@@ -1,0 +1,144 @@
+from ..kernel import core
+from ..kernel.core import VSkillModifier as V
+from ..character import characterKernel as ck
+from functools import partial
+from ..status.ability import Ability_tool
+from . import globalSkill
+
+
+class JobGenerator(ck.JobGenerator):
+    def __init__(self):
+        super(JobGenerator, self).__init__()
+        self.buffrem = False
+        self.vEnhanceNum = 9
+        self.jobtype = "str"
+        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'mess')
+        self.preEmptiveSkills = 1
+
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(crit = 20)
+
+    def get_passive_skill_list(self):
+
+        
+        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",patt = 10)
+        
+        PhisicalTraiging = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
+        SwordMastery = core.InformedCharacterModifier("소드 마스터리",pdamage_indep = 15)
+        InvigoratePassive = core.InformedCharacterModifier("격려(패시브)",att = 20)
+        Intension = core.InformedCharacterModifier("인텐션",stat_main = 60, crit = 20, pdamage_indep = 10)
+        ShiningCharge = core.InformedCharacterModifier("샤이닝 차지(패시브)",pdamage = 60)
+        CombatMastery = core.InformedCharacterModifier("컴뱃 마스터리",armor_ignore = 40)
+        AdvancedSowrdMastery = core.InformedCharacterModifier("어드밴스드 소드 마스터리",att = 30, crit = 15, crit_damage = 10)
+        AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)",att = 30)
+
+        return [ElementalExpert, PhisicalTraiging, SwordMastery,
+                            InvigoratePassive, Intension, ShiningCharge, CombatMastery, AdvancedSowrdMastery,
+                            AdvancedFinalAttackPassive]
+
+    def get_not_implied_skill_list(self):
+        PARTYPEOPLE = 1        
+        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
+        
+        SoulLink = core.InformedCharacterModifier("소울 링크",pdamage = 5*PARTYPEOPLE)
+        SoulRage = core.InformedCharacterModifier("소울 레이지", pdamage_indep = 30, crit_damage = 8)
+        
+        return [WeaponConstant, Mastery, SoulLink, SoulRage]
+
+    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+        '''
+        파티원 1명
+        
+        하이퍼 : 샤이닝 크로스 리인포스 / 인스톨 / 보너스 어택
+        소울 어썰트 - 리인포스, 보너스 어택
+        
+        소울어썰트-샤이닝크로스-로얄가드-파택-데들리차지
+        
+        샤이닝 크로스는 십자가가 항상 남아있도록 유지함
+        
+        로얄 가드는 6초마다 사용하며 다른 스킬로 인해 약간 나중에 사용할 수도 있음. 로얄 가드 5중첩 버프를 상시 유지하도록 가정.
+        '''
+        
+        GuardOfLight = core.BuffSkill("빛의 수호", 900, 30000, rem = True, red = True, cooltime = 180000, pdamage = 20).wrap(core.BuffSkillWrapper)
+        
+        LoyalGuardBuff = core.BuffSkill("로얄 가드", 0, 12000, att = 45).wrap(core.BuffSkillWrapper)  #10->15->20->30->45
+        
+        LoyalGuard_1 = core.DamageSkill("로얄 가드", 630, 150+chtr.level*3, 2, cooltime = 6000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        LoyalGuard_2 = core.DamageSkill("로얄 가드", 630, 200+chtr.level*3, 3, cooltime = 6000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        LoyalGuard_3 = core.DamageSkill("로얄 가드", 630, 250+chtr.level*3, 4, cooltime = 6000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        LoyalGuard_4 = core.DamageSkill("로얄 가드", 630, 250+chtr.level*3, 5, cooltime = 6000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        LoyalGuard_5 = core.DamageSkill("로얄 가드", 630, 250+chtr.level*3, 7, cooltime = 6000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        
+        SoulAttack = core.BuffSkill("소울 어택", 0, 10000, cooltime = -1, pdamage_indep = 25, crit = 20).wrap(core.BuffSkillWrapper)
+        
+        FinalAttack = core.DamageSkill("파이널 어택", 0, 185*2, 0.75).setV(vEhc, 3, 4, False).wrap(core.DamageSkillWrapper)
+        Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
+        Invigorate = core.BuffSkill("격려", 0, 180000, rem = True, att = 30).wrap(core.BuffSkillWrapper)
+        
+        SoulAssult = core.DamageSkill("소울 어썰트", 600, 280, 8+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   #암흑 20%
+        SoulAssult_AuraWeapon = core.DamageSkill("오라웨폰", 0, 280*(0.75 + 0.01 * vEhc.getV(2,2)), 8).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        
+        ShiningCross = core.DamageSkill("샤이닝 크로스", 690, 440, 4 + 1, cooltime = 7000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #암흑 30% 10초
+        ShiningCrossInstall = core.SummonSkill("샤이닝 크로스(인스톨)", 0, 1200, 75, 4+1, 7000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #100% 암흑 5초
+        
+        #하이퍼
+        SacredCube = core.BuffSkill("세이크리드 큐브", 90, 30000, cooltime = 210000, pdamage = 10).wrap(core.BuffSkillWrapper)
+        DeadlyCharge = core.DamageSkill("데들리 차지", 810, 600, 10, cooltime = 20000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        DeadlyChargeBuff = core.BuffSkill("데들리 차지(디버프)", 0, 10000, cooltime = -1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
+        QueenOfTomorrow = core.BuffSkill("퀸 오브 투모로우", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
+        
+        AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 4000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 4초간 발동되지 않도록 합니다
+        AuraWeaponBuff = core.BuffSkill("오라웨폰 버프", 0, (80 +2*vEhc.getV(2,2)) * 1000, cooltime = 180 * 1000, armor_ignore = (10+vEhc.getV(2,2)//5), pdamage_indep = (vEhc.getV(2,2) // 5)).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!
+    
+        CygnusPalanks = core.DamageSkill("시그너스 팔랑크스", 780, 450 + 18*vEhc.getV(3,3), 40 + vEhc.getV(3,3), cooltime = 30 * 1000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        RoIias = core.BuffSkill("로 아이아스", 840, 75+3*vEhc.getV(0,0), red = True, cooltime = 300*1000, pdamage_indep = 5 + (35+3*int(vEhc.getV(0,0)*0.2))//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        ClauSolis = core.DamageSkill("클라우 솔리스", 900, 700+28*vEhc.getV(4,4), 7, red = True, cooltime = 12000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)    #로얄가드 버프지속시간 6초 증가. 100% 암흑 5초
+        ClauSolisSummon = core.SummonSkill("클라우 솔리스(소환)", 0, 5000, 350+14*vEhc.getV(4,4), 7, 9000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #100% 암흑 5초
+    
+        SwordOfSoullight = core.BuffSkill("소드 오브 소울라이트", 1050, 30000, red = True, cooltime = 180*1000, patt = 15+int(0.5*vEhc.getV(1,1)), crit = 100, armor_ignore = 100).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
+        SoullightSlash = core.DamageSkill("소울 라이트 슬래시", 600, 650+26*vEhc.getV(1,1), 7).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        SoullightSlash_AuraWeapon = core.DamageSkill("오라웨폰", 0, (650+26*vEhc.getV(2,2))*(0.75 + 0.01 * vEhc.getV(2,2)), 7).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ##### Build Graph
+        
+        BasicAttack = core.OptionalElement(SwordOfSoullight.is_active, SoullightSlash, SoulAssult)
+        
+        ClauSolis.onAfter(ClauSolisSummon)
+        DeadlyCharge.onAfter(DeadlyChargeBuff)
+        
+        SoullightSlash.onAfter(FinalAttack)
+        SoulAssult.onAfter(FinalAttack)
+        
+        ShiningCross.onAfter(ShiningCrossInstall)
+        ShiningCross.onAfter(FinalAttack)
+        
+        LoyalGuard_5.onAfter(FinalAttack)
+        
+        ShiningCrossInstall.onTick(SoulAttack.controller(5000,"set_enabled_and_time_left"))
+        ClauSolis.onAfter(SoulAttack.controller(5000,"set_enabled_and_time_left"))
+        ClauSolis.onAfter(FinalAttack)
+        ClauSolisSummon.onTick(SoulAttack.controller(5000,"set_enabled_and_time_left"))
+    
+        # 오라 웨폰
+        def AuraWeapon_connection_builder(origin_skill, target_skill):
+            optional = core.OptionalElement(lambda : (AuraWeaponCooltimeDummy.is_not_active() and AuraWeaponBuff.is_active()), target_skill)
+            origin_skill.onAfter(optional)
+            target_skill.onAfter(AuraWeaponCooltimeDummy)
+            
+        AuraWeapon_connection_builder(SoullightSlash, SoullightSlash_AuraWeapon)    
+        AuraWeapon_connection_builder(SoulAssult, SoulAssult_AuraWeapon)
+        
+        schedule = core.ScheduleGraph()
+        
+        schedule.build_graph(
+                chtr, 
+                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                    GuardOfLight, LoyalGuardBuff, SoulAttack, Booster, Invigorate, SacredCube, 
+                    DeadlyChargeBuff, QueenOfTomorrow, AuraWeaponBuff, RoIias, SwordOfSoullight,
+                    globalSkill.soul_contract()],
+                [CygnusPalanks, LoyalGuard_5, ShiningCross, DeadlyCharge, ClauSolis],
+                [ShiningCrossInstall, ClauSolisSummon],
+                [AuraWeaponCooltimeDummy],
+                BasicAttack)
+
+        return schedule
