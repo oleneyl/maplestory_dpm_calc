@@ -273,7 +273,7 @@ class EnhancerFactory():
         return CharacterModifier(stat_main = stat_main, att = att)  
 
     @classmethod
-    def get_glove_bonus_starforce_enhancement(self, level, star):
+    def get_glove_bonus_starforce_enhancement(self, star):
         return CharacterModifier(att = self.glove_starforce_att_list[star])
         
     @classmethod
