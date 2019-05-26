@@ -1,10 +1,105 @@
 from collections import defaultdict, Counter
 
 
+
+
+def set_global_storage(storage):
+    global unsafe_global_storage
+    unsafe_global_storage = storage
+
+def get_global_storage():
+    global unsafe_global_storage
+    if 'unsafe_global_storage' not in globals():
+        raise NameError("Global storage not defined : Are you sure you have ahd called set_global_storage() ? ")
+    return unsafe_global_storage
+
+def get_global_track_callback():
+    global unsafe_channel_callback
+    if 'unsafe_channel_callback' not in globals():
+        return []
+    else:        
+        return [i for i in unsafe_channel_callback]
+
+global unsafe_channel_callback
+
+class GlobalProps():
+    @classmethod
+    def get_namespace():
+        if 'unsafe_global_namespace_do_not_access_direct' not in globals():
+            raise NameError('Global namespace not defined : Are you sure you have had called GlobalPropertyController.initializer_every_global_prepery() ? ')
+        else:
+            global unsafe_global_namespace_do_not_access_direct
+            if unsafe_global_namespace_do_not_access_direct is None:
+                raise ValueError('global namespace access denied : Make sure you are in scope of GlobalPropertyController.DefaultNamespace()')
+            else:
+                return unsafe_global_namespace_do_not_access_direct
+
+class GlobalPropertyController():
+    @classmethod
+    def initialize_every_global_property(self):
+        global unsafe_channel_callback
+        unsafe_channel_callback = []
+
+    class DefaultCallback():
+        def __init__(self, callbacks):
+            self._callbacks = callbacks
+
+        def __enter__(self):
+            global unsafe_channel_callback
+            unsafe_channel_callback = self._callbacks
+
+        def __exit__(self, type, value, traceback):
+            print('Exiting Scope..')
+            global unsafe_channel_callback
+            unsafe_channel_callback = []
+
+    class DefualtNamespace():
+        def __init__(self, namespace):
+            self._namespace = namespace
+
+        def __enter__(self):
+            global unsafe_global_namespace_do_not_access_direct
+            unsafe_global_namespace_do_not_access_direct = self._namespace
+
+        def __exit__(self, type, value, traceback):
+            global unsafe_global_namespace_do_not_access_direct
+            unsafe_global_namespace_do_not_access_direct = None
+
+
+
 class DynamicVariableTracker():
-    def __init__(self, track_target):
+    class ExitCallback():
+        @classmethod
+        def assign_storage(self, storage = None):
+            if storage == None:
+                storage = get_global_storage()
+            def callback_func(kwd, el, options):
+                el.assign_storage_head(storage)
+            return callback_func
+
+        @classmethod
+        def save_storage(self, storage = None):
+            if storage == None:
+                storage = get_global_storage()
+            def callback_func(kwd, el, options):
+                el.save_storage_head(storage)
+            return callback_func    
+
+        @classmethod
+        def attach_namespace(self):
+            def callback_func(kwd, el, options):
+                if 'name' in options:
+                    namespace = '/'.join([options['name'], kwd])
+                else:
+                    namespace = kwd
+                el.attach_namespace_head(namespace)
+            return callback_func
+
+    def __init__(self, track_target, callback = [], options = {}):
         self._track_target = track_target
         self._recorded_variable = []
+        self._callback = callback
+        self.options = options
 
     def __enter__(self):
         self._recorded_variable = dir(self._track_target)
@@ -13,10 +108,26 @@ class DynamicVariableTracker():
         final_variables = dir(self._track_target)
         tracked_result = Counter(final_variables) - Counter(self._recorded_variable)
         tracked_result = [var for var, i in tracked_result.most_common()]
-        self.parse_variable(tracked_result)
+        self.parse_variable_internal(tracked_result)
 
     def parse_variable(self, tracked_result):
         raise NotImplementedError('Method not implemented DynamicVariableTracker.parse_variable')
+
+    def parse_variable_internal(self, tracked_result):
+        #Check track target's type and convert
+        for kwd in tracked_result:
+            if not isinstance(type(getattr(self._track_target, kwd)), AbstractDynamicVariableInstance):
+                if not type(getattr(self._track_target, kwd)) in [str, float, int, bool, type(None)]:
+                    print("Warning : Trying to convert none - static variable {kwd} into MimicDynamicVariable, which can \
+                    raise consistency problem.")
+                setattr(self._track_target, kwd, DynamicVariableMimicingConstant(getattr(self._track_target, kwd)))
+        self.parse_variable(tracked_result)
+        #콜백 호출 / With Global callback ( Danger ) 
+        for callback in get_global_track_callback() + self._callback:
+            for kwd in tracked_result:
+                el = getattr(self._track_target, kwd)
+                callback(kwd, el, self.options)
+
 
 class VariableObjectPrecursor(object):
     def __init__(self):
@@ -37,20 +148,28 @@ class VariableObjectPrecursor(object):
         '''각각의 Object에 값을 당겨올 수 있는 Storage를 할당합니다.
         '''
 
+
+
+
 class EvaluativeGraphElement(VariableObjectPrecursor):
     class GraphElementTracker(DynamicVariableTracker):
         def parse_variable(self, tracked_result):
             self._track_target.add_precursor_keyword(tracked_result)
 
     def __init__(self):
-        pass      
+        super(EvaluativeGraphElement, self).__init__()
 
-    def dynamic_range(self):
-        return EvaluativeGraphElement.GraphElementTracker(self)
+    def dynamic_range(self, options = {}):
+        return EvaluativeGraphElement.GraphElementTracker(self, options = options)
 
     def transfer_as_real(self):
         super(EvaluativeGraphElement, self).transfer_as_real()
         pass
+
+    
+
+
+
 
 class AbstractDiGraphElement():
     def __init__(self):
@@ -81,10 +200,10 @@ class AbstractDiGraphElement():
         '''This function is decorator.
         Use this method to func(instance, param, index) -> action, return recursive param
         '''
-        def output_func(instance, param, index):    
-            rec_param = func(instance, param, index)
+        def output_func(self, instance, param, index):    
+            rec_param = func(self, instance, param, index)
             for idx, inst in enumerate(instance.get_next_instances()):
-                output_func(inst, rec_param, idx)
+                output_func(self, inst, rec_param, idx)
 
         return output_func
 
@@ -126,7 +245,7 @@ class AbstractDynamicVariableInstance(AbstractDiGraphElement):
 
     def get_next_nodes(self):
         raise NotImplementedError('''
-        Please implement ABstractDynamicVariableInstance.get_nex_nodes()
+        Please implement ABstractDynamicVariableInstance.get_next_nodes()
         You may trying to use Abstract Instance without recoginizing what
         are you doing. Please be aware what you are trying to do.
         ''')
@@ -166,13 +285,24 @@ class AbstractDynamicVariableInstance(AbstractDiGraphElement):
     @AbstractDiGraphElement.recurrent_run
     def save_storage(self, inst, storage, index):
         touch_end = len(inst.get_next_instances()) == 0
-        storage.set_namespace(inst.get_namespace, inst.evaluate(),
+        storage.set_namespace(inst.get_namespace(), inst.evaluate(),
                                                 touch_end = touch_end)
         return storage
+
+    def attach_namespace_head(self, namespace):
+        self.attach_namespace(self, namespace, 0)
+
+    def save_storage_head(self, storage):
+        self.save_storage(self, storage, 0) 
+
+    def assign_storage_head(self, storage):
+        self.assign_storage(self, storage, 0)
+
 
  
 class DynamicVariableMimicingConstant(AbstractDynamicVariableInstance):
     def __init__(self, constant):
+        super(DynamicVariableMimicingConstant, self).__init__()
         self._mimic_target_constant = constant
 
     def evaluate(self):

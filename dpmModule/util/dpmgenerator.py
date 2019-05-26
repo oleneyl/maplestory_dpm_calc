@@ -2,7 +2,7 @@ import os, sys
 import json
 import threading
 
-import dpmModule.jobs.template as jt
+from dpmModule.kernel import core
 
 import dpmModule.character.characterTemplate as CT
 import dpmModule.character.characterTemplateHigh as CT_high
@@ -25,22 +25,22 @@ class IndividualDPMGenerator():
     def setRuntime(self, time):
         self.runtime = time
 
-    def getDpm(self, vEhc = jt.vEnhancer(), ulevel = 6000, weaponstat = [4,9], level = 230):
+    def getDpm(self, vEhc = core.vEnhancer(), ulevel = 6000, weaponstat = [4,9], level = 230):
         #TODO target을 동적으로 생성할 수 있도록.
         target = self.template(maplejobs.weaponList[self.job])
         target.level = level
         gen = (self.supplier).JobGenerator()
-        vEhc = jt.vEnhancer()
+        vEhc = core.vEnhancer()
         vEhc.set_state_direct([50,50,50,50,25,25,25,25,0,0,0,0])
         graph = gen.package(target, vEhc = vEhc, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
-        sche = jt.Scheduler(graph) #가져온 그래프를 토대로 스케줄러를 생성합니다.
-        analytics = jt.Analytics()  #데이터를 분석할 분석기를 생성합니다.
-        control = jt.Simulator(sche, target, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
+        sche = core.Scheduler(graph) #가져온 그래프를 토대로 스케줄러를 생성합니다.
+        analytics = core.Analytics()  #데이터를 분석할 분석기를 생성합니다.
+        control = core.Simulator(sche, target, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
         control.start_simulation(self.runtime)
 
         return control.getDPM()
 
-    def getDetailedDpm(self, vEhc = jt.vEnhancer(), ulevel = 6000, weaponstat = [4,9], level = 230):
+    def getDetailedDpm(self, vEhc = core.vEnhancer(), ulevel = 6000, weaponstat = [4,9], level = 230):
         #TODO target을 동적으로 생성할 수 있도록.
         
         target = self.template(maplejobs.weaponList[self.job])
@@ -48,12 +48,12 @@ class IndividualDPMGenerator():
         gen = (self.supplier).JobGenerator()
         
         #코어강화량 설정
-        vEhc = jt.vEnhancer()
+        vEhc = core.vEnhancer()
         vEhc.set_state_direct([50,50,50,50,25,25,25,25,0,0,0,0])
         graph = gen.package(target, vEhc = vEhc, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
-        sche = jt.Scheduler(graph) #가져온 그래프를 토대로 스케줄러를 생성합니다.
-        analytics = jt.Analytics()  #데이터를 분석할 분석기를 생성합니다.
-        control = jt.Simulator(sche, target, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
+        sche = core.Scheduler(graph) #가져온 그래프를 토대로 스케줄러를 생성합니다.
+        analytics = core.Analytics()  #데이터를 분석할 분석기를 생성합니다.
+        control = core.Simulator(sche, target, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
         control.start_simulation(self.runtime)
 
         return {"data" : control.get_results(), 
@@ -71,7 +71,7 @@ class DpmSetting():
     '''DpmSetting은 모든 직업의 dpm 설정값을 연산합니다. IndividualDPMGenerator에 필요한 메타데이터를 저장합니다.
     '''
     itemGrade = ["노말", "레어", "에픽", "유니크", "레전"]
-    def __init__(self, template, vEhc = jt.vEnhancer(), ulevel = 0, weaponstat = [3,0], level = 200):
+    def __init__(self, template, vEhc = core.vEnhancer(), ulevel = 0, weaponstat = [3,0], level = 200):
         self.level = level
         self.vEhc = vEhc
         self.ulevel = ulevel

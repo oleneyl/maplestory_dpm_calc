@@ -1,3 +1,4 @@
+from .graph import EvaluativeGraphElement
 from functools import partial
 import math
 
@@ -434,7 +435,7 @@ class vEnhancer():
     def __repr__(self):
         return "VEnhancer :: dpmModule.jobs.template\nVEnhance : %s\nVSkill : %s" % (str(self.enhance_list), str(self.v_skill_list))
 
-class AbstractSkill():
+class AbstractSkill(EvaluativeGraphElement):
     '''Skill must have information about it's name, it's using - delay, skill using cooltime.
     Basic functions
     
@@ -445,17 +446,21 @@ class AbstractSkill():
     '''
     
     def __init__(self, name, delay, cooltime = 0, rem = False, red = True):
+        super(AbstractSkill, self).__init__()
         self.spec = "graph control"
-        self.rem = rem
-        self.red = red
-        self.name = name
-        self.delay = delay
-        self.cooltime = cooltime
-        self.explanation = None
+        with self.dynamic_range(options = {
+            'name' : name
+        }):
+            self.rem = rem
+            self.red = red
+            self.name = name
+            self.delay = delay
+            self.cooltime = cooltime
+            self.explanation = None
+            
+            if self.cooltime == -1:
+                self.cooltime = NOTWANTTOEXECUTE
         
-        if self.cooltime == -1:
-            self.cooltime = NOTWANTTOEXECUTE
-    
     def _change_time_into_string(self, number_or_Infinite, divider = 1, lang = "ko"):
         lang_to_inf_dict = {"ko" : "무한/자동발동불가", "en" : "Infinite" }
         if abs(number_or_Infinite - NOTWANTTOEXECUTE / divider) < 10000 / divider:
