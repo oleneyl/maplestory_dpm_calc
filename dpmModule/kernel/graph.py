@@ -16,23 +16,30 @@ def _unsafe_access_global_storage():
     global unsafe_global_collection_do_not_access_direct
     return unsafe_global_collection_do_not_access_direct
 
-class GlobalOperationTemplate():
+class GlobalOperation():
     @classmethod
-    def horay(self):
-        print('horay')
-
-class GlobalOperation(GlobalOperationTemplate):
-    @classmethod
-    def assign_storage(self, storage):
+    def assign_storage(self):
         _unsafe_access_global_storage().assign_storage()
 
     @classmethod
-    def save_storage(self, storage):
+    def save_storage(self):
         _unsafe_access_global_storage().save_storage()
 
     @classmethod
-    def attach_namespace(self, storage):
+    def attach_namespace(self):
         _unsafe_access_global_storage().attach_namespace()
+
+    @classmethod
+    def convert_to_static(self):
+        _unsafe_access_global_storage().convert_to_static()
+
+    @classmethod
+    def revert_to_dynamic(self):
+        _unsafe_access_global_storage().revert_to_dynamic()
+
+    @classmethod
+    def notify_dynamic_object_added(self, obj):
+        _unsafe_access_global_storage().add_dynamic_object(obj)
 
 
 class GlobalCollection():
@@ -40,9 +47,6 @@ class GlobalCollection():
     def __init__(self):
         self._found_dynamic_object = []
         self._storage = ConfigurationStorage({})
-
-    def foo(self):
-        print('foo')
 
     def add_dynamic_object(self, obj):
         self._found_dynamic_object.append(obj)
@@ -63,13 +67,16 @@ class GlobalCollection():
                 getattr(obj, kwd).attach_namespace_head(kwd)
 
     def convert_to_static(self):
-        for obj in self._found_dynamic_object:
+        for obj in self._found_dynamic_object:            
             for kwd in obj.get_dynamic_variables():
-                if not isinstance(type(getattr(obj, kwd)), AbstractDynamicVariableInstance):
+                if not isinstance(getattr(obj, kwd), AbstractDynamicVariableInstance):
                     if not type(getattr(obj, kwd)) in [str, float, int, bool, type(None)]:
-                        raise TypeError("Trying to evaluate non - dynamic variable {kwd} into static. \
-                        This error was raised to prevent consistency problem.")
-                setattr(obj, self.historical_track_prefix + kwd, getattr(obj, kwd).evaluate())
+                        raise TypeError(f'''Trying to evaluate non - dynamic variable [{obj}({obj._namespace})/{kwd}] into static.
+                        Tryed element type : {type(getattr(obj, kwd))}
+                        This error was raised to prevent consistency problem.''')
+                setattr(obj, self.historical_track_prefix + kwd, getattr(obj, kwd))
+                setattr(obj, kwd, getattr(obj, kwd).evaluate())
+                print(f'converting attribute {obj._namespace}/{kwd} ')
 
     def revert_to_dynamic(self):
         for obj in self._found_dynamic_object:
@@ -104,13 +111,14 @@ class DynamicObject(object):
     def __init__(self, namespace = None):
         self._variable_precursor_keyword = []   
         self._namespace = namespace
+        GlobalOperation.notify_dynamic_object_added(self)
 
     def add_precursor_keyword(self, keyword_list):
         self._variable_precursor_keyword += keyword_list
 
         #Force tracked keywords as Dynamic Variable
         for kwd in keyword_list:
-            if not isinstance(type(getattr(self, kwd)), AbstractDynamicVariableInstance):
+            if not isinstance(getattr(self, kwd), AbstractDynamicVariableInstance):
                 if not type(getattr(self, kwd)) in [str, float, int, bool, type(None)]:
                     print("Warning : Trying to convert none - static variable {kwd} into MimicDynamicVariable, which can \
                     raise consistency problem.")
@@ -125,8 +133,8 @@ class EvaluativeGraphElement(DynamicObject):
         def parse_variable(self, tracked_result):
             self._track_target.add_precursor_keyword(tracked_result)
             
-    def __init__(self):
-        super(EvaluativeGraphElement, self).__init__()
+    def __init__(self, namespace = None):
+        super(EvaluativeGraphElement, self).__init__(namespace=namespace)
 
     def dynamic_range(self, options = {}):
         return EvaluativeGraphElement.GraphElementTracker(self, options = options)
@@ -336,10 +344,25 @@ class DynamicVariableOperation(AbstractDynamicVariableInstance):
     def get_next_nodes(self):
         return self._args
 
+    @classmethod
+    def wrap_arguments(self, args : list):
+        def wrapper(arg):
+            if isinstance(arg, AbstractDynamicVariableInstance):
+                return arg
+            else:
+                if type(arg) in [str,int,float,bool,type(None)]:
+                    return DynamicVariableMimicingConstant(arg)
+                else:
+                    print(f'''Warning::Tryingto convert non-static variable {arg} into
+                    DynamicVariableMimicingConstant''')
+                    return DynamicVariableMimicingConstant(arg)
+        return [wrapper(a) for a in args]
+
     @staticmethod
     def create_ops(eval_func, repr_str):
         def ops(*args):
-            return DynamicVariableOperation(args, eval_func, repr_str)
+            wrapped_args = DynamicVariableOperation.wrap_arguments(args)
+            return DynamicVariableOperation(wrapped_args, eval_func, repr_str)
         return ops
     
     @staticmethod

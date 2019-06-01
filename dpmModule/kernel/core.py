@@ -458,6 +458,7 @@ class AbstractSkill(EvaluativeGraphElement):
             
             if self.cooltime == -1:
                 self.cooltime = NOTWANTTOEXECUTE
+        return
         
     def _change_time_into_string(self, number_or_Infinite, divider = 1, lang = "ko"):
         lang_to_inf_dict = {"ko" : "무한/자동발동불가", "en" : "Infinite" }
@@ -1142,8 +1143,7 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         delay = self.skill.delay
         #mdf = self.get_modifier()
         return ResultObject(delay, CharacterModifier(), 0, sname = self.skill.name, spec = 'buff', kwargs = {"remain" : self.skill.remain * (1+0.01*rem*self.skill.rem)})
-        #return delay, mdf, 0, self.cascade
-        
+
     def get_modifier(self) -> CharacterModifier:
         if self.onoff:
             return self.skill.get_modifier()
