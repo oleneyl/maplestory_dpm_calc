@@ -114,15 +114,19 @@ class DynamicObject(object):
         GlobalOperation.notify_dynamic_object_added(self)
 
     def add_precursor_keyword(self, keyword_list):
-        self._variable_precursor_keyword += keyword_list
-
+        
+        filtered_keywords = []
         #Force tracked keywords as Dynamic Variable
         for kwd in keyword_list:
+            #to prevent recurrent cascaded DynamicObject, DynamicObject will be tracked only once.
+            if isinstance(getattr(self, kwd), DynamicObject): continue                  
             if not isinstance(getattr(self, kwd), AbstractDynamicVariableInstance):
                 if not type(getattr(self, kwd)) in [str, float, int, bool, type(None)]:
-                    print("Warning : Trying to convert none - static variable {kwd} into MimicDynamicVariable, which can \
-                    raise consistency problem.")
+                    print(f'''Warning : Trying to convert none - static variable {kwd} into MimicDynamicVariable. This can
+                    raise consistency problem.''')
                 setattr(self, kwd, DynamicVariableMimicingConstant(getattr(self, kwd))) #Force attribute convert into Dynamic
+            filtered_keywords.append(kwd)
+        self._variable_precursor_keyword += filtered_keywords
 
     def get_dynamic_variables(self):
         return self._variable_precursor_keyword

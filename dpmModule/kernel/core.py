@@ -1,4 +1,4 @@
-from .graph import EvaluativeGraphElement
+from .graph import EvaluativeGraphElement, DynamicObject
 from functools import partial
 import math
 
@@ -6,7 +6,7 @@ NOTWANTTOEXECUTE = 99999999
 MAX_DAMAGE_RESTRICTION = 10000 * 10000 * 100 - 1
 
 
-class CharacterModifier(object):
+class CharacterModifier(DynamicObject):
     __slots__ = 'crit', 'crit_damage', 'pdamage', 'pdamage_indep', 'stat_main', 'stat_sub', 'pstat_main', 'pstat_sub', 'boss_pdamage', 'armor_ignore', 'patt', 'att', 'stat_main_fixed', 'stat_sub_fixed'
     '''CharacterModifier : Holds information about character modifiing factors ex ) pdamage, stat, att%, etc.AbstractSkill
     - parameters
@@ -458,7 +458,6 @@ class AbstractSkill(EvaluativeGraphElement):
             
             if self.cooltime == -1:
                 self.cooltime = NOTWANTTOEXECUTE
-        return
         
     def _change_time_into_string(self, number_or_Infinite, divider = 1, lang = "ko"):
         lang_to_inf_dict = {"ko" : "무한/자동발동불가", "en" : "Infinite" }
@@ -528,10 +527,11 @@ class BuffSkill(AbstractSkill):
     '''
     def __init__(self, name, delay, remain,  cooltime = 0, crit = 0, crit_damage = 0, pdamage = 0, stat_main = 0, stat_sub = 0, pstat_main = 0, pstat_sub = 0, boss_pdamage = 0, pdamage_indep = 0, armor_ignore = 0, patt = 0, att = 0, stat_main_fixed = 0, stat_sub_fixed = 0, rem = False, red = False):
         super(BuffSkill, self).__init__(name, delay, cooltime = cooltime, rem = rem, red = red)
-        self.spec = "buff"
-        self.remain = remain
-        #Build StaticModifier from given arguments
-        self.static_character_modifier = CharacterModifier(crit = crit, crit_damage = crit_damage, pdamage = pdamage, pdamage_indep = pdamage_indep, stat_main = stat_main, stat_sub = stat_sub, pstat_main = pstat_main, pstat_sub = pstat_sub, boss_pdamage = boss_pdamage, armor_ignore = armor_ignore, patt = patt, att = att, stat_main_fixed = stat_main_fixed, stat_sub_fixed = stat_sub_fixed)
+        with self.dynamic_range():
+            self.spec = "buff"
+            self.remain = remain
+            #Build StaticModifier from given arguments
+            self.static_character_modifier = CharacterModifier(crit = crit, crit_damage = crit_damage, pdamage = pdamage, pdamage_indep = pdamage_indep, stat_main = stat_main, stat_sub = stat_sub, pstat_main = pstat_main, pstat_sub = pstat_sub, boss_pdamage = boss_pdamage, armor_ignore = armor_ignore, patt = patt, att = att, stat_main_fixed = stat_main_fixed, stat_sub_fixed = stat_sub_fixed)
 
     def _get_explanation_internal(self, detail = False, lang = "ko", expl_level = 2):
         if lang == "ko":
