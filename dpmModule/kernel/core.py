@@ -1,4 +1,4 @@
-from .graph import EvaluativeGraphElement, DynamicObject
+from .graph import EvaluativeGraphElement, ConstantConvertableInheritTemplate, DynamicVariableOperation, DynamicVariableInstance
 from functools import partial
 import math
 
@@ -6,7 +6,7 @@ NOTWANTTOEXECUTE = 99999999
 MAX_DAMAGE_RESTRICTION = 10000 * 10000 * 100 - 1
 
 
-class CharacterModifier(DynamicObject):
+class CharacterModifier(object):
     __slots__ = 'crit', 'crit_damage', 'pdamage', 'pdamage_indep', 'stat_main', 'stat_sub', 'pstat_main', 'pstat_sub', 'boss_pdamage', 'armor_ignore', 'patt', 'att', 'stat_main_fixed', 'stat_sub_fixed'
     '''CharacterModifier : Holds information about character modifiing factors ex ) pdamage, stat, att%, etc.AbstractSkill
     - parameters
@@ -244,6 +244,38 @@ class CharacterModifier(DynamicObject):
                             "stat_main_fixed":self.stat_main_fixed,
                             "stat_sub_fixed":self.stat_sub_fixed}
 
+    def _dynamic_variable_hint(self, character_modifier):
+        if not isinstance(character_modifier, DynamicCharacterModifier):
+            return DynamicCharacterModifier(crit = character_modifier.crit, crit_damage = character_modifier.crit_damage, pdamage = character_modifier.pdamage, 
+                    pdamage_indep = character_modifier.pdamage_indep, stat_main = character_modifier.stat_main, stat_sub = character_modifier.stat_sub, 
+                    pstat_main = character_modifier.pstat_main, pstat_sub = character_modifier.pstat_sub, boss_pdamage = character_modifier.boss_pdamage, 
+                    armor_ignore = character_modifier.armor_ignore, patt = character_modifier.patt, att = character_modifier.att, stat_main_fixed = character_modifier.stat_main_fixed, stat_sub_fixed = character_modifier.stat_sub_fixed)
+        else:
+            return None
+
+class DynamicCharacterModifier(DynamicVariableInstance, CharacterModifier):
+    def __init__(self, **kwargs):
+        DynamicVariableInstance.__init__(self)        
+        parsed_kwargs = {k : DynamicVariableOperation.wrap_argument(a) for k, a in kwargs.items()}
+        for k, a in parsed_kwargs.items():
+            self.add_next_instance(a)
+            a.inherit_namespace(k)
+        CharacterModifier.__init__(self, **parsed_kwargs)
+
+    def evaluate_override(self):
+        return CharacterModifier(crit = self.crit.evaluate(),
+                    crit_damage = self.crit_damage.evaluate(), pdamage = self.pdamage.evaluate(), 
+                    pdamage_indep = self.pdamage_indep.evaluate(), stat_main = self.stat_main.evaluate(),
+                    stat_sub = self.stat_sub.evaluate(), 
+                    pstat_main = self.pstat_main.evaluate(), pstat_sub = self.pstat_sub.evaluate(), 
+                    boss_pdamage = self.boss_pdamage.evaluate(), 
+                    armor_ignore = self.armor_ignore.evaluate(), 
+                    patt = self.patt.evaluate(), 
+                    att = self.att.evaluate(), stat_main_fixed = self.stat_main_fixed.evaluate(), 
+                    stat_sub_fixed = self.stat_sub_fixed.evaluate())
+        
+    
+
 class InformedCharacterModifier(CharacterModifier):
     __slots__ = "name"
     def __init__(self, name, crit = 0, crit_damage = 0, pdamage = 0, pdamage_indep = 0, stat_main = 0, stat_sub = 0, pstat_main = 0, pstat_sub = 0, boss_pdamage = 0, armor_ignore = 0, patt = 0, att = 0, stat_main_fixed = 0, stat_sub_fixed = 0):
@@ -322,6 +354,7 @@ class ExtendedCharacterModifier(CharacterModifier):
                         att = (self.att + arg.att), \
                         stat_main_fixed = (self.stat_main_fixed + arg.stat_main_fixed), \
                         stat_sub_fixed = (self.stat_sub_fixed + arg.stat_sub_fixed))  
+
 
 class VSkillModifier():
     @staticmethod
