@@ -49,7 +49,6 @@ class JobGenerator(ck.JobGenerator):
         풍마수리검은 스프레드 스로우 사용 중에는 사용하지 않음
         
         '''
-
         #Buff skills
         ShadowPartner = core.BuffSkill("쉐도우 파트너", 600, 200 * 1000, rem = True).wrap(core.BuffSkillWrapper) #어떻게 처리할지 고심중! #딜레이 모름
         SpiritJavelin = core.BuffSkill("스피릿 자벨린", 600, 200 * 1000, rem = True).wrap(core.BuffSkillWrapper) #어떻게 처리할지 고심중! #딜레이 모름

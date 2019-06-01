@@ -446,11 +446,9 @@ class AbstractSkill(EvaluativeGraphElement):
     '''
     
     def __init__(self, name, delay, cooltime = 0, rem = False, red = True):
-        super(AbstractSkill, self).__init__()
+        super(AbstractSkill, self).__init__(namespace = name)
         self.spec = "graph control"
-        with self.dynamic_range(options = {
-            'name' : name
-        }):
+        with self.dynamic_range():
             self.rem = rem
             self.red = red
             self.name = name

@@ -1,100 +1,87 @@
 from collections import defaultdict, Counter
 
+'''
+global properties
 
+- unsafe_global_storage
+- unsafe_channel_callback
+- unsafe_global_namespace_do_not_access_direct
+- unsafe_global_evaluative_graph_element_controls
+'''
+def initialize_global_properties():
+    global unsafe_global_collection_do_not_access_direct
+    unsafe_global_collection_do_not_access_direct = GlobalCollection()
 
+def _unsafe_access_global_storage():
+    global unsafe_global_collection_do_not_access_direct
+    return unsafe_global_collection_do_not_access_direct
 
-def set_global_storage(storage):
-    global unsafe_global_storage
-    unsafe_global_storage = storage
-
-def get_global_storage():
-    global unsafe_global_storage
-    if 'unsafe_global_storage' not in globals():
-        raise NameError("Global storage not defined : Are you sure you have ahd called set_global_storage() ? ")
-    return unsafe_global_storage
-
-def get_global_track_callback():
-    global unsafe_channel_callback
-    if 'unsafe_channel_callback' not in globals():
-        return []
-    else:        
-        return [i for i in unsafe_channel_callback]
-
-global unsafe_channel_callback
-
-class GlobalProps():
+class GlobalOperationTemplate():
     @classmethod
-    def get_namespace():
-        if 'unsafe_global_namespace_do_not_access_direct' not in globals():
-            raise NameError('Global namespace not defined : Are you sure you have had called GlobalPropertyController.initializer_every_global_prepery() ? ')
-        else:
-            global unsafe_global_namespace_do_not_access_direct
-            if unsafe_global_namespace_do_not_access_direct is None:
-                raise ValueError('global namespace access denied : Make sure you are in scope of GlobalPropertyController.DefaultNamespace()')
-            else:
-                return unsafe_global_namespace_do_not_access_direct
+    def horay(self):
+        print('horay')
 
-class GlobalPropertyController():
+class GlobalOperation(GlobalOperationTemplate):
     @classmethod
-    def initialize_every_global_property(self):
-        global unsafe_channel_callback
-        unsafe_channel_callback = []
+    def assign_storage(self, storage):
+        _unsafe_access_global_storage().assign_storage()
 
-    class DefaultCallback():
-        def __init__(self, callbacks):
-            self._callbacks = callbacks
+    @classmethod
+    def save_storage(self, storage):
+        _unsafe_access_global_storage().save_storage()
 
-        def __enter__(self):
-            global unsafe_channel_callback
-            unsafe_channel_callback = self._callbacks
+    @classmethod
+    def attach_namespace(self, storage):
+        _unsafe_access_global_storage().attach_namespace()
 
-        def __exit__(self, type, value, traceback):
-            print('Exiting Scope..')
-            global unsafe_channel_callback
-            unsafe_channel_callback = []
 
-    class DefualtNamespace():
-        def __init__(self, namespace):
-            self._namespace = namespace
+class GlobalCollection():
+    historical_track_prefix = '_temporal_save_'
+    def __init__(self):
+        self._found_dynamic_object = []
+        self._storage = ConfigurationStorage({})
 
-        def __enter__(self):
-            global unsafe_global_namespace_do_not_access_direct
-            unsafe_global_namespace_do_not_access_direct = self._namespace
+    def foo(self):
+        print('foo')
 
-        def __exit__(self, type, value, traceback):
-            global unsafe_global_namespace_do_not_access_direct
-            unsafe_global_namespace_do_not_access_direct = None
+    def add_dynamic_object(self, obj):
+        self._found_dynamic_object.append(obj)
+    
+    def assign_storage(self):
+        for obj in self._found_dynamic_object:
+            for kwd in obj.get_dynamic_variables():
+                getattr(obj, kwd).assign_storage_head(self._storage)
 
+    def save_storage(self):
+        for obj in self._found_dynamic_object:
+            for kwd in obj.get_dynamic_variables():
+                getattr(obj, kwd).save_storage_head(self._storage)
+                
+    def attach_namespace(self):
+        for obj in self._found_dynamic_object:
+            for kwd in obj.get_dynamic_variables():
+                getattr(obj, kwd).attach_namespace_head(kwd)
+
+    def convert_to_static(self):
+        for obj in self._found_dynamic_object:
+            for kwd in obj.get_dynamic_variables():
+                if not isinstance(type(getattr(obj, kwd)), AbstractDynamicVariableInstance):
+                    if not type(getattr(obj, kwd)) in [str, float, int, bool, type(None)]:
+                        raise TypeError("Trying to evaluate non - dynamic variable {kwd} into static. \
+                        This error was raised to prevent consistency problem.")
+                setattr(obj, self.historical_track_prefix + kwd, getattr(obj, kwd).evaluate())
+
+    def revert_to_dynamic(self):
+        for obj in self._found_dynamic_object:
+            for kwd in obj.get_dynamic_variables():
+                try:
+                    setattr(obj, kwd, getattr(obj, self.historical_track_prefix + kwd))
+                except AttributeError as e:
+                    raise AttributeError('Cannot find saved object before evalute. Check whether you have had \
+                        called convert_to_static()')
 
 
 class DynamicVariableTracker():
-    class ExitCallback():
-        @classmethod
-        def assign_storage(self, storage = None):
-            if storage == None:
-                storage = get_global_storage()
-            def callback_func(kwd, el, options):
-                el.assign_storage_head(storage)
-            return callback_func
-
-        @classmethod
-        def save_storage(self, storage = None):
-            if storage == None:
-                storage = get_global_storage()
-            def callback_func(kwd, el, options):
-                el.save_storage_head(storage)
-            return callback_func    
-
-        @classmethod
-        def attach_namespace(self):
-            def callback_func(kwd, el, options):
-                if 'name' in options:
-                    namespace = '/'.join([options['name'], kwd])
-                else:
-                    namespace = kwd
-                el.attach_namespace_head(namespace)
-            return callback_func
-
     def __init__(self, track_target, callback = [], options = {}):
         self._track_target = track_target
         self._recorded_variable = []
@@ -108,67 +95,41 @@ class DynamicVariableTracker():
         final_variables = dir(self._track_target)
         tracked_result = Counter(final_variables) - Counter(self._recorded_variable)
         tracked_result = [var for var, i in tracked_result.most_common()]
-        self.parse_variable_internal(tracked_result)
+        self.parse_variable(tracked_result)
 
     def parse_variable(self, tracked_result):
         raise NotImplementedError('Method not implemented DynamicVariableTracker.parse_variable')
 
-    def parse_variable_internal(self, tracked_result):
-        #Check track target's type and convert
-        for kwd in tracked_result:
-            if not isinstance(type(getattr(self._track_target, kwd)), AbstractDynamicVariableInstance):
-                if not type(getattr(self._track_target, kwd)) in [str, float, int, bool, type(None)]:
-                    print("Warning : Trying to convert none - static variable {kwd} into MimicDynamicVariable, which can \
-                    raise consistency problem.")
-                setattr(self._track_target, kwd, DynamicVariableMimicingConstant(getattr(self._track_target, kwd)))
-        self.parse_variable(tracked_result)
-        #콜백 호출 / With Global callback ( Danger ) 
-        for callback in get_global_track_callback() + self._callback:
-            for kwd in tracked_result:
-                el = getattr(self._track_target, kwd)
-                callback(kwd, el, self.options)
-
-
-class VariableObjectPrecursor(object):
-    def __init__(self):
+class DynamicObject(object):
+    def __init__(self, namespace = None):
         self._variable_precursor_keyword = []   
+        self._namespace = namespace
 
     def add_precursor_keyword(self, keyword_list):
         self._variable_precursor_keyword += keyword_list
 
-    def transfer_as_real(self):
-        '''각각의 Object를 evaluate하여 실제 값을 각 속성에
-        할당합니다. 이 시점에서 가상 DynamicVariableInstance와의 연결은 끊어집니다.
+        #Force tracked keywords as Dynamic Variable
+        for kwd in keyword_list:
+            if not isinstance(type(getattr(self, kwd)), AbstractDynamicVariableInstance):
+                if not type(getattr(self, kwd)) in [str, float, int, bool, type(None)]:
+                    print("Warning : Trying to convert none - static variable {kwd} into MimicDynamicVariable, which can \
+                    raise consistency problem.")
+                setattr(self, kwd, DynamicVariableMimicingConstant(getattr(self, kwd))) #Force attribute convert into Dynamic
 
-        '''
-        for kwd in self._variable_precursor_keyword:
-            setattr(self, kwd, getattr(self, kwd).evaluate())
+    def get_dynamic_variables(self):
+        return self._variable_precursor_keyword
+    
 
-    def assign_storage(self):
-        '''각각의 Object에 값을 당겨올 수 있는 Storage를 할당합니다.
-        '''
-
-
-
-
-class EvaluativeGraphElement(VariableObjectPrecursor):
+class EvaluativeGraphElement(DynamicObject):
     class GraphElementTracker(DynamicVariableTracker):
         def parse_variable(self, tracked_result):
             self._track_target.add_precursor_keyword(tracked_result)
-
+            
     def __init__(self):
         super(EvaluativeGraphElement, self).__init__()
 
     def dynamic_range(self, options = {}):
         return EvaluativeGraphElement.GraphElementTracker(self, options = options)
-
-    def transfer_as_real(self):
-        super(EvaluativeGraphElement, self).transfer_as_real()
-        pass
-
-    
-
-
 
 
 class AbstractDiGraphElement():
@@ -367,7 +328,7 @@ class DynamicVariableOperation(AbstractDynamicVariableInstance):
         self._repr_func = repr_func
 
     def evaluate(self):
-        return self._eval_func(*self._args, **self._kwargs)
+        return self._eval_func(*self._args)
 
     def represent(self):
         return self._repr_func(self._args)
