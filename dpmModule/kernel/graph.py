@@ -378,7 +378,7 @@ class DynamicVariableOperation(AbstractDynamicVariableInstance):
         self._eval_func = eval_func
         self._repr_func = repr_func
 
-    def evaluate(self):
+    def evaluate_override(self):
         return self._eval_func(*self._args)
 
     def represent(self):
@@ -446,7 +446,7 @@ class DynamicVariableMimicingConstant(DynamicVariableInstance):
         super(DynamicVariableMimicingConstant, self).__init__()
         self._mimic_target_constant = constant
 
-    def evaluate(self):
+    def evaluate_override(self):
         return self._mimic_target_constant
 
     def represent(self):
