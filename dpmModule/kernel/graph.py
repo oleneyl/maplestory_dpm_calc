@@ -66,12 +66,25 @@ class GlobalOperation():
     def notify_dynamic_object_added(self, obj):
         _unsafe_access_global_storage().add_dynamic_object(obj)
 
+    @classmethod
+    def export_collection(self):
+        collection = _unsafe_access_global_storage()
+        initialize_global_properties()
+        return collection
+    
+    @classmethod
+    def set_storage(self, storage):
+        _unsafe_access_global_storage().set_storage(storage)
+
 
 class GlobalCollection():
     historical_track_prefix = '_temporal_save_'
     def __init__(self):
         self._found_dynamic_object = []
         self._storage = ConfigurationStorage({})
+
+    def set_storage(self, storage):
+        self._storage = storage
 
     def add_dynamic_object(self, obj):
         self._found_dynamic_object.append(obj)
@@ -89,10 +102,10 @@ class GlobalCollection():
     def attach_namespace(self):
         for obj in self._found_dynamic_object:
             for kwd in obj.get_dynamic_variables():
-                getattr(obj, kwd).attach_namespace_head('/'.join([obj.namespace,kwd]))
+                obj.attach_namespace()
 
     def convert_to_static(self):
-        for obj in self._found_dynamic_object:            
+        for obj in self._found_dynamic_object:       
             for kwd in obj.get_dynamic_variables():
                 if not isinstance(getattr(obj, kwd), AbstractDynamicVariableInstance):
                     if not type(getattr(obj, kwd)) in [str, float, int, bool, type(None)]:
@@ -101,7 +114,6 @@ class GlobalCollection():
                         This error was raised to prevent consistency problem.''')
                 setattr(obj, self.historical_track_prefix + kwd, getattr(obj, kwd))
                 setattr(obj, kwd, getattr(obj, kwd).evaluate())
-                #print(f'converting attribute {obj.namespace}/{kwd} ')
 
     def revert_to_dynamic(self):
         for obj in self._found_dynamic_object:
@@ -295,6 +307,13 @@ class DynamicObject(object):
 
     def get_dynamic_variables(self):
         return self._variable_precursor_keyword
+
+    def attach_namespace(self):
+        for kwd in self._variable_precursor_keyword:
+            var = getattr(self, kwd)
+            var.inherit_namespace(kwd)
+            var.attach_namespace_head(self.namespace)
+            #getattr(obj, kwd).attach_namespace_head('/'.join([obj.namespace,kwd]))
 
 class EvaluativeGraphElement(DynamicObject):
     class GraphElementTracker(DynamicVariableTracker):
