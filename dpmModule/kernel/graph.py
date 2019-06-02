@@ -81,7 +81,7 @@ class GlobalCollection():
     historical_track_prefix = '_temporal_save_'
     def __init__(self):
         self._found_dynamic_object = []
-        self._storage = ConfigurationStorage({})
+        self._storage = DeepConfigurationStorage({})
 
     def set_storage(self, storage):
         self._storage = storage
@@ -327,6 +327,30 @@ class EvaluativeGraphElement(DynamicObject):
         return EvaluativeGraphElement.GraphElementTracker(self, options = options)
 
 
+class AbstactStorage():
+    def __init__(self, allow_fetch = True):
+        self._allow_fetch = allow_fetch
+    
+    def has_namespace(self, namespace : str) -> bool:
+        raise NotImplementedError('''has_namespace function call
+        will return whether value exist in given namespace.
+        ''')
+    
+    def get_namespace(self, namespace : str) -> AbstractDynamicVariableInstance:
+        raise NotImplementedError('''get_namespace function call 
+        will return value in given namespace.''')
+
+    def set_namespace(self, namespace : str, value, touch_end : bool = False, override : bool = True):
+        raise NotImplementedError('''set_namespace function call
+        will set given DynamicVariable into given namespace.
+
+        Options::
+        touch_end(bool) : if True, only return value if given namespace is 'End of tree', which means
+        there is no other namespace under given namespace.
+        override(bool) : if True, override value if value already exist. Else, do not override value.
+        ''')
+
+
 class ConfigurationStorage():
     def __init__(self, dict_obj, allow_fetch = True):
         self._origin = dict_obj
@@ -346,6 +370,55 @@ class ConfigurationStorage():
             return
         else:
             self._origin[namespace] = value
+
+class DeepConfigurationStorage(ConfigurationStorage):
+    DATA_KEYWORD = '_data_keyword_'
+    def __init__(self, key_value_map, allow_fetch = True):
+        self.space_generator = dict
+        self._origin = self.space_generator()
+
+    def parse_namespace_to_address(self, namespace):
+        return namespace.split('/')
+
+    def get_variable_by_address(self, address):
+        position = self._origin
+        for kwd in address:
+            try:
+                position = position[kwd]
+            except:
+                raise KeyError(f'Given address {"/".join(address)} not exist in storage')
+        return position[DeepConfigurationStorage.DATA_KEYWORD]
+    
+    def save_variable_by_address(self, address, variable, override = False):
+        position = self._origin
+        for kwd in address:
+            if kwd not in position:
+                position[kwd] = self.space_generator()
+            position = position[kwd]
+        if not override:
+            if DeepConfigurationStorage.DATA_KEYWORD in position:
+                return False
+        position[DeepConfigurationStorage.DATA_KEYWORD] = variable
+        return True
+
+    def has_namespace(self, namespace):
+        address = self.parse_namespace_to_address(namespace)
+        position = self._origin
+        for kwd in address:
+            if kwd not in position:
+                return False
+            else:
+                position = position[kwd]
+        return (DeepConfigurationStorage.DATA_KEYWORD in position)
+
+    def get_namespace(self, namespace):
+        address = self.parse_namespace_to_address(namespace)
+        return self.get_variable_by_address(address)
+
+    def set_namespace(self, namespace, value, touch_end = False, override = True):
+        address = self.parse_namespace_to_address(namespace)
+        self.save_variable_by_address(address, value)
+
 
 class DynamicVariableFromConfigurationStorage(AbstractDynamicVariableInstance):
     def __init__(self, fetch_origin, fetch_name):
