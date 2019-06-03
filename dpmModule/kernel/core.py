@@ -1410,29 +1410,12 @@ class Store():
     def prevent_collision(self, first_skill, second_skill):
         first_skill.createConstraint('Store.prevent_collision', second_skill, second_skill.is_not_active)
         second_skill.createConstraint('Store.prevent_collision', first_skill, first_skill.is_not_active)
-    
-    
-class StoreHandler():
-    '''Store는 여러분이 그래프 요소를 자유롭게 변경할 수 있는 Interface를 제공합니다. 
-    그 Interface를 우리가 실제로 사용하고자 할 때는, 사용 가능성이 높은 몇 가지 설정 중 우리가 사용하고 싶은 설정으로 골라서 사용할 가능성이
-    높습니다. 그러나 Store를 변경하는 행위는 그 각각이 함수로서 정의되기 때문에 정형화되지 않을 위험성이 있습니다.
-    
-    StoreHandler는 그로부터 파생되는 문제를 방지하기 위해 제공되는 클래스 입니다. StoreHandler에는 Store를 인자로 받아 어떤 식으로 작동하도록 할지를 명시합니다. 여러분은 미리 정의된
-    Handler들 중에서 원하는 Handler를 Graph 단에서 적용시킬 수 있습니다. 이는 또한 코드의 안정성을 높힙니다 : 즉, 인가되지 않은 Handler를 통해 코드를 변경하는 행위를 방지합니다.
-    
-    
-    '''
-    def __init__(self):
-        pass
-    
-    def handle_store(self, store):
-        raise NotImplementedError('You must Implement this section for your own idea!')
 
 
-    
+   
 class AbstractScenarioGraph():
-    def __init__(self, *store_parameter):
-        self.store = Store(*store_parameter)
+    def __init__(self, collection = None):
+        self.collection = collection
         pass
     
     def build_graph(self, *args):
@@ -1522,8 +1505,8 @@ class AbstractScenarioGraph():
     
 
 class ScheduleGraph(AbstractScenarioGraph):
-    def __init__(self, *store_parameter):
-        super(ScheduleGraph, self).__init__(*store_parameter)
+    def __init__(self, collection = None):
+        super(ScheduleGraph, self).__init__(collection=collection)
         self._vEhc = None
         
         self.default_task = None
