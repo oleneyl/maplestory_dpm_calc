@@ -527,8 +527,3 @@ class DynamicVariableMimicingConstant(DynamicVariableInstance):
 
     def get_next_nodes(self):
         return []
-    
-class ConstantConvertableInheritTemplate():
-    ATTR = '_convert_hint_to_dynamic'
-    def _convert_hint_to_dynamic(self):
-        return True

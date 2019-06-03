@@ -1,4 +1,4 @@
-from .graph import EvaluativeGraphElement, ConstantConvertableInheritTemplate, DynamicVariableOperation, DynamicVariableInstance
+from .graph import EvaluativeGraphElement, DynamicVariableOperation, DynamicVariableInstance
 from functools import partial
 import math
 
