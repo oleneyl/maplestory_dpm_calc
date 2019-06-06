@@ -273,7 +273,6 @@ class DynamicCharacterModifier(DynamicVariableInstance, CharacterModifier):
                     patt = self.patt.evaluate(), 
                     att = self.att.evaluate(), stat_main_fixed = self.stat_main_fixed.evaluate(), 
                     stat_sub_fixed = self.stat_sub_fixed.evaluate())
-        
     
 
 class InformedCharacterModifier(CharacterModifier):
@@ -481,7 +480,7 @@ class AbstractSkill(EvaluativeGraphElement):
     def __init__(self, name, delay, cooltime = 0, rem = False, red = True):
         super(AbstractSkill, self).__init__(namespace = name)
         self.spec = "graph control"
-        with self.dynamic_range():
+        with self.dynamic_range():            
             self.rem = rem
             self.red = red
             self.name = name
@@ -491,7 +490,7 @@ class AbstractSkill(EvaluativeGraphElement):
             
             if self.cooltime == -1:
                 self.cooltime = NOTWANTTOEXECUTE
-        
+            
     def _change_time_into_string(self, number_or_Infinite, divider = 1, lang = "ko"):
         lang_to_inf_dict = {"ko" : "무한/자동발동불가", "en" : "Infinite" }
         if abs(number_or_Infinite - NOTWANTTOEXECUTE / divider) < 10000 / divider:
@@ -622,7 +621,7 @@ class DamageSkill(AbstractSkill):
         return self._parse_list_info_into_string(li)
         
     def setV(self, vEnhancer, index, incr, crit = False):
-        self._static_skill_modifier += vEnhancer.getEhc(index, incr, crit, self)
+        self._static_skill_modifier = self._static_skill_modifier + vEnhancer.getEhc(index, incr, crit, self)
         return self
         
     def get_damage(self):
@@ -670,7 +669,7 @@ class SummonSkill(AbstractSkill):
         return my_json 
     
     def setV(self, vEnhancer, index, incr, crit = False):
-        self._static_skill_modifier += vEnhancer.getEhc(index, incr, crit, self)
+        self._static_skill_modifier = self._static_skill_modifier + vEnhancer.getEhc(index, incr, crit, self)
         return self
         
     def get_damage(self):
@@ -1780,7 +1779,7 @@ class Simulator(object):
             dt += self.run_individual_task(stack.pop())
         result = task.do()
         if result.damage > 0:
-            result.mdf += self.scheduler.get_buff_modifier()
+            result.mdf = result.mdf + self.scheduler.get_buff_modifier()
         result.setTime(self.scheduler.get_current_time())
         self.analytics.analyze(self.character, result)
         dt += result.delay
@@ -1797,10 +1796,8 @@ class Simulator(object):
         
         result = task.do()
         
-        
         if result.damage > 0:
             result.mdf += self.scheduler.get_buff_modifier()
-            
             
         result.setTime(self.scheduler.get_current_time())
         self.analytics.analyze(self.character, result)
@@ -1931,6 +1928,7 @@ class Analytics():
         #For speed acceleration
         if self.print_calculation_progress:
             self.log('At Time %.1f, Skill [%s] ... Damage [%.1f] ... Delay [%.1f]' % (result.time, result.sname, deal, result.delay))
+            self.log(f'{result.mdf}')
         if deal > 0:
             self.logList.append({"result":result, "time" : (result.time), "deal" : deal, "loss" : free_deal - deal})
         else:
