@@ -328,8 +328,9 @@ class EvaluativeGraphElement(DynamicObject):
 
 
 class AbstactStorage():
-    def __init__(self, allow_fetch = True):
+    def __init__(self, allow_fetch = True, override = True):
         self._allow_fetch = allow_fetch
+        self.override = override
     
     def has_namespace(self, namespace : str) -> bool:
         raise NotImplementedError('''has_namespace function call
@@ -340,21 +341,22 @@ class AbstactStorage():
         raise NotImplementedError('''get_namespace function call 
         will return value in given namespace.''')
 
-    def set_namespace(self, namespace : str, value, touch_end : bool = False, override : bool = True):
+    def set_namespace(self, namespace : str, value, touch_end : bool = False):
         raise NotImplementedError('''set_namespace function call
         will set given DynamicVariable into given namespace.
 
         Options::
         touch_end(bool) : if True, only return value if given namespace is 'End of tree', which means
         there is no other namespace under given namespace.
-        override(bool) : if True, override value if value already exist. Else, do not override value.
+
         ''')
 
 
-class ConfigurationStorage():
-    def __init__(self, dict_obj, allow_fetch = True):
+class ConfigurationStorage(AbstactStorage):
+    def __init__(self, dict_obj, allow_fetch = True, override = True):
+        super(ConfigurationStorage, self).__init__(allow_fetch = allow_fetch, override = override)
         self._origin = dict_obj
-        self._allow_fetch = allow_fetch
+        
 
     def has_namespace(self, namespace):
         if self._allow_fetch:
@@ -365,15 +367,16 @@ class ConfigurationStorage():
     def get_namespace(self, namespace):
         return  self._origin[namespace]
 
-    def set_namespace(self, namespace, value, touch_end = False, override = True):
-        if namespace in self._origin and not override:
+    def set_namespace(self, namespace, value, touch_end = False):
+        if namespace in self._origin and not self.override:
             return
         else:
             self._origin[namespace] = value
 
-class DeepConfigurationStorage(ConfigurationStorage):
+class DeepConfigurationStorage(AbstactStorage):
     DATA_KEYWORD = '_data_keyword_'
-    def __init__(self, key_value_map, allow_fetch = True):
+    def __init__(self, key_value_map, allow_fetch = True, override = True):
+        super(DeepConfigurationStorage, self).__init__(allow_fetch = allow_fetch, override = override)
         self.space_generator = dict
         self._origin = self.space_generator()
 
@@ -389,13 +392,13 @@ class DeepConfigurationStorage(ConfigurationStorage):
                 raise KeyError(f'Given address {"/".join(address)} not exist in storage')
         return position[DeepConfigurationStorage.DATA_KEYWORD]
     
-    def save_variable_by_address(self, address, variable, override = False):
+    def save_variable_by_address(self, address, variable):
         position = self._origin
         for kwd in address:
             if kwd not in position:
                 position[kwd] = self.space_generator()
             position = position[kwd]
-        if not override:
+        if not self.override:
             if DeepConfigurationStorage.DATA_KEYWORD in position:
                 return False
         position[DeepConfigurationStorage.DATA_KEYWORD] = variable
@@ -415,7 +418,7 @@ class DeepConfigurationStorage(ConfigurationStorage):
         address = self.parse_namespace_to_address(namespace)
         return self.get_variable_by_address(address)
 
-    def set_namespace(self, namespace, value, touch_end = False, override = True):
+    def set_namespace(self, namespace, value, touch_end = False):
         address = self.parse_namespace_to_address(namespace)
         self.save_variable_by_address(address, value)
 
@@ -527,3 +530,15 @@ class DynamicVariableMimicingConstant(DynamicVariableInstance):
 
     def get_next_nodes(self):
         return []
+
+class AbstractGraphBuilder():
+    def psuedo_building_sequence(storage = None):
+        initialize_global_properties()
+        if storage is not None:
+            GlobalOperation.set_storage(storage)
+        #Create graph
+        #Build graph(Unstaged)
+        GlobalOperation.assign_storage()
+        GlobalOperation.attach_namespace()
+        GlobalOperation.save_storage()
+        GlobalOperation.convert_to_static()
