@@ -12,7 +12,6 @@ import dpmModule.jobs as maplejobs
 
 class IndividualDPMGenerator():
     '''IndividualDPMGenerator는 단일 직업의 dpm을 연산합니다. 연산을 위해 인자로 job 과 template 를 받습니다.
-    
     '''
     inputViewList = [[6,9,15,21],[6,9,15,21],[10,15,17,22]]
     
@@ -25,7 +24,7 @@ class IndividualDPMGenerator():
     def setRuntime(self, time):
         self.runtime = time
 
-    def getDpm(self, vEhc = core.vEnhancer(), ulevel = 6000, weaponstat = [4,9], level = 230):
+    def getDpm(self, vEhc = core.vEnhancer(), ulevel = 6000, weaponstat = [4,9], level = 230, printFlag = False):
         #TODO target을 동적으로 생성할 수 있도록.
         target = self.template(maplejobs.weaponList[self.job])
         target.level = level
@@ -34,11 +33,12 @@ class IndividualDPMGenerator():
         vEhc.set_state_direct([50,50,50,50,25,25,25,25,0,0,0,0])
         graph = gen.package(target, vEhc = vEhc, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
         sche = core.Scheduler(graph) #가져온 그래프를 토대로 스케줄러를 생성합니다.
-        analytics = core.Analytics()  #데이터를 분석할 분석기를 생성합니다.
+        analytics = core.Analytics(printFlag=printFlag)  #데이터를 분석할 분석기를 생성합니다.
         control = core.Simulator(sche, target, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
         control.start_simulation(self.runtime)
 
         return control.getDPM()
+
 
     def getDetailedDpm(self, vEhc = core.vEnhancer(), ulevel = 6000, weaponstat = [4,9], level = 230):
         #TODO target을 동적으로 생성할 수 있도록.
