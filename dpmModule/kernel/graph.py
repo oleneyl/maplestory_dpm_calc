@@ -1,5 +1,5 @@
 from collections import defaultdict, Counter
-
+import json
 '''
 global properties
 
@@ -351,6 +351,15 @@ class AbstactStorage():
 
         ''')
 
+    def write(self, fp, only_endpoint = True):
+        raise NotImplementedError('''write() function call
+        will write current storage state into given fp(FILE pointer).
+        
+        Options::
+        only_endpoint(bool) : If True, only save values that points variable chain's endpoint.
+        If False, save all variable chain elemnt. It might contain a lot of redundant values.
+        ''')
+
 
 class ConfigurationStorage(AbstactStorage):
     def __init__(self, dict_obj, allow_fetch = True, override = True):
@@ -372,6 +381,26 @@ class ConfigurationStorage(AbstactStorage):
             return
         else:
             self._origin[namespace] = value
+
+    def write(self, fp, only_endpoint = True):
+        if not only_endpoint:
+            json.dump(fp, self._origin)
+        else:
+            kwds = list(self._origin.keys())
+            avail_kwds = []
+            for kwd in self._origin:
+                count = 0
+                for kwd_check  in kwds:
+                    if kwd in kwd_check:
+                        count += 1
+                        if count > 1:
+                            break
+                if count > 1:
+                    continue
+                else:
+                    avail_kwds.append(kwd)
+            endpoints = {k:self._origin[k] for k in avail_kwds}
+            json.dump(endpoints, fp)
 
 class DeepConfigurationStorage(AbstactStorage):
     DATA_KEYWORD = '_data_keyword_'
@@ -422,6 +451,20 @@ class DeepConfigurationStorage(AbstactStorage):
         address = self.parse_namespace_to_address(namespace)
         self.save_variable_by_address(address, value)
 
+    def write(self, fp, only_endpoint = True):
+        def recurrent_copy(copial_target, copy_point, parent, parent_key):
+            for kwd in copial_target:
+                if kwd == DeepConfigurationStorage.DATA_KEYWORD:
+                    if len(copial_target) == 1:
+                        parent[parent_key] = copial_target[DeepConfigurationStorage.DATA_KEYWORD]
+                else:
+                    copy_point[kwd] = {}
+                    recurrent_copy(copial_target[kwd], copy_point[kwd], copy_point, kwd)
+        
+        copial = {}
+        recurrent_copy(self._origin, copial, None, None)
+        json.dump(copial, fp, ensure_ascii=False, indent=2)
+                
 
 class DynamicVariableFromConfigurationStorage(AbstractDynamicVariableInstance):
     def __init__(self, fetch_origin, fetch_name):
