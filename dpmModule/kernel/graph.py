@@ -247,8 +247,15 @@ class AbstractDynamicVariableInstance(AbstractDiGraphElement):
     @AbstractDiGraphElement.recurrent_run
     def save_storage(self, inst, storage, index):
         touch_end = len(inst.get_next_instances()) == 0
-        storage.set_namespace(inst.get_assigned_namespace(), inst.evaluate(),
+        try:
+            storage.set_namespace(inst.get_assigned_namespace(), inst.evaluate(),
                                                 touch_end = touch_end)
+        except Exception as e:
+            raise ValueError(f'''
+            Error raised from instance {inst} [{inst.get_assigned_namespace()}].
+            This error might be raised by incompatibel value passing to DynamicVariable.
+
+            Original Error : {e}''')
         return storage
 
     def attach_namespace_head(self, namespace):
@@ -492,19 +499,31 @@ class DynamicVariableFromConfigurationStorage(AbstractDynamicVariableInstance):
         return []
 
 class DynamicVariableOperation(AbstractDynamicVariableInstance):
-    def __init__(self, args, eval_func, repr_func):
+    def __init__(self, args, eval_func, repr_func, inheritted_namespace = None):
+        super(DynamicVariableOperation, self).__init__()
+        self.inheritted_namespace = inheritted_namespace
         self._args = args
+        for arg in args:
+            self.add_next_instance(arg)
         self._eval_func = eval_func
         self._repr_func = repr_func
 
     def evaluate_override(self):
-        return self._eval_func(*self._args)
+        try:
+            return self._eval_func(*self._args)
+        except Exception as e:
+            raise TypeError(f'''
+            Evaluation failure, given argument {[x.assigned_namespace for x in self._args]}
+            Evaluated value may be 
+            {[x.evaluate() for x in self._args]}
+
+            Check given arguments passed correctly.
+
+            Original Error : {e}
+            ''')
 
     def represent(self):
         return self._repr_func(self._args)
-
-    def get_next_nodes(self):
-        return self._args
 
     @classmethod
     def wrap_argument(self, arg):
@@ -519,19 +538,24 @@ class DynamicVariableOperation(AbstractDynamicVariableInstance):
         return [self.wrap_argument(a) for a in args]
 
     @staticmethod
-    def create_ops(eval_func, repr_str):
+    def create_ops(eval_func, repr_str, name = None):
         def ops(*args):
             wrapped_args = DynamicVariableOperation.wrap_arguments(args)
-            return DynamicVariableOperation(wrapped_args, eval_func, repr_str)
+            return DynamicVariableOperation(wrapped_args, eval_func, repr_str, name)
         return ops
     
     @staticmethod
     def add(*args):
         def add_func(*ops_args):
-            return sum([var.evaluate() for var in ops_args])
+            li = [var.evaluate() for var in ops_args]
+            sum_value = li[0]
+            for v in li[1:]:
+                sum_value += v
+            return sum_value
+            
         def add_repr(*ops_args):
             return "+".join([var.represent() for var in ops_args])
-        return DynamicVariableOperation.create_ops(add_func, add_repr)(*args)
+        return DynamicVariableOperation.create_ops(add_func, add_repr, 'add')(*args)
 
     @staticmethod
     def mult(a, b):
@@ -539,7 +563,7 @@ class DynamicVariableOperation(AbstractDynamicVariableInstance):
             return a.evaluate() * b.evaluate()
         def add_repr(a, b):
             return "*".join([var.represent() for var in [a,b]])
-        return DynamicVariableOperation.create_ops(add_func, add_repr)(a, b)
+        return DynamicVariableOperation.create_ops(add_func, add_repr, 'mult')(a, b)
 
     @staticmethod
     def floor(a, b):
@@ -551,6 +575,9 @@ class DynamicVariableOperation(AbstractDynamicVariableInstance):
 
 class DynamicVariableInstance(AbstractDynamicVariableInstance, object):
     def __add__(self, arg):
+        return DynamicVariableOperation.add(self, arg)
+
+    def __iadd__(self, arg):
         return DynamicVariableOperation.add(self, arg)
 
     def __mul__(self, arg):
