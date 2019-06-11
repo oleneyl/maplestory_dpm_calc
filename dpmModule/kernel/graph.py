@@ -1,5 +1,5 @@
 from collections import defaultdict, Counter
-
+import json
 '''
 global properties
 
@@ -82,6 +82,12 @@ class GlobalCollection():
     def __init__(self):
         self._found_dynamic_object = []
         self._storage = DeepConfigurationStorage({})
+
+    def get_storage(self):
+        return self._storage
+
+    def get_dynamic_objects(self):
+        return self._found_dynamic_object
 
     def set_storage(self, storage):
         self._storage = storage
@@ -247,8 +253,15 @@ class AbstractDynamicVariableInstance(AbstractDiGraphElement):
     @AbstractDiGraphElement.recurrent_run
     def save_storage(self, inst, storage, index):
         touch_end = len(inst.get_next_instances()) == 0
-        storage.set_namespace(inst.get_assigned_namespace(), inst.evaluate(),
+        try:
+            storage.set_namespace(inst.get_assigned_namespace(), inst.evaluate(),
                                                 touch_end = touch_end)
+        except Exception as e:
+            raise ValueError(f'''
+            Error raised from instance {inst} [{inst.get_assigned_namespace()}].
+            This error might be raised by incompatibel value passing to DynamicVariable.
+
+            Original Error : {e}''')
         return storage
 
     def attach_namespace_head(self, namespace):
@@ -328,8 +341,9 @@ class EvaluativeGraphElement(DynamicObject):
 
 
 class AbstactStorage():
-    def __init__(self, allow_fetch = True):
+    def __init__(self, allow_fetch = True, override = True):
         self._allow_fetch = allow_fetch
+        self.override = override
     
     def has_namespace(self, namespace : str) -> bool:
         raise NotImplementedError('''has_namespace function call
@@ -340,21 +354,31 @@ class AbstactStorage():
         raise NotImplementedError('''get_namespace function call 
         will return value in given namespace.''')
 
-    def set_namespace(self, namespace : str, value, touch_end : bool = False, override : bool = True):
+    def set_namespace(self, namespace : str, value, touch_end : bool = False):
         raise NotImplementedError('''set_namespace function call
         will set given DynamicVariable into given namespace.
 
         Options::
         touch_end(bool) : if True, only return value if given namespace is 'End of tree', which means
         there is no other namespace under given namespace.
-        override(bool) : if True, override value if value already exist. Else, do not override value.
+
+        ''')
+
+    def write(self, fp, only_endpoint = True):
+        raise NotImplementedError('''write() function call
+        will write current storage state into given fp(FILE pointer).
+        
+        Options::
+        only_endpoint(bool) : If True, only save values that points variable chain's endpoint.
+        If False, save all variable chain elemnt. It might contain a lot of redundant values.
         ''')
 
 
-class ConfigurationStorage():
-    def __init__(self, dict_obj, allow_fetch = True):
+class ConfigurationStorage(AbstactStorage):
+    def __init__(self, dict_obj, allow_fetch = True, override = True):
+        super(ConfigurationStorage, self).__init__(allow_fetch = allow_fetch, override = override)
         self._origin = dict_obj
-        self._allow_fetch = allow_fetch
+        
 
     def has_namespace(self, namespace):
         if self._allow_fetch:
@@ -365,15 +389,36 @@ class ConfigurationStorage():
     def get_namespace(self, namespace):
         return  self._origin[namespace]
 
-    def set_namespace(self, namespace, value, touch_end = False, override = True):
-        if namespace in self._origin and not override:
+    def set_namespace(self, namespace, value, touch_end = False):
+        if namespace in self._origin and not self.override:
             return
         else:
             self._origin[namespace] = value
 
-class DeepConfigurationStorage(ConfigurationStorage):
+    def write(self, fp, only_endpoint = True):
+        if not only_endpoint:
+            json.dump(fp, self._origin)
+        else:
+            kwds = list(self._origin.keys())
+            avail_kwds = []
+            for kwd in self._origin:
+                count = 0
+                for kwd_check  in kwds:
+                    if kwd in kwd_check:
+                        count += 1
+                        if count > 1:
+                            break
+                if count > 1:
+                    continue
+                else:
+                    avail_kwds.append(kwd)
+            endpoints = {k:self._origin[k] for k in avail_kwds}
+            json.dump(endpoints, fp)
+
+class DeepConfigurationStorage(AbstactStorage):
     DATA_KEYWORD = '_data_keyword_'
-    def __init__(self, key_value_map, allow_fetch = True):
+    def __init__(self, key_value_map, allow_fetch = True, override = True):
+        super(DeepConfigurationStorage, self).__init__(allow_fetch = allow_fetch, override = override)
         self.space_generator = dict
         self._origin = self.space_generator()
 
@@ -389,13 +434,13 @@ class DeepConfigurationStorage(ConfigurationStorage):
                 raise KeyError(f'Given address {"/".join(address)} not exist in storage')
         return position[DeepConfigurationStorage.DATA_KEYWORD]
     
-    def save_variable_by_address(self, address, variable, override = False):
+    def save_variable_by_address(self, address, variable):
         position = self._origin
         for kwd in address:
             if kwd not in position:
                 position[kwd] = self.space_generator()
             position = position[kwd]
-        if not override:
+        if not self.override:
             if DeepConfigurationStorage.DATA_KEYWORD in position:
                 return False
         position[DeepConfigurationStorage.DATA_KEYWORD] = variable
@@ -415,10 +460,24 @@ class DeepConfigurationStorage(ConfigurationStorage):
         address = self.parse_namespace_to_address(namespace)
         return self.get_variable_by_address(address)
 
-    def set_namespace(self, namespace, value, touch_end = False, override = True):
+    def set_namespace(self, namespace, value, touch_end = False):
         address = self.parse_namespace_to_address(namespace)
         self.save_variable_by_address(address, value)
 
+    def write(self, fp, only_endpoint = True):
+        def recurrent_copy(copial_target, copy_point, parent, parent_key):
+            for kwd in copial_target:
+                if kwd == DeepConfigurationStorage.DATA_KEYWORD:
+                    if len(copial_target) == 1:
+                        parent[parent_key] = copial_target[DeepConfigurationStorage.DATA_KEYWORD]
+                else:
+                    copy_point[kwd] = {}
+                    recurrent_copy(copial_target[kwd], copy_point[kwd], copy_point, kwd)
+        
+        copial = {}
+        recurrent_copy(self._origin, copial, None, None)
+        json.dump(copial, fp, ensure_ascii=False, indent=2)
+                
 
 class DynamicVariableFromConfigurationStorage(AbstractDynamicVariableInstance):
     def __init__(self, fetch_origin, fetch_name):
@@ -446,19 +505,31 @@ class DynamicVariableFromConfigurationStorage(AbstractDynamicVariableInstance):
         return []
 
 class DynamicVariableOperation(AbstractDynamicVariableInstance):
-    def __init__(self, args, eval_func, repr_func):
+    def __init__(self, args, eval_func, repr_func, inheritted_namespace = None):
+        super(DynamicVariableOperation, self).__init__()
+        self.inheritted_namespace = inheritted_namespace
         self._args = args
+        for arg in args:
+            self.add_next_instance(arg)
         self._eval_func = eval_func
         self._repr_func = repr_func
 
     def evaluate_override(self):
-        return self._eval_func(*self._args)
+        try:
+            return self._eval_func(*self._args)
+        except Exception as e:
+            raise TypeError(f'''
+            Evaluation failure, given argument {[x.assigned_namespace for x in self._args]}
+            Evaluated value may be 
+            {[x.evaluate() for x in self._args]}
+
+            Check given arguments passed correctly.
+
+            Original Error : {e}
+            ''')
 
     def represent(self):
         return self._repr_func(self._args)
-
-    def get_next_nodes(self):
-        return self._args
 
     @classmethod
     def wrap_argument(self, arg):
@@ -473,19 +544,24 @@ class DynamicVariableOperation(AbstractDynamicVariableInstance):
         return [self.wrap_argument(a) for a in args]
 
     @staticmethod
-    def create_ops(eval_func, repr_str):
+    def create_ops(eval_func, repr_str, name = None):
         def ops(*args):
             wrapped_args = DynamicVariableOperation.wrap_arguments(args)
-            return DynamicVariableOperation(wrapped_args, eval_func, repr_str)
+            return DynamicVariableOperation(wrapped_args, eval_func, repr_str, name)
         return ops
     
     @staticmethod
     def add(*args):
         def add_func(*ops_args):
-            return sum([var.evaluate() for var in ops_args])
+            li = [var.evaluate() for var in ops_args]
+            sum_value = li[0]
+            for v in li[1:]:
+                sum_value += v
+            return sum_value
+            
         def add_repr(*ops_args):
             return "+".join([var.represent() for var in ops_args])
-        return DynamicVariableOperation.create_ops(add_func, add_repr)(*args)
+        return DynamicVariableOperation.create_ops(add_func, add_repr, 'add')(*args)
 
     @staticmethod
     def mult(a, b):
@@ -493,7 +569,7 @@ class DynamicVariableOperation(AbstractDynamicVariableInstance):
             return a.evaluate() * b.evaluate()
         def add_repr(a, b):
             return "*".join([var.represent() for var in [a,b]])
-        return DynamicVariableOperation.create_ops(add_func, add_repr)(a, b)
+        return DynamicVariableOperation.create_ops(add_func, add_repr, 'mult')(a, b)
 
     @staticmethod
     def floor(a, b):
@@ -505,6 +581,9 @@ class DynamicVariableOperation(AbstractDynamicVariableInstance):
 
 class DynamicVariableInstance(AbstractDynamicVariableInstance, object):
     def __add__(self, arg):
+        return DynamicVariableOperation.add(self, arg)
+
+    def __iadd__(self, arg):
         return DynamicVariableOperation.add(self, arg)
 
     def __mul__(self, arg):
@@ -527,8 +606,15 @@ class DynamicVariableMimicingConstant(DynamicVariableInstance):
 
     def get_next_nodes(self):
         return []
-    
-class ConstantConvertableInheritTemplate():
-    ATTR = '_convert_hint_to_dynamic'
-    def _convert_hint_to_dynamic(self):
-        return True
+
+class AbstractGraphBuilder():
+    def psuedo_building_sequence(storage = None):
+        initialize_global_properties()
+        if storage is not None:
+            GlobalOperation.set_storage(storage)
+        #Create graph
+        #Build graph(Unstaged)
+        GlobalOperation.assign_storage()
+        GlobalOperation.attach_namespace()
+        GlobalOperation.save_storage()
+        GlobalOperation.convert_to_static()

@@ -3,7 +3,8 @@ from ..kernel.core import ExtendedCharacterModifier as EXMDF
 from ..item import ItemKernel as ik
 from ..item.ItemKernel import Item
 from ..status.ability import Ability_tool, Ability_grade
-
+from ..kernel.graph import GlobalOperation, initialize_global_properties
+from ..kernel import policy
 MDF = CharacterModifier
 '''Clas AbstractCharacter : Basic template for build specific User. User is such object that contains
 - Items
@@ -156,9 +157,21 @@ class JobGenerator():
         return
     
     def build(self, chtr, combat = False):
-        graph = self.generate(chtr, combat = combat, vEhc = self.vEhc)
-        self.apply_specific_schedule(graph)
-        self.constructedSchedule = graph
+        initialize_global_properties()
+
+        base_element, all_elements = self.generate(chtr, combat = combat, vEhc = self.vEhc)
+
+        GlobalOperation.assign_storage()
+        GlobalOperation.attach_namespace()
+        GlobalOperation.save_storage()
+        GlobalOperation.convert_to_static()
+
+        collection = GlobalOperation.export_collection()
+
+        graph = policy.StorageLinkedGraph(base_element, [],
+            collection.get_storage(), accessible_elements=all_elements)
+        graph.build(chtr)
+        
         return graph
     
     def generate(self, chtr : AbstractCharacter, combat : bool = False , vEhc = vEnhancer()):

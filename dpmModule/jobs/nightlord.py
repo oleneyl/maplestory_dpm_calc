@@ -61,7 +61,7 @@ class JobGenerator(ck.JobGenerator):
         QuarupleThrow =core.DamageSkill("쿼드러플 스로우", 600, 378, 5 * 1.7, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)    #쉐도우 파트너 적용
         
         MarkOfNightlord = core.DamageSkill("마크 오브 나이트로드", 0, (60 + chtr.level), 0.6*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        MarkOfNightlordPungma = core.DamageSkill("마크 오브 나이트로드", 0, (60 + chtr.level), 0.6*3*0.4).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        MarkOfNightlordPungma = core.DamageSkill("마크 오브 나이트로드(풍마)", 0, (60 + chtr.level), 0.6*3*0.4).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
     
         FatalVenom = core.DotSkill("페이탈 베놈", 480, 8000).wrap(core.SummonSkillWrapper)
     
@@ -110,5 +110,14 @@ class JobGenerator(ck.JobGenerator):
                 [Pungma, ArcaneOfDarklord, BleedingToxinDot],
                 [],
                 QuarupleThrow)
+
+        return (QuarupleThrow, 
+            [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                    ShadowPartner, SpiritJavelin, PurgeArea, BleedingToxin, EpicAdventure, 
+                    ReadyToDiePassive, UltimateDarksight, ReadyToDie, SpreadThrowInit,
+                    globalSkill.soul_contract()] + \
+                [ArcaneOfDarklordFinal] + \
+                [Pungma, ArcaneOfDarklord, BleedingToxinDot] +\
+                [] + [QuarupleThrow])
 
         return schedule

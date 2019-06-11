@@ -11,50 +11,8 @@ user who want to inspect whole featur eof package.
 *******************************
 '''
 
-class AbstractGraphElement():
+class AbstractScenarioGraph():    
 
-
-
-
-class AbstractStore():
-
-
-
-
-
-
-
-class AbstractTrackableOperation():
-    def __init__(self):
-
-
-    def 
-
-
-
-class AbstractGraphBuilder():
-    def __init__(self):
-        self._trackable_elements = {}
-        pass
-    
-    def package(self):
-        raise NotImplementedError("Implement AbstractGraphBuilder.package to return type of AbstractGraph")
-
-    def start_element_scope(self):
-        
-
-    def track_element(self, graph_element : AbstractGraphElement):
-
-
-    def 
-
-
-
-class AbstractScenarioGraph():
-    def __init__(self, *store_parameter):
-        self.store = Store(*store_parameter)
-        pass
-    
     def build_graph(self, *args):
         raise NotImplementedError("You must Implement build_graph function to create specific graph.")
     
@@ -141,11 +99,42 @@ class AbstractScenarioGraph():
 
 
 class AbstractScheduler():
+    def __init__(self, graph):
+        self.graph = graph
+        self.total_time_left= None
+        self.total_time_initial = None
 
+    def initialize(self, time):
+        raise NotImplementedError(''' AbstractScheduler.initializer(time) must be implemented,
+        this function will initialize scheduler with given Schduling total time.
+        ''')
+
+    def get_current_time(self):
+        return self.total_time_initial - self.total_time_left
+
+    def is_simulation_end(self):
+        return (self.total_time_left < 0)
+
+    def spend_time(self, time):
+        '''This function might be overrided, with super().spend_time(time) calling.
+        '''
+        self.total_time_left -= time
+        self.graph.spend_time(time)
+
+    def dequeue(self):
+        raise NotImplementedError('''Scheduler.dequeue() must be implemented,
+        This function will return appropriate element that will be executed by
+        Simulator, which satisfy every rule, for FetchingPolicy.
+        ''')
+
+    def get_delayed_task(self):
+        raise NotImplementedError('''Scheduler.get_delayed_task() must be implemented,
+        This function will return delayed task whlie previous task pending.''')
 
 class AbstractSession():
-
+    pass
 
 
 class AbstractAnalytics():
+    pass
 

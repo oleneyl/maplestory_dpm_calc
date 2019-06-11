@@ -1,4 +1,5 @@
-from .graph import EvaluativeGraphElement, ConstantConvertableInheritTemplate, DynamicVariableOperation, DynamicVariableInstance
+from .graph import EvaluativeGraphElement, DynamicVariableOperation, DynamicVariableInstance, AbstractDynamicVariableInstance
+from .abstract import AbstractScenarioGraph
 from functools import partial
 import math
 
@@ -273,7 +274,6 @@ class DynamicCharacterModifier(DynamicVariableInstance, CharacterModifier):
                     patt = self.patt.evaluate(), 
                     att = self.att.evaluate(), stat_main_fixed = self.stat_main_fixed.evaluate(), 
                     stat_sub_fixed = self.stat_sub_fixed.evaluate())
-        
     
 
 class InformedCharacterModifier(CharacterModifier):
@@ -481,17 +481,17 @@ class AbstractSkill(EvaluativeGraphElement):
     def __init__(self, name, delay, cooltime = 0, rem = False, red = True):
         super(AbstractSkill, self).__init__(namespace = name)
         self.spec = "graph control"
-        with self.dynamic_range():
+        with self.dynamic_range():            
             self.rem = rem
             self.red = red
             self.name = name
             self.delay = delay
             self.cooltime = cooltime
             self.explanation = None
-            
+    
             if self.cooltime == -1:
                 self.cooltime = NOTWANTTOEXECUTE
-        
+                
     def _change_time_into_string(self, number_or_Infinite, divider = 1, lang = "ko"):
         lang_to_inf_dict = {"ko" : "무한/자동발동불가", "en" : "Infinite" }
         if abs(number_or_Infinite - NOTWANTTOEXECUTE / divider) < 10000 / divider:
@@ -599,10 +599,11 @@ class DamageSkill(AbstractSkill):
     '''
     def __init__(self, name, delay, damage, hit,  cooltime = 0, modifier = CharacterModifier(), red = 0):
         super(DamageSkill, self).__init__(name, delay, cooltime = cooltime, rem = 0, red = red)
-        self.spec = "damage"
-        self.damage = damage
-        self.hit = hit
-        self._static_skill_modifier = modifier #Issue : Will we need this option really?
+        with self.dynamic_range():
+            self.spec = "damage"
+            self.damage = damage
+            self.hit = hit
+            self._static_skill_modifier = modifier #Issue : Will we need this option really?
 
     def _get_explanation_internal(self, detail = False, lang = "ko", expl_level = 2):
         if lang == "ko":
@@ -622,7 +623,7 @@ class DamageSkill(AbstractSkill):
         return self._parse_list_info_into_string(li)
         
     def setV(self, vEnhancer, index, incr, crit = False):
-        self._static_skill_modifier += vEnhancer.getEhc(index, incr, crit, self)
+        self._static_skill_modifier = self._static_skill_modifier + vEnhancer.getEhc(index, incr, crit, self)
         return self
         
     def get_damage(self):
@@ -639,12 +640,13 @@ class DamageSkill(AbstractSkill):
 class SummonSkill(AbstractSkill):
     def __init__(self, name, summondelay, delay, damage, hit, remain, cooltime = 0, modifier = CharacterModifier(), rem = 0, red = 0):
         super(SummonSkill, self).__init__(name, delay, cooltime = cooltime, rem = rem, red = red)
-        self.spec = "summon"
-        self.summondelay = summondelay
-        self.damage = damage
-        self.hit = hit
-        self.remain = remain
-        self._static_skill_modifier = modifier
+        with self.dynamic_range():
+            self.spec = "summon"
+            self.summondelay = summondelay
+            self.damage = damage
+            self.hit = hit
+            self.remain = remain
+            self._static_skill_modifier = modifier
 
     def _get_explanation_internal(self, detail = False, lang = "ko", expl_level = 2):
         if lang == "ko":
@@ -670,7 +672,7 @@ class SummonSkill(AbstractSkill):
         return my_json 
     
     def setV(self, vEnhancer, index, incr, crit = False):
-        self._static_skill_modifier += vEnhancer.getEhc(index, incr, crit, self)
+        self._static_skill_modifier = self._static_skill_modifier + vEnhancer.getEhc(index, incr, crit, self)
         return self
         
     def get_damage(self):
@@ -786,6 +788,8 @@ class GraphElement():
     Flag_Constraint = 128
     
     def __init__(self, _id):
+        if isinstance(_id, AbstractDynamicVariableInstance):
+            _id = _id.evaluate()
         self._id = _id
         self._before = []   #Tasks that must be executed before this task.
         self._after = []    #Tasks that must be executed after this task.
@@ -928,7 +932,6 @@ class OptionalTask(Task):
         else:
             self._fail = ResultObject(0, CharacterModifier(), 0, sname = self._name, spec = 'graph control', cascade = [failtask])
 
-        
     def do(self):
         if(self._discriminator()):
             return self._result_object_cache
@@ -1034,7 +1037,7 @@ class AbstractSkillWrapper(GraphElement):
         if self.skill.cooltime == NOTWANTTOEXECUTE:
             self.set_disabled_and_time_left(-1)
         self.accessible_boss_state = AccessibleBossState.NO_FLAG
-        
+
     def get_explanation(self, lang = "ko"):
         return self.skill.get_explanation(lang = lang)
     
@@ -1292,6 +1295,7 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self.disabledModifier = CharacterModifier()
         self._onTick = []
         self.accessible_boss_state = AccessibleBossState.NO_FLAG
+        self.is_periodic = True
     
     def get_link(self):
         li = super(SummonSkillWrapper, self).get_link()
@@ -1357,173 +1361,10 @@ class SummonSkillWrapper(AbstractSkillWrapper):
     
     def get_damage(self) -> float:
         return self.skill.get_damage()
-
-class Store():
-    '''
-
-    store.py :: Store for graph element
     
-    사용자들은 그래프를 빌드한 이후에, 그래프 간의 상호작용을 정의하거나, 그래프 내의 원소들에 제약을 부여하는 등 내부 요소에 접근하고 싶을 수 있습니다.
-    그러나, ScheduleGraph Object는 내부적으로는 모든 그래프 요소를 Tracking 할 수 있으나, 명시적으로 그래프 요소에 접근하는 행위를 허용하고 있지는 않습니다.
-    이는 그래프 요소에 접근하는 행위가 통제되지 않은 변경을 유발하여 내부 로직을 망가뜨리거나, 잘못된 결과물을 제공할 수도 있기 때문입니다.
-    
-    이와 같은 불상사를 방지하면서, 필요한 경우에는 내부 요소에 접근할 수 있도록 Store Class를 제공합니다. Store는 다음과 같은 기능을 제공합니다.
-    
-    (1) 명시된 접근자에 대한 그래프 요소만을 접근 허용함으로서 보안을 보장합니다.
-    (2) 지원되는 함수를 통한 요소 변경을 권장함으로서 최대한 사용자가 잘못된 설정을 시도하는 행위를 방지합니다.
-    (3) 다른 Store과의 상호작용을 정의하여 여러개의 Graph를 동시에 연산할 수 있도록 돕습니다.
-    
-    '''
-    def __init__(self, allowed_keywords_and_elements = {} ):
-        self._allowed_keywords = [i for i in allowed_keywords_and_elements]
-        self._allowed_keywords_and_elements = allowed_keywords_and_elements
-        for kwd in allowed_keywords_and_elements:
-            setattr(self, kwd, allowed_keywords_and_elements[kwd])
-    
-    def check_exist(self, kwd):
-        return (kwd in self._allowed_keywords)
-        
-    def synchronize(self, main_skill, following_skill, mode = 'only_last_use'):
-        '''Force following_skill's skill run with main_skill.
-        
-         -- mode -- 
-         only_last_use : only last skill use will be modified by this constraint.
-         every_use : every skill usage get duty to retain following_skill's skill timing lag.
-         
-        '''
-        def prevent_skill_use(_main_skill, _following_skill):
-            following_cooltime = _following_skill.skill.cooltime
-            main_skill_left = _main_skill.cooltimeLeft
-            if main_skill_left < following_cooltime * 2:
-                return False
-            else:
-                return True
-        
-        if main_skill.skill.cooltime < following_skill.skill.cooltime:
-            following_skill.onConstraint(jt.ConstraintElement('Store.synchronize',main_skill, main_skill.is_active))
-        else:
-            if mode == 'only_last_use':
-                following_skill.createConstraint('Store.synchronize::only_last_use', main_skill, partial(prevent_skill_use, main_skill, following_skill) )
-            elif mode == 'every_use':
-                raise NotImplementedError('Not maded yet!')
-                
-    def prevent_collision(self, first_skill, second_skill):
-        first_skill.createConstraint('Store.prevent_collision', second_skill, second_skill.is_not_active)
-        second_skill.createConstraint('Store.prevent_collision', first_skill, first_skill.is_not_active)
-    
-    
-class StoreHandler():
-    '''Store는 여러분이 그래프 요소를 자유롭게 변경할 수 있는 Interface를 제공합니다. 
-    그 Interface를 우리가 실제로 사용하고자 할 때는, 사용 가능성이 높은 몇 가지 설정 중 우리가 사용하고 싶은 설정으로 골라서 사용할 가능성이
-    높습니다. 그러나 Store를 변경하는 행위는 그 각각이 함수로서 정의되기 때문에 정형화되지 않을 위험성이 있습니다.
-    
-    StoreHandler는 그로부터 파생되는 문제를 방지하기 위해 제공되는 클래스 입니다. StoreHandler에는 Store를 인자로 받아 어떤 식으로 작동하도록 할지를 명시합니다. 여러분은 미리 정의된
-    Handler들 중에서 원하는 Handler를 Graph 단에서 적용시킬 수 있습니다. 이는 또한 코드의 안정성을 높힙니다 : 즉, 인가되지 않은 Handler를 통해 코드를 변경하는 행위를 방지합니다.
-    
-    
-    '''
-    def __init__(self):
-        pass
-    
-    def handle_store(self, store):
-        raise NotImplementedError('You must Implement this section for your own idea!')
-
-
-    
-class AbstractScenarioGraph():
-    def __init__(self, *store_parameter):
-        self.store = Store(*store_parameter)
-        pass
-    
-    def build_graph(self, *args):
-        raise NotImplementedError("You must Implement build_graph function to create specific graph.")
-    
-    def get_single_network_information(self, graphel, isList = False):
-        '''Function get_single_network_information (param graphel : GraphElement)
-        Return Network information about given graphel, as d3 - parsable dictionary element.
-        return value is dictionary followed by below.
-        
-        nodes : list - of - {"name" : GraphElement._id}
-        links : list - of - {"source" : index - of - source,
-                            "target" : index - of - target,
-                            "type" : type - of - node}
-        
-        '''
-        if not isList:
-            nodes, links = self.getNetwork(graphel)
-        else:
-            nodes = [i[0] for i in graphel]
-            links = []
-            for el in graphel:
-                _nds , _lns = self._getNetworkRecursive(el[0], nodes, links)
-                nodes += _nds
-                links += _lns
-            #refinement
-            nodeSet = []
-            for node in nodes:
-                if node not in nodeSet:
-                    nodeSet.append(node)
-            nodes = nodeSet
-        
-        nodeIndex = []            
-        for node, idx in zip(nodes, range(len(nodes))):
-            node_info = {"name" : node._id, "expl" : node.get_explanation(lang = "ko"), "flag" : node._flag}
-            if node._flag & 1:
-                node_info["delay"] = node.skill.get_info()["delay"]
-                node_info["cooltime"] = node.skill.get_info()["cooltime"]
-                node_info["expl"] = node.skill.get_info(expl_level = 0)["expl"]
-            if idx <= len(graphel):
-                node_info["st"] = True
-            else:
-                node_info["st"] = False
-                
-            nodeIndex.append(node_info)
-        #nodeIndex = [{"name" : node._id, "expl" : node.get_explanation(lang = "ko"), "flag" : node._flag} for node in nodes]
-        
-        linkIndex = []
-        
-        for link in links:
-            linkIndex.append({"source" : link[0], "target" : link[1], "type" : link[2]})
-            if len(link[2].split(" ")) > 1:
-                linkIndex[-1]["type"] = link[2].split(" ")[0]
-                linkIndex[-1]["misc"] = link[2].split(" ")[1:]
-            
-        for node, idx in zip(nodes, range(len(nodeIndex))):
-            for link in linkIndex:
-                if link["source"] == node:
-                    link["source"] = idx
-                if link["target"] == node:
-                    link["target"] = idx
-                    
-        return nodeIndex, linkIndex
-
-    def getNetwork(self, ancestor):
-        nodes, links = self._getNetworkRecursive(ancestor, [ancestor], [])
-        nodes.insert(0, ancestor)
-        return nodes, links
-        
-    def _getNetworkRecursive(self, ancestor, nodes, links):
-        try:
-            _nodes = []
-            _links = ancestor.get_link()
-            _linksCandidate = ancestor.get_link()
-        except AttributeError:
-            raise AttributeError('Cannot find Appropriate Link. Make sure your Graph element task has correct reference')
-        if len(_linksCandidate) > 0:
-            for _, el, _t in _linksCandidate:
-                if el not in nodes:
-                    _nodes.append(el)
-                    nds, lis = self._getNetworkRecursive(el, nodes + _nodes, links + _links)
-                    _nodes += nds
-                    _links += lis
-                
-        return _nodes, _links
-
-    
-
 class ScheduleGraph(AbstractScenarioGraph):
-    def __init__(self, *store_parameter):
-        super(ScheduleGraph, self).__init__(*store_parameter)
+    def __init__(self, collection = None):
+        super(ScheduleGraph, self).__init__()
         self._vEhc = None
         
         self.default_task = None
@@ -1539,6 +1380,12 @@ class ScheduleGraph(AbstractScenarioGraph):
         self.tick = []
         
         self.node = []  #Show direct view of graph!
+
+    def get_accessibles(self):
+        wrps = []
+        for wrp, _ in (self.buff + self.damage + self.summon + self.spend + [self.default_task]):
+            wrps.append(wrp)
+        return wrps
 
     def set_v_enhancer(self, vEhc):
         self._vEhc = vEhc
@@ -1640,92 +1487,6 @@ class ScheduleGraph(AbstractScenarioGraph):
                 snames.append(sk._id)
         
         return {"dict" : retli, "li" : snames}
-
-class Scheduler(object):
-    __slots__ = 'graph', 'totalTimeLeft', 'totalTimeInitial', 'cascadeStack', 'tickIndex', \
-                    'pendingTime', '_buffMdfPreCalc', '_buffMdfCalcZip'
-    def __init__(self, graph):
-        self.graph = graph
-        self.totalTimeLeft = None
-        self.totalTimeInitial = None
-        self.cascadeStack = []
-        self.tickIndex = 0
-        self.pendingTime = False
-        self._buffMdfPreCalc = CharacterModifier()
-        self._buffMdfCalcZip = []
-
-    def initialize(self, time):
-        self.totalTimeLeft = time
-        self.totalTimeInitial = time
-        self.cascadeStack = []
-        
-        #### time pending associated variables ####
-        self.tickIndex = 0
-        self.pendingTime = False
-        
-        self._buffMdfPreCalc = CharacterModifier()
-        self._buffMdfCalcZip = []
-        
-        ## For faster calculation, we will pre- calculate invariant buff skills.
-        for buffwrp, _ in self.graph.buff:
-            if buffwrp.skill.cooltime == 0 and buffwrp.modifierInvariantFlag:
-                #print(buffwrp.skill.name)  #캐싱되는 버프를 확인하기 위해 이 주석부분을 활성화 합니다.
-                self._buffMdfPreCalc += buffwrp.get_modifier_forced()
-                st = False
-            else:
-                st = True
-            self._buffMdfCalcZip.append([buffwrp, st])
-            
-        
-    def get_current_time(self):
-        return self.totalTimeInitial - self.totalTimeLeft
-
-    def is_simulation_end(self):
-        if self.totalTimeLeft<0:
-            return True
-        else:
-            return False
-
-    def spend_time(self, time):
-        self.totalTimeLeft -= time
-        self.graph.spend_time(time)
-
-    def get_delayed_task(self):  
-        for (wrp, tick), idx in zip((self.graph.tick[self.tickIndex:]), range(self.tickIndex, len(self.graph.tick))):
-            if wrp.need_count():
-                return tick
-        return None
-
-    def dequeue(self):
-        if not self.pendingTime:
-            for wrp, buff in self.graph.buff:
-                if wrp.is_usable() and (not wrp.onoff):
-                    return buff
-        
-            for wrp, summon in self.graph.summon:
-                if wrp.is_usable() and (not wrp.onoff):
-                    return summon
-                    
-            for wrp, damage in self.graph.damage:
-                if wrp.is_usable():
-                    return damage
-            return self.graph.default_task[1]
-    
-    def get_buff_modifier(self):
-        '''
-        mdf = CharacterModifier()
-        for buffwrp, _ in self.graph.buff:
-            if buffwrp.onoff:
-                mdf += buffwrp.get_modifier()
-        return mdf
-        '''
-        mdf = self._buffMdfPreCalc.copy()   #BuffModifier는 쿨타임이 없는 버프에 한해 캐싱하여 연산량을 감소시킵니다. 캐싱된 
-        for buffwrp, st in self._buffMdfCalcZip:
-            if st: 
-                mdf += buffwrp.get_modifier()
-                #print(buffwrp.skill.name, buffwrp.is_active(), buffwrp.get_modifier().pdamage_indep)
-        return mdf
-        
             
 class Simulator(object):
     __slots__ = 'scheduler', 'character', 'analytics', '_modifier_cache_and_time'
@@ -1751,10 +1512,10 @@ class Simulator(object):
         return self.analytics.get_metadata(mod)
         
     def getDPM(self):
-        return self.analytics.total_damage / (self.scheduler.totalTimeInitial) * 60000
+        return self.analytics.total_damage / (self.scheduler.total_time_initial) * 60000
 
     def get_unrestricted_DPM(self):
-        return self.analytics.total_damage_without_restriction / (self.scheduler.totalTimeInitial) * 60000
+        return self.analytics.total_damage_without_restriction / (self.scheduler.total_time_initial) * 60000
 
     def getTotalDamage(self):
         return self.analytics.total_damage
@@ -1797,7 +1558,7 @@ class Simulator(object):
             dt += self.run_individual_task(stack.pop())
         result = task.do()
         if result.damage > 0:
-            result.mdf += self.scheduler.get_buff_modifier()
+            result.mdf = result.mdf + self.scheduler.get_buff_modifier()
         result.setTime(self.scheduler.get_current_time())
         self.analytics.analyze(self.character, result)
         dt += result.delay
@@ -1814,11 +1575,9 @@ class Simulator(object):
         
         result = task.do()
         
-        
         if result.damage > 0:
             result.mdf += self.scheduler.get_buff_modifier()
-            
-            
+
         result.setTime(self.scheduler.get_current_time())
         self.analytics.analyze(self.character, result)
         
@@ -1948,6 +1707,7 @@ class Analytics():
         #For speed acceleration
         if self.print_calculation_progress:
             self.log('At Time %.1f, Skill [%s] ... Damage [%.1f] ... Delay [%.1f]' % (result.time, result.sname, deal, result.delay))
+            self.log(f'{result.mdf}')
         if deal > 0:
             self.logList.append({"result":result, "time" : (result.time), "deal" : deal, "loss" : free_deal - deal})
         else:
