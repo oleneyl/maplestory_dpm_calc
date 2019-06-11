@@ -11,6 +11,7 @@ import dpmModule.character.characterKernel
 import dpmModule.jobs as maplejobs
 
 from dpmModule.kernel import policy
+from dpmModule.execution import rules
 
 class IndividualDPMGenerator():
     '''IndividualDPMGenerator는 단일 직업의 dpm을 연산합니다. 연산을 위해 인자로 job 과 template 를 받습니다.
@@ -35,7 +36,7 @@ class IndividualDPMGenerator():
         vEhc.set_state_direct([50,50,50,50,25,25,25,25,0,0,0,0])
         graph = gen.package(target, vEhc = vEhc, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
         sche = policy.AdvancedGraphScheduler(graph,
-        policy.TypebaseFetchingPolicy, [policy.UniquenessRule()]) #가져온 그래프를 토대로 스케줄러를 생성합니다.
+        policy.TypebaseFetchingPolicy, [rules.UniquenessRule()]) #가져온 그래프를 토대로 스케줄러를 생성합니다.
         analytics = core.Analytics(printFlag=printFlag)  #데이터를 분석할 분석기를 생성합니다.
         control = core.Simulator(sche, target, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
         control.start_simulation(self.runtime)
