@@ -159,9 +159,7 @@ class JobGenerator():
     def build(self, chtr, combat = False):
         initialize_global_properties()
 
-        graph = self.generate(chtr, combat = combat, vEhc = self.vEhc)
-        self.apply_specific_schedule(graph)
-        self.constructedSchedule = graph
+        base_element, all_elements = self.generate(chtr, combat = combat, vEhc = self.vEhc)
 
         GlobalOperation.assign_storage()
         GlobalOperation.attach_namespace()
@@ -169,11 +167,12 @@ class JobGenerator():
         GlobalOperation.convert_to_static()
 
         collection = GlobalOperation.export_collection()
-        new_graph = policy.StorageLinkedGraph([],
-            collection.get_storage(), accessible_elements=graph.get_accessibles())
-        new_graph.build(chtr)
-        #return graph
-        return new_graph
+
+        graph = policy.StorageLinkedGraph(base_element, [],
+            collection.get_storage(), accessible_elements=all_elements)
+        graph.build(chtr)
+        
+        return graph
     
     def generate(self, chtr : AbstractCharacter, combat : bool = False , vEhc = vEnhancer()):
         raise NotImplementedError

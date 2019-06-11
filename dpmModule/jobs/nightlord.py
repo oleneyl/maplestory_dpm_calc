@@ -111,4 +111,13 @@ class JobGenerator(ck.JobGenerator):
                 [],
                 QuarupleThrow)
 
+        return (QuarupleThrow, 
+            [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                    ShadowPartner, SpiritJavelin, PurgeArea, BleedingToxin, EpicAdventure, 
+                    ReadyToDiePassive, UltimateDarksight, ReadyToDie, SpreadThrowInit,
+                    globalSkill.soul_contract()] + \
+                [ArcaneOfDarklordFinal] + \
+                [Pungma, ArcaneOfDarklord, BleedingToxinDot] +\
+                [] + [QuarupleThrow])
+
         return schedule

@@ -1,6 +1,6 @@
 from dpmModule.kernel.policy import AbstractRule
 from collections import defaultdict
-from dpmModule.kernel.core import BuffSkillWrapper, Scheduler, DamageSkillWrapper, SummonSkillWrapper
+from dpmModule.kernel.core import BuffSkillWrapper, DamageSkillWrapper, SummonSkillWrapper
 
 class UniquenessRule(AbstractRule):
     def get_related_elements(self, reference_graph):

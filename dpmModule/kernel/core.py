@@ -1361,65 +1361,7 @@ class SummonSkillWrapper(AbstractSkillWrapper):
     
     def get_damage(self) -> float:
         return self.skill.get_damage()
-
-class Store():
-    '''
-
-    store.py :: Store for graph element
     
-    사용자들은 그래프를 빌드한 이후에, 그래프 간의 상호작용을 정의하거나, 그래프 내의 원소들에 제약을 부여하는 등 내부 요소에 접근하고 싶을 수 있습니다.
-    그러나, ScheduleGraph Object는 내부적으로는 모든 그래프 요소를 Tracking 할 수 있으나, 명시적으로 그래프 요소에 접근하는 행위를 허용하고 있지는 않습니다.
-    이는 그래프 요소에 접근하는 행위가 통제되지 않은 변경을 유발하여 내부 로직을 망가뜨리거나, 잘못된 결과물을 제공할 수도 있기 때문입니다.
-    
-    이와 같은 불상사를 방지하면서, 필요한 경우에는 내부 요소에 접근할 수 있도록 Store Class를 제공합니다. Store는 다음과 같은 기능을 제공합니다.
-    
-    (1) 명시된 접근자에 대한 그래프 요소만을 접근 허용함으로서 보안을 보장합니다.
-    (2) 지원되는 함수를 통한 요소 변경을 권장함으로서 최대한 사용자가 잘못된 설정을 시도하는 행위를 방지합니다.
-    (3) 다른 Store과의 상호작용을 정의하여 여러개의 Graph를 동시에 연산할 수 있도록 돕습니다.
-    
-    '''
-    def __init__(self, allowed_keywords_and_elements = {} ):
-        self._allowed_keywords = [i for i in allowed_keywords_and_elements]
-        self._allowed_keywords_and_elements = allowed_keywords_and_elements
-        for kwd in allowed_keywords_and_elements:
-            setattr(self, kwd, allowed_keywords_and_elements[kwd])
-    
-    def check_exist(self, kwd):
-        return (kwd in self._allowed_keywords)
-        
-    def synchronize(self, main_skill, following_skill, mode = 'only_last_use'):
-        '''Force following_skill's skill run with main_skill.
-        
-         -- mode -- 
-         only_last_use : only last skill use will be modified by this constraint.
-         every_use : every skill usage get duty to retain following_skill's skill timing lag.
-         
-        '''
-        def prevent_skill_use(_main_skill, _following_skill):
-            following_cooltime = _following_skill.skill.cooltime
-            main_skill_left = _main_skill.cooltimeLeft
-            if main_skill_left < following_cooltime * 2:
-                return False
-            else:
-                return True
-        
-        if main_skill.skill.cooltime < following_skill.skill.cooltime:
-            following_skill.onConstraint(jt.ConstraintElement('Store.synchronize',main_skill, main_skill.is_active))
-        else:
-            if mode == 'only_last_use':
-                following_skill.createConstraint('Store.synchronize::only_last_use', main_skill, partial(prevent_skill_use, main_skill, following_skill) )
-            elif mode == 'every_use':
-                raise NotImplementedError('Not maded yet!')
-                
-    def prevent_collision(self, first_skill, second_skill):
-        first_skill.createConstraint('Store.prevent_collision', second_skill, second_skill.is_not_active)
-        second_skill.createConstraint('Store.prevent_collision', first_skill, first_skill.is_not_active)
-
-
-   
-
-    
-
 class ScheduleGraph(AbstractScenarioGraph):
     def __init__(self, collection = None):
         super(ScheduleGraph, self).__init__()
@@ -1545,92 +1487,6 @@ class ScheduleGraph(AbstractScenarioGraph):
                 snames.append(sk._id)
         
         return {"dict" : retli, "li" : snames}
-
-class Scheduler(object):
-    __slots__ = 'graph', 'totalTimeLeft', 'totalTimeInitial', 'cascadeStack', 'tickIndex', \
-                    'pendingTime', '_buffMdfPreCalc', '_buffMdfCalcZip'
-    def __init__(self, graph):
-        self.graph = graph
-        self.totalTimeLeft = None
-        self.totalTimeInitial = None
-        self.cascadeStack = []
-        self.tickIndex = 0
-        self.pendingTime = False
-        self._buffMdfPreCalc = CharacterModifier()
-        self._buffMdfCalcZip = []
-
-    def initialize(self, time):
-        self.totalTimeLeft = time
-        self.totalTimeInitial = time
-        self.cascadeStack = []
-        
-        #### time pending associated variables ####
-        self.tickIndex = 0
-        self.pendingTime = False
-        
-        self._buffMdfPreCalc = CharacterModifier()
-        self._buffMdfCalcZip = []
-        
-        ## For faster calculation, we will pre- calculate invariant buff skills.
-        for buffwrp, _ in self.graph.buff:
-            if buffwrp.skill.cooltime == 0 and buffwrp.modifierInvariantFlag:
-                #print(buffwrp.skill.name)  #캐싱되는 버프를 확인하기 위해 이 주석부분을 활성화 합니다.
-                self._buffMdfPreCalc += buffwrp.get_modifier_forced()
-                st = False
-            else:
-                st = True
-            self._buffMdfCalcZip.append([buffwrp, st])
-            
-        
-    def get_current_time(self):
-        return self.totalTimeInitial - self.totalTimeLeft
-
-    def is_simulation_end(self):
-        if self.totalTimeLeft<0:
-            return True
-        else:
-            return False
-
-    def spend_time(self, time):
-        self.totalTimeLeft -= time
-        self.graph.spend_time(time)
-
-    def get_delayed_task(self):  
-        for (wrp, tick), idx in zip((self.graph.tick[self.tickIndex:]), range(self.tickIndex, len(self.graph.tick))):
-            if wrp.need_count():
-                return tick
-        return None
-
-    def dequeue(self):
-        if not self.pendingTime:
-            for wrp, buff in self.graph.buff:
-                if wrp.is_usable() and (not wrp.onoff):
-                    return buff
-        
-            for wrp, summon in self.graph.summon:
-                if wrp.is_usable() and (not wrp.onoff):
-                    return summon
-                    
-            for wrp, damage in self.graph.damage:
-                if wrp.is_usable():
-                    return damage
-            return self.graph.default_task[1]
-    
-    def get_buff_modifier(self):
-        '''
-        mdf = CharacterModifier()
-        for buffwrp, _ in self.graph.buff:
-            if buffwrp.onoff:
-                mdf += buffwrp.get_modifier()
-        return mdf
-        '''
-        mdf = self._buffMdfPreCalc.copy()   #BuffModifier는 쿨타임이 없는 버프에 한해 캐싱하여 연산량을 감소시킵니다. 캐싱된 
-        for buffwrp, st in self._buffMdfCalcZip:
-            if st: 
-                mdf += buffwrp.get_modifier()
-                #print(buffwrp.skill.name, buffwrp.is_active(), buffwrp.get_modifier().pdamage_indep)
-        return mdf
-        
             
 class Simulator(object):
     __slots__ = 'scheduler', 'character', 'analytics', '_modifier_cache_and_time'
@@ -1656,10 +1512,10 @@ class Simulator(object):
         return self.analytics.get_metadata(mod)
         
     def getDPM(self):
-        return self.analytics.total_damage / (self.scheduler.totalTimeInitial) * 60000
+        return self.analytics.total_damage / (self.scheduler.total_time_initial) * 60000
 
     def get_unrestricted_DPM(self):
-        return self.analytics.total_damage_without_restriction / (self.scheduler.totalTimeInitial) * 60000
+        return self.analytics.total_damage_without_restriction / (self.scheduler.total_time_initial) * 60000
 
     def getTotalDamage(self):
         return self.analytics.total_damage

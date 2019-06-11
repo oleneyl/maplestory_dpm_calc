@@ -1,11 +1,12 @@
 import random
 from collections import defaultdict
-from .abstract import AbstractScenarioGraph
+from .abstract import AbstractScenarioGraph, AbstractScheduler
 from .core import CharacterModifier
-from .core import BuffSkillWrapper, Scheduler, DamageSkillWrapper, SummonSkillWrapper
+from .core import BuffSkillWrapper, DamageSkillWrapper, SummonSkillWrapper
 
 class StorageLinkedGraph(AbstractScenarioGraph):
-    def __init__(self, all_elements, storage, accessible_elements = [] ) :
+    def __init__(self, base_element, all_elements, storage, accessible_elements = [] ) :
+        self.base_element = base_element
         self.storage = storage
         self._all_elements = all_elements
         self.accessible_elements = accessible_elements
@@ -81,15 +82,10 @@ class StorageLinkedGraph(AbstractScenarioGraph):
     def get_task_from_element(self, element):
         return self._task_map[element._id]
 
-class AdvancedGraphScheduler(Scheduler):
+class AdvancedGraphScheduler(AbstractScheduler):
     def __init__(self, graph, fetching_policy, rules):
         super(AdvancedGraphScheduler, self).__init__(graph)
-        self.graph = graph
-        self.fetching_policy = fetching_policy(graph, "쿼드러플 스로우", priority_list = [
-            BuffSkillWrapper,
-            SummonSkillWrapper,
-            DamageSkillWrapper
-        ])
+        self.fetching_policy = fetching_policy(graph)
         self.rules = rules
         self._rule_map = defaultdict(list)
     
@@ -112,13 +108,8 @@ class AdvancedGraphScheduler(Scheduler):
         return None
 
     def initialize(self, time):
-        self.totalTimeLeft = time
-        self.totalTimeInitial = time
-        self.cascadeStack = []
-        
-        #### time pending associated variables ####
-        self.tickIndex = 0
-        self.pendingTime = False
+        self.total_time_left = time
+        self.total_time_initial = time
         
         self._buffMdfPreCalc = CharacterModifier()
         self._buffMdfCalcZip = []
@@ -138,10 +129,28 @@ class AdvancedGraphScheduler(Scheduler):
             for wrp in rule.get_related_elements(self.graph):
                 self._rule_map[wrp._id].append(rule)
 
+    def get_buff_modifier(self):
+        '''
+        mdf = CharacterModifier()
+        for buffwrp, _ in self.graph.buff:
+            if buffwrp.onoff:
+                mdf += buffwrp.get_modifier()
+        return mdf
+        '''
+        mdf = self._buffMdfPreCalc.copy()   #BuffModifier는 쿨타임이 없는 버프에 한해 캐싱하여 연산량을 감소시킵니다. 캐싱된 
+        for buffwrp, st in self._buffMdfCalcZip:
+            if st: 
+                mdf += buffwrp.get_modifier()
+                #print(buffwrp.skill.name, buffwrp.is_active(), buffwrp.get_modifier().pdamage_indep)
+        return mdf
 
 class FetchingPolicy():
-    def __init__(self, graph, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def __call__(self, graph):
         self.target = graph.get_all()
+        return self
 
     def fetch_targets(self):
         return filter(lambda x:x.is_usable(), self.get_sorted())
@@ -155,13 +164,18 @@ class FetchingPolicy():
 
 
 class TypebaseFetchingPolicy(FetchingPolicy):
-    def __init__(self, graph, final_name, priority_list = [0,1,2,3]):
-        super(TypebaseFetchingPolicy, self).__init__(graph)
+    def __init__(self, priority_list = [0,1,2,3]):
+        super(TypebaseFetchingPolicy, self).__init__()
+        self.priority_list = priority_list
+
+    def __call__(self, graph):
+        super(TypebaseFetchingPolicy, self).__call__(graph)
         self.sorted = []
-        for clstype in priority_list:
+        for clstype in self.priority_list:
             self.sorted += (list(filter(lambda x:isinstance(x,clstype), self.target)))
-        self.sorted.pop(self.sorted.index(graph.get_element(final_name)))
-        self.sorted.append(graph.get_element(final_name))
+        self.sorted.pop(self.sorted.index(graph.base_element))
+        self.sorted.append(graph.base_element)
+        return self
     
     def get_sorted(self):
         return [i for i in self.sorted]
