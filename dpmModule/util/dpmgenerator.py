@@ -24,10 +24,10 @@ class IndividualDPMGenerator():
         self.supplier = maplejobs.jobMap[job]
         self.runtime = 1800 * 1000
         
-    def setRuntime(self, time):
+    def set_runtime(self, time):
         self.runtime = time
 
-    def getDpm(self, vEhc = core.vEnhancer(), ulevel = 6000, weaponstat = [4,9], level = 230, printFlag = False):
+    def get_dpm(self, vEhc = core.vEnhancer(), ulevel = 6000, weaponstat = [4,9], level = 230, printFlag = False):
         #TODO target을 동적으로 생성할 수 있도록.
         target = self.template(maplejobs.weaponList[self.job])
         target.level = level
@@ -48,7 +48,7 @@ class IndividualDPMGenerator():
 
         return control.getDPM()
 
-    def getDetailedDpm(self, vEhc = core.vEnhancer(), ulevel = 6000, weaponstat = [4,9], level = 230):
+    def get_detailed_dpm(self, vEhc = core.vEnhancer(), ulevel = 6000, weaponstat = [4,9], level = 230):
         #TODO target을 동적으로 생성할 수 있도록.
         
         target = self.template(maplejobs.weaponList[self.job])
