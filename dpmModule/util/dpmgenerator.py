@@ -59,7 +59,13 @@ class IndividualDPMGenerator():
         vEhc = core.vEnhancer()
         vEhc.set_state_direct([50,50,50,50,25,25,25,25,0,0,0,0])
         graph = gen.package(target, vEhc = vEhc, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
-        sche = core.Scheduler(graph) #가져온 그래프를 토대로 스케줄러를 생성합니다.
+        sche = policy.AdvancedGraphScheduler(graph,
+            policy.TypebaseFetchingPolicy(priority_list = [
+                core.BuffSkillWrapper,
+                core.SummonSkillWrapper,
+                core.DamageSkillWrapper
+            ]), 
+            [rules.UniquenessRule()]) #가져온 그래프를 토대로 스케줄러를 생성합니다.
         analytics = core.Analytics()  #데이터를 분석할 분석기를 생성합니다.
         control = core.Simulator(sche, target, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
         control.start_simulation(self.runtime)

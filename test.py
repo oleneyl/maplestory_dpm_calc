@@ -5,6 +5,9 @@ import dpmModule.character.characterTemplateHigh as template
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
 from dpmModule.kernel import graph
 from dpmModule.jobs import jobMap
+
+import time
+
 jobname = "나이트로드"
 ulevel = 6000
 weaponstat = [4,9]
@@ -18,7 +21,7 @@ for jobname in ['나이트로드']:
 #for jobname in jobMap:
         parser = IndividualDPMGenerator(jobname, template.getU4000CharacterTemplate)
         try:
-                dpm = parser.unstable_getDpm(ulevel = ulevel,
+                dpm = parser.getDpm(ulevel = ulevel,
                 weaponstat = weaponstat,
                 level = level,
                 printFlag=False)
