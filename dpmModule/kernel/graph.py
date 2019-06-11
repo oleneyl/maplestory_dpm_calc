@@ -83,6 +83,12 @@ class GlobalCollection():
         self._found_dynamic_object = []
         self._storage = DeepConfigurationStorage({})
 
+    def get_storage(self):
+        return self._storage
+
+    def get_dynamic_objects(self):
+        return self._found_dynamic_object
+
     def set_storage(self, storage):
         self._storage = storage
 

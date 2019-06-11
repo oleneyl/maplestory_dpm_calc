@@ -1,4 +1,5 @@
-from .graph import EvaluativeGraphElement, DynamicVariableOperation, DynamicVariableInstance
+from .graph import EvaluativeGraphElement, DynamicVariableOperation, DynamicVariableInstance, AbstractDynamicVariableInstance
+from .abstract import AbstractScenarioGraph
 from functools import partial
 import math
 
@@ -487,10 +488,10 @@ class AbstractSkill(EvaluativeGraphElement):
             self.delay = delay
             self.cooltime = cooltime
             self.explanation = None
-            
+    
             if self.cooltime == -1:
                 self.cooltime = NOTWANTTOEXECUTE
-            
+                
     def _change_time_into_string(self, number_or_Infinite, divider = 1, lang = "ko"):
         lang_to_inf_dict = {"ko" : "무한/자동발동불가", "en" : "Infinite" }
         if abs(number_or_Infinite - NOTWANTTOEXECUTE / divider) < 10000 / divider:
@@ -598,10 +599,11 @@ class DamageSkill(AbstractSkill):
     '''
     def __init__(self, name, delay, damage, hit,  cooltime = 0, modifier = CharacterModifier(), red = 0):
         super(DamageSkill, self).__init__(name, delay, cooltime = cooltime, rem = 0, red = red)
-        self.spec = "damage"
-        self.damage = damage
-        self.hit = hit
-        self._static_skill_modifier = modifier #Issue : Will we need this option really?
+        with self.dynamic_range():
+            self.spec = "damage"
+            self.damage = damage
+            self.hit = hit
+            self._static_skill_modifier = modifier #Issue : Will we need this option really?
 
     def _get_explanation_internal(self, detail = False, lang = "ko", expl_level = 2):
         if lang == "ko":
@@ -638,12 +640,13 @@ class DamageSkill(AbstractSkill):
 class SummonSkill(AbstractSkill):
     def __init__(self, name, summondelay, delay, damage, hit, remain, cooltime = 0, modifier = CharacterModifier(), rem = 0, red = 0):
         super(SummonSkill, self).__init__(name, delay, cooltime = cooltime, rem = rem, red = red)
-        self.spec = "summon"
-        self.summondelay = summondelay
-        self.damage = damage
-        self.hit = hit
-        self.remain = remain
-        self._static_skill_modifier = modifier
+        with self.dynamic_range():
+            self.spec = "summon"
+            self.summondelay = summondelay
+            self.damage = damage
+            self.hit = hit
+            self.remain = remain
+            self._static_skill_modifier = modifier
 
     def _get_explanation_internal(self, detail = False, lang = "ko", expl_level = 2):
         if lang == "ko":
@@ -785,6 +788,8 @@ class GraphElement():
     Flag_Constraint = 128
     
     def __init__(self, _id):
+        if isinstance(_id, AbstractDynamicVariableInstance):
+            _id = _id.evaluate()
         self._id = _id
         self._before = []   #Tasks that must be executed before this task.
         self._after = []    #Tasks that must be executed after this task.
@@ -927,7 +932,6 @@ class OptionalTask(Task):
         else:
             self._fail = ResultObject(0, CharacterModifier(), 0, sname = self._name, spec = 'graph control', cascade = [failtask])
 
-        
     def do(self):
         if(self._discriminator()):
             return self._result_object_cache
@@ -1033,7 +1037,7 @@ class AbstractSkillWrapper(GraphElement):
         if self.skill.cooltime == NOTWANTTOEXECUTE:
             self.set_disabled_and_time_left(-1)
         self.accessible_boss_state = AccessibleBossState.NO_FLAG
-        
+
     def get_explanation(self, lang = "ko"):
         return self.skill.get_explanation(lang = lang)
     
@@ -1291,6 +1295,7 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self.disabledModifier = CharacterModifier()
         self._onTick = []
         self.accessible_boss_state = AccessibleBossState.NO_FLAG
+        self.is_periodic = True
     
     def get_link(self):
         li = super(SummonSkillWrapper, self).get_link()
@@ -1412,100 +1417,12 @@ class Store():
 
 
    
-class AbstractScenarioGraph():
-    def __init__(self, collection = None):
-        self.collection = collection
-        pass
-    
-    def build_graph(self, *args):
-        raise NotImplementedError("You must Implement build_graph function to create specific graph.")
-    
-    def get_single_network_information(self, graphel, isList = False):
-        '''Function get_single_network_information (param graphel : GraphElement)
-        Return Network information about given graphel, as d3 - parsable dictionary element.
-        return value is dictionary followed by below.
-        
-        nodes : list - of - {"name" : GraphElement._id}
-        links : list - of - {"source" : index - of - source,
-                            "target" : index - of - target,
-                            "type" : type - of - node}
-        
-        '''
-        if not isList:
-            nodes, links = self.getNetwork(graphel)
-        else:
-            nodes = [i[0] for i in graphel]
-            links = []
-            for el in graphel:
-                _nds , _lns = self._getNetworkRecursive(el[0], nodes, links)
-                nodes += _nds
-                links += _lns
-            #refinement
-            nodeSet = []
-            for node in nodes:
-                if node not in nodeSet:
-                    nodeSet.append(node)
-            nodes = nodeSet
-        
-        nodeIndex = []            
-        for node, idx in zip(nodes, range(len(nodes))):
-            node_info = {"name" : node._id, "expl" : node.get_explanation(lang = "ko"), "flag" : node._flag}
-            if node._flag & 1:
-                node_info["delay"] = node.skill.get_info()["delay"]
-                node_info["cooltime"] = node.skill.get_info()["cooltime"]
-                node_info["expl"] = node.skill.get_info(expl_level = 0)["expl"]
-            if idx <= len(graphel):
-                node_info["st"] = True
-            else:
-                node_info["st"] = False
-                
-            nodeIndex.append(node_info)
-        #nodeIndex = [{"name" : node._id, "expl" : node.get_explanation(lang = "ko"), "flag" : node._flag} for node in nodes]
-        
-        linkIndex = []
-        
-        for link in links:
-            linkIndex.append({"source" : link[0], "target" : link[1], "type" : link[2]})
-            if len(link[2].split(" ")) > 1:
-                linkIndex[-1]["type"] = link[2].split(" ")[0]
-                linkIndex[-1]["misc"] = link[2].split(" ")[1:]
-            
-        for node, idx in zip(nodes, range(len(nodeIndex))):
-            for link in linkIndex:
-                if link["source"] == node:
-                    link["source"] = idx
-                if link["target"] == node:
-                    link["target"] = idx
-                    
-        return nodeIndex, linkIndex
-
-    def getNetwork(self, ancestor):
-        nodes, links = self._getNetworkRecursive(ancestor, [ancestor], [])
-        nodes.insert(0, ancestor)
-        return nodes, links
-        
-    def _getNetworkRecursive(self, ancestor, nodes, links):
-        try:
-            _nodes = []
-            _links = ancestor.get_link()
-            _linksCandidate = ancestor.get_link()
-        except AttributeError:
-            raise AttributeError('Cannot find Appropriate Link. Make sure your Graph element task has correct reference')
-        if len(_linksCandidate) > 0:
-            for _, el, _t in _linksCandidate:
-                if el not in nodes:
-                    _nodes.append(el)
-                    nds, lis = self._getNetworkRecursive(el, nodes + _nodes, links + _links)
-                    _nodes += nds
-                    _links += lis
-                
-        return _nodes, _links
 
     
 
 class ScheduleGraph(AbstractScenarioGraph):
     def __init__(self, collection = None):
-        super(ScheduleGraph, self).__init__(collection=collection)
+        super(ScheduleGraph, self).__init__()
         self._vEhc = None
         
         self.default_task = None
@@ -1521,6 +1438,12 @@ class ScheduleGraph(AbstractScenarioGraph):
         self.tick = []
         
         self.node = []  #Show direct view of graph!
+
+    def get_accessibles(self):
+        wrps = []
+        for wrp, _ in (self.buff + self.damage + self.summon + self.spend + [self.default_task]):
+            wrps.append(wrp)
+        return wrps
 
     def set_v_enhancer(self, vEhc):
         self._vEhc = vEhc
@@ -1798,7 +1721,7 @@ class Simulator(object):
         
         if result.damage > 0:
             result.mdf += self.scheduler.get_buff_modifier()
-            
+
         result.setTime(self.scheduler.get_current_time())
         self.analytics.analyze(self.character, result)
         

@@ -11,49 +11,7 @@ user who want to inspect whole featur eof package.
 *******************************
 '''
 
-class AbstractGraphElement():
-
-
-
-
-class AbstractStore():
-
-
-
-
-
-
-
-class AbstractTrackableOperation():
-    def __init__(self):
-
-
-    def 
-
-
-
-class AbstractGraphBuilder():
-    def __init__(self):
-        self._trackable_elements = {}
-        pass
-    
-    def package(self):
-        raise NotImplementedError("Implement AbstractGraphBuilder.package to return type of AbstractGraph")
-
-    def start_element_scope(self):
-        
-
-    def track_element(self, graph_element : AbstractGraphElement):
-
-
-    def 
-
-
-
-class AbstractScenarioGraph():
-    def __init__(self, *store_parameter):
-        self.store = Store(*store_parameter)
-        pass
+class AbstractScenarioGraph():    
     
     def build_graph(self, *args):
         raise NotImplementedError("You must Implement build_graph function to create specific graph.")
@@ -141,11 +99,12 @@ class AbstractScenarioGraph():
 
 
 class AbstractScheduler():
-
+    pass
 
 class AbstractSession():
-
+    pass
 
 
 class AbstractAnalytics():
+    pass
 
