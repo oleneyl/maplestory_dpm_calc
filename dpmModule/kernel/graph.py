@@ -98,7 +98,11 @@ class GlobalCollection():
     def assign_storage(self):
         for obj in self._found_dynamic_object:
             for kwd in obj.get_dynamic_variables():
-                getattr(obj, kwd).assign_storage_head(self._storage)
+                try:
+                    getattr(obj, kwd).assign_storage_head(self._storage)
+                except AttributeError:
+                    raise AttributeError(f'''{kwd} at {obj}({obj.name}) is not Dynamic object. Check whether you
+                    had been dangerously override given property.''')
 
     def save_storage(self):
         for obj in self._found_dynamic_object:
@@ -538,7 +542,14 @@ class DynamicVariableOperation(AbstractDynamicVariableInstance):
             return wrapped
         else:
             return arg
-        
+    
+    @classmethod
+    def reveal_argument(self, arg):
+        if isinstance(arg, DynamicVariableMimicingConstant):
+            return arg._mimic_target_constant
+        else:
+            return arg
+
     @classmethod
     def wrap_arguments(self, args : list):
         return [self.wrap_argument(a) for a in args]
