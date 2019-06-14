@@ -135,13 +135,13 @@ class JobGenerator(ck.JobGenerator):
         
         ThunderBrake = core.DamageSkill("썬더브레이크 개시스킬", 0, 0, 1, red = True, cooltime = 45 * 1000).wrap(core.DamageSkillWrapper) #Awesome! -> Tandem 사출처리 해야함...Later. 690을 일단 급한대로 분배해서 사용.
         ThunderBrake1 = core.DamageSkill("썬더브레이크", 100, (750 + vEhc.getV(0,0)*30), 8).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        ThunderBrake2 = core.DamageSkill("썬더브레이크", 100, (750 + vEhc.getV(0,0)*30)*0.9, 8).wrap(core.DamageSkillWrapper)
-        ThunderBrake3 = core.DamageSkill("썬더브레이크", 100, (750 + vEhc.getV(0,0)*30)*0.8, 8).wrap(core.DamageSkillWrapper)
-        ThunderBrake4 = core.DamageSkill("썬더브레이크", 100, (750 + vEhc.getV(0,0)*30)*0.7, 8).wrap(core.DamageSkillWrapper)
-        ThunderBrake5 = core.DamageSkill("썬더브레이크", 100, (750 + vEhc.getV(0,0)*30)*0.6, 8).wrap(core.DamageSkillWrapper)
-        ThunderBrake6 = core.DamageSkill("썬더브레이크", 100, (750 + vEhc.getV(0,0)*30)*0.5, 8).wrap(core.DamageSkillWrapper)
-        ThunderBrake7 = core.DamageSkill("썬더브레이크", 100, (750 + vEhc.getV(0,0)*30)*0.4, 8).wrap(core.DamageSkillWrapper)
-        ThunderBrake8 = core.DamageSkill("썬더브레이크", 70, (750 + vEhc.getV(0,0)*30)*0.3, 8).wrap(core.DamageSkillWrapper)
+        ThunderBrake2 = core.DamageSkill("썬더브레이크(1)", 100, (750 + vEhc.getV(0,0)*30)*0.9, 8).wrap(core.DamageSkillWrapper)
+        ThunderBrake3 = core.DamageSkill("썬더브레이크(2)", 100, (750 + vEhc.getV(0,0)*30)*0.8, 8).wrap(core.DamageSkillWrapper)
+        ThunderBrake4 = core.DamageSkill("썬더브레이크(3)", 100, (750 + vEhc.getV(0,0)*30)*0.7, 8).wrap(core.DamageSkillWrapper)
+        ThunderBrake5 = core.DamageSkill("썬더브레이크(4)", 100, (750 + vEhc.getV(0,0)*30)*0.6, 8).wrap(core.DamageSkillWrapper)
+        ThunderBrake6 = core.DamageSkill("썬더브레이크(5)", 100, (750 + vEhc.getV(0,0)*30)*0.5, 8).wrap(core.DamageSkillWrapper)
+        ThunderBrake7 = core.DamageSkill("썬더브레이크(6)", 100, (750 + vEhc.getV(0,0)*30)*0.4, 8).wrap(core.DamageSkillWrapper)
+        ThunderBrake8 = core.DamageSkill("썬더브레이크(7)", 70, (750 + vEhc.getV(0,0)*30)*0.3, 8).wrap(core.DamageSkillWrapper)
         
         SpiritOfSnow = core.SummonSkill("스피릿 오브 스노우", 720, 3000, 500+36*vEhc.getV(3,1), 9, 30000, red = True, cooltime = 120*1000).isV(vEhc, 3,1).wrap(core.SummonSkillWrapper)
         
@@ -213,16 +213,11 @@ class JobGenerator(ck.JobGenerator):
         SoulContract = globalSkill.soul_contract()
         SoulContract.set_disabled_and_time_left(72000)
 
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return(ChainLightening,
                 [Infinity, Meditation, EpicAdventure, OverloadMana, FrostEffect,
                 globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                SoulContract],
-                [IceAgeHolder, Blizzard, LighteningSpear, ThunderBrake],
-                [Elquiness, IceAura, IceAge, FrozenOrbEjac, SpiritOfSnow],
-                [],
-                ChainLightening)
-
-        return schedule
+                SoulContract] +\
+                [IceAgeHolder, Blizzard, LighteningSpear, ThunderBrake] +\
+                [Elquiness, IceAura, IceAge, FrozenOrbEjac, SpiritOfSnow] +\
+                [] +\
+                [ChainLightening])

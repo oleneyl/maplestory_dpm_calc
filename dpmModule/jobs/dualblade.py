@@ -77,12 +77,12 @@ class JobGenerator(ck.JobGenerator):
         ReadyToDie = core.BuffSkill("레디 투 다이", 780, 15*1000, red = True, cooltime = (90-int(0.5*vEhc.getV(1,1)))*1000, pdamage_indep = 30+int(0.2*vEhc.getV(1,1))).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         
         BladeStorm = core.DamageSkill("블레이드 스톰", 660, 580+23*vEhc.getV(0,0), 7, red = True, cooltime = 90000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        BladeStormTick = core.DamageSkill("블레이드 스톰", 210, 350+10*vEhc.getV(0,0), 5, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  #10000/210 타
+        BladeStormTick = core.DamageSkill("블레이드 스톰(틱)", 210, 350+10*vEhc.getV(0,0), 5, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  #10000/210 타
         
         KarmaFury = core.DamageSkill("카르마 퓨리", 990, 600+24*vEhc.getV(6,6), 7 * 3, red = True, cooltime = 10000).isV(vEhc,6,6).wrap(core.DamageSkillWrapper)  #보스전에서 사용하지 않음
         BladeTornado = core.DamageSkill("블레이드 토네이도", 720, 600+24*vEhc.getV(2,2), 7, cooltime = 12000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        BladeTornadoFront = core.DamageSkill("블레이드 토네이도", 0, 600+24*vEhc.getV(2,2), 6, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)   #보통 1타
-        BladeTornadoSummon = core.SummonSkill("블레이드 토네이도", 0, 540, 450+18*vEhc.getV(2,2), 6, 2000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #임의 딜레이, 미사용
+        BladeTornadoFront = core.DamageSkill("블레이드 토네이도(전방)", 0, 600+24*vEhc.getV(2,2), 6, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)   #보통 1타
+        BladeTornadoSummon = core.SummonSkill("블레이드 토네이도(소환)", 0, 540, 450+18*vEhc.getV(2,2), 6, 2000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #임의 딜레이, 미사용
         
         ######   Skill Wrapper   ######
     
@@ -103,16 +103,13 @@ class JobGenerator(ck.JobGenerator):
         BladeTornado.onAfter(BladeTornadoFront)
         
         UltimateDarksight.onAfter(DarkSight.controller(30000, "set_enabled_and_time_left"))
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return(PhantomBlow,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Booster, MirrorImaging, DarkSight, FinalCutBuff, EpicAdventure, FlashBangDebuff, HiddenBladeBuff, UltimateDarksight, ReadyToDie,
-                    globalSkill.soul_contract()],
-                [FinalCut, FlashBang, Asura, BladeStorm, BladeTornado, SuddenRaid],
-                [SuddenRaidDOT, Venom],
-                [],
-                PhantomBlow)
+                    globalSkill.soul_contract()] +\
+                [FinalCut, FlashBang, Asura, BladeStorm, BladeTornado, SuddenRaid] +\
+                [SuddenRaidDOT, Venom] +\
+                [] +\
+                [PhantomBlow])
         
         return schedule

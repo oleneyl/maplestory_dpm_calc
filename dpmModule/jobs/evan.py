@@ -81,7 +81,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery,Interaction]
     
-    def getMergedSkill(self, sname, tick, mirRem, vEhc = None, passive = False):
+    def getMergedSkill(self, sname, tick, mirRem, vEhc = None, passive = False, nametag = ''):
         '''You must give vEnhance and vlevel.
         mirRem : 미르 제한조건 버프.
         '''
@@ -89,28 +89,28 @@ class JobGenerator(ck.JobGenerator):
         #SwiftOfWind 
         #DiveOfThunder
         if sname == "스위프트 오브 썬더":
-            SwiftOfThunderTick = core.DamageSkill("스위프트 오브 썬더", 330, 150+80+300, 6 + 1, cooltime = 8000) # 5회 공격 별그림
-            SwiftOfThunder = core.SummonSkill("스위프트 오브 썬더", 0, 330, 150+80+300, 6+1, tick * 330 - 1, cooltime = (-1 if passive else 8000)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+            SwiftOfThunderTick = core.DamageSkill("스위프트 오브 썬더"+nametag, 330, 150+80+300, 6 + 1, cooltime = 8000) # 5회 공격 별그림
+            SwiftOfThunder = core.SummonSkill("스위프트 오브 썬더(소환)", 0, 330, 150+80+300, 6+1, tick * 330 - 1, cooltime = (-1 if passive else 8000)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
             SwiftOfThunder.onAfter(mirRem.controller(330*tick, "set_enabled_and_time_left"))
             return SwiftOfThunder
         elif sname =="브레스 오브 윈드":
-            BreathOfWindTick = core.DamageSkill("브레스 오브 윈드", 450, 215, 5, cooltime = 7500) # 3.5초 지속, 8회 공격
-            BreathOfWind = core.SummonSkill("브레스 오브 윈드", 0, 450, 215, 5, tick * 450 - 1, cooltime = (-1 if passive else 7500)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
+            BreathOfWindTick = core.DamageSkill("브레스 오브 윈드(틱)", 450, 215, 5, cooltime = 7500) # 3.5초 지속, 8회 공격
+            BreathOfWind = core.SummonSkill("브레스 오브 윈드"+nametag, 0, 450, 215, 5, tick * 450 - 1, cooltime = (-1 if passive else 7500)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
             BreathOfWind.onAfter(mirRem.controller(450*tick, "set_enabled_and_time_left"))
             return BreathOfWind
         elif sname == "브레스 오브 어스":
-            BreathOfEarthTick = core.DamageSkill("브레스 오브 어스", 480, 280, 5, cooltime = 7500) #3.5초 지속, 7회 공격
-            BreathOfEarth = core.SummonSkill("브레스 오브 어스", 0, 480, 280, 5, tick * 480 - 1, cooltime = (-1 if passive else 7500)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+            BreathOfEarthTick = core.DamageSkill("브레스 오브 어스(틱)", 480, 280, 5, cooltime = 7500) #3.5초 지속, 7회 공격
+            BreathOfEarth = core.SummonSkill("브레스 오브 어스"+nametag, 0, 480, 280, 5, tick * 480 - 1, cooltime = (-1 if passive else 7500)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
             BreathOfEarth.onAfter(mirRem.controller(480*tick, "set_enabled_and_time_left"))
             return BreathOfEarth
         elif sname == "다이브 오브 어스":
-            DiveOfEarthTick = core.DamageSkill("다이브 오브 어스", 480, 190 + 420, 6, cooltime = 6000, modifier = MDF(pdamage = 20)) # 4타
-            DiveOfEarth = core.SummonSkill("다이브 오브 어스", 0, 480, 190+420, 6, tick * 480 - 1, cooltime = (-1 if passive else 6000), modifier = MDF(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+            DiveOfEarthTick = core.DamageSkill("다이브 오브 어스(틱)", 480, 190 + 420, 6, cooltime = 6000, modifier = MDF(pdamage = 20)) # 4타
+            DiveOfEarth = core.SummonSkill("다이브 오브 어스"+nametag, 0, 480, 190+420, 6, tick * 480 - 1, cooltime = (-1 if passive else 6000), modifier = MDF(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
             DiveOfEarth.onAfter(mirRem.controller(480*tick, "set_enabled_and_time_left"))
             return DiveOfEarth
         elif sname == "임페리얼 브레스":
-            ImperialBreathTick = core.DamageSkill("임페리얼 브레스", 250, 500+20*vEhc.getV(3,1), 7)# 4초 지속, 16타
-            ImperialBreath = core.SummonSkill("임페리얼 브레스", 0, 250, 500+20*vEhc.getV(3,1), 7, tick * 250 - 1, cooltime = (-1 if passive else 60000)).isV(vEhc,3,1).wrap(core.SummonSkillWrapper)
+            ImperialBreathTick = core.DamageSkill("임페리얼 브레스(틱)", 250, 500+20*vEhc.getV(3,1), 7)# 4초 지속, 16타
+            ImperialBreath = core.SummonSkill("임페리얼 브레스"+nametag, 0, 250, 500+20*vEhc.getV(3,1), 7, tick * 250 - 1, cooltime = (-1 if passive else 60000)).isV(vEhc,3,1).wrap(core.SummonSkillWrapper)
             ImperialBreath.onAfter(mirRem.controller(250 * tick, "set_enabled_and_time_left"))
             return ImperialBreath
         else:
@@ -177,7 +177,7 @@ class JobGenerator(ck.JobGenerator):
 
         DragonBreak = core.DamageSkill("드래곤 브레이크", 0, 450+18*vEhc.getV(5,5), 7 * 6, cooltime = 20000).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)# 420초 6타
 
-        ZodiakRayInit = core.DamageSkill("조디악 레이", 780, 0, 0, cooltime = 180000, red = True).isV(vEhc,4,2).wrap(core.DamageSkillWrapper)
+        ZodiakRayInit = core.DamageSkill("조디악 레이(개시)", 780, 0, 0, cooltime = 180000, red = True).isV(vEhc,4,2).wrap(core.DamageSkillWrapper)
         ZodiakRay = core.SummonSkill("조디악 레이", 0, 180, 400+16*vEhc.getV(4,2), 6, 180*71, modifier = MDF(armor_ignore = 100), cooltime = -1).isV(vEhc,4,2).wrap(core.SummonSkillWrapper)
         #14+vlevel//10초간 지속, 남은 시간동안 마법진 해방 딜 180ms마다. : 426타 가정( = 71타)
         
@@ -212,7 +212,7 @@ class JobGenerator(ck.JobGenerator):
         BreathOfWind.onBefore(DragonBreathForBOW)
 
         #브오윈 - 조디악
-        BreathOfWindZodiak = self.getMergedSkill("브레스 오브 윈드", 1, MirBuff, vEhc = vEhc)
+        BreathOfWindZodiak = self.getMergedSkill("브레스 오브 윈드", 1, MirBuff, vEhc = vEhc, nametag = '조디악')
         #임페리얼
         ImperialBreath = self.getMergedSkill("임페리얼 브레스", 16, MirBuff, vEhc = vEhc, passive = True)
         ElementalBlast.onAfter(ElementalBlastBuff)
@@ -242,16 +242,11 @@ class JobGenerator(ck.JobGenerator):
         for i in [SwiftOfThunder, DiveOfEarth, BreathOfEarth, ImperialBreath, CircleOfMana, BreathOfWind]:
             i.onAfter(DragonSparking)
             
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return(CircleOfMana,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     OverloadMana, Booster, OnixBless, Frid, HerosOath, SwiftBack, ElementalBlastBuff,
-                    globalSkill.soul_contract()],
-                [ZodiakRayInit, DragonBreak, MagicParticle],
-                [BreathBack, SummonOnixDragon, ZodiakRay, ImperialBreath, SwiftOfThunder, DiveOfEarth, BreathOfWind, BreathOfWindZodiak],
-                [MirBuff],
-                CircleOfMana)
-                
-        return schedule
+                    globalSkill.soul_contract()] +\
+                [ZodiakRayInit, DragonBreak, MagicParticle] +\
+                [BreathBack, SummonOnixDragon, ZodiakRay, ImperialBreath, SwiftOfThunder, DiveOfEarth, BreathOfWind, BreathOfWindZodiak] +\
+                [MirBuff] +\
+                [CircleOfMana])

@@ -116,16 +116,11 @@ class JobGenerator(ck.JobGenerator):
         QuibberFullBurst.onAfter(QuibberFullBurstDOT)
     
         ### Exports ###
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return(ArrowOfStorm,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_wind_booster(),
                     SoulArrow, AdvancedQuibber, Preparation, EpicAdventure, ArrowRainBuff, CriticalReinforce,
-                    globalSkill.soul_contract()],
-                [],
-                [Evolve, ArrowFlatter, ArrowRain, Pheonix, GuidedArrow, QuibberFullBurst, ImageArrow],
-                [],
-                ArrowOfStorm)
-
-        return schedule
+                    globalSkill.soul_contract()] +\
+                [] +\
+                [Evolve, ArrowFlatter, ArrowRain, Pheonix, GuidedArrow, QuibberFullBurst, ImageArrow] +\
+                [] +\
+                [ArrowOfStorm])

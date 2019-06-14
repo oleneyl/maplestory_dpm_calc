@@ -70,11 +70,11 @@ class JobGenerator(ck.JobGenerator):
         
         SoulContract = core.BuffSkill("소울 컨트랙트", 600, 10000, rem = True, red = True, cooltime = 90000, pdamage = 90).wrap(core.BuffSkillWrapper)
         SoulSeekerExpert = core.DamageSkill("소울 시커", 0, 320 * 0.75, 1 * 0.35 * 6.03).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        SoulSeekerExpert_PR = core.DamageSkill("소울 시커", 0, 320 * 0.75, 1 * 0.5 * 6.03).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        SoulSeekerExpert_PR = core.DamageSkill("소울 시커(프라이멀 로어)", 0, 320 * 0.75, 1 * 0.5 * 6.03).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
         Trinity_1 = core.DamageSkill("트리니티", 470, 650, 2+1, modifier = core.CharacterModifier(pdamage =20, armor_ignore=20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(1타)")
-        Trinity_2 = core.DamageSkill("트리니티", 470, 650, 3+1, modifier = core.CharacterModifier(pdamage =20, armor_ignore=20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(2타)")
-        Trinity_3 = core.DamageSkill("트리니티", 470-340, 650, 4+1, modifier = core.CharacterModifier(pdamage =20, armor_ignore=20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(3타)")
+        Trinity_2 = core.DamageSkill("트리니티(2타)", 470, 650, 3+1, modifier = core.CharacterModifier(pdamage =20, armor_ignore=20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(2타)")
+        Trinity_3 = core.DamageSkill("트리니티(3타)", 470-340, 650, 4+1, modifier = core.CharacterModifier(pdamage =20, armor_ignore=20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(3타)")
         
         FinaturaFettuccia = core.DamageSkill("피나투라 페투치아", 540, 4000, 1, red = True, cooltime = 40000*0.75).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         FinaturaFettucciaBuff = core.BuffSkill("피나투라 페투치아(버프)", 0, 20000, cooltime = -1, pdamage_indep=25+10).wrap(core.BuffSkillWrapper)
@@ -124,17 +124,12 @@ class JobGenerator(ck.JobGenerator):
         Overdrive.onAfter(OverdrivePenalty.controller(30*1000))
         
     
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return (Trinity_1,
                 [Booster, SoulGaze, LuckyDice, FinalContract,
                     SoulExult, SoulContract,Overdrive, OverdrivePenalty,
                     FinaturaFettucciaBuff, SpotLightBuff, MascortFamilier,
-                    globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster()],
-                [FinaturaFettuccia, EnergyBurst],
-                [SuperNova, MascortFamilierAttack, ShinyBubbleBreath, SpotLight],
-                [],
-                Trinity_1)
-        
-        return schedule
+                    globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster()] +\
+                [FinaturaFettuccia, EnergyBurst] +\
+                [SuperNova, MascortFamilierAttack, ShinyBubbleBreath, SpotLight] +\
+                [] +\
+                [Trinity_1])

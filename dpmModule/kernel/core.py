@@ -836,12 +836,12 @@ class GraphElement():
     def _use(self):
         return self._result_object_cache
         
-    def build_task(self):
+    def build_task(self, **kwargs):
         task = Task(self, self._use)
         self.sync(task)
         return task
         
-    def spend_time(self):
+    def spend_time(self, time):
         return
 
     def onRun(self, el):
@@ -906,7 +906,7 @@ class TaskHolder(GraphElement):
         elif lang == "en":
             return "type:task holder\nname:%s" % self._id
         
-    def build_task(self):
+    def build_task(self, **kwargs):
         task = self._taskholder.copy()
         self.sync(task)
         return task
@@ -952,7 +952,7 @@ class OptionalElement(GraphElement):
         elif lang == "en":
             return "type:Optional Element\nname:%s" % self._id
         
-    def build_task(self):
+    def build_task(self, **kwargs):
         if self.fail == None:
             fail = None
         else:

@@ -22,7 +22,7 @@ class JaguerStack(core.DamageSkillWrapper, core.TimeStackSkillWrapper):
     def __init__(self, level, vEhc):
         self.level = level
         self.modifier = core.CharacterModifier()
-        skill = core.DamageSkill("어나더 바이트", 9999999999, 0, 0).setV(vEhc, 1, 2, False)
+        skill = core.DamageSkill("어나더 바이트", 0, 0, 0, cooltime=-1).setV(vEhc, 1, 2, False)
         super(core.DamageSkillWrapper, self).__init__(skill, 3)
         
     def addStack(self, vary, left):
@@ -36,6 +36,9 @@ class JaguerStack(core.DamageSkillWrapper, core.TimeStackSkillWrapper):
         mdf = self.get_modifier()
         dmg = 60*self.getStack() + int(self.level/3)
         return core.ResultObject(0, mdf,  dmg, sname = self._id, spec = 'deal')
+
+    def is_usable(self):
+        return False
 
 ######   Passive Skill   ######
 
@@ -93,12 +96,12 @@ class JobGenerator(ck.JobGenerator):
         JaguarSoul = core.DamageSkill("재규어 소울", 0, 1000+20*chtr.level, 1, cooltime = 210000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         RampageAsOne = core.DamageSkill("램피지 애즈 원", 0, 500+1*chtr.level, 9, cooltime=12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
     
-        Normal_JG = core.DamageSkill("재규어 공격",          0, (140+chtr.level)*(62+vEhc.getV(0,0))*0.01, 1 * JAGUERNUMBER, cooltime = 60000/37, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        ClawCut_JG = core.DamageSkill("클로우 컷",           0, (200+chtr.level)*(62+vEhc.getV(0,0))*0.01, 4 * JAGUERNUMBER, cooltime = 5000*0.9, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        Crossroad_JG = core.DamageSkill("크로스 로드",       0, (450+2*chtr.level)*(62+vEhc.getV(0,0))*0.01, 1 * JAGUERNUMBER, cooltime = 6000*0.9, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
-        SonicBoom_JG = core.DamageSkill("소닉 붐",           0, (220+chtr.level)*(62+vEhc.getV(0,0))*0.01, 6 * JAGUERNUMBER, cooltime = 6000*0.9, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        JaguarSoul_JG = core.DamageSkill("재규어 소울",      0, (1000+20*chtr.level)*(62+vEhc.getV(0,0))*0.01, 1 * JAGUERNUMBER, cooltime = 210000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        RampageAsOne_JG = core.DamageSkill("램피지 애즈 원", 0, (500+1*chtr.level)*(62+vEhc.getV(0,0))*0.01, 9 * JAGUERNUMBER, cooltime=12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        Normal_JG = core.DamageSkill("재규어 공격(여럿)",          0, (140+chtr.level)*(62+vEhc.getV(0,0))*0.01, 1 * JAGUERNUMBER, cooltime = 60000/37, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        ClawCut_JG = core.DamageSkill("클로우 컷(여럿)",           0, (200+chtr.level)*(62+vEhc.getV(0,0))*0.01, 4 * JAGUERNUMBER, cooltime = 5000*0.9, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        Crossroad_JG = core.DamageSkill("크로스 로드(여럿)",       0, (450+2*chtr.level)*(62+vEhc.getV(0,0))*0.01, 1 * JAGUERNUMBER, cooltime = 6000*0.9, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
+        SonicBoom_JG = core.DamageSkill("소닉 붐(여럿)",           0, (220+chtr.level)*(62+vEhc.getV(0,0))*0.01, 6 * JAGUERNUMBER, cooltime = 6000*0.9, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        JaguarSoul_JG = core.DamageSkill("재규어 소울(여럿)",      0, (1000+20*chtr.level)*(62+vEhc.getV(0,0))*0.01, 1 * JAGUERNUMBER, cooltime = 210000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        RampageAsOne_JG = core.DamageSkill("램피지 애즈 원(여럿)", 0, (500+1*chtr.level)*(62+vEhc.getV(0,0))*0.01, 9 * JAGUERNUMBER, cooltime=12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
     
     
         ######   Skill   ######
@@ -112,8 +115,8 @@ class JobGenerator(ck.JobGenerator):
         
         WillOfLiberty = core.BuffSkill("윌 오브 리버티", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        FinalAttack70 = core.DamageSkill("파이널 어택", 0, 210, 0.7).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        FinalAttack100 = core.DamageSkill("파이널 어택", 0, 210, 1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        FinalAttack70 = core.DamageSkill("파이널 어택(70)", 0, 210, 0.7).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        FinalAttack100 = core.DamageSkill("파이널 어택(100)", 0, 210, 1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
         HuntingUnit = core.SummonSkill("헌팅 유닛", 660, 31000/90, 150, 1.5, 31000).setV(vEhc, 4, 3, False).wrap(core.SummonSkillWrapper)
     
@@ -149,16 +152,11 @@ class JobGenerator(ck.JobGenerator):
         JaguarSoul.onAfter(core.OptionalElement(JaguerStorm.is_active, JaguarSoul_JG))
         RampageAsOne.onAfter(core.OptionalElement(JaguerStorm.is_active, RampageAsOne_JG))
     
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return(WildBalkan,
                 [globalSkill.maple_heros(chtr.level),
                     CriticalReinforce, SoulArrow, Booster, Hauling, BeastForm, SharpEyes, SilentRampage, JaguerStorm,
-                    globalSkill.soul_contract()],
-                [Normal, ClawCut, Crossroad, SonicBoom, JaguarSoul, RampageAsOne],
-                [HuntingUnit, GuidedArrow, RegistanceLineInfantry, WildGrenade],
-                [JaguerStorm, AnotherBite],
-                WildBalkan)
-
-        return schedule
+                    globalSkill.soul_contract()] +\
+                [Normal, ClawCut, Crossroad, SonicBoom, JaguarSoul, RampageAsOne] +\
+                [HuntingUnit, GuidedArrow, RegistanceLineInfantry, WildGrenade] +\
+                [AnotherBite] +\
+                [WildBalkan])

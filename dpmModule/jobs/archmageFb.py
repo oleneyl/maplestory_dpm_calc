@@ -97,7 +97,7 @@ class JobGenerator(ck.JobGenerator):
         
         DotPunisher = core.DamageSkill("도트 퍼니셔", 870, (400+vEhc.getV(0,0)*15), 5*(1+19*0.75), cooltime = 25 * 1000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)#=775*(1+0.75*19)*5
         PoisonNova = core.DamageSkill("포이즌 노바", 750, 500 + 20*vEhc.getV(2,1), 6, cooltime = 25*1000).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
-        PoisonNovaErupt = core.DamageSkill("포이즌 노바", 0, 400 + 18*vEhc.getV(2,1), 6 * (3 + 0.50)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)   #4히트
+        PoisonNovaErupt = core.DamageSkill("포이즌 노바(폭발)", 0, 400 + 18*vEhc.getV(2,1), 6 * (3 + 0.50)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)   #4히트
     
         Meteor = core.DamageSkill("메테오", 870, 935+combat*10, 4, cooltime = 45 * 1000).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
         MegidoFlame = core.DamageSkill("메기도 플레임", 690, 700, 9, cooltime = 50 * 1000).setV(vEhc, 8, 2, True).wrap(core.DamageSkillWrapper)
@@ -112,13 +112,13 @@ class JobGenerator(ck.JobGenerator):
         Ignite = core.DamageSkill("이그나이트", 0, 110*0.5, 3).setV(vEhc, 3, 4, False).wrap(core.DamageSkillWrapper)
         #Ignite : Need Wrapper
         
-        ParalyzeDOT = core.DotSkill("도트", 240, 10000).wrap(core.SummonSkillWrapper)
-        MistDOT = core.DotSkill("도트", 240, 12000).wrap(core.SummonSkillWrapper)
-        HeizeFlameDOT = core.DotSkill("도트", 200, 20000).wrap(core.SummonSkillWrapper)
-        TeleportMasteryDOT = core.DotSkill("도트", 49, 8000).wrap(core.SummonSkillWrapper)
-        MegidoFlameDOT = core.DotSkill("도트", 700, 60000).wrap(core.SummonSkillWrapper)
-        DotPunisherDOT = core.DotSkill("도트", 200+3*vEhc.getV(0,0), 16000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
-        PoisonNovaDOT = core.DotSkill("도트", 300+12*vEhc.getV(2,1), 20000).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
+        ParalyzeDOT = core.DotSkill("도트(패럴라이즈)", 240, 10000).wrap(core.SummonSkillWrapper)
+        MistDOT = core.DotSkill("도트(포이즌 미스트)", 240, 12000).wrap(core.SummonSkillWrapper)
+        HeizeFlameDOT = core.DotSkill("도트(헤이즈 플레임)", 200, 20000).wrap(core.SummonSkillWrapper)
+        TeleportMasteryDOT = core.DotSkill("도트(텔레포트 마스터리)", 49, 8000).wrap(core.SummonSkillWrapper)
+        MegidoFlameDOT = core.DotSkill("도트(메기도 플레임)", 700, 60000).wrap(core.SummonSkillWrapper)
+        DotPunisherDOT = core.DotSkill("도트(도트 퍼니셔)", 200+3*vEhc.getV(0,0), 16000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        PoisonNovaDOT = core.DotSkill("도트(포이즌 노바)", 300+12*vEhc.getV(2,1), 20000).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         
         
         Infinity = InfinityWrapper()
@@ -140,19 +140,12 @@ class JobGenerator(ck.JobGenerator):
         SoulContract = globalSkill.soul_contract()
         SoulContract.set_disabled_and_time_left(72000)       
 
-
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return (Paralyze, 
                 [Infinity, Meditation, EpicAdventure, OverloadMana.ensure(vEhc,1,5),
                 globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                SoulContract],
-                [DotPunisher.ensure(vEhc,0,0), Meteor, MegidoFlame, FlameHeize, PoisonNova.ensure(vEhc,2,1)],
+                SoulContract] +\
+                [DotPunisher.ensure(vEhc,0,0), Meteor, MegidoFlame, FlameHeize, PoisonNova.ensure(vEhc,2,1)] +\
                 [Ifritt, FireAura, FuryOfIfritt.ensure(vEhc,3,2),
-                    ParalyzeDOT, MistDOT, HeizeFlameDOT, TeleportMasteryDOT, MegidoFlameDOT, DotPunisherDOT.ensure(vEhc,0,0), PoisonNovaDOT.ensure(vEhc,2,1)],
-                [],
-                Paralyze)
-
-        return schedule
-    
+                    ParalyzeDOT, MistDOT, HeizeFlameDOT, TeleportMasteryDOT, MegidoFlameDOT, DotPunisherDOT.ensure(vEhc,0,0), PoisonNovaDOT.ensure(vEhc,2,1)] +\
+                [] +\
+                [Paralyze])

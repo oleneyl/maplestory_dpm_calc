@@ -68,7 +68,7 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
     
         SummonCrew = core.SummonSkill("어셈블 크루", 900, 60000/17, 465 * 1.15, 2, 120000, rem = True).setV(vEhc, 6, 2, True).wrap(core.SummonSkillWrapper)   #분당 17타, 평균 퍼뎀 465
-        SummonCrewBuff = core.BuffSkill("어셈블 크루", 0, 120000, rem = True, crit = 15/2, crit_damage = 5/2, cooltime = -1, att = 45).wrap(core.BuffSkillWrapper)
+        SummonCrewBuff = core.BuffSkill("어셈블 크루(버프)", 0, 120000, rem = True, crit = 15/2, crit_damage = 5/2, cooltime = -1, att = 45).wrap(core.BuffSkillWrapper)
     
         OctaQuaterdeck = core.SummonSkill("옥타 쿼터덱", 630, 60000/110, 300, 1, 30000, rem = True, cooltime = 10000).setV(vEhc, 5, 2, True).wrap(core.SummonSkillWrapper)
         RapidFire = core.DamageSkill("래피드 파이어", 120, 325, 1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
@@ -76,8 +76,8 @@ class JobGenerator(ck.JobGenerator):
         BattleshipBomber = core.DamageSkill("배틀쉽 봄버", 0,0,0, red = True, cooltime = 30000).wrap(core.DamageSkillWrapper)
         BattleshipBomber_1_ON = core.BuffSkill("배틀쉽봄버-1", 0, 30000, rem = True, cooltime = -1).wrap(core.BuffSkillWrapper)
         BattleshipBomber_2_ON = core.BuffSkill("배틀쉽봄버-2", 0, 30000, rem = True, cooltime = -1).wrap(core.BuffSkillWrapper)
-        BattleshipBomber_1 = core.SummonSkill("배틀쉽 봄버", 300, 600, 249, 3, 30000, rem = True, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
-        BattleshipBomber_2 = core.SummonSkill("배틀쉽 봄버", 300, 600, 249, 3, 30000, rem = True, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
+        BattleshipBomber_1 = core.SummonSkill("배틀쉽 봄버(소환,1)", 300, 600, 249, 3, 30000, rem = True, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
+        BattleshipBomber_2 = core.SummonSkill("배틀쉽 봄버(소환, 2)", 300, 600, 249, 3, 30000, rem = True, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
         '''
         돈틀레스 : 275 보통 13/22 타수3 600
         블랙바크 : 445 느림 15/18 타수3 810
@@ -90,7 +90,7 @@ class JobGenerator(ck.JobGenerator):
         Nautilus = core.DamageSkill("노틸러스", 690, 440+130, 7, red = True, cooltime = 30000).setV(vEhc, 8, 2, True).wrap(core.DamageSkillWrapper)
         PirateStyle = core.BuffSkill("파이렛 스타일", 0, 180000, rem = True, patt = 20).wrap(core.BuffSkillWrapper)
         CaptainDignitiyNormal = core.DamageSkill("캡틴 디그니티", 0, 275, 1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        CaptainDignitiyEnhance = core.DamageSkill("캡틴 디그니티", 0, 275*1.3, 1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper, name = "디그니티(강화)")
+        CaptainDignitiyEnhance = core.DamageSkill("캡틴 디그니티(강화)", 0, 275*1.3, 1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper, name = "디그니티(강화)")
         
         QuickDraw = core.BuffSkill("퀵 드로우", 0, 10, cooltime = -1, pdamage_indep = 25).wrap(core.BuffSkillWrapper)
         
@@ -109,11 +109,11 @@ class JobGenerator(ck.JobGenerator):
         OverdrivePenalty = core.BuffSkill("오버드라이브(페널티)", 0, (40 - 0.2*vEhc.getV(4,4))*1000, cooltime = -1, att = -15*1.5).isV(vEhc,4,4).wrap(core.BuffSkillWrapper) #페널티
         
         BulletParty = core.DamageSkill("불릿 파티", 0, 0, 0, cooltime = 75000).wrap(core.DamageSkillWrapper)
-        BulletPartyTick = core.DamageSkill("불릿 파티", 240, 230+9*vEhc.getV(5,5), 5).isV(vEhc,5,5).wrap(core.DamageSkillWrapper) #임의 딜레이, 사용안함.
+        BulletPartyTick = core.DamageSkill("불릿 파티(틱)", 240, 230+9*vEhc.getV(5,5), 5).isV(vEhc,5,5).wrap(core.DamageSkillWrapper) #임의 딜레이, 사용안함.
         
         DeadEye = core.DamageSkill("데드아이", 600, (800+32*vEhc.getV(3,3))*3, 6, cooltime = 30000, red = True, modifier = core.CharacterModifier(crit = 100, pdamage_indep = 4*11)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
         NautillusAssult = core.SummonSkill("노틸러스 어썰트", 900, 360, 600+24*vEhc.getV(0,0), 6, 360*7-1, red = True, cooltime = 180000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)#7회 2초간
-        NautillusAssult_2 = core.SummonSkill("노틸러스 어썰트", 0, 160, 300+12*vEhc.getV(0,0), 12, 160*36-1, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)#36회 6초간
+        NautillusAssult_2 = core.SummonSkill("노틸러스 어썰트(2)", 0, 160, 300+12*vEhc.getV(0,0), 12, 160*36-1, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)#36회 6초간
         ######   Skill Wrapper   ######
     
         #크루 사용 후 버프 제공
@@ -137,17 +137,14 @@ class JobGenerator(ck.JobGenerator):
         #디그니티
         RapidFire.onAfter(CaptainDignitiy)
     
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return (RapidFire,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     SummonCrewBuff, PirateStyle, Booster, InfiniteBullet, LuckyDice, UnwierdingNectar, EpicAdventure, PirateFlag, Overdrive, OverdrivePenalty,
                     BattleshipBomber_1_ON, BattleshipBomber_2_ON,
-                    globalSkill.soul_contract()],
-                [BattleshipBomber, Headshot, Nautilus, DeadEye],
-                [OctaQuaterdeck, BattleshipBomber_1, BattleshipBomber_2, NautillusAssult, NautillusAssult_2, SummonCrew],
-                [],
-                RapidFire)
+                    globalSkill.soul_contract()] +\
+                [BattleshipBomber, Headshot, Nautilus, DeadEye] +\
+                [OctaQuaterdeck, BattleshipBomber_1, BattleshipBomber_2, NautillusAssult, NautillusAssult_2, SummonCrew] +\
+                [] +\
+                [RapidFire])
         
         return schedule

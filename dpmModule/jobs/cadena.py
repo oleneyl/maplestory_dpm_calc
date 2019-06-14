@@ -125,8 +125,8 @@ class JobGenerator(ck.JobGenerator):
         #ChainArts_ToughHustle = core.DamageSkill("체인아츠:터프허슬", 5000000, 600, 2).setV(vEhc, 0, 2, False) #지속형, 6초, 미사용
         
         ChainArts_takedown = core.DamageSkill("체인아츠:테이크다운", 5360, 990, 15, cooltime = 150*1000, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        ChainArts_takedown_wave = core.DamageSkill("체인아츠:테이크다운", 0, 600, 16, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        ChainArts_takedown_final = core.DamageSkill("체인아츠:테이크다운", 0, 5000, 1, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        ChainArts_takedown_wave = core.DamageSkill("체인아츠:테이크다운(파동)", 0, 600, 16, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        ChainArts_takedown_final = core.DamageSkill("체인아츠:테이크다운(최종)", 0, 5000, 1, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         ChainArts_takedown_bind = core.BuffSkill("체인아츠:테이크다운(바인드)", 0, 15000, crit=2, crit_damage = 10, cooltime = -1).wrap(core.BuffSkillWrapper)
         #논체인아츠 스킬
         
@@ -272,22 +272,17 @@ class JobGenerator(ck.JobGenerator):
                         ChainArts_maelstorm, ChainArts_Fury_Damage]:
             s.onAfter(ProfessionalAgent_Attack)
             
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return(NormalAttack,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     WeaponVarietyAttack, Booster, SpecialPotion, ProfessionalAgent,
                     ReadyToDie, ChainArts_Fury, 
                     ChainArts_takedown_bind, SummonSlachingKnife_Horror, SummonBeatingNeedlebat_Honmy, VenomBurst_Poison, ChainArts_maelstorm_slow,
-                    globalSkill.soul_contract()],
+                    globalSkill.soul_contract()] +\
                 [ChainArts_takedown, AD_Odnunce_Final,
-                    WingDaggerBatCombo, BommBrickCombo, ShootgunClawCombo, SimiterChaseCombo, KnifeCombo],
-                [SummonThrowingWingdaggerInit, VenomBurst, AD_Odnunce, ChainArts_maelstorm],	#서먼 스로잉 위대거가 스스로 작동하는 문제점 해결 필요
+                    WingDaggerBatCombo, BommBrickCombo, ShootgunClawCombo, SimiterChaseCombo, KnifeCombo] +\
+                [SummonThrowingWingdaggerInit, VenomBurst, AD_Odnunce, ChainArts_maelstorm] +\
                 [ChainArts_Fury_Dummy, SummonShootingShotgun, SummonStretchingClaw,
                         SummonCuttingSimiter, SummonSlachingKnife,
                             SummonReleasingBoom, SummonStrikingBrick,
-                                SummonBeatingNeedlebat_1, SummonThrowingWingdagger],
-                NormalAttack)
-
-        return schedule
+                                SummonBeatingNeedlebat_1, SummonThrowingWingdagger] +\
+                [NormalAttack])

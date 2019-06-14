@@ -82,7 +82,7 @@ class JobGenerator(ck.JobGenerator):
         ICBMDOT = core.SummonSkill("ICBM(장판)", 0, 15000/27, (500+20*vEhc.getV(1,1)) * 0.45, 1 * 3, 15000, cooltime = -1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) #27타
     
         SpecialMonkeyEscort_Canon = core.SummonSkill("스페셜 몽키 에스코트", 780, int(45000 / 97), 300+12*vEhc.getV(2,2), 4, (30+int(0.5*vEhc.getV(2,2)))*1000 - 1500, cooltime = 120000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
-        SpecialMonkeyEscort_Boom = core.SummonSkill("스페셜 몽키 에스코트", 0, int(45000 / 17), 450+18*vEhc.getV(2,2), 7, (30+int(0.5*vEhc.getV(2,2)))*5000 - 1500, cooltime = 120000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
+        SpecialMonkeyEscort_Boom = core.SummonSkill("스페셜 몽키 에스코트(폭탄)", 0, int(45000 / 17), 450+18*vEhc.getV(2,2), 7, (30+int(0.5*vEhc.getV(2,2)))*5000 - 1500, cooltime = 120000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
         ### build graph relationships
     
         MonkeyWave.onAfter(MonkeyWaveBuff)
@@ -99,17 +99,12 @@ class JobGenerator(ck.JobGenerator):
     
         Overdrive.onAfter(OverdrivePenalty.controller(30*1000))
     
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return(CanonBuster,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Booster, MonkeyWaveBuff, MonkeyFuriousBuff, OakRulet, MonkeyMagic,
                     EpicAdventure, LuckyDice, Overdrive, OverdrivePenalty, PirateFlag,
-                    globalSkill.soul_contract()],
-                [MonkeyWave, MonkeyFurious, ICBM],
-                [OakRuletDOT, SupportMonkeyTwins, RollingCanonRainbow, BFGCannonball, ICBMDOT, SpecialMonkeyEscort_Boom, SpecialMonkeyEscort_Canon],
-                [],
-                CanonBuster)
-        
-        return schedule
+                    globalSkill.soul_contract()] +\
+                [MonkeyWave, MonkeyFurious, ICBM] +\
+                [OakRuletDOT, SupportMonkeyTwins, RollingCanonRainbow, BFGCannonball, ICBMDOT, SpecialMonkeyEscort_Boom, SpecialMonkeyEscort_Canon] +\
+                [] +\
+                [CanonBuster])

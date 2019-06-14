@@ -58,14 +58,14 @@ class JobGenerator(ck.JobGenerator):
         MagnumPunch_Revolve_Maximize = core.DamageSkill("매그넘 펀치(리볼빙 캐논)", 0, 180*1.5, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         ReleaseFileBunker = core.DamageSkill("릴리즈 파일 벙커", 600, 370, 8, modifier = core.CharacterModifier(pdamage = 20, armor_ignore = 80)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #임의 딜레이 600
-        ReleaseFileBunker_A = core.DamageSkill("릴리즈 파일 벙커", 0, 220, 6, modifier = core.CharacterModifier(pdamage = 15, armor_ignore = 80)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        ReleaseFileBunker_B = core.DamageSkill("릴리즈 파일 벙커", 0, 230, 6, modifier = core.CharacterModifier(pdamage = 15, armor_ignore = 80)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        ReleaseFileBunker_C = core.DamageSkill("릴리즈 파일 벙커", 0, 270, 6, modifier = core.CharacterModifier(pdamage = 15, armor_ignore = 80)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        ReleaseFileBunker_D = core.DamageSkill("릴리즈 파일 벙커", 0, 320, 6, modifier = core.CharacterModifier(pdamage = 15, armor_ignore = 80)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ReleaseFileBunker_A = core.DamageSkill("릴리즈 파일 벙커(A)", 0, 220, 6, modifier = core.CharacterModifier(pdamage = 15, armor_ignore = 80)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ReleaseFileBunker_B = core.DamageSkill("릴리즈 파일 벙커(B)", 0, 230, 6, modifier = core.CharacterModifier(pdamage = 15, armor_ignore = 80)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ReleaseFileBunker_C = core.DamageSkill("릴리즈 파일 벙커(C)", 0, 270, 6, modifier = core.CharacterModifier(pdamage = 15, armor_ignore = 80)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ReleaseFileBunker_D = core.DamageSkill("릴리즈 파일 벙커(D)", 0, 320, 6, modifier = core.CharacterModifier(pdamage = 15, armor_ignore = 80)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         DoublePang = core.DamageSkill("더블 팡", 0, 360, 4, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         DoublePang_Revolve = core.DamageSkill("더블 팡(리볼빙 캐논)", 0, 180, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        DoublePang_Revolve_Maximize = core.DamageSkill("더블 팡(리볼빙 캐논)", 0, 180*1.5, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        DoublePang_Revolve_Maximize = core.DamageSkill("더블 팡(리볼빙 캐논,맥시마이즈)", 0, 180*1.5, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         HammerSmash = core.DamageSkill("해머 스매시", 0, 200+195, 6, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         HammerSmashWave = core.SummonSkill("해머 스매시(충격파)", 0, 1500, 150, 2+2, 5000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
@@ -88,17 +88,17 @@ class JobGenerator(ck.JobGenerator):
         
         
         BunkerBuster = core.BuffSkill("벙커 버스터", 720, 45000, cooltime = 120000, rem = False).wrap(core.BuffSkillWrapper)    #임의딜레이 720
-        BunkerBusterAttack = core.DamageSkill("벙커 버스터", 0, 120 + 9* vEhc.getV(0,0), 8, modifier = core.CharacterModifier(armor_ignore = 100)).wrap(core.DamageSkillWrapper)
-        BunkerBusterAttack_Maximize = core.DamageSkill("벙커 버스터", 0, (120 + 9* vEhc.getV(0,0))*1.5, 8, modifier = core.CharacterModifier(armor_ignore = 100)).wrap(core.DamageSkillWrapper)
+        BunkerBusterAttack = core.DamageSkill("벙커 버스터(공격)", 0, 120 + 9* vEhc.getV(0,0), 8, modifier = core.CharacterModifier(armor_ignore = 100)).wrap(core.DamageSkillWrapper)
+        BunkerBusterAttack_Maximize = core.DamageSkill("벙커 버스터(맥시마이즈)", 0, (120 + 9* vEhc.getV(0,0))*1.5, 8, modifier = core.CharacterModifier(armor_ignore = 100)).wrap(core.DamageSkillWrapper)
         
         #발칸 펀치는 최대딜사이클에서는 사용하지 않음.
         BalkanPunch = core.DamageSkill("발칸 펀치", 720, 1000 + 40* vEhc.getV(4,4), 6, cooltime = 60 * 1000).wrap(core.DamageSkillWrapper) #임의 딜레이 720
-        BalkanPunchTick = core.DamageSkill("발칸 펀치", 180, 450 + 8*vEhc.getV(4,4), 5).wrap(core.DamageSkillWrapper)	#8초간 43번
+        BalkanPunchTick = core.DamageSkill("발칸 펀치(틱)", 180, 450 + 8*vEhc.getV(4,4), 5).wrap(core.DamageSkillWrapper)	#8초간 43번
         
         
         BurningBreaker = core.DamageSkill("버닝 브레이커", 5000, 1500 + 60*vEhc.getV(1,1), 15, cooltime = 100*1000, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).wrap(core.DamageSkillWrapper)
-        BurningBreakerSplash = core.DamageSkill("버닝 브레이커", 0, 1200+48*vEhc.getV(1,1), 15 * 6, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).wrap(core.DamageSkillWrapper)
-        BurningBreakerSplash_Maximize = core.DamageSkill("버닝 브레이커", 0, (1200+48*vEhc.getV(1,1))*1.5, 15 * 6, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).wrap(core.DamageSkillWrapper)
+        BurningBreakerSplash = core.DamageSkill("버닝 브레이커(스플래시)", 0, 1200+48*vEhc.getV(1,1), 15 * 6, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).wrap(core.DamageSkillWrapper)
+        BurningBreakerSplash_Maximize = core.DamageSkill("버닝 브레이커(스플래시,맥시마이즈)", 0, (1200+48*vEhc.getV(1,1))*1.5, 15 * 6, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).wrap(core.DamageSkillWrapper)
         
         #스킬 기본 연계 연결
         ReleaseFileBunker.onAfters([ReleaseFileBunker_A, ReleaseFileBunker_B, ReleaseFileBunker_C, ReleaseFileBunker_D])
@@ -144,16 +144,11 @@ class JobGenerator(ck.JobGenerator):
         BunkerBuster.onConstraint(core.ConstraintElement("맥시마이즈 캐논과 겹치지 않게", MaximizeCannon, MaximizeCannon.is_not_active))
         #ReleaseHammer.onConstraint(core.ConstraintElement("벙버일때 미사용",  BunkerBuster, BunkerBuster.is_not_active))
         
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return(Mag_Pang,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, MaximizeCannon, WillOfLiberty, AuraWeaponBuff, BunkerBuster,
-                    globalSkill.soul_contract()],
-                [ReleaseHammer, BurningBreaker],
-                [RegistanceLineInfantry, HammerSmashWave],
-                [AuraWeaponCooltimeDummy],
-                Mag_Pang)
-        
-        return schedule
+                    globalSkill.soul_contract()] +\
+                [ReleaseHammer, BurningBreaker] +\
+                [RegistanceLineInfantry, HammerSmashWave] +\
+                [AuraWeaponCooltimeDummy] +\
+                [Mag_Pang])

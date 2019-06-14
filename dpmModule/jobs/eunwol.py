@@ -104,7 +104,7 @@ class JobGenerator(ck.JobGenerator):
         FoxSoul = core.DamageSkill("여우령", 0, 200, 3 * (0.2+0.1)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         SoulAttack = core.DamageSkill("귀참", 600, 380, 8+1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DoubleBodyAttack = core.DamageSkill("분혼 격참", 0, 2000, 1).wrap(core.DamageSkillWrapper)
+        DoubleBodyAttack = core.DamageSkill("분혼 격참(공격)", 0, 2000, 1).wrap(core.DamageSkillWrapper)
         DoubleBody = core.BuffSkill("분혼 격참", 1000, 10000, cooltime = 180000, red = True, pdamage_indep = 50).wrap(core.BuffSkillWrapper)
     
         #하이퍼스킬
@@ -143,7 +143,7 @@ class JobGenerator(ck.JobGenerator):
         #분혼 격참
         DoubleBody.onAfter(DoubleBodyAttack)
         DoubleBody.onAfter(DoubleBodyRegistance)
-        DoubleBodyConstraint = core.ConstraintElement("분혼 격참(저항)", DoubleBodyRegistance, DoubleBodyRegistance.is_not_active)
+        DoubleBodyConstraint = core.ConstraintElement("분혼 격참(저항)(제한)", DoubleBodyRegistance, DoubleBodyRegistance.is_not_active)
         DoubleBody.onConstraint(DoubleBodyConstraint)
         
         #정결극 위계
@@ -164,6 +164,9 @@ class JobGenerator(ck.JobGenerator):
         RealSoulAttack.onAfter(RealSoulAttackCounter)
         BasicAttack = core.OptionalElement(RealSoulAttackCounter.is_active, SoulAttack, RealSoulAttack, name = "진 귀참 발동 불가능?")
 
+        BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
+        BasicAttackWrapper.onAfter(BasicAttack)
+
         #여우령
         BasicAttack.onAfter(FoxSoul)
         SoulTrap.onTick(FoxSoul)
@@ -171,15 +174,14 @@ class JobGenerator(ck.JobGenerator):
         
         schedule = core.ScheduleGraph()
         
-        schedule.build_graph(
-                chtr, 
+        return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     EnhanceSpiritLinkSummon_J_Buff, EnhanceSpiritLink, LuckyDice, HerosOath, Frid, 
                     Overdrive, OverdrivePenalty, SoulConcentrate, DoubleBody, SoulTrapBuff,
-                    globalSkill.soul_contract()],
-                [],
-                [EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init, EnhanceSpiritLinkSummon_J, SoulTrap, SoulConcentrateSummon],
-                [RealSoulAttackCounter, DoubleBodyRegistance],
-                BasicAttack)
+                    globalSkill.soul_contract()] +\
+                [] +\
+                [EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init, EnhanceSpiritLinkSummon_J, SoulTrap, SoulConcentrateSummon] +\
+                [RealSoulAttackCounter, DoubleBodyRegistance] +\
+                [BasicAttackWrapper])
         
         return schedule

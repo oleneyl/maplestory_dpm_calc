@@ -108,7 +108,7 @@ class JobGenerator(ck.JobGenerator):
         CarteNoir_ = core.DamageSkill("느와르 카르트(저지먼트)", 0, 270, 10).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
         PrieredAria = core.BuffSkill("프레이 오브 아리아", 0, (240+7*combat)*1000, pdamage = 30+combat, armor_ignore = 30+combat).wrap(core.BuffSkillWrapper)
-        TempestOfCardInit = core.DamageSkill("템페스트 오브 카드", 0, 0, 0, cooltime = 18000*0.8 + 180*56, red = True).wrap(core.DamageSkillWrapper, name = "템오카 시전")
+        TempestOfCardInit = core.DamageSkill("템페스트 오브 카드(시전)", 0, 0, 0, cooltime = 18000*0.8 + 180*56, red = True).wrap(core.DamageSkillWrapper, name = "템오카 시전")
         TempestOfCard = core.DamageSkill("템페스트 오브 카드", 180, 200+2*combat, 3, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
     
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
@@ -118,14 +118,14 @@ class JobGenerator(ck.JobGenerator):
         #조커가 소환기가 아님!
         Joker = core.SummonSkill("조커", 720, 100*5, 240+9*vEhc.getV(4,4), 1*JOKERRATE*7*5, 7000-1, cooltime = 150000, red = True).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
         JokerInit = core.DamageSkill("조커(시전)", 720, 0, 0, cooltime = 150000, red = True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
-        JokerDamage = core.DamageSkill("조커", 100*5, 240+9*vEhc.getV(4,4), 1*JOKERRATE*7*5).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)  #14회 반복
+        JokerDamage = core.DamageSkill("조커(피격)", 100*5, 240+9*vEhc.getV(4,4), 1*JOKERRATE*7*5).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)  #14회 반복
         JokerBuff = core.BuffSkill("조커(버프)", 0, 30000, cooltime = -1, pdamage_indep = (vEhc.getV(4,4)//5)/2).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         
         BlackJack = core.SummonSkill("블랙잭", 760, 250, 400+16*vEhc.getV(1,1), 1, 5000-1, cooltime = 15000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
-        BlackJackFinal = core.DamageSkill("블랙잭", 0, 1000+40*vEhc.getV(1,1), 6, cooltime = -1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        BlackJackFinal = core.DamageSkill("블랙잭(최종)", 0, 1000+40*vEhc.getV(1,1), 6, cooltime = -1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         
         MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 900, 600+24*vEhc.getV(2,2), 3 * 7, cooltime = 30000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        MarkOfPhantomEnd = core.DamageSkill("마크 오브 팬텀", 0, 1200+48*vEhc.getV(2,2), 12).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        MarkOfPhantomEnd = core.DamageSkill("마크 오브 팬텀(최종)", 0, 1200+48*vEhc.getV(2,2), 12).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         #### 그래프 빌드
         
@@ -147,7 +147,8 @@ class JobGenerator(ck.JobGenerator):
         MileAiguilles.onAfter(MileAiguillesInit.controller(500, 'set_enabled_and_time_left'))
         
         BasicAttack = core.OptionalElement(MileAiguillesInit.is_active, MileAiguilles, MileAiguillesInit, name = "선딜 반영")
-        
+        BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
+        BasicAttackWrapper.onAfter(BasicAttack)
         TempestOfCardInit.onAfter(core.RepeatElement(TempestOfCard, 56))
         TempestOfCard.onAfter(CarteNoir)
         
@@ -164,17 +165,12 @@ class JobGenerator(ck.JobGenerator):
         
         #이들 정보교환 부분을 굳이 Task exchange로 표현할 필요가 있을까?
         
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     TalentOfPhantomII, TalentOfPhantomIII, FinalCutBuff, BoolsEye,
                     JudgementBuff, Booster, PrieredAria, HerosOath, ReadyToDie, JokerBuff, Frid,
-                    globalSkill.soul_contract()],
-                [FinalCut, JokerInit, TempestOfCardInit, MarkOfPhantom, BlackJackFinal],
-                [BlackJack],
-                [MileAiguillesInit],
-                BasicAttack)
-        
-        return schedule
+                    globalSkill.soul_contract()] +\
+                [FinalCut, JokerInit, TempestOfCardInit, MarkOfPhantom, BlackJackFinal] +\
+                [BlackJack] +\
+                [MileAiguillesInit] +\
+                [BasicAttackWrapper])

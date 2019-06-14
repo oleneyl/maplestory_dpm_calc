@@ -186,16 +186,11 @@ class JobGenerator(ck.JobGenerator):
             wrp.onAfter(AdvancedFinalAttackFast)
             wrp.modifier = ElementalGhostFast
     
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return(IshtarRing,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), 
                     Booster, AncientSpirit, ElvishBlessing, HerosOath, Frid, Sylphidia.ignore(), CriticalReinforce, UnicornSpikeBuff, RegendrySpearBuff, ElementalGhost,
-                    SoulContract],
-                [UnicornSpike, RegendrySpear, WrathOfEllil, IrkilaBreathInit],
-                [ElementalKnights, GuidedArrow],
-                [],
-                IshtarRing)
-
-        return schedule
+                    SoulContract] +\
+                [UnicornSpike, RegendrySpear, WrathOfEllil, IrkilaBreathInit] +\
+                [ElementalKnights, GuidedArrow] +\
+                [] +\
+                [IshtarRing])

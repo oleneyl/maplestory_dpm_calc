@@ -72,13 +72,13 @@ class JobGenerator(ck.JobGenerator):
         DemonSlashAWBB3 = core.DamageSkill("데몬 슬래시 강화(3타)블블", 210, 700, 3*1.9, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DemonSlashAWBB4 = core.DamageSkill("데몬 슬래시 강화(4타)블블", 210, 800, 3*1.9, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
-        DemonSlashAWBB1_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 600 * (75 + vEhc.getV(2,2))*0.01, 3*1.9, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).wrap(core.DamageSkillWrapper)
-        DemonSlashAWBB2_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 600 * (75 + vEhc.getV(2,2))*0.01, 3*1.9, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).wrap(core.DamageSkillWrapper)
-        DemonSlashAWBB3_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 700 * (75 + vEhc.getV(2,2))*0.01, 3*1.9, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).wrap(core.DamageSkillWrapper)
-        DemonSlashAWBB4_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 800 * (75 + vEhc.getV(2,2))*0.01, 3*1.9, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).wrap(core.DamageSkillWrapper)
+        DemonSlashAWBB1_AuraWeapon = core.DamageSkill("오라 웨폰(1타)", 0, 600 * (75 + vEhc.getV(2,2))*0.01, 3*1.9, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).wrap(core.DamageSkillWrapper)
+        DemonSlashAWBB2_AuraWeapon = core.DamageSkill("오라 웨폰(2타)", 0, 600 * (75 + vEhc.getV(2,2))*0.01, 3*1.9, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).wrap(core.DamageSkillWrapper)
+        DemonSlashAWBB3_AuraWeapon = core.DamageSkill("오라 웨폰(3타)", 0, 700 * (75 + vEhc.getV(2,2))*0.01, 3*1.9, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).wrap(core.DamageSkillWrapper)
+        DemonSlashAWBB4_AuraWeapon = core.DamageSkill("오라 웨폰(4타)", 0, 800 * (75 + vEhc.getV(2,2))*0.01, 3*1.9, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).wrap(core.DamageSkillWrapper)
         
         DemonImpact = core.DamageSkill("데몬 임팩트", 660, 460, (6+1)*1.9, modifier = core.CharacterModifier(crit = 100, armor_ignore = 30, boss_pdamage = 40, pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        DemonImpact_AuraWeapon = core.DamageSkill("데몬 임팩트", 0, 460 * (75 + vEhc.getV(2,2))*0.01, (6+1)*1.9, modifier = core.CharacterModifier(crit = 100, armor_ignore = 30, boss_pdamage = 40, pdamage = 20)).wrap(core.DamageSkillWrapper)        
+        DemonImpact_AuraWeapon = core.DamageSkill("오라웨폰(데몬 임팩트)", 0, 460 * (75 + vEhc.getV(2,2))*0.01, (6+1)*1.9, modifier = core.CharacterModifier(crit = 100, armor_ignore = 30, boss_pdamage = 40, pdamage = 20)).wrap(core.DamageSkillWrapper)        
 
         DevilCry = core.DamageSkill("데빌 크라이", 1620, 515, 7*1.9, cooltime = 20 * 1000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)   #이블 토쳐 위해 사용필수.
         DevilCryBuff = core.BuffSkill("데빌 크라이(위협)", 0, 20000, cooltime = -1).wrap(core.BuffSkillWrapper)
@@ -124,7 +124,8 @@ class JobGenerator(ck.JobGenerator):
         DemonSlashAWBB3.onAfter(DemonSlashAWBB4)
         
         BasicAttack = core.OptionalElement(DemonAwakning.is_active, DemonSlashAWBB1, DemonImpact, name = "어웨이크닝 ON")
-        
+        BasicAttackWrapper = core.DamageSkill('기본 공격', 0,0,0).wrap(core.DamageSkillWrapper)
+        BasicAttackWrapper.onAfter(BasicAttack)
         DevilCry.onAfter(DevilCryBuff)
         
         DemonAwakning.onAfter(DemonAwakningSummon)
@@ -147,16 +148,11 @@ class JobGenerator(ck.JobGenerator):
         AuraWeapon_connection_builder(DemonSlashAWBB4, DemonSlashAWBB4_AuraWeapon)
         AuraWeapon_connection_builder(DemonImpact, DemonImpact_AuraWeapon)
         
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Booster, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, DemonAwakning,
-                    globalSkill.soul_contract()],
-                [Cerberus, DevilCry, SpiritOfRageEnd],
-                [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_],
-                [AuraWeaponCooltimeDummy],
-                BasicAttack)
-
-        return schedule
+                    globalSkill.soul_contract()] +\
+                [Cerberus, DevilCry, SpiritOfRageEnd] +\
+                [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_] +\
+                [AuraWeaponCooltimeDummy] +\
+                [BasicAttackWrapper])

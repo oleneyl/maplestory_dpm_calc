@@ -98,19 +98,6 @@ class JobGenerator(ck.JobGenerator):
         Pungma.onConstraint(core.ConstraintElement("스프 미사용중에만", SpreadThrowInit, SpreadThrowInit.is_not_active))
         UltimateDarksight.onConstraint(core.ConstraintElement("스프 사용중에만", SpreadThrowInit, SpreadThrowInit.is_active))
 
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-                    ShadowPartner, SpiritJavelin, PurgeArea, BleedingToxin, EpicAdventure, 
-                    ReadyToDiePassive, UltimateDarksight, ReadyToDie, SpreadThrowInit,
-                    globalSkill.soul_contract()],
-                [ArcaneOfDarklordFinal],
-                [Pungma, ArcaneOfDarklord, BleedingToxinDot],
-                [],
-                QuarupleThrow)
-
         return (QuarupleThrow, 
             [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     ShadowPartner, SpiritJavelin, PurgeArea, BleedingToxin, EpicAdventure, 
@@ -119,5 +106,3 @@ class JobGenerator(ck.JobGenerator):
                 [ArcaneOfDarklordFinal] + \
                 [Pungma, ArcaneOfDarklord, BleedingToxinDot] +\
                 [] + [QuarupleThrow])
-
-        return schedule
