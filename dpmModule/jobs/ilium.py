@@ -141,8 +141,8 @@ class JobGenerator(ck.JobGenerator):
  
         SoulOfCrystal = core.BuffSkill("소울 오브 크리스탈", 660, 30*1000, cooltime = 40*1000).isV(vEhc,1,0).wrap(core.BuffSkillWrapper)
 
-        SoulOfCrystal_Reaction_Domination = core.DamageSkill("리액션 : 도미네이션", 0, 550 * 0.01 * (50 + vEhc.getV(1,0)) * 2, 2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        SoulOfCrystal_Reaction_Destruction = core.DamageSkill("리액션 : 디스트럭션", 0, 550* 0.01 * (50 + vEhc.getV(1,0)) * 2, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SoulOfCrystal_Reaction_Domination = core.DamageSkill("리액션 : 도미네이션(소오크)", 0, 550 * 0.01 * (50 + vEhc.getV(1,0)) * 2, 2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        SoulOfCrystal_Reaction_Destruction = core.DamageSkill("리액션 : 디스트럭션(소오크)", 0, 550* 0.01 * (50 + vEhc.getV(1,0)) * 2, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         SoulOfCrystal_Reaction_Spectrum = core.SummonSkill("리액션:스펙트럼(소오크)", 0, 1000, 1000+40*vEhc.getV(2,1) * 2, 5, 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
         

@@ -71,7 +71,7 @@ class JobGenerator(ck.JobGenerator):
         HiddenBlade = core.DamageSkill("히든 블레이드", 0, 140 / 1.7, 2).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)    #미러 이미징에 의해 추가타 2개, 최종뎀 1.7배 무시
         
         Asura = core.DamageSkill("아수라", 0, 0, 0, cooltime = 60000).wrap(core.DamageSkillWrapper)
-        AsuraTick = core.DamageSkill("아수라", 300, 420, 4, modifier =core.CharacterModifier(armor_ignore = 100)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  #41타
+        AsuraTick = core.DamageSkill("아수라(틱)", 300, 420, 4, modifier =core.CharacterModifier(armor_ignore = 100)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  #41타
         
         UltimateDarksight = core.BuffSkill("얼티밋 다크사이트", 750, 30000, red = True, cooltime = (220-vEhc.getV(3,3))*1000).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
         ReadyToDie = core.BuffSkill("레디 투 다이", 780, 15*1000, red = True, cooltime = (90-int(0.5*vEhc.getV(1,1)))*1000, pdamage_indep = 30+int(0.2*vEhc.getV(1,1))).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
