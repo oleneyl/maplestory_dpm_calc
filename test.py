@@ -8,27 +8,38 @@ from dpmModule.jobs import jobMap
 
 import time
 
+import argparse
+
 jobname = "나이트로드"
 ulevel = 6000
 weaponstat = [4,9]
 level = 230
 
+def get_args():
+    parser = argparse.ArgumentParser('DPM Test argument')
+    parser.add_argument('--job', type=str, help='Target job name to test dpm')
+    parser.add_argument('--level', type=int, default=230)
+    parser.add_argument('--ulevel', type=int, default=6000)
 
+    return parser.parse_args()
 
-#my_storage = graph.ConfigurationStorage({})
-#graph.set_global_storage(my_storage)
-for jobname in ['나이트로드']:
-#for jobname in jobMap:
-        parser = IndividualDPMGenerator(jobname, template.getU4000CharacterTemplate)
+def test():
+    args = get_args()
+
+    for jobname in [args.job]:
+        parser = IndividualDPMGenerator(jobname, template.getU6000CharacterTemplate)
         try:
-                dpm = parser.getDpm(ulevel = ulevel,
-                weaponstat = weaponstat,
-                level = level,
-                printFlag=False)
+            dpm = parser.get_dpm(ulevel = args.ulevel,
+            weaponstat = weaponstat,
+            level = args.level,
+            printFlag=False)
         except:
-                raise
+            raise
         finally:
-                print(jobname, dpm)
-        with open('conf.json', 'w', encoding='utf8') as f:
-                graph._unsafe_access_global_storage()._storage.write(f)
+            print(jobname, dpm)
 
+    #with open('conf.json', 'w', encoding='utf8') as f:
+    #    graph._unsafe_access_global_storage()._storage.write(f)
+
+if __name__ == '__main__':
+    test()
