@@ -108,7 +108,7 @@ class JobGenerator(ck.JobGenerator):
         SpecialPotion = core.BuffSkill("상인단 특제 비약", 0, 60*1000, pdamage = 10, crit = 10, cooltime = 120*1000).wrap(core.BuffSkillWrapper)
         
         ProfessionalAgent= core.BuffSkill("프로페셔널 에이전트", 570, 30000, cooltime = 200000).wrap(core.BuffSkillWrapper)
-        ProfessionalAgentAdditionalDamage = core.DamageSkill("프로페셔널 에이전트", 0, 255, 2).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ProfessionalAgentAdditionalDamage = core.DamageSkill("프로페셔널 에이전트(공격)", 0, 255, 2).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         #웨폰버라이어티 추가타	
         WeaponVarietyAttackSkill = core.DamageSkill("웨폰 버라이어티", 0, 350, 4).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
@@ -213,8 +213,8 @@ class JobGenerator(ck.JobGenerator):
         for i in [ChainArts_Stroke_1, SummonShootingShotgun, SummonStretchingClaw, ChainArts_Stroke_2]:
             ShootgunClawCombo.onAfter(i)
         
-        for c in [core.ConstraintElement('샷건', SummonShootingShotgun, SummonShootingShotgun.is_usable),
-                    core.ConstraintElement('클로', SummonStretchingClaw, SummonStretchingClaw.is_usable)]:
+        for c in [core.ConstraintElement('샷건', SummonShootingShotgun, SummonShootingShotgun.is_available),
+                    core.ConstraintElement('클로', SummonStretchingClaw, SummonStretchingClaw.is_available)]:
             ShootgunClawCombo.onConstraint(c)
         
         #시미터 - 체이스
@@ -222,7 +222,7 @@ class JobGenerator(ck.JobGenerator):
         for i in [ChainArts_Stroke_1, SummonCuttingSimiter, ChainArts_Chais, ChainArts_Stroke_2]:
             SimiterChaseCombo.onAfter(i)
             
-        for c in [core.ConstraintElement('시미터', SummonCuttingSimiter, SummonCuttingSimiter.is_usable)]:
+        for c in [core.ConstraintElement('시미터', SummonCuttingSimiter, SummonCuttingSimiter.is_available)]:
             SimiterChaseCombo.onConstraint(c)
             
         # 나이프
@@ -230,7 +230,7 @@ class JobGenerator(ck.JobGenerator):
         for i in [ChainArts_Stroke_1, SummonSlachingKnife, ChainArts_Stroke_2]:
             KnifeCombo.onAfter(i)
 
-        for c in [core.ConstraintElement('나이프', SummonSlachingKnife, SummonSlachingKnife.is_usable)]:
+        for c in [core.ConstraintElement('나이프', SummonSlachingKnife, SummonSlachingKnife.is_available)]:
             KnifeCombo.onConstraint(c)
             
         # 봄-브릭
@@ -238,8 +238,8 @@ class JobGenerator(ck.JobGenerator):
         for i in [ChainArts_Stroke_1, SummonReleasingBoom, SummonStrikingBrick, ChainArts_Stroke_2]:
             BommBrickCombo.onAfter(i)
             
-        for c in [core.ConstraintElement('봄', SummonReleasingBoom, SummonReleasingBoom.is_usable),
-                    core.ConstraintElement('브릭', SummonStrikingBrick, SummonStrikingBrick.is_usable)]:
+        for c in [core.ConstraintElement('봄', SummonReleasingBoom, SummonReleasingBoom.is_available),
+                    core.ConstraintElement('브릭', SummonStrikingBrick, SummonStrikingBrick.is_available)]:
             BommBrickCombo.onConstraint(c)	
         
         #평타
@@ -253,8 +253,8 @@ class JobGenerator(ck.JobGenerator):
                   , SummonBeatingNeedlebat_1, ChainArts_Stroke_2]:
             WingDaggerBatCombo.onAfter(i)
 
-        for c in [core.ConstraintElement('윙대거', SummonThrowingWingdagger, SummonThrowingWingdagger.is_usable),
-                    core.ConstraintElement('배트', SummonBeatingNeedlebat_1, SummonBeatingNeedlebat_1.is_usable)]:
+        for c in [core.ConstraintElement('윙대거', SummonThrowingWingdagger, SummonThrowingWingdagger.is_available),
+                    core.ConstraintElement('배트', SummonBeatingNeedlebat_1, SummonBeatingNeedlebat_1.is_available)]:
             WingDaggerBatCombo.onConstraint(c)	
         
         # 메일스트롬은 2타 후 없으면 시전
@@ -271,7 +271,13 @@ class JobGenerator(ck.JobGenerator):
                     SummonReleasingBoom, SummonStrikingBrick, SummonBeatingNeedlebat_1, SummonBeatingNeedlebat_2, SummonBeatingNeedlebat_3,
                         ChainArts_maelstorm, ChainArts_Fury_Damage]:
             s.onAfter(ProfessionalAgent_Attack)
-            
+        
+        for s in [ChainArts_Fury_Dummy, SummonShootingShotgun, SummonStretchingClaw,
+                        SummonCuttingSimiter, SummonSlachingKnife,
+                            SummonReleasingBoom, SummonStrikingBrick,
+                                SummonBeatingNeedlebat_1, SummonThrowingWingdagger]:
+            s.protect_from_running()
+
         return(NormalAttack,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     WeaponVarietyAttack, Booster, SpecialPotion, ProfessionalAgent,

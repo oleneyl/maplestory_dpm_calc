@@ -1034,9 +1034,13 @@ class AbstractSkillWrapper(GraphElement):
         self.timeLeft = 0       # indicate how much time left for continuing this wrapper.
         self.constraint = []
         self._result_object_cache = ResultObject(0, CharacterModifier(), 0, sname = self.skill.name, spec = 'graph control')
-        if self.skill.cooltime == NOTWANTTOEXECUTE:
+        if DynamicVariableOperation.reveal_argument(self.skill.cooltime) == NOTWANTTOEXECUTE:
             self.set_disabled_and_time_left(-1)
         self.accessible_boss_state = AccessibleBossState.NO_FLAG
+
+    def protect_from_running(self):
+        constraint = ConstraintElement('사용 금지', self, lambda:False)
+        self.onConstraint(constraint)
 
     def get_explanation(self, lang = "ko"):
         return self.skill.get_explanation(lang = lang)
@@ -1107,6 +1111,9 @@ class AbstractSkillWrapper(GraphElement):
                 if not cnst.check():
                     return False
         return self.available
+
+    def is_available(self):
+        return self.available
     
     def is_not_usable(self):
         return (not self.is_usable())
@@ -1140,7 +1147,7 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         self.disabledModifier = CharacterModifier()
         self.modifierInvariantFlag = True
         self.accessible_boss_state = AccessibleBossState.ALWAYS
-    
+        
     def set_enabled_and_time_left(self, time):
         '''This function must be carefull.. You must sure about this skill's cooltime calculation i.e. -1
         '''

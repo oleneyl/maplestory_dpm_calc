@@ -152,6 +152,8 @@ class JobGenerator(ck.JobGenerator):
         JaguarSoul.onAfter(core.OptionalElement(JaguerStorm.is_active, JaguarSoul_JG))
         RampageAsOne.onAfter(core.OptionalElement(JaguerStorm.is_active, RampageAsOne_JG))
     
+        AnotherBite.protect_from_running()
+
         return(WildBalkan,
                 [globalSkill.maple_heros(chtr.level),
                     CriticalReinforce, SoulArrow, Booster, Hauling, BeastForm, SharpEyes, SilentRampage, JaguerStorm,

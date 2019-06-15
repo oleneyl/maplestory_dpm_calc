@@ -162,6 +162,8 @@ class JobGenerator(ck.JobGenerator):
         BlackJack.onAfter(BlackJackFinal.controller(5000))
         
         MarkOfPhantom.onAfter(MarkOfPhantomEnd)
+
+        MileAiguillesInit.protect_from_running()
         
         #이들 정보교환 부분을 굳이 Task exchange로 표현할 필요가 있을까?
         

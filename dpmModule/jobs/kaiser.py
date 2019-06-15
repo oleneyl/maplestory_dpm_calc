@@ -146,7 +146,7 @@ class JobGenerator(ck.JobGenerator):
         
         GigaSlasher = core.OptionalElement(FinalFiguration.is_active, GigaSlasher_Fig, GigaSlasher_, name = "변신시")
         
-        BasicAttack = core.OptionalElement(DrakeSlasher_Dummy.is_usable, DrakeSlasher_Dummy, GigaSlasher, name = "드라코 슬래셔 충전시")
+        BasicAttack = core.OptionalElement(DrakeSlasher_Dummy.is_available, DrakeSlasher_Dummy, GigaSlasher, name = "드라코 슬래셔 충전시")
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
         #어윌소 --> AdvancedWillOfSword
@@ -157,7 +157,7 @@ class JobGenerator(ck.JobGenerator):
         
         AdvancedWillOfSword_Opt = core.OptionalElement(FinalFiguration.is_active, AdvancedWillOfSword_Fig, AdvancedWillOfSword_, name = "변신시")
         
-        AdvancedWillOfSword.onAfter(core.OptionalElement(WillOfSwordStrikeJudge.is_usable, WillOfSwordStrikeJudge, AdvancedWillOfSword_Opt, name = "윌오소스 사용 가능시"))
+        AdvancedWillOfSword.onAfter(core.OptionalElement(WillOfSwordStrikeJudge.is_available, WillOfSwordStrikeJudge, AdvancedWillOfSword_Opt, name = "윌오소스 사용 가능시"))
         
         #오라 웨폰
         AuraWeaponTick = core.OptionalElement(FinalFiguration.is_active, AuraWeaponTick_Fig, AuraWeaponTick_, name = "변신시")
@@ -178,6 +178,9 @@ class JobGenerator(ck.JobGenerator):
             sk.onAfter(MorphGauge.stackController(incr))
             sk.onAfter(Morph)
         
+        for sk in [WillOfSwordStrikeJudge, DrakeSlasher_Dummy]:
+            sk.protect_from_running()
+
         Wingbit_1.onTick(MorphGauge.stackController(5))
         Wingbit_2.onTick(MorphGauge.stackController(5))
     

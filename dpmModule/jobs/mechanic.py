@@ -123,6 +123,8 @@ class JobGenerator(ck.JobGenerator):
         RoboFactory.onAfter(RoboFactoryBuff.controller(1))
         
         Overdrive.onAfter(OverdrivePenalty.controller(30*1000))
+
+        BusterCallBuff.protect_from_running()
         
         return(MassiveFire,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
@@ -132,5 +134,3 @@ class JobGenerator(ck.JobGenerator):
                 [HommingMissleHolder, RegistanceLineInfantry, SupportWaver, Robolauncher, RoboFactory, DistortionField, MultipleOptionGattling, MultipleOptionMissle] +\
                 [BusterCallBuff] +\
                 [MassiveFire])
-
-        return schedule
