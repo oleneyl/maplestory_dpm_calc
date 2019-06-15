@@ -81,7 +81,7 @@ class Factory():
                 item.add_main_option(it.EnhancerFactory.get_armor_scroll_enhancement(160, elist = scrolls[idx]))
             else: #For glove
                 item.add_main_option(it.EnhancerFactory.get_glove_scroll_enhancement(160, elist = scrolls[idx]))
-                item.add_main_option(it.EnhancerFactory.get_glove_bonus_starforce_enhancement(160, star))
+                item.add_main_option(it.EnhancerFactory.get_glove_bonus_starforce_enhancement(star))
             
         return package
     
