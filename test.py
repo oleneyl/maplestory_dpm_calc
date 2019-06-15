@@ -20,19 +20,24 @@ def get_args():
     parser.add_argument('--job', type=str, help='Target job name to test dpm')
     parser.add_argument('--level', type=int, default=230)
     parser.add_argument('--ulevel', type=int, default=6000)
+    parser.add_argument('--log', action='store_true')
 
     return parser.parse_args()
 
 def test():
     args = get_args()
+    if args.job == 'all':
+        jobs = jobMap.keys()
+    else:
+        jobs = [args.job]
 
-    for jobname in [args.job]:
+    for jobname in jobs:
         parser = IndividualDPMGenerator(jobname, template.getU6000CharacterTemplate)
         try:
             dpm = parser.get_dpm(ulevel = args.ulevel,
             weaponstat = weaponstat,
             level = args.level,
-            printFlag=False)
+            printFlag=args.log)
         except:
             raise
         finally:
