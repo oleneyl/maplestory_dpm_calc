@@ -101,7 +101,8 @@ class AdvancedGraphScheduler(AbstractScheduler):
             if not failed:
                 #print(self.totalTimeLeft, avail._id)
                 return self.graph.get_task_from_element(avail)
-
+        return None
+        
     def get_delayed_task(self):  
         for _, (wrp, tick) in self.graph.get_tick_task().items():
             if hasattr(wrp, 'need_count'):
