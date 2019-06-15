@@ -156,8 +156,8 @@ class JobGenerator(ck.JobGenerator):
         Reaction_Domination.onAfter(Reaction_Domination_Link)
         Reaction_Spectrum.onAfter(Reaction_Spectrum_Link)
                 
-        Reaction_Domination_Trigger = core.OptionalElement(Reaction_Domination.is_usable, Reaction_Domination, name = "리액션:도미네이션")
-        Reaction_Destruction_Trigger = core.OptionalElement(Reaction_Destruction.is_usable, Reaction_Destruction, name = "리액션:디스트럭션")
+        Reaction_Domination_Trigger = core.OptionalElement(lambda:Reaction_Domination.available, Reaction_Domination, name = "리액션:도미네이션")
+        Reaction_Destruction_Trigger = core.OptionalElement(lambda:Reaction_Destruction.available, Reaction_Destruction, name = "리액션:디스트럭션")
         Reaction_Spectrum_Trigger = core.OptionalElement(Reaction_Spectrum.is_usable, Reaction_Spectrum, name = "리액션:스펙트럼")
         
         Craft_Orb.onAfter(Reaction_Domination_Trigger)
@@ -200,6 +200,9 @@ class JobGenerator(ck.JobGenerator):
         Craft_Javelin.onAfter(CrystalCharge.stackController(2))
         Craft_Orb.onAfter(CrystalCharge.stackController(1))
         Craft_Longinus.onAfter(CrystalCharge.stackController(3))
+
+        Reaction_Domination.protect_from_running()
+        Reaction_Destruction.protect_from_running()
 
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
