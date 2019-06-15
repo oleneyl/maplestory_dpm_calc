@@ -16,11 +16,20 @@ class ConcurrentRunRule(AbstractRule):
         self._checking_element_name = checking_element
 
     def get_related_elements(self, reference_graph):
-        return reference_graph.get_element(self._state_element_name)
+        return [reference_graph.get_element(self._state_element_name)]
 
     def check(self, caller, reference_graph, context = None):
         return reference_graph.get_element(self._checking_element_name).is_onoff()
 
+class DisableRule(AbstractRule):
+    def __init__(self, target_element):
+        self.target_element = target_element
+
+    def get_related_elements(self, reference_graph):
+        return [reference_graph.get_element(self.target_element)]
+    
+    def check(self, caller, reference_graph, context = None):
+        return False
 
 class RuleSet(defaultdict):
     BASE = 'RuleSet.BASE'
