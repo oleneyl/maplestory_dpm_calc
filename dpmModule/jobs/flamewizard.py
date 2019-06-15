@@ -76,8 +76,8 @@ class JobGenerator(ck.JobGenerator):
         
         SavageFlame = core.DamageSkill("플레임 디스차지", 0, 0, 0, cooltime = 20*1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
     
-        SavageFlame_2 = core.DamageSkill("플레임 디스차지", 840, 250 + 10*vEhc.getV(4,4), 8*(8+2)).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
-        SavageFlame_3 = core.DamageSkill("플레임 디스차지", 840, 250 + 10*vEhc.getV(4,4), 8*(8+3)).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
+        SavageFlame_2 = core.DamageSkill("플레임 디스차지(2)", 840, 250 + 10*vEhc.getV(4,4), 8*(8+2)).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
+        SavageFlame_3 = core.DamageSkill("플레임 디스차지(3)", 840, 250 + 10*vEhc.getV(4,4), 8*(8+3)).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         
         InfinityFlameCircleTick = core.DamageSkill("인피니티 플레임 서클", 180, 500+20*vEhc.getV(3,3),7, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #1틱
         InfinityFlameCircleInit = core.DamageSkill("인피니티 플레임 서클(개시)", 360, 0, 0, cooltime = 15*12*1000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)#계산 필요
@@ -100,17 +100,13 @@ class JobGenerator(ck.JobGenerator):
 
         schedule = core.ScheduleGraph()
         
-        schedule.build_graph(
-                chtr, 
+        return (OrbitalFlame,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     WordOfFire, FiresOfCreation, BurningRegion, GloryOfGuardians, OverloadMana,
-                    globalSkill.soul_contract()],
+                    globalSkill.soul_contract()] +\
                 [CygnusPalanks, BlazingOrbital, DragonSlaveInit, SavageFlame, InfinityFlameCircleInit, 
-                    InfernoRize],
-                [IgnitionDOT],
-                [],
-                OrbitalFlame)
-        
-        return schedule
-    
+                    InfernoRize] +\
+                [IgnitionDOT] +\
+                [] +\
+                [OrbitalFlame])    
     

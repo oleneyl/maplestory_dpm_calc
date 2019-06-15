@@ -98,16 +98,11 @@ class JobGenerator(ck.JobGenerator):
         #Summon
         HowlingGail.onTicks([core.RepeatElement(TriflingWhim, 2), core.RepeatElement(StormBringer, 2)])
 
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return(SongOfHeaven, 
                 [globalSkill.maple_heros(chtr.level), 
                     Storm, SylphsAid, Albatross, SharpEyes, GloryOfGuardians, StormBringerDummy, CriticalReinforce,
-                    globalSkill.soul_contract()],
-                [Mercilesswind],
-                [GuidedArrow, HowlingGail, WindWall, MercilesswindDOT, CygnusPalanks],
-                [],
-                SongOfHeaven)
-
-        return schedule
+                    globalSkill.soul_contract()] +\
+                [Mercilesswind]+\
+                [GuidedArrow, HowlingGail, WindWall, MercilesswindDOT, CygnusPalanks]+\
+                []+\
+                [SongOfHeaven])

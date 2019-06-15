@@ -67,7 +67,7 @@ class JobGenerator(ck.JobGenerator):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
 
-        CriticalRage = core.InformedCharacterModifier("크리티컬 레이지",crit = 20)    #보스상대 추가+20% 크리율
+        CriticalRage = core.InformedCharacterModifier("크리티컬 레이지(준액티브)",crit = 20)    #보스상대 추가+20% 크리율
         GuardCrush = core.InformedCharacterModifier("가드 크러시",armor_ignore = 40) #40% 확률로 방무 100% 무시.
         CounterAttack = core.InformedCharacterModifier("카운터 어택",pdamage = 25)  #피격시 25%로발동.
         
@@ -147,7 +147,8 @@ class JobGenerator(ck.JobGenerator):
         FistInrage_T.onAfter(EnergyCharge.stackController(-150))
         
         BasicAttack = core.OptionalElement(EnergyCharge.isStateOn, FistInrage_T, FistInrage)
-        
+        BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
+        BasicAttackWrapper.onAfter(BasicAttack)
         DragonStrike.onAfter(EnergyCharge.stackController(-180))
         DragonStrike.onAfter(DragonStrikeBuff)
         
@@ -169,17 +170,12 @@ class JobGenerator(ck.JobGenerator):
         DragonStrike.onConstraint(EnergyConstraint)
         SerpentScrew.onConstraint(EnergyConstraint)
     
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-                LuckyDice, Viposition, Stimulate, EpicAdventure, LoadedDicePassive, PirateFlag, Overdrive, Transform, NautilusBuff,
-                UnityOfPowerBuff, OverdrivePenalty, DragonStrikeBuff, EnergyCharge,
-                SerpentScrewTrackingBuff, globalSkill.soul_contract()],
-                [UnityOfPower, Nautilus, DragonStrike, FuriousCharge],
-                [SerpentScrew, SerpentScrewDummy, StimulateSummon],
-                [],
-                BasicAttack)
-        
-        return schedule
+        return (BasicAttackWrapper,
+            [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+            LuckyDice, Viposition, Stimulate, EpicAdventure, LoadedDicePassive, PirateFlag, Overdrive, Transform, NautilusBuff,
+            UnityOfPowerBuff, OverdrivePenalty, DragonStrikeBuff, EnergyCharge,
+            SerpentScrewTrackingBuff, globalSkill.soul_contract()] +\
+            [UnityOfPower, Nautilus, DragonStrike, FuriousCharge] +\
+            [SerpentScrew, SerpentScrewDummy, StimulateSummon] +\
+            [] +\
+            [BasicAttackWrapper])

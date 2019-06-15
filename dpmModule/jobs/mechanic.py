@@ -48,7 +48,7 @@ class JobGenerator(ck.JobGenerator):
         WillOfLiberty = core.BuffSkill("윌 오브 리버티", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
         MassiveFire = core.DamageSkill("매시브 파이어", 600, 285, 6+1, modifier = core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        MassiveFire2 = core.DamageSkill("매시브 파이어", 0, 350, 1, modifier = core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        MassiveFire2 = core.DamageSkill("매시브 파이어(2)", 0, 350, 1, modifier = core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         #로디드 데미지 고정.
         LuckyDice = core.BuffSkill("럭키 다이스", 0, 180*1000, pdamage = 20 * 4 / 3).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
@@ -57,17 +57,17 @@ class JobGenerator(ck.JobGenerator):
         Opengate = core.SummonSkill("오픈 게이트:GX-9", 600, 300*1000, 0,0,300*1000*1.4, rem = True).wrap(core.SummonSkillWrapper)#임의 딜레이
         
         Robolauncher = core.SummonSkill("로보런쳐:RM7", 630, 1000, 250*1.7, 1, 60*1000*1.4, rem=True, modifier = core.CharacterModifier(pdamage=90)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
-        RobolauncherFinal = core.DamageSkill("로보런쳐:RM7", 0, 400*1.7, 1, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        RobolauncherBuff = core.BuffSkill("로보런쳐:RM7", 0, 60*1000*1.4, cooltime = -1, pdamage = 6).wrap(core.BuffSkillWrapper)
+        RobolauncherFinal = core.DamageSkill("로보런쳐:RM7(폭발)", 0, 400*1.7, 1, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        RobolauncherBuff = core.BuffSkill("로보런쳐:RM7(버프)", 0, 60*1000*1.4, cooltime = -1, pdamage = 6).wrap(core.BuffSkillWrapper)
         #MagneticField = core.SummonSkill("마그네틱 필드", ?, ?, 200, 60*1000, cooltime = 180*1000) 자폭 550% V.getEhc(2, vEnhance[0])
         
         SupportWaver = core.SummonSkill("서포트 웨이버", 630, 80000*1.4, 0, 0, 80*1000*1.4).wrap(core.SummonSkillWrapper)
-        SupportWaverBuff = core.BuffSkill("서포트 웨이버", 0, 80*1000*1.4, pdamage_indep=10, pdamage= 5 + 6, cooltime = -1).wrap(core.BuffSkillWrapper)    #소환수직속 영향받게..
-        SupportWaverFinal = core.DamageSkill("서포트 웨이버", 0, 1100*1.7, 1, cooltime = -1).wrap(core.DamageSkillWrapper)
+        SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*1.4, pdamage_indep=10, pdamage= 5 + 6, cooltime = -1).wrap(core.BuffSkillWrapper)    #소환수직속 영향받게..
+        SupportWaverFinal = core.DamageSkill("서포트 웨이버(폭발)", 0, 1100*1.7, 1, cooltime = -1).wrap(core.DamageSkillWrapper)
         
         RoboFactory = core.SummonSkill("로보 팩토리", 630, 3000, 500*1.7, 3, 30*1000*1.4, cooltime=60*1000).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
-        RoboFactoryFinal = core.DamageSkill("로보 팩토리", 0, 1000*1.7, 1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
-        RoboFactoryBuff = core.BuffSkill("로보 팩토리", 0, 30*1000*1.4, cooltime = -1, pdamage = 6).wrap(core.BuffSkillWrapper)
+        RoboFactoryFinal = core.DamageSkill("로보 팩토리(폭발)", 0, 1000*1.7, 1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        RoboFactoryBuff = core.BuffSkill("로보 팩토리(버프)", 0, 30*1000*1.4, cooltime = -1, pdamage = 6).wrap(core.BuffSkillWrapper)
         
         BomberTime = core.BuffSkill("봄버 타임", 990, 10*1000, cooltime = 100*1000).wrap(core.BuffSkillWrapper)
         DistortionField = core.SummonSkill("디스토션 필드", 690, 4000/30, 350, 2, 4000-1, cooltime = 8000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
@@ -81,16 +81,16 @@ class JobGenerator(ck.JobGenerator):
         
         MicroMissle = core.DamageSkill("마이크로 미사일", 540, 375+17*vEhc.getV(0,0), (30+8)*5, cooltime = 25000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         BusterCall_ = core.DamageSkill("전탄발사", 10000/37, 400+16*vEhc.getV(4,4), 10).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
-        BusterCallInit = core.DamageSkill("전탄발사", 0, 0, 0, cooltime = 200*1000).wrap(core.DamageSkillWrapper)
+        BusterCallInit = core.DamageSkill("전탄발사(시전)", 0, 0, 0, cooltime = 200*1000).wrap(core.DamageSkillWrapper)
         BusterCallBuff = core.BuffSkill("전탄발사(버프)", 0, 8000, cooltime = 200*1000).isV(vEhc,4,4).wrap(core.BuffSkillWrapper) # spentime에 넣으면 됨.
         
         
         MassiveFire.onAfter(MassiveFire2)
         #### 호밍 미사일 정의 ####
         HommingMissle_ = core.DamageSkill("호밍 미사일", 0, 500*0.6, 9+combat*1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        HommingMissle_B = core.DamageSkill("호밍 미사일", 0, 500*0.6, 9+combat*1+6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        HommingMissle_Bu = core.DamageSkill("호밍 미사일", 0, 500, 9+combat*1+6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        HommingMissle_B_Bu = core.DamageSkill("호밍 미사일", 0, 500, 9+combat*1+6+6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        HommingMissle_B = core.DamageSkill("호밍 미사일(봄버)", 0, 500*0.6, 9+combat*1+6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        HommingMissle_Bu = core.DamageSkill("호밍 미사일(전탄)", 0, 500, 9+combat*1+6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        HommingMissle_B_Bu = core.DamageSkill("호밍 미사일(봄버)(전탄)", 0, 500, 9+combat*1+6+6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         HommingMissleHolder = core.SummonSkill("호밍 미사일(더미)", 0, 600, 0, 0, 99999 * 100000).wrap(core.SummonSkillWrapper)
         
@@ -123,17 +123,14 @@ class JobGenerator(ck.JobGenerator):
         RoboFactory.onAfter(RoboFactoryBuff.controller(1))
         
         Overdrive.onAfter(OverdrivePenalty.controller(30*1000))
+
+        BusterCallBuff.protect_from_running()
         
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return(MassiveFire,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, RoboFactoryBuff, BomberTime, Overdrive, OverdrivePenalty,
-                    globalSkill.soul_contract()],
-                [MicroMissle, BusterCallInit],
-                [HommingMissleHolder, RegistanceLineInfantry, SupportWaver, Robolauncher, RoboFactory, DistortionField, MultipleOptionGattling, MultipleOptionMissle],
-                [BusterCallBuff],
-                MassiveFire)
-
-        return schedule
+                    globalSkill.soul_contract()] +\
+                [MicroMissle, BusterCallInit] +\
+                [HommingMissleHolder, RegistanceLineInfantry, SupportWaver, Robolauncher, RoboFactory, DistortionField, MultipleOptionGattling, MultipleOptionMissle] +\
+                [BusterCallBuff] +\
+                [MassiveFire])

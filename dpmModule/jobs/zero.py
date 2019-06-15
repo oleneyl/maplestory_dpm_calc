@@ -67,41 +67,41 @@ class JobGenerator(ck.JobGenerator):
                     core.CharacterModifier(armor_ignore = 50)
         
         MoonStrike = core.DamageSkill("문 스트라이크", 390, 180, 4).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-        MoonStrikeTAG = core.DamageSkill("문 스트라이크", 0, 180, 4).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-        MoonStrike_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 180 * (75 + vEhc.getV(3,3))*0.01, 4).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        MoonStrikeTAG = core.DamageSkill("문 스트라이크(태그)", 0, 180, 4).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        MoonStrike_AuraWeapon = core.DamageSkill("오라 웨폰(문 스트라이크)", 0, 180 * (75 + vEhc.getV(3,3))*0.01, 4).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         
         PierceStrike = core.DamageSkill("피어스 쓰러스트", 510, 250, 4 ).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
-        PierceStrikeTAG = core.DamageSkill("피어스 쓰러스트", 0, 250, 4 ).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
-        PierceStrike_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 250 * (75 + vEhc.getV(3,3))*0.01, 4 ).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        PierceStrikeTAG = core.DamageSkill("피어스 쓰러스트(태그)", 0, 250, 4 ).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        PierceStrike_AuraWeapon = core.DamageSkill("오라 웨폰(피어쓰 쓰러스트)", 0, 250 * (75 + vEhc.getV(3,3))*0.01, 4 ).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
         
         '''
         ShadowStrike = core.DamageSkill("쉐도우 스트라이크", ?, 310, 5)
         ShadowStrikeAura = core.DamageSkill("쉐도우 스트라이크", 0, 310, 1)
         '''
         FlashAssault = core.DamageSkill("플래시 어썰터", 480, 330, 4 ).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        FlashAssaultTAG = core.DamageSkill("플래시 어썰터", 0, 330, 4 ).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        FlashAssault_AuraWeapon = core.DamageSkill("플래시 어썰터", 0, 330, 4 ).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        FlashAssaultTAG = core.DamageSkill("플래시 어썰터(태그)", 0, 330, 4 ).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        FlashAssault_AuraWeapon = core.DamageSkill("플래시 어썰터(오라 웨폰)", 0, 330, 4 ).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         
         AdvancedSpinCutter = core.DamageSkill("어드밴스드 스핀 커터", 630, 520, 5 ).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedSpinCutterTAG = core.DamageSkill("어드밴스드 스핀 커터", 0, 520, 5 ).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedSpinCutterAura = core.DamageSkill("어드밴스드 스핀 커터", 0, 475, 1 ).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedSpinCutter_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 520 * (75 + vEhc.getV(3,3))*0.01, 5 ).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedSpinCutterTAG = core.DamageSkill("어드밴스드 스핀 커터(태그)", 0, 520, 5 ).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedSpinCutterAura = core.DamageSkill("어드밴스드 스핀 커터(오라)", 0, 475, 1 ).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedSpinCutter_AuraWeapon = core.DamageSkill("오라 웨폰(어드밴스드 스핀 커터)", 0, 520 * (75 + vEhc.getV(3,3))*0.01, 5 ).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         AdvancedRollingCurve = core.DamageSkill("어드밴스드 롤링 커브", 960, 530, 8 ).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingCurveTAG = core.DamageSkill("어드밴스드 롤링 커브", 0, 530, 8 ).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingCurveAura = core.DamageSkill("어드밴스드 롤링 커브", 0, 700, 1 ).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingCurve_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 530 * (75 + vEhc.getV(3,3))*0.01, 8 ).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingCurveTAG = core.DamageSkill("어드밴스드 롤링 커브(태그)", 0, 530, 8 ).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingCurveAura = core.DamageSkill("어드밴스드 롤링 커브(오라)", 0, 700, 1 ).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingCurve_AuraWeapon = core.DamageSkill("오라 웨폰(어드밴스드 롤링 커브)", 0, 530 * (75 + vEhc.getV(3,3))*0.01, 8 ).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
         AdvancedRollingAssulter = core.DamageSkill("어드밴스드 롤링 어썰터", 960, 745, 6 ).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingAssulterTAG = core.DamageSkill("어드밴스드 롤링 어썰터", 0, 745, 6 ).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingAssulterAura = core.DamageSkill("어드밴스드 롤링 어썰터", 0, 745, 1 ).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingAssulter_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 745 * (75 + vEhc.getV(3,3))*0.01, 6 ).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingAssulterTAG = core.DamageSkill("어드밴스드 롤링 어썰터(태그)", 0, 745, 6 ).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingAssulterAura = core.DamageSkill("어드밴스드 롤링 어썰터(오라)", 0, 745, 1 ).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingAssulter_AuraWeapon = core.DamageSkill("오라 웨폰(어드밴스드 롤링 어썰터)", 0, 745 * (75 + vEhc.getV(3,3))*0.01, 6 ).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
         WindCutter = core.DamageSkill("윈드 커터", 540, 325, 4 ).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         WindCutterSummon = core.DamageSkill("윈드 커터(소환)", 0, 325, 3 ).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper) #3타 타격
         WindStrike = core.DamageSkill("윈드 스트라이크",600, 500, 4 ).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
         StormBreak = core.DamageSkill("어드밴스드 스톰 브레이크", 690, 670, 5 ).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        StormBreak_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 670 * (75 + vEhc.getV(3,3))*0.01, 5 ).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        StormBreak_AuraWeapon = core.DamageSkill("오라 웨폰(스톰 브레이크)", 0, 670 * (75 + vEhc.getV(3,3))*0.01, 5 ).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         StormBreakSummon = core.DamageSkill("어드밴스드 스톰 브레이크(소환)", 0, 670, 2).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) #2타 타격
         StormBreakElectric = core.DamageSkill("어드밴스드 스톰 브레이크(전기)", 0, 230, 3 ).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
@@ -112,13 +112,13 @@ class JobGenerator(ck.JobGenerator):
         
 
         UpperStrike = core.DamageSkill("어퍼 슬래시", 690, 630, 2).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-        UpperStrikeTAG = core.DamageSkill("어퍼 슬래시", 0, 630, 2).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-        UpperStrike_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 630 * (75 + vEhc.getV(3,3))*0.01, 2).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)        
+        UpperStrikeTAG = core.DamageSkill("어퍼 슬래시(태그)", 0, 630, 2).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        UpperStrike_AuraWeapon = core.DamageSkill("오라 웨폰(어퍼 슬래시)", 0, 630 * (75 + vEhc.getV(3,3))*0.01, 2).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)        
         
         AirRiot = core.DamageSkill("어드밴스드 파워 스텀프", 570, 980, 3).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
-        AirRiotTAG = core.DamageSkill("어드밴스드 파워 스텀프", 0, 980, 3).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
-        AirRiot_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 980 * (75 + vEhc.getV(3,3))*0.01, 3).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
-        AirRiotWave = core.DamageSkill("어드밴스드 파워 스텀프", 0, 980, 3).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        AirRiotTAG = core.DamageSkill("어드밴스드 파워 스텀프(태그)", 0, 980, 3).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        AirRiot_AuraWeapon = core.DamageSkill("오라 웨폰(ㅇ드밴스드 파워 스텀프)", 0, 980 * (75 + vEhc.getV(3,3))*0.01, 3).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        AirRiotWave = core.DamageSkill("어드밴스드 파워 스텀프(파동)", 0, 980, 3).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
         
         FlashCut = core.DamageSkill("프론트 슬래시", 630, 610, 2).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         ThrowingWeapon = core.DamageSkill("어드밴스드 스로잉 웨폰", 360, 550, 2 * 5).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)    #5타 = 1.5s
@@ -127,18 +127,18 @@ class JobGenerator(ck.JobGenerator):
         AdvancedWheelWind = core.DamageSkill("어드밴스드 휠 윈드", 540, 400, 7).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)     #   0.1초당 1타, 최대 7초, 7타로 적용
         
         GigaCrash = core.DamageSkill("기가 크래시", 630, 750, 2).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        GigaCrashTAG = core.DamageSkill("기가 크래시", 0, 750, 2).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        GigaCrash_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 750 * (75 + vEhc.getV(3,3))*0.01, 2).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        GigaCrashTAG = core.DamageSkill("기가 크래시(태그)", 0, 750, 2).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        GigaCrash_AuraWeapon = core.DamageSkill("오라 웨폰(기가 크래시)", 0, 750 * (75 + vEhc.getV(3,3))*0.01, 2).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         
         FallingStar = core.DamageSkill("점핑 크래시", 660, 670, 3).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
-        FallingStarTAG = core.DamageSkill("점핑 크래시", 0, 670, 3).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
-        FallingStar_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 670 * (75 + vEhc.getV(3,3))*0.01, 3).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
+        FallingStarTAG = core.DamageSkill("점핑 크래시(태그)", 0, 670, 3).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
+        FallingStar_AuraWeapon = core.DamageSkill("오라 웨폰(점핑 크래시)", 0, 670 * (75 + vEhc.getV(3,3))*0.01, 3).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
         
         AdvancedEarthBreak = core.DamageSkill("어드밴스드 어스 브레이크", 1170, 760, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedEarthBreakTAG = core.DamageSkill("어드밴스드 어스 브레이크", 0, 760, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) 
-        AdvancedEarthBreak_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 760 * (75 + vEhc.getV(3,3))*0.01, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) 
+        AdvancedEarthBreakTAG = core.DamageSkill("어드밴스드 어스 브레이크(태그)", 0, 760, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) 
+        AdvancedEarthBreak_AuraWeapon = core.DamageSkill("오라 웨폰(어드밴스드 어스 브레이크)", 0, 760 * (75 + vEhc.getV(3,3))*0.01, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) 
         
-        AdvancedEarthBreakWave = core.DamageSkill("어드밴스드 어스 브레이크", 0, 570, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedEarthBreakWave = core.DamageSkill("어드밴스드 어스 브레이크(전기)(파동)", 0, 570, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedEarthBreakElectric = core.DamageSkill("어드밴스드 어스 브레이크(전기)", 0, 340, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
         DoubleTime = core.BuffSkill("래피드 타임", 0, 9999*10000, crit = 20, pdamage = 10).wrap(core.BuffSkillWrapper)
@@ -155,23 +155,23 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 4000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 4초간 발동되지 않도록 합니다.
 
         LimitBreakAttack = core.DamageSkill("리미트 브레이크", 0, 400+15*vEhc.getV(0,0), 5).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        LimitBreak = core.BuffSkill("리미트 브레이크", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = (30+vEhc.getV(0,0)//5) *1.2 + 20, cooltime = 240*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = (30+vEhc.getV(0,0)//5) *1.2 + 20, cooltime = 240*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
         # 베타로 사용함.
         TwinBladeOfTime = core.DamageSkill("조인트 어택", 0, 0, 0, cooltime = 120*1000, red = True).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_1 = core.DamageSkill("조인트 어택", 3480, 875+35*vEhc.getV(1,1), 8).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_2 = core.DamageSkill("조인트 어택", 0, 835+33*vEhc.getV(1,1), 8).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_3 = core.DamageSkill("조인트 어택", 0, 1000+40*vEhc.getV(1,1), 13).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_end = core.DamageSkill("조인트 어택", 0, 2400+96*vEhc.getV(1,1), 15, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_end_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 2400+96*vEhc.getV(1,1) * (75 + vEhc.getV(3,3))*0.01, 15).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_1 = core.DamageSkill("조인트 어택(1)", 3480, 875+35*vEhc.getV(1,1), 8).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_2 = core.DamageSkill("조인트 어택(2)", 0, 835+33*vEhc.getV(1,1), 8).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_3 = core.DamageSkill("조인트 어택(3)", 0, 1000+40*vEhc.getV(1,1), 13).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_end = core.DamageSkill("조인트 어택(4)", 0, 2400+96*vEhc.getV(1,1), 15, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_end_AuraWeapon = core.DamageSkill("오라 웨폰(조인트 어택)", 0, 2400+96*vEhc.getV(1,1) * (75 + vEhc.getV(3,3))*0.01, 15).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         
         #알파
-        ShadowFlashAlpha = core.DamageSkill("쉐도우 플래시", 670, 500+20*vEhc.getV(2,2), 6, cooltime = 40*1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        ShadowFlashAlphaEnd = core.DamageSkill("쉐도우 플래시", 0, 400+16*vEhc.getV(2,2), 15*3).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ShadowFlashAlpha = core.DamageSkill("쉐도우 플래시(알파)", 670, 500+20*vEhc.getV(2,2), 6, cooltime = 40*1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ShadowFlashAlphaEnd = core.DamageSkill("쉐도우 플래시(알파)(종료)", 0, 400+16*vEhc.getV(2,2), 15*3).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         #베타
-        ShadowFlashBeta = core.DamageSkill("쉐도우 플래시", 670, 600+24*vEhc.getV(2,2), 5, cooltime = 40*1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        ShadowFlashBetaEnd = core.DamageSkill("쉐도우 플래시", 0, 750+30*vEhc.getV(2,2), 12 * 2).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ShadowFlashBeta = core.DamageSkill("쉐도우 플래시(베타)", 670, 600+24*vEhc.getV(2,2), 5, cooltime = 40*1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ShadowFlashBetaEnd = core.DamageSkill("쉐도우 플래시(베타)(종료)", 0, 750+30*vEhc.getV(2,2), 12 * 2).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         ComboHolder = core.DamageSkill("어파스", 0,0,0).wrap(core.DamageSkillWrapper)
         ######   Skill Wrapper   ######
@@ -283,17 +283,11 @@ class JobGenerator(ck.JobGenerator):
         
         AuraWeapon_connection_builder(TwinBladeOfTime_end, TwinBladeOfTime_end_AuraWeapon)
 
-
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return(ComboHolder,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     AlphaState, BetaState, AuraWeaponBuff, DoubleTime, TimeDistortion, TimeHolding, IntensiveTime, LimitBreak,
-                    globalSkill.soul_contract()],
-                [ShadowRain, TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta],
-                [],
-                [AuraWeaponCooltimeDummy],
-                ComboHolder)
-        
-        return schedule
+                    globalSkill.soul_contract()]+\
+                [ShadowRain, TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta]+\
+                []+\
+                [AuraWeaponCooltimeDummy]+\
+                [ComboHolder])

@@ -181,7 +181,7 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
         PodicMeditaion = core.BuffSkill("포딕 메디테이션", 0, 1800000, att = 40).wrap(core.BuffSkillWrapper)
         DarkCrescendo = core.BuffSkill("다크 크레센도", 780, 180 * 1000, pdamage = 28, rem = True).wrap(core.BuffSkillWrapper)#<- 제대로 계산 필요함. 딜레이 모름
-        DarknessSocery = core.BuffSkill("다크니스 소서리", 780, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
+        DarknessSocery = core.BuffSkill("다크니스 소서리(버프)", 780, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
         Memorize = core.BuffSkill("메모라이즈", 600, 10, cooltime = 150 * 1000, rem = True).wrap(core.BuffSkillWrapper)#Memorize <- 역시 제대로 계산 필요함. 딜레이 모음
     
@@ -205,7 +205,7 @@ class JobGenerator(ck.JobGenerator):
         Apocalypse = core.DamageSkill("아포칼립스", 1140, 340, 7 * 1.5,modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         AbsoluteKill = core.DamageSkill("앱솔루트 킬", 600, 385, 7*2,modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬', 600, 385, 7*2, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(쿨타임)', 600, 385, 7*2, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         LightReflection.onAfter(LuminousState.modifyStack(22))
         Apocalypse.onAfter(LuminousState.modifyStack(25))
@@ -226,16 +226,11 @@ class JobGenerator(ck.JobGenerator):
         SoulContract = globalSkill.soul_contract()
         #SoulContract.onConstraint(core.ConstraintElement('이퀄일때만 사용', LuminousState, partial(LuminousState.isState,2) ))
 
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return(Attack, 
                 [LuminousState, globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Booster, PodicMeditaion, DarknessSocery, DarkCrescendo, HerosOath, Memorize, Frid, OverloadMana,
-                    SoulContract],
-                [LightAndDarkness, AbsoluteKillCooltimed],
-                [PunishingResonator, DoorOfTruth],
-                [],
-                Attack)
-
-        return schedule
+                    SoulContract] +\
+                [LightAndDarkness, AbsoluteKillCooltimed] +\
+                [PunishingResonator, DoorOfTruth] +\
+                [] +\
+                [Attack])

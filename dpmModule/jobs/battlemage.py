@@ -67,9 +67,9 @@ class JobGenerator(ck.JobGenerator):
         
         #배페 좌우텔 분당 86회 기준.
         FinishBlow_ = core.DamageSkill("피니쉬 블로우", 720, 330, 6, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        FinishBlow_M = core.DamageSkill("피니쉬 블로우", 720, 330, 6+1, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        FinishBlow_M = core.DamageSkill("피니쉬 블로우(마오데)", 720, 330, 6+1, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         FinishBlow_U = core.DamageSkill("사신의 낫", 720+60, 300, 12, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        FinishBlow_M_U = core.DamageSkill("사신의 낫", 720+60, 300, 12+1, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        FinishBlow_M_U = core.DamageSkill("사신의 낫(마오데)", 720+60, 300, 12+1, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         Death = core.SummonSkill("데스", 0, 5000, 200+chtr.level, 12, 99999*100000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         
@@ -80,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
     
         MasterOfDeath = core.BuffSkill("마스터 오브 데스", 1020, 30*1000, cooltime = 200*1000).wrap(core.BuffSkillWrapper)
         BattlekingBar = core.DamageSkill("배틀킹 바", 200, 650, 2, cooltime = 13*1000, modifier = core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        BattlekingBar2 = core.DamageSkill("배틀킹 바", 250, 650, 5, modifier =  core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        BattlekingBar2 = core.DamageSkill("배틀킹 바(2타)", 250, 650, 5, modifier =  core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
         DarkGenesis = core.DamageSkill("다크 제네시스", 870, 520, 8, cooltime = 30*1000).wrap(core.DamageSkillWrapper)
         DarkGenesisFinalAttack = core.DamageSkill("다크 제네시스(추가타)", 0, 220, 0.6).wrap(core.DamageSkillWrapper)
@@ -101,6 +101,8 @@ class JobGenerator(ck.JobGenerator):
         FinishBlow.onAfter(UseMark)
         FinishBlow.onAfter(DarkLightening)
         FinishBlow.onAfter(FinalAttack)
+        FinishBlowEndpoint = core.DamageSkill('기본공격', 0, 0, 0).wrap(core.DamageSkillWrapper)
+        FinishBlowEndpoint.onAfter(FinishBlow)
         
         #DarkLightening.onAfters([MarkStack.stackController(1), UseMark])
         DarkLightening.onAfters([MarkStack.stackController(1), FinalAttack])
@@ -113,16 +115,11 @@ class JobGenerator(ck.JobGenerator):
         # 극딜기 싱크로
         MasterOfDeath.onConstraint(core.ConstraintElement("리퍼와 같이 사용", GrimReaper, GrimReaper.is_active))
         
-        schedule = core.ScheduleGraph()
-        
-        schedule.build_graph(
-                chtr, 
+        return(FinishBlowEndpoint,
                 [Booster, WillOfLiberty, MasterOfDeath, UnionAura,
                 globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                globalSkill.soul_contract()],
-                [DarkGenesis, BattlekingBar],
-                [RegistanceLineInfantry, Death, BlackMagicAlter, GrimReaper],
-                [],
-                FinishBlow)
-
-        return schedule
+                globalSkill.soul_contract()] +\
+                [DarkGenesis, BattlekingBar] +\
+                [RegistanceLineInfantry, Death, BlackMagicAlter, GrimReaper] +\
+                [] +\
+                [FinishBlowEndpoint])

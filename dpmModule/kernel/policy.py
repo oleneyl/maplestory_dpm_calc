@@ -14,6 +14,8 @@ class StorageLinkedGraph(AbstractScenarioGraph):
         self._task_map = {}
         self._tick_task_map = {}
         for el in accessible_elements:
+            if el is None:
+                continue
             name = el._id
             if name in self._element_map:
                 raise KeyError(f'''Given Graph element {name} was duplicated, cannot create unique mapping.
@@ -99,7 +101,8 @@ class AdvancedGraphScheduler(AbstractScheduler):
             if not failed:
                 #print(self.totalTimeLeft, avail._id)
                 return self.graph.get_task_from_element(avail)
-
+        return None
+        
     def get_delayed_task(self):  
         for _, (wrp, tick) in self.graph.get_tick_task().items():
             if hasattr(wrp, 'need_count'):
@@ -173,7 +176,8 @@ class TypebaseFetchingPolicy(FetchingPolicy):
         self.sorted = []
         for clstype in self.priority_list:
             self.sorted += (list(filter(lambda x:isinstance(x,clstype), self.target)))
-        self.sorted.pop(self.sorted.index(graph.base_element))
+        if graph.base_element in self.sorted:
+            self.sorted.pop(self.sorted.index(graph.base_element))
         self.sorted.append(graph.base_element)
         return self
     

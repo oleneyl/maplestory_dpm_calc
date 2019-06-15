@@ -111,14 +111,11 @@ class JobGenerator(ck.JobGenerator):
         SplitArrowBuff.onConstraint(core.ConstraintElement("트스나 사용불가시에만", TrueSnipping, TrueSnipping.is_not_usable))
         schedule = core.ScheduleGraph()
         
-        schedule.build_graph(
-                chtr, 
+        return(Snipping,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_wind_booster(),
                     SoulArrow, ElusionStep, SharpEyes, BoolsEye, EpicAdventure, CriticalReinforce, SplitArrowBuff,
-                        globalSkill.soul_contract()],
-                [TrueSnipping, ChargedArrowUse, ChargedArrow],
-                [Evolve,Freezer, GuidedArrow],
-                [],
-                Snipping)
-
-        return schedule
+                        globalSkill.soul_contract()] +\
+                [TrueSnipping, ChargedArrowUse, ChargedArrow] +\
+                [Evolve,Freezer, GuidedArrow] +\
+                [] +\
+                [Snipping])

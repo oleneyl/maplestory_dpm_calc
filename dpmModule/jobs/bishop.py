@@ -124,8 +124,8 @@ class JobGenerator(ck.JobGenerator):
         
         #Damage Skills
         AngelRay = core.DamageSkill("엔젤레이", 630, 315 + 6*combat, 10).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
-        AngelRay_25 = core.DamageSkill("엔젤레이", 630, 315 + 6*combat, 10, modifier = core.CharacterModifier(pdamage_indep = 25)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
-        AngelRay_50 = core.DamageSkill("엔젤레이", 630, 315 + 6*combat, 10, modifier = core.CharacterModifier(pdamage_indep = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
+        AngelRay_25 = core.DamageSkill("엔젤레이(25)", 630, 315 + 6*combat, 10, modifier = core.CharacterModifier(pdamage_indep = 25)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
+        AngelRay_50 = core.DamageSkill("엔젤레이(50)", 630, 315 + 6*combat, 10, modifier = core.CharacterModifier(pdamage_indep = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
         
         HeavensDoor = core.DamageSkill("헤븐즈도어", 1080, 1000, 8, cooltime = 180 * 1000).wrap(core.DamageSkillWrapper)   #사용하지 않는다--> 일단 Wrapper 제작 안할 것.
         PeaceMaker = core.DamageSkill("피스메이커", 750, 350 + 14*vEhc.getV(0,0), 12, cooltime = 10 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) #풀스택시 미발동..
@@ -165,21 +165,17 @@ class JobGenerator(ck.JobGenerator):
 
         AngelRay_is25 = core.OptionalElement(SacredMark.statusChecker(25), AngelRay_25, AngelRay)
         MainAttack = core.OptionalElement(SacredMark.statusChecker(50), AngelRay_50, AngelRay_is25) 
-        
-        schedule = core.ScheduleGraph()
-        
+        MainAttackWrapped = core.DamageSkill('기본공격',0,0,0).wrap(core.DamageSkillWrapper)
+        MainAttackWrapped.onAfter(MainAttack)
         Pray.onConstraint(core.ConstraintElement("인피 마지막과 맞춰서", Infinity, partial(Infinity.is_time_left, 45000, -1)))
         SoulContract = globalSkill.soul_contract()
         SoulContract.set_disabled_and_time_left(72000)
         
-        schedule.build_graph(
-                chtr, 
+        return(MainAttackWrapped, 
                 [Booster, SacredMark, Infinity, PeaceMakerFinalBuff, Pray, EpicAdventure, OverloadMana,
                 globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                SoulContract],
-                [PeaceMaker],
-                [AngelOfLibra, Bahamutt],
-                [],
-                MainAttack)
-
-        return schedule
+                SoulContract] +\
+                [PeaceMaker] +\
+                [AngelOfLibra, Bahamutt] +\
+                [] +\
+                [MainAttackWrapped])
