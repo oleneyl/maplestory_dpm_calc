@@ -6,11 +6,14 @@ dpmModule
     - argparse
 
   - download
-
+    ```bash
+    pip install dpmModule
+    ```
+    
     ```bash
     git clone https://github.com/oleneyl/maplestory_dpm_calc
     ```
-    
+
 About 
 ------------
   dpmModule은 메이플스토리에서 데미지와 관련된 계산(기댓값, DPM, 최적잠재 등) 을 쉽게 계산하기
