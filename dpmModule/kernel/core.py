@@ -1722,12 +1722,6 @@ class BasicVEnhancer(AbstractVEnhancer):
                 "vskill" : [{"name" : skills[0]["target"].name} for skills in v_skill_list_sorted if len(skills) > 0]}
     
     def set_state_direct(self, li):
-        #This Error check is disabled due to enable force-setting by clinets.
-        '''
-        for i in range(len(li)-1):
-            if li[i] < li[i+1]:
-                raise TypeError("List must sorted with descending order.")
-        '''
         self.enhance_list = li
         self.enhancer_priority = [[] for i in li]
 
