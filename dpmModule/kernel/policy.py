@@ -4,15 +4,11 @@ from .abstract import AbstractScenarioGraph, AbstractScheduler
 from .core import CharacterModifier
 from .core import BuffSkillWrapper, DamageSkillWrapper, SummonSkillWrapper
 
-class StorageLinkedGraph(AbstractScenarioGraph):
-    def __init__(self, base_element, all_elements, storage, accessible_elements = [] ) :
-        self.base_element = base_element
-        self.storage = storage
-        self._all_elements = all_elements
-        self.accessible_elements = accessible_elements
+
+class NameIndexedGraph(AbstractScenarioGraph):
+    def __init__(self, accessible_elements = []):
         self._element_map = {}
-        self._task_map = {}
-        self._tick_task_map = {}
+        self.accessible_elements = accessible_elements
         for el in accessible_elements:
             if el is None:
                 continue
@@ -24,6 +20,28 @@ class StorageLinkedGraph(AbstractScenarioGraph):
                 ''')
             else:
                 self._element_map[name] = el
+
+    def get_element(self, name):
+        if name in self._element_map:
+            return self._element_map[name]
+        else:
+            raise KeyError(f'''No element name {name} exist. Check your graph configuration, or
+            check with graph.get_storage()''')
+
+    def get_all(self):
+        return self.accessible_elements
+
+    def filter_elements(self, ftr):
+        return list(filter(ftr, self.get_all()))
+
+
+class StorageLinkedGraph(NameIndexedGraph):
+    def __init__(self, base_element, storage, accessible_elements = [] ) :
+        super(StorageLinkedGraph, self).__init__(accessible_elements = accessible_elements)
+        self.base_element = base_element
+        self.storage = storage
+        self._task_map = {}
+        self._tick_task_map = {}
     
     def build(self, chtr):
         rem = chtr.buff_rem
@@ -41,18 +59,8 @@ class StorageLinkedGraph(AbstractScenarioGraph):
         for _, wrp in self._element_map.items():
             wrp.spend_time(t)
 
-    def get_element(self, name):
-        if name in self._element_map:
-            return self._element_map[name]
-        else:
-            raise KeyError(f'''No element name {name} exist. Check your graph configuration, or
-            check with graph.get_storage()''')
-
     def get_tick_task(self):
         return {n:[self._element_map[n], self._tick_task_map[n]] for n in self._tick_task_map}
-
-    def get_all(self):
-        return self.accessible_elements
 
     def get_element_and_task(self):
         ret_dict = {}
@@ -70,9 +78,6 @@ class StorageLinkedGraph(AbstractScenarioGraph):
 
     def set_v_enhancer(self, vEhc):
         self._vEhc = vEhc
-
-    def filter_elements(self, ftr):
-        return list(filter(ftr, self.get_all()))
 
     def get_default_buff_modifier(self):
         mdf = CharacterModifier()

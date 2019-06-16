@@ -163,7 +163,7 @@ class JobGenerator():
 
         collection = GlobalOperation.export_collection()
 
-        graph = policy.StorageLinkedGraph(base_element, [],
+        graph = policy.StorageLinkedGraph(base_element,
             collection.get_storage(), accessible_elements=all_elements)
         graph.build(chtr)
         
