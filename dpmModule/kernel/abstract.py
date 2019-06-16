@@ -156,6 +156,7 @@ class AbstractVEnhancer():
         which have keys [enhance, vskill], contains list of {name : skillname}, defines which skill has priority
         when enhancing.
         ''')
+
     def get_reinforcement_with_register(self, index, incr, crit, target):
         raise NotImplementedError('''get_reinforcement_with_register must return CharacterModifier, with registering given skill
         as given priority, with appropriate Modifier.

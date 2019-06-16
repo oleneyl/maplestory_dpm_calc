@@ -1,5 +1,5 @@
 from .graph import EvaluativeGraphElement, DynamicVariableOperation, DynamicVariableInstance, AbstractDynamicVariableInstance
-from .abstract import AbstractScenarioGraph
+from .abstract import AbstractScenarioGraph, AbstractVEnhancer
 from functools import partial
 import math
 
@@ -368,8 +368,7 @@ class VSkillModifier():
             return CharacterModifier(crit = 0, pdamage_indep = (lv * incr), armor_ignore = armor)
 
 
-
-class vEnhancer():
+class vEnhancer(AbstractVEnhancer):
     def __init__(self):
         #### value list ####
         self.enhance_list = []
@@ -387,6 +386,19 @@ class vEnhancer():
         
         return {"enhance" : [{"name" : skills[0].name} for skills in self.enhancer_priority if len(skills) > 0],
                 "vskill" : [{"name" : skills[0]["target"].name} for skills in v_skill_list_sorted if len(skills) > 0]}
+    
+    def set_state_direct(self, li):
+        #This Error check is disabled due to enable force-setting by clinets.
+        '''
+        for i in range(len(li)-1):
+            if li[i] < li[i+1]:
+                raise TypeError("List must sorted with descending order.")
+        '''
+        self.enhance_list = li
+        self.enhancer_priority = [[] for i in li]
+
+    def set_vlevel_direct(self, li):
+        self.v_skill_list = li
 
     def set_state_from_level_and_skill_cores(self, level, skill_cores, skill_core_level, each_enhanced_amount = 17):
         total_core_slots = 6 + (level - 200) // 5
@@ -423,19 +435,6 @@ class vEnhancer():
         self.set_state_direct(enhance_state_will_be_setted)
         self.set_vlevel_direct( [(i < skill_cores) * skill_core_level for i in range(10)] )
 
-    def set_state_direct(self, li):
-        #This Error check is disabled due to enable force-setting by clinets.
-        '''
-        for i in range(len(li)-1):
-            if li[i] < li[i+1]:
-                raise TypeError("List must sorted with descending order.")
-        '''
-        self.enhance_list = li
-        self.enhancer_priority = [[] for i in li]
-
-    def set_vlevel_direct(self, li):
-        self.v_skill_list = li
-        
     def get_reinforcement_with_register(self, index, incr, crit, target):
         self.enhancer_priority[index].append(target)
         
