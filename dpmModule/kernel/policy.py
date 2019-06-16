@@ -34,6 +34,9 @@ class NameIndexedGraph(AbstractScenarioGraph):
     def filter_elements(self, ftr):
         return list(filter(ftr, self.get_all()))
 
+    def get_accessible_keys(self):
+        return list(self._element_map.keys())
+
 
 class StorageLinkedGraph(NameIndexedGraph):
     def __init__(self, base_element, storage, accessible_elements = [] ) :
