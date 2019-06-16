@@ -1700,6 +1700,8 @@ class Analytics():
         
         return {"damage" : (total_damage - self.total_damage) * (60000 / self.totalTime) , "increment" : (total_damage / self.total_damage) - 1, "simple_increment" : simple_increment}
 
+
+
 class BasicVEnhancer(AbstractVEnhancer):
     def __init__(self):
         #### value list ####
@@ -1756,6 +1758,17 @@ class BasicVEnhancer(AbstractVEnhancer):
     def __repr__(self):
         return "VEnhancer :: dpmModule.jobs.template\nVEnhance : %s\nVSkill : %s" % (str(self.enhance_list), str(self.v_skill_list))
 
+
+class DirectVBuilder(AbstractVBuilder):
+    def __init__(self, direct_enhance_state, direct_v_state):
+        self.direct_enhance_state = direct_enhance_state
+        self.direct_v_state = direct_v_state
+
+    def build_enhancer(self, character, generator):
+        enhancer = BasicVEnhancer()
+        enhancer.set_state_direct(self.direct_enhance_state)
+        enhancer.set_vlevel_direct(self.direct_v_state)
+        return enhancer
 
 class NjbStyleVBuilder(AbstractVBuilder):
     def __init__(self, skill_core_level = 25, each_enhanced_amount = 17):

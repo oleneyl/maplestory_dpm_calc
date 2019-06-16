@@ -161,7 +161,3 @@ class AbstractVBuilder():
         raise NotImplementedError('''AbstractVBuilder.build_enhancer must return VEnhancer as as result,
         with properly handling given character and generator.
         ''')
-
-
-class DirectVBuilder(AbstractVBuilder):
-    pass
