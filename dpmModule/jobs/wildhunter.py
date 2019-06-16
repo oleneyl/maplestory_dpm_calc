@@ -77,7 +77,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, SummonJaguer]
         
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         재규어 7마리(25레벨시 8마리) 소환, 재규어당 데미지 62+vlevel, 3히트 가정.
         

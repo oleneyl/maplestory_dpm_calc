@@ -37,7 +37,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, ContinualAimingPassive]
         
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         ----정보---
         크루 커멘더쉽 : 최종뎀 15%

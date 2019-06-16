@@ -53,7 +53,7 @@ class JobGenerator(ck.JobGenerator):
         
         
 
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         하이퍼
         싸이킥 그랩 - 보스포인트/리인포스

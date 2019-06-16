@@ -36,7 +36,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, ElementalCharge, ParashockGuard]
         
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         블래-라차-디차-파택
         

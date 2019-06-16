@@ -37,7 +37,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery]        
         
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         트리니티 버프는 2.8중첩으로 계산
         

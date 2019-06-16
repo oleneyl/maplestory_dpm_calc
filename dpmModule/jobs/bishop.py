@@ -102,7 +102,7 @@ class JobGenerator(ck.JobGenerator):
         VengenceOfAngelOn = core.InformedCharacterModifier("벤전스 오브 엔젤(on)", att = 50, pdamage_indep = 30, armor_ignore = 20)#속서애성을 pdamage_indep으로 임시 계싼
         return [WeaponConstant, Mastery, ArcaneAim, VengenceOfAngelOn]
         
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         ######   Skill   ###### 
         '''리브라 ON
         서버렉 3초

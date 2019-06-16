@@ -47,7 +47,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, ReshuffleSwitchAttack]
         
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         모프게이지 3단계(700)
         피규레이션은 벞지 영향을 받음

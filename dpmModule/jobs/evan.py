@@ -121,7 +121,7 @@ class JobGenerator(ck.JobGenerator):
         #DragonBreak = core.DamageSkill("드래곤 브레이크", ?, 450+18*vlevel, 7, cooltime = 20000) 2.5초 지속, 6회
         pass
         
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         다오어-브레스-브오윈
         

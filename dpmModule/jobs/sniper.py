@@ -55,7 +55,7 @@ class JobGenerator(ck.JobGenerator):
                ExtremeArchery, LastmanStanding, WeaknessFinding]
         
 
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         거리 400
         

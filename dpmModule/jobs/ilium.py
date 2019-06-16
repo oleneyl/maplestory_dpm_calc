@@ -72,7 +72,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery]
         
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         하이퍼 : 자벨린- 보스킬러, 리인포스, 보너스 어택
         

@@ -41,7 +41,7 @@ class JobGenerator(ck.JobGenerator):
         Flame = core.InformedCharacterModifier("플레임",att = 40)
         return [WeaponConstant, Mastery, Flame]
         
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         오비탈 - 블레이징 - 드래곤 슬레이브 - 이그니션 - 인페르노라이즈
         여우 사용

@@ -1,4 +1,4 @@
-from ..kernel.core import CharacterModifier, vEnhancer
+from ..kernel.core import CharacterModifier
 from ..kernel.core import ExtendedCharacterModifier as EXMDF
 from ..item import ItemKernel as ik
 from ..item.ItemKernel import Item
@@ -134,12 +134,7 @@ class JobGenerator():
         self.chtr = None
         self.ability_list = Ability_tool.get_ability_set(None, None, None)
         self._use_critical_reinforce = False
-        
-        if(vEhc == None):
-            self.vEhc = vEnhancer()
-        else:
-            self.vEhc = vEhc
-    
+            
     def apply_complex_options(self, chtr):
         return
 
@@ -159,7 +154,7 @@ class JobGenerator():
     def build(self, chtr, combat = False):
         initialize_global_properties()
 
-        base_element, all_elements = self.generate(chtr, combat = combat, vEhc = self.vEhc)
+        base_element, all_elements = self.generate(self.vEhc, chtr, combat = combat)
 
         GlobalOperation.assign_storage()
         GlobalOperation.attach_namespace()
@@ -174,7 +169,7 @@ class JobGenerator():
         
         return graph
     
-    def generate(self, chtr : AbstractCharacter, combat : bool = False , vEhc = vEnhancer()):
+    def generate(self, vEhc, chtr : AbstractCharacter, combat : bool = False):
         raise NotImplementedError
     
     def build_passive_skill_list(self):
@@ -200,19 +195,8 @@ class JobGenerator():
             passive_modifier += _mdf        
         return passive_modifier
     
-    def package_bare(self, chtr, vEhc = None, useFullCore = False, vEnhanceGenerateFlag = None):
-        if vEnhanceGenerateFlag == "njb_style":
-            ehc = vEnhancer()
-            ehc.set_state_from_level_and_skill_cores(chtr.level, self.vSkillNum, 25, each_enhanced_amount = 17)    #Najebul - style core enhancement guideline.
-            self.vEhc = ehc
-        elif useFullCore:
-            fullEhc = vEnhancer()
-            fullEhc.set_state_direct([50,50,50,50,25,25,25,25,0,0,0,0])
-            fullEhc.set_vlevel_direct([25,25,25,25,25,25,25,25,25,25,25,25])
-            self.vEhc = fullEhc
-        else:
-            self.vEhc = vEhc
-        
+    def package_bare(self, chtr, v_builder, useFullCore = False, vEnhanceGenerateFlag = None):
+        self.vEhc = v_builder.build_enhancer(chtr, self)
         self.chtr = chtr
         self.build_not_implied_skill_list()
         chtr.apply_modifiers([self.get_passive_skill_modifier()])
@@ -222,9 +206,8 @@ class JobGenerator():
         
         return graph
         
-    def package(self, chtr, combat : bool = False, 
-                    vlevel : int = 0, 
-                    vEhc = None,
+    def package(self, chtr, v_builder, combat : bool = False, 
+                    vlevel : int = 0,
                     ulevel : int = 4000,
                     weaponstat = [3,6],
                     log = False,
@@ -232,14 +215,7 @@ class JobGenerator():
                     ability_grade = Ability_grade(4,1) ):
         '''Packaging function
         '''
-        if vEnhanceGenerateFlag == "njb_style":
-            ehc = vEnhancer()
-            ehc.set_state_from_level_and_skill_cores(chtr.level, self.vSkillNum, 25, each_enhanced_amount = 17)    #Najebul - style core enhancement guideline.
-            self.vEhc = ehc
-        elif vEhc is None:
-            raise TypeError("You must specify vEhc")
-        else:
-            self.vEhc = vEhc
+        self.vEhc = v_builder.build_enhancer(chtr, self)
         self.combat = combat
         self.chtr = chtr
         

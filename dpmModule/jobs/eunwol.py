@@ -79,7 +79,7 @@ class JobGenerator(ck.JobGenerator):
         Weakness = core.InformedCharacterModifier("약화",pdamage = 20) #디버프지만 상시발동가정        
         return [WeaponConstant, Mastery,Weakness]
 
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         ----정보---
         하이퍼 : 귀참 3개, 폭류권 리인포스, 여우령 소환확률 +10%

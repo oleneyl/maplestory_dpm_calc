@@ -60,7 +60,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery]
     
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         일반 다크사이트는 깡으로 사용하지 않음.
         

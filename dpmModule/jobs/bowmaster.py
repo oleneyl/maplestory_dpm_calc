@@ -52,7 +52,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery,  MortalBlow, ExtremeArchery, ArmorPiercing]
 
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vlevel : int = 0, vEhc = core.vEnhancer(), applyPassive = True) -> None:
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         잔영의시 : 500ms마다 타격(초당 2회)
         애로우 레인 : 떨어질 때마다 6번씩( = 2500/6 ~ 420ms)
