@@ -40,7 +40,7 @@ class JobGenerator(ck.JobGenerator):
         BattleRage = core.InformedCharacterModifier("배틀 레이지",pdamage = 40, crit_damage = 8, crit=20)
         return [WeaponConstant, Mastery, DebuffAura, BattleRage ]
 
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         오라스위칭 미사용
         디버프 오라 사용

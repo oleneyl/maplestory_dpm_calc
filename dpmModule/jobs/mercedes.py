@@ -108,7 +108,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 60, pdamage = 30)
         
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         코강 순서
         

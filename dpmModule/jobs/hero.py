@@ -76,7 +76,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, Enrage]
         
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         코강 순서:
         레블 - 파택 - 업라이징 - 샤우트 - 인사이징 - 패닉

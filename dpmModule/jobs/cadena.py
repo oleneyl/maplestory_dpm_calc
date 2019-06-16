@@ -80,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery]		                      
 
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         논체인아츠-리인포스, 보스킬러
         체인아츠스트로크-넥스트어택 리인포스, 리인포스

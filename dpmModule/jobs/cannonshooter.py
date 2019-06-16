@@ -36,7 +36,7 @@ class JobGenerator(ck.JobGenerator):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)        
         return [WeaponConstant, Mastery]
         
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         하이퍼 : 몽키트윈스-스플릿, 인핸스, 캐논버스터 - 리인포스, 보너스 어택.
         롤링캐논레인보우 25타

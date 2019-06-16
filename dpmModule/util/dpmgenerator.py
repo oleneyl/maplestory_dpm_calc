@@ -27,14 +27,14 @@ class IndividualDPMGenerator():
     def set_runtime(self, time):
         self.runtime = time
 
-    def get_dpm(self, vEhc = core.vEnhancer(), ulevel = 6000, weaponstat = [4,9], level = 230, printFlag = False):
+    def get_dpm(self, ulevel = 6000, weaponstat = [4,9], level = 230, printFlag = False):
         #TODO target을 동적으로 생성할 수 있도록.
         target = self.template(maplejobs.weaponList[self.job])
         target.level = level
         gen = (self.supplier).JobGenerator()
-        vEhc = core.vEnhancer()
-        vEhc.set_state_direct([50,50,50,50,25,25,25,25,0,0,0,0])
-        graph = gen.package(target, vEhc = vEhc, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
+
+        v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17)
+        graph = gen.package(target, v_builder, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
         sche = policy.AdvancedGraphScheduler(graph,
             policy.TypebaseFetchingPolicy(priority_list = [
                 core.BuffSkillWrapper,
@@ -48,7 +48,7 @@ class IndividualDPMGenerator():
 
         return control.getDPM()
 
-    def get_detailed_dpm(self, vEhc = core.vEnhancer(), ulevel = 6000, weaponstat = [4,9], level = 230):
+    def get_detailed_dpm(self, ulevel = 6000, weaponstat = [4,9], level = 230):
         #TODO target을 동적으로 생성할 수 있도록.
         
         target = self.template(maplejobs.weaponList[self.job])
@@ -56,9 +56,8 @@ class IndividualDPMGenerator():
         gen = (self.supplier).JobGenerator()
         
         #코어강화량 설정
-        vEhc = core.vEnhancer()
-        vEhc.set_state_direct([50,50,50,50,25,25,25,25,0,0,0,0])
-        graph = gen.package(target, vEhc = vEhc, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
+        v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17)
+        graph = gen.package(target, v_builder, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
         sche = policy.AdvancedGraphScheduler(graph,
             policy.TypebaseFetchingPolicy(priority_list = [
                 core.BuffSkillWrapper,
@@ -85,7 +84,7 @@ class DpmSetting():
     '''DpmSetting은 모든 직업의 dpm 설정값을 연산합니다. IndividualDPMGenerator에 필요한 메타데이터를 저장합니다.
     '''
     itemGrade = ["노말", "레어", "에픽", "유니크", "레전"]
-    def __init__(self, template, vEhc = core.vEnhancer(), ulevel = 0, weaponstat = [3,0], level = 200):
+    def __init__(self, template, v_builder = core.NjbStyleVBuilder(), ulevel = 0, weaponstat = [3,0], level = 200):
         self.level = level
         self.vEhc = vEhc
         self.ulevel = ulevel

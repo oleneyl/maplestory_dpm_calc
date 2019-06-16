@@ -138,3 +138,26 @@ class AbstractSession():
 class AbstractAnalytics():
     pass
 
+
+class AbstractVEnhancer():
+    def get_priority(self):
+        raise NotImplementedError('''AbstractVEnhancer.get_priority must return dict like object,
+        which have keys [enhance, vskill], contains list of {name : skillname}, defines which skill has priority
+        when enhancing.
+        ''')
+    def get_reinforcement_with_register(self, index, incr, crit, target):
+        raise NotImplementedError('''get_reinforcement_with_register must return CharacterModifier, with registering given skill
+        as given priority, with appropriate Modifier.
+        ''')
+
+class AbstractVBuilder():
+    '''Class AbstractVBuilder
+    This builder class creates VEnhancer, from given settings, with given JobGenerator.
+    '''
+    def __init__(self):
+        pass
+
+    def build_enhancer(self, character, generator):
+        raise NotImplementedError('''AbstractVBuilder.build_enhancer must return VEnhancer as as result,
+        with properly handling given character and generator.
+        ''')

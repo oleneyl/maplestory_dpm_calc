@@ -39,7 +39,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery]
 
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         쿼드-마크-쇼다운
         

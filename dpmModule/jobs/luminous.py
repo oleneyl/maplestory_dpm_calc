@@ -167,7 +167,7 @@ class JobGenerator(ck.JobGenerator):
 
         return [WeaponConstant, Mastery, BlessOfDarkness]
         
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         아포 22회 / 라리플 25회가 이퀄리브리엄 진입까지 요구됨
         

@@ -43,7 +43,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery]
 
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         하이퍼 : 
         트루사이트 : 내성무시 / 방무

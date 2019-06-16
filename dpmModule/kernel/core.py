@@ -1,5 +1,5 @@
 from .graph import EvaluativeGraphElement, DynamicVariableOperation, DynamicVariableInstance, AbstractDynamicVariableInstance
-from .abstract import AbstractScenarioGraph
+from .abstract import AbstractScenarioGraph, AbstractVEnhancer, AbstractVBuilder
 from functools import partial
 import math
 
@@ -366,107 +366,7 @@ class VSkillModifier():
             return CharacterModifier(crit = 5, pdamage_indep = (lv * incr), armor_ignore = armor)
         else:
             return CharacterModifier(crit = 0, pdamage_indep = (lv * incr), armor_ignore = armor)
-    
-    @staticmethod
-    def getEhc(incr, lv, crit = False):
-        return VSkillModifier.get_reinforcement(incr, lv, crit)        
 
-
-
-class vEnhancer():
-    def __init__(self):
-        #### value list ####
-        self.enhance_list = []
-        self.v_skill_list = []
-        self.core_number = None
-        
-        #### analytics list ####
-        self.enhancer_priority = []  # 5차의 강화스킬 순서
-        self.v_skill_priority = [] # 5차의 사용스킬 순서
-    
-    def get_priority(self):
-        v_skill_list_sorted = [[] for i in range(20)]  #20 is magic number
-        for vskill in self.v_skill_priority:
-            v_skill_list_sorted[vskill["useIdx"]].append(vskill)
-        
-        return {"enhance" : [{"name" : skills[0].name} for skills in self.enhancer_priority if len(skills) > 0],
-                "vskill" : [{"name" : skills[0]["target"].name} for skills in v_skill_list_sorted if len(skills) > 0]}
-        #TODOTODOTODOTODO
-    
-    def set_state_from_level_and_skill_cores(self, level, skill_cores, skill_core_level, each_enhanced_amount = 17):
-        total_core_slots = 6 + (level - 200) // 5
-        available_core_slots = max(total_core_slots - skill_cores, 0)
-        level_bonus = level - 200
-        
-        enhance_state_will_be_setted = [0 for i in range(16)]
-        
-        if available_core_slots < 3 :
-            for i in range(available_core_slots):
-                for j in range(3):
-                    enhance_state_will_be_setted[j] += 17
-        else:
-            for i in range(available_core_slots):
-                enhance_state_will_be_setted[i] = 50
-        
-        while level_bonus > 0:
-            chance_for_upgrade = min(level_bonus, 5)
-            target_upgrade_skill_index = 0
-            
-            enhancement_left = 3 #하나의 코어는 3개의 스킬을 강화합니다.
-            while target_upgrade_skill_index < len(enhance_state_will_be_setted) and enhancement_left > 0:
-                if enhance_state_will_be_setted[target_upgrade_skill_index] < 60 : 
-                    maximum_upgrade_level_available = 60 - enhance_state_will_be_setted[target_upgrade_skill_index]
-                    actual_chance_for_upgrade = min(chance_for_upgrade, maximum_upgrade_level_available)
-                    enhance_state_will_be_setted[target_upgrade_skill_index] += actual_chance_for_upgrade
-                    enhancement_left -= 1
-                    
-                target_upgrade_skill_index += 1
-                
-            level_bonus -= chance_for_upgrade
-            
-        
-        self.set_state_direct(enhance_state_will_be_setted)
-        self.set_vlevel_direct( [(i < skill_cores) * skill_core_level for i in range(10)] )
-
-    def set_state_direct(self, li):
-        #This Error check is disabled due to enable force-setting by clinets.
-        '''
-        for i in range(len(li)-1):
-            if li[i] < li[i+1]:
-                raise TypeError("List must sorted with descending order.")
-        '''
-        self.enhance_list = li
-        self.enhancer_priority = [[] for i in li]
-        
-        # Debug HACK 
-        # self.set_vlevel_direct([25,25,25,25,25,25,25,25,25,25,25,25])
-
-    def set_vlevel_direct(self, li):
-        self.v_skill_list = li
-        
-    def getEhc(self, index, incr, crit, target):
-        self.enhancer_priority[index].append(target)
-        
-        if index >= len(self.enhance_list):
-            return CharacterModifier()
-        else:
-            return VSkillModifier.get_reinforcement(incr, self.enhance_list[index], crit)
-
-    def getV(self, use_index, upgrade_index):
-        if use_index <= len(self.v_skill_list):
-            return self.v_skill_list[upgrade_index]
-    
-    def add_v_skill(self, target, use_index, upgrade_index):
-        self.v_skill_priority.append({"target" : target, "useIdx" : use_index, "upgIdx" : upgrade_index})
-        
-    def copy(self):
-        retval = vEnhancer()
-        retval.set_state_direct(self.enhance_list)
-        retval.set_vlevel_direct(self.v_skill_list)
-        return retval
-
-    def __repr__(self):
-        return "VEnhancer :: dpmModule.jobs.template\nVEnhance : %s\nVSkill : %s" % (str(self.enhance_list), str(self.v_skill_list))
 
 class AbstractSkill(EvaluativeGraphElement):
     '''Skill must have information about it's name, it's using - delay, skill using cooltime.
@@ -533,10 +433,10 @@ class AbstractSkill(EvaluativeGraphElement):
         else:
             return wrapper(self, name = name)
 
-    def isV(self, vEhc, useIdx, upgIdx):
+    def isV(self, enhancer, use_index, upgrade_index):
         '''Speed hack
         '''
-        vEhc.add_v_skill(self, useIdx, upgIdx)
+        enhancer.add_v_skill(self, use_index, upgrade_index)
         return self
 
 
@@ -622,8 +522,8 @@ class DamageSkill(AbstractSkill):
         
         return self._parse_list_info_into_string(li)
         
-    def setV(self, vEnhancer, index, incr, crit = False):
-        self._static_skill_modifier = self._static_skill_modifier + vEnhancer.getEhc(index, incr, crit, self)
+    def setV(self, v_enhancer, index, incr, crit = False):
+        self._static_skill_modifier = self._static_skill_modifier + v_enhancer.get_reinforcement_with_register(index, incr, crit, self)
         return self
         
     def get_damage(self):
@@ -671,8 +571,8 @@ class SummonSkill(AbstractSkill):
         my_json = {"name" : self.name, "delay" : self._change_time_into_string(self.summondelay), "cooltime" : self._change_time_into_string(self.cooltime), "expl" : self.get_explanation(expl_level = expl_level)}
         return my_json 
     
-    def setV(self, vEnhancer, index, incr, crit = False):
-        self._static_skill_modifier = self._static_skill_modifier + vEnhancer.getEhc(index, incr, crit, self)
+    def setV(self, v_enhancer, index, incr, crit = False):
+        self._static_skill_modifier = self._static_skill_modifier + v_enhancer.get_reinforcement_with_register(index, incr, crit, self)
         return self
         
     def get_damage(self):
@@ -1799,3 +1699,113 @@ class Analytics():
         simple_increment = ((self.chtrmdf + temporal_modifier).get_damage_factor() / (self.chtrmdf.get_damage_factor()) - 1) * (continue_time_length / self.totalTime)
         
         return {"damage" : (total_damage - self.total_damage) * (60000 / self.totalTime) , "increment" : (total_damage / self.total_damage) - 1, "simple_increment" : simple_increment}
+
+
+
+class BasicVEnhancer(AbstractVEnhancer):
+    def __init__(self):
+        #### value list ####
+        self.enhance_list = []
+        self.v_skill_list = []
+        self.core_number = None
+        
+        #### analytics list ####
+        self.enhancer_priority = []  # 5차의 강화스킬 순서
+        self.v_skill_priority = [] # 5차의 사용스킬 순서
+    
+    def get_priority(self):
+        v_skill_list_sorted = [[] for i in range(20)]  #20 is magic number
+        for vskill in self.v_skill_priority:
+            v_skill_list_sorted[vskill["useIdx"]].append(vskill)
+        
+        return {"enhance" : [{"name" : skills[0].name} for skills in self.enhancer_priority if len(skills) > 0],
+                "vskill" : [{"name" : skills[0]["target"].name} for skills in v_skill_list_sorted if len(skills) > 0]}
+    
+    def set_state_direct(self, li):
+        self.enhance_list = li
+        self.enhancer_priority = [[] for i in li]
+
+    def set_vlevel_direct(self, li):
+        self.v_skill_list = li
+
+    def get_reinforcement_with_register(self, index, incr, crit, target):
+        self.enhancer_priority[index].append(target)
+        
+        if index >= len(self.enhance_list):
+            return CharacterModifier()
+        else:
+            return VSkillModifier.get_reinforcement(incr, self.enhance_list[index], crit)
+
+    def getV(self, use_index, upgrade_index):
+        if use_index <= len(self.v_skill_list):
+            return self.v_skill_list[upgrade_index]
+    
+    def add_v_skill(self, target, use_index, upgrade_index):
+        self.v_skill_priority.append({"target" : target, "useIdx" : use_index, "upgIdx" : upgrade_index})
+        
+    def copy(self):
+        retval = BasicVEnhancer()
+        retval.set_state_direct(self.enhance_list)
+        retval.set_vlevel_direct(self.v_skill_list)
+        return retval
+
+    def __repr__(self):
+        return "VEnhancer :: dpmModule.jobs.template\nVEnhance : %s\nVSkill : %s" % (str(self.enhance_list), str(self.v_skill_list))
+
+
+class DirectVBuilder(AbstractVBuilder):
+    def __init__(self, direct_enhance_state, direct_v_state):
+        self.direct_enhance_state = direct_enhance_state
+        self.direct_v_state = direct_v_state
+
+    def build_enhancer(self, character, generator):
+        enhancer = BasicVEnhancer()
+        enhancer.set_state_direct(self.direct_enhance_state)
+        enhancer.set_vlevel_direct(self.direct_v_state)
+        return enhancer
+
+class NjbStyleVBuilder(AbstractVBuilder):
+    def __init__(self, skill_core_level = 25, each_enhanced_amount = 17):
+        self.skill_core_level = skill_core_level
+        self.each_enhanced_amount = each_enhanced_amount
+
+    def build_enhancer(self, character, generator):
+        level = character.level
+        cores = generator.vSkillNum
+        return self.set_state_from_level_and_skill_cores(level, cores, self.skill_core_level, self.each_enhanced_amount)
+
+    def set_state_from_level_and_skill_cores(self, level, skill_cores, skill_core_level, each_enhanced_amount):
+        total_core_slots = 6 + (level - 200) // 5
+        available_core_slots = max(total_core_slots - skill_cores, 0)
+        level_bonus = level - 200
+        
+        enhance_state_will_be_setted = [0 for i in range(16)]
+        
+        if available_core_slots < 3 :
+            for i in range(available_core_slots):
+                for j in range(3):
+                    enhance_state_will_be_setted[j] += 17
+        else:
+            for i in range(available_core_slots):
+                enhance_state_will_be_setted[i] = 50
+        
+        while level_bonus > 0:
+            chance_for_upgrade = min(level_bonus, 5)
+            target_upgrade_skill_index = 0
+            
+            enhancement_left = 3 #하나의 코어는 3개의 스킬을 강화합니다.
+            while target_upgrade_skill_index < len(enhance_state_will_be_setted) and enhancement_left > 0:
+                if enhance_state_will_be_setted[target_upgrade_skill_index] < 60 : 
+                    maximum_upgrade_level_available = 60 - enhance_state_will_be_setted[target_upgrade_skill_index]
+                    actual_chance_for_upgrade = min(chance_for_upgrade, maximum_upgrade_level_available)
+                    enhance_state_will_be_setted[target_upgrade_skill_index] += actual_chance_for_upgrade
+                    enhancement_left -= 1
+                    
+                target_upgrade_skill_index += 1
+                
+            level_bonus -= chance_for_upgrade
+            
+        enhancer = BasicVEnhancer()
+        enhancer.set_state_direct(enhance_state_will_be_setted)
+        enhancer.set_vlevel_direct( [(i < skill_cores) * skill_core_level for i in range(10)] )
+        return enhancer

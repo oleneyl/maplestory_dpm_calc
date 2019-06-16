@@ -38,7 +38,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, MetalArmorTank]
         
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = core.vEnhancer()):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         코강 순서:
         매시브-호밍-디스토션-마그네틱필드-RM7-RM1

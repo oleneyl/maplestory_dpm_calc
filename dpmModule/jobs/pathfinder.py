@@ -105,7 +105,7 @@ class JobGenerator(ck.JobGenerator):
 
         return [WeaponConstant, Mastery]
 
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vlevel : int = 0, vEhc = core.vEnhancer(), applyPassive = True) -> None:
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         카디널 : 20, 
         카디널 디스차지 : 10,(화살당)
