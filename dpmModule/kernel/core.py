@@ -433,10 +433,10 @@ class AbstractSkill(EvaluativeGraphElement):
         else:
             return wrapper(self, name = name)
 
-    def isV(self, vEhc, useIdx, upgIdx):
+    def isV(self, enhancer, use_index, upgrade_index):
         '''Speed hack
         '''
-        vEhc.add_v_skill(self, useIdx, upgIdx)
+        enhancer.add_v_skill(self, use_index, upgrade_index)
         return self
 
 
@@ -522,8 +522,8 @@ class DamageSkill(AbstractSkill):
         
         return self._parse_list_info_into_string(li)
         
-    def setV(self, vEnhancer, index, incr, crit = False):
-        self._static_skill_modifier = self._static_skill_modifier + vEnhancer.get_reinforcement_with_register(index, incr, crit, self)
+    def setV(self, v_enhancer, index, incr, crit = False):
+        self._static_skill_modifier = self._static_skill_modifier + v_enhancer.get_reinforcement_with_register(index, incr, crit, self)
         return self
         
     def get_damage(self):
@@ -571,8 +571,8 @@ class SummonSkill(AbstractSkill):
         my_json = {"name" : self.name, "delay" : self._change_time_into_string(self.summondelay), "cooltime" : self._change_time_into_string(self.cooltime), "expl" : self.get_explanation(expl_level = expl_level)}
         return my_json 
     
-    def setV(self, vEnhancer, index, incr, crit = False):
-        self._static_skill_modifier = self._static_skill_modifier + vEnhancer.get_reinforcement_with_register(index, incr, crit, self)
+    def setV(self, v_enhancer, index, incr, crit = False):
+        self._static_skill_modifier = self._static_skill_modifier + v_enhancer.get_reinforcement_with_register(index, incr, crit, self)
         return self
         
     def get_damage(self):
