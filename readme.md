@@ -1,20 +1,32 @@
 dpmModule
--------------------
-
-
-
-
-- About
+========================
   
-  dpmModule은 메이플스토리에서의 데미지 기댓값을 계산하기 위한 라이브러리입니다.
-  전체 41개 직업군중 데벤, 제논, 아란을 제외한 38개 직업군의 데미지 시뮬레이션을 지원합니다.
+  - requirements
+    - Python >= 3.7
+    - argparse
+
+  - download
+
+    ```bash
+    git clone https://github.com/oleneyl/maplestory_dpm_calc
+    ```
+    
+About 
+------------
+  dpmModule은 메이플스토리에서 데미지와 관련된 계산(기댓값, DPM, 최적잠재 등) 을 쉽게 계산하기
+  위한 라이브러리입니다. 전체 41개 직업군중 데벤, 제논, 아란을 제외한 38개 직업군의 데미지 시뮬레이션을 지원합니다.
 
 
 Example
-========================
+-----------------------
 
+  - CLI Usage
 
-  - Basic Usage
+    ```bash
+    python3 test.py --job [직업명] --ulevel [유니온 레벨] --level [캐릭터 레벨]
+    ```
+
+  - Basic Python Usage
 
     ```python
     import dpmModule
@@ -22,6 +34,8 @@ Example
     import dpmModule.character.characterTemplateHigh as template
     gen = IndividualDPMGenerator('나이트로드', template.getU6000CharacterTemplate)
     print(gen.get_dpm(ulevel = 6000))
+
+    >>> 406674153728.34534  #Can be different by version
     ```
 
   - Advanced Usage
@@ -63,20 +77,29 @@ Example
     import dpmModule.character.characterTemplateHigh as template
 
     character = template()
-    nightlord.JobGenerator().package()
-    graph = gen.package(target, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
+    generator = nightlord.JobGenerator()
+    v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17)
+
+    graph = gen.package(character, v_builder)
+
     sche = policy.AdvancedGraphScheduler(graph,
         policy.TypebaseFetchingPolicy(priority_list = [
             core.BuffSkillWrapper,
             core.SummonSkillWrapper,
             core.DamageSkillWrapper
         ]), 
-        [rules.UniquenessRule()]) #가져온 그래프를 토대로 스케줄러를 생성합니다.
-    analytics = core.Analytics(printFlag=printFlag)  #데이터를 분석할 분석기를 생성합니다.
-    control = core.Simulator(sche, target, analytics) #시뮬레이터에 스케줄러, 캐릭터, 분석기를 연결하고 생성합니다.
+        [rules.UniquenessRule()])
+
+    analytics = core.Analytics(printFlag=printFlag)
+    control = core.Simulator(sche, target, analytics)
     control.start_simulation(180 * 1000)
+    
     dpm = control.getDPM()
     ```
+
+    - 자세한 사용 방법은 dpmModule의 readme를 참조하십시오.
+
+
 
 
     
