@@ -366,10 +366,6 @@ class VSkillModifier():
             return CharacterModifier(crit = 5, pdamage_indep = (lv * incr), armor_ignore = armor)
         else:
             return CharacterModifier(crit = 0, pdamage_indep = (lv * incr), armor_ignore = armor)
-    
-    @staticmethod
-    def getEhc(incr, lv, crit = False):
-        return VSkillModifier.get_reinforcement(incr, lv, crit)        
 
 
 
@@ -391,8 +387,7 @@ class vEnhancer():
         
         return {"enhance" : [{"name" : skills[0].name} for skills in self.enhancer_priority if len(skills) > 0],
                 "vskill" : [{"name" : skills[0]["target"].name} for skills in v_skill_list_sorted if len(skills) > 0]}
-        #TODOTODOTODOTODO
-    
+
     def set_state_from_level_and_skill_cores(self, level, skill_cores, skill_core_level, each_enhanced_amount = 17):
         total_core_slots = 6 + (level - 200) // 5
         available_core_slots = max(total_core_slots - skill_cores, 0)
@@ -437,14 +432,11 @@ class vEnhancer():
         '''
         self.enhance_list = li
         self.enhancer_priority = [[] for i in li]
-        
-        # Debug HACK 
-        # self.set_vlevel_direct([25,25,25,25,25,25,25,25,25,25,25,25])
 
     def set_vlevel_direct(self, li):
         self.v_skill_list = li
         
-    def getEhc(self, index, incr, crit, target):
+    def get_reinforcement_with_register(self, index, incr, crit, target):
         self.enhancer_priority[index].append(target)
         
         if index >= len(self.enhance_list):
@@ -467,6 +459,8 @@ class vEnhancer():
 
     def __repr__(self):
         return "VEnhancer :: dpmModule.jobs.template\nVEnhance : %s\nVSkill : %s" % (str(self.enhance_list), str(self.v_skill_list))
+
+
 
 class AbstractSkill(EvaluativeGraphElement):
     '''Skill must have information about it's name, it's using - delay, skill using cooltime.
@@ -623,7 +617,7 @@ class DamageSkill(AbstractSkill):
         return self._parse_list_info_into_string(li)
         
     def setV(self, vEnhancer, index, incr, crit = False):
-        self._static_skill_modifier = self._static_skill_modifier + vEnhancer.getEhc(index, incr, crit, self)
+        self._static_skill_modifier = self._static_skill_modifier + vEnhancer.get_reinforcement_with_register(index, incr, crit, self)
         return self
         
     def get_damage(self):
@@ -672,7 +666,7 @@ class SummonSkill(AbstractSkill):
         return my_json 
     
     def setV(self, vEnhancer, index, incr, crit = False):
-        self._static_skill_modifier = self._static_skill_modifier + vEnhancer.getEhc(index, incr, crit, self)
+        self._static_skill_modifier = self._static_skill_modifier + vEnhancer.get_reinforcement_with_register(index, incr, crit, self)
         return self
         
     def get_damage(self):
