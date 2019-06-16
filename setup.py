@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name             = 'DpmModule',
-    version          = '1.0',
+    version          = '1.0.1',
     description      = 'Python module for Maplestory calculation / simulation',
     author           = 'oleneyl',
     author_email     = 'meson3241@gmail.com',

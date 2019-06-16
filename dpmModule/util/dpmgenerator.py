@@ -2,7 +2,7 @@ import os, sys
 import json
 import threading
 
-from dpmModule.kernel import core
+from ..kernel import core
 
 import dpmModule.character.characterTemplate as CT
 import dpmModule.character.characterTemplateHigh as CT_high
