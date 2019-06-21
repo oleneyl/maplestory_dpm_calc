@@ -2,6 +2,7 @@ from ..kernel import core
 from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, SynchronizeRule
 from . import globalSkill
 #TODO : 도트데미지 적용 / 포이즌노바 / 퓨리오브 이프리트
 
@@ -43,6 +44,11 @@ class JobGenerator(ck.JobGenerator):
     def apply_complex_options(self, chtr):
         chtr.buff_rem += 50
         chtr.add_property_ignorance(10)
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(SynchronizeRule('소울 컨트랙트', '인피니티', 10000, 1), RuleSet.BASE)
+        return ruleset
 
     def get_passive_skill_list(self):
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤", stat_main = 40)
@@ -138,7 +144,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 극딜기 싱크로
         SoulContract = globalSkill.soul_contract()
-        SoulContract.set_disabled_and_time_left(72000)       
+        #SoulContract.set_disabled_and_time_left(30000)       
 
         return (Paralyze, 
                 [Infinity, Meditation, EpicAdventure, OverloadMana.ensure(vEhc,1,5),
