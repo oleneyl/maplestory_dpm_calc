@@ -21,6 +21,20 @@ class ConcurrentRunRule(AbstractRule):
     def check(self, caller, reference_graph, context = None):
         return reference_graph.get_element(self._checking_element_name).is_onoff()
 
+class SynchronizeRule(AbstractRule):
+    def __init__(self, target_element, timer_element, time, direction = 1):
+        self._target_element = target_element
+        self._timer_element = timer_element
+        self.time = time
+        self.direction = direction
+
+    def get_related_elements(self, reference_graph):
+        return [reference_graph.get_element(self._target_element)]
+
+    def check(self, caller, reference_graph, context = None):
+        timer = reference_graph.get_element(self._timer_element)
+        return timer.is_not_active() or timer.is_time_left(self.time, self.direction)
+
 class DisableRule(AbstractRule):
     def __init__(self, target_element):
         self.target_element = target_element
@@ -32,6 +46,8 @@ class DisableRule(AbstractRule):
         return False
 
 class RuleSet(defaultdict):
+    def __init__(self):
+        super(RuleSet, self).__init__(list)
     BASE = 'RuleSet.BASE'
     DENSE = 'RuleSet.DENSE'
     OPTIMISTIC = 'RuleSet.OPTIMISTIC'
@@ -41,8 +57,5 @@ class RuleSet(defaultdict):
         self[tag].append(rule)
         return True
 
-    def get_rules(self, tags):
-        rules = []
-        for tag in tags:
-            rules.append(self[tag])
-        return list(set(rules))
+    def get_rules(self, tag):
+        return list(self[tag])
