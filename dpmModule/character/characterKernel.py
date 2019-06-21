@@ -138,6 +138,16 @@ class JobGenerator():
     def apply_complex_options(self, chtr):
         return
 
+    def get_ruleset(self):
+        return 
+
+    def get_predefined_rules(self, rule_type):
+        ruleset = self.get_ruleset()
+        if ruleset is None:
+            return []
+        else:
+            return ruleset.get_rules(rule_type)
+
     def get_total_modifier_optimization_hint(self):
         return self.get_modifier_optimization_hint() + CharacterModifier(armor_ignore = 20)
 

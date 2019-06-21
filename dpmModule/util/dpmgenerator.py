@@ -35,13 +35,15 @@ class IndividualDPMGenerator():
 
         v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17)
         graph = gen.package(target, v_builder, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
+        manual_rule = gen.get_predefined_rules(rules.RuleSet.BASE)
         sche = policy.AdvancedGraphScheduler(graph,
             policy.TypebaseFetchingPolicy(priority_list = [
                 core.BuffSkillWrapper,
                 core.SummonSkillWrapper,
                 core.DamageSkillWrapper
             ]), 
-            [rules.UniquenessRule()]) #가져온 그래프를 토대로 스케줄러를 생성합니다.
+            [rules.UniquenessRule()] + manual_rule
+        ) #가져온 그래프를 토대로 스케줄러를 생성합니다.
         analytics = core.Analytics(printFlag=printFlag)  #데이터를 분석할 분석기를 생성합니다.
         control = core.Simulator(sche, target, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
         control.start_simulation(self.runtime)
