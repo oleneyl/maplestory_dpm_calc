@@ -368,10 +368,13 @@ class AbstactStorage():
 
         ''')
 
-    def write(self, fp, only_endpoint = True):
-        raise NotImplementedError('''write() function call
-        will write current storage state into given fp(FILE pointer).
-        
+    def write(self, fp, only_endpoint = True):      
+        '''This function call
+        will write current storage state into given fp(FILE pointer). '''
+        json.dump(self.export(only_endpoint=only_endpoint), fp)
+
+    def export(self, only_endpoint = True):
+        raise NotImplementedError('''export() 
         Options::
         only_endpoint(bool) : If True, only save values that points variable chain's endpoint.
         If False, save all variable chain elemnt. It might contain a lot of redundant values.
@@ -399,9 +402,9 @@ class ConfigurationStorage(AbstactStorage):
         else:
             self._origin[namespace] = value
 
-    def write(self, fp, only_endpoint = True):
+    def export(self, only_endpoint = True):
         if not only_endpoint:
-            json.dump(fp, self._origin)
+            return self._origin
         else:
             kwds = list(self._origin.keys())
             avail_kwds = []
@@ -417,7 +420,7 @@ class ConfigurationStorage(AbstactStorage):
                 else:
                     avail_kwds.append(kwd)
             endpoints = {k:self._origin[k] for k in avail_kwds}
-            json.dump(endpoints, fp)
+            return endpoints
 
 class DeepConfigurationStorage(AbstactStorage):
     DATA_KEYWORD = '_data_keyword_'
@@ -468,7 +471,7 @@ class DeepConfigurationStorage(AbstactStorage):
         address = self.parse_namespace_to_address(namespace)
         self.save_variable_by_address(address, value)
 
-    def write(self, fp, only_endpoint = True):
+    def export(self, only_endpoint = True):
         def recurrent_copy(copial_target, copy_point, parent, parent_key):
             for kwd in copial_target:
                 if kwd == DeepConfigurationStorage.DATA_KEYWORD:
@@ -480,7 +483,7 @@ class DeepConfigurationStorage(AbstactStorage):
         
         copial = {}
         recurrent_copy(self._origin, copial, None, None)
-        json.dump(copial, fp, ensure_ascii=False, indent=2)
+        return copial
                 
 
 class DynamicVariableFromConfigurationStorage(AbstractDynamicVariableInstance):
