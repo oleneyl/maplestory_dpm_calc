@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, ReservationRule
 from . import globalSkill
 
 #TODO : 5차 신스킬 적용
@@ -80,7 +81,14 @@ class JobGenerator(ck.JobGenerator):
         self.jobtype = "dex"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
-        
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(ReservationRule('소울 컨트랙트', '이르킬라의 숨결'), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule('히어로즈 오쓰', '이르킬라의 숨결'), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule('크리티컬 리인포스', '이르킬라의 숨결'), RuleSet.BASE)
+        return ruleset
+
     def get_passive_skill_list(self):
         PotentialPower = core.InformedCharacterModifier("포텐셜 파워",pdamage = 20)
         SharpAiming = core.InformedCharacterModifier("샤프 에이밍",crit = 40)
@@ -145,8 +153,8 @@ class JobGenerator(ck.JobGenerator):
         
         Sylphidia = core.BuffSkill("실피디아", 0, (30 + 0.5*vEhc.getV(5,5)) * 1000, cooltime = 150 * 1000, patt = (5+0.5*vEhc.getV(5,5))).isV(vEhc,5,5).wrap(core.BuffSkillWrapper)  #정보 없음..
         
-        IrkilaBreathInit = core.DamageSkill("이르킬라의 숨결(개시)", 720, 0, 0, cooltime = 150 * 1000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        IrkilaBreathTick = core.DamageSkill("이르킬라의 숨결", 150, 425+15*vEhc.getV(1,1), 8).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        IrkilaBreathInit = core.DamageSkill("이르킬라의 숨결", 720, 0, 0, cooltime = 150 * 1000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        IrkilaBreathTick = core.DamageSkill("이르킬라의 숨결(틱)", 150, 425+15*vEhc.getV(1,1), 8).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
 
         GuidedArrow = core.SummonSkill("가이디드 애로우", 720, 330, 400+16*vEhc.getV(4,4), 1, 30 * 1000, cooltime = 60 * 1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
 
@@ -173,11 +181,7 @@ class JobGenerator(ck.JobGenerator):
         
         # 극딜기 몰아서 사용하기
         SoulContract = globalSkill.soul_contract()
-        
-        SoulContract.onConstraint(core.ConstraintElement("이르칼라와 함께", IrkilaBreathInit, IrkilaBreathInit.is_usable))
-        HerosOath.onConstraint(core.ConstraintElement("이르칼라와 함께", IrkilaBreathInit, IrkilaBreathInit.is_usable))
-        CriticalReinforce.onConstraint(core.ConstraintElement("이르칼라와 함께", IrkilaBreathInit, IrkilaBreathInit.is_usable))
-    
+            
         for wrp in [UnicornSpike, AdvanceStrikeDualShot, RegendrySpear, WrathOfEllil]:
             wrp.onAfter(AdvancedFinalAttackSlow)
             wrp.modifier = ElementalGhostSlow

@@ -13,7 +13,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobtype = "luk"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
-        
+
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 86)
 
@@ -102,7 +102,6 @@ class JobGenerator(ck.JobGenerator):
         BladeStorm.onAfter(core.RepeatElement(BladeStormTick, int((10000+3000)/210)))
         BladeTornado.onAfter(BladeTornadoFront)
         
-        UltimateDarksight.onAfter(DarkSight.controller(30000, "set_enabled_and_time_left"))
         return(PhantomBlow,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Booster, MirrorImaging, DarkSight, FinalCutBuff, EpicAdventure, FlashBangDebuff, HiddenBladeBuff, UltimateDarksight, ReadyToDie,
@@ -111,5 +110,3 @@ class JobGenerator(ck.JobGenerator):
                 [SuddenRaidDOT, Venom] +\
                 [] +\
                 [PhantomBlow])
-        
-        return schedule

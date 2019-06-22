@@ -2,6 +2,7 @@ from ..kernel import core
 from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, SynchronizeRule
 from . import globalSkill
 from functools import partial
 #Infinity Graph Element
@@ -77,6 +78,12 @@ class JobGenerator(ck.JobGenerator):
     def apply_complex_options(self, chtr):
         chtr.buff_rem += 50
         chtr.add_property_ignorance(10)
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(SynchronizeRule('소울 컨트랙트', '인피니티', 35000, -1), RuleSet.BASE)
+        ruleset.add_rule(SynchronizeRule('프레이', '인피니티', 45000, -1), RuleSet.BASE)        
+        return ruleset
 
     def get_passive_skill_list(self):
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
@@ -164,12 +171,12 @@ class JobGenerator(ck.JobGenerator):
         Bahamutt.onConstraint(core.ConstraintElement("리브라와 동시사용 불가", AngelOfLibra, AngelOfLibra.is_not_active))
 
         AngelRay_is25 = core.OptionalElement(SacredMark.statusChecker(25), AngelRay_25, AngelRay)
-        MainAttack = core.OptionalElement(SacredMark.statusChecker(50), AngelRay_50, AngelRay_is25) 
+        MainAttack = core.OptionalElement(SacredMark.statusChecker(50), AngelRay_50, AngelRay_is25)
+
         MainAttackWrapped = core.DamageSkill('기본공격',0,0,0).wrap(core.DamageSkillWrapper)
         MainAttackWrapped.onAfter(MainAttack)
-        Pray.onConstraint(core.ConstraintElement("인피 마지막과 맞춰서", Infinity, partial(Infinity.is_time_left, 45000, -1)))
+
         SoulContract = globalSkill.soul_contract()
-        SoulContract.set_disabled_and_time_left(72000)
         
         return(MainAttackWrapped, 
                 [Booster, SacredMark, Infinity, PeaceMakerFinalBuff, Pray, EpicAdventure, OverloadMana,

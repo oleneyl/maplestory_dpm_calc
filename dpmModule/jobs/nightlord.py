@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, MutualRule, ConcurrentRunRule
 from . import globalSkill
 #TODO : 5차 신스킬 적용
 
@@ -17,6 +18,14 @@ class JobGenerator(ck.JobGenerator):
         self.jobtype = "str"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(MutualRule('풍마수리검', '스프레드 스로우'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('얼티밋 다크사이트', '스프레드 스로우'), RuleSet.BASE)
+
+
+        return ruleset
 
     def get_passive_skill_list(self):
         NimbleBody = core.InformedCharacterModifier("님블 바디",stat_main = 20)
@@ -72,8 +81,8 @@ class JobGenerator(ck.JobGenerator):
 #        ReadyToDie = core.BuffSkill("레디 투 다이", 780, 30*1000, cooltime = (90-int(0.5*vlevel))*1000, pdamage_indep = 30+int(0.2*vlevel)).wrap(core.BuffSkillWrapper)
         
         #조건부 파이널어택으로 설정함.
-        SpreadThrowTick = core.DamageSkill("스프레드 스로우", 0, 378*0.85, 5*3, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        SpreadThrowInit = core.BuffSkill("스프레드 스로우(시전)", 600, (30+vEhc.getV(0,0))*1000, cooltime = (240-vEhc.getV(0,0))*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)    #딜레이 모름
+        SpreadThrowTick = core.DamageSkill("스프레드 스로우(틱)", 0, 378*0.85, 5*3, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        SpreadThrowInit = core.BuffSkill("스프레드 스로우", 600, (30+vEhc.getV(0,0))*1000, cooltime = (240-vEhc.getV(0,0))*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)    #딜레이 모름
         Pungma = core.SummonSkill("풍마수리검", 690, 100, 250+vEhc.getV(4,4)*10, 5*1.7, 1450, cooltime = 25*1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #10타 가정
         ArcaneOfDarklord = core.SummonSkill("다크로드의 비전서", 360, 780, 350+14*vEhc.getV(2,2), 7 + 5, 11990, cooltime = 60*1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #56타 + 폭발 1회 ( 7 * 8s)
         ArcaneOfDarklordFinal = core.DamageSkill("다크로드의 비전서(막타)", 0, 900+18*vEhc.getV(2,2), 10, cooltime = -1).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
@@ -93,10 +102,6 @@ class JobGenerator(ck.JobGenerator):
         BleedingToxin.onAfter(BleedingToxinDot)
         
         QuarupleThrow.onAfters([MarkOfNightlord, SpreadThrow])
-
-        #조건 제한
-        Pungma.onConstraint(core.ConstraintElement("스프 미사용중에만", SpreadThrowInit, SpreadThrowInit.is_not_active))
-        UltimateDarksight.onConstraint(core.ConstraintElement("스프 사용중에만", SpreadThrowInit, SpreadThrowInit.is_active))
 
         return (QuarupleThrow, 
             [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),

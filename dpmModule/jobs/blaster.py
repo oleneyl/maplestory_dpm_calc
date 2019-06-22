@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, InactiveRule
 from . import globalSkill
 
 #TODO : 5차 신스킬 적용
@@ -13,7 +14,16 @@ class JobGenerator(ck.JobGenerator):
         self.jobtype = "str"
         self.vEnhanceNum = 12
         self.ability_list = Ability_tool.get_ability_set('passive_level', 'boss_pdamage', 'crit')
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+
+        ruleset.add_rule(InactiveRule('버닝 브레이커','벙커 버스터'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('맥시마이즈 캐논','벙커 버스터'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('벙커 버스터', '맥시마이즈 캐논'), RuleSet.BASE)
         
+        return ruleset
+
     def get_passive_skill_list(self):
         GuntletMastery = core.InformedCharacterModifier("건틀렛 마스터리 마스터리", crit= 30, att = 20)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 드레이닝",stat_main = 30, stat_sub = 30)
@@ -138,11 +148,6 @@ class JobGenerator(ck.JobGenerator):
             optional = core.OptionalElement(lambda : (AuraWeaponCooltimeDummy.is_not_active() and AuraWeaponBuff.is_active()), target_skill)
             origin_skill.onAfter(optional)
             target_skill.onAfter(AuraWeaponCooltimeDummy)
-
-        BurningBreaker.onConstraint(core.ConstraintElement("벙버와 겹치지 않게", BunkerBuster, BunkerBuster.is_not_active))
-        MaximizeCannon.onConstraint(core.ConstraintElement("벙버와 겹치지 않게", BunkerBuster, BunkerBuster.is_not_active))
-        BunkerBuster.onConstraint(core.ConstraintElement("맥시마이즈 캐논과 겹치지 않게", MaximizeCannon, MaximizeCannon.is_not_active))
-        #ReleaseHammer.onConstraint(core.ConstraintElement("벙버일때 미사용",  BunkerBuster, BunkerBuster.is_not_active))
         
         return(Mag_Pang,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

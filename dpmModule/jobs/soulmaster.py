@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
 from . import globalSkill
 
 class JobGenerator(ck.JobGenerator):
@@ -14,9 +15,17 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(ConcurrentRunRule('엘리시온', '트루 사이트'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('엘리시온', '셀레스티얼 댄스'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('셀레스티얼 댄스', '엘리시온'), RuleSet.BASE)
+        return ruleset
+
+
     def apply_complex_options(self, chtr):
         chtr.add_property_ignorance(10)
-        
+
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(crit = 35, pdamage = 55)
 
@@ -75,8 +84,8 @@ class JobGenerator(ck.JobGenerator):
         #엘리시온 38타 / 3타
         ElisionTick = core.DamageSkill("크로스 더 스틱스(엘리시온에 의해 발동)", 30 * 1000 / 40, 1450, 5 * 2, modifier = MasterOfSword.copy()).isV(vEhc,1,1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  #40회 반복
         ElisionTick_AuraWeapon = core.DamageSkill("오라 웨폰(엘리시온)", 0, 1450 * (75 + vEhc.getV(2,2))*0.01, 5 * 2, modifier = MasterOfSword.copy()).isV(vEhc,1,1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  #40회 반복
-        ElisionBreak = core.DamageSkill("엘리시온", 0, 2600 + 104*vEhc.getV(1,1), 12).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)    #3회 발동
-        ElisionBuff = core.BuffSkill("엘리시온(더미)", 750, 30 * 1000, cooltime = 180 * 1000).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)    #시전딜레이 750ms
+        ElisionBreak = core.DamageSkill("엘리시온(균열)", 0, 2600 + 104*vEhc.getV(1,1), 12).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)    #3회 발동
+        ElisionBuff = core.BuffSkill("엘리시온", 750, 30 * 1000, cooltime = 180 * 1000).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)    #시전딜레이 750ms
         
         #소울 이클립스
         SoulEclipse = core.SummonSkill("소울 이클립스", 810, 1000, 510 + 8 * vEhc.getV(3,3), 7, 30 * 1000, cooltime = 180 * 1000).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
@@ -105,12 +114,7 @@ class JobGenerator(ck.JobGenerator):
             target_skill.onAfter(AuraWeaponCooltimeDummy)
             
         AuraWeapon_connection_builder(NormalAttack, NormalAttack_AuraWeapon)
-        AuraWeapon_connection_builder(ElisionTick, ElisionTick_AuraWeapon)
-    
-        ElisionBuff.onConstraint(core.ConstraintElement("트루가 켜져있을 때", TrueSight, TrueSight.is_active))
-        ElisionBuff.onConstraint(core.ConstraintElement("셀레와 같이 사용하지 않음", SelestialDanceInit, SelestialDanceInit.is_not_active))
-        SelestialDanceInit.onConstraint(core.ConstraintElement("엘리시온과 같이 사용하지 않음", ElisionBuff, ElisionBuff.is_not_active))
-    
+        AuraWeapon_connection_builder(ElisionTick, ElisionTick_AuraWeapon)    
         
         return(NormalAttack,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),

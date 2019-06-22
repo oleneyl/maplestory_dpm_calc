@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, MutualRule
 from . import globalSkill
 
 class JobGenerator(ck.JobGenerator):
@@ -13,6 +14,11 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         
         self.preEmptiveSkills = 2
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(MutualRule('인피니티 스펠', '근원의 기억'), RuleSet.BASE)
+        return ruleset
 
     def get_passive_skill_list(self):
         vEhc = self.vEhc
@@ -257,7 +263,7 @@ class JobGenerator(ck.JobGenerator):
         ScarletBuff.set_disabled_and_time_left(0)
         AbyssBuff.set_disabled_and_time_left(0)
         
-        InfinitySpell.onConstraint(core.ConstraintElement('근원의 기억부터 사용하도록', MemoryOfSource, MemoryOfSource.is_not_usable))        
+        #InfinitySpell.onConstraint(core.ConstraintElement('근원의 기억부터 사용하도록', MemoryOfSource, MemoryOfSource.is_not_usable))        
         
         
         return(PlainAttack, 

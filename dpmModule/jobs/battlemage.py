@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
 ######   Passive Skill   ######
 
@@ -14,7 +15,12 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 10
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'reuse')
         self.preEmptiveSkills = 2
-        
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(ConcurrentRunRule('마스터 오브 데스', '그림 리퍼'), RuleSet.BASE)
+        return ruleset
+
     def apply_complex_options(self, chtr):
         chtr.add_property_ignorance(10)
 
@@ -111,10 +117,7 @@ class JobGenerator(ck.JobGenerator):
         BattlekingBar2.onAfter(UseMark)
         
         BlackMagicAlter.onTick(MarkStack.stackController(1))
-        
-        # 극딜기 싱크로
-        MasterOfDeath.onConstraint(core.ConstraintElement("리퍼와 같이 사용", GrimReaper, GrimReaper.is_active))
-        
+                
         return(FinishBlowEndpoint,
                 [Booster, WillOfLiberty, MasterOfDeath, UnionAura,
                 globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),

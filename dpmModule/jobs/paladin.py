@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
 
 #TODO : 5차 신스킬 적용
@@ -17,7 +18,12 @@ class JobGenerator(ck.JobGenerator):
         self.jobtype = "str"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
-        
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(ConcurrentRunRule('그랜드 크로스', '홀리 유니티'), RuleSet.BASE)
+        return ruleset
+
     def get_passive_skill_list(self):
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         ShieldMastery = core.InformedCharacterModifier("실드 마스터리",att = 10)
@@ -70,9 +76,9 @@ class JobGenerator(ck.JobGenerator):
         
         #http://www.inven.co.kr/board/maple/2294/21881?category=%ED%8C%94%EB%9D%BC%EB%94%98&name=subject&keyword=%EA%B7%B8%ED%81%AC
         #TODO : 오라웨폰 미발동 적용해야 할 필요 있음.
-        GrandCrossSmallTick = core.DamageSkill("그랜드 크로스", 800, 350 + vEhc.getV(3,3)*14, 13, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
+        GrandCrossSmallTick = core.DamageSkill("그랜드 크로스(작은)", 800, 350 + vEhc.getV(3,3)*14, 13, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
         GrandCrossLargeTick = core.DamageSkill("그랜드 크로스(강화)", 800, 600 + vEhc.getV(3,3)*24, 43, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
-        GrandCross = core.DamageSkill("그랜드 크로스(싲ㄴ)", 480, 0, 0, cooltime = 150 * 1000).wrap(core.DamageSkillWrapper)#Loop = 480인걸로 봐서 재정의 필요할 수도 있음
+        GrandCross = core.DamageSkill("그랜드 크로스", 480, 0, 0, cooltime = 150 * 1000).wrap(core.DamageSkillWrapper)#Loop = 480인걸로 봐서 재정의 필요할 수도 있음
         
         GrandCrossSmallTick_AuraWeapon = core.DamageSkill("오라 웨폰(그크)", 0, (350 + vEhc.getV(3,3)*14) * (75 + vEhc.getV(2,2))*0.01, 6, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
         GrandCrossLargeTick_AuraWeapon = core.DamageSkill("오라 웨폰(그크)(강화)", 0, (600 + vEhc.getV(3,3)*24) * (75 + vEhc.getV(2,2))*0.01, 6, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
@@ -100,9 +106,6 @@ class JobGenerator(ck.JobGenerator):
         AuraWeapon_connection_builder(Blast, Blast_AuraWeapon)
         AuraWeapon_connection_builder(GrandCrossSmallTick, GrandCrossSmallTick_AuraWeapon)
         AuraWeapon_connection_builder(GrandCrossLargeTick, GrandCrossLargeTick_AuraWeapon)
-        
-        #Synchronization
-        GrandCross.onConstraint(core.ConstraintElement("홀리 유니티와 함께", HolyUnity, HolyUnity.is_active))
         
         return(Blast,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),

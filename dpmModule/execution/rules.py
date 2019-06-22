@@ -19,7 +19,18 @@ class ConcurrentRunRule(AbstractRule):
         return [reference_graph.get_element(self._state_element_name)]
 
     def check(self, caller, reference_graph, context = None):
-        return reference_graph.get_element(self._checking_element_name).is_onoff()
+        return reference_graph.get_element(self._checking_element_name).is_active()
+
+class ReservationRule(AbstractRule):
+    def __init__(self, state_element, checking_element):
+        self._state_element_name = state_element
+        self._checking_element_name = checking_element
+
+    def get_related_elements(self, reference_graph):
+        return [reference_graph.get_element(self._state_element_name)]
+
+    def check(self, caller, reference_graph, context = None):
+        return reference_graph.get_element(self._checking_element_name).is_usable()
 
 class SynchronizeRule(AbstractRule):
     def __init__(self, target_element, timer_element, time, direction = 1):
@@ -33,7 +44,36 @@ class SynchronizeRule(AbstractRule):
 
     def check(self, caller, reference_graph, context = None):
         timer = reference_graph.get_element(self._timer_element)
-        return timer.is_not_active() or timer.is_time_left(self.time, self.direction)
+        if not timer.is_not_active():
+            if not timer.is_time_left(self.time, self.direction):
+                if not timer.is_time_left(caller.skill.cooltime, 1):
+                    return False
+        return True
+
+class MutualRule(AbstractRule):
+    def __init__(self, target_element, state_element):
+        self._target_element_name = target_element
+        self._state_element_name = state_element
+
+    def get_related_elements(self, reference_graph):
+        return [reference_graph.get_element(self._target_element_name)]
+
+    def check(self, caller, reference_graph, context = None):
+        if not reference_graph.get_element(self._state_element_name).is_usable():
+            return True
+        return False
+
+class InactiveRule(AbstractRule):
+    def __init__(self, target_element, state_element):
+        self._target_element_name = target_element
+        self._state_element_name = state_element
+
+    def get_related_elements(self, reference_graph):
+        return [reference_graph.get_element(self._target_element_name)]
+
+    def check(self, caller, reference_graph, context = None):
+        return reference_graph.get_element(self._state_element_name).is_not_active()
+
 
 class DisableRule(AbstractRule):
     def __init__(self, target_element):

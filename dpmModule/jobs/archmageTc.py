@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, SynchronizeRule, ConcurrentRunRule
 from . import globalSkill
 
 #TODO : 5차 신스킬 적용
@@ -68,7 +69,13 @@ class JobGenerator(ck.JobGenerator):
     def apply_complex_options(self, chtr):
         chtr.buff_rem += 50
         chtr.add_property_ignorance(10)
-        
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(SynchronizeRule('소울 컨트랙트', '인피니티', 35000, -1), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('라이트닝 스피어', '인피니티'), RuleSet.BASE)
+        return ruleset
+
     def get_passive_skill_list(self):
         ######   Passive Skill   ######
         
@@ -124,8 +131,8 @@ class JobGenerator(ck.JobGenerator):
         
         FrozenOrbEjac = core.SummonSkill("프로즌 오브", 450, 100, 200+4*combat, 1, 1999, cooltime = -1, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
     
-        LighteningSpear = core.DamageSkill("라이트닝 스피어 개시스킬", 0, 0, 1, cooltime = 75 * 1000).wrap(core.DamageSkillWrapper)
-        LighteningSpearSingle = core.DamageSkill("라이트닝 스피어", 250, 200, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        LighteningSpear = core.DamageSkill("라이트닝 스피어", 0, 0, 1, cooltime = 75 * 1000).wrap(core.DamageSkillWrapper)
+        LighteningSpearSingle = core.DamageSkill("라이트닝 스피어(단일)", 250, 200, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         LighteningSpearFinalizer = core.DamageSkill("라이트닝 스피어 막타", 0, 1500, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
         IceAgeHolder = core.DamageSkill("아이스 에이지 개시스킬", 870, 500 + vEhc.getV(2,3)*20, 10, cooltime = 60 * 1000, red = True).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
@@ -208,10 +215,7 @@ class JobGenerator(ck.JobGenerator):
         Elquiness.onTick(BlizzardPassive)
         IceAura.onTick(FrostIncrement)
         
-        #극딜기 싱크로
-        LighteningSpear.onConstraint(core.ConstraintElement("라스피는 인피때만", Infinity, Infinity.is_active))
         SoulContract = globalSkill.soul_contract()
-        SoulContract.set_disabled_and_time_left(72000)
 
         return(ChainLightening,
                 [Infinity, Meditation, EpicAdventure, OverloadMana, FrostEffect,
