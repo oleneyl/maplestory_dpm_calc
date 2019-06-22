@@ -4,7 +4,7 @@ import threading
 
 from ..kernel import core
 
-import dpmModule.character.characterTemplate as CT
+from ..character import characterTemplate as CT
 import dpmModule.character.characterTemplateHigh as CT_high
 import dpmModule.character.characterKernel
 
@@ -35,15 +35,13 @@ class IndividualDPMGenerator():
 
         v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17)
         graph = gen.package(target, v_builder, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
-        manual_rule = gen.get_predefined_rules(rules.RuleSet.BASE)
         sche = policy.AdvancedGraphScheduler(graph,
             policy.TypebaseFetchingPolicy(priority_list = [
                 core.BuffSkillWrapper,
                 core.SummonSkillWrapper,
                 core.DamageSkillWrapper
             ]), 
-            [rules.UniquenessRule()] + manual_rule
-        ) #가져온 그래프를 토대로 스케줄러를 생성합니다.
+            [rules.UniquenessRule()]) #가져온 그래프를 토대로 스케줄러를 생성합니다.
         analytics = core.Analytics(printFlag=printFlag)  #데이터를 분석할 분석기를 생성합니다.
         control = core.Simulator(sche, target, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
         control.start_simulation(self.runtime)
@@ -88,7 +86,6 @@ class DpmSetting():
     itemGrade = ["노말", "레어", "에픽", "유니크", "레전"]
     def __init__(self, template, v_builder = core.NjbStyleVBuilder(), ulevel = 0, weaponstat = [3,0], level = 200):
         self.level = level
-        self.vEhc = vEhc
         self.ulevel = ulevel
         self.weaponstat = weaponstat
         self.template = template
@@ -110,8 +107,8 @@ class DpmSetting():
     
         for _job, idx in zip(jobli, range(len(jobli))):
             job = maplejobs.jobList[_job]
-            parser = IndividualDPMGenerator(job, self.template)
-            dpm = parser.getDpm(vEhc = self.vEhc.copy(), ulevel = self.ulevel, weaponstat = self.weaponstat, level = self.level)
+            generator = IndividualDPMGenerator(job, self.template)
+            dpm = generator.get_dpm(ulevel = self.ulevel, weaponstat = self.weaponstat, level = self.level)
             retli.append(dpm)
             value = {"name" : job, "dpm" : dpm}
             #print(value)
@@ -123,9 +120,9 @@ class DpmSetting():
         return data
 
     def processJob(self, koJob, runtime = 180000):
-        parser = IndividualDPMGenerator(koJob, self.template)
-        parser.setRuntime(runtime)
-        return parser.getDetailedDpm(vEhc = self.vEhc.copy(), ulevel = self.ulevel, weaponstat = self.weaponstat, level = self.level)
+        generator = IndividualDPMGenerator(koJob, self.template)
+        generator.set_runtime(runtime)
+        return generator.get_detailed_dpm( ulevel = self.ulevel, weaponstat = self.weaponstat, level = self.level)
 
 
         
@@ -134,21 +131,15 @@ def CalculateEvery():
     U4000DpmSetting = DpmSetting(CT.getU4000CharacterTemplate, ulevel = 4000, weaponstat = [3,3], level = 210)
     U5000DpmSetting = DpmSetting(CT.getU5000CharacterTemplate, ulevel = 5000, weaponstat = [3,6], level = 220)
     U6000DpmSetting = DpmSetting(CT.getU6000CharacterTemplate, ulevel = 6000, weaponstat = [4,3], level = 225)
-    U6500DpmSetting = DpmSetting(CT.getU6500CharacterTemplate, ulevel = 6500, weaponstat = [4,5], level = 230)
     U7000DpmSetting = DpmSetting(CT.getU7000CharacterTemplate, ulevel = 7000, weaponstat = [4,6], level = 235)
-    U7500DpmSetting = DpmSetting(CT.getU7500CharacterTemplate, ulevel = 7500, weaponstat = [4,7], level = 240)
     U8000DpmSetting = DpmSetting(CT.getU8000CharacterTemplate, ulevel = 8000, weaponstat = [4,8], level = 245)
-    U8200DpmSetting = DpmSetting(CT.getU8200CharacterTemplate, ulevel = 8200, weaponstat = [4,9], level = 250)
     U8500DpmSetting = DpmSetting(CT.getU8500CharacterTemplate, ulevel = 8500, weaponstat = [4,9], level = 255)
     
     settings = [U4000DpmSetting, 
                 U5000DpmSetting, 
                 U6000DpmSetting, 
-                U6500DpmSetting, 
                 U7000DpmSetting, 
-                U7500DpmSetting, 
                 U8000DpmSetting, 
-                U8200DpmSetting, 
                 U8500DpmSetting]
     
     retval = [{"data" : setting.process() , "prefix" : "u" + str(setting.ulevel)} for setting in settings]
@@ -177,11 +168,8 @@ def CalculateAt(ulevel):
     4000 : DpmSetting(CT.getU4000CharacterTemplate, ulevel = 4000, weaponstat = [3,3], level = 210),
     5000 :  DpmSetting(CT.getU5000CharacterTemplate, ulevel = 5000, weaponstat = [3,6], level = 220),
     6000 :  DpmSetting(CT.getU6000CharacterTemplate, ulevel = 6000, weaponstat = [4,3], level = 225),
-    6500 :  DpmSetting(CT.getU6500CharacterTemplate, ulevel = 6500, weaponstat = [4,5], level = 230),
     7000 :  DpmSetting(CT.getU7000CharacterTemplate, ulevel = 7000, weaponstat = [4,6], level = 235),
-    7500 :  DpmSetting(CT.getU7500CharacterTemplate, ulevel = 7500, weaponstat = [4,7], level = 240),
     8000 :  DpmSetting(CT.getU8000CharacterTemplate, ulevel = 8000, weaponstat = [4,8], level = 245),
-    8200 :  DpmSetting(CT.getU8200CharacterTemplate, ulevel = 8200, weaponstat = [4,9], level = 250),
     8500 :  DpmSetting(CT.getU8500CharacterTemplate, ulevel = 8500, weaponstat = [4,9], level = 255)}
     
     setting = settings[ulevel]
@@ -231,16 +219,10 @@ def CalculateJob(koJob, ulevel, runtime = 180000):
         dpmSetting = DpmSetting(CT.getU5000CharacterTemplate, ulevel = 5000, weaponstat = [3,6], level = 220)
     elif ulevel == 6000:        
         dpmSetting = DpmSetting(CT.getU6000CharacterTemplate, ulevel = 6000, weaponstat = [4,6], level = 225)
-    elif ulevel == 6500:                
-        dpmSetting = DpmSetting(CT.getU6500CharacterTemplate, ulevel = 6500, weaponstat = [4,6], level = 230)
     elif ulevel == 7000:                
         dpmSetting = DpmSetting(CT.getU7000CharacterTemplate, ulevel = 7000, weaponstat = [4,7], level = 235)
-    elif ulevel == 7500:                
-        dpmSetting = DpmSetting(CT.getU7500CharacterTemplate, ulevel = 7500, weaponstat = [4,7], level = 240)
     elif ulevel == 8000:                
         dpmSetting = DpmSetting(CT.getU8000CharacterTemplate, ulevel = 8000, weaponstat = [4,8], level = 245)
-    elif ulevel == 8200:        
-        dpmSetting = DpmSetting(CT.getU8200CharacterTemplate, ulevel = 8200, weaponstat = [4,9], level = 250)
     elif ulevel == 8500:        
         dpmSetting = DpmSetting(CT.getU8500CharacterTemplate, ulevel = 8500, weaponstat = [4,9], level = 255)
     else:
