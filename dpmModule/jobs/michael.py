@@ -18,9 +18,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(crit = 20)
 
-    def get_passive_skill_list(self):
-
-        
+    def get_passive_skill_list(self):        
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",patt = 10)
         
         PhisicalTraiging = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)

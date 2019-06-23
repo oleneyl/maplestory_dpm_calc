@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, InactiveRule
 from . import globalSkill
 
 #TODO : 5차 신스킬 적용
@@ -57,6 +58,12 @@ class JobGenerator(ck.JobGenerator):
         self.jobtype = "str"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'mess')
         self.preEmptiveSkills = 2
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(InactiveRule('콤보 데스폴트', '콤보 인스팅트'), RuleSet.BASE)
+        return ruleset
+
 
     def get_passive_skill_list(self):
         WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리",pdamage_indep = 10, pdamage = 5)   #도끼 사용
@@ -148,8 +155,6 @@ class JobGenerator(ck.JobGenerator):
         AuraWeapon_connection_builder(Panic, Panic_AuraWeapon)
         AuraWeapon_connection_builder(Insizing, Insizing_AuraWeapon)
         
-        # 가정 부여
-        ComboDesfort.onConstraint(core.ConstraintElement("데폴은 인스팅트 중에는 사용하지 않음", ComboInstinct, ComboInstinct.is_not_active))
                 
         return(RaisingBlowInrage,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),

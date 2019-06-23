@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, MutualRule
 from . import globalSkill
 #TODO : 5차 신스킬 적용
 
@@ -28,7 +29,14 @@ class JobGenerator(ck.JobGenerator):
         self.jobtype = "dex"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
-        
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(MutualRule('스플릿 애로우', '트루 스나이핑'), RuleSet.BASE)
+
+
+        return ruleset
+
     def get_passive_skill_list(self):
         CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit = 40)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
@@ -74,8 +82,8 @@ class JobGenerator(ck.JobGenerator):
     
         #Damage Skills
         Snipping = core.DamageSkill("스나이핑", 660, 730+combat*10, 5 + 1, modifier = core.CharacterModifier(crit = 100, armor_ignore = 20 + combat*1, pdamage = 20, boss_pdamage = 10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        TrueSnippingTick = core.DamageSkill("트루 스나이핑", 700, 1200+vEhc.getV(2,2)*48, 9+1, modifier = core.CharacterModifier(pdamage_indep = 100, armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        TrueSnipping = core.DamageSkill("트루 스나이핑 홀더", 0, 0, 0, cooltime = 180 * 1000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        TrueSnippingTick = core.DamageSkill("트루 스나이핑(타격)", 700, 1200+vEhc.getV(2,2)*48, 9+1, modifier = core.CharacterModifier(pdamage_indep = 100, armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        TrueSnipping = core.DamageSkill("트루 스나이핑", 0, 0, 0, cooltime = 180 * 1000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         #TODO : 차지드 애로우용 홀더 생성이 필요함.
         ChargedArrow = core.DamageSkill("차지드 애로우", 0, 750 + vEhc.getV(1,1)*30, 10+1, cooltime = -1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
@@ -86,8 +94,8 @@ class JobGenerator(ck.JobGenerator):
         
         Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(5,5)))*1000).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
         
-        SplitArrow = core.DamageSkill("스플릿 애로우", 0, 600 + vEhc.getV(0,0) * 24, 5+1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        SplitArrowBuff = core.BuffSkill("스플릿 애로우 시전", 810, 60 * 1000, 120 * 1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        SplitArrow = core.DamageSkill("스플릿 애로우(공격)", 0, 600 + vEhc.getV(0,0) * 24, 5+1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        SplitArrowBuff = core.BuffSkill("스플릿 애로우", 810, 60 * 1000, 120 * 1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         #TODO : 스플릿애로우 계산
         
         ######   Skill Wrapper   ######
@@ -108,7 +116,6 @@ class JobGenerator(ck.JobGenerator):
         ChargedArrowUse.onAfter(ChargedArrow.controller(5000))
         
         ### 제한
-        SplitArrowBuff.onConstraint(core.ConstraintElement("트스나 사용불가시에만", TrueSnipping, TrueSnipping.is_not_usable))
         schedule = core.ScheduleGraph()
         
         return(Snipping,

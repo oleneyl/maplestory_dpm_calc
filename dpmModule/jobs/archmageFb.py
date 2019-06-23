@@ -47,7 +47,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(SynchronizeRule('소울 컨트랙트', '인피니티', 10000, 1), RuleSet.BASE)
+        ruleset.add_rule(SynchronizeRule('소울 컨트랙트', '인피니티', 35000, -1), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self):

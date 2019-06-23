@@ -224,7 +224,6 @@ class JobGenerator(ck.JobGenerator):
         Memorize.onConstraint(core.ConstraintElement('이퀄일때는 사용하지 않음', LuminousState, LuminousState.isNotEqual ) ) 
 
         SoulContract = globalSkill.soul_contract()
-        #SoulContract.onConstraint(core.ConstraintElement('이퀄일때만 사용', LuminousState, partial(LuminousState.isState,2) ))
 
         return(Attack, 
                 [LuminousState, globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
