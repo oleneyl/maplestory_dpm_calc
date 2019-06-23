@@ -1,9 +1,11 @@
 from .. import jobs as maplejobs
 from ..character.characterKernel import ItemedCharacter as ichar
 from ..character.characterKernel import Union, HyperStat
-from ..jobs import template as jt
+from ..kernel import core
+from dpmModule.kernel import policy
+from dpmModule.execution import rules
 from ..item import Absolab
-MDF = jt.CharacterModifier
+MDF = core.CharacterModifier
 
 '''
 Optimizer
@@ -35,12 +37,12 @@ union : 유니온
 추후 추가 예정. 일단은 MVP부터 생성 필요.
 '''
 
-def getOptimalHyperFromBare(spec, level):
+def get_optimal_hyper_from_bare(spec, level):
     ref = spec.copy()
     newHyper = HyperStat.get_hyper_object(ref, level)
     return newHyper
 
-def getOptimalHyperUnion(spec, job, otherspec, hyper, union):
+def get_optimal_hyper_union(spec, job, otherspec, hyper, union):
     '''최적화된 하이퍼 / 유니온 값을 계산해서 리턴합니다.
     입력값 : CharacterModifier들
     출력값 : [hyper, union]
@@ -59,7 +61,7 @@ def getOptimalHyperUnion(spec, job, otherspec, hyper, union):
     return {"hyper" : newHyper, "union" : newUnion }
 
 
-def getInstantDpm(spec, job, otherspec, useFullCore = True, koJobFlag = False, vEhc = None, seed_rings = False):
+def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False, vEhc = None, seed_rings = False):
     '''주어진 값과 직업값으로부터 dpm을 계산해서 리턴합니다.
     입력값 : CharacterModifier, job, otherspec
     출력값 : float(DPM)
@@ -88,9 +90,15 @@ def getInstantDpm(spec, job, otherspec, useFullCore = True, koJobFlag = False, v
     
     template.apply_modifiers([spec])
     graph = gen.package_bare(template, useFullCore = False, vEhc = vEhc)
-    sche = jt.Scheduler(graph) #가져온 그래프를 토대로 스케줄러를 생성합니다.
-    analytics = jt.Analytics()  #데이터를 분석할 분석기를 생성합니다.
-    control = jt.Simulator(sche, template, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
+    sche = policy.AdvancedGraphScheduler(graph,
+        policy.TypebaseFetchingPolicy(priority_list = [
+            core.BuffSkillWrapper,
+            core.SummonSkillWrapper,
+            core.DamageSkillWrapper
+        ]), 
+        [rules.UniquenessRule()]) #가져온 그래프를 토대로 스케줄러를 생성합니다.
+    analytics = core.Analytics()  #데이터를 분석할 분석기를 생성합니다.
+    control = core.Simulator(sche, template, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
     control.start_simulation(180*1000)
     
     
