@@ -5,6 +5,10 @@ dpmModule
     - Python >= 3.7
     - argparse
 
+  - Demo
+    
+    - https://maplestats.com
+
   - download
     ```bash
     pip install dpmModule
