@@ -61,7 +61,7 @@ def get_optimal_hyper_union(spec, job, otherspec, hyper, union):
     return {"hyper" : newHyper, "union" : newUnion }
 
 
-def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False, vEhc = None, seed_rings = False):
+def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False, v_builder = None, seed_rings = False):
     '''주어진 값과 직업값으로부터 dpm을 계산해서 리턴합니다.
     입력값 : CharacterModifier, job, otherspec
     출력값 : float(DPM)
@@ -89,7 +89,7 @@ def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False,
             template.cooltimeReduce = otherspec["cooltimereduce"]    
     
     template.apply_modifiers([spec])
-    graph = gen.package_bare(template, useFullCore = False, vEhc = vEhc)
+    graph = gen.package_bare(template, useFullCore = False, v_builder = v_builder)
     sche = policy.AdvancedGraphScheduler(graph,
         policy.TypebaseFetchingPolicy(priority_list = [
             core.BuffSkillWrapper,
@@ -110,7 +110,6 @@ def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False,
             {"name" : "크리데미지", "effect" : [ [9000 + 2000*i, MDF(crit_damage = 7+ 7*i)] for i in range(4) ]}
         ]
         
-        print("wpf att", Absolab.WeaponFactory.getWeapon(maplejobs.weaponList[koJob], star = 17, elist = [0,0,0,9] ).att)
         return_ring_dpms = []
         
         for spec in seed_ring_specs:

@@ -1,6 +1,6 @@
 from .. import jobs as maplejobs
-from ..jobs.template import vEnhancer as vEhc
-from ..jobs import template as jt
+from ..kernel.core import BasicVEnhancer as vEhc
+from ..kernel import core
 from ..character.characterKernel import ItemedCharacter as ichar
 
 def getpassiveInformation(enjob):
