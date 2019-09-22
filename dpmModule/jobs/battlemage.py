@@ -71,12 +71,13 @@ class JobGenerator(ck.JobGenerator):
         FinishBlow_U = core.DamageSkill("사신의 낫", 720+60, 300, 12, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         FinishBlow_M_U = core.DamageSkill("사신의 낫(마오데)", 720+60, 300, 12+1, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
+        # TODO : [마스터 오브 데스] : 사용 중 데스의 최종 데미지가 50% 증가하는 기능이 추가됩니다. V1.2.316
         Death = core.SummonSkill("데스", 0, 5000, 200+chtr.level, 12, 99999*100000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         
         RegistanceLineInfantry = core.SummonSkill("레지스탕스 라인 인팬트리", 360, 1000, 215+8*vEhc.getV(4,4), 9, 10*1000, cooltime = 25000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
-        UnionAura = core.BuffSkill("유니온 오라", 810, (vEhc.getV(1,1)+30)*1000, cooltime = 150*1000, pdamage=20, boss_pdamage=10).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
+        UnionAura = core.BuffSkill("유니온 오라", 810, (vEhc.getV(1,1)//2+25)*1000, cooltime = 100*1000, pdamage=20, boss_pdamage=10, att=50).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         BlackMagicAlter = core.SummonSkill("블랙 매직 알터", 690 * 2*2.5, 800, 800+32*vEhc.getV(0,0), 4, 40*1000, cooltime = 50*1000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)    #가동률 60%
-        GrimReaper = core.SummonSkill("그림 리퍼", 720, 4000, 800+32*vEhc.getV(2,2), 12, 62*1000, cooltime=120*1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #공격시 지속2초증가->지속62s
+        GrimReaper = core.SummonSkill("그림 리퍼", 720, 4000, 800+32*vEhc.getV(2,2), 12, 62*1000, cooltime=100*1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #공격시 지속2초증가->지속62s
     
         MasterOfDeath = core.BuffSkill("마스터 오브 데스", 1020, 30*1000, cooltime = 200*1000).wrap(core.BuffSkillWrapper)
         BattlekingBar = core.DamageSkill("배틀킹 바", 200, 650, 2, cooltime = 13*1000, modifier = core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
