@@ -84,7 +84,7 @@ class JobGenerator(ck.JobGenerator):
     
         #TODO : 애로우 레인(조건부 파이널어택)
         ArrowRainBuff = core.BuffSkill("애로우 레인(버프)", 720, (40+vEhc.getV(0,0))*1000, cooltime = 120 * 1000, red = True, pdamage = 15+(0.5*vEhc.getV(0,0))).isV(vEhc,0,0).wrap(core.BuffSkillWrapper) #딜레이 모름
-        ArrowRain = core.SummonSkill("애로우 레인", 0, 420, 250+vEhc.getV(0,0)*10, 5, (40+vEhc.getV(0,0))*1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        ArrowRain = core.SummonSkill("애로우 레인", 0, 840, 500+vEhc.getV(0,0)*24, 5, (40+vEhc.getV(0,0))*1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         
         #Summon Skills
         Pheonix = core.SummonSkill("피닉스", 900, 2670, 390, 1, 220 * 1000).setV(vEhc, 5, 3, True).wrap(core.SummonSkillWrapper)
@@ -92,7 +92,8 @@ class JobGenerator(ck.JobGenerator):
         Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(5,5)))*1000).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
         
         #잔영의시 미적용
-        QuibberFullBurst = core.SummonSkill("퀴버풀버스트", 780, 3 * 1000 / 6, 600 + 24 * vEhc.getV(2,2), 3, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
+        QuibberFullBurst = core.SummonSkill("퀴버풀버스트", 780, 3 * 1000 / 6, 750 + 30 * vEhc.getV(2,2), 3, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
+        QuibberFullBurstBuff = core.BuffSkill("퀴버 풀버스트(버프)", 0, 30 * 1000, cooltime=-1, red = False, patt=(10+int(vEhc.getV(2,2)*0.5))).wrap(core.BuffSkillWrapper)
         QuibberFullBurstDOT = core.DotSkill("독화살", 220, 30*1000).wrap(core.SummonSkillWrapper)
     
         ImageArrow = core.SummonSkill("잔영의 시", 720, 500, 400+16*vEhc.getV(1,1), 3, 30000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
@@ -114,11 +115,12 @@ class JobGenerator(ck.JobGenerator):
         
         ArrowRainBuff.onAfter(ArrowRain)
         QuibberFullBurst.onAfter(QuibberFullBurstDOT)
+        QuibberFullBurst.onAfter(QuibberFullBurstBuff)
     
         ### Exports ###
         return(ArrowOfStorm,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_wind_booster(),
-                    SoulArrow, AdvancedQuibber, Preparation, EpicAdventure, ArrowRainBuff, CriticalReinforce,
+                    SoulArrow, AdvancedQuibber, Preparation, EpicAdventure, ArrowRainBuff, CriticalReinforce, QuibberFullBurstBuff, 
                     globalSkill.soul_contract()] +\
                 [] +\
                 [Evolve, ArrowFlatter, ArrowRain, Pheonix, GuidedArrow, QuibberFullBurst, ImageArrow] +\
