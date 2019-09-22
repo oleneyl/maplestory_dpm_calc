@@ -58,7 +58,7 @@ class JobGenerator(ck.JobGenerator):
         트루사이트 : 내성무시 / 방무
         보스전 딜스킬 : 리인포스 /이그노어 가드/보스킬러
         '''
-        MasterOfSword = core.CharacterModifier(crit = 35, pdamage = 55, pdamage_indep = -10) #타수2배 , 공격력 90%를 편집함
+        MasterOfSword = core.CharacterModifier(crit = 35, pdamage_indep = 12.5, att=45)  #타수2배 , 공격력 90%를 편집함
 
         #Buff skills
         NimbleFinger = core.BuffSkill("님블 핑거", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름

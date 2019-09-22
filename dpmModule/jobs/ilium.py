@@ -89,8 +89,8 @@ class JobGenerator(ck.JobGenerator):
         Reaction_Domination = core.DamageSkill("리액션 : 도미네이션", 0, 550, 2, cooltime = 4000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         Craft_Javelin_EnhanceBuff = core.BuffSkill("크래프트:오브(자벨린 강화버프)", 0, 2000, cooltime = -1).wrap(core.BuffSkillWrapper)
         
-        Craft_Javelin = core.DamageSkill("크래프트:자벨린", 510, 390, 4 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Craft_Javelin_AfterOrb = core.DamageSkill("크래프트:자벨린(오브 이후)", 510, 390, 4 * 3, modifier = core.CharacterModifier(pdamage = 20 + 30, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Craft_Javelin = core.DamageSkill("크래프트:자벨린", 510, 405, 4 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Craft_Javelin_AfterOrb = core.DamageSkill("크래프트:자벨린(오브 이후)", 510, 405, 4 * 3, modifier = core.CharacterModifier(pdamage = 20 + 30, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
         Craft_Javelin_Fragment = core.DamageSkill("크래프트:자벨린(파편)", 0, 130, 2 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Reaction_Destruction = core.DamageSkill("리액션 : 디스트럭션", 0, 550, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 4000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)

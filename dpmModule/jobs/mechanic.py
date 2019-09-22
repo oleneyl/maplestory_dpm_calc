@@ -76,7 +76,7 @@ class JobGenerator(ck.JobGenerator):
         OverdrivePenalty = core.BuffSkill("오버드라이브(페널티)", 0, (40 - 0.2*vEhc.getV(5,5))*1000, cooltime = -1, att = -15*1.5).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) #페널티
     
         RegistanceLineInfantry = core.SummonSkill("레지스탕스 라인 인팬트리", 360, 1000, 215+8*vEhc.getV(3,3), 9, 10*1000, cooltime = 25000).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
-        MultipleOptionGattling = core.SummonSkill("멀티플 옵션(개틀링)", 780, 1500, 200+8*vEhc.getV(2,1), 6, (115+6*vEhc.getV(2,1))*1000, cooltime = 450000).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
+        MultipleOptionGattling = core.SummonSkill("멀티플 옵션(개틀링)", 780, 1500, 75+2*vEhc.getV(2,1), 6, (115+6*vEhc.getV(2,1))*1000, cooltime = 200 * 1000).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         MultipleOptionMissle = core.SummonSkill("멀티플 옵션(미사일)", 0, 8000, 350+10*vEhc.getV(2,1), 24, (115+6*vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         
         MicroMissle = core.DamageSkill("마이크로 미사일", 540, 375+17*vEhc.getV(0,0), (30+8)*5, cooltime = 25000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
@@ -106,7 +106,7 @@ class JobGenerator(ck.JobGenerator):
         IsBuster_B = core.OptionalElement(BusterCallBuff.is_active, HommingMissle_B_Bu, HommingMissle_B)
         IsBuster = core.OptionalElement(BusterCallBuff.is_active, HommingMissle_Bu, HommingMissle_)
         IsBomber = core.OptionalElement(BomberTime.is_active, IsBuster_B, IsBuster)
-        HommingMissle = core.OptionalElement(partial(judgeLefttime, BusterCallBuff, 8000, 18000), IsBomber)
+        HommingMissle = core.OptionalElement(partial(judgeLefttime, BusterCallBuff, 14000, 18000), IsBomber)
         
         HommingMissleHolder.onTick(HommingMissle)
         

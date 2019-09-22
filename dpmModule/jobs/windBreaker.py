@@ -71,6 +71,10 @@ class JobGenerator(ck.JobGenerator):
         TriflingWhim = core.DamageSkill("트라이플링 윔", 0, 290*0.8+390*0.2, 2*0.6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  #오더스 적용 필요
         StormBringer = core.DamageSkill("스톰 브링어", 0, 500, 0.3).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)  #오더스 적용 필요
     
+        # 핀포인트 피어스
+        PinPointPierce = core.DamageSkill("핀포인트 피어스", 900, 340, 2, cooltime=30 * 1000).wrap(core.DamageSkillWrapper)
+        PinPointPierceDebuff = core.BuffSkill("핀포인트 피어스(버프)", 0, 30 * 1000, cooltime=-1, pdamage=15, armor_ignore=15).wrap(core.BuffSkillWrapper)
+
         #Damage Skills
         SongOfHeaven = core.DamageSkill("천공의 노래", 120, 345 +combat*3, 1, modifier = core.CharacterModifier(pdamage = 127.36, boss_pdamage = 30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)#오더스 적용 필요, 코강렙 20이상 가정.
         
@@ -94,15 +98,16 @@ class JobGenerator(ck.JobGenerator):
         #Damage
         SongOfHeaven.onAfters([TriflingWhim, StormBringer])
         CygnusPalanks.onTicks([core.RepeatElement(TriflingWhim,5), core.RepeatElement(StormBringer,5)])
-
+        PinPointPierce.onAfter(PinPointPierceDebuff)
         #Summon
         HowlingGail.onTicks([core.RepeatElement(TriflingWhim, 2), core.RepeatElement(StormBringer, 2)])
 
         return(SongOfHeaven, 
                 [globalSkill.maple_heros(chtr.level), 
                     Storm, SylphsAid, Albatross, SharpEyes, GloryOfGuardians, StormBringerDummy, CriticalReinforce,
+                    PinPointPierceDebuff,
                     globalSkill.soul_contract()] +\
                 [Mercilesswind]+\
-                [GuidedArrow, HowlingGail, WindWall, MercilesswindDOT, CygnusPalanks]+\
+                [GuidedArrow, HowlingGail, WindWall, MercilesswindDOT, CygnusPalanks, PinPointPierce]+\
                 []+\
                 [SongOfHeaven])

@@ -84,8 +84,8 @@ class JobGenerator(ck.JobGenerator):
         SpreadThrowTick = core.DamageSkill("스프레드 스로우(틱)", 0, 378*0.85, 5*3, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         SpreadThrowInit = core.BuffSkill("스프레드 스로우", 600, (30+vEhc.getV(0,0))*1000, cooltime = (240-vEhc.getV(0,0))*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)    #딜레이 모름
         Pungma = core.SummonSkill("풍마수리검", 690, 100, 250+vEhc.getV(4,4)*10, 5*1.7, 1450, cooltime = 25*1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #10타 가정
-        ArcaneOfDarklord = core.SummonSkill("다크로드의 비전서", 360, 780, 350+14*vEhc.getV(2,2), 7 + 5, 11990, cooltime = 60*1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #56타 + 폭발 1회 ( 7 * 8s)
-        ArcaneOfDarklordFinal = core.DamageSkill("다크로드의 비전서(막타)", 0, 900+18*vEhc.getV(2,2), 10, cooltime = -1).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ArcaneOfDarklord = core.SummonSkill("다크로드의 비전서", 360, 780, 350+14*vEhc.getV(2,2), 7 + 5, 11990, cooltime = 60*1000, modifier=core.CharacterModifier(boss_pdamage=30)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #56타 + 폭발 1회 ( 7 * 8s)
+        ArcaneOfDarklordFinal = core.DamageSkill("다크로드의 비전서(막타)", 0, 900+18*vEhc.getV(2,2), 10, cooltime = -1, modifier=core.CharacterModifier(boss_pdamage=30)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
 

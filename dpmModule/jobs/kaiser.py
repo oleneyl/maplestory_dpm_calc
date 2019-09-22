@@ -34,7 +34,7 @@ class JobGenerator(ck.JobGenerator):
         Catalyze = core.InformedCharacterModifier("카탈라이즈",patt=30, pdamage_indep=20)
         AdvancedWillOfSwordPassive = core.InformedCharacterModifier("어드밴스드 윌 오브 소드(패시브)",att = 20)
         UnflinchingCourage = core.InformedCharacterModifier("언플린칭 커리지",armor_ignore = 40)
-        AdvancedSwordMastery = core.InformedCharacterModifier("어드밴스드 소드 마스터리", att = 30, crit_damage = 8)
+        AdvancedSwordMastery = core.InformedCharacterModifier("어드밴스드 소드 마스터리", att = 30, crit_damage = 15, crit=20)
     
         return [InnerBlaze, AdvancedInnerBlaze, Catalyze, 
                 AdvancedWillOfSwordPassive, UnflinchingCourage, AdvancedSwordMastery]
@@ -75,9 +75,9 @@ class JobGenerator(ck.JobGenerator):
         RegainStrenth = core.BuffSkill("리게인 스트렝스", 0, 240000, rem = True, pdamage_indep = 15).wrap(core.BuffSkillWrapper)
         BlazeUp = core.BuffSkill("블레이즈 업", 0, 240000, att = 20, rem = True).wrap(core.BuffSkillWrapper)
     
-        FinalFiguration = core.BuffSkill("파이널 피규레이션", 0, 60000, pdamage_indep = 15, crit=40, cooltime = -1).wrap(MorphGaugeWrapper)
-        Wingbit_1 = core.SummonSkill("윙비트", 540, 300, 200, 1, 14400, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)  #48타
-        Wingbit_2 = core.SummonSkill("윙비트(2)", 540, 300, 200, 1, 14400, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)  #48타
+        FinalFiguration = core.BuffSkill("파이널 피규레이션", 0, 60000, pdamage_indep = 15, cooltime = -1).wrap(MorphGaugeWrapper)
+        Wingbit_1 = core.SummonSkill("윙비트", 540, 300, 200, 1, 19400, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)  #48타
+        Wingbit_2 = core.SummonSkill("윙비트(2)", 540, 300, 200, 1, 19400, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)  #48타
         
         GigaSlasher_ = core.DamageSkill("기가 슬래셔", 540, 330, 9+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         GigaSlasher_Fig = core.DamageSkill("기가 슬래셔(변신)", 540, 330, 11+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
@@ -109,10 +109,10 @@ class JobGenerator(ck.JobGenerator):
         WillOfSwordStrikeJudge = core.DamageSkill("윌 오브 소드:스트라이크(시전)", 0, 0, 0, cooltime = 30000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
     
         WillOfSwordStrike = core.DamageSkill("윌 오브 소드:스트라이크", 0, 500+20*vEhc.getV(3,3), 4*5).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
-        WillOfSwordStrike_ = core.DamageSkill("윌 오브 소드:스트라이크(폭발)", 0, 350+14*vEhc.getV(3,3), 6*5).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        WillOfSwordStrike_ = core.DamageSkill("윌 오브 소드:스트라이크(폭발)", 0, 1000+14*vEhc.getV(3,3), 6*5).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
         
         WillOfSwordStrike_Fig = core.DamageSkill("윌 오브 소드:스트라이크(변신)", 0, 500+20*vEhc.getV(3,3), (4+1)*5).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
-        WillOfSwordStrike_Fig_ = core.DamageSkill("윌 오브 소드:스트라이크(폭발)(변신)", 0, 350+14*vEhc.getV(3,3), (6+1)*5).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)  
+        WillOfSwordStrike_Fig_ = core.DamageSkill("윌 오브 소드:스트라이크(폭발)(변신)", 0, 1000+40*vEhc.getV(3,3), (6+1)*5).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)  
         
         DrakeSlasher_Dummy = core.DamageSkill("드라코 슬래셔(시전)", 540, 0, 0, cooltime = (7-(vEhc.getV(0,0)//15))*1000).wrap(core.DamageSkillWrapper)
         

@@ -111,7 +111,7 @@ class JobGenerator(ck.JobGenerator):
         Hauling = core.BuffSkill("하울링", 0, 300*1000, rem = True, patt = 10).wrap(core.BuffSkillWrapper)
         BeastForm = core.BuffSkill("비스트 폼", 0, 300*1000, rem = True, patt=20+5).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill("샤프 아이즈", 1080, 300 * 1000, crit = 20 + combat*1, crit_damage = 15 + combat*1, rem = True).wrap(core.BuffSkillWrapper)
-        SilentRampage = core.BuffSkill("사일런트 램피지", 1020, 40*1000, pdamage=40, cooltime = 160000).wrap(core.BuffSkillWrapper)
+        SilentRampage = core.BuffSkill("사일런트 램피지", 1020, 40*1000, pdamage=40, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         
         WillOfLiberty = core.BuffSkill("윌 오브 리버티", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
