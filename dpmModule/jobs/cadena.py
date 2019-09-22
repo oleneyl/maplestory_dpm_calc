@@ -28,7 +28,7 @@ class WeaponVarietyStackWrapper(core.StackSkillWrapper):
         if self.currentAttack != target:
             if self.currentAttackTime < 0:
                 res.cascade = [self.final_attack_task]
-                self.currentAttackTime = 500
+                self.currentAttackTime = 250
             
         return res	
     
@@ -121,7 +121,7 @@ class JobGenerator(ck.JobGenerator):
         
         ChainArts_Chais = core.DamageSkill("체인아츠:체이스", 0, 100, 1).wrap(core.DamageSkillWrapper)
 
-        #ChainArts_ToughHustleInit = core.DamageSkill("체인아츠:터프허슬", 0, 0, 0, cooltime = 45000).setV(vEhc, 0, 2, False) #지속형		
+        #ChainArts_ToughHustleInit = core.DamageSkill("체인아츠:터프허슬", 0, 0, 0, cooltime = 50000).setV(vEhc, 0, 2, False) #지속형		
         #ChainArts_ToughHustle = core.DamageSkill("체인아츠:터프허슬", 5000000, 600, 2).setV(vEhc, 0, 2, False) #지속형, 6초, 미사용
         
         ChainArts_takedown = core.DamageSkill("체인아츠:테이크다운", 5360, 990, 15, cooltime = 150*1000, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
