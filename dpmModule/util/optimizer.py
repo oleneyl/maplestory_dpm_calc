@@ -51,7 +51,7 @@ def get_optimal_hyper_union(spec, job, otherspec, hyper, union):
     ref = ref - hyper.mdf
     ref = ref - union.mdf
     
-    buffremFlag = (union.buffrem > 0)
+    buffremFlag = (union.buff_rem > 0)
     
     newHyper = HyperStat.get_hyper_object(ref, hyper.level)
     ref += newHyper.mdf
