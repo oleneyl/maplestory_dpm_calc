@@ -102,7 +102,7 @@ class JobGenerator(ck.JobGenerator):
         OverdrivePenalty = core.BuffSkill("오버드라이브(페널티)", 0, (40 - 0.2*vEhc.getV(5,5))*1000, cooltime = -1, att = -15*1.54).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) #페널티
         
         Transform = core.BuffSkill("트랜스폼", 450, (50+vEhc.getV(1,1))*1000, cooltime = 180 * 1000, pdamage_indep = (20 + 0.2*vEhc.getV(1,1))).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)#에너지 완충
-        TransformEnergyOrb = core.DamageSkill("에너지 오브", 1140, 400 +vEhc.getV(1,1)*15, (2+(vEhc.getV(1,1) == 25)*1) * 8, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TransformEnergyOrb = core.DamageSkill("에너지 오브", 1140, 450 +vEhc.getV(1,1)*18, (2+(vEhc.getV(1,1) == 25)*1) * 8, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
     
         FistInrage = core.DamageSkill("피스트 인레이지", 690, 320, 8 + 1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         FistInrage_T = core.DamageSkill("피스트 인레이지(변신)", 690, 320, 8 + 1 + 2, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)#완충시 10번 공격
