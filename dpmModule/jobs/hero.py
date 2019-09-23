@@ -129,7 +129,7 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill Wrapper   ######
         
         #Final attack type
-        ComboInstinct.onAfter(ComboInstinctOff.controller(30000))
+        ComboInstinct.onAfter(ComboInstinctOff.controller(30 * 1000))
         ComboInstinct.onAfter(ComboAttack.toggleController(True))
         ComboInstinctOff.onAfter(ComboAttack.toggleController(False))
         InstinctFringeUse = core.OptionalElement(ComboInstinct.is_active, ComboInstinctFringe, name = "콤보 인스팅트 여부")
@@ -139,7 +139,7 @@ class JobGenerator(ck.JobGenerator):
     
         Insizing.onAfters([InsizingBuff, AdvancedFinalAttack, ComboAttack.stackController(-2)])
     
-        ComboDesfort.onAfters([ComboDesfortBuff, ComboAttack.stackController(-6)])    #is_usable() 콜로 체크 필��.
+        ComboDesfort.onAfters([ComboDesfortBuff, ComboAttack.stackController(-6)])    #is_usable() 콜로 체크 필수.
 
         Panic.onAfter(PanicBuff)
         Panic.onAfter(ComboAttack.stackController(-2))

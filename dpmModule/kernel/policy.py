@@ -92,6 +92,10 @@ class StorageLinkedGraph(NameIndexedGraph):
     def get_task_from_element(self, element):
         return self._task_map[element._id]
 
+    def get_network_information(self, information_type):
+        if information_type == 'merged':
+            return self.get_single_network_information(self.get_all(), is_list=True)
+
 class AdvancedGraphScheduler(AbstractScheduler):
     def __init__(self, graph, fetching_policy, rules):
         super(AdvancedGraphScheduler, self).__init__(graph)

@@ -644,14 +644,16 @@ class Task():
 
 class ResultObject():
     def __init__(self, delay, mdf, damage, sname = 'Not specified', spec = 'Undefined', kwargs = {}, cascade = [], hit = 1):
-        self.delay = delay
-        self.damage = damage
-        self.mdf = mdf
-        self.sname = sname
-        self.spec = spec        #buff, deal, summon
-        self.kwargs = kwargs
-        self.cascade = cascade
-        self.hit = hit
+        """Result object must be static; alway to be ensure it is revealed.
+        """
+        self.delay = DynamicVariableOperation.reveal_argument(delay)
+        self.damage = DynamicVariableOperation.reveal_argument(damage)
+        self.mdf = DynamicVariableOperation.reveal_argument(mdf)
+        self.sname = DynamicVariableOperation.reveal_argument(sname)
+        self.spec = DynamicVariableOperation.reveal_argument(spec)        #buff, deal, summon
+        self.kwargs = DynamicVariableOperation.reveal_argument(kwargs)
+        self.cascade = DynamicVariableOperation.reveal_argument(cascade)
+        self.hit = DynamicVariableOperation.reveal_argument(hit)
         self.time = None
         
     def setTime(self, time):
@@ -1310,15 +1312,15 @@ class ScheduleGraph(AbstractScenarioGraph):
         '''
         
         if style == "buff":
-            return self.get_single_network_information(self.buff, isList = True)
+            return self.get_single_network_information(self.buff, is_list = True)
         elif style == "damage":
-            return self.get_single_network_information(self.damage + [self.default_task], isList = True)
+            return self.get_single_network_information(self.damage + [self.default_task], is_list = True)
         elif style == "summon":
-            return self.get_single_network_information(self.summon, isList = True)
+            return self.get_single_network_information(self.summon, is_list = True)
         elif style == "tick":
-            return self.get_single_network_information(self.tick, isList = True)
+            return self.get_single_network_information(self.tick, is_list = True)
         elif style == "merged":
-            return self.get_single_network_information(self.buff + self.damage + self.summon + self.spend + self.tick + [self.default_task], isList = True)
+            return self.get_single_network_information(self.buff + self.damage + self.summon + self.spend + self.tick + [self.default_task], is_list = True)
 
     def get_default_buff_modifier(self):
         mdf = CharacterModifier()

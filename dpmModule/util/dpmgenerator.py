@@ -69,7 +69,7 @@ class IndividualDPMGenerator():
         control = core.Simulator(sche, target, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
         control.start_simulation(self.runtime)
 
-        return {"data" : control.get_results(), 
+        return {"data" : control.get_results(),
                 "meta" : control.get_metadata(),
                 "skill" : control.get_skill_info(), 
                 "graph" : graph.get_network_information("merged"),
@@ -122,7 +122,7 @@ class DpmSetting():
     def processJob(self, koJob, runtime = 180000):
         generator = IndividualDPMGenerator(koJob, self.template)
         generator.set_runtime(runtime)
-        return generator.get_detailed_dpm( ulevel = self.ulevel, weaponstat = self.weaponstat, level = self.level)
+        return generator.get_detailed_dpm(ulevel = self.ulevel, weaponstat = self.weaponstat, level = self.level)
 
 
         

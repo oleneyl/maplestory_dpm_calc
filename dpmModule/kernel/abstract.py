@@ -16,7 +16,7 @@ class AbstractScenarioGraph():
     def build_graph(self, *args):
         raise NotImplementedError("You must Implement build_graph function to create specific graph.")
     
-    def get_single_network_information(self, graphel, isList = False):
+    def get_single_network_information(self, graphel, is_list = False):
         '''Function get_single_network_information (param graphel : GraphElement)
         Return Network information about given graphel, as d3 - parsable dictionary element.
         return value is dictionary followed by below.
@@ -27,13 +27,13 @@ class AbstractScenarioGraph():
                             "type" : type - of - node}
         
         '''
-        if not isList:
+        if not is_list:
             nodes, links = self.getNetwork(graphel)
         else:
-            nodes = [i[0] for i in graphel]
+            nodes = [i for i in graphel]
             links = []
             for el in graphel:
-                _nds , _lns = self._getNetworkRecursive(el[0], nodes, links)
+                _nds , _lns = self._getNetworkRecursive(el, nodes, links)
                 nodes += _nds
                 links += _lns
             #refinement
