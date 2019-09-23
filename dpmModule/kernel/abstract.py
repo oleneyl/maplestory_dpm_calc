@@ -30,12 +30,13 @@ class AbstractScenarioGraph():
         if not is_list:
             nodes, links = self.getNetwork(graphel)
         else:
-            nodes = [i for i in graphel]
+            nodes = [i for i in graphel if i is not None]
             links = []
             for el in graphel:
-                _nds , _lns = self._getNetworkRecursive(el, nodes, links)
-                nodes += _nds
-                links += _lns
+                if el is not None:
+                    _nds , _lns = self._getNetworkRecursive(el, nodes, links)
+                    nodes += _nds
+                    links += _lns
             #refinement
             nodeSet = []
             for node in nodes:
@@ -86,7 +87,8 @@ class AbstractScenarioGraph():
             _links = ancestor.get_link()
             _linksCandidate = ancestor.get_link()
         except AttributeError:
-            raise AttributeError('Cannot find Appropriate Link. Make sure your Graph element task has correct reference')
+            raise AttributeError(f'''Cannot find Appropriate Link. Make sure your Graph element task 
+                    has correct reference. This was raised with ancestor {ancestor}''')
         if len(_linksCandidate) > 0:
             for _, el, _t in _linksCandidate:
                 if el not in nodes:
