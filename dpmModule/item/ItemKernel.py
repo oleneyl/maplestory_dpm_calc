@@ -303,7 +303,7 @@ class EnhancerFactory():
     
     @classmethod
     def get_glove_starforce_enhancement(self, level, star):
-        return EnhancerFactory.get_glove_bonus_starforce_enhancement(level, star) + EnhancerFactory.get_armor_starforce_enhancement(level, star)
+        return EnhancerFactory.get_glove_bonus_starforce_enhancement(star) + EnhancerFactory.get_armor_starforce_enhancement(level, star)
     
     @classmethod
     def get_weapon_scroll_enhancement(self, level, elist = [0,0,0,0]):
