@@ -811,5 +811,3 @@ def testonly():
     for i in range(140, 220, 5):
         print("level" + str(i))
         print(HyperStat.get_hyper_index(test, i))
-        
-        

@@ -1,5 +1,6 @@
 from .characterKernel import ItemedCharacter as ichar
 from .characterKernel import LinkSkill
+from .characterTemplate import AbstractTemplateGenerator, register_template_generator
 from ..item import Arcane, Absolab, Empress, RootAbyss, BossAccesory, Default, Else, Meister, Darkness
 from ..item.ItemKernel import CharacterModifier as MDF
 from ..item import ItemKernel as it
@@ -674,21 +675,32 @@ def getU8500CharacterTemplate(_type):
     template.add_summary("아케인포스 1320")
     template.apply_modifiers([MDF(stat_main_fixed = 13200)])
     
-    return template           
-    
+    return template
 
-def get_template(ulevel):
-    if ulevel == 4000:
-        return getU4000CharacterTemplate
-    elif ulevel == 5000:
-        return getU5000CharacterTemplate
-    elif ulevel == 6000:
-        return getU6000CharacterTemplate
-    elif ulevel == 7000:
-        return getU7000CharacterTemplate
-    elif ulevel == 8000:
-        return getU8000CharacterTemplate
-    elif ulevel == 8500:
-        return getU8500CharacterTemplate
-    else:
-        raise TypeError('given ulevel %d not exist in characterTemplateHigh' % ulevel)
+class TemplateGenerator(AbstractTemplateGenerator):
+    TEMPLATE_NAME='high_standard'
+    def __init__(self):
+        super(TemplateGenerator, self).__init__({
+            4000 : (2,6),
+            5000 : (3,6),
+            6000 : (4,9),
+            7000 : (4,9),
+            8000 : (4,9),
+            9000 : (4,9)
+        })
+
+    def get_template(self, ulevel):
+        if ulevel == 4000:
+            return getU4000CharacterTemplate
+        elif ulevel == 5000:
+            return getU5000CharacterTemplate
+        elif ulevel == 6000:
+            return getU6000CharacterTemplate
+        elif ulevel == 7000:
+            return getU7000CharacterTemplate
+        elif ulevel == 8000:
+            return getU8000CharacterTemplate
+        elif ulevel == 8500:
+            return getU8500CharacterTemplate
+        else:
+            raise KeyError(f'given ulevel {ulevel} not exist in {self.TEMPLATE_NAME}')
