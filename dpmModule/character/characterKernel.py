@@ -161,7 +161,7 @@ class JobGenerator():
     def apply_specific_schedule(self, graph):
         return
     
-    def build(self, chtr, combat = False):
+    def build(self, chtr, combat = False, storage_handler=None):
         initialize_global_properties()
 
         base_element, all_elements = self.generate(self.vEhc, chtr, combat = combat)
@@ -169,6 +169,8 @@ class JobGenerator():
         GlobalOperation.assign_storage()
         GlobalOperation.attach_namespace()
         GlobalOperation.save_storage()
+        if storage_handler is not None:
+            storage_handler()
         GlobalOperation.convert_to_static()
 
         collection = GlobalOperation.export_collection()
@@ -222,7 +224,8 @@ class JobGenerator():
                     weaponstat = [3,6],
                     log = False,
                     vEnhanceGenerateFlag = None,
-                    ability_grade = Ability_grade(4,1) ):
+                    ability_grade = Ability_grade(4,1),
+                    storage_handler=None ):
         '''Packaging function
         '''
         self.vEhc = v_builder.build_enhancer(chtr, self)
@@ -244,7 +247,7 @@ class JobGenerator():
         self.chtr.buff_rem = self.chtr.buff_rem + adjusted_ability.buff_rem + personality.buff_rem
         self.chtr.add_property_ignorance(personality.prop_ignore)
         
-        graph = self.build(chtr, combat = combat)
+        graph = self.build(chtr, combat = combat, storage_handler=storage_handler)
 
         if log:
             print("\n---basic CHTR---")
