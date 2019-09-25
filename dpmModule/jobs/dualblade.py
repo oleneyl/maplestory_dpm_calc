@@ -39,10 +39,10 @@ class JobGenerator(ck.JobGenerator):
         하이퍼 : 팬텀 블로우 - 리인포스, 이그노어 가드, 보너스 어택
         블레이드 퓨리 - 리인포스, 엑스트라 타겟
         
-        미러이미징을 뎀뻥으로 계산.
+        미러이미징을 뎀뻥으로 계산.(:= 맥뎀 누수계산에 오류가 있을 수 있음)
         아수라 41타
-        블레이드 토네이도 1타
-        카르마 퓨리 미사용
+        블레이드 토네이도 3타
+        카르마 퓨리 사용
         
         코어 16개 유효 : 팬블 / 아수라 / 퓨리 -- 써든레이드 / 어센션 / 히든블레이드
         '''
@@ -81,8 +81,8 @@ class JobGenerator(ck.JobGenerator):
         
         KarmaFury = core.DamageSkill("카르마 퓨리", 990, 600+24*vEhc.getV(6,6), 7 * 3, red = True, cooltime = 10000, modifier = core.CharacterModifier(armor_ignore = 30)).isV(vEhc,6,6).wrap(core.DamageSkillWrapper)
         BladeTornado = core.DamageSkill("블레이드 토네이도", 720, 600+24*vEhc.getV(2,2), 7, cooltime = 12000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        BladeTornadoFront = core.DamageSkill("블레이드 토네이도(전방)", 0, 600+24*vEhc.getV(2,2), 6, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)   #보통 1타
-        BladeTornadoSummon = core.SummonSkill("블레이드 토네이도(소환)", 0, 540, 450+18*vEhc.getV(2,2), 6, 2000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #임의 딜레이, 미사용
+        #BladeTornadoFront = core.DamageSkill("블레이드 토네이도(전방)", 0, 600+24*vEhc.getV(2,2), 6, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)   #보통 1타
+        BladeTornadoSummon = core.SummonSkill("블레이드 토네이도(소환)", 0, 540, 450+18*vEhc.getV(2,2), 6 * 3, 2000, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #임의 딜레이, 미사용
         
         ######   Skill Wrapper   ######
     
@@ -92,7 +92,7 @@ class JobGenerator(ck.JobGenerator):
         HiddenBladeOpt = core.OptionalElement(HiddenBladeBuff.is_active, HiddenBlade)
         
         FlashBang.onAfter(FlashBangDebuff)
-        for sk in [FinalCut, PhantomBlow, SuddenRaid, FlashBang, AsuraTick, BladeStorm, BladeStormTick, BladeTornado, BladeTornadoSummon, BladeTornadoFront]:
+        for sk in [FinalCut, PhantomBlow, SuddenRaid, FlashBang, AsuraTick, BladeStorm, BladeStormTick, BladeTornado, BladeTornadoSummon]:
             sk.onAfter(HiddenBladeOpt)
             
         for sk in [PhantomBlow, AsuraTick, BladeStormTick]:
@@ -100,13 +100,14 @@ class JobGenerator(ck.JobGenerator):
         
         Asura.onAfter(core.RepeatElement(AsuraTick, int((10+3)*1000/300)))
         BladeStorm.onAfter(core.RepeatElement(BladeStormTick, int((10000+3000)/210)))
-        BladeTornado.onAfter(BladeTornadoFront)
+        #BladeTornado.onAfter(BladeTornadoFront)
+        BladeTornado.onAfter(BladeTornadoSummon)
         
         return(PhantomBlow,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Booster, MirrorImaging, DarkSight, FinalCutBuff, EpicAdventure, FlashBangDebuff, HiddenBladeBuff, UltimateDarksight, ReadyToDie,
                     globalSkill.soul_contract()] +\
                 [FinalCut, FlashBang, Asura, BladeStorm, BladeTornado, SuddenRaid, KarmaFury] +\
-                [SuddenRaidDOT, Venom] +\
+                [SuddenRaidDOT, Venom, BladeTornadoSummon] +\
                 [] +\
                 [PhantomBlow])
