@@ -95,6 +95,24 @@ class StorageLinkedGraph(NameIndexedGraph):
     def get_network_information(self, information_type):
         if information_type == 'merged':
             return self.get_single_network_information(self.get_all(), is_list=True)
+        elif information_type == "damage":
+            return self.get_single_network_information(self.filter_elements(lambda x:isinstance(x, DamageSkillWrapper)), is_list = True)
+        elif information_type == "summon":
+            return self.get_single_network_information(self.filter_elements(lambda x:isinstance(x, SummonSkillWrapper)), is_list = True)
+        elif information_type == "spend":
+            return self.get_single_network_information([], is_list = True)
+        elif information_type == "buff":
+            return self.get_single_network_information(self.filter_elements(lambda x:isinstance(x, BuffSkillWrapper)), is_list = True)
+
+    def get_whole_skill_info(self, expl_level = 0):
+        return{
+            #"basic" : [self.default_task[0].skill.get_info(expl_level = expl_level)],
+            "buff" : self.get_network_information('buff'),
+            "damage" : self.get_network_information('damage'),
+            "summon" : self.get_network_information('summon'),
+            "spend" : self.get_network_information('spend'),
+        }
+
 
 class AdvancedGraphScheduler(AbstractScheduler):
     def __init__(self, graph, fetching_policy, rules):
