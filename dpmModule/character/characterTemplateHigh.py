@@ -59,7 +59,7 @@ def getUnionCharacter(_type, armor_pstat_ptnl = 6, acc_pstat_ptnl = 9, weaponSta
 
     #Temporal union object..
     unionModifier = MDF(att = 5, pdamage = 21, armor_ignore = 21, stat_main = 5)
-    link = LinkSkill.FullPackage.copy()
+    link = LinkSkill.get_full_link()
     
     template = ichar(modifierlist = [unionModifier, link])
 
@@ -109,7 +109,7 @@ def getU6000Character(_type, armor_pstat_ptnl = 15, acc_pstat_ptnl = 15, weaponS
     #Temporal union object..
     unionModifier = MDF(att = 5, pdamage = 21, armor_ignore = 21, stat_main = 5, crit_damage = 24)
     
-    link = LinkSkill.FullPackage.copy()
+    link = LinkSkill.get_full_link()
     
     template = ichar(modifierlist = [unionModifier, link])
 
@@ -123,7 +123,7 @@ def getU6000Character(_type, armor_pstat_ptnl = 15, acc_pstat_ptnl = 15, weaponS
     template.add_item_with_id("shoes", absolabSet["shoes"])
     template.add_item_with_id("ring3", Default.getEventRing(potential = accPtnl))
     template.add_item_with_id("ring4", Default.getEventRing(potential = accPtnl))
-    template.add_item_with_id("subweapon", Default.getSubweapon(potential = subPtnl, additional_potential = subAPtnl))
+    template.add_item_with_id("subweapon", Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Absolab.Factory))
     template.add_item_with_id("emblem", Default.getEmblem(potential = emblemPtnl, additional_potential = emblemAPtnl))
     
     template.add_item_with_id("weapon", Absolab.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = weaponPtnl, additional_potential = weaponAPtnl ))
@@ -154,7 +154,7 @@ def getDpmStdCharacterTemplate(_type, armor_pstat_ptnl = 15, acc_pstat_ptnl = 15
     etcAddPtnl = MDF(att = 10)
 
     #Temporal union object..
-    link = LinkSkill.FullPackage.copy()
+    link = LinkSkill.get_full_link()
     
     template = ichar(modifierlist = [link], level = 240)
 
@@ -168,7 +168,7 @@ def getDpmStdCharacterTemplate(_type, armor_pstat_ptnl = 15, acc_pstat_ptnl = 15
     template.add_item_with_id("shoes", absolabSet["shoes"])
     template.add_item_with_id("ring3", Default.getEventRing(potential = accPtnl))
     template.add_item_with_id("ring4", Default.getEventRing(potential = accPtnl))
-    template.add_item_with_id("subweapon", Default.getSubweapon(potential = MDF(), additional_potential = subAPtnl))
+    template.add_item_with_id("subweapon", Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Absolab.Factory))
     template.add_item_with_id("emblem", Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl))
     
     template.add_item_with_id("weapon", Absolab.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl, elist = [0,0,0,9] ))
@@ -206,7 +206,7 @@ def getEpicDpmStdCharacterTemplate(_type, armor_pstat_ptnl = 9, acc_pstat_ptnl =
     etcAddPtnl = MDF(att = 10)
 
     #Temporal union object..
-    link = LinkSkill.FullPackage.copy()
+    link = LinkSkill.get_full_link()
     
     template = ichar(modifierlist = [link], level = 230)
 
@@ -220,7 +220,7 @@ def getEpicDpmStdCharacterTemplate(_type, armor_pstat_ptnl = 9, acc_pstat_ptnl =
     template.add_item_with_id("shoes", absolabSet["shoes"])
     template.add_item_with_id("ring3", Default.getEventRing(potential = accPtnl))
     template.add_item_with_id("ring4", Default.getEventRing(potential = accPtnl))
-    template.add_item_with_id("subweapon", Default.getSubweapon(potential = MDF(), additional_potential = subAPtnl))
+    template.add_item_with_id("subweapon", Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Absolab.Factory))
     template.add_item_with_id("emblem", Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl))
     
     template.add_item_with_id("weapon", Absolab.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ))
@@ -246,7 +246,7 @@ def getU4000CharacterTemplate(_type):
     카루타 + 여제 + 보장
     '''
     #Temporal union object..
-    link = LinkSkill.FullPackage.copy()
+    link = LinkSkill.get_full_link()
     template = ichar(modifierlist = [link], level = 215)
     
     template.add_summary("에디셔널 잠재능력 없음")
@@ -279,7 +279,7 @@ def getU4000CharacterTemplate(_type):
     template.add_item_with_id("shoes", empressSet["shoes"])
     template.add_item_with_id("ring3", Default.getEventRing(potential = accPtnl))
     template.add_item_with_id("ring4", Default.getEventRing(potential = accPtnl))
-    template.add_item_with_id("subweapon", Default.getSubweapon(potential = MDF(), additional_potential = subAPtnl))
+    template.add_item_with_id("subweapon", Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=RootAbyss.Factory))
     template.add_item_with_id("emblem", Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl))
     
     template.add_item_with_id("weapon", RootAbyss.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ))
@@ -300,7 +300,7 @@ def getU4000CharacterTemplate(_type):
 
 def getU5000CharacterTemplate(_type):
     #Temporal union object..
-    link = LinkSkill.FullPackage.copy()
+    link = LinkSkill.get_full_link()
     template = ichar(modifierlist = [link], level = 230)
 
     weaponAPtnl = MDF(att = 3)
@@ -333,7 +333,7 @@ def getU5000CharacterTemplate(_type):
     template.add_item_with_id("shoes", empressSet["shoes"])
     template.add_item_with_id("ring3", Default.getEventRing(potential = accPtnl))
     template.add_item_with_id("ring4", Default.getEventRing(potential = accPtnl))
-    template.add_item_with_id("subweapon", Default.getSubweapon(potential = MDF(), additional_potential = subAPtnl))
+    template.add_item_with_id("subweapon", Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Absolab.Factory))
     template.add_item_with_id("emblem", Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl))
     
     template.add_item_with_id("weapon", Absolab.Factory.getWeapon(_type, elist = [0,0,0,9], bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ))
@@ -355,7 +355,7 @@ def getU5000CharacterTemplate(_type):
 
 def getU6000CharacterTemplate(_type):
     #Temporal union object..
-    link = LinkSkill.FullPackage.copy()
+    link = LinkSkill.get_full_link()
     template = ichar(modifierlist = [link], level = 240)
     
     template.add_summary("에디 공10, 무기류 공6%")
@@ -393,7 +393,7 @@ def getU6000CharacterTemplate(_type):
     template.add_item_with_id("shoes", absolabSet["shoes"])
     template.add_item_with_id("ring3", Default.getEventRing(potential = accPtnl))
     template.add_item_with_id("ring4", Default.getEventRing(potential = accPtnl))
-    template.add_item_with_id("subweapon", Default.getSubweapon(potential = MDF(), additional_potential = subAPtnl))
+    template.add_item_with_id("subweapon", Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Absolab.Factory))
     template.add_item_with_id("emblem", Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl))
     
     template.add_item_with_id("weapon", Absolab.Factory.getWeapon(_type, elist = [0,0,0,9], bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ))
@@ -415,7 +415,7 @@ def getU6000CharacterTemplate(_type):
 
 def getU7000CharacterTemplate(_type):
     #Temporal union object..
-    link = LinkSkill.FullPackage.copy()
+    link = LinkSkill.get_full_link()
     template = ichar(modifierlist = [link], level = 250)
     
     template.add_summary("에디 2줄, 무기류 공21%")
@@ -475,7 +475,7 @@ def getU7000CharacterTemplate(_type):
     template.add_item_with_id("shoes", absolabSet["shoes"])
     template.add_item_with_id("head", absolabSet["head"])
     template.add_item_with_id("ring4", Default.getEventRing(potential = accPtnl))
-    template.add_item_with_id("subweapon", Default.getSubweapon(potential = MDF(), additional_potential = subAPtnl))
+    template.add_item_with_id("subweapon", Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Arcane.Factory))
     template.add_item_with_id("emblem", Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl))
     
     template.add_item_with_id("weapon", Arcane.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ))
@@ -498,7 +498,7 @@ def getU7000CharacterTemplate(_type):
 
 def getU8000CharacterTemplate(_type):
     #Temporal union object..
-    link = LinkSkill.FullPackage.copy()
+    link = LinkSkill.get_full_link()
     template = ichar(modifierlist = [link], level = 255)
     
     template.add_summary("에디 2.5줄, 무기류 공15%")
@@ -560,7 +560,7 @@ def getU8000CharacterTemplate(_type):
     template.add_item_with_id("shoes", absolabSet["shoes"])
     template.add_item_with_id("ring3", Default.getEventRing(potential = accPtnl))
     template.add_item_with_id("ring4", Default.getEventRing(potential = accPtnl))
-    template.add_item_with_id("subweapon", Default.getSubweapon(potential = MDF(), additional_potential = subAPtnl))
+    template.add_item_with_id("subweapon", Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Arcane.Factory))
     template.add_item_with_id("emblem", Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl))
     
     template.add_item_with_id("weapon", Arcane.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ))
@@ -584,7 +584,7 @@ def getU8000CharacterTemplate(_type):
     
 def getU8500CharacterTemplate(_type):
     #Temporal union object..
-    link = LinkSkill.FullPackage.copy()
+    link = LinkSkill.get_full_link()
     template = ichar(modifierlist = [link], level = 260)
     
     template.add_summary("에디 레전 3줄, 무기류 공24%")
@@ -652,7 +652,7 @@ def getU8500CharacterTemplate(_type):
     template.add_item_with_id("shoes", arcaneSet["shoes"])
     template.add_item_with_id("ring3", Default.getEventRing(potential = accPtnl))
     template.add_item_with_id("ring4", Default.getEventRing(potential = accPtnl))
-    template.add_item_with_id("subweapon", Default.getSubweapon(potential = MDF(), additional_potential = subAPtnl))
+    template.add_item_with_id("subweapon", Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Arcane.Factory))
     template.add_item_with_id("emblem", Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl))
     
     template.add_item_with_id("weapon", Arcane.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ))
@@ -681,14 +681,14 @@ def get_template(ulevel):
     if ulevel == 4000:
         return getU4000CharacterTemplate
     elif ulevel == 5000:
-        return getU4000CharacterTemplate
+        return getU5000CharacterTemplate
     elif ulevel == 6000:
-        return getU4000CharacterTemplate
+        return getU6000CharacterTemplate
     elif ulevel == 7000:
-        return getU4000CharacterTemplate
+        return getU7000CharacterTemplate
     elif ulevel == 8000:
-        return getU4000CharacterTemplate
+        return getU8000CharacterTemplate
     elif ulevel == 8500:
-        return getU4000CharacterTemplate
+        return getU8500CharacterTemplate
     else:
         raise TypeError('given ulevel %d not exist in characterTemplateHigh' % ulevel)
