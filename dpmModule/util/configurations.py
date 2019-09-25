@@ -1,7 +1,8 @@
 import sys, os
 
 import dpmModule as dpm
-import dpmModule.character.characterTemplateHigh as template
+from dpmModule.character.characterTemplate import get_template_generator
+
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
 from dpmModule.kernel import graph
 from dpmModule.jobs import jobMap
@@ -15,7 +16,7 @@ import argparse
 
 
 def export_configuration(jobname):
-    target = template.getU6000CharacterTemplate(maplejobs.weaponList[jobname])
+    target = get_template_generator('high_standard')().query(6000)(maplejobs.weaponList[jobname])
     supplier = maplejobs.jobMap[jobname]
 
     v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17)

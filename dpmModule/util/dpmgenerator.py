@@ -120,29 +120,37 @@ class DpmSetting():
         generator.set_runtime(runtime)
         return generator.get_detailed_dpm(ulevel = self.ulevel, weaponstat = self.weaponstat)
 
-def CalculateEveryHigh():
-    settings = []
-    for ulevel, template, weapon_stat in get_template_generator('high_standard')():
-        settings.append(DpmSetting(template, ulevel=ulevel, weaponstat=weapon_stat))
-    
-    retval = [{"data" : setting.process() , "prefix" : "u" + str(setting.ulevel)} for setting in settings]
-    return retval
 
-def CalculateHighAt(ulevel):
-    template_generator = get_template_generator('high_standard')()
-    template, weaponstat = template_generator.query(ulevel)
-    setting = DpmSetting(template, ulevel=ulevel, weaponstat=weaponstat)
-    return {"data" : setting.process() , "prefix" : "u" + str(setting.ulevel)}
+class DpmInterface():
+    def __init__(self, template_generator_name):
+        self.generator_name = template_generator_name
 
-def CalculateJobHigh(koJob, ulevel, runtime = 180*1000):
-    template_generator = get_template_generator('high_standard')()
-    try:
+    def get_template_generator(self):
+        return get_template_generator(self.generator_name)
+
+    def calculate_every(self):
+        settings = []
+        for ulevel, template, weapon_stat in self.get_template_generator()():
+            settings.append(DpmSetting(template, ulevel=ulevel, weaponstat=weapon_stat))
+        
+        retval = [{"data" : setting.process() , "prefix" : "u" + str(setting.ulevel)} for setting in settings]
+        return retval
+
+    def calculate(self, ulevel):
+        template_generator = self.get_template_generator()()
         template, weaponstat = template_generator.query(ulevel)
-    except KeyError as e:
-        raise e
-    except Exception as e:
-        print('Unknown error occured')
-        raise e
-    setting = DpmSetting(template, ulevel=ulevel, weaponstat=weaponstat)
-    
-    return setting.processJob(koJob, runtime = runtime)
+        setting = DpmSetting(template, ulevel=ulevel, weaponstat=weaponstat)
+        return {"data" : setting.process() , "prefix" : "u" + str(setting.ulevel)}
+
+    def calculate_job(self, koJob, ulevel, runtime = 180*1000):
+        template_generator = self.get_template_generator()()
+        try:
+            template, weaponstat = template_generator.query(ulevel)
+        except KeyError as e:
+            raise e
+        except Exception as e:
+            print('Unknown error occured')
+            raise e
+        setting = DpmSetting(template, ulevel=ulevel, weaponstat=weaponstat)
+        
+        return setting.processJob(koJob, runtime = runtime)
