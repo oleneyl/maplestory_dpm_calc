@@ -20,7 +20,7 @@ class InfinityWrapper(core.BuffSkillWrapper):
             
     def get_modifier(self):
         if self.onoff:
-            return core.CharacterModifier(pdamage_indep = (70 + 4 * (self.passedTime // ((3+self.serverlag)*1000))) )
+            return core.CharacterModifier(pdamage_indep = (70 + 4 * (self.passedTime // ((4+self.serverlag)*1000))) )
         else:
             return core.CharacterModifier()
         
