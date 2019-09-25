@@ -30,7 +30,7 @@ def getpassiveInformation(enjob):
     
     return {"passive_direct" : passive_skill_direct, "passive_indirect" : passive_skill_indirect, "static_buff" : buffs}
 
-def extractSkillInfo(enjob):
+def extract_skill_info(enjob):
     gen = maplejobs.getGenerator(maplejobs.getKoJobName(enjob)).JobGenerator()
     template = ichar()
     
@@ -50,7 +50,7 @@ def extractSkillInfo(enjob):
     
     return {"bare" : info_bare, "full" : info_full , "vskill" : info_vskill}
 
-def extractEverySkillInfo(enjob):
+def extract_every_skill_info(enjob):
     gen = maplejobs.getGenerator(maplejobs.getKoJobName(enjob)).JobGenerator()
     template = ichar()
     
@@ -60,7 +60,7 @@ def extractEverySkillInfo(enjob):
     
     #25레벨
     gen = maplejobs.getGenerator(maplejobs.getKoJobName(enjob)).JobGenerator()
-    graph_full = gen.package_bare(template, useFullCore = True)
+    graph_full = gen.package_bare(template, v_builder = no_enhancer)
     
     info_vskill = gen.vEhc.get_priority()
     
