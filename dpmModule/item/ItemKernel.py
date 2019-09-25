@@ -351,8 +351,11 @@ class WeaponFactoryClass():
         self.valueMap = valueMap
         self.modifier = modifier
         
-    def getWeapon(self, _type, star = 0, elist = [0,0,0,0], potential = CharacterModifier(), additional_potential = CharacterModifier(), bonusAttIndex = 0, bonusElse = CharacterModifier()):
+    def getWeapon(self, _type, star = 0, elist = [0,0,0,0], potential = CharacterModifier(), additional_potential = CharacterModifier(), bonusAttIndex = 0, bonusElse = CharacterModifier(),
+    enable_blade=False):
         assert(_type in self.wholeType)
+        if _type == '블레이드' and not enable_blade:
+            _type == '단검'
         _att, _bonus = self.getMap(_type)
         item = Item(att = _att)
         item.add_main_option(self.modifier)
@@ -361,7 +364,7 @@ class WeaponFactoryClass():
         item.add_main_option(EnhancerFactory.get_weapon_starforce_enhancement(item, self.level, star))
         item.add_main_option(bonusElse)
         item.set_potential(potential)
-        item.set_additional_potential(additional_potential)        
+        item.set_additional_potential(additional_potential)
         return item
     
     def getMap(self, _type):
