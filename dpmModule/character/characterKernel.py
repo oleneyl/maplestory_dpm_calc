@@ -499,7 +499,7 @@ class LinkSkill():
     Angelicbuster = CharacterModifier()   #Skill
     Aran = CharacterModifier()    #Exp
     Evan = CharacterModifier()    #Exp
-    Canonshooter = CharacterModifier(stat_main = 15, stat_sub = 15)
+    Canonshooter = CharacterModifier(stat_main = 70, stat_sub = 70)
     Enwool = CharacterModifier() #Util
     Zero = CharacterModifier(armor_ignore = 10)
     Kinesis = CharacterModifier(crit_damage = 4)
@@ -507,20 +507,27 @@ class LinkSkill():
     Kaiser = CharacterModifier() #HP
     Cygnus = CharacterModifier() #Util
     Registance = CharacterModifier()  #Util
+    AdventureMage = CharacterModifier(pdamage=9, armor_ignore=9)
+    AdventureArcher = CharacterModifier(crit=10)
+    AdventureRog = CharacterModifier(pdamage=18/2)
+
     
     '''Full Package
     DS, DA, Luminous, Phantom, Zenon, Ark, 
     Ilium, Cadena, Zero, Kinesis, (Angelicbuster), (Registance)
     '''
-    FullPackage = CharacterModifier(pdamage = 54, armor_ignore = 23.5, crit = 15, pstat_main = 10, pstat_sub = 10, crit_damage = 4)
-    FullPackageExceptCadena = CharacterModifier(pdamage = 54 - 6, armor_ignore = 23.5, crit = 15, pstat_main = 10, pstat_sub = 10, crit_damage = 4)
-
+    # FullPackage = CharacterModifier(pdamage = 54, armor_ignore = 23.5, crit = 15, pstat_main = 10, pstat_sub = 10, crit_damage = 4)
+    # FullPackageExceptCadena = CharacterModifier(pdamage = 54 - 6, armor_ignore = 23.5, crit = 15, pstat_main = 10, pstat_sub = 10, crit_damage = 4)
     @staticmethod
     def get_full_link(cadena = False):
+        FullPackage = LinkSkill.AdventureMage + LinkSkill.AdventureRog + LinkSkill.Luminous + LinkSkill.Phantom + LinkSkill.DemonSlayer + LinkSkill.DemonAvenger + \
+            LinkSkill.Zenon + LinkSkill.Cadena + LinkSkill.Angelicbuster + LinkSkill.Zero + LinkSkill.Kinesis + LinkSkill.Ark
+    
+        FullPackageExceptCadena = FullPackage - LinkSkill.Cadena
         if cadena :
-            return LinkSkill.FullPackage.copy()
+            return FullPackage.copy()
         else:
-            return LinkSkill.FullPackageExceptCadena.copy()
+            return FullPackageExceptCadena.copy()
 
 class Card():
     '''
