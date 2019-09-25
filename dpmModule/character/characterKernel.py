@@ -139,7 +139,7 @@ class JobGenerator():
         return
 
     def get_ruleset(self):
-        return 
+        return
 
     def get_predefined_rules(self, rule_type):
         ruleset = self.get_ruleset()

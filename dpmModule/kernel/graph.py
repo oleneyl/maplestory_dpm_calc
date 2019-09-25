@@ -622,7 +622,7 @@ class DynamicVariableMimicingConstant(DynamicVariableInstance):
         return []
 
 class AbstractGraphBuilder():
-    def psuedo_building_sequence(storage = None):
+    def psuedo_building_sequence(self, storage = None):
         initialize_global_properties()
         if storage is not None:
             GlobalOperation.set_storage(storage)
