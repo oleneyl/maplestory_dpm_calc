@@ -22,7 +22,7 @@ class JobGenerator(ck.JobGenerator):
         CallOfAncient = core.InformedCharacterModifier("콜 오브 에인션트", att = 40)
         AffinityIII = core.InformedCharacterModifier("어피니티 III", stat_main = 40, pdamage = 20)
         AffinityIV = core.InformedCharacterModifier("어피니티 IV", pdamage = 30)
-        TrinityPassive = core.InformedCharacterModifier("트리니티(패시브)", pdamage_indep = 15, armor_ignore = 15)
+        TrinityPassive = core.InformedCharacterModifier("트리니티(패시브)", pdamage_indep = 10, armor_ignore = 15)
         SoulShooterExpert = core.InformedCharacterModifier("소울슈터 엑스퍼트", att = 30, crit = 30, crit_damage = 15)
         
         LoadedDicePassive = core.InformedCharacterModifier("로디드 다이스(패시브)", att = vEhc.getV(1,2) + 10)
