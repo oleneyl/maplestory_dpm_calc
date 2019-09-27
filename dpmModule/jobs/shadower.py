@@ -107,7 +107,7 @@ class JobGenerator(ck.JobGenerator):
         
         Eviscerate = core.DamageSkill("절개", 570, 1900+76*vEhc.getV(0,0), 7*1.7, modifier = core.CharacterModifier(crit=100, armor_ignore=100), cooltime = 14000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         SonicBlow = core.DamageSkill("소닉 블로우", 900, 0, 0, cooltime = 80 * 1000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        SonicBlowTick = core.DamageSkill("소닉 블로우(틱)", 125, 440+17*vEhc.getV(1,1), 7*1.7, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper, name = "소닉 블로우(사용)")#20타
+        SonicBlowTick = core.DamageSkill("소닉 블로우(틱)", 125, 500+20*vEhc.getV(1,1), 7*1.7, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper, name = "소닉 블로우(사용)")#20타
         
         ### build graph relationships
         def isNotDarkSight():
