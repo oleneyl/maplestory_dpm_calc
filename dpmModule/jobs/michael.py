@@ -76,12 +76,12 @@ class JobGenerator(ck.JobGenerator):
         
         SoulAssult = core.DamageSkill("소울 어썰트", 600, 280, 8+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   #암흑 20%
         
-        ShiningCross = core.DamageSkill("샤이닝 크로스", 690, 440, 4 + 1, cooltime = 7000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #암흑 30% 10초
+        ShiningCross = core.DamageSkill("샤이닝 크로스", 640, 440, 4 + 1, cooltime = 7000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #암흑 30% 10초
         ShiningCrossInstall = core.SummonSkill("샤이닝 크로스(인스톨)", 0, 1200, 75, 4+1, 7000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #100% 암흑 5초
         
         #하이퍼
         SacredCube = core.BuffSkill("세이크리드 큐브", 90, 30000, cooltime = 210000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        DeadlyCharge = core.DamageSkill("데들리 차지", 810, 600, 10, cooltime = 20000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        DeadlyCharge = core.DamageSkill("데들리 차지", 810, 600, 10, cooltime = 15000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         DeadlyChargeBuff = core.BuffSkill("데들리 차지(디버프)", 0, 10000, cooltime = -1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
         QueenOfTomorrow = core.BuffSkill("퀸 오브 투모로우", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
