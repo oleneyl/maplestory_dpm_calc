@@ -104,7 +104,7 @@ class JobGenerator(ck.JobGenerator):
         RaisingBlowInrage = core.DamageSkill("레이징 블로우(인레이지)", 600, 285, 4, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함.
         RaisingBlowInrageFinalizer = core.DamageSkill("레이징 블로우(인레이지)(최종타)", 0, 285, 2, modifier = core.CharacterModifier(pdamage = 20, crit = 100)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함. 둘을 연결해야 함.
         
-        Insizing = core.DamageSkill("인사이징", 660, 576, 3, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #870->640 오더스 적용 필요함. 도트뎀 (30초간 2초당 165%), 크리율에따른 뎀증 반영필요.
+        Insizing = core.DamageSkill("인사이징", 660, 576, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #870->640 오더스 적용 필요함. 도트뎀 (30초간 2초당 165%), 크리율에따른 뎀증 반영필요.
         InsizingBuff = core.BuffSkill("인사이징(버프)", 0, 30 * 1000, cooltime = -1, pdamage = 25).wrap(core.BuffSkillWrapper)
     
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 250, 2 * 0.75).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
