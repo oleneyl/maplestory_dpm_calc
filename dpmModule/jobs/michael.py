@@ -75,7 +75,6 @@ class JobGenerator(ck.JobGenerator):
         Invigorate = core.BuffSkill("격려", 0, 180000, rem = True, att = 30).wrap(core.BuffSkillWrapper)
         
         SoulAssult = core.DamageSkill("소울 어썰트", 600, 280, 8+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   #암흑 20%
-        SoulAssult_AuraWeapon = core.DamageSkill("오라웨폰(소울 어썰트)", 0, 280*(0.75 + 0.01 * vEhc.getV(2,2)), 8).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         ShiningCross = core.DamageSkill("샤이닝 크로스", 690, 440, 4 + 1, cooltime = 7000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #암흑 30% 10초
         ShiningCrossInstall = core.SummonSkill("샤이닝 크로스(인스톨)", 0, 1200, 75, 4+1, 7000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #100% 암흑 5초
@@ -85,9 +84,6 @@ class JobGenerator(ck.JobGenerator):
         DeadlyCharge = core.DamageSkill("데들리 차지", 810, 600, 10, cooltime = 20000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         DeadlyChargeBuff = core.BuffSkill("데들리 차지(디버프)", 0, 10000, cooltime = -1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
         QueenOfTomorrow = core.BuffSkill("퀸 오브 투모로우", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        
-        AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 4000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 4초간 발동되지 않도록 합니다
-        AuraWeaponBuff = core.BuffSkill("오라웨폰 버프", 0, (80 +2*vEhc.getV(2,2)) * 1000, cooltime = 180 * 1000, armor_ignore = (10+vEhc.getV(2,2)//5), pdamage_indep = (vEhc.getV(2,2) // 5)).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!
     
         CygnusPalanks = core.DamageSkill("시그너스 팔랑크스", 780, 450 + 18*vEhc.getV(3,3), 40 + vEhc.getV(3,3), cooltime = 30 * 1000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
         RoIias = core.BuffSkill("로 아이아스", 840, 75+3*vEhc.getV(0,0), red = True, cooltime = 300*1000, pdamage_indep = 5 + (35+3*int(vEhc.getV(0,0)*0.2))//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
@@ -96,7 +92,6 @@ class JobGenerator(ck.JobGenerator):
     
         SwordOfSoullight = core.BuffSkill("소드 오브 소울라이트", 1050, 30000, red = True, cooltime = 180*1000, patt = 15+int(0.5*vEhc.getV(1,1)), crit = 100, armor_ignore = 100).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         SoullightSlash = core.DamageSkill("소울 라이트 슬래시", 600, 650+26*vEhc.getV(1,1), 7).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        SoullightSlash_AuraWeapon = core.DamageSkill("오라웨폰(소울라이트 슬래시)", 0, (650+26*vEhc.getV(2,2))*(0.75 + 0.01 * vEhc.getV(2,2)), 7).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         ##### Build Graph
         
         BasicAttack = core.OptionalElement(SwordOfSoullight.is_active, SoullightSlash, SoulAssult)
@@ -118,14 +113,12 @@ class JobGenerator(ck.JobGenerator):
         ClauSolis.onAfter(FinalAttack)
         ClauSolisSummon.onTick(SoulAttack.controller(5000,"set_enabled_and_time_left"))
     
+
         # 오라 웨폰
-        def AuraWeapon_connection_builder(origin_skill, target_skill):
-            optional = core.OptionalElement(lambda : (AuraWeaponCooltimeDummy.is_not_active() and AuraWeaponBuff.is_active()), target_skill)
-            origin_skill.onAfter(optional)
-            target_skill.onAfter(AuraWeaponCooltimeDummy)
-            
-        AuraWeapon_connection_builder(SoullightSlash, SoullightSlash_AuraWeapon)    
-        AuraWeapon_connection_builder(SoulAssult, SoulAssult_AuraWeapon)
+        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 2, 2)
+        for sk in [SoullightSlash, SoulAssult]:
+            auraweapon_builder.add_aura_weapon(sk)
+        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
         
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),

@@ -65,24 +65,17 @@ class JobGenerator(ck.JobGenerator):
         DivineCharge = core.DamageSkill("디바인 차지", 810, 462, 3, cooltime = 60 * 1000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         Blast = core.DamageSkill("블래스트", 630, 318, 8+2+1, modifier = core.CharacterModifier(crit=20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        Blast_AuraWeapon = core.DamageSkill("오라 웨폰(블래스트)", 0, 318 * (75 + vEhc.getV(2,2))*0.01, 8+2+1, modifier = core.CharacterModifier(crit=20, pdamage = 20)).wrap(core.DamageSkillWrapper)
         
         #Summon Skills
         BlessedHammer = core.SummonSkill("블레스드 해머", 0, 600, (250 + vEhc.getV(1,1)*10), 2, 999999* 10000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)   #딜레이 반영
         BlessedHammerActive = core.SummonSkill("블레스드 해머(활성화)", 0, 600, (525+vEhc.getV(1,1)*21)*3-(250+vEhc.getV(1,1)*10)*2, 1, 30 * 1000, cooltime = 60 * 1000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)#딜레이 반영
-        
-        AuraWeaponBuff = core.BuffSkill("오라웨폰 버프", 0, (80 +2*vEhc.getV(2,2)) * 1000, cooltime = 180*1000, armor_ignore = 15, pdamage_indep = (vEhc.getV(2,2) // 5)).isV(vEhc,2,2).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!    
-        AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 4000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 4초간 발동되지 않도록 합니다.
-        
+                
         #http://www.inven.co.kr/board/maple/2294/21881?category=%ED%8C%94%EB%9D%BC%EB%94%98&name=subject&keyword=%EA%B7%B8%ED%81%AC
         #TODO : 오라웨폰 미발동 적용해야 할 필요 있음.
         GrandCrossSmallTick = core.DamageSkill("그랜드 크로스(작은)", 800, 350 + vEhc.getV(3,3)*14, 13, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
         GrandCrossLargeTick = core.DamageSkill("그랜드 크로스(강화)", 800, 600 + vEhc.getV(3,3)*24, 43, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
         GrandCross = core.DamageSkill("그랜드 크로스", 480, 0, 0, cooltime = 150 * 1000).wrap(core.DamageSkillWrapper)#Loop = 480인걸로 봐서 재정의 필요할 수도 있음
-        
-        GrandCrossSmallTick_AuraWeapon = core.DamageSkill("오라 웨폰(그크)", 0, (350 + vEhc.getV(3,3)*14) * (75 + vEhc.getV(2,2))*0.01, 6, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
-        GrandCrossLargeTick_AuraWeapon = core.DamageSkill("오라 웨폰(그크)(강화)", 0, (600 + vEhc.getV(3,3)*24) * (75 + vEhc.getV(2,2))*0.01, 6, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
-        
+                
         FinalAttack = core.DamageSkill("파이널 어택", 0, 150, 0.4).setV(vEhc, 3, 5, True).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
@@ -98,15 +91,11 @@ class JobGenerator(ck.JobGenerator):
                             core.RepeatElement(GrandCrossSmallTick, 6)])
         
         # 오라 웨폰
-        def AuraWeapon_connection_builder(origin_skill, target_skill):
-            optional = core.OptionalElement(lambda : (AuraWeaponCooltimeDummy.is_not_active() and AuraWeaponBuff.is_active()), target_skill)
-            origin_skill.onAfter(optional)
-            target_skill.onAfter(AuraWeaponCooltimeDummy)
-            
-        AuraWeapon_connection_builder(Blast, Blast_AuraWeapon)
-        AuraWeapon_connection_builder(GrandCrossSmallTick, GrandCrossSmallTick_AuraWeapon)
-        AuraWeapon_connection_builder(GrandCrossLargeTick, GrandCrossLargeTick_AuraWeapon)
-        
+        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 2, 2)
+        for sk in [Blast, GrandCrossSmallTick, GrandCrossLargeTick]:
+            auraweapon_builder.add_aura_weapon(sk)
+        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+                        
         return(Blast,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Threat, BlessingArmor, ElementalForce, EpicAdventure, HolyUnity, AuraWeaponBuff,

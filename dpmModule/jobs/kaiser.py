@@ -95,12 +95,7 @@ class JobGenerator(ck.JobGenerator):
         #하이퍼
         MajestyOfKaiser = core.BuffSkill("마제스티 오브 카이저", 670, 30000, att = 30, cooltime = 90000).wrap(core.BuffSkillWrapper)
         FinalTrance = core.BuffSkill("파이널 트랜스", 0, 60000, cooltime = 300000).wrap(core.BuffSkillWrapper)#딜레이 모름
-    
-        AuraWeapon = core.SummonSkill("오라웨폰", 720, 4 * 1000, 0, 0, (80+2*vEhc.getV(1,1)) * 1000, cooltime = 180 * 1000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)    #4초 텀으로 스킬의 (75+vlevel)%의 데미지 공격 파동 발사, 하이퍼 미적용 -> 레블로 가정하고 계산함. 딜레이 모름
-        AuraWeaponTick_ = core.DamageSkill("오라웨폰(틱)", 0, 330*(0.75 + 0.01 * vEhc.getV(1,1)), 9).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        AuraWeaponTick_Fig = core.DamageSkill("오라웨폰(변신)", 0, 330*(0.75 + 0.01 * vEhc.getV(1,1)), 11).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        AuraWeaponBuff = core.BuffSkill("오라웨폰 버프", 0, (80 +2*vEhc.getV(1,1)) * 1000, cooltime = 99999 *1000, armor_ignore = 15, pdamage_indep = (vEhc.getV(1,1) // 5)).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!
-        
+            
         Phanteon = core.DamageSkill("판테온", 510, 600+24*vEhc.getV(4,4), 8).wrap(core.DamageSkillWrapper)  #사용안함
         GuardianOfNova_1 = core.SummonSkill("가디언 오브 노바(1)", 600, 1290, 450+15*vEhc.getV(2,2), 4, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = 120000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
         GuardianOfNova_2 = core.SummonSkill("가디언 오브 노바(2)", 0, 1290, 250+10*vEhc.getV(2,2), 6, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
@@ -159,10 +154,11 @@ class JobGenerator(ck.JobGenerator):
         
         AdvancedWillOfSword.onAfter(core.OptionalElement(WillOfSwordStrikeJudge.is_available, WillOfSwordStrikeJudge, AdvancedWillOfSword_Opt, name = "윌오소스 사용 가능시"))
         
-        #오라 웨폰
-        AuraWeaponTick = core.OptionalElement(FinalFiguration.is_active, AuraWeaponTick_Fig, AuraWeaponTick_, name = "변신시")
-        AuraWeapon.onAfter(AuraWeaponBuff)
-        AuraWeapon.onTick(AuraWeaponTick)
+        # 오라 웨폰
+        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 1, 1)
+        for sk in [GigaSlasher_, GigaSlasher_Fig, DrakeSlasher, DrakeSlasher_, DrakeSlasher_Fig, DrakeSlasher_Fig_]:
+            auraweapon_builder.add_aura_weapon(sk)
+        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
         
         #쿨 초기화
         MajestyOfKaiser.onAfters([WillOfSwordStrike.controller(1)])
@@ -186,9 +182,9 @@ class JobGenerator(ck.JobGenerator):
     
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-                    RegainStrenth, BlazeUp, FinalFiguration, MajestyOfKaiser, FinalTrance, AuraWeaponBuff,
+                    RegainStrenth, BlazeUp, FinalFiguration, MajestyOfKaiser, FinalTrance, AuraWeaponBuff, AuraWeaponCooltimeDummy,
                     globalSkill.soul_contract()] +\
                 [AdvancedWillOfSword] +\
-                [Wingbit_1, Wingbit_2, AuraWeapon, GuardianOfNova_1, GuardianOfNova_2, GuardianOfNova_3] +\
+                [Wingbit_1, Wingbit_2, GuardianOfNova_1, GuardianOfNova_2, GuardianOfNova_3] +\
                 [WillOfSwordStrikeJudge, DrakeSlasher_Dummy] +\
                 [BasicAttackWrapper])
