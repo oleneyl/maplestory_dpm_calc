@@ -3,7 +3,7 @@ from ..kernel.core import ExtendedCharacterModifier as EXMDF
 from ..item import ItemKernel as ik
 from ..item.ItemKernel import Item
 from ..status.ability import Ability_tool, Ability_grade
-from ..kernel.graph import GlobalOperation, initialize_global_properties
+from ..kernel.graph import GlobalOperation, initialize_global_properties, _unsafe_access_global_storage
 from ..kernel import policy
 MDF = CharacterModifier
 '''Clas AbstractCharacter : Basic template for build specific User. User is such object that contains
@@ -170,7 +170,7 @@ class JobGenerator():
         GlobalOperation.attach_namespace()
         GlobalOperation.save_storage()
         if storage_handler is not None:
-            storage_handler()
+            storage_handler(_unsafe_access_global_storage())
         GlobalOperation.convert_to_static()
 
         collection = GlobalOperation.export_collection()
@@ -311,7 +311,7 @@ class JobGenerator():
         ## 기타 옵션 적용
         self.apply_complex_options(chtr)
         #그래프를 다시 빌드합니다.
-        graph = self.build(chtr, combat = combat)
+        graph = self.build(chtr, combat = combat, storage_handler=storage_handler)
         graph.set_v_enhancer(self.vEhc)
 
         if log:

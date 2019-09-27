@@ -499,7 +499,7 @@ class DynamicVariableFromConfigurationStorage(AbstractDynamicVariableInstance):
     def __repr__(self):
         return f"DynamicVariable({self._fetch_name})"
 
-    def evaluate(self):
+    def evaluate_override(self):
         try:
             return self._fetch_origin[self._fetch_name]
         except:
