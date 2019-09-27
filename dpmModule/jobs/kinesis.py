@@ -34,7 +34,7 @@ class JobGenerator(ck.JobGenerator):
         PsychicForce3Passive = core.InformedCharacterModifier("사이킥 포스 3(패시브)",att = 10)
         
         ESPBattleOrder = core.InformedCharacterModifier("ESP 배틀오더",att = 50, pdamage = 20)
-        Transcendence = core.InformedCharacterModifier("초월",pdamage_indep = 20)
+        Transcendence = core.InformedCharacterModifier("각성",pdamage_indep = 25)
         Transport = core.InformedCharacterModifier("전달",armor_ignore = 25)
         Mastery = core.InformedCharacterModifier("마스터리",crit_damage = 10)
         #TODO
@@ -105,7 +105,7 @@ class JobGenerator(ck.JobGenerator):
 
         PsychicTornado = core.SummonSkill("싸이킥 토네이도", 720, 1000, 500+20*vEhc.getV(2,2), 4, 20000, red = True, cooltime = 120000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)# -15
         PsychicTornadoFinal_1 = core.DamageSkill("싸이킥 토네이도(1)", 0, (200+3*vEhc.getV(2,2))*3, 2).wrap(core.DamageSkillWrapper)
-        PsychicTornadoFinal_2 = core.DamageSkill("싸이킥 토네이도(2)", 0, (350+10*vEhc.getV(2,2))*3, 6).wrap(core.DamageSkillWrapper)
+        PsychicTornadoFinal_2 = core.DamageSkill("싸이킥 토네이도(2)", 0, (350+10*vEhc.getV(2,2))*3, 6*3).wrap(core.DamageSkillWrapper)
 
         UltimateMovingMatter = core.SummonSkill("무빙 매터", 630, 25000/64, 500+20*vEhc.getV(0,0), 5, 25000, cooltime = 90000, modifier = core.CharacterModifier(crit_damage=20)).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)# -10
         UltimateMovingMatterFinal = core.DamageSkill("무빙 매터(최종)", 0, 700+28*vEhc.getV(0,0), 12).wrap(core.DamageSkillWrapper)
