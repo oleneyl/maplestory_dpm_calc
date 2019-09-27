@@ -117,6 +117,7 @@ class JobGenerator(ck.JobGenerator):
         DrakeSlasher_Fig = core.DamageSkill("드라코 슬래셔(추가타)(변신)", 0, 500+5*vEhc.getV(0,0), 10+2+1, modifier = core.CharacterModifier(crit=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         DrakeSlasher_Fig_ = core.DamageSkill("드라코 슬래셔(변신)", 0, 500+5*vEhc.getV(0,0), 6+2+1, modifier = core.CharacterModifier(crit=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
+        #TODO : V1.2.324KMS [윌 오브 소드-스트라이크] : 불길 적중 시 드라코슬래셔의 재사용 대기시간이 즉시 초기화되고 이후 3회 드라코 슬래셔의 재사용 대기시간이 적용되지 않는버프가 걸리는 기능이 추가됩니다. 해당 버프는 윌 오브 소드-스트라이크의재사용 대기시간 동안만 유지됩니다.
         ######   Skill Wrapper   ######
         
         MorphGauge = FinalFiguration
