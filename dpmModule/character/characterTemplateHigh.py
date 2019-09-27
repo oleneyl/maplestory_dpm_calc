@@ -686,7 +686,7 @@ class TemplateGenerator(AbstractTemplateGenerator):
             6000 : (4,9),
             7000 : (4,9),
             8000 : (4,9),
-            9000 : (4,9)
+            8500 : (4,9)
         })
 
     def get_template(self, ulevel):
