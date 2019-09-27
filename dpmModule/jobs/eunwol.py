@@ -63,7 +63,7 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 60)
         SpiritLink_3 = core.InformedCharacterModifier("정령 결속 3",att = 20, pdamage = 20)
 
-        SpiritLink_4 = core.InformedCharacterModifier("정령 결속 4",armor_ignore = 30, boss_pdamage = 30)
+        SpiritLink_4 = core.InformedCharacterModifier("정령 결속 4",armor_ignore = 30, boss_pdamage = 30, pdamage_indep=15)
         AdvancedNuckleMastery = core.InformedCharacterModifier("고급 너클 숙련",crit_damage = 20, pdamage_indep = 10)
         WeaknessFinding = core.InformedCharacterModifier("약점 간파",crit = 25)
         #체력 50%이하인 적에게 크리율 65%, 크뎀 20% 증가??
@@ -105,7 +105,7 @@ class JobGenerator(ck.JobGenerator):
 
         SoulAttack = core.DamageSkill("귀참", 600, 380, 8+1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DoubleBodyAttack = core.DamageSkill("분혼 격참(공격)", 0, 2000, 1).wrap(core.DamageSkillWrapper)
-        DoubleBody = core.BuffSkill("분혼 격참", 1000, 10000, cooltime = 180000, red = True, pdamage_indep = 50).wrap(core.BuffSkillWrapper)
+        DoubleBody = core.BuffSkill("분혼 격참", 1000, 10000, cooltime = 180000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
     
         #하이퍼스킬
         #정결극 유지율 100%
