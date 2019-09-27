@@ -111,8 +111,7 @@ class GlobalCollection():
                 
     def attach_namespace(self):
         for obj in self._found_dynamic_object:
-            for kwd in obj.get_dynamic_variables():
-                obj.attach_namespace()
+            obj.attach_namespace()
 
     def convert_to_static(self):
         for obj in self._found_dynamic_object:       
