@@ -147,7 +147,7 @@ class JobGenerator(ck.JobGenerator):
         TwinBladeOfTime_1 = core.DamageSkill("조인트 어택(1)", 3480, 875+35*vEhc.getV(1,1), 8).wrap(core.DamageSkillWrapper)
         TwinBladeOfTime_2 = core.DamageSkill("조인트 어택(2)", 0, 835+33*vEhc.getV(1,1), 8).wrap(core.DamageSkillWrapper)
         TwinBladeOfTime_3 = core.DamageSkill("조인트 어택(3)", 0, 1000+40*vEhc.getV(1,1), 13).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_end = core.DamageSkill("조인트 어택(4)", 0, 2400+96*vEhc.getV(1,1), 15, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_end = core.DamageSkill("조인트 어택(4)", 0, 900+36*vEhc.getV(1,1), 15*3, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         
         #알파
         ShadowFlashAlpha = core.DamageSkill("쉐도우 플래시(알파)", 670, 500+20*vEhc.getV(2,2), 6, cooltime = 40*1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
