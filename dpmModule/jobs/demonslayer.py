@@ -92,8 +92,8 @@ class JobGenerator(ck.JobGenerator):
         DemonAwakning = core.BuffSkill("데몬 어웨이크닝", 1110, (35 + vEhc.getV(0,0))*1000, cooltime = 120 * 1000, crit = (50 + int(0.5*vEhc.getV(0,0)))).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         DemonAwakningSummon = core.SummonSkill("데몬 어웨이크닝(더미)", 0, 8000, 0, 0, (35 + vEhc.getV(0,0))*1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         
-        SpiritOfRage = core.SummonSkill("요르문간드", 810, 1080, (850+34*vEhc.getV(3,3)), 9, (10+int(0.2*vEhc.getV(3,3)))*1000, cooltime = (120 - int(0.5*vEhc.getV(3,3)))*1000, modifier = core.CharacterModifier(crit = 100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
-        SpiritOfRageEnd = core.DamageSkill("요르문간드(종료)", 0, 900+36*vEhc.getV(3,3), 12, cooltime = -1).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        SpiritOfRage = core.SummonSkill("요르문간드", 810, 1080, (850+34*vEhc.getV(3,3)), 12, (10+int(0.2*vEhc.getV(3,3)))*1000, cooltime = (120 - int(0.5*vEhc.getV(3,3)))*1000, modifier = core.CharacterModifier(crit = 100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
+        SpiritOfRageEnd = core.DamageSkill("요르문간드(종료)", 0, 900+36*vEhc.getV(3,3), 15, cooltime = -1).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
         Orthros = core.SummonSkill("오르트로스(네메아)", 1000, 2000, 400+16*vEhc.getV(1,1), 12, 40000, cooltime = 120*1000, modifier = core.CharacterModifier(crit = 100, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         Orthros_ = core.SummonSkill("오르트로스(게리온)", 0, 3000, 900+36*vEhc.getV(1,1), 10, 40000, cooltime = -1, modifier = core.CharacterModifier(crit = 100, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         ######   Skill Wrapper   ######
