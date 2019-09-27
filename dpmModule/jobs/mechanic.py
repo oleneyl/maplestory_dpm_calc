@@ -24,7 +24,7 @@ class JobGenerator(ck.JobGenerator):
         MechanicMastery = core.InformedCharacterModifier("메카닉 마스터리",att = 20, crit = 10, crit_damage = 5)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         
-        OverTunning = core.InformedCharacterModifier("오버 튜닝",pdamage_indep = 15, crit=20, armor_ignore=30)
+        OverTunning = core.InformedCharacterModifier("오버 튜닝",pdamage_indep = 20, crit=20, armor_ignore=30)
         MetalArmorExtreme=core.InformedCharacterModifier("메탈아머 익스트림",att=55)
         LoadedDicePassive = core.InformedCharacterModifier("로디드 다이스(패시브)",att = self.vEhc.getV(1,2) + 10)
         
@@ -56,17 +56,17 @@ class JobGenerator(ck.JobGenerator):
         #로봇들 :: 로봇당 총뎀6%
         Opengate = core.SummonSkill("오픈 게이트:GX-9", 600, 300*1000, 0,0,300*1000*1.4, rem = True).wrap(core.SummonSkillWrapper)#임의 딜레이
         
-        Robolauncher = core.SummonSkill("로보런쳐:RM7", 630, 1000, 250*1.7, 1, 60*1000*1.4, rem=True, modifier = core.CharacterModifier(pdamage=90)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
-        RobolauncherFinal = core.DamageSkill("로보런쳐:RM7(폭발)", 0, 400*1.7, 1, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        Robolauncher = core.SummonSkill("로보런쳐:RM7", 630, 1000, 250*2.05, 1, 60*1000*1.4, rem=True, modifier = core.CharacterModifier(pdamage=90)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        RobolauncherFinal = core.DamageSkill("로보런쳐:RM7(폭발)", 0, 400*2.05, 1, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         RobolauncherBuff = core.BuffSkill("로보런쳐:RM7(버프)", 0, 60*1000*1.4, cooltime = -1, pdamage = 6).wrap(core.BuffSkillWrapper)
         #MagneticField = core.SummonSkill("마그네틱 필드", ?, ?, 200, 60*1000, cooltime = 180*1000) 자폭 550% V.getEhc(2, vEnhance[0])
         
         SupportWaver = core.SummonSkill("서포트 웨이버", 630, 80000*1.4, 0, 0, 80*1000*1.4).wrap(core.SummonSkillWrapper)
-        SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*1.4, pdamage_indep=10, pdamage= 5 + 6, cooltime = -1).wrap(core.BuffSkillWrapper)    #소환수직속 영향받게..
-        SupportWaverFinal = core.DamageSkill("서포트 웨이버(폭발)", 0, 1100*1.7, 1, cooltime = -1).wrap(core.DamageSkillWrapper)
+        SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*1.4, pdamage_indep=10, pdamage= 5 + 6, cooltime = -1, armor_ignore=10).wrap(core.BuffSkillWrapper)    #소환수직속 영향받게..
+        SupportWaverFinal = core.DamageSkill("서포트 웨이버(폭발)", 0, 1100*2.05, 1, cooltime = -1).wrap(core.DamageSkillWrapper)
         
-        RoboFactory = core.SummonSkill("로보 팩토리", 630, 3000, 500*1.7, 3, 30*1000*1.4, cooltime=60*1000).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
-        RoboFactoryFinal = core.DamageSkill("로보 팩토리(폭발)", 0, 1000*1.7, 1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        RoboFactory = core.SummonSkill("로보 팩토리", 630, 3000, 500*2.05, 3, 30*1000*1.4, cooltime=60*1000).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
+        RoboFactoryFinal = core.DamageSkill("로보 팩토리(폭발)", 0, 1000*2.05, 1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         RoboFactoryBuff = core.BuffSkill("로보 팩토리(버프)", 0, 30*1000*1.4, cooltime = -1, pdamage = 6).wrap(core.BuffSkillWrapper)
         
         BomberTime = core.BuffSkill("봄버 타임", 990, 10*1000, cooltime = 100*1000).wrap(core.BuffSkillWrapper)
@@ -80,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
         MultipleOptionMissle = core.SummonSkill("멀티플 옵션(미사일)", 0, 8000, 350+10*vEhc.getV(2,1), 24, (115+6*vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         
         MicroMissle = core.DamageSkill("마이크로 미사일", 540, 375+17*vEhc.getV(0,0), (30+8)*5, cooltime = 25000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        BusterCall_ = core.DamageSkill("전탄발사", 10000/37, 400+16*vEhc.getV(4,4), 10).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
+        BusterCall_ = core.DamageSkill("전탄발사", 10000/37, 400+16*vEhc.getV(4,4), 11).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         BusterCallInit = core.DamageSkill("전탄발사(시전)", 0, 0, 0, cooltime = 200*1000).wrap(core.DamageSkillWrapper)
         BusterCallBuff = core.BuffSkill("전탄발사(버프)", 0, 8000, cooltime = 200*1000).isV(vEhc,4,4).wrap(core.BuffSkillWrapper) # spentime에 넣으면 됨.
         
@@ -89,8 +89,8 @@ class JobGenerator(ck.JobGenerator):
         #### 호밍 미사일 정의 ####
         HommingMissle_ = core.DamageSkill("호밍 미사일", 0, 500*0.6, 9+combat*1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         HommingMissle_B = core.DamageSkill("호밍 미사일(봄버)", 0, 500*0.6, 9+combat*1+6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        HommingMissle_Bu = core.DamageSkill("호밍 미사일(전탄)", 0, 500, 9+combat*1+6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        HommingMissle_B_Bu = core.DamageSkill("호밍 미사일(봄버)(전탄)", 0, 500, 9+combat*1+6+6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        HommingMissle_Bu = core.DamageSkill("호밍 미사일(전탄)", 0, 500, 9+combat*1+7).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        HommingMissle_B_Bu = core.DamageSkill("호밍 미사일(봄버)(전탄)", 0, 500, 9+combat*1+6+7).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         HommingMissleHolder = core.SummonSkill("호밍 미사일(더미)", 0, 600, 0, 0, 99999 * 100000).wrap(core.SummonSkillWrapper)
         
