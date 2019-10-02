@@ -29,6 +29,7 @@ class JobGenerator(ck.JobGenerator):
 		# 1.2.324 패치 적용
 		# 마법의 진리 스킬 없음. 일단 해방된 마력에 마력 10 증가시킴
         LiberatedMagic = core.InformedCharacterModifier("해방된 마력",pdamage_indep = 30, att = 10)
+		
         BurningFocus = core.InformedCharacterModifier("버닝 포커스",crit = 30, crit_damage = 15)
         BriliantEnlightenment = core.InformedCharacterModifier("briliantEnlightenment",stat_main = 60)
         PureMagic = core.InformedCharacterModifier("순수한 마력", att = 10, pdamage_indep = 50)
