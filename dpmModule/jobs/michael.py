@@ -82,6 +82,7 @@ class JobGenerator(ck.JobGenerator):
         
         #하이퍼
         SacredCube = core.BuffSkill("세이크리드 큐브", 90, 30000, cooltime = 210000, pdamage = 10).wrap(core.BuffSkillWrapper)
+		# 1.2.324 패치 미적용
         DeadlyCharge = core.DamageSkill("데들리 차지", 810, 600, 10, cooltime = 20000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         DeadlyChargeBuff = core.BuffSkill("데들리 차지(디버프)", 0, 10000, cooltime = -1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
         QueenOfTomorrow = core.BuffSkill("퀸 오브 투모로우", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)

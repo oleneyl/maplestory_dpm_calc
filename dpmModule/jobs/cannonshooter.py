@@ -78,7 +78,9 @@ class JobGenerator(ck.JobGenerator):
         PirateFlag = core.BuffSkill("파이렛 플래그", 990, 30 * 1000, cooltime = (60 - vEhc.getV(4,3)) * 1000, armor_ignore = int(10 + 0.5*vEhc.getV(4,3)), stat_main_fixed = (chtr.level * 5 + 18)*0.01*(10 + 0.5*vEhc.getV(4,3))).isV(vEhc,4,3).wrap(core.BuffSkillWrapper)
     
         BFGCannonball = core.SummonSkill("빅 휴즈 기간틱 캐논볼", 600, 210, (450+15*vEhc.getV(0,0)) * 0.45, 4 * 3, COCOBALLHIT, cooltime = 25000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
-        ICBM = core.DamageSkill("ICBM", 1190, (1000+40*vEhc.getV(1,1)) * 0.45, 5*ICBMHIT * 3, cooltime = 30000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+		
+		# 1.2.324 패치 적용
+        ICBM = core.DamageSkill("ICBM", 1190, (1200+48*vEhc.getV(1,1)) * 0.45, 5*ICBMHIT * 3, cooltime = 30000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         ICBMDOT = core.SummonSkill("ICBM(장판)", 0, 15000/27, (500+20*vEhc.getV(1,1)) * 0.45, 1 * 3, 15000, cooltime = -1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) #27타
     
         SpecialMonkeyEscort_Canon = core.SummonSkill("스페셜 몽키 에스코트", 780, int(45000 / 97), 300+12*vEhc.getV(2,2), 4, (30+int(0.5*vEhc.getV(2,2)))*1000 - 1500, cooltime = 120000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)

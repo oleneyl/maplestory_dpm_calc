@@ -1,5 +1,7 @@
 dpmModule
 ========================
+
+최신화 : `엔젤릭버스터`
   
   - requirements
     - Python >= 3.7

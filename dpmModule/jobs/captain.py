@@ -85,7 +85,8 @@ class JobGenerator(ck.JobGenerator):
         조나단 : 235 보통   12/20 타수3 600
         평균 데미지 600ms당 249
         '''
-        Headshot = core.DamageSkill("헤드 샷", 660, 525, 10+1, cooltime = 5000, modifier = core.CharacterModifier(crit=100, armor_ignore=40, pdamage = 20)).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
+		# 1.2.324 패치 적용
+        Headshot = core.DamageSkill("헤드 샷", 660, 525, 12+1, cooltime = 5000, modifier = core.CharacterModifier(crit=100, armor_ignore=100, pdamage = 20)).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
         
         Nautilus = core.DamageSkill("노틸러스", 690, 440+130, 7, red = True, cooltime = 30000).setV(vEhc, 8, 2, True).wrap(core.DamageSkillWrapper)
         PirateStyle = core.BuffSkill("파이렛 스타일", 0, 180000, rem = True, patt = 20).wrap(core.BuffSkillWrapper)
