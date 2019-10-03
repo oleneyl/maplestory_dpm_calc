@@ -8,6 +8,8 @@ from . import globalSkill
 
 #TODO : 5차 신스킬 적용
 
+# 오라웨폰 변경 시범적용
+
 ######   Passive Skill   ######
 
 class JobGenerator(ck.JobGenerator):
@@ -72,8 +74,10 @@ class JobGenerator(ck.JobGenerator):
         BlessedHammerActive = core.SummonSkill("블레스드 해머(활성화)", 0, 600, (525+vEhc.getV(1,1)*21)*3-(250+vEhc.getV(1,1)*10)*2, 1, 30 * 1000, cooltime = 60 * 1000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)#딜레이 반영
         
         AuraWeaponBuff = core.BuffSkill("오라웨폰 버프", 0, (80 +2*vEhc.getV(2,2)) * 1000, cooltime = 180*1000, armor_ignore = 15, pdamage_indep = (vEhc.getV(2,2) // 5)).isV(vEhc,2,2).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!    
-        AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 4000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 4초간 발동되지 않도록 합니다.
-        
+        AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 6000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 6초간 발동되지 않도록 합니다.
+        AuraWeaponAttack = core.DamageSkill("오라웨폰 공격", 0, (500 + 20 * vEhc.getV(2,2)), 6).wrap(core.DamageSkillWrapper)
+        # 패치 반영을 위해 변경
+		
         #http://www.inven.co.kr/board/maple/2294/21881?category=%ED%8C%94%EB%9D%BC%EB%94%98&name=subject&keyword=%EA%B7%B8%ED%81%AC
         #TODO : 오라웨폰 미발동 적용해야 할 필요 있음.
         GrandCrossSmallTick = core.DamageSkill("그랜드 크로스(작은)", 800, 350 + vEhc.getV(3,3)*14, 13, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
@@ -98,14 +102,18 @@ class JobGenerator(ck.JobGenerator):
                             core.RepeatElement(GrandCrossSmallTick, 6)])
         
         # 오라 웨폰
-        def AuraWeapon_connection_builder(origin_skill, target_skill):
+        '''def AuraWeapon_connection_builder(origin_skill, target_skill):
             optional = core.OptionalElement(lambda : (AuraWeaponCooltimeDummy.is_not_active() and AuraWeaponBuff.is_active()), target_skill)
             origin_skill.onAfter(optional)
-            target_skill.onAfter(AuraWeaponCooltimeDummy)
+            target_skill.onAfter(AuraWeaponCooltimeDummy)'''
+        def AuraWeapon_connection_builder(origin_skill):
+            optional = core.OptionalElement(lambda : (AuraWeaponCooltimeDummy.is_not_active() and AuraWeaponBuff.is_active()), AuraWeaponAttack)
+            origin_skill.onAfter(optional)
+            AuraWeaponAttack.onAfter(AuraWeaponCooltimeDummy)
             
-        AuraWeapon_connection_builder(Blast, Blast_AuraWeapon)
-        AuraWeapon_connection_builder(GrandCrossSmallTick, GrandCrossSmallTick_AuraWeapon)
-        AuraWeapon_connection_builder(GrandCrossLargeTick, GrandCrossLargeTick_AuraWeapon)
+        AuraWeapon_connection_builder(Blast)
+        AuraWeapon_connection_builder(GrandCrossSmallTick)
+        AuraWeapon_connection_builder(GrandCrossLargeTick)
         
         return(Blast,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
