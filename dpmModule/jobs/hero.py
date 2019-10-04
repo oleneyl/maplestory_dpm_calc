@@ -114,11 +114,16 @@ class JobGenerator(ck.JobGenerator):
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 250, 2 * 0.75).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
     
         Valhalla = core.BuffSkill("발할라", 840, 30 * 1000, cooltime = 150 * 1000, crit = 30, att = 50).wrap(core.BuffSkillWrapper)  #임의 배정된 공격속도.
+        
         AuraWeaponBuff = core.BuffSkill("오라웨폰 버프", 0, (80 +2*vEhc.getV(3,2)) * 1000, cooltime = 180 * 1000, armor_ignore = 15, pdamage_indep = (vEhc.getV(3,2) // 5)).isV(vEhc, 3, 2).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!
         AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 6000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 6초간 발동되지 않도록 합니다.
         AuraWeaponAttack = core.DamageSkill("오라웨폰 공격", 0, (500 + 20 * vEhc.getV(3,2)), 6).wrap(core.DamageSkillWrapper)
         # 패치 반영을 위해 변경
         
+        
+        ''' 오라웨폰을 소환수로 변경하는 코드
+        AuraWeaponSummon = core.SummonSkill("오라웨폰", 0, 6000, (500 + 20 * vEhc.getV(3,2)), 6, (80 +2*vEhc.getV(3,2)) * 1000, cooltime = 180 * 1000, modifier = core.CharacterModifier(armor_ignore = 15, pdamage_indep = (vEhc.getV(3,2) // 5)).isV(vEhc, 3, 2).wrap(core.SummonSkillWrapper)'''	
+        #시전 딜레이 모름.
         SwordOfBurningSoul = core.SummonSkill("소드 오브 버닝 소울", 840, 1000, (315+12*vEhc.getV(0,0)), 6, (60+0.5*vEhc.getV(0,0)) * 1000, cooltime = 120 * 1000, modifier = core.CharacterModifier(crit = 50)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)       #시전 딜레이 모름.
         
         ComboDeathFault = core.DamageSkill("콤보 데스폴트", 1680, 800 + 32*vEhc.getV(2,3), 7, cooltime = 20 * 1000).isV(vEhc, 2, 3).wrap(core.DamageSkillWrapper)
@@ -151,7 +156,8 @@ class JobGenerator(ck.JobGenerator):
         '''def AuraWeapon_connection_builder(origin_skill, target_skill):
             optional = core.OptionalElement(lambda : (AuraWeaponCooltimeDummy.is_not_active() and AuraWeaponBuff.is_active()), target_skill)
             origin_skill.onAfter(optional)
-            target_skill.onAfter(AuraWeaponCooltimeDummy)'''
+            target_skill.onAfter(AuraWeaponCooltimeDummy)
+        '''
         def AuraWeapon_connection_builder(origin_skill):
             optional = core.OptionalElement(lambda : (AuraWeaponCooltimeDummy.is_not_active() and AuraWeaponBuff.is_active()), AuraWeaponAttack)
             origin_skill.onAfter(optional)

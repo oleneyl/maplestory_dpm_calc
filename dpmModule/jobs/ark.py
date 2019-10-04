@@ -99,7 +99,7 @@ class JobGenerator(ck.JobGenerator):
         
         AbyssChargeDrive_Link = core.DamageSkill("어비스 차지 드라이브(연계)", 630 - 240, 340, 4, cooltime = 9000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
-        AbyssBuff = core.BuffSkill("어비스 버프", 0, 60*1000, cooltime = -1, pdamage = 20, boss_pdamage = 20, armor_ignore = 20).wrap(core.BuffSkillWrapper)
+        AbyssBuff = core.BuffSkill("어비스 버프", 0, 60*1000, cooltime = -1, pdamage = 20, boss_pdamage = 30, armor_ignore = 20).wrap(core.BuffSkillWrapper)
         
         RaptRestriction = core.DamageSkill("황홀한 구속", 690, 500, 6, cooltime = 180 * 1000).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         RaptRestrictionSummon = core.SummonSkill("황홀한 구속(소환)", 0, 300, 400, 3, 9000, cooltime = -1).setV(vEhc, 7, 2, False).wrap(core.SummonSkillWrapper)  #임의주기 300ms, DPM 미사용.
