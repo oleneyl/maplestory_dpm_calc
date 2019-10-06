@@ -30,9 +30,44 @@ class JobGenerator(ck.JobGenerator):
         AbyssalRage = core.InformedCharacterModifier("어비셜 레이지", att=40)
         AdvancedDesperadoMastery = core.InformedCharacterModifier("어드밴스드 데스페라도 마스터리",att = 50, crit_damage = 8)
         OverwhelmingPower = core.InformedCharacterModifier("오버휄밍 파워", pdamage=40)
-		DefenseExpertise = core.InformedCharacterModifier("디펜스 엑스퍼타이즈", armor_ignore = 30)
-		DemonicSharpness = core.InformedCharacterModifier("데모닉 샤프니스", crit=20)
+        DefenseExpertise = core.InformedCharacterModifier("디펜스 엑스퍼타이즈", armor_ignore = 30)
+        DemonicSharpness = core.InformedCharacterModifier("데모닉 샤프니스", crit=20)
+        
+        ReleaseOverload = core.InformedCharacterModifier("릴리즈 오버로드", pdamage_indep = 25)
+        '''
+        TODO: 이너 스트렝스, 디아볼릭 리커버리
+        이즈 익시드 페인(익시드 스킬 데미지 20% 증가)
+        메용 패시브: HP 15%
 
+        하이퍼: 익시드 - 리인포스: 익시드 스킬 데미지 20% 증가
+        하이퍼: 익시드 - 보너스 찬스: 영구적으로 익시드 스킬의 추가 공격 발동 확률 10% 증가
+        하이퍼: 실드 체이싱 - 리인포스 : 데미지 20% 증가
+        하이퍼: 포비든 컨트랙트: 30초간 데미지 10%, 쿨타임 75초
+
+        하이퍼: 사우전드 소드 : 이 스킬을 보스전에서 쓰나? 최대 HP의 15% 소비, 최대 14명의 적 500% 데미지로 8번 공격. 사용 시 익시드 오버로드 5 증가. 재사용 대기시간 8초
+        하이퍼: 데모닉 포티튜드 : 60초간 데미지 10%, 쿨타임 120초
+        오라 웨폰
+        콜 마스테마 - 이 스킬을 과연 쓰는가?
+        이계 여신의 축복 - 이 스킬을 과연 쓰는가?
+
+        데몬 프렌지 - DPM 기준을 어떻게 할것인지?
+        블러드 피스트 - 이 스킬을 과연 쓰는가?
+        디멘션 소드 - 이 스킬을 과연 쓰는가?
+        '''
+
+        #V코어 관련부분은 전면 재작성 필요
+        Execution = core.DamageSkill("익시드: 엑스큐션", 0, 540, 4, modifier = core.CharacterModifier(armor_ignore = 30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ExecutionExceed = core.DamageSkill("익시드: 엑스큐션 (강화)", 0, 540, 6, modifier = core.CharacterModifier(armor_ignore = 30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+# 2개의 방패를 적에게 던져서 500% 데미지로 공격. 방패 1개당 최대 8번 공격. 재사용 대기시간 6초.
+# 방어력 2배 무시가 30퍼를 한번 더 계산하는건지, 아니면 60퍼로 적용되는건지 알아볼 필요가 있음.
+
+#인핸스드 익시드: [파이널 어택류 스킬] 영구적으로 익시드 공격 이후 70% 확률로 200%의 데미지로 2명의 적을 2번 추가 공격
+        ShieldChasing = core.DamageSkill("실드 체이싱", 0, 500, 2 * 8, cooltime = 6 * 1000, modifier = core.CharacterModifier(armor_ignore = 30, pdamage = 20)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        ArmorBreak = core.DamageSkill("아머 브레이크", 0, 350, 4, cooltime = 30 * 1000, modifier = core.CharacterModifier(armor_ignore = 30)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+
+        
+        
+        
 # 최종데미지 (릴리즈 오버로드, 데몬 프렌지)
         ## 이하 내용 데슬 기반
         DeathCurse = core.InformedCharacterModifier("데스 커스",pdamage = 1)
