@@ -6,6 +6,7 @@ Belt = it.Item(stat_main = 50, stat_sub = 50, att = 6)#200 // 3
 Pendant = it.Item(stat_main = 10, stat_sub = 10, att = 5)#160 // 5
 Pocket = it.Item(stat_main = 20, stat_sub = 10, att = 10)#160
 
+# 블랙하트, 고근, 창세의 뱃지 추가필요
 
 class Factory():
     
