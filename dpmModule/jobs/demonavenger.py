@@ -115,21 +115,10 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill Wrapper   ######
         '''딜 사이클 정리
         
-        이하 소스는 데몬슬레이어 복붙이므로 처음부터 작성해야 함.
         '''
         
 
         # 오라 웨폰
-        def AuraWeapon_connection_builder(origin_skill, target_skill):
-            optional = core.OptionalElement(lambda : (AuraWeaponCooltimeDummy.is_not_active() and AuraWeaponBuff.is_active()), target_skill)
-            origin_skill.onAfter(optional)
-            target_skill.onAfter(AuraWeaponCooltimeDummy)
-            
-        AuraWeapon_connection_builder(DemonSlashAWBB1, DemonSlashAWBB1_AuraWeapon)
-        AuraWeapon_connection_builder(DemonSlashAWBB2, DemonSlashAWBB2_AuraWeapon)
-        AuraWeapon_connection_builder(DemonSlashAWBB3, DemonSlashAWBB3_AuraWeapon)
-        AuraWeapon_connection_builder(DemonSlashAWBB4, DemonSlashAWBB4_AuraWeapon)
-        AuraWeapon_connection_builder(DemonImpact, DemonImpact_AuraWeapon)
         
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
