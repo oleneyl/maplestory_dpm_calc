@@ -1,6 +1,9 @@
 from . import ItemKernel as it
 
+#TODO: 리퀴드 하트
+
 #칭호들
+
 
 KingOfRootAbyss = it.Item(att=3, stat_main = 8, stat_sub=8, potential = it.CharacterModifier(armor_ignore = 5, boss_pdamage = 5))
 PingkbinAndMe = it.Item(att = 5, stat_main = 10, stat_sub=10, potential = it.CharacterModifier( boss_pdamage = 10))
