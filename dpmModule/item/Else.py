@@ -15,6 +15,10 @@ WeeklyParkBadge = it.Item(stat_main = 7, stat_sub = 7, att = 7, armor_ignore = 1
 # 뱃지 방무와 세트 효과 방무는 별개이므로 방무 10퍼씩 2번 적용. (19퍼랑 동일)
 WeeklyParkTitle = it.Item(stat_main = 7, stat_sub = 7, armor_ignore = 10)
 
+# 업횟 11+1
+# 일반적인 템셋에서 카벨 모자를 사용할 직업은 제로뿐이므로 앱솔/아케인 무기 착용으로 가정
+#ChaosVellumHelm = it.Item(stat_main = 23, stat_sub = 23, att = 1, boss_pdamage = 30)
+
 def get_weekly_set():
     return {"badge" : WeeklyParkBadge.copy(),
                 "title" : WeeklyParkTitle.copy() }

@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 
+##### 4카5앱으로 변경 필요 #####
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -18,8 +19,9 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
 
-        ResolutionTime = core.InformedCharacterModifier("레졸루션 타임",pdamage_indep = 25, stat_main = 50)
+        ResolutionTime = core.InformedCharacterModifier("리졸브 타임",pdamage_indep = 25, stat_main = 50)
         
+        # 무기상수 1.34
         AlphaState = core.InformedCharacterModifier("상태-알파", pdamage_indep = 34, crit = 40, att = 40, armor_ignore = 30, crit_damage = 50)
 
         return [Mastery, ResolutionTime, AlphaState]
@@ -29,6 +31,7 @@ class JobGenerator(ck.JobGenerator):
         return [ArmorSplit]
 
     def get_modifier_optimization_hint(self):
+        # ???
         return core.CharacterModifier(crit = 15, pdamage = 30, armor_ignore = 20)
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
@@ -52,20 +55,20 @@ class JobGenerator(ck.JobGenerator):
         
         어파스 기준
         '''
-        #### 알파 ####
+        #### 마스터리 ####
         AlphaMastery = core.CharacterModifier(pdamage_indep = 34) + \
             core.CharacterModifier(att = 40, armor_ignore = 30) + \
             core.CharacterModifier(crit = 40) + \
-            core.CharacterModifier(crit_damage = 50) + \
-            core.CharacterModifier(crit_damage = 20*4/35)  #크리티컬 바인드
-            
-        AlphaState = core.BuffSkill("상태-알파", 0, 9999*10000, cooltime = -1, crit_damage = (20*4/35)).wrap(core.BuffSkillWrapper)
+            core.CharacterModifier(crit_damage = 50)
+        
+        # 크리티컬 바인드 적용된거 삭제
+        AlphaState = core.BuffSkill("상태-알파", 0, 9999*10000, cooltime = -1, crit_damage = 0).wrap(core.BuffSkillWrapper)
         BetaState = core.BuffSkill("상태-베타", 0, 9999*10000, cooltime = -1, pdamage_indep = 9.70, crit = 15-40, boss_pdamage = 30 + 30, att = 80-40, pdamage = 40, armor_ignore = -42.85, crit_damage = -50).wrap(core.BuffSkillWrapper)
             
         BetaMastery = core.CharacterModifier(pdamage_indep = 49) + \
                     core.CharacterModifier(crit = 15, boss_pdamage = 30 + 30, att = 80, pdamage = 40) + \
                     core.CharacterModifier(armor_ignore = 50)
-        
+        #### 알파 ####
         MoonStrike = core.DamageSkill("문 스트라이크", 390, 180, 4).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         MoonStrikeTAG = core.DamageSkill("문 스트라이크(태그)", 0, 180, 4).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         MoonStrike_AuraWeapon = core.DamageSkill("오라 웨폰(문 스트라이크)", 0, 180 * (75 + vEhc.getV(3,3))*0.01, 4).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
@@ -146,10 +149,14 @@ class JobGenerator(ck.JobGenerator):
         TimeHolding = core.BuffSkill("타임 홀딩", 1080, 90000, 180*1000, pdamage = 10).wrap(core.BuffSkillWrapper) #  쿨타임 초기화.(타임 리와 / 리미트 브레이크 제외)
         IntensiveTime = core.BuffSkill("인탠시브 타임", 0, 40*60*1000, patt = 4).wrap(core.BuffSkillWrapper)
         
+        # 딜레이 확인필요, 딜사이클에 포함되는 스킬인지 확인필요
         ShadowRain = core.DamageSkill("쉐도우 레인", 0, 1400, 14, cooltime = 300*1000).wrap(core.DamageSkillWrapper)
         
         #### 5차 스킬 ####
         #5차스킬들 마스터리 알파/베타 구분해서 적용할것.
+        
+        # 오라웨폰을 소환수로 변경하는 코드 (발동 딜레이 추가바람)
+        #AuraWeaponSummon = core.SummonSkill("오라웨폰", 0, 6000, (500 + 20 * vEhc.getV(3,3)), 6, (80 +2*vEhc.getV(3,3)) * 1000, cooltime = 180 * 1000, modifier = core.CharacterModifier(armor_ignore = 15, pdamage_indep = (vEhc.getV(3,3) // 5))).isV(vEhc, 3, 3).wrap(core.SummonSkillWrapper)
         
         AuraWeaponBuff = core.BuffSkill("오라웨폰 버프", 0, (80 +2*vEhc.getV(3,3)) * 1000, cooltime = 180 * 1000, armor_ignore = 15, pdamage_indep = (vEhc.getV(3,3) // 5)).isV(vEhc, 3, 3).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!
         AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 4000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 4초간 발동되지 않도록 합니다.
