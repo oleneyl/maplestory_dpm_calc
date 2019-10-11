@@ -106,7 +106,7 @@ class JobGenerator(ck.JobGenerator):
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
         PirateFlag = core.BuffSkill("파이렛 플래그", 990, 30 * 1000, cooltime = (60 - vEhc.getV(2,1)) * 1000, armor_ignore = (10 + 0.5*vEhc.getV(2,1)), stat_main_fixed = (chtr.level * 5 + 18)*0.01*(10 + 0.5*vEhc.getV(2,1))).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
-        Overdrive = core.BuffSkill("오버드라이브", 540, 30*1000, cooltime = (70 - 0.2*vEhc.getV(4,4))*1000, att = 1.5*(45 + vEhc.getV(4,4))).isV(vEhc,4,4).wrap(core.BuffSkillWrapper) #무기공의 (30+vlevel)만큼 공 증가 이후 15%만큼 감소. 30초유지, 70 - (0.2*vlevel), 앱솔가정,
+        Overdrive = core.BuffSkill("오버드라이브", 540, 30*1000, cooltime = (70 - 0.2*vEhc.getV(4,4))*1000, att = 1.5*(20+2*vEhc.getV(4,4))).isV(vEhc,4,4).wrap(core.BuffSkillWrapper) #무기공의 (30+vlevel)만큼 공 증가 이후 15%만큼 감소. 30초유지, 70 - (0.2*vlevel), 앱솔가정,
         OverdrivePenalty = core.BuffSkill("오버드라이브(페널티)", 0, (40 - 0.2*vEhc.getV(4,4))*1000, cooltime = -1, att = -15*1.5).isV(vEhc,4,4).wrap(core.BuffSkillWrapper) #페널티
         
         BulletParty = core.DamageSkill("불릿 파티", 0, 0, 0, cooltime = 75000).wrap(core.DamageSkillWrapper)
