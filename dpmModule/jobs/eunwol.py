@@ -5,6 +5,8 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 
+# TODO: 분혼 격참 분신 데미지 50% -> 25%
+
 class FridWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc):
         super(FridWrapper, self).__init__(skill = core.BuffSkill("프리드의 가호 더미", 0,0).isV(vEhc,0,0))
@@ -63,7 +65,7 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 60)
         SpiritLink_3 = core.InformedCharacterModifier("정령 결속 3",att = 20, pdamage = 20)
 
-        SpiritLink_4 = core.InformedCharacterModifier("정령 결속 4",armor_ignore = 30, boss_pdamage = 30)
+        SpiritLink_4 = core.InformedCharacterModifier("정령 결속 4",armor_ignore = 30, boss_pdamage = 30, pdamage_indep = 15)
         AdvancedNuckleMastery = core.InformedCharacterModifier("고급 너클 숙련",crit_damage = 20, pdamage_indep = 10)
         WeaknessFinding = core.InformedCharacterModifier("약점 간파",crit = 25)
         #체력 50%이하인 적에게 크리율 65%, 크뎀 20% 증가??
