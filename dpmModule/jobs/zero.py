@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 
 ##### 4카5앱으로 변경 필요 #####
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -23,6 +24,8 @@ class JobGenerator(ck.JobGenerator):
         
         # 무기상수 1.34
         AlphaState = core.InformedCharacterModifier("상태-알파", pdamage_indep = 34, crit = 40, att = 40, armor_ignore = 30, crit_damage = 50)
+        #4카5앱 옵션을 직접 작성할 경우를 가정하여...
+        #VellumHelm = core.InformedCharacterModifier("카오스 벨룸의 헬름(4카 5앱)",boss_pdamage = 30, armor_ignore = -10)
 
         return [Mastery, ResolutionTime, AlphaState]
 
