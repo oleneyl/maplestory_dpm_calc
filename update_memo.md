@@ -2,6 +2,8 @@ Maplestory DPM Project by cheese98
 ==================================
 forked form [oleneyl/maplestory_dpm_calc](https://github.com/oleneyl/maplestory_dpm_calc) (commit d861256)
 
+> 현재 군 복무중인 관계로 업데이트가 불규칙적이거나 느릴 수 있습니다.
+
 TODO
 -----
 ### 직업
