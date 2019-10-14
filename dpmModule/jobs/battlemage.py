@@ -78,7 +78,9 @@ class JobGenerator(ck.JobGenerator):
         FinishBlow_M_U = core.DamageSkill("사신의 낫(마오데)", 720+60, 300, 12+1, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         # TODO : [마스터 오브 데스] : 사용 중 데스의 최종 데미지가 50% 증가하는 기능이 추가됩니다. V1.2.316
+        # MasterOfDeath 발동시에 Death를 비활성화시키고 Death_MOD를 활성화, 종료시에 Death_MOD를 비활성화시키고 Death를 활성화. 더 좋은 방법이 있을지...
         Death = core.SummonSkill("데스", 0, 5000, 200+chtr.level, 12, 99999*100000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
+        #Death_MOD = core.SummonSkill("데스 (마스터 오브 데스)", 0, 5000, (200+chtr.level) * 1.5, 12, 99999*100000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         
         RegistanceLineInfantry = core.SummonSkill("레지스탕스 라인 인팬트리", 360, 1000, 215+8*vEhc.getV(4,4), 9, 10*1000, cooltime = 25000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
         UnionAura = core.BuffSkill("유니온 오라", 810, (vEhc.getV(1,1)//2+25)*1000, cooltime = 100*1000, pdamage=20, boss_pdamage=10, att=50).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
@@ -118,7 +120,7 @@ class JobGenerator(ck.JobGenerator):
         BattlekingBar2.onAfter(UseMark)
         
         BlackMagicAlter.onTick(MarkStack.stackController(1))
-                
+        
         return(FinishBlowEndpoint,
                 [Booster, WillOfLiberty, MasterOfDeath, UnionAura,
                 globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
