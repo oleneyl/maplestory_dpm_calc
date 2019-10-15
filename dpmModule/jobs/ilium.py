@@ -52,8 +52,8 @@ class JobGenerator(ck.JobGenerator):
         
     def get_passive_skill_list(self):
         vEhc = self.vEhc
-        
-        MagicCircuit = core.InformedCharacterModifier("매직 서킷", att = 538*0.2)
+        # 앱솔 무기 마력 241
+        MagicCircuit = core.InformedCharacterModifier("매직 서킷", att = 241*0.2)
         
         MagicGuntletMastery = core.InformedCharacterModifier("매직 건틀렛 마스터리", crit = 20)
         BlessMarkPassive = core.InformedCharacterModifier("블레스 마크(패시브)", pdamage = 10)

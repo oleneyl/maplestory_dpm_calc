@@ -23,7 +23,8 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self):
         vEhc = self.vEhc
         
-        MagicCircuit = core.InformedCharacterModifier("매직 서킷", 50 * 0.25)  #무기 마력의 25%
+        # 매직 서킷: 앱솔 기준 15.4
+        MagicCircuit = core.InformedCharacterModifier("매직 서킷", att = 15.4)  #무기 마력의 25%, 최대치 가정.
         MisticArtsMastery = core.InformedCharacterModifier("미스틱 아츠 마스터리", att = 20)
         NuckleMastery = core.InformedCharacterModifier("너클 마스터리", att = 20)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝", stat_main = 60)
