@@ -6,6 +6,8 @@ from functools import partial
 from ...status.ability import Ability_tool
 from .. import globalSkill
 
+
+
 class FridWrapper(core.BuffSkillWrapper):
 	# num1, num2
     def __init__(self, vEhc, num1, num2):
@@ -20,7 +22,8 @@ class FridWrapper(core.BuffSkillWrapper):
                     core.BuffSkill("프리드의 가호 5스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel)),
                     core.BuffSkill("프리드의 가호 6스택", 0, 30 * 1000, cooltime = 240 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel))]
         self.state = 0
-        self.modifierInvariantFlag = False
+        # 이 변수가 무슨 뜻인지 확인필요. 직업별 스크립트 중 에반에만 존재.
+        #self.modifierInvariantFlag = False
 
     def _use(self, rem = 0, red = 0) -> core.ResultObject:
         self.onoff = True
@@ -37,3 +40,9 @@ class FridWrapper(core.BuffSkillWrapper):
         mdf = self.get_modifier()
         return core.ResultObject(delay, mdf, 0, sname = self._id, spec = 'buff', kwargs = {"remain" : self.skill.remain * (1+0.01*rem*self.skill.rem)})
         #return delay, mdf, 0, self.cascade
+
+
+
+
+
+

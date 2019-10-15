@@ -137,6 +137,9 @@ class JobGenerator(ck.JobGenerator):
         OverloadMana = core.BuffSkill("오버로드 마나", 0, 99999 * 10000, pdamage = 8+int(0.1*vEhc.getV(1,4))).isV(vEhc,1,4).wrap(core.BuffSkillWrapper)
         Frid = heroes.FridWrapper(vEhc, 0, 0)
         
+        # 기존 프리드 스크립트들 중 에반에만 이 설정이 있길래 옮겨옴.
+        Frid.modifierInvariantFlag = False
+        
         ElementalBlast = core.DamageSkill("엘리멘탈 블래스트", 1500, (750+30*vEhc.getV(2,3)) * 1.1, 6 * 4, cooltime = 60000, red = True, modifier = MDF(crit = 100)).isV(vEhc,2,3).wrap(core.DamageSkillWrapper) #4연속, 임의 딜레이
         ElementalBlastBuff = core.BuffSkill("엘리멘탈 블래스트(버프)", 0, 10000, pdamage_indep = 20).isV(vEhc,2,3).wrap(core.BuffSkillWrapper)
 
