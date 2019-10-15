@@ -11,7 +11,7 @@ class FridWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, num1, num2):
         super(FridWrapper, self).__init__(skill = core.BuffSkill("프리드의 가호 더미", num1, num2).isV(vEhc, num1, num2))
         self.vlevel = vEhc.getV(num1, num2)
-        vlevel = vEhc.getV(num1, num2)
+        vlevel = self.vlevel
         self.skillList = [core.BuffSkill("프리드의 가호 0스택(더미)", 0, 30 * 1000),
                     core.BuffSkill("프리드의 가호 1스택", 0, 30 * 1000),
                     core.BuffSkill("프리드의 가호 2스택", 0, 30 * 1000),
