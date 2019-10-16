@@ -4,8 +4,11 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobclass import heroes
 
 ##### TODO: 소스코드 전체 작성 (현재 닼나 복붙) #####
+
+# 최저 콤보 카운트 500 가정
 
 #TODO : 5차 신스킬 적용
 
@@ -14,12 +17,19 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.buffrem = True
         self.jobtype = "str"
+        # 이하 수정 필요
         self.vEnhanceNum = 9
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'buff_rem', 'crit')
         self.preEmptiveSkills = 2
         
     def get_passive_skill_list(self):
-        WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리",pdamage = 5)
+        # 기본 뎀퍼 10 + 빙결 뎀퍼 10
+        SnowChargePassive = core.InformedCharacterModifier("스노우 차지 (패시브)",pdamage = 20)
+
+        ComboAbility = core.InformedCharacterModifier("콤보 어빌리티 10중첩",att = 20)
+        AdvancedComboAbility = core.InformedCharacterModifier("어드밴스드 콤보 어빌리티 10중첩",att = 20)
+        AdvancedComboAbilityPassive = core.InformedCharacterModifier("어드밴스드 콤보 어빌리티 패시브",att = 10)
+
         PhisicalTraining = core.InformedCharacterModifier("피지컬 드레이닝",stat_main = 30, stat_sub = 30)
         
         LordOfDarkness = core.InformedCharacterModifier("로드 오브 다크니스",crit=30, crit_damage = 8)
