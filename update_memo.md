@@ -6,6 +6,8 @@ forked form [oleneyl/maplestory_dpm_calc](https://github.com/oleneyl/maplestory_
 
 TODO
 -----
+> [테스트서버 1.2.093](inven.co.kr/board/maple/2299/3017929)
+
 ### 직업
 * 전 직업 공통: 딜사이클 확인 필요
 
