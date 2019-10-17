@@ -99,16 +99,13 @@ class JobGenerator(ck.JobGenerator):
         
         #Damage Skills
         Panic = core.DamageSkill("패닉", 1080, 1150, 1, cooltime = 40000).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-        Panic_AuraWeapon = core.DamageSkill("패닉(오라웨폰)", 0, 1150 * (75 + vEhc.getV(3,2))*0.01, 1).wrap(core.DamageSkillWrapper)
         PanicBuff = core.BuffSkill("패닉(디버프)", 0, 40000, cooltime = -1, pdamage_indep = 25, rem = False).wrap(core.BuffSkillWrapper)
         
         RaisingBlow = core.DamageSkill("레이징 블로우", 600, 268, 6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         RaisingBlowInrage = core.DamageSkill("레이징 블로우(인레이지)", 600, 285, 4, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함.
         RaisingBlowInrageFinalizer = core.DamageSkill("레이징 블로우(인레이지)(최종타)", 0, 285, 2, modifier = core.CharacterModifier(pdamage = 20, crit = 100)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함. 둘을 연결해야 함.
-        RaisingBlowInrage_AuraWeapon = core.DamageSkill("레이징 블로우(인레이지)(오라 웨폰)", 0, 285 * (75 + vEhc.getV(3,2))*0.01 , 6).wrap(core.DamageSkillWrapper)
         
-        Insizing = core.DamageSkill("인사이징", 660, 576, 3, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #870->640 오더스 적용 필요함. 도트뎀 (30초간 2초당 165%), 크리율에따른 뎀증 반영필요.
-        Insizing_AuraWeapon = core.DamageSkill("인사이징(오라웨폰)", 0, 576 * (75 + vEhc.getV(3,2))*0.01, 3).wrap(core.DamageSkillWrapper)    #870->640 오더스 적용 필요함. 도트뎀 (30초간 2초당 165%), 크리율에따른 뎀증 반영필요.
+        Insizing = core.DamageSkill("인사이징", 660, 576, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #870->640 오더스 적용 필요함. 도트뎀 (30초간 2초당 165%), 크리율에따른 뎀증 반영필요.
         InsizingBuff = core.BuffSkill("인사이징(버프)", 0, 30 * 1000, cooltime = -1, pdamage = 25).wrap(core.BuffSkillWrapper)
     
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 250, 2 * 0.75).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
@@ -122,7 +119,6 @@ class JobGenerator(ck.JobGenerator):
         SwordOfBurningSoul = core.SummonSkill("소드 오브 버닝 소울", 840, 1000, (315+12*vEhc.getV(0,0)), 6, (60+0.5*vEhc.getV(0,0)) * 1000, cooltime = 120 * 1000, modifier = core.CharacterModifier(crit = 50)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)       #시전 딜레이 모름.
         
         ComboDeathFault = core.DamageSkill("콤보 데스폴트", 1680, 800 + 32*vEhc.getV(2,3), 7, cooltime = 20 * 1000).isV(vEhc, 2, 3).wrap(core.DamageSkillWrapper)
-        ComboDeathFault_AuraWeapon = core.DamageSkill("오라 웨폰(콤보 데스폴트)", 0,(800 + 32*vEhc.getV(2,3)) * (75 + vEhc.getV(3,2))*0.01, 7).isV(vEhc, 2, 3).wrap(core.DamageSkillWrapper)
         ComboDeathFaultBuff = core.BuffSkill("콤보 데스폴트 종료 지시자", 0, 5 * 1000, pdamage_indep = 48.6, rem = False, cooltime = -1).isV(vEhc, 2, 3).wrap(core.BuffSkillWrapper)
         
         ComboInstinct = core.BuffSkill("콤보 인스팅트", 450, 30 * 1000, cooltime = 240 * 1000, rem = False, red = True).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper)

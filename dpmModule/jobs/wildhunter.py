@@ -5,6 +5,8 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 
+# TODO: 재규어 맥시멈 추가
+
 class CriticalReinforceWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, character : ck.AbstractCharacter):
         skill = core.BuffSkill("크리티컬 리인포스", 780, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,1,1)
@@ -60,9 +62,9 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         Flurry = core.InformedCharacterModifier("플러리", stat_main = 40)
         JaugerLink = core.InformedCharacterModifier("재규어 링크",crit = 18, crit_damage = 12, att = 10)
-        CrossbowExpert = core.InformedCharacterModifier("크로스보우 엑스퍼트",att=30, crit_damage = 8)
+        CrossbowExpert = core.InformedCharacterModifier("크로스보우 엑스퍼트",att=30, crit_damage = 20)
         WildInstinct = core.InformedCharacterModifier("와일드 인스팅트",armor_ignore = 30)
-        ExtentMagazine = core.InformedCharacterModifier("익스텐드 매거진", pdamage_indep=15, stat_main=60, stat_sub=60)
+        ExtentMagazine = core.InformedCharacterModifier("익스텐드 매거진", pdamage_indep=20, stat_main=60, stat_sub=60)
         AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)", att = 20)
     
         return [Jaguer, NaturesWrath, AutomaticShootingDevice,

@@ -28,7 +28,7 @@ class JobGenerator(ck.JobGenerator):
         ArtOfStaff = core.InformedCharacterModifier("아트 오브 스태프",att = 20, crit = 15)
         StaffMastery = core.InformedCharacterModifier("스태프 마스터리",att = 30, crit = 20)
         HighWisdom =  core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
-        BattleMastery = core.InformedCharacterModifier("배틀 마스터리",pdamage = 20, crit_damage = 20)
+        BattleMastery = core.InformedCharacterModifier("배틀 마스터리",pdamage_indep = 10, crit_damage = 20)
         DarkAuraPassive = core.InformedCharacterModifier("다크 오라(패시브)", patt=15)
         
         #택 1

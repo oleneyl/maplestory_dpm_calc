@@ -6,6 +6,8 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 #TODO : 5차 신스킬 적용
 
+#TODO : [쉐도우 배트] : 쉐도우 배트의 공격 확률이 100%가아니기 때문에 안정된 사냥 성능을 발휘하지 못해 100%로 증가시키려고 합니다.
+#TODO : [쉐도우 서번트 익스텐드] : 그림자의 최종 데미지가 25레벨기준 45%에서 50%로 증가됩니다.
 ######   Passive Skill   ######
 
 

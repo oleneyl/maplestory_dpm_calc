@@ -4,7 +4,14 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+# TODO:
+# [얼티메이트-트레인] : 싸이킥 포인트 소모량이 20칸에서 15칸으로 감소됩니다.
 
+# [에버싸이킥] : 사용 즉시 싸이킥 포인트가 증가하게 됩니다.
+
+# [싸이킥 토네이도] : 물체를 던졌을 때 폭발이 3회발생하게 됩니다.
+
+# [얼티메이트-싸이킥 불릿] : 전방을 공격하는 스킬보스 몬스터에게 적중해야 싸이킥 포인트 1칸이 회복되게 됩니다. 마이크로블랙홀 적중 시 싸이킥 포인트 회복은 변경되지 않습니다.
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -34,7 +41,8 @@ class JobGenerator(ck.JobGenerator):
         PsychicForce3Passive = core.InformedCharacterModifier("사이킥 포스 3(패시브)",att = 10)
         
         ESPBattleOrder = core.InformedCharacterModifier("ESP 배틀오더",att = 50, pdamage = 20)
-        Transcendence = core.InformedCharacterModifier("초월",pdamage_indep = 20)
+        # 초월 -> 각성
+        Transcendence = core.InformedCharacterModifier("각성",pdamage_indep = 25)
         Transport = core.InformedCharacterModifier("전달",armor_ignore = 25)
         Mastery = core.InformedCharacterModifier("마스터리",crit_damage = 10)
         #TODO

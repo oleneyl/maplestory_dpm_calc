@@ -4,6 +4,14 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+
+#TODO:
+#[서포트 웨이버 : H-EX] : 마스터 기준 방어율 감소량이 20%에서10%로 감소되지만 보스 몬스터에게도 적용되게 됩니다. HP 자동회복이 순수 HP 20% 회복에서 최대 HP 8% 회복으로변경되고 설치 즉시 회복하지 않게 됩니다.
+
+#[로봇 마스터리] : 로봇의 최종 데미지 증가량과 같은 수치의 데미지가 추가로 증가하는 현상이수정됩니다. 마스터 기준 로보 런처 : RM7의 데미지 90% 기능이 135%p 증가로 변경되고 로봇의 최종 데미지 증가량이70%에서 105%로 증가됩니다.
+
+#[메탈아머 전탄발사] : 25레벨 기준 공격 횟수가 10회에서11회로 추가로 발사되는 호밍 미사일이 6개에서 7개로 증가됩니다. 스킬 종료 후 호밍 미사일 사용불가 시간이 좀 더정확하게 적용되게 됩니다.
+
 ######   Passive Skill   ######
 
 class JobGenerator(ck.JobGenerator):
@@ -24,7 +32,7 @@ class JobGenerator(ck.JobGenerator):
         MechanicMastery = core.InformedCharacterModifier("메카닉 마스터리",att = 20, crit = 10, crit_damage = 5)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         
-        OverTunning = core.InformedCharacterModifier("오버 튜닝",pdamage_indep = 15, crit=20, armor_ignore=30)
+        OverTunning = core.InformedCharacterModifier("오버 튜닝",pdamage_indep = 20, crit=20, armor_ignore=30)
         MetalArmorExtreme=core.InformedCharacterModifier("메탈아머 익스트림",att=55)
         LoadedDicePassive = core.InformedCharacterModifier("로디드 다이스(패시브)",att = self.vEhc.getV(1,2) + 10)
         

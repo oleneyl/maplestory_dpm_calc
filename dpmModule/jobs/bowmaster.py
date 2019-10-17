@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 
 #TODO : 5차 신스킬 적용
+#TODO : 윈드 오브 프레이 추가
 
 class CriticalReinforceWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, character : ck.AbstractCharacter):

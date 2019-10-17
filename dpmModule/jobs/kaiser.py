@@ -30,7 +30,8 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self):
         InnerBlaze = core.InformedCharacterModifier("이너 블레이즈",stat_main = 20)
         AdvancedInnerBlaze = core.InformedCharacterModifier("어드밴스드 이너 블레이즈",stat_main = 30)
-    
+        # 모프 게이지 단계당 데미지 3% 증가
+        IronWill = core.InformedCharacterModifier("아이언 윌",pdamage = 9)
         Catalyze = core.InformedCharacterModifier("카탈라이즈",patt=30, pdamage_indep=20)
         AdvancedWillOfSwordPassive = core.InformedCharacterModifier("어드밴스드 윌 오브 소드(패시브)",att = 20)
         UnflinchingCourage = core.InformedCharacterModifier("언플린칭 커리지",armor_ignore = 40)

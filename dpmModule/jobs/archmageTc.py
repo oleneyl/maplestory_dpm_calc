@@ -140,7 +140,7 @@ class JobGenerator(ck.JobGenerator):
         
         Blizzard = core.DamageSkill("블리자드", 870, 900+10*combat, 4, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         
-		# 중첩당 감소량 5%
+        # 중첩당 감소량 5%
         ThunderBrake = core.DamageSkill("썬더브레이크 개시스킬", 0, 0, 1, red = True, cooltime = 45 * 1000).wrap(core.DamageSkillWrapper) #Awesome! -> Tandem 사출처리 해야함...Later. 690을 일단 급한대로 분배해서 사용.
         ThunderBrake1 = core.DamageSkill("썬더브레이크", 100, (750 + vEhc.getV(0,0)*30), 8).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ThunderBrake2 = core.DamageSkill("썬더브레이크(1)", 100, (750 + vEhc.getV(0,0)*30)*0.95, 8).wrap(core.DamageSkillWrapper)
@@ -151,11 +151,11 @@ class JobGenerator(ck.JobGenerator):
         ThunderBrake7 = core.DamageSkill("썬더브레이크(6)", 100, (750 + vEhc.getV(0,0)*30)*0.7, 8).wrap(core.DamageSkillWrapper)
         ThunderBrake8 = core.DamageSkill("썬더브레이크(7)", 70, (750 + vEhc.getV(0,0)*30)*0.65, 8).wrap(core.DamageSkillWrapper)
         
-		
-		# 1.2.324 패치 미적용
-        SpiritOfSnow = core.SummonSkill("스피릿 오브 스노우", 720, 3000, 500+36*vEhc.getV(3,1), 9, 30000, red = True, cooltime = 120*1000).isV(vEhc, 3,1).wrap(core.SummonSkillWrapper)
         
-		
+        # 단일 대상 기준
+        SpiritOfSnow = core.SummonSkill("스피릿 오브 스노우", 720, 3000, 700+40*vEhc.getV(3,1), 9, 30000, red = True, cooltime = 120*1000).isV(vEhc, 3,1).wrap(core.SummonSkillWrapper)
+        
+        
         #Summoning skill
         Elquiness = core.SummonSkill("엘퀴네스", 900, 3030, 380+6*combat, 1, 999999999).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         IceAura = core.SummonSkill("아이스 오라", 0, 1200, 0, 1, 999999999).wrap(core.SummonSkillWrapper)
