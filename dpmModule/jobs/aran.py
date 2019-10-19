@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobclass import heroes
+from .jobbranch import warriors
 
 ##### TODO: 소스코드 전체 작성 (현재 닼나 복붙) #####
 

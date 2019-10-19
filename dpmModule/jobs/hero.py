@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, InactiveRule
 from . import globalSkill
+from .jobbranch import warriors
 
 #TODO : 5차 신스킬 적용
 '''히어로 스킬 정리
@@ -114,7 +115,7 @@ class JobGenerator(ck.JobGenerator):
         
         
         # 오라웨폰을 소환수로 변경하는 코드 (발동 딜레이 추가바람)
-        AuraWeaponSummon = core.SummonSkill("오라웨폰", 0, 6000, (500 + 20 * vEhc.getV(3,2)), 6, (80 +2*vEhc.getV(3,2)) * 1000, cooltime = 180 * 1000, modifier = core.CharacterModifier(armor_ignore = 15, pdamage_indep = (vEhc.getV(3,2) // 5))).isV(vEhc, 3, 2).wrap(core.SummonSkillWrapper)
+        AuraWeaponSummon = warrior.AuraWeaponWrapper(vEhc, 3, 2)
         
         SwordOfBurningSoul = core.SummonSkill("소드 오브 버닝 소울", 840, 1000, (315+12*vEhc.getV(0,0)), 6, (60+0.5*vEhc.getV(0,0)) * 1000, cooltime = 120 * 1000, modifier = core.CharacterModifier(crit = 50)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)       #시전 딜레이 모름.
         

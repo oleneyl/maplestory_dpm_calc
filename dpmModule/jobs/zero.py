@@ -4,6 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import warriors
 
 ##### 4카5앱으로 변경 필요 #####
 
@@ -146,8 +147,7 @@ class JobGenerator(ck.JobGenerator):
         #### 5차 스킬 ####
         #5차스킬들 마스터리 알파/베타 구분해서 적용할것.
         
-        # 오라웨폰을 소환수로 변경하는 코드 (발동 딜레이 추가바람)
-        AuraWeaponSummon = core.SummonSkill("오라웨폰", 0, 6000, (500 + 20 * vEhc.getV(3,3)), 6, (80 +2*vEhc.getV(3,3)) * 1000, cooltime = 180 * 1000, modifier = core.CharacterModifier(armor_ignore = 15, pdamage_indep = (vEhc.getV(3,3) // 5))).isV(vEhc, 3, 3).wrap(core.SummonSkillWrapper)
+        AuraWeaponSummon = warrior.AuraWeaponWrapper(vEhc, 3, 3)
 
         LimitBreakAttack = core.DamageSkill("리미트 브레이크", 0, 400+15*vEhc.getV(0,0), 5).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = (30+vEhc.getV(0,0)//5) *1.2 + 20, cooltime = 240*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)

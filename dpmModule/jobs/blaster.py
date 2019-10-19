@@ -31,7 +31,6 @@ class JobGenerator(ck.JobGenerator):
         GuntletExpert = core.InformedCharacterModifier("건틀렛 엑스퍼트", crit_damage = 15, boss_pdamage = 15)
         AdvancedChargeMastery= core.InformedCharacterModifier("어드밴스드 차지 마스터리", armor_ignore = 35)
         CombinationTraining = core.InformedCharacterModifier("콤비네이션 트레이닝II", att = 40)	#패시브스킬+1, 오더스+1
-     
         return [GuntletMastery, PhisicalTraining, ChargeMastery, 
                         GuntletExpert, AdvancedChargeMastery, CombinationTraining]
 
@@ -125,7 +124,7 @@ class JobGenerator(ck.JobGenerator):
         
         
         # 리볼빙 캐논 발동
-       
+        
         MagnumPunch_Revolve_Final = core.OptionalElement(BunkerBuster.is_active, BunkerBusterAttack_WithMaximize, MagnumPunch_Revolve_WithMaximize)
         DoublePang_Revolve_Final = core.OptionalElement(BunkerBuster.is_active, BunkerBusterAttack_WithMaximize, DoublePang_Revolve_WithMaximize)
         MagnumPunch.onAfter(MagnumPunch_Revolve_Final)

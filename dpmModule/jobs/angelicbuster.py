@@ -4,6 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import pirates
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):
