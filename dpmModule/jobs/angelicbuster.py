@@ -92,8 +92,10 @@ class JobGenerator(ck.JobGenerator):
         
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-        Overdrive = core.BuffSkill("오버드라이브", 540, 30*1000, cooltime = (70 - 0.2*vEhc.getV(3,3))*1000, att = 1.54*(20 + 2* vEhc.getV(3,3))).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
-        OverdrivePenalty = core.BuffSkill("오버드라이브(페널티)", 0, (40 - 0.2*vEhc.getV(3,3))*1000, cooltime = -1, att = -15*1.54).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
+        WEAPON_ATT = 154
+        OverdriveBuff = pirates.OverdriveWrapper(vEhc, WEAPON_ATT, 3, 3)
+        Overdrive = OverdriveBuff.Overdrive
+        OverdrivePenalty = OverdriveBuff.OverdrivePenalty
     
         EnergyBurst = core.DamageSkill("에너지 버스트", 900, (600+20*vEhc.getV(4,4)) * 3, 12, red = True, cooltime = 120 * 1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         

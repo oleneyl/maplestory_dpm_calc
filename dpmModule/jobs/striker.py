@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from . import contrib
+from .jobbranch import pirates
 #TODO : 5차 신스킬 적용
 #[섬멸] : 공격 횟수가 뇌전 버프와 무관하게 7회로적용되게 됩니다.
 #[뇌신] : 컴뱃 오더스가 적용되지 않는 현재 로직과 같은 스킬 설명이 추가됩니다.
@@ -96,8 +97,12 @@ class JobGenerator(ck.JobGenerator):
         CygnusPalanks = core.DamageSkill("시그너스 팔랑크스", 780, 450 + 18*vEhc.getV(4,4), int(40 + vEhc.getV(4,4) * PALANKSRATE), cooltime = 30 * 1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         LuckyDice = core.BuffSkill("럭키 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,1,3).wrap(core.BuffSkillWrapper)
 
-        Overdrive = core.BuffSkill("오버드라이브", 540, 30*1000, cooltime = (70 - 0.2*vEhc.getV(5,5))*1000, att = 1.54*(20+2*vEhc.getV(5,5))).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) #무기공의 (30+vlevel)만큼 공 증가 이후 15%만큼 감소. 30초유지, 70 - (0.2*vlevel), 앱솔가정,
-        OverdrivePenalty = core.BuffSkill("오버드라이브(페널티)", 0, (40 - 0.2*vEhc.getV(5,5))*1000, cooltime = -1, att = -15*1.54).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) #페널티
+        #오버드라이브 (앱솔 가정)
+        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
+        WEAPON_ATT = 154
+        OverdriveBuff = pirates.OverdriveWrapper(vEhc, WEAPON_ATT, 5, 5)
+        Overdrive = OverdriveBuff.Overdrive
+        OverdrivePenalty = OverdriveBuff.OverdrivePenalty
 
         ShinNoiHapL = core.BuffSkill("신뇌합일", 0, (30+vEhc.getV(3,2)//2) * 1000, red = True, cooltime = (121-vEhc.getV(3,2)//2)*1000, pdamage_indep=4+vEhc.getV(3,2)//5).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
         ShinNoiHapLAttack = core.SummonSkill("신뇌합일(공격)", 0, 3000, 16*vEhc.getV(3,2) + 400, 7, (30+vEhc.getV(3,2)//2) * 1000, cooltime = -1).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)

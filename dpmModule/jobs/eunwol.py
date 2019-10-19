@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobclass import heroes
+from .jobbranch import pirates
 # TODO: 분혼 격참 분신 데미지 50% -> 25%
 
 class SoulTrapBuffWrapper(core.StackSkillWrapper):
@@ -98,8 +99,12 @@ class JobGenerator(ck.JobGenerator):
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
         Frid = heroes.FridWrapper(vEhc, 0, 0)
     
-        Overdrive = core.BuffSkill("오버드라이브", 540, 30*1000, cooltime = (70 - 0.2*vEhc.getV(5,5))*1000, att = 1.5*(20+2*vEhc.getV(5,5))).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) #무기공의 (30+vlevel)만큼 공 증가 이후 15%만큼 감소. 30초유지, 70 - (0.2*vlevel), 앱솔가정,
-        OverdrivePenalty = core.BuffSkill("오버드라이브(페널티)", 0, (40 - 0.2*vEhc.getV(5,5))*1000, cooltime = -1, att = -15*1.5).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) #페널티
+        #오버드라이브 (앱솔 가정)
+        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
+        WEAPON_ATT = 154
+        OverdriveBuff = pirates.OverdriveWrapper(vEhc, WEAPON_ATT, 5, 5)
+        Overdrive = OverdriveBuff.Overdrive
+        OverdrivePenalty = OverdriveBuff.OverdrivePenalty
         
         SoulConcentrate = core.BuffSkill("정령 집속", 960, (30+vEhc.getV(2,1))*1000, cooltime = 120*1000, pdamage_indep = (5+vEhc.getV(2,1)//2)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
         SoulConcentrateSummon = core.SummonSkill("정령 집속(무작위)", 0, 2000, 1742, 1, (30+vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)

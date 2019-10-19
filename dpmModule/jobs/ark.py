@@ -5,11 +5,12 @@ from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, MutualRule
 from . import globalSkill
+from .jobbranch import pirates
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):
         super(JobGenerator, self).__init__(vEhc = vEhc)
-        self.jobtype = "dex"
+        self.jobtype = "str"
         self.vEnhanceNum = 12
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         
@@ -24,7 +25,9 @@ class JobGenerator(ck.JobGenerator):
         vEhc = self.vEhc
         
         # 매직 서킷: 앱솔 기준 15.4
-        MagicCircuit = core.InformedCharacterModifier("매직 서킷", att = 15.4)  #무기 마력의 25%, 최대치 가정.
+        WEAPON_ATT = 154
+        
+        MagicCircuit = core.InformedCharacterModifier("매직 서킷", att = WEAPON_ATT * 0.1)  #무기 마력의 25%, 최대치 가정.
         MisticArtsMastery = core.InformedCharacterModifier("미스틱 아츠 마스터리", att = 20)
         NuckleMastery = core.InformedCharacterModifier("너클 마스터리", att = 20)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝", stat_main = 60)
@@ -138,8 +141,12 @@ class JobGenerator(ck.JobGenerator):
         # 5차
         LuckyDice = core.BuffSkill("럭키 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
     
-        Overdrive = core.BuffSkill("오버드라이브", 540, 30*1000, cooltime = (70 - 0.2*vEhc.getV(5,5))*1000, att = 1.54*(20+2* vEhc.getV(5,5))).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) #무기공의 (30+vlevel)만큼 공 증가 이후 15%만큼 감소. 30초유지, 70 - (0.2*vlevel), 앱솔가정,
-        OverdrivePenalty = core.BuffSkill("오버드라이브(페널티)", 0, (40 - 0.2*vEhc.getV(5,5))*1000, cooltime = -1, att = -15*1.54).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) #페널티
+        #오버드라이브 (앱솔 가정)
+        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
+        WEAPON_ATT = 154
+        OverdriveBuff = pirates.OverdriveWrapper(vEhc, WEAPON_ATT, 5, 5)
+        Overdrive = OverdriveBuff.Overdrive
+        OverdrivePenalty = OverdriveBuff.OverdrivePenalty
     
         MagicCircuitFullDrive = core.BuffSkill("매직서킷 풀드라이브", 720, (30+vEhc.getV(4,4))*1000, pdamage = (20 + vEhc.getV(3,2)), cooltime = 200*1000).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         MagicCircuitFullDriveStorm = core.SummonSkill("매직서킷 풀드라이브(마력 폭풍)", 0, 4000, 500+20*vEhc.getV(4,4), 3, (30+vEhc.getV(4,4))*1000, cooltime = -1).wrap(core.SummonSkillWrapper)
