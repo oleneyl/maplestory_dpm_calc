@@ -4,6 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobclass import cygnus
 #TODO : 5차 신스킬 적용
 
 #TODO : [쉐도우 배트] : 쉐도우 배트의 공격 확률이 100%가아니기 때문에 안정된 사냥 성능을 발휘하지 못해 100%로 증가시키려고 합니다.
@@ -94,7 +95,8 @@ class JobGenerator(ck.JobGenerator):
 
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        CygnusPalanks = core.DamageSkill("시그너스 팔랑크스", 780, 450 + 18*vEhc.getV(4,4), 40 + vEhc.getV(4,4), cooltime = 30 * 1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
+        CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
+
         ReadyToDie = core.BuffSkill("레디 투 다이", 780, 15*1000, cooltime = (90-int(0.5*vEhc.getV(3,3)))*1000, pdamage_indep = 30+int(0.2*vEhc.getV(3,3))).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
 
         ShadowSpear = core.BuffSkill("쉐도우 스피어", 600, (50+vEhc.getV(0,0))*1000, red = True, cooltime = (181-vEhc.getV(0,0)//2)*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)

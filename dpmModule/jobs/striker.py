@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from . import contrib
 from .jobbranch import pirates
+from .jobclass import cygnus
 #TODO : 5차 신스킬 적용
 #[섬멸] : 공격 횟수가 뇌전 버프와 무관하게 7회로적용되게 됩니다.
 #[뇌신] : 컴뱃 오더스가 적용되지 않는 현재 로직과 같은 스킬 설명이 추가됩니다.

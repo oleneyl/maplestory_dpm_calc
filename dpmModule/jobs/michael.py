@@ -4,6 +4,9 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobclass import cygnus
+
+# 미하일 영메 적용여부에 대해 고민해볼 필요 있음
 
 
 class JobGenerator(ck.JobGenerator):
@@ -90,7 +93,8 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 4000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 4초간 발동되지 않도록 합니다
         AuraWeaponBuff = core.BuffSkill("오라웨폰 버프", 0, (80 +2*vEhc.getV(2,2)) * 1000, cooltime = 180 * 1000, armor_ignore = (10+vEhc.getV(2,2)//5), pdamage_indep = (vEhc.getV(2,2) // 5)).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!
     
-        CygnusPalanks = core.DamageSkill("시그너스 팔랑크스", 780, 450 + 18*vEhc.getV(3,3), 40 + vEhc.getV(3,3), cooltime = 30 * 1000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 3, 3)
+
         RoIias = core.BuffSkill("로 아이아스", 840, 75+3*vEhc.getV(0,0), red = True, cooltime = 300*1000, pdamage_indep = 5 + (35+3*int(vEhc.getV(0,0)*0.2))//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ClauSolis = core.DamageSkill("클라우 솔리스", 900, 700+28*vEhc.getV(4,4), 7, red = True, cooltime = 12000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)    #로얄가드 버프지속시간 6초 증가. 100% 암흑 5초
         ClauSolisSummon = core.SummonSkill("클라우 솔리스(소환)", 0, 5000, 350+14*vEhc.getV(4,4), 7, 9000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #100% 암흑 5초

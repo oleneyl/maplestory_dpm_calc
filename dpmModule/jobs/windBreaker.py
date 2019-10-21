@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import bowmen
+from .jobclass import cygnus
 #TODO : 5차 신스킬 적용
 
 class JobGenerator(ck.JobGenerator):

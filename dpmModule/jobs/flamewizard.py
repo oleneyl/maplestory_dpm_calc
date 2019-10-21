@@ -4,6 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobclass import cygnus
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -65,7 +66,7 @@ class JobGenerator(ck.JobGenerator):
         
         #Full speed, No Combat Orders
         OrbitalFlame = core.DamageSkill("오비탈 플레임", flamewizardDefaultSpeed, 215, 3 * 2, modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        CygnusPalanks = core.DamageSkill("시그너스 팔랑크스", 780, 450 + 18*vEhc.getV(2,1), 40 + vEhc.getV(2,1), cooltime = 30 * 1000).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
+        CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 2, 1)
         BlazingOrbital = core.DamageSkill("블레이징 오비탈 플레임", 210, 330+13*vEhc.getV(0,0), 6 * 4, cooltime = 5000, modifier = core.CharacterModifier(armor_ignore = 50)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)    #4타 가정
         
         DragonSlaveTick = core.DamageSkill("드래곤 슬레이브", 280, 500, 6).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)#x7

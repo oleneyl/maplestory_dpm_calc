@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
 from . import globalSkill
+from .jobclass import cygnus
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -71,7 +72,7 @@ class JobGenerator(ck.JobGenerator):
         NormalAttack = core.DamageSkill("댄스오브 문,스피딩 선셋", (360+270)/2, 400, 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + MasterOfSword.copy()).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         NormalAttack_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 400 * (75 + vEhc.getV(2,2))*0.01, 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + MasterOfSword.copy()).wrap(core.DamageSkillWrapper)
         
-        CygnusPalanks = core.DamageSkill("시그너스 팔랑크스", 780, 450 + 18*vEhc.getV(4,4), 40 + vEhc.getV(4,4), cooltime = 30 * 1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
+        CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
         
         SelestialDanceSummon = core.SummonSkill("셀레스티얼 댄스 추가타", 0, 5000, (1200 + 40 * vEhc.getV(0,0)), 3, (40 + vEhc.getV(0,0)) * 1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) #딜레이 모름
         SelestialDanceInit = core.BuffSkill("셀레스티얼 댄스", 700, (40+vEhc.getV(0,0))*1000, cooltime = 150000, red = True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
