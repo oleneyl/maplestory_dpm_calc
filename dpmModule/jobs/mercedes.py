@@ -6,21 +6,9 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ReservationRule
 from . import globalSkill
 from .jobclass import heroes
+from .jobbranch import bowmen
 
 #TODO : 5차 신스킬 적용
-
-class CriticalReinforceWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc, character : ck.AbstractCharacter):
-        skill = core.BuffSkill("크리티컬 리인포스", 780, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,2,2)
-        super(CriticalReinforceWrapper, self).__init__(skill)
-        self.char = character
-        self.inhancer = (20 + vEhc.getV(2,2))*0.01
-        
-    def get_modifier(self):
-        if self.onoff:
-            return core.CharacterModifier(crit_damage = self.inhancer * max(0,self.char.get_modifier().crit))
-        else:
-            return self.disabledModifier  
 
 class ElementalGhostWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, target1, target2):
@@ -141,7 +129,7 @@ class JobGenerator(ck.JobGenerator):
         AdvancedFinalAttackFast.modifier = ElementalGhostFast
         AdvancedFinalAttackSlow.modifier = ElementalGhostSlow
         
-        CriticalReinforce = CriticalReinforceWrapper(vEhc, chtr)
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 2, 2, 0)
     
         #Damage
         UnicornSpike.onAfter(UnicornSpikeBuff.controller(1))

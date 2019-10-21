@@ -4,22 +4,8 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import bowmen
 #TODO : 5차 신스킬 적용
-
-class CriticalReinforceWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc, character : ck.AbstractCharacter):
-        skill = core.BuffSkill("크리티컬 리인포스", 780, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,3,3)
-        super(CriticalReinforceWrapper, self).__init__(skill)
-        self.char = character
-        self.inhancer = (20 + vEhc.getV(3,3))*0.01
-        
-    def get_modifier(self):
-        if self.onoff:
-            #print(self.char.get_modifier().crit)
-            return core.CharacterModifier(crit_damage = self.inhancer * max(0,self.char.get_modifier().crit+55))
-        else:
-            return self.disabledModifier        
-
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -93,7 +79,7 @@ class JobGenerator(ck.JobGenerator):
         
         ######   Skill Wrapper   #####
         
-        CriticalReinforce = CriticalReinforceWrapper(vEhc, chtr) #Maybe need to sync
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 3, 3, 55) #Maybe need to sync
     
         #Damage
         SongOfHeaven.onAfters([TriflingWhim, StormBringer])

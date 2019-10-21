@@ -5,20 +5,8 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobclass import resistance
+from .jobbranch import bowmen
 # TODO: 재규어 맥시멈 추가
-
-class CriticalReinforceWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc, character : ck.AbstractCharacter):
-        skill = core.BuffSkill("크리티컬 리인포스", 780, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,1,1)
-        super(CriticalReinforceWrapper, self).__init__(skill)
-        self.char = character
-        self.inhancer = (20 + vEhc.getV(1,1))*0.01
-        
-    def get_modifier(self):
-        if self.onoff:
-            return core.CharacterModifier(crit_damage = self.inhancer * max(0,self.char.get_modifier().crit + 20))
-        else:
-            return self.disabledModifier
 
 class JaguerStack(core.DamageSkillWrapper, core.TimeStackSkillWrapper):
     def __init__(self, level, vEhc):
@@ -127,7 +115,7 @@ class JobGenerator(ck.JobGenerator):
         GuidedArrow = core.SummonSkill("가이디드 애로우", 720, 330, 400+16*vEhc.getV(4,4), 1, 30 * 1000, cooltime = 60 * 1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
         RegistanceLineInfantry = ResistanceLineInfantryWrapper(vEhc, 3, 3)
     
-        CriticalReinforce = CriticalReinforceWrapper(vEhc, chtr)
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 1, 1, 20)
     
         JaguerStorm = core.BuffSkill("재규어 스톰", 840, 40*1000, cooltime = (150-vEhc.getV(0,0))*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
