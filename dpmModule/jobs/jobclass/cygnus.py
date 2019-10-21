@@ -1,0 +1,1 @@
+#CygnusPalanks = core.DamageSkill("시그너스 팔랑크스", 780, 450 + 18*vEhc.getV(0,0), 40 + vEhc.getV(0,0), cooltime = 30 * 1000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)

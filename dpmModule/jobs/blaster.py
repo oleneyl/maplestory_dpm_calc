@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, InactiveRule
 from . import globalSkill
 
+from .jobclass import resistance
 #TODO : 5차 신스킬 적용
 
 class JobGenerator(ck.JobGenerator):
@@ -92,7 +93,7 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff = core.BuffSkill("오라웨폰 버프", 0, (80 +2*vEhc.getV(2,2)) * 1000, cooltime = 180 * 1000, armor_ignore = 15, pdamage_indep = (vEhc.getV(2,2) // 5)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!    
         AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 4000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 4초간 발동되지 않도록 합니다.
     
-        RegistanceLineInfantry = core.SummonSkill("레지스탕스 라인 인팬트리", 360, 1000, 215+8*vEhc.getV(3,3), 9, 10*1000, cooltime = 25000).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
+        RegistanceLineInfantry = ResistanceLineInfantryWrapper(vEhc, 3, 3)
         
         
         

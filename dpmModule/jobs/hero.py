@@ -115,7 +115,7 @@ class JobGenerator(ck.JobGenerator):
         
         
         # 오라웨폰을 소환수로 변경하는 코드 (발동 딜레이 추가바람)
-        AuraWeaponSummon = warrior.AuraWeaponWrapper(vEhc, 3, 2)
+        AuraWeaponSummon = warriors.AuraWeaponWrapper(vEhc, 3, 2)
         
         SwordOfBurningSoul = core.SummonSkill("소드 오브 버닝 소울", 840, 1000, (315+12*vEhc.getV(0,0)), 6, (60+0.5*vEhc.getV(0,0)) * 1000, cooltime = 120 * 1000, modifier = core.CharacterModifier(crit = 50)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)       #시전 딜레이 모름.
         

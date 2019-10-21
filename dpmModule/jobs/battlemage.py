@@ -5,6 +5,8 @@ from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
+
+from .jobclass import resistance
 ######   Passive Skill   ######
 
 class JobGenerator(ck.JobGenerator):
@@ -82,7 +84,7 @@ class JobGenerator(ck.JobGenerator):
         Death = core.SummonSkill("데스", 0, 5000, 200+chtr.level, 12, 99999*100000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         #Death_MOD = core.SummonSkill("데스 (마스터 오브 데스)", 0, 5000, (200+chtr.level) * 1.5, 12, 99999*100000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         
-        RegistanceLineInfantry = core.SummonSkill("레지스탕스 라인 인팬트리", 360, 1000, 215+8*vEhc.getV(4,4), 9, 10*1000, cooltime = 25000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
+        RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 4, 4)
         UnionAura = core.BuffSkill("유니온 오라", 810, (vEhc.getV(1,1)//2+25)*1000, cooltime = 100*1000, pdamage=20, boss_pdamage=10, att=50).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         BlackMagicAlter = core.SummonSkill("블랙 매직 알터", 690 * 2*2.5, 800, 800+32*vEhc.getV(0,0), 4, 40*1000, cooltime = 50*1000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)    #가동률 60%
         GrimReaper = core.SummonSkill("그림 리퍼", 720, 4000, 800+32*vEhc.getV(2,2), 12, 62*1000, cooltime=100*1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #공격시 지속2초증가->지속62s

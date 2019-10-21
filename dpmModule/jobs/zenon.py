@@ -2,7 +2,7 @@ from . import template as jt
 from .template import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
-from .jobtype import resistance
+from .jobclass import resistance
 from .jobbranch import thieves, pirates
 #TODO : 5차 신스킬 적용
 

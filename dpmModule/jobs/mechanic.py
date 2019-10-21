@@ -4,6 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobclass import resistance
 from .jobbranch import pirates
 
 #TODO:
@@ -88,7 +89,7 @@ class JobGenerator(ck.JobGenerator):
         Overdrive = OverdriveBuff.Overdrive
         OverdrivePenalty = OverdriveBuff.OverdrivePenalty
     
-        RegistanceLineInfantry = core.SummonSkill("레지스탕스 라인 인팬트리", 360, 1000, 215+8*vEhc.getV(3,3), 9, 10*1000, cooltime = 25000).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
+        RegistanceLineInfantry = ResistanceLineInfantryWrapper(vEhc, 3, 3)
         MultipleOptionGattling = core.SummonSkill("멀티플 옵션(개틀링)", 780, 1500, 75+2*vEhc.getV(2,1), 6, (115+6*vEhc.getV(2,1))*1000, cooltime = 200 * 1000).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         MultipleOptionMissle = core.SummonSkill("멀티플 옵션(미사일)", 0, 8000, 350+10*vEhc.getV(2,1), 24, (115+6*vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         
