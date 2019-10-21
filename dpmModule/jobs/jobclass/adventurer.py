@@ -11,6 +11,7 @@ class MapleHero2:
         return core.BuffSkill("메이플월드 여신의 축복")
 '''
 # 모험가 법사
+# 3% 증가로 알고있는데... 확인필요
 # TODO : 재사용 대기시간 초기화 미적용으로 변경
 class InfinityWrapper(core.BuffSkillWrapper):
     def __init__(self, serverlag = 3):
