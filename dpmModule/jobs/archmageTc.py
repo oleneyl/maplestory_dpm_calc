@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, SynchronizeRule, ConcurrentRunRule
 from . import globalSkill
+from .jobclass import adventurer
 
 #TODO : 5차 신스킬 적용
 
@@ -30,29 +31,6 @@ class FrostEffectWrapper(core.BuffSkillWrapper):
 
     def get_modifier(self):
         return core.CharacterModifier(crit_damage = 3*self.stack, pdamage = 12*self.stack*(self.skillType is "T"), armor_ignore = 0.2*5*self.stack)
-
-#Infinity Graph Element
-class InfinityWrapper(core.BuffSkillWrapper):
-    def __init__(self, serverlag = 3):
-        skill = core.BuffSkill("인피니티", 960, 40000, cooltime = 180 * 1000, rem = True, red = True)
-        super(InfinityWrapper, self).__init__(skill)
-        self.passedTime = 0
-        self.serverlag = serverlag
-        
-    def spend_time(self, time):
-        if self.onoff:
-            self.passedTime += time
-        super(InfinityWrapper, self).spend_time(time)
-            
-    def get_modifier(self):
-        if self.onoff:
-            return core.CharacterModifier(pdamage_indep = (70 + 4 * (self.passedTime // ((4+self.serverlag)*1000))) )
-        else:
-            return core.CharacterModifier()
-        
-    def _use(self, rem = 0, red = 0):
-        self.passedTime = 0
-        return super(InfinityWrapper, self)._use(rem = rem, red = red)
 
 
 class JobGenerator(ck.JobGenerator):
@@ -164,7 +142,7 @@ class JobGenerator(ck.JobGenerator):
         BlizzardPassive = core.DamageSkill("블리자드 패시브", 0, (220+4*combat) * (0.6+0.01*combat), 1).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         
         #special skills
-        Infinity = InfinityWrapper()
+        Infinity = adventurer.InfinityWrapper()
         FrostEffect = core.BuffSkill("프로스트 이펙트", 0, 999999 * 1000).wrap(FrostEffectWrapper)
         
         ######   Skill Wrapper   ######

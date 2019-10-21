@@ -5,28 +5,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, SynchronizeRule
 from . import globalSkill
 from functools import partial
-#Infinity Graph Element
-class InfinityWrapper(core.BuffSkillWrapper):
-    def __init__(self, serverlag = 3):
-        skill = core.BuffSkill("인피니티", 960, 40000, cooltime = 180 * 1000, rem = True, red = True)
-        super(InfinityWrapper, self).__init__(skill)
-        self.passedTime = 0
-        self.serverlag = serverlag
-        
-    def spend_time(self, time):
-        if self.onoff:
-            self.passedTime += time
-        super(InfinityWrapper, self).spend_time(time)
-            
-    def get_modifier(self):
-        if self.onoff:
-            return core.CharacterModifier(pdamage_indep = (70 + 4 * (self.passedTime // ((4+self.serverlag)*1000))) )
-        else:
-            return core.CharacterModifier()
-        
-    def _use(self, rem = 0, red = 0):
-        self.passedTime = 0
-        return super(InfinityWrapper, self)._use(rem = rem, red = red)
+from .jobclass import adventurer
 
 #비숍 소환수 뎀증보너스 적용
 class SacredMarkWrapper(core.BuffSkillWrapper):
@@ -144,7 +123,7 @@ class JobGenerator(ck.JobGenerator):
         AngelOfLibra = core.SummonSkill("리브라", 540, 3333, 500 + 20*vEhc.getV(3,1), 12, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,3,1).wrap(core.SummonSkillWrapper)    #바하뮤트와 겹치지 않도록 재정의 필요, 최종뎀50%스택
         
         ######   Wrappers    ######
-        Infinity = InfinityWrapper()
+        Infinity = adventurer.InfinityWrapper()
         SacredMark = SacredMarkWrapper()
         
         MarkIncrement25 = SacredMark.getFlowHandler(1, 25)
