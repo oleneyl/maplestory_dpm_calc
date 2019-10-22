@@ -4,7 +4,10 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import thieves
 #TODO : 5차 신스킬 적용
+
+# TODO: 왜 레투다는 5차값이 1,1인데 레투다 패시브는 2,2일까?
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -24,7 +27,7 @@ class JobGenerator(ck.JobGenerator):
         SornsEffect = core.InformedCharacterModifier("쏜즈 이펙트", att = 30)
         DualBladeExpert = core.InformedCharacterModifier("이도류 엑스퍼트", att = 30, pdamage_indep = 20)
         Sharpness = core.InformedCharacterModifier("샤프니스", crit = 35, crit_damage = 13)
-        ReadyToDiePassive = core.InformedCharacterModifier("레디 투 다이(패시브)",att = self.vEhc.getV(2,2))
+        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(self.vEhc, 2, 2)
         
         return [Karma, PhisicalTraining, SornsEffect, DualBladeExpert, Sharpness,
                             ReadyToDiePassive]
@@ -74,7 +77,7 @@ class JobGenerator(ck.JobGenerator):
         AsuraTick = core.DamageSkill("아수라(틱)", 300, 420, 4, modifier =core.CharacterModifier(armor_ignore = 100)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  #41타
         
         UltimateDarksight = core.BuffSkill("얼티밋 다크사이트", 750, 30000, red = True, cooltime = (220-vEhc.getV(3,3))*1000).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
-        ReadyToDie = core.BuffSkill("레디 투 다이", 780, 15*1000, red = True, cooltime = (90-int(0.5*vEhc.getV(1,1)))*1000, pdamage_indep = 30+int(0.2*vEhc.getV(1,1))).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
+        ReadyToDie = thieves.ReadyToDieWrapper(vEhc,1,1)
         
         BladeStorm = core.DamageSkill("블레이드 스톰", 660, 580+23*vEhc.getV(0,0), 7, red = True, cooltime = 90000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         BladeStormTick = core.DamageSkill("블레이드 스톰(틱)", 210, 350+10*vEhc.getV(0,0), 5, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  #10000/210 타

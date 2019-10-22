@@ -5,8 +5,10 @@ from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
-
 from .jobclass import resistance
+from .jobbranch import magicians
+# TODO: 오버로드 마나를 정말 안쓰는 것인지 확인필요
+
 ######   Passive Skill   ######
 
 class JobGenerator(ck.JobGenerator):

@@ -39,7 +39,7 @@ class JobGenerator(ck.JobGenerator):
         
         SkyOpenPassive = core.InformedCharacterModifier("천지개벽(패시브)",pdamage_indep = 20)
         
-        LoadedDicePassive = core.InformedCharacterModifier("로디드 다이스(패시브)",att = self.vEhc.getV(1,3) + 10)
+        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(self.vEhc, 1, 3)
 
         
         return [ElementalHarmony, ElementalExpert,

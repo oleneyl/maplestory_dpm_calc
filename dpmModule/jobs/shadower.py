@@ -4,6 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import thieves
 
 class MesoStack(core.DamageSkillWrapper, core.StackSkillWrapper):
     def __init__(self, vEhc):

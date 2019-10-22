@@ -36,7 +36,7 @@ class JobGenerator(ck.JobGenerator):
         
         OverTunning = core.InformedCharacterModifier("오버 튜닝",pdamage_indep = 20, crit=20, armor_ignore=30)
         MetalArmorExtreme=core.InformedCharacterModifier("메탈아머 익스트림",att=55)
-        LoadedDicePassive = core.InformedCharacterModifier("로디드 다이스(패시브)",att = self.vEhc.getV(1,2) + 10)
+        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(self.vEhc, 1, 2)
         
         return [HiddenPiece, MechanicMastery, PhisicalTraining, LoadedDicePassive, MetalArmorExtreme, OverTunning]
 

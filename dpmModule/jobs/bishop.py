@@ -6,7 +6,7 @@ from ..execution.rules import RuleSet, SynchronizeRule
 from . import globalSkill
 from functools import partial
 from .jobclass import adventurer
-
+from .jobbranch import magicians
 #비숍 소환수 뎀증보너스 적용
 class SacredMarkWrapper(core.BuffSkillWrapper):
     def __init__(self):
@@ -103,7 +103,7 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 240000, rem = True).wrap(core.BuffSkillWrapper)
         AdvancedBless = core.BuffSkill("어드밴스드 블레스", 0, 240000, att = 30 + combat*1 + 20, boss_pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        OverloadMana = core.BuffSkill("오버로드 마나", 0, 99999 * 10000, pdamage_indep = 8+int(0.1*vEhc.getV(1,4))).isV(vEhc,1,4).wrap(core.BuffSkillWrapper)
+        OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 4)
         
         charMainStat = chtr.get_modifier().stat_main * (1 + 0.01 * chtr.get_modifier().pstat_main)
         Pray = core.BuffSkill("프레이", 810, 1000 * (30 + 0.5 * vEhc.getV(2,2)), cooltime = 180 * 1000, red = True, pdamage_indep = (5 + (charMainStat // 2500))).isV(vEhc, 2,2).wrap(core.BuffSkillWrapper)

@@ -116,7 +116,7 @@ class JobGenerator(ck.JobGenerator):
         IrkilaBreathInit = core.DamageSkill("이르킬라의 숨결", 720, 0, 0, cooltime = 150 * 1000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         IrkilaBreathTick = core.DamageSkill("이르킬라의 숨결(틱)", 150, 425+15*vEhc.getV(1,1), 8).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
 
-        GuidedArrow = core.SummonSkill("가이디드 애로우", 720, 330, 400+16*vEhc.getV(4,4), 1, 30 * 1000, cooltime = 60 * 1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
+        GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
 
         ElementalGhostFast = core.CharacterModifier()
         ElementalGhostSlow = core.CharacterModifier()

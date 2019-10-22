@@ -2,6 +2,8 @@ from ...kernel import core
 from ...kernel.core import VSkillModifier as V
 from ...character import characterKernel as ck
 # 모험가 공용 5차스킬 통합코드
+
+#TODO: 얼닼사, 블리츠실드, 이볼브, 파이렛 플래그
 '''
 class MapleHero2:
     #vEhc.getV(var1,var2)

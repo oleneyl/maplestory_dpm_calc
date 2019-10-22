@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, SynchronizeRule, ConcurrentRunRule
 from . import globalSkill
 from .jobclass import adventurer
+from .jobbranch import magicians
 
 #TODO : 5차 신스킬 적용
 
@@ -102,7 +103,7 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Meditation = core.BuffSkill("메디테이션", 0, 240*1000, att = 30, rem = True, red = True).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10, red = True).wrap(core.BuffSkillWrapper)
-        OverloadMana = core.BuffSkill("오버로드 마나", 0, 99999 * 10000, pdamage_indep = 8+int(0.1*vEhc.getV(1,2))).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
+        OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         
         #Damage Skills
         ChainLightening = core.DamageSkill("체인 라이트닝", 600, 230 + 2*combat, 9, modifier = core.CharacterModifier(crit = 25, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)

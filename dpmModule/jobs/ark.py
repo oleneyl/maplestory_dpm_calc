@@ -140,6 +140,8 @@ class JobGenerator(ck.JobGenerator):
         
         # 5차
         LuckyDice = core.BuffSkill("럭키 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
+        # 로디드 강화순서 확인필요
+        #LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
     
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.

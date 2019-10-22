@@ -26,7 +26,7 @@ class JobGenerator(ck.JobGenerator):
         PirateSpirit = core.InformedCharacterModifier("파이렛 스피릿",boss_pdamage=40)
         OverburningCanon = core.InformedCharacterModifier("오버버닝 캐논",pdamage_indep=30, armor_ignore=20)
     
-        LoadedDicePassive = core.InformedCharacterModifier("로디드 다이스(패시브)",att = self.vEhc.getV(3,4) + 10)
+        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(self.vEhc, 3, 4)
     
         return [BuildupCanon, CriticalFire, 
                             PirateTraining, MonkeyWavePassive, OakRuletPassive, ReinforceCanon,

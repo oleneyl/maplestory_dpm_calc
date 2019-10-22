@@ -4,6 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import magicians
 # TODO:
 # [얼티메이트-트레인] : 싸이킥 포인트 소모량이 20칸에서 15칸으로 감소됩니다.
 
@@ -106,7 +107,7 @@ class JobGenerator(ck.JobGenerator):
         PsychicOver = core.BuffSkill("싸이킥 오버", 0, 30000, cooltime = 210000).wrap(core.BuffSkillWrapper) # 소모량 절반 / 포인트 지속증가(초당 1)
         PsychicOverSummon = core.SummonSkill("싸이킥 오버(소환)", 0, 1000, 0, 0, 30000, cooltime = -1).wrap(core.SummonSkillWrapper)
         try:
-            OverloadMana = core.BuffSkill("오버로드 마나", 0, 99999 * 10000, pdamage_indep = 8+int(0.1*vEhc.getV(1,1))).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
+            OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 1)
         except:
             print(vEhc)
             raise

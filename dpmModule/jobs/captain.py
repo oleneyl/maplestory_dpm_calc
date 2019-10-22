@@ -26,7 +26,7 @@ class JobGenerator(ck.JobGenerator):
         CaptainDignitiyPassive = core.InformedCharacterModifier("캡틴 디그니티(패시브)",att = 30)
         CrueCommandership = core.InformedCharacterModifier("크루 커맨더쉽",crit_damage = 25)
     
-        LoadedDicePassive = core.InformedCharacterModifier("로디드 다이스(패시브)", att = self.vEhc.getV(1,2) + 10)
+        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(self.vEhc, 1, 2)
     
         return [CriticalRoar, PhisicalTraining, HalopointBullet, ContinualAimingPassive,
             FullMetaJacket, CaptainDignitiyPassive, CrueCommandership]

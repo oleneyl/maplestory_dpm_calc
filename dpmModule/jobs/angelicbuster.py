@@ -26,7 +26,7 @@ class JobGenerator(ck.JobGenerator):
         TrinityPassive = core.InformedCharacterModifier("트리니티(패시브)", pdamage_indep = 10, armor_ignore = 15)
         SoulShooterExpert = core.InformedCharacterModifier("소울슈터 엑스퍼트", att = 30, crit = 30, crit_damage = 15)
         
-        LoadedDicePassive = core.InformedCharacterModifier("로디드 다이스(패시브)", att = vEhc.getV(1,2) + 10)
+        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
     
         return [SoulShooterMastery, InnerFire,
                             CallOfAncient, AffinityIII, AffinityIV, TrinityPassive, SoulShooterExpert,

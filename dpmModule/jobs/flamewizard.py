@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobclass import cygnus
+from .jobbranch import magicians
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -60,7 +61,7 @@ class JobGenerator(ck.JobGenerator):
         BurningRegion = core.BuffSkill("버닝 리전", 810, 30 * 1000, cooltime =45 * 1000, rem = True, pdamage = 60).wrap(core.BuffSkillWrapper)
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        OverloadMana = core.BuffSkill("오버로드 마나", 0, 99999 * 10000, pdamage = 8+int(0.1*vEhc.getV(1,2))).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
+        OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         #Damage Skills
         InfernoRize = core.DamageSkill("인페르노 라이즈", 720, 285, 5, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage = 90)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #임의딜레이 720
         

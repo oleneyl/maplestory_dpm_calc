@@ -61,8 +61,10 @@ class JobGenerator(ck.JobGenerator):
         StimulatePassive = core.InformedCharacterModifier("스티뮬레이트(패시브)",boss_pdamage = 20)
         
         EchoOfHero = core.InformedCharacterModifier("영웅의 메아리", patt = 4) #타임리프
+
+        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(self.vEhc, 2, 3)
         
-        return [CriticalRoar, MentalClearity, PhisicalTraining, CriticalRage, StimulatePassive, EchoOfHero]
+        return [CriticalRoar, MentalClearity, PhisicalTraining, CriticalRage, StimulatePassive, EchoOfHero, LoadedDicePassive]
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
@@ -96,8 +98,7 @@ class JobGenerator(ck.JobGenerator):
         UnityOfPowerBuff = core.BuffSkill("유니티 오브 파워(디버프)", 0, 90 * 1000, cooltime = -1, crit_damage = 40).wrap(core.BuffSkillWrapper)   #4스택 가정.
         #크리티컬 리인포스 - >재정의 필요함..
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-    
-        LoadedDicePassive = core.BuffSkill("로디드 다이스", 0, 99999 * 10000, att = vEhc.getV(2,3) + 10).isV(vEhc,2,3).wrap(core.BuffSkillWrapper)
+
         PirateFlag = core.BuffSkill("파이렛 플래그", 990, 30 * 1000, cooltime = (60 - vEhc.getV(3,2)) * 1000, armor_ignore = (10 + 0.5*vEhc.getV(3,2)), stat_main_fixed = (chtr.level * 5 + 18)*0.01*(10 + 0.5*vEhc.getV(3,2))).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
         
         #오버드라이브 (앱솔 가정)
@@ -178,7 +179,7 @@ class JobGenerator(ck.JobGenerator):
     
         return (BasicAttackWrapper,
             [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-            LuckyDice, Viposition, Stimulate, EpicAdventure, LoadedDicePassive, PirateFlag, Overdrive, Transform, NautilusBuff,
+            LuckyDice, Viposition, Stimulate, EpicAdventure, PirateFlag, Overdrive, Transform, NautilusBuff,
             UnityOfPowerBuff, OverdrivePenalty, DragonStrikeBuff, EnergyCharge,
             SerpentScrewTrackingBuff, globalSkill.soul_contract()] +\
             [UnityOfPower, Nautilus, DragonStrike, FuriousCharge] +\
