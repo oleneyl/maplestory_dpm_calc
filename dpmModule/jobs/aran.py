@@ -64,23 +64,8 @@ class JobGenerator(ck.JobGenerator):
         
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
-        CrossoverChain = core.BuffSkill("크로스 오버 체인", 0, 200*1000, pdamage_indep = 80).wrap(core.BuffSkillWrapper)
-        FinalAttack = core.DamageSkill("파이널 어택", 0, 150, 0.4).setV(vEhc, 3, 4, True).wrap(core.DamageSkillWrapper)
-        BiholderDominant = core.SummonSkill("비홀더 도미넌트", 0, 10000, 210, 1, 99999*10000, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).wrap(core.SummonSkillWrapper)
-        BiholderShock = core.DamageSkill("비홀더 쇼크", 0, 640, 2, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).wrap(core.DamageSkillWrapper)
         
-        DarkImpail = core.DamageSkill("다크 임페일", 630, 280, 6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        GoungnilDescentNoCooltime = core.DamageSkill("궁그닐 디센트(무한)", 600, 225, 12, modifier = core.CharacterModifier(armor_ignore = 30+20, pdamage = 20, boss_pdamage = 10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    
-        GoungnilDescent = core.DamageSkill("궁그닐 디센트", 600, 225, 12, cooltime = 8000, modifier = core.CharacterModifier(armor_ignore = 30+20, pdamage = 20, boss_pdamage = 10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-
-        #GoungnilDescent_AuraWeapon = core.DamageSkill("오라 웨폰(궁그닐)", 0, 225 * (75 + vEhc.getV(2,1))*0.01, 12, modifier = core.CharacterModifier(armor_ignore = 30+20, pdamage = 20, boss_pdamage = 10)).wrap(core.DamageSkillWrapper)
-        
-        Sacrifice = core.BuffSkill("새크리파이스", 1080, 30*1000, rem = True, red = True, cooltime = 70000, armor_ignore = 10, boss_pdamage = 10).wrap(core.BuffSkillWrapper)   #궁그닐 쿨 무시, 비홀더 공격시 쿨0.3감소
-        Reincarnation = core.BuffSkill("리인카네이션", 0, 40*1000, cooltime = 600000, rem = True, red = True).wrap(core.BuffSkillWrapper) #궁그닐 쿨 무시
-        
-        #하이퍼
-        DarkThurst = core.BuffSkill("다크 서스트", 900, 30000, cooltime = 120*1000, att = 80).wrap(core.BuffSkillWrapper)
-        EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
+        Frid = heroes.FridWrapper(vEhc, 0, 0)
 
         # 오라웨폰을 소환수로 변경하는 코드 (발동 딜레이 추가바람)
         AuraWeaponSummon = core.SummonSkill("오라웨폰", 0, 6000, (500 + 20 * vEhc.getV(2,1)), 6, (80 +2*vEhc.getV(2,1)) * 1000, cooltime = 180 * 1000, modifier = core.CharacterModifier(armor_ignore = 15, pdamage_indep = (vEhc.getV(2,1) // 5))).isV(vEhc, 2, 1).wrap(core.SummonSkillWrapper)
@@ -91,8 +76,6 @@ class JobGenerator(ck.JobGenerator):
     
         Reincarnation.set_disabled_and_time_left(30000)
         
-        def InfGoungnil():
-            return (Sacrifice.is_active() or Reincarnation.is_active())
         
         DarkImpail.onAfter(FinalAttack)
         GoungnilDescentNoCooltime.onAfter(FinalAttack)
