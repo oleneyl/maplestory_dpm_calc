@@ -10,7 +10,7 @@ class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.buffrem = False
-        self.jobtype = "dex"
+        self.jobtype = "str"
         self.vEnhanceNum = 16
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'reuse')
         self.preEmptiveSkills = 2
