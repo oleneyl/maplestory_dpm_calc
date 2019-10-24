@@ -30,7 +30,7 @@ class JobGenerator(ck.JobGenerator):
         AcuteSence = core.InformedCharacterModifier("어큐트 센스",crit = 35, pdamage_indep = 30)
         CainExpert = core.InformedCharacterModifier("케인 엑스퍼트", att = 40+self.combat, crit_damage = 15, pdamage_indep = 25 + int(self.combat * 0.5))
     
-        ReadyToDiePassive = core.InformedCharacterModifier("레디투다이(패시브)", att = self.vEhc.getV(3,3))
+        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(self.vEhc, 3, 3)
 
         return [
                             HighDexterity, LuckMonopoly, LuckOfPhantomtheif, MoonLight, AcuteSence, CainExpert,
@@ -85,7 +85,7 @@ class JobGenerator(ck.JobGenerator):
     
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
-        ReadyToDie = core.BuffSkill("레디 투 다이", 780, 15*1000, cooltime = (90-int(0.5*vEhc.getV(3,3)))*1000, pdamage_indep = 30+int(0.2*vEhc.getV(3,3))).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
+        ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 3, 3)
         
         #조커가 소환기가 아님!
         Joker = core.SummonSkill("조커", 720, 100*5, 240+9*vEhc.getV(4,4), 1*JOKERRATE*7*5, 7000-1, cooltime = 150000, red = True).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)

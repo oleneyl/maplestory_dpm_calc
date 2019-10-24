@@ -34,7 +34,7 @@ class JobGenerator(ck.JobGenerator):
         ThrowingExpert = core.InformedCharacterModifier("스로잉 엑스퍼트",att = 30, crit_damage = 10)
         DarknessBlessing = core.InformedCharacterModifier("다크니스 블레싱",att = 30, armor_ignore = 15)
 
-        ReadyToDiePassive = core.InformedCharacterModifier("레디 투 다이(패시브)",att = self.vEhc.getV(3,3))
+        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(self.vEhc, 3, 3)
 
         return [ElementalExpert, ElementalHarmony, ThrowingMastery, CriticalThrowing, PhisicalTraining, 
             Adrenalin, ThrowingExpert, DarknessBlessing,
@@ -98,7 +98,7 @@ class JobGenerator(ck.JobGenerator):
         
         CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
 
-        ReadyToDie = core.BuffSkill("레디 투 다이", 780, 15*1000, cooltime = (90-int(0.5*vEhc.getV(3,3)))*1000, pdamage_indep = 30+int(0.2*vEhc.getV(3,3))).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
+        ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 3, 3)
 
         ShadowSpear = core.BuffSkill("쉐도우 스피어", 600, (50+vEhc.getV(0,0))*1000, red = True, cooltime = (181-vEhc.getV(0,0)//2)*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ShadowSpearSmall = core.DamageSkill("쉐도우 스피어(창)", 0, 100+4*vEhc.getV(0,0), 4).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)

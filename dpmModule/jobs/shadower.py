@@ -47,7 +47,7 @@ class JobGenerator(ck.JobGenerator):
         BoomerangStepPassive = core.InformedCharacterModifier("부메랑 스텝(패시브)",pdamage_indep = 25)
         
         ShadowerInstinctPassive = core.InformedCharacterModifier("섀도어 인스팅트(패시브)",armor_ignore = 20)
-        ReadyToDiePassive = core.InformedCharacterModifier("레디 투 다이(패시브)",att = self.vEhc.getV(2,2))
+        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(self.vEhc, 2, 2)
     
         DaggerExpert = core.InformedCharacterModifier("대거 엑스퍼트",att = 40, crit_damage = 15)
         
@@ -104,7 +104,7 @@ class JobGenerator(ck.JobGenerator):
         #_VenomBurst = core.DamageSkill("베놈 버스트", ??) ## 패시브 50%확률로 10초간 160+6*vlevel dot. 사용시 도트뎀 모두 피해 + (500+20*vlevel) * 5. 어차피 안쓰는 스킬이므로 작성X
         
         UltimateDarksight = core.BuffSkill("얼티밋 다크사이트", 750, 30000, cooltime = (220-vEhc.getV(3,3))*1000, pdamage_indep = (10 + int(0.2*vEhc.getV(3,3))/1.05 )).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
-        ReadyToDie = core.BuffSkill("레디 투 다이", 780, 15*1000, cooltime = (90-int(0.5*vEhc.getV(2,2)))*1000, pdamage_indep = 30+int(0.2*vEhc.getV(2,2))).isV(vEhc,2,2).wrap(core.BuffSkillWrapper)
+        ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 2)
         
         Eviscerate = core.DamageSkill("절개", 570, 1900+76*vEhc.getV(0,0), 7*1.7, modifier = core.CharacterModifier(crit=100, armor_ignore=100), cooltime = 14000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 		
