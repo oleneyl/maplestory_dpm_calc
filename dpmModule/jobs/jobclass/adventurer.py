@@ -37,7 +37,8 @@ class InfinityWrapper(core.BuffSkillWrapper):
         self.passedTime = 0
         return super(InfinityWrapper, self)._use(rem = rem, red = red)
 
-# TODO: 작성필요 (globalSkills 코드 참조)
-def MapleHeroes2Wrapper(vEhc, num1, num2):
-    MapleHeroes2 = core.DamageSkill("메이플월드 여신의 축복", 780, 450 + 18*vEhc.getV(num1, num2), 40 + vEhc.getV(num1, num2), cooltime = 30 * 1000).isV(vEhc, num1, num2).wrap(core.DamageSkillWrapper)
+# 테스트 필요
+def MapleHeroes2Wrapper(vEhc, num1, num2, level):
+    MapleHeroes2 = core.BuffSkill("메이플월드 여신의 축복", 450, 60*1000, stat_main = 0.01 * (100 + 10 * vEhc.getV(num1, num2)) * (25 + level * 5), pdamage = 5 + vEhc.getV(num1, num2) // 2, cooltime = 180*1000).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
     return MapleHeroes2
+
