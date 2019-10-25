@@ -9,7 +9,7 @@ def PhalanxChargeWrapper(vEhc, num1, num2):
     return PhalanxCharge
 
 #세부값 확인해서 변경필요
-def CygnusBlessWrapper(vEhc, num1, num2, LEVEL)
+def CygnusBlessWrapper(vEhc, num1, num2, LEVEL):
     if LEVEL < 245:
         CygnusBless = core.BuffSkill("여제 시그너스의 축복", 450, (30+vEhc.getV(num1, num2)//2)*1000, pdamage = (30+vEhc.getV(num1, num2)//5) *1.2 + 20, cooltime = 240*1000).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
     else:
