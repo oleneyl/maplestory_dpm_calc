@@ -93,7 +93,7 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff = core.BuffSkill("오라웨폰 버프", 0, (80 +2*vEhc.getV(2,2)) * 1000, cooltime = 180 * 1000, armor_ignore = 15, pdamage_indep = (vEhc.getV(2,2) // 5)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!    
         AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 4000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 4초간 발동되지 않도록 합니다.
     
-        RegistanceLineInfantry = ResistanceLineInfantryWrapper(vEhc, 3, 3)
+        RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3)
         
         
         

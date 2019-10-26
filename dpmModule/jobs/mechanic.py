@@ -89,7 +89,7 @@ class JobGenerator(ck.JobGenerator):
         Overdrive = OverdriveBuff.Overdrive
         OverdrivePenalty = OverdriveBuff.OverdrivePenalty
     
-        RegistanceLineInfantry = ResistanceLineInfantryWrapper(vEhc, 3, 3)
+        RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3)
         MultipleOptionGattling = core.SummonSkill("멀티플 옵션(개틀링)", 780, 1500, 75+2*vEhc.getV(2,1), 6, (115+6*vEhc.getV(2,1))*1000, cooltime = 200 * 1000).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         MultipleOptionMissle = core.SummonSkill("멀티플 옵션(미사일)", 0, 8000, 350+10*vEhc.getV(2,1), 24, (115+6*vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         

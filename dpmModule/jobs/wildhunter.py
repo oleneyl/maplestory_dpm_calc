@@ -113,7 +113,7 @@ class JobGenerator(ck.JobGenerator):
         WildBalkan = core.DamageSkill("와일드 발칸", 120, 340, 1, modifier = core.CharacterModifier(boss_pdamage=10+20, pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
     
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
-        RegistanceLineInfantry = ResistanceLineInfantryWrapper(vEhc, 3, 3)
+        RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3)
     
         CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 1, 1, 20)
     
