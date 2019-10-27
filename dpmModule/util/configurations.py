@@ -16,7 +16,8 @@ import argparse
 
 
 def export_configuration(jobname):
-    target = get_template_generator('high_standard')().query(6000)(maplejobs.weaponList[jobname])
+    template, _ = get_template_generator('high_standard')().query(6000)
+    target = template(maplejobs.weaponList[jobname])
     supplier = maplejobs.jobMap[jobname]
 
     v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17)

@@ -65,7 +65,7 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill   ######
 
         JUMPRATE = 1
-        BATRATE = 0.22
+        BATRATE = 0.3333
 
         ElementalDarkness = core.BuffSkill("엘리멘탈 : 다크니스", 1440, 180000, armor_ignore = (4+1+1+1) * (2+1+1+1)).wrap(core.BuffSkillWrapper)
         ElementalDarknessDOT = core.DotSkill("엘리멘탈 : 다크니스(도트)", (80 + 40 + 50 + 50) * (2+1+1+1), 100000000).wrap(core.SummonSkillWrapper)
@@ -105,7 +105,7 @@ class JobGenerator(ck.JobGenerator):
         ShadowSpearSmallBat = core.DamageSkill("쉐도우 스피어(창)(배트)", 0, 100+4*vEhc.getV(0,0), 4.0*BATRATE).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ShadowSpearLarge = core.SummonSkill("쉐도우 스피어(거대 창)", 0, 3000, 400 + 32*vEhc.getV(0,0), 6, (50+vEhc.getV(0,0))*1000 - 1, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
 
-        ShadowServentExtend = core.BuffSkill("쉐도우 서번트 익스텐드", 570, (30+vEhc.getV(1,1)//2)*1000, red = True, cooltime = 60000).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
+        ShadowServentExtend = core.BuffSkill("쉐도우 서번트 익스텐드", 570, (25+vEhc.getV(1,1))*1000, red = True, cooltime = 60000).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
 
         ShadowBite = core.DamageSkill("쉐도우 바이트", 810, 600+24*vEhc.getV(2,2), 14).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         ShadowBiteBuff = core.BuffSkill("쉐도우 바이트(버프)", 0, (15+vEhc.getV(2,2)//10)*1000, pdamage_indep = (8+vEhc.getV(2,2)//4), red = True, cooltime = 20000).isV(vEhc,2,2).wrap(core.BuffSkillWrapper)

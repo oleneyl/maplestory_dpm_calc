@@ -155,8 +155,8 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
         PodicMeditaion = core.BuffSkill("포딕 메디테이션", 0, 1800000, att = 40).wrap(core.BuffSkillWrapper)
-        DarkCrescendo = core.BuffSkill("다크 크레센도", 780, 180 * 1000, pdamage = 28, rem = True).wrap(core.BuffSkillWrapper)#<- 제대로 계산 필요함. 딜레이 모름
-        DarknessSocery = core.BuffSkill("다크니스 소서리(버프)", 780, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
+        DarkCrescendo = core.BuffSkill("다크 크레센도", 450, 180 * 1000, pdamage = 28, rem = True).wrap(core.BuffSkillWrapper)#<- 제대로 계산 필요함. 딜레이 모름
+        DarknessSocery = core.BuffSkill("다크니스 소서리(버프)", 510, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
         Memorize = core.BuffSkill("메모라이즈", 600, 10, cooltime = 150 * 1000, rem = True).wrap(core.BuffSkillWrapper)#Memorize <- 역시 제대로 계산 필요함. 딜레이 모음
     
@@ -176,8 +176,8 @@ class JobGenerator(ck.JobGenerator):
         Attack = core.DamageSkill('기본 공격', 0, 0, 0).wrap(core.DamageSkillWrapper)
         
         
-        LightReflection = core.DamageSkill("라이트 리플렉션", 780, 400, 4 * 1.5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        Apocalypse = core.DamageSkill("아포칼립스", 1140, 340, 7 * 1.5,modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        LightReflection = core.DamageSkill("라이트 리플렉션", 720, 400, 4 * 1.5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        Apocalypse = core.DamageSkill("아포칼립스", 855, 340, 7 * 1.5,modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         AbsoluteKill = core.DamageSkill("앱솔루트 킬", 600, 385, 7*2,modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(쿨타임)', 600, 385, 7*2, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)

@@ -149,8 +149,6 @@ class JobGenerator(ck.JobGenerator):
         #### 5차 스킬 ####
         #5차스킬들 마스터리 알파/베타 구분해서 적용할것.
         
-        AuraWeaponSummon = warriors.AuraWeaponWrapper(vEhc, 3, 3)
-
         LimitBreakAttack = core.DamageSkill("리미트 브레이크", 0, 400+15*vEhc.getV(0,0), 5).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = (30+vEhc.getV(0,0)//5) *1.2 + 20, cooltime = 240*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         #LimitBreakFinal = core.DamageSkill("리미트 브레이크 (막타)", 0, '''지속시간 동안 가한 데미지의 20% / 15''', 15)
@@ -258,12 +256,19 @@ class JobGenerator(ck.JobGenerator):
         TimeHolding.onAfters([TimeDistortion.controller(1), ShadowRain.controller(1)])
         TimeHolding.onConstraint(core.ConstraintElement("쉐레사용 이후사용", ShadowRain, ShadowRain.is_not_usable))
 
+        # 오라 웨폰
+        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 2, 2)
+        for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
+                    AdvancedRollingCurve, AdvancedRollingAssulter, StormBreak, UpperStrike, AirRiot, GigaCrash,
+                    FallingStar, AdvancedEarthBreak, TwinBladeOfTime_end]:
+            auraweapon_builder.add_aura_weapon(sk)
+        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
 
         return(ComboHolder,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                    AlphaState, BetaState, DoubleTime, TimeDistortion, TimeHolding, IntensiveTime, LimitBreak,
+                    AlphaState, BetaState, AuraWeaponBuff, DoubleTime, TimeDistortion, TimeHolding, IntensiveTime, LimitBreak,
                     globalSkill.soul_contract()]+\
                 [ShadowRain, TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta]+\
-                []+\
+                [AuraWeaponCooltimeDummy]+\
                 [AuraWeaponSummon]+\
                 [ComboHolder])

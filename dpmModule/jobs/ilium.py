@@ -91,8 +91,8 @@ class JobGenerator(ck.JobGenerator):
         Reaction_Domination = core.DamageSkill("리액션 : 도미네이션", 0, 550, 2, cooltime = 4000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         Craft_Javelin_EnhanceBuff = core.BuffSkill("크래프트:오브(자벨린 강화버프)", 0, 2000, cooltime = -1).wrap(core.BuffSkillWrapper)
         
-        Craft_Javelin = core.DamageSkill("크래프트:자벨린", 510, 405, 4 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Craft_Javelin_AfterOrb = core.DamageSkill("크래프트:자벨린(오브 이후)", 510, 405, 4 * 3, modifier = core.CharacterModifier(pdamage = 20 + 30, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Craft_Javelin = core.DamageSkill("크래프트:자벨린", 510, 375, 4 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Craft_Javelin_AfterOrb = core.DamageSkill("크래프트:자벨린(오브 이후)", 510, 405, 4 * 3, modifier = core.CharacterModifier(pdamage = 20 + 15, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
         Craft_Javelin_Fragment = core.DamageSkill("크래프트:자벨린(파편)", 0, 130, 2 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Reaction_Destruction = core.DamageSkill("리액션 : 디스트럭션", 0, 550, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 4000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
@@ -105,7 +105,7 @@ class JobGenerator(ck.JobGenerator):
         CrystalSkill_MortalSwing = core.DamageSkill("크리스탈 스킬:모탈 스윙", 0, 600, 10, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)    #30
         CrystalSkill_Deus = core.SummonSkill("데우스", 0, 4800, 315, 5, 30*1000, cooltime = -1).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)   #90, 7타
         
-        LonginusZone = core.DamageSkill("롱기누스 존", 900, 1500, 12, cooltime = 180*1000)    #안씀
+        LonginusZone = core.DamageSkill("롱기누스 존", 690, 1500, 12, cooltime = 180*1000)    #안씀
         
         BlessMark = core.BuffSkill("블레스 마크", 0, 99999999, att = 46).wrap(core.BuffSkillWrapper)
         CurseMark = core.BuffSkill("커스 마크", 0, 99999999, armor_ignore = 20).wrap(core.BuffSkillWrapper)
@@ -127,7 +127,7 @@ class JobGenerator(ck.JobGenerator):
         
         GloryWing_MortalWingbit = core.DamageSkill("글로리 윙(모탈 윙비트)", 0, 2000, 8, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #1회
         
-        GloryWing_Craft_Javelin = core.DamageSkill("크래프트:자벨린(글로리 윙)", 540, 450, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 0, True).wrap(core.DamageSkillWrapper)
+        GloryWing_Craft_Javelin = core.DamageSkill("크래프트:자벨린(글로리 윙)", 390, 465, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep=80)).setV(vEhc, 0, 0, True).wrap(core.DamageSkillWrapper)
         GloryWing_Craft_Javelin_Fragment = core.DamageSkill("크래프트:자벨린(글로리 윙)(파편)", 0, 200+100, 3*3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 0, True).wrap(core.DamageSkillWrapper)
         #5차 스킬들
         OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 0, 3)
@@ -141,8 +141,9 @@ class JobGenerator(ck.JobGenerator):
         
         Reaction_Spectrum = core.SummonSkill("리액션:스펙트럼", 0, 1000, 1000+40*vEhc.getV(2,1), 5, 10000, cooltime = -1).wrap(core.SummonSkillWrapper) #1초마다 시전됨.
  
+        # TODO:소오크 소모시 강화 반영필요
         SoulOfCrystal = core.BuffSkill("소울 오브 크리스탈", 660, 30*1000, cooltime = 40*1000).isV(vEhc,1,0).wrap(core.BuffSkillWrapper)
-
+        SoulOfCrystalPassive = core.BuffSkill("소울 오브 크리스탈(패시브)", 0, 999999999, att = (5+vEhc.getV(1,0)*2)).isV(vEhc,1,0).wrap(core.BuffSkillWrapper)
         SoulOfCrystal_Reaction_Domination = core.DamageSkill("리액션 : 도미네이션(소오크)", 0, 550 * 0.01 * (50 + vEhc.getV(1,0)) * 2, 2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         SoulOfCrystal_Reaction_Destruction = core.DamageSkill("리액션 : 디스트럭션(소오크)", 0, 550* 0.01 * (50 + vEhc.getV(1,0)) * 2, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
@@ -207,7 +208,7 @@ class JobGenerator(ck.JobGenerator):
         Reaction_Destruction.protect_from_running()
 
         return(BasicAttackWrapper,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                [SoulOfCrystalPassive, globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Booster, FastCharge, WraithOfGod, MagicCircuitFullDrive, SoulOfCrystal,
                     Craft_Javelin_EnhanceBuff, CrystalCharge, GloryWingUse,
                     OverloadMana, BlessMark, CurseMark,

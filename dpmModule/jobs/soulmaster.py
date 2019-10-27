@@ -70,7 +70,6 @@ class JobGenerator(ck.JobGenerator):
     
         #Damage Skills
         NormalAttack = core.DamageSkill("댄스오브 문,스피딩 선셋", (360+270)/2, 400, 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + MasterOfSword.copy()).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        NormalAttack_AuraWeapon = core.DamageSkill("오라 웨폰", 0, 400 * (75 + vEhc.getV(2,2))*0.01, 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + MasterOfSword.copy()).wrap(core.DamageSkillWrapper)
         
         CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
         
@@ -79,12 +78,8 @@ class JobGenerator(ck.JobGenerator):
 
         SelestialDanceAttack = core.DamageSkill("댄스오브 문,스피딩 선셋(셀레스티얼)", 0, 400*0.01*(30+vEhc.getV(0,2)), 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)+MasterOfSword.copy()).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    #직접사용 X
         
-        AuraWeaponBuff = core.BuffSkill("오라웨폰 버프", 0, (80 +2*vEhc.getV(2,2)) * 1000, cooltime = 180 *1000, armor_ignore = 15, pdamage_indep = (vEhc.getV(2,2) // 5)).isV(vEhc,2,2).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!
-        AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 4000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 4초간 발동되지 않도록 합니다.
-        
         #엘리시온 38타 / 3타
         ElisionTick = core.DamageSkill("크로스 더 스틱스(엘리시온에 의해 발동)", 30 * 1000 / 40, 1450, 5 * 2, modifier = MasterOfSword.copy()).isV(vEhc,1,1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  #40회 반복
-        ElisionTick_AuraWeapon = core.DamageSkill("오라 웨폰(엘리시온)", 0, 1450 * (75 + vEhc.getV(2,2))*0.01, 5 * 2, modifier = MasterOfSword.copy()).isV(vEhc,1,1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  #40회 반복
         ElisionBreak = core.DamageSkill("엘리시온(균열)", 0, 2600 + 104*vEhc.getV(1,1), 12).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)    #3회 발동
         ElisionBuff = core.BuffSkill("엘리시온", 750, 30 * 1000, cooltime = 180 * 1000).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)    #시전딜레이 750ms
         
@@ -109,14 +104,11 @@ class JobGenerator(ck.JobGenerator):
         SoulEclipse.onAfter(SolunaDivide.controller(30*1000))
 
         # 오라 웨폰
-        def AuraWeapon_connection_builder(origin_skill, target_skill):
-            optional = core.OptionalElement(lambda : (AuraWeaponCooltimeDummy.is_not_active() and AuraWeaponBuff.is_active()), target_skill)
-            origin_skill.onAfter(optional)
-            target_skill.onAfter(AuraWeaponCooltimeDummy)
-            
-        AuraWeapon_connection_builder(NormalAttack, NormalAttack_AuraWeapon)
-        AuraWeapon_connection_builder(ElisionTick, ElisionTick_AuraWeapon)    
-        
+        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 2, 2)
+        for sk in [NormalAttack, ElisionTick]:
+            auraweapon_builder.add_aura_weapon(sk)
+        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+
         return(NormalAttack,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     NimbleFinger, TrueSight, SolunaTime, SoulForge, 

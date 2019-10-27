@@ -1118,12 +1118,19 @@ class StackSkillWrapper(BuffSkillWrapper):
     def vary(self, d):
         self.stack = max(min((self.stack + d), self._max), 0)
         return ResultObject(0, CharacterModifier(), 0, sname = self.skill.name, spec = 'graph control')
-        
+    
+    def set_stack(self, d):
+        self.stack = d
+        return ResultObject(0, CharacterModifier(), 0, sname = self.skill.name, spec = 'graph control')
+
     def get_modifier(self):
         return CharacterModifier()
     
-    def stackController(self, d, name = None):
-        task = Task(self, partial(self.vary, d))
+    def stackController(self, d, name = None, dtype='vary'):
+        if dtype=='vary':
+            task = Task(self, partial(self.vary, d))
+        elif dtype=='set':
+            task = Task(self, partial(self.set_stack, d))
         if self._style is not None and name is None:
             name = self._style % (d)
         return TaskHolder(task, name = name)

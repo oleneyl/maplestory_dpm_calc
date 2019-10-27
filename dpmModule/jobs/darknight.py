@@ -62,8 +62,6 @@ class JobGenerator(ck.JobGenerator):
         DarkImpail = core.DamageSkill("다크 임페일", 630, 280, 6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         GoungnilDescentNoCooltime = core.DamageSkill("궁그닐 디센트(무한)", 600, 225, 12, modifier = core.CharacterModifier(armor_ignore = 30+20, pdamage = 20, boss_pdamage = 10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    
         GoungnilDescent = core.DamageSkill("궁그닐 디센트", 600, 225, 12, cooltime = 8000, modifier = core.CharacterModifier(armor_ignore = 30+20, pdamage = 20, boss_pdamage = 10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-
-        #GoungnilDescent_AuraWeapon = core.DamageSkill("오라 웨폰(궁그닐)", 0, 225 * (75 + vEhc.getV(2,1))*0.01, 12, modifier = core.CharacterModifier(armor_ignore = 30+20, pdamage = 20, boss_pdamage = 10)).wrap(core.DamageSkillWrapper)
         
         Sacrifice = core.BuffSkill("새크리파이스", 1080, 30*1000, rem = True, red = True, cooltime = 70000, armor_ignore = 10, boss_pdamage = 10).wrap(core.BuffSkillWrapper)   #궁그닐 쿨 무시, 비홀더 공격시 쿨0.3감소
         Reincarnation = core.BuffSkill("리인카네이션", 0, 40*1000, cooltime = 600000, rem = True, red = True).wrap(core.BuffSkillWrapper) #궁그닐 쿨 무시
@@ -72,19 +70,11 @@ class JobGenerator(ck.JobGenerator):
         DarkThurst = core.BuffSkill("다크 서스트", 900, 30000, cooltime = 120*1000, att = 80).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
-        #AuraWeaponBuff = core.BuffSkill("오라웨폰 버프", 0, (80 +2*vEhc.getV(2,1)) * 1000, cooltime = 180 * 1000, armor_ignore = 15, pdamage_indep = (vEhc.getV(2,1) // 5)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!    
-        #AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 4000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 4초간 발동되지 않도록 합니다.
-        
-        
-        # 오라웨폰을 소환수로 변경하는 코드 (발동 딜레이 추가바람)
-        AuraWeaponSummon = core.SummonSkill("오라웨폰", 0, 6000, (500 + 20 * vEhc.getV(2,1)), 6, (80 +2*vEhc.getV(2,1)) * 1000, cooltime = 180 * 1000, modifier = core.CharacterModifier(armor_ignore = 15, pdamage_indep = (vEhc.getV(2,1) // 5))).isV(vEhc, 2, 1).wrap(core.SummonSkillWrapper)
-    
         DarkSpear = core.DamageSkill("다크 스피어", 990, 350+10*vEhc.getV(1,0), 7*7, cooltime = 10000, red = True, modifier = core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc,1,0).wrap(core.DamageSkillWrapper)
         BiholderImpact = core.SummonSkill("비홀더 임팩트", 0, 100, 300+3*vEhc.getV(0,2), 2, 801, cooltime = 20000, red = True, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).isV(vEhc,0,2).wrap(core.SummonSkillWrapper)#onTick으로 0.3초씩
         PierceCyclone = core.DamageSkill("피어스 사이클론(더미)", 90, 0, 0, cooltime = 180*1000).wrap(core.DamageSkillWrapper)
         PierceCycloneTick = core.DamageSkill("피어스 사이클론", 9000/22, 400+16*vEhc.getV(3,3), 12, modifier = core.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #22타
         PierceCycloneEnd = core.DamageSkill("피어스 사이클론(종료)", 0, 1500+60*vEhc.getV(3,3), 15, modifier = core.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
-        #PierceCycloneEnd_AuraWeapon = core.DamageSkill("오라 웨폰(사이클론)", 0, 1500+60*vEhc.getV(3,3) * (75 + vEhc.getV(2,1))*0.01, 15, modifier = core.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
     
@@ -110,20 +100,16 @@ class JobGenerator(ck.JobGenerator):
         PierceCyclone.onAfter(PierceCyclone_)
 
         # 오라 웨폰
-        '''def AuraWeapon_connection_builder(origin_skill, target_skill):
-            optional = core.OptionalElement(lambda : (AuraWeaponCooltimeDummy.is_not_active() and AuraWeaponBuff.is_active()), target_skill)
-            origin_skill.onAfter(optional)
-            target_skill.onAfter(AuraWeaponCooltimeDummy)
-            
-        AuraWeapon_connection_builder(GoungnilDescent, GoungnilDescent_AuraWeapon)
-        AuraWeapon_connection_builder(PierceCycloneEnd, PierceCycloneEnd_AuraWeapon)'''
+        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 2, 1)
+        for sk in [GoungnilDescent, PierceCycloneEnd]:
+            auraweapon_builder.add_aura_weapon(sk)
+        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
         
         return(BasicAttackWrapped, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-#                    Booster, CrossoverChain, Sacrifice, Reincarnation,EpicAdventure, DarkThurst, AuraWeaponBuff,
-                    Booster, CrossoverChain, Sacrifice, Reincarnation,EpicAdventure, DarkThurst, AuraWeaponSummon,
+                    Booster, CrossoverChain, Sacrifice, Reincarnation,EpicAdventure, DarkThurst, AuraWeaponBuff,
                     globalSkill.soul_contract()] +\
                 [BiholderShock, GoungnilDescent, DarkSpear, PierceCyclone] +\
                 [BiholderDominant, BiholderImpact] +\
-#                [AuraWeaponCooltimeDummy] +\
+                [AuraWeaponCooltimeDummy] +\
                 [BasicAttackWrapped])

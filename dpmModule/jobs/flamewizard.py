@@ -28,12 +28,10 @@ class JobGenerator(ck.JobGenerator):
         
         SpellControl = core.InformedCharacterModifier("스펠 컨트롤",att = 10)
         #이그니션 : 매초 (220% * 1.8) x2-> 폭발하여 240%
-		# 1.2.324 패치 적용
         LiberatedMagic = core.InformedCharacterModifier("해방된 마력",pdamage_indep = 30)
-		
         BurningFocus = core.InformedCharacterModifier("버닝 포커스",crit = 30, crit_damage = 15)
         BriliantEnlightenment = core.InformedCharacterModifier("briliantEnlightenment",stat_main = 60)
-        PureMagic = core.InformedCharacterModifier("마법의 진리", att = 20, pdamage_indep = 50)
+        PureMagic = core.InformedCharacterModifier("순수한 마력", att = 20, pdamage_indep = 50)
         #TODO
         #Elemental Reset --> elemental ignorance +10% --> first we will apply this term as simple pdamage_indep
         return [ElementalExpert, ElementalHarmony, SpellControl, LiberatedMagic, BurningFocus, BriliantEnlightenment, PureMagic]

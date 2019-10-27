@@ -130,11 +130,9 @@ class JobGenerator(ck.JobGenerator):
         ThunderBrake7 = core.DamageSkill("썬더브레이크(6)", 100, (750 + vEhc.getV(0,0)*30)*0.7, 8).wrap(core.DamageSkillWrapper)
         ThunderBrake8 = core.DamageSkill("썬더브레이크(7)", 70, (750 + vEhc.getV(0,0)*30)*0.65, 8).wrap(core.DamageSkillWrapper)
         
-        
         # 단일 대상 기준
         SpiritOfSnow = core.SummonSkill("스피릿 오브 스노우", 720, 3000, 700+40*vEhc.getV(3,1), 9, 30000, red = True, cooltime = 120*1000).isV(vEhc, 3,1).wrap(core.SummonSkillWrapper)
-        
-        
+                
         #Summoning skill
         Elquiness = core.SummonSkill("엘퀴네스", 900, 3030, 380+6*combat, 1, 999999999).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         IceAura = core.SummonSkill("아이스 오라", 0, 1200, 0, 1, 999999999).wrap(core.SummonSkillWrapper)

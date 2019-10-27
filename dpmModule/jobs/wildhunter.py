@@ -121,6 +121,7 @@ class JobGenerator(ck.JobGenerator):
         
         AnotherBite = JaguerStack(chtr.level, vEhc)
         #JaguerMaximum = core. 안씀..
+        #TODO : 재규어맥시멈 사용여부
         WildGrenade = core.SummonSkill("와일드 그레네이드", 0, 4500, 600+24*vEhc.getV(2,2), 5, 9999*10000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
     
         FinalAttack = core.OptionalElement(SilentRampage.is_active, FinalAttack100, FinalAttack70)

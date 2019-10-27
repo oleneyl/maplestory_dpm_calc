@@ -78,7 +78,7 @@ class JobGenerator(ck.JobGenerator):
 
         SoulAttack = core.DamageSkill("귀참", 600, 380, 8+1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DoubleBodyAttack = core.DamageSkill("분혼 격참(공격)", 0, 2000, 1).wrap(core.DamageSkillWrapper)
-        DoubleBody = core.BuffSkill("분혼 격참", 1000, 10000, cooltime = 180000, red = True, pdamage_indep = 50).wrap(core.BuffSkillWrapper)
+        DoubleBody = core.BuffSkill("분혼 격참", 1000, 10000, cooltime = 180000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
     
         #하이퍼스킬
         #정결극 유지율 100%

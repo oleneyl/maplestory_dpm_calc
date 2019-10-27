@@ -49,7 +49,6 @@ def dpm(args):
         try:
             dpm = parser.get_dpm(ulevel = args.ulevel,
             weaponstat = weaponstat,
-            level = args.level,
             printFlag=args.log)
         except:
             raise
