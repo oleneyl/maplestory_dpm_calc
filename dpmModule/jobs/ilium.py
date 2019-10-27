@@ -97,7 +97,7 @@ class JobGenerator(ck.JobGenerator):
         Craft_Javelin_Fragment = core.DamageSkill("크래프트:자벨린(파편)", 0, 130, 2 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Reaction_Destruction = core.DamageSkill("리액션 : 디스트럭션", 0, 550, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 4000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
-        Craft_Longinus = core.DamageSkill("크래프트:롱기누스", 1170, 900, 7, cooltime = 15000).wrap(core.DamageSkillWrapper)
+        Craft_Longinus = core.DamageSkill("크래프트:롱기누스", 1053, 950, 8, cooltime = 15000).wrap(core.DamageSkillWrapper)
         
         Riyo = core.SummonSkill("리요", 900, 500, 140, 1, 180000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper) #임의딜레이 900
         Machina = core.SummonSkill("마키나", 900, 1980, 350, 4, 180000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)    #임의딜레이 900
@@ -127,7 +127,7 @@ class JobGenerator(ck.JobGenerator):
         
         GloryWing_MortalWingbit = core.DamageSkill("글로리 윙(모탈 윙비트)", 0, 2000, 8, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #1회
         
-        GloryWing_Craft_Javelin = core.DamageSkill("크래프트:자벨린(글로리 윙)", 390, 465, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep=80)).setV(vEhc, 0, 0, True).wrap(core.DamageSkillWrapper)
+        GloryWing_Craft_Javelin = core.DamageSkill("크래프트:자벨린(글로리 윙)", 390, 465, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep=40)).setV(vEhc, 0, 0, True).wrap(core.DamageSkillWrapper)
         GloryWing_Craft_Javelin_Fragment = core.DamageSkill("크래프트:자벨린(글로리 윙)(파편)", 0, 200+100, 3*3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 0, True).wrap(core.DamageSkillWrapper)
         #5차 스킬들
         OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 0, 3)

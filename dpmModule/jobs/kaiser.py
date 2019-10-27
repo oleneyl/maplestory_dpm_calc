@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 
 #Combo Instinct - generated sub deal
+#TODO: [윌 오브 소드-스트라이크] : 불길 적중 시 드라코슬래셔의 재사용 대기시간이 즉시 초기화되고 이후 3회 드라코 슬래셔의 재사용 대기시간이 적용되지 않는버프가 걸리는 기능이 추가됩니다. 해당 버프는 윌 오브 소드-스트라이크의재사용 대기시간 동안만 유지됩니다.
 ######   Passive Skill   ######
 class MorphGaugeWrapper(core.StackSkillWrapper):
     def __init__(self, skill):

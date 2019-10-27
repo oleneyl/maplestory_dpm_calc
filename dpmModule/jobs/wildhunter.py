@@ -122,6 +122,10 @@ class JobGenerator(ck.JobGenerator):
         AnotherBite = JaguerStack(chtr.level, vEhc)
         #JaguerMaximum = core. 안씀..
         #TODO : 재규어맥시멈 사용여부
+# MP 1000 소비, 12초[10초+10레벨당 1초] 동안 무적이 되어 최대 15명의 적을 2000%의 데미지로 연속해서 12번 공격하는 공격을 3회 시전 후 3600%의 데미지로 15번 마무리 공격[기본 공격: (스킬 레벨*40+1000)%의 데미지, 마무리 공격: (스킬 레벨*72+1800)%의 데미지], 추가 크리티컬 확률 100%, 몬스터 방어율 100% 추가 무시
+#공격 중 스킬을 다시 사용하여 즉시 마무리 공격 사용 가능
+#재규어에 탑승하지 않았다면 탑승한 후에 스킬을 사용하며, 탑승할 때도 무적 적용
+#재사용 대기시간 150초
         WildGrenade = core.SummonSkill("와일드 그레네이드", 0, 4500, 600+24*vEhc.getV(2,2), 5, 9999*10000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
     
         FinalAttack = core.OptionalElement(SilentRampage.is_active, FinalAttack100, FinalAttack70)

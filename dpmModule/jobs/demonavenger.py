@@ -103,11 +103,6 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         # 펫에 등록한 걸로 가정.
         #Booster = core.BuffSkill("부스터", 600, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
-        
-        
-        #5차스킬 (수정필요)
-        AuraWeaponBuff = core.BuffSkill("오라웨폰 버프", 0, (80 +2*vEhc.getV(2,2)) * 1000, cooltime = 180 * 1000, armor_ignore = 15, pdamage_indep = (vEhc.getV(1,1) // 5)).isV(vEhc,2,2).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!
-        AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 6000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 6초간 발동되지 않도록 합니다.
     
         CallMastema = core.SummonSkill("콜 마스테마", 690, 5000, 1100, 8, (30+vEhc.getV(4,4))*1000, cooltime = 150*1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
         #CallMastemaAnother = core.SummonSkill("콜 마스테마+", 0, ).wrap(core.BuffSkillWrapper)    #러블리 테리토리..데미지 없음.

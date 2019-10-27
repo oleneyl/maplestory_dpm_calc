@@ -8,9 +8,8 @@ from .jobclass import resistance
 from .jobbranch import pirates
 
 #TODO:
-#[서포트 웨이버 : H-EX] : 마스터 기준 방어율 감소량이 20%에서10%로 감소되지만 보스 몬스터에게도 적용되게 됩니다. HP 자동회복이 순수 HP 20% 회복에서 최대 HP 8% 회복으로변경되고 설치 즉시 회복하지 않게 됩니다.
 
-#[로봇 마스터리] : 로봇의 최종 데미지 증가량과 같은 수치의 데미지가 추가로 증가하는 현상이수정됩니다. 마스터 기준 로보 런처 : RM7의 데미지 90% 기능이 135%p 증가로 변경되고 로봇의 최종 데미지 증가량이70%에서 105%로 증가됩니다.
+#[로봇 마스터리] : 로봇의 최종 데미지 증가량이 70%에서 105%로 증가됩니다.
 
 #[메탈아머 전탄발사] : 25레벨 기준 공격 횟수가 10회에서11회로 추가로 발사되는 호밍 미사일이 6개에서 7개로 증가됩니다. 스킬 종료 후 호밍 미사일 사용불가 시간이 좀 더정확하게 적용되게 됩니다.
 
@@ -66,13 +65,13 @@ class JobGenerator(ck.JobGenerator):
         #로봇들 :: 로봇당 총뎀6%
         Opengate = core.SummonSkill("오픈 게이트:GX-9", 600, 300*1000, 0,0,300*1000*1.4, rem = True).wrap(core.SummonSkillWrapper)#임의 딜레이
         
-        Robolauncher = core.SummonSkill("로보런쳐:RM7", 630, 1000, 250*2.05, 1, 60*1000*1.4, rem=True, modifier = core.CharacterModifier(pdamage=90)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        Robolauncher = core.SummonSkill("로보런쳐:RM7", 630, 1000, (250+135)*2.05, 1, 60*1000*1.4, rem=True).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         RobolauncherFinal = core.DamageSkill("로보런쳐:RM7(폭발)", 0, 400*2.05, 1, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         RobolauncherBuff = core.BuffSkill("로보런쳐:RM7(버프)", 0, 60*1000*1.4, cooltime = -1, pdamage = 6).wrap(core.BuffSkillWrapper)
         #MagneticField = core.SummonSkill("마그네틱 필드", ?, ?, 200, 60*1000, cooltime = 180*1000) 자폭 550% V.getEhc(2, vEnhance[0])
         
         SupportWaver = core.SummonSkill("서포트 웨이버", 630, 80000*1.4, 0, 0, 80*1000*1.4).wrap(core.SummonSkillWrapper)
-        SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*1.4, pdamage_indep=10, pdamage= 5 + 6, cooltime = -1, armor_ignore=10).wrap(core.BuffSkillWrapper)    #소환수직속 영향받게..
+        SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*1.4, pdamage_indep=15, pdamage= 5 + 6, cooltime = -1, armor_ignore=10).wrap(core.BuffSkillWrapper)    #하이퍼(+5), 소환수직속 영향받게..
         SupportWaverFinal = core.DamageSkill("서포트 웨이버(폭발)", 0, 1100*2.05, 1, cooltime = -1).wrap(core.DamageSkillWrapper)
         
         RoboFactory = core.SummonSkill("로보 팩토리", 630, 3000, 500*2.05, 3, 30*1000*1.4, cooltime=60*1000).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)

@@ -6,7 +6,6 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import pirates
-# TODO: 분혼 격참 분신 데미지 50% -> 25%
 
 class SoulTrapBuffWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
