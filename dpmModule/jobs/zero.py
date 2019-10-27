@@ -270,5 +270,5 @@ class JobGenerator(ck.JobGenerator):
                     globalSkill.soul_contract()]+\
                 [ShadowRain, TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta]+\
                 [AuraWeaponCooltimeDummy]+\
-                [AuraWeaponSummon]+\
+                []+\
                 [ComboHolder])

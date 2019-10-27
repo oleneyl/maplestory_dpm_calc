@@ -134,7 +134,7 @@ class JobGenerator(ck.JobGenerator):
     
         Insizing.onAfters([InsizingBuff, AdvancedFinalAttack, ComboAttack.stackController(-2)])
     
-        ComboDeathFault.onAfters([ComboDeathFaultBuff, ComboAttack.stackController(-6)])    #is_usable() 콜로 체크 필수.
+        ComboDesfort.onAfters([ComboDesfortBuff, ComboAttack.stackController(-6)])    #is_usable() 콜로 체크 필수.
 
         Panic.onAfter(PanicBuff)
         Panic.onAfter(ComboAttack.stackController(-2))
@@ -148,10 +148,10 @@ class JobGenerator(ck.JobGenerator):
         return(RaisingBlowInrage,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
                     ComboAttack, Fury, EpicAdventure, Valhalla, 
-                    InsizingBuff, AuraWeaponBuff, ComboDeathFaultBuff, 
+                    InsizingBuff, AuraWeaponBuff, ComboDesfortBuff, 
                     ComboInstinct, ComboInstinctOff, PanicBuff,
                     globalSkill.soul_contract()] +\
-                [Panic, Insizing, ComboDeathFault] +\
+                [Panic, Insizing, ComboDesfort] +\
                 [SwordOfBurningSoul] +\
                 [AuraWeaponCooltimeDummy] +\
                 [RaisingBlowInrage])
