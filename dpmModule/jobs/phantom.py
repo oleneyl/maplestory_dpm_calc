@@ -4,38 +4,10 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobclass import heroes
+from .jobbranch import thieves
 
-class FridWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc):
-        super(FridWrapper, self).__init__(skill = core.BuffSkill("프리드의 가호 더미", 0,0).isV(vEhc,0,0))
-        self.vlevel = vEhc.getV(0,0)
-        vlevel = self.vlevel
-        self.skillList = [core.BuffSkill("프리드의 가호 0스택(더미)", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 1스택", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 2스택", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 3스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25),
-                    core.BuffSkill("프리드의 가호 4스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel)),
-                    core.BuffSkill("프리드의 가호 5스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel)),
-                    core.BuffSkill("프리드의 가호 6스택", 0, 30 * 1000, cooltime = 240 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel))]
-        self.state = 0
-
-    def _use(self, rem = 0, red = 0) -> core.ResultObject:
-        self.onoff = True
-        self.state += 1
-        if self.state > 6:
-            self.state -= 6        
-        self.skill = self.skillList[self.state]
-        self.timeLeft = self.skill.remain * (1 + 0.01*rem * self.skill.rem)
-        self.cooltimeLeft = self.skill.cooltime * (1 - 0.01*red* self.skill.red)
-        self.onoff = True
-        if self.cooltimeLeft > 0:
-            self.available = False
-        delay = self.skill.delay
-        mdf = self.get_modifier()
-        return core.ResultObject(delay, mdf, 0, sname = self._id, spec = 'buff', kwargs = {"remain" : self.skill.remain * (1+0.01*rem*self.skill.rem)})
-        #return delay, mdf, 0, self.cascade
-
-
+# TODO : [마크 오브 팬텀] : 괴도의 증표를 1개 모으는데 필요한 얼티밋 드라이브 적중 수가 5회에서 7회로 증가됩니다. 템페스트 오브 카드로도 괴도의 증표를 모을 수 있게 됩니다. 얼티밋 드라이브와 같은 횟수를 공격해야 괴도의 증표를 획득 할 수 있습니다.
 ######   Passive Skill   ######
 
 
@@ -58,7 +30,7 @@ class JobGenerator(ck.JobGenerator):
         AcuteSence = core.InformedCharacterModifier("어큐트 센스",crit = 35, pdamage_indep = 30)
         CainExpert = core.InformedCharacterModifier("케인 엑스퍼트", att = 40+self.combat, crit_damage = 15, pdamage_indep = 25 + int(self.combat * 0.5))
     
-        ReadyToDiePassive = core.InformedCharacterModifier("레디투다이(패시브)", att = self.vEhc.getV(3,3))
+        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(self.vEhc, 3, 3)
 
         return [
                             HighDexterity, LuckMonopoly, LuckOfPhantomtheif, MoonLight, AcuteSence, CainExpert,
@@ -113,7 +85,7 @@ class JobGenerator(ck.JobGenerator):
     
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
-        ReadyToDie = core.BuffSkill("레디 투 다이", 780, 15*1000, cooltime = (90-int(0.5*vEhc.getV(3,3)))*1000, pdamage_indep = 30+int(0.2*vEhc.getV(3,3))).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
+        ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 3, 3)
         
         #조커가 소환기가 아님!
         Joker = core.SummonSkill("조커", 720, 100*5, 240+9*vEhc.getV(4,4), 1*JOKERRATE*7*5, 7000-1, cooltime = 150000, red = True).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
@@ -131,7 +103,7 @@ class JobGenerator(ck.JobGenerator):
         
         FinalCut.onAfter(FinalCutBuff)
         
-        Frid = FridWrapper(vEhc)
+        Frid = heroes.FridWrapper(vEhc, 0, 0)
         
         CardStack = core.StackSkillWrapper(core.BuffSkill("카드 스택", 0, 99999999), 40, name = "느와르 카르트 스택")
         

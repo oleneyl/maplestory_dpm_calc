@@ -6,6 +6,10 @@ Shoes = it.Item(stat_main = 20, stat_sub = 20, att = 5)
 Cloak = it.Item(stat_main = 15, stat_sub = 15, att = 2)
 Shoulder = it.Item(stat_main = 14, stat_sub = 14, att = 10)
 
+# 업횟 11+1
+# 일반적인 템셋에서 카벨 모자를 사용할 직업은 제로뿐이므로 앱솔/아케인 무기 착용으로 가정
+#ChaosVellumHelm = it.Item(stat_main = 23, stat_sub = 23, att = 1, boss_pdamage = 30)
+
 _valueMap = [[103, [0,16,23,32,42,53]],
                 [150,[0,23,33,46,60,77]],
                 [154,[0,24,34,47,62,79]],

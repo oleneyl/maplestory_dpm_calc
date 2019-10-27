@@ -5,6 +5,12 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobclass import heroes
+from .jobbranch import warriors
+
+##### TODO: 소스코드 전체 작성 (현재 닼나 복붙) #####
+
+# 최저 콤보 카운트 500 가정
 
 #TODO : 5차 신스킬 적용
 

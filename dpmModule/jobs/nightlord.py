@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, MutualRule, ConcurrentRunRule
 from . import globalSkill
+from .jobbranch import thieves
 #TODO : 5차 신스킬 적용
 
 ######   Passive Skill   ######
@@ -15,7 +16,7 @@ class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.vEnhanceNum = 11
-        self.jobtype = "str"
+        self.jobtype = "luk"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
@@ -38,9 +39,10 @@ class JobGenerator(ck.JobGenerator):
         DarkSerenity = core.InformedCharacterModifier("다크 세레니티",att = 40, armor_ignore = 30)
         
         JavelineExpert = core.InformedCharacterModifier("자벨린 엑스퍼트",att = 30, crit_damage = 15)
+        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(self.vEhc, 1, 1)
         
         return [NimbleBody, CriticalThrow, PhisicalTraining, 
-                Adrenalin, JavelinMastery, PurgeAreaPassive, DarkSerenity, JavelineExpert]
+                Adrenalin, JavelinMastery, PurgeAreaPassive, DarkSerenity, JavelineExpert, ReadyToDiePassive]
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 75)
@@ -65,7 +67,7 @@ class JobGenerator(ck.JobGenerator):
         BleedingToxin = core.BuffSkill("블리딩 톡신", 600, 90*1000, cooltime = 200 * 1000, att = 60).wrap(core.BuffSkillWrapper) #딜레이 모름
         BleedingToxinDot = core.DotSkill("블리딩 톡신(도트)", 1000, 90*1000).wrap(core.SummonSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        ReadyToDiePassive = core.BuffSkill("레디 투 다이(패시브)", 0, 9999 * 100000, att = vEhc.getV(1,1)).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
+
         
         QuarupleThrow =core.DamageSkill("쿼드러플 스로우", 600, 378, 5 * 1.7, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)    #쉐도우 파트너 적용
         
@@ -77,7 +79,7 @@ class JobGenerator(ck.JobGenerator):
         #_VenomBurst = core.DamageSkill("베놈 버스트", ??) ## 패시브 50%확률로 10초간 160+6*vlevel dot. 사용시 도트뎀 모두 피해 + (500+20*vlevel) * 5. 어차피 안쓰는 스킬이므로 작성X
         
         UltimateDarksight = core.BuffSkill("얼티밋 다크사이트", 750, 30*1000, cooltime = (220-vEhc.getV(3,3))*1000, pdamage_indep=int(0.5*vEhc.getV(3,3))).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
-        ReadyToDie = core.BuffSkill("레디 투 다이", 780, 15*1000, cooltime = (90-int(0.5*vEhc.getV(1,1)))*1000, pdamage_indep = 30+int(0.2*vEhc.getV(1,1))).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
+        ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 1, 1)
 #        ReadyToDie = core.BuffSkill("레디 투 다이", 780, 30*1000, cooltime = (90-int(0.5*vlevel))*1000, pdamage_indep = 30+int(0.2*vlevel)).wrap(core.BuffSkillWrapper)
         
         #조건부 파이널어택으로 설정함.
@@ -106,7 +108,7 @@ class JobGenerator(ck.JobGenerator):
         return (QuarupleThrow, 
             [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     ShadowPartner, SpiritJavelin, PurgeArea, BleedingToxin, EpicAdventure, 
-                    ReadyToDiePassive, UltimateDarksight, ReadyToDie, SpreadThrowInit,
+                    UltimateDarksight, ReadyToDie, SpreadThrowInit,
                     globalSkill.soul_contract()] + \
                 [ArcaneOfDarklordFinal] + \
                 [Pungma, ArcaneOfDarklord, BleedingToxinDot] +\

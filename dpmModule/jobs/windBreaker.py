@@ -4,22 +4,9 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import bowmen
+from .jobclass import cygnus
 #TODO : 5차 신스킬 적용
-
-class CriticalReinforceWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc, character : ck.AbstractCharacter):
-        skill = core.BuffSkill("크리티컬 리인포스", 780, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,3,3)
-        super(CriticalReinforceWrapper, self).__init__(skill)
-        self.char = character
-        self.inhancer = (20 + vEhc.getV(3,3))*0.01
-        
-    def get_modifier(self):
-        if self.onoff:
-            #print(self.char.get_modifier().crit)
-            return core.CharacterModifier(crit_damage = self.inhancer * max(0,self.char.get_modifier().crit+55))
-        else:
-            return self.disabledModifier        
-
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -85,7 +72,7 @@ class JobGenerator(ck.JobGenerator):
         MercilesswindDOT = core.DotSkill("아이들 윔(도트)", 1000, 9000).wrap(core.SummonSkillWrapper)
     
         #Summon Skills
-        GuidedArrow = core.SummonSkill("가이디드 애로우", 720, 660, 400+16*vEhc.getV(5,5), 1, 60 * 1000, cooltime = 60 * 1000).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
+        GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 5, 5)
         HowlingGail = core.SummonSkill("하울링 게일 1스택", 780, 10 * 1000 / 33, 250 + 10*vEhc.getV(1,1), 2 * 3, 10000, cooltime = 20 * 1000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) #딜레이 모름, 64���
         WindWall = core.SummonSkill("윈드 월", 720, 2000, (550 + vEhc.getV(2,2)*22) / 2, 12 , 45 * 1000, cooltime = 90 * 1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
         #TODO : 이볼브 계산
@@ -93,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
         
         ######   Skill Wrapper   #####
         
-        CriticalReinforce = CriticalReinforceWrapper(vEhc, chtr) #Maybe need to sync
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 3, 3, 55) #Maybe need to sync
     
         #Damage
         SongOfHeaven.onAfters([TriflingWhim, StormBringer])

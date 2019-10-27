@@ -8,6 +8,8 @@ from . import globalSkill
 
 #TODO : 5차 신스킬 적용
 
+# 오라웨폰 변경 시범적용
+
 ######   Passive Skill   ######
 
 class JobGenerator(ck.JobGenerator):
@@ -69,7 +71,6 @@ class JobGenerator(ck.JobGenerator):
         #Summon Skills
         BlessedHammer = core.SummonSkill("블레스드 해머", 0, 600, (250 + vEhc.getV(1,1)*10), 2, 999999* 10000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)   #딜레이 반영
         BlessedHammerActive = core.SummonSkill("블레스드 해머(활성화)", 0, 600, (525+vEhc.getV(1,1)*21)*3-(250+vEhc.getV(1,1)*10)*2, 1, 30 * 1000, cooltime = 60 * 1000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)#딜레이 반영
-                
         #http://www.inven.co.kr/board/maple/2294/21881?category=%ED%8C%94%EB%9D%BC%EB%94%98&name=subject&keyword=%EA%B7%B8%ED%81%AC
         #TODO : 오라웨폰 미발동 적용해야 할 필요 있음.
         GrandCrossSmallTick = core.DamageSkill("그랜드 크로스(작은)", 800, 350 + vEhc.getV(3,3)*14, 13, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s

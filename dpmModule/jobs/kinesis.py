@@ -4,7 +4,13 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import magicians
+# TODO:
+# [에버싸이킥] : 사용 즉시 싸이킥 포인트가 증가하게 됩니다.
 
+# [싸이킥 토네이도] : 물체를 던졌을 때 폭발이 3회발생하게 됩니다.
+
+# [얼티메이트-싸이킥 불릿] : 전방을 공격하는 스킬보스 몬스터에게 적중해야 싸이킥 포인트 1칸이 회복되게 됩니다. 마이크로블랙홀 적중 시 싸이킥 포인트 회복은 변경되지 않습니다.
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -98,7 +104,7 @@ class JobGenerator(ck.JobGenerator):
         PsychicOver = core.BuffSkill("싸이킥 오버", 0, 30000, cooltime = 210000).wrap(core.BuffSkillWrapper) # 소모량 절반 / 포인트 지속증가(초당 1)
         PsychicOverSummon = core.SummonSkill("싸이킥 오버(소환)", 0, 1000, 0, 0, 30000, cooltime = -1).wrap(core.SummonSkillWrapper)
         try:
-            OverloadMana = core.BuffSkill("오버로드 마나", 0, 99999 * 10000, pdamage_indep = 8+int(0.1*vEhc.getV(1,1))).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
+            OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 1)
         except:
             print(vEhc)
             raise

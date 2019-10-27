@@ -4,6 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import thieves
 
 #TODO : 5차 신스킬 적용
 # Refernce : https://m.blog.naver.com/oe135/221095516055
@@ -67,9 +68,10 @@ class JobGenerator(ck.JobGenerator):
         
         WeaponMastery = core.InformedCharacterModifier("웨폰 엑스퍼트", att = 30, crit = 30, crit_damage = 15)
         QuickserviceMind_II = core.InformedCharacterModifier("퀵서비스 마인드 II", att = 30, crit_damage  =5, crit = 10)
+        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(self.vEhc, 2, 3)
         
         return [CollectingForLeap, PhisicalTraining,
-                                    QuickserviceMind, BasicDetection, WeaponMastery, QuickserviceMind_II]
+                                    QuickserviceMind, BasicDetection, WeaponMastery, QuickserviceMind_II, ReadyToDiePassive]
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 20, crit_damage = 20, pdamage = 20)
@@ -151,7 +153,7 @@ class JobGenerator(ck.JobGenerator):
         VenomBurst = core.SummonSkill("베놈 버스트", 0, 1000, 160+6*vEhc.getV(4,4), 1, 99999999).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
         VenomBurst_Poison = core.BuffSkill("베놈 버스트(중독)", 0, 15000, crit=2, crit_damage = 10, cooltime = -1).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         
-        ReadyToDie = core.BuffSkill("레디 투 다이", 780, 15*1000, cooltime = (90-int(0.5*vEhc.getV(2,3)))*1000, pdamage_indep = 30+int(0.2*vEhc.getV(2,3))).isV(vEhc,2,3).wrap(core.BuffSkillWrapper)
+        ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 3)
         
         ChainArts_Fury = core.BuffSkill("체인아츠:퓨리", 540, (35+vEhc.getV(0,0))*1000, cooltime = (180-vEhc.getV(0,0))*1000 ).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ChainArts_Fury_Damage = core.DamageSkill("체인아츠:퓨리(공격)", 0, 250+10*vEhc.getV(0,0), 6).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)

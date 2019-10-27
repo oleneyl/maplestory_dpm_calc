@@ -4,30 +4,9 @@ from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, SynchronizeRule
 from . import globalSkill
+from .jobclass import adventurer
+from .jobbranch import magicians
 #TODO : 도트데미지 적용 / 포이즌노바 / 퓨리오브 이프리트
-
-#Infinity Graph Element
-class InfinityWrapper(core.BuffSkillWrapper):
-    def __init__(self, serverlag = 3):
-        skill = core.BuffSkill("인피니티", 960, 40000, cooltime = 180 * 1000, rem = True, red = True)
-        super(InfinityWrapper, self).__init__(skill)
-        self.passedTime = 0
-        self.serverlag = serverlag
-        
-    def spend_time(self, time):
-        if self.onoff:
-            self.passedTime += time
-        super(InfinityWrapper, self).spend_time(time)
-            
-    def get_modifier(self):
-        if self.onoff:
-            return core.CharacterModifier(pdamage_indep = (70 + 4 * (self.passedTime // ((4+self.serverlag)*1000))) )
-        else:
-            return core.CharacterModifier()
-        
-    def _use(self, rem = 0, red = 0):
-        self.passedTime = 0
-        return super(InfinityWrapper, self)._use(rem = rem, red = red)
 
 '''This function is recommended.
 '''
@@ -91,7 +70,7 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Meditation = core.BuffSkill("메디테이션", 0, 240000, att = 30, rem = True, red = True).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        OverloadMana = core.BuffSkill("오버로드 마나", 0, 99999 * 10000, pdamage_indep = 8+int(0.1*vEhc.getV(1,5))).isV(vEhc,1,5).wrap(core.BuffSkillWrapper)
+        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 5)
         
         #Damage Skills
         #Full speed, No Combat Orders
@@ -127,7 +106,7 @@ class JobGenerator(ck.JobGenerator):
         PoisonNovaDOT = core.DotSkill("도트(포이즌 노바)", 300+12*vEhc.getV(2,1), 20000).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         
         
-        Infinity = InfinityWrapper()
+        Infinity = adventurer.InfinityWrapper()
         
         Paralyze.onAfters([MeteorPassive, Ignite, ParalyzeDOT.controller(1)])
         

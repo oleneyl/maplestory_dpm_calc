@@ -4,22 +4,11 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import bowmen
 
 #TODO : 5차 신스킬 적용
+#TODO : 윈드 오브 프레이 추가
 
-class CriticalReinforceWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc, character : ck.AbstractCharacter):
-        skill = core.BuffSkill("크리티컬 리인포스", 780, 30 * 1000, cooltime = 120 * 1000).isV(vEhc, 3,3)
-        super(CriticalReinforceWrapper, self).__init__(skill)
-        self.char = character
-        self.inhancer = (20 + vEhc.getV(3,3))*0.01
-        
-    def get_modifier(self):
-        if self.onoff:
-            return core.CharacterModifier(crit_damage = self.inhancer * max(0,self.char.get_modifier().crit + 20))
-        else:
-            return self.disabledModifier    
-            
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -88,7 +77,7 @@ class JobGenerator(ck.JobGenerator):
         
         #Summon Skills
         Pheonix = core.SummonSkill("피닉스", 900, 2670, 390, 1, 220 * 1000).setV(vEhc, 5, 3, True).wrap(core.SummonSkillWrapper)
-        GuidedArrow = core.SummonSkill("가이디드 애로우", 720, 330, 400+16*vEhc.getV(4,4), 1, 30 * 1000, cooltime = 60 * 1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
+        GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(5,5)))*1000).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
         
         #잔영의시 미적용
@@ -105,7 +94,7 @@ class JobGenerator(ck.JobGenerator):
         Pheonix.onConstraint(core.ConstraintElement("이볼브 사용시 사용 금지", Evolve, Evolve.is_not_active))
             
     
-        CriticalReinforce = CriticalReinforceWrapper(vEhc, chtr) #Maybe need to sync
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 3, 3, 20) #Maybe need to sync
     
         ArrowOfStorm.onAfter(AdvancedQuibberAttack)
         ArrowOfStorm.onAfter(AdvancedFinalAttack)

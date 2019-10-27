@@ -5,6 +5,10 @@ from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
+from .jobclass import resistance
+from .jobbranch import magicians
+# TODO: 오버로드 마나를 정말 안쓰는 것인지 확인필요
+
 ######   Passive Skill   ######
 
 class JobGenerator(ck.JobGenerator):
@@ -28,7 +32,7 @@ class JobGenerator(ck.JobGenerator):
         ArtOfStaff = core.InformedCharacterModifier("아트 오브 스태프",att = 20, crit = 15)
         StaffMastery = core.InformedCharacterModifier("스태프 마스터리",att = 30, crit = 20)
         HighWisdom =  core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
-        BattleMastery = core.InformedCharacterModifier("배틀 마스터리",pdamage_indep=10, crit_damage = 20)
+        BattleMastery = core.InformedCharacterModifier("배틀 마스터리",pdamage_indep = 10, crit_damage = 20)
         DarkAuraPassive = core.InformedCharacterModifier("다크 오라(패시브)", patt=15)
         
         #택 1
@@ -78,9 +82,11 @@ class JobGenerator(ck.JobGenerator):
         FinishBlow_M_U = core.DamageSkill("사신의 낫(마오데)", 720+60, 300, 12+1, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         # TODO : [마스터 오브 데스] : 사용 중 데스의 최종 데미지가 50% 증가하는 기능이 추가됩니다. V1.2.316
+        # MasterOfDeath 발동시에 Death를 비활성화시키고 Death_MOD를 활성화, 종료시에 Death_MOD를 비활성화시키고 Death를 활성화. 더 좋은 방법이 있을지...
         Death = core.SummonSkill("데스", 0, 5000, 200+chtr.level, 12, 99999*100000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
+        #Death_MOD = core.SummonSkill("데스 (마스터 오브 데스)", 0, 5000, (200+chtr.level) * 1.5, 12, 99999*100000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         
-        RegistanceLineInfantry = core.SummonSkill("레지스탕스 라인 인팬트리", 360, 1000, 215+8*vEhc.getV(4,4), 9, 10*1000, cooltime = 25000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
+        RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 4, 4)
         UnionAura = core.BuffSkill("유니온 오라", 810, (vEhc.getV(1,1)//2+25)*1000, cooltime = 100*1000, pdamage=20, boss_pdamage=10, att=50).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         BlackMagicAlter = core.SummonSkill("블랙 매직 알터", 690 * 2*2.5, 800, 800+32*vEhc.getV(0,0), 4, 40*1000, cooltime = 50*1000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)    #가동률 60%
         GrimReaper = core.SummonSkill("그림 리퍼", 720, 4000, 800+32*vEhc.getV(2,2), 12, 62*1000, cooltime=100*1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #공격시 지속2초증가->지속62s
@@ -118,7 +124,7 @@ class JobGenerator(ck.JobGenerator):
         BattlekingBar2.onAfter(UseMark)
         
         BlackMagicAlter.onTick(MarkStack.stackController(1))
-                
+        
         return(FinishBlowEndpoint,
                 [Booster, WillOfLiberty, MasterOfDeath, UnionAura,
                 globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),

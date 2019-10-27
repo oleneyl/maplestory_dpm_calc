@@ -4,36 +4,9 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
-
-class FridWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc):
-        super(FridWrapper, self).__init__(skill = core.BuffSkill("프리드의 가호 더미", 0,0).isV(vEhc,0,0))
-        self.vlevel = vEhc.getV(0,0)
-        vlevel = self.vlevel
-        self.skillList = [core.BuffSkill("프리드의 가호 0스택(더미)", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 1스택", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 2스택", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 3스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25),
-                    core.BuffSkill("프리드의 가호 4스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel)),
-                    core.BuffSkill("프리드의 가호 5스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel)),
-                    core.BuffSkill("프리드의 가호 6스택", 0, 30 * 1000, cooltime = 240 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel))]
-        self.state = 0
-
-    def _use(self, rem = 0, red = 0) -> core.ResultObject:
-        self.onoff = True
-        self.state += 1
-        if self.state > 6:
-            self.state -= 6        
-        self.skill = self.skillList[self.state]
-        self.timeLeft = self.skill.remain * (1 + 0.01*rem * self.skill.rem)
-        self.cooltimeLeft = self.skill.cooltime * (1 - 0.01*red* self.skill.red)
-        self.onoff = True
-        if self.cooltimeLeft > 0:
-            self.available = False
-        delay = self.skill.delay
-        mdf = self.get_modifier()
-        return core.ResultObject(delay, mdf, 0, sname = self._id, spec = 'buff', kwargs = {"remain" : self.skill.remain * (1+0.01*rem*self.skill.rem)})
-        #return delay, mdf, 0, self.cascade
+from .jobclass import heroes
+from .jobbranch import pirates
+# TODO: 분혼 격참 분신 데미지 50% -> 25%
 
 class SoulTrapBuffWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
@@ -63,7 +36,7 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 60)
         SpiritLink_3 = core.InformedCharacterModifier("정령 결속 3",att = 20, pdamage = 20)
 
-        SpiritLink_4 = core.InformedCharacterModifier("정령 결속 4",armor_ignore = 30, boss_pdamage = 30, pdamage_indep=15)
+        SpiritLink_4 = core.InformedCharacterModifier("정령 결속 4",armor_ignore = 30, boss_pdamage = 30, pdamage_indep = 15)
         AdvancedNuckleMastery = core.InformedCharacterModifier("고급 너클 숙련",crit_damage = 20, pdamage_indep = 10)
         WeaknessFinding = core.InformedCharacterModifier("약점 간파",crit = 25)
         #체력 50%이하인 적에게 크리율 65%, 크뎀 20% 증가??
@@ -115,6 +88,7 @@ class JobGenerator(ck.JobGenerator):
         EnhanceSpiritLinkSummon_J = core.SummonSkill("수호 정령(소혼 장막)", 0, 150, 150, 1, 4800, cooltime = -1).wrap(core.SummonSkillWrapper)
         
         #소혼 장막을 은월이 시전해야함
+        #소혼 장막: 최대 10명의 적을 150% 데미지로 4.8초 동안 지속 공격, 수호 정령이 소혼 장막을 시전 하는 동안 은월이 시전하는 소혼장막의 최종 데미지 700% 증가. 재사용 대기시간 60초
         EnhanceSpiritLinkSummon_J_Buff = core.BuffSkill("수호 정령(소혼 장막)(버프)", 0, 4800, cooltime = -1, pdamage_indep = 450).wrap(core.BuffSkillWrapper)
         EnhanceSpiritLinkSummon_J_Damage = core.DamageSkill("소혼 장막", 150, 200*5.5, 1).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
     
@@ -123,10 +97,14 @@ class JobGenerator(ck.JobGenerator):
         #2중첩 럭다 재사용 50초 감소 / 방어력40% / 체엠 30% / 크리율25% / 뎀증30 / 경치40
         #7 발동시 방무 20 -> 30
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        Frid = FridWrapper(vEhc)
+        Frid = heroes.FridWrapper(vEhc, 0, 0)
     
-        Overdrive = core.BuffSkill("오버드라이브", 540, 30*1000, cooltime = (70 - 0.2*vEhc.getV(5,5))*1000, att = 1.5*(45 + vEhc.getV(5,5))).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) #무기공의 (30+vlevel)만큼 공 증가 이후 15%만큼 감소. 30초유지, 70 - (0.2*vlevel), 앱솔가정,
-        OverdrivePenalty = core.BuffSkill("오버드라이브(페널티)", 0, (40 - 0.2*vEhc.getV(5,5))*1000, cooltime = -1, att = -15*1.5).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) #페널티
+        #오버드라이브 (앱솔 가정)
+        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
+        WEAPON_ATT = 154
+        OverdriveBuff = pirates.OverdriveWrapper(vEhc, WEAPON_ATT, 5, 5)
+        Overdrive = OverdriveBuff.Overdrive
+        OverdrivePenalty = OverdriveBuff.OverdrivePenalty
         
         SoulConcentrate = core.BuffSkill("정령 집속", 960, (30+vEhc.getV(2,1))*1000, cooltime = 120*1000, pdamage_indep = (5+vEhc.getV(2,1)//2)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
         SoulConcentrateSummon = core.SummonSkill("정령 집속(무작위)", 0, 2000, 1742, 1, (30+vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)

@@ -5,6 +5,8 @@ from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, SynchronizeRule, ConcurrentRunRule
 from . import globalSkill
+from .jobclass import adventurer
+from .jobbranch import magicians
 
 #TODO : 5차 신스킬 적용
 
@@ -30,29 +32,6 @@ class FrostEffectWrapper(core.BuffSkillWrapper):
 
     def get_modifier(self):
         return core.CharacterModifier(crit_damage = 3*self.stack, pdamage = 12*self.stack*(self.skillType is "T"), armor_ignore = 0.2*5*self.stack)
-
-#Infinity Graph Element
-class InfinityWrapper(core.BuffSkillWrapper):
-    def __init__(self, serverlag = 3):
-        skill = core.BuffSkill("인피니티", 960, 40000, cooltime = 180 * 1000, rem = True, red = True)
-        super(InfinityWrapper, self).__init__(skill)
-        self.passedTime = 0
-        self.serverlag = serverlag
-        
-    def spend_time(self, time):
-        if self.onoff:
-            self.passedTime += time
-        super(InfinityWrapper, self).spend_time(time)
-            
-    def get_modifier(self):
-        if self.onoff:
-            return core.CharacterModifier(pdamage_indep = (70 + 4 * (self.passedTime // ((4+self.serverlag)*1000))) )
-        else:
-            return core.CharacterModifier()
-        
-    def _use(self, rem = 0, red = 0):
-        self.passedTime = 0
-        return super(InfinityWrapper, self)._use(rem = rem, red = red)
 
 
 class JobGenerator(ck.JobGenerator):
@@ -124,7 +103,7 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Meditation = core.BuffSkill("메디테이션", 0, 240*1000, att = 30, rem = True, red = True).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10, red = True).wrap(core.BuffSkillWrapper)
-        OverloadMana = core.BuffSkill("오버로드 마나", 0, 99999 * 10000, pdamage_indep = 8+int(0.1*vEhc.getV(1,2))).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
+        OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         
         #Damage Skills
         ChainLightening = core.DamageSkill("체인 라이트닝", 600, 230 + 2*combat, 9, modifier = core.CharacterModifier(crit = 25, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
@@ -140,6 +119,7 @@ class JobGenerator(ck.JobGenerator):
         
         Blizzard = core.DamageSkill("블리자드", 870, 900+10*combat, 4, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         
+        # 중첩당 감소량 5%
         ThunderBrake = core.DamageSkill("썬더브레이크 개시스킬", 0, 0, 1, red = True, cooltime = 45 * 1000).wrap(core.DamageSkillWrapper) #Awesome! -> Tandem 사출처리 해야함...Later. 690을 일단 급한대로 분배해서 사용.
         ThunderBrake1 = core.DamageSkill("썬더브레이크", 100, (750 + vEhc.getV(0,0)*30), 8).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ThunderBrake2 = core.DamageSkill("썬더브레이크(1)", 100, (750 + vEhc.getV(0,0)*30)*0.95, 8).wrap(core.DamageSkillWrapper)
@@ -150,8 +130,9 @@ class JobGenerator(ck.JobGenerator):
         ThunderBrake7 = core.DamageSkill("썬더브레이크(6)", 100, (750 + vEhc.getV(0,0)*30)*0.7, 8).wrap(core.DamageSkillWrapper)
         ThunderBrake8 = core.DamageSkill("썬더브레이크(7)", 70, (750 + vEhc.getV(0,0)*30)*0.65, 8).wrap(core.DamageSkillWrapper)
         
-        SpiritOfSnow = core.SummonSkill("스피릿 오브 스노우", 720, 3000, 800+36*vEhc.getV(3,1), 9, 30000, red = True, cooltime = 120*1000).isV(vEhc, 3,1).wrap(core.SummonSkillWrapper)
-        
+        # 단일 대상 기준
+        SpiritOfSnow = core.SummonSkill("스피릿 오브 스노우", 720, 3000, 700+40*vEhc.getV(3,1), 9, 30000, red = True, cooltime = 120*1000).isV(vEhc, 3,1).wrap(core.SummonSkillWrapper)
+                
         #Summoning skill
         Elquiness = core.SummonSkill("엘퀴네스", 900, 3030, 380+6*combat, 1, 999999999).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         IceAura = core.SummonSkill("아이스 오라", 0, 1200, 0, 1, 999999999).wrap(core.SummonSkillWrapper)
@@ -160,7 +141,7 @@ class JobGenerator(ck.JobGenerator):
         BlizzardPassive = core.DamageSkill("블리자드 패시브", 0, (220+4*combat) * (0.6+0.01*combat), 1).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         
         #special skills
-        Infinity = InfinityWrapper()
+        Infinity = adventurer.InfinityWrapper()
         FrostEffect = core.BuffSkill("프로스트 이펙트", 0, 999999 * 1000).wrap(FrostEffectWrapper)
         
         ######   Skill Wrapper   ######

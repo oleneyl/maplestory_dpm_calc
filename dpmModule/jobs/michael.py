@@ -4,6 +4,9 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobclass import cygnus
+
+# 미하일 영메 적용여부에 대해 고민해볼 필요 있음
 
 
 class JobGenerator(ck.JobGenerator):
@@ -81,11 +84,13 @@ class JobGenerator(ck.JobGenerator):
         
         #하이퍼
         SacredCube = core.BuffSkill("세이크리드 큐브", 90, 30000, cooltime = 210000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        DeadlyCharge = core.DamageSkill("데들리 차지", 810, 600, 10, cooltime = 15000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+    		# 1.2.324 패치 미적용
+        DeadlyCharge = core.DamageSkill("데들리 차지", 810, 600, 10, cooltime = 20000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         DeadlyChargeBuff = core.BuffSkill("데들리 차지(디버프)", 0, 10000, cooltime = -1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
         QueenOfTomorrow = core.BuffSkill("퀸 오브 투모로우", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
-        CygnusPalanks = core.DamageSkill("시그너스 팔랑크스", 780, 450 + 18*vEhc.getV(3,3), 40 + vEhc.getV(3,3), cooltime = 30 * 1000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 3, 3)
+
         RoIias = core.BuffSkill("로 아이아스", 840, 75+3*vEhc.getV(0,0), red = True, cooltime = 300*1000, pdamage_indep = 5 + (35+3*int(vEhc.getV(0,0)*0.2))//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ClauSolis = core.DamageSkill("클라우 솔리스", 900, 700+28*vEhc.getV(4,4), 7, red = True, cooltime = 12000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)    #로얄가드 버프지속시간 6초 증가. 100% 암흑 5초
         ClauSolisSummon = core.SummonSkill("클라우 솔리스(소환)", 0, 5000, 350+14*vEhc.getV(4,4), 7, 9000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #100% 암흑 5초

@@ -4,9 +4,12 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobclass import heroes
+from .jobbranch import magicians
 '''아포 22회
 라리플 25회
 '''
+# TODO: 시전 딜레이 패치 적용
 
 class LuminousStateController(core.BuffSkillWrapper):
     DARK = 0
@@ -69,35 +72,7 @@ class LuminousStateController(core.BuffSkillWrapper):
     def isNotEqual(self):
         return (self.state != LuminousStateController.EQUAL)
         
-class FridWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc):
-        super(FridWrapper, self).__init__(skill = core.BuffSkill("프리드의 가호 더미", 0,0))
-        self.vlevel = vEhc.getV(0,0)
-        vlevel= self.vlevel
-        self.skillList = [core.BuffSkill("프리드의 가호 0스택(더미)", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 1스택", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 2스택", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 3스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25),
-                    core.BuffSkill("프리드의 가호 4스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel)),
-                    core.BuffSkill("프리드의 가호 5스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel)),
-                    core.BuffSkill("프리드의 가호 6스택", 0, 30 * 1000, cooltime = 240 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel))]
-        self.state = 0
 
-    def _use(self, rem = 0, red = 0) -> core.ResultObject:
-        self.onoff = True
-        self.state += 1
-        if self.state > 6:
-            self.state -= 6        
-        self.skill = self.skillList[self.state]
-        self.timeLeft = self.skill.remain * (1 + 0.01*rem * self.skill.rem)
-        self.cooltimeLeft = self.skill.cooltime * (1 - 0.01*red* self.skill.red)
-        self.onoff = True
-        if self.cooltimeLeft > 0:
-            self.available = False
-        delay = self.skill.delay
-        mdf = self.get_modifier()
-        return core.ResultObject(delay, mdf, 0, sname = self._id, spec = 'buff', kwargs = {"remain" : self.skill.remain * (1+0.01*rem*self.skill.rem)})
-        #return delay, mdf, 0, self.cascade
 
 
 class PunishingResonatorWrapper(core.SummonSkillWrapper):
@@ -185,13 +160,13 @@ class JobGenerator(ck.JobGenerator):
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
         Memorize = core.BuffSkill("메모라이즈", 600, 10, cooltime = 150 * 1000, rem = True).wrap(core.BuffSkillWrapper)#Memorize <- 역시 제대로 계산 필요함. 딜레이 모음
     
-        OverloadMana = core.BuffSkill("오버로드 마나", 0, 99999 * 10000, pdamage_indep = 8+int(0.1*vEhc.getV(2,3))).isV(vEhc,2,3).wrap(core.BuffSkillWrapper)
+        OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 2, 3)
     
         #Damage Skills
 
         DoorOfTruth = core.SummonSkill("진리의 문", 870, 3030, 375 + 15 * vEhc.getV(4,4), 10, (25 + 0.5*vEhc.getV(4,4)) * 1000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #이퀄시 사용 가능해짐.
 
-        Frid = FridWrapper(vEhc)
+        Frid = heroes.FridWrapper(vEhc, 0, 0)
         LightAndDarkness = LightAndDarknessWrapper(vEhc)
     
         LuminousState = LuminousStateController(core.BuffSkill("루미너스 상태", 0, 99999999), chtr)

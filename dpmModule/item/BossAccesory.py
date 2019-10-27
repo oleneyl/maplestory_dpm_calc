@@ -29,6 +29,7 @@ Ring110 =  it.Item(stat_main = 5, stat_sub = 5, att = 2, level = 110)
 #혼테일 목걸이..(0) -> 알발린상태로 계산 필요
 
 #아카이럼 매커...(2)
+# TODO: 120으로 변경
 Pendant130 =  it.Item(stat_main = 10, stat_sub = 10, att = 1, level = 130)
 
 #아카이럼 도미...(6 or 0) 파편작 가정

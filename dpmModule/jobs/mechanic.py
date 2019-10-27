@@ -4,6 +4,16 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobclass import resistance
+from .jobbranch import pirates
+
+#TODO:
+#[서포트 웨이버 : H-EX] : 마스터 기준 방어율 감소량이 20%에서10%로 감소되지만 보스 몬스터에게도 적용되게 됩니다. HP 자동회복이 순수 HP 20% 회복에서 최대 HP 8% 회복으로변경되고 설치 즉시 회복하지 않게 됩니다.
+
+#[로봇 마스터리] : 로봇의 최종 데미지 증가량과 같은 수치의 데미지가 추가로 증가하는 현상이수정됩니다. 마스터 기준 로보 런처 : RM7의 데미지 90% 기능이 135%p 증가로 변경되고 로봇의 최종 데미지 증가량이70%에서 105%로 증가됩니다.
+
+#[메탈아머 전탄발사] : 25레벨 기준 공격 횟수가 10회에서11회로 추가로 발사되는 호밍 미사일이 6개에서 7개로 증가됩니다. 스킬 종료 후 호밍 미사일 사용불가 시간이 좀 더정확하게 적용되게 됩니다.
+
 ######   Passive Skill   ######
 
 class JobGenerator(ck.JobGenerator):
@@ -26,7 +36,7 @@ class JobGenerator(ck.JobGenerator):
         
         OverTunning = core.InformedCharacterModifier("오버 튜닝",pdamage_indep = 20, crit=20, armor_ignore=30)
         MetalArmorExtreme=core.InformedCharacterModifier("메탈아머 익스트림",att=55)
-        LoadedDicePassive = core.InformedCharacterModifier("로디드 다이스(패시브)",att = self.vEhc.getV(1,2) + 10)
+        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(self.vEhc, 1, 2)
         
         return [HiddenPiece, MechanicMastery, PhisicalTraining, LoadedDicePassive, MetalArmorExtreme, OverTunning]
 
@@ -72,10 +82,14 @@ class JobGenerator(ck.JobGenerator):
         BomberTime = core.BuffSkill("봄버 타임", 990, 10*1000, cooltime = 100*1000).wrap(core.BuffSkillWrapper)
         DistortionField = core.SummonSkill("디스토션 필드", 690, 4000/30, 350, 2, 4000-1, cooltime = 8000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
     
-        Overdrive = core.BuffSkill("오버드라이브", 540, 30*1000, cooltime = (70 - 0.2*vEhc.getV(5,5))*1000, att = 1.5*(45 + vEhc.getV(5,5))).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) #무기공의 (30+vlevel)만큼 공 증가 이후 15%만큼 감소. 30초유지, 70 - (0.2*vlevel), 앱솔가정,
-        OverdrivePenalty = core.BuffSkill("오버드라이브(페널티)", 0, (40 - 0.2*vEhc.getV(5,5))*1000, cooltime = -1, att = -15*1.5).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) #페널티
+        #오버드라이브 (앱솔 가정)
+        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
+        WEAPON_ATT = 150
+        OverdriveBuff = pirates.OverdriveWrapper(vEhc, WEAPON_ATT, 5, 5)
+        Overdrive = OverdriveBuff.Overdrive
+        OverdrivePenalty = OverdriveBuff.OverdrivePenalty
     
-        RegistanceLineInfantry = core.SummonSkill("레지스탕스 라인 인팬트리", 360, 1000, 215+8*vEhc.getV(3,3), 9, 10*1000, cooltime = 25000).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
+        RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3)
         MultipleOptionGattling = core.SummonSkill("멀티플 옵션(개틀링)", 780, 1500, 75+2*vEhc.getV(2,1), 6, (115+6*vEhc.getV(2,1))*1000, cooltime = 200 * 1000).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         MultipleOptionMissle = core.SummonSkill("멀티플 옵션(미사일)", 0, 8000, 350+10*vEhc.getV(2,1), 24, (115+6*vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         

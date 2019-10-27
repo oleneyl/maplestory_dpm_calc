@@ -4,6 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import pirates
 #TODO : 5차 신스킬 적용
 
 class EnergyChargeWrapper(core.StackSkillWrapper):
@@ -60,8 +61,10 @@ class JobGenerator(ck.JobGenerator):
         StimulatePassive = core.InformedCharacterModifier("스티뮬레이트(패시브)",boss_pdamage = 20)
         
         EchoOfHero = core.InformedCharacterModifier("영웅의 메아리", patt = 4) #타임리프
+
+        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(self.vEhc, 2, 3)
         
-        return [CriticalRoar, MentalClearity, PhisicalTraining, CriticalRage, StimulatePassive, EchoOfHero]
+        return [CriticalRoar, MentalClearity, PhisicalTraining, CriticalRage, StimulatePassive, EchoOfHero, LoadedDicePassive]
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
@@ -95,11 +98,15 @@ class JobGenerator(ck.JobGenerator):
         UnityOfPowerBuff = core.BuffSkill("유니티 오브 파워(디버프)", 0, 90 * 1000, cooltime = -1, crit_damage = 40).wrap(core.BuffSkillWrapper)   #4스택 가정.
         #크리티컬 리인포스 - >재정의 필요함..
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-    
-        LoadedDicePassive = core.BuffSkill("로디드 다이스", 0, 99999 * 10000, att = vEhc.getV(2,3) + 10).isV(vEhc,2,3).wrap(core.BuffSkillWrapper)
+
         PirateFlag = core.BuffSkill("파이렛 플래그", 990, 30 * 1000, cooltime = (60 - vEhc.getV(3,2)) * 1000, armor_ignore = (10 + 0.5*vEhc.getV(3,2)), stat_main_fixed = (chtr.level * 5 + 18)*0.01*(10 + 0.5*vEhc.getV(3,2))).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
-        Overdrive = core.BuffSkill("오버드라이브", 540, 30*1000, cooltime = (70 - 0.2*vEhc.getV(5,5))*1000, att = 1.54*(45 + vEhc.getV(5,5))).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) #무기공의 (30+vlevel)만큼 공 증가 이후 15%만큼 감소. 30초유지, 70 - (0.2*vlevel), 앱솔가정,
-        OverdrivePenalty = core.BuffSkill("오버드라이브(페널티)", 0, (40 - 0.2*vEhc.getV(5,5))*1000, cooltime = -1, att = -15*1.54).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) #페널티
+        
+        #오버드라이브 (앱솔 가정)
+        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
+        WEAPON_ATT = 154
+        OverdriveBuff = pirates.OverdriveWrapper(vEhc, WEAPON_ATT, 5, 5)
+        Overdrive = OverdriveBuff.Overdrive
+        OverdrivePenalty = OverdriveBuff.OverdrivePenalty
         
         Transform = core.BuffSkill("트랜스폼", 450, (50+vEhc.getV(1,1))*1000, cooltime = 180 * 1000, pdamage_indep = (20 + 0.2*vEhc.getV(1,1))).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)#에너지 완충
         TransformEnergyOrb = core.DamageSkill("에너지 오브", 1140, 450 +vEhc.getV(1,1)*18, (2+(vEhc.getV(1,1) == 25)*1) * 8, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
@@ -172,7 +179,7 @@ class JobGenerator(ck.JobGenerator):
     
         return (BasicAttackWrapper,
             [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-            LuckyDice, Viposition, Stimulate, EpicAdventure, LoadedDicePassive, PirateFlag, Overdrive, Transform, NautilusBuff,
+            LuckyDice, Viposition, Stimulate, EpicAdventure, PirateFlag, Overdrive, Transform, NautilusBuff,
             UnityOfPowerBuff, OverdrivePenalty, DragonStrikeBuff, EnergyCharge,
             SerpentScrewTrackingBuff, globalSkill.soul_contract()] +\
             [UnityOfPower, Nautilus, DragonStrike, FuriousCharge] +\

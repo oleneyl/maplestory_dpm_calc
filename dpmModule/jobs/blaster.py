@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, InactiveRule
 from . import globalSkill
 
+from .jobclass import resistance
 #TODO : 5차 신스킬 적용
 
 class JobGenerator(ck.JobGenerator):
@@ -31,7 +32,6 @@ class JobGenerator(ck.JobGenerator):
         GuntletExpert = core.InformedCharacterModifier("건틀렛 엑스퍼트", crit_damage = 15, boss_pdamage = 15)
         AdvancedChargeMastery= core.InformedCharacterModifier("어드밴스드 차지 마스터리", armor_ignore = 35)
         CombinationTraining = core.InformedCharacterModifier("콤비네이션 트레이닝II", att = 40)	#패시브스킬+1, 오더스+1
-     
         return [GuntletMastery, PhisicalTraining, ChargeMastery, 
                         GuntletExpert, AdvancedChargeMastery, CombinationTraining]
 
@@ -90,8 +90,6 @@ class JobGenerator(ck.JobGenerator):
         
         RegistanceLineInfantry = core.SummonSkill("레지스탕스 라인 인팬트리", 360, 1000, 215+8*vEhc.getV(3,3), 9, 10*1000, cooltime = 25000).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
         
-        
-        
         BunkerBuster = core.BuffSkill("벙커 버스터", 720, 45000, cooltime = 120000, rem = False).wrap(core.BuffSkillWrapper)    #임의딜레이 720
         BunkerBusterAttack = core.DamageSkill("벙커 버스터(공격)", 0, 120 + 9* vEhc.getV(0,0), 8, modifier = core.CharacterModifier(armor_ignore = 100)).wrap(core.DamageSkillWrapper)
         BunkerBusterAttack_Maximize = core.DamageSkill("벙커 버스터(맥시마이즈)", 0, (120 + 9* vEhc.getV(0,0))*1.5, 8, modifier = core.CharacterModifier(armor_ignore = 100)).wrap(core.DamageSkillWrapper)
@@ -120,7 +118,7 @@ class JobGenerator(ck.JobGenerator):
         
         
         # 리볼빙 캐논 발동
-       
+        
         MagnumPunch_Revolve_Final = core.OptionalElement(BunkerBuster.is_active, BunkerBusterAttack_WithMaximize, MagnumPunch_Revolve_WithMaximize)
         DoublePang_Revolve_Final = core.OptionalElement(BunkerBuster.is_active, BunkerBusterAttack_WithMaximize, DoublePang_Revolve_WithMaximize)
         MagnumPunch.onAfter(MagnumPunch_Revolve_Final)

@@ -4,6 +4,11 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import warriors
+
+##### 4카5앱으로 변경 필요 #####
+
+# TODO: 리미트 막타 추가
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -18,9 +23,12 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
 
-        ResolutionTime = core.InformedCharacterModifier("레졸루션 타임",pdamage_indep = 25, stat_main = 50)
+        ResolutionTime = core.InformedCharacterModifier("리졸브 타임",pdamage_indep = 25, stat_main = 50)
         
+        # 무기상수 1.34
         AlphaState = core.InformedCharacterModifier("상태-알파", pdamage_indep = 34, crit = 40, att = 40, armor_ignore = 30, crit_damage = 50)
+        #4카5앱 옵션을 직접 작성할 경우를 가정하여...
+        #VellumHelm = core.InformedCharacterModifier("카오스 벨룸의 헬름(4카 5앱)",boss_pdamage = 30, armor_ignore = -10)
 
         return [Mastery, ResolutionTime, AlphaState]
 
@@ -29,6 +37,7 @@ class JobGenerator(ck.JobGenerator):
         return [ArmorSplit]
 
     def get_modifier_optimization_hint(self):
+        # ???
         return core.CharacterModifier(crit = 15, pdamage = 30, armor_ignore = 20)
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
@@ -52,20 +61,20 @@ class JobGenerator(ck.JobGenerator):
         
         어파스 기준
         '''
-        #### 알파 ####
+        #### 마스터리 ####
         AlphaMastery = core.CharacterModifier(pdamage_indep = 34) + \
             core.CharacterModifier(att = 40, armor_ignore = 30) + \
             core.CharacterModifier(crit = 40) + \
-            core.CharacterModifier(crit_damage = 50) + \
-            core.CharacterModifier(crit_damage = 20*4/35)  #크리티컬 바인드
-            
-        AlphaState = core.BuffSkill("상태-알파", 0, 9999*10000, cooltime = -1, crit_damage = (20*4/35)).wrap(core.BuffSkillWrapper)
-        BetaState = core.BuffSkill("상태-베타", 0, 9999*10000, cooltime = -1, pdamage_indep = 9.70, crit = 15-40, boss_pdamage = 30 + 30, att = 80-40, pdamage = 40, armor_ignore = -42.85, crit_damage = -50).wrap(core.BuffSkillWrapper)
-            
+            core.CharacterModifier(crit_damage = 50)
         BetaMastery = core.CharacterModifier(pdamage_indep = 49) + \
                     core.CharacterModifier(crit = 15, boss_pdamage = 30 + 30, att = 80, pdamage = 40) + \
                     core.CharacterModifier(armor_ignore = 50)
         
+        # 크리티컬 바인드 평균값 임시로 적용
+        AlphaState = core.BuffSkill("상태-알파", 0, 9999*10000, cooltime = -1, crit_damage = (20*4/35)).wrap(core.BuffSkillWrapper)
+        BetaState = core.BuffSkill("상태-베타", 0, 9999*10000, cooltime = -1, pdamage_indep = 9.70, crit = 15-40, boss_pdamage = 30, att = 80-40, pdamage = 40, armor_ignore = -42.85, crit_damage = -(50 + (20*4/35))).wrap(core.BuffSkillWrapper)
+
+        #### 알파 ####
         MoonStrike = core.DamageSkill("문 스트라이크", 390, 180, 4).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         MoonStrikeTAG = core.DamageSkill("문 스트라이크(태그)", 0, 180, 4).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         
@@ -98,8 +107,8 @@ class JobGenerator(ck.JobGenerator):
         StormBreakSummon = core.DamageSkill("어드밴스드 스톰 브레이크(소환)", 0, 670, 2).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) #2타 타격
         StormBreakElectric = core.DamageSkill("어드밴스드 스톰 브레이크(전기)", 0, 230, 3 ).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
-        
-        CriticalBind = core.BuffSkill("크리티컬 바인드", 0, 4000, crit = 30, crit_damage = 20, cooltime = 35 * 1000).wrap(core.BuffSkillWrapper) #알파만 적용됨.
+        # TODO: 알파 상태에서만 적용되도록 개편할 필요 있음. 일단 마스터리에 기본 옵션으로 추가시킴.
+        #CriticalBind = core.BuffSkill("크리티컬 바인드", 0, 4000, crit = 30, crit_damage = 20, cooltime = 35 * 1000).wrap(core.BuffSkillWrapper)
 
         #### 베타 ####
         
@@ -134,6 +143,7 @@ class JobGenerator(ck.JobGenerator):
         TimeHolding = core.BuffSkill("타임 홀딩", 1080, 90000, 180*1000, pdamage = 10).wrap(core.BuffSkillWrapper) #  쿨타임 초기화.(타임 리와 / 리미트 브레이크 제외)
         IntensiveTime = core.BuffSkill("인탠시브 타임", 0, 40*60*1000, patt = 4).wrap(core.BuffSkillWrapper)
         
+        # 딜레이 확인필요, 딜사이클에 포함되는 스킬인지 확인필요
         ShadowRain = core.DamageSkill("쉐도우 레인", 0, 1400, 14, cooltime = 300*1000).wrap(core.DamageSkillWrapper)
         
         #### 5차 스킬 ####
@@ -141,13 +151,14 @@ class JobGenerator(ck.JobGenerator):
         
         LimitBreakAttack = core.DamageSkill("리미트 브레이크", 0, 400+15*vEhc.getV(0,0), 5).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = (30+vEhc.getV(0,0)//5) *1.2 + 20, cooltime = 240*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        
+        #LimitBreakFinal = core.DamageSkill("리미트 브레이크 (막타)", 0, '''지속시간 동안 가한 데미지의 20% / 15''', 15)
         # 베타로 사용함.
         TwinBladeOfTime = core.DamageSkill("조인트 어택", 0, 0, 0, cooltime = 120*1000, red = True).wrap(core.DamageSkillWrapper)
         TwinBladeOfTime_1 = core.DamageSkill("조인트 어택(1)", 3480, 875+35*vEhc.getV(1,1), 8).wrap(core.DamageSkillWrapper)
         TwinBladeOfTime_2 = core.DamageSkill("조인트 어택(2)", 0, 835+33*vEhc.getV(1,1), 8).wrap(core.DamageSkillWrapper)
         TwinBladeOfTime_3 = core.DamageSkill("조인트 어택(3)", 0, 1000+40*vEhc.getV(1,1), 13).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_end = core.DamageSkill("조인트 어택(4)", 0, 900+36*vEhc.getV(1,1), 15*3, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        # 45타수가 시스템상으로 잘 반영되는지 확인필요.
+        TwinBladeOfTime_end = core.DamageSkill("조인트 어택(4)", 0, 900+36*vEhc.getV(1,1), 45, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         
         #알파
         ShadowFlashAlpha = core.DamageSkill("쉐도우 플래시(알파)", 670, 500+20*vEhc.getV(2,2), 6, cooltime = 40*1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
@@ -253,12 +264,11 @@ class JobGenerator(ck.JobGenerator):
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
 
-
         return(ComboHolder,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     AlphaState, BetaState, AuraWeaponBuff, DoubleTime, TimeDistortion, TimeHolding, IntensiveTime, LimitBreak,
                     globalSkill.soul_contract()]+\
                 [ShadowRain, TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta]+\
-                []+\
                 [AuraWeaponCooltimeDummy]+\
+                [AuraWeaponSummon]+\
                 [ComboHolder])

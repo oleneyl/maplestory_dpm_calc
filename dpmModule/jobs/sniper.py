@@ -5,20 +5,8 @@ from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, MutualRule
 from . import globalSkill
-#TODO : 5차 신스킬 적용
-
-class CriticalReinforceWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc, character : ck.AbstractCharacter):
-        skill = core.BuffSkill("크리티컬 리인포스", 780, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,3,3)
-        super(CriticalReinforceWrapper, self).__init__(skill)
-        self.char = character
-        self.inhancer = (20 + vEhc.getV(3,3))*0.01
-        
-    def get_modifier(self):
-        if self.onoff:
-            return core.CharacterModifier(crit_damage = self.inhancer * max(0,self.char.get_modifier().crit + 20 + 6.6))
-        else:
-            return self.disabledModifier        
+from .jobbranch import bowmen
+#TODO : 5차 신스킬 적용    
 
 
 class JobGenerator(ck.JobGenerator):
@@ -90,7 +78,7 @@ class JobGenerator(ck.JobGenerator):
         ChargedArrowUse = core.DamageSkill("차지드 애로우(차징)", 0, 0, 0, cooltime = 10000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         #Summon Skills
         Freezer = core.SummonSkill("프리저", 900, 3030, 390, 1, 220 * 1000).setV(vEhc, 3, 3, False).wrap(core.SummonSkillWrapper)
-        GuidedArrow = core.SummonSkill("가이디드 애로우", 720, 330, 400+16*vEhc.getV(4,4), 1, 30 * 1000, cooltime = 60 * 1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
+        GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         
         Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(5,5)))*1000).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
         
@@ -104,7 +92,7 @@ class JobGenerator(ck.JobGenerator):
         Evolve.onAfter(Freezer.controller(1))
         Freezer.onConstraint(core.ConstraintElement("이볼브 사용시 사용 금지", Evolve, Evolve.is_not_active))
         
-        CriticalReinforce = CriticalReinforceWrapper(vEhc, chtr) #Maybe need to sync
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 3, 3, 20+6.6) #Maybe need to sync
     
         SplitArrowOption = core.OptionalElement(SplitArrowBuff.is_active, SplitArrow, name = "스플릿 애로우 여부 확인")
         Snipping.onAfter(SplitArrowOption)
