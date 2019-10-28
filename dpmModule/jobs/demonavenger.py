@@ -34,7 +34,24 @@ class JobGenerator(ck.JobGenerator):
         DemonicSharpness = core.InformedCharacterModifier("데모닉 샤프니스", crit=20)
         
         ReleaseOverload = core.InformedCharacterModifier("릴리즈 오버로드", pdamage_indep = 25)
+        # 메용: 체력+15%로 수정
+        MapleHeroesDemon = core.InformedCharacterModifier("메이플 용사(데몬어벤져)", stat_main = 0.15*(25 + level * 5))
+# 최종데미지 (릴리즈 오버로드, 데몬 프렌지)
+        ## 이하 내용 데슬 기반
+        
+        return [DeathCurse, Outrage, PhisicalTraining, Concentration, AdvancedWeaponMastery, DarkBindPassive]
+
+    def get_not_implied_skill_list(self):
+        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 30)
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
+        
+        return [WeaponConstant, Mastery, EvilTorture]
+        
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
+        코강 순서:
+        '''
+'''
         TODO: 이너 스트렝스, 디아볼릭 리커버리
         이즈 익시드 페인(익시드 스킬 데미지 20% 증가)
         메용 패시브: HP 15%
@@ -62,44 +79,10 @@ class JobGenerator(ck.JobGenerator):
 # 방어력 2배 무시가 30퍼를 한번 더 계산하는건지, 아니면 60퍼로 적용되는건지 알아볼 필요가 있음.
 
 #인핸스드 익시드: [파이널 어택류 스킬] 영구적으로 익시드 공격 이후 70% 확률로 200%의 데미지로 2명의 적을 2번 추가 공격
-        ShieldChasing = core.DamageSkill("실드 체이싱", 0, 500, 2 * 8, cooltime = 6 * 1000, modifier = core.CharacterModifier(armor_ignore = 30, pdamage = 20)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        ArmorBreak = core.DamageSkill("아머 브레이크", 0, 350, 4, cooltime = 30 * 1000, modifier = core.CharacterModifier(armor_ignore = 30)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-
-        
-        
-        
-# 최종데미지 (릴리즈 오버로드, 데몬 프렌지)
-        ## 이하 내용 데슬 기반
-        DeathCurse = core.InformedCharacterModifier("데스 커스",pdamage = 1)
-        Outrage = core.InformedCharacterModifier("아웃레이지",att = 50, crit = 20)
-        PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
-        Concentration = core.InformedCharacterModifier("컨센트레이션",pdamage_indep = 25)
-        
-        
-        DarkBindPassive = core.InformedCharacterModifier("다크 바인드(패시브)", armor_ignore = 30)
-        
-        return [DeathCurse, Outrage, PhisicalTraining, Concentration, AdvancedWeaponMastery, DarkBindPassive]
-
-    def get_not_implied_skill_list(self):
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 30)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)        
-
-        EvilTorture = core.InformedCharacterModifier("이블 토쳐",pdamage_indep = 15, crit = 15) #상태이상에 걸렷을때만.
-        
-        return [WeaponConstant, Mastery, EvilTorture]
-        
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
-        '''
-        코강 순서:
-        슬래시-임팩트-서버-익스플로전-메타-데빌크라이
-
-        #####하이퍼 #####
-        # 데몬슬래시 - 리인포스, 리메인타임 리인포스
-        # 데몬 입팩트 - 리인포스, 보너스 어택, 리듀스 포스        
-        '''
-
-    
-
+        ShieldChasing = core.DamageSkill("실드 체이싱", 0, 500, 2 * 8, cooltime = 6 * 1000, red = True, modifier = core.CharacterModifier(armor_ignore = 30, pdamage = 20)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        ArmorBreak = core.DamageSkill("아머 브레이크", 0, 350, 4, cooltime = 30 * 1000).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        ArmorBreakBuff = core.BuffSkill("아머 브레이크(디버프)", 0, 30*1000, armor_ignore = and).wrap(core.BuffSkillWrapper)
+        EnhancedExceed = core.Damageskil("인핸스드 익시드", 0, 200, 2*0.7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         #Buff skills
         # 펫에 등록한 걸로 가정.
         #Booster = core.BuffSkill("부스터", 600, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
