@@ -57,14 +57,12 @@ class JobGenerator(ck.JobGenerator):
         메용 패시브: HP 15%
 
         하이퍼: 익시드 - 리인포스: 익시드 스킬 데미지 20% 증가
-        하이퍼: 익시드 - 보너스 찬스: 영구적으로 익시드 스킬의 추가 공격 발동 확률 10% 증가
-        하이퍼: 실드 체이싱 - 리인포스 : 데미지 20% 증가
+        하이퍼: 실드 체이싱-엑스트라 타겟 : 영구적으로 실드 체이싱의 방패 1개 당 최대 공격 횟수 2 증가
+
         하이퍼: 포비든 컨트랙트: 30초간 데미지 10%, 쿨타임 75초
 
         하이퍼: 사우전드 소드 : 이 스킬을 보스전에서 쓰나? 최대 HP의 15% 소비, 최대 14명의 적 500% 데미지로 8번 공격. 사용 시 익시드 오버로드 5 증가. 재사용 대기시간 8초
-        하이퍼: 데모닉 포티튜드 : 60초간 데미지 10%, 쿨타임 120초
         오라 웨폰
-        콜 마스테마 - 이 스킬을 과연 쓰는가?
         이계 여신의 축복 - 이 스킬을 과연 쓰는가?
 
         데몬 프렌지 - DPM 기준을 어떻게 할것인지?
@@ -73,20 +71,33 @@ class JobGenerator(ck.JobGenerator):
         '''
 
         #V코어 관련부분은 전면 재작성 필요
+
+
         Execution = core.DamageSkill("익시드: 엑스큐션", 0, 540, 4, modifier = core.CharacterModifier(armor_ignore = 30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         ExecutionExceed = core.DamageSkill("익시드: 엑스큐션 (강화)", 0, 540, 6, modifier = core.CharacterModifier(armor_ignore = 30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-# 2개의 방패를 적에게 던져서 500% 데미지로 공격. 방패 1개당 최대 8번 공격. 재사용 대기시간 6초.
-# 방어력 2배 무시가 30퍼를 한번 더 계산하는건지, 아니면 60퍼로 적용되는건지 알아볼 필요가 있음.
 
-#인핸스드 익시드: [파이널 어택류 스킬] 영구적으로 익시드 공격 이후 70% 확률로 200%의 데미지로 2명의 적을 2번 추가 공격
+        # 방어력 2배 무시가 30퍼를 한번 더 계산하는건지, 아니면 60퍼로 적용되는건지 알아볼 필요가 있음.
         ShieldChasing = core.DamageSkill("실드 체이싱", 0, 500, 2 * 8, cooltime = 6 * 1000, red = True, modifier = core.CharacterModifier(armor_ignore = 30, pdamage = 20)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         ArmorBreak = core.DamageSkill("아머 브레이크", 0, 350, 4, cooltime = 30 * 1000).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        ArmorBreakBuff = core.BuffSkill("아머 브레이크(디버프)", 0, 30*1000, armor_ignore = and).wrap(core.BuffSkillWrapper)
-        EnhancedExceed = core.Damageskil("인핸스드 익시드", 0, 200, 2*0.7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        ArmorBreakBuff = core.BuffSkill("아머 브레이크(디버프)", 0, 30*1000, armor_ignore = 30, cooltime=99999*1000).wrap(core.BuffSkillWrapper)
+
+        ThousandSword = core.Damageskill("사우전드 소드", 0, 500, 8, cooltime = 8*1000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+
+        # 보너스 찬스 70% -> 80%
+        EnhancedExceed = core.DamageSkill("인핸스드 익시드", 0, 200, 2*0.8).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+
+        FrenzyDOT = core.DamageSkill("프렌지 장판", 0, 300 + 8 * vEhc.getV(0, 0), 2).setV(vEhc, 0, 0, True).wrap(core.DamageSkillWrapper)
+
         #Buff skills
-        # 펫에 등록한 걸로 가정.
-        #Booster = core.BuffSkill("부스터", 600, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
-    
+        Exceed = core.BuffSkill("익시드", 0, 99999999)
+        Exceed = core.StackSkillWrapper(Exceed, 18)
+        Exceed.set_name_style("익시드 %d스택")
+        Exceed.set_stack(0)
+
+        ForbiddenContract = core.BuffSkill("포비든 컨트랙트", 0, 30*1000, cooltime = 75*1000, pdamage = 10)
+        DemonicFortitude = core.BuffSkill("데모닉 포티튜드", 0, 60*1000, cooltime=120*1000, pdamage=10)
+
+        ReleaseOverload = core.BuffSkill("릴리즈 오버로드", 0, 60*1000, pdamage_indep= 25)
         CallMastema = core.SummonSkill("콜 마스테마", 690, 5000, 1100, 8, (30+vEhc.getV(4,4))*1000, cooltime = 150*1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
         #CallMastemaAnother = core.SummonSkill("콜 마스테마+", 0, ).wrap(core.BuffSkillWrapper)    #러블리 테리토리..데미지 없음.
         
@@ -95,6 +106,11 @@ class JobGenerator(ck.JobGenerator):
         
         '''
         
+        ArmorBreak.onAfter(ArmorBreakBuff.controller(1))
+        Execution.onAfter(EnhancedExceed)
+        ExecutionExceed.onAfter(EnhancedExceed)
+
+        ThousandSword.onAfter(Exceed.stackController(5))
 
         # 오라 웨폰
         
