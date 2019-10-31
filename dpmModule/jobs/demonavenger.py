@@ -36,8 +36,7 @@ class JobGenerator(ck.JobGenerator):
         ReleaseOverload = core.InformedCharacterModifier("릴리즈 오버로드", pdamage_indep = 25)
         # 메용: 체력+15%로 수정
         MapleHeroesDemon = core.InformedCharacterModifier("메이플 용사(데몬어벤져)", stat_main = 0.15*(25 + level * 5))
-# 최종데미지 (릴리즈 오버로드, 데몬 프렌지)
-        ## 이하 내용 데슬 기반
+        # 최종데미지 (릴리즈 오버로드, 데몬 프렌지)
         
         return [DeathCurse, Outrage, PhisicalTraining, Concentration, AdvancedWeaponMastery, DarkBindPassive]
 

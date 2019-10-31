@@ -19,8 +19,6 @@ from .jobbranch import warriors
 - 어파 (공30), 75%(하이퍼적용+15)
 - 레블 +20%, 타수+1
 '''
-#TODO : 5차 신스킬 적용
-# 스킬명 수정: ComboDesFort > ComboDeathFault
 
 #ComboAttack
 class ComboAttackWrapper(core.StackSkillWrapper):

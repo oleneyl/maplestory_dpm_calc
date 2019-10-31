@@ -90,7 +90,7 @@ class JobGenerator(ck.JobGenerator):
         ImageArrow = core.SummonSkill("잔영의 시", 720, 500, 400+16*vEhc.getV(1,1), 3, 30000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
     
         ######   Skill Wrapper   ######
-        
+        #GrittyGust.onAfter(GrittyGustDOT)
         #이볼브 연계 설정
         Evolve.onAfter(Pheonix.controller(1))
         Pheonix.onConstraint(core.ConstraintElement("이볼브 사용시 사용 금지", Evolve, Evolve.is_not_active))

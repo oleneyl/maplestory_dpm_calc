@@ -8,8 +8,6 @@ from . import globalSkill
 
 #TODO : 5차 신스킬 적용
 
-# 오라웨폰 변경 시범적용
-
 ######   Passive Skill   ######
 
 class JobGenerator(ck.JobGenerator):
