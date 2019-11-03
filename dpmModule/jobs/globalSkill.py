@@ -42,3 +42,9 @@ class AuraWeaponBuilder():
     def get_buff(self):
         return self.AuraWeaponBuff, self.AuraWeaponCooltimeDummy
 
+# 235레벨 이상만 사용가능
+class SpiderInMirrorBuilder():
+    def __init__(self, enhancer, skill_importance, enhance_importance):
+        self.MirrorBreak = core.DamageSkill("스파이더 인 미러(공간 붕괴)", 0, 750+30*enhancer.getV(skill_importance, enhance_importance), 12, cooltime = 250*1000).wrap(core.DamageSkillWrapper)
+        # 50초 동안 지속되며 일정 시간 마다 공격 상태에 돌입, 공격 상태 동안 385%의 데미지로 8번 공격하는 거미 다리를 10회 사용, 거미 다리가 한명의 적을 5번 연속 공격할 경우 공격 상태 즉시 종료, 공격 상태 종료 후 재돌입 대기시간 3초
+        self.MirrorSpider = core.SummonSkill("스파이더 인 미러(거울 속의 거미)", 0, 3000, 175+17*enhancer.getV(skill_importance, enhance_importance), 8, 50*1000).wrap(core.SummonSkillWrapper)
