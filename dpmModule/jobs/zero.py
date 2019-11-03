@@ -6,9 +6,7 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import warriors
 
-##### 4카5앱으로 변경 필요 #####
-
-# TODO: 리미트 막타 추가
+# TODO: 4카 5앱 적용, 리미트 막타 추가
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
