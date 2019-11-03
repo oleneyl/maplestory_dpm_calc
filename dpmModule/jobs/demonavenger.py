@@ -8,26 +8,7 @@ from . import globalSkill
 ### 데몬어벤져 직업 코드 (작성중)
 # TODO: 스킬별 딜레이 추가, 5차 강화값 적용, 딜사이클
 ######   Passive Skill   ######
-'''
-HP 20% 소비, 초당 HP 6000 소비, 회복 아이템 및 스킬의 회복량 최대 HP의 1%(30레벨 한정 2%)까지로 제한
 
-최대 HP 대비 소모된 HP 3%(24레벨가지는 4%)당 최종 데미지 1% 증가
-
-일정 주기로 마족의 피가 바닥에 뿌려져 5초 동안 최대 10명의 적을 일정주기 마다 300+8n%로 2번 공격
-
-현재 HP가 최대 HP의 1% 이하라면 HP를 소모하지 않고 마족의 피도 뿌려지지 않음
-
-스킬 사용 시 효과가 활성화되고 재사용 시 비활성화되는 온오프 스킬
-
-재사용 대기시간 150-n초
-'''
-class DemonFrenzy:
-    def __init__(self, enhancer, skill_importance, enhance_importance, HP_RATE):
-        self.skill_level = enhancer.getV(skill_importance,enhance_importance)
-        self.HP_RATE = HP_RATE
-    
-    #core.DamageSkill("프렌지 장판", 0, 300 + 8 * vEhc.getV(0, 0), 2).setV(vEhc, 0, 0, True).wrap(core.DamageSkillWrapper)
-    
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -57,6 +38,10 @@ class JobGenerator(ck.JobGenerator):
         # 최종데미지 (릴리즈 오버로드, 데몬 프렌지)
         InnerStrength = core.InformedCharacterModifier("이너 스트렝스", stat_main = 600)
         DiabolicRecovery = core.InformedCharacterModifier("디아볼릭 리커버리", pstat_main=25)
+
+        HP_RATE = 100
+        #최대 HP 대비 소모된 HP 3%(24레벨가지는 4%)당 최종 데미지 1% 증가
+        FrenzyPassive = core.InformedCharacterModifier("데몬 프렌지 (최종 데미지)", pdamage_indep = (100 - HP_RATE) // (4 - (self.vEhc.getV(0, 0) // 25)))
         return [DeathCurse, Outrage, PhisicalTraining, Concentration, AdvancedWeaponMastery, DarkBindPassive]
 
     def get_not_implied_skill_list(self):
@@ -84,11 +69,11 @@ class JobGenerator(ck.JobGenerator):
         디멘션 소드 - 이 스킬을 과연 쓰는가?
         '''
 
-        #V코어 관련부분은 전면 재작성 필요
+        #V코어 값은 전면 재작성 필요
 
         # 익시드 0~4스택
         Execution = core.DamageSkill("익시드: 엑스큐션", 0, 540, 4, modifier = core.CharacterModifier(armor_ignore = 30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        # 익시드 5스택
+        # 익시드 5스택 이상
         ExecutionExceed = core.DamageSkill("익시드: 엑스큐션 (강화)", 540, 540, 6, modifier = core.CharacterModifier(armor_ignore = 30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         # 방어력 2배 무시가 30퍼를 한번 더 계산하는건지, 아니면 60퍼로 적용되는건지 알아볼 필요가 있음.
@@ -103,27 +88,28 @@ class JobGenerator(ck.JobGenerator):
         # 보너스 찬스 70% -> 80%
         EnhancedExceed = core.DamageSkill("인핸스드 익시드", 0, 200, 2*0.8).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
 
-        #FrenzyDOT = core.DamageSkill("프렌지 장판", 0, 300 + 8 * vEhc.getV(0, 0), 2).setV(vEhc, 0, 0, True).wrap(core.DamageSkillWrapper)
+        #일정 주기로 마족의 피가 바닥에 뿌려져 5초 동안 최대 10명의 적을 일정주기 마다 300+8n%로 2번 공격
+        FrenzyDOT = core.DamageSkill("프렌지 장판", 0, 300 + 8 * vEhc.getV(0, 0), 2).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         #BatSwarm = core.SummonSkill("배츠 스웜", 0, 0, 200, 1, 0)
 
         #BloodImprison = core.DamageSkill("블러디 임프리즌", 0, 800, 3, cooltime = 120*1000)
 
         #Buff skills
-        Exceed = core.BuffSkill("익시드", 0, 99999999)
+        Exceed = core.BuffSkill("익시드", 0, 99999999).wrap(core.BuffSkillWrapper)
         Exceed = core.StackSkillWrapper(Exceed, 18)
         Exceed.set_name_style("익시드 %d스택")
         Exceed.set_stack(0)
 
-        ForbiddenContract = core.BuffSkill("포비든 컨트랙트", 0, 30*1000, cooltime = 75*1000, pdamage = 10)
-        DemonicFortitude = core.BuffSkill("데모닉 포티튜드", 0, 60*1000, cooltime=120*1000, pdamage=10)
+        ForbiddenContract = core.BuffSkill("포비든 컨트랙트", 0, 30*1000, cooltime = 75*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
+        DemonicFortitude = core.BuffSkill("데모닉 포티튜드", 0, 60*1000, cooltime=120*1000, pdamage=10).wrap(core.BuffSkillWrapper)
 
-        ReleaseOverload = core.BuffSkill("릴리즈 오버로드", 0, 60*1000, pdamage_indep= 25)
+        ReleaseOverload = core.BuffSkill("릴리즈 오버로드", 0, 60*1000, pdamage_indep= 25).wrap(core.BuffSkillWrapper)
         CallMastema = core.SummonSkill("콜 마스테마", 690, 5000, 500 + vEhc.getV(4,4)*20, 8, (30+vEhc.getV(4,4))*1000, cooltime = 150*1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
         #CallMastemaAnother = core.SummonSkill("콜 마스테마+", 0, ).wrap(core.BuffSkillWrapper)    #러블리 테리토리..데미지 없음.
         
-        DimensionSword = core.SummonSkill("디멘션 소드", 0, 3000, 1250+14*vEhc.getV(0,0), 8, 40*1000, cooltime = 120*1000, modifier=core.CharacterModifier(armor_ignore=100)).wrap(core.SummonSkillWrapper)
-        DimensionSwordReuse = core.SummonSkill("디멘션 소드 (재시전)", 0, 0, 300+vEhc.getV(0,0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).wrap(core.SummonSkillWrapper)
+        DimensionSword = core.SummonSkill("디멘션 소드", 0, 3000, 1250+14*vEhc.getV(0,0), 8, 40*1000, cooltime = 120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        DimensionSwordReuse = core.SummonSkill("디멘션 소드 (재시전)", 0, 0, 300+vEhc.getV(0,0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
         ######   Skill Wrapper   ######
         '''딜 사이클 정리
         
@@ -133,6 +119,8 @@ class JobGenerator(ck.JobGenerator):
         Execution.onAfter(EnhancedExceed)
         ExecutionExceed.onAfter(EnhancedExceed)
         ReleaseOverload.onAfter(Exceed.set_stack(0))
+
+        ExceedOpt = core.OptionalElement(Exceed.judge(5, 1), ExecutionExceed, Execution)
 
         #사우전드 소드 : 사용 시 익시드 오버로드 5 증가
         ThousandSword.onAfter(Exceed.stackController(5))
