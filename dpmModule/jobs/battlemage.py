@@ -81,10 +81,10 @@ class JobGenerator(ck.JobGenerator):
         FinishBlow_U = core.DamageSkill("사신의 낫", 720+60, 300, 12, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         FinishBlow_M_U = core.DamageSkill("사신의 낫(마오데)", 720+60, 300, 12+1, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
-        # TODO : [마스터 오브 데스] : 사용 중 데스의 최종 데미지가 50% 증가하는 기능이 추가됩니다. V1.2.316
-        # MasterOfDeath 발동시에 Death를 비활성화시키고 Death_MOD를 활성화, 종료시에 Death_MOD를 비활성화시키고 Death를 활성화. 더 좋은 방법이 있을지...
-        Death = core.SummonSkill("데스", 0, 5000, 200+chtr.level, 12, 99999*100000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
-        #Death_MOD = core.SummonSkill("데스 (마스터 오브 데스)", 0, 5000, (200+chtr.level) * 1.5, 12, 99999*100000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
+        # 마스터 오브 데스의 지속시간 중 데스의 최종 데미지 50% 증가
+        # 올바르게 작동하는지 확인 필요
+        Death = core.SummonSkill("데스", 0, 5000, 200+chtr.level, 12, 99999*100000, cooltime = -1).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
+        Death_MOD = core.SummonSkill("데스 (마스터 오브 데스)", 0, 5000, (200+chtr.level) * 1.5, 12, 30*1000, cooltime = -1).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         
         RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 4, 4)
         UnionAura = core.BuffSkill("유니온 오라", 810, (vEhc.getV(1,1)//2+25)*1000, cooltime = 100*1000, pdamage=20, boss_pdamage=10, att=50).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
@@ -117,6 +117,10 @@ class JobGenerator(ck.JobGenerator):
         FinishBlowEndpoint = core.DamageSkill('기본공격', 0, 0, 0).wrap(core.DamageSkillWrapper)
         FinishBlowEndpoint.onAfter(FinishBlow)
         
+        # 확인 필요
+        MasterOfDeath.onAfter(Death_MOD)
+        MasterOfDeath.onAfter(Death.controller(30*1000))
+
         #DarkLightening.onAfters([MarkStack.stackController(1), UseMark])
         DarkLightening.onAfters([MarkStack.stackController(1), FinalAttack])
         
@@ -130,6 +134,6 @@ class JobGenerator(ck.JobGenerator):
                 globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                 globalSkill.soul_contract()] +\
                 [DarkGenesis, BattlekingBar] +\
-                [RegistanceLineInfantry, Death, BlackMagicAlter, GrimReaper] +\
+                [RegistanceLineInfantry, Death, Death_MOD, BlackMagicAlter, GrimReaper] +\
                 [] +\
                 [FinishBlowEndpoint])

@@ -149,6 +149,7 @@ class JobGenerator(ck.JobGenerator):
         BasicAttackWrapper.onAfter(BasicAttack)
         #어윌소 --> AdvancedWillOfSword
         WillOfSwordStrike.onAfter(WillOfSwordStrike_)
+        #WillOfSwordStrike.onAfter(DrakeSlasher_Dummy.controller(1))
         WillOfSwordStrike_Fig.onAfter(WillOfSwordStrike_Fig_)
         WillOfSwordStrike_Opt = core.OptionalElement(FinalFiguration.is_active, WillOfSwordStrike_Fig, WillOfSwordStrike, name = "변신시")
         WillOfSwordStrikeJudge.onAfter(WillOfSwordStrike_Opt)
