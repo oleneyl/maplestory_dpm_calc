@@ -256,7 +256,7 @@ class JobGenerator(ck.JobGenerator):
         TimeHolding.onConstraint(core.ConstraintElement("쉐레사용 이후사용", ShadowRain, ShadowRain.is_not_usable))
 
         # 오라 웨폰
-        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 2, 2)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
         for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
                     AdvancedRollingCurve, AdvancedRollingAssulter, StormBreak, UpperStrike, AirRiot, GigaCrash,
                     FallingStar, AdvancedEarthBreak, TwinBladeOfTime_end]:

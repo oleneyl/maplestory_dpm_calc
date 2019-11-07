@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobclass import cygnus
+from .jobbranch import warriors
 
 # 미하일 영메 적용여부에 대해 고민해볼 필요 있음
 
@@ -121,7 +122,7 @@ class JobGenerator(ck.JobGenerator):
     
 
         # 오라 웨폰
-        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 2, 2)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
         for sk in [SoullightSlash, SoulAssult]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()

@@ -4,6 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import warriors
 
 #TODO : 5차 신스킬 적용
 
@@ -100,7 +101,7 @@ class JobGenerator(ck.JobGenerator):
         PierceCyclone.onAfter(PierceCyclone_)
 
         # 오라 웨폰
-        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 2, 1)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 1)
         for sk in [GoungnilDescent, PierceCycloneEnd]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()

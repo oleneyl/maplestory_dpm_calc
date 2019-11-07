@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
+from .jobbranch import warriors
 
 #TODO : 5차 신스킬 적용
 
@@ -90,7 +91,7 @@ class JobGenerator(ck.JobGenerator):
                             core.RepeatElement(GrandCrossSmallTick, 6)])
         
         # 오라 웨폰
-        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 2, 2)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
         for sk in [Blast, GrandCrossSmallTick, GrandCrossLargeTick]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()

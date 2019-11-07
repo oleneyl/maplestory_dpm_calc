@@ -144,7 +144,7 @@ class JobGenerator(ck.JobGenerator):
         InstallMaha.onAfter(Combo.stackController(100))
 
         # 콤보 계산, 오라 웨폰
-        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 2, 1)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 1)
         for sk in [SmashSwing, FinalBlow, 
                 Judgement, BeyonderFirst, BeyonderSecond, BeyonderThird,
                 AdrenalineSmashSwing, AdrenalineFinalBlow, AdrenalineBeyonderWave,

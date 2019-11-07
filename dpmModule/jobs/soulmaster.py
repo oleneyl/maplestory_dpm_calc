@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
 from . import globalSkill
 from .jobclass import cygnus
+from .jobbranch import warriors
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -104,7 +105,7 @@ class JobGenerator(ck.JobGenerator):
         SoulEclipse.onAfter(SolunaDivide.controller(30*1000))
 
         # 오라 웨폰
-        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 2, 2)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
         for sk in [NormalAttack, ElisionTick]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()

@@ -138,7 +138,7 @@ class JobGenerator(ck.JobGenerator):
         Panic.onAfter(ComboAttack.stackController(-2))
         
         # 오라 웨폰
-        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 3, 2)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
         for sk in [RaisingBlowInrageFinalizer, ComboDesfort, Panic, Insizing]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()

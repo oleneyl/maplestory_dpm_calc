@@ -4,6 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import warriors
 ######   Passive Skill   ######
 
 
@@ -127,7 +128,7 @@ class JobGenerator(ck.JobGenerator):
         Metamorphosis.onAfter(MetamorphosisSummon)
 
         # 오라 웨폰
-        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 3, 2)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
         for sk in [DemonSlashAWBB1, DemonSlashAWBB2, DemonSlashAWBB3, DemonSlashAWBB4, DemonImpact]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
