@@ -1,4 +1,22 @@
+from ...kernel import core
+from ...kernel.core import VSkillModifier as V
+from ...kernel.core import CharacterModifier as MDF
+from ...character import characterKernel as ck
+from functools import partial
+
 #레프
+
+class MagicCircuitFullDriveBuilder():
+    def __init__(self, vEhc, num1, num2):
+        # 마나 최대치 유지 가정, 비율에 따라 수치가 어떻게 변동되는지 확인 필요
+        # 마력 폭풍 발생 시 데미지 증가량 갱신하지 않음
+        self.MANA = 100
+        self.MagicCircuitFullDriveBuff = core.BuffSkill("매직 서킷 풀드라이브 (버프)", 0, 30+vEhc.getV(num1, num2), cooltime = 200*1000, pdamage= (20+vEhc.getV(num1, num2)) * (MANA/100)).wrap(core.BuffSkillWrapper)
+        self.ManaStorm = core.SummonSkill("매직 서킷 풀드라이브 (마나 폭풍)", 0, 4000, 500+20*vEhc.getV(num1, num2), 3, 30+vEhc.getV(num1, num2), cooltime = -1).wrap(core.SummonSkillWrapper)
+
+    def get_skill(self):
+        return self.MagicCircuitFullDriveBuff, self.ManaStorm
+
 '''
 매직 서킷 풀드라이브
 최대 MP의 15% 소비, 55초[(스킬 레벨+30)초] 동안 현재 MP의 비율에 따라 데미지 최대 45%[(스킬 레벨+20)%]까지 증가, 마력 폭풍 발생 시 데미지 증가량 갱신
