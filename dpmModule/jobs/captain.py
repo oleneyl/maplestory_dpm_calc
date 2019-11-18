@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import pirates
+from .jobclass import adventurer
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -106,7 +107,7 @@ class JobGenerator(ck.JobGenerator):
         UnwierdingNectar = core.BuffSkill("언위어링 넥타", 1170, 180000, crit=10).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
-        PirateFlag = core.BuffSkill("파이렛 플래그", 990, 30 * 1000, cooltime = (60 - vEhc.getV(2,1)) * 1000, armor_ignore = (10 + 0.5*vEhc.getV(2,1)), stat_main_fixed = (chtr.level * 5 + 18)*0.01*(10 + 0.5*vEhc.getV(2,1))).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
+        PirateFlag = adventurer.PirateFlagWrapper(vEhc, 2, 1, chtr.level)
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = 150

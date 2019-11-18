@@ -42,6 +42,11 @@ def MapleHeroes2Wrapper(vEhc, num1, num2, level):
     MapleHeroes2 = core.BuffSkill("메이플월드 여신의 축복", 450, 60*1000, stat_main = 0.01 * (100 + 10 * vEhc.getV(num1, num2)) * (25 + level * 5), pdamage = 5 + vEhc.getV(num1, num2) // 2, cooltime = 180*1000).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
     return MapleHeroes2
 
+def PirateFlagWrapper(vEhc, num1, num2, level):
+    PirateFlag = core.BuffSkill("파이렛 플래그", 990, 30 * 1000, cooltime = (60 - vEhc.getV(num1, num2)) * 1000, armor_ignore = int(10 + 0.5*vEhc.getV(num1, num2)), stat_main_fixed = (level * 5 + 18)*0.01*(10 + 0.5*vEhc.getV(num1, num2))).isV(vEhc,num1, num2).wrap(core.BuffSkillWrapper)
+    return PirateFlag
+
+
 '''
 블리츠 실드
 HP 5% 소비, 최대 HP의 20%의[23] 피해를 막아주는 보호막을 5초간 생성
@@ -57,9 +62,4 @@ MP 800 소비, 40초 동안 강화되어 최대 10명의 적을 825%[(스킬 레
 MP 850 소비, 30초 동안 다크 사이트 중 공격 및 스킬 사용 시 은신이 해제되지 않음
 다크 사이트 중 공격 시 최종 데미지 15%[기본 10%에서 5레벨마다 1% 증가한다.] 증가, 어드밴스드 다크 사이트의 최종 데미지 증가와 합적용
 재사용 대기시간 195초[(220-스킬 레벨)초]
-
-파이렛 플래그
-MP 500 소비, 30초 동안 해적 깃발 소환
-해적 깃발 주변에 있는 파티원의 AP를 직접 투자한 모든 능력치 22% 증가, 몬스터 방어율 22% 감소[(스킬 레벨×0.5+10)%. 소수점은 버린다.]
-재사용 대기시간 35초[(60-스킬 레벨)초]
 '''
