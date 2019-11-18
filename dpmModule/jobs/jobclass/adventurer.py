@@ -37,7 +37,7 @@ class InfinityWrapper(core.BuffSkillWrapper):
         self.passedTime = 0
         return super(InfinityWrapper, self)._use(rem = rem, red = red)
 
-# 테스트 필요
+# 이하 모든 코드 테스트 필요
 def MapleHeroes2Wrapper(vEhc, num1, num2, level):
     MapleHeroes2 = core.BuffSkill("메이플월드 여신의 축복", 450, 60*1000, stat_main = 0.01 * (100 + 10 * vEhc.getV(num1, num2)) * (25 + level * 5), pdamage = 5 + vEhc.getV(num1, num2) // 2, cooltime = 180*1000).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
     return MapleHeroes2
@@ -46,7 +46,10 @@ def PirateFlagWrapper(vEhc, num1, num2, level):
     PirateFlag = core.BuffSkill("파이렛 플래그", 990, 30 * 1000, cooltime = (60 - vEhc.getV(num1, num2)) * 1000, armor_ignore = int(10 + 0.5*vEhc.getV(num1, num2)), stat_main_fixed = (level * 5 + 18)*0.01*(10 + 0.5*vEhc.getV(num1, num2))).isV(vEhc,num1, num2).wrap(core.BuffSkillWrapper)
     return PirateFlag
 
-
+# 작성중, 2초 후 폭발 가정
+def BlitzShieldWrappers(vEhc, num1, num2):
+    BlitzShieldDummy = core.BuffSkill("블리츠 실드 (더미)", 0, 2000, cooltime = -1).wrap(core.BuffSkillWrapper)
+    BlitzShield = core.DamageSkill("블리츠 실드", 0, vEhc.getV(num1, num2)*20+500, 5, cooltime = 15000).isV(vEhc, num1, num2).wrap(core.DamageSkillWrapper)
 '''
 블리츠 실드
 HP 5% 소비, 최대 HP의 20%의[23] 피해를 막아주는 보호막을 5초간 생성
