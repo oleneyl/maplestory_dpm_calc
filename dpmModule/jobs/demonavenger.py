@@ -4,6 +4,8 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import warriors
+from .jobclass import demon
 
 ### 데몬어벤져 직업 코드 (작성중)
 # TODO: 스킬별 딜레이 추가, 5차 강화값 적용, 딜사이클
@@ -42,13 +44,13 @@ class JobGenerator(ck.JobGenerator):
         HP_RATE = 100
         #최대 HP 대비 소모된 HP 3%(24레벨가지는 4%)당 최종 데미지 1% 증가
         FrenzyPassive = core.InformedCharacterModifier("데몬 프렌지 (최종 데미지)", pdamage_indep = (100 - HP_RATE) // (4 - (self.vEhc.getV(0, 0) // 25)))
-        return [DeathCurse, Outrage, PhisicalTraining, Concentration, AdvancedWeaponMastery, DarkBindPassive]
+        return [AbyssalRage, AdvancedDesperadoMastery, OverwhelmingPower, DefenseExpertise, DemonicSharpness, MapleHeroesDemon, InnerStrength, DiabolicRecovery, FrenzyPassive]
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
         
-        return [WeaponConstant, Mastery, EvilTorture]
+        return [WeaponConstant, Mastery]
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
@@ -57,16 +59,15 @@ class JobGenerator(ck.JobGenerator):
 '''
         TODO:
         이즈 익시드 페인(익시드 스킬 데미지 20% 증가) - 어떤 스킬에 적용되는 것인지 확인필요
-        메용 패시브: HP 15%
 
         하이퍼: 익시드 - 리인포스: 익시드 스킬 데미지 20% 증가
 
-        오라 웨폰
+        오라 웨폰 - 작성 필요
         이계 여신의 축복 - 이 스킬을 과연 쓰는가?
 
         데몬 프렌지 - DPM 기준을 어떻게 할것인지?
-        블러드 피스트 - 이 스킬을 과연 쓰는가?
-        디멘션 소드 - 이 스킬을 과연 쓰는가?
+        블러드 피스트 - 작성 필요
+        디멘션 소드 - 작성 필요
         '''
 
         #V코어 값은 전면 재작성 필요
@@ -78,6 +79,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 방어력 2배 무시가 30퍼를 한번 더 계산하는건지, 아니면 60퍼로 적용되는건지 알아볼 필요가 있음.
         # 최대 10회 공격
+        # 공격 주기 등 정보를 알아야 젱확히 작성가능
         ShieldChasing = core.SummonSkill("실드 체이싱", 0, 0, 500, 2, 5000-1, cooltime = 6000, modifier = core.CharacterModifier(armor_ignore = 30, pdamage=20), red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
 
         ArmorBreak = core.DamageSkill("아머 브레이크", 0, 350, 4, cooltime = 30 * 1000).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
@@ -111,6 +113,7 @@ class JobGenerator(ck.JobGenerator):
         DimensionSword = core.SummonSkill("디멘션 소드", 0, 3000, 1250+14*vEhc.getV(0,0), 8, 40*1000, cooltime = 120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
         DimensionSwordReuse = core.SummonSkill("디멘션 소드 (재시전)", 0, 0, 300+vEhc.getV(0,0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
         ######   Skill Wrapper   ######
+        # TODO: 딜사이클을 알아야 작성가능
         '''딜 사이클 정리
         
         '''
@@ -126,7 +129,12 @@ class JobGenerator(ck.JobGenerator):
         ThousandSword.onAfter(Exceed.stackController(5))
 
         # 오라 웨폰
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
+        for sk in []:
+            auraweapon_builder.add_aura_weapon(sk)
+        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
         
+
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Booster, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, DemonAwakning,
