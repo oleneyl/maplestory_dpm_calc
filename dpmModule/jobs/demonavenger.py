@@ -56,7 +56,7 @@ class JobGenerator(ck.JobGenerator):
         '''
         코강 순서: 익시드 엑스큐션, 실드 체이싱 -> 문라이트 슬래시(사용하지 않음)
         '''
-'''
+        '''
         TODO:
         이즈 익시드 페인(익시드 스킬 데미지 20% 증가) - 어떤 스킬에 적용되는 것인지 확인필요
 
@@ -69,9 +69,9 @@ class JobGenerator(ck.JobGenerator):
         블러드 피스트 - 작성 필요
         디멘션 소드 - 작성 필요
         '''
-
         #V코어 값은 전면 재작성 필요
-
+        
+        # TODO: OptionalElement로 변경해야 함
         # 익시드 0~4스택
         Execution = core.DamageSkill("익시드: 엑스큐션", 0, 540, 4, modifier = core.CharacterModifier(armor_ignore = 30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         # 익시드 5스택 이상
@@ -130,16 +130,15 @@ class JobGenerator(ck.JobGenerator):
 
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
-        for sk in []:
+        for sk in [Execution, ExecutionExceed, ShieldChasing, ArmorBreak, ThousandSword]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
         
-
         return(BasicAttackWrapper,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+               [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Booster, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, DemonAwakning,
                     globalSkill.soul_contract()] +\
-                [Cerberus, DevilCry, SpiritOfRageEnd] +\
+                [Execution, Cerberus, DevilCry, SpiritOfRageEnd] +\
                 [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_] +\
                 [AuraWeaponCooltimeDummy] +\
                 [BasicAttackWrapper])
