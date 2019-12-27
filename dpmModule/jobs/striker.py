@@ -75,7 +75,11 @@ class JobGenerator(ck.JobGenerator):
         ChookRoi = core.BuffSkill("축뢰", 1620, 180000, rem = True).wrap(core.BuffSkillWrapper) # 타수증가 적용으로 계싼할지는 염두에 두어야 함
         WindBooster = core.BuffSkill("윈드 부스터", 0, 300000, rem = True).wrap(core.BuffSkillWrapper)
     
+
+        # 5차 강화에 포함해야 할 수도 있음
+        # 버프 통합 필요
         Huricane = core.DamageSkill("태풍", 0, 390, 5).wrap(core.DamageSkillWrapper)
+        #Huricane_NoCool = core.DamageSkill("태풍(노쿨)", 900, 390, 5).wrap(core.DamageSkillWrapper)
         HuricaneBuff = core.BuffSkill("태풍(버프)", 900, 90000, rem = True, pdamage = 35).wrap(core.BuffSkillWrapper)
         
         Destroy = core.DamageSkill("섬멸", 420, 350, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
@@ -118,6 +122,10 @@ class JobGenerator(ck.JobGenerator):
             contrib.create_auxilary_attack(skill, CHOOKROI)
         ShinNoiHapLAttack.onTick(ShinNoiHapLAttack_ChookRoi)
         NoiShinChanGeukAttack.onTick(NoiShinChanGeukAttack_ChookRoi)
+
+        #천지개벽 발동 중에는 태풍을 노쿨로 사용
+        #Huricane_NoCool.onAfter(HuricaneBuff)
+        #Huricane_SkyOpen = core.OptionalElement(SkyOpen.is_active(), Huricane_NoCool, name = "태풍(천지개벽)" )
         
         #조건부 파이널어택으로 설정함.
 
