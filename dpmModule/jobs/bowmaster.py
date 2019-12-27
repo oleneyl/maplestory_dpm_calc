@@ -108,7 +108,7 @@ class JobGenerator(ck.JobGenerator):
     
         ### Exports ###
         return(ArrowOfStorm,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level),
                     SoulArrow, AdvancedQuibber, Preparation, EpicAdventure, ArrowRainBuff, CriticalReinforce, QuibberFullBurstBuff, 
                     globalSkill.soul_contract()] +\
                 [] +\
