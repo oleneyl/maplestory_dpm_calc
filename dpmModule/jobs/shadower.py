@@ -77,8 +77,9 @@ class JobGenerator(ck.JobGenerator):
 
         
         ######   Skill   ######
-        STACK1RATE = 34
-        STACK2RATE = 91
+        # http://m.inven.co.kr/board/powerbbs.php?come_idx=2297&stype=subject&svalue=%EC%8A%A4%ED%83%9D&l=52201
+        STACK1RATE = 19
+        STACK2RATE = 80
 
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 200*1000).wrap(core.BuffSkillWrapper)
@@ -121,12 +122,12 @@ class JobGenerator(ck.JobGenerator):
         
         MesoExplosion = MesoStack(vEhc)
         
-        Assasinate2.onAfters([SonicBlow.controller(1500, "reduce_cooltime"), MesoExplosion.stackController(6*0.4, name = "메소 생성")])
+        Assasinate2.onAfters([SonicBlow.controller(1500 * STACK2RATE, "reduce_cooltime"), MesoExplosion.stackController(6*0.4, name = "메소 생성")])
         Assasinate1.onAfter(MesoExplosion.stackController(6*0.4, name = "메소 생성"))
         Assasinate1.onAfter(MesoExplosion)
         Assasinate1.onAfter(Assasinate2)
         
-        Assasinate2_D.onAfters([SonicBlow.controller(1500, "reduce_cooltime"), MesoExplosion.stackController(6*0.4, name = "메소 생성")])
+        Assasinate2_D.onAfters([SonicBlow.controller(1500 * STACK2RATE, "reduce_cooltime"), MesoExplosion.stackController(6*0.4, name = "메소 생성")])
         Assasinate1_D.onAfter(MesoExplosion.stackController(6*0.4, name = "메소 생성"))
         Assasinate1_D.onAfter(MesoExplosion)
         Assasinate1_D.onAfter(Assasinate2_D)
