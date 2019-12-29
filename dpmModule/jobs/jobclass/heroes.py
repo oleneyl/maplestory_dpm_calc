@@ -7,7 +7,7 @@ from functools import partial
 
 class FridWrapper(core.BuffSkillWrapper):
 	# num1, num2
-    def __init__(self, vEhc, num1, num2):
+    def __init__(self, vEhc, num1, num2, invariant = True):
         super(FridWrapper, self).__init__(skill = core.BuffSkill("프리드의 가호 더미", num1, num2).isV(vEhc, num1, num2))
         self.vlevel = vEhc.getV(num1, num2)
         vlevel = self.vlevel
@@ -20,7 +20,7 @@ class FridWrapper(core.BuffSkillWrapper):
                     core.BuffSkill("프리드의 가호 6스택", 0, 30 * 1000, cooltime = 240 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel))]
         self.state = 0
         # 이 변수가 무슨 뜻인지 확인필요. 직업별 스크립트 중 에반에만 존재.
-        #self.modifierInvariantFlag = False
+        self.modifierInvariantFlag = invariant
 
     def _use(self, rem = 0, red = 0) -> core.ResultObject:
         self.onoff = True
@@ -38,6 +38,9 @@ class FridWrapper(core.BuffSkillWrapper):
         return core.ResultObject(delay, mdf, 0, sname = self._id, spec = 'buff', kwargs = {"remain" : self.skill.remain * (1+0.01*rem*self.skill.rem)})
         #return delay, mdf, 0, self.cascade
 
+# 메용2는 모험가 파일에 맡김. 더 나은 방법 있으면 수정 필요.
+def MapleHeroes2Wrapper(vEhc, num1, num2):
+    adventurer.MapleHeroes2Wrapper(vEhc, num1, num2)
 
 
 

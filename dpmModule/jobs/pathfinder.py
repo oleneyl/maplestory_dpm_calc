@@ -30,7 +30,6 @@ class CardinalStateWrapper(core.BuffSkillWrapper):
             self.state = state
             for skill in self.ancient_force_skills:
                 skill.reduce_cooltime(1000)
-                #print(skill._id, skill.cooltimeLeft)
             return True
         else:
             return False

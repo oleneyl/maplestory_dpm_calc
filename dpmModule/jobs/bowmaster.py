@@ -70,7 +70,9 @@ class JobGenerator(ck.JobGenerator):
         
         ArrowOfStorm = core.DamageSkill("폭풍의 시", 120, 350*0.75, 1+1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 10)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)  #오더스 적용 필요, 아머 피어싱, 
         ArrowFlatter = core.SummonSkill("애로우 플래터", 600, 1000 / 4.5, 85+90, 1, 30 * 1000).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
-    
+        # 작성중
+        #GrittyGust = core.DamageSkill("윈드 오브 프레이", ?, 500, 81, cooltime = 15 * 1000, red = true).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        #GrittyGustDOT = core.SummonSkill("윈드 오브 프레이(도트)", 0, 1000, 200, 1, 10*1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         #TODO : 애로우 레인(조건부 파이널어택)
         ArrowRainBuff = core.BuffSkill("애로우 레인(버프)", 720, (40+vEhc.getV(0,0))*1000, cooltime = 120 * 1000, red = True, pdamage = 15+(0.5*vEhc.getV(0,0))).isV(vEhc,0,0).wrap(core.BuffSkillWrapper) #딜레이 모름
         ArrowRain = core.SummonSkill("애로우 레인", 0, 840, 500+vEhc.getV(0,0)*24, 5, (40+vEhc.getV(0,0))*1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
@@ -88,7 +90,7 @@ class JobGenerator(ck.JobGenerator):
         ImageArrow = core.SummonSkill("잔영의 시", 720, 500, 400+16*vEhc.getV(1,1), 3, 30000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
     
         ######   Skill Wrapper   ######
-        
+        #GrittyGust.onAfter(GrittyGustDOT)
         #이볼브 연계 설정
         Evolve.onAfter(Pheonix.controller(1))
         Pheonix.onConstraint(core.ConstraintElement("이볼브 사용시 사용 금지", Evolve, Evolve.is_not_active))

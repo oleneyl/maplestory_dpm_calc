@@ -59,7 +59,7 @@ class JobGenerator(ck.JobGenerator):
         IgnisRoar = core.InformedCharacterModifier("이그니스 로어",pdamage_indep = 15, att = 40)
 
         DualbowgunExpert = core.InformedCharacterModifier("듀얼보우건 엑스퍼트",att = 30, crit_damage =10)
-        DefenceBreak = core.InformedCharacterModifier("디펜스 브레이크",armor_ignore=25, pdamage_indep=20, boss_pdamage = 15, crit_damage = 20)
+        DefenceBreak = core.InformedCharacterModifier("디펜스 브레이크",armor_ignore=25, pdamage_indep=20, boss_pdamage = 20, crit_damage = 20)
         AdvancedFinalAttack = core.InformedCharacterModifier("어드밴스드 파이널 어택",att = 20)
         
         return [PotentialPower, SharpAiming, SpiritInfusion, 

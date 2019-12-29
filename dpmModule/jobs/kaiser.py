@@ -4,8 +4,10 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import warriors
 
 #Combo Instinct - generated sub deal
+#TODO: [윌 오브 소드-스트라이크] : 불길 적중 시 드라코슬래셔의 재사용 대기시간이 즉시 초기화되고 이후 3회 드라코 슬래셔의 재사용 대기시간이 적용되지 않는버프가 걸리는 기능이 추가됩니다. 해당 버프는 윌 오브 소드-스트라이크의재사용 대기시간 동안만 유지됩니다.
 ######   Passive Skill   ######
 class MorphGaugeWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
@@ -145,8 +147,6 @@ class JobGenerator(ck.JobGenerator):
         BasicAttack = core.OptionalElement(DrakeSlasher_Dummy.is_available, DrakeSlasher_Dummy, GigaSlasher, name = "드라코 슬래셔 충전시")
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
-
-        #어윌소 --> AdvancedWillOfSword
         WillOfSwordStrike.onAfter(WillOfSwordStrike_)
         WillOfSwordStrike_Fig.onAfter(WillOfSwordStrike_Fig_)
         WillOfSwordStrike_Opt = core.OptionalElement(FinalFiguration.is_active, WillOfSwordStrike_Fig, WillOfSwordStrike, name = "변신시")
@@ -157,7 +157,7 @@ class JobGenerator(ck.JobGenerator):
         AdvancedWillOfSword.onAfter(core.OptionalElement(WillOfSwordStrikeJudge.is_available, WillOfSwordStrikeJudge, AdvancedWillOfSword_Opt, name = "윌오소스 사용 가능시"))
         
         # 오라 웨폰
-        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 1, 1)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 1, 1)
         for sk in [GigaSlasher_, GigaSlasher_Fig, DrakeSlasher, DrakeSlasher_, DrakeSlasher_Fig, DrakeSlasher_Fig_]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()

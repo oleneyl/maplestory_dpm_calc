@@ -8,9 +8,7 @@ from . import contrib
 from .jobbranch import pirates
 from .jobclass import cygnus
 #TODO : 5차 신스킬 적용
-#[섬멸] : 공격 횟수가 뇌전 버프와 무관하게 7회로적용되게 됩니다.
-#[뇌신] : 컴뱃 오더스가 적용되지 않는 현재 로직과 같은 스킬 설명이 추가됩니다.
-#[천지개벽] : 지속시간이 90초에서 30초로, 재사용 대기시간이 180초에서 120초로 감소되고 지속시간 동안 뇌전 버프를 소모하지 않는 기능이 추가됩니다. 천지개벽 지속시간 동안 질풍을 사용하면 데미지 증가 버프의 지속시간이 30초미만일 때만 지속시간이 갱신되게 됩니다.
+#TODO : 천지개벽 발동 중에는 태풍을 노쿨로 사용하도록
 
 ######   Passive Skill   ######
 
@@ -77,10 +75,14 @@ class JobGenerator(ck.JobGenerator):
         ChookRoi = core.BuffSkill("축뢰", 1620, 180000, rem = True).wrap(core.BuffSkillWrapper) # 타수증가 적용으로 계싼할지는 염두에 두어야 함
         WindBooster = core.BuffSkill("윈드 부스터", 0, 300000, rem = True).wrap(core.BuffSkillWrapper)
     
+
+        # 5차 강화에 포함해야 할 수도 있음
+        # 버프 통합 필요
         Huricane = core.DamageSkill("태풍", 0, 390, 5).wrap(core.DamageSkillWrapper)
+        #Huricane_NoCool = core.DamageSkill("태풍(노쿨)", 900, 390, 5).wrap(core.DamageSkillWrapper)
         HuricaneBuff = core.BuffSkill("태풍(버프)", 900, 90000, rem = True, pdamage = 35).wrap(core.BuffSkillWrapper)
         
-        Destroy = core.DamageSkill("섬멸", 420, 350, 2 + 5, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Destroy = core.DamageSkill("섬멸", 420, 350, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Thunder = core.DamageSkill("벽력", 660, 320, 5 + 1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         DestroyConcat = core.DamageSkill("섬멸(연계)", 420, 350, 2 + 5, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20, pdamage_indep = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         ThunderConcat = core.DamageSkill("벽력(연계)", 660, 320, 5 + 1, modifier = core.CharacterModifier(pdamage = 20, pdamage_indep = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #연계최종뎀 20%
@@ -91,7 +93,8 @@ class JobGenerator(ck.JobGenerator):
         BasicAttack = core.DamageSkill("벽력(기본공격)", 660, 320, 5 + 1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)        
 
         # 하이퍼
-        SkyOpen = core.BuffSkill("천지개벽", 0, 180000).wrap(core.BuffSkillWrapper) #   안씀
+        # 딜레이 추가 필요
+        SkyOpen = core.BuffSkill("천지개벽", 0, 30*1000, cooltime = 120*1000).wrap(core.BuffSkillWrapper)
         
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
@@ -119,6 +122,10 @@ class JobGenerator(ck.JobGenerator):
             contrib.create_auxilary_attack(skill, CHOOKROI)
         ShinNoiHapLAttack.onTick(ShinNoiHapLAttack_ChookRoi)
         NoiShinChanGeukAttack.onTick(NoiShinChanGeukAttack_ChookRoi)
+
+        #천지개벽 발동 중에는 태풍을 노쿨로 사용
+        #Huricane_NoCool.onAfter(HuricaneBuff)
+        #Huricane_SkyOpen = core.OptionalElement(SkyOpen.is_active(), Huricane_NoCool, name = "태풍(천지개벽)" )
         
         #조건부 파이널어택으로 설정함.
 

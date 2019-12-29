@@ -8,43 +8,9 @@ from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import warriors
 
-##### TODO: 소스코드 전체 작성 (현재 닼나 복붙) #####
-
 # 최저 콤보 카운트 500 가정
 
 #TODO : 5차 신스킬 적용
-
-class FridWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc):
-        super(FridWrapper, self).__init__(skill = core.BuffSkill("프리드의 가호 더미", 0,0).isV(vEhc,0,0))
-        self.vlevel = vEhc.getV(0,0)
-        vlevel = vEhc.getV(0,0)
-        self.skillList = [core.BuffSkill("프리드의 가호 0스택(더미)", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 1스택", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 2스택", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 3스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25),
-                    core.BuffSkill("프리드의 가호 4스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel)),
-                    core.BuffSkill("프리드의 가호 5스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel)),
-                    core.BuffSkill("프리드의 가호 6스택", 0, 30 * 1000, cooltime = 240 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel))]
-        self.state = 0
-        self.modifierInvariantFlag = False
-
-    def _use(self, rem = 0, red = 0) -> core.ResultObject:
-        self.onoff = True
-        self.state += 1
-        if self.state > 6:
-            self.state -= 6        
-        self.skill = self.skillList[self.state]
-        self.timeLeft = self.skill.remain * (1 + 0.01*rem * self.skill.rem)
-        self.cooltimeLeft = self.skill.cooltime * (1 - 0.01*red* self.skill.red)
-        self.onoff = True
-        if self.cooltimeLeft > 0:
-            self.available = False
-        delay = self.skill.delay
-        mdf = self.get_modifier()
-        return core.ResultObject(delay, mdf, 0, sname = self._id, spec = 'buff', kwargs = {"remain" : self.skill.remain * (1+0.01*rem*self.skill.rem)})
-        #return delay, mdf, 0, self.cascade
-
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -125,7 +91,8 @@ class JobGenerator(ck.JobGenerator):
         MahaRegionInit = core.DamageSkill("마하의 영역(시전)", 0, 800, 5).wrap(core.DamageSkillWrapper)
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime=120*1000, pdamage_indep=10).wrap(core.BuffSkillWrapper)
 
-        Frid = FridWrapper(vEhc)
+        # modifierInvariantFlag = False
+        Frid = heroes.FridWrapper(vEhc, 0, 0, False)
 
         InstallMaha = core.BuffSkill("인스톨 마하", 1710, (30+vEhc.getV(1,1))*1000, patt=5+vEhc.getV(1,1), cooltime=150*1000).wrap(core.BuffSkillWrapper)
         InstallMahaBlizzard = core.SummonSkill("인스톨 마하(눈보라)", 0, 3000, 650+10*vEhc.getV(1,1), 5, 60*1000, cooltime=-1).wrap(core.SummonSkillWrapper)
@@ -146,7 +113,7 @@ class JobGenerator(ck.JobGenerator):
         InstallMaha.onAfter(Combo.stackController(100))
 
         # 콤보 계산, 오라 웨폰
-        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 2, 1)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 1)
         for sk in [SmashSwing, FinalBlow, 
                 Judgement, BeyonderFirst, BeyonderSecond, BeyonderThird,
                 AdrenalineSmashSwing, AdrenalineFinalBlow, AdrenalineBeyonderWave,

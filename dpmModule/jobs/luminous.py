@@ -9,7 +9,6 @@ from .jobbranch import magicians
 '''아포 22회
 라리플 25회
 '''
-# TODO: 시전 딜레이 패치 적용
 
 class LuminousStateController(core.BuffSkillWrapper):
     DARK = 0

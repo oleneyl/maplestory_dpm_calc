@@ -5,7 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, InactiveRule
 from . import globalSkill
-
+from .jobbranch import warriors
 from .jobclass import resistance
 #TODO : 5차 신스킬 적용
 
@@ -137,8 +137,9 @@ class JobGenerator(ck.JobGenerator):
             wrp.onAfter(RevolvingCannonMastery)
 
         # 오라 웨폰
-        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 2, 2)
-        for sk in []:
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
+        # 리스트 내용 검증 필요
+        for sk in [ReleaseHammer, BurningBreaker, HammerSmashWave, Mag_Pang]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
 

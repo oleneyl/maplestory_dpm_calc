@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobclass import cygnus
+from .jobbranch import warriors
 
 # 미하일 영메 적용여부에 대해 고민해볼 필요 있음
 
@@ -84,9 +85,10 @@ class JobGenerator(ck.JobGenerator):
         
         #하이퍼
         SacredCube = core.BuffSkill("세이크리드 큐브", 90, 30000, cooltime = 210000, pdamage = 10).wrap(core.BuffSkillWrapper)
-    		# 1.2.324 패치 미적용
-        DeadlyCharge = core.DamageSkill("데들리 차지", 810, 600, 10, cooltime = 20000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        DeadlyChargeBuff = core.BuffSkill("데들리 차지(디버프)", 0, 10000, cooltime = -1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
+    	# 1.2.324 패치 미적용
+        DeadlyCharge = core.DamageSkill("데들리 차지", 810, 600, 10, cooltime = 15000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        #총뎀인지 최종뎀인지 확인필요
+        DeadlyChargeBuff = core.BuffSkill("데들리 차지(디버프)", 0, 10000, cooltime = -1, pdamage = 10).wrap(core.BuffSkillWrapper)
         QueenOfTomorrow = core.BuffSkill("퀸 오브 투모로우", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
         CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 3, 3)
@@ -120,7 +122,7 @@ class JobGenerator(ck.JobGenerator):
     
 
         # 오라 웨폰
-        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 2, 2)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
         for sk in [SoullightSlash, SoulAssult]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()

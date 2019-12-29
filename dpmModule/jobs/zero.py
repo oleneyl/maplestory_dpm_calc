@@ -6,9 +6,9 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import warriors
 
-##### 4카5앱으로 변경 필요 #####
+# TODO: 4카 5앱 적용, 리미트 막타 추가
 
-# TODO: 리미트 막타 추가
+# 제로 메용은 쓸컴뱃을 적용받지 않음
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -37,7 +37,6 @@ class JobGenerator(ck.JobGenerator):
         return [ArmorSplit]
 
     def get_modifier_optimization_hint(self):
-        # ???
         return core.CharacterModifier(crit = 15, pdamage = 30, armor_ignore = 20)
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
@@ -70,7 +69,7 @@ class JobGenerator(ck.JobGenerator):
                     core.CharacterModifier(crit = 15, boss_pdamage = 30 + 30, att = 80, pdamage = 40) + \
                     core.CharacterModifier(armor_ignore = 50)
         
-        # 크리티컬 바인드 평균값 임시로 적용
+        # 알파: 크리티컬 바인드 크뎀 평균값 적용
         AlphaState = core.BuffSkill("상태-알파", 0, 9999*10000, cooltime = -1, crit_damage = (20*4/35)).wrap(core.BuffSkillWrapper)
         BetaState = core.BuffSkill("상태-베타", 0, 9999*10000, cooltime = -1, pdamage_indep = 9.70, crit = 15-40, boss_pdamage = 30, att = 80-40, pdamage = 40, armor_ignore = -42.85, crit_damage = -(50 + (20*4/35))).wrap(core.BuffSkillWrapper)
 
@@ -106,9 +105,6 @@ class JobGenerator(ck.JobGenerator):
         StormBreak = core.DamageSkill("어드밴스드 스톰 브레이크", 690, 670, 5 ).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         StormBreakSummon = core.DamageSkill("어드밴스드 스톰 브레이크(소환)", 0, 670, 2).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) #2타 타격
         StormBreakElectric = core.DamageSkill("어드밴스드 스톰 브레이크(전기)", 0, 230, 3 ).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-
-        # TODO: 알파 상태에서만 적용되도록 개편할 필요 있음. 일단 마스터리에 기본 옵션으로 추가시킴.
-        #CriticalBind = core.BuffSkill("크리티컬 바인드", 0, 4000, crit = 30, crit_damage = 20, cooltime = 35 * 1000).wrap(core.BuffSkillWrapper)
 
         #### 베타 ####
         
@@ -257,7 +253,7 @@ class JobGenerator(ck.JobGenerator):
         TimeHolding.onConstraint(core.ConstraintElement("쉐레사용 이후사용", ShadowRain, ShadowRain.is_not_usable))
 
         # 오라 웨폰
-        auraweapon_builder = globalSkill.AuraWeaponBuilder(vEhc, 2, 2)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
         for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
                     AdvancedRollingCurve, AdvancedRollingAssulter, StormBreak, UpperStrike, AirRiot, GigaCrash,
                     FallingStar, AdvancedEarthBreak, TwinBladeOfTime_end]:
