@@ -7,11 +7,11 @@ from functools import partial
 #레프
 
 class MagicCircuitFullDriveBuilder():
-    def __init__(self, vEhc, num1, num2):
+    def __init__(self, vEhc, num1, num2, mana=100):
         # 마나 최대치 유지 가정, 비율에 따라 수치가 어떻게 변동되는지 확인 필요
         # 마력 폭풍 발생 시 데미지 증가량 갱신하지 않음
-        self.MANA = 100
-        self.MagicCircuitFullDriveBuff = core.BuffSkill("매직 서킷 풀드라이브 (버프)", 0, 30+vEhc.getV(num1, num2), cooltime = 200*1000, pdamage= (20+vEhc.getV(num1, num2)) * (MANA/100)).wrap(core.BuffSkillWrapper)
+        self.MANA = mana
+        self.MagicCircuitFullDriveBuff = core.BuffSkill("매직 서킷 풀드라이브 (버프)", 0, 30+vEhc.getV(num1, num2), cooltime = 200*1000, pdamage= (20+vEhc.getV(num1, num2)) * (self.MANA/100)).wrap(core.BuffSkillWrapper)
         self.ManaStorm = core.SummonSkill("매직 서킷 풀드라이브 (마나 폭풍)", 0, 4000, 500+20*vEhc.getV(num1, num2), 3, 30+vEhc.getV(num1, num2), cooltime = -1).wrap(core.SummonSkillWrapper)
 
     def get_skill(self):

@@ -24,16 +24,13 @@ class JobGenerator(ck.JobGenerator):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
 
         ResolutionTime = core.InformedCharacterModifier("리졸브 타임",pdamage_indep = 25, stat_main = 50)
-
-        # 이미 적용되어 있다면 지워야됨
-        DoubleTime = core.InformedCharacterModifier("래피드 타임", crit = 20, pdamage = 10)
         
         # 무기상수 1.34
         AlphaState = core.InformedCharacterModifier("상태-알파", pdamage_indep = 34, crit = 40, att = 40, armor_ignore = 30, crit_damage = 50)
         #4카5앱 옵션을 직접 작성할 경우를 가정하여...
         #VellumHelm = core.InformedCharacterModifier("카오스 벨룸의 헬름(4카 5앱)",boss_pdamage = 30, armor_ignore = -10)
 
-        return [Mastery, ResolutionTime, DoubleTime, AlphaState]
+        return [Mastery, ResolutionTime, AlphaState]
 
     def get_not_implied_skill_list(self):
         ArmorSplit = core.InformedCharacterModifier("아머 스플릿", armor_ignore = 50)

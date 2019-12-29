@@ -83,8 +83,8 @@ class JobGenerator(ck.JobGenerator):
         
         # 마스터 오브 데스의 지속시간 중 데스의 최종 데미지 50% 증가
         # 올바르게 작동하는지 확인 필요
-        Death = core.SummonSkill("데스", 0, 5000, 200+chtr.level, 12, 99999*100000, cooltime = -1).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
-        Death_MOD = core.SummonSkill("데스 (마스터 오브 데스)", 0, 5000, (200+chtr.level) * 1.5, 12, 30*1000, cooltime = -1).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
+        Death = core.SummonSkill("데스", 0, 5000, 200+chtr.level, 12, 99999*100000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
+        DeathAfterMOD = core.SummonSkill("데스 (마스터 오브 데스)", 0, 5000, (200+chtr.level) * 0.5, 12, 30*1000, cooltime = -1).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         
         RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 4, 4)
         UnionAura = core.BuffSkill("유니온 오라", 810, (vEhc.getV(1,1)//2+25)*1000, cooltime = 100*1000, pdamage=20, boss_pdamage=10, att=50).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
@@ -118,8 +118,8 @@ class JobGenerator(ck.JobGenerator):
         FinishBlowEndpoint.onAfter(FinishBlow)
         
         # 확인 필요
-        MasterOfDeath.onAfter(Death_MOD)
-        MasterOfDeath.onAfter(Death.controller(30*1000))
+
+        MasterOfDeath.onAfter(DeathAfterMOD)
 
         #DarkLightening.onAfters([MarkStack.stackController(1), UseMark])
         DarkLightening.onAfters([MarkStack.stackController(1), FinalAttack])
@@ -128,12 +128,15 @@ class JobGenerator(ck.JobGenerator):
         BattlekingBar2.onAfter(UseMark)
         
         BlackMagicAlter.onTick(MarkStack.stackController(1))
+
+        # DeathAfterMOD는 처음에 비활성화됨
+        DeathAfterMOD.set_disabled_and_time_left(-1)
         
         return(FinishBlowEndpoint,
                 [Booster, WillOfLiberty, MasterOfDeath, UnionAura,
                 globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                 globalSkill.soul_contract()] +\
                 [DarkGenesis, BattlekingBar] +\
-                [RegistanceLineInfantry, Death, Death_MOD, BlackMagicAlter, GrimReaper] +\
+                [RegistanceLineInfantry, Death, DeathAfterMOD, BlackMagicAlter, GrimReaper] +\
                 [] +\
                 [FinishBlowEndpoint])
