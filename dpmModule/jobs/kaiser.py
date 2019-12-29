@@ -181,6 +181,14 @@ class JobGenerator(ck.JobGenerator):
 
         Wingbit_1.onTick(MorphGauge.stackController(5))
         Wingbit_2.onTick(MorphGauge.stackController(5))
+
+        #윌오브소드:스트라이크
+        #V1.2.324KMS [윌 오브 소드-스트라이크] : 불길 적중 시 드라코슬래셔의 재사용 대기시간이 즉시 초기화되고 이후 3회 드라코 슬래셔의 재사용 대기시간이 적용되지 않는버프가 걸리는 기능이 추가됩니다. 해당 버프는 윌 오브 소드-스트라이크의재사용 대기시간 동안만 유지됩니다.
+        DrakeSlasherReset = core.StackSkillWrapper(core.BuffSkill('드라코 슬래셔 - 재사용 초기화', 0, 0), 3)
+        judge_reset = core.OptionalElement(lambda:DrakeSlasherReset.judge(1, 1), DrakeSlasher_Dummy.controller(1.0, 'reduce_cooltime_p'))
+        DrakeSlasher_Dummy.onAfter(judge_reset)
+        DrakeSlasher_Dummy.onAfter(DrakeSlasherReset.stackController(-1))
+        WillOfSwordStrikeJudge.onAfter(DrakeSlasherReset.stackController(3))
     
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
