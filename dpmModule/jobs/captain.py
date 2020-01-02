@@ -65,6 +65,7 @@ class JobGenerator(ck.JobGenerator):
         서먼크루 / 스트봄 / 노틸러스
         '''
         DEADEYEACC = 3
+        BULLET_PARTY_TICK = 120
         
         ######   Skill   ######
         #Buff skills
@@ -95,7 +96,7 @@ class JobGenerator(ck.JobGenerator):
         CaptainDignitiyNormal = core.DamageSkill("캡틴 디그니티", 0, 275, 1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         CaptainDignitiyEnhance = core.DamageSkill("캡틴 디그니티(강화)", 0, 275*1.3, 1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper, name = "디그니티(강화)")
         
-        QuickDraw = core.BuffSkill("퀵 드로우", 0, 10, cooltime = -1, pdamage_indep = 25).wrap(core.BuffSkillWrapper)
+        QuickDraw = core.BuffSkill("퀵 드로우", 0, core.infinite_time(), cooltime = -1, pdamage_indep = 25).wrap(core.BuffSkillWrapper)
         
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
         InfiniteBullet = core.BuffSkill("인피닛 불릿", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
@@ -116,7 +117,7 @@ class JobGenerator(ck.JobGenerator):
         OverdrivePenalty = OverdriveBuff.OverdrivePenalty
         
         BulletParty = core.DamageSkill("불릿 파티", 0, 0, 0, cooltime = 75000).wrap(core.DamageSkillWrapper)
-        BulletPartyTick = core.DamageSkill("불릿 파티(틱)", 240, 230+9*vEhc.getV(5,5), 5).isV(vEhc,5,5).wrap(core.DamageSkillWrapper) #임의 딜레이, 사용안함.
+        BulletPartyTick = core.DamageSkill("불릿 파티(틱)", BULLET_PARTY_TICK, 230+9*vEhc.getV(5,5), 5).isV(vEhc,5,5).wrap(core.DamageSkillWrapper) #12초간 지속 -> 50회 시전
         
         DeadEye = core.DamageSkill("데드아이", 600, (800+32*vEhc.getV(3,3))*3, 6, cooltime = 30000, red = True, modifier = core.CharacterModifier(crit = 100, pdamage_indep = 4*11)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
         NautillusAssult = core.SummonSkill("노틸러스 어썰트", 900, 360, 600+24*vEhc.getV(0,0), 6, 360*7-1, red = True, cooltime = 180000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)#7회 2초간
@@ -135,6 +136,14 @@ class JobGenerator(ck.JobGenerator):
 
         Nautilus.onAfter(BattleshipBomber.controller(0.5, "reduce_cooltime_p"))
         Nautilus.onConstraint(NautilusConstraint)
+
+        # 퀵 드로우
+        QuickDrawShutdownTrigger = QuickDraw.controller(core.infinite_time())
+
+        for start, end in [
+            [DeadEye, DeadEye]]:
+            start.onBefore(QuickDraw)
+            end.onAfter(QuickDrawShutdownTrigger)
         #디그니티는 노틸러스 쿨을 반영    
         CaptainDignitiy = core.OptionalElement(Nautilus.is_usable, CaptainDignitiyNormal, CaptainDignitiyEnhance)
         #오버드라이브 연계
@@ -143,15 +152,16 @@ class JobGenerator(ck.JobGenerator):
         NautillusAssult.onAfter(NautillusAssult_2)
         #디그니티
         RapidFire.onAfter(CaptainDignitiy)
+        #불릿파티
+        BulletParty.onAfter(core.RepeatElement(BulletPartyTick, 12 * 1000 // BULLET_PARTY_TICK))
     
+        QuickDraw.set_disabled_and_time_left(-1)
         return (RapidFire,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     SummonCrewBuff, PirateStyle, Booster, InfiniteBullet, LuckyDice, UnwierdingNectar, EpicAdventure, PirateFlag, Overdrive, OverdrivePenalty,
-                    BattleshipBomber_1_ON, BattleshipBomber_2_ON,
+                    BattleshipBomber_1_ON, BattleshipBomber_2_ON, QuickDraw,
                     globalSkill.soul_contract()] +\
                 [BattleshipBomber, Headshot, Nautilus, DeadEye] +\
                 [OctaQuaterdeck, BattleshipBomber_1, BattleshipBomber_2, NautillusAssult, NautillusAssult_2, SummonCrew] +\
-                [] +\
+                [BulletParty] +\
                 [RapidFire])
-        
-        return schedule
