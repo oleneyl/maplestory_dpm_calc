@@ -6,6 +6,8 @@ import math
 NOTWANTTOEXECUTE = 99999999
 MAX_DAMAGE_RESTRICTION = 10000 * 10000 * 100 - 1
 
+def infinite_time():
+    return NOTWANTTOEXECUTE
 
 class CharacterModifier(object):
     __slots__ = 'crit', 'crit_damage', 'pdamage', 'pdamage_indep', 'stat_main', 'stat_sub', 'pstat_main', 'pstat_sub', 'boss_pdamage', 'armor_ignore', 'patt', 'att', 'stat_main_fixed', 'stat_sub_fixed'
