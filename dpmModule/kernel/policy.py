@@ -75,8 +75,8 @@ class StorageLinkedGraph(NameIndexedGraph):
         return self.storage
 
     def export_task(self, common_args = {}, tick_args = {}):
-        self._task_map = {k:self._all_elements[k].build_task(**common_args) for k in self._element_map}
-        self._tick_task_map = {k:self._all_elements[k].build_periodic_task(**tick_args)
+        self._task_map = {k: self._element_map[k].build_task(**common_args) for k in self._element_map}
+        self._tick_task_map = {k: self._element_map[k].build_periodic_task(**tick_args)
                  for k in self._element_map if hasattr(self._element_map[k], 'is_periodic') and getattr(self._element_map[k], 'is_periodic')}
 
     def set_v_enhancer(self, vEhc):
