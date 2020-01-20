@@ -90,7 +90,7 @@ dpmModule의 계산 과정은 다음과 같습니다.
   추가적인 정보를 얻고 싶다면 해당 클래스를 상속받으십시오.
 
   ```python
-  analytics = core.Analytics(pringFlag=False)
+  analytics = core.Analytics(printFlag=False)
   ```
 
 5. Simulator 생성
