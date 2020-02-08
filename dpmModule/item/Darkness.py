@@ -7,7 +7,10 @@ Pendant = it.Item(stat_main = 10, stat_sub = 10, att = 5)#160 // 5
 Pocket = it.Item(stat_main = 20, stat_sub = 10, att = 10)#160
 #Heart = it.Item(stat_main = 50, stat_sub = 50, att = 77, boss_pdamage = 30, armor_ignore = 30)
 #Badge = it.Item(stat_main = 15, stat_sub = 15, att = 10)
-# 블랙하트, 창세의 뱃지 추가필요
+#Ring = it.Item(stat_main = 5, stat_sub = 5, att = 4)
+#Ear = it.Item(stat_main = 5, stat_sub = 5, att = 4)
+
+# 블랙하트, 창세의 뱃지, 거대한 공포, 커맨드 포스 이어링 추가필요
 
 class Factory():
     
