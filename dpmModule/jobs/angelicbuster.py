@@ -77,7 +77,7 @@ class JobGenerator(ck.JobGenerator):
         Trinity_2 = core.DamageSkill("트리니티(2타)", 470, 650, 3+1, modifier = core.CharacterModifier(pdamage =20, armor_ignore=20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(2타)")
         Trinity_3 = core.DamageSkill("트리니티(3타)", 470-340, 650, 4+1, modifier = core.CharacterModifier(pdamage =20, armor_ignore=20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(3타)")
         
-        FinaturaFettuccia = core.DamageSkill("피나투라 페투치아", 540, 4000, 1, red = True, cooltime = 40000*0.75).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        FinaturaFettuccia = core.DamageSkill("피나투라 페투치아", 1020, 4000, 1, red = True, cooltime = 40000*0.75).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         FinaturaFettucciaBuff = core.BuffSkill("피나투라 페투치아(버프)", 0, 20000, cooltime = -1, pdamage_indep=25, armor_ignore=15).wrap(core.BuffSkillWrapper)
         
         SoulGaze = core.BuffSkill("소울 게이즈", 1080, 180000, rem = True, crit_damage = 45).wrap(core.BuffSkillWrapper)
