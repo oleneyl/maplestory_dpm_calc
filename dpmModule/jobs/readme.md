@@ -107,3 +107,24 @@ jobs.py
     - `SkillNum` : 사용하는 5차 스킬의 개수입니다.
     - `vEnhanceNum` : 가능한 5차 강화스킬의 가짓수입니다.
     - `passiveSkillList` : 패시브 스킬 효과를 담고 있는 리스트 입니다. generate 전까지는 계산되지 않습니다.
+
+하위 모듈
+-------------
+jobs의 하위 모듈로는 `jobbranch`와 `jobclass`가 존재합니다. 여기에는 각각 직업 계열과 직업군별 공용 스킬이 저장되어 있습니다.
+
+단일 직업군의 스킬은 해당 직업의 스크립트에 포함되어 있습니다. (제로, 키네시스)
+
+- jobbranch 모듈은 다음을 포함합니다.
+  - `warriors.py` : 전사 공용 스킬입니다.
+  - `magicians.py` : 마법사 공용 스킬입니다.
+  - `bowmen.py` : 궁수 공용 스킬입니다.
+  - `thieves.py` : 도적 공용 스킬입니다.
+  - `pirates.py` : 해적 공용 스킬입니다.
+- jobclass 모듈은 다음을 포함합니다.
+  - `adventurer.py` : 모험가 공용 스킬입니다.
+  - `cygnus.py` : 시그너스 기사단 공용 스킬입니다.
+  - `heroes.py` : 영웅 공용 스킬입니다.
+  - `resistance.py` : 레지스탕스(데몬 제외) 공용 스킬입니다.
+  - `demon.py` : 데몬 공용 스킬입니다.
+  - `nova.py` : 노바 공용 스킬입니다.
+  - `flora.py` : 레프 공용 스킬입니다.
