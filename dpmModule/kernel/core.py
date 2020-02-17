@@ -1564,13 +1564,20 @@ class Analytics():
     def statistics(self):
         self.log("Total damage %.1f in %d second" % (self.total_damage, self.totalTime / 1000) )
         countDict = {}
+        damageDict = {}
         for log in self.logList:
             if log["result"].sname not in countDict:
                 countDict[log["result"].sname] = 0
+                damageDict[log["result"].sname] = 0
             countDict[log["result"].sname] += 1
+            damageDict[log["result"].sname] += log["deal"]
         
         for i in countDict:
             self.log("SKILL %s Used %d" % (i, countDict[i]))
+
+        for i in damageDict:         
+            if damageDict[i] > 0:   
+                self.log("SKILL %s share is %f,  %.4f percent" % (i, damageDict[i], damageDict[i] / self.total_damage * 100))
         #self.log("Percent damage per second is %.2f" % (100*self.total_damage / self.character.get_modifier().get_damage_factor() / self.totalTimeInitial * 1000))
 
     def skill_share(self):
