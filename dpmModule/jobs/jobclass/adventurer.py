@@ -17,7 +17,7 @@ class MapleHero2:
 # TODO : 재사용 대기시간 초기화 미적용으로 변경
 class InfinityWrapper(core.BuffSkillWrapper):
     def __init__(self, serverlag = 3):
-        skill = core.BuffSkill("인피니티", 960, 40000, cooltime = 180 * 1000, rem = True, red = True)
+        skill = core.BuffSkill("인피니티", 960, 40000, cooltime = 180 * 1000, rem = True, red = False)
         super(InfinityWrapper, self).__init__(skill)
         self.passedTime = 0
         self.serverlag = serverlag
@@ -29,7 +29,7 @@ class InfinityWrapper(core.BuffSkillWrapper):
             
     def get_modifier(self):
         if self.onoff:
-            return core.CharacterModifier(pdamage_indep = (70 + 4 * (self.passedTime // ((4+self.serverlag)*1000))) )
+            return core.CharacterModifier(pdamage_indep = (70 + 3 * (self.passedTime // ((4+self.serverlag)*1000))) )
         else:
             return core.CharacterModifier()
         
