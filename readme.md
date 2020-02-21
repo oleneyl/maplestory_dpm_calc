@@ -22,7 +22,17 @@ dpmModule
 About 
 ------------
   dpmModule은 메이플스토리에서 데미지와 관련된 계산(기댓값, DPM, 최적잠재 등) 을 쉽게 계산하기
-  위한 라이브러리입니다. 전체 43개 직업군중 데벤, 제논, 호영, 아델을 제외한 39개 직업군의 데미지 시뮬레이션을 지원합니다.
+  위한 라이브러리입니다. 전체 43개 직업군중 데벤, 제논, 호영을 제외한 40개 직업군의 데미지 시뮬레이션을 지원합니다.
+
+
+Document
+--------------
+  - [튜토리얼tutorial](dpmModule/kernel/readme.md)
+  - [작동 원리mechanism](dpmModule/kernel/track.md)
+  - [Benchmark](dpmModule/benchmark_log.md)
+  - [직업 구현](dpmModule/jobs/readme.md)
+  - [캐릭터 구현, 아이템 구현, 캐릭터 설정](dpmModule/character/readme.md)
+
 
 Example
 -----------------------
@@ -41,8 +51,9 @@ Example
     import dpmModule.character.characterTemplateHigh as template
     gen = IndividualDPMGenerator('나이트로드', template.getU6000CharacterTemplate)
     print(gen.get_dpm(ulevel = 6000))
-
-    >>> 406674153728.34534  #Can be different by version
+    
+    # Result
+    406674153728.34534  #Can be different by version
     ```
 
   - Advanced Usage
@@ -103,6 +114,7 @@ Example
 `아크`
 `블래스터`
 `아란`
+`아델`
 
       - `template` : 사용할 캐릭터의 상태를 정의합니다. `dpmModule.jobs.characterTemplateHigh` 내의 template중 하나를 사용하면 됩니다. 스펙구간별로 적절한 template이 정의되어 있습니다.
 
@@ -122,13 +134,16 @@ Example
 
     ```python
     import dpmModule.jobs.nightlord as nightlord
-    import dpmModule.character.characterTemplateHigh as template
+    from dpmModule.kernel import core
+    from dpmModule.kernel import policy
+    from dpmModule.execution import rules
+    from dpmModule.character.characterTemplate import get_template_generator
 
-    character = template()
+    character = get_template_generator('high_standard').get_template(6000) # 고스펙 기준 유니온 6천인 캐릭터 설정
     generator = nightlord.JobGenerator()
-    v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17)
+    v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17) #스킬코어 25렙, 3중코어코강
 
-    graph = gen.package(character, v_builder)
+    graph = generator.package(character, v_builder)
 
     sche = policy.AdvancedGraphScheduler(graph,
         policy.TypebaseFetchingPolicy(priority_list = [
@@ -136,13 +151,14 @@ Example
             core.SummonSkillWrapper,
             core.DamageSkillWrapper
         ]), 
-        [rules.UniquenessRule()])
+        [rules.UniquenessRule()]) # 버프, 소환수, 쿨타임 스킬 순으로 사용.
 
-    analytics = core.Analytics(printFlag=printFlag)
-    control = core.Simulator(sche, target, analytics)
-    control.start_simulation(180 * 1000)
+    analytics = core.Analytics(printFlag=False) # 로그를 최소한으로 출력
+    control = core.Simulator(sche, character, analytics) 
+    control.start_simulation(180 * 1000) # 3분간 시뮬레이션 진행
     
-    dpm = control.getDPM()
+    dpm = control.getDPM() # dpm 출력
+    print(dpm)
     ```
 
     - 자세한 사용 방법은 dpmModule의 readme를 참조하십시오.
