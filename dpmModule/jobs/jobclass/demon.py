@@ -11,6 +11,13 @@ from functools import partial
 
 '''
 
+class AnotherWorldGoddessWrapper(core.BuffSkillWrapper):
+    def __init__(self, vEhc, num1, num2):
+        self.vlevel = vEhc.getV(num1, num2)
+        vlevel = self.vlevel
+        super(AnotherWorldGoddessWrapper, self).__init__(skill = core.BuffSkill("이계 여신의 축복", num1, num2, pdamage_indep=6+(vlevel-1)//5).isV(vEhc, num1, num2))
+        self.skillList = [core.BuffSkill("회복의 축복"), core.BuffSkill("방패의 축복"), core.BuffSkill("보호의 축복"), core.BuffSkill(("이계의 공허"))]
+
 '''
 최대 HP의 5% 소비, 40초 동안 최종 데미지 [1레벨에서 6%, 6, 11, 16, 21, 26레벨에서 1%씩 증가] 증가, 일정 시간마다 각종 축복 및 공격을 시전, 축복 시전 시 이전 축복이 남아있다면 소멸
 회복의 축복: DF/PP/HP 중 자신이 사용하는 쪽을 최대치의 27%[(15 + 스킬레벨/2)%, 소수점은 버린다.] 회복, 특정한 회복 불가 상황에도 회복 가능
