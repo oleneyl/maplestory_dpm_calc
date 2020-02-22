@@ -1,20 +1,13 @@
 from ...kernel import core
 from ...kernel.core import VSkillModifier as V
 from ...character import characterKernel as ck
-# 모험가 공용 5차스킬 통합코드
+# 모험가 및 모험가 직업 공용 5차스킬 통합코드
 
-#TODO: 얼닼사, 블리츠실드, 이볼브, 파이렛 플래그
-'''
-class MapleHero2:
-    #vEhc.getV(var1,var2)
-    def __init__(self, vEhc):
-        return
-    def mapleHero2(var1, var2):
-        return core.BuffSkill("메이플월드 여신의 축복")
-'''
+#TODO: 얼닼사
+
 # 모험가 법사
 # 3% 증가로 알고있는데... 확인필요
-# TODO : 재사용 대기시간 초기화 미적용으로 변경
+
 class InfinityWrapper(core.BuffSkillWrapper):
     def __init__(self, serverlag = 3):
         skill = core.BuffSkill("인피니티", 960, 40000, cooltime = 180 * 1000, rem = True, red = False)
@@ -38,6 +31,8 @@ class InfinityWrapper(core.BuffSkillWrapper):
         return super(InfinityWrapper, self)._use(rem = rem, red = red)
 
 # 이하 모든 코드 테스트 필요
+
+# 레지스탕스도 이 코드를 사용
 def MapleHeroes2Wrapper(vEhc, num1, num2, level):
     MapleHeroes2 = core.BuffSkill("메이플월드 여신의 축복", 450, 60*1000, stat_main = 0.01 * (100 + 10 * vEhc.getV(num1, num2)) * (25 + level * 5), pdamage = 5 + vEhc.getV(num1, num2) // 2, cooltime = 180*1000).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
     return MapleHeroes2
@@ -49,10 +44,10 @@ def PirateFlagWrapper(vEhc, num1, num2, level):
 # 작성중, 2초 후 폭발 가정
 def BlitzShieldWrappers(vEhc, num1, num2):
     # 딜레이 추가 필요
-    BlitzShieldDummy = core.BuffSkill("블리츠 실드 (더미)", 0, 2000, cooltime = 15000).wrap(core.BuffSkillWrapper)
+    BlitzShieldDummy = core.BuffSkill("블리츠 실드 (더미)", 600, 2000, cooltime = 15000).wrap(core.BuffSkillWrapper)
     BlitzShield = core.DamageSkill("블리츠 실드", 2000, vEhc.getV(num1, num2)*20+500, 5).wrap(core.DamageSkillWrapper)
-    #BlitzShieldDummy.onAfter(BlitzShield)
-    return BlitzShieldDummy, BlitzShield
+    BlitzShieldDummy.onAfter(BlitzShield)
+    return BlitzShieldDummy
 
 # 아직 사용하지 말것! 연계 설정 추가 필요
 def EvolveWrapper(vEhc, num1, num2):
