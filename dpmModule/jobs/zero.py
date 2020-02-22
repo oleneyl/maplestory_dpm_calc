@@ -10,6 +10,35 @@ from .jobbranch import warriors
 
 # 제로 메용은 쓸컴뱃을 적용받지 않음
 
+# 현재로는 계산 알고리즘 작성 구문에서 연산과정에 접근을 할 수 없도록 캡슐화되어 있으므로 사용 불가능
+'''
+class LimitBreakNew():
+    def __init__(self, enhancer, skill_importance, enhance_importance):
+        self.damage_start = 0
+        self.damage_end = 0
+        self.analytics = core.Analytics()
+        self.vLevel = enhancer.getV(skill_importance, enhance_importance)
+
+        self.LimitBreakAttack = core.DamageSkill("리미트 브레이크", 0, 400+15*self.vLevel, 5).isV(enhancer, skill_importance, enhance_importance).wrap(core.DamageSkillWrapper)
+        self.LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+self.vLevel//2)*1000, pdamage_indep = (30+self.vLevel//5) * 1.2 + 20, cooltime = 240*1000).isV(enhancer, skill_importance, enhance_importance).wrap(core.BuffSkillWrapper)
+        self.LimitBreak.onAfter(self.LimitBreakAttack)
+        
+    def LimitBreakStart(self):
+        self.damage_start = self.analytics.total_damage
+        return LimitBreak
+
+    def LimitBreakEnd(self):
+        self.damage_end = self.analytics.total_damage - self.damage_start
+        # 지속시간 동안 가한 데미지의 20% / 15
+        # 퍼뎀이 아니라 고정값으로 뜨게 수정해야 함
+        return core.DamageSkill("리미트 브레이크(막타)", 0, damage_end / 75, 15).wrap(core.DamageSkillWrapper)
+    def get_buff(self):
+        return self.LimitBreak
+
+# LimitBreakSet = LimitBreakNew(vEhc, 0, 0)
+# LimitBreak = LimitBreakSet.get_buff()
+'''
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
