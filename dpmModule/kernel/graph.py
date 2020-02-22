@@ -76,6 +76,14 @@ class GlobalOperation():
     def set_storage(self, storage):
         _unsafe_access_global_storage().set_storage(storage)
 
+    @classmethod
+    def export_storage_without_complex_option(cls):
+        GlobalOperation.assign_storage()
+        GlobalOperation.attach_namespace()
+        GlobalOperation.save_storage()
+        GlobalOperation.convert_to_static()
+        return GlobalOperation.export_collection()
+
 
 class GlobalCollection():
     historical_track_prefix = '_temporal_save_'
