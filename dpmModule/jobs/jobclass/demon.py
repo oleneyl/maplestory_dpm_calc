@@ -4,12 +4,13 @@ from ...kernel.core import CharacterModifier as MDF
 from ...character import characterKernel as ck
 from functools import partial
 
-'''
-최대 HP의 20% 소비, 55초[(스킬 레벨+30)초] 동안 마스테마 소환, 재사용 대기시간 150초, 소환된 마스테마는 스스로의 판단으로 아래의 스킬을 시전
-마스테마 클로우: 최대 8명의 적을 1000%[(스킬 레벨*20+500)%의 데미지]의 데미지로 8번 공격, 재사용 대기시간 5초
-러블리 테리토리: 6초 동안 최대 HP의 일정 비율로 피해를 입히는 공격을 포함한 피격 데미지 22%를 2회 감소시키는 버프를 시전, 지속시간이 끝나거나 감소 횟수를 모두 소비하면 버프 소멸, 재사용 대기시간 8초
+# 마스테마 클로우를 쿨타임마다 시전한다고 가정
+def CallMastemaWrapper(vEhc, num1, num2):
+    CallMastema = core.BuffSkill("콜 마스테마(버프)", 690, (30 + vEhc.getV(num1, num2))*1000, cooltime = 150*1000).wrap(core.BuffSkillWrapper)
+    MastemaClaw_Attack = core.DamageSkill("마스테마 클로우", 0, 500 + 20 *vEhc.getV(num1, num2), 8, cooltime=4000).wrap(core.DamageSkillWrapper)
+    MastemaClaw = core.OptionalElement(CallMastema.is_active(), MastemaClaw_Attack)
+    return CallMastema, MastemaClaw
 
-'''
 
 class AnotherWorldGoddessWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, num1, num2):
