@@ -72,7 +72,7 @@ class JobGenerator(ck.JobGenerator):
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
         DarkSpear = core.DamageSkill("다크 스피어", 990, 350+10*vEhc.getV(1,0), 7 * 8, cooltime = 10000, red = True, modifier = core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc,1,0).wrap(core.DamageSkillWrapper)
-        BiholderImpact = core.SummonSkill("비홀더 임팩트", 0, 100, 300+3*vEhc.getV(0,2), 2, 801, cooltime = 20000, red = True, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).isV(vEhc,0,2).wrap(core.SummonSkillWrapper)#onTick으로 0.3초씩
+        BiholderImpact = core.SummonSkill("비홀더 임팩트", 0, 300, 300+3*vEhc.getV(0,2), 2, 3001, cooltime = 20000, red = True, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).isV(vEhc,0,2).wrap(core.SummonSkillWrapper)#onTick으로 0.3초씩
         PierceCyclone = core.DamageSkill("피어스 사이클론(더미)", 90, 0, 0, cooltime = 180*1000).wrap(core.DamageSkillWrapper)
         PierceCycloneTick = core.DamageSkill("피어스 사이클론", 9000/22, 400+16*vEhc.getV(3,3), 12, modifier = core.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #22타
         PierceCycloneEnd = core.DamageSkill("피어스 사이클론(종료)", 0, 1500+60*vEhc.getV(3,3), 15, modifier = core.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
