@@ -78,7 +78,8 @@ class JobGenerator(ck.JobGenerator):
     
         #_VenomBurst = core.DamageSkill("베놈 버스트", ??) ## 패시브 50%확률로 10초간 160+6*vlevel dot. 사용시 도트뎀 모두 피해 + (500+20*vlevel) * 5. 어차피 안쓰는 스킬이므로 작성X
         
-        UltimateDarksight = core.BuffSkill("얼티밋 다크사이트", 750, 30*1000, cooltime = (220-vEhc.getV(3,3))*1000, pdamage_indep=int(0.5*vEhc.getV(3,3))).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
+        UltimateDarksight = thieves.UltimateDarkSightWrapper(vEhc, 3, 3)
+        #UltimateDarksight = core.BuffSkill("얼티밋 다크사이트", 750, 30*1000, cooltime = (220-vEhc.getV(3,3))*1000, pdamage_indep=int(0.5*vEhc.getV(3,3))).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 1, 1)
 #        ReadyToDie = core.BuffSkill("레디 투 다이", 780, 30*1000, cooltime = (90-int(0.5*vlevel))*1000, pdamage_indep = 30+int(0.2*vlevel)).wrap(core.BuffSkillWrapper)
         
