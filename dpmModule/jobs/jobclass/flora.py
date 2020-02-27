@@ -5,6 +5,10 @@ from ...character import characterKernel as ck
 from functools import partial
 
 #레프
+def FloraGoddessBlessWrapper(vEhc, num1, num2, WEAPON_ATT):
+    # 장비 비례 증가 수치는 최대치로 가정
+    FloraGoddessBless = core.BuffSkill("그란디스 여신의 축복(레프)", 450, 40*1000, att = 10 + 3 * vEhc.getV(num1, num2) + 1.5 * WEAPON_ATT, cooltime = 240*1000).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
+    return FloraGoddessBless
 
 class MagicCircuitFullDriveBuilder():
     def __init__(self, vEhc, num1, num2, mana=100):
