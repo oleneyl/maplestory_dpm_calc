@@ -156,9 +156,7 @@ class JobGenerator(ck.JobGenerator):
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = 154
-        OverdriveBuff = pirates.OverdriveWrapper(vEhc, WEAPON_ATT, 5, 5)
-        Overdrive = OverdriveBuff.Overdrive
-        OverdrivePenalty = OverdriveBuff.OverdrivePenalty
+        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
     
         MagicCircuitFullDrive = core.BuffSkill("매직서킷 풀드라이브", 720, (30+vEhc.getV(4,4))*1000, pdamage = (20 + vEhc.getV(3,2)), cooltime = 200*1000).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         MagicCircuitFullDriveStorm = core.SummonSkill("매직서킷 풀드라이브(마력 폭풍)", 0, 4000, 500+20*vEhc.getV(4,4), 3, (30+vEhc.getV(4,4))*1000, cooltime = -1).wrap(core.SummonSkillWrapper)
@@ -230,7 +228,6 @@ class JobGenerator(ck.JobGenerator):
         MemoryOfSource.onAfter(MemoryOfSourceEnd)
         MemoryOfSource.onAfter(MemoryOfSourceBuff)
         
-        Overdrive.onAfter(OverdrivePenalty.controller(30*1000))
         MagicCircuitFullDrive.onAfter(MagicCircuitFullDriveStorm)
         
         # 스펙터 상태 파이널어택류 연계

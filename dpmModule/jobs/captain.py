@@ -112,9 +112,7 @@ class JobGenerator(ck.JobGenerator):
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = 150
-        OverdriveBuff = pirates.OverdriveWrapper(vEhc, WEAPON_ATT, 4, 4)
-        Overdrive = OverdriveBuff.Overdrive
-        OverdrivePenalty = OverdriveBuff.OverdrivePenalty
+        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 4, 4, WEAPON_ATT)
         
         BulletParty = core.DamageSkill("불릿 파티", 0, 0, 0, cooltime = 75000).wrap(core.DamageSkillWrapper)
         BulletPartyTick = core.DamageSkill("불릿 파티(틱)", BULLET_PARTY_TICK, 230+9*vEhc.getV(5,5), 5).isV(vEhc,5,5).wrap(core.DamageSkillWrapper) #12초간 지속 -> 50회 시전
@@ -146,8 +144,6 @@ class JobGenerator(ck.JobGenerator):
             end.onAfter(QuickDrawShutdownTrigger)
         #디그니티는 노틸러스 쿨을 반영    
         CaptainDignitiy = core.OptionalElement(Nautilus.is_usable, CaptainDignitiyNormal, CaptainDignitiyEnhance)
-        #오버드라이브 연계
-        Overdrive.onAfter(OverdrivePenalty.controller(30*1000))
         #노틸러스 어썰트는 2개로 분리되어 잇음
         NautillusAssult.onAfter(NautillusAssult_2)
         #디그니티
