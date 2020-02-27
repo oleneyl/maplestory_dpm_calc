@@ -11,13 +11,13 @@ def CallMastemaWrapper(vEhc, num1, num2):
     MastemaClaw = core.OptionalElement(CallMastema.is_active(), MastemaClaw_Attack)
     return CallMastema, MastemaClaw
 
-
-class AnotherWorldGoddessWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc, num1, num2):
-        self.vlevel = vEhc.getV(num1, num2)
-        vlevel = self.vlevel
-        super(AnotherWorldGoddessWrapper, self).__init__(skill = core.BuffSkill("이계 여신의 축복", num1, num2, pdamage_indep=6+(vlevel-1)//5).isV(vEhc, num1, num2))
-        self.skillList = [core.BuffSkill("회복의 축복"), core.BuffSkill("방패의 축복"), core.BuffSkill("보호의 축복"), core.BuffSkill(("이계의 공허"))]
+def AnotherWorldWrapper(vEhc, num1, num2):
+    # 공격 확률 100%로 가정
+    void_chance = 1
+    AnotherGoddessBuff = core.BuffSkill("이계 여신의 축복", 630, 40000, cooltime = 120000, pdamage_indep=6+(vEhc.getV(num1, num2)-1)//5).wrap(core.BuffSkillWrapper)
+    AnotherVoid = core.SummonSkill("이계의 공허", 0, 3000 / void_chance, 1200+48*vEhc.getV(num1, num2), 12, 40000, cooltime = -1).wrap(core.BuffSkillWrapper)
+    AnotherGoddessBuff.onAfter(AnotherVoid)
+    return AnotherGoddessBuff, AnotherVoid
 
 '''
 최대 HP의 5% 소비, 40초 동안 최종 데미지 [1레벨에서 6%, 6, 11, 16, 21, 26레벨에서 1%씩 증가] 증가, 일정 시간마다 각종 축복 및 공격을 시전, 축복 시전 시 이전 축복이 남아있다면 소멸
