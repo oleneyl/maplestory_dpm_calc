@@ -47,7 +47,7 @@ def BlitzShieldWrappers(vEhc, num1, num2):
     BlitzShieldDummy = core.BuffSkill("블리츠 실드 (더미)", 600, 2000, cooltime = 15000).wrap(core.BuffSkillWrapper)
     BlitzShield = core.DamageSkill("블리츠 실드", 2000, vEhc.getV(num1, num2)*20+500, 5).wrap(core.DamageSkillWrapper)
     BlitzShieldDummy.onAfter(BlitzShield)
-    return BlitzShieldDummy
+    return BlitzShieldDummy, BlitzShield
 
 # 아직 사용하지 말것! 연계 설정 추가 필요
 def EvolveWrapper(vEhc, num1, num2):
