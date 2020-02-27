@@ -11,3 +11,4 @@ def NovaGoddessBlessWrapper(vEhc, num1, num2):
 
 def PantheonWrapper(vEhc, num1, num2):
     Pantheon = core.DamageSkill("판테온", 510, 2000 + 80 * vEhc.getV(num1, num2), 10, cooltime = 1200*1000).wrap(core.DamageSkillWrapper)
+    return Pantheon
