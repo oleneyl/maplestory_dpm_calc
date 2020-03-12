@@ -9,21 +9,24 @@ def PhalanxChargeWrapper(vEhc, num1, num2):
     return PhalanxCharge
 
 class CygnusBlessWrapper(core.BuffSkillWrapper):
+    # 코드 정리 필요
     def __init__(self, enhancer, skill_importance, enhance_importance, serverlag = 3, level = 230):
-        self.isUpgraded = (level >= 245) 
+        skill = core.BuffSkill("초월자 시그너스의 축복" if level >= 245 else "여제 시그너스의 축복" , 630, 45000, cooltime = 240*1000).wrap(core.BuffSkillWrapper)
+        super(CygnusBlessWrapper, self).__init__(skill)
+
+        self.isUpgraded = (level >= 245)
+
         self.enhancer = enhancer
         self.skill_importance = skill_importance
         self.enhance_importance = enhance_importance
-        
-        skill = core.BuffSkill("초월자 시그너스의 축복" if isUpgraded else "여제 시그너스의 축복" , 630, 45000, cooltime = 240*1000).wrap(core.BuffSkillWrapper)
-        super(CygnusBlessWrapper, self).__init__(skill)
 
         self.damage_point = 4 + (enhancer.getV(self.skill_importance, self.enhance_importance))//15
         self.damage_limit = 90
-        #interval: 데미지 증가 주기 (모름)
+        
+        #interval: 데미지 증가 주기 (확인 필요)
         self.interval = 4
         
-        # 업그레이드 상태일경우 해당 스펙 적용
+        # 업그레이드 상태일경우 스펙 증가치 적용
         if self.isUpgraded:
             self.damage_point += 2
             self.damage_limit += 30
