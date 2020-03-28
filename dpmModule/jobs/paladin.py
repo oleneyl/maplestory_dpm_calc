@@ -8,6 +8,8 @@ from . import globalSkill
 from .jobbranch import warriors
 
 #TODO : 5차 신스킬 적용
+# 4차 스킬은 컴뱃오더스 적용 기준으로 작성해야 함.
+# 생츄어리 필요한지 확인바람
 
 ######   Passive Skill   ######
 
@@ -65,7 +67,7 @@ class JobGenerator(ck.JobGenerator):
         LighteningChargeDOT = core.DotSkill("라이트닝 차지(도트)", 115, 6000).wrap(core.SummonSkillWrapper)
         DivineCharge = core.DamageSkill("디바인 차지", 810, 462, 3, cooltime = 60 * 1000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
-        Blast = core.DamageSkill("블래스트", 630, 318, 8+2+1, modifier = core.CharacterModifier(crit=20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Blast = core.DamageSkill("블래스트", 630, 291, 8+2+1, modifier = core.CharacterModifier(crit=20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         #Summon Skills
         BlessedHammer = core.SummonSkill("블레스드 해머", 0, 600, (250 + vEhc.getV(1,1)*10), 2, 999999* 10000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)   #딜레이 반영
@@ -76,7 +78,7 @@ class JobGenerator(ck.JobGenerator):
         GrandCrossLargeTick = core.DamageSkill("그랜드 크로스(강화)", 800, 600 + vEhc.getV(3,3)*24, 43, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
         GrandCross = core.DamageSkill("그랜드 크로스", 480, 0, 0, cooltime = 150 * 1000).wrap(core.DamageSkillWrapper)#Loop = 480인걸로 봐서 재정의 필요할 수도 있음
                 
-        FinalAttack = core.DamageSkill("파이널 어택", 0, 150, 0.4).setV(vEhc, 3, 5, True).wrap(core.DamageSkillWrapper)
+        FinalAttack = core.DamageSkill("파이널 어택", 0, 80, 2*0.4).setV(vEhc, 3, 5, True).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
     

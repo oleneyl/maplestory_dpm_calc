@@ -61,7 +61,7 @@ class JobGenerator(ck.JobGenerator):
         
         OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         #Damage Skills
-        InfernoRize = core.DamageSkill("인페르노 라이즈", 720, 285, 5, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage = 90)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #임의딜레이 720
+        InfernoRize = core.DamageSkill("인페르노 라이즈", 720, 350, 10, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage = 90)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #임의딜레이 720
         
         #Full speed, No Combat Orders
         OrbitalFlame = core.DamageSkill("오비탈 플레임", flamewizardDefaultSpeed, 215, 3 * 2, modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)

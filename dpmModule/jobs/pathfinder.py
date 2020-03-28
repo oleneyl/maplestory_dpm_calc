@@ -76,7 +76,7 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         
         AncientGuidance = core.InformedCharacterModifier("에인션트 가이던스(패시브)", pdamage_indep = 10)
-        EssenceOfArcher = core.InformedCharacterModifier("에센스 오브 아처", crit = 10, pdamage = 20, armor_ignore = 30)
+        EssenceOfArcher = core.InformedCharacterModifier("에센스 오브 아처", crit = 10, pdamage = 10, armor_ignore = 30)
         
         AdditionalTransitionPassive = core.InformedCharacterModifier("에디셔널 트랜지션(패시브)", patt = 20)
         
