@@ -70,6 +70,7 @@ class JobGenerator(ck.JobGenerator):
         FlashBangDebuff = core.BuffSkill("플래시 뱅(디버프)", 0, 50000/2, cooltime = -1, pdamage = 10 * 0.9).wrap(core.BuffSkillWrapper)
         Venom = core.DotSkill("페이탈 베놈", 160*3/1.7, 8000).wrap(core.SummonSkillWrapper)
         
+        # TODO: 버프 시전 딜레이 적용
         HiddenBladeBuff = core.BuffSkill("히든 블레이드(버프)", 0, 60000, cooltime = 90000, pdamage = 10).wrap(core.BuffSkillWrapper)
         HiddenBlade = core.DamageSkill("히든 블레이드", 0, 140 / 1.7, 2).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)    #미러 이미징에 의해 추가타 2개, 최종뎀 1.7배 무시
         

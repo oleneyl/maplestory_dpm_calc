@@ -7,9 +7,8 @@ from . import globalSkill
 from .jobclass import resistance
 from .jobbranch import pirates
 
-#TODO:
-
-#[로봇 마스터리] : 로봇의 최종 데미지 증가량이 70%에서 105%로 증가됩니다.
+# TODO: 워머신 타이탄 추가 (로봇 마스터리 적용)
+# TODO: [메탈아머 전탄발사] : 호밍 미사일 리로드 지속시간이 4초에서 2초로 감소되고 지속시간이 좀 더 정확하게 적용됩니다.
 
 ######   Passive Skill   ######
 
@@ -63,18 +62,18 @@ class JobGenerator(ck.JobGenerator):
         #로봇들 :: 로봇당 총뎀6%
         Opengate = core.SummonSkill("오픈 게이트:GX-9", 600, 300*1000, 0,0,300*1000*1.4, rem = True).wrap(core.SummonSkillWrapper)#임의 딜레이
         
-        Robolauncher = core.SummonSkill("로보런쳐:RM7", 630, 1000, (250+135)*2.05, 1, 60*1000*1.4, rem=True).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
-        RobolauncherFinal = core.DamageSkill("로보런쳐:RM7(폭발)", 0, 400*2.05, 1, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        RobolauncherBuff = core.BuffSkill("로보런쳐:RM7(버프)", 0, 60*1000*1.4, cooltime = -1, pdamage = 6).wrap(core.BuffSkillWrapper)
+        Robolauncher = core.SummonSkill("로봇런쳐:RM7", 630, 1000, (250+135)*2.05, 1, 60*1000*1.4, rem=True).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        RobolauncherFinal = core.DamageSkill("로봇런쳐:RM7(폭발)", 0, 400*2.05, 1, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        RobolauncherBuff = core.BuffSkill("로봇런쳐:RM7(버프)", 0, 60*1000*1.4, cooltime = -1, pdamage = 6).wrap(core.BuffSkillWrapper)
         #MagneticField = core.SummonSkill("마그네틱 필드", ?, ?, 200, 60*1000, cooltime = 180*1000) 자폭 550% V.getEhc(2, vEnhance[0])
         
         SupportWaver = core.SummonSkill("서포트 웨이버", 630, 80000*1.4, 0, 0, 80*1000*1.4).wrap(core.SummonSkillWrapper)
         SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*1.4, pdamage_indep=15, pdamage= 5 + 6, cooltime = -1, armor_ignore=10).wrap(core.BuffSkillWrapper)    #하이퍼(+5), 소환수직속 영향받게..
         SupportWaverFinal = core.DamageSkill("서포트 웨이버(폭발)", 0, 1100*2.05, 1, cooltime = -1).wrap(core.DamageSkillWrapper)
         
-        RoboFactory = core.SummonSkill("로보 팩토리", 630, 3000, 500*2.05, 3, 30*1000*1.4, cooltime=60*1000).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
-        RoboFactoryFinal = core.DamageSkill("로보 팩토리(폭발)", 0, 1000*2.05, 1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
-        RoboFactoryBuff = core.BuffSkill("로보 팩토리(버프)", 0, 30*1000*1.4, cooltime = -1, pdamage = 6).wrap(core.BuffSkillWrapper)
+        RoboFactory = core.SummonSkill("로봇 팩토리", 630, 3000, 500*2.05, 3, 30*1000*1.4, cooltime=60*1000).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
+        RoboFactoryFinal = core.DamageSkill("로봇 팩토리(폭발)", 0, 1000*2.05, 1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        RoboFactoryBuff = core.BuffSkill("로봇 팩토리(버프)", 0, 30*1000*1.4, cooltime = -1, pdamage = 6).wrap(core.BuffSkillWrapper)
         
         BomberTime = core.BuffSkill("봄버 타임", 990, 10*1000, cooltime = 100*1000).wrap(core.BuffSkillWrapper)
         DistortionField = core.SummonSkill("디스토션 필드", 690, 4000/30, 350, 2, 4000-1, cooltime = 8000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)

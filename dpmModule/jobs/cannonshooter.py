@@ -80,8 +80,12 @@ class JobGenerator(ck.JobGenerator):
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
     
         PirateFlag = PirateFlag = adventurer.PirateFlagWrapper(vEhc, 4, 3, chtr.level)
-    
-        BFGCannonball = core.SummonSkill("빅 휴즈 기간틱 캐논볼", 600, 210, (450+15*vEhc.getV(0,0)) * 0.45, 4 * 3, COCOBALLHIT, cooltime = 25000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+
+        # 쿨타임마다 사용
+        # 1.2.332 패치 반영 (50회 제한)
+        BFGCannonball = core.SummonSkill("빅 휴즈 기간틱 캐논볼", 600, 210, (450+15*vEhc.getV(0,0)) * 0.45, 4 * 3, 210*50, cooltime = 25000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+
+
         ICBM = core.DamageSkill("ICBM", 1190, (1200+48*vEhc.getV(1,1)) * 0.45, 5*ICBMHIT * 3, cooltime = 30000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         ICBMDOT = core.SummonSkill("ICBM(장판)", 0, 15000/27, (500+20*vEhc.getV(1,1)) * 0.45, 1 * 3, 15000, cooltime = -1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) #27타
     
