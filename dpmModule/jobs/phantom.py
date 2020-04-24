@@ -58,7 +58,7 @@ class JobGenerator(ck.JobGenerator):
         템오카 선딜 없음
         크리율과 상관없이 블랑카르트 적용 크리율은 100%로 고정
         '''
-        JOKERRATE = 1.0
+        JOKERRATE = 1.0 / 1.2
         
 
         
