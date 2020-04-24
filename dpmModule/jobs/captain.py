@@ -81,21 +81,15 @@ class JobGenerator(ck.JobGenerator):
         BattleshipBomber = core.DamageSkill("배틀쉽 봄버", 0,0,0, red = True, cooltime = 60000).wrap(core.DamageSkillWrapper)
         BattleshipBomber_1_ON = core.BuffSkill("배틀쉽봄버-1", 0, 30000, rem = True, cooltime = -1).wrap(core.BuffSkillWrapper)
         BattleshipBomber_2_ON = core.BuffSkill("배틀쉽봄버-2", 0, 30000, rem = True, cooltime = -1).wrap(core.BuffSkillWrapper)
-        BattleshipBomber_1 = core.SummonSkill("배틀쉽 봄버(소환,1)", 300, 600, 249, 3, 30000, rem = True, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
-        BattleshipBomber_2 = core.SummonSkill("배틀쉽 봄버(소환, 2)", 300, 600, 249, 3, 30000, rem = True, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
-        '''
-        돈틀레스 : 275 보통 13/22 타수3 600
-        블랙바크 : 445 느림 15/18 타수3 810
-        슈린츠 : 150 빠름   15/27 타수3 570
-        조나단 : 235 보통   12/20 타수3 600
-        평균 데미지 600ms당 249
-        '''
+        BattleshipBomber_1 = core.SummonSkill("배틀쉽 봄버(소환,1)", 300, 600, 297, 3, 30000, rem = True, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
+        BattleshipBomber_2 = core.SummonSkill("배틀쉽 봄버(소환, 2)", 300, 600, 297, 3, 30000, rem = True, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
+
         '''
         돈틀레스 : 330 보통 13/22 타수3 600
         블랙바크 : 445 느림 15/18 타수3 810
         슈린츠 : 200 빠름   15/27 타수3 570
         조나단 : 320 보통   12/20 타수3 600
-        평균 데미지 600ms당 ?
+        평균 데미지 600ms당 297
         '''
         
 
