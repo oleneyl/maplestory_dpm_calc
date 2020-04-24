@@ -7,6 +7,7 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobclass import heroes
 
+# TODO : 조디악 커맨드 수정
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):

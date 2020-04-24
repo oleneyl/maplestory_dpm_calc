@@ -6,7 +6,7 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobclass import resistance
 from .jobbranch import bowmen
-# TODO: 재규어 맥시멈 추가
+# TODO: 재규어 맥시멈, 드릴 컨테이너 추가
 
 class JaguerStack(core.DamageSkillWrapper, core.TimeStackSkillWrapper):
     def __init__(self, level, vEhc):

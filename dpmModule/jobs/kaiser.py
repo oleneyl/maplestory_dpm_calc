@@ -79,8 +79,8 @@ class JobGenerator(ck.JobGenerator):
         BlazeUp = core.BuffSkill("블레이즈 업", 0, 240000, att = 20, rem = True).wrap(core.BuffSkillWrapper)
     
         FinalFiguration = core.BuffSkill("파이널 피규레이션", 0, 60000, pdamage_indep = 15, cooltime = -1).wrap(MorphGaugeWrapper)
-        Wingbit_1 = core.SummonSkill("윙비트", 540, 300, 200, 1, 19400, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)  #48타
-        Wingbit_2 = core.SummonSkill("윙비트(2)", 540, 300, 200, 1, 19400, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)  #48타
+        Wingbit_1 = core.SummonSkill("윙비트", 360, 300, 200, 1, 19400, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)  #48타
+        Wingbit_2 = core.SummonSkill("윙비트(2)", 360, 300, 200, 1, 19400, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)  #48타
         
         GigaSlasher_ = core.DamageSkill("기가 슬래셔", 540, 330, 9+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         GigaSlasher_Fig = core.DamageSkill("기가 슬래셔(변신)", 540, 330, 11+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)

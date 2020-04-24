@@ -106,21 +106,21 @@ class JobGenerator(ck.JobGenerator):
         OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         
         #Damage Skills
-        ChainLightening = core.DamageSkill("체인 라이트닝", 600, 230 + 2*combat, 9, modifier = core.CharacterModifier(crit = 25, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ChainLightening = core.DamageSkill("체인 라이트닝", 600, 185 + 2*combat, 10+1, modifier = core.CharacterModifier(crit = 25, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        FrozenOrbEjac = core.SummonSkill("프로즌 오브", 450, 100, 200+4*combat, 1, 1999, cooltime = -1, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
+        FrozenOrbEjac = core.SummonSkill("프로즌 오브", 390, 100, 200+4*combat, 1, 1999, cooltime = -1, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
     
         LighteningSpear = core.DamageSkill("라이트닝 스피어", 0, 0, 1, cooltime = 75 * 1000).wrap(core.DamageSkillWrapper)
         LighteningSpearSingle = core.DamageSkill("라이트닝 스피어(단일)", 250, 200, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         LighteningSpearFinalizer = core.DamageSkill("라이트닝 스피어 막타", 0, 1500, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
         IceAgeHolder = core.DamageSkill("아이스 에이지 개시스킬", 870, 500 + vEhc.getV(2,3)*20, 10, cooltime = 60 * 1000, red = True).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
-        IceAge = core.EjaculateSkill("아이스 에이지 사출기", 870, 375 + vEhc.getV(2,3)*15, 1, 15 * 1000).isV(vEhc,2,3).wrap(core.SummonSkillWrapper) #소환처리 해야함 ;; TODO
+        IceAge = core.EjaculateSkill("아이스 에이지 사출기", 870, 125 + vEhc.getV(2,3)*5, 3, 15 * 1000).isV(vEhc,2,3).wrap(core.SummonSkillWrapper) #소환처리 해야함 ;; TODO
         
-        Blizzard = core.DamageSkill("블리자드", 870, 900+10*combat, 4, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
+        Blizzard = core.DamageSkill("블리자드", 720, 450+10*combat, 8, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         
         # 중첩당 감소량 5%
-        ThunderBrake = core.DamageSkill("썬더브레이크 개시스킬", 0, 0, 1, red = True, cooltime = 45 * 1000).wrap(core.DamageSkillWrapper) #Awesome! -> Tandem 사출처리 해야함...Later. 690을 일단 급한대로 분배해서 사용.
+        ThunderBrake = core.DamageSkill("썬더브레이크 개시스킬", 0, 0, 1, red = True, cooltime = 40 * 1000).wrap(core.DamageSkillWrapper) #Awesome! -> Tandem 사출처리 해야함...Later. 690을 일단 급한대로 분배해서 사용.
         ThunderBrake1 = core.DamageSkill("썬더브레이크", 100, (750 + vEhc.getV(0,0)*30), 8).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ThunderBrake2 = core.DamageSkill("썬더브레이크(1)", 100, (750 + vEhc.getV(0,0)*30)*0.95, 8).wrap(core.DamageSkillWrapper)
         ThunderBrake3 = core.DamageSkill("썬더브레이크(2)", 100, (750 + vEhc.getV(0,0)*30)*0.9, 8).wrap(core.DamageSkillWrapper)

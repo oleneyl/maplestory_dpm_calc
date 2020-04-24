@@ -82,6 +82,8 @@ class JobGenerator(ck.JobGenerator):
         PlainBuff = core.BuffSkill("플레인 버프", 0, 60 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         ScarletChargeDrive = core.DamageSkill("스칼렛 차지 드라이브", 540, 350, 6, cooltime = 3000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        ScarletChargeDrive_After = core.DamageSkill("스칼렛 차지 드라이브(후속타)", 0, 350, 6).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        
         ScarletSpell = core.DamageSkill("스칼렛 스펠", 0, 220, 5).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         ScarletSpell_Infinity = core.DamageSkill("스칼렛 스펠(인피니티)", 0, 220, 5 * 5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
@@ -98,6 +100,10 @@ class JobGenerator(ck.JobGenerator):
         CrawlingFear = core.DamageSkill("기어다니는 공포", 690, 1390, 12, cooltime = 60*1000).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         
         AbyssChargeDrive = core.DamageSkill("어비스 차지 드라이브", 630, 340, 4, cooltime = 9000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        AbyssChargeDrive_After = core.DamageSkill("어비스 차지 드라이브(후속타)", 0, 410, 6).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        
+        # 어비스 스펠: 70%로 2번 공격하는 장판, 10초동안 13번
+        # SummonSkill로 변경 필요
         AbyssSpell = core.DamageSkill("어비스 스펠", 0, 410, 6).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         AbyssSpell_Infinity = core.DamageSkill("어비스 스펠(인피니티)", 0, 410, 6 * 5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
@@ -105,10 +111,12 @@ class JobGenerator(ck.JobGenerator):
         
         AbyssBuff = core.BuffSkill("어비스 버프", 0, 60*1000, cooltime = -1, pdamage = 20, boss_pdamage = 30, armor_ignore = 20).wrap(core.BuffSkillWrapper)
         
-        RaptRestriction = core.DamageSkill("황홀한 구속", 690, 500, 6, cooltime = 180 * 1000).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        RaptRestrictionSummon = core.SummonSkill("황홀한 구속(소환)", 0, 300, 400, 3, 9000, cooltime = -1).setV(vEhc, 7, 2, False).wrap(core.SummonSkillWrapper)  #임의주기 300ms, DPM 미사용.
+        RaptRestriction = core.DamageSkill("황홀한 구속", 690, 600, 6, cooltime = 180 * 1000).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        RaptRestrictionSummon = core.SummonSkill("황홀한 구속(소환)", 0, 450, 400, 3, 9000, cooltime = -1).setV(vEhc, 7, 2, False).wrap(core.SummonSkillWrapper)  #임의주기 300ms, DPM 미사용.
         RaptRestrictionEnd = core.DamageSkill("황홀한 구속(종결)", 0, 1000, 8, cooltime = -1).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         
+        # TODO: 딜레이 추가, 5차 강화 정보 갱신, 딜사이클 등록, 2회 발동기능 추가
+        UnstoppableImpulse = core.DamageSkill("멈출 수 없는 충동", 0, 435, 5, cooltime = 6000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
         ##### 스펙터 상태일 때 #####
         UpcomingDeath = core.DamageSkill("다가오는 죽음", 0, 450, 2).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
@@ -119,22 +127,24 @@ class JobGenerator(ck.JobGenerator):
         
         EndlessBadDream = core.DamageSkill("끝나지 않는 흉몽", 540, 445, 6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
         
-        UnfulfilledHunger = core.DamageSkill("채워지지 않는 굶주림", 750, 320, 7, cooltime = 5000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  #거스트 차지 드라이브 변형
+        UnfulfilledHunger = core.DamageSkill("채워지지 않는 굶주림", 750, 510, 7, cooltime = 5000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  #거스트 차지 드라이브 변형
         UnfulfilledHunger_Link = core.DamageSkill("채워지지 않는 굶주림(연계)", 750 - 240 - 240, 320, 7, cooltime = 5000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         UncontrollableChaos = core.DamageSkill("겉잡을 수 없는 혼돈", 810, 440, 12, cooltime = 9000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper) #어비스 차지 드라이브 변형
         UncontrollableChaos_Link = core.DamageSkill("겉잡을 수 없는 혼돈(연계)", 810 - 240 - 240, 440, 12, cooltime = 9000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
+        # TODO: 딜레이 추가, 5차 강화 정보 갱신, 딜사이클 등록, 2회 발동기능 추가
+        TenaciousInstinct = core.DamageSkill("멈출 수 없는 본능", 0, 460, 6, cooltime = 6000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
         
-        
-        # 하이처
-        ChargeSpellAmplification = core.BuffSkill("차지 스펠 엠플리피케이션", 720, 60000, att = 30, crit = 20, pdamage = 20, armor_ignore = 20, boss_pdamage = 20, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
+        # 하이퍼
+        ChargeSpellAmplification = core.BuffSkill("차지 스펠 엠플리피케이션", 720, 60000, att = 30, crit = 20, pdamage = 20, armor_ignore = 20, boss_pdamage = 30, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         
         
         EndlessPainTick = core.DamageSkill("끝없는 고통(틱)", 200,  300, 3).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)   #15타
         EndlessPain = core.DamageSkill("끝없는 고통", 0, 0, 0, cooltime = 60 * 1000).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper) # onTick==> 다가오는 죽음
-        EndlessPainEnd = core.DamageSkill("끝없는 고통(종결)", 0, 700*2, 12).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        # 딜레이 : 1200ms 또는 1050ms(이후 연계 시). 일단 1200으로.
+        EndlessPainEnd = core.DamageSkill("끝없는 고통(종결)", 1200, 500*3.5, 12).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60*1000, pdamage = 10, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         
@@ -146,9 +156,7 @@ class JobGenerator(ck.JobGenerator):
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = 154
-        OverdriveBuff = pirates.OverdriveWrapper(vEhc, WEAPON_ATT, 5, 5)
-        Overdrive = OverdriveBuff.Overdrive
-        OverdrivePenalty = OverdriveBuff.OverdrivePenalty
+        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
     
         MagicCircuitFullDrive = core.BuffSkill("매직서킷 풀드라이브", 720, (30+vEhc.getV(4,4))*1000, pdamage = (20 + vEhc.getV(3,2)), cooltime = 200*1000).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         MagicCircuitFullDriveStorm = core.SummonSkill("매직서킷 풀드라이브(마력 폭풍)", 0, 4000, 500+20*vEhc.getV(4,4), 3, (30+vEhc.getV(4,4))*1000, cooltime = -1).wrap(core.SummonSkillWrapper)
@@ -156,16 +164,16 @@ class JobGenerator(ck.JobGenerator):
         
         MemoryOfSource = core.DamageSkill("근원의 기억", 0, 0, 0, cooltime = 200 * 1000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         MemoryOfSourceTick = core.DamageSkill("근원의 기억(틱)", 250, 400 + 16 * vEhc.getV(1,1), 6).wrap(core.DamageSkillWrapper)    # 43타
-        MemoryOfSourceEnd = core.DamageSkill("근원의 기억(종결)", 0, 120 + 24 * vEhc.getV(1,1), 12 * 6).wrap(core.DamageSkillWrapper)
+        MemoryOfSourceEnd = core.DamageSkill("근원의 기억(종결)", 0, 1200 + 48 * vEhc.getV(1,1), 12 * 6).wrap(core.DamageSkillWrapper)
         MemoryOfSourceBuff = core.BuffSkill("근원의 기억(버프)", 0, 30 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper) #정신력 소모되지 않음
         
         
-        InfinitySpell = core.BuffSkill("인피니티 스펠", 720, (40 + vEhc.getV(0,0)) * 1000, cooltime = 240 * 1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        InfinitySpell = core.BuffSkill("인피니티 스펠", 720, (40 + 2*vEhc.getV(0,0)) * 1000, cooltime = 240 * 1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         #스펠이 남은 수많큼 차지됨
         #심연의 기운은 세개씩 추가 생성됨
         
         EvanescentNightmare = core.DamageSkill("새어나오는 악몽", 0, 500 + 20*vEhc.getV(2,2), 9, cooltime = 10 * 1000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        EvanescentBadDream = core.DamageSkill("새어나오는 흉몽", 0, 500 + 20*vEhc.getV(2,2), 9, cooltime = 10 * 1000).wrap(core.DamageSkillWrapper)
+        EvanescentBadDream = core.DamageSkill("새어나오는 흉몽", 0, 600 + 24*vEhc.getV(2,2), 9, cooltime = 10 * 1000).wrap(core.DamageSkillWrapper)
         
         EvanescentNightmareTimer = core.BuffSkill("새어나오는 악몽(타이머)", 0, 10000, cooltime = -1).wrap(core.BuffSkillWrapper)
         EvanescentBadDreamTimer = core.BuffSkill("새어나오는 흉몽(타이머)", 0, 10000 - 1000 - 1000, cooltime = -1).wrap(core.BuffSkillWrapper)   #악몽만 사용 가정
@@ -195,6 +203,8 @@ class JobGenerator(ck.JobGenerator):
         ScarletChargeDrive_Link.onBefore(PlainChargeDrive)
         ScarletSpell_Connected.onAfter(ScarletBuff)
         
+        ScarletChargeDrive.onAfter(ScarletChargeDrive_After)
+
         GustSpell_Connected = core.OptionalElement(InfinitySpell.is_active, GustSpell_Infinity, GustSpell)
         GustChargeDrive.onAfter(GustSpell_Connected)
         GustChargeDrive_Link.onAfter(GustSpell_Connected)
@@ -205,6 +215,8 @@ class JobGenerator(ck.JobGenerator):
         AbyssChargeDrive.onAfter(AbyssSpell_Connected)
         AbyssChargeDrive_Link.onAfter(AbyssSpell_Connected)
         AbyssChargeDrive_Link.onBefore(PlainChargeDrive)
+
+        AbyssChargeDrive.onAfter(AbyssChargeDrive_After)
         
         RaptRestriction.onAfter(RaptRestrictionSummon)
         RaptRestriction.onAfter(RaptRestrictionEnd)
@@ -216,7 +228,6 @@ class JobGenerator(ck.JobGenerator):
         MemoryOfSource.onAfter(MemoryOfSourceEnd)
         MemoryOfSource.onAfter(MemoryOfSourceBuff)
         
-        Overdrive.onAfter(OverdrivePenalty.controller(30*1000))
         MagicCircuitFullDrive.onAfter(MagicCircuitFullDriveStorm)
         
         # 스펙터 상태 파이널어택류 연계

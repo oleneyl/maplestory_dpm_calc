@@ -76,20 +76,24 @@ class JobGenerator(ck.JobGenerator):
         OctaQuaterdeck = core.SummonSkill("옥타 쿼터덱", 630, 60000/110, 300, 1, 30000, rem = True, cooltime = 10000).setV(vEhc, 5, 2, True).wrap(core.SummonSkillWrapper)
         RapidFire = core.DamageSkill("래피드 파이어", 120, 325, 1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
-        BattleshipBomber = core.DamageSkill("배틀쉽 봄버", 0,0,0, red = True, cooltime = 30000).wrap(core.DamageSkillWrapper)
+        # TODO : 지속시간 30초 -> 60초, 쿨타임 60초 -> 30초
+        # 소환수 데미지 변경 계산 필요
+        BattleshipBomber = core.DamageSkill("배틀쉽 봄버", 0,0,0, red = True, cooltime = 60000).wrap(core.DamageSkillWrapper)
         BattleshipBomber_1_ON = core.BuffSkill("배틀쉽봄버-1", 0, 30000, rem = True, cooltime = -1).wrap(core.BuffSkillWrapper)
         BattleshipBomber_2_ON = core.BuffSkill("배틀쉽봄버-2", 0, 30000, rem = True, cooltime = -1).wrap(core.BuffSkillWrapper)
-        BattleshipBomber_1 = core.SummonSkill("배틀쉽 봄버(소환,1)", 300, 600, 249, 3, 30000, rem = True, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
-        BattleshipBomber_2 = core.SummonSkill("배틀쉽 봄버(소환, 2)", 300, 600, 249, 3, 30000, rem = True, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
-        '''
-        돈틀레스 : 275 보통 13/22 타수3 600
-        블랙바크 : 445 느림 15/18 타수3 810
-        슈린츠 : 150 빠름   15/27 타수3 570
-        조나단 : 235 보통   12/20 타수3 600
-        평균 데미지 600ms당 249
-        '''
+        BattleshipBomber_1 = core.SummonSkill("배틀쉽 봄버(소환,1)", 300, 600, 297, 3, 30000, rem = True, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
+        BattleshipBomber_2 = core.SummonSkill("배틀쉽 봄버(소환, 2)", 300, 600, 297, 3, 30000, rem = True, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
 
-        Headshot = core.DamageSkill("헤드 샷", 660, 525, 12+1, cooltime = 5000, modifier = core.CharacterModifier(crit=100, armor_ignore=60, pdamage = 20)).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
+        '''
+        돈틀레스 : 330 보통 13/22 타수3 600
+        블랙바크 : 445 느림 15/18 타수3 810
+        슈린츠 : 200 빠름   15/27 타수3 570
+        조나단 : 320 보통   12/20 타수3 600
+        평균 데미지 600ms당 297
+        '''
+        
+
+        Headshot = core.DamageSkill("헤드 샷", 420, 525, 12+1, cooltime = 5000, modifier = core.CharacterModifier(crit=100, armor_ignore=60, pdamage = 20)).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
         
         Nautilus = core.DamageSkill("노틸러스", 690, 440+130, 7, red = True, cooltime = 30000).setV(vEhc, 8, 2, True).wrap(core.DamageSkillWrapper)
         PirateStyle = core.BuffSkill("파이렛 스타일", 0, 180000, rem = True, patt = 20).wrap(core.BuffSkillWrapper)
@@ -112,9 +116,7 @@ class JobGenerator(ck.JobGenerator):
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = 150
-        OverdriveBuff = pirates.OverdriveWrapper(vEhc, WEAPON_ATT, 4, 4)
-        Overdrive = OverdriveBuff.Overdrive
-        OverdrivePenalty = OverdriveBuff.OverdrivePenalty
+        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 4, 4, WEAPON_ATT)
         
         BulletParty = core.DamageSkill("불릿 파티", 0, 0, 0, cooltime = 75000).wrap(core.DamageSkillWrapper)
         BulletPartyTick = core.DamageSkill("불릿 파티(틱)", BULLET_PARTY_TICK, 230+9*vEhc.getV(5,5), 5).isV(vEhc,5,5).wrap(core.DamageSkillWrapper) #12초간 지속 -> 50회 시전
@@ -146,8 +148,6 @@ class JobGenerator(ck.JobGenerator):
             end.onAfter(QuickDrawShutdownTrigger)
         #디그니티는 노틸러스 쿨을 반영    
         CaptainDignitiy = core.OptionalElement(Nautilus.is_usable, CaptainDignitiyNormal, CaptainDignitiyEnhance)
-        #오버드라이브 연계
-        Overdrive.onAfter(OverdrivePenalty.controller(30*1000))
         #노틸러스 어썰트는 2개로 분리되어 잇음
         NautillusAssult.onAfter(NautillusAssult_2)
         #디그니티

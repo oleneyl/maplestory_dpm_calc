@@ -8,14 +8,44 @@ def PhalanxChargeWrapper(vEhc, num1, num2):
     PhalanxCharge = core.DamageSkill("시그너스 팔랑크스", 780, 450 + 18*vEhc.getV(num1, num2), 40 + vEhc.getV(num1, num2), cooltime = 30 * 1000).isV(vEhc, num1, num2).wrap(core.DamageSkillWrapper)
     return PhalanxCharge
 
-# 인피니티와 유사한 매커니즘이므로 별도의 클래스 작성 필요
-#세부값 확인해서 변경필요
-#MP 500 소비, 45초 동안 데미지 25% 증가, 일정 시간마다 HP 4%씩 회복 및 데미지 3% 추가 증가, 시그너스의 축복으로 증가하는 데미지는 합 적용이며 최대 90%까지 증가
-#MP 500 소비, 45초 동안 데미지 25% 증가 및 최대 HP의 일정 비율로 피해를 입히는 공격을 포함한 피격 데미지 5% 감소, 일정 시간마다 HP 7%씩 회복 및 데미지 5% 추가 증가, 시그너스의 축복으로 증가하는 데미지는 합 적용이며 최대 120%까지 증가
+class CygnusBlessWrapper(core.BuffSkillWrapper):
+    # 코드 정리 필요
+    def __init__(self, enhancer, skill_importance, enhance_importance, serverlag = 3, level = 230):
+        skill = core.BuffSkill("초월자 시그너스의 축복" if level >= 245 else "여제 시그너스의 축복" , 630, 45000, cooltime = 240*1000).wrap(core.BuffSkillWrapper)
+        super(CygnusBlessWrapper, self).__init__(skill)
 
-def CygnusBlessWrapper(vEhc, num1, num2, LEVEL):
-    if LEVEL < 245:
-        CygnusBless = core.BuffSkill("여제 시그너스의 축복", 450, (30+vEhc.getV(num1, num2)//2)*1000, pdamage = (30+vEhc.getV(num1, num2)//5) *1.2 + 20, cooltime = 240*1000).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
-    else:
-        CygnusBless = core.BuffSkill("초월자 시그너스의 축복", 450, (30+vEhc.getV(num1, num2)//2)*1000, pdamage = (30+vEhc.getV(num1, num2)//5) *1.2 + 20, cooltime = 240*1000).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
-    return CygnusBless
+        self.isUpgraded = (level >= 245)
+
+        self.enhancer = enhancer
+        self.skill_importance = skill_importance
+        self.enhance_importance = enhance_importance
+
+        self.damage_point = 4 + (enhancer.getV(self.skill_importance, self.enhance_importance))//15
+        self.damage_limit = 90
+        
+        #interval: 데미지 증가 주기 (확인 필요)
+        self.interval = 4
+        
+        # 업그레이드 상태일경우 스펙 증가치 적용
+        if self.isUpgraded:
+            self.damage_point += 2
+            self.damage_limit += 30
+            
+        self.passedTime = 0
+        self.serverlag = serverlag
+
+    def spend_time(self, time):
+        if self.onoff:
+            self.passedTime += time
+        super(CygnusBlessWrapper, self).spend_time(time)
+
+    def get_modifier(self):
+        
+        if self.onoff:
+            return core.CharacterModifier(pdamage = min(enhancer.getV(self.skill_importance, self.enhance_importance) + self.damage_point * (self.passedTime // ((self.interval + self.serverlag) * 1000)), self.damage_limit))
+        else:
+            return core.CharacterModifier()
+        
+    def _use(self, rem = 0, red = 0):
+        self.passedTime = 0
+        return super(CygnusBlessWrapper, self)._use(rem = rem, red = red)

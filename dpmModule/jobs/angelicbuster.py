@@ -93,9 +93,7 @@ class JobGenerator(ck.JobGenerator):
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = 154
-        OverdriveBuff = pirates.OverdriveWrapper(vEhc, WEAPON_ATT, 3, 3)
-        Overdrive = OverdriveBuff.Overdrive
-        OverdrivePenalty = OverdriveBuff.OverdrivePenalty
+        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 3, 3, WEAPON_ATT)
     
         EnergyBurst = core.DamageSkill("에너지 버스트", 900, (600+20*vEhc.getV(4,4)) * 3, 12, red = True, cooltime = 120 * 1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         
@@ -126,7 +124,6 @@ class JobGenerator(ck.JobGenerator):
         
         SuperNova.onTick(SoulSeeker)
         #SuperNova.onConstraint(core.ConstraintElement("익절트와 함께", SoulExult, SoulExult.is_active))
-        Overdrive.onAfter(OverdrivePenalty.controller(30*1000))
         
     
         return (Trinity_1,

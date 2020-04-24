@@ -105,9 +105,7 @@ class JobGenerator(ck.JobGenerator):
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = 154
-        OverdriveBuff = pirates.OverdriveWrapper(vEhc, WEAPON_ATT, 5, 5)
-        Overdrive = OverdriveBuff.Overdrive
-        OverdrivePenalty = OverdriveBuff.OverdrivePenalty
+        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         
         Transform = core.BuffSkill("트랜스폼", 450, (50+vEhc.getV(1,1))*1000, cooltime = 180 * 1000, pdamage_indep = (20 + 0.2*vEhc.getV(1,1))).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)#에너지 완충
         TransformEnergyOrb = core.DamageSkill("에너지 오브", 1140, 450 +vEhc.getV(1,1)*18, (2+(vEhc.getV(1,1) == 25)*1) * 8, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
@@ -139,8 +137,6 @@ class JobGenerator(ck.JobGenerator):
     
         UnityOfPower.onAfter(EnergyCharge.stackController(-1500))
         UnityOfPower.onAfter(UnityOfPowerBuff)
-    
-        Overdrive.onAfter(OverdrivePenalty.controller(30000))
         
         Transform.onAfter(EnergyCharge.stackController(10000, name = "트랜스폼"))
         Transform.onAfter(core.RepeatElement(TransformEnergyOrb, 3))

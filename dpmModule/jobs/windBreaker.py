@@ -74,7 +74,7 @@ class JobGenerator(ck.JobGenerator):
         #Summon Skills
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 5, 5)
         HowlingGail = core.SummonSkill("하울링 게일 1스택", 780, 10 * 1000 / 33, 250 + 10*vEhc.getV(1,1), 2 * 3, 10000, cooltime = 20 * 1000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) #딜레이 모름, 64���
-        WindWall = core.SummonSkill("윈드 월", 720, 2000, (550 + vEhc.getV(2,2)*22) / 2, 12 , 45 * 1000, cooltime = 90 * 1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
+        WindWall = core.SummonSkill("윈드 월", 720, 2000, (550 + vEhc.getV(2,2)*22) / 2, 5*3 , 45 * 1000, cooltime = 90 * 1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
         #TODO : 이볼브 계산
     
         

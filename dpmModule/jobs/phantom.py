@@ -58,7 +58,7 @@ class JobGenerator(ck.JobGenerator):
         템오카 선딜 없음
         크리율과 상관없이 블랑카르트 적용 크리율은 100%로 고정
         '''
-        JOKERRATE = 1.0
+        JOKERRATE = 1.0 / 1.2
         
 
         
@@ -74,7 +74,7 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 240 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
         
         MileAiguillesInit = core.BuffSkill("얼티밋 드라이브(개시)", 240, 240).wrap(core.BuffSkillWrapper)
-        MileAiguilles = core.DamageSkill("얼티밋 드라이브", 150, 110 + 2*combat, 3, modifier = core.CharacterModifier(pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        MileAiguilles = core.DamageSkill("얼티밋 드라이브", 150, 125 + 2*combat, 3, modifier = core.CharacterModifier(pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         CarteNoir = core.DamageSkill("느와르 카르트", 0, 270, min(chtr.get_modifier().crit/100,1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         CarteNoir_ = core.DamageSkill("느와르 카르트(저지먼트)", 0, 270, 10).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
@@ -87,8 +87,14 @@ class JobGenerator(ck.JobGenerator):
     
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 3, 3)
         
+        # 트와일라이트 미적용 상태
+        Twilight = core.BuffSkill("트와일라이트", 120, 15000, cooltime = 15000, armor_ignore = 20).wrap(core.BuffSkillWrapper)
+        TwilightHit = core.DamageSkill("트와일라이트(공격)", 540, 450, 3, cooltime = -1).wrap(core.DamageSkillWrapper)
+
+
         #조커가 소환기가 아님!
-        Joker = core.SummonSkill("조커", 720, 100*5, 240+9*vEhc.getV(4,4), 1*JOKERRATE*7*5, 7000-1, cooltime = 150000, red = True).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
+        # TODO: 카드 수 12% 감소 반영필요
+        Joker = core.SummonSkill("조커", 720, 100*5, 240+9*vEhc.getV(4,4), 1*JOKERRATE*7*5, (6+vEhc.getV(4,4)//25)*1000-1, cooltime = 150000, red = True).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
         JokerInit = core.DamageSkill("조커(시전)", 720, 0, 0, cooltime = 150000, red = True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         JokerDamage = core.DamageSkill("조커(피격)", 100*5, 240+9*vEhc.getV(4,4), 1*JOKERRATE*7*5).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)  #14회 반복
         JokerBuff = core.BuffSkill("조커(버프)", 0, 30000, cooltime = -1, pdamage_indep = (vEhc.getV(4,4)//5)/2).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
@@ -124,8 +130,8 @@ class JobGenerator(ck.JobGenerator):
         TempestOfCardInit.onAfter(core.RepeatElement(TempestOfCard, 56))
         TempestOfCard.onAfter(CarteNoir)
         
-        #Joker.onTick(CarteNoir)    #조커는 느와르를 미발동
-        Joker.onAfter(JokerBuff.controller(7000))
+        Joker.onTick(CarteNoir)    #조커는 느와르를 발동
+        Joker.onAfter(JokerBuff.controller((vEhc.getV(4,4)//25+6) * 1000))
         
         JokerInit.onAfter(core.RepeatElement(JokerDamage, 14))
         JokerInit.onAfter(JokerBuff)

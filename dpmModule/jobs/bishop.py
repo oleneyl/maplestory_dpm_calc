@@ -109,9 +109,9 @@ class JobGenerator(ck.JobGenerator):
         Pray = core.BuffSkill("프레이", 810, 1000 * (30 + 0.5 * vEhc.getV(2,2)), cooltime = 180 * 1000, red = True, pdamage_indep = (5 + (charMainStat // 2500))).isV(vEhc, 2,2).wrap(core.BuffSkillWrapper)
         
         #Damage Skills
-        AngelRay = core.DamageSkill("엔젤레이", 630, 315 + 6*combat, 10).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
-        AngelRay_25 = core.DamageSkill("엔젤레이(25)", 630, 315 + 6*combat, 10, modifier = core.CharacterModifier(pdamage_indep = 25)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
-        AngelRay_50 = core.DamageSkill("엔젤레이(50)", 630, 315 + 6*combat, 10, modifier = core.CharacterModifier(pdamage_indep = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
+        AngelRay = core.DamageSkill("엔젤레이", 630, 225 + 5*combat, 14).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
+        AngelRay_25 = core.DamageSkill("엔젤레이(25)", 630, 225 + 5*combat, 14, modifier = core.CharacterModifier(pdamage_indep = 25)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
+        AngelRay_50 = core.DamageSkill("엔젤레이(50)", 630, 225 + 5*combat, 14, modifier = core.CharacterModifier(pdamage_indep = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
         
         HeavensDoor = core.DamageSkill("헤븐즈도어", 1080, 1000, 8, cooltime = 180 * 1000).wrap(core.DamageSkillWrapper)   #사용하지 않는다--> 일단 Wrapper 제작 안할 것.
         PeaceMaker = core.DamageSkill("피스메이커", 750, 350 + 14*vEhc.getV(0,0), 12, cooltime = 10 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) #풀스택시 미발동..

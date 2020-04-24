@@ -55,7 +55,7 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
         MirrorImaging = core.BuffSkill("미러 이미징", 0, 200000, rem = True, pdamage_indep = 70).wrap(core.BuffSkillWrapper)
         
-        DarkSight = core.BuffSkill("다크 사이트", 0, 1, cooltime = -1, pdamage_indep = 20 + 10 + int(0.2*vEhc.getV(3,3))).wrap(core.BuffSkillWrapper)
+        DarkSight = core.BuffSkill("다크 사이트", 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper)#, pdamage_indep = 20 + 10 + int(0.2*vEhc.getV(3,3))).wrap(core.BuffSkillWrapper)
         
         PhantomBlow = core.DamageSkill("팬텀 블로우", 540, 315, 6+1, modifier = core.CharacterModifier(armor_ignore = 30+20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         SuddenRaid = core.DamageSkill("써든 레이드", 900, 1150, 3, cooltime = 30000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)    #파컷의 남은 쿨타임 20% 감소
@@ -70,13 +70,15 @@ class JobGenerator(ck.JobGenerator):
         FlashBangDebuff = core.BuffSkill("플래시 뱅(디버프)", 0, 50000/2, cooltime = -1, pdamage = 10 * 0.9).wrap(core.BuffSkillWrapper)
         Venom = core.DotSkill("페이탈 베놈", 160*3/1.7, 8000).wrap(core.SummonSkillWrapper)
         
+        # TODO: 버프 시전 딜레이 적용
         HiddenBladeBuff = core.BuffSkill("히든 블레이드(버프)", 0, 60000, cooltime = 90000, pdamage = 10).wrap(core.BuffSkillWrapper)
         HiddenBlade = core.DamageSkill("히든 블레이드", 0, 140 / 1.7, 2).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)    #미러 이미징에 의해 추가타 2개, 최종뎀 1.7배 무시
         
         Asura = core.DamageSkill("아수라", 0, 0, 0, cooltime = 60000).wrap(core.DamageSkillWrapper)
         AsuraTick = core.DamageSkill("아수라(틱)", 300, 420, 4, modifier =core.CharacterModifier(armor_ignore = 100)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  #41타
         
-        UltimateDarksight = core.BuffSkill("얼티밋 다크사이트", 750, 30000, red = True, cooltime = (220-vEhc.getV(3,3))*1000).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
+        UltimateDarksight = thieves.UltimateDarkSightWrapper(vEhc, 3, 3, 20)
+        #UltimateDarksight = core.BuffSkill("얼티밋 다크사이트", 750, 30000, red = True, cooltime = (220-vEhc.getV(3,3))*1000).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc,1,1)
         
         BladeStorm = core.DamageSkill("블레이드 스톰", 660, 580+23*vEhc.getV(0,0), 7, red = True, cooltime = 90000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)

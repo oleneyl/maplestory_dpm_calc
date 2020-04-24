@@ -74,14 +74,14 @@ class JobGenerator(ck.JobGenerator):
         
         SoulAttack = core.BuffSkill("소울 어택", 0, 10000, cooltime = -1, pdamage_indep = 25, crit = 20).wrap(core.BuffSkillWrapper)
         
-        FinalAttack = core.DamageSkill("파이널 어택", 0, 185*2, 0.75).setV(vEhc, 3, 4, False).wrap(core.DamageSkillWrapper)
+        FinalAttack = core.DamageSkill("파이널 어택", 0, 95*4, 0.75).setV(vEhc, 3, 4, False).wrap(core.DamageSkillWrapper)
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
         Invigorate = core.BuffSkill("격려", 0, 180000, rem = True, att = 30).wrap(core.BuffSkillWrapper)
         
-        SoulAssult = core.DamageSkill("소울 어썰트", 600, 280, 8+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   #암흑 20%
+        SoulAssult = core.DamageSkill("소울 어썰트", 600, 210, 11+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   #암흑 20%
         
-        ShiningCross = core.DamageSkill("샤이닝 크로스", 640, 440, 4 + 1, cooltime = 7000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #암흑 30% 10초
-        ShiningCrossInstall = core.SummonSkill("샤이닝 크로스(인스톨)", 0, 1200, 75, 4+1, 7000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #100% 암흑 5초
+        ShiningCross = core.DamageSkill("샤이닝 크로스", 600, 440, 4 + 1, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #암흑 30% 10초
+        ShiningCrossInstall = core.SummonSkill("샤이닝 크로스(인스톨)", 0, 1200, 75, 4+1, 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #100% 암흑 5초
         
         #하이퍼
         SacredCube = core.BuffSkill("세이크리드 큐브", 90, 30000, cooltime = 210000, pdamage = 10).wrap(core.BuffSkillWrapper)
@@ -97,8 +97,8 @@ class JobGenerator(ck.JobGenerator):
         ClauSolis = core.DamageSkill("클라우 솔리스", 900, 700+28*vEhc.getV(4,4), 7, red = True, cooltime = 12000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)    #로얄가드 버프지속시간 6초 증가. 100% 암흑 5초
         ClauSolisSummon = core.SummonSkill("클라우 솔리스(소환)", 0, 5000, 350+14*vEhc.getV(4,4), 7, 9000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #100% 암흑 5초
     
-        SwordOfSoullight = core.BuffSkill("소드 오브 소울라이트", 1050, 30000, red = True, cooltime = 180*1000, patt = 15+int(0.5*vEhc.getV(1,1)), crit = 100, armor_ignore = 100).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
-        SoullightSlash = core.DamageSkill("소울 라이트 슬래시", 600, 650+26*vEhc.getV(1,1), 7).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        SwordOfSoullight = core.BuffSkill("소드 오브 소울 라이트", 1050, 30000, red = True, cooltime = 180*1000, patt = 15+int(0.5*vEhc.getV(1,1)), crit = 100, armor_ignore = 100).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
+        SoullightSlash = core.DamageSkill("소울 라이트 슬래시", 600, 400+16*vEhc.getV(1,1), 12).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         ##### Build Graph
         
         BasicAttack = core.OptionalElement(SwordOfSoullight.is_active, SoullightSlash, SoulAssult)

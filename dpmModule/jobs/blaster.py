@@ -31,14 +31,14 @@ class JobGenerator(ck.JobGenerator):
         ChargeMastery= core.InformedCharacterModifier("차지 마스터리", pdamage = 20)
         GuntletExpert = core.InformedCharacterModifier("건틀렛 엑스퍼트", crit_damage = 15, boss_pdamage = 15)
         AdvancedChargeMastery= core.InformedCharacterModifier("어드밴스드 차지 마스터리", armor_ignore = 35)
-        CombinationTraining = core.InformedCharacterModifier("콤비네이션 트레이닝II", att = 40)	#패시브스킬+1, 오더스+1
+        CombinationTraining = core.InformedCharacterModifier("콤비네이션 트레이닝II", att = 44)	#패시브스킬+1, 오더스+1
         return [GuntletMastery, PhisicalTraining, ChargeMastery, 
                         GuntletExpert, AdvancedChargeMastery, CombinationTraining]
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
-        CombinationTraining = core.InformedCharacterModifier("콤비네이션 트레이닝II", pdamage_indep = 60, crit = 40)	#패시브스킬+1, 오더스+1
+        CombinationTraining = core.InformedCharacterModifier("콤비네이션 트레이닝II", pdamage_indep = 70, crit = 40)	#패시브스킬+1, 오더스+1
         
 
         return [WeaponConstant, Mastery, CombinationTraining]

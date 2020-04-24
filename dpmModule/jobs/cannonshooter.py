@@ -77,13 +77,15 @@ class JobGenerator(ck.JobGenerator):
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = 210
-        OverdriveBuff = pirates.OverdriveWrapper(vEhc, WEAPON_ATT, 5, 5)
-        Overdrive = OverdriveBuff.Overdrive
-        OverdrivePenalty = OverdriveBuff.OverdrivePenalty
+        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
     
         PirateFlag = PirateFlag = adventurer.PirateFlagWrapper(vEhc, 4, 3, chtr.level)
-    
-        BFGCannonball = core.SummonSkill("빅 휴즈 기간틱 캐논볼", 600, 210, (450+15*vEhc.getV(0,0)) * 0.45, 4 * 3, COCOBALLHIT, cooltime = 25000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+
+        # 쿨타임마다 사용
+        # 1.2.332 패치 반영 (50회 제한)
+        BFGCannonball = core.SummonSkill("빅 휴즈 기간틱 캐논볼", 600, 210, (450+15*vEhc.getV(0,0)) * 0.45, 4 * 3, 210*50, cooltime = 25000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+
+
         ICBM = core.DamageSkill("ICBM", 1190, (1200+48*vEhc.getV(1,1)) * 0.45, 5*ICBMHIT * 3, cooltime = 30000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         ICBMDOT = core.SummonSkill("ICBM(장판)", 0, 15000/27, (500+20*vEhc.getV(1,1)) * 0.45, 1 * 3, 15000, cooltime = -1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) #27타
     
@@ -102,8 +104,6 @@ class JobGenerator(ck.JobGenerator):
         ICBM.onAfter(ICBMDOT)
     
         SpecialMonkeyEscort_Canon.onAfter(SpecialMonkeyEscort_Boom)
-    
-        Overdrive.onAfter(OverdrivePenalty.controller(30*1000))
     
         return(CanonBuster,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),

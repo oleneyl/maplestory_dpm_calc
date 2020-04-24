@@ -9,6 +9,8 @@ from .jobclass import resistance
 from .jobbranch import magicians
 # TODO: 오버로드 마나를 정말 안쓰는 것인지 확인필요
 
+# TODO: [블랙 매직 알터] : 제단이 설치되어 있지 않을 때 아래 방향키와 함께 사용하면 자신의 위치와 전방에 총 2개의 제단이 한번에 설치되는 기능이 추가됩니다. 설치 개수가 2개를 초과했을 때 초과한 개수에 비례해 저주의 이동속도가 증가하는 기능이 공격 횟수가 증가하는 기능으로 변경됩니다.
+
 ######   Passive Skill   ######
 
 class JobGenerator(ck.JobGenerator):
@@ -32,7 +34,7 @@ class JobGenerator(ck.JobGenerator):
         ArtOfStaff = core.InformedCharacterModifier("아트 오브 스태프",att = 20, crit = 15)
         StaffMastery = core.InformedCharacterModifier("스태프 마스터리",att = 30, crit = 20)
         HighWisdom =  core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
-        BattleMastery = core.InformedCharacterModifier("배틀 마스터리",pdamage_indep = 10, crit_damage = 20)
+        BattleMastery = core.InformedCharacterModifier("배틀 마스터리",pdamage_indep = 15, crit_damage = 20)
         DarkAuraPassive = core.InformedCharacterModifier("다크 오라(패시브)", patt=15)
         
         #택 1
@@ -131,10 +133,11 @@ class JobGenerator(ck.JobGenerator):
 
         # DeathAfterMOD는 처음에 비활성화됨
         DeathAfterMOD.set_disabled_and_time_left(-1)
-        
+
+        # 쓸윈 제거 ([너브 스티뮬레이션] : 공격 속도가 1단계 증가하는 기능이 추가됩니다.)
         return(FinishBlowEndpoint,
                 [Booster, WillOfLiberty, MasterOfDeath, UnionAura,
-                globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), #globalSkill.useful_wind_booster(),
                 globalSkill.soul_contract()] +\
                 [DarkGenesis, BattlekingBar] +\
                 [RegistanceLineInfantry, Death, DeathAfterMOD, BlackMagicAlter, GrimReaper] +\

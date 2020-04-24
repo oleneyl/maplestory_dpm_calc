@@ -7,18 +7,20 @@ from . import globalSkill
 from .jobbranch import thieves
 
 class MesoStack(core.DamageSkillWrapper, core.StackSkillWrapper):
+    # 메익 리인포스 미적용 기준
     def __init__(self, vEhc):
         self.vEhc = vEhc
-        skill = core.DamageSkill("메소익스플로전", 0, 220, 1).setV(vEhc, 2, 3, False)
+        skill = core.DamageSkill("메소익스플로전", 0, 100, 2).setV(vEhc, 2, 3, False)
         super(core.DamageSkillWrapper, self).__init__(skill, 20)
         self.modifierInvariantFlag = False
         
     def _use(self, rem = 0, red = 0):
         mdf = self.skill.get_modifier()
-        dmg = 220
+        dmg = 100
         stack = self.stack
         self.stack = 0
-        return core.ResultObject(0, mdf.copy(),  dmg * stack, sname = self._id, spec = 'deal')
+        # 확인 필요
+        return core.ResultObject(0, mdf.copy(),  dmg, sname = self._id, spec = 'deal', hit = 2 * stack)
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -87,11 +89,11 @@ class JobGenerator(ck.JobGenerator):
         ShadowerInstinct = core.BuffSkill("섀도어 인스팅트", 0, 200*1000, rem = True, att = 40+30).wrap(core.BuffSkillWrapper)
         ShadowPartner = core.BuffSkill("섀도우 파트너", 1000, 2000*1000, rem = True).wrap(core.BuffSkillWrapper)
         
-        Assasinate1 = core.DamageSkill("암살(1타)", 630, 550, 3 * 1.7, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타")   #쉐파
-        Assasinate2 = core.DamageSkill("암살(2타)", 630+30, 700, 3 * 1.7, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타")   #쉐파
+        Assasinate1 = core.DamageSkill("암살(1타)", 630, 275, 6 * 1.7, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타")   #쉐파
+        Assasinate2 = core.DamageSkill("암살(2타)", 630+30, 350, 6 * 1.7, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타")   #쉐파
         
-        Assasinate1_D = core.DamageSkill("암살(1타)(다크사이트)", 630, 550, 3 * 1.7, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타(닼사)")   #쉐파
-        Assasinate2_D = core.DamageSkill("암살(2타)(다크사이트)", 630+30, 700, 3 * 1.7, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타(닼사)")   #쉐파
+        Assasinate1_D = core.DamageSkill("암살(1타)(다크사이트)", 630, 275, 6 * 1.7, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타(닼사)")   #쉐파
+        Assasinate2_D = core.DamageSkill("암살(2타)(다크사이트)", 630+30, 350, 6 * 1.7, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타(닼사)")   #쉐파
         
         BailOfShadow = core.DamageSkill("베일 오브 섀도우", 810, 800, 15, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         #킬포3개 사용시 최종뎀 100% 증가.
@@ -104,7 +106,8 @@ class JobGenerator(ck.JobGenerator):
         
         #_VenomBurst = core.DamageSkill("베놈 버스트", ??) ## 패시브 50%확률로 10초간 160+6*vlevel dot. 사용시 도트뎀 모두 피해 + (500+20*vlevel) * 5. 어차피 안쓰는 스킬이므로 작성X
         
-        UltimateDarksight = core.BuffSkill("얼티밋 다크사이트", 750, 30000, cooltime = (220-vEhc.getV(3,3))*1000, pdamage_indep = (10 + int(0.2*vEhc.getV(3,3))/1.05 )).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
+        UltimateDarksight = thieves.UltimateDarkSightWrapper(vEhc, 3, 3, 5)
+        #UltimateDarksight = core.BuffSkill("얼티밋 다크사이트", 750, 30000, cooltime = (220-vEhc.getV(3,3))*1000, pdamage_indep = (10 + int(0.2*vEhc.getV(3,3))/1.05 )).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 2)
         
         Eviscerate = core.DamageSkill("절개", 570, 1900+76*vEhc.getV(0,0), 7*1.7, modifier = core.CharacterModifier(crit=100, armor_ignore=100), cooltime = 14000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)

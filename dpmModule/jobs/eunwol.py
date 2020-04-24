@@ -73,9 +73,9 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill   ######
         #Buff skills
     
-        FoxSoul = core.DamageSkill("여우령", 0, 200, 3 * (0.2+0.1)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        FoxSoul = core.DamageSkill("여우령", 0, 200, 3 * (0.25+0.1)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        SoulAttack = core.DamageSkill("귀참", 600, 380, 8+1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        SoulAttack = core.DamageSkill("귀참", 600, 265, 12+1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DoubleBodyAttack = core.DamageSkill("분혼 격참(공격)", 0, 2000, 1).wrap(core.DamageSkillWrapper)
         DoubleBody = core.BuffSkill("분혼 격참", 1000, 10000, cooltime = 180000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
     
@@ -102,9 +102,7 @@ class JobGenerator(ck.JobGenerator):
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = 154
-        OverdriveBuff = pirates.OverdriveWrapper(vEhc, WEAPON_ATT, 5, 5)
-        Overdrive = OverdriveBuff.Overdrive
-        OverdrivePenalty = OverdriveBuff.OverdrivePenalty
+        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         
         SoulConcentrate = core.BuffSkill("정령 집속", 960, (30+vEhc.getV(2,1))*1000, cooltime = 120*1000, pdamage_indep = (5+vEhc.getV(2,1)//2)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
         SoulConcentrateSummon = core.SummonSkill("정령 집속(무작위)", 0, 2000, 1742, 1, (30+vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
@@ -112,7 +110,7 @@ class JobGenerator(ck.JobGenerator):
         SoulTrap = core.SummonSkill("귀문진", 1000, 930, 600+24*vEhc.getV(3,2), 3, 40000, cooltime = (120-vEhc.getV(3,2))*1000).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
         SoulTrapBuff = core.BuffSkill("귀문진(버프)", 0, 40000, cooltime = -1).wrap(SoulTrapBuffWrapper)
 
-        RealSoulAttack = core.DamageSkill("진 귀참", 600, 800+8*vEhc.getV(1,3), 8 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20) + core.CharacterModifier(armor_ignore=50)).setV(vEhc, 0, 2, False).isV(vEhc,1,3).wrap(core.DamageSkillWrapper)
+        RealSoulAttack = core.DamageSkill("진 귀참", 600, 540+6*vEhc.getV(1,3), 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20) + core.CharacterModifier(armor_ignore=50)).setV(vEhc, 0, 2, False).isV(vEhc,1,3).wrap(core.DamageSkillWrapper)
         RealSoulAttackCounter = core.BuffSkill("진 귀참(딜레이)", 0, 6000, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         DoubleBodyRegistance = core.BuffSkill("분혼 격참(저항)", 0, 90000, cooltime = -1).wrap(core.BuffSkillWrapper)
@@ -128,8 +126,6 @@ class JobGenerator(ck.JobGenerator):
         EnhanceSpiritLink.onAfters([EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init])
         EnhanceSpiritLinkSummon_J_Init.onTick(EnhanceSpiritLinkSummon_J)
         EnhanceSpiritLinkSummon_J.onAfter( core.RepeatElement(EnhanceSpiritLinkSummon_J_Damage, 32) )
-        
-        Overdrive.onAfter(OverdrivePenalty.controller(30000))
         
         #정령 집속
         SoulConcentrate.onAfter(DoubleBody.controller(1.0, 'reduce_cooltime_p'))

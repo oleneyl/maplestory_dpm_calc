@@ -74,8 +74,9 @@ class JobGenerator(ck.JobGenerator):
         #GrittyGust = core.DamageSkill("윈드 오브 프레이", ?, 500, 81, cooltime = 15 * 1000, red = true).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         #GrittyGustDOT = core.SummonSkill("윈드 오브 프레이(도트)", 0, 1000, 200, 1, 10*1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         #TODO : 애로우 레인(조건부 파이널어택)
-        ArrowRainBuff = core.BuffSkill("애로우 레인(버프)", 720, (40+vEhc.getV(0,0))*1000, cooltime = 120 * 1000, red = True, pdamage = 15+(0.5*vEhc.getV(0,0))).isV(vEhc,0,0).wrap(core.BuffSkillWrapper) #딜레이 모름
-        ArrowRain = core.SummonSkill("애로우 레인", 0, 840, 500+vEhc.getV(0,0)*24, 5, (40+vEhc.getV(0,0))*1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        # 최신 패치내용과 일치하는지 재확인 필요
+        ArrowRainBuff = core.BuffSkill("애로우 레인(버프)", 720, (40+vEhc.getV(0,0))*1000, cooltime = 120 * 1000, red = True, pdamage = 15+(vEhc.getV(0,0)//2)).isV(vEhc,0,0).wrap(core.BuffSkillWrapper) #딜레이 모름
+        ArrowRain = core.SummonSkill("애로우 레인", 0, 840, 600+vEhc.getV(0,0)*24, 8, (40+vEhc.getV(0,0))*1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         
         #Summon Skills
         Pheonix = core.SummonSkill("피닉스", 900, 2670, 390, 1, 220 * 1000).setV(vEhc, 5, 3, True).wrap(core.SummonSkillWrapper)

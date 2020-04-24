@@ -22,7 +22,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 2
         
     def get_passive_skill_list(self):
-        RetrievedMemory = core.InformedCharacterModifier("되찾은 기억", att=10)
+        RetrievedMemory = core.InformedCharacterModifier("되찾은 기억", patt=5)
         SnowChargePassive = core.InformedCharacterModifier("스노우 차지(패시브)", pdamage=10+10)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 드레이닝",stat_main = 30, stat_sub = 30)
         AdvancedComboAbilityPassive = core.InformedCharacterModifier("어드밴스드 콤보 어빌리티", att=10, crit=20, crit_damage=10)
@@ -53,14 +53,14 @@ class JobGenerator(ck.JobGenerator):
 
         SmashSwing = core.DamageSkill("스매시 스윙", 90, 800, 2).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         SmashSwingIncr = core.BuffSkill("스매시 스윙(최종데미지)", 0, 5000+3000, pdamage_indep=15, pdamage=20, cooltime=-1).wrap(core.BuffSkillWrapper)
-        SmashSwingIllusion = core.DamageSkill("스매시 스윙(잔상)", 0, 350, 4).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        SmashSwingIllusion = core.DamageSkill("스매시 스윙(잔상)", 0, 280, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
         FinalBlow = core.DamageSkill("파이널 블로우", 600, 445, 5, modifier=core.CharacterModifier(armor_ignore=15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
         Booster = core.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
         SnowCharge = core.BuffSkill("스노우 차지", 0, 200*1000, pdamage=10).wrap(core.BuffSkillWrapper) # 펫버프
 
-        FinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 250, 0.6).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        FinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 85, 3*0.6).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         AdvancedComboAbility = core.BuffSkill("어드밴스드 콤보 어빌리티", 0, 9999*9999, att=2*10, crit=3*10).wrap(core.BuffSkillWrapper)
         Judgement = core.DamageSkill("저지먼트", JUDGEMENT_DELAY, 380, 4).wrap(core.DamageSkillWrapper)
@@ -84,7 +84,7 @@ class JobGenerator(ck.JobGenerator):
         AdrenalineBeyonderThird = core.DamageSkill("비욘더(3타)(아드레날린)", 410, 565, 8, modifier=core.CharacterModifier(pdamage=20+79.1, armor_ignore=20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         AdrenalineBeyonderWave = core.DamageSkill("비욘더(파동)", 0, 400, 5).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        BoostEndHuntersTargeting = core.DamageSkill("부스트엔드-헌터즈타겟팅", BOOST_END_HUNTERS_TARGETING_DELAY, 1500+500, 15, cooltime=-1).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        BoostEndHuntersTargeting = core.DamageSkill("부스트엔드-헌터즈타겟팅", BOOST_END_HUNTERS_TARGETING_DELAY, 1500+500, 15*5, cooltime=-1).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
 
         AdrenalineGenerator = core.BuffSkill("아드레날린 제네레이터", ADRENALINE_GENERATOR_DELAY, 0, cooltime=240*1000).wrap(core.BuffSkillWrapper)
         MahaRegion = core.SummonSkill("마하의 영역", 1710, 1000, 500, 3, 10*1000, cooltime=150*1000).wrap(core.SummonSkillWrapper)
@@ -98,7 +98,7 @@ class JobGenerator(ck.JobGenerator):
         InstallMahaBlizzard = core.SummonSkill("인스톨 마하(눈보라)", 0, 3000, 650+10*vEhc.getV(1,1), 5, 60*1000, cooltime=-1).wrap(core.SummonSkillWrapper)
         #스택+100
 
-        BrandishMaha = core.DamageSkill('브랜디쉬 마하', 1170, 900+vEhc.getV(2,2)*36, 10*2, cooltime=20*1000, modifier=core.CharacterModifier(boss_pdamage=20)).wrap(core.DamageSkillWrapper)
+        BrandishMaha = core.DamageSkill('브랜디쉬 마하', 1170, 600+vEhc.getV(2,2)*24, 15*2, cooltime=20*1000, modifier=core.CharacterModifier(boss_pdamage=20)).wrap(core.DamageSkillWrapper)
         #인스톨마하상태에서 쿨타임 10초 감소
 
         PenrilCrash = core.DamageSkill('펜릴 크래시', 450, 100+500+vEhc.getV(3,3)*5, 7, modifier=core.CharacterModifier(crit=100, armor_ignore=60,pdamage=20+69.6)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
