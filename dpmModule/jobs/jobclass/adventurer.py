@@ -51,7 +51,7 @@ def BlitzShieldWrappers(vEhc, num1, num2):
 
 # 아직 사용하지 말것! 연계 설정 추가 필요
 def EvolveWrapper(vEhc, num1, num2):
-    Evolve = core.BuffSkill("이볼브", 600, 3330, 450+vEhc.getV(num1, num2)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(num1, num2)))*1000).isV(vEhc,num1, num2).wrap(core.SummonSkillWrapper)
+    Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(num1, num2)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(num1, num2)))*1000).isV(vEhc,num1, num2).wrap(core.SummonSkillWrapper)
     return Evolve
 
 '''
