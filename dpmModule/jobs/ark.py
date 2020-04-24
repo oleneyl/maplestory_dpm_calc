@@ -144,7 +144,7 @@ class JobGenerator(ck.JobGenerator):
         EndlessPainTick = core.DamageSkill("끝없는 고통(틱)", 200,  300, 3).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)   #15타
         EndlessPain = core.DamageSkill("끝없는 고통", 0, 0, 0, cooltime = 60 * 1000).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper) # onTick==> 다가오는 죽음
         # 딜레이 : 1200ms 또는 1050ms(이후 연계 시). 일단 1200으로.
-        EndlessPainEnd = core.DamageSkill("끝없는 고통(종결)", 1200, 700*2, 12).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        EndlessPainEnd = core.DamageSkill("끝없는 고통(종결)", 1200, 500*3.5, 12).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60*1000, pdamage = 10, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         
