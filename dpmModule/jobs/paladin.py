@@ -67,7 +67,7 @@ class JobGenerator(ck.JobGenerator):
         LighteningChargeDOT = core.DotSkill("라이트닝 차지(도트)", 115, 6000).wrap(core.SummonSkillWrapper)
         DivineCharge = core.DamageSkill("디바인 차지", 810, 462, 3, cooltime = 60 * 1000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
-        Blast = core.DamageSkill("블래스트", 630, 291, 8+2+1, modifier = core.CharacterModifier(crit=20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Blast = core.DamageSkill("블래스트", 630, 291, 9+2+1, modifier = core.CharacterModifier(crit=20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         #Summon Skills
         BlessedHammer = core.SummonSkill("블레스드 해머", 0, 600, (250 + vEhc.getV(1,1)*10), 2, 999999* 10000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)   #딜레이 반영
