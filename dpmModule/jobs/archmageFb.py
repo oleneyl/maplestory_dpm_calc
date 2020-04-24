@@ -74,17 +74,17 @@ class JobGenerator(ck.JobGenerator):
         
         #Damage Skills
         #Full speed, No Combat Orders
-        Paralyze = core.DamageSkill("패럴라이즈", 600, 250 + 3*combat, 7, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        Paralyze = core.DamageSkill("패럴라이즈", 570, 220 + 3*combat, 8, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         #Need to connect Both Skill by cascade.
         FlameHeize = core.DamageSkill("플레임 헤이즈", 1080, 504 + 8*combat, 6, cooltime = 4 * 1000).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
-        MistEruption = core.DamageSkill("미스트 이럽션", 780, 776.25 +12.25*combat, 8, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 52)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        MistEruption = core.DamageSkill("미스트 이럽션", 720, 416.25 +12.25*combat, 15, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 52)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         DotPunisher = core.DamageSkill("도트 퍼니셔", 870, (400+vEhc.getV(0,0)*15), 5*(1+19*0.75), cooltime = 25 * 1000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)#=775*(1+0.75*19)*5
         PoisonNova = core.DamageSkill("포이즌 노바", 750, 500 + 20*vEhc.getV(2,1), 6, cooltime = 25*1000).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
         PoisonNovaErupt = core.DamageSkill("포이즌 노바(폭발)", 0, 400 + 18*vEhc.getV(2,1), 6 * (3 + 0.50)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)   #4히트
     
-        Meteor = core.DamageSkill("메테오", 870, 935+combat*10, 4, cooltime = 45 * 1000).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
+        Meteor = core.DamageSkill("메테오", 720, 470+combat*5, 8, cooltime = 45 * 1000).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
         MegidoFlame = core.DamageSkill("메기도 플레임", 690, 700, 9, cooltime = 50 * 1000).setV(vEhc, 8, 2, True).wrap(core.DamageSkillWrapper)
         
         #Summoning skill
@@ -94,7 +94,7 @@ class JobGenerator(ck.JobGenerator):
         
         #FinalAttack
         MeteorPassive = core.DamageSkill("메테오(패시브)", 0, (220+4*combat) * (0.6+0.01*combat), 1).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
-        Ignite = core.DamageSkill("이그나이트", 0, 110*0.5, 3).setV(vEhc, 3, 4, False).wrap(core.DamageSkillWrapper)
+        Ignite = core.DamageSkill("이그나이트", 0, 40*0.5, 3 * 3).setV(vEhc, 3, 4, False).wrap(core.DamageSkillWrapper)
         #Ignite : Need Wrapper
         
         ParalyzeDOT = core.DotSkill("도트(패럴라이즈)", 240, 10000).wrap(core.SummonSkillWrapper)
