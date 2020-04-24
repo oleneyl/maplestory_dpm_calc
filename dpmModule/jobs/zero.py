@@ -139,16 +139,16 @@ class JobGenerator(ck.JobGenerator):
         AdvancedRollingAssulterAura = core.DamageSkill("어드밴스드 롤링 어썰터(오라)", 0, 250, 3 ).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
         WindCutter = core.DamageSkill("윈드 커터", 540, 165, 8 ).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        WindCutterSummon = core.SummonSkill("윈드 커터(소환)", 0, 500, 110, 3, 3000).setV(vEhc, 7, 2, False).wrap(core.SummonSkillWrapper)
+        WindCutterSummon = core.SummonSkill("윈드 커터(소환)", 0, 500, 110, 3, 3000, cooltime=-1).setV(vEhc, 7, 2, False).wrap(core.SummonSkillWrapper)
         #WindCutterSummon = core.DamageSkill("윈드 커터(소환)", 0, 110, 3*3 ).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper) #3타 타격
 
         WindStrike = core.DamageSkill("윈드 스트라이크",600, 250, 8).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
 
         StormBreak = core.DamageSkill("어드밴스드 스톰 브레이크", 690, 335, 10 ).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        StormBreakSummon = core.SummonSkill("어드밴스드 스톰 브레이크(소환)", 0, 500, 335, 4, 3000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        StormBreakSummon = core.SummonSkill("어드밴스드 스톰 브레이크(소환)", 0, 500, 335, 4, 3000, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         #StormBreakSummon = core.DamageSkill("어드밴스드 스톰 브레이크(소환)", 0, 335, 4).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) #2타 타격
-        StormBreakElectric = core.DotSkill("어드밴스드 스톰 브레이크(전기)", 230, 3000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
-        #StormBreakElectric = core.DamageSkill("어드밴스드 스톰 브레이크(전기)", 0, 230, 3 ).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        #StormBreakElectric = core.DotSkill("어드밴스드 스톰 브레이크(전기)", 230, 3000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        StormBreakElectric = core.DamageSkill("어드밴스드 스톰 브레이크(전기)", 0, 230, 3 ).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
         #### 베타 ####
         
@@ -162,7 +162,7 @@ class JobGenerator(ck.JobGenerator):
         
         THROWINGHIT = 5
         FlashCut = core.DamageSkill("프론트 슬래시", 630, 205, 6).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        ThrowingWeapon = core.SummonSkill("어드밴스드 스로잉 웨폰", 360, 300, 550, 2, THROWINGHIT*300).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+        ThrowingWeapon = core.SummonSkill("어드밴스드 스로잉 웨폰", 360, 300, 550, 2, THROWINGHIT*300, cooltime=-1).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
         #ThrowingWeapon = core.DamageSkill("어드밴스드 스로잉 웨폰", 360, 550, 2 * 5).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)    #5타 = 1.5s
         
         SpinDriver = core.DamageSkill("터닝 드라이브", 540, 260, 6).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
@@ -181,8 +181,8 @@ class JobGenerator(ck.JobGenerator):
         
         AdvancedEarthBreakWave = core.DamageSkill("어드밴스드 어스 브레이크(파동)", 0, 285, 10).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
-        AdvancedEarthBreakElectric = core.DotSkill("어드밴스드 어스 브레이크(전기)", 340, 5).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
-        #AdvancedEarthBreakElectric = core.DamageSkill("어드밴스드 어스 브레이크(전기)", 0, 340, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        #AdvancedEarthBreakElectric = core.DotSkill("어드밴스드 어스 브레이크(전기)", 340, 5).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        AdvancedEarthBreakElectric = core.DamageSkill("어드밴스드 어스 브레이크(전기)", 0, 340, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
         DoubleTime = core.BuffSkill("래피드 타임", 0, 9999*10000, crit = 20, pdamage = 10).wrap(core.BuffSkillWrapper)
         TimeDistortion = core.BuffSkill("타임 디스토션", 540, 30000, cooltime = 240 * 1000, pdamage = 25).wrap(core.BuffSkillWrapper)
@@ -328,6 +328,7 @@ class JobGenerator(ck.JobGenerator):
                     AlphaState, BetaState, AuraWeaponBuff, DoubleTime, TimeDistortion, TimeHolding, IntensiveTime, LimitBreak,
                     globalSkill.soul_contract()]+\
                 [ShadowRain, TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta]+\
+                [StormBreakSummon, WindCutterSummon, ThrowingWeapon]+\
                 [AuraWeaponCooltimeDummy]+\
                 []+\
                 [ComboHolder])
