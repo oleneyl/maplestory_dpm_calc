@@ -10,7 +10,7 @@ from ...character import characterKernel as ck
 
 class InfinityWrapper(core.BuffSkillWrapper):
     def __init__(self, serverlag = 3):
-        skill = core.BuffSkill("인피니티", 960, 40000, cooltime = 180 * 1000, rem = True, red = False)
+        skill = core.BuffSkill("인피니티", 960, 40000, cooltime = 180 * 1000, rem = True, red = True)
         super(InfinityWrapper, self).__init__(skill)
         self.passedTime = 0
         self.serverlag = serverlag
