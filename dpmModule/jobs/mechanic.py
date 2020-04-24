@@ -114,7 +114,7 @@ class JobGenerator(ck.JobGenerator):
         IsBuster_B = core.OptionalElement(BusterCallBuff.is_active, HommingMissle_B_Bu, HommingMissle_B)
         IsBuster = core.OptionalElement(BusterCallBuff.is_active, HommingMissle_Bu, HommingMissle_)
         IsBomber = core.OptionalElement(BomberTime.is_active, IsBuster_B, IsBuster)
-        HommingMissle = core.OptionalElement(partial(judgeLefttime, BusterCallBuff, 14000, 18000), IsBomber)
+        HommingMissle = core.OptionalElement(partial(judgeLefttime, BusterCallBuff, 14000, 16000), IsBomber)
         
         HommingMissleHolder.onTick(HommingMissle)
         
