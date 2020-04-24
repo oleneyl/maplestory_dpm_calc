@@ -108,7 +108,7 @@ class JobGenerator(ck.JobGenerator):
         #Damage Skills
         ChainLightening = core.DamageSkill("체인 라이트닝", 600, 185 + 2*combat, 10+1, modifier = core.CharacterModifier(crit = 25, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        FrozenOrbEjac = core.SummonSkill("프로즌 오브", 690, 100, 200+4*combat, 1, 1999, cooltime = -1, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
+        FrozenOrbEjac = core.SummonSkill("프로즌 오브", 390, 100, 200+4*combat, 1, 1999, cooltime = -1, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
     
         LighteningSpear = core.DamageSkill("라이트닝 스피어", 0, 0, 1, cooltime = 75 * 1000).wrap(core.DamageSkillWrapper)
         LighteningSpearSingle = core.DamageSkill("라이트닝 스피어(단일)", 250, 200, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
