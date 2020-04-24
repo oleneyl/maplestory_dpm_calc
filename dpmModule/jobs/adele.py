@@ -36,7 +36,7 @@ class JobGenerator(ck.JobGenerator):
         Rudiment = core.InformedCharacterModifier("루디먼트", att=30)
         Mastery = core.InformedCharacterModifier("마스터리", att=30)
         Train = core.InformedCharacterModifier("트레인", stat_main=60)
-        Accent = core.InformedCharacterModifier("어센트", att=30, pdamage_indep=25, crit=20)
+        Accent = core.InformedCharacterModifier("어센트", att=30, pdamage_indep=15, crit=20)
         Expert = core.InformedCharacterModifier("엑스퍼트", att=30)
         Demolition = core.InformedCharacterModifier("데몰리션", pdamage_indep=30, armor_ignore=20)
         Attain = core.InformedCharacterModifier("어테인", att=30, boss_pdamage=10, crit=20)
@@ -62,7 +62,7 @@ class JobGenerator(ck.JobGenerator):
 
         게더링-블로섬
 
-        오더의 칼 개수는 6으로 고정( 리스토어 한정 8)
+        오더의 칼 개수는 5으로 고정( 리스토어 한정 7)
         게더링-블로섬 연계는 게더링 5히트 / 블로섬 3히트를 가정함
         크리에이션은 평균 4자루의 칼이 공격하는 것을 가정함 (= 최종뎀 15% 효과를 받지못함)
 
@@ -83,21 +83,21 @@ class JobGenerator(ck.JobGenerator):
         ResonanceStack = core.BuffSkill('레조넌스(스택)', 0, 30*1000, cooltime=-1, pdamage_indep=15, armor_ignore=15).wrap(core.BuffSkillWrapper) # 최종뎀 5, 방무 5, 최대3회. 상시 중첩으로 가정
 
         #12초마다 발동
-        Creation = core.SummonSkill('크리에이션', 0, 12000, 200+245+570, 2 * CREATION_HIT, 99999999).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper) # 직접시전시 270ms 기본공속
+        Creation = core.SummonSkill('크리에이션', 0, 9500 - 8000, 200+240+270, CREATION_HIT, 99999999).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper) # 직접시전시 270ms 기본공속
 
         Territory = core.SummonSkill('테리토리', 420, 405, 100+300, 4, 7000+4000, rem=False, cooltime=30*1000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper) # 27회 타격, 클라공속540ms
         TerritoryEnd = core.DamageSkill('테리토리(종료)', 0, 550+300, 12).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         Gathering = core.DamageSkill('게더링', 0, 260+300, 4 * GATHERING_HIT, cooltime=12*1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 칼 불러오기. 블라섬과 연계됨, 딜레이 0 가정
 
-        Order = core.SummonSkill('오더', 0, 1140, 240+120, 2 * 6, 99999999).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper) # 15% 에테르 결정, 시전딜레이 없음으로 가정, 공격주기 1140ms(인피니트로부터 추정됨)
+        Order = core.SummonSkill('오더', 0, 1140, 240+120, 2 * 5, 99999999).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper) # 15% 에테르 결정, 시전딜레이 없음으로 가정, 공격주기 1140ms(인피니트로부터 추정됨)
 
-        Divide = core.DamageSkill('디바이드', 600, 425, 6, modifier=core.CharacterModifier(pdamage_indep=20, boss_pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #트리거 스킬, 클라공속 780ms
+        Divide = core.DamageSkill('디바이드', 600, 375, 6, modifier=core.CharacterModifier(pdamage_indep=20, boss_pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #트리거 스킬, 클라공속 780ms
 
         Grave = core.DamageSkill('그레이브', 630, 800, 10, cooltime=-1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) #한 번만 사용, 클라공속 840ms
         GraveDebuff = core.BuffSkill('그레이브(디버프)', 0, 999999999, pdamage=20, armor_ignore=10, cooltime=-1).wrap(core.BuffSkillWrapper)
 
-        Blossom = core.DamageSkill('블로섬', 450, 650 * 0.75, 8 * BLOSSOM_HIT, cooltime=20*1000*0.75).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 50%결정. 클라공속 600ms
+        Blossom = core.DamageSkill('블로섬', 300, 650 * 0.75, 8 * BLOSSOM_HIT, cooltime=20*1000*0.75).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 50%결정. 클라공속 600ms
 
         Marker = core.DamageSkill('마커', 690, 1000 * (4), 3 * (1), cooltime=60*1000).wrap(core.DamageSkillWrapper) # 최종뎀 300% 증가, 임의위치 조각 5개, 1히트, 결정 5개, 클라공속 900ms
         Scool = core.DamageSkill('스콜', 690, 1000, 12, cooltime=180*1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) #바인드. 클라공속 900ms
@@ -116,7 +116,7 @@ class JobGenerator(ck.JobGenerator):
         RuinFirstTick = core.SummonSkill('루인(소환)', 0, 160, 250 + vEhc.getV(2,2)*10, 6, 2000, cooltime=-1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 12번, 2초에 나누어 사용으로 가정
         RuinSecondTick = core.SummonSkill('루인(공격)', 0, 250, 450 + vEhc.getV(2,2)*18, 9, 2000, cooltime=-1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 8번, 2초에 나누어 사용으로 가정
 
-        Infinite = core.SummonSkill('인피니트', 540, 1140, 350 + vEhc.getV(0,0) * 14, 2 * 20, 30000, cooltime=180*1000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) #매 공격마다 5% 결정생성. 전분 기준 522회 타격 -> 평균 522/20 = 26회 공격(1140ms). 
+        Infinite = core.SummonSkill('인피니트', 540, 1140, 350 + vEhc.getV(0,0) * 14, 2 * 18, 30000, cooltime=180*1000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) #매 공격마다 5% 결정생성. 전분 기준 522회 타격 -> 평균 522/20 = 26회 공격(1140ms). 
         Restore = core.BuffSkill('리스토어', 720, 30*1000, pdamage=15+vEhc.getV(1,1), cooltime=180*1000).isV(vEhc,1,1).wrap(core.BuffSkillWrapper) #소드 2개 증가, 에테르획득량 40%증가
         RestoreTick = core.SummonSkill('리스토어(주기공격)', 0, 2970, 900+36*vEhc.getV(1,1), 3, 30*1000, cooltime=-1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # 11회 시전
         OrderRestore = core.SummonSkill('오더(리스토어)', 0, 1140, 240+120, 2 * 1, 30*1000, cooltime=-1).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper) # 15% 에테르 결정, 시전딜레이 없음으로 가정, 공격주기 1140ms(인피니트로부터 추정됨)
