@@ -46,7 +46,7 @@ class JobGenerator(ck.JobGenerator):
         Jaguer = core.InformedCharacterModifier("재규어",crit=5)
         NaturesWrath = core.InformedCharacterModifier("네이처스 래쓰",crit=25)
         AutomaticShootingDevice = core.InformedCharacterModifier("오토매팅 슈팅 디바이스",att=20)
-        CrossbowMastery = core.InformedCharacterModifier("크로스보우 마스터리",patt = 10)
+        CrossbowMastery = core.InformedCharacterModifier("크로스보우 마스터리",pdamage = 10)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         Flurry = core.InformedCharacterModifier("플러리", stat_main = 40)
         JaugerLink = core.InformedCharacterModifier("재규어 링크",crit = 18, crit_damage = 12, att = 10)
