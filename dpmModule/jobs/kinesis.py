@@ -1,3 +1,8 @@
+"""
+Kinesis.py
+
+Advisor : Gwang-jun
+"""
 from ..kernel import core
 from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
@@ -170,7 +175,7 @@ class JobGenerator(ck.JobGenerator):
         
         UltimatePsychicBulletBlackhole.onTick(PsychicPoint.stackController(1))
         
-        PsychicCharging.onAfter(PsychicPoint.stackController(10))   #급한대로 +10
+        PsychicCharging.onAfter(PsychicPoint.stackController(17))   #Issue43, 15-19 may correct : take 17
         PsychicCharging.onConstraint(core.ConstraintElement("2포인트", PsychicPoint, partial(PsychicPoint.judge,5,-1)))
         
         schedule = core.ScheduleGraph()
