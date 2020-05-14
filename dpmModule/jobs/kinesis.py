@@ -164,7 +164,7 @@ class JobGenerator(ck.JobGenerator):
         UltimateMovingMatter.onAfter(PsychicPoint.stackController(-10))
         UltimateMovingMatter.onAfter(core.OptionalElement(PsychicOver.is_active, PsychicPoint.stackController(5)))
         
-        UltimateMovingMatter.onConstraint(core.ConstraintElement("2포인트", PsychicPoint, partial(PsychicPoint.judge,2,1)))
+        UltimatePsychicBullet.onConstraint(core.ConstraintElement("2포인트", PsychicPoint, partial(PsychicPoint.judge,2,1)))
         UltimatePsychicBullet.onAfter(PsychicPoint.stackController(-3))
         UltimatePsychicBullet.onAfter(core.OptionalElement(PsychicOver.is_active, PsychicPoint.stackController(2)))
         
