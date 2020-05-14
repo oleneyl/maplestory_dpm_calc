@@ -118,6 +118,11 @@ class JobGenerator(ck.JobGenerator):
 
         
         ### Build Graph ###
+
+        ### Telekinesis
+        for sk in [PsychicGrab2, PsychicGroundDamage, PsycoBreakDamage, EverPsychicFinal, PsychicTornadoFinal_1, PsychicTornadoFinal_2]:
+            sk.onAfter(TeleKinesis)
+        
         
         ### Tandem skill connection
         PsychicGround.onAfter(PsychicGroundDamage)
