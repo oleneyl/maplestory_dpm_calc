@@ -113,7 +113,7 @@ class JobGenerator(ck.JobGenerator):
         UltimatePsychicBullet = core.DamageSkill("싸이킥 불릿", 570, 550 + 22*vEhc.getV(3,3), 6, modifier = core.CharacterModifier(crit_damage=20)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)# -2
         UltimatePsychicBulletBlackhole = core.SummonSkill("싸이킥 불릿(블랙홀)", 0, 500, 500+20*vEhc.getV(3,3), 3, 500*4, cooltime = -1).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)# +1
         
-        PsychicPoint = core.StackSkillWrapper(core.BuffSkill("싸이킥 포인트", 0, 999999999), 30)
+        PsychicPoint = core.StackSkillWrapper(core.BuffSkill("싸이킥 포인트", 0, 999999999), 30 + 10) # Issue 43 ; maximum point may 40
         PsychicPoint.set_name_style("포인트 변화 : %d")
 
         
@@ -153,7 +153,7 @@ class JobGenerator(ck.JobGenerator):
         UltimatePsychic.onAfter(core.OptionalElement(PsychicOver.is_active, PsychicPoint.stackController(3)))
         
         PsychicGrab2.onAfter(PsychicPoint.stackController(2))
-        EverPsychic.onAfter(PsychicPoint.stackController(30))
+        EverPsychic.onAfter(PsychicPoint.stackController(30 + 10)) # Issue 43, pp maximum may 40 in most case. TODO:hyper point modification
         PsychicOverSummon.onTick(PsychicPoint.stackController(1))
         
         PsychicTornado.onConstraint(core.ConstraintElement("15포인트", PsychicPoint, partial(PsychicPoint.judge,15,1)))
