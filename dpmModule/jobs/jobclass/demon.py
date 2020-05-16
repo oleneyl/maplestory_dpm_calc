@@ -12,9 +12,10 @@ def CallMastemaWrapper(vEhc, num1, num2):
     return CallMastema, MastemaClaw
 
 def AnotherWorldWrapper(vEhc, num1, num2):
-    # 공격 확률 100%로 가정
+    # 공격 확률 25%로 가정, 이계의 공허가 첫번째로 발동
+    ATTACK_RATE = 0.25
     void_chance = 1
-    AnotherGoddessBuff = core.BuffSkill("이계 여신의 축복", 630, 40000, cooltime = 120000, pdamage_indep=6+(vEhc.getV(num1, num2)-1)//5).wrap(core.BuffSkillWrapper)
+    AnotherGoddessBuff = core.BuffSkill("이계 여신의 축복", 630, 40000 / ATTACK_RATE , cooltime = 120000, pdamage_indep=6+(vEhc.getV(num1, num2)-1)//5).wrap(core.BuffSkillWrapper)
     AnotherVoid = core.SummonSkill("이계의 공허", 0, 3000 / void_chance, 1200+48*vEhc.getV(num1, num2), 12, 40000, cooltime = -1).wrap(core.BuffSkillWrapper)
     AnotherGoddessBuff.onAfter(AnotherVoid)
     return AnotherGoddessBuff, AnotherVoid
