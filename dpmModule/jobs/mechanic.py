@@ -1,3 +1,6 @@
+"""Advisor : 새틀라이트(유니온)
+"""
+
 from ..kernel import core
 from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
@@ -18,7 +21,7 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = False
         self.vEnhanceNum = 14
         self.jobtype = "dex"
-        self.ability_list = Ability_tool.get_ability_set('crit', 'boss_pdamage', 'buff_rem')
+        self.ability_list = Ability_tool.get_ability_set('passive_level', 'boss_pdamage', 'crit')
         self.preEmptiveSkills = 1
         
     def get_modifier_optimization_hint(self):
@@ -88,19 +91,19 @@ class JobGenerator(ck.JobGenerator):
         MultipleOptionMissle = core.SummonSkill("멀티플 옵션(미사일)", 0, 8000, 350+10*vEhc.getV(2,1), 24, (115+6*vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         
         MicroMissle = core.DamageSkill("마이크로 미사일", 540, 375+17*vEhc.getV(0,0), (30+8)*5, cooltime = 25000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        BusterCall_ = core.DamageSkill("전탄발사", 10000/37, 400+16*vEhc.getV(4,4), 11).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
-        BusterCallInit = core.DamageSkill("전탄발사(시전)", 0, 0, 0, cooltime = 200*1000).wrap(core.DamageSkillWrapper)
-        BusterCallBuff = core.BuffSkill("전탄발사(버프)", 0, 8000, cooltime = 200*1000).isV(vEhc,4,4).wrap(core.BuffSkillWrapper) # spentime에 넣으면 됨.
-        
+        BusterCall_ = core.DamageSkill("전탄발사", 8500/37, 400+16*vEhc.getV(4,4), 11).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
+        BusterCallInit = core.DamageSkill("전탄발사(시전)", 1500, 0, 0, cooltime = 200*1000).wrap(core.DamageSkillWrapper) # 선딜레이 1.5초
+        BusterCallBuff = core.BuffSkill("전탄발사(버프)", 0, 8500, cooltime = 200*1000).isV(vEhc,4,4).wrap(core.BuffSkillWrapper) # spentime에 넣으면 됨.
+        BusterCallEnd = core.DamageSkill("전탄발사(하차)", 1500, 0, 0).wrap(core.DamageSkillWrapper)
         
         MassiveFire.onAfter(MassiveFire2)
         #### 호밍 미사일 정의 ####
-        HommingMissle_ = core.DamageSkill("호밍 미사일", 0, 500*0.6, 9+combat*1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        HommingMissle_B = core.DamageSkill("호밍 미사일(봄버)", 0, 500*0.6, 9+combat*1+6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        HommingMissle_Bu = core.DamageSkill("호밍 미사일(전탄)", 0, 500, 9+combat*1+7).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        HommingMissle_B_Bu = core.DamageSkill("호밍 미사일(봄버)(전탄)", 0, 500, 9+combat*1+6+7).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        HommingMissle_ = core.DamageSkill("호밍 미사일", 0, 500*0.6, 9+1+combat*1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        HommingMissle_B = core.DamageSkill("호밍 미사일(봄버)", 0, 500*0.6, 9+1+combat*1+6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        HommingMissle_Bu = core.DamageSkill("호밍 미사일(전탄)", 0, 500, 9+1+combat*1+7).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        HommingMissle_B_Bu = core.DamageSkill("호밍 미사일(봄버)(전탄)", 0, 500, 9+1+combat*1+6+7).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
-        HommingMissleHolder = core.SummonSkill("호밍 미사일(더미)", 0, 600, 0, 0, 99999 * 100000).wrap(core.SummonSkillWrapper)
+        HommingMissleHolder = core.SummonSkill("호밍 미사일(더미)", 0, 660, 0, 0, 99999 * 100000).wrap(core.SummonSkillWrapper)
         
         def judgeLefttime(target, to, end):
             delta = (target.skill.cooltime - target.cooltimeLeft)
@@ -119,6 +122,7 @@ class JobGenerator(ck.JobGenerator):
         HommingMissleHolder.onTick(HommingMissle)
         
         BusterCall = core.RepeatElement(BusterCall_, 37)
+        BusterCall.onAfter(BusterCallEnd)
         BusterCallInit.onAfters([BusterCall, BusterCallBuff])
         
         Robolauncher.onAfter(RobolauncherFinal.controller(84000))
