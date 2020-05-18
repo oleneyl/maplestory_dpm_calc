@@ -66,7 +66,7 @@ class JobGenerator(ck.JobGenerator):
         싸이코브레이크 - 인핸스
         
         코강 순서:
-        BPM 메테리얼 그랩 드레인 트레인
+        BPM 메테리얼 그랩 드레인 트레인 텔레키네시스
         
         싸이킥 샷 히트율 80%, 타수2배 적용.
         '''
@@ -87,7 +87,7 @@ class JobGenerator(ck.JobGenerator):
         PsycoBreak = core.BuffSkill("싸이코 브레이크", 720, 30000, pdamage_indep = 5 * 2, rem = False).wrap(core.BuffSkillWrapper) #+1
         PsycoBreakDamage = core.DamageSkill("싸이코 브레이크(공격)", 0, 1000, 4).wrap(core.DamageSkillWrapper)
         
-        TeleKinesis = core.DamageSkill("텔레키네시스", 0, 350, 0.7).wrap(core.DamageSkillWrapper)
+        TeleKinesis = core.DamageSkill("텔레키네시스", 0, 350, 0.7).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         UltimateBPM = core.SummonSkill("얼티메이트-BPM", 0, 660, 175, 7, 999999999).setV(vEhc, 0, 2, False).wrap(core.SummonSkillWrapper) #1
         UltimatePsychic = core.DamageSkill("얼티메이트-싸이킥 샷", 660, 300, 3*5*2*0.8,  modifier = core.CharacterModifier(crit_damage = 20, pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) #5
         UltimatePsychicBuff = core.BuffSkill("얼티메이트-싸이킥 샷(디버프)", 0, 10000, rem = True, armor_ignore = 15, cooltime = -1).wrap(core.BuffSkillWrapper)
