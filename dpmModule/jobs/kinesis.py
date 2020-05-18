@@ -96,6 +96,8 @@ class JobGenerator(ck.JobGenerator):
         
         PsychicCharging = core.BuffSkill("싸이킥 차징", 0, 500, cooltime = 45000, red = True).wrap(core.BuffSkillWrapper) #남은포인트의 50%충전
         
+        UltimateTrain = core.SummonSkill("얼티메이트-트레인", 630, 11999 / 17, 180, 4, 12000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+
         #하이퍼
         EverPsychic = core.DamageSkill("에버 싸이킥", 870, 400, 16, cooltime = 120000).wrap(core.DamageSkillWrapper) # +30, 캔슬 통해 딜레 870ms
         EverPsychicFinal = core.DamageSkill("에버 싸이킥(최종)", 0, 1500, 1,  modifier = core.CharacterModifier(armor_ignore = 50, crit = 100)).wrap(core.DamageSkillWrapper)
@@ -177,8 +179,11 @@ class JobGenerator(ck.JobGenerator):
         
         PsychicCharging.onAfter(PsychicPoint.stackController(17))   #Issue43, 15-19 may correct : take 17
         PsychicCharging.onConstraint(core.ConstraintElement("2포인트", PsychicPoint, partial(PsychicPoint.judge,5,-1)))
-        
-        schedule = core.ScheduleGraph()
+
+        UltimateTrain.onConstraint(core.ConstraintElement("싸이킥오버에서만", PsychicOver, PsychicOver.is_active))
+        UltimateTrain.onConstraint(core.ConstraintElement("15포인트", PsychicPoint, partial(PsychicPoint.judge,15,1)))
+        UltimateTrain.onAfter(PsychicPoint.stackController(-15))
+        UltimateTrain.onAfter(core.OptionalElement(PsychicOver.is_active, PsychicPoint.stackController(8)))
         
         return(PsychicGrab2,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
@@ -188,5 +193,5 @@ class JobGenerator(ck.JobGenerator):
                     globalSkill.soul_contract()] +\
                 [EverPsychic, UltimatePsychic] +\
                 [PsychicDrain, PsychicForce3, UltimateBPM, PsychicOverSummon, PsychicTornado, UltimateMovingMatter, UltimatePsychicBulletBlackhole] +\
-                [] +\
+                [UltimateTrain] +\
                 [PsychicGrab2])
