@@ -73,7 +73,7 @@ class JobGenerator(ck.JobGenerator):
         
         하이퍼 : 메익 인핸스, 암살 리인포스 / 보킬 / 이그노어 가드.
         
-        암살 1타 3스택 34% / 2타 91%
+        암살 1타 3스택 19% / 2타 80%
         암살-부스-익플-배오섀
         '''
 
@@ -125,12 +125,12 @@ class JobGenerator(ck.JobGenerator):
         
         MesoExplosion = MesoStack(vEhc)
         
-        Assasinate2.onAfters([SonicBlow.controller(1500 * STACK2RATE, "reduce_cooltime"), MesoExplosion.stackController(6*0.4, name = "메소 생성")])
+        Assasinate2.onAfters([SonicBlow.controller(1500 * STACK2RATE * 0.01, "reduce_cooltime"), MesoExplosion.stackController(6*0.4, name = "메소 생성")])
         Assasinate1.onAfter(MesoExplosion.stackController(6*0.4, name = "메소 생성"))
         Assasinate1.onAfter(MesoExplosion)
         Assasinate1.onAfter(Assasinate2)
         
-        Assasinate2_D.onAfters([SonicBlow.controller(1500 * STACK2RATE, "reduce_cooltime"), MesoExplosion.stackController(6*0.4, name = "메소 생성")])
+        Assasinate2_D.onAfters([SonicBlow.controller(1500 * STACK2RATE * 0.01, "reduce_cooltime"), MesoExplosion.stackController(6*0.4, name = "메소 생성")])
         Assasinate1_D.onAfter(MesoExplosion.stackController(6*0.4, name = "메소 생성"))
         Assasinate1_D.onAfter(MesoExplosion)
         Assasinate1_D.onAfter(Assasinate2_D)
