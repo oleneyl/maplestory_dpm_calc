@@ -1,3 +1,8 @@
+"""
+Kinesis.py
+
+Advisor : Gwang-jun
+"""
 from ..kernel import core
 from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
@@ -61,7 +66,7 @@ class JobGenerator(ck.JobGenerator):
         싸이코브레이크 - 인핸스
         
         코강 순서:
-        BPM 메테리얼 그랩 드레인 트레인
+        BPM 메테리얼 그랩 드레인 트레인 텔레키네시스
         
         싸이킥 샷 히트율 80%, 타수2배 적용.
         '''
@@ -82,7 +87,7 @@ class JobGenerator(ck.JobGenerator):
         PsycoBreak = core.BuffSkill("싸이코 브레이크", 720, 30000, pdamage_indep = 5 * 2, rem = False).wrap(core.BuffSkillWrapper) #+1
         PsycoBreakDamage = core.DamageSkill("싸이코 브레이크(공격)", 0, 1000, 4).wrap(core.DamageSkillWrapper)
         
-        TeleKinesis = core.DamageSkill("텔레키네시스", 0, 350, 0.7).wrap(core.DamageSkillWrapper)
+        TeleKinesis = core.DamageSkill("텔레키네시스", 0, 350, 0.7).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         UltimateBPM = core.SummonSkill("얼티메이트-BPM", 0, 660, 175, 7, 999999999).setV(vEhc, 0, 2, False).wrap(core.SummonSkillWrapper) #1
         UltimatePsychic = core.DamageSkill("얼티메이트-싸이킥 샷", 660, 300, 3*5*2*0.8,  modifier = core.CharacterModifier(crit_damage = 20, pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) #5
         UltimatePsychicBuff = core.BuffSkill("얼티메이트-싸이킥 샷(디버프)", 0, 10000, rem = True, armor_ignore = 15, cooltime = -1).wrap(core.BuffSkillWrapper)
@@ -91,8 +96,10 @@ class JobGenerator(ck.JobGenerator):
         
         PsychicCharging = core.BuffSkill("싸이킥 차징", 0, 500, cooltime = 45000, red = True).wrap(core.BuffSkillWrapper) #남은포인트의 50%충전
         
+        UltimateTrain = core.SummonSkill("얼티메이트-트레인", 630, 11999 / 17, 180, 4, 12000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+
         #하이퍼
-        EverPsychic = core.DamageSkill("에버 싸이킥", 4380, 400, 16, cooltime = 120000).wrap(core.DamageSkillWrapper) # +30
+        EverPsychic = core.DamageSkill("에버 싸이킥", 870, 400, 16, cooltime = 120000).wrap(core.DamageSkillWrapper) # +30, 캔슬 통해 딜레 870ms
         EverPsychicFinal = core.DamageSkill("에버 싸이킥(최종)", 0, 1500, 1,  modifier = core.CharacterModifier(armor_ignore = 50, crit = 100)).wrap(core.DamageSkillWrapper)
         #Psycometry = core.DamageSkill()
         PsychicOver = core.BuffSkill("싸이킥 오버", 0, 30000, cooltime = 210000).wrap(core.BuffSkillWrapper) # 소모량 절반 / 포인트 지속증가(초당 1)
@@ -113,11 +120,16 @@ class JobGenerator(ck.JobGenerator):
         UltimatePsychicBullet = core.DamageSkill("싸이킥 불릿", 570, 550 + 22*vEhc.getV(3,3), 6, modifier = core.CharacterModifier(crit_damage=20)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)# -2
         UltimatePsychicBulletBlackhole = core.SummonSkill("싸이킥 불릿(블랙홀)", 0, 500, 500+20*vEhc.getV(3,3), 3, 500*4, cooltime = -1).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)# +1
         
-        PsychicPoint = core.StackSkillWrapper(core.BuffSkill("싸이킥 포인트", 0, 999999999), 30)
+        PsychicPoint = core.StackSkillWrapper(core.BuffSkill("싸이킥 포인트", 0, 999999999), 30 + 10) # Issue 43 ; maximum point may 40
         PsychicPoint.set_name_style("포인트 변화 : %d")
 
         
         ### Build Graph ###
+
+        ### Telekinesis
+        for sk in [PsychicGrab2, PsychicGroundDamage, PsycoBreakDamage, EverPsychicFinal, PsychicTornadoFinal_1, PsychicTornadoFinal_2]:
+            sk.onAfter(TeleKinesis)
+        
         
         ### Tandem skill connection
         PsychicGround.onAfter(PsychicGroundDamage)
@@ -148,7 +160,7 @@ class JobGenerator(ck.JobGenerator):
         UltimatePsychic.onAfter(core.OptionalElement(PsychicOver.is_active, PsychicPoint.stackController(3)))
         
         PsychicGrab2.onAfter(PsychicPoint.stackController(2))
-        EverPsychic.onAfter(PsychicPoint.stackController(30))
+        EverPsychic.onAfter(PsychicPoint.stackController(30 + 10)) # Issue 43, pp maximum may 40 in most case. TODO:hyper point modification
         PsychicOverSummon.onTick(PsychicPoint.stackController(1))
         
         PsychicTornado.onConstraint(core.ConstraintElement("15포인트", PsychicPoint, partial(PsychicPoint.judge,15,1)))
@@ -159,16 +171,19 @@ class JobGenerator(ck.JobGenerator):
         UltimateMovingMatter.onAfter(PsychicPoint.stackController(-10))
         UltimateMovingMatter.onAfter(core.OptionalElement(PsychicOver.is_active, PsychicPoint.stackController(5)))
         
-        UltimateMovingMatter.onConstraint(core.ConstraintElement("2포인트", PsychicPoint, partial(PsychicPoint.judge,2,1)))
+        UltimatePsychicBullet.onConstraint(core.ConstraintElement("2포인트", PsychicPoint, partial(PsychicPoint.judge,2,1)))
         UltimatePsychicBullet.onAfter(PsychicPoint.stackController(-3))
         UltimatePsychicBullet.onAfter(core.OptionalElement(PsychicOver.is_active, PsychicPoint.stackController(2)))
         
         UltimatePsychicBulletBlackhole.onTick(PsychicPoint.stackController(1))
         
-        PsychicCharging.onAfter(PsychicPoint.stackController(10))   #급한대로 +10
+        PsychicCharging.onAfter(PsychicPoint.stackController(17))   #Issue43, 15-19 may correct : take 17
         PsychicCharging.onConstraint(core.ConstraintElement("2포인트", PsychicPoint, partial(PsychicPoint.judge,5,-1)))
-        
-        schedule = core.ScheduleGraph()
+
+        UltimateTrain.onConstraint(core.ConstraintElement("싸이킥오버에서만", PsychicOver, PsychicOver.is_active))
+        UltimateTrain.onConstraint(core.ConstraintElement("15포인트", PsychicPoint, partial(PsychicPoint.judge,15,1)))
+        UltimateTrain.onAfter(PsychicPoint.stackController(-15))
+        UltimateTrain.onAfter(core.OptionalElement(PsychicOver.is_active, PsychicPoint.stackController(8)))
         
         return(PsychicGrab2,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
@@ -178,5 +193,5 @@ class JobGenerator(ck.JobGenerator):
                     globalSkill.soul_contract()] +\
                 [EverPsychic, UltimatePsychic] +\
                 [PsychicDrain, PsychicForce3, UltimateBPM, PsychicOverSummon, PsychicTornado, UltimateMovingMatter, UltimatePsychicBulletBlackhole] +\
-                [] +\
+                [UltimateTrain] +\
                 [PsychicGrab2])
