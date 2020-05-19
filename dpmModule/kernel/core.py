@@ -1407,7 +1407,7 @@ class ScheduleGraph(AbstractScenarioGraph):
         return {"dict" : retli, "li" : snames}
             
 class Simulator(object):
-    __slots__ = 'scheduler', 'character', 'analytics', '_modifier_cache_and_time'
+    __slots__ = 'scheduler', 'character', 'analytics', '_modifier_cache_and_time', '_default_modifier'
     def __init__(self, scheduler, chtr, analytics):
         self.scheduler = scheduler
         self.character = chtr
@@ -1418,6 +1418,14 @@ class Simulator(object):
         
         #Buff modifier를 시간별도 캐싱하여 연산량을 줄입니다.
         self._modifier_cache_and_time = [-1,CharacterModifier()]
+
+        self._default_modifier = CharacterModifier()
+
+    def set_default_modifier(self, modifier):
+        self._default_modifier = modifier
+
+    def get_default_modifier(self):
+        return self._default_modifier
     
     def get_skill_info(self):
         return self.analytics.get_skill_info()
@@ -1479,7 +1487,7 @@ class Simulator(object):
             dt += self.run_individual_task(stack.pop())
         result = task.do()
         if result.damage > 0:
-            result.mdf = result.mdf + self.scheduler.get_buff_modifier()
+            result.mdf = result.mdf + self.scheduler.get_buff_modifier() + self.get_default_modifier()
         result.setTime(self.scheduler.get_current_time())
         self.analytics.analyze(self.character, result)
         dt += result.delay
@@ -1497,7 +1505,7 @@ class Simulator(object):
         result = task.do()
         
         if result.damage > 0:
-            result.mdf += self.scheduler.get_buff_modifier()
+            result.mdf += self.scheduler.get_buff_modifier() + self.get_default_modifier()
 
         result.setTime(self.scheduler.get_current_time())
         self.analytics.analyze(self.character, result)

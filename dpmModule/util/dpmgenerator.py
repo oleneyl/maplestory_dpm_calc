@@ -26,7 +26,7 @@ class IndividualDPMGenerator():
     def set_runtime(self, time):
         self.runtime = time
 
-    def get_dpm(self, ulevel = 6000, weaponstat = [4,9], printFlag = False, restricted = True):
+    def get_dpm(self, ulevel = 6000, weaponstat = [4,9], printFlag = False, restricted = True, default_modifier=core.CharacterModifier()):
         #TODO target을 동적으로 생성할 수 있도록.
         target = self.template(maplejobs.weaponList[self.job])
         gen = (self.supplier).JobGenerator()
@@ -44,6 +44,7 @@ class IndividualDPMGenerator():
         if printFlag:
             print(target.get_modifier())
         control = core.Simulator(sche, target, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
+        control.set_default_modifier(default_modifier)
         control.start_simulation(self.runtime)
         control.analytics.statistics()
         return control.getDPM(restricted=restricted)
@@ -97,7 +98,7 @@ class DpmSetting():
         return retli
 
 
-    def process(self, restricted=True):
+    def process(self, restricted=True, default_modifier=core.CharacterModifier()):
         print("ulevel : " + str(self.ulevel))
         jobli = maplejobs.jobListOrder
         retli = []
@@ -106,7 +107,7 @@ class DpmSetting():
         for _job, idx in zip(jobli, range(len(jobli))):
             job = maplejobs.jobList[_job]
             generator = IndividualDPMGenerator(job, self.template)
-            dpm = generator.get_dpm(ulevel = self.ulevel, weaponstat = self.weaponstat, restricted=restricted)
+            dpm = generator.get_dpm(ulevel = self.ulevel, weaponstat = self.weaponstat, restricted=restricted, default_modifier=default_modifier)
             retli.append(dpm)
             value = {"name" : job, "dpm" : dpm}
             #print(value)
@@ -138,11 +139,11 @@ class DpmInterface():
         retval = [{"data" : setting.process() , "prefix" : "u" + str(setting.ulevel)} for setting in settings]
         return retval
 
-    def calculate(self, ulevel, restricted=True):
+    def calculate(self, ulevel, restricted=True, default_modifier=core.CharacterModifier()):
         template_generator = self.get_template_generator()()
         template, weaponstat = template_generator.query(ulevel)
         setting = DpmSetting(template, ulevel=ulevel, weaponstat=weaponstat)
-        return {"data" : setting.process(restricted=restricted) , "prefix" : "u" + str(setting.ulevel)}
+        return {"data" : setting.process(restricted=restricted, default_modifier=default_modifier) , "prefix" : "u" + str(setting.ulevel)}
 
     def calculate_job(self, koJob, ulevel, runtime = 180*1000):
         template_generator = self.get_template_generator()()

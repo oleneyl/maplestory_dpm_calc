@@ -5,6 +5,7 @@ from dpmModule.util.dpmgenerator import IndividualDPMGenerator
 from dpmModule.util.configurations import export_configuration
 from dpmModule.kernel import graph
 from dpmModule.jobs import jobMap
+from dpmModule.kernel import core
 
 import time, json
 
@@ -45,7 +46,7 @@ def dpm(args):
         jobs = [args.job]
 
     for jobname in jobs:
-        parser = IndividualDPMGenerator(jobname, template.getU8500CharacterTemplate)
+        parser = IndividualDPMGenerator(jobname, template.getU6000CharacterTemplate)
         try:
             dpm = parser.get_dpm(ulevel = args.ulevel,
             weaponstat = weaponstat,
