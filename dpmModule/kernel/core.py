@@ -1429,8 +1429,11 @@ class Simulator(object):
         mod = self.character.get_buffed_modifier()
         return self.analytics.get_metadata(mod)
         
-    def getDPM(self):
-        return self.analytics.total_damage / (self.scheduler.total_time_initial) * 60000
+    def getDPM(self, restricted = True):
+        if not restricted:
+            return self.get_unrestricted_DPM()
+        else:
+            return self.analytics.total_damage / (self.scheduler.total_time_initial) * 60000
 
     def get_unrestricted_DPM(self):
         return self.analytics.total_damage_without_restriction / (self.scheduler.total_time_initial) * 60000

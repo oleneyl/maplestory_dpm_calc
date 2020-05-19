@@ -45,7 +45,7 @@ def dpm(args):
         jobs = [args.job]
 
     for jobname in jobs:
-        parser = IndividualDPMGenerator(jobname, template.getU6000CharacterTemplate)
+        parser = IndividualDPMGenerator(jobname, template.getU8500CharacterTemplate)
         try:
             dpm = parser.get_dpm(ulevel = args.ulevel,
             weaponstat = weaponstat,

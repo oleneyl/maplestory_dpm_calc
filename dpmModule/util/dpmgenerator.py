@@ -26,7 +26,7 @@ class IndividualDPMGenerator():
     def set_runtime(self, time):
         self.runtime = time
 
-    def get_dpm(self, ulevel = 6000, weaponstat = [4,9], printFlag = False):
+    def get_dpm(self, ulevel = 6000, weaponstat = [4,9], printFlag = False, restricted = True):
         #TODO target을 동적으로 생성할 수 있도록.
         target = self.template(maplejobs.weaponList[self.job])
         gen = (self.supplier).JobGenerator()
@@ -41,10 +41,12 @@ class IndividualDPMGenerator():
             ]), 
             [rules.UniquenessRule()]) #가져온 그래프를 토대로 스케줄러를 생성합니다.
         analytics = core.Analytics(printFlag=printFlag)  #데이터를 분석할 분석기를 생성합니다.
+        if printFlag:
+            print(target.get_modifier())
         control = core.Simulator(sche, target, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
         control.start_simulation(self.runtime)
         control.analytics.statistics()
-        return control.getDPM()
+        return control.getDPM(restricted=restricted)
 
     def get_detailed_dpm(self, ulevel = 6000, weaponstat = [4,9]):
         #TODO target을 동적으로 생성할 수 있도록.
@@ -95,7 +97,7 @@ class DpmSetting():
         return retli
 
 
-    def process(self):
+    def process(self, restricted=True):
         print("ulevel : " + str(self.ulevel))
         jobli = maplejobs.jobListOrder
         retli = []
@@ -104,7 +106,7 @@ class DpmSetting():
         for _job, idx in zip(jobli, range(len(jobli))):
             job = maplejobs.jobList[_job]
             generator = IndividualDPMGenerator(job, self.template)
-            dpm = generator.get_dpm(ulevel = self.ulevel, weaponstat = self.weaponstat)
+            dpm = generator.get_dpm(ulevel = self.ulevel, weaponstat = self.weaponstat, restricted=restricted)
             retli.append(dpm)
             value = {"name" : job, "dpm" : dpm}
             #print(value)
@@ -136,11 +138,11 @@ class DpmInterface():
         retval = [{"data" : setting.process() , "prefix" : "u" + str(setting.ulevel)} for setting in settings]
         return retval
 
-    def calculate(self, ulevel):
+    def calculate(self, ulevel, restricted=True):
         template_generator = self.get_template_generator()()
         template, weaponstat = template_generator.query(ulevel)
         setting = DpmSetting(template, ulevel=ulevel, weaponstat=weaponstat)
-        return {"data" : setting.process() , "prefix" : "u" + str(setting.ulevel)}
+        return {"data" : setting.process(restricted=restricted) , "prefix" : "u" + str(setting.ulevel)}
 
     def calculate_job(self, koJob, ulevel, runtime = 180*1000):
         template_generator = self.get_template_generator()()
