@@ -1430,7 +1430,7 @@ class Simulator(object):
         return self.analytics.get_metadata(mod)
         
     def getDPM(self, restricted = True):
-        if restricted:
+        if not restricted:
             return self.get_unrestricted_DPM()
         else:
             return self.analytics.total_damage / (self.scheduler.total_time_initial) * 60000
