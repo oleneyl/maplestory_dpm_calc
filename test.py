@@ -1,6 +1,6 @@
 import sys, os
 
-import dpmModule.character.characterTemplateHigh as template
+from  dpmModule.character.characterTemplate import get_template_generator
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
 from dpmModule.util.configurations import export_configuration
 from dpmModule.kernel import graph
@@ -46,7 +46,7 @@ def dpm(args):
         jobs = [args.job]
 
     for jobname in jobs:
-        parser = IndividualDPMGenerator(jobname, template.getU6000CharacterTemplate)
+        parser = IndividualDPMGenerator(jobname, get_template_generator('high_standard')().get_template(args.ulevel))
         try:
             dpm = parser.get_dpm(ulevel = args.ulevel,
             weaponstat = weaponstat,
