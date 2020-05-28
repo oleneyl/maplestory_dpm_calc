@@ -46,6 +46,13 @@ class JobGenerator(ck.JobGenerator):
         HP_RATE = 100
         #최대 HP 대비 소모된 HP 3%(24레벨가지는 4%)당 최종 데미지 1% 증가
         FrenzyPassive = core.InformedCharacterModifier("데몬 프렌지 (최종 데미지)", pdamage_indep = (100 - HP_RATE) // (4 - (self.vEhc.getV(0, 0) // 25)))
+
+        RUIN_USE = False
+        if RUIN_USE:
+            # 극한 HP = 800(600+200), 루인 HP = 560
+            RuinForceShield = core.InformedCharacterModifier("루인 포스실드", stat_main = -240, stat_sub = -2, pdamage_indep = 10)
+
+
         return [AbyssalRage, AdvancedDesperadoMastery, OverwhelmingPower, DefenseExpertise, DemonicSharpness, MapleHeroesDemon, InnerStrength, DiabolicRecovery, FrenzyPassive]
 
     def get_not_implied_skill_list(self):
@@ -96,15 +103,15 @@ class JobGenerator(ck.JobGenerator):
         # 초당 22타 가정
         FrenzyStack = 1
         FrenzyPerSecond = 11
-        FrenzyDOT = core.SummonSkill("프렌지 장판", 0, 1000/FrenzyPerSecond, 300 + 8 * vEhc.getV(0, 0), 2*FrenzyStack, 999999).wrap(core.SummonSkillWrapper)
+        FrenzyDOT = core.SummonSkill("프렌지 장판", 0, 1000/FrenzyPerSecond, 300 + 8 * vEhc.getV(0, 0), FrenzyStack, 999999).wrap(core.SummonSkillWrapper)
 
         # 블피 (즉시 시전)
         DemonicBlast = core.DamageSkill("블러드 피스트", 0, 500 + 20*vEhc.getV(0,0), 7, cooltime = 10000, modifier = CharacterModifier(crit = 100, armor_ignore = 100)).wrap(core.DamageSkillWrapper)
         
         #평딜이냐 극딜이냐... 소스코드는 서버렉 미적용
         # 참고자료: https://blog.naver.com/oe135/221372243858
-        DimensionSword = core.SummonSkill("디멘션 소드(평딜)", 480, 3000, 1250+14*vEhc.getV(0,0), 8, 40*1000, cooltime = 120*1000, modifier=core.CharacterModifier(armor_ignore=100)).wrap(core.SummonSkillWrapper)
-        DimensionSwordReuse = core.SummonSkill("디멘션 소드 (극딜)", 0, 210, 300+vEhc.getV(0,0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).wrap(core.SummonSkillWrapper)
+        #DimensionSword = core.SummonSkill("디멘션 소드(평딜)", 480, 3000, 1250+14*vEhc.getV(0,0), 8, 40*1000, cooltime = 120*1000, modifier=core.CharacterModifier(armor_ignore=100)).wrap(core.SummonSkillWrapper)
+        DimensionSwordReuse = core.SummonSkill("디멘션 소드 (극딜)", 480, 210, 300+vEhc.getV(0,0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).wrap(core.SummonSkillWrapper)
         
 
         #BatSwarm = core.SummonSkill("배츠 스웜", 0, 0, 200, 1, 0)
@@ -129,9 +136,9 @@ class JobGenerator(ck.JobGenerator):
         
         
         ######   Skill Wrapper   ######
-        # TODO: 딜사이클을 알아야 작성가능
         '''딜 사이클 정리
-        
+        https://blog.naver.com/oe135/221538210455
+        매 3분마다 버프류 스킬 사용하여 극딜
         '''
         
         ArmorBreak.onAfter(ArmorBreakBuff.controller(1))
