@@ -93,7 +93,10 @@ class JobGenerator(ck.JobGenerator):
         EnhancedExceed = core.DamageSkill("인핸스드 익시드", 0, 200, 2*0.8).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
 
         #일정 주기로 마족의 피가 바닥에 뿌려져 5초 동안 최대 10명의 적을 일정주기 마다 300+8n%로 2번 공격
-        FrenzyDOT = core.DamageSkill("프렌지 장판", 0, 300 + 8 * vEhc.getV(0, 0), 2).wrap(core.DamageSkillWrapper)
+        # 초당 22타 가정
+        FrenzyStack = 1
+        FrenzyPerSecond = 11
+        FrenzyDOT = core.SummonSkill("프렌지 장판", 0, 1000/FrenzyPerSecond, 300 + 8 * vEhc.getV(0, 0), 2*FrenzyStack, 999999).wrap(core.SummonSkillWrapper)
 
         # 블피 (즉시 시전)
         DemonicBlast = core.DamageSkill("블러드 피스트", 0, 500 + 20*vEhc.getV(0,0), 7, cooltime = 10000, modifier = CharacterModifier(crit = 100, armor_ignore = 100)).wrap(core.DamageSkillWrapper)
