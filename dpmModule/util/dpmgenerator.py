@@ -32,8 +32,7 @@ class IndividualDPMGenerator():
         if level is not None:
             target.unsafe_change_level(level)
         gen = (self.supplier).JobGenerator()
-
-        v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17)
+        v_builder = core.AlwaysMaximumVBuilder()
         graph = gen.package(target, v_builder, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
         sche = policy.AdvancedGraphScheduler(graph,
             policy.TypebaseFetchingPolicy(priority_list = [
@@ -58,7 +57,7 @@ class IndividualDPMGenerator():
         gen = (self.supplier).JobGenerator()
         
         #코어강화량 설정
-        v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17)
+        v_builder = core.AlwaysMaximumVBuilder()
         graph = gen.package(target, v_builder, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
         sche = policy.AdvancedGraphScheduler(graph,
             policy.TypebaseFetchingPolicy(priority_list = [
@@ -86,7 +85,7 @@ class DpmSetting():
     '''DpmSetting은 모든 직업의 dpm 설정값을 연산합니다. IndividualDPMGenerator에 필요한 메타데이터를 저장합니다.
     '''
     itemGrade = ["노말", "레어", "에픽", "유니크", "레전"]
-    def __init__(self, template, v_builder = core.NjbStyleVBuilder(), ulevel = 0, weaponstat = [3,0]):
+    def __init__(self, template, v_builder = core.AlwaysMaximumVBuilder(), ulevel = 0, weaponstat = [3,0]):
         self.ulevel = ulevel
         self.weaponstat = weaponstat
         self.template = template

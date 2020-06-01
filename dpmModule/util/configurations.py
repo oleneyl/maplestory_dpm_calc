@@ -20,7 +20,7 @@ def export_configuration(jobname):
     target = template(maplejobs.weaponList[jobname])
     supplier = maplejobs.jobMap[jobname]
 
-    v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17)
+    v_builder = core.AlwaysMaximumVBuilder(skill_core_level=25, each_enhanced_amount=17)
     gen = supplier.JobGenerator()
     gen.vEhc = v_builder.build_enhancer(target, gen)
 
