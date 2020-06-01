@@ -77,23 +77,38 @@ class JobGenerator(ck.JobGenerator):
         암살-부스-익플-배오섀
         '''
 
+        def shadow_partner_builder(sk : core.DamageSkillWrapper):
+            skill = sk.skill
+            copial = core.DamageSkill(skill.name.evaluate() + '(쉐도우파트너)', 
+                0,
+                skill.damage.evaluate() * 0.7,
+                skill.hit.evaluate(),
+                cooltime=skill.cooltime.evaluate(),
+                modifier=skill._static_skill_modifier.evaluate()).wrap(core.DamageSkillWrapper)
+            sk.onAfter(copial)
         
         ######   Skill   ######
         # http://m.inven.co.kr/board/powerbbs.php?come_idx=2297&stype=subject&svalue=%EC%8A%A4%ED%83%9D&l=52201
-        STACK1RATE = 19
-        STACK2RATE = 80
+
+        # 크로아 서버 스킨헤드님 제보 (https://maple.gg/u/%EC%8A%A4%ED%82%A8%ED%97%A4%EB%93%9C)
+        # http://m.dcinside.com/board/maplestory/10616710
+        # http://m.dcinside.com/board/maplestory/10616992
+
+        STACK1RATE = 70
+        STACK2RATE = 95
 
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 200*1000).wrap(core.BuffSkillWrapper)
         FlipTheCoin = core.BuffSkill("플립 더 코인", 0, 24000, pdamage = 5*5, crit = 10*5).wrap(core.BuffSkillWrapper)
         ShadowerInstinct = core.BuffSkill("섀도어 인스팅트", 0, 200*1000, rem = True, att = 40+30).wrap(core.BuffSkillWrapper)
+        # 더미 데이터
         ShadowPartner = core.BuffSkill("섀도우 파트너", 1000, 2000*1000, rem = True).wrap(core.BuffSkillWrapper)
         
-        Assasinate1 = core.DamageSkill("암살(1타)", 630, 275, 6 * 1.7, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타")   #쉐파
-        Assasinate2 = core.DamageSkill("암살(2타)", 630+30, 350, 6 * 1.7, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타")   #쉐파
+        Assasinate1 = core.DamageSkill("암살(1타)", 630, 275, 6, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타")   #쉐파
+        Assasinate2 = core.DamageSkill("암살(2타)", 630+30, 350, 6, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타")   #쉐파
         
-        Assasinate1_D = core.DamageSkill("암살(1타)(다크사이트)", 630, 275, 6 * 1.7, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타(닼사)")   #쉐파
-        Assasinate2_D = core.DamageSkill("암살(2타)(다크사이트)", 630+30, 350, 6 * 1.7, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타(닼사)")   #쉐파
+        Assasinate1_D = core.DamageSkill("암살(1타)(다크사이트)", 630, 275, 6, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타(닼사)")   #쉐파
+        Assasinate2_D = core.DamageSkill("암살(2타)(다크사이트)", 630+30, 350, 6, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타(닼사)")   #쉐파
         
         BailOfShadow = core.DamageSkill("베일 오브 섀도우", 810, 800, 15, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         #킬포3개 사용시 최종뎀 100% 증가.
@@ -110,11 +125,11 @@ class JobGenerator(ck.JobGenerator):
         #UltimateDarksight = core.BuffSkill("얼티밋 다크사이트", 750, 30000, cooltime = (220-vEhc.getV(3,3))*1000, pdamage_indep = (10 + int(0.2*vEhc.getV(3,3))/1.05 )).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 2)
         
-        Eviscerate = core.DamageSkill("절개", 570, 1900+76*vEhc.getV(0,0), 7*1.7, modifier = core.CharacterModifier(crit=100, armor_ignore=100), cooltime = 14000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        Eviscerate = core.DamageSkill("절개", 570, 1900+76*vEhc.getV(0,0), 7, modifier = core.CharacterModifier(crit=100, armor_ignore=100), cooltime = 14000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 		
 		# 1.2.324 패치 적용
         SonicBlow = core.DamageSkill("소닉 블로우", 900, 0, 0, cooltime = 80 * 1000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        SonicBlowTick = core.DamageSkill("소닉 블로우(틱)", 125, 500+20*vEhc.getV(1,1), 7*1.7, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper, name = "소닉 블로우(사용)")#20타
+        SonicBlowTick = core.DamageSkill("소닉 블로우(틱)", 125, 500+20*vEhc.getV(1,1), 7, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper, name = "소닉 블로우(사용)")#20타
         
         ### build graph relationships
         def isNotDarkSight():
@@ -153,6 +168,9 @@ class JobGenerator(ck.JobGenerator):
         Assasinate = core.OptionalElement(AdvancedDarkSight.is_active, Assasinate1_D, Assasinate1, name = "닼사 여부")
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(Assasinate)
+
+        for sk in [Assasinate1, Assasinate2, Assasinate1_D, Assasinate2_D, Eviscerate, SonicBlowTick]:
+            shadow_partner_builder(sk)
         
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
