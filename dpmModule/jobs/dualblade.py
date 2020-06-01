@@ -49,11 +49,18 @@ class JobGenerator(ck.JobGenerator):
         
         코어 16개 유효 : 팬블 / 아수라 / 퓨리 -- 써든레이드 / 어센션 / 히든블레이드
         '''
+        def mirror_imaging_builder(sk : core.DamageSkillWrapper):
+            skill = sk.skill
+            copial = core.DamageSkill(skill.name.evaluate() + '(미러이미징)', 
+                0,
+                skill.damage.evaluate() * 0.7,
+                skill.hit.evaluate(),
+                cooltime=skill.cooltime.evaluate(),
+                modifier=skill._static_skill_modifier.evaluate()).wrap(core.DamageSkillWrapper)
+            sk.onAfter(copial)
 
-        
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
-        MirrorImaging = core.BuffSkill("미러 이미징", 0, 200000, rem = True, pdamage_indep = 70).wrap(core.BuffSkillWrapper)
         
         DarkSight = core.BuffSkill("다크 사이트", 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper)#, pdamage_indep = 20 + 10 + int(0.2*vEhc.getV(3,3))).wrap(core.BuffSkillWrapper)
         
@@ -87,7 +94,8 @@ class JobGenerator(ck.JobGenerator):
         KarmaFury = core.DamageSkill("카르마 퓨리", 990, 750+30*vEhc.getV(6,6), 7 * 3, red = True, cooltime = 10000, modifier = core.CharacterModifier(armor_ignore = 30)).isV(vEhc,6,6).wrap(core.DamageSkillWrapper)
         BladeTornado = core.DamageSkill("블레이드 토네이도", 720, 600+24*vEhc.getV(2,2), 7, cooltime = 12000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         #BladeTornadoFront = core.DamageSkill("블레이드 토네이도(전방)", 0, 600+24*vEhc.getV(2,2), 6, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)   #보통 1타
-        BladeTornadoSummon = core.SummonSkill("블레이드 토네이도(소환)", 0, 540, 450+18*vEhc.getV(2,2), 6 * 3, 2000, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #임의 딜레이, 미사용
+        BladeTornadoSummon = core.SummonSkill("블레이드 토네이도(소환)", 0, 540, 450+18*vEhc.getV(2,2), 6 * 5, 2000, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #임의 딜레이, 미사용
+        BladeTornadoSummonMirrorImaging = core.SummonSkill("블레이드 토네이도(소환)(미러이미징)", 0, 540, 450+18*vEhc.getV(2,2) * 0.7, 6 * 5, 2000, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #임의 딜레이, 미사용
         
         ######   Skill Wrapper   ######
     
@@ -107,12 +115,17 @@ class JobGenerator(ck.JobGenerator):
         BladeStorm.onAfter(core.RepeatElement(BladeStormTick, int((10000+3000)/210)))
         #BladeTornado.onAfter(BladeTornadoFront)
         BladeTornado.onAfter(BladeTornadoSummon)
+        BladeTornado.onAfter(BladeTornadoSummonMirrorImaging)
+
+        for sk in [PhantomBlow, SuddenRaid, FinalCut, FlashBang, AsuraTick, 
+            BladeStorm, BladeStormTick, KarmaFury, BladeTornado]:
+            mirror_imaging_builder(sk)
         
         return(PhantomBlow,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-                    Booster, MirrorImaging, DarkSight, FinalCutBuff, EpicAdventure, FlashBangDebuff, HiddenBladeBuff, UltimateDarksight, ReadyToDie,
+                    Booster, DarkSight, FinalCutBuff, EpicAdventure, FlashBangDebuff, HiddenBladeBuff, UltimateDarksight, ReadyToDie,
                     globalSkill.soul_contract()] +\
                 [FinalCut, FlashBang, Asura, BladeStorm, BladeTornado, SuddenRaid, KarmaFury] +\
-                [SuddenRaidDOT, Venom, BladeTornadoSummon] +\
+                [SuddenRaidDOT, Venom, BladeTornadoSummon, BladeTornadoSummonMirrorImaging] +\
                 [] +\
                 [PhantomBlow])
