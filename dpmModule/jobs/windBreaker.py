@@ -42,7 +42,6 @@ class JobGenerator(ck.JobGenerator):
         코강 순서:
         천노-윔-브링어
         
-        하울링 게일 오류 반영(3타 -> 1타), 64타 / 회
         아이들 윔 평균치로 계산
         
         '''
