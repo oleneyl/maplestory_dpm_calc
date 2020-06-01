@@ -26,9 +26,11 @@ class IndividualDPMGenerator():
     def set_runtime(self, time):
         self.runtime = time
 
-    def get_dpm(self, ulevel = 6000, weaponstat = [4,9], printFlag = False, restricted = True, default_modifier=core.CharacterModifier()):
+    def get_dpm(self, ulevel = 6000, level=None, weaponstat = [4,9], printFlag = False, restricted = True, default_modifier=core.CharacterModifier()):
         #TODO target을 동적으로 생성할 수 있도록.
         target = self.template(maplejobs.weaponList[self.job])
+        if level is not None:
+            target.unsafe_change_level(level)
         gen = (self.supplier).JobGenerator()
 
         v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17)
