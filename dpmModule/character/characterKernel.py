@@ -36,6 +36,12 @@ class AbstractCharacter():
         
         self._modifier_cache = None
 
+    def unsafe_change_level(self, level):
+        level_delta = level - self.level
+        self.add_summary(f"레벨 강제 변경 : {self.level} -> {level}")
+        self.level = level
+        self.basic_character_modifier += CharacterModifier(stat_main = level_delta * 5)        
+
     def add_summary(self, txt):
         self.about += "\n" + txt
     
@@ -139,7 +145,7 @@ class JobGenerator():
         return
 
     def get_ruleset(self):
-        return
+        return []
 
     def get_predefined_rules(self, rule_type):
         ruleset = self.get_ruleset()

@@ -19,7 +19,7 @@ level = 230
 def get_args():
     parser = argparse.ArgumentParser('DPM Test argument')
     parser.add_argument('--job', type=str, help='Target job name to test dpm')
-    parser.add_argument('--level', type=int, default=230)
+    parser.add_argument('--level', type=int, default=None)
     parser.add_argument('--ulevel', type=int, default=6000)
     parser.add_argument('--log', action='store_true')
     parser.add_argument('--task',default='dpm')
@@ -46,9 +46,11 @@ def dpm(args):
         jobs = [args.job]
 
     for jobname in jobs:
-        parser = IndividualDPMGenerator(jobname, get_template_generator('high_standard')().get_template(args.ulevel))
+        template = get_template_generator('high_standard')().get_template(args.ulevel)
+        parser = IndividualDPMGenerator(jobname, template)
         try:
             dpm = parser.get_dpm(ulevel = args.ulevel,
+            level = args.level,
             weaponstat = weaponstat,
             printFlag=args.log)
         except:
