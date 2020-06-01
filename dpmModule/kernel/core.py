@@ -1793,6 +1793,16 @@ class DirectVBuilder(AbstractVBuilder):
         enhancer.set_vlevel_direct(self.direct_v_state)
         return enhancer
 
+class AlwaysMaximumVBuilder(AbstractVBuilder):
+    def __init__(self):
+        pass
+
+    def build_enhancer(self, character, generator):
+        enhancer = BasicVEnhancer()
+        enhancer.set_state_direct([60 for i in range(15)])
+        enhancer.set_vlevel_direct([30 for i in range(15)])        
+        return enhancer
+
 class NjbStyleVBuilder(AbstractVBuilder):
     def __init__(self, skill_core_level = 25, each_enhanced_amount = 17):
         self.skill_core_level = skill_core_level
