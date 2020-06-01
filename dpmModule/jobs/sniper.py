@@ -73,7 +73,7 @@ class JobGenerator(ck.JobGenerator):
         #재사용 대기시간 15초
 
         Snipping = core.DamageSkill("스나이핑", 630, 465+combat*5, 9 + 1, modifier = core.CharacterModifier(crit = 100, armor_ignore = 20 + combat*1, pdamage = 20, boss_pdamage = 10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        TrueSnippingTick = core.DamageSkill("트루 스나이핑(타격)", 700, 950+vEhc.getV(2,2)*30, 14+1, modifier = core.CharacterModifier(pdamage_indep = 100, armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        TrueSnippingTick = core.DamageSkill("트루 스나이핑(타격)", 700, 950+vEhc.getV(2,2)*30, 14+1, modifier = core.CharacterModifier(pdamage=100, armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         TrueSnipping = core.DamageSkill("트루 스나이핑", 0, 0, 0, cooltime = 180 * 1000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         #TODO : 차지드 애로우용 홀더 생성이 필요함.
