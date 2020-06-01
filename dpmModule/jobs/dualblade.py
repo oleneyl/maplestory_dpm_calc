@@ -86,12 +86,12 @@ class JobGenerator(ck.JobGenerator):
         
         UltimateDarksight = thieves.UltimateDarkSightWrapper(vEhc, 3, 3, 20)
         #UltimateDarksight = core.BuffSkill("얼티밋 다크사이트", 750, 30000, red = True, cooltime = (220-vEhc.getV(3,3))*1000).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
-        ReadyToDie = thieves.ReadyToDieWrapper(vEhc,1,1)
+        ReadyToDie = thieves.ReadyToDieWrapper(vEhc,4,4)
         
         BladeStorm = core.DamageSkill("블레이드 스톰", 660, 580+23*vEhc.getV(0,0), 7, red = True, cooltime = 90000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         BladeStormTick = core.DamageSkill("블레이드 스톰(틱)", 210, 350+10*vEhc.getV(0,0), 5, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  #10000/210 타
         
-        KarmaFury = core.DamageSkill("카르마 퓨리", 990, 750+30*vEhc.getV(6,6), 7 * 3, red = True, cooltime = 10000, modifier = core.CharacterModifier(armor_ignore = 30)).isV(vEhc,6,6).wrap(core.DamageSkillWrapper)
+        KarmaFury = core.DamageSkill("카르마 퓨리", 990, 750+30*vEhc.getV(1,1), 7 * 3, red = True, cooltime = 10000, modifier = core.CharacterModifier(armor_ignore = 30)).isV(vEhc,6,6).wrap(core.DamageSkillWrapper)
         BladeTornado = core.DamageSkill("블레이드 토네이도", 720, 600+24*vEhc.getV(2,2), 7, cooltime = 12000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         #BladeTornadoFront = core.DamageSkill("블레이드 토네이도(전방)", 0, 600+24*vEhc.getV(2,2), 6, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)   #보통 1타
         BladeTornadoSummon = core.SummonSkill("블레이드 토네이도(소환)", 0, 540, 450+18*vEhc.getV(2,2), 6 * 5, 2000, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #임의 딜레이, 미사용
