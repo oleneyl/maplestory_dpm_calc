@@ -75,7 +75,6 @@ class JobGenerator(ck.JobGenerator):
         AncientBowMastery = core.InformedCharacterModifier("에인션트 보우 마스터리", att = 30)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         
-        AncientGuidance = core.InformedCharacterModifier("에인션트 가이던스(패시브)", pdamage_indep = 10)
         EssenceOfArcher = core.InformedCharacterModifier("에센스 오브 아처", crit = 10, pdamage = 10, armor_ignore = 30)
         
         AdditionalTransitionPassive = core.InformedCharacterModifier("에디셔널 트랜지션(패시브)", patt = 20)
@@ -83,7 +82,7 @@ class JobGenerator(ck.JobGenerator):
         AncientBowExpert = core.InformedCharacterModifier("에인션트 보우 엑스퍼트", att=60, crit_damage = 10)
         IllusionStep = core.InformedCharacterModifier("일루젼 스텝", stat_main = 80)
         return [CriticalShot, AncientBowMastery, PhisicalTraining,
-                                    AncientGuidance, EssenceOfArcher, AdditionalTransitionPassive, 
+                                    EssenceOfArcher, AdditionalTransitionPassive, 
                                         AncientBowExpert, IllusionStep]
 
     def get_not_implied_skill_list(self):
