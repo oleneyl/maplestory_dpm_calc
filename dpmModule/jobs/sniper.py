@@ -38,7 +38,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 35)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5 * self.combat)
         
         DistancingSence = core.InformedCharacterModifier("디스턴싱 센스",pdamage_indep = 40 + self.combat * 2) #최대 사정거리
         MortalBlow = core.InformedCharacterModifier("모탈 블로우",pdamage = 2)        
