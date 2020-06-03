@@ -79,7 +79,7 @@ class JobGenerator(ck.JobGenerator):
         #재규어 스킬들
         JAGUERNUMBER = 3
         
-        Normal = core.DamageSkill("재규어 공격", 0, 140+chtr.level, 1, cooltime = 60000/37, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        Normal = core.DamageSkill("서먼 재규어(재규어 공격)", 0, 140+chtr.level, 1, cooltime = 60000/37, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         ClawCut = core.DamageSkill("클로우 컷", 0, 200+chtr.level, 4, cooltime = 5000*0.9, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         Crossroad = core.DamageSkill("크로스 로드", 0, 450+2*chtr.level, 1, cooltime = 6000*0.9, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
         SonicBoom = core.DamageSkill("소닉 붐", 0, 220+chtr.level, 6, cooltime = 6000*0.9, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
@@ -108,7 +108,7 @@ class JobGenerator(ck.JobGenerator):
         FinalAttack70 = core.DamageSkill("파이널 어택(70)", 0, 210, 0.7).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         FinalAttack100 = core.DamageSkill("파이널 어택(100)", 0, 210, 1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
-        HuntingUnit = core.SummonSkill("헌팅 유닛", 660, 31000/90, 150, 1.5, 31000).setV(vEhc, 4, 3, False).wrap(core.SummonSkillWrapper)
+        HuntingUnit = core.SummonSkill("어시스턴트 헌팅 유닛", 660, 31000/90, 150, 1.5, 31000).setV(vEhc, 4, 3, False).wrap(core.SummonSkillWrapper)
     
         WildBalkan = core.DamageSkill("와일드 발칸", 120, 340, 1, modifier = core.CharacterModifier(boss_pdamage=10+20, pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
     
