@@ -68,39 +68,40 @@ class JobGenerator(ck.JobGenerator):
         SpectorState = core.BuffSkill("스펙터 상태", 0, 45000, att = 30, cooltime = (67+45)*1000, rem = False, red = False).wrap(core.BuffSkillWrapper)
         Booster = core.BuffSkill("부스터", 0, 200 * 1000).wrap(core.BuffSkillWrapper)
         
-        
+        Unforgotable = core.DamageSkill("잊혀지지 않는 악몽", 540, 440, 6, cooltime = 2000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # Dummy
+
         
         # 일반 공격들
         
         EndlessNightmare = core.DamageSkill("끝나지 않는 악몽", 540, 440, 6, cooltime = 2000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         EndlessNightmare_Link = core.DamageSkill("끝나지 않는 악몽(연계)", 540 - 240, 440, 6, cooltime = 2000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
-        PlainChargeDrive = core.DamageSkill('플레인 차지 드라이브', 540, 610, 3).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        PlainChargeDrive = core.DamageSkill('플레인 차지드라이브', 540, 610, 3).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         PlainSpell = core.DamageSkill("플레인 스펠", 0, 370, 2).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         PlainSpell_Infinity = core.DamageSkill("플레인 스펠(인피니티)", 0, 370, 5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         PlainBuff = core.BuffSkill("플레인 버프", 0, 60 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper)
         
-        ScarletChargeDrive = core.DamageSkill("스칼렛 차지 드라이브", 540, 350, 6, cooltime = 3000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        ScarletChargeDrive_After = core.DamageSkill("스칼렛 차지 드라이브(후속타)", 0, 350, 6).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        ScarletChargeDrive = core.DamageSkill("스칼렛 차지드라이브", 540, 350, 6, cooltime = 3000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        ScarletChargeDrive_After = core.DamageSkill("스칼렛 차지드라이브(후속타)", 0, 350, 6).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
         ScarletSpell = core.DamageSkill("스칼렛 스펠", 0, 220, 5).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         ScarletSpell_Infinity = core.DamageSkill("스칼렛 스펠(인피니티)", 0, 220, 5 * 5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
-        ScarletChargeDrive_Link = core.DamageSkill("스칼렛 차지 드라이브(연계)", 540 - 240, 350, 3, cooltime = 3000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        ScarletChargeDrive_Link = core.DamageSkill("스칼렛 차지드라이브(연계)", 540 - 240, 350, 3, cooltime = 3000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         ScarletBuff = core.BuffSkill("스칼렛 버프", 0, 60 * 1000, cooltime = -1, att = 30, crit = 20).wrap(core.BuffSkillWrapper)
         
-        GustChargeDrive = core.DamageSkill("거스트 차지 드라이브", 450, 400, 6, cooltime = 5000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        GustChargeDrive = core.DamageSkill("거스트 차지드라이브", 450, 400, 6, cooltime = 5000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         GustSpell = core.DamageSkill('거스트 스펠', 0, 230, 4).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         GustSpell_Infinity = core.DamageSkill('거스트 스펠(인피니티)', 0, 230, 4 * 5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         GustBuff = core.BuffSkill("거스트 버프", 0, 60*1000, cooltime = -1).wrap(core.BuffSkillWrapper)
         
-        GustChargeDrive_Link = core.DamageSkill("거스트 차지 드라이브(연계)", 450 - 240, 400, 6, cooltime = 5000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        GustChargeDrive_Link = core.DamageSkill("거스트 차지드라이브(연계)", 450 - 240, 400, 6, cooltime = 5000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
-        CrawlingFear = core.DamageSkill("기어다니는 공포", 690, 1390, 12, cooltime = 60*1000).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        CrawlingFear = core.DamageSkill("기어 다니는 공포", 690, 1390, 12, cooltime = 60*1000).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         
-        AbyssChargeDrive = core.DamageSkill("어비스 차지 드라이브", 630, 340, 4, cooltime = 9000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
-        AbyssChargeDrive_After = core.DamageSkill("어비스 차지 드라이브(후속타)", 0, 410, 6).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        AbyssChargeDrive = core.DamageSkill("어비스 차지드라이브", 630, 340, 4, cooltime = 9000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        AbyssChargeDrive_After = core.DamageSkill("어비스 차지드라이브(후속타)", 0, 410, 6).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
         # 어비스 스펠: 70%로 2번 공격하는 장판, 10초동안 13번
         # SummonSkill로 변경 필요
@@ -172,7 +173,7 @@ class JobGenerator(ck.JobGenerator):
         #스펠이 남은 수많큼 차지됨
         #심연의 기운은 세개씩 추가 생성됨
         
-        EvanescentNightmare = core.DamageSkill("새어나오는 악몽", 0, 500 + 20*vEhc.getV(2,2), 9, cooltime = 10 * 1000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        EvanescentNightmare = core.DamageSkill("새어 나오는 악몽/새어 나오는 흉몽(새어 나오는 악몽)", 0, 500 + 20*vEhc.getV(2,2), 9, cooltime = 10 * 1000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         EvanescentBadDream = core.DamageSkill("새어나오는 흉몽", 0, 600 + 24*vEhc.getV(2,2), 9, cooltime = 10 * 1000).wrap(core.DamageSkillWrapper)
         
         EvanescentNightmareTimer = core.BuffSkill("새어나오는 악몽(타이머)", 0, 10000, cooltime = -1).wrap(core.BuffSkillWrapper)

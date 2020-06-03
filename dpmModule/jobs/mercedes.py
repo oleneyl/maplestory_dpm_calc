@@ -113,8 +113,8 @@ class JobGenerator(ck.JobGenerator):
         
         Sylphidia = core.BuffSkill("실피디아", 0, (30 + 0.5*vEhc.getV(5,5)) * 1000, cooltime = 150 * 1000, patt = (5+0.5*vEhc.getV(5,5))).isV(vEhc,5,5).wrap(core.BuffSkillWrapper)  #정보 없음..
         
-        IrkilaBreathInit = core.DamageSkill("이르킬라의 숨결", 720, 0, 0, cooltime = 150 * 1000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        IrkilaBreathTick = core.DamageSkill("이르킬라의 숨결(틱)", 150, 425+15*vEhc.getV(1,1), 8).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        IrkilaBreathInit = core.DamageSkill("이르칼라의 숨결", 720, 0, 0, cooltime = 150 * 1000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        IrkilaBreathTick = core.DamageSkill("이르칼라의 숨결(틱)", 150, 425+15*vEhc.getV(1,1), 8).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
 
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
 

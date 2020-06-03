@@ -70,8 +70,8 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill   ######
         #Buff skills
     
-        SummonCrew = core.SummonSkill("어셈블 크루", 900, 60000/17, 465 * 1.15, 2, 120000, rem = True).setV(vEhc, 6, 2, True).wrap(core.SummonSkillWrapper)   #분당 17타, 평균 퍼뎀 465
-        SummonCrewBuff = core.BuffSkill("어셈블 크루(버프)", 0, 120000, rem = True, crit = 15/2, crit_damage = 5/2, cooltime = -1, att = 45).wrap(core.BuffSkillWrapper)
+        SummonCrew = core.SummonSkill("서먼 크루", 900, 60000/17, 465 * 1.15, 2, 120000, rem = True).setV(vEhc, 6, 2, True).wrap(core.SummonSkillWrapper)   #분당 17타, 평균 퍼뎀 465
+        SummonCrewBuff = core.BuffSkill("서먼 크루(버프)", 0, 120000, rem = True, crit = 15/2, crit_damage = 5/2, cooltime = -1, att = 45).wrap(core.BuffSkillWrapper)
     
         OctaQuaterdeck = core.SummonSkill("옥타 쿼터덱", 630, 60000/110, 300, 1, 30000, rem = True, cooltime = 10000).setV(vEhc, 5, 2, True).wrap(core.SummonSkillWrapper)
         RapidFire = core.DamageSkill("래피드 파이어", 120, 325, 1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
@@ -104,7 +104,7 @@ class JobGenerator(ck.JobGenerator):
         
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
         InfiniteBullet = core.BuffSkill("인피닛 불릿", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
-        LuckyDice = core.BuffSkill("럭키 다이스", 0, 180*1000, pdamage = 20 * 4 / 3, crit = 15 * 2/3 - 5 /36).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
+        LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20 * 4 / 3, crit = 15 * 2/3 - 5 /36).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
         #1중첩 럭다 재사용 50초 감소 / 방어력30% / 체엠 20% / 크리율15% / 뎀증20 / 경치30
         #2중첩 럭다 재사용 50초 감소 / 방어력40% / 체엠 30% / 크리율25% / 뎀증30 / 경치40
         #7 발동시 방무 20 -> 30

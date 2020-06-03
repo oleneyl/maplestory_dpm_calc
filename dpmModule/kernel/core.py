@@ -1747,8 +1747,8 @@ class BasicVEnhancer(AbstractVEnhancer):
         for vskill in self.v_skill_priority:
             v_skill_list_sorted[vskill["useIdx"]].append(vskill)
         
-        return {"enhance" : [{"name" : skills[0].name} for skills in self.enhancer_priority if len(skills) > 0],
-                "vskill" : [{"name" : skills[0]["target"].name} for skills in v_skill_list_sorted if len(skills) > 0]}
+        return {"enhance" : [{"name" : skills[0].name.split('(')[0]} for skills in self.enhancer_priority if len(skills) > 0],
+                "vskill" : [{"name" : skills[0]["target"].name.split('(')[0]} for skills in v_skill_list_sorted if len(skills) > 0]}
     
     def set_state_direct(self, li):
         self.enhance_list = li

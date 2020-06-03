@@ -94,8 +94,8 @@ class JobGenerator(ck.JobGenerator):
         CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 3, 3)
 
         RoIias = core.BuffSkill("로 아이아스", 840, 75+3*vEhc.getV(0,0), red = True, cooltime = 300*1000, pdamage_indep = 5 + (35+3*int(vEhc.getV(0,0)*0.2))//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        ClauSolis = core.DamageSkill("클라우 솔리스", 900, 700+28*vEhc.getV(4,4), 7, red = True, cooltime = 12000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)    #로얄가드 버프지속시간 6초 증가. 100% 암흑 5초
-        ClauSolisSummon = core.SummonSkill("클라우 솔리스(소환)", 0, 5000, 350+14*vEhc.getV(4,4), 7, 9000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #100% 암흑 5초
+        ClauSolis = core.DamageSkill("클라우 솔라스", 900, 700+28*vEhc.getV(4,4), 7, red = True, cooltime = 12000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)    #로얄가드 버프지속시간 6초 증가. 100% 암흑 5초
+        ClauSolisSummon = core.SummonSkill("클라우 솔라스(소환)", 0, 5000, 350+14*vEhc.getV(4,4), 7, 9000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #100% 암흑 5초
     
         SwordOfSoullight = core.BuffSkill("소드 오브 소울 라이트", 1050, 30000, red = True, cooltime = 180*1000, patt = 15+int(0.5*vEhc.getV(1,1)), crit = 100, armor_ignore = 100).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         SoullightSlash = core.DamageSkill("소울 라이트 슬래시", 600, 400+16*vEhc.getV(1,1), 12).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)

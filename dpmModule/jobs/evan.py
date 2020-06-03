@@ -110,7 +110,7 @@ class JobGenerator(ck.JobGenerator):
         OnixBless = core.BuffSkill("오닉스의 축복", 0, 180000, rem = True, att = 80).wrap(core.BuffSkillWrapper)
 
 
-        CircleOfMana = core.DamageSkill("서클 오브 마나", 600, 315, 8).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    #클라값 510
+        CircleOfMana = core.DamageSkill("서클 오브 마나 IV", 600, 315, 8).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    #클라값 510
         DragonSparking = core.DamageSkill("드래곤 스파킹", 0, 150, 1).setV(vEhc,6,2).wrap(core.DamageSkillWrapper)  
         #MagicParticle = core.DamageSkill("마법 잔해", 110, 1) 0.4초마다 생성, +100 (5개당 증가) -> 6초마다 사용
         MagicParticle = core.DamageSkill("마법 잔해", 0, 410, 15, cooltime = 10000).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)

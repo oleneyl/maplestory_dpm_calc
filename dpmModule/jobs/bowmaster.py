@@ -84,7 +84,7 @@ class JobGenerator(ck.JobGenerator):
         Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(5,5)))*1000).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
         
         #잔영의시 미적용
-        QuibberFullBurst = core.SummonSkill("퀴버풀버스트", 780, 3 * 1000 / 6, 750 + 30 * vEhc.getV(2,2), 3, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
+        QuibberFullBurst = core.SummonSkill("퀴버 풀버스트", 780, 3 * 1000 / 6, 750 + 30 * vEhc.getV(2,2), 3, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
         QuibberFullBurstBuff = core.BuffSkill("퀴버 풀버스트(버프)", 0, 30 * 1000, cooltime=-1, red = False, patt=(10+int(vEhc.getV(2,2)*0.5))).wrap(core.BuffSkillWrapper)
         QuibberFullBurstDOT = core.DotSkill("독화살", 220, 30*1000).wrap(core.SummonSkillWrapper)
     

@@ -61,10 +61,10 @@ class JobGenerator(ck.JobGenerator):
         
         OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         #Damage Skills
-        InfernoRize = core.DamageSkill("인페르노 라이즈", 540, 350, 10, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage = 90)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #임의딜레이 720
+        InfernoRize = core.DamageSkill("인페르노라이즈", 540, 350, 10, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage = 90)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #임의딜레이 720
         
         #Full speed, No Combat Orders
-        OrbitalFlame = core.DamageSkill("오비탈 플레임", flamewizardDefaultSpeed, 215, 3 * 2, modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        OrbitalFlame = core.DamageSkill("오비탈 플레임 IV", flamewizardDefaultSpeed, 215, 3 * 2, modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 2, 1)
         BlazingOrbital = core.DamageSkill("블레이징 오비탈 플레임", 210, 330+13*vEhc.getV(0,0), 6 * 4, cooltime = 5000, modifier = core.CharacterModifier(armor_ignore = 50)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)    #4타 가정
         
