@@ -70,7 +70,7 @@ class JobGenerator(ck.JobGenerator):
         Blast = core.DamageSkill("블래스트", 630, 291, 9+2+1, modifier = core.CharacterModifier(crit=20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         #Summon Skills
-        BlessedHammer = core.SummonSkill("블레스드 해머", 0, 600, (250 + vEhc.getV(1,1)*10), 2, 999999* 10000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)   #딜레이 반영
+        BlessedHammer = core.SummonSkill("블래스드 해머", 0, 600, (250 + vEhc.getV(1,1)*10), 2, 999999* 10000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)   #딜레이 반영
         BlessedHammerActive = core.SummonSkill("블레스드 해머(활성화)", 0, 600, (525+vEhc.getV(1,1)*21)*3-(250+vEhc.getV(1,1)*10)*2, 1, 30 * 1000, cooltime = 60 * 1000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)#딜레이 반영
         GrandCrossSmallTick = core.DamageSkill("그랜드 크로스(작은)", 800, 350 + vEhc.getV(3,3)*14, 13, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
         GrandCrossLargeTick = core.DamageSkill("그랜드 크로스(강화)", 800, 600 + vEhc.getV(3,3)*24, 43, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
