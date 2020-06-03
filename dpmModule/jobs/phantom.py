@@ -65,7 +65,7 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         TalentOfPhantomII = core.BuffSkill("분노(탤팬2)", 0, 180000, rem = True, att = 30).wrap(core.BuffSkillWrapper)
         TalentOfPhantomIII = core.BuffSkill("크로스 오버 체인(탤팬3)", 0, 180000, rem = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
-        FinalCut = core.DamageSkill("파이널 컷(탤팬4)", 870, 2000, 1, cooltime = 90000).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
+        FinalCut = core.DamageSkill("탤런트 오브 팬텀시프 IV(파이널 컷)", 870, 2000, 1, cooltime = 90000).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
         FinalCutBuff = core.BuffSkill("파이널 컷(버프, 탤팬4)", 0, 60000, cooltime = -1, rem = True, pdamage_indep = 40).wrap(core.BuffSkillWrapper)
         BoolsEye = core.BuffSkill("불스아이(탤팬5)", 600, 30 * 1000, cooltime = 180 * 1000, crit = 20, crit_damage = 10, armor_ignore = 20, pdamage = 20).wrap(core.BuffSkillWrapper)
     
