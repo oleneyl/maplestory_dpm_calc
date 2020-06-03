@@ -65,8 +65,8 @@ class JobGenerator(ck.JobGenerator):
         DarkSight = core.BuffSkill("다크 사이트", 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper)#, pdamage_indep = 20 + 10 + int(0.2*vEhc.getV(3,3))).wrap(core.BuffSkillWrapper)
         
         PhantomBlow = core.DamageSkill("팬텀 블로우", 540, 315, 6+1, modifier = core.CharacterModifier(armor_ignore = 30+20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        SuddenRaid = core.DamageSkill("써든 레이드", 900, 1150, 3, cooltime = 30000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)    #파컷의 남은 쿨타임 20% 감소
-        SuddenRaidDOT = core.DotSkill("써든 레이드(도트)", 210/1.7, 10000).wrap(core.SummonSkillWrapper)
+        SuddenRaid = core.DamageSkill("써든레이드", 900, 1150, 3, cooltime = 30000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)    #파컷의 남은 쿨타임 20% 감소
+        SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 210/1.7, 10000).wrap(core.SummonSkillWrapper)
         
         FinalCut = core.DamageSkill("파이널 컷", 870, 2000, 1, cooltime = 90000).wrap(core.DamageSkillWrapper)
         FinalCutBuff = core.BuffSkill("파이널 컷(버프)", 0, 60000, rem = True, pdamage_indep = 40).wrap(core.BuffSkillWrapper)
