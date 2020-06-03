@@ -10,7 +10,7 @@ class MesoStack(core.DamageSkillWrapper, core.StackSkillWrapper):
     # 메익 리인포스 미적용 기준
     def __init__(self, vEhc):
         self.vEhc = vEhc
-        skill = core.DamageSkill("메소익스플로전", 0, 100, 2).setV(vEhc, 2, 3, False)
+        skill = core.DamageSkill("메소 익스플로전", 0, 100, 2).setV(vEhc, 2, 3, False)
         super(core.DamageSkillWrapper, self).__init__(skill, 20)
         self.modifierInvariantFlag = False
         
