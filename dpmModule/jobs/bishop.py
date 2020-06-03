@@ -120,7 +120,7 @@ class JobGenerator(ck.JobGenerator):
     
         #Summoning skill
         Bahamutt = core.SummonSkill("바하뮤트", 600, 3030, 500+6*combat, 1, 90 * 1000, cooltime = 120 * 1000, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #최종뎀25%스택
-        AngelOfLibra = core.SummonSkill("리브라", 540, 3333, 500 + 20*vEhc.getV(3,1), 12, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,3,1).wrap(core.SummonSkillWrapper)    #바하뮤트와 겹치지 않도록 재정의 필요, 최종뎀50%스택
+        AngelOfLibra = core.SummonSkill("엔젤 오브 리브라", 540, 3333, 500 + 20*vEhc.getV(3,1), 12, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,3,1).wrap(core.SummonSkillWrapper)    #바하뮤트와 겹치지 않도록 재정의 필요, 최종뎀50%스택
         
         ######   Wrappers    ######
         Infinity = adventurer.InfinityWrapper()
