@@ -77,8 +77,8 @@ class JobGenerator(ck.JobGenerator):
         Trinity_2 = core.DamageSkill("트리니티(2타)", 470, 650, 3+1, modifier = core.CharacterModifier(pdamage =20, armor_ignore=20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(2타)")
         Trinity_3 = core.DamageSkill("트리니티(3타)", 470-340, 650, 4+1, modifier = core.CharacterModifier(pdamage =20, armor_ignore=20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(3타)")
         
-        FinaturaFettuccia = core.DamageSkill("피나투라 페투치아", 1020, 4000, 1, red = True, cooltime = 40000*0.75).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        FinaturaFettucciaBuff = core.BuffSkill("피나투라 페투치아(버프)", 0, 20000, cooltime = -1, pdamage_indep=25, armor_ignore=15).wrap(core.BuffSkillWrapper)
+        FinaturaFettuccia = core.DamageSkill("피니투라 페투치아", 1020, 4000, 1, red = True, cooltime = 40000*0.75).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        FinaturaFettucciaBuff = core.BuffSkill("피니투라 페투치아(버프)", 0, 20000, cooltime = -1, pdamage_indep=25, armor_ignore=15).wrap(core.BuffSkillWrapper)
         
         SoulGaze = core.BuffSkill("소울 게이즈", 1080, 180000, rem = True, crit_damage = 45).wrap(core.BuffSkillWrapper)
         
@@ -88,7 +88,7 @@ class JobGenerator(ck.JobGenerator):
         FinalContract = core.BuffSkill("파이널 컨트랙트", 0, 30000, cooltime = 120 * 1000, att = 50, crit = 30).wrap(core.BuffSkillWrapper)
         
         #로디드 데미지 고정.
-        LuckyDice = core.BuffSkill("럭키 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
+        LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
         
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
