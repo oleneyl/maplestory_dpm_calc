@@ -88,21 +88,21 @@ class JobGenerator(ck.JobGenerator):
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60000, pdamage = 10, cooltime = 120000).wrap(core.BuffSkillWrapper)
         
         Craft_Orb = core.DamageSkill("크래프트:오브", 510, 300, 1).wrap(core.DamageSkillWrapper)
-        Reaction_Domination = core.DamageSkill("리액션 : 도미네이션", 0, 550, 2, cooltime = 4000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        Reaction_Domination = core.DamageSkill("리액션:도미네이션", 0, 550, 2, cooltime = 4000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         Craft_Javelin_EnhanceBuff = core.BuffSkill("크래프트:오브(자벨린 강화버프)", 0, 2000, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         Craft_Javelin = core.DamageSkill("크래프트:자벨린", 510, 375, 4 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Craft_Javelin_AfterOrb = core.DamageSkill("크래프트:자벨린(오브 이후)", 510, 405, 4 * 3, modifier = core.CharacterModifier(pdamage = 20 + 15, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
         Craft_Javelin_Fragment = core.DamageSkill("크래프트:자벨린(파편)", 0, 130, 2 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Reaction_Destruction = core.DamageSkill("리액션 : 디스트럭션", 0, 550, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 4000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        Reaction_Destruction = core.DamageSkill("리액션:디스트럭션", 0, 550, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 4000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         Craft_Longinus = core.DamageSkill("크래프트:롱기누스", 1053, 950, 8, cooltime = 15000).wrap(core.DamageSkillWrapper)
         
         Riyo = core.SummonSkill("리요", 900, 500, 140, 1, 180000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper) #임의딜레이 900
         Machina = core.SummonSkill("마키나", 900, 1980, 350, 4, 180000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)    #임의딜레이 900
         
-        CrystalSkill_MortalSwing = core.DamageSkill("크리스탈 스킬:모탈 스윙", 0, 600, 10, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)    #30
+        CrystalSkill_MortalSwing = core.DamageSkill("크리스탈 스킬:모탈스윙", 0, 600, 10, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)    #30
         CrystalSkill_Deus = core.SummonSkill("데우스", 0, 4800, 315, 5, 30*1000, cooltime = -1).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)   #90, 7타
         
         LonginusZone = core.DamageSkill("롱기누스 존", 690, 1500, 12, cooltime = 180*1000)    #안씀
@@ -133,8 +133,8 @@ class JobGenerator(ck.JobGenerator):
         OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 0, 3)
         GramHolder = core.SummonSkill("그람홀더", 900, 3000, 1000+25*vEhc.getV(4,3), 6, 40000, cooltime = 180000).isV(vEhc,4,3).wrap(core.SummonSkillWrapper)   #임의딜레이 900
         
-        MagicCircuitFullDrive = core.BuffSkill("매직서킷 풀드라이브", 720, (30+vEhc.getV(3,2))*1000, pdamage = (20 + vEhc.getV(3,2)), cooltime = 200*1000).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
-        MagicCircuitFullDriveStorm = core.SummonSkill("매직서킷 풀드라이브(마력 폭풍)", 0, 4000, 500+20*vEhc.getV(3,2), 3, (30+vEhc.getV(3,2))*1000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        MagicCircuitFullDrive = core.BuffSkill("매직 서킷 풀드라이브", 720, (30+vEhc.getV(3,2))*1000, pdamage = (20 + vEhc.getV(3,2)), cooltime = 200*1000).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
+        MagicCircuitFullDriveStorm = core.SummonSkill("매직 서킷 풀드라이브(마력 폭풍)", 0, 4000, 500+20*vEhc.getV(3,2), 3, (30+vEhc.getV(3,2))*1000, cooltime = -1).wrap(core.SummonSkillWrapper)
         
         CrystalIgnitionInit = core.DamageSkill("크리스탈 이그니션(시전)", 960, 0, 0, cooltime = 180*1000).wrap(core.DamageSkillWrapper)
         CrystalIgnition = core.DamageSkill("크리스탈 이그니션", 270, 750 + 25*vEhc.getV(2,1), 4, modifier = core.CharacterModifier(boss_pdamage = 20)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper) #75회
