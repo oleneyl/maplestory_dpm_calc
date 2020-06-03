@@ -7,7 +7,7 @@ from functools import partial
 class AuraWeaponBuilder():
     def __init__(self, enhancer, skill_importance, enhance_importance):
         self.AuraWeaponBuff = core.BuffSkill(
-            "오라웨폰(버프)", 0, (80 +2*enhancer.getV(skill_importance,enhance_importance)) * 1000, 
+            "오라 웨폰(버프)", 0, (80 +2*enhancer.getV(skill_importance,enhance_importance)) * 1000, 
             cooltime = 180 * 1000, armor_ignore = 15, pdamage_indep = (enhancer.getV(skill_importance, enhance_importance) // 5)
         ).isV(enhancer, skill_importance, enhance_importance).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!
         self.AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 5000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 4초간 발동되지 않도록 합니다.
