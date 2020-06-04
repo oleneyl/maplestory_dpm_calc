@@ -61,7 +61,7 @@ def get_optimal_hyper_union(spec, job, otherspec, hyper, union):
     return {"hyper" : newHyper, "union" : newUnion }
 
 
-def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False, v_builder = None, seed_rings = False):
+def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False, v_builder = None, seed_rings = False, weaponAtt = None):
     '''주어진 값과 직업값으로부터 dpm을 계산해서 리턴합니다.
     입력값 : CharacterModifier, job, otherspec
     출력값 : float(DPM)
@@ -101,12 +101,14 @@ def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False,
     control = core.Simulator(sche, template, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
     control.start_simulation(180*1000)
     
-    
+    if weaponAtt is None:
+        weaponAtt = Absolab.WeaponFactory.getWeapon(maplejobs.weaponList[koJob], star = 17, elist = [0,0,0,9] ).att
+
     if seed_rings:
         seed_ring_specs = [
             {"name" : "리스크테이커", "effect" : [ [12000 + 6000*i, MDF(patt = 20 + 10*i)] for i in range(4) ]},
             {"name" : "리스트레인트", "effect" : [ [9000 + 2000*i, MDF(patt = 25 + 25*i)] for i in range(4) ]},
-            {"name" : "웨폰퍼프", "effect" : [ [9000 + 2000*i, MDF(stat_main = Absolab.WeaponFactory.getWeapon(maplejobs.weaponList[koJob], star = 17, elist = [0,0,0,9] ).att * (i+1))] for i in range(4) ]}, 
+            {"name" : "웨폰퍼프", "effect" : [ [9000 + 2000*i, MDF(stat_main = weaponAtt * (i+1))] for i in range(4) ]}, 
             {"name" : "크리데미지", "effect" : [ [9000 + 2000*i, MDF(crit_damage = 7+ 7*i)] for i in range(4) ]}
         ]
         
