@@ -59,3 +59,12 @@ class SpiderInMirrorBuilder():
     def get_skill(self):
         return self.SpiderInMirror
 
+# 창조의 아이온 (즉시 재시전)
+def genesis_aeonian_rise():
+    AeonianRise = core.DamageSkill("창조의 아이온", 0, 1500, 7, cooltime = 180000).wrap(core.DamageSkillWrapper)
+    return AeonianRise
+
+# 파괴의 얄다바오트
+def genesis_tanadian_ruin():
+    TandadianRuin = core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime = 90000, pdamage_indep = 15).wrap(core.BuffSkillWrapper)
+    return TandadianRuin
