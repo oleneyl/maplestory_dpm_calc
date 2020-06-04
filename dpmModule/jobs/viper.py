@@ -88,7 +88,7 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill   ######
         serverlag = 3
 
-        LuckyDice = core.BuffSkill("럭키 다이스", 600, 180 * 1000, pdamage = 20 *4/3).wrap(core.BuffSkillWrapper)#딜레이 모름
+        LuckyDice = core.BuffSkill("로디드 다이스", 600, 180 * 1000, pdamage = 20 *4/3).isV(vEhc, 2, 2).wrap(core.BuffSkillWrapper)#딜레이 모름
         #1중첩 럭다 재사용 50초 감소 / 방어력30% / 체엠 20% / 크리율15% / 뎀증20 / 경치30
         #2중첩 럭다 재사용 50초 감소 / 방어력40% / 체엠 30% / 크리율25% / 뎀증30 / 경치40
         #7 발동시 방무 20 -> 30
@@ -108,7 +108,7 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.getWeaponATT("너클")
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         
-        Transform = core.BuffSkill("트랜스폼", 450, (50+vEhc.getV(1,1))*1000, cooltime = 180 * 1000, pdamage_indep = (20 + 0.2*vEhc.getV(1,1))).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)#에너지 완충
+        Transform = core.BuffSkill("트랜스 폼", 450, (50+vEhc.getV(1,1))*1000, cooltime = 180 * 1000, pdamage_indep = (20 + 0.2*vEhc.getV(1,1))).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)#에너지 완충
         TransformEnergyOrb = core.DamageSkill("에너지 오브", 1140, 450 +vEhc.getV(1,1)*18, (2+(vEhc.getV(1,1) == 25)*1) * 8, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
     
         FistInrage = core.DamageSkill("피스트 인레이지", 690, 320, 8 + 1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
@@ -139,7 +139,7 @@ class JobGenerator(ck.JobGenerator):
         UnityOfPower.onAfter(EnergyCharge.stackController(-1500))
         UnityOfPower.onAfter(UnityOfPowerBuff)
         
-        Transform.onAfter(EnergyCharge.stackController(10000, name = "트랜스폼"))
+        Transform.onAfter(EnergyCharge.stackController(10000, name = "트랜스 폼"))
         Transform.onAfter(core.RepeatElement(TransformEnergyOrb, 3))
     
         Nautilus.onAfter(NautilusBuff)

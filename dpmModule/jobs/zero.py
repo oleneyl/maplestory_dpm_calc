@@ -124,6 +124,13 @@ class JobGenerator(ck.JobGenerator):
         FlashAssault = core.DamageSkill("플래시 어썰터", 480, 165, 8 ).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         FlashAssaultTAG = core.DamageSkill("플래시 어썰터(태그)", 0, 165, 8 ).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         
+        ### Dummy Skills
+        _SpinCutter = core.DamageSkill("스핀 커터", 630, 260, 10 ).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) 
+        _RollingCurve = core.DamageSkill("롤링 커브", 960, 365, 12 ).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        _RollingAssulter = core.DamageSkill("롤링 어썰터", 960, 375, 12 ).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        _StormBreak = core.DamageSkill("스톰 브레이크", 690, 335, 10 ).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        ### Dummy SKill End 
+
         AdvancedSpinCutter = core.DamageSkill("어드밴스드 스핀 커터", 630, 260, 10 ).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedSpinCutterTAG = core.DamageSkill("어드밴스드 스핀 커터(태그)", 0, 260, 10 ).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedSpinCutterAura = core.DamageSkill("어드밴스드 스핀 커터(오라)", 0, 130, 4 ).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
@@ -314,7 +321,7 @@ class JobGenerator(ck.JobGenerator):
         TimeHolding.onConstraint(core.ConstraintElement("쉐레사용 이후사용", ShadowRain, ShadowRain.is_not_usable))
 
         # 오라 웨폰
-        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 3)
         for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
                     AdvancedRollingCurve, AdvancedRollingAssulter, StormBreak, UpperStrike, AirRiot, GigaCrash,
                     FallingStar, AdvancedEarthBreak, TwinBladeOfTime_end]:

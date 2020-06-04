@@ -74,7 +74,7 @@ class JobGenerator(ck.JobGenerator):
         
         #Damage Skills
         #Full speed, No Combat Orders
-        Paralyze = core.DamageSkill("패럴라이즈", 570, 220 + 3*combat, 8, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        Paralyze = core.DamageSkill("페럴라이즈", 570, 220 + 3*combat, 8, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         #Need to connect Both Skill by cascade.
         FlameHeize = core.DamageSkill("플레임 헤이즈", 1080, 504 + 8*combat, 6, cooltime = 4 * 1000).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)

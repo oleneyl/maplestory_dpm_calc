@@ -111,7 +111,7 @@ class JobGenerator(ck.JobGenerator):
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
 
-        MagicCircuitFullDrive = core.BuffSkill("매직서킷 풀드라이브", 720, (30+vEhc.getV(3,3))*1000, pdamage = (20 + vEhc.getV(3,3)), cooltime = 200*1000).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
+        MagicCircuitFullDrive = core.BuffSkill("매직 서킷 풀드라이브", 720, (30+vEhc.getV(3,3))*1000, pdamage = (20 + vEhc.getV(3,3)), cooltime = 200*1000).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
 
         Ruin = core.DamageSkill('루인(시전)', 780, 0, 0, cooltime=60*1000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper) # 4초에 나누어서 시전되는 것으로 가정
         RuinFirstTick = core.SummonSkill('루인(소환)', 0, 160, 250 + vEhc.getV(2,2)*10, 6, 2000, cooltime=-1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 12번, 2초에 나누어 사용으로 가정

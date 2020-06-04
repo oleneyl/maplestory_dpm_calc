@@ -70,18 +70,18 @@ class JobGenerator(ck.JobGenerator):
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
         #Damage Skills
-        NormalAttack = core.DamageSkill("댄스오브 문,스피딩 선셋", (360+270)/2, 400, 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + MasterOfSword.copy()).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        NormalAttack = core.DamageSkill("댄스오브 문/스피딩 선셋", (360+270)/2, 400, 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + MasterOfSword.copy()).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
         
-        SelestialDanceSummon = core.SummonSkill("셀레스티얼 댄스 추가타", 0, 5000, (1200 + 40 * vEhc.getV(0,0)), 3, (40 + vEhc.getV(0,0)) * 1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) #딜레이 모름
+        SelestialDanceSummon = core.SummonSkill("셀레스티얼 댄스(추가타)", 0, 5000, (1200 + 40 * vEhc.getV(0,0)), 3, (40 + vEhc.getV(0,0)) * 1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) #딜레이 모름
         SelestialDanceInit = core.BuffSkill("셀레스티얼 댄스", 700, (40+vEhc.getV(0,0))*1000, cooltime = 150000, red = True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
 
-        SelestialDanceAttack = core.DamageSkill("댄스오브 문,스피딩 선셋(셀레스티얼)", 0, 400*0.01*(30+vEhc.getV(0,2)), 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)+MasterOfSword.copy()).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    #직접사용 X
+        SelestialDanceAttack = core.DamageSkill("댄스오브 문/스피딩 선셋(셀레스티얼)", 0, 400*0.01*(30+vEhc.getV(0,2)), 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)+MasterOfSword.copy()).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    #직접사용 X
         
         #엘리시온 38타 / 3타
-        ElisionTick = core.DamageSkill("크로스 더 스틱스(엘리시온에 의해 발동)", 30 * 1000 / 40, 1450, 5 * 2, modifier = MasterOfSword.copy()).isV(vEhc,1,1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  #40회 반복
         ElisionBreak = core.DamageSkill("엘리시온(균열)", 0, 2600 + 104*vEhc.getV(1,1), 12).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)    #3회 발동
+        ElisionTick = core.DamageSkill("크로스 더 스틱스(엘리시온에 의해 발동)", 30 * 1000 / 40, 1450, 5 * 2, modifier = MasterOfSword.copy()).isV(vEhc,1,1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  #40회 반복
         ElisionBuff = core.BuffSkill("엘리시온", 750, 30 * 1000, cooltime = 180 * 1000).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)    #시전딜레이 750ms
         
         #소울 이클립스

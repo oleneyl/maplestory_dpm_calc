@@ -104,13 +104,13 @@ class JobGenerator(ck.JobGenerator):
         GuardianOfNova_2 = core.SummonSkill("가디언 오브 노바(2)", 0, 1290, 250+10*vEhc.getV(2,2), 6, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
         GuardianOfNova_3 = core.SummonSkill("가디언 오브 노바(3)", 0, 1290, 900+35*vEhc.getV(2,2), 2, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
     
-        WillOfSwordStrikeJudge = core.DamageSkill("윌 오브 소드:스트라이크(시전)", 0, 0, 0, cooltime = 30000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        WillOfSwordStrikeJudge = core.DamageSkill("윌 오브 소드:(스트라이크)(시전)", 0, 0, 0, cooltime = 30000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
     
-        WillOfSwordStrike = core.DamageSkill("윌 오브 소드:스트라이크", 0, 500+20*vEhc.getV(3,3), 4*5).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
-        WillOfSwordStrike_ = core.DamageSkill("윌 오브 소드:스트라이크(폭발)", 0, 1000+14*vEhc.getV(3,3), 6*5).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        WillOfSwordStrike = core.DamageSkill("윌 오브 소드: 스트라이크", 0, 500+20*vEhc.getV(3,3), 4*5).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        WillOfSwordStrike_ = core.DamageSkill("윌 오브 소드: 스트라이크(폭발)", 0, 1000+14*vEhc.getV(3,3), 6*5).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
         
-        WillOfSwordStrike_Fig = core.DamageSkill("윌 오브 소드:스트라이크(변신)", 0, 500+20*vEhc.getV(3,3), (4+1)*5).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
-        WillOfSwordStrike_Fig_ = core.DamageSkill("윌 오브 소드:스트라이크(폭발)(변신)", 0, 1000+40*vEhc.getV(3,3), (6+1)*5).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)  
+        WillOfSwordStrike_Fig = core.DamageSkill("윌 오브 소드: 스트라이크(변신)", 0, 500+20*vEhc.getV(3,3), (4+1)*5).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        WillOfSwordStrike_Fig_ = core.DamageSkill("윌 오브 소드:스 트라이크(폭발)(변신)", 0, 1000+40*vEhc.getV(3,3), (6+1)*5).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)  
         
         DrakeSlasher_Dummy = core.DamageSkill("드라코 슬래셔(시전)", 540, 0, 0, cooltime = (7-(vEhc.getV(0,0)//15))*1000).wrap(core.DamageSkillWrapper)
         
