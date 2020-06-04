@@ -162,7 +162,7 @@ class JobGenerator(ck.JobGenerator):
         AD_Odnunce = core.SummonSkill("A.D 오드넌스", 450, 330, 225+9*vEhc.getV(1,1), 5, 10000, cooltime = 25000, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         AD_Odnunce_Final = core.DamageSkill("A.D 오드넌스(막타)", 0, 750+30*vEhc.getV(1,1), 8, cooltime = -1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         
-        ChainArts_maelstorm = core.SummonSkill("체인아츠:메일스트롬", 720, 240, 300+12*vEhc.getV(3,2), 4, 4000, cooltime = -1).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
+        ChainArts_maelstorm = core.SummonSkill("체인아츠:메일스트롬", 720, 800, 300+12*vEhc.getV(3,2), 4, 8000, cooltime = -1).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
         ChainArts_maelstorm_slow = core.BuffSkill("체인아츠:메일스트롬(중독)", 0, 14000, crit=2, crit_damage = 10, cooltime = -1).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
         ######   Skill Wrapper   ######
 
