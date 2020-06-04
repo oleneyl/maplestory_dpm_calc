@@ -9,6 +9,7 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobclass import resistance
 from .jobbranch import pirates
+from . import jobutils
 
 # TODO: 워머신 타이탄 추가 (로봇 마스터리 적용)
 # TODO: [메탈아머 전탄발사] : 호밍 미사일 리로드 지속시간이 4초에서 2초로 감소되고 지속시간이 좀 더 정확하게 적용됩니다.
@@ -83,7 +84,7 @@ class JobGenerator(ck.JobGenerator):
     
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-        WEAPON_ATT = 150
+        WEAPON_ATT = jobutils.getWeaponATT("건")
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
     
         RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3)

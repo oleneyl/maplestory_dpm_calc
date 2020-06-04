@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import pirates
 from .jobclass import adventurer
+from . import jobutils
 #TODO : 5차 신스킬 적용
 
 class EnergyChargeWrapper(core.StackSkillWrapper):
@@ -104,7 +105,7 @@ class JobGenerator(ck.JobGenerator):
         
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-        WEAPON_ATT = 154
+        WEAPON_ATT = jobutils.getWeaponATT("너클")
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         
         Transform = core.BuffSkill("트랜스폼", 450, (50+vEhc.getV(1,1))*1000, cooltime = 180 * 1000, pdamage_indep = (20 + 0.2*vEhc.getV(1,1))).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)#에너지 완충

@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import magicians
+from . import jobutils
 
 class IliumStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill, _max, fastChargeJudge, stopJudge, name = None):
@@ -54,7 +55,7 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self):
         vEhc = self.vEhc
         # 앱솔 무기 마력 241
-        WEAPON_ATT = 241
+        WEAPON_ATT = jobutils.getWeaponATT("건틀렛")
         MagicCircuit = core.InformedCharacterModifier("매직 서킷", att = WEAPON_ATT*0.2)
         
         MagicGuntletMastery = core.InformedCharacterModifier("매직 건틀렛 마스터리", crit = 20)

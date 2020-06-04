@@ -8,6 +8,7 @@ from . import globalSkill
 from .jobbranch import warriors
 from .jobclass import cygnus
 from .jobclass import flora
+from . import jobutils
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -27,7 +28,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_passive_skill_list(self):
         # 매직 서킷: 앱솔 기준 15.4
-        WEAPON_ATT = 205
+        WEAPON_ATT = jobutils.getWeaponATT("튜너")
         
         MagicCircuit = core.InformedCharacterModifier("매직 서킷", att=WEAPON_ATT * 0.15)  #무기 마력의 25%, 최대치 가정.
         Pace = core.InformedCharacterModifier("패이스", crit_damage=10, patt=10)
