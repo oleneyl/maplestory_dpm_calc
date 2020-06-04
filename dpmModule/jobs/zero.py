@@ -8,8 +8,6 @@ from .jobbranch import warriors
 
 # TODO: 4카 5앱 적용, 리미트 막타 추가
 
-# 제로 메용은 쓸컴뱃을 적용받지 않음
-
 # 초월자 륀느의 기원 : 미적용 상태
 def RhinneBlessWrapper(enhancer, skill_importance, enhance_importance):
     # TODO: 재사용 대기시간 초기화 구현
@@ -324,7 +322,7 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
 
         return(ComboHolder,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, combatLevel = 0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     AlphaState, BetaState, AuraWeaponBuff, DoubleTime, TimeDistortion, TimeHolding, IntensiveTime, LimitBreak,
                     globalSkill.soul_contract()]+\
                 [ShadowRain, TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta]+\
