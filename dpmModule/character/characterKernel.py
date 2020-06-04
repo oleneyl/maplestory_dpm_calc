@@ -217,7 +217,13 @@ class JobGenerator():
         self.vEhc = v_builder.build_enhancer(chtr, self)
         self.chtr = chtr
         self.build_not_implied_skill_list()
+        
         chtr.apply_modifiers([self.get_passive_skill_modifier()])
+
+        # Apply property_ignore, however do not override buff remain.
+        _save_buff_rem = chtr.buff_rem        
+        self.apply_complex_options(chtr)
+        chtr.buff_rem = _save_buff_rem 
         
         graph = self.build(chtr)
         graph.set_v_enhancer(self.vEhc)
