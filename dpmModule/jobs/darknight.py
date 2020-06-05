@@ -27,8 +27,8 @@ class JobGenerator(ck.JobGenerator):
         ReincarnationBuff = core.InformedCharacterModifier("리인카네이션(패시브)",pdamage_indep = 30, crit = 10, crit_damage = 15)
     
         SacrificePassive = core.InformedCharacterModifier("새크리파이스(패시브)",armor_ignore = 30)
-    
-        return [WeaponMastery, PhisicalTraining, LordOfDarkness, AdvancedWeaponMastery, ReincarnationBuff, SacrificePassive]
+        CrossoverChainPassive = core.InformedCharacterModifier("크로스 오버 체인(패시브)", pdamage_indep=50)
+        return [WeaponMastery, PhisicalTraining, LordOfDarkness, AdvancedWeaponMastery, ReincarnationBuff, SacrificePassive, CrossoverChainPassive]
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 49)
@@ -55,7 +55,7 @@ class JobGenerator(ck.JobGenerator):
         
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
-        CrossoverChain = core.BuffSkill("크로스 오버 체인", 0, 200*1000, pdamage_indep = 80).wrap(core.BuffSkillWrapper)
+        CrossoverChain = core.BuffSkill("크로스 오버 체인", 0, 200*1000, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
         FinalAttack = core.DamageSkill("파이널 어택", 0, 80, 2*0.4).setV(vEhc, 3, 4, True).wrap(core.DamageSkillWrapper)
         BiholderDominant = core.SummonSkill("비홀더 도미넌트", 0, 10000, 210, 1, 99999*10000, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).wrap(core.SummonSkillWrapper)
         BiholderShock = core.DamageSkill("비홀더 쇼크", 0, 215, 6, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).wrap(core.DamageSkillWrapper)
