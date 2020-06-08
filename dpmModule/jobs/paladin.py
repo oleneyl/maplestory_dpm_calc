@@ -97,7 +97,7 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
                         
         return(Blast,
-                [globalSkill.maple_heros(chtr.level, combatLevel = 2), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, combat_level = 2), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Threat, BlessingArmor, ElementalForce, EpicAdventure, HolyUnity, AuraWeaponBuff,
                     globalSkill.soul_contract()] +\
                 [LighteningCharge, DivineCharge, GrandCross] +\
