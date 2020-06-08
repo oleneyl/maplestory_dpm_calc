@@ -89,15 +89,15 @@ class JobGenerator(ck.JobGenerator):
 
         # 방어력 2배 무시가 30퍼를 한번 더 계산하는건지, 아니면 60퍼로 적용되는건지 알아볼 필요가 있음.
         # 최대 10회 공격
-        ShieldChasing = core.DamageSkill("실드 체이싱", 540, 500, 2*(8+2), cooltime = 6000, modifier = core.CharacterModifier(armor_ignore = 30, pdamage=20), red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
+        ShieldChasing = core.DamageSkill("실드 체이싱", 540, 500, 2*2*(8+2), cooltime = 6000, modifier = core.CharacterModifier(armor_ignore = 30, pdamage=20), red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
 
         ArmorBreak = core.DamageSkill("아머 브레이크", 0, 350, 4, cooltime = 30 * 1000).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        ArmorBreakBuff = core.BuffSkill("아머 브레이크(디버프)", 0, 30*1000, armor_ignore = 30).wrap(core.BuffSkillWrapper)
+        ArmorBreakBuff = core.BuffSkill("아머 브레이크(디버프)", 720, 30*1000, armor_ignore = 30).wrap(core.BuffSkillWrapper)
 
         #ThousandSword = core.Damageskill("사우전드 소드", 0, 500, 8, cooltime = 8*1000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
 
         # 보너스 찬스 70% -> 80%
-        EnhancedExceed = core.DamageSkill("인핸스드 익시드", 0, 200, 2*0.8).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        EnhancedExceed = core.DamageSkill("인핸스드 익시드", 0, 200, 2*0.8, cooltime = -1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
 
         #일정 주기로 마족의 피가 바닥에 뿌려져 5초 동안 최대 10명의 적을 일정주기 마다 300+8n%로 2번 공격
         # 초당 22타 가정
@@ -119,10 +119,6 @@ class JobGenerator(ck.JobGenerator):
         #BloodImprison = core.DamageSkill("블러디 임프리즌", 0, 800, 3, cooltime = 120*1000)
 
         #Buff skills
-        Exceed = core.BuffSkill("익시드", 0, 99999999).wrap(core.BuffSkillWrapper)
-        Exceed = core.StackSkillWrapper(Exceed, 18)
-        Exceed.set_name_style("익시드 %d스택")
-        Exceed.set_stack(0)
 
         ForbiddenContract = core.BuffSkill("포비든 컨트랙트", 0, 30*1000, cooltime = 75*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         DemonicFortitude = core.BuffSkill("데모닉 포티튜드", 0, 60*1000, cooltime=120*1000, pdamage=10).wrap(core.BuffSkillWrapper)
@@ -141,15 +137,14 @@ class JobGenerator(ck.JobGenerator):
         매 3분마다 버프류 스킬 사용하여 극딜
         '''
         
-        ArmorBreak.onAfter(ArmorBreakBuff.controller(1))
-        Execution.onAfter(EnhancedExceed)
+        ArmorBreakBuff.onAfter(ArmorBreak)
         ExecutionExceed.onAfter(EnhancedExceed)
-        ReleaseOverload.onAfter(Exceed.set_stack(0))
+
+        ReleaseOverload.onAfter(Execution_0)
 
         ExceedOpt = core.OptionalElement(Exceed.judge(5, 1), ExecutionExceed, Execution)
 
-        #사우전드 소드 : 사용 시 익시드 오버로드 5 증가
-        #ThousandSword.onAfter(Exceed.stackController(5))
+        BasicAttack = core.OptionalElement(ReleaseOverload.is_active, ExecutionExceed, ReleaseOverload)
 
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
