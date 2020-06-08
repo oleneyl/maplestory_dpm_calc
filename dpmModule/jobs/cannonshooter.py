@@ -77,7 +77,7 @@ class JobGenerator(ck.JobGenerator):
     
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-        WEAPON_ATT = jobutils.getWeaponATT("핸드캐논")
+        WEAPON_ATT = jobutils.get_weapon_att("핸드캐논")
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
     
         PirateFlag = PirateFlag = adventurer.PirateFlagWrapper(vEhc, 4, 3, chtr.level)

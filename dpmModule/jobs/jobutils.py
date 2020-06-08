@@ -2,7 +2,7 @@ from ..item import RootAbyss, Absolab, Arcane
 
 # 스펙 측정시마다 수동으로 변경 필요
 
-def getWeaponATT(WEAPON_NAME, spec = 6000):
+def get_weapon_att(WEAPON_NAME, spec = 6000):
     if spec < 5000:
         #파프
         return RootAbyss.WeaponFactory.getWeapon(WEAPON_NAME, star = 0, elist = [0,0,0,0] ).att

@@ -105,7 +105,7 @@ class JobGenerator(ck.JobGenerator):
 
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-        WEAPON_ATT = jobutils.getWeaponATT("너클")
+        WEAPON_ATT = jobutils.get_weapon_att("너클")
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
 
         ShinNoiHapL = core.BuffSkill("신뇌합일", 0, (30+vEhc.getV(3,2)//2) * 1000, red = True, cooltime = (121-vEhc.getV(3,2)//2)*1000, pdamage_indep=4+vEhc.getV(3,2)//5).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
