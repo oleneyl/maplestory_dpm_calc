@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import pirates
+from . import jobutils
 
 class SoulTrapBuffWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
@@ -101,7 +102,8 @@ class JobGenerator(ck.JobGenerator):
     
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-        WEAPON_ATT = 154
+
+        WEAPON_ATT = jobutils.get_weapon_att("너클")
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         
         SoulConcentrate = core.BuffSkill("정령 집속", 960, (30+vEhc.getV(2,1))*1000, cooltime = 120*1000, pdamage_indep = (5+vEhc.getV(2,1)//2)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)

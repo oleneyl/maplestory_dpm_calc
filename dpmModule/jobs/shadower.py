@@ -101,9 +101,12 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 200*1000).wrap(core.BuffSkillWrapper)
         FlipTheCoin = core.BuffSkill("플립 더 코인", 0, 24000, pdamage = 5*5, crit = 10*5).wrap(core.BuffSkillWrapper)
         ShadowerInstinct = core.BuffSkill("섀도어 인스팅트", 0, 200*1000, rem = True, att = 40+30).wrap(core.BuffSkillWrapper)
+        #StealPotion = core.BuffSkill("스틸 (포션)", 0, 180000, cooltime = -1, att = 30).wrap(core.BuffSkillWrapper)
+        
         # 더미 데이터
         ShadowPartner = core.BuffSkill("섀도우 파트너", 1000, 2000*1000, rem = True).wrap(core.BuffSkillWrapper)
         
+        #킬포3개 사용시 최종뎀 100% 증가.
         Assasinate1 = core.DamageSkill("암살(1타)", 630, 275, 6, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타")   #쉐파
         Assasinate2 = core.DamageSkill("암살(2타)", 630+30, 350, 6, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타")   #쉐파
         
@@ -111,14 +114,18 @@ class JobGenerator(ck.JobGenerator):
         Assasinate2_D = core.DamageSkill("암살(2타)(다크사이트)", 630+30, 350, 6, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타(닼사)")   #쉐파
         
         BailOfShadow = core.DamageSkill("베일 오브 섀도우", 810, 800, 15, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        #킬포3개 사용시 최종뎀 100% 증가.
+        
     
         Smoke = core.BuffSkill("연막탄", 1080, 30000, cooltime = 150000, crit_damage = 20).wrap(core.BuffSkillWrapper)
         Venom = core.DotSkill("페이탈 베놈", 480, 89999 * 1000).wrap(core.SummonSkillWrapper)
         
-        AdvancedDarkSight = core.BuffSkill("다크 사이트", 0, 10000, cooltime = -1, pdamage_indep = 5).wrap(core.BuffSkillWrapper)
+        AdvancedDarkSight = core.BuffSkill("어드밴스드 다크 사이트", 0, 10000, cooltime = -1, pdamage_indep = 5).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
+        '''
+        Steal = core.DamageSkill("스틸", 600, 330, 1, cooltime = 180000).isV(?, ?).wrap(core.DamageSkillWrapper)
+        Steal.onAfter(StealPotion)
+        '''
         #_VenomBurst = core.DamageSkill("베놈 버스트", ??) ## 패시브 50%확률로 10초간 160+6*vlevel dot. 사용시 도트뎀 모두 피해 + (500+20*vlevel) * 5. 어차피 안쓰는 스킬이므로 작성X
         
         UltimateDarksight = thieves.UltimateDarkSightWrapper(vEhc, 3, 3, 5)
@@ -140,18 +147,18 @@ class JobGenerator(ck.JobGenerator):
         
         MesoExplosion = MesoStack(vEhc)
         
-        Assasinate2.onAfters([SonicBlow.controller(1500 * STACK2RATE * 0.01, "reduce_cooltime"), MesoExplosion.stackController(6*0.4, name = "메소 생성")])
-        Assasinate1.onAfter(MesoExplosion.stackController(6*0.4, name = "메소 생성"))
+        Assasinate2.onAfters([SonicBlow.controller(1500 * STACK2RATE * 0.01, "reduce_cooltime"), MesoExplosion.stackController(6*2*0.4, name = "메소 생성")])
+        Assasinate1.onAfter(MesoExplosion.stackController(6*2*0.4, name = "메소 생성"))
         Assasinate1.onAfter(MesoExplosion)
         Assasinate1.onAfter(Assasinate2)
         
-        Assasinate2_D.onAfters([SonicBlow.controller(1500 * STACK2RATE * 0.01, "reduce_cooltime"), MesoExplosion.stackController(6*0.4, name = "메소 생성")])
-        Assasinate1_D.onAfter(MesoExplosion.stackController(6*0.4, name = "메소 생성"))
+        Assasinate2_D.onAfters([SonicBlow.controller(1500 * STACK2RATE * 0.01, "reduce_cooltime"), MesoExplosion.stackController(6*2*0.4, name = "메소 생성")])
+        Assasinate1_D.onAfter(MesoExplosion.stackController(6*2*0.4, name = "메소 생성"))
         Assasinate1_D.onAfter(MesoExplosion)
         Assasinate1_D.onAfter(Assasinate2_D)
         
         BailOfShadow.onConstraint(DarkSightTurnedOn)
-        BailOfShadow.onAfter(MesoExplosion.stackController(15*0.4, name = "메소 생성"))
+        BailOfShadow.onAfter(MesoExplosion.stackController(15*2*0.4, name = "메소 생성"))
         BailOfShadow.onAfter(AdvancedDarkSight.controller(12000, "set_enabled_and_time_left"))
         
         Smoke.onConstraint(DarkSightTurnedOn)
@@ -160,10 +167,10 @@ class JobGenerator(ck.JobGenerator):
         UltimateDarksight.onConstraint(DarkSightTurnedOn)
         UltimateDarksight.onAfter(AdvancedDarkSight.controller(30000,"set_enabled_and_time_left" ))
         
-        SonicBlowTick.onAfter(MesoExplosion.stackController(14*0.4, name = "메소 생성"))
+        SonicBlowTick.onAfter(MesoExplosion.stackController(14*2*0.4, name = "메소 생성"))
         SonicBlow.onAfter(core.RepeatElement(SonicBlowTick, 20))
         
-        Eviscerate.onAfter(MesoExplosion.stackController(14*0.4, name = "메소 생성"))
+        Eviscerate.onAfter(MesoExplosion.stackController(14*2*0.4, name = "메소 생성"))
         
         Assasinate = core.OptionalElement(AdvancedDarkSight.is_active, Assasinate1_D, Assasinate1, name = "닼사 여부")
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)

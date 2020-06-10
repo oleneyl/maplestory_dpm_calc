@@ -38,9 +38,9 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 35)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5 * self.combat)
         
-        DistancingSence = core.InformedCharacterModifier("디스턴싱 센스",pdamage_indep = 42) #최대 사정거리
+        DistancingSence = core.InformedCharacterModifier("디스턴싱 센스",pdamage_indep = 40 + self.combat * 2) #최대 사정거리
         MortalBlow = core.InformedCharacterModifier("모탈 블로우",pdamage = 2)        
         ExtremeArchery = core.InformedCharacterModifier("익스트림 아처리:석궁",crit_damage = 20)
         
@@ -69,8 +69,7 @@ class JobGenerator(ck.JobGenerator):
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
         #Damage Skills
-        # TODO: 롱레인지 트루샷: MP 300 소비, 범위 내 12명의 적에게 450% 데미지로 9번 공격
-        #재사용 대기시간 15초
+        # 롱레인지 트루샷: 나무위키피셜 DPM 떨어지므로 보류
 
         Snipping = core.DamageSkill("스나이핑", 630, 465+combat*5, 9 + 1, modifier = core.CharacterModifier(crit = 100, armor_ignore = 20 + combat*1, pdamage = 20, boss_pdamage = 10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         TrueSnippingTick = core.DamageSkill("트루 스나이핑(타격)", 700, 950+vEhc.getV(2,2)*30, 14+1, modifier = core.CharacterModifier(pdamage=100, armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)

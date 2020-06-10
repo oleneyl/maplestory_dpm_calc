@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, MutualRule
 from . import globalSkill
 from .jobbranch import pirates
+from . import jobutils
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):
@@ -25,7 +26,7 @@ class JobGenerator(ck.JobGenerator):
         vEhc = self.vEhc
         
         # 매직 서킷: 앱솔 기준 15.4
-        WEAPON_ATT = 154
+        WEAPON_ATT = jobutils.get_weapon_att("너클")
         
         MagicCircuit = core.InformedCharacterModifier("매직 서킷", att = WEAPON_ATT * 0.1)  #무기 마력의 25%, 최대치 가정.
         MisticArtsMastery = core.InformedCharacterModifier("미스틱 아츠 마스터리", att = 20)
@@ -156,7 +157,7 @@ class JobGenerator(ck.JobGenerator):
     
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-        WEAPON_ATT = 154
+        WEAPON_ATT = jobutils.get_weapon_att("너클")
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
     
         MagicCircuitFullDrive = core.BuffSkill("매직서킷 풀드라이브", 720, (30+vEhc.getV(4,4))*1000, pdamage = (20 + vEhc.getV(3,2)), cooltime = 200*1000).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)

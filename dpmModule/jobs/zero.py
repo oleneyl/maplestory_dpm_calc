@@ -8,17 +8,6 @@ from .jobbranch import warriors
 
 # TODO: 4카 5앱 적용, 리미트 막타 추가
 
-# 제로 메용은 쓸컴뱃을 적용받지 않음
-
-# 초월자 륀느의 기원 : 미적용 상태
-def RhinneBlessWrapper(enhancer, skill_importance, enhance_importance):
-    # TODO: 재사용 대기시간 초기화 구현
-    RhinneBless = core.BuffSkill("초월자 륀느의 기원", 630, 30+enhancer.getV(skill_importance, enhance_importance)//2, cooltime = 240000, att = 10+3*enhancer.getV(skill_importance, enhance_importance)).wrap(core.BuffSkillWrapper)
-    RhinneBlessAttack_hit = core.DamageSkill("초월자 륀느의 기원 (타격)", 0, 125+5*enhancer.getV(skill_importance, enhance_importance), 5, cooltime = 0).wrap(core.DamageSkillWrapper)
-    RhinneBlessAttack = core.OptionalElement(RhinneBless.is_active(), RhinneBlessAttack_hit)
-
-    return RhinneBless, RhinneBlessAttack
-
 
 # 현재로는 계산 알고리즘 작성 구문에서 연산과정에 접근을 할 수 없도록 캡슐화되어 있으므로 사용 불가능
 '''
@@ -199,11 +188,14 @@ class JobGenerator(ck.JobGenerator):
         # 딜레이 확인필요, 딜사이클에 포함되는 스킬인지 확인필요
         ShadowRain = core.DamageSkill("쉐도우 레인", 0, 1400, 14, cooltime = 300*1000).wrap(core.DamageSkillWrapper)
         
+        SoulContract = globalSkill.soul_contract()
+
         #### 5차 스킬 ####
         #5차스킬들 마스터리 알파/베타 구분해서 적용할것.
         
         LimitBreakAttack = core.DamageSkill("리미트 브레이크", 0, 400+15*vEhc.getV(0,0), 5).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = (30+vEhc.getV(0,0)//5) *1.2 + 20, cooltime = 240*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        
         #LimitBreakFinal = core.DamageSkill("리미트 브레이크 (막타)", 0, '''지속시간 동안 가한 데미지의 20% / 15''', 15)
         # 베타로 사용함.
         TwinBladeOfTime = core.DamageSkill("조인트 어택", 0, 0, 0, cooltime = 120*1000, red = True).wrap(core.DamageSkillWrapper)
@@ -223,15 +215,11 @@ class JobGenerator(ck.JobGenerator):
         
         ComboHolder = core.DamageSkill("어파스", 0,0,0).wrap(core.DamageSkillWrapper)
 
+        #초월자 륀느의 기원
         '''
-        초월자 륀느의 기원
-        RhinneBless, RhinneBlessAttack = RhinneBlessWrapper(vEhc, 0, 0)
-        모든 스킬에 onAfter(RhinneBlessAttack) 추가
-        for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
-                    AdvancedRollingCurve, AdvancedRollingAssulter, StormBreak, UpperStrike, AirRiot, GigaCrash,
-                    FallingStar, AdvancedEarthBreak, TwinBladeOfTime_end]:
-            sk.onAfter(RhinneBlessAttack)
-        스킬 쿨타임 초기화
+        RhinneBless = core.BuffSkill("초월자 륀느의 기원", 630, 30+vEhc.getV(0, 0)//2, cooltime = 240000, att = 10+3*vEhc.getV(0, 0)).wrap(core.BuffSkillWrapper)
+        RhinneBlessAttack_hit = core.DamageSkill("초월자 륀느의 기원 (타격)", 0, 125+5*vEhc.getV(0, 0), 5, cooltime = -1).wrap(core.DamageSkillWrapper)
+        RhinneBlessAttack = core.OptionalElement(RhinneBless.is_active(), RhinneBlessAttack_hit)
         '''
 
 
@@ -244,7 +232,7 @@ class JobGenerator(ck.JobGenerator):
         윈드커터-윈드스트라이크-스톰브레이크 / 문스트라이크-피어스쓰러스트 / 문스트라이크-피어스 쓰러스트 /
         기가크래시-점핑크래시-어드어스브레이크 / 어퍼슬래시-파워스텀프 / 어퍼슬래시-파워스텀프/
         '''
-        
+
         ### 스킬 연결 ###
         ### 알파 ###
         MoonStrike.onAfter(PierceStrike)
@@ -311,7 +299,15 @@ class JobGenerator(ck.JobGenerator):
         ShadowFlashAlpha.onAfter(ShadowFlashAlphaEnd)
         ShadowFlashBeta.onAfter(ShadowFlashBetaEnd)
         LimitBreak.onAfter(LimitBreakAttack)
+
+        LimitBreakCDR = core.BuffSkill("리미트 브레이크(재사용 대기시간 감소)", 0, 0, cooltime = -1).wrap(core.BuffSkillWrapper)
+        LimitBreak.onAfter(LimitBreakCDR)
+        for sk in [ShadowRain, TimeDistortion, SoulContract]:
+            # 재사용 대기시간 초기화의 효과를 받지 않는 스킬을 제외한 스킬의 재사용 대기시간이 (기본 200%에 5레벨마다 10%씩) 더 빠르게 감소
+            LimitBreakCDR.onAfter(sk.controller(2000 + 20 * vEhc.getV(0, 0), 'reduce_cooltime'))
         
+        LimitBreakCDR.onAfter(core.OptionalElement(LimitBreak.is_active, LimitBreakCDR.controller(1000)))
+
         StateTAG = core.OptionalElement(AlphaState.is_active, SetBeta, SetAlpha)
         
         ### 국콤 생성
@@ -330,10 +326,21 @@ class JobGenerator(ck.JobGenerator):
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
 
+        '''
+        스킬 사용 후 초월자 륀느의 기원 발동
+        for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
+                    AdvancedRollingCurve, AdvancedRollingAssulter, StormBreak, UpperStrike, AirRiot, GigaCrash,
+                    FallingStar, AdvancedEarthBreak]:
+            sk.onAfter(RhinneBlessAttack)
+
+        스킬 쿨타임 초기화
+        RhinneBless.onAfters(TimeDistortion.controller(1, 'reduce_cooltime_p'), ShadowRain.controller(1, 'reduce_cooltime_p'), SoulContract.controller(1, 'reduce_cooltime_p'))
+        '''
+
         return(ComboHolder,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, combat_level = 0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     AlphaState, BetaState, AuraWeaponBuff, DoubleTime, TimeDistortion, TimeHolding, IntensiveTime, LimitBreak,
-                    globalSkill.soul_contract()]+\
+                    SoulContract]+\
                 [ShadowRain, TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta]+\
                 [StormBreakSummon, WindCutterSummon, ThrowingWeapon]+\
                 [AuraWeaponCooltimeDummy]+\

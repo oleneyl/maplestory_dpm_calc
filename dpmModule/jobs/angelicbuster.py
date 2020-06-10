@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import pirates
+from . import jobutils
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):
@@ -92,7 +93,7 @@ class JobGenerator(ck.JobGenerator):
         
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-        WEAPON_ATT = 154
+        WEAPON_ATT = jobutils.get_weapon_att("소울슈터")
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 3, 3, WEAPON_ATT)
     
         EnergyBurst = core.DamageSkill("에너지 버스트", 900, (600+20*vEhc.getV(4,4)) * 3, 12, red = True, cooltime = 120 * 1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
