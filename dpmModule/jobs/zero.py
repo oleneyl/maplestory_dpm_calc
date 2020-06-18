@@ -38,6 +38,17 @@ class LimitBreakNew():
 # LimitBreak = LimitBreakSet.get_buff()
 '''
 
+'''
+스킬 사용 시 공격 받은 적이 스킬의 최대 공격 가능한 몬스터 수보다 적을 때 1명 당 8%의 데미지 증가
+
+각각 베타 스킬에 꼭 적용해주세요. 툴팁에 나와있는 몬스터 수를 그대로 작성해주시면 됩니다.
+
+vlevel = 코어 20레벨 효과인 타겟 수 증가를 적용하기 위한 변수입니다. 5차 스킬은 레벨에 따른 타겟 수 증가가 없으니 -1으로 써주세요.
+'''
+def beta_enrage(target, vlevel):
+    target += (vlevel >= 20)
+    return core.CharacterModifier(pdamage = 8 * (target - 1))
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -94,12 +105,12 @@ class JobGenerator(ck.JobGenerator):
             core.CharacterModifier(crit = 40) + \
             core.CharacterModifier(crit_damage = 50)
         BetaMastery = core.CharacterModifier(pdamage_indep = 49) + \
-                    core.CharacterModifier(crit = 15, boss_pdamage = 30 + 30, att = 80, pdamage = 40) + \
+                    core.CharacterModifier(crit = 15, boss_pdamage = 30 + 30, att = 80) + \
                     core.CharacterModifier(armor_ignore = 50)
         
         # 알파: 크리티컬 바인드 크뎀 평균값 적용
         AlphaState = core.BuffSkill("상태-알파", 0, 9999*10000, cooltime = -1, crit_damage = (20*4/35)).wrap(core.BuffSkillWrapper)
-        BetaState = core.BuffSkill("상태-베타", 0, 9999*10000, cooltime = -1, pdamage_indep = 9.70, crit = 15-40, boss_pdamage = 30, att = 80-40, pdamage = 40, armor_ignore = -42.85, crit_damage = -(50 + (20*4/35))).wrap(core.BuffSkillWrapper)
+        BetaState = core.BuffSkill("상태-베타", 0, 9999*10000, cooltime = -1, pdamage_indep = 9.70, crit = 15-40, boss_pdamage = 30, att = 80-40, armor_ignore = -42.85, crit_damage = -(50 + (20*4/35))).wrap(core.BuffSkillWrapper)
 
         #### 알파 ####
         MoonStrike = core.DamageSkill("문 스트라이크", 390, 120, 6).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
@@ -149,36 +160,36 @@ class JobGenerator(ck.JobGenerator):
         #### 베타 ####
         
 
-        UpperStrike = core.DamageSkill("어퍼 슬래시", 690, 210, 6).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-        UpperStrikeTAG = core.DamageSkill("어퍼 슬래시(태그)", 0, 210, 6).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        UpperStrike = core.DamageSkill("어퍼 슬래시", 690, 210, 6, modifier = beta_enrage(6, vEhc.getV(5 , 3))).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        UpperStrikeTAG = core.DamageSkill("어퍼 슬래시(태그)", 0, 210, 6, modifier = beta_enrage(6, vEhc.getV(5 , 3))).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         
-        AirRiot = core.DamageSkill("어드밴스드 파워 스텀프", 570, 330, 9).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
-        AirRiotTAG = core.DamageSkill("어드밴스드 파워 스텀프(태그)", 0, 330, 9).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
-        AirRiotWave = core.DamageSkill("어드밴스드 파워 스텀프(파동)", 0, 330, 9).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        AirRiot = core.DamageSkill("어드밴스드 파워 스텀프", 570, 330, 9, modifier = beta_enrage(6, vEhc.getV(0 , 3))).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        AirRiotTAG = core.DamageSkill("어드밴스드 파워 스텀프(태그)", 0, 330, 9, modifier = beta_enrage(6, vEhc.getV(0 , 3))).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        AirRiotWave = core.DamageSkill("어드밴스드 파워 스텀프(파동)", 0, 330, 9, modifier = beta_enrage(6, vEhc.getV(0 , 3))).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
         
         THROWINGHIT = 5
-        FlashCut = core.DamageSkill("프론트 슬래시", 630, 205, 6).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        ThrowingWeapon = core.SummonSkill("어드밴스드 스로잉 웨폰", 360, 300, 550, 2, THROWINGHIT*300, cooltime=-1).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
-        #ThrowingWeapon = core.DamageSkill("어드밴스드 스로잉 웨폰", 360, 550, 2 * 5).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)    #5타 = 1.5s
+        FlashCut = core.DamageSkill("프론트 슬래시", 630, 205, 6, modifier = beta_enrage(6, vEhc.getV(6, 2))).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        ThrowingWeapon = core.SummonSkill("어드밴스드 스로잉 웨폰", 360, 300, 550, 2, THROWINGHIT*300, cooltime=-1, modifier = beta_enrage(6, vEhc.getV(1, 2))).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+        #ThrowingWeapon = core.DamageSkill("어드밴스드 스로잉 웨폰", 360, 550, 2 * 5, modifier = beta_enrage(6, vEhc.getV(1 , 2))).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)    #5타 = 1.5s
         
-        SpinDriver = core.DamageSkill("터닝 드라이브", 540, 260, 6).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedWheelWind = core.DamageSkill("어드밴스드 휠 윈드", 540, 200, 2*7).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)     #   0.1초당 1타, 최대 7초, 7타로 적용
+        SpinDriver = core.DamageSkill("터닝 드라이브", 540, 260, 6, modifier = beta_enrage(6, vEhc.getV(2 , 2))).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedWheelWind = core.DamageSkill("어드밴스드 휠 윈드", 540, 200, 2*7, modifier = beta_enrage(6, vEhc.getV(3 , 2))).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)     #   0.1초당 1타, 최대 7초, 7타로 적용
         
-        GigaCrash = core.DamageSkill("기가 크래시", 630, 250, 6).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        GigaCrashTAG = core.DamageSkill("기가 크래시(태그)", 0, 250, 6).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        GigaCrash = core.DamageSkill("기가 크래시", 630, 250, 6, modifier = beta_enrage(6, vEhc.getV(7 , 2))).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        GigaCrashTAG = core.DamageSkill("기가 크래시(태그)", 0, 250, 6, modifier = beta_enrage(6, vEhc.getV(7 , 2))).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         
-        FallingStar = core.DamageSkill("점핑 크래시", 660, 225, 6).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
+        FallingStar = core.DamageSkill("점핑 크래시", 660, 225, 6, modifier = beta_enrage(6, vEhc.getV(8 , 2))).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
         # 충격파 값 포함
-        FallingStarTAG = core.DamageSkill("점핑 크래시(태그)", 0, 225, 6).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
-        FallingStarWave = core.DamageSkill("점핑 크래시(충격파)", 0, 225, 3).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
+        FallingStarTAG = core.DamageSkill("점핑 크래시(태그)", 0, 225, 6, modifier = beta_enrage(6, vEhc.getV(8 , 2))).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
+        FallingStarWave = core.DamageSkill("점핑 크래시(충격파)", 0, 225, 3, modifier = beta_enrage(6, vEhc.getV(8 , 2))).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
         
-        AdvancedEarthBreak = core.DamageSkill("어드밴스드 어스 브레이크", 1170, 380, 10).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedEarthBreakTAG = core.DamageSkill("어드밴스드 어스 브레이크(태그)", 0, 380, 10).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) 
+        AdvancedEarthBreak = core.DamageSkill("어드밴스드 어스 브레이크", 1170, 380, 10, modifier = beta_enrage(6, vEhc.getV(4 , 2))).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedEarthBreakTAG = core.DamageSkill("어드밴스드 어스 브레이크(태그)", 0, 380, 10, modifier = beta_enrage(6, vEhc.getV(4 , 2))).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) 
         
-        AdvancedEarthBreakWave = core.DamageSkill("어드밴스드 어스 브레이크(파동)", 0, 285, 10).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedEarthBreakWave = core.DamageSkill("어드밴스드 어스 브레이크(파동)", 0, 285, 10, modifier = beta_enrage(6, vEhc.getV(4 , 2))).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         #AdvancedEarthBreakElectric = core.DotSkill("어드밴스드 어스 브레이크(전기)", 340, 5).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
-        AdvancedEarthBreakElectric = core.DamageSkill("어드밴스드 어스 브레이크(전기)", 0, 340, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedEarthBreakElectric = core.DamageSkill("어드밴스드 어스 브레이크(전기)", 0, 340, 5, modifier = beta_enrage(6, vEhc.getV(4 , 2))).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
         DoubleTime = core.BuffSkill("래피드 타임", 0, 9999*10000, crit = 20, pdamage = 10).wrap(core.BuffSkillWrapper)
         TimeDistortion = core.BuffSkill("타임 디스토션", 540, 30000, cooltime = 240 * 1000, pdamage = 25).wrap(core.BuffSkillWrapper)
@@ -193,25 +204,25 @@ class JobGenerator(ck.JobGenerator):
         #### 5차 스킬 ####
         #5차스킬들 마스터리 알파/베타 구분해서 적용할것.
         
-        LimitBreakAttack = core.DamageSkill("리미트 브레이크", 0, 400+15*vEhc.getV(0,0), 5).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        LimitBreakAttack = core.DamageSkill("리미트 브레이크", 0, 400+15*vEhc.getV(0,0), 5, modifier = beta_enrage(15, -1)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = (30+vEhc.getV(0,0)//5) *1.2 + 20, cooltime = 240*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
         #LimitBreakFinal = core.DamageSkill("리미트 브레이크 (막타)", 0, '''지속시간 동안 가한 데미지의 20% / 15''', 15)
         # 베타로 사용함.
-        TwinBladeOfTime = core.DamageSkill("조인트 어택", 0, 0, 0, cooltime = 120*1000, red = True).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_1 = core.DamageSkill("조인트 어택(1)", 3480, 875+35*vEhc.getV(1,1), 8).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_2 = core.DamageSkill("조인트 어택(2)", 0, 835+33*vEhc.getV(1,1), 8).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_3 = core.DamageSkill("조인트 어택(3)", 0, 1000+40*vEhc.getV(1,1), 13).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime = core.DamageSkill("조인트 어택", 0, 0, 0, cooltime = 120*1000, modifier = beta_enrage(12, -1)).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_1 = core.DamageSkill("조인트 어택(1)", 3480, 875+35*vEhc.getV(1,1), 8, modifier = beta_enrage(12, -1)).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_2 = core.DamageSkill("조인트 어택(2)", 0, 835+33*vEhc.getV(1,1), 8, modifier = beta_enrage(12, -1)).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_3 = core.DamageSkill("조인트 어택(3)", 0, 1000+40*vEhc.getV(1,1), 13, modifier = beta_enrage(12, -1)).wrap(core.DamageSkillWrapper)
         # 45타수가 시스템상으로 잘 반영되는지 확인필요.
-        TwinBladeOfTime_end = core.DamageSkill("조인트 어택(4)", 0, 900+36*vEhc.getV(1,1), 45, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_end = core.DamageSkill("조인트 어택(4)", 0, 900+36*vEhc.getV(1,1), 45, modifier = (beta_enrage(12, -1) + core.CharacterModifier(armor_ignore = 100))).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         
         #알파
-        ShadowFlashAlpha = core.DamageSkill("쉐도우 플래시(알파)", 670, 500+20*vEhc.getV(2,2), 6, cooltime = 40*1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ShadowFlashAlpha = core.DamageSkill("쉐도우 플래시(알파)", 670, 500+20*vEhc.getV(2,2), 6, cooltime = 40*1000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         ShadowFlashAlphaEnd = core.DamageSkill("쉐도우 플래시(알파)(종료)", 0, 400+16*vEhc.getV(2,2), 15*3).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         #베타
-        ShadowFlashBeta = core.DamageSkill("쉐도우 플래시(베타)", 670, 600+24*vEhc.getV(2,2), 5, cooltime = 40*1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        ShadowFlashBetaEnd = core.DamageSkill("쉐도우 플래시(베타)(종료)", 0, 750+30*vEhc.getV(2,2), 12 * 2).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ShadowFlashBeta = core.DamageSkill("쉐도우 플래시(베타)", 670, 600+24*vEhc.getV(2,2), 5, cooltime = 40*1000, modifier = beta_enrage(8, -1)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ShadowFlashBetaEnd = core.DamageSkill("쉐도우 플래시(베타)(종료)", 0, 750+30*vEhc.getV(2,2), 12 * 2, modifier = beta_enrage(8, -1)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         ComboHolder = core.DamageSkill("어파스", 0,0,0).wrap(core.DamageSkillWrapper)
 
