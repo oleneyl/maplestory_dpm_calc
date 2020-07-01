@@ -90,12 +90,12 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill   ######
         # http://m.inven.co.kr/board/powerbbs.php?come_idx=2297&stype=subject&svalue=%EC%8A%A4%ED%83%9D&l=52201
 
-        # 크로아 서버 스킨헤드님 제보 (https://maple.gg/u/%EC%8A%A4%ED%82%A8%ED%97%A4%EB%93%9C)
-        # http://m.dcinside.com/board/maplestory/10616710
-        # http://m.dcinside.com/board/maplestory/10616992
+        # 1타 94.6%, 2타 100%
+        # 크로아 서버 스킨헤드님 (https://maple.gg/u/%EC%8A%A4%ED%82%A8%ED%97%A4%EB%93%9C)
+        # https://drive.google.com/file/d/1ORJc-F77ELssCSVWgHiuQP49pifgCjpo/view
 
-        STACK1RATE = 70
-        STACK2RATE = 95
+        STACK1RATE = 94.6
+        STACK2RATE = 100
 
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 200*1000).wrap(core.BuffSkillWrapper)
