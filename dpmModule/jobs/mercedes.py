@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ReservationRule
+from ..execution.rules import RuleSet, ReservationRule, ConcurrentRunRule
 from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import bowmen
@@ -28,7 +28,7 @@ class ElementalGhostWrapper(core.BuffSkillWrapper):
             self.available = True
     
     def _use(self, rem = 0, red = 0):
-        self.target[0].pdamage_indep = 56.8125 * 0.01 * (30 + self.vlevel)
+        self.target[0].pdamage_indep = 64.687 * 0.01 * (30 + self.vlevel)
         self.target[1].pdamage_indep = 184.5 * 0.01 * (30 + self.vlevel)
         return super(ElementalGhostWrapper, self)._use()
 
@@ -44,9 +44,12 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ReservationRule('소울 컨트랙트', '이르킬라의 숨결'), RuleSet.BASE)
-        ruleset.add_rule(ReservationRule('히어로즈 오쓰', '이르킬라의 숨결'), RuleSet.BASE)
-        ruleset.add_rule(ReservationRule('크리티컬 리인포스', '이르킬라의 숨결'), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule('엘리멘탈 고스트', '소울 컨트랙트'), RuleSet.BASE)
+        # ruleset.add_rule(ReservationRule('히어로즈 오쓰', '이르칼라의 숨결'), RuleSet.BASE)
+        # ruleset.add_rule(ReservationRule('크리티컬 리인포스', '이르칼라의 숨결'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('크리티컬 리인포스', '엘리멘탈 고스트'), RuleSet.BASE)
+        # ruleset.add_rule(ReservationRule('엘리멘탈 고스트', '이르칼라의 숨결'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('이르칼라의 숨결','엘리멘탈 고스트'), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self):
@@ -82,7 +85,7 @@ class JobGenerator(ck.JobGenerator):
         
         이슈, 스듀/파택, 엘리멘탈, 래쓰오브엔릴, 레전드리, 유니콘
         
-        엘리멘탈 고스트는 최종뎀으로 계산되며 각각 56.812, 184.5%의 최종뎀을 받음
+        엘리멘탈 고스트는 최종뎀으로 계산되며 각각 64.687, 184.5%의 최종뎀을 받음
         최종뎀으로 계산함으로서 맥뎀 부분에서 약간의 오류가 발생할 수 있으나 미미함
         소울 컨트랙트, 히어로즈 오쓰, 크리티컬 리인포스는 모두 이르칼라와 함께 사용되도록 함
         '''
@@ -152,7 +155,7 @@ class JobGenerator(ck.JobGenerator):
     
         return(IshtarRing,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), 
-                    Booster, AncientSpirit, ElvishBlessing, HerosOath, Frid, Sylphidia.ignore(), CriticalReinforce, UnicornSpikeBuff, RegendrySpearBuff, ElementalGhost,
+                    Booster, ElvishBlessing, AncientSpirit, HerosOath, Frid, Sylphidia.ignore(), CriticalReinforce, UnicornSpikeBuff, RegendrySpearBuff, ElementalGhost,
                     SoulContract] +\
                 [UnicornSpike, RegendrySpear, WrathOfEllil, IrkilaBreathInit] +\
                 [ElementalKnights, GuidedArrow] +\
