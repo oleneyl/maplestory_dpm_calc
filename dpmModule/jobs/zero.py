@@ -39,14 +39,17 @@ class LimitBreakNew():
 '''
 
 '''
-스킬 사용 시 공격 받은 적이 스킬의 최대 공격 가능한 몬스터 수보다 적을 때 1명 당 8%의 데미지 증가
+beta_enrage
+
+대검 마스터리: 스킬 사용 시 공격 받은 적이 스킬의 최대 공격 가능한 몬스터 수보다 적을 때 1명 당 8%의 데미지 증가
 
 각각 베타 스킬에 꼭 적용해주세요. 툴팁에 나와있는 몬스터 수를 그대로 작성해주시면 됩니다.
 
 vlevel = 코어 20레벨 효과인 타겟 수 증가를 적용하기 위한 변수입니다. 5차 스킬은 레벨에 따른 타겟 수 증가가 없으니 -1으로 써주세요.
 '''
 def beta_enrage(target, vlevel):
-    target += (vlevel >= 20)
+    if vlevel >= 20:
+        target += 1
     return core.CharacterModifier(pdamage = 8 * (target - 1))
 
 class JobGenerator(ck.JobGenerator):
@@ -120,6 +123,8 @@ class JobGenerator(ck.JobGenerator):
         PierceStrikeTAG = core.DamageSkill("피어스 쓰러스트(태그)", 0, 170, 6 ).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
         
         '''
+        미사용 스킬
+
         ShadowStrike = core.DamageSkill("쉐도우 스트라이크", ?, 195, 8)
         ShadowStrikeAura = core.DamageSkill("쉐도우 스트라이크", 0, 310, 1)
         '''
@@ -217,11 +222,11 @@ class JobGenerator(ck.JobGenerator):
         TwinBladeOfTime_end = core.DamageSkill("조인트 어택(4)", 0, 900+36*vEhc.getV(1,1), 45, modifier = (beta_enrage(12, -1) + core.CharacterModifier(armor_ignore = 100))).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         
         #알파
-        ShadowFlashAlpha = core.DamageSkill("쉐도우 플래시(알파)", 670, 500+20*vEhc.getV(2,2), 6, cooltime = 40*1000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ShadowFlashAlpha = core.DamageSkill("쉐도우 플래시(알파)", 670, 500+20*vEhc.getV(2,2), 6, cooltime = 40*1000, red = True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         ShadowFlashAlphaEnd = core.DamageSkill("쉐도우 플래시(알파)(종료)", 0, 400+16*vEhc.getV(2,2), 15*3).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         #베타
-        ShadowFlashBeta = core.DamageSkill("쉐도우 플래시(베타)", 670, 600+24*vEhc.getV(2,2), 5, cooltime = 40*1000, modifier = beta_enrage(8, -1)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ShadowFlashBeta = core.DamageSkill("쉐도우 플래시(베타)", 670, 600+24*vEhc.getV(2,2), 5, cooltime = 40*1000, modifier = beta_enrage(8, -1), red = True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         ShadowFlashBetaEnd = core.DamageSkill("쉐도우 플래시(베타)(종료)", 0, 750+30*vEhc.getV(2,2), 12 * 2, modifier = beta_enrage(8, -1)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         ComboHolder = core.DamageSkill("어파스", 0,0,0).wrap(core.DamageSkillWrapper)
@@ -317,6 +322,7 @@ class JobGenerator(ck.JobGenerator):
             # 재사용 대기시간 초기화의 효과를 받지 않는 스킬을 제외한 스킬의 재사용 대기시간이 (기본 200%에 5레벨마다 10%씩) 더 빠르게 감소
             LimitBreakCDR.onAfter(sk.controller(2000 + 20 * vEhc.getV(0, 0), 'reduce_cooltime'))
         
+        # 리미트 브레이크 지속시간동안 쿨감효과 반복
         LimitBreakCDR.onAfter(core.OptionalElement(LimitBreak.is_active, LimitBreakCDR.controller(1000)))
 
         StateTAG = core.OptionalElement(AlphaState.is_active, SetBeta, SetAlpha)
