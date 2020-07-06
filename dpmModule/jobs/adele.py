@@ -93,7 +93,7 @@ class JobGenerator(ck.JobGenerator):
 
         Order = core.SummonSkill('오더', 0, 1140, 240+120, 2 * 5, 99999999).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper) # 15% 에테르 결정, 시전딜레이 없음으로 가정, 공격주기 1140ms(인피니트로부터 추정됨)
 
-        Divide = core.DamageSkill('디바이드', 600, 375, 6, modifier=core.CharacterModifier(pdamage_indep=20, boss_pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #트리거 스킬, 클라공속 780ms
+        Divide = core.DamageSkill('디바이드', 600, 375, 6, modifier=core.CharacterModifier(pdamage=20, boss_pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #트리거 스킬, 클라공속 780ms
 
         Grave = core.DamageSkill('그레이브', 630, 800, 10, cooltime=-1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) #한 번만 사용, 클라공속 840ms
         GraveDebuff = core.BuffSkill('그레이브(디버프)', 0, 999999999, pdamage=20, armor_ignore=10, cooltime=-1).wrap(core.BuffSkillWrapper)

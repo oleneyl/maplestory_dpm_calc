@@ -23,11 +23,11 @@ class JobGenerator(ck.JobGenerator):
         
     def get_passive_skill_list(self):
         RetrievedMemory = core.InformedCharacterModifier("되찾은 기억", patt=5)
-        SnowChargePassive = core.InformedCharacterModifier("스노우 차지(패시브)", pdamage=10+10)
-        PhisicalTraining = core.InformedCharacterModifier("피지컬 드레이닝",stat_main = 30, stat_sub = 30)
+        SnowChargePassive = core.InformedCharacterModifier("스노우 차지(패시브)", pdamage=10)
+        PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         AdvancedComboAbilityPassive = core.InformedCharacterModifier("어드밴스드 콤보 어빌리티", att=10, crit=20, crit_damage=10)
         CleavingAttack = core.InformedCharacterModifier("클리빙 어택", armor_ignore=40, pdamage=10)
-        Might = core.InformedCharacterModifier("마이트", att=40)       
+        Might = core.InformedCharacterModifier("마이트", att=40)
         HighMastery = core.InformedCharacterModifier("하이 마스터리", att=30, crit_damage=8) 
         AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)", att=30)
 

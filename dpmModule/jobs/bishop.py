@@ -67,7 +67,6 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self):
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
         SpellMastery = core.InformedCharacterModifier("스펠 마스터리",att = 10)
-        BlessingEnsemble = core.InformedCharacterModifier("블레싱 앙상블",pdamage_indep = 3)
         
         MagicCritical = core.InformedCharacterModifier("매직 크리티컬",crit = 30, crit_damage = 13)
         HolyFocus = core.InformedCharacterModifier("홀리 포커스",crit = 40)
@@ -78,15 +77,16 @@ class JobGenerator(ck.JobGenerator):
         VengenceOfAngelOff = core.InformedCharacterModifier("벤전스 오브 엔젤(off)",pdamage = 40)
         #엔젤레이 반영 필요
         
-        return [HighWisdom, SpellMastery, MagicCritical, HolyFocus, MasterMagic, ArcaneAim, BlessingEnsemble]
+        return [HighWisdom, SpellMastery, MagicCritical, HolyFocus, MasterMagic, ArcaneAim, VengenceOfAngelOff]
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5)       
-        
+        BlessingEnsemble = core.InformedCharacterModifier("블레싱 앙상블",pdamage_indep = 3)
+
         ArcaneAim = core.InformedCharacterModifier("아케인 에임",pdamage = 40)
-        VengenceOfAngelOn = core.InformedCharacterModifier("벤전스 오브 엔젤(on)", att = 50, pdamage_indep = 30, armor_ignore = 20)#속서애성을 pdamage_indep으로 임시 계싼
-        return [WeaponConstant, Mastery, ArcaneAim, VengenceOfAngelOn]
+        VengenceOfAngelOn = core.InformedCharacterModifier("벤전스 오브 엔젤(on)", att = 50, pdamage_indep = 30, armor_ignore = 20, pdamage=-40)#속서애성을 pdamage_indep으로 임시 계싼
+        return [WeaponConstant, Mastery, ArcaneAim, VengenceOfAngelOn, BlessingEnsemble]
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         ######   Skill   ###### 
