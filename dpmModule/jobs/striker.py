@@ -60,7 +60,10 @@ class JobGenerator(ck.JobGenerator):
         섬멸, 벽력, 승천, (뇌성)
         
         뇌전버프 상시 풀스택 가정
-        태풍은 버프 쿨타임마다만 사용
+        연계 100% 가정
+
+        천지개벽 ON: 태풍 - 섬멸
+        천지개벽 OFF: 벽력 - 섬멸
         
         벽섬 : 1080ms (420 / 660)
         
@@ -76,23 +79,19 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
         ChookRoi = core.BuffSkill("축뢰", 1620, 180000, rem = True).wrap(core.BuffSkillWrapper) # 타수증가 적용으로 계싼할지는 염두에 두어야 함
         WindBooster = core.BuffSkill("윈드 부스터", 0, 300000, rem = True).wrap(core.BuffSkillWrapper)
+        HuricaneBuff = core.BuffSkill("태풍(버프)", 0, 90000, rem = True, pdamage = 35).wrap(core.BuffSkillWrapper)
     
 
         # 5차 강화에 포함해야 할 수도 있음
-        # 버프 통합 필요
-        Huricane = core.DamageSkill("태풍", 0, 390, 5).wrap(core.DamageSkillWrapper)
-        #Huricane_NoCool = core.DamageSkill("태풍(노쿨)", 900, 390, 5).wrap(core.DamageSkillWrapper)
-        HuricaneBuff = core.BuffSkill("태풍(버프)", 900, 90000, rem = True, pdamage = 35).wrap(core.BuffSkillWrapper)
+        Huricane = core.DamageSkill("태풍", 900, 390, 5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
         
         Destroy = core.DamageSkill("섬멸", 420, 350, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Thunder = core.DamageSkill("벽력", 660, 320, 5 + 1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         DestroyConcat = core.DamageSkill("섬멸(연계)", 420, 350, 2 + 5, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20, pdamage_indep = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         ThunderConcat = core.DamageSkill("벽력(연계)", 660, 320, 5 + 1, modifier = core.CharacterModifier(pdamage = 20, pdamage_indep = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #연계최종뎀 20%
         
-        
-        
-        #BasicAttack = core.DamageSkill("섬멸", 420, 350, 2 + 5, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        BasicAttack = core.DamageSkill("벽력(기본공격)", 660, 320, 5 + 1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)        
+        #BasicAttack = core.DamageSkill("섬멸(기본공격)", 420, 350, 2 + 5, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        #BasicAttack = core.DamageSkill("벽력(기본공격)", 660, 320, 5 + 1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)        
 
         # 하이퍼
         # 딜레이 추가 필요
@@ -111,38 +110,36 @@ class JobGenerator(ck.JobGenerator):
         ShinNoiHapL = core.BuffSkill("신뇌합일", 0, (30+vEhc.getV(3,2)//2) * 1000, red = True, cooltime = (121-vEhc.getV(3,2)//2)*1000, pdamage_indep=4+vEhc.getV(3,2)//5).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
         ShinNoiHapLAttack = core.SummonSkill("신뇌합일(공격)", 0, 3000, 16*vEhc.getV(3,2) + 400, 7, (30+vEhc.getV(3,2)//2) * 1000, cooltime = -1).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
         ShinNoiHapLAttack_ChookRoi = core.DamageSkill('신뇌합일(축뢰)', 0, (16*vEhc.getV(3,2) + 400) * CHOOKROI, 7 ).wrap(core.DamageSkillWrapper)
-        GioaTan = core.DamageSkill("교아탄", 480, 1000+40*vEhc.getV(2,1), 7, cooltime = 8000).isV(vEhc,2,1).wrap(core.DamageSkillWrapper) #  교아탄-벽력 콤보 사용함
+        GioaTan = core.DamageSkill("교아탄", 480, 1000+40*vEhc.getV(2,1), 7, cooltime = 8000, modifier = core.CharacterModifier(pdamage = 20)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper) #  교아탄-벽력 콤보 사용함
 
         NoiShinChanGeuk = core.DamageSkill("뇌신창격", 0, 150+6*vEhc.getV(0,0), 6, cooltime = 7000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         NoiShinChanGeukAttack = core.SummonSkill("뇌신창격(공격)", 0, 1000, 200 + 8*vEhc.getV(0,0), 7, 3999, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)    #4번 발동
         NoiShinChanGeukAttack_ChookRoi = core.DamageSkill("뇌신창격(축뢰)", 0, (200 + 8*vEhc.getV(0,0)) * CHOOKROI, 7).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         #섬멸 연계
+
+        BasicAttack = core.OptionalElement(SkyOpen.is_active, Huricane, ThunderConcat)
+        BasicAttackWrapper = core.DamageSkill('기본 공격', 0,0,0).wrap(core.DamageSkillWrapper)
+        BasicAttackWrapper.onAfter(BasicAttack)
+
+        Huricane.onAfter(DestroyConcat)
+        ThunderConcat.onAfter(DestroyConcat)
         
-        for skill in [Destroy, Thunder, DestroyConcat, BasicAttack, ThunderConcat, GioaTan, NoiShinChanGeuk]:
+        for skill in [Destroy, Thunder, DestroyConcat, ThunderConcat, Huricane, GioaTan, NoiShinChanGeuk]:
             contrib.create_auxilary_attack(skill, CHOOKROI)
+        
         ShinNoiHapLAttack.onTick(ShinNoiHapLAttack_ChookRoi)
         NoiShinChanGeukAttack.onTick(NoiShinChanGeukAttack_ChookRoi)
-
-        #천지개벽 발동 중에는 태풍을 노쿨로 사용
-        #Huricane_NoCool.onAfter(HuricaneBuff)
-        #Huricane_SkyOpen = core.OptionalElement(SkyOpen.is_active(), Huricane_NoCool, name = "태풍(천지개벽)" )
-        
-        #조건부 파이널어택으로 설정함.
-
-        HuricaneBuff.onAfter(Huricane)
-        #BasicAttack.onAfter(ThunderConcat)
-        BasicAttack.onAfter(DestroyConcat)
         
         ShinNoiHapL.onAfter(ShinNoiHapLAttack)
-        GioaTan.onAfter(ThunderConcat)
+        #GioaTan.onAfter(DestroyConcat)
         NoiShinChanGeuk.onAfter(NoiShinChanGeukAttack)
 
-        return(BasicAttack,
+        return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Lightening, Booster, ChookRoi, WindBooster, LuckyDice,
-                    HuricaneBuff, GloryOfGuardians, Overdrive, OverdrivePenalty, ShinNoiHapL,
+                    HuricaneBuff, GloryOfGuardians, SkyOpen, Overdrive, OverdrivePenalty, ShinNoiHapL,
                     globalSkill.soul_contract()] +\
                 [GioaTan, CygnusPalanks, NoiShinChanGeuk] +\
                 [ShinNoiHapLAttack, NoiShinChanGeukAttack] +\
                 [] +\
-                [BasicAttack])
+                [BasicAttackWrapper])

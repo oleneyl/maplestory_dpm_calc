@@ -55,7 +55,7 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = False
         self.vEnhanceNum = 11
         self.jobtype = "luk"
-        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'buff_rem', 'crit')
+        self.ability_list = Ability_tool.get_ability_set('reuse', 'boss_pdamage', 'mess')
         self.preEmptiveSkills = 1
         
     def get_passive_skill_list(self):
