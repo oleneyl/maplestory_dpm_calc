@@ -145,9 +145,9 @@ class JobGenerator(ck.JobGenerator):
         
         SummonReleasingBoom = core.DamageSkill("서먼 릴리징 봄", 420, 535, 6, cooltime = 8000, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         SummonStrikingBrick = core.DamageSkill("서먼 스트라이킹 브릭", 720, 485, 7, cooltime = 8000, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        SummonBeatingNeedlebat_1 = core.DamageSkill("서먼 비팅 니들배트(1타)", 360, 450, 6, modifier = core.CharacterModifier(pdamage = 35 + 20, boss_pdamage = 20, pdamage_indep = 15), cooltime = 12000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        SummonBeatingNeedlebat_2 = core.DamageSkill("서먼 비팅 니들배트(2타)", 420, 555, 6, modifier = core.CharacterModifier(pdamage = 35 + 20, boss_pdamage = 20, pdamage_indep = 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        SummonBeatingNeedlebat_3 = core.DamageSkill("서먼 비팅 니들배트(3타)", 600, 715, 6, modifier = core.CharacterModifier(pdamage = 45 + 20, boss_pdamage = 20, pdamage_indep = 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SummonBeatingNeedlebat_1 = core.DamageSkill("서먼 비팅 니들배트(1타)", 360, 450, 6, modifier = core.CharacterModifier(pdamage = 25 + 20, boss_pdamage = 20, pdamage_indep = 15), cooltime = 12000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SummonBeatingNeedlebat_2 = core.DamageSkill("서먼 비팅 니들배트(2타)", 420, 555, 7, modifier = core.CharacterModifier(pdamage = 35 + 20, boss_pdamage = 20, pdamage_indep = 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SummonBeatingNeedlebat_3 = core.DamageSkill("서먼 비팅 니들배트(3타)", 600, 715, 8, modifier = core.CharacterModifier(pdamage = 45 + 20, boss_pdamage = 20, pdamage_indep = 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         SummonBeatingNeedlebat_Honmy = core.BuffSkill("서먼 비팅 니들배트(혼미)", 0, 15000, crit=2, crit_damage = 10, cooltime = -1).wrap(core.BuffSkillWrapper)
           
         VenomBurst = core.SummonSkill("베놈 버스트", 0, 1000, 160+6*vEhc.getV(4,4), 1, 99999999).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
