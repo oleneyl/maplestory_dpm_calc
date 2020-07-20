@@ -54,7 +54,7 @@ class JobGenerator(ck.JobGenerator):
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''하이퍼스킬
         트리거-리인포스
-        트리거-보스킬러
+        노빌리티-실드 리인포스
         레조넌스-엑스트라 힐링
         테리토리-퍼시스트
         블로섬-쿨타임 리듀스
@@ -93,7 +93,7 @@ class JobGenerator(ck.JobGenerator):
 
         Order = core.SummonSkill('오더', 0, 1140, 240+120, 2 * 5, 99999999).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper) # 15% 에테르 결정, 시전딜레이 없음으로 가정, 공격주기 1140ms(인피니트로부터 추정됨)
 
-        Divide = core.DamageSkill('디바이드', 600, 375, 6, modifier=core.CharacterModifier(pdamage=20, boss_pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #트리거 스킬, 클라공속 780ms
+        Divide = core.DamageSkill('디바이드', 600, 375, 6, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #트리거 스킬, 클라공속 780ms
 
         Grave = core.DamageSkill('그레이브', 630, 800, 10, cooltime=-1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) #한 번만 사용, 클라공속 840ms
         GraveDebuff = core.BuffSkill('그레이브(디버프)', 0, 999999999, pdamage=20, armor_ignore=10, cooltime=-1).wrap(core.BuffSkillWrapper)
