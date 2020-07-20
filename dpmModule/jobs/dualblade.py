@@ -18,7 +18,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 1
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 86)
+        return core.CharacterModifier(armor_ignore = 40)
 
     def get_passive_skill_list(self):
         Karma = core.InformedCharacterModifier("카르마", att = 30)
@@ -42,9 +42,8 @@ class JobGenerator(ck.JobGenerator):
         하이퍼 : 팬텀 블로우 - 리인포스, 이그노어 가드, 보너스 어택
         블레이드 퓨리 - 리인포스, 엑스트라 타겟
         
-        미러이미징을 뎀뻥으로 계산.(:= 맥뎀 누수계산에 오류가 있을 수 있음)
         아수라 41타
-        블레이드 토네이도 3타
+        블레이드 토네이도 5타
         카르마 퓨리 사용
         
         코어 16개 유효 : 팬블 / 아수라 / 퓨리 -- 써든레이드 / 어센션 / 히든블레이드
@@ -91,11 +90,11 @@ class JobGenerator(ck.JobGenerator):
         BladeStorm = core.DamageSkill("블레이드 스톰", 660, 580+23*vEhc.getV(0,0), 7, red = True, cooltime = 90000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         BladeStormTick = core.DamageSkill("블레이드 스톰(틱)", 210, 350+10*vEhc.getV(0,0), 5, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  #10000/210 타
         
-        KarmaFury = core.DamageSkill("카르마 퓨리", 990, 750+30*vEhc.getV(1,1), 7 * 3, red = True, cooltime = 10000, modifier = core.CharacterModifier(armor_ignore = 30)).isV(vEhc,6,6).wrap(core.DamageSkillWrapper)
+        KarmaFury = core.DamageSkill("카르마 퓨리", 990, 750+30*vEhc.getV(1,1), 7 * 3, red = True, cooltime = 10000, modifier = core.CharacterModifier(armor_ignore = 30)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         BladeTornado = core.DamageSkill("블레이드 토네이도", 720, 600+24*vEhc.getV(2,2), 7, cooltime = 12000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         #BladeTornadoFront = core.DamageSkill("블레이드 토네이도(전방)", 0, 600+24*vEhc.getV(2,2), 6, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)   #보통 1타
-        BladeTornadoSummon = core.SummonSkill("블레이드 토네이도(소환)", 0, 540, 450+18*vEhc.getV(2,2), 6 * 5, 2000, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #임의 딜레이, 미사용
-        BladeTornadoSummonMirrorImaging = core.SummonSkill("블레이드 토네이도(소환)(미러이미징)", 0, 540, (450+18*vEhc.getV(2,2)) * 0.7, 6 * 5, 2000, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #임의 딜레이, 미사용
+        BladeTornadoSummon = core.SummonSkill("블레이드 토네이도(소환)", 0, 540, 450+18*vEhc.getV(2,2), 6, 3000, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #임의 딜레이, 미사용
+        BladeTornadoSummonMirrorImaging = core.SummonSkill("블레이드 토네이도(소환)(미러이미징)", 0, 540, (450+18*vEhc.getV(2,2)) * 0.7, 6, 3000, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #임의 딜레이, 미사용
         
         ######   Skill Wrapper   ######
     
@@ -111,11 +110,13 @@ class JobGenerator(ck.JobGenerator):
         for sk in [PhantomBlow, AsuraTick, BladeStormTick]:
             sk.onAfter(Venom)
         
-        Asura.onAfter(core.RepeatElement(AsuraTick, int((10+3)*1000/300)))
-        BladeStorm.onAfter(core.RepeatElement(BladeStormTick, int((10000+3000)/210)))
+        Asura.onAfter(core.RepeatElement(AsuraTick, 28))
+        BladeStorm.onAfter(core.RepeatElement(BladeStormTick, 48))
         #BladeTornado.onAfter(BladeTornadoFront)
         BladeTornado.onAfter(BladeTornadoSummon)
         BladeTornado.onAfter(BladeTornadoSummonMirrorImaging)
+
+        SuddenRaid.onAfter(FinalCut.controller(0.2, "reduce_cooltime_p"))
 
         for sk in [PhantomBlow, SuddenRaid, FinalCut, FlashBang, AsuraTick, 
             BladeStorm, BladeStormTick, KarmaFury, BladeTornado]:
@@ -125,7 +126,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Booster, DarkSight, FinalCutBuff, EpicAdventure, FlashBangDebuff, HiddenBladeBuff, UltimateDarksight, ReadyToDie,
                     globalSkill.soul_contract()] +\
-                [FinalCut, FlashBang, Asura, BladeStorm, BladeTornado, SuddenRaid, KarmaFury] +\
+                [FinalCut, FlashBang, BladeTornado, SuddenRaid, KarmaFury, BladeStorm, Asura] +\
                 [SuddenRaidDOT, Venom, BladeTornadoSummon, BladeTornadoSummonMirrorImaging] +\
                 [] +\
                 [PhantomBlow])
