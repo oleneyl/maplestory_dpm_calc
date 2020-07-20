@@ -90,8 +90,7 @@ class JobGenerator(ck.JobGenerator):
         #소혼 장막을 은월이 시전해야함
         #소혼 장막: 최대 10명의 적을 150% 데미지로 4.8초 동안 지속 공격, 수호 정령이 소혼 장막을 시전 하는 동안 은월이 시전하는 소혼장막의 최종 데미지 700% 증가. 재사용 대기시간 60초
         # 최종 데미지 450 -> 700으로 수정
-        EnhanceSpiritLinkSummon_J_Buff = core.BuffSkill("수호 정령(소혼 장막)(버프)", 0, 4800, cooltime = -1, pdamage_indep = 700).wrap(core.BuffSkillWrapper)
-        EnhanceSpiritLinkSummon_J_Damage = core.DamageSkill("소혼 장막", 150, 200*5.5, 1).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
+        EnhanceSpiritLinkSummon_J_Damage = core.DamageSkill("소혼 장막", 150, 45, 5, modifier=core.CharacterModifier(pdamage_indep=700)).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
     
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20 * 4 / 3).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         #1중첩 럭다 재사용 50초 감소 / 방어력30% / 체엠 20% / 크리율15% / 뎀증20 / 경치30
@@ -152,7 +151,7 @@ class JobGenerator(ck.JobGenerator):
         
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                    EnhanceSpiritLinkSummon_J_Buff, EnhanceSpiritLink, LuckyDice, HerosOath, Frid, 
+                    EnhanceSpiritLink, LuckyDice, HerosOath, Frid, 
                     Overdrive, OverdrivePenalty, SoulConcentrate, DoubleBody, SoulTrapBuff,
                     globalSkill.soul_contract()] +\
                 [] +\
