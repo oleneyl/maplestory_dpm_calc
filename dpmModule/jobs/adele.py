@@ -65,8 +65,8 @@ class JobGenerator(ck.JobGenerator):
 
         오더의 칼 개수는 5으로 고정( 리스토어 한정 7)
         게더링-블로섬 연계는 게더링 5히트 / 블로섬 3히트를 가정함
-        크리에이션은 평균 4자루의 칼이 공격하는 것을 가정함 (= 최종뎀 15% 효과를 받지못함)
-
+        크리에이션은 평균 3자루의 칼이 공격하는 것을 가정함
+        
         코어 강화 순서
         디바이드 - 오더(그레이브) - 테리토리(트레드) - 블로섬(스콜) - 크리에이션(게더링) - 샤드 - 레조넌스
         인피니트 - 리스토어 - 루인 - 매서풀 - 오라웨폰 - (바오스)
@@ -74,7 +74,7 @@ class JobGenerator(ck.JobGenerator):
         '''
         GATHERING_HIT = 5
         BLOSSOM_HIT = 3
-        CREATION_HIT = 4
+        CREATION_HIT = 3
         ShardActive = core.DamageSkill("샤드(액티브)", 0, 80+30+115+225, 3 * 5).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper) # 자동사용만, 최종 450*3
         Shard = core.SummonSkill("샤드", 0, 8000, 80+30+115+225, 3 * 5, 99999999).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper) # 8초마다 자동시전
 
