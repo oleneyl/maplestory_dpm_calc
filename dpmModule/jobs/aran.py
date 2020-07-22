@@ -48,7 +48,7 @@ class JobGenerator(ck.JobGenerator):
             return (adrenaline_el.is_not_active() or (adrenaline_el.is_time_left(10*1000, 1)))
 
         ruleset = RuleSet()
-        ruleset.add_rule(InactiveRule('브랜디쉬 마하', '아드레날린 부스트'), RuleSet.BASE)
+        # ruleset.add_rule(InactiveRule('브랜디쉬 마하', '아드레날린 부스트'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('히어로즈 오쓰', '아드레날린 부스트'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('쓸만한 샤프 아이즈', '아드레날린 부스트'), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('소울 컨트랙트', '아드레날린 부스트', check_soul_contract_time), RuleSet.BASE)
@@ -126,6 +126,7 @@ class JobGenerator(ck.JobGenerator):
 
         # BrandishMaha = core.DamageSkill('브랜디쉬 마하', 1170, 600+vEhc.getV(2,2)*24, 15*2, cooltime=20*1000, modifier=core.CharacterModifier(boss_pdamage=20)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
         # 게더링캐쳐 캔슬 : 1170 -> 600
+        
         BrandishMaha = core.DamageSkill('브랜디쉬 마하', 600, 600+vEhc.getV(2,2)*24, 15*2, cooltime=20*1000, modifier=core.CharacterModifier(boss_pdamage=20)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
         GatheringCatcher = core.DamageSkill('게더링 캐쳐(캔슬)', 0, 170, 2).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
 
@@ -203,10 +204,10 @@ class JobGenerator(ck.JobGenerator):
         AdrenalineGenerator.onConstraint(core.ConstraintElement('아드레날린부스트가 불가능할때', AdrenalineBoost, AdrenalineBoost.is_not_active))
         AdrenalineGenerator.onAfter(AdrenalineBoost)
         return(BasicAttack, 
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), HerosOath,
                     Booster, SmashSwingIncr, SnowCharge, AdvancedComboAbility,
                     BlessingMaha, AdrenalineBoost, AdrenalineBoostEndDummy,
-                    AdrenalineGenerator, HerosOath,
+                    AdrenalineGenerator, 
                     Frid, InstallMaha, Combo, AuraWeaponCooltimeDummy, AuraWeaponBuff,
                     globalSkill.soul_contract()] +\
                 [SmashSwingHolder, BrandishMaha, BoostEndHuntersTargeting] +\
