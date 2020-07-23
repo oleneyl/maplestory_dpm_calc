@@ -89,6 +89,7 @@ def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False,
             template.cooltimeReduce = otherspec["cooltimereduce"]    
     
     template.apply_modifiers([spec])
+
     graph = gen.package_bare(template, useFullCore = False, v_builder = v_builder)
     sche = policy.AdvancedGraphScheduler(graph,
         policy.TypebaseFetchingPolicy(priority_list = [
@@ -97,9 +98,9 @@ def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False,
             core.DamageSkillWrapper
         ]), 
         [rules.UniquenessRule()] + gen.get_predefined_rules(rules.RuleSet.BASE)) #가져온 그래프를 토대로 스케줄러를 생성합니다.
-    analytics = core.Analytics(printFlag=True)  #데이터를 분석할 분석기를 생성합니다.
+    analytics = core.Analytics(printFlag=False)  #데이터를 분석할 분석기를 생성합니다.
     control = core.Simulator(sche, template, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
-    control.start_simulation(240*1000)
+    control.start_simulation(180*1000)
     
     if weaponAtt is None:
         weaponAtt = Absolab.WeaponFactory.getWeapon(maplejobs.weaponList[koJob], star = 17, elist = [0,0,0,9] ).att
