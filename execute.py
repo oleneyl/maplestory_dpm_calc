@@ -47,7 +47,7 @@ def main(argv):
         sys.exit(2)
 
     gen = IndividualDPMGenerator(JOB_NAME, UNION_PRESET[UNION_LEVEL])
-    print(JOB_NAME, gen.get_dpm(ulevel = 8000))
+    print(JOB_NAME, gen.get_dpm(ulevel = int(UNION_LEVEL)))
 
 
 if __name__ == '__main__':
