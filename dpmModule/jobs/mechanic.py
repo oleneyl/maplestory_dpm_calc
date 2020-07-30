@@ -80,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
         RoboFactoryBuff = core.BuffSkill("로봇 팩토리(버프)", 0, 30*1000*1.4, cooltime = -1, pdamage = 7).wrap(core.BuffSkillWrapper)
         
         BomberTime = core.BuffSkill("봄버 타임", 990, 10*1000, cooltime = 100*1000).wrap(core.BuffSkillWrapper)
-        DistortionField = core.SummonSkill("디스토션 필드", 690, 4000/30, 350, 2, 4000-1, cooltime = 8000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
+        DistortionField = core.SummonSkill("디스토션 필드", 690, 4000/15, 350, 2, 4000-1, cooltime = 8000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
     
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
@@ -88,8 +88,8 @@ class JobGenerator(ck.JobGenerator):
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
     
         RegistanceLineInfantry = core.SummonSkill("레지스탕스 라인 인팬트리", 360, 1000, (215+8*vEhc.getV(3, 3))*(2.08+combat*0.03), 9, 10*1000, cooltime = 25000).isV(vEhc,3, 3).wrap(core.SummonSkillWrapper) # 메카닉은 인팬트리에 로봇 마스터리 최종뎀이 적용됨
-        MultipleOptionGattling = core.SummonSkill("멀티플 옵션(개틀링)", 780, 1500, 200+8*vEhc.getV(2,1), 6, (115+6*vEhc.getV(2,1))*1000, cooltime = 200 * 1000).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
-        MultipleOptionMissle = core.SummonSkill("멀티플 옵션(미사일)", 0, 8000, 350+10*vEhc.getV(2,1), 24, (115+6*vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
+        MultipleOptionGattling = core.SummonSkill("멀티플 옵션(개틀링)", 780, 1901, (200+8*vEhc.getV(2,1))*(2.08+combat*0.03), 6, (75+2*vEhc.getV(2,1))*1000, cooltime = 200 * 1000).isV(vEhc,2,1).wrap(core.SummonSkillWrapper) # 원래 공격주기는 1500이나, 미사일로 인해 손실되는 타수를 보정하기 위해 1901로 기입함.
+        MultipleOptionMissle = core.SummonSkill("멀티플 옵션(미사일)", 0, 8000, (350+10*vEhc.getV(2,1))*(2.08+combat*0.03), 24, (75+2*vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         
         MicroMissle = core.DamageSkill("마이크로 미사일 컨테이너", 540, 375+17*vEhc.getV(0,0), (30 + vEhc.getV(0,0) // 3) * 5, cooltime = 25000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         BusterCall_ = core.DamageSkill("메탈아머 전탄발사", 8500/37, 400+16*vEhc.getV(4,4), 11).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
