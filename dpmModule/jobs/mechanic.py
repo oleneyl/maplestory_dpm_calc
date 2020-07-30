@@ -87,7 +87,7 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.get_weapon_att("건")
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
     
-        RegistanceLineInfantry = core.SummonSkill("레지스탕스 라인 인팬트리", 360, 1000, (215+8*vEhc.getV(3, 3))*(2.08+combat*0.03), 9, 10*1000, cooltime = 25000).isV(vEhc,3, 3).wrap(core.SummonSkillWrapper)
+        RegistanceLineInfantry = core.SummonSkill("레지스탕스 라인 인팬트리", 360, 1000, (215+8*vEhc.getV(3, 3))*(2.08+combat*0.03), 9, 10*1000, cooltime = 25000).isV(vEhc,3, 3).wrap(core.SummonSkillWrapper) # 메카닉은 인팬트리에 로봇 마스터리 최종뎀이 적용됨
         MultipleOptionGattling = core.SummonSkill("멀티플 옵션(개틀링)", 780, 1500, 200+8*vEhc.getV(2,1), 6, (115+6*vEhc.getV(2,1))*1000, cooltime = 200 * 1000).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         MultipleOptionMissle = core.SummonSkill("멀티플 옵션(미사일)", 0, 8000, 350+10*vEhc.getV(2,1), 24, (115+6*vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         
