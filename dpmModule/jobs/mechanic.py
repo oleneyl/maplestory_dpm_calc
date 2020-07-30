@@ -91,7 +91,7 @@ class JobGenerator(ck.JobGenerator):
         MultipleOptionGattling = core.SummonSkill("멀티플 옵션(개틀링)", 780, 1500, 200+8*vEhc.getV(2,1), 6, (115+6*vEhc.getV(2,1))*1000, cooltime = 200 * 1000).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         MultipleOptionMissle = core.SummonSkill("멀티플 옵션(미사일)", 0, 8000, 350+10*vEhc.getV(2,1), 24, (115+6*vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         
-        MicroMissle = core.DamageSkill("마이크로 미사일 컨테이너", 540, 375+17*vEhc.getV(0,0), (30+10)*5, cooltime = 25000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        MicroMissle = core.DamageSkill("마이크로 미사일 컨테이너", 540, 375+17*vEhc.getV(0,0), (30 + vEhc.getV(0,0) // 3) * 5, cooltime = 25000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         BusterCall_ = core.DamageSkill("메탈아머 전탄발사", 8500/37, 400+16*vEhc.getV(4,4), 11).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         BusterCallInit = core.DamageSkill("메탈아머 전탄발사(시전)", 1500, 0, 0, cooltime = 200*1000).wrap(core.DamageSkillWrapper) # 선딜레이 1.5초
         BusterCallBuff = core.BuffSkill("메탈아머 전탄발사(버프)", 0, 8500, cooltime = 200*1000).isV(vEhc,4,4).wrap(core.BuffSkillWrapper) # spentime에 넣으면 됨.
