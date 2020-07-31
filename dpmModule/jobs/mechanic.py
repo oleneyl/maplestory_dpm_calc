@@ -63,21 +63,20 @@ class JobGenerator(ck.JobGenerator):
         #로디드 데미지 고정.
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 40*1/72 + 30*1/6 + 20*(59/72)).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
         
-        #로봇들 :: 로봇당 총뎀6%
-        Opengate = core.SummonSkill("오픈 게이트:GX-9", 600, 300*1000, 0,0,300*1000*1.4, rem = True).wrap(core.SummonSkillWrapper)#임의 딜레이
+        #로봇들 :: 로봇당 총뎀6%, 어빌리티 적용 시 7%
         
-        Robolauncher = core.SummonSkill("로봇 런처(:RM7)", 630, 1000, (250+135)*(2.08+combat*0.03), 1, 60*1000*1.4, rem=True).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        Robolauncher = core.SummonSkill("로봇 런처(:RM7)", 630, 1000, (250+135)*(2.08+combat*0.03), 1, 60*1000*(1+chtr.summonRemain+0.4)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         RobolauncherFinal = core.DamageSkill("로봇 런처(:RM7)(폭발)", 0, 400*(2.08+combat*0.03), 1, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        RobolauncherBuff = core.BuffSkill("로봇 런처(:RM7)(버프)", 0, 60*1000*1.4, cooltime = -1, pdamage = 7).wrap(core.BuffSkillWrapper)
+        RobolauncherBuff = core.BuffSkill("로봇 런처(:RM7)(버프)", 0, 60*1000*(1+chtr.summonRemain+0.4), cooltime = -1, pdamage = 7).wrap(core.BuffSkillWrapper)
         #MagneticField = core.SummonSkill("마그네틱 필드", ?, ?, 200, 60*1000, cooltime = 180*1000) 자폭 550% V.getEhc(2, vEnhance[0])
         
-        SupportWaver = core.SummonSkill("서포트 웨이버", 630, 80000*1.4, 0, 0, 80*1000*1.4).wrap(core.SummonSkillWrapper)
-        SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*1.4, pdamage_indep=16, pdamage = 7, cooltime = -1, armor_ignore=10).wrap(core.BuffSkillWrapper)    #하이퍼(+5), 소환수직속 영향받게..
+        SupportWaver = core.SummonSkill("서포트 웨이버", 630, 80000*(1+chtr.summonRemain+0.4), 0, 0, 80*1000*(1+chtr.summonRemain+0.4)).wrap(core.SummonSkillWrapper)
+        SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*(1+chtr.summonRemain+0.4), pdamage_indep=16, pdamage = 7, cooltime = -1, armor_ignore=10).wrap(core.BuffSkillWrapper)
         SupportWaverFinal = core.DamageSkill("서포트 웨이버(폭발)", 0, 1100*(2.08+combat*0.03), 1, cooltime = -1).wrap(core.DamageSkillWrapper)
         
-        RoboFactory = core.SummonSkill("로봇 팩토리", 630, 3000, 500*(2.08+combat*0.03), 3, 30*1000*1.4, cooltime=60*1000).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
+        RoboFactory = core.SummonSkill("로봇 팩토리", 630, 3000, 500*(2.08+combat*0.03), 3, 30*1000*(1+chtr.summonRemain+0.4), cooltime=60*1000).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
+        RoboFactoryBuff = core.BuffSkill("로봇 팩토리(버프)", 0, 30*1000*(1+chtr.summonRemain+0.4), cooltime = -1, pdamage = 7).wrap(core.BuffSkillWrapper)
         RoboFactoryFinal = core.DamageSkill("로봇 팩토리(폭발)", 0, 1000*(2.08+combat*0.03), 1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
-        RoboFactoryBuff = core.BuffSkill("로봇 팩토리(버프)", 0, 30*1000*1.4, cooltime = -1, pdamage = 7).wrap(core.BuffSkillWrapper)
         
         BomberTime = core.BuffSkill("봄버 타임", 990, 10*1000, cooltime = 100*1000).wrap(core.BuffSkillWrapper)
         DistortionField = core.SummonSkill("디스토션 필드", 690, 4000/15, 350, 2, 4000-1, cooltime = 8000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
@@ -126,13 +125,13 @@ class JobGenerator(ck.JobGenerator):
         BusterCall.onAfter(BusterCallEnd)
         BusterCallInit.onAfters([BusterCall, BusterCallBuff])
         
-        Robolauncher.onAfter(RobolauncherFinal.controller(84000))
+        Robolauncher.onAfter(RobolauncherFinal.controller(60*1000*(1+chtr.summonRemain+0.4)))
         Robolauncher.onAfter(RobolauncherBuff.controller(1))
         
+        SupportWaver.onAfter(SupportWaverFinal.controller(80*1000*(1+chtr.summonRemain+0.4)))
         SupportWaver.onAfter(SupportWaverBuff.controller(1))
-        SupportWaver.onAfter(SupportWaverFinal.controller(112000))
         
-        RoboFactory.onAfter(RoboFactoryFinal.controller(1))
+        RoboFactory.onAfter(RoboFactoryFinal.controller(30*1000*(1+chtr.summonRemain+0.4)))
         RoboFactory.onAfter(RoboFactoryBuff.controller(1))
 
         BusterCallBuff.protect_from_running()
