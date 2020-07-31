@@ -63,6 +63,7 @@ class JobGenerator(ck.JobGenerator):
         
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝", stat_main = 30, stat_sub = 30)
         QuickserviceMind = core.InformedCharacterModifier("퀵서비스 마인드", att = 10, crit_damage  =5, crit = 10)
+        Weakpoint = core.InformedCharacterModifier("위크포인트 컨버징 어택", crit=4, crit_damage=20) # 모법링크, 패시브 출혈 2스택
         
         BasicDetection = core.InformedCharacterModifier("베이직 디텍션", armor_ignore = 20)
         
@@ -71,14 +72,14 @@ class JobGenerator(ck.JobGenerator):
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(self.vEhc, 2, 3)
         
         return [CollectingForLeap, PhisicalTraining,
-                                    QuickserviceMind, BasicDetection, WeaponMastery, QuickserviceMind_II, ReadyToDiePassive]
+                                    QuickserviceMind, Weakpoint, BasicDetection, WeaponMastery, QuickserviceMind_II, ReadyToDiePassive]
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 20, crit_damage = 20, pdamage = 20)
                               
     def get_not_implied_skill_list(self):
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 75)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)	#오더스 기본적용!
+        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)	#오더스 기본적용!
         
         return [WeaponConstant, Mastery]		                      
 
@@ -145,9 +146,9 @@ class JobGenerator(ck.JobGenerator):
         
         SummonReleasingBoom = core.DamageSkill("서먼 릴리징 봄", 420, 535, 6, cooltime = 8000, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         SummonStrikingBrick = core.DamageSkill("서먼 스트라이킹 브릭", 720, 485, 7, cooltime = 8000, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        SummonBeatingNeedlebat_1 = core.DamageSkill("서먼 비팅 니들배트(1타)", 360, 450, 6, modifier = core.CharacterModifier(pdamage = 25 + 20, boss_pdamage = 20, pdamage_indep = 15), cooltime = 12000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        SummonBeatingNeedlebat_2 = core.DamageSkill("서먼 비팅 니들배트(2타)", 420, 555, 7, modifier = core.CharacterModifier(pdamage = 35, boss_pdamage = 20, pdamage_indep = 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        SummonBeatingNeedlebat_3 = core.DamageSkill("서먼 비팅 니들배트(3타)", 600, 715, 8, modifier = core.CharacterModifier(pdamage = 45, boss_pdamage = 20, pdamage_indep = 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SummonBeatingNeedlebat_1 = core.DamageSkill("서먼 비팅 니들배트(1타)", 360, 450, 6, modifier = core.CharacterModifier(pdamage = 40 + 20, boss_pdamage = 20, pdamage_indep = 15), cooltime = 12000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SummonBeatingNeedlebat_2 = core.DamageSkill("서먼 비팅 니들배트(2타)", 420, 555, 7, modifier = core.CharacterModifier(pdamage = 40 + 20, boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SummonBeatingNeedlebat_3 = core.DamageSkill("서먼 비팅 니들배트(3타)", 600, 715, 8, modifier = core.CharacterModifier(pdamage = 50 + 20, boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         SummonBeatingNeedlebat_Honmy = core.BuffSkill("서먼 비팅 니들배트(혼미)", 0, 15000, crit=2, crit_damage = 10, cooltime = -1).wrap(core.BuffSkillWrapper)
           
         VenomBurst = core.SummonSkill("베놈 버스트", 0, 1000, 160+6*vEhc.getV(4,4), 1, 99999999).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
@@ -212,7 +213,7 @@ class JobGenerator(ck.JobGenerator):
         
         #샷건-클로
         ShootgunClawCombo = core.DamageSkill('샷건-클로', 0, 0, 0).wrap(core.DamageSkillWrapper)
-        for i in [ChainArts_Stroke_1, SummonShootingShotgun, SummonStretchingClaw, ChainArts_Stroke_2]:
+        for i in [ChainArts_Stroke_1, SummonShootingShotgun, SummonStretchingClaw]:
             ShootgunClawCombo.onAfter(i)
         
         for c in [core.ConstraintElement('샷건', SummonShootingShotgun, SummonShootingShotgun.is_available),
@@ -221,7 +222,7 @@ class JobGenerator(ck.JobGenerator):
         
         #시미터 - 체이스
         SimiterChaseCombo = core.DamageSkill('시미터 - 체이스', 0, 0, 0).wrap(core.DamageSkillWrapper)
-        for i in [ChainArts_Stroke_1, SummonCuttingSimiter, ChainArts_Chais, ChainArts_Stroke_2]:
+        for i in [ChainArts_Stroke_1, SummonCuttingSimiter, ChainArts_Chais]:
             SimiterChaseCombo.onAfter(i)
             
         for c in [core.ConstraintElement('시미터', SummonCuttingSimiter, SummonCuttingSimiter.is_available)]:
@@ -229,7 +230,7 @@ class JobGenerator(ck.JobGenerator):
             
         # 나이프
         KnifeCombo = core.DamageSkill("나이프", 0, 0, 0).wrap(core.DamageSkillWrapper)
-        for i in [ChainArts_Stroke_1, SummonSlachingKnife, ChainArts_Stroke_2]:
+        for i in [ChainArts_Stroke_1, SummonSlachingKnife]:
             KnifeCombo.onAfter(i)
 
         for c in [core.ConstraintElement('나이프', SummonSlachingKnife, SummonSlachingKnife.is_available)]:
@@ -237,7 +238,7 @@ class JobGenerator(ck.JobGenerator):
             
         # 봄-브릭
         BommBrickCombo = core.DamageSkill("봄-브릭", 0, 0, 0).wrap(core.DamageSkillWrapper)
-        for i in [ChainArts_Stroke_1, SummonReleasingBoom, SummonStrikingBrick, ChainArts_Stroke_2]:
+        for i in [ChainArts_Stroke_1, SummonReleasingBoom, SummonStrikingBrick]:
             BommBrickCombo.onAfter(i)
             
         for c in [core.ConstraintElement('봄', SummonReleasingBoom, SummonReleasingBoom.is_available),
@@ -252,7 +253,7 @@ class JobGenerator(ck.JobGenerator):
         #윙대거-배트
         WingDaggerBatCombo = core.DamageSkill("윙대거-배트", 0, 0, 0).wrap(core.DamageSkillWrapper)
         for i in [ChainArts_Stroke_1, SummonThrowingWingdaggerInit, ChainArts_Stroke_1
-                  , SummonBeatingNeedlebat_1, ChainArts_Stroke_2]:
+                  , SummonBeatingNeedlebat_1]:
             WingDaggerBatCombo.onAfter(i)
 
         for c in [core.ConstraintElement('윙대거', SummonThrowingWingdagger, SummonThrowingWingdagger.is_available),
