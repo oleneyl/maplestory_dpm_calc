@@ -54,7 +54,7 @@ class JobGenerator(ck.JobGenerator):
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''하이퍼스킬
         트리거-리인포스
-        트리거-보스킬러
+        노빌리티-실드 리인포스
         레조넌스-엑스트라 힐링
         테리토리-퍼시스트
         블로섬-쿨타임 리듀스
@@ -65,42 +65,42 @@ class JobGenerator(ck.JobGenerator):
 
         오더의 칼 개수는 5으로 고정( 리스토어 한정 7)
         게더링-블로섬 연계는 게더링 5히트 / 블로섬 3히트를 가정함
-        크리에이션은 평균 4자루의 칼이 공격하는 것을 가정함 (= 최종뎀 15% 효과를 받지못함)
+        크리에이션은 평균 3자루의 칼이 공격하는 것을 가정함
 
         코어 강화 순서
-        디바이드 - 오더(그레이브) - 테리토리(트레드) - 블로섬(스콜) - 크리에이션(게더링) - 샤드 - 레조넌스
+        디바이드 - 오더(그레이브) - 테리토리(트레드) - 블로섬(스콜) - 임페일(레조넌스/마커) - 크리에이션(게더링) - 샤드 - 레조넌스
         인피니트 - 리스토어 - 루인 - 매서풀 - 오라웨폰 - (바오스)
 
         '''
         GATHERING_HIT = 5
         BLOSSOM_HIT = 3
-        CREATION_HIT = 4
-        ShardActive = core.DamageSkill("샤드(액티브)", 0, 80+30+115+225, 3 * 5).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper) # 자동사용만, 최종 450*3
-        Shard = core.SummonSkill("샤드", 0, 8000, 80+30+115+225, 3 * 5, 99999999).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper) # 8초마다 자동시전
+        CREATION_HIT = 3
+        ShardActive = core.DamageSkill("샤드(액티브)", 0, 80+30+115+225, 3 * 5).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) # 자동사용만, 최종 450*3
+        Shard = core.SummonSkill("샤드", 0, 8000, 80+30+115+225, 3 * 5, 99999999).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper) # 8초마다 자동시전
 
         # Ether = core.StackSkillWrapper('에테르', 300)
-        Resonance = core.DamageSkill("레조넌스", 690, (120+125+265) * (1.15**6), 6, cooltime=10*1000).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 900ms, 스택 유지를 위해 10초마다 사용함
+        Resonance = core.DamageSkill("레조넌스", 690, (120+125+265) * (1.15**6), 6, cooltime=10*1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 900ms, 스택 유지를 위해 10초마다 사용함
 
         ResonanceStack = core.BuffSkill('레조넌스(스택)', 0, 30*1000, cooltime=-1, pdamage_indep=15, armor_ignore=15).wrap(core.BuffSkillWrapper) # 최종뎀 5, 방무 5, 최대3회. 상시 중첩으로 가정
 
         #12초마다 발동
-        Creation = core.SummonSkill('크리에이션', 0, 9500 - 8000, 200+240+270, CREATION_HIT, 99999999).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper) # 직접시전시 270ms 기본공속
+        Creation = core.SummonSkill('크리에이션', 0, 9500 - 8000, 200+240+270, CREATION_HIT, 99999999).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper) # 직접시전시 270ms 기본공속
 
         Territory = core.SummonSkill('테리토리', 420, 405, 100+300, 4, 7000+4000, rem=False, cooltime=30*1000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper) # 27회 타격, 클라공속540ms
         TerritoryEnd = core.DamageSkill('테리토리(종료)', 0, 550+300, 12).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        Gathering = core.DamageSkill('게더링', 0, 260+300, 4 * GATHERING_HIT, cooltime=12*1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 칼 불러오기. 블라섬과 연계됨, 딜레이 0 가정
+        Gathering = core.DamageSkill('게더링', 0, 260+300, 4 * GATHERING_HIT, cooltime=12*1000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper) # 칼 불러오기. 블라섬과 연계됨, 딜레이 0 가정
 
         Order = core.SummonSkill('오더', 0, 1140, 240+120, 2 * 5, 99999999).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper) # 15% 에테르 결정, 시전딜레이 없음으로 가정, 공격주기 1140ms(인피니트로부터 추정됨)
 
-        Divide = core.DamageSkill('디바이드', 600, 375, 6, modifier=core.CharacterModifier(pdamage=20, boss_pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #트리거 스킬, 클라공속 780ms
+        Divide = core.DamageSkill('디바이드', 600, 375, 6, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #트리거 스킬, 클라공속 780ms
 
         Grave = core.DamageSkill('그레이브', 630, 800, 10, cooltime=-1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) #한 번만 사용, 클라공속 840ms
         GraveDebuff = core.BuffSkill('그레이브(디버프)', 0, 999999999, pdamage=20, armor_ignore=10, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         Blossom = core.DamageSkill('블로섬', 300, 650 * 0.75, 8 * BLOSSOM_HIT, cooltime=20*1000*0.75).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 50%결정. 클라공속 600ms
 
-        Marker = core.DamageSkill('마커', 690, 1000 * (4), 3 * (1), cooltime=60*1000).wrap(core.DamageSkillWrapper) # 최종뎀 300% 증가, 임의위치 조각 5개, 1히트, 결정 5개, 클라공속 900ms
+        Marker = core.DamageSkill('마커', 690, 1000 * (4), 3 * (1), cooltime=60*1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 최종뎀 300% 증가, 임의위치 조각 5개, 1히트, 결정 5개, 클라공속 900ms
         Scool = core.DamageSkill('스콜', 690, 1000, 12, cooltime=180*1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) #바인드. 클라공속 900ms
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60*1000, pdamage = 10, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
 
