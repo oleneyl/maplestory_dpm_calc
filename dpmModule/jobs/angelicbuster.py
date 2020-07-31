@@ -46,7 +46,7 @@ class JobGenerator(ck.JobGenerator):
         하이퍼 : 소울시커-메이크업/리인포스, 피나투라페투치아-쿨리듀스
         트리니티 - 리인포스/스플릿데미지
         
-        스포트라이트 히트 3, 공속 1500ms
+        스포트라이트 히트 3, 공격주기 800ms
         패밀리어 공격속도 2.5초당 1타
         
         95% 재생성, 최대6회 : 1 + 0.95 + 0.95*0.95 + ... + (6타) = 6.03타
@@ -71,15 +71,15 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("리리컬 크로스", 0, 200*1000).wrap(core.BuffSkillWrapper)
         
         SoulContract = core.BuffSkill("소울 컨트랙트", 600, 10000, rem = True, red = True, cooltime = 90000, pdamage = 90).wrap(core.BuffSkillWrapper)
-        SoulSeekerExpert = core.DamageSkill("소울 시커", 0, 320 * 0.75, 1 * 0.35 * 6.03, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        SoulSeekerExpert_PR = core.DamageSkill("소울 시커(프라이멀 로어)", 0, 320 * 0.75, 1 * 0.5 * 6.03, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        SoulSeekerExpert = core.DamageSkill("소울 시커", 0, 320 * 0.75, 1 * 0.35 * 12.066, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        SoulSeekerExpert_PR = core.DamageSkill("소울 시커(소울 익절트)", 0, 320 * 0.75, 1 * 0.5 * 12.066, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
-        Trinity_1 = core.DamageSkill("트리니티", 470, 650, 2+1, modifier = core.CharacterModifier(pdamage =20, armor_ignore=20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(1타)")
-        Trinity_2 = core.DamageSkill("트리니티(2타)", 470, 650, 3+1, modifier = core.CharacterModifier(pdamage =20, armor_ignore=20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(2타)")
-        Trinity_3 = core.DamageSkill("트리니티(3타)", 470-340, 650, 4+1, modifier = core.CharacterModifier(pdamage =20, armor_ignore=20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(3타)")
+        Trinity_1 = core.DamageSkill("트리니티", 470, 650, 2+1, modifier = core.CharacterModifier(pdamage =20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(1타)")
+        Trinity_2 = core.DamageSkill("트리니티(2타)", 470, 650, 3+1, modifier = core.CharacterModifier(pdamage =20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(2타)")
+        Trinity_3 = core.DamageSkill("트리니티(3타)", 470-340, 650, 4+1, modifier = core.CharacterModifier(pdamage =20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(3타)")
         
         FinaturaFettuccia = core.DamageSkill("피니투라 페투치아", 1020, 4000, 1, red = True, cooltime = 40000*0.75).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        FinaturaFettucciaBuff = core.BuffSkill("피니투라 페투치아(버프)", 0, 20000, cooltime = -1, pdamage_indep=25, armor_ignore=15).wrap(core.BuffSkillWrapper)
+        FinaturaFettucciaBuff = core.BuffSkill("피니투라 페투치아(버프)", 0, 20000, cooltime = -1, pdamage_indep=25).wrap(core.BuffSkillWrapper)
         
         SoulGaze = core.BuffSkill("소울 게이즈", 1080, 180000, rem = True, crit_damage = 45).wrap(core.BuffSkillWrapper)
         
@@ -98,7 +98,7 @@ class JobGenerator(ck.JobGenerator):
     
         EnergyBurst = core.DamageSkill("에너지 버스트", 900, (600+20*vEhc.getV(4,4)) * 3, 12, red = True, cooltime = 120 * 1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         
-        SpotLight = core.SummonSkill("스포트라이트", 990, 1800, 400+16*vEhc.getV(0,0), 3 * SPOTLIGHTHIT, 30000, cooltime = 120 * 1000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        SpotLight = core.SummonSkill("스포트라이트", 990, 800, 400+16*vEhc.getV(0,0), 3 * SPOTLIGHTHIT, 30000, cooltime = 120 * 1000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         SpotLightBuff = core.BuffSkill("스포트라이트(버프)", 0, 30000, cooltime = -1, crit = (10+int(0.2*vEhc.getV(0,0)))*SPOTLIGHTHIT,
                                                                                 pdamage_indep = (3+(vEhc.getV(0,0)//10))*SPOTLIGHTHIT).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
