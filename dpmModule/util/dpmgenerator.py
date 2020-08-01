@@ -34,8 +34,18 @@ class IndividualDPMGenerator():
         gen = (self.supplier).JobGenerator()
         v_builder = core.AlwaysMaximumVBuilder()
         graph = gen.package(target, v_builder, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
-        sche = policy.AdvancedGraphScheduler(graph,
-            policy.PriorityFetchingPolicy(priority_list = gen.get_skill_priority()), 
+        priority_list = gen.get_skill_priority()
+        if priority_list is not None:
+            sche = policy.AdvancedGraphScheduler(graph,
+                policy.PriorityFetchingPolicy(priority_list = priority_list), 
+                [rules.UniquenessRule()] + gen.get_predefined_rules(rules.RuleSet.BASE)) #가져온 그래프를 토대로 스케줄러를 생성합니다.
+        else:
+            sche = policy.AdvancedGraphScheduler(graph,
+            policy.TypebaseFetchingPolicy(priority_list = [
+                core.BuffSkillWrapper,
+                core.SummonSkillWrapper,
+                core.DamageSkillWrapper
+            ]), 
             [rules.UniquenessRule()] + gen.get_predefined_rules(rules.RuleSet.BASE)) #가져온 그래프를 토대로 스케줄러를 생성합니다.
         analytics = core.Analytics(printFlag=printFlag)  #데이터를 분석할 분석기를 생성합니다.
         if printFlag:

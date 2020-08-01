@@ -213,6 +213,9 @@ class JobGenerator():
         for _mdf in self._passive_skill_list:
             passive_modifier += _mdf        
         return passive_modifier
+
+    def get_skill_priority(self):
+        return
     
     def package_bare(self, chtr, v_builder, useFullCore = False, vEnhanceGenerateFlag = None):
         self.vEhc = v_builder.build_enhancer(chtr, self)
