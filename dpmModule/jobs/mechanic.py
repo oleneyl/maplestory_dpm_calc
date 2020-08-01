@@ -47,6 +47,12 @@ class JobGenerator(ck.JobGenerator):
         MetalArmorTank = core.InformedCharacterModifier("메탈아머:탱크",crit=30)
         
         return [WeaponConstant, Mastery, MetalArmorTank]
+
+    def get_skill_priority(self):
+        return ['메이플 용사', '쓸만한 샤프 아이즈', '부스터', '로디드 다이스', '호밍 미사일(더미)',
+            '서포트 웨이버', '서포트 웨이버(버프)', '로봇 팩토리', '로봇 팩토리(버프)', '로봇 런처(:RM7)', '로봇 런처(:RM7)(버프)',
+            '멀티플 옵션(개틀링)', '윌 오브 리버티', '오버 드라이브', '오버 드라이브(페널티)', '디스토션 필드', '소울 컨트랙트',
+            '마이크로 미사일 컨테이너', '레지스탕스 라인 인팬트리', '봄버 타임', '메탈아머 전탄발사(시전)', '매시브 파이어']
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''

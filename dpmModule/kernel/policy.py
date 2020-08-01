@@ -214,7 +214,21 @@ class TypebaseFetchingPolicy(FetchingPolicy):
     def get_sorted(self):
         return [i for i in self.sorted]
     
+class PriorityFetchingPolicy(FetchingPolicy):
+    def __init__(self, priority_list):
+        super(PriorityFetchingPolicy, self).__init__()
+        self.priority_list = priority_list
 
+    def __call__(self, graph):
+        super(PriorityFetchingPolicy, self).__call__(graph)
+        self.sorted = []
+        ids = list(map(lambda x: x._id, self.target))
+        for skill_name in self.priority_list:
+            self.sorted += [self.target[ids.index(skill_name)]]
+        return self
+    
+    def get_sorted(self):
+        return [i for i in self.sorted]
 
 class AbstractRule():
     '''Rule defines given element will be aceepted or not. This concept is somewhat simmillar with Constraint,
