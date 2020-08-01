@@ -6,6 +6,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, ConcurrentRunRule, ReservationRule
 from . import globalSkill
 from .jobclass import resistance
 from .jobbranch import pirates
@@ -47,7 +48,13 @@ class JobGenerator(ck.JobGenerator):
         MetalArmorTank = core.InformedCharacterModifier("메탈아머:탱크",crit=30)
         
         return [WeaponConstant, Mastery, MetalArmorTank]
-        
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(ConcurrentRunRule('메탈아머 전탄발사(시전)', '봄버 타임'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('봄버 타임', '소울 컨트랙트'), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule('소울 컨트랙트', '봄버 타임'), RuleSet.BASE)
+        return ruleset
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         코강 순서:
