@@ -20,7 +20,7 @@ class MesoStack(core.DamageSkillWrapper, core.StackSkillWrapper):
         stack = self.stack
         self.stack = 0
         # 확인 필요
-        return core.ResultObject(0, mdf.copy(),  dmg, sname = self._id, spec = 'deal', hit = 2 * stack)
+        return core.ResultObject(0, mdf.copy(),  dmg * (2 * stack), sname = self._id, spec = 'deal', hit = 2 * stack)
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):

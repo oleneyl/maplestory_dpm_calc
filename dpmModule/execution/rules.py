@@ -2,6 +2,18 @@ from dpmModule.kernel.policy import AbstractRule
 from collections import defaultdict
 from dpmModule.kernel.core import BuffSkillWrapper, DamageSkillWrapper, SummonSkillWrapper
 
+class ConditionRule(AbstractRule):
+    def __init__(self, state_element, checking_element, check_function):
+        self._state_element_name = state_element
+        self._checking_element_name = checking_element
+        self._check_function = check_function
+
+    def get_related_elements(self, reference_graph):
+        return [reference_graph.get_element(self._state_element_name)]
+
+    def check(self, caller, reference_graph, context = None):
+        return self._check_function(reference_graph.get_element(self._checking_element_name))
+
 class UniquenessRule(AbstractRule):
     def get_related_elements(self, reference_graph):
         return reference_graph.filter_elements(lambda x:isinstance(x, BuffSkillWrapper)) +\

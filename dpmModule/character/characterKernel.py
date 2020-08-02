@@ -5,6 +5,7 @@ from ..item.ItemKernel import Item
 from ..status.ability import Ability_tool, Ability_grade
 from ..kernel.graph import GlobalOperation, initialize_global_properties, _unsafe_access_global_storage
 from ..kernel import policy
+
 MDF = CharacterModifier
 '''Clas AbstractCharacter : Basic template for build specific User. User is such object that contains
 - Items
@@ -145,7 +146,7 @@ class JobGenerator():
         return
 
     def get_ruleset(self):
-        return []
+        return
 
     def get_predefined_rules(self, rule_type):
         ruleset = self.get_ruleset()
@@ -216,6 +217,9 @@ class JobGenerator():
     def package_bare(self, chtr, v_builder, useFullCore = False, vEnhanceGenerateFlag = None):
         self.vEhc = v_builder.build_enhancer(chtr, self)
         self.chtr = chtr
+        
+        # Since given character specification already imply both option; ignore these two.
+
         self.build_not_implied_skill_list()
         chtr.apply_modifiers([self.get_passive_skill_modifier()])
         

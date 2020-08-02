@@ -23,7 +23,7 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(MutualRule('풍마수리검', '스프레드 스로우'), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule('얼티밋 다크사이트', '스프레드 스로우'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('얼티밋 다크 사이트', '스프레드 스로우'), RuleSet.BASE)
 
 
         return ruleset

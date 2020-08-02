@@ -250,13 +250,13 @@ def getU4000CharacterTemplate(_type):
     link = LinkSkill.get_full_link()
     template = ichar(modifierlist = [link], level = 215)
     
-    template.add_summary("에디셔널 잠재능력 없음")
+    template.add_summary("에디셔널 잠재능력: 없음")
 
     weaponAPtnl = MDF()
     subAPtnl = MDF()
     emblemAPtnl = MDF()
 
-    template.add_summary("방어구/장신구 에픽9%, 추옵 60급, 스타포스 10성")    
+    template.add_summary("방어구/장신구: 에픽9%, 추옵 60급, 스타포스 10성")    
     armorPtnl = MDF(pstat_main = 9)
     armorBonus = MDF(pstat_main = 6, pstat_sub = 6)
     armorStar = 10
@@ -265,11 +265,12 @@ def getU4000CharacterTemplate(_type):
     accBonus = MDF(stat_main = 60)
     accStar = 10
     
-    template.add_summary("무기 스타포스 10성, 3추옵")
+    template.add_summary("무기: 스타포스 10성, 3추옵")
     weaponStar = 10
     bonusAttIndex = 3
 
-    template.add_summary("장신구 : 보장9셋, 방어구 : 여제4셋 + 카루타 4셋")
+    template.add_summary("장신구: 보장9셋")
+    template.add_summary("방어구: 여제4셋, 카루타 4셋")
     template.add_items_with_id(BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, star = accStar))
     template.add_items_with_id(RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar))
     
@@ -286,7 +287,7 @@ def getU4000CharacterTemplate(_type):
     template.add_item_with_id("weapon", RootAbyss.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ))
     #print(template.itemlist["weapon"].att)
     
-    template.add_summary("킹오루 / 공마3훈장 / 하트X / 펫공 X")
+    template.add_summary("기타: 킹오루, 공마3훈장, 하트X, 펫공 X")
     template.add_item_with_id("medal", Else.get_medal(3))
     template.add_item_with_id("title", Else.KingOfRootAbyss.copy())
     #template.add_item_with_id("heart", Else.get_heart())
@@ -294,7 +295,7 @@ def getU4000CharacterTemplate(_type):
     
     template.apply_modifiers([Empress.Factory.getSetOption(4), RootAbyss.Factory.getSetOption(4), BossAccesory.Factory.getSetOption(9)])
     
-    template.add_summary("아케인포스 240")
+    template.add_summary("아케인포스: 240")
     template.apply_modifiers([MDF(stat_main_fixed = 2400)])
     
     return template
@@ -308,7 +309,7 @@ def getU5000CharacterTemplate(_type):
     subAPtnl = MDF()
     emblemAPtnl = MDF()
 
-    template.add_summary("방어구/장신구 에픽9%, 추옵 70급, 스타포스 10성, 에디 공10")   
+    template.add_summary("방어구/장신구: 에픽9%, 추옵 70급, 스타포스 10성, 에디 공10")   
     armorAPtnl = MDF(att = 10)    
     armorPtnl = MDF(pstat_main = 9)
     armorBonus = MDF(pstat_main = 5, pstat_sub = 5, stat_main = 20)
@@ -319,11 +320,11 @@ def getU5000CharacterTemplate(_type):
     accBonus = MDF(stat_main = 70)
     accStar = 10
     
-    template.add_summary("무기 스타포스 12성, 2추옵")
+    template.add_summary("무기: 스타포스 12성, 2추옵")
     weaponStar = 12
     bonusAttIndex = 2
-
-    template.add_summary("장신구 : 보장9셋, 방어구 : 앱솔5셋 + 카루타 3셋")
+    template.add_summary("장신구: 보장9셋")
+    template.add_summary("방어구: 앱솔5셋, 카루타 3셋")
     template.add_items_with_id(BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, enhance = 30, additional_potential = accAPtnl))
     template.add_items_with_id(RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, enhance = 30, additional_potential = armorAPtnl))
     
@@ -340,7 +341,7 @@ def getU5000CharacterTemplate(_type):
     template.add_item_with_id("weapon", Absolab.Factory.getWeapon(_type, elist = [0,0,0,9], bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ))
     #print(template.itemlist["weapon"].att)
 
-    template.add_summary("킹오루 / 공마7훈장 / 하트 공30 / 펫공 30")
+    template.add_summary("기타: 킹오루, 공마7훈장, 하트 공30, 펫공 30")
     template.add_item_with_id("medal", Else.get_medal(7))
     template.add_item_with_id("title", Else.KingOfRootAbyss.copy())
     template.add_item_with_id("heart", Else.get_heart(30))
@@ -348,7 +349,7 @@ def getU5000CharacterTemplate(_type):
     
     template.apply_modifiers([Absolab.Factory.getSetOption(5), RootAbyss.Factory.getSetOption(3), BossAccesory.Factory.getSetOption(9)])
 
-    template.add_summary("아케인포스 540")
+    template.add_summary("아케인포스: 540")
     template.apply_modifiers([MDF(stat_main_fixed = 5400)])
     
     
@@ -359,15 +360,15 @@ def getU6000CharacterTemplate(_type):
     link = LinkSkill.get_full_link()
     template = ichar(modifierlist = [link], level = 240)
     
-    template.add_summary("에디 공10, 무기류 공6%")
+    template.add_summary("에디: 공10, 무기류 공6%")
 
 
     weaponAPtnl = MDF(patt = 6)
     subAPtnl = MDF(patt = 6)
     emblemAPtnl = MDF(patt = 6)
 
-    template.add_summary("방어구/장신구 유니크15%, 추옵 90급, 스타포스 17성")    
-    template.add_summary("장갑 크뎀1줄")
+    template.add_summary("방어구/장신구: 유니크15%, 추옵 90급, 스타포스 17성")    
+    template.add_summary("장갑: 크뎀1줄")
     armorAPtnl = MDF(att = 10)
     armorPtnl = MDF(pstat_main = 12)
     armorBonus = MDF(pstat_main = 5, pstat_sub = 5, stat_main = 40)
@@ -378,11 +379,12 @@ def getU6000CharacterTemplate(_type):
     accBonus = MDF(stat_main = 90)
     accStar = 17
     
-    template.add_summary("무기 스타포스 17성, 2추옵")
+    template.add_summary("무기: 스타포스 17성, 2추옵")
     weaponStar = 17
     bonusAttIndex = 2
 
-    template.add_summary("장신구 : 보장9셋, 방어구 : 앱솔5셋 + 카루타 3셋")
+    template.add_summary("장신구: 보장9셋")
+    template.add_summary("방어구: 앱솔5셋, 카루타 3셋")
     template.add_items_with_id(BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, enhance = 30, star = accStar, additional_potential = accAPtnl))
     template.add_items_with_id(RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, enhance = 30, star = armorStar, additional_potential = armorAPtnl))
     
@@ -400,7 +402,7 @@ def getU6000CharacterTemplate(_type):
     template.add_item_with_id("weapon", Absolab.Factory.getWeapon(_type, elist = [0,0,0,9], bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ))
     #print(template.itemlist["weapon"].att)
 
-    template.add_summary("핑아 / 공마3훈장 / 하트 공50 / 펫공 40")
+    template.add_summary("기타: 핑아, 공마3훈장, 하트 공50, 펫공 40")
     template.add_item_with_id("medal", Else.get_medal(3))
     template.add_item_with_id("title", Else.PingkbinAndMe.copy())
     template.add_item_with_id("heart", Else.get_heart(50))
@@ -408,7 +410,7 @@ def getU6000CharacterTemplate(_type):
     
     template.apply_modifiers([Absolab.Factory.getSetOption(5), RootAbyss.Factory.getSetOption(3), BossAccesory.Factory.getSetOption(9)])
 
-    template.add_summary("아케인포스 780")
+    template.add_summary("아케인포스: 780")
     template.apply_modifiers([MDF(stat_main_fixed = 7800)])
     
     
@@ -419,14 +421,14 @@ def getU7000CharacterTemplate(_type):
     link = LinkSkill.get_full_link()
     template = ichar(modifierlist = [link], level = 250)
     
-    template.add_summary("에디 2줄, 무기류 공21%")
+    template.add_summary("에디: 2줄, 무기류 공21%")
 
     weaponAPtnl = MDF(patt = 21)
     subAPtnl = MDF(patt = 21)
     emblemAPtnl = MDF(patt = 21)
 
-    template.add_summary("방어구/장신구 유닉21%, 추옵 110급, 스타포스 18성")
-    template.add_summary("장갑 크뎀1줄")
+    template.add_summary("방어구/장신구: 유닉21%, 추옵 110급, 스타포스 18성")
+    template.add_summary("장갑: 크뎀1줄")
     armorAPtnl = MDF(att = 21)
     armorPtnl = MDF(pstat_main = 21)
     armorBonus = MDF(pstat_main = 5, pstat_sub = 5, stat_main = 60)
@@ -437,11 +439,12 @@ def getU7000CharacterTemplate(_type):
     accBonus = MDF(stat_main = 110)
     accStar = 18
     
-    template.add_summary("무기 스타포스 17성, 1추옵")
+    template.add_summary("무기: 스타포스 17성, 1추옵")
     weaponStar = 17
     bonusAttIndex = 1
 
-    template.add_summary("장신구 : 보장7셋 + 마이링 + 칠요, 방어구 : 앱솔5셋 + 카루타 2셋 + 1아케인(무기)")
+    template.add_summary("장신구: 보장7셋, 마이, 칠요")
+    template.add_summary("방어구: 앱솔5셋, 카루타 2셋, 1아케인(무기)")
     template.add_items_with_id(BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, additional_potential = accAPtnl))
     template.add_items_with_id(RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl))
     
@@ -482,7 +485,7 @@ def getU7000CharacterTemplate(_type):
     template.add_item_with_id("weapon", Arcane.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ))
     #print(template.itemlist["weapon"].att)
 
-    template.add_summary("핑아 / 공마5훈장 / 하트 공95 / 펫공 80")
+    template.add_summary("기타: 핑아, 공마5훈장, 하트 공95, 펫공 80")
     template.add_item_with_id("medal", Else.get_medal(5))
     template.add_item_with_id("title", Else.PingkbinAndMe.copy())
     template.add_item_with_id("heart", Else.get_heart(95, accPtnl, accAPtnl))
@@ -490,7 +493,7 @@ def getU7000CharacterTemplate(_type):
     
     template.apply_modifiers([Absolab.Factory.getSetOption(5), RootAbyss.Factory.getSetOption(2), BossAccesory.Factory.getSetOption(7)])
 
-    template.add_summary("아케인포스 960")
+    template.add_summary("아케인포스: 960")
     template.apply_modifiers([MDF(stat_main_fixed = 9600)])
     
     
@@ -502,14 +505,14 @@ def getU8000CharacterTemplate(_type):
     link = LinkSkill.get_full_link()
     template = ichar(modifierlist = [link], level = 255)
     
-    template.add_summary("에디 2.5줄, 무기류 공15%")
+    template.add_summary("에디: 2.5줄, 무기류 공15%")
 
     weaponAPtnl = MDF(patt = 15)
     subAPtnl = MDF(patt = 15)
     emblemAPtnl = MDF(patt = 15)
 
-    template.add_summary("방어구/장신구 레전27%, 추옵 120급, 스타포스 22성")
-    template.add_summary("장갑 크뎀2줄")
+    template.add_summary("방어구/장신구: 레전27%, 추옵 120급, 스타포스 22성")
+    template.add_summary("장갑: 크뎀2줄")
     armorAPtnl = MDF(att = 11, pstat_main = 7)
     armorPtnl = MDF(pstat_main = 27)
     armorBonus = MDF(pstat_main = 6, pstat_sub = 6, stat_main = 60)
@@ -520,11 +523,12 @@ def getU8000CharacterTemplate(_type):
     accBonus = MDF(stat_main = 120)
     accStar = 22
     
-    template.add_summary("무기 스타포스 22성, 1추옵")
+    template.add_summary("무기: 스타포스 22성, 1추옵")
     weaponStar = 22
     bonusAttIndex = 1
 
-    template.add_summary("장신구 : 보장5셋, 방어구 : 앱솔5셋 + 카루타 2셋 + 아케인셰이드")
+    template.add_summary("장신구: 보장5셋")
+    template.add_summary("방어구: 방어구 : 앱솔5셋, 카루타 2셋, 아케인셰이드")
     template.add_items_with_id(BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, additional_potential = accAPtnl))
     template.add_items_with_id(RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl))
     
@@ -567,7 +571,7 @@ def getU8000CharacterTemplate(_type):
     template.add_item_with_id("weapon", Arcane.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ))
     #print(template.itemlist["weapon"].att)
 
-    template.add_summary("핑아 / 칠요 / 하트 공120 / 펫공 120")
+    template.add_summary("기타: 핑아, 칠요, 하트 공120, 펫공 120")
     
     template.add_items_with_id( Else.get_weekly_set() )
     template.add_item_with_id("title", Else.PingkbinAndMe.copy())
@@ -578,7 +582,7 @@ def getU8000CharacterTemplate(_type):
                                 RootAbyss.Factory.getSetOption(2), 
                                 BossAccesory.Factory.getSetOption(5)])
 
-    template.add_summary("아케인포스 1140")
+    template.add_summary("아케인포스: 1140")
     template.apply_modifiers([MDF(stat_main_fixed = 11400)])
 
     return template            
@@ -588,14 +592,14 @@ def getU8500CharacterTemplate(_type):
     link = LinkSkill.get_full_link()
     template = ichar(modifierlist = [link], level = 260)
     
-    template.add_summary("에디 레전 3줄, 무기류 공24%")
+    template.add_summary("에디: 레전 3줄, 무기류 공24%")
 
     weaponAPtnl = MDF(patt = 24)
     subAPtnl = MDF(patt = 24)
     emblemAPtnl = MDF(patt = 24)
 
-    template.add_summary("방어구/장신구 레전33%, 추옵 130급, 스타포스 22성")
-    template.add_summary("장갑 크뎀2.5줄")
+    template.add_summary("방어구/장신구: 레전33%, 추옵 130급, 스타포스 22성")
+    template.add_summary("장갑: 크뎀2.5줄")
     armorAPtnl = MDF(att = 14, pstat_main = 7)
     armorPtnl = MDF(pstat_main = 33)
     armorBonus = MDF(pstat_main = 6, pstat_sub = 6, stat_main = 70)
@@ -606,11 +610,12 @@ def getU8500CharacterTemplate(_type):
     accBonus = MDF(stat_main = 130)
     accStar = 22
     
-    template.add_summary("무기 스타포스 22성, 1추옵")
+    template.add_summary("무기: 스타포스 22성, 1추옵")
     weaponStar = 22
     bonusAttIndex = 1
 
-    template.add_summary("장신구 : 칠흑셋, 방어구 : 아케인6셋 + 카루타 2셋")
+    template.add_summary("장신구: 칠흑셋")
+    template.add_summary("방어구 : 아케인6셋, 카루타 2셋")
     template.add_items_with_id(BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, additional_potential = accAPtnl))
     template.add_items_with_id(RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl))
 
@@ -660,7 +665,7 @@ def getU8500CharacterTemplate(_type):
     #print(template.itemlist["weapon"].att)
 
 
-    template.add_summary("핑아 / 공마10훈장 / 하트 공160 / 펫공 120")
+    template.add_summary("기타: 핑아, 공마10훈장, 하트 공160, 펫공 120")
     
     template.add_items_with_id( Else.get_weekly_set() )
     template.add_item_with_id("title", Else.PingkbinAndMe.copy())
@@ -672,7 +677,7 @@ def getU8500CharacterTemplate(_type):
                                 BossAccesory.Factory.getSetOption(3),
                                 Darkness.Factory.getSetOption(4)])
 
-    template.add_summary("아케인포스 1320")
+    template.add_summary("아케인포스: 1320")
     template.apply_modifiers([MDF(stat_main_fixed = 13200)])
     
     return template
