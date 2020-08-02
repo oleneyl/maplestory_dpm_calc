@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, MutualRule
+from ..execution.rules import RuleSet, MutualRule, ConcurrentRunRule, ReservationRule
 from . import globalSkill
 from .jobbranch import bowmen
 #TODO : 5차 신스킬 적용    
@@ -21,7 +21,11 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(MutualRule('스플릿 애로우', '트루 스나이핑'), RuleSet.BASE)
-
+        ruleset.add_rule(ConcurrentRunRule('에픽 어드벤처', '크리티컬 리인포스'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('불스아이', '크리티컬 리인포스'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '크리티컬 리인포스'), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule('크리티컬 리인포스', '스플릿 애로우'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('스플릿 애로우', '소울 컨트랙트'), RuleSet.BASE)
 
         return ruleset
 
@@ -82,11 +86,13 @@ class JobGenerator(ck.JobGenerator):
         Freezer = core.SummonSkill("프리저", 900, 3030, 390, 1, 220 * 1000).setV(vEhc, 3, 3, False).wrap(core.SummonSkillWrapper)
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         
-        Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(5,5)))*1000).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
+        Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (int(121-0.5*vEhc.getV(5,5)))*1000).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
         
         SplitArrow = core.DamageSkill("스플릿 애로우(공격)", 0, 600 + vEhc.getV(0,0) * 24, 5+1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         SplitArrowBuff = core.BuffSkill("스플릿 애로우", 810, 60 * 1000, 120 * 1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         #TODO : 스플릿애로우 계산
+        
+        FinalAttack = core.DamageSkill("파이널 어택", 0, 150, 0.4).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
         
@@ -104,6 +110,9 @@ class JobGenerator(ck.JobGenerator):
         TrueSnipping.onAfter(ChargedArrow.controller(9999999, name = "차징 해제"))
         
         ChargedArrowUse.onAfter(ChargedArrow.controller(5000))
+
+        for sk in [Snipping, TrueSnippingTick, ChargedArrow]:
+            sk.onAfter(FinalAttack)
         
         ### 제한
         schedule = core.ScheduleGraph()
