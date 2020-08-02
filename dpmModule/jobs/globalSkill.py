@@ -3,18 +3,18 @@ from ..kernel import core
 
 #_SoulContract = core.BuffSkill("SoulContract", 600, 1000, cooltime = 9000, pdamage = 45)
 
-# TODO: CharacterModifier 반환 방식으로 변경
-passiveStat = lambda slevel : (slevel + 4) // 5
+usefulSkillRemain = lambda slevel = 1: (180 + slevel * 3) * 1000
+passiveStat = lambda slevel = 1: (slevel + 4) // 5
 
 # 미완성 코드
 def useful_hyper_body_demonavenger(slevel = 1):
     # 딜레이 클라기준
-    UsefulHyperBody = core.BuffSkill("쓸만한 하이퍼 바디 (데몬어벤져)", 600, (180 + slevel * 3)*1000, pstat_main = 40, stat_sub = passiveStat(slevel), rem = False).wrap(core.BuffSkillWrapper)
+    UsefulHyperBody = core.BuffSkill("쓸만한 하이퍼 바디 (데몬어벤져)", 600, usefulSkillRemain(slevel), pstat_main = 40, stat_sub = passiveStat(slevel), rem = False).wrap(core.BuffSkillWrapper)
     return UsefulHyperBody
 
 def useful_hyper_body_zenon(slevel = 1):
     # 마나뻥 처리는 직업코드에서
-    UsefulHyperBody = core.BuffSkill("쓸만한 하이퍼 바디", 600, (180 + slevel * 3)*1000, stat_main = passiveStat(slevel), stat_sub = passiveStat(slevel), rem = False).wrap(core.BuffSkillWrapper)
+    UsefulHyperBody = core.BuffSkill("쓸만한 하이퍼 바디 (제논)", 600, usefulSkillRemain(slevel), stat_main = passiveStat(slevel), stat_sub = passiveStat(slevel), rem = False).wrap(core.BuffSkillWrapper)
     return UsefulHyperBody
 
 # 스탠스 100%가 아닌 직업들 사용필요!
@@ -34,20 +34,20 @@ def maple_heros(level, combat_level = 0):
 
 # 1레벨
 def useful_combat_orders():
-    UsefulCombatOrders = core.BuffSkill("쓸만한 컴뱃 오더스", 1500, (180 + 3)*1000, rem = False).wrap(core.BuffSkillWrapper)
+    UsefulCombatOrders = core.BuffSkill("쓸만한 컴뱃 오더스", 1500, usefulSkillRemain(), rem = False).wrap(core.BuffSkillWrapper)
     return UsefulCombatOrders
     
 def useful_sharp_eyes(slevel = 1):
-    UsefulSharpEyes = core.BuffSkill("쓸만한 샤프 아이즈", 900, (180 + slevel * 3) * 1000, rem = False, crit = 10, crit_damage = 8, stat_main = passiveStat(slevel), stat_sub = passiveStat(slevel)).wrap(core.BuffSkillWrapper)
+    UsefulSharpEyes = core.BuffSkill("쓸만한 샤프 아이즈", 900, usefulSkillRemain(slevel), rem = False, crit = 10, crit_damage = 8, stat_main = passiveStat(slevel), stat_sub = passiveStat(slevel)).wrap(core.BuffSkillWrapper)
     return UsefulSharpEyes
     
 def useful_wind_booster(slevel = 1):
-    UsefulWindBooster = core.BuffSkill("쓸만한 윈드 부스터", 900, (180 + slevel * 3) * 1000, rem = False, stat_main = passiveStat(slevel), stat_sub = passiveStat(slevel)).wrap(core.BuffSkillWrapper)
+    UsefulWindBooster = core.BuffSkill("쓸만한 윈드 부스터", 900, usefulSkillRemain(slevel), rem = False, stat_main = passiveStat(slevel), stat_sub = passiveStat(slevel)).wrap(core.BuffSkillWrapper)
     return UsefulWindBooster
 
 def useful_advanced_bless(slevel = 1, useHP = False):
     # TODO: HP, MP 475 증가 반영
-    UsefulAdvancedBless = core.BuffSkill("쓸만한 어드밴스드 블레스", (180 + slevel * 3) * 1000, rem = False, att = 20, stat_main = 475 * useHP).wrap(core.BuffSkillWrapper)
+    UsefulAdvancedBless = core.BuffSkill("쓸만한 어드밴스드 블레스", usefulSkillRemain(slevel), rem = False, att = 20, stat_main = 475 * useHP).wrap(core.BuffSkillWrapper)
 
 class SpiderInMirrorBuilder():
     def __init__(self, enhancer, skill_importance, enhance_importance, chtr_level):
@@ -71,5 +71,5 @@ def genesis_aeonian_rise():
 
 # 파괴의 얄다바오트
 def genesis_tanadian_ruin():
-    TandadianRuin = core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime = 120000, pdamage_indep = 15).wrap(core.BuffSkillWrapper)
+    TandadianRuin = core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime = 120000, pdamage_indep = 15, rem = False, red = False).wrap(core.BuffSkillWrapper)
     return TandadianRuin
