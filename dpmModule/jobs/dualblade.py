@@ -74,7 +74,7 @@ class JobGenerator(ck.JobGenerator):
         
         PhantomBlow = core.DamageSkill("팬텀 블로우", 540, 315, 6+1, modifier = core.CharacterModifier(armor_ignore = 44, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         SuddenRaid = core.DamageSkill("써든레이드", 900, 1150, 3, cooltime = 30000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)    #파컷의 남은 쿨타임 20% 감소
-        SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 210/1.7, 10000).wrap(core.SummonSkillWrapper)
+        SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 210, 10000).wrap(core.SummonSkillWrapper)
         
         FinalCut = core.DamageSkill("파이널 컷", 870, 2000, 1, cooltime = 90000).wrap(core.DamageSkillWrapper)
         FinalCutBuff = core.BuffSkill("파이널 컷(버프)", 0, 60000, rem = True, cooltime = -1, pdamage_indep = 40).wrap(core.BuffSkillWrapper)
@@ -83,11 +83,11 @@ class JobGenerator(ck.JobGenerator):
         
         FlashBang = core.DamageSkill("플래시 뱅", 600, 250, 1, cooltime = 60000).wrap(core.DamageSkillWrapper)  #임의 딜레이.
         FlashBangDebuff = core.BuffSkill("플래시 뱅(디버프)", 0, 50000/2, cooltime = -1, pdamage = 10 * 0.9).wrap(core.BuffSkillWrapper)
-        Venom = core.DotSkill("페이탈 베놈", 160*3/1.7, 8000).wrap(core.SummonSkillWrapper)
+        Venom = core.DotSkill("페이탈 베놈", 160*3, 8000).wrap(core.SummonSkillWrapper)
         
         # TODO: 버프 시전 딜레이 적용
         HiddenBladeBuff = core.BuffSkill("히든 블레이드(버프)", 0, 60000, cooltime = 90000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        HiddenBlade = core.DamageSkill("히든 블레이드", 0, 140 / 1.7, 2).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)    #미러 이미징에 의해 추가타 2개, 최종뎀 1.7배 무시
+        HiddenBlade = core.DamageSkill("히든 블레이드", 0, 140, 1.7).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
         
         Asura = core.DamageSkill("아수라", 0, 0, 0, cooltime = 60000).wrap(core.DamageSkillWrapper)
         AsuraTick = core.DamageSkill("아수라(틱)", 300, 420, 4, modifier =core.CharacterModifier(armor_ignore = 100)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  #41타
