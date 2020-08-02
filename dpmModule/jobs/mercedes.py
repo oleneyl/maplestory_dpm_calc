@@ -132,7 +132,7 @@ class JobGenerator(ck.JobGenerator):
         AdvancedFinalAttackFast.modifier = ElementalGhostFast
         AdvancedFinalAttackSlow.modifier = ElementalGhostSlow
         
-        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 2, 2, 0)
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 2, 2, 10)
     
         #Damage
         UnicornSpike.onAfter(UnicornSpikeBuff.controller(1))

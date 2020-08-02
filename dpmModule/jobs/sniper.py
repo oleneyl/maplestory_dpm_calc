@@ -100,7 +100,7 @@ class JobGenerator(ck.JobGenerator):
         Evolve.onAfter(Freezer.controller(1))
         Freezer.onConstraint(core.ConstraintElement("이볼브 사용시 사용 금지", Evolve, Evolve.is_not_active))
         
-        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 3, 3, 20+6.6) #Maybe need to sync
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 3, 3, 20+20) # 샤프 아이즈 20 + 불스아이 20. 불스아이를 항상 크리인에 맞춰쓰므로 가동률 고려 X
     
         SplitArrowOption = core.OptionalElement(SplitArrowBuff.is_active, SplitArrow, name = "스플릿 애로우 여부 확인")
         Snipping.onAfter(SplitArrowOption)
