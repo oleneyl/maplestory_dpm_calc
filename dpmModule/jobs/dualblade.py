@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, ConditionRule
 from . import globalSkill
 from .jobbranch import thieves
 #TODO : 5차 신스킬 적용
@@ -37,6 +38,14 @@ class JobGenerator(ck.JobGenerator):
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5)    #오더스 기본적용!   
         return [WeaponConstant, Mastery]
 
+    def get_ruleset(self):
+        def check_final_cut_time(final_cut):
+            return (final_cut.is_not_usable() and final_cut.is_cooltime_left(80*1000, 1)) # 파컷 직후 써레 1번만 쓰는게 더 효율적임
+
+        ruleset = RuleSet()
+        ruleset.add_rule(ConditionRule('써든레이드', '파이널 컷', check_final_cut_time), RuleSet.BASE)
+        return ruleset
+
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         하이퍼 : 팬텀 블로우 - 리인포스, 이그노어 가드, 보너스 어택
@@ -63,12 +72,12 @@ class JobGenerator(ck.JobGenerator):
         
         DarkSight = core.BuffSkill("다크 사이트", 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper)#, pdamage_indep = 20 + 10 + int(0.2*vEhc.getV(3,3))).wrap(core.BuffSkillWrapper)
         
-        PhantomBlow = core.DamageSkill("팬텀 블로우", 540, 315, 6+1, modifier = core.CharacterModifier(armor_ignore = 30+20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        PhantomBlow = core.DamageSkill("팬텀 블로우", 540, 315, 6+1, modifier = core.CharacterModifier(armor_ignore = 44, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         SuddenRaid = core.DamageSkill("써든레이드", 900, 1150, 3, cooltime = 30000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)    #파컷의 남은 쿨타임 20% 감소
         SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 210/1.7, 10000).wrap(core.SummonSkillWrapper)
         
         FinalCut = core.DamageSkill("파이널 컷", 870, 2000, 1, cooltime = 90000).wrap(core.DamageSkillWrapper)
-        FinalCutBuff = core.BuffSkill("파이널 컷(버프)", 0, 60000, rem = True, pdamage_indep = 40).wrap(core.BuffSkillWrapper)
+        FinalCutBuff = core.BuffSkill("파이널 컷(버프)", 0, 60000, rem = True, cooltime = -1, pdamage_indep = 40).wrap(core.BuffSkillWrapper)
         
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
@@ -93,13 +102,13 @@ class JobGenerator(ck.JobGenerator):
         KarmaFury = core.DamageSkill("카르마 퓨리", 990, 750+30*vEhc.getV(1,1), 7 * 3, red = True, cooltime = 10000, modifier = core.CharacterModifier(armor_ignore = 30)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         BladeTornado = core.DamageSkill("블레이드 토네이도", 720, 600+24*vEhc.getV(2,2), 7, cooltime = 12000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         #BladeTornadoFront = core.DamageSkill("블레이드 토네이도(전방)", 0, 600+24*vEhc.getV(2,2), 6, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)   #보통 1타
-        BladeTornadoSummon = core.SummonSkill("블레이드 토네이도(소환)", 0, 540, 450+18*vEhc.getV(2,2), 6, 3000, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #임의 딜레이, 미사용
+        BladeTornadoSummon = core.SummonSkill("블레이드 토네이도(소환)", 0, 3000/5, 450+18*vEhc.getV(2,2), 6, 3000-1, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #임의 딜레이, 미사용
         BladeTornadoSummonMirrorImaging = core.SummonSkill("블레이드 토네이도(소환)(미러이미징)", 0, 540, (450+18*vEhc.getV(2,2)) * 0.7, 6, 3000, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #임의 딜레이, 미사용
         
         ######   Skill Wrapper   ######
     
         SuddenRaid.onAfter(SuddenRaidDOT)
-        FinalCut.onAfter(FinalCutBuff)
+        FinalCut.onAfter(FinalCutBuff.controller(1))
         
         HiddenBladeOpt = core.OptionalElement(HiddenBladeBuff.is_active, HiddenBlade)
         
