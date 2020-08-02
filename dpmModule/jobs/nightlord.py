@@ -67,8 +67,8 @@ class JobGenerator(ck.JobGenerator):
         
         QuarupleThrow =core.DamageSkill("쿼드러플 스로우", 600, 378, 5 * 1.7, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)    #쉐도우 파트너 적용
         
-        MarkOfNightlord = core.DamageSkill("마크 오브 나이트로드", 0, (60 + chtr.level), 0.35*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        MarkOfNightlordPungma = core.DamageSkill("마크 오브 나이트로드(풍마)", 0, (60 + chtr.level), 0.193*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        MarkOfNightlord = core.DamageSkill("마크 오브 나이트로드", 0, (60 + chtr.level), 0.375*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        MarkOfNightlordPungma = core.DamageSkill("마크 오브 나이트로드(풍마)", 0, (60 + chtr.level), 0.375*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 툴팁대로면 19.355%가 맞으나, 쿼드러플과 동일한 37.5%로 적용되는 중
     
         FatalVenom = core.DotSkill("페이탈 베놈", 480, 8000).wrap(core.SummonSkillWrapper)
     
