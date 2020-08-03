@@ -7,7 +7,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule, ReservationRule
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobclass import resistance
 from .jobbranch import pirates
 from . import jobutils
@@ -149,7 +149,7 @@ class JobGenerator(ck.JobGenerator):
         return(MassiveFire,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, RoboFactoryBuff, BomberTime, Overdrive, OverdrivePenalty,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [MicroMissle, BusterCallInit] +\
                 [HommingMissleHolder, RegistanceLineInfantry, SupportWaver, Robolauncher, RoboFactory, DistortionField, MultipleOptionGattling, MultipleOptionMissle] +\
                 [BusterCallBuff] +\

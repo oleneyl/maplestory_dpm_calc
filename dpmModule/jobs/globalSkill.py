@@ -17,11 +17,6 @@ def useful_hyper_body_zenon(slevel = 1):
     UsefulHyperBody = core.BuffSkill("쓸만한 하이퍼 바디", 600, (180 + slevel * 3)*1000, stat_main = passiveStat(slevel), stat_sub = passiveStat(slevel), rem = False).wrap(core.BuffSkillWrapper)
     return UsefulHyperBody
 
-# 기본 90초, 직업별 딜사이클에 따라 쿨타임 조절가능
-def soul_contract(Cool = 90*1000):
-    SoulContract = core.BuffSkill("소울 컨트랙트", 900, 10*1000, cooltime = Cool, pdamage = 45, rem = True, red = True).wrap(core.BuffSkillWrapper)
-    return SoulContract
-
 # 쓸컴뱃 = 1, 팔라딘 = 2
 def maple_heros(level, combat_level = 0):
     MapleHeros = core.BuffSkill("메이플 용사", 0, (900+15*combat_level)*1000, stat_main = (0.15 + 0.005 * combat_level)*(25 + level * 5), rem = True).wrap(core.BuffSkillWrapper)

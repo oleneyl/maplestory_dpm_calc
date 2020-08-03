@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobclass import cygnus
 from .jobbranch import magicians
 
@@ -105,7 +105,7 @@ class JobGenerator(ck.JobGenerator):
         return (OrbitalFlame,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     WordOfFire, FiresOfCreation, BurningRegion, GloryOfGuardians, OverloadMana,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [CygnusPalanks, BlazingOrbital, DragonSlaveInit, SavageFlame, InfinityFlameCircleInit, 
                     InfernoRize] +\
                 [IgnitionDOT] +\

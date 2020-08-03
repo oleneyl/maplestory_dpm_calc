@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import warriors
 from .jobclass import demon
 
@@ -155,7 +155,7 @@ class JobGenerator(ck.JobGenerator):
         return(BasicAttackWrapper,
                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Booster, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, DemonAwakning,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [Execution, Cerberus, DevilCry, SpiritOfRageEnd] +\
                 [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_] +\
                 [AuraWeaponCooltimeDummy] +\

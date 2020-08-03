@@ -4,7 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobclass import cygnus
 from .jobbranch import warriors
 
@@ -113,7 +113,7 @@ class JobGenerator(ck.JobGenerator):
         return(NormalAttack,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     NimbleFinger, TrueSight, SolunaTime, SoulForge, 
-                    GloryOfGuardians, AuraWeaponBuff, globalSkill.soul_contract(), ElisionBuff, SelestialDanceInit, 
+                    GloryOfGuardians, AuraWeaponBuff, linkSkill.soul_contract(), ElisionBuff, SelestialDanceInit, 
                     ] +\
                 [CygnusPalanks, SolunaDivide] +\
                 [SelestialDanceSummon, SoulEclipse] +\

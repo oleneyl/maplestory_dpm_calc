@@ -122,10 +122,10 @@ class JobGenerator():
     .vEnhanceNum : 5차 강화 스킬의 총 개수입니다.
     .vSkillNum : 5차 스킬의 총 개수입니다.
     
-    from . import globalSkill
+    from . import globalSkill, linkSkill
     self.preEmptiveSkills = 2
     globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster()
-    globalSkill.soul_contract()
+    linkSkill.soul_contract()
     
     미하일까지..
     '''
@@ -497,50 +497,6 @@ class Union():
         return (MDF(att = state[0]) + MDF(stat_main = 5 * state[1]) + \
                             MDF(boss_pdamage = state[2]) + MDF(armor_ignore = state[3]) + \
                             MDF(crit = state[4]) + MDF(crit_damage = state[5] * 0.5))
-        
-        
-class LinkSkill():
-    Mercedes = CharacterModifier()    #Exp
-    DemonSlayer = CharacterModifier(pdamage = 15)
-    DemonAvenger = CharacterModifier(pdamage = 10)
-    Luminous = CharacterModifier(armor_ignore = 15)
-    Phantom = CharacterModifier(crit = 15)
-    Zenon = CharacterModifier(pstat_main = 10, pstat_sub = 10)
-    Ark = CharacterModifier(pdamage = 11)
-    Ilium = CharacterModifier(pdamage = 12)
-    Cadena = CharacterModifier(pdamage = 6) #optional
-    Angelicbuster = CharacterModifier()   #Skill
-    Aran = CharacterModifier()    #Exp
-    Evan = CharacterModifier()    #Exp
-    Canonshooter = CharacterModifier(stat_main = 70, stat_sub = 70)
-    Enwool = CharacterModifier() #Util
-    Zero = CharacterModifier(armor_ignore = 10)
-    Kinesis = CharacterModifier(crit_damage = 4)
-    Michael = CharacterModifier() #Util skill
-    Kaiser = CharacterModifier() #HP
-    Cygnus = CharacterModifier() #Util
-    Registance = CharacterModifier()  #Util
-    AdventureMage = CharacterModifier(pdamage=9, armor_ignore=9)
-    AdventureArcher = CharacterModifier(crit=10)
-    AdventureRog = CharacterModifier(pdamage=18/2)
-
-    
-    '''Full Package
-    DS, DA, Luminous, Phantom, Zenon, Ark, 
-    Ilium, Cadena, Zero, Kinesis, (Angelicbuster), (Registance)
-    '''
-    # FullPackage = CharacterModifier(pdamage = 54, armor_ignore = 23.5, crit = 15, pstat_main = 10, pstat_sub = 10, crit_damage = 4)
-    # FullPackageExceptCadena = CharacterModifier(pdamage = 54 - 6, armor_ignore = 23.5, crit = 15, pstat_main = 10, pstat_sub = 10, crit_damage = 4)
-    @staticmethod
-    def get_full_link(cadena = False):
-        FullPackage = LinkSkill.AdventureMage + LinkSkill.AdventureRog + LinkSkill.Luminous + LinkSkill.Phantom + LinkSkill.DemonSlayer + LinkSkill.DemonAvenger + \
-            LinkSkill.Zenon + LinkSkill.Cadena + LinkSkill.Angelicbuster + LinkSkill.Zero + LinkSkill.Kinesis + LinkSkill.Ark
-    
-        FullPackageExceptCadena = FullPackage - LinkSkill.Cadena
-        if cadena :
-            return FullPackage.copy()
-        else:
-            return FullPackageExceptCadena.copy()
 
 class Card():
     '''

@@ -8,7 +8,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import magicians
 
 class JobGenerator(ck.JobGenerator):
@@ -191,7 +191,7 @@ class JobGenerator(ck.JobGenerator):
                     Booster, PsychicShield, PsychicGround, 
                     PsycoBreak, UltimatePsychicBuff, PsychicCharging, 
                     PsychicOver, OverloadMana, PsychicPoint,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [EverPsychic, UltimatePsychic] +\
                 [PsychicDrain, PsychicForce3, UltimateBPM, PsychicOverSummon, PsychicTornado, UltimateMovingMatter, UltimatePsychicBulletBlackhole] +\
                 [UltimateTrain] +\

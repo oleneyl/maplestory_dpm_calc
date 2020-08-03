@@ -4,7 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import warriors
 
 #TODO : 5차 신스킬 적용
@@ -99,7 +99,7 @@ class JobGenerator(ck.JobGenerator):
         return(Blast,
                 [globalSkill.maple_heros(chtr.level, combat_level = 2), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Threat, BlessingArmor, ElementalForce, EpicAdventure, HolyUnity, AuraWeaponBuff,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [LighteningCharge, DivineCharge, GrandCross] +\
                 [BlessedHammer, BlessedHammerActive] +\
                 [AuraWeaponCooltimeDummy] +\

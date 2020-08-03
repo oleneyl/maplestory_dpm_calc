@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import thieves
 
 class MesoStack(core.DamageSkillWrapper, core.StackSkillWrapper):
@@ -182,7 +182,7 @@ class JobGenerator(ck.JobGenerator):
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Booster, FlipTheCoin, ShadowerInstinct, ShadowPartner, Smoke, AdvancedDarkSight, EpicAdventure, UltimateDarksight, 
-                        ReadyToDie, globalSkill.soul_contract()] +\
+                        ReadyToDie, linkSkill.soul_contract()] +\
                 [Eviscerate, SonicBlow, BailOfShadow]+\
                 [Venom]+\
                 []+\

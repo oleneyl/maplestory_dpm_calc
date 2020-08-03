@@ -4,7 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, InactiveRule
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import warriors
 from .jobclass import resistance
 #TODO : 5차 신스킬 적용
@@ -147,7 +147,7 @@ class JobGenerator(ck.JobGenerator):
         return(Mag_Pang,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, MaximizeCannon, WillOfLiberty, AuraWeaponBuff, BunkerBuster,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [ReleaseHammer, BurningBreaker] +\
                 [RegistanceLineInfantry, HammerSmashWave] +\
                 [AuraWeaponCooltimeDummy] +\

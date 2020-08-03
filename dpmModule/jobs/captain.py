@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import pirates
 from .jobclass import adventurer
 from . import jobutils
@@ -161,7 +161,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     SummonCrewBuff, PirateStyle, Booster, InfiniteBullet, LuckyDice, UnwierdingNectar, EpicAdventure, PirateFlag, Overdrive, OverdrivePenalty,
                     BattleshipBomber_1_ON, BattleshipBomber_2_ON, QuickDraw,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [BattleshipBomber, Headshot, Nautilus, DeadEye] +\
                 [OctaQuaterdeck, BattleshipBomber_1, BattleshipBomber_2, NautillusAssult, NautillusAssult_2, SummonCrew] +\
                 [BulletParty] +\

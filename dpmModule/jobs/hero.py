@@ -4,7 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, InactiveRule
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import warriors
 
 #TODO : 5차 신스킬 적용
@@ -151,7 +151,7 @@ class JobGenerator(ck.JobGenerator):
                     ComboAttack, Fury, EpicAdventure, Valhalla, 
                     InsizingBuff, AuraWeaponBuff, ComboDesfortBuff, 
                     ComboInstinct, ComboInstinctOff, PanicBuff,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [Panic, Insizing, ComboDesfort] +\
                 [SwordOfBurningSoul] +\
                 [AuraWeaponCooltimeDummy] +\

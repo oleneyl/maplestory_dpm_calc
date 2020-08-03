@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import thieves
 
 #TODO : 5차 신스킬 적용
@@ -285,7 +285,7 @@ class JobGenerator(ck.JobGenerator):
                     WeaponVarietyAttack, Booster, SpecialPotion, ProfessionalAgent,
                     ReadyToDie, ChainArts_Fury, 
                     SummonSlachingKnife_Horror, SummonBeatingNeedlebat_Honmy, VenomBurst_Poison, ChainArts_maelstorm_slow,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [AD_Odnunce_Final,
                     WingDaggerBatCombo, BommBrickCombo, ShootgunClawCombo, SimiterChaseCombo, KnifeCombo] +\
                 [SummonThrowingWingdaggerInit, VenomBurst, AD_Odnunce, ChainArts_maelstorm] +\

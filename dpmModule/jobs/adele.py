@@ -4,7 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import warriors
 from .jobclass import cygnus
 from .jobclass import flora
@@ -147,7 +147,7 @@ class JobGenerator(ck.JobGenerator):
         return(Divide,
                 [globalSkill.maple_heros(chtr.level), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
                     AuraWeaponBuff, AuraWeaponCooltimeDummy, MagicCircuitFullDrive, 
-                    globalSkill.useful_sharp_eyes(), globalSkill.soul_contract()] +\
+                    globalSkill.useful_sharp_eyes(), linkSkill.soul_contract()] +\
                 [Resonance, Grave, Blossom, Marker, Ruin] +\
                 [Order, Shard, Territory, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, OrderRestore, Creation] +\
                 [] +\

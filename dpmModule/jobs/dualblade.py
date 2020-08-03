@@ -4,7 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConditionRule
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import thieves
 #TODO : 5차 신스킬 적용
 
@@ -134,7 +134,7 @@ class JobGenerator(ck.JobGenerator):
         return(PhantomBlow,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Booster, DarkSight, FinalCutBuff, EpicAdventure, FlashBangDebuff, HiddenBladeBuff, UltimateDarksight, ReadyToDie,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [FinalCut, FlashBang, BladeTornado, SuddenRaid, KarmaFury, BladeStorm, Asura] +\
                 [SuddenRaidDOT, Venom, BladeTornadoSummon, BladeTornadoSummonMirrorImaging] +\
                 [] +\

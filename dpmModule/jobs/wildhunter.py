@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobclass import resistance
 from .jobbranch import bowmen
 # TODO: 재규어 맥시멈, 드릴 컨테이너 추가
@@ -152,7 +152,7 @@ class JobGenerator(ck.JobGenerator):
         return(WildBalkan,
                 [globalSkill.maple_heros(chtr.level),
                     CriticalReinforce, SoulArrow, Booster, Hauling, BeastForm, SharpEyes, SilentRampage, JaguerStorm,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [Normal, ClawCut, Crossroad, SonicBoom, JaguarSoul, RampageAsOne] +\
                 [HuntingUnit, GuidedArrow, RegistanceLineInfantry, WildGrenade] +\
                 [AnotherBite] +\

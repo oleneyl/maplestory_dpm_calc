@@ -4,7 +4,7 @@ from ..kernel.core import CharacterModifier as MDF
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobclass import heroes
 
 # TODO : 조디악 커맨드 수정
@@ -214,7 +214,7 @@ class JobGenerator(ck.JobGenerator):
         return(CircleOfMana,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     OverloadMana, Booster, OnixBless, Frid, HerosOath, SwiftBack, ElementalBlastBuff,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [ZodiakRayInit, DragonBreak, MagicParticle] +\
                 [BreathBack, SummonOnixDragon, ZodiakRay, ImperialBreath, SwiftOfThunder, DiveOfEarth, BreathOfWind, BreathOfWindZodiak] +\
                 [MirBuff] +\

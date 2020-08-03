@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import pirates
 from .jobclass import adventurer
 from . import jobutils
@@ -179,7 +179,7 @@ class JobGenerator(ck.JobGenerator):
             [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
             LuckyDice, Viposition, Stimulate, EpicAdventure, PirateFlag, Overdrive, Transform, NautilusBuff,
             UnityOfPowerBuff, OverdrivePenalty, DragonStrikeBuff, EnergyCharge,
-            SerpentScrewTrackingBuff, globalSkill.soul_contract()] +\
+            SerpentScrewTrackingBuff, linkSkill.soul_contract()] +\
             [UnityOfPower, Nautilus, DragonStrike, FuriousCharge] +\
             [SerpentScrew, SerpentScrewDummy, StimulateSummon] +\
             [] +\

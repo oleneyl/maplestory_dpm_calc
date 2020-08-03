@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import warriors
 
 #TODO : 5차 신스킬 적용
@@ -109,7 +109,7 @@ class JobGenerator(ck.JobGenerator):
         return(BasicAttackWrapped, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Booster, CrossoverChain, Sacrifice, Reincarnation,EpicAdventure, DarkThurst, AuraWeaponBuff,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [BiholderShock, GoungnilDescent, DarkSpear, PierceCyclone] +\
                 [BiholderDominant, BiholderImpact] +\
                 [AuraWeaponCooltimeDummy] +\

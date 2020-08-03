@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import warriors
 
 # TODO: 4카 5앱 적용, 리미트 막타 추가
@@ -204,7 +204,7 @@ class JobGenerator(ck.JobGenerator):
         # 딜레이 확인필요, 딜사이클에 포함되는 스킬인지 확인필요
         ShadowRain = core.DamageSkill("쉐도우 레인", 0, 1400, 14, cooltime = 300*1000).wrap(core.DamageSkillWrapper)
         
-        SoulContract = globalSkill.soul_contract()
+        SoulContract = linkSkill.soul_contract()
 
         #### 5차 스킬 ####
         #5차스킬들 마스터리 알파/베타 구분해서 적용할것.

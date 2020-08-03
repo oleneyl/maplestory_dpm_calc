@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import bowmen
 from .jobclass import cygnus
 #TODO : 5차 신스킬 적용
@@ -92,7 +92,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level), 
                     Storm, SylphsAid, Albatross, SharpEyes, GloryOfGuardians, StormBringerDummy, CriticalReinforce,
                     PinPointPierceDebuff,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [Mercilesswind]+\
                 [GuidedArrow, HowlingGail, WindWall, MercilesswindDOT, CygnusPalanks, PinPointPierce]+\
                 []+\

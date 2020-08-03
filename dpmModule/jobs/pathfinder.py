@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import bowmen
 #TODO : 5차 신스킬 적용
 
@@ -303,7 +303,7 @@ class JobGenerator(ck.JobGenerator):
                     AncientBowBooster, CurseTolerance, CurseTransition, SharpEyes,
                     RelicEvolution, EpicAdventure,
                     AncientGuidanceBuff, AdditionalTransition, CriticalReinforce,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [CardinalTransition_ForceUse, 
                     AncientAstraHolder, TripleImpact, EdgeOfResonance, 
                         ComboAssultHolder, UltimateBlast] +\

@@ -1,5 +1,4 @@
 from .characterKernel import ItemedCharacter as ichar
-from .characterKernel import LinkSkill
 from .characterTemplate import AbstractTemplateGenerator, register_template_generator
 from ..item import Arcane, Absolab, Empress, RootAbyss, BossAccesory, Default, Else, Meister, Darkness
 from ..item.ItemKernel import CharacterModifier as MDF
@@ -60,9 +59,8 @@ def getUnionCharacter(_type, armor_pstat_ptnl = 6, acc_pstat_ptnl = 9, weaponSta
 
     #Temporal union object..
     unionModifier = MDF(att = 5, pdamage = 21, armor_ignore = 21, stat_main = 5)
-    link = LinkSkill.get_full_link()
     
-    template = ichar(modifierlist = [unionModifier, link])
+    template = ichar(modifierlist = [unionModifier])
 
     template.add_items_with_id(BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, star = accStar))
     template.add_items_with_id(RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar))
@@ -110,9 +108,8 @@ def getU6000Character(_type, armor_pstat_ptnl = 15, acc_pstat_ptnl = 15, weaponS
     #Temporal union object..
     unionModifier = MDF(att = 5, pdamage = 21, armor_ignore = 21, stat_main = 5, crit_damage = 24)
     
-    link = LinkSkill.get_full_link()
     
-    template = ichar(modifierlist = [unionModifier, link])
+    template = ichar(modifierlist = [unionModifier])
 
     template.add_items_with_id(BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, star = accStar))
     template.add_items_with_id(RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar))
@@ -155,9 +152,8 @@ def getDpmStdCharacterTemplate(_type, armor_pstat_ptnl = 15, acc_pstat_ptnl = 15
     etcAddPtnl = MDF(att = 10)
 
     #Temporal union object..
-    link = LinkSkill.get_full_link()
     
-    template = ichar(modifierlist = [link], level = 240)
+    template = ichar(modifierlist = [], level = 240)
 
     template.add_items_with_id(BossAccesory.Factory.get11SetDict(potential = accPtnl, additional_potential = etcAddPtnl, bonus = accBonus, star = accStar, enhance = 30))
     template.add_items_with_id(RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, additional_potential = etcAddPtnl, bonus = armorBonus, star = armorStar, enhance = 30))
@@ -207,9 +203,8 @@ def getEpicDpmStdCharacterTemplate(_type, armor_pstat_ptnl = 9, acc_pstat_ptnl =
     etcAddPtnl = MDF(att = 10)
 
     #Temporal union object..
-    link = LinkSkill.get_full_link()
     
-    template = ichar(modifierlist = [link], level = 230)
+    template = ichar(modifierlist = [], level = 230)
 
     template.add_items_with_id(BossAccesory.Factory.get11SetDict(potential = accPtnl, additional_potential = etcAddPtnl, bonus = accBonus, star = accStar))
     template.add_items_with_id(RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, additional_potential = etcAddPtnl, bonus = armorBonus, star = armorStar))
@@ -247,8 +242,7 @@ def getU4000CharacterTemplate(_type):
     카루타 + 여제 + 보장
     '''
     #Temporal union object..
-    link = LinkSkill.get_full_link()
-    template = ichar(modifierlist = [link], level = 215)
+    template = ichar(modifierlist = [], level = 215)
     
     template.add_summary("에디셔널 잠재능력: 없음")
 
@@ -302,8 +296,7 @@ def getU4000CharacterTemplate(_type):
 
 def getU5000CharacterTemplate(_type):
     #Temporal union object..
-    link = LinkSkill.get_full_link()
-    template = ichar(modifierlist = [link], level = 230)
+    template = ichar(modifierlist = [], level = 230)
 
     weaponAPtnl = MDF(att = 3)
     subAPtnl = MDF()
@@ -357,8 +350,7 @@ def getU5000CharacterTemplate(_type):
 
 def getU6000CharacterTemplate(_type):
     #Temporal union object..
-    link = LinkSkill.get_full_link()
-    template = ichar(modifierlist = [link], level = 240)
+    template = ichar(modifierlist = [], level = 240)
     
     template.add_summary("에디: 공10, 무기류 공6%")
 
@@ -418,8 +410,7 @@ def getU6000CharacterTemplate(_type):
 
 def getU7000CharacterTemplate(_type):
     #Temporal union object..
-    link = LinkSkill.get_full_link()
-    template = ichar(modifierlist = [link], level = 250)
+    template = ichar(modifierlist = [], level = 250)
     
     template.add_summary("에디: 2줄, 무기류 공21%")
 
@@ -502,8 +493,7 @@ def getU7000CharacterTemplate(_type):
 
 def getU8000CharacterTemplate(_type):
     #Temporal union object..
-    link = LinkSkill.get_full_link()
-    template = ichar(modifierlist = [link], level = 255)
+    template = ichar(modifierlist = [], level = 255)
     
     template.add_summary("에디: 2.5줄, 무기류 공15%")
 
@@ -589,8 +579,7 @@ def getU8000CharacterTemplate(_type):
     
 def getU8500CharacterTemplate(_type):
     #Temporal union object..
-    link = LinkSkill.get_full_link()
-    template = ichar(modifierlist = [link], level = 260)
+    template = ichar(modifierlist = [], level = 260)
     
     template.add_summary("에디: 레전 3줄, 무기류 공24%")
 

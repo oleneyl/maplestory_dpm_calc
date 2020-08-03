@@ -1,5 +1,4 @@
 from .characterKernel import ItemedCharacter as ichar
-from .characterKernel import LinkSkill
 from ..item import Arcane, Absolab, Empress, RootAbyss, BossAccesory, Default, Else
 from ..item.ItemKernel import CharacterModifier as MDF
 # Define UnionCharacter : Character that is oftenly used for union.

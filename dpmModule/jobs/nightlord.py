@@ -4,7 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import thieves
 #TODO : 5차 신스킬 적용
 
@@ -108,7 +108,7 @@ class JobGenerator(ck.JobGenerator):
             [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     ShadowPartner, SpiritJavelin, PurgeArea, BleedingToxin, EpicAdventure, 
                     UltimateDarksight, ReadyToDie, SpreadThrowInit,
-                    globalSkill.soul_contract()] + \
+                    linkSkill.soul_contract()] + \
                 [ArcaneOfDarklordFinal] + \
                 [Pungma, ArcaneOfDarklord, BleedingToxinDot, FatalVenom] +\
                 [] + [QuarupleThrow])

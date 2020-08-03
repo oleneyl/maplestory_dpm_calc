@@ -4,7 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, SynchronizeRule, ConcurrentRunRule
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobclass import adventurer
 from .jobbranch import magicians
 
@@ -196,7 +196,7 @@ class JobGenerator(ck.JobGenerator):
         Elquiness.onTick(BlizzardPassive)
         IceAura.onTick(FrostIncrement)
         
-        SoulContract = globalSkill.soul_contract()
+        SoulContract = linkSkill.soul_contract()
 
         return(ChainLightening,
                 [Infinity, Meditation, EpicAdventure, OverloadMana, FrostEffect,

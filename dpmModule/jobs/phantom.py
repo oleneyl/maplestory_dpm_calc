@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobclass import heroes
 from .jobbranch import thieves
 
@@ -149,7 +149,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     TalentOfPhantomII, TalentOfPhantomIII, FinalCutBuff, BoolsEye,
                     JudgementBuff, Booster, PrieredAria, HerosOath, ReadyToDie, JokerBuff, Frid,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [FinalCut, JokerInit, TempestOfCardInit, MarkOfPhantom, BlackJackFinal] +\
                 [BlackJack] +\
                 [MileAiguillesInit] +\

@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from . import contrib
 from .jobbranch import pirates
 from .jobclass import cygnus
@@ -138,7 +138,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Lightening, Booster, ChookRoi, WindBooster, LuckyDice,
                     HuricaneBuff, GloryOfGuardians, SkyOpen, Overdrive, OverdrivePenalty, ShinNoiHapL,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [GioaTan, CygnusPalanks, NoiShinChanGeuk] +\
                 [ShinNoiHapLAttack, NoiShinChanGeukAttack] +\
                 [] +\

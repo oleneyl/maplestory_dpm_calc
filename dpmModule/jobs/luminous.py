@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobclass import heroes
 from .jobbranch import magicians
 '''아포 22회
@@ -197,7 +197,7 @@ class JobGenerator(ck.JobGenerator):
         
         Memorize.onConstraint(core.ConstraintElement('이퀄일때는 사용하지 않음', LuminousState, LuminousState.isNotEqual ) ) 
 
-        SoulContract = globalSkill.soul_contract()
+        SoulContract = linkSkill.soul_contract()
 
         return(Attack, 
                 [LuminousState, globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),

@@ -4,7 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, MutualRule
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import bowmen
 #TODO : 5차 신스킬 적용    
 
@@ -111,7 +111,7 @@ class JobGenerator(ck.JobGenerator):
         return(Snipping,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_wind_booster(),
                     SoulArrow, ElusionStep, SharpEyes, BoolsEye, EpicAdventure, CriticalReinforce, SplitArrowBuff,
-                        globalSkill.soul_contract()] +\
+                        linkSkill.soul_contract()] +\
                 [TrueSnipping, ChargedArrowUse, ChargedArrow] +\
                 [Evolve,Freezer, GuidedArrow] +\
                 [] +\

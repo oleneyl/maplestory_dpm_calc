@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import magicians
 from . import jobutils
 
@@ -213,7 +213,7 @@ class JobGenerator(ck.JobGenerator):
                     Booster, FastCharge, WraithOfGod, MagicCircuitFullDrive, SoulOfCrystal,
                     Craft_Javelin_EnhanceBuff, CrystalCharge, GloryWingUse,
                     OverloadMana, BlessMark, CurseMark,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [CrystalSkill_MortalSwing, GloryWing_MortalWingbit, CrystalIgnitionInit] +\
                 [Riyo, Machina, CrystalSkill_Deus, 
                     GramHolder, MagicCircuitFullDriveStorm, Reaction_Spectrum, SoulOfCrystal_Reaction_Spectrum] +\

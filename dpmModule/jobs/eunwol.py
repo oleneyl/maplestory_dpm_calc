@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobclass import heroes
 from .jobbranch import pirates
 from . import jobutils
@@ -154,7 +154,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     EnhanceSpiritLinkSummon_J_Buff, EnhanceSpiritLink, LuckyDice, HerosOath, Frid, 
                     Overdrive, OverdrivePenalty, SoulConcentrate, DoubleBody, SoulTrapBuff,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [] +\
                 [EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init, EnhanceSpiritLinkSummon_J, SoulTrap, SoulConcentrateSummon] +\
                 [RealSoulAttackCounter, DoubleBodyRegistance] +\

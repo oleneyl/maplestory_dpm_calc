@@ -7,7 +7,7 @@ from ..kernel.graph import DynamicVariableOperation
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobclass import heroes
 from .jobbranch import warriors
 from ..execution.rules import RuleSet, InactiveRule, ConditionRule
@@ -232,7 +232,7 @@ class JobGenerator(ck.JobGenerator):
                     BlessingMaha, AdrenalineBoost, AdrenalineBoostEndDummy,
                     AdrenalineGenerator, 
                     Frid, InstallMaha, Combo, AuraWeaponCooltimeDummy, AuraWeaponBuff,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [SmashSwingHolder, BrandishMaha, BoostEndHuntersTargeting] +\
                 [MahaRegion] +\
                 [BasicAttack])

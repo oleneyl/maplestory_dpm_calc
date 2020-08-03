@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, SynchronizeRule
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobclass import adventurer
 from .jobbranch import magicians
 #TODO : 도트데미지 적용 / 포이즌노바 / 퓨리오브 이프리트
@@ -122,7 +122,7 @@ class JobGenerator(ck.JobGenerator):
         PoisonNova.onAfter(PoisonNovaDOT.controller(1))
 
         # 극딜기 싱크로
-        SoulContract = globalSkill.soul_contract()
+        SoulContract = linkSkill.soul_contract()
         #SoulContract.set_disabled_and_time_left(30000)       
 
         return (Paralyze, 

@@ -4,7 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, MutualRule
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import pirates
 from . import jobutils
 

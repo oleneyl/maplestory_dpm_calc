@@ -4,7 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobclass import resistance
 from .jobbranch import magicians
 # TODO: 오버로드 마나를 정말 안쓰는 것인지 확인필요
@@ -138,7 +138,7 @@ class JobGenerator(ck.JobGenerator):
         return(FinishBlowEndpoint,
                 [Booster, WillOfLiberty, MasterOfDeath, UnionAura,
                 globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), #globalSkill.useful_wind_booster(),
-                globalSkill.soul_contract()] +\
+                linkSkill.soul_contract()] +\
                 [DarkGenesis, BattlekingBar] +\
                 [RegistanceLineInfantry, Death, DeathAfterMOD, BlackMagicAlter, GrimReaper] +\
                 [] +\

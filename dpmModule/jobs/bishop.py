@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, SynchronizeRule
-from . import globalSkill
+from . import globalSkill, linkSkill
 from functools import partial
 from .jobclass import adventurer
 from .jobbranch import magicians
@@ -155,7 +155,7 @@ class JobGenerator(ck.JobGenerator):
         MainAttackWrapped = core.DamageSkill('기본공격',0,0,0).wrap(core.DamageSkillWrapper)
         MainAttackWrapped.onAfter(MainAttack)
 
-        SoulContract = globalSkill.soul_contract()
+        SoulContract = linkSkill.soul_contract()
         
         return(MainAttackWrapped, 
                 [Booster, SacredMark, Infinity, PeaceMakerFinalBuff, Pray, EpicAdventure, OverloadMana,

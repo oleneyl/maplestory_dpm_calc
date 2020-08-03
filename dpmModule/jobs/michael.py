@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobclass import cygnus
 from .jobbranch import warriors
 
@@ -131,7 +131,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     GuardOfLight, LoyalGuardBuff, SoulAttack, Booster, Invigorate, SacredCube, 
                     DeadlyChargeBuff, QueenOfTomorrow, AuraWeaponBuff, RoIias, SwordOfSoullight,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [CygnusPalanks, LoyalGuard_5, ShiningCross, DeadlyCharge, ClauSolis] +\
                 [ShiningCrossInstall, ClauSolisSummon] +\
                 [AuraWeaponCooltimeDummy] +\

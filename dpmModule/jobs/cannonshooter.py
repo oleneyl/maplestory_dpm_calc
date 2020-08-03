@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobbranch import pirates
 from .jobclass import adventurer
 from . import jobutils
@@ -110,7 +110,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Booster, MonkeyWaveBuff, MonkeyFuriousBuff, OakRulet, MonkeyMagic,
                     EpicAdventure, LuckyDice, Overdrive, OverdrivePenalty, PirateFlag,
-                    globalSkill.soul_contract()] +\
+                    linkSkill.soul_contract()] +\
                 [MonkeyWave, MonkeyFurious, ICBM] +\
                 [OakRuletDOT, SupportMonkeyTwins, RollingCanonRainbow, BFGCannonball, ICBMDOT, SpecialMonkeyEscort_Boom, SpecialMonkeyEscort_Canon] +\
                 [] +\

@@ -4,7 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ReservationRule, ConcurrentRunRule
-from . import globalSkill
+from . import globalSkill, linkSkill
 from .jobclass import heroes
 from .jobbranch import bowmen
 
@@ -143,7 +143,7 @@ class JobGenerator(ck.JobGenerator):
         IrkilaBreathInit.onAfter(IrkilaBreath)
         
         # 극딜기 몰아서 사용하기
-        SoulContract = globalSkill.soul_contract()
+        SoulContract = linkSkill.soul_contract()
             
         for wrp in [UnicornSpike, AdvanceStrikeDualShot, RegendrySpear, WrathOfEllil]:
             wrp.onAfter(AdvancedFinalAttackSlow)
