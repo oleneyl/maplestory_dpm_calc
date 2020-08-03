@@ -83,12 +83,12 @@ class JobGenerator(ck.JobGenerator):
     
 
         # 5차 강화에 포함해야 할 수도 있음
-        Huricane = core.DamageSkill("태풍", 900, 390, 5+1).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
+        HuricaneConcat = core.DamageSkill("태풍(연계)", 420, 390, 5+1).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
         
-        Destroy = core.DamageSkill("섬멸", 420, 350, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Thunder = core.DamageSkill("벽력", 660, 320, 5 + 1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        DestroyConcat = core.DamageSkill("섬멸(연계)", 420, 350, 2 + 5, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20, pdamage_indep = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        ThunderConcat = core.DamageSkill("벽력(연계)", 660, 320, 5 + 1, modifier = core.CharacterModifier(pdamage = 20, pdamage_indep = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #연계최종뎀 20%
+        Destroy = core.DamageSkill("섬멸", 480, 350, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Thunder = core.DamageSkill("벽력", 540, 320, 5 + 1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        DestroyConcat = core.DamageSkill("섬멸(연계)", 480, 350, 2 + 5, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20, pdamage_indep = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        ThunderConcat = core.DamageSkill("벽력(연계)", 540, 320, 5 + 1, modifier = core.CharacterModifier(pdamage = 20, pdamage_indep = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #연계최종뎀 20%
         
         #BasicAttack = core.DamageSkill("섬멸(기본공격)", 420, 350, 2 + 5, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         #BasicAttack = core.DamageSkill("벽력(기본공격)", 660, 320, 5 + 1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)        
@@ -117,14 +117,14 @@ class JobGenerator(ck.JobGenerator):
         NoiShinChanGeukAttack_ChookRoi = core.DamageSkill("뇌신창격(축뢰)", 0, (200 + 8*vEhc.getV(0,0)) * CHOOKROI, 7).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         #섬멸 연계
 
-        BasicAttack = core.OptionalElement(SkyOpen.is_active, Huricane, ThunderConcat)
+        BasicAttack = core.OptionalElement(SkyOpen.is_active, HuricaneConcat, ThunderConcat)
         BasicAttackWrapper = core.DamageSkill('기본 공격', 0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
 
-        Huricane.onAfter(DestroyConcat)
+        HuricaneConcat.onAfter(DestroyConcat)
         ThunderConcat.onAfter(DestroyConcat)
         
-        for skill in [Destroy, Thunder, DestroyConcat, ThunderConcat, Huricane, GioaTan, NoiShinChanGeuk]:
+        for skill in [Destroy, Thunder, DestroyConcat, ThunderConcat, HuricaneConcat, GioaTan, NoiShinChanGeuk]:
             contrib.create_auxilary_attack(skill, CHOOKROI)
         
         ShinNoiHapLAttack.onTick(ShinNoiHapLAttack_ChookRoi)
