@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, MutualRule, ConcurrentRunRule
+from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobbranch import thieves
 #TODO : 5차 신스킬 적용
@@ -22,10 +22,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(MutualRule('풍마수리검', '스프레드 스로우'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('얼티밋 다크 사이트', '스프레드 스로우'), RuleSet.BASE)
-
-
         return ruleset
 
     def get_passive_skill_list(self):
@@ -57,13 +54,12 @@ class JobGenerator(ck.JobGenerator):
         스프 3줄 히트
         
         얼닼사는 스프 사용중에만 사용
-        풍마수리검은 스프레드 스로우 사용 중에는 사용하지 않음
         
         '''
         #Buff skills
         ShadowPartner = core.BuffSkill("쉐도우 파트너", 600, 200 * 1000, rem = True).wrap(core.BuffSkillWrapper) #어떻게 처리할지 고심중! #딜레이 모름
         SpiritJavelin = core.BuffSkill("스피릿 자벨린", 600, 200 * 1000, rem = True).wrap(core.BuffSkillWrapper) #어떻게 처리할지 고심중! #딜레이 모름
-        PurgeArea = core.BuffSkill("퍼지 에어리어", 600, 40 * 1000).wrap(core.BuffSkillWrapper) #딜레이 모름
+        PurgeArea = core.BuffSkill("퍼지 에어리어", 600, 40 * 1000, armor_ignore=30).wrap(core.BuffSkillWrapper) #딜레이 모름
         BleedingToxin = core.BuffSkill("블리딩 톡신", 600, 90*1000, cooltime = 200 * 1000, att = 60).wrap(core.BuffSkillWrapper) #딜레이 모름
         BleedingToxinDot = core.DotSkill("블리딩 톡신(도트)", 1000, 90*1000).wrap(core.SummonSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
@@ -71,8 +67,8 @@ class JobGenerator(ck.JobGenerator):
         
         QuarupleThrow =core.DamageSkill("쿼드러플 스로우", 600, 378, 5 * 1.7, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)    #쉐도우 파트너 적용
         
-        MarkOfNightlord = core.DamageSkill("마크 오브 나이트로드", 0, (60 + chtr.level), 0.6*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        MarkOfNightlordPungma = core.DamageSkill("마크 오브 나이트로드(풍마)", 0, (60 + chtr.level), 0.6*3*0.4).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        MarkOfNightlord = core.DamageSkill("마크 오브 나이트로드", 0, (60 + chtr.level), 0.375*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        MarkOfNightlordPungma = core.DamageSkill("마크 오브 나이트로드(풍마)", 0, (60 + chtr.level), 0.375*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 툴팁대로면 19.355%가 맞으나, 쿼드러플과 동일한 37.5%로 적용되는 중
     
         FatalVenom = core.DotSkill("페이탈 베놈", 480, 8000).wrap(core.SummonSkillWrapper)
     
@@ -88,7 +84,7 @@ class JobGenerator(ck.JobGenerator):
         SpreadThrowInit = core.BuffSkill("스프레드 스로우", 600, (30+vEhc.getV(0,0))*1000, cooltime = (240-vEhc.getV(0,0))*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)    #딜레이 모름
         Pungma = core.SummonSkill("풍마수리검", 690, 100, 250+vEhc.getV(4,4)*10, 5*1.7, 1450, cooltime = 25*1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #10타 가정
         ArcaneOfDarklord = core.SummonSkill("다크로드의 비전서", 360, 780, 350+14*vEhc.getV(2,2), 7 + 5, 11990, cooltime = 60*1000, modifier=core.CharacterModifier(boss_pdamage=30)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #56타 + 폭발 1회 ( 7 * 8s)
-        ArcaneOfDarklordFinal = core.DamageSkill("다크로드의 비전서(막타)", 0, 900+18*vEhc.getV(2,2), 10, cooltime = -1, modifier=core.CharacterModifier(boss_pdamage=30)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ArcaneOfDarklordFinal = core.DamageSkill("다크로드의 비전서(막타)", 0, 900+36*vEhc.getV(2,2), 10, cooltime = -1, modifier=core.CharacterModifier(boss_pdamage=30)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
 
@@ -96,15 +92,17 @@ class JobGenerator(ck.JobGenerator):
 
         #조건부 파이널어택으로 설정함.
         SpreadThrow = core.OptionalElement(SpreadThrowInit.is_active, SpreadThrowTick)
-        SpreadThrowTick.onAfter(core.RepeatElement(MarkOfNightlord, 6))
+        SpreadThrowTick.onAfter(core.RepeatElement(MarkOfNightlord, 15))
         Pungma.onTick(MarkOfNightlordPungma)
         
-        ArcaneOfDarklord.onTick(core.RepeatElement(MarkOfNightlord, 7))
         ArcaneOfDarklord.onAfter(ArcaneOfDarklordFinal.controller(8000))
         
         BleedingToxin.onAfter(BleedingToxinDot)
         
         QuarupleThrow.onAfters([MarkOfNightlord, SpreadThrow])
+
+        for sk in [QuarupleThrow, Pungma, SpreadThrowTick]:
+            sk.onAfter(FatalVenom)
 
         return (QuarupleThrow, 
             [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
@@ -112,5 +110,5 @@ class JobGenerator(ck.JobGenerator):
                     UltimateDarksight, ReadyToDie, SpreadThrowInit,
                     globalSkill.soul_contract()] + \
                 [ArcaneOfDarklordFinal] + \
-                [Pungma, ArcaneOfDarklord, BleedingToxinDot] +\
+                [Pungma, ArcaneOfDarklord, BleedingToxinDot, FatalVenom] +\
                 [] + [QuarupleThrow])

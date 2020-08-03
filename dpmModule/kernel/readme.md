@@ -185,10 +185,9 @@ dpmModule은 다음과 같은 순서로 적동하도록 설계되어 있습니�
   - Rule은 `dpmModule.kernel.graph.AbstractRule` 을 상속하여 정의할 수 있습니다.
   - 기본적으로 `dpmModule.execution.rules`에 몇 가지 유용한 Rule이 정의되어 있습니다.
   
-    - `UniquenessRule` : 제일 기본적이고 필수적인 Rule입니다. 주어진 Element가 on 상태가 아니면 사용을 금지합니다.
-    이 Rule이 적용되지 않을 경우 스킬 쿨타임이 무시됩니다.
+    - `UniquenessRule` : 제일 기본적이고 필수적인 Rule입니다. 주어진 Element가 on 상태이면 사용을 금지합니다.
     
-    - `ConcurrentRunRule` : 두 GraphElement A,B에 대해, B가 A가 사용중일 때만 사용하도록록 강제합니다. 극딜기를 함께 사용하도록
+    - `ConcurrentRunRule` : 두 GraphElement A,B에 대해, A가 B가 사용중일 때만 사용하도록록 강제합니다. 극딜기를 함께 사용하도록
     할 때 유용합니다.
     
     - `ReservationRule` : 두 GraphElement A,B에 대해, B가 A가 사용가능할 때만 사용하도록록 강제합니다. 극딜기를 함께 사용하도록
