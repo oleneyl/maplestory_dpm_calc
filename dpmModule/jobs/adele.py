@@ -32,8 +32,6 @@ class JobGenerator(ck.JobGenerator):
         
         MagicCircuit = core.InformedCharacterModifier("매직 서킷", att=WEAPON_ATT * 0.15)  #무기 마력의 25%, 최대치 가정.
         Pace = core.InformedCharacterModifier("패이스", crit_damage=10, patt=10)
-        # Link skill : ignored
-        # Nobless = core.InformedCharacterModifier("노블레스", boss_pdamage=4)
         Rudiment = core.InformedCharacterModifier("루디먼트", att=30)
         Mastery = core.InformedCharacterModifier("마스터리", att=30)
         Train = core.InformedCharacterModifier("트레인", stat_main=60)
@@ -42,7 +40,15 @@ class JobGenerator(ck.JobGenerator):
         Demolition = core.InformedCharacterModifier("데몰리션", pdamage_indep=30, armor_ignore=20)
         Attain = core.InformedCharacterModifier("어테인", att=30, boss_pdamage=10, crit=20)
 
-        return [MagicCircuit, Pace, Rudiment, Mastery, Train, Accent, Expert, Demolition, Attain]
+        # 링크스킬
+        LinkSkills = [
+            linkSkill.nobless(), linkSkill.spirit_of_freedom(),
+            linkSkill.deadly_instinct(), linkSkill.judgement(),
+            linkSkill.permeate(), linkSkill.rhinne_protection(),
+            linkSkill.empirical_knowledge(), linkSkill.wild_rage(), linkSkill.solus(), linkSkill.demons_fury(), linkSkill.thief_kerning(), linkSkill.intensive_insult()
+        ]
+
+        return [MagicCircuit, Pace, Rudiment, Mastery, Train, Accent, Expert, Demolition, Attain] + LinkSkills
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
@@ -71,6 +77,9 @@ class JobGenerator(ck.JobGenerator):
         디바이드 - 오더(그레이브) - 테리토리(트레드) - 블로섬(스콜) - 임페일(레조넌스/마커) - 크리에이션(게더링) - 샤드 - 레조넌스
         인피니트 - 리스토어 - 루인 - 매서풀 - 오라웨폰 - (바오스)
 
+        링크 스킬
+
+        아델(기본) / 레지 / 팬텀 / 키네 / 루미, 제로 / 데벤, 아크, 데슬, 모도, 카데나 / 제논 / 엔버
         '''
         GATHERING_HIT = 5
         BLOSSOM_HIT = 3

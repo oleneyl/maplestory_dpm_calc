@@ -39,9 +39,18 @@ class JobGenerator(ck.JobGenerator):
         
         MasterMagic = core.InformedCharacterModifier("마스터 매직", att = 30)
         ArcaneAim = core.InformedCharacterModifier("아케인 에임", armor_ignore = 20)
+
+        # 링크스킬
+        LinkSkills = [
+            linkSkill.empirical_knowledge(), linkSkill.spirit_of_freedom(),
+            linkSkill.deadly_instinct(), linkSkill.judgement(),
+            linkSkill.permeate(), 
+            linkSkill.wild_rage(), linkSkill.solus(), linkSkill.demons_fury(), linkSkill.thief_kerning(), linkSkill.intensive_insult(),
+            linkSkill.hybrid_logic()
+        ]
         
         return [HighWisdom, SpellMastery, MagicCritical, ElementalReset, 
-                                    MasterMagic, ElementAmplication, ArcaneAim]
+                                    MasterMagic, ElementAmplication, ArcaneAim] + LinkSkills
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)
@@ -65,10 +74,15 @@ class JobGenerator(ck.JobGenerator):
         언스테이블 메모라이즈를 사용하지 않음
         
         극딜형 스킬은 쿨마다 사용함
+
+        링크 스킬
+
+        모법(기본) / 미하일, 레지 / 팬텀 / 키네 / 루미 / 데벤, 아크, 데슬, 모도, 카데나 / 제논 / 엔버
         
         '''
         #Buff skills
         Meditation = core.BuffSkill("메디테이션", 0, 240000, att = 30, rem = True, red = True).wrap(core.BuffSkillWrapper)
+        KnightsWatch = linkSkill.knights_watch()
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 5)
         
@@ -126,7 +140,7 @@ class JobGenerator(ck.JobGenerator):
         #SoulContract.set_disabled_and_time_left(30000)       
 
         return (Paralyze, 
-                [Infinity, Meditation, EpicAdventure, OverloadMana.ensure(vEhc,1,5),
+                [Infinity, Meditation, KnightsWatch, EpicAdventure, OverloadMana.ensure(vEhc,1,5),
                 globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                 SoulContract] +\
                 [DotPunisher.ensure(vEhc,0,0), Meteor, MegidoFlame, FlameHeize, PoisonNova.ensure(vEhc,2,1)] +\
