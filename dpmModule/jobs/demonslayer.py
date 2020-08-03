@@ -8,6 +8,10 @@ from .jobbranch import warriors
 from . import contrib
 ######   Passive Skill   ######
 
+class AuraWeaponBuilder_BB(warriors.AuraWeaponBuilder):
+    def __init__(self, enhancer, skill_importance, enhance_importance):
+        super(AuraWeaponBuilder_BB, self).__init__(enhancer, skill_importance, enhance_importance)
+        contrib.create_auxilary_attack(self.target_skill, 0.9)
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -133,7 +137,7 @@ class JobGenerator(ck.JobGenerator):
             contrib.create_auxilary_attack(sk, 0.9)
 
         # 오라 웨폰
-        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
+        auraweapon_builder = AuraWeaponBuilder_BB(vEhc, 3, 2)
         for sk in [DemonSlashAWBB1, DemonSlashAWBB2, DemonSlashAWBB3, DemonSlashAWBB4, DemonImpact]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
