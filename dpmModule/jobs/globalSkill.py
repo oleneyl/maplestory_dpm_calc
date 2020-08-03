@@ -17,11 +17,6 @@ def useful_hyper_body_zenon(slevel = 1):
     UsefulHyperBody = core.BuffSkill("쓸만한 하이퍼 바디 (제논)", 600, usefulSkillRemain(slevel), stat_main = passiveStat(slevel), stat_sub = passiveStat(slevel), rem = False).wrap(core.BuffSkillWrapper)
     return UsefulHyperBody
 
-# 스탠스 100%가 아닌 직업들 사용필요!
-def guard_of_light():
-    GuardOfLight = core.BuffSkill("빛의 수호", 900, 110000, rem = True, red = True, cooltime = 180000).wrap(core.BuffSkillWrapper)
-    return GuardOfLight
-
 # 기본 90초, 직업별 딜사이클에 따라 쿨타임 조절가능
 def soul_contract(Cool = 90*1000):
     SoulContract = core.BuffSkill("소울 컨트랙트", 900, 10*1000, cooltime = Cool, pdamage = 45, rem = True, red = True).wrap(core.BuffSkillWrapper)
