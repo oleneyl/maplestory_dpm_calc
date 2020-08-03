@@ -625,7 +625,7 @@ class Task():
     def getRef(self):
         return self._ref
         
-    def do(self):
+    def do(self, **kwargs):
         return self._ftn()
         
     def onAfter(self, afters):
@@ -643,6 +643,10 @@ class Task():
         retTask.onBefore(self._before)
         retTask.onJustAfter(self._justAfter)
         return retTask
+
+class ContextReferringTask(Task):
+    def do(self, **kwargs):
+        return self._ftn(**kwargs)
 
 class ResultObject():
     def __init__(self, delay, mdf, damage, sname = 'Not specified', spec = 'Undefined', kwargs = {}, cascade = [], hit = 1):
@@ -737,10 +741,10 @@ class GraphElement():
         elif lang == "en":
             return "Type:graph Element"
         
-    def _use(self):
+    def _use(self) -> ResultObject:
         return self._result_object_cache
         
-    def build_task(self, **kwargs):
+    def build_task(self, **kwargs) -> Task:
         task = Task(self, self._use)
         self.sync(task)
         return task
@@ -836,7 +840,7 @@ class OptionalTask(Task):
         else:
             self._fail = ResultObject(0, CharacterModifier(), 0, sname = self._name, spec = 'graph control', cascade = [failtask])
 
-    def do(self):
+    def do(self, **kwargs):
         if(self._discriminator()):
             return self._result_object_cache
         else:
@@ -942,6 +946,16 @@ class AbstractSkillWrapper(GraphElement):
             self.set_disabled_and_time_left(-1)
         self.accessible_boss_state = AccessibleBossState.NO_FLAG
 
+        # Context referring
+        self._refer_runtime_context = False
+
+    def enable_referring_runtime_context(self):
+        '''If this is true, given skill wrapper may use runtime context.
+        with this option, you MUST override _use() method with **kwargs argument is enabled.
+        given context may passed by **kwargs option.
+        '''
+        self._refer_runtime_context = True
+
     def protect_from_running(self):
         constraint = ConstraintElement('사용 금지', self, lambda:False)
         self.onConstraint(constraint)
@@ -1000,14 +1014,23 @@ class AbstractSkillWrapper(GraphElement):
             return TaskHolder(task, name = name)
         else:
             return TaskHolder(task, name = _name)
-        
-    def _use(self, rem = 0, red = 0):
+
+    def _use(self, ftn, rem = 0, red = 0, **kwargs) -> ResultObject:
         raise NotImplementedError
         
-    def build_task(self, rem = 0, red = 0):
-        task = Task(self, partial(self._use, rem, red))
+    def build_task(self, rem = 0, red = 0) -> Task:
+        if self._refer_runtime_context:
+            task = self._build_task_with_referring_context(rem=rem, red=red)
+        else:
+            task = Task(self, partial(self._use, rem, red))
         self.sync(task)
         return task
+
+    def _build_task_with_referring_context(self, rem = 0, red = 0):
+        def context_referring_function(**kwargs):   # Task가 실행시킬 함수
+            return self._use(rem=rem, red=red, **kwargs)
+        
+        return ContextReferringTask(self, context_referring_function)
         
     def is_usable(self):
         if len(self.constraint) > 0:
@@ -1485,9 +1508,11 @@ class Simulator(object):
         stack = task._before
         while len(stack) != 0:
             dt += self.run_individual_task(stack.pop())
-        result = task.do()
+
+        runtime_context_modifier = self.scheduler.get_buff_modifier() + self.get_default_modifier()
+        result = task.do(runtime_context_modifier=runtime_context_modifier + self.character.get_modifier())
         if result.damage > 0:
-            result.mdf = result.mdf + self.scheduler.get_buff_modifier() + self.get_default_modifier()
+            result.mdf += runtime_context_modifier
         result.setTime(self.scheduler.get_current_time())
         self.analytics.analyze(self.character, result)
         dt += result.delay
@@ -1502,10 +1527,11 @@ class Simulator(object):
         while len(stack) != 0:
             self.run_task_recursive(stack.pop())
         
-        result = task.do()
+        runtime_context_modifier = self.scheduler.get_buff_modifier() + self.get_default_modifier()
+        result = task.do(runtime_context_modifier=runtime_context_modifier + self.character.get_modifier())
         
         if result.damage > 0:
-            result.mdf += self.scheduler.get_buff_modifier() + self.get_default_modifier()
+            result.mdf += runtime_context_modifier
 
         result.setTime(self.scheduler.get_current_time())
         self.analytics.analyze(self.character, result)
