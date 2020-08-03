@@ -179,7 +179,8 @@ class JobGenerator(ck.JobGenerator):
         Apocalypse = core.DamageSkill("아포칼립스", 720, 340, 7 * 1.5,modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         AbsoluteKill = core.DamageSkill("앱솔루트 킬", 600, 385, 7*2,modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(쿨타임)', 600, 385, 7*2, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(쿨타임)', 600, 385, 7, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        AbsoluteKillCooltimedHalf = core.DamageSkill('앱솔루트 킬(쿨타임)', 0, 385*0.5, 7, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         LightReflection.onAfter(LuminousState.modifyStack(22))
         Apocalypse.onAfter(LuminousState.modifyStack(25))
@@ -187,9 +188,11 @@ class JobGenerator(ck.JobGenerator):
         IsLight = core.OptionalElement(partial(LuminousState.isState, LuminousStateController.LIGHT), LightReflection, Apocalypse, name = '빛이면 라리플 사용')
         IsEqual = core.OptionalElement(partial(LuminousState.isState, LuminousStateController.EQUAL), AbsoluteKill, IsLight, name = '이퀄리브리엄이면 이퀄 사용')
         Attack.onAfter(IsEqual)
+
+        AbsoluteKillCooltimed.onAfter(AbsoluteKillCooltimedHalf)
         
         for absolute in [AbsoluteKillCooltimed, AbsoluteKill]:
-            absolute.onAfter(core.create_task('빛과 어둠의 세례 쿨다운 감소', LightAndDarkness.reduceStack, LightAndDarkness))
+            absolute.onAfter(core.create_task('빛과 어둠의 세례 쿨다운 스택 1 감소', LightAndDarkness.reduceStack, LightAndDarkness))
         
         Memorize.onAfter(core.create_task("메모라이즈", LuminousState.memorize, LuminousState))
         PunishingResonator = PunishingResonatorWrapper(vEhc, LuminousState.getState)
