@@ -114,7 +114,7 @@ class JobGenerator(ck.JobGenerator):
         
         CardStack = core.StackSkillWrapper(core.BuffSkill("카드 스택", 0, 99999999), 40, name = "느와르 카르트 스택")
         
-        AddCard = CardStack.stackController(min(chtr.get_modifier().crit/100,1), name = "스택 1 증가")
+        AddCard = CardStack.stackController(1, name = "스택 1 증가")
         Judgement = CarteNoir_
         Judgement.onAfter(CardStack.stackController(-9999, name = "스택 초기화"))
         
