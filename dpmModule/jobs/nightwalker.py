@@ -103,10 +103,10 @@ class JobGenerator(ck.JobGenerator):
         ShadowSpearSmallBat = core.DamageSkill("쉐도우 스피어(창)(배트)", 0, 100+4*vEhc.getV(0,0), 4.0*BATRATE).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ShadowSpearLarge = core.SummonSkill("쉐도우 스피어(거대 창)", 0, 3000, 400 + 32*vEhc.getV(0,0), 6, (50+vEhc.getV(0,0))*1000 - 1, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
 
-        ShadowServentExtend = core.BuffSkill("쉐도우 서번트 익스텐드", 570, (25+vEhc.getV(1,1))*1000, red = True, cooltime = 60000).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
+        ShadowServentExtend = core.BuffSkill("쉐도우 서번트 익스텐드", 570, (30+vEhc.getV(1,1)//2)*1000, red = True, cooltime = 60000).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
 
-        ShadowBite = core.DamageSkill("쉐도우 바이트", 810, 600+24*vEhc.getV(2,2), 14).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        ShadowBiteBuff = core.BuffSkill("쉐도우 바이트(버프)", 0, (15+vEhc.getV(2,2)//10)*1000, pdamage_indep = (8+vEhc.getV(2,2)//4), red = True, cooltime = 20000).isV(vEhc,2,2).wrap(core.BuffSkillWrapper)
+        ShadowBite = core.DamageSkill("쉐도우 바이트", 810, 600+24*vEhc.getV(2,2), 14, red = True, cooltime = 20000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ShadowBiteBuff = core.BuffSkill("쉐도우 바이트(버프)", 0, (15+vEhc.getV(2,2)//10)*1000, pdamage_indep = (8+vEhc.getV(2,2)//4), cooltime = -1).isV(vEhc,2,2).wrap(core.BuffSkillWrapper)
         ######   Skill Wrapper   ######
 
         #_VenomBurst = core.DamageSkill("베놈 버스트", ??) ## 패시브 50%확률로 10초간 160+6*vlevel dot. 사용시 도트뎀 모두 피해 + (500+20*vlevel) * 5. 어차피 안쓰는 스킬이므로 작성X
@@ -134,12 +134,12 @@ class JobGenerator(ck.JobGenerator):
         #도미니언
         Dominion.onAfter(DominionAttack)
         #쉐도우 바이트
-        ShadowBiteBuff.onAfter(ShadowBite)
+        ShadowBite.onAfter(ShadowBiteBuff.controller(2000))
                 
         return( QuintupleThrow,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     ElementalDarkness, Heist, Booster, ShadowServent, SpiritThrowing, 
-                    ShadowElusion, ReadyToDie, Dominion, GloryOfGuardians, ShadowSpear, ShadowServentExtend, ShadowBiteBuff,
+                    ShadowElusion, ReadyToDie, Dominion, GloryOfGuardians, ShadowSpear, ShadowServentExtend, ShadowBite, ShadowBiteBuff,
                     globalSkill.soul_contract()] +\
                 [CygnusPalanks] +\
                 [ElementalDarknessDOT, ShadowSpearLarge] +\
