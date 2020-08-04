@@ -3,8 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ConcurrentRunRule, ReservationRule
-from . import globalSkill
+from . import globalSkill, debug
 from .jobclass import heroes
 from .jobbranch import thieves
 
@@ -40,11 +39,6 @@ class JobGenerator(ck.JobGenerator):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
         
         return [WeaponConstant, Mastery]
-
-    def get_ruleset(self):
-        ruleset = RuleSet()
-        ruleset.add_rule(ReservationRule("소울 컨트랙트", "마크 오브 팬텀"), RuleSet.BASE)
-        return ruleset
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
@@ -99,10 +93,10 @@ class JobGenerator(ck.JobGenerator):
         JokerDamage = core.DamageSkill("조커", 100*5, 240+9*vEhc.getV(4,4), 30).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)  #14회 반복, 총 420타이므로 30타로 적용
         JokerBuff = core.BuffSkill("조커(버프)", 0, 30000, cooltime = -1, pdamage_indep = (1 + (vEhc.getV(4,4) - 1) // 5) * 2 / 5).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         
-        BlackJack = core.SummonSkill("블랙잭", 570, 250, 400+16*vEhc.getV(1,1), 1, 5000-1, cooltime = 15000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
+        BlackJack = core.SummonSkill("블랙잭", 570, 250, 400+16*vEhc.getV(1,1), 1, 5000-1, cooltime = 15000, red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         BlackJackFinal = core.DamageSkill("블랙잭(최종)", 0, 1200+48*vEhc.getV(1,1), 6, cooltime = -1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         
-        MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 900, 600+24*vEhc.getV(2,2), 3 * 7, cooltime = 30000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 900, 600+24*vEhc.getV(2,2), 3 * 7, cooltime = 30000, red = True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         MarkOfPhantomEnd = core.DamageSkill("마크 오브 팬텀(최종)", 0, 1200+48*vEhc.getV(2,2), 12).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         #### 그래프 빌드
@@ -131,17 +125,71 @@ class JobGenerator(ck.JobGenerator):
         # TempestOfCard.onAfter(CarteNoir)
         
         JokerDamage.onAfter(core.RepeatElement(CarteNoir, 10))    #조커는 느와르를 발동하나, 조커 3타에 1번씩만 들어가므로 30 / 3 = 10
-        JokerDamage.onAfter(JokerBuff)
         
-        JokerInit.onAfter(core.RepeatElement(JokerDamage, 14))
-        JokerInit.onAfter(JokerBuff)
+        JokerDamages = core.RepeatElement(JokerDamage, 14)
+        JokerInit.onAfter(JokerDamages)
+        JokerDamages.onAfter(JokerBuff)
         
         BlackJack.onTick(CarteNoir)
         BlackJack.onAfter(BlackJackFinal.controller(5000))
         
         MarkOfPhantom.onAfter(MarkOfPhantomEnd)
 
+        #### 디버그
+
+        # debug.debug_damage_skill(MarkOfPhantom)
+        # debug.debug_damage_skill(JokerInit)
+        # debug.debug_damage_skill(BlackJack)
+
+        #### 딜사이클
+
+        SoulContract = globalSkill.soul_contract()
+
+        Cycle1 = core.DamageSkill("딜사이클 1", 0,0,0,cooltime=9999999).wrap(core.DamageSkillWrapper)
+        Cycle2 = core.DamageSkill("딜사이클 2", 0,0,0,cooltime=-1).wrap(core.DamageSkillWrapper)
+        Cycle3 = core.DamageSkill("딜사이클 3", 0,0,0,cooltime=-1).wrap(core.DamageSkillWrapper)
+        Cycle4 = core.DamageSkill("딜사이클 4", 0,0,0,cooltime=-1).wrap(core.DamageSkillWrapper)
+        Cycle5 = core.DamageSkill("딜사이클 5", 0,0,0,cooltime=-1).wrap(core.DamageSkillWrapper)
+        Cycle6 = core.DamageSkill("딜사이클 6", 0,0,0,cooltime=-1).wrap(core.DamageSkillWrapper)
+        Cycle7 = core.DamageSkill("딜사이클 7", 0,0,0,cooltime=-1).wrap(core.DamageSkillWrapper)
+        Cycle8 = core.DamageSkill("딜사이클 8", 0,0,0,cooltime=-1).wrap(core.DamageSkillWrapper)
+        Cycle9 = core.DamageSkill("딜사이클 9", 0,0,0,cooltime=-1).wrap(core.DamageSkillWrapper)
+        Cycle10 = core.DamageSkill("딜사이클 10", 0,0,0,cooltime=-1).wrap(core.DamageSkillWrapper)
+        Cycle11 = core.DamageSkill("딜사이클 11", 0,0,0,cooltime=-1).wrap(core.DamageSkillWrapper)
+        Cycle12 = core.DamageSkill("딜사이클 12", 0,0,0,cooltime=-1).wrap(core.DamageSkillWrapper)
+
+        for sk in [BoolsEye, ReadyToDie, Cycle2.controller(15000), BlackJack, SoulContract, Cycle3.controller(30000 - 540), MarkOfPhantom, JokerInit]:
+            Cycle1.onAfter(sk)
+        for sk in [BlackJack]:
+            Cycle2.onAfter(sk)
+        for sk in [Cycle4.controller(15000), BlackJack, Cycle5.controller(30000 - 540), MarkOfPhantom]:
+            Cycle3.onAfter(sk)
+        for sk in [BlackJack]:
+            Cycle4.onAfter(sk)
+        for sk in [Cycle6.controller(15000), BlackJack, Cycle7.controller(30000 - 540 - 780 - 900), MarkOfPhantom]:
+            Cycle5.onAfter(sk)
+        for sk in [BlackJack]:
+            Cycle6.onAfter(sk)
+        for sk in [ReadyToDie, SoulContract, Cycle8.controller(15000), BlackJack, Cycle9.controller(30000 - 540), MarkOfPhantom]:
+            Cycle7.onAfter(sk)
+        for sk in [BlackJack]:
+            Cycle8.onAfter(sk)
+        for sk in [Cycle10.controller(15000), BlackJack, Cycle11.controller(30000 - 540), MarkOfPhantom]:
+            Cycle9.onAfter(sk)
+        for sk in [BlackJack]:
+            Cycle10.onAfter(sk)
+        for sk in [Cycle12.controller(15000), BlackJack, Cycle1.controller(30000 - 540 - 600 - 780 - 900), MarkOfPhantom]:
+            Cycle11.onAfter(sk)
+        for sk in [BlackJack]:
+            Cycle12.onAfter(sk)
+
         MileAiguillesInit.protect_from_running()
+        ReadyToDie.protect_from_running()
+        SoulContract.protect_from_running()
+        JokerInit.protect_from_running()
+        MarkOfPhantom.protect_from_running()
+        BlackJack.protect_from_running()
+        BoolsEye.protect_from_running()
         
         #이들 정보교환 부분을 굳이 Task exchange로 표현할 필요가 있을까?
         
@@ -149,8 +197,8 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     TalentOfPhantomII, TalentOfPhantomIII, FinalCutBuff, BoolsEye,
                     JudgementBuff, Booster, PrieredAria, HerosOath, ReadyToDie, JokerBuff, Frid,
-                    globalSkill.soul_contract()] +\
-                [FinalCut, JokerInit, MarkOfPhantom, BlackJackFinal] +\
+                    SoulContract] +\
+                [FinalCut, Cycle1, Cycle2, Cycle3, Cycle4, Cycle5, Cycle6, Cycle7, Cycle8, Cycle9, Cycle10, Cycle11, Cycle12, JokerInit, MarkOfPhantom, BlackJackFinal] +\
                 [BlackJack] +\
                 [MileAiguillesInit] +\
                 [BasicAttackWrapper])
