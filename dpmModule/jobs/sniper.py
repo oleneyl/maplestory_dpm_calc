@@ -18,6 +18,9 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(armor_ignore = 50)
+
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(MutualRule('스플릿 애로우', '트루 스나이핑'), RuleSet.BASE)
@@ -43,16 +46,11 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 35)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5 * self.combat)
-        
-        DistancingSence = core.InformedCharacterModifier("디스턴싱 센스",pdamage_indep = 40 + self.combat * 2) #최대 사정거리
+
         MortalBlow = core.InformedCharacterModifier("모탈 블로우",pdamage = 2)        
         ExtremeArchery = core.InformedCharacterModifier("익스트림 아처리:석궁",crit_damage = 20)
-        
-        LastmanStanding = core.InformedCharacterModifier("라스트맨 스탠딩",pdamage_indep = 20+self.combat*2)
-        WeaknessFinding = core.InformedCharacterModifier("위크니스 파인딩",armor_ignore = 50+self.combat*1)
-        
-        return [WeaponConstant, Mastery, DistancingSence, MortalBlow, 
-               ExtremeArchery, LastmanStanding, WeaknessFinding]
+
+        return [WeaponConstant, Mastery, MortalBlow, ExtremeArchery]
         
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
@@ -62,6 +60,15 @@ class JobGenerator(ck.JobGenerator):
         스나, 피어싱, 롱레트, 프리저
         '''
         distance = 400
+
+        def sum_armor_ignore(ignore1, ignore2):
+            return 100 - 0.01 * ((100 - ignore1) * (100 - ignore2))
+
+        def sum_pdamage_indep(p1, p2):
+            return ((1 + p1 / 100) * (1 + p2 / 100) - 1) * 100
+
+        WEAKNESS_FINDING = 50 + self.combat * 1
+        DISTANCING_LASTMAN = sum_pdamage_indep(40 + self.combat * 2, 20 + self.combat * 2)
         
         #Buff skills
         SoulArrow = core.BuffSkill("소울 애로우", 0, 300 * 1000, att = 30, rem = True).wrap(core.BuffSkillWrapper)
@@ -75,12 +82,31 @@ class JobGenerator(ck.JobGenerator):
         #Damage Skills
         # 롱레인지 트루샷: 나무위키피셜 DPM 떨어지므로 보류
 
-        Snipping = core.DamageSkill("스나이핑", 630, 465+combat*5, 9 + 1, modifier = core.CharacterModifier(crit = 100, armor_ignore = 20 + combat*1, pdamage = 20, boss_pdamage = 10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        TrueSnippingTick = core.DamageSkill("트루 스나이핑(타격)", 700, 950+vEhc.getV(2,2)*30, 14+1, modifier = core.CharacterModifier(pdamage=100, armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        Snipping = core.DamageSkill("스나이핑", 630, 465+combat*5, 9 + 1,
+            modifier = core.CharacterModifier(
+                crit = 100,
+                armor_ignore = sum_armor_ignore(20 + combat*1, WEAKNESS_FINDING),
+                pdamage = 20,
+                boss_pdamage = 10,
+                pdamage_indep = DISTANCING_LASTMAN
+            )
+        ).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        TrueSnippingTick = core.DamageSkill("트루 스나이핑(타격)", 700, 950+vEhc.getV(2,2)*30, 14+1,
+            modifier = core.CharacterModifier(
+                pdamage = 100,
+                armor_ignore = 100,
+                pdamage_indep = DISTANCING_LASTMAN
+            )
+        ).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         TrueSnipping = core.DamageSkill("트루 스나이핑", 0, 0, 0, cooltime = 180 * 1000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         #TODO : 차지드 애로우용 홀더 생성이 필요함.
-        ChargedArrow = core.DamageSkill("차지드 애로우", 0, 750 + vEhc.getV(1,1)*30, 10+1, cooltime = -1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        ChargedArrow = core.DamageSkill("차지드 애로우", 0, 750 + vEhc.getV(1,1)*30, 10+1, cooltime = -1,
+            modifier = core.CharacterModifier(
+                armor_ignore = WEAKNESS_FINDING,
+                pdamage_indep = DISTANCING_LASTMAN
+            )
+        ).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         ChargedArrowUse = core.DamageSkill("차지드 애로우(차징)", 0, 0, 0, cooltime = 10000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         #Summon Skills
         Freezer = core.SummonSkill("프리저", 900, 3030, 390, 1, 220 * 1000).setV(vEhc, 3, 3, False).wrap(core.SummonSkillWrapper)
@@ -88,11 +114,21 @@ class JobGenerator(ck.JobGenerator):
         
         Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (int(121-0.5*vEhc.getV(5,5)))*1000).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
         
-        SplitArrow = core.DamageSkill("스플릿 애로우(공격)", 0, 600 + vEhc.getV(0,0) * 24, 5+1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        SplitArrow = core.DamageSkill("스플릿 애로우(공격)", 0, 600 + vEhc.getV(0,0) * 24, 5+1,
+            modifier = core.CharacterModifier(
+                armor_ignore = WEAKNESS_FINDING,
+                pdamage_indep = DISTANCING_LASTMAN
+            )
+        ).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         SplitArrowBuff = core.BuffSkill("스플릿 애로우", 810, 60 * 1000, 120 * 1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         #TODO : 스플릿애로우 계산
         
-        FinalAttack = core.DamageSkill("파이널 어택", 0, 150, 0.4).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
+        FinalAttack = core.DamageSkill("파이널 어택", 0, 150, 0.4, 
+            modifier = core.CharacterModifier(
+                armor_ignore = WEAKNESS_FINDING,
+                pdamage_indep = DISTANCING_LASTMAN
+            )
+        ).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
         
