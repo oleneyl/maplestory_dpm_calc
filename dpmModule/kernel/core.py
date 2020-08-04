@@ -169,7 +169,7 @@ class CharacterModifier(object):
 
         res_damage = reference_hit * MAX_DAMAGE_RESTRICTION
 
-        real_damage = (max_crit_factor + min_crit_factor) * (max_damage_factor + min_damage_factor) / 4 # W/O restriction
+        real_damage = (max_crit_factor + min_crit_factor) / 2 * (max_damage_factor + min_damage_factor) / 2 # W/O restriction
         res_damage = restricted_damage(min_damage_factor, max_damage_factor, min_crit_factor, max_crit_factor, res_damage)  # W/ restriction
 
         return (res_damage, real_damage - res_damage)
