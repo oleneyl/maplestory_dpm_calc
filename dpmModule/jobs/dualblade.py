@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConditionRule
 from . import globalSkill
 from .jobbranch import thieves
+from . import contrib
 #TODO : 5차 신스킬 적용
 
 # TODO: 왜 레투다는 5차값이 1,1인데 레투다 패시브는 2,2일까?
@@ -57,15 +58,6 @@ class JobGenerator(ck.JobGenerator):
         
         코어 16개 유효 : 팬블 / 아수라 / 퓨리 -- 써든레이드 / 어센션 / 히든블레이드
         '''
-        def mirror_imaging_builder(sk : core.DamageSkillWrapper):
-            skill = sk.skill
-            copial = core.DamageSkill(skill.name.evaluate() + '(미러이미징)', 
-                0,
-                skill.damage.evaluate() * 0.7,
-                skill.hit.evaluate(),
-                cooltime=skill.cooltime.evaluate(),
-                modifier=skill._static_skill_modifier.evaluate()).wrap(core.DamageSkillWrapper)
-            sk.onAfter(copial)
 
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
@@ -87,7 +79,7 @@ class JobGenerator(ck.JobGenerator):
         
         # TODO: 버프 시전 딜레이 적용
         HiddenBladeBuff = core.BuffSkill("히든 블레이드(버프)", 0, 60000, cooltime = 90000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        HiddenBlade = core.DamageSkill("히든 블레이드", 0, 140, 1.7).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
+        HiddenBlade = core.DamageSkill("히든 블레이드", 0, 140, 1).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
         
         Asura = core.DamageSkill("아수라", 0, 0, 0, cooltime = 60000).wrap(core.DamageSkillWrapper)
         AsuraTick = core.DamageSkill("아수라(틱)", 300, 420, 4, modifier =core.CharacterModifier(armor_ignore = 100)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  #41타
@@ -128,8 +120,8 @@ class JobGenerator(ck.JobGenerator):
         SuddenRaid.onAfter(FinalCut.controller(0.2, "reduce_cooltime_p"))
 
         for sk in [PhantomBlow, SuddenRaid, FinalCut, FlashBang, AsuraTick, 
-            BladeStorm, BladeStormTick, KarmaFury, BladeTornado]:
-            mirror_imaging_builder(sk)
+            BladeStorm, BladeStormTick, KarmaFury, BladeTornado, HiddenBlade]:
+            contrib.create_auxilary_attack(sk, 0.7, nametag = '(미러이미징)')
         
         return(PhantomBlow,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),

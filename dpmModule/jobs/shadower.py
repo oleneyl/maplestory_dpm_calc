@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import thieves
+from . import contrib
 
 class MesoStack(core.DamageSkillWrapper, core.StackSkillWrapper):
     # 메익 리인포스 미적용 기준
@@ -76,16 +77,6 @@ class JobGenerator(ck.JobGenerator):
         암살 1타 3스택 19% / 2타 80%
         암살-부스-익플-배오섀
         '''
-
-        def shadow_partner_builder(sk : core.DamageSkillWrapper):
-            skill = sk.skill
-            copial = core.DamageSkill(skill.name.evaluate() + '(쉐도우파트너)', 
-                0,
-                skill.damage.evaluate() * 0.7,
-                skill.hit.evaluate(),
-                cooltime=skill.cooltime.evaluate(),
-                modifier=skill._static_skill_modifier.evaluate()).wrap(core.DamageSkillWrapper)
-            sk.onAfter(copial)
         
         ######   Skill   ######
         # http://m.inven.co.kr/board/powerbbs.php?come_idx=2297&stype=subject&svalue=%EC%8A%A4%ED%83%9D&l=52201
@@ -177,7 +168,7 @@ class JobGenerator(ck.JobGenerator):
         BasicAttackWrapper.onAfter(Assasinate)
 
         for sk in [Assasinate1, Assasinate2, Assasinate1_D, Assasinate2_D, Eviscerate, SonicBlowTick]:
-            shadow_partner_builder(sk)
+            contrib.create_auxilary_attack(sk, 0.7, nametag = '(쉐도우파트너)')
         
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
