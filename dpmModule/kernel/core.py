@@ -146,7 +146,7 @@ class CharacterModifier(object):
                 return (res_damage, real_damage - res_damage)
             else:
                 #print('---', min_damage, res_damage, max_damage)
-                exp_damage = (((res_damage - min_damage) * (res_damage - min_damage)) + (max_damage - res_damage) * res_damage ) / (max_damage - min_damage)
+                exp_damage = (((res_damage - min_damage) * (res_damage + min_damage) / 2) + (max_damage - res_damage) * res_damage ) / (max_damage - min_damage)
                 #print(exp_damage, real_damage)
                 return (exp_damage, real_damage - exp_damage)
 
