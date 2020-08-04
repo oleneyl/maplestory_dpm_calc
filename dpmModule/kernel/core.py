@@ -118,6 +118,40 @@ class CharacterModifier(object):
         '''Return : (damage, loss) tuple
         숙련도는 90~100으로 가정함(5% deviation)
         '''
+        def restricted_damage(x1, x2, y1, y2, M):
+            '''Calculated expected value of min(M, xy) in [x1~x2, y1~y2]
+            '''
+            normalizer = (x2 - x1) * (y2 - y1)
+            basis = (x1 + x2) / 2 * (y1 + y2) / 2
+            
+            if M > x2 * y2:
+                return basis
+            else:
+                if M > x1 * y2 and M > x2 * y1:
+                    x_p = M / y2
+                    # Case 1
+                    excess = M * y2 * (x2 - x_p) - (y2 * y2 / 4) *(x2 * x2 - x_p * x_p) - (M * M / 2) * math.log(x2 / x_p)
+                    
+                    return basis + excess / normalizer
+                elif M < x1 * y2 and M > x2 * y1:
+                    # Case 2
+                    x_p = x1
+                    # Case 1
+                    excess = M * y2 * (x2 - x_p) - (y2 * y2 / 4) *(x2 * x2 - x_p * x_p) - (M * M / 2) * math.log(x2 / x_p)
+                    return basis + excess / normalizer
+
+                elif M > x1 * y2 and M < x2 * y1:
+                    # Case 3 -> change to Case 2
+                    return restricted_damage(y1, y2, x1, x2, M)
+                    
+                elif M > x1 * y1:
+                    x_p = M / y1
+                    excess = M * y1 * (x_p - x1) - (y1 * y1 / 4) * (x_p * x_p - x1 * x1) - (M * M / 2) * math.log(x_p / x1)
+                    return M + excess / normalizer
+
+                else:
+                    return M
+
         #Optimized
         real_crit = min(100, self.crit)
         stat = (4 * self.stat_main * (1 + 0.01 * self.pstat_main) + self.stat_sub * (1 + 0.01 * self.pstat_sub)) + (4 * self.stat_main_fixed + self.stat_sub_fixed )
@@ -127,28 +161,18 @@ class CharacterModifier(object):
         
         factor_aggregated = stat * adap * factor_crit_removed * ignorance * damage * 0.0001
         
-        max_crit_factor = (1 + 0.0001 * max(0, real_crit) * (self.crit_damage + 50)) * (100/95)
-        min_crit_factor = (1 + 0.0001 * max(0, real_crit) * (self.crit_damage + 20)) * (90/95)
+        max_crit_factor = (1 + 0.0001 * max(0, real_crit) * (self.crit_damage + 50))
+        min_crit_factor = (1 + 0.0001 * max(0, real_crit) * (self.crit_damage + 20))
         
+        max_damage_factor = factor_aggregated * (100/95)
+        min_damage_factor = factor_aggregated * (90/95)
+
         res_damage = reference_hit * MAX_DAMAGE_RESTRICTION
-        
-        max_damage = max_crit_factor * factor_aggregated 
-        min_damage = min_crit_factor * factor_aggregated
-        real_damage = 0.5 * (max_damage + min_damage)
-        
-        if max_damage < res_damage:
-            #Not restricted by max damage
-            return (real_damage, 0)
-        else:
-            #restricted by max damage
-            if min_damage > res_damage:
-                #print(res_damage, real_damage)
-                return (res_damage, real_damage - res_damage)
-            else:
-                #print('---', min_damage, res_damage, max_damage)
-                exp_damage = (((res_damage - min_damage) * (res_damage + min_damage) / 2) + (max_damage - res_damage) * res_damage ) / (max_damage - min_damage)
-                #print(exp_damage, real_damage)
-                return (exp_damage, real_damage - exp_damage)
+
+        real_damage = (max_crit_factor + min_crit_factor) / 2 * (max_damage_factor + min_damage_factor) / 2 # W/O restriction
+        res_damage = restricted_damage(min_damage_factor, max_damage_factor, min_crit_factor, max_crit_factor, res_damage)  # W/ restriction
+
+        return (res_damage, real_damage - res_damage)
 
     def log(self):
         txt = ("crit rate : %.1f, crit damage %.1f\n")%(self.crit, self.crit_damage)
