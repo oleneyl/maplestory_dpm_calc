@@ -91,7 +91,7 @@ class JobGenerator(ck.JobGenerator):
         
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 200*1000).wrap(core.BuffSkillWrapper)
-        FastCharge = core.BuffSkill("패스트 차지", 600, 10000, cooltime = 120000).wrap(core.BuffSkillWrapper) #임의딜레이 600
+        FastCharge = core.BuffSkill("패스트 차지", 600, 10000, cooltime = 120000, rem=True).wrap(core.BuffSkillWrapper) #임의딜레이 600
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60000, pdamage = 10, cooltime = 120000).wrap(core.BuffSkillWrapper)
         
         Craft_Orb = core.DamageSkill("크래프트:오브", 390, 300, 1).wrap(core.DamageSkillWrapper)
