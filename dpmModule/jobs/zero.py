@@ -210,7 +210,8 @@ class JobGenerator(ck.JobGenerator):
         #5차스킬들 마스터리 알파/베타 구분해서 적용할것.
         
         LimitBreakAttack = core.DamageSkill("리미트 브레이크", 0, 400+15*vEhc.getV(0,0), 5, modifier = beta_enrage(15, -1)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = (30+vEhc.getV(0,0)//5) *1.2 + 20, cooltime = 240*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        # 리미트 브레이크 중에는 디바인 포스 사용 (공격력 20 증가)
+        LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = (30+vEhc.getV(0,0)//5) *1.2 + 20, att = 20, cooltime = 240*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
         #LimitBreakFinal = core.DamageSkill("리미트 브레이크 (막타)", 0, '''지속시간 동안 가한 데미지의 20% / 15''', 15)
         # 베타로 사용함.
