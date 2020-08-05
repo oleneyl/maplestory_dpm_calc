@@ -62,6 +62,7 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(InactiveRule('콤보 데스폴트', '콤보 인스팅트'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('레이지 업라이징', '콤보 인스팅트'), RuleSet.BASE)
         return ruleset
 
 
@@ -97,11 +98,11 @@ class JobGenerator(ck.JobGenerator):
         ComboAttack = ComboAttackWrapper(core.BuffSkill("콤보어택", 0, 999999 * 1000), vEhc, combat)
         
         #Damage Skills
-        Panic = core.DamageSkill("패닉", 1080, 1150, 1, cooltime = 40000).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        Panic = core.DamageSkill("패닉", 720, 1150, 1, cooltime = 40000).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         PanicBuff = core.BuffSkill("패닉(디버프)", 0, 40000, cooltime = -1, pdamage_indep = 25, rem = False).wrap(core.BuffSkillWrapper)
         
         RaisingBlow = core.DamageSkill("레이징 블로우", 600, 200, 8, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        RaisingBlowInrage = core.DamageSkill("레이징 블로우(인레이지)", 570, 215, 6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함.
+        RaisingBlowInrage = core.DamageSkill("레이징 블로우(인레이지)", 600, 215, 6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함.
         RaisingBlowInrageFinalizer = core.DamageSkill("레이징 블로우(인레이지)(최종타)", 0, 215, 2, modifier = core.CharacterModifier(pdamage = 20, crit = 100)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함. 둘을 연결해야 함.
         
         Insizing = core.DamageSkill("인사이징", 660, 576, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #870->640 오더스 적용 필요함. 도트뎀 (30초간 2초당 165%), 크리율에따른 뎀증 반영필요.
@@ -110,7 +111,7 @@ class JobGenerator(ck.JobGenerator):
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 170, 3 * 0.75).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
         # 현재 딜사이클 미포함 상태, 코어강화 수치 확인 필요
-        RisingRage = core.DamageSkill("레이지 업라이징", 750, 500, 8, cooltime = 10*1000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        RisingRage = core.DamageSkill("레이지 업라이징", 750, 500, 8, cooltime = 10*1000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         Valhalla = core.BuffSkill("발할라", 840, 30 * 1000, cooltime = 150 * 1000, crit = 30, att = 50).wrap(core.BuffSkillWrapper)  #임의 배정된 공격속도.
         SwordOfBurningSoul = core.SummonSkill("소드 오브 버닝 소울", 820, 1000, (315+12*vEhc.getV(0,0)), 6, (60+0.5*vEhc.getV(0,0)) * 1000, cooltime = 120 * 1000, modifier = core.CharacterModifier(crit = 50)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)       #시전 딜레이 모름.
@@ -119,7 +120,7 @@ class JobGenerator(ck.JobGenerator):
         ComboDesfortBuff = core.BuffSkill("콤보 데스폴트 종료 지시자", 0, 5 * 1000, pdamage_indep = 48.6, rem = False, cooltime = -1).isV(vEhc, 2, 3).wrap(core.BuffSkillWrapper)
         
         ComboInstinct = core.BuffSkill("콤보 인스팅트", 450, 30 * 1000, cooltime = 240 * 1000, rem = False, red = True).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper)
-        ComboInstinctFringe = core.DamageSkill("콤보 인스팅트 균열", 0, 250 + 10*vEhc.getV(1,1), 18).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        ComboInstinctFringe = core.DamageSkill("콤보 인스팅트 균열", 0, 200 + 8*vEhc.getV(1,1), 18).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
         ComboInstinctOff = core.BuffSkill("콤보 인스팅트 종료", 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper)
 
         ######   Skill Wrapper   ######
@@ -132,6 +133,8 @@ class JobGenerator(ck.JobGenerator):
     
         #레이징 블로우
         RaisingBlowInrage.onAfters([InstinctFringeUse, RaisingBlowInrageFinalizer, AdvancedFinalAttack, ComboAttack.stackController(1)])
+
+        RisingRage.onAfter(ComboAttack.stackController(1))
     
         Insizing.onAfters([InsizingBuff, AdvancedFinalAttack, ComboAttack.stackController(-2)])
     
@@ -142,7 +145,7 @@ class JobGenerator(ck.JobGenerator):
         
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
-        for sk in [RaisingBlowInrageFinalizer, ComboDesfort, Panic, Insizing]:
+        for sk in [RaisingBlowInrageFinalizer, ComboDesfort, Panic, Insizing, RisingRage]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
 
@@ -152,7 +155,7 @@ class JobGenerator(ck.JobGenerator):
                     InsizingBuff, AuraWeaponBuff, ComboDesfortBuff, 
                     ComboInstinct, ComboInstinctOff, PanicBuff,
                     globalSkill.soul_contract()] +\
-                [Panic, Insizing, ComboDesfort] +\
+                [Panic, Insizing, ComboDesfort, RisingRage] +\
                 [SwordOfBurningSoul] +\
                 [AuraWeaponCooltimeDummy] +\
                 [RaisingBlowInrage])
