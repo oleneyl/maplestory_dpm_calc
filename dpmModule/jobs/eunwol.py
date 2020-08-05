@@ -76,24 +76,24 @@ class JobGenerator(ck.JobGenerator):
     
         FoxSoul = core.DamageSkill("여우령", 0, 200, 3 * (0.25+0.1)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        SoulAttack = core.DamageSkill("귀참", 600, 265, 12+1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        SoulAttack = core.DamageSkill("귀참", 600, 265, 12, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DoubleBodyAttack = core.DamageSkill("분혼 격참(공격)", 0, 2000, 1).wrap(core.DamageSkillWrapper)
-        DoubleBody = core.BuffSkill("분혼 격참", 1000, 10000, cooltime = 180000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
+        DoubleBody = core.BuffSkill("분혼 격참", 1000, 10000, cooltime = 120 * 1000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
     
         #하이퍼스킬
         #정결극 유지율 100%
         EnhanceSpiritLink = core.BuffSkill("정령 결속 극대화", 0, 120000 * (SOULENHANCEREM/100), cooltime = 120*1000, boss_pdamage = 20, pdamage = 35, att = 20, armor_ignore = 20).wrap(core.BuffSkillWrapper)
         EnhanceSpiritLinkSummon_S = core.SummonSkill("수호 정령(간간 수월래)", 0, 3000, 275, 3, 120000 * (SOULENHANCEREM/100), cooltime = -1).wrap(core.SummonSkillWrapper)
-        EnhanceSpiritLinkSummon_J_Init = core.SummonSkill("수호 정령(소혼 장막)(시전)", 0, 30000, 0, 0, 120000 * (SOULENHANCEREM/100), cooltime = -1).wrap(core.SummonSkillWrapper)
+        EnhanceSpiritLinkSummon_J_Init = core.SummonSkill("수호 정령(소혼 장막)(시전)", 0, 60 * 1000, 0, 0, 120000 * (SOULENHANCEREM/100), cooltime = -1).wrap(core.SummonSkillWrapper)
         EnhanceSpiritLinkSummon_J = core.SummonSkill("수호 정령(소혼 장막)", 0, 150, 150, 1, 4800, cooltime = -1).wrap(core.SummonSkillWrapper)
         
         #소혼 장막을 은월이 시전해야함
         #소혼 장막: 최대 10명의 적을 150% 데미지로 4.8초 동안 지속 공격, 수호 정령이 소혼 장막을 시전 하는 동안 은월이 시전하는 소혼장막의 최종 데미지 700% 증가. 재사용 대기시간 60초
         # 최종 데미지 450 -> 700으로 수정
-        EnhanceSpiritLinkSummon_J_Buff = core.BuffSkill("수호 정령(소혼 장막)(버프)", 0, 4800, cooltime = -1, pdamage_indep = 700).wrap(core.BuffSkillWrapper)
-        EnhanceSpiritLinkSummon_J_Damage = core.DamageSkill("소혼 장막", 150, 200*5.5, 1).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
+        # EnhanceSpiritLinkSummon_J_Buff = core.BuffSkill("수호 정령(소혼 장막)(버프)", 0, 4800, cooltime = -1, pdamage_indep = 700).wrap(core.BuffSkillWrapper)
+        EnhanceSpiritLinkSummon_J_Damage = core.DamageSkill("소혼 장막", 150, 45 * 8, 5).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
     
-        LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20 * 4 / 3).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
+        LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         #1중첩 럭다 재사용 50초 감소 / 방어력30% / 체엠 20% / 크리율15% / 뎀증20 / 경치30
         #2중첩 럭다 재사용 50초 감소 / 방어력40% / 체엠 30% / 크리율25% / 뎀증30 / 경치40
         #7 발동시 방무 20 -> 30
@@ -127,7 +127,7 @@ class JobGenerator(ck.JobGenerator):
         #정결극 위계
         EnhanceSpiritLink.onAfters([EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init])
         EnhanceSpiritLinkSummon_J_Init.onTick(EnhanceSpiritLinkSummon_J)
-        EnhanceSpiritLinkSummon_J.onAfter( core.RepeatElement(EnhanceSpiritLinkSummon_J_Damage, 32) )
+        EnhanceSpiritLinkSummon_J.onAfter( core.RepeatElement(EnhanceSpiritLinkSummon_J_Damage, 56) )
         
         #정령 집속
         SoulConcentrate.onAfter(DoubleBody.controller(1.0, 'reduce_cooltime_p'))
@@ -152,7 +152,7 @@ class JobGenerator(ck.JobGenerator):
         
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                    EnhanceSpiritLinkSummon_J_Buff, EnhanceSpiritLink, LuckyDice, HerosOath, Frid, 
+                    EnhanceSpiritLink, LuckyDice, HerosOath, Frid, 
                     Overdrive, OverdrivePenalty, SoulConcentrate, DoubleBody, SoulTrapBuff,
                     globalSkill.soul_contract()] +\
                 [] +\
