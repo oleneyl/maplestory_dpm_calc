@@ -59,8 +59,7 @@ class JobGenerator(ck.JobGenerator):
         2티어 : 탤팬4
         
         펫버프 : 프레이 오브 아리아, 메용, 크오체
-        템오카 사용안함
-        크리율과 상관없이 블랑카르트 적용 크리율은 100%로 고정
+        템페스트 오브 카드 사용하지 않음
         '''
         
         #Buff skills
@@ -100,7 +99,7 @@ class JobGenerator(ck.JobGenerator):
         JokerDamage = core.DamageSkill("조커", 100*5, 240+9*vEhc.getV(4,4), 30).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)  #14회 반복, 총 420타이므로 30타로 적용
         JokerBuff = core.BuffSkill("조커(버프)", 0, 30000, cooltime = -1, pdamage_indep = (1 + (vEhc.getV(4,4) - 1) // 5) * 2 / 5).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         
-        BlackJack = core.SummonSkill("블랙잭", 760, 250, 400+16*vEhc.getV(1,1), 1, 5000-1, cooltime = 15000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
+        BlackJack = core.SummonSkill("블랙잭", 570, 250, 400+16*vEhc.getV(1,1), 1, 5000-1, cooltime = 15000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         BlackJackFinal = core.DamageSkill("블랙잭(최종)", 0, 1200+48*vEhc.getV(1,1), 6, cooltime = -1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         
         MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 900, 600+24*vEhc.getV(2,2), 3 * 7, cooltime = 30000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
