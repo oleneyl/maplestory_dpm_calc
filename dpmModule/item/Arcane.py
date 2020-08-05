@@ -17,7 +17,7 @@ _valueMap = [[149, [0,27,40,55,72,92]],
                 [347,[0,63,92,126,167,214]],
                 [353,[0,64,94,129,170,218]],
                 [140,[0,0,0,0,0,0]],
-                [295,[0,18,40,65,95,131]]]#Need blade & Zero weapon
+                [295,[0,18,40,65,95,131]]]
 
 WeaponFactory = it.WeaponFactoryClass(200, _valueMap, modifier = it.CharacterModifier(stat_main = 100, stat_sub = 100, pdamage = 30, armor_ignore = 20))
 

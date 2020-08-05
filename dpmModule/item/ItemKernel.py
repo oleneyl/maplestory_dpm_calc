@@ -355,7 +355,7 @@ class WeaponFactoryClass():
     enable_blade=False):
         assert(_type in self.wholeType)
         if _type == '블레이드' and not enable_blade:
-            _type == '단검'
+            _type = '단검'
         _att, _bonus = self.getMap(_type)
         item = Item(att = _att)
         item.add_main_option(self.modifier)
