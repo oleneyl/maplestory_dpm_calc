@@ -5,8 +5,13 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import warriors
+from . import contrib
 ######   Passive Skill   ######
 
+class AuraWeaponBuilder_BB(warriors.AuraWeaponBuilder):
+    def __init__(self, enhancer, skill_importance, enhance_importance):
+        super(AuraWeaponBuilder_BB, self).__init__(enhancer, skill_importance, enhance_importance)
+        contrib.create_auxilary_attack(self.target_skill, 0.9)
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -68,14 +73,14 @@ class JobGenerator(ck.JobGenerator):
         DemonSlashAW3 = core.DamageSkill("데몬 슬래시 강화(3타)", 210, 700, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DemonSlashAW4 = core.DamageSkill("데몬 슬래시 강화(4타)", 210, 800, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
     
-        DemonSlashAWBB1 = core.DamageSkill("데몬 슬래시 강화(1타)블블", 390, 600, 3*1.9, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAWBB2 = core.DamageSkill("데몬 슬래시 강화(2타)블블", 300, 600, 3*1.9, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAWBB3 = core.DamageSkill("데몬 슬래시 강화(3타)블블", 210, 700, 3*1.9, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAWBB4 = core.DamageSkill("데몬 슬래시 강화(4타)블블", 210, 800, 3*1.9, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAWBB1 = core.DamageSkill("데몬 슬래시 강화(1타)블블", 390, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAWBB2 = core.DamageSkill("데몬 슬래시 강화(2타)블블", 300, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAWBB3 = core.DamageSkill("데몬 슬래시 강화(3타)블블", 210, 700, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAWBB4 = core.DamageSkill("데몬 슬래시 강화(4타)블블", 210, 800, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        DemonImpact = core.DamageSkill("데몬 임팩트", 660, 460, (6+1)*1.9, modifier = core.CharacterModifier(crit = 100, armor_ignore = 30, boss_pdamage = 40, pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        DemonImpact = core.DamageSkill("데몬 임팩트", 660, 460, (6+1), modifier = core.CharacterModifier(crit = 100, armor_ignore = 30, boss_pdamage = 40, pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
-        DevilCry = core.DamageSkill("데빌 크라이", 1620, 515, 7*1.9, cooltime = 20 * 1000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)   #이블 토쳐 위해 사용필수.
+        DevilCry = core.DamageSkill("데빌 크라이", 1620, 515, 7, cooltime = 20 * 1000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)   #이블 토쳐 위해 사용필수.
         DevilCryBuff = core.BuffSkill("데빌 크라이(위협)", 0, 20000, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         InfinityForce = core.BuffSkill("인피니티 포스", 990, 50*1000, cooltime = 200 * 1000).wrap(core.BuffSkillWrapper)
@@ -127,8 +132,12 @@ class JobGenerator(ck.JobGenerator):
         
         Metamorphosis.onAfter(MetamorphosisSummon)
 
+        # 블블 추가타 적용
+        for sk in [DemonSlashAWBB1, DemonSlashAWBB2, DemonSlashAWBB3, DemonSlashAWBB4, DemonImpact, DevilCry]:
+            contrib.create_auxilary_attack(sk, 0.9)
+
         # 오라 웨폰
-        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
+        auraweapon_builder = AuraWeaponBuilder_BB(vEhc, 3, 2)
         for sk in [DemonSlashAWBB1, DemonSlashAWBB2, DemonSlashAWBB3, DemonSlashAWBB4, DemonImpact]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
