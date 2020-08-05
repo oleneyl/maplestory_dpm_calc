@@ -505,11 +505,11 @@ def getU8000CharacterTemplate(_type):
     link = LinkSkill.get_full_link()
     template = ichar(modifierlist = [link], level = 255)
     
-    template.add_summary("에디: 2.5줄, 무기류 공15%")
+    template.add_summary("에디: 2.5줄, 무기류 공21%")
 
-    weaponAPtnl = MDF(patt = 15)
-    subAPtnl = MDF(patt = 15)
-    emblemAPtnl = MDF(patt = 15)
+    weaponAPtnl = MDF(patt = 21)
+    subAPtnl = MDF(patt = 21)
+    emblemAPtnl = MDF(patt = 21)
 
     template.add_summary("방어구/장신구: 레전27%, 추옵 120급, 스타포스 22성")
     template.add_summary("장갑: 크뎀2줄")
