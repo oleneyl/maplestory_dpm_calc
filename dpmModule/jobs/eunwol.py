@@ -7,6 +7,7 @@ from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import pirates
 from . import jobutils
+from ..execution.rules import RuleSet, InactiveRule
 
 class SoulTrapBuffWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
@@ -79,8 +80,13 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5)   
-        Weakness = core.InformedCharacterModifier("약화",pdamage = 20) #디버프지만 상시발동가정        
-        return [WeaponConstant, Mastery,Weakness]
+        Weakness = core.InformedCharacterModifier("약화",pdamage = 20) #디버프지만 상시발동가정    
+        return [WeaponConstant, Mastery, Weakness]
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(InactiveRule("파쇄철조-회", "파쇄철조-반"), RuleSet.BASE)
+        return ruleset
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
@@ -99,7 +105,6 @@ class JobGenerator(ck.JobGenerator):
         정령 집속 : 무작위 스킬 1회 발동, 키다운은 3초 지속, 정령 공격은 2초마다 발동 1742퍼뎀으로 1회공격 가정.
         '''
         SOULENHANCEREM = 100
-
         
         ######   Skill   ######
         #Buff skills
@@ -108,7 +113,7 @@ class JobGenerator(ck.JobGenerator):
 
         SoulAttack = core.DamageSkill("귀참", 600, 265, 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DoubleBodyAttack = core.DamageSkill("분혼 격참(공격)", 0, 2000, 1).wrap(core.DamageSkillWrapper)
-        DoubleBody = core.BuffSkill("분혼 격참", 1000, 10000, cooltime = 120 * 1000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
+        DoubleBody = core.BuffSkill("분혼 격참", 1000, 10000, cooltime = 180 * 1000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
     
         #하이퍼스킬
         #정결극 유지율 100%
@@ -147,6 +152,11 @@ class JobGenerator(ck.JobGenerator):
         RealSoulAttackCounter = core.BuffSkill("진 귀참(딜레이)", 0, 6000, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         DoubleBodyRegistance = core.BuffSkill("분혼 격참(저항)", 0, 90000, cooltime = -1).wrap(core.BuffSkillWrapper)
+
+        # 파쇄철조 (디버프용)
+        # 강화를 안 하는 걸로 아는데, 일단 인덱스는 7로 해두었습니다
+        BladeImp = core.DamageSkill("파쇄철조-회", 90, 160, 4).setV(vEhc, 7, 3).wrap(core.DamageSkillWrapper)
+        BladeImpBuff = core.BuffSkill("파쇄철조-반", 0, 15 * 1000, cooltime=-1, pdamage_indep=10).wrap(core.BuffSkillWrapper)
         ######   Skill Wrapper   ######
         
         #분혼 격참
@@ -180,14 +190,17 @@ class JobGenerator(ck.JobGenerator):
         SoulTrap.onTick(FoxSoul)
         SoulConcentrateSummon.onTick(FoxSoul)
         
+        #파쇄철조
+        BladeImp.onAfter(BladeImpBuff)
+
         schedule = core.ScheduleGraph()
         
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     EnhanceSpiritLink, LuckyDice, HerosOath, Frid, 
                     Overdrive, OverdrivePenalty, SoulConcentrate, DoubleBody, SoulTrapBuff,
-                    globalSkill.soul_contract()] +\
-                [] +\
+                    globalSkill.soul_contract(Cool = 120 * 1000)] +\
+                [BladeImp, BladeImpBuff] +\
                 [EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init, EnhanceSpiritLinkSummon_J, SoulTrap, SoulConcentrateSummon] +\
                 [RealSoulAttackCounter, DoubleBodyRegistance] +\
                 [BasicAttackWrapper])
