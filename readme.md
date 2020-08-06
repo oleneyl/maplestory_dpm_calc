@@ -37,6 +37,9 @@ Dev Tool
 --------------
 https://github.com/oleneyl/maplestory_dpm_calc_web_tool
 
+- Slack Channel
+  - https://github.com/oleneyl/maplestory_dpm_calc/issues/98
+
 Example
 -----------------------
 
