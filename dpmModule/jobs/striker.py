@@ -92,8 +92,7 @@ class JobGenerator(ck.JobGenerator):
     
         LightningStack = LightningWrapper(core.BuffSkill("엘리멘탈 : 라이트닝", 0, 99999999))
 
-        # 5차 강화에 포함해야 할 수도 있음
-        HuricaneConcat = core.DamageSkill("태풍(연계)", 420, 390, 5+1).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
+        HuricaneConcat = core.DamageSkill("태풍(연계)", 420, 390, 5+1, modifier = core.CharacterModifier(pdamage_indep = 20)).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
         
         Destroy = core.DamageSkill("섬멸", 480, 350, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Thunder = core.DamageSkill("벽력", 540, 320, 5 + 1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
