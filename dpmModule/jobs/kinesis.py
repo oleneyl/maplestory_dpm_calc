@@ -79,7 +79,7 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 180000).wrap(core.BuffSkillWrapper)
         PsychicShield = core.BuffSkill("사이킥 실드", 0, 180000).wrap(core.BuffSkillWrapper)
 
-        Ultimate_Material = core.DamageSkill("얼티메이트-메테리얼", 600, 700, 10, modifier = core.CharacterModifier(crit_damage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)#   7
+        Ultimate_Material = core.DamageSkill("얼티메이트-메테리얼", 630, 700, 10, modifier = core.CharacterModifier(crit_damage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)#   7
         PsychicDrain = core.SummonSkill("싸이킥 드레인", 510, 500, 150, 1, 10000, cooltime = 5000, rem = False).setV(vEhc, 4, 5, False).wrap(core.SummonSkillWrapper) # 1칸+
         
         PsychicForce3 = core.SummonSkill("싸이킥 포스3", 270, 1000, 75, 1, 20000, rem = False).wrap(core.SummonSkillWrapper)
@@ -90,13 +90,13 @@ class JobGenerator(ck.JobGenerator):
         
         TeleKinesis = core.DamageSkill("텔레키네시스", 0, 350, 0.7).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         UltimateBPM = core.SummonSkill("얼티메이트-B.P.M.", 0, 600, 175, 7, 999999999).setV(vEhc, 0, 2, False).wrap(core.SummonSkillWrapper) #1
-        PsychicGrab2 = core.DamageSkill("싸이킥 그랩", 486, 470, 5,  modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) #+2, 그랩 1번에 스매싱 5회 사용 가능 (450*5+180)/5
-        UltimatePsychic = core.DamageSkill("얼티메이트-싸이킥 샷", 660, 300, 3*5*2*0.8,  modifier = core.CharacterModifier(crit_damage = 20, pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) #5
+        PsychicGrab2 = core.DamageSkill("싸이킥 그랩", 552, 470, 5,  modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) #+2, 그랩 1번에 스매싱 5회 사용 가능 (510*5+210)/5
+        UltimatePsychic = core.DamageSkill("얼티메이트-싸이킥 샷", 1110, 300, 3*5*2*0.8,  modifier = core.CharacterModifier(crit_damage = 20, pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) #5, 그랩 1번에 샷 1회 사용가능 (900+210)
         UltimatePsychicBuff = core.BuffSkill("얼티메이트-싸이킥 샷(디버프)", 0, 10000, rem = True, armor_ignore = 15, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         PsychicCharging = core.BuffSkill("싸이킥 차징", 0, 500, cooltime = 45000, red = True).wrap(core.BuffSkillWrapper) #남은포인트의 50%충전
         
-        UltimateTrain = core.SummonSkill("얼티메이트-트레인", 600, 11999 / 17, 180, 6, 12000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        UltimateTrain = core.SummonSkill("얼티메이트-트레인", 630, 11999 / 17, 180, 6, 12000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
 
         #하이퍼
         EverPsychic = core.DamageSkill("에버 싸이킥", 870, 400, 16, cooltime = 120000).wrap(core.DamageSkillWrapper) # 캔슬 통해 딜레 870ms
@@ -117,7 +117,7 @@ class JobGenerator(ck.JobGenerator):
         UltimateMovingMatter = core.SummonSkill("얼티메이트-무빙 매터", 480, 25000/64, 500+20*vEhc.getV(0,0), 5, 25000, cooltime = 90000, modifier = core.CharacterModifier(crit_damage=20)).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)# -10
         UltimateMovingMatterFinal = core.DamageSkill("얼티메이트-무빙 매터(최종)", 0, 700+28*vEhc.getV(0,0), 12).wrap(core.DamageSkillWrapper)
         
-        UltimatePsychicBullet = core.DamageSkill("얼티메이트-싸이킥 불릿", 600, 550 + 22*vEhc.getV(3,3), 6, modifier = core.CharacterModifier(crit_damage=20)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)# -2, 딜레이 420ms + 그랩 180ms
+        UltimatePsychicBullet = core.DamageSkill("얼티메이트-싸이킥 불릿", 630, 550 + 22*vEhc.getV(3,3), 6, modifier = core.CharacterModifier(crit_damage=20)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)# -2, 딜레이 420ms + 그랩 210ms
         UltimatePsychicBulletBlackhole = core.SummonSkill("얼티메이트-싸이킥 불릿(블랙홀)", 0, 500, 500+20*vEhc.getV(3,3), 3, 500*4, cooltime = -1).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)# +1
         
         PsychicPoint = core.StackSkillWrapper(core.BuffSkill("싸이킥 포인트", 0, 999999999), 30 + 10) # Issue 43 ; maximum point may 40
@@ -193,7 +193,7 @@ class JobGenerator(ck.JobGenerator):
                     PsycoBreak, UltimatePsychicBuff, PsychicCharging, 
                     PsychicOver, OverloadMana, PsychicPoint,
                     globalSkill.soul_contract()] +\
-                [EverPsychic, UltimatePsychic] +\
+                [EverPsychic, Ultimate_Material, UltimatePsychic] +\
                 [PsychicDrain, PsychicForce3, UltimateBPM, PsychicOverSummon, PsychicTornado, UltimateMovingMatter] +\
-                [Ultimate_Material, UltimateTrain] +\
+                [UltimateTrain] +\
                 [PsychicGrab2])
