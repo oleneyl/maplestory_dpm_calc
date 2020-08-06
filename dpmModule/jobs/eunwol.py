@@ -76,7 +76,7 @@ class JobGenerator(ck.JobGenerator):
     
         FoxSoul = core.DamageSkill("여우령", 0, 200, 3 * (0.25+0.1)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        SoulAttack = core.DamageSkill("귀참", 600, 265, 12, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        SoulAttack = core.DamageSkill("귀참", 600, 265, 12+1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DoubleBodyAttack = core.DamageSkill("분혼 격참(공격)", 0, 2000, 1).wrap(core.DamageSkillWrapper)
         DoubleBody = core.BuffSkill("분혼 격참", 1000, 10000, cooltime = 120 * 1000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
     
