@@ -8,8 +8,48 @@ from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import thieves
 
+from dpmModule.kernel.policy import AbstractRule
+
+
 # TODO : [마크 오브 팬텀] : 괴도의 증표를 1개 모으는데 필요한 얼티밋 드라이브 적중 수가 5회에서 7회로 증가됩니다. 템페스트 오브 카드로도 괴도의 증표를 모을 수 있게 됩니다. 얼티밋 드라이브와 같은 횟수를 공격해야 괴도의 증표를 획득 할 수 있습니다.
 ######   Passive Skill   ######
+
+class ForcedSyncRule(AbstractRule):
+    def __init__(self, state_element, checking_element, margin=0):
+        self._state_element_name = state_element
+        self._checking_element_name = checking_element
+        self._margin = margin
+
+    def get_related_elements(self, reference_graph):
+        return [reference_graph.get_element(self._state_element_name)]
+
+    def check(self, caller, reference_graph, context = None):
+        checking_element = reference_graph.get_element(self._checking_element_name)
+        state_element = reference_graph.get_element(self._state_element_name)
+
+        if checking_element.is_active(): # checking element가 사용중이라면, 사용해도 됩니다.
+            return True
+        if checking_element.is_cooltime_left(state_element.skill.cooltime - checking_element.skill.delay - self._margin, 1): # checking element를 사용할때 다시 사용할 수 있다면, 사용해도 됩니다.
+            return True
+        return False #아니라면, 즉 checking element는 쿨타임인데, 지금 쓰면 다음에 쓸 수 없다면:= 쓰면 안됩니다.
+
+
+class AwaitRule(AbstractRule):
+    def __init__(self, state_element, checking_element, margin=0):
+        self._state_element_name = state_element
+        self._checking_element_name = checking_element
+        self._margin = margin
+
+    def get_related_elements(self, reference_graph):
+        return [reference_graph.get_element(self._state_element_name)]
+
+    def check(self, caller, reference_graph, context = None):
+        checking_element = reference_graph.get_element(self._checking_element_name)
+        state_element = reference_graph.get_element(self._state_element_name)
+
+        if checking_element.is_cooltime_left(state_element.skill.delay - self._margin, 1): # checking element를 사용할때 다시 사용할 수 있다면, 사용해도 됩니다.
+            return True
+        return False #아니라면, 즉 checking element는 쿨타임인데, 지금 쓰면 다음에 쓸 수 없다면:= 쓰면 안됩니다.
 
 
 class JobGenerator(ck.JobGenerator):
@@ -31,8 +71,7 @@ class JobGenerator(ck.JobGenerator):
     
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(self.vEhc, 3, 3)
 
-        return [
-                            HighDexterity, LuckMonopoly, LuckOfPhantomtheif, MoonLight, AcuteSence, CainExpert,
+        return [HighDexterity, LuckMonopoly, LuckOfPhantomtheif, MoonLight, AcuteSence, CainExpert,
                                 ReadyToDiePassive]
                                 
     def get_not_implied_skill_list(self):
@@ -43,7 +82,13 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ReservationRule("소울 컨트랙트", "마크 오브 팬텀"), RuleSet.BASE)
+        # ruleset.add_rule(ForcedSyncRule('블랙잭', '소울 컨트랙트', margin=7.5*1000), ruleset.BASE)
+        ruleset.add_rule(AwaitRule('레디 투 다이', '블랙잭'), ruleset.BASE)
+        ruleset.add_rule(ForcedSyncRule('마크 오브 팬텀', '소울 컨트랙트', margin=15*1000), ruleset.BASE)
+        ruleset.add_rule(ConcurrentRunRule('레디 투 다이', '소울 컨트랙트'), ruleset.BASE)
+        ruleset.add_rule(ForcedSyncRule('소울 컨트랙트', '불스아이(탤팬5)', margin=10*1000), ruleset.BASE)
+        ruleset.add_rule(ConcurrentRunRule('조커(시전)', '불스아이(탤팬5)'), ruleset.BASE)
+
         return ruleset
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
@@ -105,7 +150,12 @@ class JobGenerator(ck.JobGenerator):
         MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 900, 600+24*vEhc.getV(2,2), 3 * 7, cooltime = 30000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         MarkOfPhantomEnd = core.DamageSkill("마크 오브 팬텀(최종)", 0, 1200+48*vEhc.getV(2,2), 12).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
+        MOPBuff = core.BuffSkill("마오팬_더미",0,0, cooltime=-1).wrap(core.BuffSkillWrapper)
+        BJBuff = core.BuffSkill("블랙잭 더미",0,0, cooltime=-1).wrap(core.BuffSkillWrapper)
         #### 그래프 빌드
+
+        BlackJack.onAfter(BJBuff)
+        MarkOfPhantom.onAfter(MOPBuff)
         
         FinalCut.onAfter(FinalCutBuff.controller(1))
         
@@ -146,11 +196,12 @@ class JobGenerator(ck.JobGenerator):
         #이들 정보교환 부분을 굳이 Task exchange로 표현할 필요가 있을까?
         
         return(BasicAttackWrapper,
+                [BJBuff, MOPBuff] +\
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     TalentOfPhantomII, TalentOfPhantomIII, FinalCutBuff, BoolsEye,
                     JudgementBuff, Booster, PrieredAria, HerosOath, ReadyToDie, JokerBuff, Frid,
                     globalSkill.soul_contract()] +\
-                [FinalCut, JokerInit, MarkOfPhantom, BlackJackFinal] +\
-                [BlackJack] +\
+                [FinalCut, MarkOfPhantom, BlackJackFinal] +\
+                [BlackJack, JokerInit] +\
                 [MileAiguillesInit] +\
                 [BasicAttackWrapper])
