@@ -110,7 +110,6 @@ class JobGenerator(ck.JobGenerator):
     
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 170, 3 * 0.75).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
-        # 현재 딜사이클 미포함 상태, 코어강화 수치 확인 필요
         RisingRage = core.DamageSkill("레이지 업라이징", 750, 500, 8, cooltime = 10*1000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         Valhalla = core.BuffSkill("발할라", 840, 30 * 1000, cooltime = 150 * 1000, crit = 30, att = 50).wrap(core.BuffSkillWrapper)  #임의 배정된 공격속도.
