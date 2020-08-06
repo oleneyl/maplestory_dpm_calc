@@ -108,12 +108,20 @@ class JobGenerator(ck.JobGenerator):
             core.CharacterModifier(crit = 40) + \
             core.CharacterModifier(crit_damage = 50)
         BetaMastery = core.CharacterModifier(pdamage_indep = 49) + \
-                    core.CharacterModifier(crit = 15, boss_pdamage = 30 + 30, att = 80) + \
-                    core.CharacterModifier(armor_ignore = 50)
+                    core.CharacterModifier(crit = 15, boss_pdamage = 30, att = 80)
+
+        AlphaBetaDiff = BetaMastery - AlphaMastery
         
         # 알파: 크리티컬 바인드 크뎀 평균값 적용
         AlphaState = core.BuffSkill("상태-알파", 0, 9999*10000, cooltime = -1, crit_damage = (20*4/35)).wrap(core.BuffSkillWrapper)
-        BetaState = core.BuffSkill("상태-베타", 0, 9999*10000, cooltime = -1, pdamage_indep = 9.70, crit = 15-40, boss_pdamage = 30, att = 80-40, armor_ignore = -42.85, crit_damage = -(50 + (20*4/35))).wrap(core.BuffSkillWrapper)
+        BetaState = core.BuffSkill("상태-베타", 0, 9999*10000, cooltime = -1,
+            pdamage_indep = AlphaBetaDiff.pdamage_indep,
+            crit = AlphaBetaDiff.crit,
+            boss_pdamage = AlphaBetaDiff.boss_pdamage,
+            att = AlphaBetaDiff.att,
+            armor_ignore = AlphaBetaDiff.armor_ignore,
+            crit_damage = AlphaBetaDiff.crit_damage
+        ).wrap(core.BuffSkillWrapper)
 
         #### 알파 ####
         MoonStrike = core.DamageSkill("문 스트라이크", 390, 120, 6).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
