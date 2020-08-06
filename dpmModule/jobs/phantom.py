@@ -131,10 +131,10 @@ class JobGenerator(ck.JobGenerator):
         # TempestOfCard.onAfter(CarteNoir)
         
         JokerDamage.onAfter(core.RepeatElement(CarteNoir, 10))    #조커는 느와르를 발동하나, 조커 3타에 1번씩만 들어가므로 30 / 3 = 10
-        JokerDamage.onAfter(JokerBuff)
         
-        JokerInit.onAfter(core.RepeatElement(JokerDamage, 14))
-        JokerInit.onAfter(JokerBuff)
+        JokerDamages = core.RepeatElement(JokerDamage, 14)
+        JokerInit.onAfter(JokerDamages)
+        JokerDamages.onAfter(JokerBuff)
         
         BlackJack.onTick(CarteNoir)
         BlackJack.onAfter(BlackJackFinal.controller(5000))
