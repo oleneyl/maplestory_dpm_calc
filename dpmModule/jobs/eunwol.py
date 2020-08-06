@@ -10,11 +10,41 @@ from . import jobutils
 
 class SoulTrapBuffWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
+        self.debuffQueue = []
+        self.currentTime = 0
+        self.DEBUF_PERSISTENCE_TIME = 8000 # 8000ms
         super(SoulTrapBuffWrapper, self).__init__(skill, 10)
         
     def _use(self, rem = 0, red = 0):
-        self.stack = 0
         return super(SoulTrapBuffWrapper, self)._use()
+    
+    def _add_debuff(self):
+        # 한 번에 디버프 2개 생성
+        self.stack += 2
+        self.debuffQueue += [self.currentTime]
+        if self.stack > self._max:
+            self.stack -= 2
+            del(self.debuffQueue[0])
+        return core.ResultObject(0, 0, 0)
+
+    def add_debuff(self):
+        return core.TaskHolder(core.Task(self, self._add_debuff), name="귀문진 디버프 추가")
+    
+    def spend_time(self, time):
+        self.currentTime += time
+        # debuff removal
+        
+        if self.debuffQueue:
+            for idx, t in enumerate(self.debuffQueue):
+                if t + self.DEBUF_PERSISTENCE_TIME > self.currentTime:
+                    break
+            if self.debuffQueue[0] + self.DEBUF_PERSISTENCE_TIME < self.currentTime:
+                idx = 1
+            if idx > 0:
+                self.debuffQueue = self.debuffQueue[idx:]
+                self.stack = 2 * len(self.debuffQueue)
+
+        super(SoulTrapBuffWrapper, self).spend_time(time)
     
     def get_modifier(self):
         if self.onoff:
@@ -76,7 +106,7 @@ class JobGenerator(ck.JobGenerator):
     
         FoxSoul = core.DamageSkill("여우령", 0, 200, 3 * (0.25+0.1)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        SoulAttack = core.DamageSkill("귀참", 600, 265, 12+1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        SoulAttack = core.DamageSkill("귀참", 600, 265, 12, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DoubleBodyAttack = core.DamageSkill("분혼 격참(공격)", 0, 2000, 1).wrap(core.DamageSkillWrapper)
         DoubleBody = core.BuffSkill("분혼 격참", 1000, 10000, cooltime = 120 * 1000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
     
@@ -89,9 +119,8 @@ class JobGenerator(ck.JobGenerator):
         
         #소혼 장막을 은월이 시전해야함
         #소혼 장막: 최대 10명의 적을 150% 데미지로 4.8초 동안 지속 공격, 수호 정령이 소혼 장막을 시전 하는 동안 은월이 시전하는 소혼장막의 최종 데미지 700% 증가. 재사용 대기시간 60초
-        # 최종 데미지 450 -> 700으로 수정
-        # EnhanceSpiritLinkSummon_J_Buff = core.BuffSkill("수호 정령(소혼 장막)(버프)", 0, 4800, cooltime = -1, pdamage_indep = 700).wrap(core.BuffSkillWrapper)
-        EnhanceSpiritLinkSummon_J_Damage = core.DamageSkill("소혼 장막", 150, 45 * 8, 5).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
+        #최종 데미지 450 -> 700으로 수정
+        EnhanceSpiritLinkSummon_J_Damage = core.DamageSkill("소혼 장막", 150, 45, 5, modifier=core.CharacterModifier(pdamage_indep = 700)).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
     
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         #1중첩 럭다 재사용 50초 감소 / 방어력30% / 체엠 20% / 크리율15% / 뎀증20 / 경치30
@@ -109,8 +138,10 @@ class JobGenerator(ck.JobGenerator):
         SoulConcentrate = core.BuffSkill("정령 집속", 960, (30+vEhc.getV(2,1))*1000, cooltime = 120*1000, pdamage_indep = (5+vEhc.getV(2,1)//2)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
         SoulConcentrateSummon = core.SummonSkill("정령 집속(무작위)", 0, 2000, 1742, 1, (30+vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
 
-        SoulTrap = core.SummonSkill("귀문진", 1000, 930, 600+24*vEhc.getV(3,2), 3, 40000, cooltime = (120-vEhc.getV(3,2))*1000).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
-        SoulTrapBuff = core.BuffSkill("귀문진(버프)", 0, 40000, cooltime = -1).wrap(SoulTrapBuffWrapper)
+        # 귀문진: 정령을 한번에 2마리 소환함
+        SoulTrap = core.SummonSkill("귀문진", 1000, 930, 600+24*vEhc.getV(3,2), 3 * 2, 40000, cooltime = (120-vEhc.getV(3,2))*1000).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
+        SoulTrapBuff = core.BuffSkill("귀문진(버프)", 0, 50000, cooltime = -1).wrap(SoulTrapBuffWrapper)
+        # 귀문진(버프)는 마지막 귀문진 디버프가 사라질 때까지 유지하기 위해 여유시간을 추가하였음
 
         RealSoulAttack = core.DamageSkill("진 귀참", 600, 540+6*vEhc.getV(1,3), 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20) + core.CharacterModifier(armor_ignore=50)).setV(vEhc, 0, 2, False).isV(vEhc,1,3).wrap(core.DamageSkillWrapper)
         RealSoulAttackCounter = core.BuffSkill("진 귀참(딜레이)", 0, 6000, cooltime = -1).wrap(core.BuffSkillWrapper)
@@ -134,6 +165,7 @@ class JobGenerator(ck.JobGenerator):
         SoulConcentrate.onAfter(SoulConcentrateSummon)
 
         #귀문진
+        SoulTrap.onTick(SoulTrapBuff.add_debuff())
         SoulTrap.onAfter(SoulTrapBuff)
         
         #진 귀참 알고리즘
