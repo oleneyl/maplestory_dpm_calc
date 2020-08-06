@@ -484,13 +484,14 @@ class BuffSkill(AbstractSkill):
       .get_modifier() : returns CharacterModifier for Character.
     
     '''
-    def __init__(self, name, delay, remain,  cooltime = 0, crit = 0, crit_damage = 0, pdamage = 0, stat_main = 0, stat_sub = 0, pstat_main = 0, pstat_sub = 0, boss_pdamage = 0, pdamage_indep = 0, armor_ignore = 0, patt = 0, att = 0, stat_main_fixed = 0, stat_sub_fixed = 0, rem = False, red = False):
+    def __init__(self, name, delay, remain,  cooltime = 0, crit = 0, crit_damage = 0, pdamage = 0, stat_main = 0, stat_sub = 0, pstat_main = 0, pstat_sub = 0, boss_pdamage = 0, pdamage_indep = 0, armor_ignore = 0, patt = 0, att = 0, stat_main_fixed = 0, stat_sub_fixed = 0, rem = False, red = False, modifier = CharacterModifier()):
         super(BuffSkill, self).__init__(name, delay, cooltime = cooltime, rem = rem, red = red)
         with self.dynamic_range():
             self.spec = "buff"
             self.remain = remain
             #Build StaticModifier from given arguments
             self.static_character_modifier = CharacterModifier(crit = crit, crit_damage = crit_damage, pdamage = pdamage, pdamage_indep = pdamage_indep, stat_main = stat_main, stat_sub = stat_sub, pstat_main = pstat_main, pstat_sub = pstat_sub, boss_pdamage = boss_pdamage, armor_ignore = armor_ignore, patt = patt, att = att, stat_main_fixed = stat_main_fixed, stat_sub_fixed = stat_sub_fixed)
+            self.static_character_modifier += modifier
 
     def _get_explanation_internal(self, detail = False, lang = "ko", expl_level = 2):
         if lang == "ko":
