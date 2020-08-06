@@ -386,9 +386,9 @@ class VSkillModifier():
     @staticmethod
     def get_reinforcement(incr, lv, crit = False):
         armor = 0
-        if lv > 40:
+        if lv >= 40:
             armor = 20
-        if lv > 20 and crit:
+        if lv >= 20 and crit:
             return CharacterModifier(crit = 5, pdamage_indep = (lv * incr), armor_ignore = armor)
         else:
             return CharacterModifier(crit = 0, pdamage_indep = (lv * incr), armor_ignore = armor)

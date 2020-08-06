@@ -38,3 +38,5 @@ for value in maplejobs.jobList.values():
 
 print(str(len(maplejobs.jobList)) + "개의 직업 계산 완료\n" + "출력: dpm_output.txt")
 print("총 소요시간: " + str(round(time.time() - start, 3)) + "초")
+
+dpm_output.close()
