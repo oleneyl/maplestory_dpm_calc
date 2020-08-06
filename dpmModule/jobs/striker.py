@@ -4,10 +4,9 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
-from . import contrib
+from . import jobutils
 from .jobbranch import pirates
 from .jobclass import cygnus
-from . import jobutils
 
 #TODO : 5차 신스킬 적용
 #TODO : 천지개벽 발동 중에는 태풍을 노쿨로 사용하도록
@@ -135,7 +134,7 @@ class JobGenerator(ck.JobGenerator):
         ThunderConcat.onAfter(DestroyConcat)
         
         for skill in [Destroy, Thunder, DestroyConcat, ThunderConcat, HuricaneConcat, GioaTan, NoiShinChanGeuk]:
-            contrib.create_auxilary_attack(skill, CHOOKROI)
+            jobutils.create_auxilary_attack(skill, CHOOKROI)
 
         for skill in [Destroy, Thunder, DestroyConcat, ThunderConcat, NoiShinChanGeuk]:
             skill.onAfter(LightningStack.stackController(1))
