@@ -7,7 +7,7 @@ from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import pirates
 from . import jobutils
-from ..execution.rules import RuleSet, InactiveRule
+from ..execution.rules import RuleSet, InactiveRule, ReservationRule
 
 class SoulTrapBuffWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
@@ -86,6 +86,7 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(InactiveRule("파쇄철조-회", "파쇄철조-반"), RuleSet.BASE)
+        #ruleset.add_rule(ReservationRule("소울 컨트랙트", "정령 집속"), RuleSet.BASE)
         return ruleset
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
@@ -125,7 +126,7 @@ class JobGenerator(ck.JobGenerator):
         #소혼 장막을 은월이 시전해야함
         #소혼 장막: 최대 10명의 적을 150% 데미지로 4.8초 동안 지속 공격, 수호 정령이 소혼 장막을 시전 하는 동안 은월이 시전하는 소혼장막의 최종 데미지 700% 증가. 재사용 대기시간 60초
         #최종 데미지 450 -> 700으로 수정
-        EnhanceSpiritLinkSummon_J_Damage = core.DamageSkill("소혼 장막", 150, 45, 5, modifier=core.CharacterModifier(pdamage_indep = 700)).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
+        EnhanceSpiritLinkSummon_J_Damage = core.DamageSkill("소혼 장막", 150, 45, 5, cooltime = -1, modifier=core.CharacterModifier(pdamage_indep = 700)).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
     
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         #1중첩 럭다 재사용 50초 감소 / 방어력30% / 체엠 20% / 크리율15% / 뎀증20 / 경치30
@@ -154,8 +155,7 @@ class JobGenerator(ck.JobGenerator):
         DoubleBodyRegistance = core.BuffSkill("분혼 격참(저항)", 0, 90000, cooltime = -1).wrap(core.BuffSkillWrapper)
 
         # 파쇄철조 (디버프용)
-        # 강화를 안 하는 걸로 아는데, 일단 인덱스는 7로 해두었습니다
-        BladeImp = core.DamageSkill("파쇄철조-회", 90, 160, 4).setV(vEhc, 7, 3).wrap(core.DamageSkillWrapper)
+        BladeImp = core.DamageSkill("파쇄철조-회", 90, 160, 4).wrap(core.DamageSkillWrapper)
         BladeImpBuff = core.BuffSkill("파쇄철조-반", 0, 15 * 1000, cooltime=-1, pdamage_indep=10).wrap(core.BuffSkillWrapper)
         ######   Skill Wrapper   ######
         
@@ -199,9 +199,9 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     EnhanceSpiritLink, LuckyDice, HerosOath, Frid, 
                     Overdrive, OverdrivePenalty, SoulConcentrate, DoubleBody, SoulTrapBuff,
-                    globalSkill.soul_contract(Cool = 120 * 1000)] +\
+                    globalSkill.soul_contract()] +\
                 [BladeImp, BladeImpBuff] +\
-                [EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init, EnhanceSpiritLinkSummon_J, SoulTrap, SoulConcentrateSummon] +\
+                [EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init, EnhanceSpiritLinkSummon_J, SoulTrap, SoulConcentrateSummon, EnhanceSpiritLinkSummon_J_Damage] +\
                 [RealSoulAttackCounter, DoubleBodyRegistance] +\
                 [BasicAttackWrapper])
         
