@@ -95,8 +95,8 @@ class JobGenerator(ck.JobGenerator):
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("건")
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
-    
-        RegistanceLineInfantry = core.SummonSkill("레지스탕스 라인 인팬트리", 360, 1000, (215+8*vEhc.getV(3, 3))*(2.08+combat*0.03), 9, 10*1000, cooltime = 25000).isV(vEhc,3, 3).wrap(core.SummonSkillWrapper) # 메카닉은 인팬트리에 로봇 마스터리 최종뎀이 적용됨
+        
+        RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3, arg_modifier= core.CharacterModifier(pdamage_indep = 108+3*combat)) # 메카닉은 인팬트리에 로봇 마스터리 최종뎀이 적용됨
         MultipleOptionGattling = core.SummonSkill("멀티플 옵션(개틀링)", 780, 1901, (200+8*vEhc.getV(2,1))*(2.08+combat*0.03), 6, (75+2*vEhc.getV(2,1))*1000, cooltime = 200 * 1000).isV(vEhc,2,1).wrap(core.SummonSkillWrapper) # 원래 공격주기는 1500이나, 미사일로 인해 손실되는 타수를 보정하기 위해 1901로 기입함.
         MultipleOptionMissle = core.SummonSkill("멀티플 옵션(미사일)", 0, 8000, (350+10*vEhc.getV(2,1))*(2.08+combat*0.03), 24, (75+2*vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         
