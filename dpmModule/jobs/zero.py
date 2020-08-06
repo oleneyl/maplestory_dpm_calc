@@ -62,8 +62,9 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
 
+        # 베타 상태일때 무기 공격력 +4
         self.Alpha = core.CharacterModifier(pdamage_indep = 34, crit = 40, att = 40, armor_ignore = 30, crit_damage = 50)
-        self.Beta = core.CharacterModifier(pdamage_indep = 49, crit = 15, boss_pdamage = 30, att = 80)
+        self.Beta = core.CharacterModifier(pdamage_indep = 49, crit = 15, boss_pdamage = 30, att = 80 + 4)
 
     def get_passive_skill_list(self):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
