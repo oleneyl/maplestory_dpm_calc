@@ -144,7 +144,6 @@ class JobGenerator(ck.JobGenerator):
         
         
         ### Psychic point
-        Ultimate_Material.onConstraint(core.ConstraintElement("싸이킥오버에서만", PsychicOver, PsychicOver.is_active))
         Ultimate_Material.onConstraint(core.ConstraintElement("7포인트", PsychicPoint, partial(PsychicPoint.judge,7,1)))
         Ultimate_Material.onAfter(PsychicPoint.stackController(-7))
         Ultimate_Material.onAfter(core.OptionalElement(PsychicOver.is_active, PsychicPoint.stackController(4)))
@@ -157,6 +156,7 @@ class JobGenerator(ck.JobGenerator):
         
         UltimateBPM.onTick(PsychicPoint.stackController(-1))
         
+        UltimatePsychic.onConstraint(core.ConstraintElement("디버프 없을때만", UltimatePsychicBuff, UltimatePsychicBuff.is_not_active))
         UltimatePsychic.onConstraint(core.ConstraintElement("5포인트", PsychicPoint, partial(PsychicPoint.judge,5,1)))
         UltimatePsychic.onAfter(PsychicPoint.stackController(-5))
         UltimatePsychic.onAfter(core.OptionalElement(PsychicOver.is_active, PsychicPoint.stackController(3)))
@@ -193,7 +193,7 @@ class JobGenerator(ck.JobGenerator):
                     PsycoBreak, UltimatePsychicBuff, PsychicCharging, 
                     PsychicOver, OverloadMana, PsychicPoint,
                     globalSkill.soul_contract()] +\
-                [EverPsychic, Ultimate_Material, UltimatePsychic] +\
+                [EverPsychic, Ultimate_Material] +\
                 [PsychicDrain, PsychicForce3, UltimateBPM, PsychicOverSummon, PsychicTornado, UltimateMovingMatter] +\
                 [UltimateTrain] +\
                 [PsychicGrab2])
