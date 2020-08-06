@@ -11,6 +11,37 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import magicians
 
+class KinesisStackWrapper(core.StackSkillWrapper):
+    def __init__(self, skill, _max, psychicoverjudge, name = None):
+        super().__init__(skill, _max, name = name)
+        self.psychicoverjudge = psychicoverjudge
+        self.set_name_style("pp 변화 : %d")
+    
+    def vary(self, d):
+        delta = d
+
+        if self.psychicoverjudge() and delta < -1: # BPM은 0이 되면 안됨
+            # print("==싸이킥 오버==")
+            delta = abs(delta) // 2 * -1
+        
+        result = super().vary(delta)
+        return result
+
+    def charge(self):
+        delta = (self._max - self.stack) // 2
+        result = super().vary(delta)
+        return result
+
+    def chargeController(self):
+        task = core.Task(self, self.charge)
+        return core.TaskHolder(task, name = "싸이킥 차지")
+    
+    def judge_ultimate(self, stack):
+        if self.psychicoverjudge():
+            return self.judge(stack // 2, 1)
+        else:
+            return self.judge(stack, 1)
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -111,8 +142,8 @@ class JobGenerator(ck.JobGenerator):
             raise
 
         PsychicTornado = core.SummonSkill("싸이킥 토네이도", 540, 1000, 500+20*vEhc.getV(2,2), 4, 20000, red = True, cooltime = 120000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)# -15
-        PsychicTornadoFinal_1 = core.DamageSkill("싸이킥 토네이도(1)", 0, (200+3*vEhc.getV(2,2))*3, 2).wrap(core.DamageSkillWrapper)
-        PsychicTornadoFinal_2 = core.DamageSkill("싸이킥 토네이도(2)", 0, (350+10*vEhc.getV(2,2))*3, 10*3).wrap(core.DamageSkillWrapper)
+        PsychicTornadoFinal_1 = core.DamageSkill("싸이킥 토네이도(1)", 0, (200+3*vEhc.getV(2,2))*3, 2, cooltime=-1).wrap(core.DamageSkillWrapper)
+        PsychicTornadoFinal_2 = core.DamageSkill("싸이킥 토네이도(2)", 0, (350+10*vEhc.getV(2,2))*3, 10*3, cooltime=-1).wrap(core.DamageSkillWrapper)
 
         UltimateMovingMatter = core.SummonSkill("얼티메이트-무빙 매터", 480, 25000/64, 500+20*vEhc.getV(0,0), 5, 25000, cooltime = 90000, modifier = core.CharacterModifier(crit_damage=20)).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)# -10
         UltimateMovingMatterFinal = core.DamageSkill("얼티메이트-무빙 매터(최종)", 0, 700+28*vEhc.getV(0,0), 12).wrap(core.DamageSkillWrapper)
@@ -120,9 +151,7 @@ class JobGenerator(ck.JobGenerator):
         UltimatePsychicBullet = core.DamageSkill("얼티메이트-싸이킥 불릿", 630, 550 + 22*vEhc.getV(3,3), 6, modifier = core.CharacterModifier(crit_damage=20)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)# -2, 딜레이 420ms + 그랩 210ms
         UltimatePsychicBulletBlackhole = core.SummonSkill("얼티메이트-싸이킥 불릿(블랙홀)", 0, 500, 500+20*vEhc.getV(3,3), 3, 500*4, cooltime = -1).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)# +1
         
-        PsychicPoint = core.StackSkillWrapper(core.BuffSkill("싸이킥 포인트", 0, 999999999), 30 + 10) # Issue 43 ; maximum point may 40
-        PsychicPoint.set_name_style("포인트 변화 : %d")
-
+        PsychicPoint = KinesisStackWrapper(core.BuffSkill("싸이킥 포인트", 0, 999999999), 30 + 10, PsychicOver.is_active) # Issue 43 ; maximum point may 40
         
         ### Build Graph ###
 
@@ -137,55 +166,50 @@ class JobGenerator(ck.JobGenerator):
         UltimatePsychic.onAfter(UltimatePsychicBuff)
         EverPsychic.onAfter(EverPsychicFinal)
         PsychicOver.onAfter(PsychicOverSummon)
-        PsychicTornado.onAfter(PsychicTornadoFinal_1)
-        PsychicTornado.onAfter(PsychicTornadoFinal_2)
+        PsychicTornado.onAfter(PsychicTornadoFinal_1.controller(20*1000))
+        PsychicTornado.onAfter(PsychicTornadoFinal_2.controller(20*1000))
         UltimateMovingMatter.onAfter(UltimateMovingMatterFinal)
         UltimatePsychicBullet.onAfter(UltimatePsychicBulletBlackhole)
         
         
         ### Psychic point
-        Ultimate_Material.onConstraint(core.ConstraintElement("7포인트", PsychicPoint, partial(PsychicPoint.judge,7,1)))
-        Ultimate_Material.onAfter(PsychicPoint.stackController(-7))
-        Ultimate_Material.onAfter(core.OptionalElement(PsychicOver.is_active, PsychicPoint.stackController(4)))
+        Ultimate_Material.onConstraint(core.ConstraintElement("7포인트", PsychicPoint, partial(PsychicPoint.judge_ultimate,7)))
+        Ultimate_Material.onBefore(PsychicPoint.stackController(-7))
         
-        PsychicForce3.onAfter(PsychicPoint.stackController(1))
+        PsychicForce3.onBefore(PsychicPoint.stackController(1))
         
         PsychicDrain.onTick(PsychicPoint.stackController(1))
-        PsychicGroundDamage.onAfter(PsychicPoint.stackController(1))
-        PsycoBreak.onAfter(PsychicPoint.stackController(1))
+        PsychicGroundDamage.onBefore(PsychicPoint.stackController(1))
+        PsycoBreak.onBefore(PsychicPoint.stackController(1))
         
         UltimateBPM.onTick(PsychicPoint.stackController(-1))
         
-        UltimatePsychic.onConstraint(core.ConstraintElement("디버프 없을때만", UltimatePsychicBuff, UltimatePsychicBuff.is_not_active))
-        UltimatePsychic.onConstraint(core.ConstraintElement("5포인트", PsychicPoint, partial(PsychicPoint.judge,5,1)))
-        UltimatePsychic.onAfter(PsychicPoint.stackController(-5))
-        UltimatePsychic.onAfter(core.OptionalElement(PsychicOver.is_active, PsychicPoint.stackController(3)))
+        UltimatePsychic.onConstraint(core.ConstraintElement("5포인트", PsychicPoint, partial(PsychicPoint.judge_ultimate,5)))
+        UltimatePsychic.onBefore(PsychicPoint.stackController(-5))
         
-        PsychicGrab2.onAfter(PsychicPoint.stackController(2))
-        EverPsychic.onAfter(PsychicPoint.stackController(30 + 10)) # Issue 43, pp maximum may 40 in most case. TODO:hyper point modification
+        PsychicGrab2.onBefore(PsychicPoint.stackController(2))
+
+        EverPsychic.onBefore(PsychicPoint.stackController(30 + 10)) # Issue 43, pp maximum may 40 in most case. TODO:hyper point modification
+
         PsychicOverSummon.onTick(PsychicPoint.stackController(1))
         
-        PsychicTornado.onConstraint(core.ConstraintElement("15포인트", PsychicPoint, partial(PsychicPoint.judge,15,1)))
-        PsychicTornado.onAfter(PsychicPoint.stackController(-15))
-        PsychicTornado.onAfter(core.OptionalElement(PsychicOver.is_active, PsychicPoint.stackController(8)))
+        PsychicTornado.onConstraint(core.ConstraintElement("15포인트", PsychicPoint, partial(PsychicPoint.judge_ultimate,15)))
+        PsychicTornado.onBefore(PsychicPoint.stackController(-15))
 
-        UltimateMovingMatter.onConstraint(core.ConstraintElement("10포인트", PsychicPoint, partial(PsychicPoint.judge,10,1)))
-        UltimateMovingMatter.onAfter(PsychicPoint.stackController(-10))
-        UltimateMovingMatter.onAfter(core.OptionalElement(PsychicOver.is_active, PsychicPoint.stackController(5)))
+        UltimateMovingMatter.onConstraint(core.ConstraintElement("10포인트", PsychicPoint, partial(PsychicPoint.judge_ultimate,10)))
+        UltimateMovingMatter.onBefore(PsychicPoint.stackController(-10))
         
-        UltimatePsychicBullet.onConstraint(core.ConstraintElement("2포인트", PsychicPoint, partial(PsychicPoint.judge,2,1)))
-        UltimatePsychicBullet.onAfter(PsychicPoint.stackController(-3))
-        UltimatePsychicBullet.onAfter(core.OptionalElement(PsychicOver.is_active, PsychicPoint.stackController(2)))
+        UltimatePsychicBullet.onConstraint(core.ConstraintElement("2포인트", PsychicPoint, partial(PsychicPoint.judge_ultimate,2)))
+        UltimatePsychicBullet.onBefore(PsychicPoint.stackController(-3))
         
         UltimatePsychicBulletBlackhole.onTick(PsychicPoint.stackController(1))
         
-        PsychicCharging.onAfter(PsychicPoint.stackController(17))   #Issue43, 15-19 may correct : take 17
-        PsychicCharging.onConstraint(core.ConstraintElement("2포인트", PsychicPoint, partial(PsychicPoint.judge,5,-1)))
+        PsychicCharging.onConstraint(core.ConstraintElement("5포인트 이하", PsychicPoint, partial(PsychicPoint.judge,5,-1)))
+        PsychicCharging.onAfter(PsychicPoint.chargeController())
 
         UltimateTrain.onConstraint(core.ConstraintElement("싸이킥오버에서만", PsychicOver, PsychicOver.is_active))
-        UltimateTrain.onConstraint(core.ConstraintElement("15포인트", PsychicPoint, partial(PsychicPoint.judge,15,1)))
-        UltimateTrain.onAfter(PsychicPoint.stackController(-15))
-        UltimateTrain.onAfter(core.OptionalElement(PsychicOver.is_active, PsychicPoint.stackController(8)))
+        UltimateTrain.onConstraint(core.ConstraintElement("15포인트", PsychicPoint, partial(PsychicPoint.judge_ultimate,15)))
+        UltimateTrain.onBefore(PsychicPoint.stackController(-15))
         
         return(PsychicGrab2,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
@@ -194,6 +218,6 @@ class JobGenerator(ck.JobGenerator):
                     PsychicOver, OverloadMana, PsychicPoint,
                     globalSkill.soul_contract()] +\
                 [EverPsychic, Ultimate_Material] +\
-                [PsychicDrain, PsychicForce3, UltimateBPM, PsychicOverSummon, PsychicTornado, UltimateMovingMatter] +\
+                [PsychicDrain, PsychicForce3, UltimateBPM, PsychicOverSummon, PsychicTornado, UltimateMovingMatter, PsychicTornadoFinal_1, PsychicTornadoFinal_2] +\
                 [UltimateTrain] +\
                 [PsychicGrab2])
