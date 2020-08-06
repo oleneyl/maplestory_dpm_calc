@@ -108,7 +108,7 @@ class JobGenerator(ck.JobGenerator):
         #### 마스터리 ####
 
         # 알파: 크리티컬 바인드 크뎀 평균값 적용
-        AlphaState = core.BuffSkill("상태-알파", 0, 9999*10000, cooltime = -1, modifier = self.Alpha, crit_damage = (20*4/35)).wrap(core.BuffSkillWrapper)
+        AlphaState = core.BuffSkill("상태-알파", 0, 9999*10000, cooltime = -1, crit_damage = (20*4/35)).wrap(core.BuffSkillWrapper)
         BetaState = core.BuffSkill("상태-베타", 0, 9999*10000, cooltime = -1, modifier = self.Beta - self.Alpha).wrap(core.BuffSkillWrapper)
 
         #### 알파 ####
