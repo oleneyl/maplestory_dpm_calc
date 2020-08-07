@@ -121,13 +121,13 @@ class JobGenerator(ck.JobGenerator):
         
         TeleKinesis = core.DamageSkill("텔레키네시스", 0, 350, 0.7).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         UltimateBPM = core.SummonSkill("얼티메이트-B.P.M.", 0, 600, 175, 7, 999999999).setV(vEhc, 0, 2, False).wrap(core.SummonSkillWrapper) #1
-        PsychicGrab2 = core.DamageSkill("싸이킥 그랩", 552, 470, 5,  modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) #+2, 그랩 1번에 스매싱 5회 사용 가능 (510*5+210)/5
-        UltimatePsychic = core.DamageSkill("얼티메이트-싸이킥 샷", 1110, 300, 3*5*2*0.8,  modifier = core.CharacterModifier(crit_damage = 20, pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) #5, 그랩 1번에 샷 1회 사용가능 (900+210)
+        PsychicGrab2 = core.DamageSkill("싸이킥 그랩", 576, 470, 5,  modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) #+2, 그랩 1번에 스매싱 5회 사용 가능 (510*5+210)/5
+        UltimatePsychic = core.DamageSkill("얼티메이트-싸이킥 샷", 1080, 300, 3*5*2*0.8,  modifier = core.CharacterModifier(crit_damage = 20, pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) #5, 그랩 1번에 샷 1회 사용가능 (900+210)
         UltimatePsychicBuff = core.BuffSkill("얼티메이트-싸이킥 샷(디버프)", 0, 10000, rem = True, armor_ignore = 15, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         PsychicCharging = core.BuffSkill("싸이킥 차징", 0, 500, cooltime = 45000, red = True).wrap(core.BuffSkillWrapper) #남은포인트의 50%충전
         
-        UltimateTrain = core.SummonSkill("얼티메이트-트레인", 630, 11999 / 17, 180, 6, 12000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        UltimateTrain = core.SummonSkill("얼티메이트-트레인", 600, 11999 / 17, 180, 6, 12000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
 
         #하이퍼
         EverPsychic = core.DamageSkill("에버 싸이킥", 870, 400, 16, cooltime = 120000).wrap(core.DamageSkillWrapper) # 캔슬 통해 딜레 870ms
@@ -207,7 +207,6 @@ class JobGenerator(ck.JobGenerator):
         PsychicCharging.onConstraint(core.ConstraintElement("5포인트 이하", PsychicPoint, partial(PsychicPoint.judge,5,-1)))
         PsychicCharging.onAfter(PsychicPoint.chargeController())
 
-        UltimateTrain.onConstraint(core.ConstraintElement("싸이킥오버에서만", PsychicOver, PsychicOver.is_active))
         UltimateTrain.onConstraint(core.ConstraintElement("15포인트", PsychicPoint, partial(PsychicPoint.judge_ultimate,15)))
         UltimateTrain.onBefore(PsychicPoint.stackController(-15))
         
