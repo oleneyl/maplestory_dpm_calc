@@ -54,7 +54,7 @@ class JobGenerator(ck.JobGenerator):
         슬래시-임팩트-서버-익스플로전-메타-데빌크라이
 
         ##### 하이퍼 #####
-        # 데몬 슬래시 - 리인포스, 엑스트라 포스
+        # 데몬 슬래시 - 리인포스, 리메인타임 리인포스
         # 데몬 임팩트 - 리인포스, 보너스 어택, 리듀스 포스        
         '''
 
@@ -62,16 +62,17 @@ class JobGenerator(ck.JobGenerator):
 
         #Buff skills
         Booster = core.BuffSkill("부스터", 600, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
+
+        DemonSlashRemainTime = core.BuffSkill("데몬 슬래시-리메인타임", 0, 9999999, 0, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
         
-        DemonSlash1 = core.DamageSkill("데몬 슬래시(1타)", 240, 110, 2, modifier = core.CharacterModifier(pdamage = 370)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlash2 = core.DamageSkill("데몬 슬래시(2타)", 240, 110, 2, modifier = core.CharacterModifier(pdamage = 370)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlash3 = core.DamageSkill("데몬 슬래시(3타)", 330, 100, 3, modifier = core.CharacterModifier(pdamage = 370)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlash4 = core.DamageSkill("데몬 슬래시(4타)", 330, 100, 4, modifier = core.CharacterModifier(pdamage = 370)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        # 리메인타임의 최종뎀은 데몬 슬래시에는 적용되지 않음. 어웨OFF시 4초마다 일반 슬래시 1타만 사용. 1타만 사용시 딜레이가 2타로 이어질때보다 김.
+        DemonSlashTrigger = core.BuffSkill("데몬 슬래시(더미)", 0, 0, cooltime = 4000).wrap(core.BuffSkillWrapper)
+        DemonSlash1 = core.DamageSkill("데몬 슬래시(1타)", 390, 110, 2, modifier = core.CharacterModifier(pdamage = 370, pdamage_indep = -10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        DemonSlashAW1 = core.DamageSkill("데몬 슬래시 강화(1타)", 240, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAW2 = core.DamageSkill("데몬 슬래시 강화(2타)", 240, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAW3 = core.DamageSkill("데몬 슬래시 강화(3타)", 330, 700, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAW4 = core.DamageSkill("데몬 슬래시 강화(4타)", 330, 800, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW1 = core.DamageSkill("데몬 슬래시 강화(1타)", 240, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50, pdamage_indep = -10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW2 = core.DamageSkill("데몬 슬래시 강화(2타)", 240, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50, pdamage_indep = -10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW3 = core.DamageSkill("데몬 슬래시 강화(3타)", 330, 700, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50, pdamage_indep = -10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW4 = core.DamageSkill("데몬 슬래시 강화(4타)", 330, 800, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50, pdamage_indep = -10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         DemonImpact = core.DamageSkill("데몬 임팩트", 660, 460, (6+1), modifier = core.CharacterModifier(crit = 100, armor_ignore = 30, boss_pdamage = 40, pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
@@ -118,6 +119,9 @@ class JobGenerator(ck.JobGenerator):
         BasicAttackWrapper = core.DamageSkill('기본 공격', 0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
 
+        DemonSlashTrigger.onConstraint(core.ConstraintElement("어웨이크닝 OFF일때만", DemonAwakning, DemonAwakning.is_not_active))
+        DemonSlashTrigger.onAfter(DemonSlash1)
+
         DevilCry.onConstraint(core.ConstraintElement("어웨이크닝 ON일때만", DemonAwakning, DemonAwakning.is_active))
         DevilCry.onAfter(DevilCryBuff)
         
@@ -141,7 +145,7 @@ class JobGenerator(ck.JobGenerator):
 
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-                    Booster, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, DemonAwakning,
+                    Booster, DemonSlashRemainTime, DemonSlashTrigger, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, DemonAwakning,
                     globalSkill.soul_contract()] +\
                 [Cerberus, DevilCry, SpiritOfRageEnd] +\
                 [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_] +\
