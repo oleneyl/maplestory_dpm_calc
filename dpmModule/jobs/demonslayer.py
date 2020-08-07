@@ -63,20 +63,15 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Booster = core.BuffSkill("부스터", 600, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
         
-        DemonSlash1 = core.DamageSkill("데몬 슬래시(1타)", 390, 110, 2, modifier = core.CharacterModifier(pdamage = 370)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlash2 = core.DamageSkill("데몬 슬래시(2타)", 330, 110, 2, modifier = core.CharacterModifier(pdamage = 370)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlash1 = core.DamageSkill("데몬 슬래시(1타)", 240, 110, 2, modifier = core.CharacterModifier(pdamage = 370)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlash2 = core.DamageSkill("데몬 슬래시(2타)", 240, 110, 2, modifier = core.CharacterModifier(pdamage = 370)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DemonSlash3 = core.DamageSkill("데몬 슬래시(3타)", 330, 100, 3, modifier = core.CharacterModifier(pdamage = 370)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DemonSlash4 = core.DamageSkill("데몬 슬래시(4타)", 330, 100, 4, modifier = core.CharacterModifier(pdamage = 370)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        DemonSlashAW1 = core.DamageSkill("데몬 슬래시 강화(1타)", 390, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAW2 = core.DamageSkill("데몬 슬래시 강화(2타)", 300, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAW3 = core.DamageSkill("데몬 슬래시 강화(3타)", 210, 700, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAW4 = core.DamageSkill("데몬 슬래시 강화(4타)", 210, 800, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-    
-        DemonSlashAWBB1 = core.DamageSkill("데몬 슬래시 강화(1타)블블", 390, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAWBB2 = core.DamageSkill("데몬 슬래시 강화(2타)블블", 300, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAWBB3 = core.DamageSkill("데몬 슬래시 강화(3타)블블", 210, 700, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAWBB4 = core.DamageSkill("데몬 슬래시 강화(4타)블블", 210, 800, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW1 = core.DamageSkill("데몬 슬래시 강화(1타)", 240, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW2 = core.DamageSkill("데몬 슬래시 강화(2타)", 240, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW3 = core.DamageSkill("데몬 슬래시 강화(3타)", 330, 700, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW4 = core.DamageSkill("데몬 슬래시 강화(4타)", 330, 800, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         DemonImpact = core.DamageSkill("데몬 임팩트", 660, 460, (6+1), modifier = core.CharacterModifier(crit = 100, armor_ignore = 30, boss_pdamage = 40, pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
@@ -115,11 +110,11 @@ class JobGenerator(ck.JobGenerator):
         
         TODO--> 포스 사용을 반영해서 블블 지속시간 시뮬레이션(엄청 어려울듯)
         '''
-        DemonSlashAWBB1.onAfter(DemonSlashAWBB2)
-        DemonSlashAWBB2.onAfter(DemonSlashAWBB3)
-        DemonSlashAWBB3.onAfter(DemonSlashAWBB4)
+        DemonSlashAW1.onAfter(DemonSlashAW2)
+        DemonSlashAW2.onAfter(DemonSlashAW3)
+        DemonSlashAW3.onAfter(DemonSlashAW4)
         
-        BasicAttack = core.OptionalElement(DemonAwakning.is_active, DemonSlashAWBB1, DemonImpact, name = "어웨이크닝 ON")
+        BasicAttack = core.OptionalElement(DemonAwakning.is_active, DemonSlashAW1, DemonImpact, name = "어웨이크닝 ON")
         BasicAttackWrapper = core.DamageSkill('기본 공격', 0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
         DevilCry.onAfter(DevilCryBuff)
@@ -133,12 +128,12 @@ class JobGenerator(ck.JobGenerator):
         Metamorphosis.onAfter(MetamorphosisSummon)
 
         # 블블 추가타 적용
-        for sk in [DemonSlashAWBB1, DemonSlashAWBB2, DemonSlashAWBB3, DemonSlashAWBB4, DemonImpact, DevilCry]:
+        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DevilCry]:
             contrib.create_auxilary_attack(sk, 0.9)
 
         # 오라 웨폰
         auraweapon_builder = AuraWeaponBuilder_BB(vEhc, 3, 2)
-        for sk in [DemonSlashAWBB1, DemonSlashAWBB2, DemonSlashAWBB3, DemonSlashAWBB4, DemonImpact]:
+        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
 
