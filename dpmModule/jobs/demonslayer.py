@@ -81,7 +81,7 @@ class JobGenerator(ck.JobGenerator):
         
         InfinityForce = core.BuffSkill("인피니티 포스", 990, 50*1000, cooltime = 200 * 1000).wrap(core.BuffSkillWrapper)
         Metamorphosis = core.BuffSkill("메타모포시스", 1680, 180*1000, rem = True, pdamage = 35).wrap(core.BuffSkillWrapper)
-        MetamorphosisSummon = core.SummonSkill("메타모포시스(소환)", 0, 500, 250, 1, 180*1000*chtr.buff_rem, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        MetamorphosisSummon = core.SummonSkill("메타모포시스(소환)", 0, 500, 250, 1, 180*1000*(1+chtr.buff_rem/100), cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         
         #블루블러드는 소환수 적용이 안됨.
         BlueBlood = core.BuffSkill("블루 블러드", 1020, 60000, cooltime = 120000 - 60000).wrap(core.BuffSkillWrapper) #모든 공격에 최종데미지의 90%로 추가타 발생. 포스50수급시 -3초, 인피니티 포스시 4초마다 2초 감소, 모든 스킬 포스소모량 20%감소.
