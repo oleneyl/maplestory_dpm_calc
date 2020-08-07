@@ -45,7 +45,7 @@ class JobGenerator(ck.JobGenerator):
         Grid = core.InformedCharacterModifier("그리드",att = 5)
         
         PrimaCriticalPassive = core.InformedCharacterModifier("프리마 크리티컬(패시브)",stat_main = 10, crit_damage = 20)
-        PrimaCritical = core.InformedCharacterModifier("프리마 크리티컬",crit = 53.8 / 4, crit_damage = 8.8) #스택식으로도 계산 가능.
+        PrimaCritical = core.InformedCharacterModifier("프리마 크리티컬", crit_damage = 8.8) #스택식으로도 계산 가능.
         
         BoomerangStepPassive = core.InformedCharacterModifier("부메랑 스텝(패시브)",pdamage_indep = 25)
         
@@ -68,8 +68,7 @@ class JobGenerator(ck.JobGenerator):
         '''
         일반 다크사이트는 깡으로 사용하지 않음.
         
-        프리마 크리티컬 : 6/12/18/24/30/36/42/48/... / 96/100 -> 53.8
-        크뎀 : 8.8
+        프리마 크리티컬 크뎀 : 8.8%
         쉐도우 파트너는 절개, 암살, 소닉 블로우에만 적용.
         
         하이퍼 : 메익 인핸스, 암살 리인포스 / 보킬 / 이그노어 가드.
@@ -152,7 +151,7 @@ class JobGenerator(ck.JobGenerator):
         Assasinate1_D.onAfter(Assasinate2_D)
         
         BailOfShadow.onConstraint(DarkSightTurnedOn)
-        BailOfShadow.onAfter(MesoExplosion.stackController(15*2*0.4, name = "메소 생성"))
+        BailOfShadow.onTick(MesoExplosion.stackController(0.4, name = "메소 생성"))
         BailOfShadow.onAfter(AdvancedDarkSight.controller(12000, "set_enabled_and_time_left"))
         
         Smoke.onConstraint(DarkSightTurnedOn)
@@ -161,10 +160,10 @@ class JobGenerator(ck.JobGenerator):
         UltimateDarksight.onConstraint(DarkSightTurnedOn)
         UltimateDarksight.onAfter(AdvancedDarkSight.controller(30000,"set_enabled_and_time_left" ))
         
-        SonicBlowTick.onAfter(MesoExplosion.stackController(14*2*0.4, name = "메소 생성"))
+        SonicBlowTick.onAfter(MesoExplosion.stackController(7*2*0.4, name = "메소 생성"))
         SonicBlow.onAfter(core.RepeatElement(SonicBlowTick, 15))
         
-        Eviscerate.onAfter(MesoExplosion.stackController(14*2*0.4, name = "메소 생성"))
+        Eviscerate.onAfter(MesoExplosion.stackController(7*2*0.4, name = "메소 생성"))
         
         Assasinate = core.OptionalElement(AdvancedDarkSight.is_active, Assasinate1_D, Assasinate1, name = "닼사 여부")
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
