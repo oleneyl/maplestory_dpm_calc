@@ -70,11 +70,11 @@ class JobGenerator(ck.JobGenerator):
         
         프리마 크리티컬 : 6/12/18/24/30/36/42/48/... / 96/100 -> 53.8
         크뎀 : 8.8
-        쉐도우 파트너는 절개와 암살에만 적용.
+        쉐도우 파트너는 절개, 암살, 소닉 블로우에만 적용.
         
         하이퍼 : 메익 인핸스, 암살 리인포스 / 보킬 / 이그노어 가드.
         
-        암살 1타 3스택 19% / 2타 80%
+        킬링 포인트 3스택 확률 1타 94.6% / 2타 100%
         암살-부스-익플-배오섀
         '''
         
@@ -99,10 +99,10 @@ class JobGenerator(ck.JobGenerator):
         
         #킬포3개 사용시 최종뎀 100% 증가.
         Assasinate1 = core.DamageSkill("암살(1타)", 630, 275, 6, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타")   #쉐파
-        Assasinate2 = core.DamageSkill("암살(2타)", 630+30, 350, 6, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타")   #쉐파
+        Assasinate2 = core.DamageSkill("암살(2타)", 420, 350, 6, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타")   #쉐파
         
         Assasinate1_D = core.DamageSkill("암살(1타)(다크사이트)", 630, 275, 6, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타(닼사)")   #쉐파
-        Assasinate2_D = core.DamageSkill("암살(2타)(다크사이트)", 630+30, 350, 6, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타(닼사)")   #쉐파
+        Assasinate2_D = core.DamageSkill("암살(2타)(다크사이트)", 420, 350, 6, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타(닼사)")   #쉐파
         
         BailOfShadow = core.SummonSkill("베일 오브 섀도우", 810, 12000 / 14, 800, 1, 12*1000, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
         
@@ -119,15 +119,18 @@ class JobGenerator(ck.JobGenerator):
         '''
         #_VenomBurst = core.DamageSkill("베놈 버스트", ??) ## 패시브 50%확률로 10초간 160+6*vlevel dot. 사용시 도트뎀 모두 피해 + (500+20*vlevel) * 5. 어차피 안쓰는 스킬이므로 작성X
         
-        UltimateDarksight = thieves.UltimateDarkSightWrapper(vEhc, 3, 3, 5)
-        #UltimateDarksight = core.BuffSkill("얼티밋 다크사이트", 750, 30000, cooltime = (220-vEhc.getV(3,3))*1000, pdamage_indep = (10 + int(0.2*vEhc.getV(3,3))/1.05 )).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
+        UltimateDarksight = core.BuffSkill("얼티밋 다크 사이트", 750, 30000,
+            cooltime = (220-vEhc.getV(3, 3))*1000,
+            pdamage_indep= (100 + 10 + 5 + vEhc.getV(3, 3)//5) / (100 + 5) * 100 - 100 # (얼닼사 + 어닼사) - (어닼사) 최종뎀 연산
+        ).isV(vEhc, 3, 3).wrap(core.BuffSkillWrapper)
+
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 2)
         
         Eviscerate = core.DamageSkill("절개", 570, 1900+76*vEhc.getV(0,0), 7, modifier = core.CharacterModifier(crit=100, armor_ignore=100), cooltime = 14000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 		
 		# 1.2.324 패치 적용
         SonicBlow = core.DamageSkill("소닉 블로우", 900, 0, 0, cooltime = 80 * 1000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        SonicBlowTick = core.DamageSkill("소닉 블로우(틱)", 125, 500+20*vEhc.getV(1,1), 7, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper, name = "소닉 블로우(사용)")#20타
+        SonicBlowTick = core.DamageSkill("소닉 블로우(틱)", 107, 500+20*vEhc.getV(1,1), 7, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper, name = "소닉 블로우(사용)") # 7 * 15
         
         ### build graph relationships
         def isNotDarkSight():
