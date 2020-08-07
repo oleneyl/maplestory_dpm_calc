@@ -53,9 +53,9 @@ class JobGenerator(ck.JobGenerator):
         코강 순서:
         슬래시-임팩트-서버-익스플로전-메타-데빌크라이
 
-        #####하이퍼 #####
-        # 데몬슬래시 - 리인포스, 리메인타임 리인포스
-        # 데몬 입팩트 - 리인포스, 보너스 어택, 리듀스 포스        
+        ##### 하이퍼 #####
+        # 데몬 슬래시 - 리인포스, 엑스트라 포스
+        # 데몬 임팩트 - 리인포스, 보너스 어택, 리듀스 포스        
         '''
 
     
@@ -131,7 +131,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 블블 추가타 적용
         for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DevilCry]:
-            contrib.create_auxilary_attack(sk, 0.9, "블블")
+            contrib.create_auxilary_attack(sk, 0.9, "(블블)")
 
         # 오라 웨폰
         auraweapon_builder = AuraWeaponBuilder_BB(vEhc, 3, 2)
