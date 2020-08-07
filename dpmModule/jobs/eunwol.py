@@ -7,7 +7,7 @@ from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import pirates
 from . import jobutils
-from ..execution.rules import RuleSet, InactiveRule, ReservationRule
+from ..execution.rules import RuleSet, InactiveRule, ReservationRule, ConcurrentRunRule
 
 class SoulTrapBuffWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
@@ -86,6 +86,7 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(InactiveRule("파쇄철조-회", "파쇄철조-반"), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule("소혼 장막(시전)", "수호 정령(소혼 장막)"), RuleSet.BASE)
         #ruleset.add_rule(ReservationRule("소울 컨트랙트", "정령 집속"), RuleSet.BASE)
         return ruleset
 
@@ -94,7 +95,7 @@ class JobGenerator(ck.JobGenerator):
         ----정보---
         하이퍼 : 귀참 3개, 폭류권 리인포스, 여우령 소환확률 +10%
         
-        소혼장막 150ms
+        소혼장막 150ms / 60초마다 랑혼장막 사용
         귀문진 930ms마다 공격
         
         V강화 : (15개)
@@ -109,7 +110,7 @@ class JobGenerator(ck.JobGenerator):
         
         ######   Skill   ######
         #Buff skills
-    
+
         FoxSoul = core.DamageSkill("여우령", 0, 200, 3 * (0.25+0.1)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         SoulAttack = core.DamageSkill("귀참", 600, 265, 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
@@ -126,8 +127,10 @@ class JobGenerator(ck.JobGenerator):
         #소혼 장막을 은월이 시전해야함
         #소혼 장막: 최대 10명의 적을 150% 데미지로 4.8초 동안 지속 공격, 수호 정령이 소혼 장막을 시전 하는 동안 은월이 시전하는 소혼장막의 최종 데미지 700% 증가. 재사용 대기시간 60초
         #최종 데미지 450 -> 700으로 수정
-        EnhanceSpiritLinkSummon_J_Damage = core.DamageSkill("소혼 장막", 150, 45, 5, cooltime = -1, modifier=core.CharacterModifier(pdamage_indep = 700)).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
-    
+        SpiritFrenzy = core.DamageSkill("소혼 장막(시전)", 0, 0, 0, cooltime=10*1000 + 10080).wrap(core.DamageSkillWrapper)
+        SpiritFrenzy_Tick = core.DamageSkill("소혼 장막", 180, 45, 5, cooltime = -1, modifier=core.CharacterModifier(pdamage_indep = 700)).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
+        SpiritFrenzy.onAfter(core.RepeatElement(SpiritFrenzy_Tick, 56))
+
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         #1중첩 럭다 재사용 50초 감소 / 방어력30% / 체엠 20% / 크리율15% / 뎀증20 / 경치30
         #2중첩 럭다 재사용 50초 감소 / 방어력40% / 체엠 30% / 크리율25% / 뎀증30 / 경치40
@@ -168,7 +171,6 @@ class JobGenerator(ck.JobGenerator):
         #정결극 위계
         EnhanceSpiritLink.onAfters([EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init])
         EnhanceSpiritLinkSummon_J_Init.onTick(EnhanceSpiritLinkSummon_J)
-        EnhanceSpiritLinkSummon_J.onAfter( core.RepeatElement(EnhanceSpiritLinkSummon_J_Damage, 56) )
         
         #정령 집속
         SoulConcentrate.onAfter(DoubleBody.controller(1.0, 'reduce_cooltime_p'))
@@ -189,6 +191,7 @@ class JobGenerator(ck.JobGenerator):
         BasicAttack.onAfter(FoxSoul)
         SoulTrap.onTick(FoxSoul)
         SoulConcentrateSummon.onTick(FoxSoul)
+        SpiritFrenzy_Tick.onAfter(FoxSoul)
         
         #파쇄철조
         BladeImp.onAfter(BladeImpBuff)
@@ -200,9 +203,9 @@ class JobGenerator(ck.JobGenerator):
                     EnhanceSpiritLink, LuckyDice, HerosOath, Frid, 
                     Overdrive, OverdrivePenalty, SoulConcentrate, DoubleBody, SoulTrapBuff,
                     globalSkill.soul_contract()] +\
-                [BladeImp, BladeImpBuff] +\
-                [EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init, EnhanceSpiritLinkSummon_J, SoulTrap, SoulConcentrateSummon, EnhanceSpiritLinkSummon_J_Damage] +\
-                [RealSoulAttackCounter, DoubleBodyRegistance] +\
+                [BladeImp, BladeImpBuff, SoulTrap] +\
+                [EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init, EnhanceSpiritLinkSummon_J, SoulConcentrateSummon] +\
+                [RealSoulAttackCounter, DoubleBodyRegistance, SpiritFrenzy] +\
                 [BasicAttackWrapper])
         
         return schedule
