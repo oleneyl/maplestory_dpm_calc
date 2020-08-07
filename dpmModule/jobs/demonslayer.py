@@ -24,7 +24,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'mess')
     
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 20)
+        return core.CharacterModifier(armor_ignore = 50, pdamage = 200)
 
     def get_passive_skill_list(self):
 
@@ -76,7 +76,7 @@ class JobGenerator(ck.JobGenerator):
         DemonImpact = core.DamageSkill("데몬 임팩트", 660, 460, (6+1), modifier = core.CharacterModifier(crit = 100, armor_ignore = 30, boss_pdamage = 40, pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
         DevilCry = core.DamageSkill("데빌 크라이", 1620, 515, 7, cooltime = 20 * 1000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)   #이블 토쳐 위해 사용필수.
-        DevilCryBuff = core.BuffSkill("데빌 크라이(위협)", 0, 20000, cooltime = -1).wrap(core.BuffSkillWrapper)
+        DevilCryBuff = core.BuffSkill("데빌 크라이(위협)", 0, 20000, cooltime = -1, armor_ignore = 15).wrap(core.BuffSkillWrapper)
         
         InfinityForce = core.BuffSkill("인피니티 포스", 990, 50*1000, cooltime = 200 * 1000).wrap(core.BuffSkillWrapper)
         Metamorphosis = core.BuffSkill("메타모포시스", 1680, 180*1000, rem = True, pdamage = 35).wrap(core.BuffSkillWrapper)
@@ -117,6 +117,8 @@ class JobGenerator(ck.JobGenerator):
         BasicAttack = core.OptionalElement(DemonAwakning.is_active, DemonSlashAW1, DemonImpact, name = "어웨이크닝 ON")
         BasicAttackWrapper = core.DamageSkill('기본 공격', 0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
+
+        DevilCry.onConstraint(core.ConstraintElement("어웨이크닝 ON일때만", DemonAwakning, DemonAwakning.is_active))
         DevilCry.onAfter(DevilCryBuff)
         
         DemonAwakning.onAfter(DemonAwakningSummon)
@@ -129,7 +131,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 블블 추가타 적용
         for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DevilCry]:
-            contrib.create_auxilary_attack(sk, 0.9)
+            contrib.create_auxilary_attack(sk, 0.9, "블블")
 
         # 오라 웨폰
         auraweapon_builder = AuraWeaponBuilder_BB(vEhc, 3, 2)
