@@ -11,13 +11,13 @@ class MesoStack(core.DamageSkillWrapper, core.StackSkillWrapper):
     # 메익 리인포스 미적용 기준
     def __init__(self, vEhc):
         self.vEhc = vEhc
-        skill = core.DamageSkill("메소 익스플로전", 0, 100, 2).setV(vEhc, 2, 3, False)
+        skill = core.DamageSkill("메소 익스플로전", 0, 120, 2).setV(vEhc, 2, 3, False)
         super(core.DamageSkillWrapper, self).__init__(skill, 20)
         self.modifierInvariantFlag = False
         
     def _use(self, rem = 0, red = 0):
         mdf = self.skill.get_modifier()
-        dmg = 100
+        dmg = 120
         stack = self.stack
         self.stack = 0
         # 확인 필요
@@ -90,11 +90,10 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 200*1000).wrap(core.BuffSkillWrapper)
         FlipTheCoin = core.BuffSkill("플립 더 코인", 0, 24000, pdamage = 5*5, crit = 10*5).wrap(core.BuffSkillWrapper)
-        ShadowerInstinct = core.BuffSkill("섀도어 인스팅트", 0, 200*1000, rem = True, att = 40+30).wrap(core.BuffSkillWrapper)
+        ShadowerInstinct = core.BuffSkill("섀도어 인스팅트", 900, 200*1000, rem = True, att = 40+30).wrap(core.BuffSkillWrapper)
         #StealPotion = core.BuffSkill("스틸 (포션)", 0, 180000, cooltime = -1, att = 30).wrap(core.BuffSkillWrapper)
         
-        # 더미 데이터
-        ShadowPartner = core.BuffSkill("섀도우 파트너", 1000, 2000*1000, rem = True).wrap(core.BuffSkillWrapper)
+        ShadowPartner = core.BuffSkill("섀도우 파트너", 0, 2000*1000, rem = True).wrap(core.BuffSkillWrapper)
         
         #킬포3개 사용시 최종뎀 100% 증가.
         Assasinate1 = core.DamageSkill("암살(1타)", 630, 275, 6, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타")   #쉐파
@@ -103,11 +102,11 @@ class JobGenerator(ck.JobGenerator):
         Assasinate1_D = core.DamageSkill("암살(1타)(다크사이트)", 630, 275, 6, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타(닼사)")   #쉐파
         Assasinate2_D = core.DamageSkill("암살(2타)(다크사이트)", 420, 350, 6, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타(닼사)")   #쉐파
         
-        BailOfShadow = core.SummonSkill("베일 오브 섀도우", 1080, 12000 / 14, 800, 1, 12*1000, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
+        BailOfShadow = core.SummonSkill("베일 오브 섀도우", 1080 + 100, 12000 / 14, 800, 1, 12*1000, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper) # 다크 사이트 딜레이 합산
 
         DarkFlare = core.SummonSkill("다크 플레어", 600, 60000 / 62, 360, 1, 60*1000, cooltime = 60000).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)
     
-        Smoke = core.BuffSkill("연막탄", 1080, 30000, cooltime = 150000, crit_damage = 20).wrap(core.BuffSkillWrapper)
+        Smoke = core.BuffSkill("연막탄", 1080 + 100, 30000, cooltime = 150000, crit_damage = 20).wrap(core.BuffSkillWrapper) # 다크 사이트 딜레이 합산
         Venom = core.DotSkill("페이탈 베놈", 480, 89999 * 1000).wrap(core.SummonSkillWrapper)
         
         AdvancedDarkSight = core.BuffSkill("어드밴스드 다크 사이트", 0, 10000, cooltime = -1, pdamage_indep = 5).wrap(core.BuffSkillWrapper)
