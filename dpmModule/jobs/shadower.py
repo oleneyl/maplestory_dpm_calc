@@ -104,7 +104,7 @@ class JobGenerator(ck.JobGenerator):
         Assasinate1_D = core.DamageSkill("암살(1타)(다크사이트)", 630, 275, 6, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타(닼사)")   #쉐파
         Assasinate2_D = core.DamageSkill("암살(2타)(다크사이트)", 630+30, 350, 6, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타(닼사)")   #쉐파
         
-        BailOfShadow = core.DamageSkill("베일 오브 섀도우", 810, 800, 15, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        BailOfShadow = core.SummonSkill("베일 오브 섀도우", 810, 12000 / 14, 800, 1, 12*1000, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
         
     
         Smoke = core.BuffSkill("연막탄", 1080, 30000, cooltime = 150000, crit_damage = 20).wrap(core.BuffSkillWrapper)
@@ -159,7 +159,7 @@ class JobGenerator(ck.JobGenerator):
         UltimateDarksight.onAfter(AdvancedDarkSight.controller(30000,"set_enabled_and_time_left" ))
         
         SonicBlowTick.onAfter(MesoExplosion.stackController(14*2*0.4, name = "메소 생성"))
-        SonicBlow.onAfter(core.RepeatElement(SonicBlowTick, 20))
+        SonicBlow.onAfter(core.RepeatElement(SonicBlowTick, 15))
         
         Eviscerate.onAfter(MesoExplosion.stackController(14*2*0.4, name = "메소 생성"))
         
