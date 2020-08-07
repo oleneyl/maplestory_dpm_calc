@@ -74,7 +74,7 @@ class JobGenerator(ck.JobGenerator):
         하이퍼 : 메익 인핸스, 암살 리인포스 / 보킬 / 이그노어 가드.
         
         킬링 포인트 3스택 확률 1타 94.6% / 2타 100%
-        암살-부스-익플-배오섀
+        암살-닼플-메익-배오섀
         '''
         
         ######   Skill   ######
@@ -103,8 +103,9 @@ class JobGenerator(ck.JobGenerator):
         Assasinate1_D = core.DamageSkill("암살(1타)(다크사이트)", 630, 275, 6, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타(닼사)")   #쉐파
         Assasinate2_D = core.DamageSkill("암살(2타)(다크사이트)", 420, 350, 6, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타(닼사)")   #쉐파
         
-        BailOfShadow = core.SummonSkill("베일 오브 섀도우", 810, 12000 / 14, 800, 1, 12*1000, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
-        
+        BailOfShadow = core.SummonSkill("베일 오브 섀도우", 1080, 12000 / 14, 800, 1, 12*1000, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
+
+        DarkFlare = core.SummonSkill("다크 플레어", 600, 60000 / 62, 360, 1, 60*1000, cooltime = 60000).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)
     
         Smoke = core.BuffSkill("연막탄", 1080, 30000, cooltime = 150000, crit_damage = 20).wrap(core.BuffSkillWrapper)
         Venom = core.DotSkill("페이탈 베놈", 480, 89999 * 1000).wrap(core.SummonSkillWrapper)
@@ -176,7 +177,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     Booster, FlipTheCoin, ShadowerInstinct, ShadowPartner, Smoke, AdvancedDarkSight, EpicAdventure, UltimateDarksight, 
                         ReadyToDie, globalSkill.soul_contract()] +\
-                [Eviscerate, SonicBlow, BailOfShadow]+\
+                [Eviscerate, SonicBlow, BailOfShadow, DarkFlare]+\
                 [Venom]+\
                 []+\
                 [BasicAttackWrapper])
