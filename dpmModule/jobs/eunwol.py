@@ -71,7 +71,6 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(InactiveRule("파쇄철조-회", "파쇄철조-반"), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule("소혼 장막(시전)", "수호 정령(소혼 장막)"), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule("소혼 장막(시전)", "진 귀참(딜레이)"), RuleSet.BASE)
         #ruleset.add_rule(ReservationRule("소울 컨트랙트", "정령 집속"), RuleSet.BASE)
         return ruleset
@@ -191,6 +190,8 @@ class JobGenerator(ck.JobGenerator):
 
         #소혼장막
         SpiritFrenzy.onAfter(core.RepeatElement(SpiritFrenzy_Tick, 56))
+        SpiritFrenzyConstraint = core.ConstraintElement("소혼 장막(제한)", EnhanceSpiritLinkSummon_J, EnhanceSpiritLinkSummon_J.is_active)
+        SpiritFrenzy.onConstraint(SpiritFrenzyConstraint)
 
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
