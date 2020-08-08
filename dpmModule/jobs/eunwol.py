@@ -80,8 +80,8 @@ class JobGenerator(ck.JobGenerator):
         '''
         ----정보---
         하이퍼 : 귀참 3개, 폭류권 리인포스, 여우령 소환확률 +10%
-        소혼장막 150ms / 60초마다 랑혼장막 사용. 진 귀참을 쓸 수 있으면 먼저 사용하고 소혼장막 사용
-        귀문진 1200ms마다 공격
+        소혼장막 180ms
+        귀문진 1280ms마다 공격
 
         V강화 : (15개)
         귀참, 폭류권, 여우령
@@ -90,6 +90,9 @@ class JobGenerator(ck.JobGenerator):
         정결극 유지 100%
 
         정령 집속 : 무작위 스킬 1회 발동, 키다운은 3초 지속, 정령 공격은 2초마다 발동 1742퍼뎀으로 1회공격 가정.
+        소혼 장막: 60초마다 랑혼장막 사용. 진 귀참을 쓸 수 있으면 먼저 사용하고 소혼장막 사용
+        귀참: 벽캔은 사용하지 않음
+        분혼 격참: 이동형 보스로 가정
         '''
         SOULENHANCEREM = 100
         DOUBLEBODYMULTIPLIER = (100/120) * (0.5 * 1 + 0.5 * 0.2)
@@ -118,7 +121,7 @@ class JobGenerator(ck.JobGenerator):
 
         SpiritFrenzy = core.DamageSkill("소혼 장막(시전)", 0, 0, 0, cooltime=10*1000 + 10080).wrap(core.DamageSkillWrapper)
         SpiritFrenzy_Tick = core.DamageSkill("소혼 장막", 180, 45, 5, cooltime = -1, modifier=core.CharacterModifier(pdamage_indep = 700)).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
-        SpiritFrenzy.onAfter(core.RepeatElement(SpiritFrenzy_Tick, 56))
+
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
         Frid = heroes.FridWrapper(vEhc, 0, 0)
@@ -135,7 +138,7 @@ class JobGenerator(ck.JobGenerator):
         # 귀문진: 정령을 한번에 2마리 소환함
         SoulTrap = core.SummonSkill("귀문진", 990, 1280, 0, 3 * 2, 40000, cooltime = (120-vEhc.getV(3,2))*1000).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
         SoulTrap_D_Normal = core.DamageSkill("귀문진 공격", 0, 600+24*vEhc.getV(3,2), 3 * 2, cooltime = -1).isV(vEhc,3,2).wrap(core.DamageSkillWrapper)
-        SoulTrap_D_DoubleBody = core.DamageSkill("귀문진 공격(분혼 격참)", 0, 600+24*vEhc.getV(3,2)*DOUBLEBODYMULTIPLIER, 3 * 2, cooltime = -1).isV(vEhc,3,2).wrap(core.DamageSkillWrapper)
+        SoulTrap_D_DoubleBody = core.DamageSkill("귀문진 공격(분혼 격참)", 0, (600+24*vEhc.getV(3,2))*DOUBLEBODYMULTIPLIER, 3 * 2, cooltime = -1).isV(vEhc,3,2).wrap(core.DamageSkillWrapper)
 
         RealSoulAttack = core.DamageSkill("진 귀참", 720, 540+6*vEhc.getV(1,3), 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20) + core.CharacterModifier(armor_ignore=50)).setV(vEhc, 0, 2, False).isV(vEhc,1,3).wrap(core.DamageSkillWrapper)
         RealSoulAttackCounter = core.BuffSkill("진 귀참(딜레이)", 0, 6000, cooltime = -1).wrap(core.BuffSkillWrapper)
@@ -176,13 +179,18 @@ class JobGenerator(ck.JobGenerator):
         #여우령
         FoxSoul = core.OptionalElement(DoubleBody.is_active, FoxSoul_DoubleBody, FoxSoul_Normal, name = "분혼격참 중 여우령 발동?")
         BasicAttack.onAfter(FoxSoul)
-        SoulTrap.onTick(FoxSoul)
+        SoulTrap.onTick(core.RepeatElement(FoxSoul, 2))
         SoulConcentrateSummon.onTick(FoxSoul)
         SpiritFrenzy_Tick.onAfter(FoxSoul)
+        SoulConcentrateSummon.onTick(FoxSoul)
+        BladeImp.onAfter(FoxSoul)
 
         #파쇄철조
         BladeImp.onAfter(BladeImpBuff)
         schedule = core.ScheduleGraph()
+
+        #소혼장막
+        SpiritFrenzy.onAfter(core.RepeatElement(SpiritFrenzy_Tick, 56))
 
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
