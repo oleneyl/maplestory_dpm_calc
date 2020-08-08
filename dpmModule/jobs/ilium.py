@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, MutualRule, InactiveRule, ConcurrentRunRule
+from ..execution.rules import RuleSet, MutualRule, InactiveRule, ConcurrentRunRule, ReservationRule, ConditionRule
 from . import globalSkill
 from .jobbranch import magicians
 from . import jobutils
@@ -70,6 +70,8 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule("패스트 차지", "글로리 윙(진입)"), RuleSet.BASE)
         ruleset.add_rule(InactiveRule("크리스탈 이그니션(시전)", "글로리 윙(진입)"), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule("크리스탈 이그니션(시전)", "소울 오브 크리스탈"), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule("그람홀더", "글로리 윙(진입)"), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("글로리 윙(진입)", "그람홀더", lambda x:x.is_active() or x.is_not_usable()), RuleSet.BASE)
         return ruleset
         
     def get_passive_skill_list(self):
@@ -142,7 +144,7 @@ class JobGenerator(ck.JobGenerator):
         '''
         
         #글로리 윙
-        GloryWingStackSkill = core.BuffSkill("글로링 윙(스택)", 0, 9999999)
+        GloryWingStackSkill = core.BuffSkill("글로리 윙(스택)", 0, 9999999)
         
         GloryWingUse = core.BuffSkill("글로리 윙(진입)", 30, 20000, pdamage_indep = 25, pdamage = 70, boss_pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper) # 소오크 2개에 항상 맞춰 사용
         
