@@ -43,6 +43,19 @@ class IliumStackWrapper(core.StackSkillWrapper):
                     
         return result
 
+class SoulOfCrystalWrapper(core.BuffSkillWrapper):
+    def __init__(self, skill, name = None):
+        super().__init__(skill, name)
+
+    def turnOff(self):
+        self.timeLeft = 0
+        self.onoff = False
+        return self._disabledResultobjectCache
+
+    def turnOffController(self):
+        task = core.Task(self, self.turnOff)
+        return core.TaskHolder(task, name = "소오크 흡수")
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):
         super(JobGenerator, self).__init__(vEhc = vEhc)
@@ -128,31 +141,31 @@ class JobGenerator(ck.JobGenerator):
         #글로리 윙
         GloryWingStackSkill = core.BuffSkill("글로링 윙(스택)", 0, 9999999)
         
-        GloryWingUse = core.BuffSkill("글로리 윙(진입)", 30, 20000, pdamage_indep = 25, boss_pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper) #150
+        GloryWingUse = core.BuffSkill("글로리 윙(진입)", 30, 20000, pdamage_indep = 25, pdamage = 70, boss_pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper) # 소오크 2개에 항상 맞춰 사용
         
         GloryWing_MortalWingbit = core.DamageSkill("글로리 윙(모탈 윙비트)", 0, 2000, 8, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #1회
         
-        GloryWing_Craft_Javelin = core.DamageSkill("크래프트:자벨린(글로리 윙)", 390, 465, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep=40)).setV(vEhc, 0, 0, True).wrap(core.DamageSkillWrapper)
+        GloryWing_Craft_Javelin = core.DamageSkill("크래프트:자벨린(글로리 윙)", 390, 465, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = 40)).setV(vEhc, 0, 0, True).wrap(core.DamageSkillWrapper)
         GloryWing_Craft_Javelin_Fragment = core.DamageSkill("크래프트:자벨린(글로리 윙)(파편)", 0, 200+100, 3*3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 0, True).wrap(core.DamageSkillWrapper)
 
         #5차 스킬들
         OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 0, 3)
-        GramHolder = core.SummonSkill("그람홀더", 900, 3000, 1000+25*vEhc.getV(4,3), 6, 40000, cooltime = 180000).isV(vEhc,4,3).wrap(core.SummonSkillWrapper)   #임의딜레이 900
+        GramHolder = core.SummonSkill("그람홀더", 900, 3000, 1000+25*vEhc.getV(4,3), 6, 40000, cooltime = 180000, modifier = core.CharacterModifier(pdamage_indep = 100)).isV(vEhc,4,3).wrap(core.SummonSkillWrapper)   #임의딜레이 900
         
         MagicCircuitFullDrive = core.BuffSkill("매직 서킷 풀드라이브", 720, (30+vEhc.getV(3,2))*1000, pdamage = (20 + vEhc.getV(3,2)), cooltime = 200*1000).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
         MagicCircuitFullDriveStorm = core.SummonSkill("매직 서킷 풀드라이브(마력 폭풍)", 0, 4000, 500+20*vEhc.getV(3,2), 3, (30+vEhc.getV(3,2))*1000, cooltime = -1).wrap(core.SummonSkillWrapper)
         
         CrystalIgnitionInit = core.DamageSkill("크리스탈 이그니션(시전)", 960, 0, 0, cooltime = 180*1000).wrap(core.DamageSkillWrapper)
         CrystalIgnition = core.DamageSkill("크리스탈 이그니션", 270, 750 + 25*vEhc.getV(2,1), 4, modifier = core.CharacterModifier(boss_pdamage = 20)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper) #75회
-        Reaction_Spectrum = core.DamageSkill("리액션:스펙트럼", 0, 1000+40*vEhc.getV(2,1), 5, cooltime = 1000).wrap(core.DamageSkillWrapper) #1초마다 시전됨.
+        Reaction_Spectrum = core.DamageSkill("리액션:스펙트럼", 0, 1000+40*vEhc.getV(2,1), 5, cooltime = 1000, modifier = core.CharacterModifier(boss_pdamage = 20)).wrap(core.DamageSkillWrapper) #1초마다 시전됨.
  
         # TODO:소오크 소모시 강화 반영필요
-        SoulOfCrystal = core.BuffSkill("소울 오브 크리스탈", 660, 30*1000, cooltime=40*1000).isV(vEhc,1,0).wrap(core.BuffSkillWrapper)
+        SoulOfCrystal = SoulOfCrystalWrapper(core.BuffSkill("소울 오브 크리스탈", 660, 30*1000, cooltime=40*1000).isV(vEhc,1,0))
         SoulOfCrystalPassive = core.BuffSkill("소울 오브 크리스탈(패시브)", 0, 999999999, att = (5+vEhc.getV(1,0)*2)).isV(vEhc,1,0).wrap(core.BuffSkillWrapper)
 
         SoulOfCrystal_Reaction_Domination = core.DamageSkill("리액션:도미네이션(소오크)", 0, 550 * 0.01 * (50 + vEhc.getV(1,0)), 2*2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         SoulOfCrystal_Reaction_Destruction = core.DamageSkill("리액션:디스트럭션(소오크)", 0, 550 * 0.01 * (50 + vEhc.getV(1,0)), 4*2*2, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        SoulOfCrystal_Reaction_Spectrum = core.DamageSkill("리액션:스펙트럼(소오크)", 0, 1000+40*vEhc.getV(2,1), 5*2).wrap(core.DamageSkillWrapper)
+        SoulOfCrystal_Reaction_Spectrum = core.DamageSkill("리액션:스펙트럼(소오크)", 0, 1000+40*vEhc.getV(2,1), 5*2, modifier = core.CharacterModifier(boss_pdamage = 20)).wrap(core.DamageSkillWrapper)
         
         #스킬간 연결
 
@@ -191,7 +204,11 @@ class JobGenerator(ck.JobGenerator):
         CrystalCharge.addTrigger(CrystalSkill_MortalSwing.controller(1), 30)
         CrystalCharge.addTrigger(CrystalSkill_Deus.controller(1), 90)
         CrystalCharge.addTrigger(GloryWingUse.controller(1), 150, isLast = True)
+
+        GloryWingUse.onConstraint(core.ConstraintElement("소오크 가동중", SoulOfCrystal, SoulOfCrystal.is_active))
+        GloryWingUse.onAfter(SoulOfCrystal.turnOffController())
         
+        SoulOfCrystal.onConstraint(core.ConstraintElement("글로리윙 미사용중", GloryWingUse, GloryWingUse.is_not_active))
         FastCharge.onConstraint(core.ConstraintElement("글로리윙 미사용중", GloryWingUse, GloryWingUse.is_not_active))
         
         #기본공격 설정
