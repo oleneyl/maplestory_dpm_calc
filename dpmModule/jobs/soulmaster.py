@@ -72,7 +72,7 @@ class JobGenerator(ck.JobGenerator):
         #Damage Skills
         NormalAttack = core.DamageSkill("댄스오브 문/스피딩 선셋", (360+270)/2, 400, 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + MasterOfSword.copy()).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
+        PhalanxCharge = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
         
         SelestialDanceSummon = core.SummonSkill("셀레스티얼 댄스(추가타)", 0, 5000, (1200 + 40 * vEhc.getV(0,0)), 3, (40 + vEhc.getV(0,0)) * 1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) #딜레이 모름
         SelestialDanceInit = core.BuffSkill("셀레스티얼 댄스", 700, (40+vEhc.getV(0,0))*1000, cooltime = 150000, red = True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
@@ -115,7 +115,7 @@ class JobGenerator(ck.JobGenerator):
                     NimbleFinger, TrueSight, SolunaTime, SoulForge, 
                     GloryOfGuardians, AuraWeaponBuff, globalSkill.soul_contract(), ElisionBuff, SelestialDanceInit, 
                     ] +\
-                [CygnusPalanks, SolunaDivide] +\
+                [PhalanxCharge, SolunaDivide] +\
                 [SelestialDanceSummon, SoulEclipse] +\
                 [AuraWeaponCooltimeDummy] +\
                 [NormalAttack])

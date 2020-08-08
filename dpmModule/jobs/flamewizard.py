@@ -65,7 +65,7 @@ class JobGenerator(ck.JobGenerator):
         
         #Full speed, No Combat Orders
         OrbitalFlame = core.DamageSkill("오비탈 플레임 IV", flamewizardDefaultSpeed, 215, 3 * 2, modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 2, 1)
+        PhalanxCharge = cygnus.PhalanxChargeWrapper(vEhc, 2, 1)
         BlazingOrbital = core.DamageSkill("블레이징 오비탈 플레임", 210, 330+13*vEhc.getV(0,0), 6 * 4, cooltime = 5000, modifier = core.CharacterModifier(armor_ignore = 50)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)    #4타 가정
         
         DragonSlaveTick = core.DamageSkill("드래곤 슬레이브", 280, 500, 6).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)#x7
@@ -106,7 +106,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     WordOfFire, FiresOfCreation, BurningRegion, GloryOfGuardians, OverloadMana,
                     globalSkill.soul_contract()] +\
-                [CygnusPalanks, BlazingOrbital, DragonSlaveInit, SavageFlame, InfinityFlameCircleInit, 
+                [PhalanxCharge, BlazingOrbital, DragonSlaveInit, SavageFlame, InfinityFlameCircleInit, 
                     InfernoRize] +\
                 [IgnitionDOT] +\
                 [] +\

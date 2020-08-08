@@ -4,8 +4,8 @@ from ...kernel.core import CharacterModifier as MDF
 from ...character import characterKernel as ck
 from functools import partial
 
-def PhalanxChargeWrapper(vEhc, num1, num2):
-    PhalanxCharge = core.DamageSkill("시그너스 팔랑크스", 780, 450 + 18*vEhc.getV(num1, num2), 40 + vEhc.getV(num1, num2), cooltime = 30 * 1000).isV(vEhc, num1, num2).wrap(core.DamageSkillWrapper)
+def PhalanxChargeWrapper(vEhc, num1, num2, arg_modifier = core.CharacterModifier(), arg_hitrate = 1):
+    PhalanxCharge = core.SummonSkill("시그너스 팔랑크스", 780, 120, 450 + 18*vEhc.getV(num1,num2), 1, modifier = arg_modifier, 120 * (40 + vEhc.getV(num1,num2)) * arg_hitrate, cooltime = 30 * 1000).isV(vEhc,num1,num2).wrap(core.SummonSkillWrapper)
     return PhalanxCharge
 
 class CygnusBlessWrapper(core.BuffSkillWrapper):

@@ -91,7 +91,7 @@ class JobGenerator(ck.JobGenerator):
         DeadlyChargeBuff = core.BuffSkill("데들리 차지(디버프)", 0, 10000, cooltime = -1, pdamage = 10).wrap(core.BuffSkillWrapper)
         QueenOfTomorrow = core.BuffSkill("퀸 오브 투모로우", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
-        CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 3, 3)
+        PhalanxCharge = cygnus.PhalanxChargeWrapper(vEhc, 3, 3)
 
         RoIias = core.BuffSkill("로 아이아스", 840, 75+3*vEhc.getV(0,0), red = True, cooltime = 300*1000, pdamage_indep = 5 + (35+3*int(vEhc.getV(0,0)*0.2))//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ClauSolis = core.DamageSkill("클라우 솔라스", 900, 700+28*vEhc.getV(4,4), 7, red = True, cooltime = 12000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)    #로얄가드 버프지속시간 6초 증가. 100% 암흑 5초
@@ -132,7 +132,7 @@ class JobGenerator(ck.JobGenerator):
                     GuardOfLight, LoyalGuardBuff, SoulAttack, Booster, Invigorate, SacredCube, 
                     DeadlyChargeBuff, QueenOfTomorrow, AuraWeaponBuff, RoIias, SwordOfSoullight,
                     globalSkill.soul_contract()] +\
-                [CygnusPalanks, LoyalGuard_5, ShiningCross, DeadlyCharge, ClauSolis] +\
+                [PhalanxCharge, LoyalGuard_5, ShiningCross, DeadlyCharge, ClauSolis] +\
                 [ShiningCrossInstall, ClauSolisSummon] +\
                 [AuraWeaponCooltimeDummy] +\
                 [BasicAttackWrapper])

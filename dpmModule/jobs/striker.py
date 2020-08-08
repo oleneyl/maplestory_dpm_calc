@@ -80,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
         모든 스킬은 쿨타임마다 사용
         '''
 
-        PALANKSRATE = 2 / 3
+        PHALANX_RATE = 2 / 3
         CHOOKROI = 0.7
         #Buff skills
 
@@ -108,7 +108,7 @@ class JobGenerator(ck.JobGenerator):
         
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        CygnusPalanks = core.SummonSkill("시그너스 팔랑크스", 780, 120, 450 + 18*vEhc.getV(4,4), 1, 120 * (40 + vEhc.getV(4,4)) * PALANKSRATE, cooltime = 30 * 1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
+        PhalanxCharge = cygnus.PhalanxChargeWrapper(vEhc, 4, 4, arg_hitrate = PHALANX_RATE)
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,1,3).wrap(core.BuffSkillWrapper)
 
         #오버드라이브 (앱솔 가정)
@@ -139,7 +139,7 @@ class JobGenerator(ck.JobGenerator):
         for skill in [Destroy, Thunder, DestroyConcat, ThunderConcat, NoiShinChanGeuk]:
             skill.onAfter(LightningStack.stackController(1))
 
-        for skill in [ShinNoiHapLAttack, CygnusPalanks, NoiShinChanGeukAttack]:
+        for skill in [ShinNoiHapLAttack, PhalanxCharge, NoiShinChanGeukAttack]:
             skill.onTick(LightningStack.stackController(1))
 
         GioaTan.onAfter(LightningStack.stackController(-2))
@@ -156,7 +156,7 @@ class JobGenerator(ck.JobGenerator):
                     LightningStack, Booster, ChookRoi, WindBooster, LuckyDice,
                     HuricaneBuff, GloryOfGuardians, SkyOpen, Overdrive, OverdrivePenalty, ShinNoiHapL,
                     globalSkill.soul_contract()] +\
-                [GioaTan, CygnusPalanks, NoiShinChanGeuk] +\
+                [GioaTan, PhalanxCharge, NoiShinChanGeuk] +\
                 [ShinNoiHapLAttack, NoiShinChanGeukAttack] +\
                 [] +\
                 [BasicAttackWrapper])

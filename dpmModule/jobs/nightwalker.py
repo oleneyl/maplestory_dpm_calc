@@ -94,7 +94,7 @@ class JobGenerator(ck.JobGenerator):
 
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
+        PhalanxCharge = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
 
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 3, 3)
 
@@ -141,7 +141,7 @@ class JobGenerator(ck.JobGenerator):
                     ElementalDarkness, Heist, Booster, ShadowServent, SpiritThrowing, 
                     ShadowElusion, ReadyToDie, Dominion, GloryOfGuardians, ShadowSpear, ShadowServentExtend, ShadowBite, ShadowBiteBuff,
                     globalSkill.soul_contract()] +\
-                [CygnusPalanks] +\
+                [PhalanxCharge] +\
                 [ElementalDarknessDOT, ShadowSpearLarge] +\
                 [] +\
                 [QuintupleThrow])
