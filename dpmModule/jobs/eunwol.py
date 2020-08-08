@@ -20,9 +20,9 @@ class SoulTrapStackWrapper(core.StackSkillWrapper):
         return super(SoulTrapStackWrapper, self)._use()
 
     def _add_debuff(self):
-        # debuffQueue의 원소 한개당 2개의 디버프 가정 (Queue 원소 수는 최대 self._max // 2개)
-        self.debuffQueue = ([self.currentTime] + self.debuffQueue)[:self._max//2]
-        self.stack = 2 * len(self.debuffQueue)
+        # 디버프 추가, 최대 _max(10)개로 유지
+        self.debuffQueue = ([self.currentTime] + self.debuffQueue)[:self._max]
+        self.stack = len(self.debuffQueue)
         return core.ResultObject(0, 0, 0)
 
     def add_debuff(self):
@@ -32,7 +32,7 @@ class SoulTrapStackWrapper(core.StackSkillWrapper):
         self.currentTime += time
         # 지속시간이 끝난 디버프 제거
         self.debuffQueue = [x for x in self.debuffQueue if x + self.DEBUF_PERSISTENCE_TIME > self.currentTime]
-        self.stack = 2 * len(self.debuffQueue)
+        self.stack = len(self.debuffQueue)
         super(SoulTrapStackWrapper, self).spend_time(time)
 
     def get_modifier(self):
@@ -80,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
         ----정보---
         하이퍼 : 귀참 3개, 폭류권 리인포스, 여우령 소환확률 +10%
         소혼장막 150ms / 60초마다 랑혼장막 사용
-        귀문진 990ms마다 공격
+        귀문진 1200ms마다 공격
 
         V강화 : (15개)
         귀참, 폭류권, 여우령
@@ -99,7 +99,7 @@ class JobGenerator(ck.JobGenerator):
         FoxSoul = core.DamageSkill("여우령", 0, 200, 3 * (0.25+0.1)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         SoulAttack = core.DamageSkill("귀참", 600, 265, 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DoubleBodyAttack = core.DamageSkill("분혼 격참(공격)", 0, 2000, 1).wrap(core.DamageSkillWrapper)
-        DoubleBody = core.BuffSkill("분혼 격참", 1000, 10000, cooltime = 180 * 1000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
+        DoubleBody = core.BuffSkill("분혼 격참", 900, 10000, cooltime = 180 * 1000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
 
         #하이퍼스킬
         #정결극 유지율 100%
@@ -125,12 +125,12 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.get_weapon_att("너클")
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         
-        SoulConcentrate = core.BuffSkill("정령 집속", 960, (30+vEhc.getV(2,1))*1000, cooltime = 120*1000, pdamage_indep = (5+vEhc.getV(2,1)//2)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
+        SoulConcentrate = core.BuffSkill("정령 집속", 900, (30+vEhc.getV(2,1))*1000, cooltime = 120*1000, pdamage_indep = (5+vEhc.getV(2,1)//2)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
         SoulConcentrateSummon = core.SummonSkill("정령 집속(무작위)", 0, 2000, 1742, 1, (30+vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
 
         # 귀문진: 정령을 한번에 2마리 소환함
-        SoulTrap = core.SummonSkill("귀문진", 1000, 990, 600+24*vEhc.getV(3,2), 3 * 2, 40000, cooltime = (120-vEhc.getV(3,2))*1000).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
-        RealSoulAttack = core.DamageSkill("진 귀참", 600, 540+6*vEhc.getV(1,3), 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20) + core.CharacterModifier(armor_ignore=50)).setV(vEhc, 0, 2, False).isV(vEhc,1,3).wrap(core.DamageSkillWrapper)
+        SoulTrap = core.SummonSkill("귀문진", 990, 1280, 600+24*vEhc.getV(3,2), 3 * 2, 40000, cooltime = (120-vEhc.getV(3,2))*1000).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
+        RealSoulAttack = core.DamageSkill("진 귀참", 720, 540+6*vEhc.getV(1,3), 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20) + core.CharacterModifier(armor_ignore=50)).setV(vEhc, 0, 2, False).isV(vEhc,1,3).wrap(core.DamageSkillWrapper)
         RealSoulAttackCounter = core.BuffSkill("진 귀참(딜레이)", 0, 6000, cooltime = -1).wrap(core.BuffSkillWrapper)
         DoubleBodyRegistance = core.BuffSkill("분혼 격참(저항)", 0, 90000, cooltime = -1).wrap(core.BuffSkillWrapper)
 
@@ -156,7 +156,7 @@ class JobGenerator(ck.JobGenerator):
 
         #귀문진
         SoulTrapStack = SoulTrapStackWrapper(core.BuffSkill("귀문진(버프)", 0, 9999999, cooltime = -1))
-        SoulTrap.onTick(SoulTrapStack.add_debuff())
+        SoulTrap.onTick(core.RepeatElement(SoulTrapStack.add_debuff(), 2)) # 한 번에 디버프 두 개 생성
 
         #진 귀참 알고리즘
         RealSoulAttack.onAfter(RealSoulAttackCounter)
