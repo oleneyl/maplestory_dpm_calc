@@ -24,6 +24,9 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 13
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
+    
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(armor_ignore = 20)
         
     def get_passive_skill_list(self):
         RetrievedMemory = core.InformedCharacterModifier("되찾은 기억", patt=5)
@@ -93,6 +96,7 @@ class JobGenerator(ck.JobGenerator):
         FinalAttackHolder = core.DamageSkill("파이널어택(홀더)", 0, 0, 0).wrap(core.DamageSkillWrapper)
 
         AdvancedComboAbility = core.BuffSkill("어드밴스드 콤보 어빌리티", 0, 9999*9999, att=2*10, crit=3*10).wrap(core.BuffSkillWrapper)
+        ComboAbility = core.BuffSkill("콤보 어빌리티", 0, 9999*9999, att=2*10).wrap(core.BuffSkillWrapper) 
         Judgement = core.DamageSkill("저지먼트", JUDGEMENT_DELAY, 380, 4).wrap(core.DamageSkillWrapper)
         JudgementTick = core.SummonSkill("저지먼트(지속)", 0, 1000, 200, 1, 6000).wrap(core.SummonSkillWrapper)
 
@@ -106,7 +110,7 @@ class JobGenerator(ck.JobGenerator):
         AdrenalineBoostEndDummy = core.BuffSkill("아드레날린 부스트(종료 더미)", 0, 0, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         AdrenalineSmashSwing = core.DamageSkill("스매시 스윙(아드레날린)", 90, 950, 4).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        AdrenalineFinalBlow = core.DamageSkill("파이널 블로우(아드레날린)", 600, 595, 7, modifier=core.CharacterModifier(armor_ignore=15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdrenalineFinalBlow = core.DamageSkill("파이널 블로우(아드레날린)", 600, 595+20, 7, modifier=core.CharacterModifier(armor_ignore=15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         FinalBlowWaveAdrenaline = core.DamageSkill("파이널 블로우(파동)", 0, 350, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
         AdrenalineBeyonderFirst = core.DamageSkill("비욘더(1타)(아드레날린)", 410, 535, 8, modifier=core.CharacterModifier(pdamage=20+79.1, armor_ignore=37, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
@@ -127,7 +131,7 @@ class JobGenerator(ck.JobGenerator):
 
         # InstallMaha = core.BuffSkill("인스톨 마하", 1710, (30+vEhc.getV(1,1))*1000, patt=5+vEhc.getV(1,1), cooltime=150*1000).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper)
         InstallMaha = core.BuffSkill("인스톨 마하", 600, (30+vEhc.getV(1,1))*1000, patt=5+vEhc.getV(1,1), cooltime=150*1000).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper) # 게더링캐쳐 캔슬 : 1710 -> 600
-        InstallMahaBlizzard = core.SummonSkill("인스톨 마하(눈보라)", 0, 3000, 650+10*vEhc.getV(1,1), 5, 60*1000, cooltime=-1).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)
+        InstallMahaBlizzard = core.SummonSkill("인스톨 마하(눈보라)", 0, 3000, 450+18*vEhc.getV(1,1), 5, 60*1000, cooltime=-1).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)
         #스택+100
 
         # BrandishMaha = core.DamageSkill('브랜디쉬 마하', 1170, 600+vEhc.getV(2,2)*24, 15*2, cooltime=20*1000, modifier=core.CharacterModifier(boss_pdamage=20)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
@@ -228,10 +232,10 @@ class JobGenerator(ck.JobGenerator):
         AdrenalineGenerator.onAfter(AdrenalineBoost)
         return(BasicAttack, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), HerosOath,
-                    Booster, SmashSwingIncr, SnowCharge, AdvancedComboAbility,
+                    Booster, SmashSwingIncr, SnowCharge, AdvancedComboAbility, ComboAbility,
                     BlessingMaha, AdrenalineBoost, AdrenalineBoostEndDummy,
                     AdrenalineGenerator, 
-                    Frid, InstallMaha, Combo, AuraWeaponCooltimeDummy, AuraWeaponBuff,
+                    Frid, InstallMaha, InstallMahaBlizzard, Combo, AuraWeaponCooltimeDummy, AuraWeaponBuff,
                     globalSkill.soul_contract()] +\
                 [SmashSwingHolder, BrandishMaha, BoostEndHuntersTargeting] +\
                 [MahaRegion] +\
