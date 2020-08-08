@@ -64,9 +64,6 @@ class JobGenerator(ck.JobGenerator):
         #Damage Skills
         SongOfHeaven = core.DamageSkill("천공의 노래", 120, 345 +combat*3, 1, modifier = core.CharacterModifier(pdamage = 127.36, boss_pdamage = 30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)#오더스 적용 필요, 코강렙 20이상 가정.
         
-        #CygnusPalanks = core.DamageSkill("시그너스 팔랑크스", 780, 450 + 18*vEhc.getV(0,0), 40 + vEhc.getV(0,0), cooltime = 30 * 1000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        CygnusPalanks = core.SummonSkill("시그너스 팔랑크스", 780, 120 * 5, 450 + 18*vEhc.getV(0,0), 5, 120 * (40 + vEhc.getV(0,0)), cooltime = 30 * 1000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
-        
         Mercilesswind = core.DamageSkill("아이들 윔", 600, (500 + 20*vEhc.getV(4,4)) * 0.775, 10 * 3, cooltime = 10 * 1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper) #도트 데미지 9초간 초당 1000%
         MercilesswindDOT = core.DotSkill("아이들 윔(도트)", 1000, 9000).wrap(core.SummonSkillWrapper)
     
@@ -74,7 +71,7 @@ class JobGenerator(ck.JobGenerator):
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 5, 5)
         HowlingGail = core.SummonSkill("하울링 게일", 780, 10 * 1000 / 33, 250 + 10*vEhc.getV(1,1), 2 * 3, 10000, cooltime = 20 * 1000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) #딜레이 모름, 64���
         WindWall = core.SummonSkill("윈드 월", 720, 2000, (550 + vEhc.getV(2,2)*22) / 2, 5*3 , 45 * 1000, cooltime = 90 * 1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
-        #TODO : 이볼브 계산
+        PhalanxCharge = cygnus.PhalanxChargeWrapper(vEhc, 0, 0)
     
         
         ######   Skill Wrapper   #####
@@ -83,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
     
         #Damage
         SongOfHeaven.onAfters([TriflingWhim, StormBringer])
-        CygnusPalanks.onTicks([core.RepeatElement(TriflingWhim,5), core.RepeatElement(StormBringer,5)])
+        PhalanxCharge.onTicks([TriflingWhim, StormBringer])
         PinPointPierce.onAfter(PinPointPierceDebuff)
         #Summon
         HowlingGail.onTicks([core.RepeatElement(TriflingWhim, 2), core.RepeatElement(StormBringer, 2)])
@@ -94,6 +91,6 @@ class JobGenerator(ck.JobGenerator):
                     PinPointPierceDebuff,
                     globalSkill.soul_contract()] +\
                 [Mercilesswind]+\
-                [GuidedArrow, HowlingGail, WindWall, MercilesswindDOT, CygnusPalanks, PinPointPierce]+\
+                [GuidedArrow, HowlingGail, WindWall, MercilesswindDOT, PhalanxCharge, PinPointPierce]+\
                 []+\
                 [SongOfHeaven])
