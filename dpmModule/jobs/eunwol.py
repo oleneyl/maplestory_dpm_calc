@@ -89,7 +89,8 @@ class JobGenerator(ck.JobGenerator):
 
         정결극 유지 100%
 
-        정령 집속 : 무작위 스킬 1회 발동, 키다운은 3초 지속, 정령 공격은 2초마다 발동 1742퍼뎀으로 1회공격 가정.
+        정령 집속 : 무작위 스킬 1회 발동, 키다운은 3초 지속,
+                   정령 공격은 2초마다 발동 1742퍼뎀으로 1회공격 가정. 여우령 2개 사출
         소혼 장막: 60초마다 랑혼장막 사용. 진 귀참을 쓸 수 있으면 먼저 사용하고 소혼장막 사용
         귀참: 벽캔은 사용하지 않음
         분혼 격참: 이동형 보스로 가정
@@ -180,9 +181,8 @@ class JobGenerator(ck.JobGenerator):
         FoxSoul = core.OptionalElement(DoubleBody.is_active, FoxSoul_DoubleBody, FoxSoul_Normal, name = "분혼격참 중 여우령 발동?")
         BasicAttack.onAfter(FoxSoul)
         SoulTrap.onTick(core.RepeatElement(FoxSoul, 2))
-        SoulConcentrateSummon.onTick(FoxSoul)
+        SoulConcentrateSummon.onTick(core.RepeatElement(FoxSoul, 2))
         SpiritFrenzy_Tick.onAfter(FoxSoul)
-        SoulConcentrateSummon.onTick(FoxSoul)
         BladeImp.onAfter(FoxSoul)
 
         #파쇄철조
