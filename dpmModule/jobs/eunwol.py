@@ -72,6 +72,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         ruleset.add_rule(InactiveRule("파쇄철조-회", "파쇄철조-반"), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule("소혼 장막(시전)", "수호 정령(소혼 장막)"), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule("소혼 장막(시전)", "진 귀참(딜레이)"), RuleSet.BASE)
         #ruleset.add_rule(ReservationRule("소울 컨트랙트", "정령 집속"), RuleSet.BASE)
         return ruleset
 
@@ -79,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
         '''
         ----정보---
         하이퍼 : 귀참 3개, 폭류권 리인포스, 여우령 소환확률 +10%
-        소혼장막 150ms / 60초마다 랑혼장막 사용
+        소혼장막 150ms / 60초마다 랑혼장막 사용. 진 귀참을 쓸 수 있으면 먼저 사용하고 소혼장막 사용
         귀문진 1200ms마다 공격
 
         V강화 : (15개)
@@ -91,12 +92,15 @@ class JobGenerator(ck.JobGenerator):
         정령 집속 : 무작위 스킬 1회 발동, 키다운은 3초 지속, 정령 공격은 2초마다 발동 1742퍼뎀으로 1회공격 가정.
         '''
         SOULENHANCEREM = 100
+        DOUBLEBODYMULTIPLIER = (100/120) * (0.5 * 1 + 0.5 * 0.2)
 
         ######   Skill   ######
 
         #Buff skills
 
-        FoxSoul = core.DamageSkill("여우령", 0, 200, 3 * (0.25+0.1)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        FoxSoul_Normal = core.DamageSkill("여우령", 0, 200, 3 * (0.25+0.1)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        FoxSoul_DoubleBody = core.DamageSkill("여우령(분혼 격참)", 0, 200 * DOUBLEBODYMULTIPLIER, 3 * (0.25+0.1)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+
         SoulAttack = core.DamageSkill("귀참", 600, 265, 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DoubleBodyAttack = core.DamageSkill("분혼 격참(공격)", 0, 2000, 1).wrap(core.DamageSkillWrapper)
         DoubleBody = core.BuffSkill("분혼 격참", 900, 10000, cooltime = 180 * 1000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
@@ -129,7 +133,10 @@ class JobGenerator(ck.JobGenerator):
         SoulConcentrateSummon = core.SummonSkill("정령 집속(무작위)", 0, 2000, 1742, 1, (30+vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
 
         # 귀문진: 정령을 한번에 2마리 소환함
-        SoulTrap = core.SummonSkill("귀문진", 990, 1280, 600+24*vEhc.getV(3,2), 3 * 2, 40000, cooltime = (120-vEhc.getV(3,2))*1000).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
+        SoulTrap = core.SummonSkill("귀문진", 990, 1280, 0, 3 * 2, 40000, cooltime = (120-vEhc.getV(3,2))*1000).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
+        SoulTrap_D_Normal = core.DamageSkill("귀문진 공격", 0, 600+24*vEhc.getV(3,2), 3 * 2, cooltime = -1).isV(vEhc,3,2).wrap(core.DamageSkillWrapper)
+        SoulTrap_D_DoubleBody = core.DamageSkill("귀문진 공격(분혼 격참)", 0, 600+24*vEhc.getV(3,2)*DOUBLEBODYMULTIPLIER, 3 * 2, cooltime = -1).isV(vEhc,3,2).wrap(core.DamageSkillWrapper)
+
         RealSoulAttack = core.DamageSkill("진 귀참", 720, 540+6*vEhc.getV(1,3), 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20) + core.CharacterModifier(armor_ignore=50)).setV(vEhc, 0, 2, False).isV(vEhc,1,3).wrap(core.DamageSkillWrapper)
         RealSoulAttackCounter = core.BuffSkill("진 귀참(딜레이)", 0, 6000, cooltime = -1).wrap(core.BuffSkillWrapper)
         DoubleBodyRegistance = core.BuffSkill("분혼 격참(저항)", 0, 90000, cooltime = -1).wrap(core.BuffSkillWrapper)
@@ -157,6 +164,7 @@ class JobGenerator(ck.JobGenerator):
         #귀문진
         SoulTrapStack = SoulTrapStackWrapper(core.BuffSkill("귀문진(버프)", 0, 9999999, cooltime = -1))
         SoulTrap.onTick(core.RepeatElement(SoulTrapStack.add_debuff(), 2)) # 한 번에 디버프 두 개 생성
+        SoulTrap.onTick(core.OptionalElement(DoubleBody.is_active, SoulTrap_D_DoubleBody, SoulTrap_D_Normal, name = "분혼격참 중 귀문진 발동?"))
 
         #진 귀참 알고리즘
         RealSoulAttack.onAfter(RealSoulAttackCounter)
@@ -166,10 +174,12 @@ class JobGenerator(ck.JobGenerator):
         BasicAttackWrapper.onAfter(BasicAttack)
 
         #여우령
+        FoxSoul = core.OptionalElement(DoubleBody.is_active, FoxSoul_DoubleBody, FoxSoul_Normal, name = "분혼격참 중 여우령 발동?")
         BasicAttack.onAfter(FoxSoul)
         SoulTrap.onTick(FoxSoul)
         SoulConcentrateSummon.onTick(FoxSoul)
         SpiritFrenzy_Tick.onAfter(FoxSoul)
+
         #파쇄철조
         BladeImp.onAfter(BladeImpBuff)
         schedule = core.ScheduleGraph()
