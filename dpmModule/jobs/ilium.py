@@ -43,8 +43,6 @@ class IliumStackWrapper(core.StackSkillWrapper):
                     
         return result
 
-
-
 class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):
         super(JobGenerator, self).__init__(vEhc = vEhc)
@@ -136,6 +134,7 @@ class JobGenerator(ck.JobGenerator):
         
         GloryWing_Craft_Javelin = core.DamageSkill("크래프트:자벨린(글로리 윙)", 390, 465, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep=40)).setV(vEhc, 0, 0, True).wrap(core.DamageSkillWrapper)
         GloryWing_Craft_Javelin_Fragment = core.DamageSkill("크래프트:자벨린(글로리 윙)(파편)", 0, 200+100, 3*3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 0, True).wrap(core.DamageSkillWrapper)
+
         #5차 스킬들
         OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 0, 3)
         GramHolder = core.SummonSkill("그람홀더", 900, 3000, 1000+25*vEhc.getV(4,3), 6, 40000, cooltime = 180000).isV(vEhc,4,3).wrap(core.SummonSkillWrapper)   #임의딜레이 900
@@ -145,16 +144,15 @@ class JobGenerator(ck.JobGenerator):
         
         CrystalIgnitionInit = core.DamageSkill("크리스탈 이그니션(시전)", 960, 0, 0, cooltime = 180*1000).wrap(core.DamageSkillWrapper)
         CrystalIgnition = core.DamageSkill("크리스탈 이그니션", 270, 750 + 25*vEhc.getV(2,1), 4, modifier = core.CharacterModifier(boss_pdamage = 20)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper) #75회
-        
-        Reaction_Spectrum = core.SummonSkill("리액션:스펙트럼", 0, 1000, 1000+40*vEhc.getV(2,1), 5, 10000, cooltime = -1).wrap(core.SummonSkillWrapper) #1초마다 시전됨.
+        Reaction_Spectrum = core.DamageSkill("리액션:스펙트럼", 0, 1000+40*vEhc.getV(2,1), 5, cooltime = 1000).wrap(core.DamageSkillWrapper) #1초마다 시전됨.
  
         # TODO:소오크 소모시 강화 반영필요
-        SoulOfCrystal = core.BuffSkill("소울 오브 크리스탈", 660, 30*1000, cooltime = 40*1000).isV(vEhc,1,0).wrap(core.BuffSkillWrapper)
+        SoulOfCrystal = core.BuffSkill("소울 오브 크리스탈", 660, 30*1000, cooltime=40*1000).isV(vEhc,1,0).wrap(core.BuffSkillWrapper)
         SoulOfCrystalPassive = core.BuffSkill("소울 오브 크리스탈(패시브)", 0, 999999999, att = (5+vEhc.getV(1,0)*2)).isV(vEhc,1,0).wrap(core.BuffSkillWrapper)
-        SoulOfCrystal_Reaction_Domination = core.DamageSkill("리액션 : 도미네이션(소오크)", 0, 550 * 0.01 * (50 + vEhc.getV(1,0)) * 2, 2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        SoulOfCrystal_Reaction_Destruction = core.DamageSkill("리액션 : 디스트럭션(소오크)", 0, 550* 0.01 * (50 + vEhc.getV(1,0)) * 2, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        
-        SoulOfCrystal_Reaction_Spectrum = core.SummonSkill("리액션:스펙트럼(소오크)", 0, 1000, 1000+40*vEhc.getV(2,1) * 2, 5, 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
+
+        SoulOfCrystal_Reaction_Domination = core.DamageSkill("리액션:도미네이션(소오크)", 0, 550 * 0.01 * (50 + vEhc.getV(1,0)), 2*2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        SoulOfCrystal_Reaction_Destruction = core.DamageSkill("리액션:디스트럭션(소오크)", 0, 550 * 0.01 * (50 + vEhc.getV(1,0)), 4*2*2, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SoulOfCrystal_Reaction_Spectrum = core.DamageSkill("리액션:스펙트럼(소오크)", 0, 1000+40*vEhc.getV(2,1), 5*2).wrap(core.DamageSkillWrapper)
         
         #스킬간 연결
 
@@ -168,7 +166,7 @@ class JobGenerator(ck.JobGenerator):
                 
         Reaction_Domination_Trigger = core.OptionalElement(lambda:Reaction_Domination.available, Reaction_Domination, name = "리액션:도미네이션")
         Reaction_Destruction_Trigger = core.OptionalElement(lambda:Reaction_Destruction.available, Reaction_Destruction, name = "리액션:디스트럭션")
-        Reaction_Spectrum_Trigger = core.OptionalElement(Reaction_Spectrum.is_usable, Reaction_Spectrum, name = "리액션:스펙트럼")
+        Reaction_Spectrum_Trigger = core.OptionalElement(lambda:Reaction_Spectrum.available, Reaction_Spectrum, name = "리액션:스펙트럼")
         
         Craft_Orb.onAfter(Reaction_Domination_Trigger)
         Craft_Javelin.onAfter(Reaction_Destruction_Trigger)
@@ -180,7 +178,7 @@ class JobGenerator(ck.JobGenerator):
         GloryWing_Craft_Javelin.onAfter(GloryWing_Craft_Javelin_Fragment)
         
         CrystalIgnitionInit.onAfter(core.RepeatElement(CrystalIgnition, 75))
-        CrystalIgnitionInit.onAfter(Reaction_Spectrum_Trigger)
+        CrystalIgnition.onAfter(Reaction_Spectrum_Trigger)
         
         MagicCircuitFullDrive.onAfter(MagicCircuitFullDriveStorm)
         
@@ -194,7 +192,7 @@ class JobGenerator(ck.JobGenerator):
         CrystalCharge.addTrigger(CrystalSkill_Deus.controller(1), 90)
         CrystalCharge.addTrigger(GloryWingUse.controller(1), 150, isLast = True)
         
-        FastCharge.onConstraint( core.ConstraintElement("글로리윙 미사용중", GloryWingUse, GloryWingUse.is_not_active ) )
+        FastCharge.onConstraint(core.ConstraintElement("글로리윙 미사용중", GloryWingUse, GloryWingUse.is_not_active))
         
         #기본공격 설정
         BasicAttack = core.OptionalElement(GloryWingUse.is_active, GloryWing_Craft_Javelin, Craft_Javelin_AfterOrb, name = "기본공격(글로리 윙 여부 판단)")
@@ -213,6 +211,7 @@ class JobGenerator(ck.JobGenerator):
 
         Reaction_Domination.protect_from_running()
         Reaction_Destruction.protect_from_running()
+        Reaction_Spectrum.protect_from_running()
 
         return(BasicAttackWrapper,
                 [SoulOfCrystalPassive, globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
@@ -222,6 +221,6 @@ class JobGenerator(ck.JobGenerator):
                     globalSkill.soul_contract()] +\
                 [CrystalSkill_MortalSwing, GloryWing_MortalWingbit, CrystalIgnitionInit] +\
                 [Riyo, Machina, CrystalSkill_Deus, 
-                    GramHolder, MagicCircuitFullDriveStorm, Reaction_Spectrum, SoulOfCrystal_Reaction_Spectrum] +\
-                [Reaction_Domination, Reaction_Destruction] +\
+                    GramHolder, MagicCircuitFullDriveStorm] +\
+                [Reaction_Domination, Reaction_Destruction, Reaction_Spectrum] +\
                 [BasicAttackWrapper])
