@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, MutualRule
+from ..execution.rules import RuleSet, MutualRule, InactiveRule, ConcurrentRunRule
 from . import globalSkill
 from .jobbranch import magicians
 from . import jobutils
@@ -67,6 +67,9 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(MutualRule("패스트 차지", "크리스탈 이그니션(시전)"), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule("패스트 차지", "글로리 윙(진입)"), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule("크리스탈 이그니션(시전)", "글로리 윙(진입)"), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule("크리스탈 이그니션(시전)", "소울 오브 크리스탈"), RuleSet.BASE)
         return ruleset
         
     def get_passive_skill_list(self):
@@ -209,7 +212,6 @@ class JobGenerator(ck.JobGenerator):
         GloryWingUse.onAfter(SoulOfCrystal.turnOffController())
         
         SoulOfCrystal.onConstraint(core.ConstraintElement("글로리윙 미사용중", GloryWingUse, GloryWingUse.is_not_active))
-        FastCharge.onConstraint(core.ConstraintElement("글로리윙 미사용중", GloryWingUse, GloryWingUse.is_not_active))
         
         #기본공격 설정
         BasicAttack = core.OptionalElement(GloryWingUse.is_active, GloryWing_Craft_Javelin, Craft_Javelin_AfterOrb, name = "기본공격(글로리 윙 여부 판단)")
