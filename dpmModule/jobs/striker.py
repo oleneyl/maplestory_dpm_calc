@@ -134,7 +134,7 @@ class JobGenerator(ck.JobGenerator):
         ThunderConcat.onAfter(DestroyConcat)
         
         for skill in [Destroy, Thunder, DestroyConcat, ThunderConcat, HuricaneConcat, GioaTan, NoiShinChanGeuk]:
-            contrib.create_auxilary_attack(skill, CHOOKROI)
+            contrib.create_auxilary_attack(skill, CHOOKROI, "(축뢰)")
 
         for skill in [Destroy, Thunder, DestroyConcat, ThunderConcat, NoiShinChanGeuk]:
             skill.onAfter(LightningStack.stackController(1))
