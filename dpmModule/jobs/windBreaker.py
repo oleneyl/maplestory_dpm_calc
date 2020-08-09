@@ -24,13 +24,13 @@ class JobGenerator(ck.JobGenerator):
         WhisperOfWind = core.InformedCharacterModifier("위스퍼 오브 윈드",att = 20)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝", stat_main = 30, stat_sub = 30)
         
-        WindBlessingPassive = core.InformedCharacterModifier("윈드 블레싱(패시브)",pstat_main = 15, patt = 10)
-        BowExpert = core.InformedCharacterModifier("보우 엑스퍼트", att = 30, crit_damage = 20, pdamage_indep = 25, boss_pdamage = 40)
+        WindBlessingPassive = core.InformedCharacterModifier("윈드 블레싱(패시브)",pstat_main = 15, patt = 10 + combat)
+        BowExpert = core.InformedCharacterModifier("보우 엑스퍼트", att = 30+combat, crit_damage = 20, pdamage_indep = 25+combat, boss_pdamage = 40+combat)
         return [ElementalExpert, ElementalHarmony, WhisperOfWind, PhisicalTraining, BowExpert, WindBlessingPassive]
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = (-7.5 + 0.5*combat))
         
         return [WeaponConstant, Mastery]
 
@@ -48,13 +48,14 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Storm = core.BuffSkill("엘리멘트(스톰)", 0, 200 * 1000, pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)#딜레이 모름
         SylphsAid = core.BuffSkill("실프스 에이드", 0, 200 * 1000, att = 20, crit = 10, rem = True).wrap(core.BuffSkillWrapper)#딜레이 모름
-        Albatross = core.BuffSkill("알바트로스", 0, 200 * 1000, att = 50+combat*1, pdamage = 25, armor_ignore = 15, crit = 25, rem = True).wrap(core.BuffSkillWrapper)  #900 -> 690
+        Albatross = core.BuffSkill("알바트로스 맥시멈", 0, 200 * 1000, att = 50+combat*1, pdamage = 25, armor_ignore = 15, crit = 25, rem = True).wrap(core.BuffSkillWrapper)  #900 -> 690
         SharpEyes = core.BuffSkill("샤프 아이즈", 660, 300 * 1000, crit = 20 + combat*1, crit_damage = 15 + combat*1, rem = True).wrap(core.BuffSkillWrapper)
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
         StormBringerDummy = core.BuffSkill("스톰 브링어 버프사용", 660, 200 * 1000).wrap(core.BuffSkillWrapper)  #딜레이 계산 필요
         #파이널 어택 계열
-        TriflingWhim = core.DamageSkill("트라이플링 윔", 0, 290*0.8+390*0.2, 2*0.6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  #오더스 적용 필요
+        # 하이퍼: 데미지 증가, 확률 10% 증가, 타수 증가
+        TriflingWhim = core.DamageSkill("트라이플링 윔", 0, (290+3*combat)*0.8+(390+3*combat)*0.2, 2*(0.5+0.1), modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  #오더스 적용 필요
         StormBringer = core.DamageSkill("스톰 브링어", 0, 500, 0.3).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)  #오더스 적용 필요
     
         # 핀포인트 피어스
@@ -80,13 +81,13 @@ class JobGenerator(ck.JobGenerator):
     
         #Damage
         SongOfHeaven.onAfters([TriflingWhim, StormBringer])
-        PhalanxCharge.onTicks([TriflingWhim, StormBringer])
         PinPointPierce.onAfter(PinPointPierceDebuff)
         #Summon
         HowlingGail.onTicks([core.RepeatElement(TriflingWhim, 2), core.RepeatElement(StormBringer, 2)])
+        PhalanxCharge.onTicks([TriflingWhim, StormBringer])
 
         return(SongOfHeaven, 
-                [globalSkill.maple_heros(chtr.level), 
+                [globalSkill.maple_heros(chtr.level, combat_level = combat), 
                     Storm, SylphsAid, Albatross, SharpEyes, GloryOfGuardians, StormBringerDummy, CriticalReinforce,
                     PinPointPierceDebuff,
                     globalSkill.soul_contract()] +\
