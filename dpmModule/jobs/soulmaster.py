@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
+from ..execution.rules import RuleSet, InactiveRule
 from . import globalSkill
 from .jobclass import cygnus
 from .jobbranch import warriors
@@ -19,11 +19,9 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ConcurrentRunRule('엘리시온', '트루 사이트'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('엘리시온', '셀레스티얼 댄스'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('셀레스티얼 댄스', '엘리시온'), RuleSet.BASE)
         return ruleset
-
 
     def apply_complex_options(self, chtr):
         chtr.add_property_ignorance(10)
@@ -70,7 +68,7 @@ class JobGenerator(ck.JobGenerator):
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
         #Damage Skills
-        NormalAttack = core.DamageSkill("댄스오브 문/스피딩 선셋", (360+270)/2, 400, 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + FallingMoon.copy()).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        SpeedingDance = core.DamageSkill("댄스오브 문/스피딩 선셋", (360+270)/2, 400, 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + FallingMoon.copy()).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
         
@@ -79,9 +77,9 @@ class JobGenerator(ck.JobGenerator):
         SelestialDanceAttack = core.DamageSkill("댄스오브 문/스피딩 선셋(셀레스티얼)", 0, 400*0.01*(30+vEhc.getV(0,0)), 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + FallingMoon.copy()).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    #직접사용 X
         
         #엘리시온 38타 / 3타
-        ElisionBuff = core.BuffSkill("엘리시온", 750, 30 * 1000, cooltime = 180 * 1000).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)    #시전딜레이 750ms
-        ElisionBreak = core.DamageSkill("엘리시온(균열)", 0, 2600 + 104*vEhc.getV(1,1), 12).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)    #3회 발동
-        ElisionTick = core.DamageSkill("크로스 더 스틱스(엘리시온에 의해 발동)", 30 * 1000 / 40, 1450, 5 * 2, modifier = FallingMoon.copy()).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  #40회 반복
+        Elision = core.BuffSkill("엘리시온", 750, 30 * 1000, cooltime = 180 * 1000).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)    #시전딜레이 750ms
+        ElisionBreak = core.SummonSkill("엘리시온(균열)", 0, 10000, 2600 + 104*vEhc.getV(1,1), 12, 30000, cooltime=-1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)    #3회 발동
+        ElisionStyx = core.DamageSkill("크로스 더 스틱스(엘리시온)", 30 * 1000 / 40, 1450, 5 * 2, modifier = FallingMoon.copy()).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  #40회 반복
         
         #소울 이클립스
         SoulEclipse = core.SummonSkill("소울 이클립스", 810, 1000, 450 + 18 * vEhc.getV(3,3), 7, 30 * 1000, cooltime = 180 * 1000).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
@@ -94,27 +92,30 @@ class JobGenerator(ck.JobGenerator):
         
         SelecstialDanceOption = core.OptionalElement(SelestialDanceInit.is_active, SelestialDanceAttack)
         
-        NormalAttack.onAfter(SelecstialDanceOption)
+        SpeedingDance.onAfter(SelecstialDanceOption)
         
-        Elision = core.RepeatElement(ElisionTick, 40)
-        Elision.onAfter(core.RepeatElement(ElisionBreak, 3))
-        ElisionBuff.onAfter(Elision)
+        Elision.onAfter(ElisionBreak)
     
         SolunaDivide.set_disabled_and_time_left(-1)
         SoulEclipse.onAfter(SolunaDivide.controller(30*1000))
 
+        # 엘리시온 분기
+        BasicAttack = core.OptionalElement(Elision.is_active, ElisionStyx, SpeedingDance, name = "기본공격(엘리시온 여부 판단)")
+        BasicAttackWrapper = core.DamageSkill('기본 공격', 0,0,0).wrap(core.DamageSkillWrapper)
+        BasicAttackWrapper.onAfter(BasicAttack)
+
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2, modifier=FallingMoon.copy(), hit=6*2)
-        for sk in [NormalAttack, ElisionTick]:
+        for sk in [SpeedingDance, ElisionStyx]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
 
-        return(NormalAttack,
+        return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     NimbleFinger, TrueSight, SolunaTime, SoulForge, 
-                    GloryOfGuardians, AuraWeaponBuff, globalSkill.soul_contract(), ElisionBuff, SelestialDanceInit, 
+                    GloryOfGuardians, AuraWeaponBuff, globalSkill.soul_contract(), Elision, ElisionBreak, SelestialDanceInit, 
                     ] +\
                 [CygnusPalanks, SolunaDivide] +\
                 [SelestialDanceSummon, SoulEclipse] +\
                 [AuraWeaponCooltimeDummy] +\
-                [NormalAttack])
+                [BasicAttackWrapper])
