@@ -24,7 +24,7 @@ def soul_contract(Cool = 90*1000):
 
 # 쓸컴뱃 = 1, 팔라딘 = 2
 def maple_heros(level, combat_level = 0):
-    MapleHeros = core.BuffSkill("메이플 용사", 0, (900+15*combat_level)*1000, stat_main = math.celi(15 + 0.5 * combat_level)*0.01*(25 + level * 5), rem = True).wrap(core.BuffSkillWrapper)
+    MapleHeros = core.BuffSkill("메이플 용사", 0, (900+15*combat_level)*1000, stat_main = math.ceil(15 + 0.5 * combat_level)*0.01*(25 + level * 5), rem = True).wrap(core.BuffSkillWrapper)
     return MapleHeros
 
 # 1레벨
