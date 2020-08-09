@@ -75,7 +75,8 @@ class JobGenerator(ck.JobGenerator):
         천지개벽 ON: 태풍 - 섬멸
         천지개벽 OFF: 벽력 - 섬멸
         
-        벽섬 : 1080ms (420 / 660)
+        벽섬 : 1020ms
+        태섬 : 900ms
         
         팔랑크스의 타수를 2/3만 적용되도록 함
         모든 스킬은 쿨타임마다 사용
@@ -122,8 +123,8 @@ class JobGenerator(ck.JobGenerator):
         GioaTan = core.DamageSkill("교아탄", 480, 1000+40*vEhc.getV(2,1), 7, cooltime = 8000, modifier = core.CharacterModifier(pdamage_indep = 20)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper) #  교아탄-벽력 콤보 사용함
 
         NoiShinChanGeuk = core.DamageSkill("뇌신창격", 0, 150+6*vEhc.getV(0,0), 6, cooltime = 7000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        NoiShinChanGeukAttack = core.SummonSkill("뇌신창격(공격)", 0, 1000, 200 + 8*vEhc.getV(0,0), 7, 3999, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)    #4번 발동
-        NoiShinChanGeukAttack_ChookRoi = core.DamageSkill("뇌신창격(축뢰)", 0, (200 + 8*vEhc.getV(0,0)) * CHOOKROI, 7).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        NoiShinChanGeukAttack = core.SummonSkill("뇌신창격(후속타)", 0, 1000, 200 + 8*vEhc.getV(0,0), 7, 3999, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)    #4번 발동
+        NoiShinChanGeukAttack_ChookRoi = core.DamageSkill("뇌신창격(후속타)(축뢰)", 0, (200 + 8*vEhc.getV(0,0)) * CHOOKROI, 7).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         #섬멸 연계
 
         BasicAttack = core.OptionalElement(SkyOpen.is_active, HuricaneConcat, ThunderConcat)
