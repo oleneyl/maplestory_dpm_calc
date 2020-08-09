@@ -161,7 +161,7 @@ class JobGenerator(ck.JobGenerator):
         MagicCircuitFullDriveStorm = core.SummonSkill("매직 서킷 풀드라이브(마력 폭풍)", 0, 4000, 500+20*vEhc.getV(3,2), 3, (30+vEhc.getV(3,2))*1000, cooltime = -1).wrap(core.SummonSkillWrapper)
         
         CrystalIgnitionInit = core.DamageSkill("크리스탈 이그니션(시전)", 960, 0, 0, cooltime = 180*1000).wrap(core.DamageSkillWrapper)
-        CrystalIgnition = core.DamageSkill("크리스탈 이그니션", 270, 750 + 25*vEhc.getV(2,1), 4, modifier = core.CharacterModifier(boss_pdamage = 20)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper) #75회
+        CrystalIgnition = core.DamageSkill("크리스탈 이그니션", 10000/62, 750 + 25*vEhc.getV(2,1), 4, modifier = core.CharacterModifier(boss_pdamage = 20)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper) #62회
         Reaction_Spectrum = core.DamageSkill("리액션:스펙트럼", 0, 1000+40*vEhc.getV(2,1), 5, cooltime = 1000, modifier = core.CharacterModifier(boss_pdamage = 20)).wrap(core.DamageSkillWrapper) #1초마다 시전됨.
  
         # TODO:소오크 소모시 강화 반영필요
@@ -195,7 +195,7 @@ class JobGenerator(ck.JobGenerator):
         
         GloryWing_Craft_Javelin.onAfter(GloryWing_Craft_Javelin_Fragment)
         
-        CrystalIgnitionInit.onAfter(core.RepeatElement(CrystalIgnition, 75))
+        CrystalIgnitionInit.onAfter(core.RepeatElement(CrystalIgnition, 62))
         CrystalIgnition.onAfter(Reaction_Spectrum_Trigger)
         
         MagicCircuitFullDrive.onAfter(MagicCircuitFullDriveStorm)
