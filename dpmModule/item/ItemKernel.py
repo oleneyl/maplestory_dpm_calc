@@ -94,10 +94,12 @@ class Item():
         txt += "pstat_main : %.1f, pstat_sub %.1f\n"%(self.potential.pstat_main, self.potential.pstat_sub)
         txt += "att : %.1f, patt %.1f\n"%(self.potential.att, self.potential.patt)
         txt += "pdamage : %.1f, armor_ignore %.1f\n"%(self.potential.pdamage, self.potential.armor_ignore)
+        txt += "crit : %.1f, crit_damage %.1f\n"%(self.potential.crit, self.potential.crit_damage)
         txt += "==additional_potential==\n"
         txt += "pstat_main : %.1f, pstat_sub %.1f\n"%(self.additional_potential.pstat_main, self.additional_potential.pstat_sub)
         txt += "att : %.1f, patt %.1f\n"%(self.additional_potential.att, self.additional_potential.patt)
         txt += "pdamage : %.1f, armor_ignore %.1f\n"%(self.additional_potential.pdamage, self.additional_potential.armor_ignore)
+        txt += "crit : %.1f, crit_damage %.1f\n"%(self.potential.crit, self.potential.crit_damage)
         return txt
 
 class EnhancerFactory():

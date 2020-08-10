@@ -29,8 +29,7 @@ Ring110 =  it.Item(name="실버블라썸 링", stat_main = 5, stat_sub = 5, att 
 #혼테일 목걸이..(0) -> 알발린상태로 계산 필요
 
 #아카이럼 매커...(2)
-# TODO: 120으로 변경
-Pendant130 =  it.Item(name="매커네이터 펜던트", stat_main = 10, stat_sub = 10, att = 1, level = 130)
+Pendant120 =  it.Item(name="매커네이터 펜던트", stat_main = 10, stat_sub = 10, att = 1, level = 120)
 
 #아카이럼 도미...(6 or 0) 파편작 가정
 Pendant140 =  it.Item(name="도미네이터 펜던트", stat_main = 5, stat_sub = 5, att = 5, level = 140)
@@ -49,11 +48,11 @@ class Factory():
     @staticmethod
     def get11SetDict(star = 0, enhance = 70, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
         package = [Eye100.copy(), Face110.copy(), Ear130.copy(), Ring110.copy(), Ring120.copy(), \
-                    Pendant130.copy(), Pendant140.copy(), Belt140.copy(), Pocket140.copy(), \
+                    Pendant120.copy(), Pendant140.copy(), Belt140.copy(), Pocket140.copy(), \
                     Badge130.copy(), Shoulder120.copy()]
 
         package = {"eye" : Eye100.copy(), "face" : Face110.copy(), "ear" : Ear130.copy(), "ring1" : Ring110.copy(), \
-                    "ring2" : Ring120.copy(), "pendant1" : Pendant130.copy(), "pendant2" : Pendant140.copy(), \
+                    "ring2" : Ring120.copy(), "pendant1" : Pendant120.copy(), "pendant2" : Pendant140.copy(), \
                     "belt" : Belt140.copy(), "pocket" : Pocket140.copy(), \
                     "badge" : Badge130.copy(), "shoulder" : Shoulder120.copy()}
         keylist = ["eye", "face", "ear", "ring1", "ring2", "pendant1", "pendant2", "belt", "pocket", "badge", "shoulder"]
@@ -88,7 +87,7 @@ class Factory():
     @staticmethod    
     def getBetter11SetDict(star = 0, enhance = 70, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
         package = {"eye" : Eye145.copy(), "face" : Face110.copy(), "ear" : Ear130.copy(), "ring1" : Ring110.copy(), \
-                    "ring2" : Ring120.copy(), "pendant1" : Pendant130.copy(), "pendant2" : Pendant140Fragment.copy(), \
+                    "ring2" : Ring120.copy(), "pendant1" : Pendant120.copy(), "pendant2" : Pendant140Fragment.copy(), \
                     "belt" : Belt140.copy(), "pocket" : Pocket140.copy(), \
                     "badge" : Badge130.copy(), "shoulder" : Shoulder120.copy()}
         keylist = ["eye", "face", "ear", "ring1", "ring2", "pendant1", "pendant2", "belt", "pocket", "badge", "shoulder"]

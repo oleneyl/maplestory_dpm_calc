@@ -140,7 +140,7 @@ def getU5000CharacterTemplate(_type):
     BossAccesorySet = BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, enhance = 30, additional_potential = accAPtnl)
     RootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, enhance = 30, additional_potential = armorAPtnl)
     
-    AbsolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, enhance = 30)
+    AbsolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, enhance = 30, additional_potential = armorAPtnl)
 
     template.add_summary("기타: 킹오루, 우르스 격파왕, 하트 공30, 펫공 30")
 
@@ -196,12 +196,12 @@ def getU6000CharacterTemplate(_type):
     template.add_summary("방어구/장신구: 유니크15%, 추옵 90급, 스타포스 17성")    
     template.add_summary("장갑: 크뎀1줄")
     armorAPtnl = MDF(att = 10)
-    armorPtnl = MDF(pstat_main = 12)
+    armorPtnl = MDF(pstat_main = 15)
     armorBonus = MDF(pstat_main = 5, pstat_sub = 5, stat_main = 40)
     armorStar = 17
     
     accAPtnl = MDF(att = 10)
-    accPtnl = MDF(pstat_main = 12)
+    accPtnl = MDF(pstat_main = 15)
     accBonus = MDF(stat_main = 90)
     accStar = 17
     
@@ -214,7 +214,7 @@ def getU6000CharacterTemplate(_type):
     BossAccesorySet = BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, enhance = 30, star = accStar, additional_potential = accAPtnl)
     RootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, enhance = 30, star = armorStar, additional_potential = armorAPtnl)
     
-    AbsolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, enhance = 30, bonus = armorBonus, star = armorStar)
+    AbsolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, enhance = 30, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
     AbsolabSet["glove"].set_potential(MDF(crit_damage = 8))
 
     template.add_summary("기타: 핑아, 우르스 격파왕, 하트 공50, 펫공 40")
