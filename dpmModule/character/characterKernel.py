@@ -792,13 +792,18 @@ class Doping():
                     "우뿌" : MDF(att = 30),
                     "익스레드/블루" : MDF(att = 30),
                     "MVP 버프" : MDF(att = 30)}
+
+    dopingListStat = {"향상된 10단계 물약" : MDF(stat_main = 30)}
     
     dopingListDamage = {"매칭" : MDF(boss_pdamage = 10),
-                        "노블레스(보공)" : MDF(pdamage = 20),
-                        "보킬비" : MDF(boss_pdamage = 20)}
+                        "노블레스(뎀퍼)" : MDF(pdamage = 30),
+                        "노블레스(보공)" : MDF(boss_pdamage = 30),
+                        "반빨별" : MDF(boss_pdamage = 20)}
                         
     dopingListArmor = {"고관비" : MDF(armor_ignore = 20),
-                        "노블레스(방무)" : MDF(armor_ignore = 20)}
+                        "노블레스(방무)" : MDF(armor_ignore = 30)}
+                        
+    dopingListCritDamage = {"노블레스(크뎀)" : MDF(crit_damage = 30)}
                         
     @staticmethod
     def get_full_doping():
@@ -806,10 +811,14 @@ class Doping():
         
         for name in Doping.dopingListAtt:
             retMdf = retMdf + Doping.dopingListAtt[name]
+        for name in Doping.dopingListStat:
+            retMdf = retMdf + Doping.dopingListStat[name]
         for name in Doping.dopingListDamage:
             retMdf = retMdf + Doping.dopingListDamage[name]
         for name in Doping.dopingListArmor:
             retMdf = retMdf + Doping.dopingListArmor[name]
+        for name in Doping.dopingListCritDamage:
+            retMdf = retMdf + Doping.dopingListCritDamage[name]
         
         return retMdf
 
