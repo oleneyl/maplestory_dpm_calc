@@ -45,7 +45,7 @@ class LuminousStateController(core.BuffSkillWrapper):
             self.remain = 17 * (1 + 0.01* self.buff_rem) * 1000  #오더스?
             self.equalCallback()
             
-        return core.ResultObject(0, core.CharacterModifier(),  0, '루미너스 스택 변경')     
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, '루미너스 스택 변경')     
     
     def memorize(self):
         if self.state != LuminousStateController.EQUAL:
