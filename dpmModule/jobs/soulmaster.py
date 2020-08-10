@@ -32,8 +32,8 @@ class JobGenerator(ck.JobGenerator):
         return core.CharacterModifier(crit = 35, pdamage = 55)
 
     def get_passive_skill_list(self):
-        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",stat_main = self.chtr.level // 2)
-        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니",patt = 10)
+        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트", patt = 10)
+        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니", stat_main = self.chtr.level // 2)
         
         SwordOfLight = core.InformedCharacterModifier("소드 오브 라이트",att = 20)
         Soul = core.InformedCharacterModifier("소울",armor_ignore = 10)

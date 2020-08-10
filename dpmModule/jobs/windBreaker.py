@@ -18,8 +18,8 @@ class JobGenerator(ck.JobGenerator):
         self._use_critical_reinforce = True
 
     def get_passive_skill_list(self):
-        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",stat_main = self.chtr.level // 2)
-        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니",patt = 10)
+        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트", patt = 10)
+        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니", stat_main = self.chtr.level // 2)
         
         WhisperOfWind = core.InformedCharacterModifier("위스퍼 오브 윈드",att = 20)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝", stat_main = 30, stat_sub = 30)

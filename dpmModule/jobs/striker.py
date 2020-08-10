@@ -36,8 +36,8 @@ class JobGenerator(ck.JobGenerator):
         return core.CharacterModifier(armor_ignore = 40) # 뇌전 스택으로 평균 35~40%의 방무 적용
 
     def get_passive_skill_list(self):
-        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",stat_main = self.chtr.level // 2)
-        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니",patt = 10)
+        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트", patt = 10)
+        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니", stat_main = self.chtr.level // 2)
 
         NoieBack = core.InformedCharacterModifier("뇌백",att = 20)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 60)

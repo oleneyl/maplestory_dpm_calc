@@ -23,8 +23,8 @@ class JobGenerator(ck.JobGenerator):
 
     def get_passive_skill_list(self):
         ######   Skill   ######
-        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",stat_main = self.chtr.level // 2)
-        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니",patt = 10)     
+        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트", patt = 10)
+        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니", stat_main = self.chtr.level // 2)     
         
         SpellControl = core.InformedCharacterModifier("스펠 컨트롤",att = 10)
         #이그니션 : 매초 (220% * 1.8) x2-> 폭발하여 240%

@@ -21,8 +21,8 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 1
         
     def get_passive_skill_list(self):
-        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",stat_main = self.chtr.level // 2)
-        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니",patt = 10)
+        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트", patt = 10)
+        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니", stat_main = self.chtr.level // 2)
 
         ThrowingMastery = core.InformedCharacterModifier("스로잉 마스터리",pdamage = 30)
         CriticalThrowing = core.InformedCharacterModifier("크리티컬 스로잉",crit = 35, crit_damage = 10)
