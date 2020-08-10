@@ -797,11 +797,10 @@ class Doping():
     
     dopingListDamage = {"매칭" : MDF(boss_pdamage = 10),
                         "노블레스(뎀퍼)" : MDF(pdamage = 30),
-                        "노블레스(보공)" : MDF(boss_pdamage = 30),
+                        "노블레스(보공)" : MDF(boss_pdamage = 28),
                         "반빨별" : MDF(boss_pdamage = 20)}
                         
-    dopingListArmor = {"고관비" : MDF(armor_ignore = 20),
-                        "노블레스(방무)" : MDF(armor_ignore = 30)}
+    dopingListArmor = {"고관비" : MDF(armor_ignore = 20)}
                         
     dopingListCritDamage = {"노블레스(크뎀)" : MDF(crit_damage = 30)}
                         
