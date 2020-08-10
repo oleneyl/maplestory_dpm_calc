@@ -38,7 +38,7 @@ def MapleHeroes2Wrapper(vEhc, num1, num2, level):
     return MapleHeroes2
 
 def PirateFlagWrapper(vEhc, num1, num2, level):
-    PirateFlag = core.BuffSkill("파이렛 플래그", 990, 30 * 1000, cooltime = (60 - vEhc.getV(num1, num2)) * 1000, armor_ignore = int(10 + 0.5*vEhc.getV(num1, num2)), stat_main_fixed = (level * 5 + 18)*0.01*(10 + 0.5*vEhc.getV(num1, num2))).isV(vEhc,num1, num2).wrap(core.BuffSkillWrapper)
+    PirateFlag = core.BuffSkill("파이렛 플래그", 990, 30 * 1000, cooltime = (60 - vEhc.getV(num1, num2)) * 1000, armor_ignore = int(10 + 0.5*vEhc.getV(num1, num2)), stat_main = (level * 5 + 18)*0.01*int(10 + 0.5*vEhc.getV(num1, num2))).isV(vEhc,num1, num2).wrap(core.BuffSkillWrapper)
     return PirateFlag
 
 # 작성중, 2초 후 폭발 가정
