@@ -398,7 +398,7 @@ def getU8000CharacterTemplate(_type):
     MeisterSet["ear"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
     MeisterSet["ring2"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
     
-    AbsolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar)
+    AbsolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
     AbsolabSet["glove"].set_potential(MDF(crit_damage = 16))
 
     WeeklySet = Else.get_weekly_set()
@@ -500,7 +500,7 @@ def getU8500CharacterTemplate(_type):
                                                     enhancer = it.CharacterModifier(att = 6)
                                                     )
     
-    ArcaneSet = Arcane.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar)
+    ArcaneSet = Arcane.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
     ArcaneSet["glove"].set_potential(MDF(crit_damage = 16, stat_main = 9))
     
     WeeklySet = Else.get_weekly_set()
