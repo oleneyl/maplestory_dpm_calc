@@ -351,16 +351,36 @@ class WeaponFactoryClass():
         self.valueMap = valueMap
         self.modifier = modifier
         
-    def getWeapon(self, _type, star = 0, elist = [0,0,0,0], potential = CharacterModifier(), additional_potential = CharacterModifier(), bonusAttIndex = 0, bonusElse = CharacterModifier(),
-    enable_blade=False):
+    def getWeapon(self, _type, star = 0, elist = [0,0,0,0], potential = CharacterModifier(), additional_potential = CharacterModifier(), bonusAttIndex = 0, bonusElse = CharacterModifier()):
         assert(_type in self.wholeType)
-        if _type == '블레이드' and not enable_blade:
+        if _type == '블레이드':
             _type = '단검'
         _att, _bonus = self.getMap(_type)
         item = Item(att = _att)
         item.add_main_option(self.modifier)
         item.add_main_option(EnhancerFactory.get_weapon_scroll_enhancement(self.level, elist))
         item.add_main_option(CharacterModifier(att = _bonus[-1*bonusAttIndex]))
+        item.add_main_option(EnhancerFactory.get_weapon_starforce_enhancement(item, self.level, star))
+        item.add_main_option(bonusElse)
+        item.set_potential(potential)
+        item.set_additional_potential(additional_potential)
+        return item
+
+    def getBlade(self, _type, star = 0, elist = [0,0,0,0], potential = CharacterModifier(), additional_potential = CharacterModifier(), bonusElse = CharacterModifier()):
+        assert(_type == '블레이드')
+        def get_blade_modifier():
+            if self.modifier.stat_main == 100:
+                return CharacterModifier(stat_main=65)
+            if self.modifier.stat_main == 60:
+                return CharacterModifier(stat_main=40)
+            if self.modifier.stat_main == 40:
+                return CharacterModifier(stat_main=30)
+            raise TypeError("Invalid blade, (Arcane, Absolab, RootAbyss) is allowed.")
+
+        _att, _bonus = self.getMap(_type)
+        item = Item(att = _att)
+        item.add_main_option(get_blade_modifier())
+        item.add_main_option(EnhancerFactory.get_weapon_scroll_enhancement(self.level, elist))
         item.add_main_option(EnhancerFactory.get_weapon_starforce_enhancement(item, self.level, star))
         item.add_main_option(bonusElse)
         item.set_potential(potential)
