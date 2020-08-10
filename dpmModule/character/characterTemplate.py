@@ -1,5 +1,4 @@
 from .characterKernel import ItemedCharacter as ichar
-from .characterKernel import LinkSkill
 from ..item import Arcane, Absolab, Empress, RootAbyss, BossAccesory, Default, Else, Meister, Darkness
 from ..item.ItemKernel import CharacterModifier as MDF
 from ..item import ItemKernel as it

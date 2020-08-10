@@ -19,6 +19,7 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = False
         self.vEnhanceNum = 10
         self.jobtype = "str"
+        self.jobname = "팔라딘"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
 

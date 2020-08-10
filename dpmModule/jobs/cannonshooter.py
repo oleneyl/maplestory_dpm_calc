@@ -13,6 +13,7 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.buffrem = False
         self.jobtype = "str"
+        self.jobname = "캐논슈터"
         self.vEnhanceNum = 16
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'reuse')
         self.preEmptiveSkills = 2

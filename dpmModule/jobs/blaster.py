@@ -13,6 +13,7 @@ class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.jobtype = "str"
+        self.jobname = "블래스터"
         self.vEnhanceNum = 12
         self.ability_list = Ability_tool.get_ability_set('passive_level', 'boss_pdamage', 'crit')
 

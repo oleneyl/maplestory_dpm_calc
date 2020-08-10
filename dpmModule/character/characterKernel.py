@@ -1,10 +1,11 @@
-from ..kernel.core import CharacterModifier
+from ..kernel.core import CharacterModifier, InformedCharacterModifier
 from ..kernel.core import ExtendedCharacterModifier as EXMDF
 from ..item import ItemKernel as ik
 from ..item.ItemKernel import Item
 from ..status.ability import Ability_tool, Ability_grade
 from ..kernel.graph import GlobalOperation, initialize_global_properties, _unsafe_access_global_storage
 from ..kernel import policy
+from functools import reduce
 
 MDF = CharacterModifier
 '''Clas AbstractCharacter : Basic template for build specific User. User is such object that contains
@@ -134,6 +135,7 @@ class JobGenerator():
         self.vEnhanceNum = 10
         self.vSkillNum = 3 + 3
         self.preEmptiveSkills = 0
+        self.jobname = None
         self.jobtype = "str" #재상속 하도록 명시할 필요가 있음.
         self._passive_skill_list = [] #각 생성기가 자동으로 그래프 생성 시점에서 연산합니다.
         self.constructedSchedule = None
@@ -266,7 +268,8 @@ class JobGenerator():
             refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
             print(refMDF.log())
         
-        doping = Doping.get_full_doping() # 도핑
+        # 도핑
+        doping = Doping.get_full_doping()
         if log:
             print("\n---doping---")
             print(doping.log())
@@ -277,32 +280,47 @@ class JobGenerator():
             refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
             print(refMDF.log())
 
+        # 유니온 공격대원
         unionCard = Card.get_card(self.jobtype, ulevel, True)[0]
         if log:
             print("\n---union card---")
             print(unionCard.log())
         
         chtr.apply_modifiers([unionCard])
+        self.chtr.buff_rem = self.chtr.buff_rem + 20 #메카닉 벞지 적용
         if log:
             print("\n---final---")
             refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
             print(refMDF.log())
-        
-        #메카닉 벞지 적용
-        self.chtr.buff_rem = self.chtr.buff_rem + 20
 
+        # 링크 스킬
+        # refMDF는 상시 - 시전되는 버프에 관련된 정보를 담고 있습니다.
+        refMDF = graph.get_default_buff_modifier() + chtr.get_modifier() + self.get_total_modifier_optimization_hint()
+        link = LinkSkill.get_link_skill_modifier(refMDF, self.jobname)
+        if log:
+            print("\n====link===")
+            print(link.log())
+
+        chtr.apply_modifiers([link])
+        if log:
+            print("\n---final---")
+            refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
+            print(refMDF.log())
+
+        # 하이퍼 스탯
         refMDF = graph.get_default_buff_modifier() + chtr.get_modifier() + self.get_total_modifier_optimization_hint()
         hyperstat = HyperStat.get_hyper_modifier(refMDF, chtr.level, critical_reinforce = self._use_critical_reinforce)
         if log:
             print("\n====hyper===")
             print(hyperstat.log())
 
-        chtr.apply_modifiers([hyperstat])    #하이퍼스탯 적용
+        chtr.apply_modifiers([hyperstat])
         if log:
             print("\n---final---")
             refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
             print(refMDF.log())
 
+        # 유니온 점령
         refMDF = graph.get_default_buff_modifier() + chtr.get_modifier() + self.get_total_modifier_optimization_hint()
         union, unionBuffRem = Union.get_union(refMDF, ulevel, buffrem = self.buffrem, critical_reinforce = self._use_critical_reinforce)
         if log:
@@ -310,13 +328,14 @@ class JobGenerator():
             print(union.log())
             print("union buff : %d" % (unionBuffRem))
         
-        chtr.apply_modifiers([union])    #유니온 적용
+        chtr.apply_modifiers([union])
         chtr.buff_rem += unionBuffRem #유니온 벞지 적용
         if log:
             print("\n---final---")
             refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
             print(refMDF.log())
 
+        # 무기류 잠재능력
         refMDF = graph.get_default_buff_modifier() + chtr.get_modifier() + self.get_total_modifier_optimization_hint()
         weaponli = WeaponPotential.get_weapon_pontential(refMDF, weaponstat[0], weaponstat[1])
         if log:
@@ -325,13 +344,11 @@ class JobGenerator():
                 print("\n=======")
                 print(i.log())
 
-        chtr.set_weapon_potential(weaponli)   #무기 잠재능력 적용
+        chtr.set_weapon_potential(weaponli)
         if log:
             print("\n---final---")
             refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
             print(refMDF.log())        
-        
-        refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()    #refMDF는 상시 - 시전되는 버프에 관련된 정보를 담고 있습니다.
         
         ## 기타 옵션 적용
         self.apply_complex_options(chtr)
@@ -515,47 +532,116 @@ class Union():
         
         
 class LinkSkill():
-    Mercedes = CharacterModifier()    #Exp
-    DemonSlayer = CharacterModifier(pdamage = 15)
-    DemonAvenger = CharacterModifier(pdamage = 10)
-    Luminous = CharacterModifier(armor_ignore = 15)
-    Phantom = CharacterModifier(crit = 15)
-    Zenon = CharacterModifier(pstat_main = 10, pstat_sub = 10)
-    Ark = CharacterModifier(pdamage = 11)
-    Ilium = CharacterModifier(pdamage = 12)
-    Cadena = CharacterModifier(pdamage = 6) #optional
-    Angelicbuster = CharacterModifier()   #Skill
-    Aran = CharacterModifier()    #Exp
-    Evan = CharacterModifier()    #Exp
-    Canonshooter = CharacterModifier(stat_main = 70, stat_sub = 70)
-    Enwool = CharacterModifier() #Util
-    Zero = CharacterModifier(armor_ignore = 10)
-    Kinesis = CharacterModifier(crit_damage = 4)
-    Michael = CharacterModifier() #Util skill
-    Kaiser = CharacterModifier() #HP
-    Cygnus = CharacterModifier() #Util
-    Registance = CharacterModifier()  #Util
-    AdventureMage = CharacterModifier(pdamage=9, armor_ignore=9)
-    AdventureArcher = CharacterModifier(crit=10)
-    AdventureRog = CharacterModifier(pdamage=18/2)
+    DemonSlayer = InformedCharacterModifier("링크(데몬슬레이어)", boss_pdamage = 15)
+    DemonAvenger = InformedCharacterModifier("링크(데몬어벤져)", pdamage = 10)
+    Ark = InformedCharacterModifier("링크(아크)", pdamage = 11)
+    Illium = InformedCharacterModifier("링크(일리움)", pdamage = 12)
+    Cadena = InformedCharacterModifier("링크(카데나)", pdamage = 12) #optional
+    AdventureMage = InformedCharacterModifier("링크(모법)", pdamage=9, armor_ignore=9)
+    AdventureRog = InformedCharacterModifier("링크(모도)", pdamage=18/2)
+    Adele = InformedCharacterModifier("링크(아델)", pdamage=2, boss_pdamage=4)
+    Luminous = InformedCharacterModifier("링크(루미너스)", armor_ignore = 15)
+    Zero = InformedCharacterModifier("링크(제로)", armor_ignore = 10)
+    Hoyoung = InformedCharacterModifier("링크(호영)", armor_ignore = 10)
+    Zenon = InformedCharacterModifier("링크(제논)", pstat_main = 10, pstat_sub = 10)
+    AdventurePirate = InformedCharacterModifier("링크(모해)", stat_main = 70, stat_sub = 70)
+    Cygnus = InformedCharacterModifier("링크(시그너스)", att = 25)
+    Phantom = InformedCharacterModifier("링크(팬텀)", crit = 15)
+    AdventureArcher = InformedCharacterModifier("링크(모궁)", crit = 10)
+    Kinesis = InformedCharacterModifier("링크(키네시스)", crit_damage = 4)
+    Angelicbuster = InformedCharacterModifier("링크(엔젤릭버스터)")   #Skill
+    Michael = InformedCharacterModifier("링크(미하일)") # Util skill
+    Mercedes = InformedCharacterModifier("링크(메르세데스)")    #Exp
+    Aran = InformedCharacterModifier("링크(아란)")    #Exp
+    Evan = InformedCharacterModifier("링크(에반)")    #Exp
+    Eunwol = InformedCharacterModifier("링크(은월)") # Util
+    Kaiser = InformedCharacterModifier("링크(카이저)") # HP
+    Registance = InformedCharacterModifier("링크(레지스탕스)") #Util
+    AdventureWarrior = InformedCharacterModifier("링크(모전)")   #Skill
 
-    
-    '''Full Package
-    DS, DA, Luminous, Phantom, Zenon, Ark, 
-    Ilium, Cadena, Zero, Kinesis, (Angelicbuster), (Registance)
-    '''
-    # FullPackage = CharacterModifier(pdamage = 54, armor_ignore = 23.5, crit = 15, pstat_main = 10, pstat_sub = 10, crit_damage = 4)
-    # FullPackageExceptCadena = CharacterModifier(pdamage = 54 - 6, armor_ignore = 23.5, crit = 15, pstat_main = 10, pstat_sub = 10, crit_damage = 4)
+    jobdict = {
+        "아크메이지불/독" : AdventureMage,
+        "아크메이지썬/콜" : AdventureMage,
+        "비숍" : AdventureMage,
+        "히어로" : AdventureWarrior,
+        "팔라딘" : AdventureWarrior,
+        "다크나이트" : AdventureWarrior,
+        "보우마스터" : AdventureArcher,
+        "패스파인더" : AdventureArcher,
+        "신궁" : AdventureArcher,
+        "나이트로드" : AdventureRog,
+        "섀도어" : AdventureRog,
+        "듀얼블레이드" : AdventureRog,
+        "캡틴" : AdventurePirate,
+        "바이퍼" : AdventurePirate,
+        "캐논슈터" : AdventurePirate,
+        "소울마스터" : Cygnus,
+        "플레임위자드" : Cygnus,
+        "윈드브레이커" : Cygnus,
+        "나이트워커" : Cygnus,
+        "스트라이커" : Cygnus,
+        "미하일" : Michael,
+        "아란" : Aran,
+        "에반" : Evan,
+        "루미너스" : Luminous,
+        "메르세데스" : Mercedes,
+        "팬텀" : Phantom,
+        "은월" : Eunwol,
+        "메카닉" : Registance,
+        "배틀메이지" : Registance,
+        "와일드헌터" : Registance,
+        "블래스터" : Registance,
+        "제논" : Zenon,
+        "데몬어벤져" : DemonAvenger,
+        "데몬슬레이어" : DemonSlayer,
+        "카이저" : Kaiser,
+        "엔젤릭버스터" : Angelicbuster,
+        "카데나" : Cadena,
+        "일리움" : Illium,
+        "아크" : Ark,
+        '아델' : Adele,
+        "제로" : Zero,
+        "키네시스" : Kinesis,
+        "호영" : Hoyoung
+    }
+
     @staticmethod
-    def get_full_link(cadena = False):
-        FullPackage = LinkSkill.AdventureMage + LinkSkill.AdventureRog + LinkSkill.Luminous + LinkSkill.Phantom + LinkSkill.DemonSlayer + LinkSkill.DemonAvenger + \
-            LinkSkill.Zenon + LinkSkill.Cadena + LinkSkill.Angelicbuster + LinkSkill.Zero + LinkSkill.Kinesis + LinkSkill.Ark
-    
-        FullPackageExceptCadena = FullPackage - LinkSkill.Cadena
-        if cadena :
-            return FullPackage.copy()
-        else:
-            return FullPackageExceptCadena.copy()
+    def get_link_skill_modifier(refMDF, job_name):
+        def append_link(links, new_link):
+            return [link for link in links if link.name != new_link.name] + [new_link]
+        
+        def get_mdf(links):
+            return reduce(lambda x, y: x+y, links)
+
+        links = [LinkSkill.Registance, LinkSkill.Angelicbuster]
+        links = append_link(links, LinkSkill.jobdict[job_name])
+
+        # TODO: 미하일링크 사용시 이쪽에 사용 직업들 추가
+
+        if job_name in ["소울마스터", "카데나", "제로", "블래스터", "배틀메이지", "스트라이커", "나이트워커"]:
+            links = append_link(links, LinkSkill.Illium)
+
+        if (refMDF + get_mdf(links)).armor_ignore < 63.3:
+            links = append_link(links, LinkSkill.Luminous)
+        if (refMDF + get_mdf(links)).armor_ignore < 63.3:
+            links = append_link(links, LinkSkill.Zero)
+        if (refMDF + get_mdf(links)).armor_ignore < 63.3:
+            links = append_link(links, LinkSkill.Hoyoung)
+
+        if (refMDF + get_mdf(links)).crit < 90:
+            links = append_link(links, LinkSkill.Phantom)
+        if (refMDF + get_mdf(links)).crit < 95:
+            links = append_link(links, LinkSkill.AdventureArcher)
+
+        link_priority = [LinkSkill.DemonSlayer, LinkSkill.AdventureMage, LinkSkill.Cadena,
+                        LinkSkill.Kinesis, LinkSkill.Ark, LinkSkill.DemonAvenger,
+                        LinkSkill.AdventureRog, LinkSkill.Zenon, LinkSkill.Cygnus,
+                        LinkSkill.Adele, LinkSkill.AdventurePirate]
+        for link in link_priority:
+            if len(links) < 13:
+                links = append_link(links, link)
+            
+        return get_mdf(links)
 
 class Card():
     '''

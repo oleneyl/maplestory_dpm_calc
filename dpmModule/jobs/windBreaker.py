@@ -14,6 +14,7 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = False
         self.vEnhanceNum = 10
         self.jobtype = "dex"
+        self.jobname = "윈드브레이커"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self._use_critical_reinforce = True
 

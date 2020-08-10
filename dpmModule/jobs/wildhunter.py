@@ -39,6 +39,7 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = False
         self.vEnhanceNum = 11
         self.jobtype = "dex"
+        self.jobname = "와일드헌터"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'crit')
         self.preEmptiveSkills = 0
         

@@ -73,7 +73,23 @@ class CharacterModifier(object):
         self.stat_main_fixed += arg.stat_main_fixed
         self.stat_sub_fixed += arg.stat_sub_fixed
         return self
-
+    
+    def __add__(self, arg):
+        return CharacterModifier(crit = (self.crit + arg.crit),   \
+                        crit_damage = (self.crit_damage + arg.crit_damage) , \
+                        pdamage = (self.pdamage + arg.pdamage), \
+                        pdamage_indep = self.pdamage_indep + arg.pdamage_indep + (self.pdamage_indep * arg.pdamage_indep) * 0.01, \
+                        stat_main = (self.stat_main + arg.stat_main),\
+                        stat_sub = (self.stat_sub + arg.stat_sub), \
+                        pstat_main = (self.pstat_main + arg.pstat_main), \
+                        pstat_sub = (self.pstat_sub + arg.pstat_sub), \
+                        boss_pdamage = (self.boss_pdamage + arg.boss_pdamage),\
+                        armor_ignore = 100 - 0.01 * ((100 - self.armor_ignore) * (100 - arg.armor_ignore)), \
+                        patt = (self.patt + arg.patt), \
+                        att = (self.att + arg.att), \
+                        stat_main_fixed = (self.stat_main_fixed + arg.stat_main_fixed), \
+                        stat_sub_fixed = (self.stat_sub_fixed + arg.stat_sub_fixed))
+    
     def __sub__(self, arg):
         return CharacterModifier(crit = (self.crit - arg.crit),   \
                         crit_damage = (self.crit_damage - arg.crit_damage) , \
