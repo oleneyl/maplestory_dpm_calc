@@ -18,7 +18,7 @@ class MorphGaugeWrapper(core.StackSkillWrapper):
         if not self.is_active() or d<0:
             return super(MorphGaugeWrapper, self).vary(d)
         else:
-            return core.ResultObject(0, core.CharacterModifier(), 0, sname = self._id, spec = 'graph control')
+            return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self._id, spec = 'graph control')
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
