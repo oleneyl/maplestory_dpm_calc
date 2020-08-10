@@ -74,12 +74,14 @@ class Factory():
                     
         for idx, itemkey in zip([i for i in range(11)], keylist):
             item = package[itemkey]
-            item.set_potential(potential)
-            item.set_additional_potential(additional_potential)
-            if itemkey not in ["ring1", "ring2","shoulder","badge"]:
+            item = package[itemkey]
+            if itemkey not in ["ring1", "ring2", "shoulder", "badge"]:
                 item.add_main_option(bonus)
-            item.add_main_option(it.EnhancerFactory.get_armor_starforce_enhancement(item.level, star))
-            item.add_main_option(it.EnhancerFactory.get_armor_scroll_enhancement(item.level, elist = scrolls[idx]))
+            if itemkey not in ["pocket", "badge"]:
+                item.set_potential(potential)
+                item.set_additional_potential(additional_potential)
+                item.add_main_option(it.EnhancerFactory.get_armor_starforce_enhancement(item.level, star))
+                item.add_main_option(it.EnhancerFactory.get_armor_scroll_enhancement(item.level, elist = scrolls[idx]))
             
         return package
     
@@ -107,12 +109,13 @@ class Factory():
                     
         for idx, itemkey in zip([i for i in range(11)], keylist):
             item = package[itemkey]
-            item.set_potential(potential)
-            item.set_additional_potential(additional_potential)
-            if itemkey not in ["ring1", "ring2","shoulder","badge"]:
-                item.add_main_option(bonus)            
-            item.add_main_option(it.EnhancerFactory.get_armor_starforce_enhancement(item.level, star))
-            item.add_main_option(it.EnhancerFactory.get_armor_scroll_enhancement(item.level, elist = scrolls[idx]))
+            if itemkey not in ["ring1", "ring2", "shoulder", "badge"]:
+                item.add_main_option(bonus)
+            if itemkey not in ["pocket", "badge"]:
+                item.set_potential(potential)
+                item.set_additional_potential(additional_potential)
+                item.add_main_option(it.EnhancerFactory.get_armor_starforce_enhancement(item.level, star))
+                item.add_main_option(it.EnhancerFactory.get_armor_scroll_enhancement(item.level, elist = scrolls[idx]))
             
         return package
         

@@ -14,8 +14,6 @@ class Factory():
             upgrades = [6,1,1]
         else:
             upgrades = [7,2,2]
-            
-        item_level = 140
         
         miester_ring = Ring.copy()
         miester_ear = Ear.copy()

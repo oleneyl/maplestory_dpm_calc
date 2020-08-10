@@ -90,17 +90,20 @@ class AbstractCharacter():
     def add_item_modifier(self, item):
         basic, ptnl = item.get_modifier()
         self.potential_modifier = self.potential_modifier + ptnl
-        self.static_character_modifier = self.static_character_modifier + basic        
-        
-    def add_item_with_id(self, _id, item):
-        if _id in self.itemlist:
-            self.remove_item_modifier(self.itemlist[_id])
-        self.itemlist[_id] = item            
-        self.add_item_modifier(self.itemlist[_id])
-        
-    def add_items_with_id(self, _dict):
-        for _id in _dict:
-            self.add_item_with_id(_id, _dict[_id])
+        self.static_character_modifier = self.static_character_modifier + basic      
+
+    def set_items(self, dict):
+        keys = ["head", "glove", "top", "bottom", "shoes", "cloak",
+                "eye", "face", "ear", "belt", "ring1", "ring2", "ring3", "ring4",
+                "shoulder", "pendant1", "pendant2", "pocket", "badge",
+                "weapon", "subweapon", "emblem", "medal", "heart", "title", "pet"]
+
+        for key in keys:
+            item = dict[key]
+            if item == None:
+                raise TypeError(key + " item is missing")
+            self.itemlist[key] = dict[key]            
+            self.add_item_modifier(dict[key])
 
 
 
@@ -400,9 +403,7 @@ class ItemedCharacter(AbstractCharacter):
             for j in range((len(li) - i - 1) // 3):
                 ptnl  = ptnl + li[i+j*3]
                 
-            item = self.itemlist[itemOrder[i]].copy()
-            item.set_potential(ptnl)
-            self.add_item_with_id(itemOrder[i], item)
+            self.itemlist[itemOrder[i]].set_potential(ptnl)
 
     def print_items(self):
         for item in self.itemlist:

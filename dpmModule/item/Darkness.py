@@ -46,12 +46,12 @@ class Factory():
                 item.set_potential(potential)
                 item.set_additional_potential(additional_potential)
             
-            scroll_enhance = it.CharacterModifier()
-            for i in range(enhance):
-                scroll_enhance += enhancer
+                scroll_enhance = it.CharacterModifier()
+                for i in range(enhance):
+                    scroll_enhance += enhancer
                 
-            item.add_main_option(scroll_enhance)
-            item.add_main_option(it.EnhancerFactory.get_armor_starforce_enhancement(level, star))
+                item.add_main_option(scroll_enhance)
+                item.add_main_option(it.EnhancerFactory.get_armor_starforce_enhancement(level, star))
         
         return {"eye" : black_eye ,
                 "face" : black_face,
