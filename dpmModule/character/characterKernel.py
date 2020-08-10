@@ -265,10 +265,28 @@ class JobGenerator():
             print("\n---final---")
             refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
             print(refMDF.log())
-            
-        #도핑
-        chtr.apply_modifiers([Doping.get_full_doping()])
-        chtr.apply_modifiers([Card.get_card(self.jobtype, ulevel, True)[0]])
+        
+        doping = Doping.get_full_doping() # 도핑
+        if log:
+            print("\n---doping---")
+            print(doping.log())
+
+        chtr.apply_modifiers([doping])
+        if log:
+            print("\n---final---")
+            refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
+            print(refMDF.log())
+
+        unionCard = Card.get_card(self.jobtype, ulevel, True)[0]
+        if log:
+            print("\n---union card---")
+            print(unionCard.log())
+        
+        chtr.apply_modifiers([unionCard])
+        if log:
+            print("\n---final---")
+            refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
+            print(refMDF.log())
         
         #메카닉 벞지 적용
         self.chtr.buff_rem = self.chtr.buff_rem + 20
@@ -278,6 +296,7 @@ class JobGenerator():
         if log:
             print("\n====hyper===")
             print(hyperstat.log())
+
         chtr.apply_modifiers([hyperstat])    #하이퍼스탯 적용
         if log:
             print("\n---final---")
@@ -305,18 +324,14 @@ class JobGenerator():
             for i in weaponli:
                 print("\n=======")
                 print(i.log())
+
         chtr.set_weapon_potential(weaponli)   #무기 잠재능력 적용
-        
         if log:
             print("\n---final---")
             refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
             print(refMDF.log())        
         
         refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()    #refMDF는 상시 - 시전되는 버프에 관련된 정보를 담고 있습니다.
-
-
-        ##카드 적용해야 함
-        ## 어빌리티 적용해야 함
         
         ## 기타 옵션 적용
         self.apply_complex_options(chtr)
@@ -547,8 +562,8 @@ class Card():
     10/20/40/80/100
     힘캐 : 8
     법캐 : 7
-    덱 : 3
-    럭 : 4
+    덱 : 4
+    럭 : 5
     5/10/15/20
     공마 : 1
     
@@ -582,32 +597,32 @@ class Card():
     제로 : 경치
     '''
     #주스텟 / 부스텟 / 크리 / 공마 / 크뎀 / 보공 / 방무 / 총뎀 / 제논
-    CList = [[MDF(stat_main = i) for i in [10,20,40,80,100]],
-            [MDF(stat_sub = i) for i in [10,20,40,80,100]],
+    CList = [[MDF(stat_main_fixed = i) for i in [10,20,40,80,100]],
+            [MDF(stat_sub_fixed = i) for i in [10,20,40,80,100]],
             [MDF(crit = i) for i in [1,2,3,4,5]],
             [MDF(att = i) for i in [5,10,15,20, None]],
             [MDF(crit_damage = i) for i in [1,2,3,5,6]],
             [MDF(armor_ignore = i) for i in [1,2,3,5,6]],
             [MDF(boss_pdamage = i) for i in [1,2,3,5,6]],
             [MDF(pdamage = i) for i in [0.8,1.6,2.4,3.2,4]],
-            [MDF(stat_main = i, stat_sub = i) for i in [5,10,20,40,50]]]
+            [MDF(stat_main_fixed = i, stat_sub_fixed = i) for i in [5,10,20,40,50]]]
     
     priority = {
         "str" : {
             "order" : [2,4,5,6,7,0,8,1],
-            "max" : [8,3,2,1,1,1,1,1,1]
+            "max" : [8,4,2,1,1,1,1,1,1]
         },
         "dex" : {
             "order" : [2,4,5,6,7,0,8,1],
-            "max" : [3,8,2,1,1,1,1,1,1]
+            "max" : [4,8,2,1,1,1,1,1,1]
         },
         "int" : {
             "order" : [2,4,5,6,7,0,8,1],
-            "max" : [7,4,2,1,1,1,1,1,1]
+            "max" : [7,5,2,1,1,1,1,1,1]
         },
         "luk" : {
             "order" : [2,4,5,6,7,0,8,1],
-            "max" : [4,3,2,1,1,1,1,1,1]
+            "max" : [5,4,2,1,1,1,1,1,1]
         }
     }
         
