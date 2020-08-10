@@ -783,16 +783,16 @@ class GraphElement():
         self._run += ellist
         
     def onAfter(self, el):
-        self._after = [el] + self._after 
+        self._after = self._after + [el]
         
     def onAfters(self, ellist : list):
         self._after = self._after  + ellist
         
     def onBefore(self, el):
-        self._before = self._before + [el]
+        self._before = [el] + self._before
         
     def onBefores(self, ellist : list):
-        self._before += ellist
+        self._before = ellist + self._before
         
     def sync(self, task):
         task.onBefore([el.build_task() for el in self._before])
