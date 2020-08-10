@@ -52,11 +52,11 @@ class Factory():
             if itemkey != "shoulder":
                 item.add_main_option(bonus)
             item.add_main_option(it.EnhancerFactory.get_armor_starforce_enhancement(160, star))
-            if itemkey == "glove":
-                item.add_main_option(it.EnhancerFactory.get_armor_scroll_enhancement(160, elist = scrolls[idx]))
-            else: #For glove
+            if itemkey == "glove": #For glove
                 item.add_main_option(it.EnhancerFactory.get_glove_scroll_enhancement(160, elist = scrolls[idx]))
                 item.add_main_option(it.EnhancerFactory.get_glove_bonus_starforce_enhancement(star))
+            else:
+                item.add_main_option(it.EnhancerFactory.get_armor_scroll_enhancement(160, elist = scrolls[idx]))
             
         return package
     

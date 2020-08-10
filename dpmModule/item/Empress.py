@@ -44,13 +44,14 @@ class Factory():
             item = package[itemkey]
             item.set_potential(potential)
             item.set_additional_potential(additional_potential)
-            item.add_main_option(bonus)
+            if itemkey != "shoulder":
+                item.add_main_option(bonus)
             item.add_main_option(it.EnhancerFactory.get_armor_starforce_enhancement(140, star))
-            if itemkey == "glove":
-                item.add_main_option(it.EnhancerFactory.get_armor_scroll_enhancement(140, elist = scrolls[idx]))
-            else: #For glove
-                item.add_main_option(it.EnhancerFactory.get_glove_scroll_enhancement(140, elist = scrolls[idx]))
+            if itemkey == "glove": #For glove
                 item.add_main_option(it.EnhancerFactory.get_glove_bonus_starforce_enhancement(star))
+                item.add_main_option(it.EnhancerFactory.get_glove_scroll_enhancement(140, elist = scrolls[idx]))
+            else:
+                item.add_main_option(it.EnhancerFactory.get_armor_scroll_enhancement(140, elist = scrolls[idx]))
             
         return package
         
