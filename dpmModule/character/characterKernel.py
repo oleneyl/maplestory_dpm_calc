@@ -265,23 +265,25 @@ class JobGenerator():
             print("\n---final---")
             refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
             print(refMDF.log())
-            
-        #도핑
-        chtr.apply_modifiers([Doping.get_full_doping()])
-
+        
+        doping = Doping.get_full_doping() # 도핑
         if log:
             print("\n---doping---")
-            print(chtr.get_modifier().log())
+            print(doping.log())
+
+        chtr.apply_modifiers([doping])
+        if log:
             print("\n---final---")
             refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
             print(refMDF.log())
 
-
-        chtr.apply_modifiers([Card.get_card(self.jobtype, ulevel, True)[0]])
-        
+        unionCard = Card.get_card(self.jobtype, ulevel, True)[0]
         if log:
             print("\n---union card---")
-            print(chtr.get_modifier().log())
+            print(unionCard.log())
+        
+        chtr.apply_modifiers([unionCard])
+        if log:
             print("\n---final---")
             refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
             print(refMDF.log())
@@ -294,6 +296,7 @@ class JobGenerator():
         if log:
             print("\n====hyper===")
             print(hyperstat.log())
+
         chtr.apply_modifiers([hyperstat])    #하이퍼스탯 적용
         if log:
             print("\n---final---")
@@ -321,8 +324,8 @@ class JobGenerator():
             for i in weaponli:
                 print("\n=======")
                 print(i.log())
+
         chtr.set_weapon_potential(weaponli)   #무기 잠재능력 적용
-        
         if log:
             print("\n---final---")
             refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
