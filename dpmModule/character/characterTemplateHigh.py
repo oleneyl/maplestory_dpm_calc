@@ -429,12 +429,12 @@ def getU7000CharacterTemplate(_type):
 
     template.add_summary("방어구/장신구: 유닉21%, 추옵 110급, 스타포스 18성")
     template.add_summary("장갑: 크뎀1줄")
-    armorAPtnl = MDF(att = 21)
+    armorAPtnl = MDF(att = 11, pstat_main = 4)
     armorPtnl = MDF(pstat_main = 21)
     armorBonus = MDF(pstat_main = 5, pstat_sub = 5, stat_main = 60)
     armorStar = 18
     
-    accAPtnl = MDF(att = 10, pstat_main = 4)
+    accAPtnl = MDF(att = 11, pstat_main = 4)
     accPtnl = MDF(pstat_main = 21)
     accBonus = MDF(stat_main = 110)
     accStar = 18
@@ -513,12 +513,12 @@ def getU8000CharacterTemplate(_type):
 
     template.add_summary("방어구/장신구: 레전27%, 추옵 120급, 스타포스 22성")
     template.add_summary("장갑: 크뎀2줄")
-    armorAPtnl = MDF(att = 11, pstat_main = 7)
+    armorAPtnl = MDF(att = 10, pstat_main = 6)
     armorPtnl = MDF(pstat_main = 27)
     armorBonus = MDF(pstat_main = 6, pstat_sub = 6, stat_main = 60)
     armorStar = 22
     
-    accAPtnl = MDF(att = 11, pstat_main = 7)
+    accAPtnl = MDF(att = 10, pstat_main = 6)
     accPtnl = MDF(pstat_main = 27)
     accBonus = MDF(stat_main = 120)
     accStar = 22
@@ -600,12 +600,12 @@ def getU8500CharacterTemplate(_type):
 
     template.add_summary("방어구/장신구: 레전33%, 추옵 130급, 스타포스 22성")
     template.add_summary("장갑: 크뎀2.5줄")
-    armorAPtnl = MDF(att = 14, pstat_main = 7)
+    armorAPtnl = MDF(att = 12, pstat_main = 12)
     armorPtnl = MDF(pstat_main = 33)
     armorBonus = MDF(pstat_main = 6, pstat_sub = 6, stat_main = 70)
     armorStar = 22
     
-    accAPtnl = MDF(att = 14, pstat_main = 7)
+    accAPtnl = MDF(att = 12, pstat_main = 12)
     accPtnl = MDF(pstat_main = 33)
     accBonus = MDF(stat_main = 130)
     accStar = 22
