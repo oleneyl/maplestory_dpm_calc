@@ -471,7 +471,7 @@ def getU8500CharacterTemplate(_type):
     weaponStar = 22
     bonusAttIndex = 1
 
-    template.add_summary("장신구: 칠흑셋")
+    template.add_summary("장신구: 칠흑셋, 칠요")
     template.add_summary("방어구 : 아케인6셋, 카루타 2셋")
 
     RootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
@@ -505,7 +505,7 @@ def getU8500CharacterTemplate(_type):
     
     WeeklySet = Else.get_weekly_set()
 
-    template.add_summary("기타: 핑아, 공마10훈장, 하트 공160, 펫공 120")
+    template.add_summary("기타: 핑아, 하트 공160, 펫공 120")
     
     template.set_items({
         "head": ArcaneSet["head"],
