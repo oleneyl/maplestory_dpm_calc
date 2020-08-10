@@ -73,7 +73,7 @@ class Item():
         self.additional_potential = mdf.copy()
         
     def copy(self):
-        return Item(stat_main = self.stat_main, \
+        return Item(name = self.name, level = self.level, stat_main = self.stat_main, \
         stat_sub = self.stat_sub, att = self.att, patt = self.patt, pdamage = self.pdamage,\
         armor_ignore = self.armor_ignore, pstat_main = self.pstat_main, pstat_sub = self.pstat_sub, \
         potential = self.potential, \
@@ -84,45 +84,32 @@ class Item():
                 "potential" : self.potential.as_dict(),
                 "additional_potential" : self.additional_potential.as_dict()}
         
-class Potential():
-    def __init__(self):
-        self.stat_main = 0
-        self.stat_sub = 0
-        self.pstat_main = 0
-        self.pstat_sub = 0
-        
-        self.att = 0
-        self.patt = 0
-        self.pdamage = 0
-        self.boss_pdamage = 0
-        self.armor_ignore = 0
-        
-        self.crit = 0
-        self.crit_damage = 0
-    
-    def dump(self):
-        dump = str(self.stat_main) + "," + str(self.stat_sub) + "," + str(self.pstat_main) + "," + str(self.pstat_sub) + "," + str(self.att) + "," + str(self.patt) + "," + self.pdamage + "," + self.boss_pdamage + "," + self.armor_ignore + "," + self.crit
-        return dump
-        
-    def load(self, dump_string):
-        vals = dump_string.split(",")
-        self.stat_main = int(vals[0])
-        self.stat_sub = int(vals[1])
-        self.pstat_main = int(vals[2])
-        self.pstat_sub = int(vals[3])
-        
-        self.att = int(vals[4])
-        self.patt = int(vals[5])
-        self.pdamage = int(vals[6])
-        self.boss_pdamage = int(vals[7])
-        self.armor_ignore = int(vals[8])
-        
-        self.crit = int(vals[9])
-        
-    def get_modifier(self):
-        return CharacterModifier(stat_main = self.stat_main, stat_sub = self.stat_sub, pstat_main = self.pstat_main, pstat_sub = self.pstat_sub, att = self.att, patt = self.patt, pdamage = self.pdamage, boss_pdamage = self.boss_pdamage, armor_ignore = self.armor_ignore, crit = self.crit, crit_damage = self.crit_damage)
+    def log(self):
+        txt = "name : %s, level : %d\n"%(self.name, self.level)
+        txt += "stat_main : %.1f, stat_sub %.1f\n"%(self.stat_main, self.stat_sub)
+        txt += "pstat_main : %.1f, pstat_sub %.1f\n"%(self.pstat_main, self.pstat_sub)
+        txt += "att : %.1f, patt %.1f\n"%(self.att, self.patt)
+        txt += "pdamage : %.1f, armor_ignore %.1f\n"%(self.pdamage, self.armor_ignore)
+        txt += "==potential==\n"
+        txt += "pstat_main : %.1f, pstat_sub %.1f\n"%(self.potential.pstat_main, self.potential.pstat_sub)
+        txt += "att : %.1f, patt %.1f\n"%(self.potential.att, self.potential.patt)
+        txt += "pdamage : %.1f, armor_ignore %.1f\n"%(self.potential.pdamage, self.potential.armor_ignore)
+        txt += "==additional_potential==\n"
+        txt += "pstat_main : %.1f, pstat_sub %.1f\n"%(self.additional_potential.pstat_main, self.additional_potential.pstat_sub)
+        txt += "att : %.1f, patt %.1f\n"%(self.additional_potential.att, self.additional_potential.patt)
+        txt += "pdamage : %.1f, armor_ignore %.1f\n"%(self.additional_potential.pdamage, self.additional_potential.armor_ignore)
+        return txt
 
 class EnhancerFactory():
+    starforce_90_stat = [0, 2, 4, 6, 8, 10]
+    starforce_90_armor_att = [0, 0, 0, 0, 0]
+    
+    starforce_100_stat = [0, 2, 4, 6, 8, 10, 13, 16, 19]
+    starforce_100_armor_att = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    
+    starforce_110_stat = [0, 2, 4, 6, 8, 10, 13, 16, 19, 22, 25]
+    starforce_110_armor_att = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
     starforce_120_stat = [0, 2, 4, 6, 8, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40]
     starforce_120_armor_att = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]    
     
@@ -230,7 +217,13 @@ class EnhancerFactory():
     
     @classmethod
     def get_armor_starforce_enhancement(self, level, star):
-        if level == 120:
+        if level == 90:
+            stli, atli = EnhancerFactory.starforce_90_stat, EnhancerFactory.starforce_90_armor_att
+        elif level == 100:
+            stli, atli = EnhancerFactory.starforce_100_stat, EnhancerFactory.starforce_100_armor_att
+        elif level == 110:
+            stli, atli = EnhancerFactory.starforce_110_stat, EnhancerFactory.starforce_110_armor_att
+        elif level == 120:
             stli, atli = EnhancerFactory.starforce_120_stat, EnhancerFactory.starforce_120_armor_att
         elif level == 130:
             stli, atli = EnhancerFactory.starforce_130_stat, EnhancerFactory.starforce_130_armor_att
@@ -243,8 +236,8 @@ class EnhancerFactory():
         elif level == 200:
             stli, atli = EnhancerFactory.starforce_200_stat, EnhancerFactory.starforce_200_armor_att            
         else:
-            raise TypeError("Level Must be 120, 130, 140, 150, 160, 200")
-        return CharacterModifier(stat_main = stli[star], stat_sub = stli[star], att = atli[star])  
+            raise TypeError("Level Must be 90, 110, 120, 130, 140, 150, 160, 200")
+        return CharacterModifier(stat_main = stli[min(star, len(stli) - 1)], stat_sub = stli[min(star, len(stli) - 1)], att = atli[min(star, len(atli) - 1)])  
     
     @classmethod    
     def get_glove_scroll_enhancement(self, level, elist = [0, 0, 0]):
@@ -356,7 +349,7 @@ class WeaponFactoryClass():
         if _type == '블레이드':
             _type = '단검'
         _att, _bonus = self.getMap(_type)
-        item = Item(att = _att)
+        item = Item(name = _type, att = _att, level = self.level)
         item.add_main_option(self.modifier)
         item.add_main_option(EnhancerFactory.get_weapon_scroll_enhancement(self.level, elist))
         item.add_main_option(CharacterModifier(att = _bonus[-1*bonusAttIndex]))
@@ -378,7 +371,7 @@ class WeaponFactoryClass():
             raise TypeError("Invalid blade, (Arcane, Absolab, RootAbyss) is allowed.")
 
         _att, _bonus = self.getMap(_type)
-        item = Item(att = _att)
+        item = Item(name = "블레이드", att = _att, level = self.level)
         item.add_main_option(get_blade_modifier())
         item.add_main_option(EnhancerFactory.get_weapon_scroll_enhancement(self.level, elist))
         item.add_main_option(EnhancerFactory.get_weapon_starforce_enhancement(item, self.level, star))

@@ -403,6 +403,11 @@ class ItemedCharacter(AbstractCharacter):
             item = self.itemlist[itemOrder[i]].copy()
             item.set_potential(ptnl)
             self.add_item_with_id(itemOrder[i], item)
+
+    def print_items(self):
+        for item in self.itemlist:
+            print("==="+item+"===")
+            print(self.itemlist[item].log())
             
 class Union():
     peoples = [0, 9, 10, 11, 12, 13, 
