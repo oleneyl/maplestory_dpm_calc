@@ -25,7 +25,7 @@ class WeaponVarietyStackWrapper(core.StackSkillWrapper):
         if stack and (target not in self.stackLog):
             self.stackLog.append(target)
         
-        res = core.ResultObject(0, core.CharacterModifier(), 0, sname = self.skill.name, spec = 'graph control')
+        res = core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
         if self.currentAttack != target:
             if self.currentAttackTime < 0:
                 res.cascade = [self.final_attack_task]

@@ -32,7 +32,7 @@ class ComboAttackWrapper(core.StackSkillWrapper):
     
     def toggle(self, state):
         self.instinct = state
-        return core.ResultObject(0, core.CharacterModifier(), 0, sname = self.skill.name, spec = 'graph control')
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
         
     def toggleController(self, state):
         task = core.Task(self, partial(self.toggle, state))
@@ -43,7 +43,7 @@ class ComboAttackWrapper(core.StackSkillWrapper):
         if diff > 0 and not self.instinct : self.stack -= (diff * 0.2)
         if diff > 0 and self.instinct : self.stack -= (diff * 0.7)
         self.stack = max(min(10,self.stack),0)
-        return core.ResultObject(0, core.CharacterModifier(), 0, sname = self.skill.name, spec = 'graph control')
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
 
     def get_modifier(self):
         return core.CharacterModifier(pdamage = 2 * self.stack * (1 + self.instinct * 0.01 * (5 + 0.5*self.vEhc.getV(1,1))), 

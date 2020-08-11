@@ -25,7 +25,7 @@ class FrostEffectWrapper(core.BuffSkillWrapper):
 
     def getFlow(self, diff, Type):
         self.flow(diff, Type)
-        return core.ResultObject(0, core.CharacterModifier(), 0, sname = 'Frost Effect', spec = 'frost effect control')
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = 'Frost Effect', spec = 'frost effect control')
 
     def getFlowHandler(self, diff, Type):
         return core.TaskHolder(core.Task(self, partial(self.getFlow, diff, Type)), "FrostEffect("+Type+")")
