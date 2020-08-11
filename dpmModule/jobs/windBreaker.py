@@ -80,10 +80,12 @@ class JobGenerator(ck.JobGenerator):
     
         #Damage
         SongOfHeaven.onAfters([TriflingWhim, StormBringer])
-        CygnusPalanks.onTicks([core.RepeatElement(TriflingWhim,5), core.RepeatElement(StormBringer,5)])
         PinPointPierce.onAfters([PinPointPierceDebuff, TriflingWhim, StormBringer])
         #Summon
+        CygnusPalanks.onTicks([core.RepeatElement(TriflingWhim,5), core.RepeatElement(StormBringer,5)])
         HowlingGail.onTicks([core.RepeatElement(TriflingWhim, 2), core.RepeatElement(StormBringer, 2)])
+
+        Mercilesswind.onAfter(MercilesswindDOT)
 
         return(SongOfHeaven, 
                 [globalSkill.maple_heros(chtr.level, combat_level=combat), 
