@@ -69,33 +69,33 @@ def getU4000CharacterTemplate(_type):
 
     template.add_summary("장신구: 보장9셋")
     template.add_summary("방어구: 여제5셋, 카루타 4셋")
-    BossAccesorySet = BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, star = accStar)
-    RootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar)
+    bossAccesorySet = BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, star = accStar)
+    rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar)
     
-    EmpressSet = Empress.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar)
+    empressSet = Empress.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar)
     
     template.add_summary("기타: 킹오루, 우르스 격파왕, 하트X, 펫공 X")
 
     template.set_items({
-        "head": EmpressSet["head"],
-        "glove": EmpressSet["glove"],
-        "top": RootAbyssSet["top"],
-        "bottom": RootAbyssSet["bottom"],
-        "shoes": EmpressSet["shoes"],
-        "cloak": EmpressSet["cloak"],
-        "eye": BossAccesorySet["eye"],
-        "face": BossAccesorySet["face"],
-        "ear": BossAccesorySet["ear"],
-        "belt": BossAccesorySet["belt"],
-        "ring1": BossAccesorySet["ring1"],
-        "ring2": BossAccesorySet["ring2"],
+        "head": empressSet["head"],
+        "glove": empressSet["glove"],
+        "top": rootAbyssSet["top"],
+        "bottom": rootAbyssSet["bottom"],
+        "shoes": empressSet["shoes"],
+        "cloak": empressSet["cloak"],
+        "eye": bossAccesorySet["eye"],
+        "face": bossAccesorySet["face"],
+        "ear": bossAccesorySet["ear"],
+        "belt": bossAccesorySet["belt"],
+        "ring1": bossAccesorySet["ring1"],
+        "ring2": bossAccesorySet["ring2"],
         "ring3": Default.getEventRing(potential = accPtnl),
         "ring4": Default.getEventRing(potential = accPtnl),
-        "shoulder": EmpressSet["shoulder"],
-        "pendant1": BossAccesorySet["pendant1"],
-        "pendant2": BossAccesorySet["pendant2"],
-        "pocket": BossAccesorySet["pocket"],
-        "badge": BossAccesorySet["badge"],
+        "shoulder": empressSet["shoulder"],
+        "pendant1": bossAccesorySet["pendant1"],
+        "pendant2": bossAccesorySet["pendant2"],
+        "pocket": bossAccesorySet["pocket"],
+        "badge": bossAccesorySet["badge"],
         "weapon": RootAbyss.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ),
         "subweapon": Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=RootAbyss.Factory),
         "emblem": Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl),
@@ -137,33 +137,33 @@ def getU5000CharacterTemplate(_type):
     bonusAttIndex = 2
     template.add_summary("장신구: 보장9셋")
     template.add_summary("방어구: 앱솔5셋, 카루타 3셋")
-    BossAccesorySet = BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, enhance = 30, additional_potential = accAPtnl)
-    RootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, enhance = 30, additional_potential = armorAPtnl)
+    bossAccesorySet = BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, enhance = 30, additional_potential = accAPtnl)
+    rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, enhance = 30, additional_potential = armorAPtnl)
     
-    AbsolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, enhance = 30, additional_potential = armorAPtnl)
+    absolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, enhance = 30, additional_potential = armorAPtnl)
 
     template.add_summary("기타: 킹오루, 우르스 격파왕, 하트 공30, 펫공 30")
 
     template.set_items({
-        "head": AbsolabSet["head"],
-        "glove": AbsolabSet["glove"],
-        "top": RootAbyssSet["top"],
-        "bottom": RootAbyssSet["bottom"],
-        "shoes": AbsolabSet["shoes"],
-        "cloak": AbsolabSet["cloak"],
-        "eye": BossAccesorySet["eye"],
-        "face": BossAccesorySet["face"],
-        "ear": BossAccesorySet["ear"],
-        "belt": BossAccesorySet["belt"],
-        "ring1": BossAccesorySet["ring1"],
-        "ring2": BossAccesorySet["ring2"],
+        "head": rootAbyssSet["head"],
+        "glove": absolabSet["glove"],
+        "top": rootAbyssSet["top"],
+        "bottom": rootAbyssSet["bottom"],
+        "shoes": absolabSet["shoes"],
+        "cloak": absolabSet["cloak"],
+        "eye": bossAccesorySet["eye"],
+        "face": bossAccesorySet["face"],
+        "ear": bossAccesorySet["ear"],
+        "belt": bossAccesorySet["belt"],
+        "ring1": bossAccesorySet["ring1"],
+        "ring2": bossAccesorySet["ring2"],
         "ring3": Default.getEventRing(potential = accPtnl),
         "ring4": Default.getEventRing(potential = accPtnl),
-        "shoulder": AbsolabSet["shoulder"],
-        "pendant1": BossAccesorySet["pendant1"],
-        "pendant2": BossAccesorySet["pendant2"],
-        "pocket": BossAccesorySet["pocket"],
-        "badge": BossAccesorySet["badge"],
+        "shoulder": absolabSet["shoulder"],
+        "pendant1": bossAccesorySet["pendant1"],
+        "pendant2": bossAccesorySet["pendant2"],
+        "pocket": bossAccesorySet["pocket"],
+        "badge": bossAccesorySet["badge"],
         "weapon": Absolab.Factory.getWeapon(_type, elist = [0,0,0,9], bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ),
         "subweapon": Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Absolab.Factory),
         "emblem": Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl),
@@ -211,34 +211,34 @@ def getU6000CharacterTemplate(_type):
 
     template.add_summary("장신구: 보장9셋")
     template.add_summary("방어구: 앱솔5셋, 카루타 3셋")
-    BossAccesorySet = BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, enhance = 30, star = accStar, additional_potential = accAPtnl)
-    RootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, enhance = 30, star = armorStar, additional_potential = armorAPtnl)
+    bossAccesorySet = BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, enhance = 30, star = accStar, additional_potential = accAPtnl)
+    rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, enhance = 30, star = armorStar, additional_potential = armorAPtnl)
     
-    AbsolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, enhance = 30, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
-    AbsolabSet["glove"].set_potential(MDF(crit_damage = 8))
+    absolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, enhance = 30, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
+    absolabSet["glove"].set_potential(MDF(crit_damage = 8))
 
     template.add_summary("기타: 핑아, 우르스 격파왕, 하트 공50, 펫공 40")
 
     template.set_items({
-        "head": AbsolabSet["head"],
-        "glove": AbsolabSet["glove"],
-        "top": RootAbyssSet["top"],
-        "bottom": RootAbyssSet["bottom"],
-        "shoes": AbsolabSet["shoes"],
-        "cloak": AbsolabSet["cloak"],
-        "eye": BossAccesorySet["eye"],
-        "face": BossAccesorySet["face"],
-        "ear": BossAccesorySet["ear"],
-        "belt": BossAccesorySet["belt"],
-        "ring1": BossAccesorySet["ring1"],
-        "ring2": BossAccesorySet["ring2"],
+        "head": rootAbyssSet["head"],
+        "glove": absolabSet["glove"],
+        "top": rootAbyssSet["top"],
+        "bottom": rootAbyssSet["bottom"],
+        "shoes": absolabSet["shoes"],
+        "cloak": absolabSet["cloak"],
+        "eye": bossAccesorySet["eye"],
+        "face": bossAccesorySet["face"],
+        "ear": bossAccesorySet["ear"],
+        "belt": bossAccesorySet["belt"],
+        "ring1": bossAccesorySet["ring1"],
+        "ring2": bossAccesorySet["ring2"],
         "ring3": Default.getEventRing(potential = accPtnl),
         "ring4": Default.getEventRing(potential = accPtnl),
-        "shoulder": AbsolabSet["shoulder"],
-        "pendant1": BossAccesorySet["pendant1"],
-        "pendant2": BossAccesorySet["pendant2"],
-        "pocket": BossAccesorySet["pocket"],
-        "badge": BossAccesorySet["badge"],
+        "shoulder": absolabSet["shoulder"],
+        "pendant1": bossAccesorySet["pendant1"],
+        "pendant2": bossAccesorySet["pendant2"],
+        "pocket": bossAccesorySet["pocket"],
+        "badge": bossAccesorySet["badge"],
         "weapon": Absolab.Factory.getWeapon(_type, elist = [0,0,0,9], bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ),
         "subweapon": Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Absolab.Factory),
         "emblem": Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl),
@@ -285,55 +285,55 @@ def getU7000CharacterTemplate(_type):
 
     template.add_summary("장신구: 보장7셋, 마이, 칠요")
     template.add_summary("방어구: 앱솔5셋, 카루타 2셋, 1아케인(무기)")
-    BossAccesorySet = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, additional_potential = accAPtnl)
-    RootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
+    bossAccesorySet = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, additional_potential = accAPtnl)
+    rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
     
-    BossAccesorySurprise = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, 
+    bossAccesorySurprise = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, 
                                                                 bonus = accBonus, 
                                                                 star = 0, 
                                                                 additional_potential = accAPtnl)
     
-    BossAccesorySurprise["pendant1"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(130, 12))
-    BossAccesorySurprise["pendant2"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
+    bossAccesorySurprise["pendant1"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(130, 12))
+    bossAccesorySurprise["pendant2"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
     
-    MeisterSet = Meister.Factory.getAccesoryDict(3, potential = accPtnl,  
+    meisterSet = Meister.Factory.getAccesoryDict(3, potential = accPtnl,  
                                                         bonus = accBonus,
                                                         additional_potential = accAPtnl,
                                                         star = 0)
-    MeisterSet["ring3"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
+    meisterSet["ring3"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
 
-    AbsolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, additional_potential = armorAPtnl, 
+    absolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, additional_potential = armorAPtnl, 
                                                         bonus = armorBonus, star = armorStar)
-    AbsolabSet["glove"].set_potential(MDF(crit_damage = 8))
+    absolabSet["glove"].set_potential(MDF(crit_damage = 8))
     
-    WeeklySet = Else.get_weekly_set()
+    weeklySet = Else.get_weekly_set()
     
     template.add_summary("기타: 핑아, 하트 공95, 펫공 80")
 
     template.set_items({
-        "head": AbsolabSet["head"],
-        "glove": AbsolabSet["glove"],
-        "top": RootAbyssSet["top"],
-        "bottom": RootAbyssSet["bottom"],
-        "shoes": AbsolabSet["shoes"],
-        "cloak": AbsolabSet["cloak"],
-        "eye": BossAccesorySet["eye"],
-        "face": BossAccesorySet["face"],
-        "ear": BossAccesorySet["ear"],
-        "belt": BossAccesorySet["belt"],
-        "ring1": BossAccesorySet["ring1"],
-        "ring2": BossAccesorySet["ring2"],
-        "ring3": MeisterSet["ring3"],
+        "head": absolabSet["head"],
+        "glove": absolabSet["glove"],
+        "top": rootAbyssSet["top"],
+        "bottom": rootAbyssSet["bottom"],
+        "shoes": absolabSet["shoes"],
+        "cloak": absolabSet["cloak"],
+        "eye": bossAccesorySet["eye"],
+        "face": bossAccesorySet["face"],
+        "ear": bossAccesorySet["ear"],
+        "belt": bossAccesorySet["belt"],
+        "ring1": bossAccesorySet["ring1"],
+        "ring2": bossAccesorySet["ring2"],
+        "ring3": meisterSet["ring3"],
         "ring4": Default.getEventRing(potential = accPtnl),
-        "shoulder": AbsolabSet["shoulder"],
-        "pendant1": BossAccesorySurprise["pendant1"],
-        "pendant2": BossAccesorySurprise["pendant2"],
-        "pocket": BossAccesorySet["pocket"],
-        "badge": WeeklySet["badge"],
+        "shoulder": absolabSet["shoulder"],
+        "pendant1": bossAccesorySurprise["pendant1"],
+        "pendant2": bossAccesorySurprise["pendant2"],
+        "pocket": bossAccesorySet["pocket"],
+        "badge": weeklySet["badge"],
         "weapon": Arcane.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ),
         "subweapon": Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Arcane.Factory),
         "emblem": Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl),
-        "medal": WeeklySet["medal"],
+        "medal": weeklySet["medal"],
         "heart": Else.get_heart(95, accPtnl, accAPtnl),
         "title": Else.PingkbinAndMe.copy(),
         "pet": Else.get_pet(80),
@@ -377,59 +377,59 @@ def getU8000CharacterTemplate(_type):
 
     template.add_summary("장신구: 보장5셋, 마이, 칠요")
     template.add_summary("방어구: 앱솔5셋, 카루타 2셋, 아케인셰이드")
-    BossAccesorySet = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, additional_potential = accAPtnl)
-    RootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
+    bossAccesorySet = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, additional_potential = accAPtnl)
+    rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
     
     ## 놀장 적용
-    BossAccesorySurprise = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, 
+    bossAccesorySurprise = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, 
                                                                 bonus = accBonus, 
                                                                 star = 0, 
                                                                 additional_potential = accAPtnl)
     
-    BossAccesorySurprise["pendant1"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(130, 12))
-    BossAccesorySurprise["pendant2"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
-    BossAccesorySurprise["ring1"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(110, 10))
+    bossAccesorySurprise["pendant1"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(130, 12))
+    bossAccesorySurprise["pendant2"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
+    bossAccesorySurprise["ring1"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(110, 10))
     
     
-    MeisterSet = Meister.Factory.getAccesoryDict(2, potential = accPtnl,  
+    meisterSet = Meister.Factory.getAccesoryDict(2, potential = accPtnl,  
                                                         bonus = accBonus,
                                                         additional_potential = accAPtnl,
                                                         star = 0)
-    MeisterSet["ear"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
-    MeisterSet["ring2"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
+    meisterSet["ear"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
+    meisterSet["ring2"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
     
-    AbsolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
-    AbsolabSet["glove"].set_potential(MDF(crit_damage = 16))
+    absolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
+    absolabSet["glove"].set_potential(MDF(crit_damage = 16))
 
-    WeeklySet = Else.get_weekly_set()
+    weeklySet = Else.get_weekly_set()
 
     template.add_summary("기타: 핑아, 하트 공120, 펫공 120")
     
 
     template.set_items({
-        "head": AbsolabSet["head"],
-        "glove": AbsolabSet["glove"],
-        "top": RootAbyssSet["top"],
-        "bottom": RootAbyssSet["bottom"],
-        "shoes": AbsolabSet["shoes"],
-        "cloak": AbsolabSet["cloak"],
-        "eye": BossAccesorySet["eye"],
-        "face": BossAccesorySet["face"],
-        "ear": MeisterSet["ear"],
-        "belt": BossAccesorySet["belt"],
-        "ring1": BossAccesorySurprise["ring1"],
-        "ring2": MeisterSet["ring2"],
+        "head": absolabSet["head"],
+        "glove": absolabSet["glove"],
+        "top": rootAbyssSet["top"],
+        "bottom": rootAbyssSet["bottom"],
+        "shoes": absolabSet["shoes"],
+        "cloak": absolabSet["cloak"],
+        "eye": bossAccesorySet["eye"],
+        "face": bossAccesorySet["face"],
+        "ear": meisterSet["ear"],
+        "belt": bossAccesorySet["belt"],
+        "ring1": bossAccesorySurprise["ring1"],
+        "ring2": meisterSet["ring2"],
         "ring3": Default.getEventRing(potential = accPtnl),
         "ring4": Default.getEventRing(potential = accPtnl),
-        "shoulder": AbsolabSet["shoulder"],
-        "pendant1": BossAccesorySurprise["pendant1"],
-        "pendant2": BossAccesorySurprise["pendant2"],
-        "pocket": BossAccesorySet["pocket"],
-        "badge": WeeklySet["badge"],
+        "shoulder": absolabSet["shoulder"],
+        "pendant1": bossAccesorySurprise["pendant1"],
+        "pendant2": bossAccesorySurprise["pendant2"],
+        "pocket": bossAccesorySet["pocket"],
+        "badge": weeklySet["badge"],
         "weapon": Arcane.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ),
         "subweapon": Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Arcane.Factory),
         "emblem": Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl),
-        "medal": WeeklySet["medal"],
+        "medal": weeklySet["medal"],
         "heart": Else.get_heart(120, accPtnl, accAPtnl),
         "title": Else.PingkbinAndMe.copy(),
         "pet": Else.get_pet(120),
@@ -474,63 +474,63 @@ def getU8500CharacterTemplate(_type):
     template.add_summary("장신구: 칠흑셋, 칠요")
     template.add_summary("방어구 : 아케인6셋, 카루타 2셋")
 
-    RootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
+    rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
 
     ## 놀장 적용
-    BossAccesorySurprise = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, 
+    bossAccesorySurprise = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, 
                                                                 bonus = accBonus, 
                                                                 star = 0, 
                                                                 additional_potential = accAPtnl)
     
-    BossAccesorySurprise["pendant1"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(130, 12))
-    BossAccesorySurprise["pendant2"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
-    BossAccesorySurprise["ring1"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(110, 10))
+    bossAccesorySurprise["pendant1"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(130, 12))
+    bossAccesorySurprise["pendant2"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
+    bossAccesorySurprise["ring1"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(110, 10))
     
-    MeisterSet = Meister.Factory.getAccesoryDict(2, potential = accPtnl,  
+    meisterSet = Meister.Factory.getAccesoryDict(2, potential = accPtnl,  
                                                         bonus = accBonus,
                                                         additional_potential = accAPtnl,
                                                         star = 0)
-    MeisterSet["ear"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
-    MeisterSet["ring2"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
+    meisterSet["ear"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
+    meisterSet["ring2"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
     
-    DarknessSet = Darkness.Factory.getAccesoryDict(star = accStar,
+    darknessSet = Darkness.Factory.getAccesoryDict(star = accStar,
                                                     bonus = accBonus,
                                                     potential = accPtnl,
                                                     additional_potential = accAPtnl,
                                                     enhancer = it.CharacterModifier(att = 6)
                                                     )
     
-    ArcaneSet = Arcane.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
-    ArcaneSet["glove"].set_potential(MDF(crit_damage = 16, stat_main = 9))
+    arcaneSet = Arcane.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
+    arcaneSet["glove"].set_potential(MDF(crit_damage = 16, stat_main = 9))
     
-    WeeklySet = Else.get_weekly_set()
+    weeklySet = Else.get_weekly_set()
 
     template.add_summary("기타: 핑아, 하트 공160, 펫공 120")
     
     template.set_items({
-        "head": ArcaneSet["head"],
-        "glove": ArcaneSet["glove"],
-        "top": RootAbyssSet["top"],
-        "bottom": RootAbyssSet["bottom"],
-        "shoes": ArcaneSet["shoes"],
-        "cloak": ArcaneSet["cloak"],
-        "eye": DarknessSet["eye"],
-        "face": DarknessSet["face"],
-        "ear": MeisterSet["ear"],
-        "belt": DarknessSet["belt"],
-        "ring1": BossAccesorySurprise["ring1"],
-        "ring2": MeisterSet["ring2"],
+        "head": arcaneSet["head"],
+        "glove": arcaneSet["glove"],
+        "top": rootAbyssSet["top"],
+        "bottom": rootAbyssSet["bottom"],
+        "shoes": arcaneSet["shoes"],
+        "cloak": arcaneSet["cloak"],
+        "eye": darknessSet["eye"],
+        "face": darknessSet["face"],
+        "ear": meisterSet["ear"],
+        "belt": darknessSet["belt"],
+        "ring1": bossAccesorySurprise["ring1"],
+        "ring2": meisterSet["ring2"],
         "ring3": Default.getEventRing(potential = accPtnl),
         "ring4": Default.getEventRing(potential = accPtnl),
-        "shoulder": ArcaneSet["shoulder"],
-        "pendant1": BossAccesorySurprise["pendant1"],
-        "pendant2": BossAccesorySurprise["pendant2"],
-        "pocket": DarknessSet["pocket"],
-        "badge": WeeklySet["badge"],
+        "shoulder": arcaneSet["shoulder"],
+        "pendant1": bossAccesorySurprise["pendant1"],
+        "pendant2": bossAccesorySurprise["pendant2"],
+        "pocket": darknessSet["pocket"],
+        "badge": weeklySet["badge"],
         "weapon": Arcane.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ),
         "subweapon": Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Arcane.Factory),
         "emblem": Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl),
-        "medal": WeeklySet["medal"],
+        "medal": weeklySet["medal"],
         "heart": Else.get_heart(160, accPtnl, accAPtnl),
         "title": Else.PingkbinAndMe.copy(),
         "pet": Else.get_pet(120),
