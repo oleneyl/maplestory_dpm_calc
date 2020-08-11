@@ -82,7 +82,7 @@ class JobGenerator(ck.JobGenerator):
         DragonSlaveEnd = core.DamageSkill("드래곤 슬레이브 종결", 0, 500, 10).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
         IgnitionDOT = core.SummonSkill("이그니션", 0, 1000, 220*1.6, 1, 10*1000, modifier = core.CharacterModifier(crit=-9999, armor_ignore=100)).wrap(core.SummonSkillWrapper)
-        IgnitionExplode = core.DamageSkill("이그니션(폭발)", 0, 240, 1, cooltime=-1).setV(vEhc, 3, 5, True).wrap(core.DamageSkillWrapper)
+
         #여우 사용
         SavageFlameStack = core.StackSkillWrapper(core.BuffSkill("플레임 디스차지(스택)", 0, 99999999), 6)
         
@@ -106,7 +106,6 @@ class JobGenerator(ck.JobGenerator):
         InfinityFlameCircleInit.onAfter(InfinityFlameCircle)
         
         IgnitionDOT.onAfter(SavageFlameStack.stackController(1))
-        IgnitionDOT.onAfter(IgnitionExplode)
         InfernoRize.onAfter(IgnitionDOT.controller(1))
         DragonSlaveEnd.onAfter(IgnitionDOT.controller(1))
 
