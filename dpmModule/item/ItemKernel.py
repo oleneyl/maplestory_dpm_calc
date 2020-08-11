@@ -238,7 +238,7 @@ class EnhancerFactory():
         elif level == 200:
             stli, atli = EnhancerFactory.starforce_200_stat, EnhancerFactory.starforce_200_armor_att            
         else:
-            raise TypeError("Level Must be 90, 110, 120, 130, 140, 150, 160, 200")
+            raise TypeError("Level Must be 90, 100, 110, 120, 130, 140, 150, 160, 200")
         return CharacterModifier(stat_main = stli[min(star, len(stli) - 1)], stat_sub = stli[min(star, len(stli) - 1)], att = atli[min(star, len(atli) - 1)])  
     
     @classmethod    
