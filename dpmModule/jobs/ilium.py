@@ -164,7 +164,6 @@ class JobGenerator(ck.JobGenerator):
         CrystalIgnition = core.DamageSkill("크리스탈 이그니션", 10000/62, 750 + 30*vEhc.getV(2,1), 4, modifier = core.CharacterModifier(boss_pdamage = 20)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper) #75회
         Reaction_Spectrum = core.DamageSkill("리액션:스펙트럼", 0, 1000+40*vEhc.getV(2,1), 5, cooltime = 1000, modifier = core.CharacterModifier(boss_pdamage = 20)).wrap(core.DamageSkillWrapper) #1초마다 시전됨.
  
-        # TODO:소오크 소모시 강화 반영필요
         SoulOfCrystal = SoulOfCrystalWrapper(core.BuffSkill("소울 오브 크리스탈", 660, 30*1000, cooltime=40*1000).isV(vEhc,1,0))
         SoulOfCrystalPassive = core.BuffSkill("소울 오브 크리스탈(패시브)", 0, 999999999, att = (5+vEhc.getV(1,0)*2)).isV(vEhc,1,0).wrap(core.BuffSkillWrapper)
 
