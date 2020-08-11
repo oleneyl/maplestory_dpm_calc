@@ -122,36 +122,28 @@ class JobGenerator(ck.JobGenerator):
         
         Craft_Longinus = core.DamageSkill("크래프트:롱기누스", 1053, 950, 8, cooltime = 15000).wrap(core.DamageSkillWrapper)
         
-        Riyo = core.SummonSkill("리요", 900, 500, 140, 1, 180000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper) #임의딜레이 900
-        Machina = core.SummonSkill("마키나", 900, 1980, 350, 4, 180000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)    #임의딜레이 900
+        Riyo = core.SummonSkill("리요", 0, 500, 240, 1, 180000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper) # 최초 사용 이후로는 항상 데우스 종료때 딜레이 없이 리필됨
+        Machina = core.SummonSkill("마키나", 0, 1980, 250, 4, 180000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)    # 최초 사용 이후로는 항상 데우스 종료때 딜레이 없이 리필됨
         
         CrystalSkill_MortalSwing = core.DamageSkill("크리스탈 스킬:모탈스윙", 0, 600, 10, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)    #30
-        CrystalSkill_Deus = core.SummonSkill("데우스", 0, 4800, 315, 5, 30*1000, cooltime = -1).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)   #90, 7타
+        CrystalSkill_Deus = core.SummonSkill("데우스", 0, 4800, 500, 5+1, 30*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)   #90, 7타
+        CrystalSkill_Deus_Satelite = core.SummonSkill("데우스(위성)", 0, 500, 240, 1+1, 30*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
         
         LonginusZone = core.DamageSkill("롱기누스 존", 690, 1500, 12, cooltime = 180*1000)    #안씀
         
         BlessMark = core.BuffSkill("블레스 마크", 0, 99999999, att = 46).wrap(core.BuffSkillWrapper)
         CurseMark = core.BuffSkill("커스 마크", 0, 99999999, armor_ignore = 20).wrap(core.BuffSkillWrapper)
         CurseMarkFinalAttack = core.DamageSkill("커스 마크(추가타)", 0, 200, 1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        '''
-        
-        데우스 리인포스 / 보택 찍기.
-        
-        ( 500 * 5 * 7 + 39 * 140 ) / 30 => 1초당 765
-        
-        280+170=450
-        데우스 공격력 : 315
-        '''
         
         #글로리 윙
         GloryWingStackSkill = core.BuffSkill("글로리 윙(스택)", 0, 9999999)
         
-        GloryWingUse = core.BuffSkill("글로리 윙(진입)", 30, 20000, pdamage_indep = 25, pdamage = 70, boss_pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper) # 소오크 2개에 항상 맞춰 사용
+        GloryWingUse = core.BuffSkill("글로리 윙(진입)", 30, 20000, pdamage_indep = 25, pdamage = (vEhc.getV(1,0) + 5) * 2, boss_pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper) # 소오크 2개에 항상 맞춰 사용
         
-        GloryWing_MortalWingbit = core.DamageSkill("글로리 윙(모탈 윙비트)", 0, 2000, 8, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #1회
+        GloryWing_MortalWingbit = core.DamageSkill("글로리 윙(모탈 윙비트)", 630, 2000, 8, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #1회
         
-        GloryWing_Craft_Javelin = core.DamageSkill("크래프트:자벨린(글로리 윙)", 390, 465, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = 40)).setV(vEhc, 0, 0, True).wrap(core.DamageSkillWrapper)
-        GloryWing_Craft_Javelin_Fragment = core.DamageSkill("크래프트:자벨린(글로리 윙)(파편)", 0, 200+100, 3*3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 0, True).wrap(core.DamageSkillWrapper)
+        GloryWing_Craft_Javelin = core.DamageSkill("크래프트:자벨린(글로리 윙)", 420, 465, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = 40)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        GloryWing_Craft_Javelin_Fragment = core.DamageSkill("크래프트:자벨린(글로리 윙)(파편)", 0, 250, 3*3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         #5차 스킬들
         OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 0, 3)
@@ -197,6 +189,10 @@ class JobGenerator(ck.JobGenerator):
         
         CrystalIgnitionInit.onAfter(core.RepeatElement(CrystalIgnition, 62))
         CrystalIgnition.onAfter(Reaction_Spectrum_Trigger)
+
+        CrystalSkill_Deus.onAfter(CrystalSkill_Deus_Satelite)
+        CrystalSkill_Deus.onAfter(Riyo.controller(30000, type_="set_disabled_and_time_left"))
+        CrystalSkill_Deus.onAfter(Machina.controller(30000, type_="set_disabled_and_time_left"))
         
         MagicCircuitFullDrive.onAfter(MagicCircuitFullDriveStorm)
         
@@ -214,6 +210,7 @@ class JobGenerator(ck.JobGenerator):
         GloryWingUse.onAfter(SoulOfCrystal.turnOffController())
         
         SoulOfCrystal.onConstraint(core.ConstraintElement("글로리윙 미사용중", GloryWingUse, GloryWingUse.is_not_active))
+        Machina.onConstraint(core.ConstraintElement("글로리윙 미사용중", GloryWingUse, GloryWingUse.is_not_active))
         
         #기본공격 설정
         BasicAttack = core.OptionalElement(GloryWingUse.is_active, GloryWing_Craft_Javelin, Craft_Javelin_AfterOrb, name = "기본공격(글로리 윙 여부 판단)")
@@ -241,7 +238,7 @@ class JobGenerator(ck.JobGenerator):
                     OverloadMana, BlessMark, CurseMark,
                     globalSkill.soul_contract()] +\
                 [CrystalSkill_MortalSwing, GloryWing_MortalWingbit, CrystalIgnitionInit] +\
-                [Riyo, Machina, CrystalSkill_Deus, 
+                [Riyo, Machina, CrystalSkill_Deus, CrystalSkill_Deus_Satelite,
                     GramHolder, MagicCircuitFullDriveStorm] +\
                 [Reaction_Domination, Reaction_Destruction, Reaction_Spectrum] +\
                 [BasicAttackWrapper])
