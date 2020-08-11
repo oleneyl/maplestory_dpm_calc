@@ -92,18 +92,18 @@ class AbstractCharacter():
         self.potential_modifier = self.potential_modifier + ptnl
         self.static_character_modifier = self.static_character_modifier + basic      
 
-    def set_items(self, dict):
+    def set_items(self, item_dict):
         keys = ["head", "glove", "top", "bottom", "shoes", "cloak",
                 "eye", "face", "ear", "belt", "ring1", "ring2", "ring3", "ring4",
                 "shoulder", "pendant1", "pendant2", "pocket", "badge",
                 "weapon", "subweapon", "emblem", "medal", "heart", "title", "pet"]
 
         for key in keys:
-            item = dict[key]
+            item = item_dict[key]
             if item == None:
                 raise TypeError(key + " item is missing")
-            self.itemlist[key] = dict[key]            
-            self.add_item_modifier(dict[key])
+            self.itemlist[key] = item_dict[key]            
+            self.add_item_modifier(item_dict[key])
 
 
 
