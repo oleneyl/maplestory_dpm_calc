@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, ConditionRule
 from . import globalSkill
 from .jobclass import cygnus
 from .jobbranch import magicians
@@ -20,6 +21,14 @@ class JobGenerator(ck.JobGenerator):
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 20, pdamage = 50)
+
+    def get_ruleset(self):
+        def check_ifc_time(ifc):
+            return (ifc.is_usable() or ifc.is_cooltime_left(90*1000, 1))
+
+        ruleset = RuleSet()
+        ruleset.add_rule(ConditionRule('소울 컨트랙트', '인피니티 플레임 서클(개시)', check_ifc_time), RuleSet.BASE)
+        return ruleset
 
     def get_passive_skill_list(self):
         ######   Skill   ######
