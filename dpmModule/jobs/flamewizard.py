@@ -43,10 +43,10 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
-        오비탈 - 블레이징 - 드래곤 슬레이브 - 이그니션 - 인페르노라이즈
-        여우 사용
+        오비탈 - 익스팅션 - 드래곤 슬레이브 - 이그니션 - 인페르노라이즈
+        디스차지 여우 사용
         블비탈 4히트
-        1350타 / 분
+        오비탈 1350타 / 분
         '''
         
         flamewizardDefaultSpeed = 60000 / ((1350) / 6)  #266
@@ -64,7 +64,7 @@ class JobGenerator(ck.JobGenerator):
         
         #Full speed, No Combat Orders
         OrbitalFlame = core.DamageSkill("오비탈 플레임 IV", flamewizardDefaultSpeed, 215, 3 * 2, modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        # BlazingExtinction = core.SummonSkill("블레이징 익스팅션", 1020, 2500, 310, 3+1, 10000, cooltime=5000, modifier = core.CharacterModifier(pdamage = 20)).wrap(core.SummonSkillWrapper)
+        # BlazingExtinction = core.SummonSkill("블레이징 익스팅션", 1020, 2500, 310, 3+1, 10000, cooltime=5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
         CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 2, 1)
         BlazingOrbital = core.DamageSkill("블레이징 오비탈 플레임", 210, 330+13*vEhc.getV(0,0), 6 * blazingOrbitalHit, cooltime = 5000, modifier = core.CharacterModifier(armor_ignore = 50)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)    #4타 가정
         
@@ -73,6 +73,7 @@ class JobGenerator(ck.JobGenerator):
         DragonSlaveEnd = core.DamageSkill("드래곤 슬레이브 종결", 0, 500, 10).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
         IgnitionDOT = core.SummonSkill("이그니션", 0, 1000, 220*1.6, 1, 10*1000, modifier = core.CharacterModifier(crit=-9999, armor_ignore=100)).wrap(core.SummonSkillWrapper)
+        IgnitionExplode = core.DamageSkill("이그니션(폭발)", 0, 240, 1, cooltime=-1).setV(vEhc, 3, 5, True).wrap(core.DamageSkillWrapper)
         #여우 사용
         SavageFlameStack = core.StackSkillWrapper(core.BuffSkill("플레임 디스차지(스택)", 0, 99999999), 6)
         
@@ -96,6 +97,7 @@ class JobGenerator(ck.JobGenerator):
         InfinityFlameCircleInit.onAfter(InfinityFlameCircle)
         
         IgnitionDOT.onAfter(SavageFlameStack.stackController(1))
+        IgnitionDOT.onAfter(IgnitionExplode)
         InfernoRize.onAfter(IgnitionDOT.controller(1))
         DragonSlaveEnd.onAfter(IgnitionDOT.controller(1))
 
