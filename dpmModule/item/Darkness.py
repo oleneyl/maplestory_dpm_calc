@@ -1,10 +1,10 @@
 from . import ItemKernel as it
 
-Face = it.Item(stat_main = 10, stat_sub = 10, att = 10)#160 // 5
-Eye = it.Item(stat_main = 15, stat_sub = 15, att = 3)#160 // 3
-Belt = it.Item(stat_main = 50, stat_sub = 50, att = 6)#200 // 3
-Pendant = it.Item(stat_main = 10, stat_sub = 10, att = 5)#160 // 5
-Pocket = it.Item(stat_main = 20, stat_sub = 10, att = 10)#160
+Face = it.Item(name="루즈 컨트롤 머신 마크", stat_main = 10, stat_sub = 10, att = 10, level = 160)#160 // 5
+Eye = it.Item(name="마력이 깃든 안대", stat_main = 15, stat_sub = 15, att = 3, level = 160)#160 // 3
+Belt = it.Item(name="몽환의 벨트", stat_main = 50, stat_sub = 50, att = 6, level = 200)#200 // 3
+Pendant = it.Item(name="고통의 근원", stat_main = 10, stat_sub = 10, att = 5, level = 160)#160 // 5
+Pocket = it.Item(name="저주받은 #의 마도서", stat_main = 20, stat_sub = 10, att = 10, level = 160)#160
 #Heart = it.Item(stat_main = 50, stat_sub = 50, att = 77, boss_pdamage = 30, armor_ignore = 30)
 #Badge = it.Item(stat_main = 15, stat_sub = 15, att = 10)
 #Ring = it.Item(stat_main = 5, stat_sub = 5, att = 4)
@@ -46,12 +46,12 @@ class Factory():
                 item.set_potential(potential)
                 item.set_additional_potential(additional_potential)
             
-            scroll_enhance = it.CharacterModifier()
-            for i in range(enhance):
-                scroll_enhance += enhancer
+                scroll_enhance = it.CharacterModifier()
+                for i in range(enhance):
+                    scroll_enhance += enhancer
                 
-            item.add_main_option(scroll_enhance)
-            item.add_main_option(it.EnhancerFactory.get_armor_starforce_enhancement(level, star))
+                item.add_main_option(scroll_enhance)
+                item.add_main_option(it.EnhancerFactory.get_armor_starforce_enhancement(level, star))
         
         return {"eye" : black_eye ,
                 "face" : black_face,

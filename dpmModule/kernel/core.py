@@ -1680,7 +1680,7 @@ class Analytics():
         
         #For speed acceleration
         if self.print_calculation_progress:
-            self.log('At Time %.1f, Skill [%s] ... Damage [%.1f] ... Delay [%.1f]' % (result.time, result.sname, deal, result.delay))
+            self.log('At Time %.1f, Skill [%s] ... Damage [%.1f] ... Loss [%.1f] ... Delay [%.1f]' % (result.time, result.sname, deal, free_deal - deal, result.delay))
             self.log(f'{result.mdf}')
         if deal > 0:
             self.logList.append({"result":result, "time" : (result.time), "deal" : deal, "loss" : free_deal - deal})
