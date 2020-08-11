@@ -40,10 +40,11 @@ class JobGenerator(ck.JobGenerator):
         NuckleExpret = core.InformedCharacterModifier("너클 엑스퍼트", att = 30, crit = 20)
         FusionComplete = core.InformedCharacterModifier("융합 완성", att = 40, crit = 10, armor_ignore = 30, boss_pdamage = 30)
         BattleRage = core.InformedCharacterModifier("전투 광란", pdamage_indep = 20)
+        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 3, 4)
     
         return [MagicCircuit, MisticArtsMastery, 
                                     NuckleMastery, PhisicalTraining, 
-                                    FusionProgress, NuckleExpret, FusionComplete, BattleRage]
+                                    FusionProgress, NuckleExpret, FusionComplete, BattleRage, LoadedDicePassive]
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 70)
@@ -70,9 +71,7 @@ class JobGenerator(ck.JobGenerator):
         
         # Buff skills
         ContactCaravan = core.BuffSkill("컨택트 카라반", 720, 300 * 1000, cooltime = 500 * 1000, pdamage = 2 + 1).wrap(core.BuffSkillWrapper)
-        SpectorState = core.BuffSkill("스펙터 상태", 0, 45000/112*210/2, att = 30, cooltime = 105 * 1000, rem = False, red = False).wrap(core.BuffSkillWrapper)
-        # SpectorState = core.BuffSkill("스펙터 상태", 0, 3120, att = 30, cooltime = 13140, rem = False, red = False).wrap(core.BuffSkillWrapper)
-        # SpectorState_Infinity = core.BuffSkill("스펙터 상태(인피)", 0, 12690, att = 30, cooltime = 3870, rem = False, red = False).wrap(core.BuffSkillWrapper)
+        SpectorState = core.BuffSkill("스펙터 상태", 0, 45000/112*210/2, att = 30, cooltime = 210/2 * 1000, rem = False, red = False).wrap(core.BuffSkillWrapper)
         Booster = core.BuffSkill("부스터", 0, 200 * 1000).wrap(core.BuffSkillWrapper)
         
         Unforgotable = core.DamageSkill("잊혀지지 않는 악몽", 540, 440, 6, cooltime = 2000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # Dummy
@@ -160,17 +159,15 @@ class JobGenerator(ck.JobGenerator):
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60*1000, pdamage = 10, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         
         # 5차
-        LuckyDice = core.BuffSkill("럭키 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
-        # 로디드 강화순서 확인필요
-        #LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
+        LuckyDice = core.BuffSkill("럭키 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,3,4).wrap(core.BuffSkillWrapper)
     
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("너클")
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
     
-        MagicCircuitFullDrive = core.BuffSkill("매직 서킷 풀드라이브", 720, (30+vEhc.getV(4,4))*1000, pdamage = (20 + vEhc.getV(3,2)), cooltime = 200*1000).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
-        MagicCircuitFullDriveStorm = core.DamageSkill("매직 서킷 풀드라이브(마력 폭풍)", 0, 500+20*vEhc.getV(4,4), 3, cooltime=4000).wrap(core.DamageSkillWrapper)
+        MagicCircuitFullDrive = core.BuffSkill("매직 서킷 풀드라이브", 720, (30+vEhc.getV(4,3))*1000, pdamage = (20 + vEhc.getV(4,3)), cooltime = 200*1000).isV(vEhc,4,3).wrap(core.BuffSkillWrapper)
+        MagicCircuitFullDriveStorm = core.DamageSkill("매직 서킷 풀드라이브(마력 폭풍)", 0, 500+20*vEhc.getV(4,3), 3, cooltime=4000).wrap(core.DamageSkillWrapper)
         
         
         MemoryOfSource = core.DamageSkill("근원의 기억", 0, 0, 0, cooltime = 200 * 1000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
@@ -214,7 +211,8 @@ class JobGenerator(ck.JobGenerator):
         
         # 기본 연결 설정(레프)
         # 연계 가능한 스킬들이 모두 쿨다운 중이면 540ms짜리 플레인 차지드라이브가 발동
-        for skill in [EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, UnstoppableImpulse_Link]:
+        for skill in [EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, UnstoppableImpulse_Link,
+            CrawlingFear_Link, RaptRestriction, EndlessPain, MemoryOfSource]:
             skill.onBefore(PlainChargeDrive_Link)
             PlainChargeDrive_Connected = core.OptionalElement(skill.is_not_usable, PlainChargeDrive, PlainChargeDrive_Link)
         
@@ -246,13 +244,12 @@ class JobGenerator(ck.JobGenerator):
 
         # 충동/본능 연결 설정
         Impulse1_Connect = core.OptionalElement(SpectorState.is_active, TenaciousInstinct_Link, 
-            core.OptionalElement(InfinitySpell.is_not_active,UnstoppableImpulse_Link))
+            core.OptionalElement(InfinitySpell.is_not_active,UnstoppableImpulse_Link))  # 인피 상태에서는 충동을 사용하지 않음
         Impulse1.onAfter(Impulse1_Connect)
         Impulse2.onConstraint(core.ConstraintElement("충동/본능 연속 2회", Impulse1_Connect, Impulse1.is_not_usable))
         Impulse2_Connect = core.OptionalElement(SpectorState.is_active, TenaciousInstinct_Link, 
-            core.OptionalElement(InfinitySpell.is_not_active,UnstoppableImpulse_Link))
+            core.OptionalElement(InfinitySpell.is_not_active,UnstoppableImpulse_Link))  # 인피 상태에서는 충동을 사용하지 않음
         Impulse2.onAfter(Impulse2_Connect)
-        # UnstoppableImpulse_Link.onConstraint(core.ConstraintElement("인피 상태에서는 충동 미사용", InfinitySpell, InfinitySpell.is_not_active))
 
         RaptRestriction.onAfter(RaptRestrictionSummon)
         RaptRestriction.onAfter(RaptRestrictionEnd)
@@ -319,16 +316,8 @@ class JobGenerator(ck.JobGenerator):
         MemoryOfSource.onAfter(MemoryOfSourceEnd)
         MemoryOfSource.onAfter(MemoryOfSourceBuff)
 
-        # def InfinitySpellHandleSpector(spector_state, remain, cooltime):    # 인피 상태에 따른 변신 스케쥴링용
-        #     spector_state.timeLeft += remain
-        #     spector_state.cooltimeLeft += cooltime
-        #     return core.ResultObject(0, core.CharacterModifier(), 0, sname = 'Graph Element', spec = 'graph control')
-
         ScarletBuff.set_disabled_and_time_left(0)
         AbyssBuff.set_disabled_and_time_left(0)
-        
-        # InfinitySpell.onConstraint(core.ConstraintElement('근원의 기억부터 사용하도록', MemoryOfSource, MemoryOfSource.is_not_usable))   
-        
         
         return(PlainAttack, 
                 [ContactCaravan, ScarletBuff, AbyssBuff, SpectorState, Booster,
