@@ -72,6 +72,8 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule("크리스탈 이그니션(시전)", "소울 오브 크리스탈"), RuleSet.BASE)
         ruleset.add_rule(ReservationRule("그람홀더", "글로리 윙(진입)"), RuleSet.BASE)
         ruleset.add_rule(ConditionRule("글로리 윙(진입)", "그람홀더", lambda x:x.is_active() or x.is_not_usable()), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule("데우스", "글로리 윙(진입)"), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("글로리 윙(진입)", "데우스", lambda x:x.is_active() or x.is_not_usable()), RuleSet.BASE)
         return ruleset
         
     def get_passive_skill_list(self):
@@ -126,7 +128,7 @@ class JobGenerator(ck.JobGenerator):
         Machina = core.SummonSkill("마키나", 0, 1980, 250, 4, 180000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)    # 최초 사용 이후로는 항상 데우스 종료때 딜레이 없이 리필됨
         
         CrystalSkill_MortalSwing = core.DamageSkill("크리스탈 스킬:모탈스윙", 0, 600, 10, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)    #30
-        CrystalSkill_Deus = core.SummonSkill("데우스", 0, 4800, 500, 5+1, 30*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)   #90, 7타
+        CrystalSkill_Deus = core.SummonSkill("데우스", 30, 4800, 500, 5+1, 30*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)   #90, 7타
         CrystalSkill_Deus_Satelite = core.SummonSkill("데우스(위성)", 0, 500, 240, 1+1, 30*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
         
         LonginusZone = core.DamageSkill("롱기누스 존", 690, 1500, 12, cooltime = 180*1000)    #안씀
