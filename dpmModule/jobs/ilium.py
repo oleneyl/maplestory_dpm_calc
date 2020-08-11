@@ -68,12 +68,18 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         ruleset.add_rule(MutualRule("패스트 차지", "크리스탈 이그니션(시전)"), RuleSet.BASE)
         ruleset.add_rule(InactiveRule("패스트 차지", "글로리 윙(진입)"), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule("크리스탈 이그니션(시전)", "글로리 윙(진입)"), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule("크리스탈 이그니션(시전)", "소울 오브 크리스탈"), RuleSet.BASE)
         ruleset.add_rule(ReservationRule("그람홀더", "글로리 윙(진입)"), RuleSet.BASE)
         ruleset.add_rule(ConditionRule("글로리 윙(진입)", "그람홀더", lambda x:x.is_active() or x.is_not_usable()), RuleSet.BASE)
         ruleset.add_rule(ReservationRule("데우스", "글로리 윙(진입)"), RuleSet.BASE)
         ruleset.add_rule(ConditionRule("글로리 윙(진입)", "데우스", lambda x:x.is_active() or x.is_not_usable()), RuleSet.BASE)
+
+        # 이그니션과 글로리 윙 따로 사용하는 딜사이클
+        ruleset.add_rule(InactiveRule("크리스탈 이그니션(시전)", "글로리 윙(진입)"), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule("크리스탈 이그니션(시전)", "소울 오브 크리스탈"), RuleSet.BASE)
+
+        # 함께 사용하게 하려면 위 2개 주석처리하고 아래 2개 Rule을 사용
+        # ruleset.add_rule(ConcurrentRunRule("크리스탈 이그니션(시전)", "글로리 윙(진입)"), RuleSet.BASE)
+        # ruleset.add_rule(ConditionRule("글로리 윙(진입)", "크리스탈 이그니션(시전)", lambda x:x.is_cooltime_left(20000, 1) or x.is_cooltime_left(10000, -1)), RuleSet.BASE)
         return ruleset
         
     def get_passive_skill_list(self):
@@ -142,10 +148,10 @@ class JobGenerator(ck.JobGenerator):
         
         GloryWingUse = core.BuffSkill("글로리 윙(진입)", 30, 20000, pdamage_indep = 25, pdamage = (vEhc.getV(1,0) + 5) * 2, boss_pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper) # 소오크 2개에 항상 맞춰 사용
         
-        GloryWing_MortalWingbit = core.DamageSkill("글로리 윙(모탈 윙비트)", 630, 2000, 8, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #1회
+        GloryWing_MortalWingbit = core.DamageSkill("글로리 윙:모탈 윙비트", 630, 2000, 8, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #1회
         
-        GloryWing_Craft_Javelin = core.DamageSkill("크래프트:자벨린(글로리 윙)", 420, 465, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = 40)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        GloryWing_Craft_Javelin_Fragment = core.DamageSkill("크래프트:자벨린(글로리 윙)(파편)", 0, 250, 3*3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        GloryWing_Craft_Javelin = core.DamageSkill("글로리 윙:자벨린", 420, 465, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = 40)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        GloryWing_Craft_Javelin_Fragment = core.DamageSkill("글로리 윙:자벨린(매직 미사일)", 0, 250, 3*3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         #5차 스킬들
         OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 0, 3)
