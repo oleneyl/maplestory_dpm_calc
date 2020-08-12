@@ -190,18 +190,9 @@ class JobGenerator(ck.JobGenerator):
         # 기본 연결 설정(스펙터)
         for skill in [UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, TenaciousInstinct_Link]:
             skill.onBefore(EndlessBadDream_Link)
-        # # 레프 모드의 플레인 차지드라이브에서도 연계 가능한 스킬
+        # 흉몽(스펙터)과 플레인(레프)에서도 연계 가능한 스킬
         for skill in [CrawlingFear_Link, RaptRestriction, EndlessPain, MemoryOfSource]:
             skill.onBefore(core.OptionalElement(SpectorState.is_active, EndlessBadDream_Link, PlainChargeDrive_Link))
-        # 연계 가능한 스킬들이 모두 쿨다운 중이면 540ms짜리 흉몽이 발동
-        for skill in [UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, TenaciousInstinct_Link,
-            CrawlingFear_Link, RaptRestriction, EndlessPain, MemoryOfSource]:
-            EndlessBadDream_Connected = core.OptionalElement(skill.is_not_usable, EndlessBadDream, EndlessBadDream_Link)
-
-        # # onAfter(흉몽(연계))과 onBefore(흉몽(연계)) 사이에 연계 스킬이 들어가지 않아서 제거
-        # for skill in [UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, TenaciousInstinct_Link,
-        #     CrawlingFear_Link, EndlessPainEnd_Link]:
-        #     skill.onAfter(EndlessBadDream_Connected)
   
         # 보스 1:1 시 공격 1회 당 다가오는 죽음 1개 생성, 인피니티 스펠 상태 시 3 ~ 4개
         UpcomingDeath_Connected = core.OptionalElement(InfinitySpell.is_active, core.RepeatElement(UpcomingDeath, 3 + round(vEhc.getV(0,0)/25)), UpcomingDeath)
@@ -209,12 +200,10 @@ class JobGenerator(ck.JobGenerator):
         UpcomingDeath.onAfter(core.OptionalElement(InfinitySpell.is_not_active, ReturningHate))
         ReturningHate_Infinity.onConstraint(core.ConstraintElement("증오 최대생성 제한", InfinitySpell, InfinitySpell.is_active))
         
+
         # 기본 연결 설정(레프)
-        # 연계 가능한 스킬들이 모두 쿨다운 중이면 540ms짜리 플레인 차지드라이브가 발동
-        for skill in [EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, UnstoppableImpulse_Link,
-            CrawlingFear_Link, RaptRestriction, EndlessPain, MemoryOfSource]:
+        for skill in [EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, UnstoppableImpulse_Link]:
             skill.onBefore(PlainChargeDrive_Link)
-            PlainChargeDrive_Connected = core.OptionalElement(skill.is_not_usable, PlainChargeDrive, PlainChargeDrive_Link)
         
         PlainSpell_Connected = core.OptionalElement(InfinitySpell.is_active, PlainSpell_Infinity, PlainSpell)
         #PlainSpell.onAfter(PlainBuff)
@@ -289,9 +278,9 @@ class JobGenerator(ck.JobGenerator):
             
             skill.onAfter(EvanescentBadDreamTimer.controller(1000, 'reduce_cooltime'))
         
-        # 기본 공격
+        # 기본 공격 : 540ms 중립스킬
         PlainAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
-        PlainAttack.onAfter(core.OptionalElement(SpectorState.is_active, EndlessBadDream_Connected, PlainChargeDrive_Connected))
+        PlainAttack.onAfter(core.OptionalElement(SpectorState.is_active, EndlessBadDream, PlainChargeDrive))
         
         # Constraint 추가하기 : 레프 모드
         for skill in [PlainChargeDrive, EndlessNightmare, ScarletChargeDrive, GustChargeDrive, AbyssChargeDrive, UnstoppableImpulse,
