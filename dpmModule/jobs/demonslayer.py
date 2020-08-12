@@ -69,10 +69,10 @@ class JobGenerator(ck.JobGenerator):
         DemonSlashTrigger = core.BuffSkill("데몬 슬래시(더미)", 0, 0, cooltime = 4000).wrap(core.BuffSkillWrapper)
         DemonSlash1 = core.DamageSkill("데몬 슬래시(1타)", 390, 110, 2, modifier = core.CharacterModifier(pdamage = 370, pdamage_indep = -10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        DemonSlashAW1 = core.DamageSkill("데몬 슬래시 강화(1타)", 240, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50, pdamage_indep = -10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAW2 = core.DamageSkill("데몬 슬래시 강화(2타)", 240, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50, pdamage_indep = -10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAW3 = core.DamageSkill("데몬 슬래시 강화(3타)", 330, 700, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50, pdamage_indep = -10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAW4 = core.DamageSkill("데몬 슬래시 강화(4타)", 330, 800, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50, pdamage_indep = -10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW1 = core.DamageSkill("데몬 슬래시 강화(1타)", 270, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50, pdamage_indep = -10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW2 = core.DamageSkill("데몬 슬래시 강화(2타)", 270, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50, pdamage_indep = -10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW3 = core.DamageSkill("데몬 슬래시 강화(3타)", 360, 700, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50, pdamage_indep = -10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW4 = core.DamageSkill("데몬 슬래시 강화(4타)", 360, 800, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50, pdamage_indep = -10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         DemonImpact = core.DamageSkill("데몬 임팩트", 660, 460, (6+1), modifier = core.CharacterModifier(crit = 100, armor_ignore = 30, boss_pdamage = 40, pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
