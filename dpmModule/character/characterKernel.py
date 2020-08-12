@@ -630,7 +630,7 @@ class LinkSkill():
 
         if (refMDF + get_mdf(links)).crit < 90:
             links = append_link(links, LinkSkill.Phantom)
-        if (refMDF + get_mdf(links)).crit < 95:
+        if (refMDF + get_mdf(links)).crit < 90:
             links = append_link(links, LinkSkill.AdventureArcher)
 
         link_priority = [LinkSkill.DemonSlayer, LinkSkill.AdventureMage, LinkSkill.Cadena,
