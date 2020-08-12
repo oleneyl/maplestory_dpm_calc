@@ -69,13 +69,13 @@ class JobGenerator(ck.JobGenerator):
         
         OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         #Damage Skills
-        InfernoRize = core.DamageSkill("인페르노라이즈", 540, 350, 10, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage_indep = 90)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #임의딜레이 720
+        InfernoRize = core.DamageSkill("인페르노라이즈", 540, 350, 10, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage_indep = 90), red = True).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #임의딜레이 720
         
         #Full speed, No Combat Orders
-        OrbitalFlame = core.DamageSkill("오비탈 플레임 IV", flamewizardDefaultSpeed, 215, 3 * 2, modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        OrbitalFlame = core.DamageSkill("오비탈 플레임 IV", 210, 215, 3 * 2, cooltime = flamewizardDefaultSpeed, modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         # BlazingExtinction = core.SummonSkill("블레이징 익스팅션", 1020, 2500, 310, 3+1, 10000, cooltime=5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
         CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 2, 1)
-        BlazingOrbital = core.DamageSkill("블레이징 오비탈 플레임", 210, 330+13*vEhc.getV(0,0), 6 * blazingOrbitalHit, cooltime = 5000, modifier = core.CharacterModifier(armor_ignore = 50)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)    #4타 가정
+        BlazingOrbital = core.DamageSkill("블레이징 오비탈 플레임", 210, 330+13*vEhc.getV(0,0), 6 * blazingOrbitalHit, cooltime = 5000, modifier = core.CharacterModifier(armor_ignore = 50), red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)    #4타 가정
         
         DragonSlaveTick = core.DamageSkill("드래곤 슬레이브", 280, 500, 6).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)#x7
         DragonSlaveInit = core.DamageSkill("드래곤 슬레이브 개시(더미)", 0, 0, 0, cooltime = 90 * 1000).wrap(core.DamageSkillWrapper)
@@ -86,7 +86,7 @@ class JobGenerator(ck.JobGenerator):
         #여우 사용
         SavageFlameStack = core.StackSkillWrapper(core.BuffSkill("플레임 디스차지(스택)", 0, 99999999), 6)
         
-        SavageFlame = core.DamageSkill("플레임 디스차지", 0, 0, 0, cooltime = 20*1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
+        SavageFlame = core.DamageSkill("플레임 디스차지", 0, 0, 0, cooltime = 20*1000, red = True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
     
         SavageFlame_2 = core.DamageSkill("플레임 디스차지(2스택)", 840, 250 + 10*vEhc.getV(4,4), 8*8).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         SavageFlame_3= core.DamageSkill("플레임 디스차지(3스택)", 840, 250 + 10*vEhc.getV(4,4), 8*(8+2)).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
