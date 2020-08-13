@@ -198,7 +198,6 @@ class CharacterModifier(object):
         txt += "stat_main_fixed : %.1f, stat_sub_fixed %.1f\n"%(self.stat_main_fixed, self.stat_sub_fixed)
         txt += "boss_pdamage : %.1f, armor_ignore %.1f\n"%(self.boss_pdamage, self.armor_ignore)
         txt += "att : %.1f, patt %.1f\n"%(self.att, self.patt)
-        txt += "Fixed stat : main %.1f, sub %.1f\n"%(self.stat_main_fixed, self.stat_sub_fixed)
         txt += "damageFactor : %.1f"%(self.get_damage_factor())
         return txt
     
