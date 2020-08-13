@@ -261,94 +261,72 @@ class JobGenerator():
         
         graph = self.build(chtr, combat = combat, storage_handler=storage_handler)
 
-        if log:
-            print("\n---basic CHTR---")
-            print(chtr.get_modifier().log())
-            print("\n---final---")
-            refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
-            print(refMDF.log())
+        def log_modifier(modifier, name):
+            if log:
+                print("\n---" + name + "---")
+                print(modifier.log())
+
+        def log_character(chtr):
+            if log:
+                print("\n---basic CHTR---")
+                print(chtr.get_modifier().log())
+
+        def log_buffed_character(chtr):
+            if log:
+                print("\n---final---")
+                buffed = graph.get_default_buff_modifier() + chtr.get_modifier()
+                print(buffed.log())
+
+        # refMDF는 상시 - 시전되는 버프에 관련된 정보를 담고 있습니다.
+        def get_reference_modifier(chtr):
+            return graph.get_default_buff_modifier() + chtr.get_modifier() + self.get_total_modifier_optimization_hint()
+
+        log_character(chtr)
+        log_buffed_character(chtr)
+
         
         # 도핑
         doping = Doping.get_full_doping()
-        if log:
-            print("\n---doping---")
-            print(doping.log())
-
+        log_modifier(doping, "doping")
         chtr.apply_modifiers([doping])
-        if log:
-            print("\n---final---")
-            refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
-            print(refMDF.log())
+        log_buffed_character(chtr)
 
         # 유니온 공격대원
         unionCard = Card.get_card(self.jobtype, ulevel, True)[0]
-        if log:
-            print("\n---union card---")
-            print(unionCard.log())
-        
+        log_modifier(unionCard, "union card")
         chtr.apply_modifiers([unionCard])
         self.chtr.buff_rem = self.chtr.buff_rem + 20 #메카닉 벞지 적용
-        if log:
-            print("\n---final---")
-            refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
-            print(refMDF.log())
+        log_buffed_character(chtr)
 
         # 링크 스킬
-        # refMDF는 상시 - 시전되는 버프에 관련된 정보를 담고 있습니다.
-        refMDF = graph.get_default_buff_modifier() + chtr.get_modifier() + self.get_total_modifier_optimization_hint()
+        refMDF = get_reference_modifier(chtr)
         link = LinkSkill.get_link_skill_modifier(refMDF, self.jobname)
-        if log:
-            print("\n====link===")
-            print(link.log())
-
+        log_modifier(link, "link")
         chtr.apply_modifiers([link])
-        if log:
-            print("\n---final---")
-            refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
-            print(refMDF.log())
+        log_buffed_character(chtr)
 
         # 하이퍼 스탯
-        refMDF = graph.get_default_buff_modifier() + chtr.get_modifier() + self.get_total_modifier_optimization_hint()
+        refMDF = get_reference_modifier(chtr)
         hyperstat = HyperStat.get_hyper_modifier(refMDF, chtr.level, critical_reinforce = self._use_critical_reinforce)
-        if log:
-            print("\n====hyper===")
-            print(hyperstat.log())
-
+        log_modifier(hyperstat, "hyper stat")
         chtr.apply_modifiers([hyperstat])
-        if log:
-            print("\n---final---")
-            refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
-            print(refMDF.log())
+        log_buffed_character(chtr)
 
         # 유니온 점령
-        refMDF = graph.get_default_buff_modifier() + chtr.get_modifier() + self.get_total_modifier_optimization_hint()
+        refMDF = get_reference_modifier(chtr)
         union, unionBuffRem = Union.get_union(refMDF, ulevel, buffrem = self.buffrem, critical_reinforce = self._use_critical_reinforce)
-        if log:
-            print("\n---union---")
-            print(union.log())
-            print("union buff : %d" % (unionBuffRem))
-        
+        log_modifier(union, "union")
         chtr.apply_modifiers([union])
         chtr.buff_rem += unionBuffRem #유니온 벞지 적용
-        if log:
-            print("\n---final---")
-            refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
-            print(refMDF.log())
+        log_buffed_character(chtr)
 
         # 무기류 잠재능력
-        refMDF = graph.get_default_buff_modifier() + chtr.get_modifier() + self.get_total_modifier_optimization_hint()
+        refMDF = get_reference_modifier(chtr)
         weaponli = WeaponPotential.get_weapon_pontential(refMDF, weaponstat[0], weaponstat[1])
-        if log:
-            print("\n---weapon---")
-            for i in weaponli:
-                print("\n=======")
-                print(i.log())
-
+        for index, wp in enumerate(weaponli):
+            log_modifier(wp, "weapon " + str(index + 1))
         chtr.set_weapon_potential(weaponli)
-        if log:
-            print("\n---final---")
-            refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
-            print(refMDF.log())        
+        log_buffed_character(chtr)
         
         ## 기타 옵션 적용
         self.apply_complex_options(chtr)
@@ -356,12 +334,8 @@ class JobGenerator():
         graph = self.build(chtr, combat = combat, storage_handler=storage_handler)
         graph.set_v_enhancer(self.vEhc)
 
-        if log:
-            print("\n---basic CHTR---")
-            print(chtr.get_modifier().log())
-            print("\n---buffed----")
-            refMDF = graph.get_default_buff_modifier() + chtr.get_modifier()
-            print(refMDF.log()) 
+        log_character(chtr)
+        log_buffed_character(chtr)
         
         return graph
 
