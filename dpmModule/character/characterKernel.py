@@ -815,7 +815,7 @@ class HyperStat():
         '''get_point(level) : return hyperstat point of given level.
         '''
         delta = level-140
-        return delta*3 + (delta//10) * (delta//10 - 1) * 5 + (delta//10) * (delta % 10)
+        return (delta // 10) * (30 + (delta // 10 + 2) * 10) // 2 + (delta % 10 + 1) * (delta // 10 + 3)
     
     @staticmethod
     def get_hyper_object(mdf, level):    
