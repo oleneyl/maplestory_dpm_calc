@@ -11,7 +11,7 @@ from . import contrib
 class AuraWeaponBuilder_BB(warriors.AuraWeaponBuilder):
     def __init__(self, enhancer, skill_importance, enhance_importance):
         super(AuraWeaponBuilder_BB, self).__init__(enhancer, skill_importance, enhance_importance)
-        contrib.create_auxilary_attack(self.target_skill, 0.9)
+        contrib.create_auxilary_attack(self.target_skill, 0.9, "(블블)")
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
