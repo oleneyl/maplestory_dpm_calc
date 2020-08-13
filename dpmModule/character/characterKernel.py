@@ -604,11 +604,11 @@ class LinkSkill():
         if job_name in ["소울마스터", "카데나", "제로", "블래스터", "배틀메이지", "스트라이커", "나이트워커"]:
             links = append_link(links, LinkSkill.Illium)
 
-        if (refMDF + get_mdf(links)).armor_ignore < 63.3:
+        if (refMDF + get_mdf(links)).armor_ignore < 90:
             links = append_link(links, LinkSkill.Luminous)
-        if (refMDF + get_mdf(links)).armor_ignore < 63.3:
+        if (refMDF + get_mdf(links)).armor_ignore < 85:
             links = append_link(links, LinkSkill.Zero)
-        if (refMDF + get_mdf(links)).armor_ignore < 63.3:
+        if (refMDF + get_mdf(links)).armor_ignore < 85:
             links = append_link(links, LinkSkill.Hoyoung)
 
         if (refMDF + get_mdf(links)).crit < 90:
