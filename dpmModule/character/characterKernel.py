@@ -284,6 +284,15 @@ class JobGenerator():
         log_character(chtr)
         log_buffed_character(chtr)
 
+        # 무기 소울
+        refMDF = get_reference_modifier(chtr)
+        if refMDF.crit < 88:
+            weapon_soul_modifier = CharacterModifier(crit = 12)
+        else:
+            weapon_soul_modifier = CharacterModifier(patt = 3)
+        log_modifier(weapon_soul_modifier, "weapon soul")
+        chtr.apply_modifiers([weapon_soul_modifier])
+        log_buffed_character(chtr)
         
         # 도핑
         doping = Doping.get_full_doping()
