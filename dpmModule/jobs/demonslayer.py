@@ -5,13 +5,13 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import warriors
-from . import contrib
+from . import jobutils
 ######   Passive Skill   ######
 
 class AuraWeaponBuilder_BB(warriors.AuraWeaponBuilder):
     def __init__(self, enhancer, skill_importance, enhance_importance):
         super(AuraWeaponBuilder_BB, self).__init__(enhancer, skill_importance, enhance_importance)
-        contrib.create_auxilary_attack(self.target_skill, 0.9, "(블블)")
+        jobutils.create_auxilary_attack(self.target_skill, 0.9, "(블블)")
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -137,7 +137,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 블블 추가타 적용
         for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DevilCry]:
-            contrib.create_auxilary_attack(sk, 0.9, "(블블)")
+            jobutils.create_auxilary_attack(sk, 0.9, "(블블)")
 
         # 오라 웨폰
         auraweapon_builder = AuraWeaponBuilder_BB(vEhc, 3, 2)

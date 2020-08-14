@@ -38,10 +38,6 @@ class FridWrapper(core.BuffSkillWrapper):
         return core.ResultObject(delay, mdf, 0, 0, sname = self._id, spec = 'buff', kwargs = {"remain" : self.skill.remain * (1+0.01*rem*self.skill.rem)})
         #return delay, mdf, 0, self.cascade
 
-# 메용2는 모험가 파일에 맡김. 더 나은 방법 있으면 수정 필요.
-def MapleHeroes2Wrapper(vEhc, num1, num2):
-    adventurer.MapleHeroes2Wrapper(vEhc, num1, num2)
-
 
 
 
