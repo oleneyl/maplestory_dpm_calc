@@ -61,6 +61,7 @@ class JobGenerator(ck.JobGenerator):
         MonkeyWaveBuff = core.BuffSkill("몽키 웨이브(버프)", 0, 30000, cooltime = -1, crit_damage = 5).wrap(core.BuffSkillWrapper)
         MonkeyFurious = core.DamageSkill("몽키 퓨리어스", 690, 180, 3, cooltime = 30*1000).wrap(core.DamageSkillWrapper)
         MonkeyFuriousBuff = core.BuffSkill("몽키 퓨리어스(버프)", 0, 30000, cooltime = -1, pdamage = 40).wrap(core.BuffSkillWrapper)
+        MonkeyFuriousDot = core.DotSkill("몽키 퓨리어스(도트)", 20, 30000).wrap(core.SummonSkillWrapper)
         OakRulet = core.BuffSkill("오크통 룰렛", 810, 180000, rem = True, cooltime = 180000, crit_damage = 1.25).wrap(core.BuffSkillWrapper)
         OakRuletDOT = core.DotSkill("오크통 도트", 50, 5000).wrap(core.SummonSkillWrapper)
         MonkeyMagic = core.BuffSkill("하이퍼 몽키 스펠", 0, 180000, rem = True, stat_main=60, stat_sub=60).wrap(core.BuffSkillWrapper)
@@ -96,7 +97,7 @@ class JobGenerator(ck.JobGenerator):
         ### build graph relationships
     
         MonkeyWave.onAfter(MonkeyWaveBuff)
-        MonkeyFurious.onAfter(MonkeyFuriousBuff)
+        MonkeyFurious.onAfters([MonkeyFuriousBuff, MonkeyFuriousDot])
     
         CanonBuster.onAfter(OakRuletDOT)
         BFGCannonball.onAfter(OakRuletDOT)
@@ -109,7 +110,7 @@ class JobGenerator(ck.JobGenerator):
     
         return(CanonBuster,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                    Booster, MonkeyWaveBuff, MonkeyFuriousBuff, OakRulet, Buckshot, MonkeyMagic,
+                    Booster, MonkeyWaveBuff, MonkeyFuriousBuff, MonkeyFuriousDot, OakRulet, Buckshot, MonkeyMagic,
                     EpicAdventure, LuckyDice, Overdrive, OverdrivePenalty, PirateFlag,
                     globalSkill.soul_contract()] +\
                 [MonkeyWave, MonkeyFurious, ICBM] +\

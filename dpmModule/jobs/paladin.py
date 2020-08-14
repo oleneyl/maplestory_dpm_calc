@@ -83,6 +83,7 @@ class JobGenerator(ck.JobGenerator):
         #Damage skill
         Blast.onAfter(FinalAttack)
         LighteningCharge.onAfter(FinalAttack)
+        LighteningCharge.onAfter(LighteningChargeDOT)
         DivineCharge.onAfter(FinalAttack)
         
         GrandCrossSmallTick.onAfters([FinalAttack, FinalAttack, FinalAttack])
@@ -100,7 +101,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, combat_level = 2), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Threat, BlessingArmor, ElementalForce, EpicAdventure, HolyUnity, AuraWeaponBuff,
                     globalSkill.soul_contract()] +\
-                [LighteningCharge, DivineCharge, GrandCross] +\
+                [LighteningCharge, LighteningChargeDOT, DivineCharge, GrandCross] +\
                 [BlessedHammer, BlessedHammerActive] +\
                 [AuraWeaponCooltimeDummy] +\
                 [Blast])

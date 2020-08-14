@@ -105,8 +105,9 @@ class JobGenerator(ck.JobGenerator):
         RaisingBlowInrage = core.DamageSkill("레이징 블로우(인레이지)", 600, 215, 6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함.
         RaisingBlowInrageFinalizer = core.DamageSkill("레이징 블로우(인레이지)(최종타)", 0, 215, 2, modifier = core.CharacterModifier(pdamage = 20, crit = 100)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함. 둘을 연결해야 함.
         
-        Insizing = core.DamageSkill("인사이징", 660, 576, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #870->640 오더스 적용 필요함. 도트뎀 (30초간 2초당 165%), 크리율에따른 뎀증 반영필요.
+        Insizing = core.DamageSkill("인사이징", 660, 576, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #870->640 오더스 적용 필요함.
         InsizingBuff = core.BuffSkill("인사이징(버프)", 0, 30 * 1000, cooltime = -1, pdamage = 25).wrap(core.BuffSkillWrapper)
+        InsizingDot = core.DotSkill("인사이징(도트)", 165, 30 * 1000).wrap(core.SummonSkillWrapper)
     
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 170, 3 * 0.75).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
@@ -135,7 +136,7 @@ class JobGenerator(ck.JobGenerator):
 
         RisingRage.onAfter(ComboAttack.stackController(1))
     
-        Insizing.onAfters([InsizingBuff, AdvancedFinalAttack, ComboAttack.stackController(-2)])
+        Insizing.onAfters([InsizingBuff, InsizingDot, AdvancedFinalAttack, ComboAttack.stackController(-2)])
     
         ComboDesfort.onAfters([ComboDesfortBuff, ComboAttack.stackController(-6)])    #is_usable() 콜로 체크 필수.
 
@@ -151,7 +152,7 @@ class JobGenerator(ck.JobGenerator):
         return(RaisingBlowInrage,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
                     ComboAttack, Fury, EpicAdventure, Valhalla, 
-                    InsizingBuff, AuraWeaponBuff, ComboDesfortBuff, 
+                    InsizingBuff, InsizingDot, AuraWeaponBuff, ComboDesfortBuff, 
                     ComboInstinct, ComboInstinctOff, PanicBuff,
                     globalSkill.soul_contract()] +\
                 [Panic, Insizing, ComboDesfort, RisingRage] +\

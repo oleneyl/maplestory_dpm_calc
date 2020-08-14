@@ -98,7 +98,7 @@ class JobGenerator(ck.JobGenerator):
         AdvancedComboAbility = core.BuffSkill("어드밴스드 콤보 어빌리티", 0, 9999*9999, att=2*10, crit=3*10).wrap(core.BuffSkillWrapper)
         ComboAbility = core.BuffSkill("콤보 어빌리티", 0, 9999*9999, att=2*10).wrap(core.BuffSkillWrapper) 
         Judgement = core.DamageSkill("저지먼트", JUDGEMENT_DELAY, 380, 4).wrap(core.DamageSkillWrapper)
-        JudgementTick = core.SummonSkill("저지먼트(지속)", 0, 1000, 200, 1, 6000).wrap(core.SummonSkillWrapper)
+        JudgementDot = core.DotSkill("저지먼트(도트)", 200, 6000).wrap(core.SummonSkillWrapper)
 
         BlessingMaha = core.BuffSkill("블레싱 마하", 0, 200*1000, att=30).wrap(core.BuffSkillWrapper)   #펫버프
 
