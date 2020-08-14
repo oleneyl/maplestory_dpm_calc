@@ -105,7 +105,7 @@ class JobGenerator(ck.JobGenerator):
         HiddenBladeOpt = core.OptionalElement(HiddenBladeBuff.is_active, HiddenBlade)
         
         FlashBang.onAfter(FlashBangDebuff)
-        for sk in [FinalCut, PhantomBlow, SuddenRaid, FlashBang, AsuraTick, BladeStorm, BladeStormTick, BladeTornado]:
+        for sk in [FinalCut, PhantomBlow, SuddenRaid, FlashBang, AsuraTick, BladeStorm, BladeStormTick, BladeTornado, KarmaFury]:
             sk.onAfter(HiddenBladeOpt)
             
         for sk in [PhantomBlow, AsuraTick, BladeStormTick]:
