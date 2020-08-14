@@ -62,13 +62,16 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
 
+        self.Alpha = core.CharacterModifier(pdamage_indep = 34, crit = 40, att = 40, armor_ignore = 30, crit_damage = 50)
+        self.Beta = core.CharacterModifier(pdamage_indep = 49, crit = 15, boss_pdamage = 30, att = 80)
+
     def get_passive_skill_list(self):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
 
         ResolutionTime = core.InformedCharacterModifier("리졸브 타임",pdamage_indep = 25, stat_main = 50)
         
         # 무기상수 1.34
-        AlphaState = core.InformedCharacterModifier("상태-알파", pdamage_indep = 34, crit = 40, att = 40, armor_ignore = 30, crit_damage = 50)
+        AlphaState = core.InformedCharacterModifier("상태-알파") + self.Alpha
         #4카5앱 옵션을 직접 작성할 경우를 가정하여...
         #VellumHelm = core.InformedCharacterModifier("카오스 벨룸의 헬름(4카 5앱)",boss_pdamage = 30, armor_ignore = -10)
 
@@ -103,12 +106,8 @@ class JobGenerator(ck.JobGenerator):
         어파스 기준
         '''
         #### 마스터리 ####
-        AlphaMastery = core.CharacterModifier(pdamage_indep = 34) + \
-            core.CharacterModifier(att = 40, armor_ignore = 30) + \
-            core.CharacterModifier(crit = 40) + \
-            core.CharacterModifier(crit_damage = 50)
-        BetaMastery = core.CharacterModifier(pdamage_indep = 49) + \
-                    core.CharacterModifier(crit = 15, boss_pdamage = 30, att = 80)
+        AlphaMastery = self.Alpha
+        BetaMastery = self.Beta
 
         AlphaBetaDiff = BetaMastery - AlphaMastery
         
