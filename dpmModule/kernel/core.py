@@ -114,7 +114,7 @@ class CharacterModifier(object):
         factor = (1 + 0.01 * (self.pdamage)) * (1 + 0.01 * self.pdamage_indep)
         return stat * adap * factor * 0.01
     
-    def calculate_damage(self, damage, hit, armor = 300):
+    def calculate_damage(self, damage, hit, spec, armor = 300):
         '''Return : (damage, loss) tuple
         숙련도는 90~100으로 가정함(5% deviation)
         '''
@@ -157,15 +157,23 @@ class CharacterModifier(object):
         stat = (4 * self.stat_main * (1 + 0.01 * self.pstat_main) + self.stat_sub * (1 + 0.01 * self.pstat_sub)) + (4 * self.stat_main_fixed + self.stat_sub_fixed )
         adap = self.att * (1 + 0.01 * self.patt)
         factor_crit_removed = (1 + 0.01 * (max(self.pdamage + self.boss_pdamage, 0))) * (1 + 0.01 * self.pdamage_indep)
-        ignorance = max((100 - armor * (1 - 0.01* self.armor_ignore)) * 0.01, 0)        
+        ignorance = max((100 - armor * (1 - 0.01* self.armor_ignore)) * 0.01, 0)
+        expert_max = 100 / 95
+        expert_min = 90 / 95
+
+        if spec == "dot":
+            real_crit = 0
+            factor_crit_removed = 1
+            ignorance = 1
+            expert_min = expert_max
         
         factor_aggregated = stat * adap * factor_crit_removed * ignorance * damage * 0.0001
         
         max_crit_factor = (1 + 0.0001 * max(0, real_crit) * (self.crit_damage + 50))
         min_crit_factor = (1 + 0.0001 * max(0, real_crit) * (self.crit_damage + 20))
         
-        max_damage_factor = factor_aggregated * (100/95)
-        min_damage_factor = factor_aggregated * (90/95)
+        max_damage_factor = factor_aggregated * expert_max
+        min_damage_factor = factor_aggregated * expert_min
 
         real_damage = hit * (max_crit_factor + min_crit_factor) / 2 * (max_damage_factor + min_damage_factor) / 2 # W/O restriction
         res_damage = hit * restricted_damage(min_damage_factor, max_damage_factor, min_crit_factor, max_crit_factor, MAX_DAMAGE_RESTRICTION)  # W/ restriction
@@ -1130,7 +1138,7 @@ class BuffSkillWrapper(AbstractSkillWrapper):
             self.available = False
         delay = self.skill.delay
         #mdf = self.get_modifier()
-        return ResultObject(delay, CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'buff', kwargs = {"remain" : self.skill.remain * (1+0.01*rem*self.skill.rem)})
+        return ResultObject(delay, CharacterModifier(), 0, 0, sname = self.skill.name, spec = self.skill.spec, kwargs = {"remain" : self.skill.remain * (1+0.01*rem*self.skill.rem)})
 
     def get_modifier(self) -> CharacterModifier:
         if self.onoff:
@@ -1235,7 +1243,7 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         self.cooltimeLeft = self.skill.cooltime * (1-0.01*red*self.skill.red)
         if self.cooltimeLeft > 0:
             self.available = False
-        return ResultObject(self.skill.delay, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = 'deal')
+        return ResultObject(self.skill.delay, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
         #return delay, mdf, dmg, self.cascade
         
     def get_modifier(self) -> CharacterModifier:
@@ -1291,14 +1299,14 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self.timeLeft = self.skill.remain * (1+0.01*rem*self.skill.rem)
         if self.cooltimeLeft > 0:
             self.available = False
-        return ResultObject(self.skill.summondelay, self.disabledModifier, 0, 0, sname = self.skill.name, spec = 'summon')
+        return ResultObject(self.skill.summondelay, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
     
     def _useTick(self):
         if self.onoff and self.tick <= 0:
             self.tick += self.skill.delay
-            return ResultObject(0, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = 'summon')
+            return ResultObject(0, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
         else:
-            return ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = 'summon')    
+            return ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)    
     
     def build_periodic_task(self):
         task = Task(self, self._useTick)
@@ -1664,7 +1672,7 @@ class Analytics():
         if result.damage > 0:
             mdf = charmdf + result.mdf
             
-            deal, loss = mdf.calculate_damage(result.damage, result.hit)
+            deal, loss = mdf.calculate_damage(result.damage, result.hit, result.spec)
             free_deal = deal + loss
             
             #free_deal = mdf.get_damage_factor() * result.damage * 0.01
@@ -1760,7 +1768,7 @@ class Analytics():
                 mdf = self.chtrmdf + result.mdf
                 if log["time"] >= maximal_time_loc and log["time"] < maximal_time_loc + continue_time_length:
                     mdf += temporal_modifier
-                deal, loss = mdf.calculate_damage(result.damage, result.hit)
+                deal, loss = mdf.calculate_damage(result.damage, result.hit, result.spec)
                 total_damage += deal
         
         simple_increment = ((self.chtrmdf + temporal_modifier).get_damage_factor() / (self.chtrmdf.get_damage_factor()) - 1) * (continue_time_length / self.totalTime)
