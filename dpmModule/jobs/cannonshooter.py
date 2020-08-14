@@ -59,10 +59,10 @@ class JobGenerator(ck.JobGenerator):
         Buckshot = core.BuffSkill("벅 샷", 0, 180000).wrap(core.BuffSkillWrapper)
         MonkeyWave = core.DamageSkill("몽키 웨이브", 810, 860, 1, cooltime = 30*1000).wrap(core.DamageSkillWrapper)
         MonkeyWaveBuff = core.BuffSkill("몽키 웨이브(버프)", 0, 30000, cooltime = -1, crit_damage = 5).wrap(core.BuffSkillWrapper)
-        MonkeyFurious = core.DamageSkill("몽키 퓨리어스", 690, 180, 3, cooltime = 30*1000).wrap(core.DamageSkillWrapper)
+        MonkeyFurious = core.DamageSkill("몽키 퓨리어스", 720, 180, 3, cooltime = 30*1000).wrap(core.DamageSkillWrapper)
         MonkeyFuriousBuff = core.BuffSkill("몽키 퓨리어스(버프)", 0, 30000, cooltime = -1, pdamage = 40).wrap(core.BuffSkillWrapper)
-        MonkeyFuriousDot = core.DotSkill("몽키 퓨리어스(도트)", 20, 30000).wrap(core.SummonSkillWrapper)
-        OakRulet = core.BuffSkill("오크통 룰렛", 810, 180000, rem = True, cooltime = 180000, crit_damage = 1.25).wrap(core.BuffSkillWrapper)
+        MonkeyFuriousDot = core.DotSkill("몽키 퓨리어스(도트)", 200, 30000).wrap(core.SummonSkillWrapper)
+        OakRulet = core.BuffSkill("오크통 룰렛", 840, 180000, rem = True, cooltime = 180000, crit_damage = 1.25).wrap(core.BuffSkillWrapper)
         OakRuletDOT = core.DotSkill("오크통 도트", 50, 5000).wrap(core.SummonSkillWrapper)
         MonkeyMagic = core.BuffSkill("하이퍼 몽키 스펠", 0, 180000, rem = True, stat_main=60, stat_sub=60).wrap(core.BuffSkillWrapper)
     
@@ -71,7 +71,7 @@ class JobGenerator(ck.JobGenerator):
         #서포트 몽키 트윈스 공격주기 확ㄷ인
         SupportMonkeyTwins = core.SummonSkill("서포트 몽키 트윈스", 720, 60000/195*3, 3*295*0.6, 2, 60000, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
         
-        RollingCanonRainbow = core.SummonSkill("롤링 캐논 레인보우", 810, 12000/25, 600, 3, 12000, cooltime = 90000).setV(vEhc, 3, 2, True).wrap(core.SummonSkillWrapper)
+        RollingCanonRainbow = core.SummonSkill("롤링 캐논 레인보우", 480, 12000/26, 600, 3, 12000, cooltime = 90000).setV(vEhc, 3, 2, True).wrap(core.SummonSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
         #로디드 데미지 고정.
@@ -89,7 +89,7 @@ class JobGenerator(ck.JobGenerator):
         BFGCannonball = core.SummonSkill("빅 휴즈 기간틱 캐논볼", 600, 210, (450+15*vEhc.getV(0,0)) * 0.45, 4 * 3, 210*COCOBALLHIT, cooltime = 25000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
 
 
-        ICBM = core.DamageSkill("ICBM", 1190, (1200+48*vEhc.getV(1,1)) * 0.45, 5*ICBMHIT * 3, cooltime = 30000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        ICBM = core.DamageSkill("ICBM", 1140, (1200+48*vEhc.getV(1,1)) * 0.45, 5*ICBMHIT * 3, cooltime = 30000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         ICBMDOT = core.SummonSkill("ICBM(장판)", 0, 15000/27, (500+20*vEhc.getV(1,1)) * 0.45, 1 * 3, 15000, cooltime = -1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) #27타
     
         SpecialMonkeyEscort_Canon = core.SummonSkill("스페셜 몽키 에스코트", 780, int(45000 / 97), 300+12*vEhc.getV(2,2), 4, (30+int(0.5*vEhc.getV(2,2)))*1000 - 1500, cooltime = 120000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
