@@ -104,9 +104,9 @@ class JobGenerator(ck.JobGenerator):
         FoxSoul_Normal = core.DamageSkill("여우령", 0, 200, 3 * (0.25+0.1)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         FoxSoul_DoubleBody = core.DamageSkill("여우령(분혼 격참)", 0, 200 * DOUBLEBODYMULTIPLIER, 3 * (0.25+0.1)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        SoulAttack = core.DamageSkill("귀참", 600, 265, 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        SoulAttack = core.DamageSkill("귀참", 630, 265, 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DoubleBodyAttack = core.DamageSkill("분혼 격참(공격)", 0, 2000, 1).wrap(core.DamageSkillWrapper)
-        DoubleBody = core.BuffSkill("분혼 격참", 900, 10000, cooltime = 180 * 1000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
+        DoubleBody = core.BuffSkill("분혼 격참", 810, 10000, cooltime = 180 * 1000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
 
         #하이퍼스킬
         #정결극 유지율 100%
@@ -115,10 +115,7 @@ class JobGenerator(ck.JobGenerator):
         EnhanceSpiritLinkSummon_J_Init = core.SummonSkill("수호 정령(소혼 장막)(시전)", 0, 60 * 1000, 0, 0, 120000 * (SOULENHANCEREM/100), cooltime = -1).wrap(core.SummonSkillWrapper)
         EnhanceSpiritLinkSummon_J = core.SummonSkill("수호 정령(소혼 장막)", 0, 150, 150, 1, 4800, cooltime = -1).wrap(core.SummonSkillWrapper)
 
-        #소혼 장막을 은월이 시전해야함
-        #소혼 장막: 최대 10명의 적을 150% 데미지로 4.8초 동안 지속 공격, 수호 정령이 소혼 장막을 시전 하는 동안 은월이 시전하는 소혼장막의 최종 데미지 700% 증가. 재사용 대기시간 60초
-        #최종 데미지 450 -> 700으로 수정
-
+        # 랑과 무조건 함께 사용 (최종뎀 700%)
         SpiritFrenzy = core.DamageSkill("소혼 장막(시전)", 0, 0, 0, cooltime=10*1000 + 10080).wrap(core.DamageSkillWrapper)
         SpiritFrenzy_Tick = core.DamageSkill("소혼 장막", 180, 45, 5, cooltime = -1, modifier=core.CharacterModifier(pdamage_indep = 700)).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
 
@@ -140,12 +137,12 @@ class JobGenerator(ck.JobGenerator):
         SoulTrap_D_Normal = core.DamageSkill("귀문진 공격", 0, 600+24*vEhc.getV(3,2), 3 * 2, cooltime = -1).isV(vEhc,3,2).wrap(core.DamageSkillWrapper)
         SoulTrap_D_DoubleBody = core.DamageSkill("귀문진 공격(분혼 격참)", 0, (600+24*vEhc.getV(3,2))*DOUBLEBODYMULTIPLIER, 3 * 2, cooltime = -1).isV(vEhc,3,2).wrap(core.DamageSkillWrapper)
 
-        RealSoulAttack = core.DamageSkill("진 귀참", 720, 540+6*vEhc.getV(1,3), 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20) + core.CharacterModifier(armor_ignore=50)).setV(vEhc, 0, 2, False).isV(vEhc,1,3).wrap(core.DamageSkillWrapper)
+        RealSoulAttack = core.DamageSkill("진 귀참", 540, 540+6*vEhc.getV(1,3), 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20) + core.CharacterModifier(armor_ignore=50)).setV(vEhc, 0, 2, False).isV(vEhc,1,3).wrap(core.DamageSkillWrapper)
         RealSoulAttackCounter = core.BuffSkill("진 귀참(딜레이)", 0, 6000, cooltime = -1).wrap(core.BuffSkillWrapper)
         DoubleBodyRegistance = core.BuffSkill("분혼 격참(저항)", 0, 90000, cooltime = -1).wrap(core.BuffSkillWrapper)
 
         # 파쇄철조 (디버프용)
-        BladeImp = core.DamageSkill("파쇄철조-회", 90, 160, 4).wrap(core.DamageSkillWrapper)
+        BladeImp = core.DamageSkill("파쇄철조-회", 360, 160, 4).wrap(core.DamageSkillWrapper)
         BladeImpBuff = core.BuffSkill("파쇄철조-반", 0, 15 * 1000, cooltime=-1, pdamage_indep=10).wrap(core.BuffSkillWrapper)
 
         ######   Skill Wrapper   ######
