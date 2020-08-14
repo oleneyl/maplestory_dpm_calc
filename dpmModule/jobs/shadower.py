@@ -5,7 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import thieves
-from . import contrib
+from . import jobutils
 
 class MesoStack(core.DamageSkillWrapper, core.StackSkillWrapper):
     # 메익 리인포스 미적용 기준
@@ -168,7 +168,7 @@ class JobGenerator(ck.JobGenerator):
         BasicAttackWrapper.onAfter(Assasinate)
 
         for sk in [Assasinate1, Assasinate2, Assasinate1_D, Assasinate2_D, Eviscerate, SonicBlowTick]:
-            contrib.create_auxilary_attack(sk, 0.7, nametag = '(쉐도우파트너)')
+            jobutils.create_auxilary_attack(sk, 0.7, nametag = '(쉐도우파트너)')
         
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
