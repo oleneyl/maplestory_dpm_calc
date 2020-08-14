@@ -6,7 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConditionRule
 from . import globalSkill
 from .jobbranch import thieves
-from . import contrib
+from . import jobutils
 #TODO : 5차 신스킬 적용
 
 # TODO: 왜 레투다는 5차값이 1,1인데 레투다 패시브는 2,2일까?
@@ -121,7 +121,7 @@ class JobGenerator(ck.JobGenerator):
 
         for sk in [PhantomBlow, SuddenRaid, FinalCut, FlashBang, AsuraTick, 
             BladeStorm, BladeStormTick, KarmaFury, BladeTornado, HiddenBlade]:
-            contrib.create_auxilary_attack(sk, 0.7, nametag = '(미러이미징)')
+            jobutils.create_auxilary_attack(sk, 0.7, nametag = '(미러이미징)')
         
         return(PhantomBlow,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),

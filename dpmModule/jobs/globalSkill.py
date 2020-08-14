@@ -1,5 +1,5 @@
 from ..kernel import core
-
+import math
 
 #_SoulContract = core.BuffSkill("SoulContract", 600, 1000, cooltime = 9000, pdamage = 45)
 
@@ -23,8 +23,8 @@ def soul_contract(Cool = 90*1000):
     return SoulContract
 
 # 쓸컴뱃 = 1, 팔라딘 = 2
-def maple_heros(level, combat_level = 0):
-    MapleHeros = core.BuffSkill("메이플 용사", 0, (900+15*combat_level)*1000, stat_main = (0.15 + 0.005 * combat_level)*(25 + level * 5), rem = True).wrap(core.BuffSkillWrapper)
+def maple_heros(level, name = "메이플 용사", combat_level = 0):
+    MapleHeros = core.BuffSkill(name, 0, (900+15*combat_level)*1000, stat_main = math.ceil(15 + 0.5 * combat_level)*0.01*(25 + level * 5), rem = True).wrap(core.BuffSkillWrapper)
     return MapleHeros
 
 # 1레벨
@@ -58,6 +58,11 @@ class SpiderInMirrorBuilder():
 
     def get_skill(self):
         return self.SpiderInMirror
+
+# 모험가, 영웅, 레지스탕스가 사용
+def MapleHeroes2Wrapper(vEhc, num1, num2, level):
+    MapleHeroes2 = core.BuffSkill("메이플월드 여신의 축복", 450, 60*1000, stat_main = 0.01 * (100 + 10 * vEhc.getV(num1, num2)) * (25 + level * 5), pdamage = 5 + vEhc.getV(num1, num2) // 2, cooltime = 180*1000).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
+    return MapleHeroes2
 
 # 창조의 아이온 (즉시 재시전)
 def genesis_aeonian_rise():

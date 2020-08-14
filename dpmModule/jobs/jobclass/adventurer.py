@@ -32,11 +32,6 @@ class InfinityWrapper(core.BuffSkillWrapper):
 
 # 이하 모든 코드 테스트 필요
 
-# 레지스탕스도 이 코드를 사용
-def MapleHeroes2Wrapper(vEhc, num1, num2, level):
-    MapleHeroes2 = core.BuffSkill("메이플월드 여신의 축복", 450, 60*1000, stat_main = 0.01 * (100 + 10 * vEhc.getV(num1, num2)) * (25 + level * 5), pdamage = 5 + vEhc.getV(num1, num2) // 2, cooltime = 180*1000).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
-    return MapleHeroes2
-
 def PirateFlagWrapper(vEhc, num1, num2, level):
     PirateFlag = core.BuffSkill("파이렛 플래그", 990, 30 * 1000, cooltime = (60 - vEhc.getV(num1, num2)) * 1000, armor_ignore = int(10 + 0.5*vEhc.getV(num1, num2)), stat_main = (level * 5 + 18)*0.01*int(10 + 0.5*vEhc.getV(num1, num2))).isV(vEhc,num1, num2).wrap(core.BuffSkillWrapper)
     return PirateFlag

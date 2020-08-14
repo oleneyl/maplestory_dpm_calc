@@ -4,7 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
-from . import contrib
+from . import jobutils
 from .jobbranch import pirates
 from .jobclass import cygnus
 from . import jobutils
@@ -129,7 +129,7 @@ class JobGenerator(ck.JobGenerator):
         ThunderConcat.onAfter(DestroyConcat)
         
         for skill in [Destroy, Thunder, DestroyConcat, ThunderConcat, HuricaneConcat, GioaTan, NoiShinChanGeuk]:
-            contrib.create_auxilary_attack(skill, CHOOKROI, "(축뢰)")
+            jobutils.create_auxilary_attack(skill, CHOOKROI, "(축뢰)")
 
         for skill in [Destroy, Thunder, DestroyConcat, ThunderConcat, NoiShinChanGeuk]:
             skill.onAfter(LightningStack.stackController(1))
