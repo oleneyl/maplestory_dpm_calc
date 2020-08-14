@@ -109,6 +109,8 @@ class JobGenerator(ck.JobGenerator):
         ShadowBiteBuff = core.BuffSkill("쉐도우 바이트(버프)", 0, (15+vEhc.getV(2,2)//10)*1000, pdamage_indep = (8+vEhc.getV(2,2)//4), cooltime = -1).isV(vEhc,2,2).wrap(core.BuffSkillWrapper)
         ######   Skill Wrapper   ######
 
+        ElementalDarkness.onAfter(ElementalDarknessDOT)
+
         #_VenomBurst = core.DamageSkill("베놈 버스트", ??) ## 패시브 50%확률로 10초간 160+6*vlevel dot. 사용시 도트뎀 모두 피해 + (500+20*vlevel) * 5. 어차피 안쓰는 스킬이므로 작성X
 
         ShadowSpearTickBat = core.OptionalElement(ShadowSpear.is_active, ShadowSpearSmallBat, name = "스피어ON")
