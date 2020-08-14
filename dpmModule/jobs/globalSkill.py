@@ -59,6 +59,11 @@ class SpiderInMirrorBuilder():
     def get_skill(self):
         return self.SpiderInMirror
 
+# 모험가, 영웅, 레지스탕스가 사용
+def MapleHeroes2Wrapper(vEhc, num1, num2, level):
+    MapleHeroes2 = core.BuffSkill("메이플월드 여신의 축복", 450, 60*1000, stat_main = 0.01 * (100 + 10 * vEhc.getV(num1, num2)) * (25 + level * 5), pdamage = 5 + vEhc.getV(num1, num2) // 2, cooltime = 180*1000).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
+    return MapleHeroes2
+
 # 창조의 아이온 (즉시 재시전)
 def genesis_aeonian_rise():
     AeonianRise = core.DamageSkill("창조의 아이온", 0, 1500, 7, cooltime = 180000).wrap(core.DamageSkillWrapper)
