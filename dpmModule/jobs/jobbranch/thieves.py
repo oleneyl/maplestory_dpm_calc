@@ -8,7 +8,7 @@ from functools import partial
 
 # 직업별 스크립트 완전히 파악되면 통합 필요
 def ReadyToDieWrapper(vEhc, num1, num2):
-    ReadyToDie = core.BuffSkill("레디 투 다이", 780, 15*1000, cooltime = (90-int(0.5*vEhc.getV(num1, num2)))*1000, pdamage_indep = 30+int(0.2*vEhc.getV(num1, num2))).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
+    ReadyToDie = core.BuffSkill("레디 투 다이", 600 * 2, 15*1000, cooltime = (90-int(0.5*vEhc.getV(num1, num2)))*1000, pdamage_indep = 30+int(0.2*vEhc.getV(num1, num2))).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
     return ReadyToDie
 
 def ReadyToDiePassiveWrapper(vEhc, num1, num2):
