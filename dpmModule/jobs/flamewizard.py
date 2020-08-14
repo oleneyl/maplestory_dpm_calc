@@ -63,23 +63,23 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         WordOfFire = core.BuffSkill("북 오브 파이어", 0, 300000, att = 20).wrap(core.BuffSkillWrapper)
         FiresOfCreation = core.BuffSkill("스피릿 오브 플레임", 600, 300 * 1000, armor_ignore = 30).wrap(core.BuffSkillWrapper)
-        BurningRegion = core.BuffSkill("버닝 리전", 810, 30 * 1000, cooltime =45 * 1000, rem = True, pdamage = 60).wrap(core.BuffSkillWrapper)
+        BurningRegion = core.BuffSkill("버닝 리전", 1080, 30 * 1000, cooltime =45 * 1000, rem = True, pdamage = 60).wrap(core.BuffSkillWrapper)
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         Flame = core.BuffSkill("플레임", 0, 8000, att = 40).wrap(core.BuffSkillWrapper) # 벞지 적용 안되는 스킬
         
         OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         #Damage Skills
-        InfernoRize = core.DamageSkill("인페르노라이즈", 540, 350, 10, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage_indep = 90), red = True).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #임의딜레이 720
+        InfernoRize = core.DamageSkill("인페르노라이즈", 570, 350, 10, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage_indep = 90), red = True).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         #Full speed, No Combat Orders
-        OrbitalFlame = core.DamageSkill("오비탈 플레임 IV", 210, 215, 3 * 2, cooltime = flamewizardDefaultSpeed, modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        OrbitalFlame = core.DamageSkill("오비탈 플레임 IV", 210, 215, 3 * 2 * (210 / flamewizardDefaultSpeed), modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         # BlazingExtinction = core.SummonSkill("블레이징 익스팅션", 1020, 2500, 310, 3+1, 10000, cooltime=5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
         CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 2, 1)
         BlazingOrbital = core.DamageSkill("블레이징 오비탈 플레임", 210, 330+13*vEhc.getV(0,0), 6 * blazingOrbitalHit, cooltime = 5000, modifier = core.CharacterModifier(armor_ignore = 50), red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)    #4타 가정
         
         DragonSlaveTick = core.DamageSkill("드래곤 슬레이브", 280, 500, 6).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)#x7
         DragonSlaveInit = core.DamageSkill("드래곤 슬레이브 개시(더미)", 0, 0, 0, cooltime = 90 * 1000).wrap(core.DamageSkillWrapper)
-        DragonSlaveEnd = core.DamageSkill("드래곤 슬레이브 종결", 0, 500, 10).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        DragonSlaveEnd = core.DamageSkill("드래곤 슬레이브 종결", 810, 500, 10).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
         IgnitionDOT = core.DotSkill("이그니션", 220*1.6, 10*1000).wrap(core.SummonSkillWrapper)
 
