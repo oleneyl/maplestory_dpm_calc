@@ -111,7 +111,7 @@ class JobGenerator(ck.JobGenerator):
         PsychicShield = core.BuffSkill("사이킥 실드", 0, 180000).wrap(core.BuffSkillWrapper)
 
         Ultimate_Material = core.DamageSkill("얼티메이트-메테리얼", 630, 700, 10, modifier = core.CharacterModifier(crit_damage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)#   7
-        PsychicDrain = core.SummonSkill("싸이킥 드레인", 540, 500, 150, 1, 10000, cooltime = 5000, rem = False).setV(vEhc, 4, 5, False).wrap(core.SummonSkillWrapper) # 1칸+
+        PsychicDrain = core.SummonSkill("싸이킥 드레인", 510, 500, 150, 1, 10000, cooltime = 5000, rem = False).setV(vEhc, 4, 5, False).wrap(core.SummonSkillWrapper) # 1칸+
         
         PsychicForce3 = core.DamageSkill("싸이킥 포스3", 270, 0, 0).wrap(core.DamageSkillWrapper)
         PsychicForce3Dot = core.DotSkill("싸이킥 포스3(도트)", 403.125, 20000).wrap(core.SummonSkillWrapper) # ~20초 평균 퍼뎀
@@ -128,7 +128,7 @@ class JobGenerator(ck.JobGenerator):
         
         PsychicCharging = core.BuffSkill("싸이킥 차징", 0, 500, cooltime = 45000, red = True).wrap(core.BuffSkillWrapper) #남은포인트의 50%충전
         
-        UltimateTrain = core.SummonSkill("얼티메이트-트레인", 810, 11999 / 17, 180, 6, 12000, modifier = core.CharacterModifier(crit_damage = 20)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        UltimateTrain = core.SummonSkill("얼티메이트-트레인", 600, 11999 / 17, 180, 6, 12000, modifier = core.CharacterModifier(crit_damage = 20)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
 
         #하이퍼
         EverPsychic = core.DamageSkill("에버 싸이킥", 870, 400, 16, cooltime = 120000).wrap(core.DamageSkillWrapper) # 캔슬 통해 딜레 870ms
@@ -142,11 +142,11 @@ class JobGenerator(ck.JobGenerator):
             print(vEhc)
             raise
 
-        PsychicTornado = core.SummonSkill("싸이킥 토네이도", 720, 1000, 500+20*vEhc.getV(2,2), 4, 20000, red = True, cooltime = 120000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)# -15
-        PsychicTornadoFinal_1 = core.DamageSkill("싸이킥 토네이도(1)", 720, (200+3*vEhc.getV(2,2))*3, 2, cooltime=-1).wrap(core.DamageSkillWrapper)
+        PsychicTornado = core.SummonSkill("싸이킥 토네이도", 540, 1000, 500+20*vEhc.getV(2,2), 4, 20000, red = True, cooltime = 120000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)# -15
+        PsychicTornadoFinal_1 = core.DamageSkill("싸이킥 토네이도(1)", 0, (200+3*vEhc.getV(2,2))*3, 2, cooltime=-1).wrap(core.DamageSkillWrapper)
         PsychicTornadoFinal_2 = core.DamageSkill("싸이킥 토네이도(2)", 0, (350+10*vEhc.getV(2,2))*3, 10*3, cooltime=-1).wrap(core.DamageSkillWrapper)
 
-        UltimateMovingMatter = core.SummonSkill("얼티메이트-무빙 매터", 630, 25000/64, 500+20*vEhc.getV(0,0), 5, 25000, cooltime = 90000, modifier = core.CharacterModifier(crit_damage=20)).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)# -10
+        UltimateMovingMatter = core.SummonSkill("얼티메이트-무빙 매터", 480, 25000/64, 500+20*vEhc.getV(0,0), 5, 25000, cooltime = 90000, modifier = core.CharacterModifier(crit_damage=20)).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)# -10
         UltimateMovingMatterFinal = core.DamageSkill("얼티메이트-무빙 매터(최종)", 0, 700+28*vEhc.getV(0,0), 12).wrap(core.DamageSkillWrapper)
         
         UltimatePsychicBullet = core.DamageSkill("얼티메이트-싸이킥 불릿", 630, 550 + 22*vEhc.getV(3,3), 6, modifier = core.CharacterModifier(crit_damage=20)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)# -2, 딜레이 420ms + 그랩 210ms
@@ -176,7 +176,7 @@ class JobGenerator(ck.JobGenerator):
         
         ### Psychic point
         Ultimate_Material.onConstraint(core.ConstraintElement("7포인트", PsychicPoint, partial(PsychicPoint.judge_ultimate,7)))
-        Ultimate_Material.onConstraint(core.ConstraintElement("트레인 깔려있으면", UltimateTrain, partial(UltimateTrain.is_time_left, 0, 1))) # 0 -> 2000으로 조절하면 트레인 비중 높은 딜사이클이 됨
+        Ultimate_Material.onConstraint(core.ConstraintElement("트레인 깔려있으면", UltimateTrain, partial(UltimateTrain.is_time_left, 0, 1)))
         Ultimate_Material.onBefore(PsychicPoint.stackController(-7))
         
         PsychicForce3.onConstraint(core.ConstraintElement("도트 종료시", PsychicForce3Dot, PsychicForce3Dot.is_not_active))
