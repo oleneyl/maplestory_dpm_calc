@@ -6,12 +6,56 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobclass import cygnus
 from .jobbranch import thieves
+
+class ShadowBatStackWrapper(core.StackSkillWrapper):
+    def __init__(self, skill):
+        self.BAT_SUMMON_DELAY = 960
+        self.MAX_BAT = 5
+        self.throwCount = 0
+        self.stack = 0
+        self.batQueue = []
+        self.currentTime = 0
+        super(ShadowBatStackWrapper, self).__init__(skill, 5)
+        
+    def _add_throw(self):
+        '''
+        표창 사용 3회마다 배트를 1개씩 소환합니다.
+        단, 소환중인 배트 + 소환된 배트의 수는 최대 5개 까지만 가능합니다.
+        따라서 소환 큐에는 최대 (5 - 현재 스택) 개수까지만 들어갈 수 있습니다.
+        '''
+        self.throwCount = self.throwCount + 1
+        if self.throwCount >= 3:
+            self.throwCount -= 3
+            if len(self.batQueue) < self._max - self.stack:
+                self.batQueue = self.batQueue + [self.currentTime]
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, '표창 사용 추가')
+
+    def add_throw(self):
+        return core.TaskHolder(core.Task(self, self._add_throw), name="표창 사용 추가")
+
+    def spend_time(self, time):
+        '''
+        매 시간마다 큐에서 960ms 이상 지난 원소들을 제거하고, 그만큼 스택에 추가합니다.
+        '''
+        self.currentTime += time
+        batQueue = [x for x in self.batQueue if x + self.BAT_SUMMON_DELAY > self.currentTime]
+        summonedBat = len(self.batQueue) - len(batQueue)
+        self.stack = min(self.stack + summonedBat, 5)
+        self.batQueue = batQueue
+        super(ShadowBatStackWrapper, self).spend_time(time)
+
+class ShadowBatWrapper(core.DamageSkillWrapper):
+    def __init__(self, skill, stackSkill):
+        self.stackSkill = stackSkill
+        super(ShadowBatWrapper, self).__init__(skill)
+
+    def _use(self, rem = 0, red = 0):
+        if self.stackSkill.judge(0, -1):
+            raise ValueError("Not enough stack. Consider using OptionalElement.")
+        self.stackSkill.vary(-1)
+        return super(ShadowBatWrapper, self)._use()
+
 #TODO : 5차 신스킬 적용
-
-######   Passive Skill   ######
-
-
-
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -47,7 +91,7 @@ class JobGenerator(ck.JobGenerator):
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         하이퍼 스킬 : 
-        퀸터플 3종 + 다크니스 오멘 2개
+        퀸터플 스로우-리인포스, 보스킬러 / 사이펀 바이탈리티-리인포스 / 다크니스 오멘 2개
         
         V코어 : 9개
         퀸터플, 배트, 도미니언, 다크니스 오멘 : 1티어
@@ -56,36 +100,37 @@ class JobGenerator(ck.JobGenerator):
         매 퀸터플마다 스피어 1개
         
         점샷 가동률 100%
-        배트 사출률 0.22 (0.333이 아님)
         
         퀸터-배트
         '''
         ######   Skill   ######
 
         JUMPRATE = 1
-        BATRATE = 0.3333
 
-        ElementalDarkness = core.BuffSkill("엘리멘탈 : 다크니스", 900, 180000, armor_ignore = (4+1+1+1) * (2+1+1+1)).wrap(core.BuffSkillWrapper)
+        ElementalDarkness = core.BuffSkill("엘리멘탈 : 다크니스", 900, 180000, armor_ignore = (4+1+1+1) * (2+1+1+1), att = 60).wrap(core.BuffSkillWrapper) # 사이펀 바이탈리티-리인포스 합산
         ElementalDarknessDOT = core.DotSkill("엘리멘탈 : 다크니스(도트)", (80 + 40 + 50 + 50) * (2+1+1+1), 100000000).wrap(core.SummonSkillWrapper)
         Heist = core.BuffSkill("헤이스트", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper)
         Booster = core.BuffSkill("부스터", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper) # 펫버프
-        ShadowServent = core.BuffSkill("쉐도우 서번트", 0, 180000).wrap(core.BuffSkillWrapper) # 펫버프
+        ShadowServent = core.BuffSkill("쉐도우 서번트", 990, 180000).wrap(core.BuffSkillWrapper) # 펫버프 등록불가
         SpiritThrowing = core.BuffSkill("스피릿 스로잉", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper) # 펫버프
-        
-        ShadowBat = core.DamageSkill("쉐도우 배트", 0, 150 + 120 + 150 + 200, BATRATE).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)  #3회 공격당 1번 소환
+
+        ShadowBatStack = ShadowBatStackWrapper(core.BuffSkill("쉐도우 배트(스택)", 0, 0, cooltime=-1))
+        ShadowBat = ShadowBatWrapper(core.DamageSkill("쉐도우 배트", 0, 150 + 120 + 150 + 200, 1).setV(vEhc, 1, 2, True), ShadowBatStack)
         
         #점샷기준(400ms)
-        QuintupleThrow = core.DamageSkill("퀸터플 스로우", (400 * JUMPRATE + 630 * (1-JUMPRATE)), 340, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, crit = 10, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal = core.DamageSkill("퀸터플 스로우(막타)", 0, 475, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, crit = 10, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow = core.DamageSkill("퀸터플 스로우", (400 * JUMPRATE + 630 * (1-JUMPRATE)), 340, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal = core.DamageSkill("퀸터플 스로우(막타)", 0, 475, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        QuintupleThrow_Sv = core.DamageSkill("퀸터플 스로우(서번트)", 0, 340*0.7, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, crit = 10, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal_Sv = core.DamageSkill("퀸터플 스로우(서번트)(막타)", 0, 475*0.7, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, crit = 10, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow_Sv = core.DamageSkill("퀸터플 스로우(서번트)", 0, 340*0.7, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal_Sv = core.DamageSkill("퀸터플 스로우(서번트)(막타)", 0, 475*0.7, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        QuintupleThrow_I = core.DamageSkill("퀸터플 스로우(일루젼)", 0, 340*1.5, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, crit = 10, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal_I = core.DamageSkill("퀸터플 스로우(일루젼)(막타)", 0, 475*1.5, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, crit = 10, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow_I50 = core.DamageSkill("퀸터플 스로우(일루젼 50%)", 0, 340*0.5, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal_I50 = core.DamageSkill("퀸터플 스로우(일루젼 50%)(막타)", 0, 475*0.5, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow_I30 = core.DamageSkill("퀸터플 스로우(일루젼 30%)", 0, 340*0.3, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal_I30 = core.DamageSkill("퀸터플 스로우(일루젼 30%)(막타)", 0, 475*0.3, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        QuintupleThrow_V = core.DamageSkill("퀸터플 스로우(5차)", 0, 340 * 0.01 * (20+vEhc.getV(0,0)), 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, crit = 10, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal_V = core.DamageSkill("퀸터플 스로우(5차)(막타)", 0, 475 * 0.01 * (20+vEhc.getV(0,0)), 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, crit = 10, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow_V = core.DamageSkill("퀸터플 스로우(5차)", 0, 340 * 0.01 * (25+vEhc.getV(0,0)), 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal_V = core.DamageSkill("퀸터플 스로우(5차)(막타)", 0, 475 * 0.01 * (25+vEhc.getV(0,0)), 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
     
         #하이퍼스킬
         ShadowElusion = core.BuffSkill("쉐도우 일루전", 690, 30000, cooltime = 180000).wrap(core.BuffSkillWrapper)
@@ -100,7 +145,6 @@ class JobGenerator(ck.JobGenerator):
 
         ShadowSpear = core.BuffSkill("쉐도우 스피어", 600, (50+vEhc.getV(0,0))*1000, red = True, cooltime = int(181 - vEhc.getV(0,0) / 2)*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ShadowSpearSmall = core.DamageSkill("쉐도우 스피어(창)", 0, 100+4*vEhc.getV(0,0), 4).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        ShadowSpearSmallBat = core.DamageSkill("쉐도우 스피어(창)(배트)", 0, 100+4*vEhc.getV(0,0), 4.0*BATRATE).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ShadowSpearLarge = core.SummonSkill("쉐도우 스피어(거대 창)", 0, 3000, 400 + 16*vEhc.getV(0,0), 6, (50+vEhc.getV(0,0))*1000 - 1, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
 
         ShadowServentExtend = core.BuffSkill("쉐도우 서번트 익스텐드", 570, (30+vEhc.getV(1,1)//2)*1000, red = True, cooltime = 60000).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
@@ -111,27 +155,31 @@ class JobGenerator(ck.JobGenerator):
 
         ElementalDarkness.onAfter(ElementalDarknessDOT)
 
-        #_VenomBurst = core.DamageSkill("베놈 버스트", ??) ## 패시브 50%확률로 10초간 160+6*vlevel dot. 사용시 도트뎀 모두 피해 + (500+20*vlevel) * 5. 어차피 안쓰는 스킬이므로 작성X
-
-        ShadowSpearTickBat = core.OptionalElement(ShadowSpear.is_active, ShadowSpearSmallBat, name = "스피어ON")
         ShadowSpearTick = core.OptionalElement(ShadowSpear.is_active, ShadowSpearSmall, name = "스피어ON")
         ShadowSpear.onAfter(ShadowSpearLarge)
+        ShadowBat.onAfter(ShadowSpearTick)
 
         for start, end in [[QuintupleThrow, QuintupleThrowFinal],
                             [QuintupleThrow_Sv, QuintupleThrowFinal_Sv],
-                            [QuintupleThrow_I, QuintupleThrowFinal_I],
+                            [QuintupleThrow_I50, QuintupleThrowFinal_I50],
+                            [QuintupleThrow_I30, QuintupleThrowFinal_I30],
                             [QuintupleThrow_V, QuintupleThrowFinal_V]]:
             
             start.onAfter(end)
-            for i in [start, end]:
-                i.onAfter(ShadowBat)
-                i.onAfter(ShadowSpearTick)
+            start.onAfter(ShadowBatStack.add_throw())
+            end.onAfter(ShadowBatStack.add_throw())
         
-        #ShadowBat.onAfter(ShadowSpearTickBat)
+        for sk in [QuintupleThrowFinal, QuintupleThrow_Sv, QuintupleThrowFinal_Sv,
+                    QuintupleThrow_I50, QuintupleThrowFinal_I50, QuintupleThrow_I30, QuintupleThrowFinal_I30,
+                    QuintupleThrow_V, QuintupleThrowFinal_V, ShadowBite, DominionAttack]:
+            
+            sk.onAfter(ShadowSpearTick)
         
-        QuintupleThrow_Shadow = core.OptionalElement(ShadowElusion.is_active, QuintupleThrow_I, QuintupleThrow_Sv, name = "일루전 여부")
+        QuintupleThrow.onAfter(core.RepeatElement(core.OptionalElement(partial(ShadowBatStack.judge, 1, 1), ShadowBat, name = "배트 사출가능 여부"), 5))
+        QuintupleThrow_I50_Use = core.OptionalElement(ShadowElusion.is_active, QuintupleThrow_I50, name = "일루전 여부")
+        QuintupleThrow_I30_Use = core.OptionalElement(ShadowElusion.is_active, QuintupleThrow_I30, name = "일루전 여부")
         QuintupleThrow_V_Use = core.OptionalElement(ShadowServentExtend.is_active, QuintupleThrow_V, name = "익스텐드 여부")
-        QuintupleThrow.onAfters([QuintupleThrow_Shadow, QuintupleThrow_V_Use])
+        QuintupleThrow.onAfters([QuintupleThrow_Sv, QuintupleThrow_I50_Use, QuintupleThrow_I30_Use, QuintupleThrow_V_Use])
 
         #도미니언
         Dominion.onAfter(DominionAttack)
@@ -140,7 +188,7 @@ class JobGenerator(ck.JobGenerator):
                 
         return( QuintupleThrow,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-                    ElementalDarkness, Heist, Booster, ShadowServent, SpiritThrowing, 
+                    ElementalDarkness, Heist, Booster, ShadowServent, SpiritThrowing, ShadowBatStack,
                     ShadowElusion, ReadyToDie, Dominion, GloryOfGuardians, ShadowSpear, ShadowServentExtend, ShadowBite, ShadowBiteBuff,
                     globalSkill.soul_contract()] +\
                 [CygnusPalanks] +\
