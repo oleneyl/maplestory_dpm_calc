@@ -113,13 +113,13 @@ class JobGenerator(ck.JobGenerator):
 
         RisingRage = core.DamageSkill("레이지 업라이징", 750, 500, 8, cooltime = 10*1000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        Valhalla = core.BuffSkill("발할라", 840, 30 * 1000, cooltime = 150 * 1000, crit = 30, att = 50).wrap(core.BuffSkillWrapper)  #임의 배정된 공격속도.
+        Valhalla = core.BuffSkill("발할라", 900, 30 * 1000, cooltime = 150 * 1000, crit = 30, att = 50).wrap(core.BuffSkillWrapper)
         SwordOfBurningSoul = core.SummonSkill("소드 오브 버닝 소울", 820, 1000, (315+12*vEhc.getV(0,0)), 6, (60+0.5*vEhc.getV(0,0)) * 1000, cooltime = 120 * 1000, modifier = core.CharacterModifier(crit = 50)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)       #시전 딜레이 모름.
         
-        ComboDesfort = core.DamageSkill("콤보 데스폴트", 1680, 800 + 32*vEhc.getV(2,3), 7, cooltime = 20 * 1000).isV(vEhc, 2, 3).wrap(core.DamageSkillWrapper)
+        ComboDesfort = core.DamageSkill("콤보 데스폴트", 1260, 800 + 32*vEhc.getV(2,3), 7, cooltime = 20 * 1000).isV(vEhc, 2, 3).wrap(core.DamageSkillWrapper)
         ComboDesfortBuff = core.BuffSkill("콤보 데스폴트 종료 지시자", 0, 5 * 1000, pdamage_indep = 48.6, rem = False, cooltime = -1).isV(vEhc, 2, 3).wrap(core.BuffSkillWrapper)
         
-        ComboInstinct = core.BuffSkill("콤보 인스팅트", 450, 30 * 1000, cooltime = 240 * 1000, rem = False, red = True).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper)
+        ComboInstinct = core.BuffSkill("콤보 인스팅트", 360, 30 * 1000, cooltime = 240 * 1000, rem = False, red = True).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper)
         ComboInstinctFringe = core.DamageSkill("콤보 인스팅트 균열", 0, 200 + 8*vEhc.getV(1,1), 18).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
         ComboInstinctOff = core.BuffSkill("콤보 인스팅트 종료", 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper)
 
