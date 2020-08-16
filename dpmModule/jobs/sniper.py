@@ -89,7 +89,7 @@ class JobGenerator(ck.JobGenerator):
         Freezer = core.SummonSkill("프리저", 900, 3030, 390, 1, 220 * 1000).setV(vEhc, 3, 3, False).wrap(core.SummonSkillWrapper)
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         
-        Evolve = core.SummonSkill("이볼브", 600, 2360, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (int(121-0.5*vEhc.getV(5,5)))*1000).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
+        Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (int(121-0.5*vEhc.getV(5,5)))*1000).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
         
         SplitArrow = core.DamageSkill("스플릿 애로우(공격)", 0, 600 + vEhc.getV(0,0) * 24, 5+1, modifier = PASSIVE_MODIFIER).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         SplitArrowBuff = core.BuffSkill("스플릿 애로우", 810, 60 * 1000, 120 * 1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
