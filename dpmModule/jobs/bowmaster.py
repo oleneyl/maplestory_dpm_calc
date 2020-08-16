@@ -129,8 +129,9 @@ class JobGenerator(ck.JobGenerator):
         ArrowOfStorm.onAfter(AdvancedFinalAttack)
         ArrowOfStorm.onAfter(core.OptionalElement(ImageArrow.is_not_active, ImageArrowPassive, name="잔영의 시 액티브 OFF"))
         
-        ArrowRain.onTicks([AdvancedFinalAttack, AdvancedQuibberAttack_ArrowRain])
+        ArrowRain.onTick(AdvancedQuibberAttack_ArrowRain)
         ImageArrow.onTicks([AdvancedFinalAttack, AdvancedQuibberAttack])
+        GuidedArrow.onTick(AdvancedQuibberAttack)
         
         ArrowRainBuff.onAfter(ArrowRain)
         QuibberFullBurstBuff.onAfter(QuibberFullBurstDOT)
