@@ -1,42 +1,51 @@
-import sys
-import dpmModule
+from dpmModule.character.characterTemplate import get_template_generator
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
-import dpmModule.character.characterTemplateHigh as template
-import dpmModule.jobs as maplejobs
-import time
+from dpmModule.jobs import jobMap
+from concurrent.futures import ProcessPoolExecutor
+from itertools import product, groupby
+from operator import itemgetter
 
-'''
-full_test.py
-전체 테스트를 위한 스크립트입니다.
+import time, argparse
 
-등록된 모든 직업의 모든 스펙 기준 DPM 수치를 계산하여 파일로 출력합니다.
-'''
+def get_args():
+    parser = argparse.ArgumentParser('DPM Full Test argument')
+    parser.add_argument('--ulevel', nargs="+", type=int, default=[4000, 5000, 6000, 7000, 8000, 8500])
+    parser.add_argument('--time', type=int, default=1800)
+    parser.add_argument('--thread', type=int, default=4)
 
-charTemplate = {4000: template.getU4000CharacterTemplate, 5000: template.getU5000CharacterTemplate, 6000: template.getU6000CharacterTemplate, 7000: template.getU7000CharacterTemplate, 8000: template.getU8000CharacterTemplate, 8500: template.getU8500CharacterTemplate}
+    return parser.parse_args()
 
-dpm_output = open('dpm_output.txt','w', encoding= 'utf-8')
+def test(args):
+    jobname, ulevel, runtime = args
+    start = time.time()
+    print(f"{jobname} {ulevel} 계산중")
 
-index = 1
+    template = get_template_generator('high_standard')().get_template(ulevel)
+    parser = IndividualDPMGenerator(jobname, template)
+    parser.set_runtime(runtime * 1000)
+    dpm = parser.get_dpm(ulevel = ulevel)
 
-start = time.time()
+    end = time.time()
+    print(f"{jobname} {ulevel} 계산완료, {end - start:.3f}초")
+    return jobname, ulevel, dpm
 
-print("maplestory_dpm_calc Full Test")
-print("등록된 모든 직업의 모든 스펙 기준 DPM 수치를 계산하여 파일로 출력합니다. \n")
-for value in maplejobs.jobList.values():
-    union_level_list = [4000, 5000, 6000, 7000, 8000, 8500]
-    #union_level_list = [6000]
-    dpm_output.write(value + '\t')
-    print(value + " 계산 중 (" + str(index) + '/' + str(len(maplejobs.jobList)) + ')')
-    index += 1
-    for union_level in union_level_list:
-        sstart = time.time()
-        gen = IndividualDPMGenerator(value, charTemplate[union_level])
-        dpm_output.write(str(gen.get_dpm(ulevel = union_level)) + '\t')
-        print(str(union_level) + "레벨급 스펙 계산완료 (소요시간: " + str(round(time.time() - sstart, 3)) + "초)")
-    print()
-    dpm_output.write('\n')
+def write_results(results):
+    dpm_output = open('dpm_output.txt','w', encoding= 'utf-8')
+    for jobname, result in groupby(results, key=itemgetter(0)):
+        dpm_output.write(jobname)
+        for dpm in map(itemgetter(2), result):
+            dpm_output.write(" ")
+            dpm_output.write(str(dpm))
+        dpm_output.write("\n")
+    dpm_output.close()
 
-print(str(len(maplejobs.jobList)) + "개의 직업 계산 완료\n" + "출력: dpm_output.txt")
-print("총 소요시간: " + str(round(time.time() - start, 3)) + "초")
-
-dpm_output.close()
+if __name__ == '__main__':
+    args = get_args()
+    start = time.time()
+    ulevels = args.ulevel
+    tasks = product(jobMap.keys(), ulevels, [args.time])
+    pool = ProcessPoolExecutor(max_workers=args.thread)
+    results = pool.map(test, tasks)
+    write_results(results)
+    end = time.time()
+    print(f"총 소요시간: {end - start:.3f}초")
