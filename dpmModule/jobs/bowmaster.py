@@ -90,8 +90,8 @@ class JobGenerator(ck.JobGenerator):
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
         #Damage Skills
-        AdvancedQuibberAttack = core.DamageSkill("마법 화살", 0, 260, 0.6).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
-        AdvancedQuibberAttack_ArrowRain = core.DamageSkill("마법 화살(애로우 레인)", 0, 260, 1).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
+        AdvancedQuibberAttack = core.DamageSkill("어드밴스드 퀴버", 0, 260, 0.6).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
+        AdvancedQuibberAttack_ArrowRain = core.DamageSkill("어드밴스드 퀴버(애로우 레인)", 0, 260, 1).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 210, 0.7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
         ArrowOfStorm = ArrowOfStormWrapper(core.DamageSkill("폭풍의 시", 120, (350+combat*3)*0.75, 1+1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 10)).setV(vEhc, 0, 2, True))
@@ -113,7 +113,7 @@ class JobGenerator(ck.JobGenerator):
         QuibberFullBurst = core.SummonSkill("퀴버 풀버스트", 780, 2 * 1000 / 6, 750 + 30 * vEhc.getV(2,2), 3, 30 * 1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
         QuibberFullBurstDOT = core.DotSkill("독화살", 220, 30*1000).wrap(core.SummonSkillWrapper)
     
-        ImageArrow = core.SummonSkill("잔영의 시", 720, 270, 400+16*vEhc.getV(1,1), 3, 3000, cooltime=30000, red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # 11 * 3타
+        ImageArrow = core.SummonSkill("잔영의 시", 720, 240, 400+16*vEhc.getV(1,1), 3, 3000-360, cooltime=30000, red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # 11 * 3타, 준비 360ms
         ImageArrowPassive = core.DamageSkill("잔영의 시(패시브)", 0, 400+16*vEhc.getV(1,1), 3 * 2 * 0.1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper) # 10회당 1번 생성, 생성당 3타씩 2회 공격
     
         ######   Skill Wrapper   ######
@@ -127,7 +127,7 @@ class JobGenerator(ck.JobGenerator):
 
         ArrowOfStorm.onAfter(AdvancedQuibberAttack)
         ArrowOfStorm.onAfter(AdvancedFinalAttack)
-        ArrowOfStorm.onAfter(core.OptionalElement(ImageArrow.is_not_active, ImageArrowPassive, name="액티브 OFF"))
+        ArrowOfStorm.onAfter(core.OptionalElement(ImageArrow.is_not_active, ImageArrowPassive, name="잔영의 시 액티브 OFF"))
         
         ArrowRain.onTicks([AdvancedFinalAttack, AdvancedQuibberAttack_ArrowRain])
         ImageArrow.onTicks([AdvancedFinalAttack, AdvancedQuibberAttack])
@@ -139,7 +139,8 @@ class JobGenerator(ck.JobGenerator):
         ### Exports ###
         return(ArrowOfStorm,
                 [globalSkill.maple_heros(chtr.level),
-                    SoulArrow, AdvancedQuibber, SharpEyes, ElusionStep, Preparation, EpicAdventure, ArrowRainBuff, CriticalReinforce, QuibberFullBurstBuff,
+                    SoulArrow, AdvancedQuibber, SharpEyes, ElusionStep, Preparation, EpicAdventure,
+                    ArrowRainBuff, CriticalReinforce, QuibberFullBurstBuff, QuibberFullBurstDOT,
                     globalSkill.soul_contract()] +\
                 [] +\
                 [Evolve, ArrowFlatter, ArrowRain, Pheonix, GuidedArrow, QuibberFullBurst, ImageArrow] +\
