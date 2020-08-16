@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobbranch import bowmen
 
@@ -49,6 +50,12 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(pdamage = 18)
 
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(ConcurrentRunRule("프리퍼레이션", "퀴버 풀버스트"), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule("소울 컨트랙트", "퀴버 풀버스트"), RuleSet.BASE)
+        return ruleset
+
     def get_passive_skill_list(self):
         CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit = 40)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
@@ -78,7 +85,8 @@ class JobGenerator(ck.JobGenerator):
         폭시-파택-언카블-퀴버-플래터-피닉스
 
         하이퍼: 폭풍의 시 3종 / 샤프 아이즈-이그노어 가드, 크리티컬 레이트
-                
+        
+        프리퍼레이션, 엔버링크를 120초 주기에 맞춰 사용
         '''
         ######   Skill   ######
         #Buff skills
