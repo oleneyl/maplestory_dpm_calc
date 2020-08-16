@@ -49,7 +49,7 @@ class JobGenerator(ck.JobGenerator):
         스포트라이트 히트 3, 공격주기 800ms
         패밀리어 공격속도 2.5초당 1타
         
-        95% 재생성, 최대6회 : 1 + 0.95 + 0.95*0.95 + ... + (6타) = 6.03타
+        95% 재생성, 최대6회 : 1 + 0.95 + 0.95*0.95 + ... + (6타) = 6.033타
         
         어피니티IV의 리차지시 50%로성공을 항시적용
         샤이니 버블 브레스 
@@ -74,9 +74,9 @@ class JobGenerator(ck.JobGenerator):
         SoulSeekerExpert = core.DamageSkill("소울 시커", 0, 320 * 0.75, 1 * 0.35 * 12.066, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         SoulSeekerExpert_PR = core.DamageSkill("소울 시커(소울 익절트)", 0, 320 * 0.75, 1 * 0.5 * 12.066, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
-        Trinity_1 = core.DamageSkill("트리니티", 470, 650, 2+1, modifier = core.CharacterModifier(pdamage =20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(1타)")
-        Trinity_2 = core.DamageSkill("트리니티(2타)", 470, 650, 3+1, modifier = core.CharacterModifier(pdamage =20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(2타)")
-        Trinity_3 = core.DamageSkill("트리니티(3타)", 470-340, 650, 4+1, modifier = core.CharacterModifier(pdamage =20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(3타)")
+        Trinity_1 = core.DamageSkill("트리니티", 360, 650, 2+1, modifier = core.CharacterModifier(pdamage =20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(1타)")
+        Trinity_2 = core.DamageSkill("트리니티(2타)", 360, 650, 3+1, modifier = core.CharacterModifier(pdamage =20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(2타)")
+        Trinity_3 = core.DamageSkill("트리니티(3타)", 360, 650, 4+1, modifier = core.CharacterModifier(pdamage =20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(3타)")
         
         FinaturaFettuccia = core.DamageSkill("피니투라 페투치아", 1020, 4000, 1, red = True, cooltime = 40000*0.75).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         FinaturaFettucciaBuff = core.BuffSkill("피니투라 페투치아(버프)", 0, 20000, cooltime = -1, pdamage_indep=25).wrap(core.BuffSkillWrapper)
@@ -102,7 +102,7 @@ class JobGenerator(ck.JobGenerator):
         SpotLightBuff = core.BuffSkill("스포트라이트(버프)", 0, 30000, cooltime = -1, crit = (10+int(0.2*vEhc.getV(0,0)))*SPOTLIGHTHIT,
                                                                                 pdamage_indep = (3+(vEhc.getV(0,0)//10))*SPOTLIGHTHIT).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
-        MascortFamilier = core.BuffSkill("마스코트 패밀리어", 1080, 30+(vEhc.getV(2,1)//5)*1000, red = True, cooltime = 120 * 1000).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
+        MascortFamilier = core.BuffSkill("마스코트 패밀리어", 810, 30+(vEhc.getV(2,1)//5)*1000, red = True, cooltime = 120 * 1000).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
         MascortFamilierAttack = core.SummonSkill("트윙클 스타/매지컬 벌룬", 0, 2500, 1200, 5, (30+(vEhc.getV(2,1)//5))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         ShinyBubbleBreath = core.SummonSkill("샤이니 버블 브레스", 0, 210, 250+10*vEhc.getV(2,1), 7, (3 + 0.4*8)*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         ### build graph relationships

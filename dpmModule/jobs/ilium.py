@@ -70,8 +70,8 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule("패스트 차지", "글로리 윙(진입)"), RuleSet.BASE)
         ruleset.add_rule(ReservationRule("그람홀더", "글로리 윙(진입)"), RuleSet.BASE)
         ruleset.add_rule(ConditionRule("글로리 윙(진입)", "그람홀더", lambda x:x.is_active() or x.is_not_usable()), RuleSet.BASE)
-        ruleset.add_rule(ReservationRule("데우스", "글로리 윙(진입)"), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule("글로리 윙(진입)", "데우스", lambda x:x.is_active() or x.is_not_usable()), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule("크리스탈 스킬:데우스", "글로리 윙(진입)"), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("글로리 윙(진입)", "크리스탈 스킬:데우스", lambda x:x.is_active() or x.is_not_usable()), RuleSet.BASE)
 
         # 이그니션과 글로리 윙 따로 사용하는 딜사이클
         ruleset.add_rule(InactiveRule("크리스탈 이그니션(시전)", "글로리 윙(진입)"), RuleSet.BASE)
@@ -115,7 +115,7 @@ class JobGenerator(ck.JobGenerator):
         
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 200*1000).wrap(core.BuffSkillWrapper)
-        FastCharge = core.BuffSkill("패스트 차지", 600, 10000, cooltime = 120000, rem=True).wrap(core.BuffSkillWrapper) #임의딜레이 600
+        FastCharge = core.BuffSkill("패스트 차지", 30, 10000, cooltime = 120000, rem=True).wrap(core.BuffSkillWrapper)
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60000, pdamage = 10, cooltime = 120000).wrap(core.BuffSkillWrapper)
         
         Craft_Orb = core.DamageSkill("크래프트:오브", 390, 300, 1).wrap(core.DamageSkillWrapper)
@@ -128,14 +128,14 @@ class JobGenerator(ck.JobGenerator):
         Craft_Javelin_Fragment = core.DamageSkill("크래프트:자벨린(파편)", 0, 130, 2 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Reaction_Destruction = core.DamageSkill("리액션:디스트럭션", 0, 550, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 4000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
-        Craft_Longinus = core.DamageSkill("크래프트:롱기누스", 1053, 950, 8, cooltime = 15000).wrap(core.DamageSkillWrapper)
+        Craft_Longinus = core.DamageSkill("크래프트:롱기누스", 600+180, 950, 8, cooltime = 15000).wrap(core.DamageSkillWrapper) # 자체딜레이 600 + 자벨린-오브 연계 취소 180
         
         Riyo = core.SummonSkill("리요", 0, 500, 240, 1, 180000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper) # 최초 사용 이후로는 항상 데우스 종료때 딜레이 없이 리필됨
         Machina = core.SummonSkill("마키나", 0, 1980, 250, 4, 180000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)    # 최초 사용 이후로는 항상 데우스 종료때 딜레이 없이 리필됨
         
         CrystalSkill_MortalSwing = core.DamageSkill("크리스탈 스킬:모탈스윙", 0, 600, 10, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)    #30
-        CrystalSkill_Deus = core.SummonSkill("데우스", 30, 4800, 500, 5+1, 30*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)   #90, 7타
-        CrystalSkill_Deus_Satelite = core.SummonSkill("데우스(위성)", 0, 500, 240, 1+1, 30*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
+        CrystalSkill_Deus = core.SummonSkill("크리스탈 스킬:데우스", 30, 4800, 500, 5+1, 30*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)   #90, 7타
+        CrystalSkill_Deus_Satelite = core.SummonSkill("크리스탈 스킬:데우스(위성)", 0, 500, 240, 1+1, 30*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
         
         LonginusZone = core.DamageSkill("롱기누스 존", 690, 1500, 12, cooltime = 180*1000)    #안씀
         
@@ -155,16 +155,16 @@ class JobGenerator(ck.JobGenerator):
 
         #5차 스킬들
         OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 0, 3)
-        GramHolder = core.SummonSkill("그람홀더", 900, 3000, 1000+25*vEhc.getV(4,3), 6, 40000, cooltime = 180000, modifier = core.CharacterModifier(pdamage_indep = 100)).isV(vEhc,4,3).wrap(core.SummonSkillWrapper)   #임의딜레이 900
+        GramHolder = core.SummonSkill("그람홀더", 0, 3000, 1000+25*vEhc.getV(4,3), 6, 40000, cooltime = 180000, modifier = core.CharacterModifier(pdamage_indep = 100)).isV(vEhc,4,3).wrap(core.SummonSkillWrapper) # 클라 딜레이 없음
         
         MagicCircuitFullDrive = core.BuffSkill("매직 서킷 풀드라이브", 720, (30+vEhc.getV(3,2))*1000, pdamage = (20 + vEhc.getV(3,2)), cooltime = 200*1000).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
         MagicCircuitFullDriveStorm = core.SummonSkill("매직 서킷 풀드라이브(마력 폭풍)", 0, 4000, 500+20*vEhc.getV(3,2), 3, (30+vEhc.getV(3,2))*1000, cooltime = -1).wrap(core.SummonSkillWrapper)
         
         CrystalIgnitionInit = core.DamageSkill("크리스탈 이그니션(시전)", 960, 0, 0, cooltime = 180*1000).wrap(core.DamageSkillWrapper)
-        CrystalIgnition = core.DamageSkill("크리스탈 이그니션", 10000/62, 750 + 30*vEhc.getV(2,1), 4, modifier = core.CharacterModifier(boss_pdamage = 20)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper) #75회
+        CrystalIgnition = core.DamageSkill("크리스탈 이그니션", 10000/62, 750 + 30*vEhc.getV(2,1), 4, modifier = core.CharacterModifier(boss_pdamage = 20)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
         Reaction_Spectrum = core.DamageSkill("리액션:스펙트럼", 0, 1000+40*vEhc.getV(2,1), 5, cooltime = 1000, modifier = core.CharacterModifier(boss_pdamage = 20)).wrap(core.DamageSkillWrapper) #1초마다 시전됨.
  
-        SoulOfCrystal = SoulOfCrystalWrapper(core.BuffSkill("소울 오브 크리스탈", 660, 30*1000, cooltime=40*1000).isV(vEhc,1,0))
+        SoulOfCrystal = SoulOfCrystalWrapper(core.BuffSkill("소울 오브 크리스탈", 510*2, 30*1000, cooltime=40*1000).isV(vEhc,1,0))
         SoulOfCrystalPassive = core.BuffSkill("소울 오브 크리스탈(패시브)", 0, 999999999, att = (5+vEhc.getV(1,0)*2)).isV(vEhc,1,0).wrap(core.BuffSkillWrapper)
 
         SoulOfCrystal_Reaction_Domination = core.DamageSkill("리액션:도미네이션(소오크)", 0, 550 * 0.01 * (50 + vEhc.getV(1,0)), 2*2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
