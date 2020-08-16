@@ -15,7 +15,6 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 10
         self.jobtype = "dex"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
-        self._use_critical_reinforce = True
 
     def get_passive_skill_list(self):
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트", patt = 10)
