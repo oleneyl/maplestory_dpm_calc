@@ -632,13 +632,7 @@ class DotSkill(SummonSkill):
         if expl_level < 2:
             li = li[3:7] + [li[10]]
             
-        return self._parse_list_info_into_string(li)        
-        
-
-class EjaculateSkill(SummonSkill):
-    def __init__(self, name, delay, damage, hit, remain, modifier = CharacterModifier()):
-        super(EjaculateSkill, self).__init__(name, 0, delay, damage, hit, remain, cooltime = -1, modifier = modifier)
-        self.spec = "ejac"
+        return self._parse_list_info_into_string(li)
         
 class Task():
     def __init__(self, ref, ftn):
