@@ -13,10 +13,10 @@ class ArrowOfStormWrapper(core.DamageSkillWrapper):
     모탈 블로우 - 9회 공격 후 다음 공격은 데미지+80%
     아머 피어싱 - 적 방어율만큼 최종뎀 추가, 방무+50%. 쿨타임 9초, 공격마다 1초씩 감소, 최소 재발동 대기시간 1초
     '''
-    def __init__(self, skill):
+    def __init__(self, skill, combat):
         super(ArrowOfStormWrapper, self).__init__(skill)
-        self.mortalBlowCount = 0
         self.armorPiercingCooltime = 0
+        self.combat = combat
 
     def spend_time(self, time):
         self.armorPiercingCooltime -= time
@@ -24,14 +24,9 @@ class ArrowOfStormWrapper(core.DamageSkillWrapper):
         
     def _use(self, rem = 0, red = 0):
         modifier = self.get_modifier()
-        if self.mortalBlowCount >= 9:
-            modifier += core.CharacterModifier(pdamage = 80)
-            self.mortalBlowCount = 0
-        else:
-            self.mortalBlowCount += 1
 
         if self.armorPiercingCooltime <= 0:
-            modifier += core.CharacterModifier(pdamage_indep = 300, armor_ignore = 50) # 적 방어율 300 가정
+            modifier += core.CharacterModifier(pdamage_indep = 300 * (1 + self.combat * 0.05), armor_ignore = 50 * (1 + self.combat * 0.02)) # 적 방어율 300 가정
             self.armorPiercingCooltime = 9000 * (1 - 0.01 * red)
         elif self.armorPiercingCooltime > 1000:
             self.armorPiercingCooltime = max(self.armorPiercingCooltime - 1000, 1000)
@@ -73,8 +68,9 @@ class JobGenerator(ck.JobGenerator):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)
 
         ExtremeArchery = core.InformedCharacterModifier("익스트림 아처리",att = 40, pdamage_indep = 30)
+        MortalBlow = core.InformedCharacterModifier("모탈 블로우",pdamage = 80/10)   #확률성을 변형적용... 패치 필요할듯
         
-        return [WeaponConstant, Mastery, ExtremeArchery]
+        return [WeaponConstant, Mastery, ExtremeArchery, MortalBlow]
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
@@ -102,7 +98,7 @@ class JobGenerator(ck.JobGenerator):
         AdvancedQuibberAttack_ArrowRain = core.DamageSkill("어드밴스드 퀴버(애로우 레인)", 0, 260, 1).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 210, 0.7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
-        ArrowOfStorm = ArrowOfStormWrapper(core.DamageSkill("폭풍의 시", 120, (350+combat*3)*0.75, 1+1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 10)).setV(vEhc, 0, 2, True))
+        ArrowOfStorm = ArrowOfStormWrapper(core.DamageSkill("폭풍의 시", 120, (350+combat*3)*0.75, 1+1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 10)).setV(vEhc, 0, 2, True), combat)
         ArrowFlatter = core.SummonSkill("애로우 플래터", 600, 210, 85+90+combat*3, 1, 30 * 1000, modifier = core.CharacterModifier(pdamage = 30)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper) # 딜레이 모름
         
         GrittyGust = core.DamageSkill("윈드 오브 프레이", 720, 500, 8, cooltime = 15 * 1000).setV(vEhc, 6, 2, True).wrap(core.DamageSkillWrapper)
@@ -137,13 +133,15 @@ class JobGenerator(ck.JobGenerator):
         ArrowOfStorm.onAfter(AdvancedFinalAttack)
         ArrowOfStorm.onAfter(core.OptionalElement(ImageArrow.is_not_active, ImageArrowPassive, name="잔영의 시 액티브 OFF"))
         
+        ArrowRainBuff.onAfter(ArrowRain)
         ArrowRain.onTick(AdvancedQuibberAttack_ArrowRain)
         ImageArrow.onTicks([AdvancedFinalAttack, AdvancedQuibberAttack])
         GuidedArrow.onTick(AdvancedQuibberAttack)
         
-        ArrowRainBuff.onAfter(ArrowRain)
         QuibberFullBurstBuff.onAfter(QuibberFullBurstDOT)
         QuibberFullBurstBuff.onAfter(QuibberFullBurst)
+
+        QuibberFullBurst.onTick(AdvancedQuibberAttack)
 
         ### Exports ###
         return(ArrowOfStorm,
