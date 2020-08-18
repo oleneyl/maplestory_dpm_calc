@@ -1,10 +1,10 @@
 from . import ItemKernel as it
 
-Head = it.Item(stat_main = 45, stat_sub = 45, att = 3, armor_ignore = 10)
-Glove = it.Item(stat_main = 20, stat_sub = 20, att = 5)
-Shoes = it.Item(stat_main = 20, stat_sub = 20, att = 5)
-Cloak = it.Item(stat_main = 15, stat_sub = 15, att = 2)
-Shoulder = it.Item(stat_main = 14, stat_sub = 14, att = 10)
+Head = it.Item(name="앱솔랩스 모자", stat_main = 45, stat_sub = 45, att = 3, armor_ignore = 10, level = 160)
+Glove = it.Item(name="앱솔랩스 장갑", stat_main = 20, stat_sub = 20, att = 5, level = 160)
+Shoes = it.Item(name="앱솔랩스 신발", stat_main = 20, stat_sub = 20, att = 5, level = 160)
+Cloak = it.Item(name="앱솔랩스 망토", stat_main = 15, stat_sub = 15, att = 2, level = 160)
+Shoulder = it.Item(name="앱솔랩스 견장", stat_main = 14, stat_sub = 14, att = 10, level = 160)
 
 # 업횟 11+1
 # 일반적인 템셋에서 카벨 모자를 사용할 직업은 제로뿐이므로 앱솔/아케인 무기 착용으로 가정
@@ -28,36 +28,6 @@ WeaponFactory = it.WeaponFactoryClass(160, _valueMap, modifier = it.CharacterMod
 
 class Factory():
     @staticmethod
-    def getArmorSet(star = 0, enhance = 30, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
-        assert(enhance in [100, 70, 30])
-        #TODO : Simplyfy this dirty codes.
-        if not hammer: 
-            upgrades = [11,7,7,7,1]
-        else:
-            upgrades = [12,8,8,8,2]
-         
-        if enhance == 100:
-            scrolls = [[upgrades[i],0,0] for i in range(5)]
-        elif enhance == 70:
-            scrolls = [[0,upgrades[i],0] for i in range(5)]
-        else:
-            scrolls = [[0,0,upgrades[i]] for i in range(5)]
-            
-        retli = [ Head.copy(), Glove.copy(), Shoes.copy(), Cloak.copy(), Shoulder.copy()]
-        for idx, item in zip([0,1,2,3,4],retli):
-            item.set_potential(potential)
-            item.set_additional_potential(additional_potential)
-            item.add_main_option(bonus)
-            item.add_main_option(it.EnhancerFactory.get_armor_starforce_enhancement(160, star))
-            if idx != 1:
-                item.add_main_option(it.EnhancerFactory.get_armor_scroll_enhancement(160, elist = scrolls[idx]))
-            else: #For glove
-                item.add_main_option(it.EnhancerFactory.get_glove_scroll_enhancement(160, elist = scrolls[idx]))
-                item.add_main_option(it.EnhancerFactory.getGloveStarforceEnhancement(star))
-            
-        return retli
-
-    @staticmethod
     def getArmorSetDict(star = 0, enhance = 30, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
         assert(enhance in [100, 70, 30])
         #TODO : Simplyfy this dirty codes.
@@ -79,21 +49,26 @@ class Factory():
             item = package[itemkey]
             item.set_potential(potential)
             item.set_additional_potential(additional_potential)
-            item.add_main_option(bonus)
+            if itemkey != "shoulder":
+                item.add_main_option(bonus)
             item.add_main_option(it.EnhancerFactory.get_armor_starforce_enhancement(160, star))
-            if itemkey == "glove":
-                item.add_main_option(it.EnhancerFactory.get_armor_scroll_enhancement(160, elist = scrolls[idx]))
-            else: #For glove
+            if itemkey == "glove": #For glove
                 item.add_main_option(it.EnhancerFactory.get_glove_scroll_enhancement(160, elist = scrolls[idx]))
                 item.add_main_option(it.EnhancerFactory.get_glove_bonus_starforce_enhancement(star))
+            else:
+                item.add_main_option(it.EnhancerFactory.get_armor_scroll_enhancement(160, elist = scrolls[idx]))
             
         return package
     
     @staticmethod
-    def getWeapon(_type, star = 0, elist = [0,0,0,9], potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonusAttIndex = 0, bonusElse = it.CharacterModifier(), enable_blade=False):
+    def getWeapon(_type, star = 0, elist = [0,0,0,9], potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonusAttIndex = 0, bonusElse = it.CharacterModifier()):
         
-        return WeaponFactory.getWeapon(_type, star = star, elist = elist, potential = potential, additional_potential = additional_potential, bonusAttIndex = bonusAttIndex, bonusElse = bonusElse, enable_blade=enable_blade)
+        return WeaponFactory.getWeapon(_type, star = star, elist = elist, potential = potential, additional_potential = additional_potential, bonusAttIndex = bonusAttIndex, bonusElse = bonusElse)
 
+    @staticmethod
+    def getBlade(_type, star = 0, elist = [0,0,0,0], potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonusElse = it.CharacterModifier()):
+
+        return WeaponFactory.getBlade(_type, star = star, elist = elist, potential = potential, additional_potential = additional_potential, bonusElse = bonusElse)
     
     @staticmethod
     def getSetOption(rank):

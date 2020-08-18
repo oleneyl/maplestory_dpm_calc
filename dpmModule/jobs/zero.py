@@ -170,6 +170,8 @@ class JobGenerator(ck.JobGenerator):
         #StormBreakElectric = core.DotSkill("어드밴스드 스톰 브레이크(전기)", 230, 3000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         StormBreakElectric = core.DamageSkill("어드밴스드 스톰 브레이크(전기)", 0, 230, 3 ).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
+        DivineLeer = core.DotSkill("디바인 리어", 200, 99999999).wrap(core.SummonSkillWrapper)
+
         #### 베타 ####
         
 
@@ -352,6 +354,8 @@ class JobGenerator(ck.JobGenerator):
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
 
+        DivineLeer.set_disabled_and_time_left(1)
+
         '''
         스킬 사용 후 초월자 륀느의 기원 발동
         for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
@@ -365,7 +369,7 @@ class JobGenerator(ck.JobGenerator):
 
         return(ComboHolder,
                 [globalSkill.maple_heros(chtr.level, combat_level = 0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                    AlphaState, BetaState, AuraWeaponBuff, DoubleTime, TimeDistortion, TimeHolding, IntensiveTime, LimitBreak,
+                    AlphaState, BetaState, DivineLeer, AuraWeaponBuff, DoubleTime, TimeDistortion, TimeHolding, IntensiveTime, LimitBreak,
                     SoulContract]+\
                 [ShadowRain, TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta]+\
                 [StormBreakSummon, WindCutterSummon, ThrowingWeapon]+\

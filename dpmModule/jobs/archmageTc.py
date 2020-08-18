@@ -10,28 +10,14 @@ from .jobbranch import magicians
 
 #TODO : 5차 신스킬 적용
 
-class FrostEffectWrapper(core.BuffSkillWrapper):
+class FrostEffectWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
-        super(FrostEffectWrapper, self).__init__(skill)
-        self.stack = 6  #Better point!
-        self.skillType = "C" # This value is "T" or "C"
+        super(FrostEffectWrapper, self).__init__(skill, 5)
+        self.stack = 5  # Better point!
         self.modifierInvariantFlag = False
-        
-    def flow(self, diff, Type):
-        #assert(Type =="T" or Type=="C")
-        self.skillType = Type
-        self.stack += diff
-        self.stack = max(min(6,self.stack),0)
-
-    def getFlow(self, diff, Type):
-        self.flow(diff, Type)
-        return core.ResultObject(0, core.CharacterModifier(), 0, sname = 'Frost Effect', spec = 'frost effect control')
-
-    def getFlowHandler(self, diff, Type):
-        return core.TaskHolder(core.Task(self, partial(self.getFlow, diff, Type)), "FrostEffect("+Type+")")
-
+    
     def get_modifier(self):
-        return core.CharacterModifier(crit_damage = 3*self.stack, pdamage = 12*self.stack*(self.skillType is "T"), armor_ignore = 0.2*5*self.stack)
+        return core.CharacterModifier(crit_damage = 3*self.stack, pdamage = 12*self.stack, armor_ignore = 0.2*5*self.stack)
 
 
 class JobGenerator(ck.JobGenerator):
@@ -81,7 +67,7 @@ class JobGenerator(ck.JobGenerator):
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         코강 순서
-        체라-라스피-블자-오브-엘퀴
+        체라-라스피-블자-오브-엘퀴-썬더스톰
         
         썬브 8히트
         
@@ -95,7 +81,7 @@ class JobGenerator(ck.JobGenerator):
         소울 컨트랙트는 인피니티 마지막과 맞춰서 사용
         
         그 외의 극딜기는 쿨마다 사용
-        오브는 라스피와 썬브 직전에만 사용함(체라의 경우 풀스택 유지가 가능)
+        오브는 쿨마다 사용, 19타
         썬브는 풀히트는 가정
 
         '''
@@ -103,41 +89,42 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Meditation = core.BuffSkill("메디테이션", 0, 240*1000, att = 30, rem = True, red = True).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10, red = True).wrap(core.BuffSkillWrapper)
-        OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
+        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         
         #Damage Skills
-        ChainLightening = core.DamageSkill("체인 라이트닝", 600, 185 + 2*combat, 10+1, modifier = core.CharacterModifier(crit = 25, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ChainLightening = core.DamageSkill("체인 라이트닝", 600, 185 + 3*combat, 10+1, modifier = core.CharacterModifier(crit = 25, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        FrozenOrbEjac = core.SummonSkill("프로즌 오브", 390, 100, 200+4*combat, 1, 1999, cooltime = -1, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
+        FrozenOrbEjac = core.SummonSkill("프로즌 오브", 690, 210, 220+4*combat, 1, 4000, cooltime = 5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
     
         LighteningSpear = core.DamageSkill("라이트닝 스피어", 0, 0, 1, cooltime = 75 * 1000).wrap(core.DamageSkillWrapper)
-        LighteningSpearSingle = core.DamageSkill("라이트닝 스피어(단일)", 250, 200, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        LighteningSpearFinalizer = core.DamageSkill("라이트닝 스피어 막타", 0, 1500, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        LighteningSpearSingle = core.DamageSkill("라이트닝 스피어(단일)", 270, 200, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        LighteningSpearFinalizer = core.DamageSkill("라이트닝 스피어 막타", 1080, 1500, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
-        IceAgeHolder = core.DamageSkill("아이스 에이지(개시스킬)", 870, 500 + vEhc.getV(2,3)*20, 10, cooltime = 60 * 1000, red = True).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
-        IceAge = core.EjaculateSkill("아이스 에이지(사출기)", 870, 125 + vEhc.getV(2,3)*5, 3, 15 * 1000).isV(vEhc,2,3).wrap(core.SummonSkillWrapper) #소환처리 해야함 ;; TODO
-        
-        Blizzard = core.DamageSkill("블리자드", 720, 450+10*combat, 8, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
-        
+        IceAgeInit = core.DamageSkill("아이스 에이지(개시)", 660, 500 + vEhc.getV(2,3)*20, 10, cooltime = 60 * 1000, red = True).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
+        IceAgeSummon = core.SummonSkill("아이스 에이지(장판)", 0, 810, 125 + vEhc.getV(2,3)*5, 3, 15 * 1000, cooltime = -1).isV(vEhc,2,3).wrap(core.SummonSkillWrapper)
+                
         # 중첩당 감소량 5%
-        ThunderBrake = core.DamageSkill("썬더 브레이크 개시스킬", 0, 0, 1, red = True, cooltime = 40 * 1000).wrap(core.DamageSkillWrapper) #Awesome! -> Tandem 사출처리 해야함...Later. 690을 일단 급한대로 분배해서 사용.
-        ThunderBrake1 = core.DamageSkill("썬더 브레이크", 100, (750 + vEhc.getV(0,0)*30), 8).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        ThunderBrake2 = core.DamageSkill("썬더 브레이크(1)", 100, (750 + vEhc.getV(0,0)*30)*0.95, 8).wrap(core.DamageSkillWrapper)
-        ThunderBrake3 = core.DamageSkill("썬더 브레이크(2)", 100, (750 + vEhc.getV(0,0)*30)*0.9, 8).wrap(core.DamageSkillWrapper)
-        ThunderBrake4 = core.DamageSkill("썬더 브레이크(3)", 100, (750 + vEhc.getV(0,0)*30)*0.85, 8).wrap(core.DamageSkillWrapper)
-        ThunderBrake5 = core.DamageSkill("썬더 브레이크(4)", 100, (750 + vEhc.getV(0,0)*30)*0.8, 8).wrap(core.DamageSkillWrapper)
-        ThunderBrake6 = core.DamageSkill("썬더 브레이크(5)", 100, (750 + vEhc.getV(0,0)*30)*0.75, 8).wrap(core.DamageSkillWrapper)
-        ThunderBrake7 = core.DamageSkill("썬더 브레이크(6)", 100, (750 + vEhc.getV(0,0)*30)*0.7, 8).wrap(core.DamageSkillWrapper)
-        ThunderBrake8 = core.DamageSkill("썬더 브레이크(7)", 70, (750 + vEhc.getV(0,0)*30)*0.65, 8).wrap(core.DamageSkillWrapper)
+        # TODO: 썬브가 이전 스킬 딜레이 캔슬하는것 구현해야 함
+        ThunderBrake = core.DamageSkill("썬더 브레이크 개시스킬", 120, 0, 1, red = True, cooltime = 40 * 1000).wrap(core.DamageSkillWrapper) #Awesome! -> Tandem 사출처리 해야함...Later. 690을 일단 급한대로 분배해서 사용.
+        ThunderBrake1 = core.DamageSkill("썬더 브레이크(1)", 120, (750 + vEhc.getV(0,0)*30), 8).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        ThunderBrake2 = core.DamageSkill("썬더 브레이크(2)", 120, (750 + vEhc.getV(0,0)*30)*0.95, 8).wrap(core.DamageSkillWrapper)
+        ThunderBrake3 = core.DamageSkill("썬더 브레이크(3)", 120, (750 + vEhc.getV(0,0)*30)*0.9, 8).wrap(core.DamageSkillWrapper)
+        ThunderBrake4 = core.DamageSkill("썬더 브레이크(4)", 120, (750 + vEhc.getV(0,0)*30)*0.85, 8).wrap(core.DamageSkillWrapper)
+        ThunderBrake5 = core.DamageSkill("썬더 브레이크(5)", 120, (750 + vEhc.getV(0,0)*30)*0.8, 8).wrap(core.DamageSkillWrapper)
+        ThunderBrake6 = core.DamageSkill("썬더 브레이크(6)", 120, (750 + vEhc.getV(0,0)*30)*0.75, 8).wrap(core.DamageSkillWrapper)
+        ThunderBrake7 = core.DamageSkill("썬더 브레이크(7)", 120, (750 + vEhc.getV(0,0)*30)*0.7, 8).wrap(core.DamageSkillWrapper)
+        ThunderBrake8 = core.DamageSkill("썬더 브레이크(8)", 120, (750 + vEhc.getV(0,0)*30)*0.65, 8).wrap(core.DamageSkillWrapper)
         
         # 단일 대상 기준
-        SpiritOfSnow = core.SummonSkill("스피릿 오브 스노우", 720, 3000, 700+40*vEhc.getV(3,1), 9, 30000, red = True, cooltime = 120*1000).isV(vEhc, 3,1).wrap(core.SummonSkillWrapper)
+        SpiritOfSnow = core.SummonSkill("스피릿 오브 스노우", 720, 3000, 850+34*vEhc.getV(3,1), 9, 30000, red = True, cooltime = 120*1000).isV(vEhc, 3,1).wrap(core.SummonSkillWrapper)
                 
         #Summoning skill
-        Elquiness = core.SummonSkill("엘퀴네스", 900, 3030, 380+6*combat, 1, 999999999).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        ThunderStorm = core.SummonSkill("썬더 스톰", 900, 1770, 430, 1, 90000, cooltime = 30000).setV(vEhc, 5, 3, False).wrap(core.SummonSkillWrapper)
+        Elquiness = core.SummonSkill("엘퀴네스", 600, 3030, 380+6*combat, 1, 260*1000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         IceAura = core.SummonSkill("아이스 오라", 0, 1200, 0, 1, 999999999).wrap(core.SummonSkillWrapper)
         
         #FinalAttack
+        Blizzard = core.DamageSkill("블리자드", 720, 450+5*combat, 8, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         BlizzardPassive = core.DamageSkill("블리자드 패시브", 0, (220+4*combat) * (0.6+0.01*combat), 1).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         
         #special skills
@@ -145,53 +132,47 @@ class JobGenerator(ck.JobGenerator):
         FrostEffect = core.BuffSkill("프로스트 이펙트", 0, 999999 * 1000).wrap(FrostEffectWrapper)
         
         ######   Skill Wrapper   ######
-        #TODO : 블자 패시브가 스택을 유지시켜주나?
         #Frost Effect
-        FrostIncrement = FrostEffect.getFlowHandler(1, "C")
-        FrostDecrement = FrostEffect.getFlowHandler(-1, "T")
+        FrostIncrement = FrostEffect.stackController(1)
+        FrostDecrement = FrostEffect.stackController(-1)
         
         #Ejaculator
-        FrozenOrbEjac.onBefore(FrostIncrement)
         FrozenOrbEjac.onTick(FrostIncrement)
-        FrozenOrbEjac.onAfter(BlizzardPassive)
+        FrozenOrbEjac.onTick(BlizzardPassive)
 
         #Lightening Spear
         LighteningSpearSingle.onAfter(BlizzardPassive)
-        LighteningSpearSingle.onBefore(FrostDecrement)
+        LighteningSpearSingle.onAfter(FrostDecrement)
         LighteningSpearFinalizer.onAfter(BlizzardPassive)
-        LighteningSpearFinalizer.onBefore(FrostDecrement)
+        LighteningSpearFinalizer.onAfter(FrostDecrement)
         
-        LighteningRepeator = core.RepeatElement(LighteningSpearSingle, 32)
+        LighteningRepeator = core.RepeatElement(LighteningSpearSingle, 30)
         LighteningRepeator.onAfter(LighteningSpearFinalizer)
     
-        LighteningSpear.onAfters([LighteningRepeator, FrozenOrbEjac])
+        LighteningSpear.onAfter(LighteningRepeator)
         
         #damage skills
         ChainLightening.onAfter(BlizzardPassive)
-        ChainLightening.onBefore(FrostDecrement)
-        #ChainLightening.onAfter(FrostDecrement)
+        ChainLightening.onAfter(FrostDecrement)
         
-        IceAge.onTicks([BlizzardPassive, FrostIncrement])
-        IceAgeHolder.onBefore(FrostIncrement)
-        IceAgeHolder.onAfter(IceAge)
+        IceAgeSummon.onTicks([BlizzardPassive, FrostIncrement])
+        IceAgeInit.onBefore(FrostIncrement)
+        IceAgeInit.onAfter(BlizzardPassive)
+        IceAgeInit.onAfter(IceAgeSummon)
         
         Elquiness.onTick(FrostIncrement)
         
         Blizzard.onBefore(FrostIncrement)
-        BlizzardPassive.onBefore(FrostEffect.getFlowHandler(0.6, "C"))
+        BlizzardPassive.onBefore(FrostEffect.stackController(0.6))
+        
+        SpiritOfSnow.onTick(FrostEffect.stackController(3))
         
         node_before = ThunderBrake
-        node_before.onBefore(FrostDecrement)
-        node_before.onAfter(BlizzardPassive)
-        
-        SpiritOfSnow.onBefore(core.RepeatElement(FrostIncrement, 3))
         
         for node in [ThunderBrake1, ThunderBrake2, ThunderBrake3, ThunderBrake4, ThunderBrake5, ThunderBrake6, ThunderBrake7, ThunderBrake8]:
-            node.onBefore(FrostDecrement)
+            node.onAfter(FrostDecrement)
             node.onAfter(BlizzardPassive)
             node_before.onAfter(node)
-        
-        ThunderBrake.onBefore(FrozenOrbEjac)
         
         Elquiness.onTick(BlizzardPassive)
         IceAura.onTick(FrostIncrement)
@@ -202,7 +183,7 @@ class JobGenerator(ck.JobGenerator):
                 [Infinity, Meditation, EpicAdventure, OverloadMana, FrostEffect,
                 globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                 SoulContract] +\
-                [IceAgeHolder, Blizzard, LighteningSpear, ThunderBrake] +\
-                [Elquiness, IceAura, IceAge, FrozenOrbEjac, SpiritOfSnow] +\
+                [IceAgeInit, Blizzard, LighteningSpear, ThunderBrake] +\
+                [ThunderStorm, Elquiness, IceAura, IceAgeSummon, FrozenOrbEjac, SpiritOfSnow] +\
                 [] +\
                 [ChainLightening])

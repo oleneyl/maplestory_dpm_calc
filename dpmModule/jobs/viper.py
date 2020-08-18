@@ -27,7 +27,7 @@ class EnergyChargeWrapper(core.StackSkillWrapper):
             self.turnOff()
         elif (not self._st) and self.stack >= 10000:
             self.turnOn()
-        return core.ResultObject(0, core.CharacterModifier(), 0, sname = self.skill.name, spec = 'graph control')
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
             
     def turnOn(self):
         self.stack = 10000
