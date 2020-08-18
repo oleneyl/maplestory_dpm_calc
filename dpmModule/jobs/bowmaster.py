@@ -1,4 +1,6 @@
-"""Advisor : 저격장(레드)
+"""
+Advisor : 저격장(레드)
+https://github.com/oleneyl/maplestory_dpm_calc/issues/247
 """
 
 from ..kernel import core
@@ -24,8 +26,19 @@ class ArrowOfStormWrapper(core.DamageSkillWrapper):
         super(ArrowOfStormWrapper, self).__init__(skill)
         self.armorPiercing = armorPiercing
         self.combat = combat
+        self.lastUsed = -9999
+        self.currentTime = 0
+
+    def spend_time(self, time):
+        self.currentTime += time
+        super(ArrowOfStormWrapper, self).spend_time(time)
         
     def _use(self, rem = 0, red = 0):
+        '''
+        아머 피어싱 적용.
+        현재 시간 > 마지막 시전 시간 + 딜레이 인 경우에 선딜을 추가함.
+        딜레이가 0인 버프가 끼어들 수 있기에 정확한 구현은 아님.
+        '''
         modifier = self.get_modifier()
         if self.armorPiercing.is_available():
             modifier += core.CharacterModifier(pdamage_indep = 300 * (1 + self.combat * 0.05), armor_ignore = 50 * (1 + self.combat * 0.02))
@@ -33,7 +46,12 @@ class ArrowOfStormWrapper(core.DamageSkillWrapper):
         else:
             self.armorPiercing.reduce_cooltime(1000)
         
-        return core.ResultObject(self.skill.delay, modifier, self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
+        delay = self.skill.delay
+        if self.currentTime > self.lastUsed:
+            delay += 540
+        self.lastUsed = self.currentTime + delay
+
+        return core.ResultObject(delay, modifier, self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
 
 class GuidedArrowWrapper(bowmen.GuidedArrowWrapper):
     def __init__(self, vEhc, num1, num2, armorPiercing, combat):
@@ -97,8 +115,8 @@ class JobGenerator(ck.JobGenerator):
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
-        잔영의시 : 500ms마다 타격(초당 2회)
-        애로우 레인 : 떨어질 때마다 6번씩( = 2500/6 ~ 420ms)
+        잔영의 시 : 액티브 13*3타, 패시브 3.5*3타. 패시브는 쿨타임동안 10~11회 사용
+        애로우 레인 : 1줄기, 떨어질 때 마다 3.5회 타격
                 
         코강 순서:
         폭시-파택-언카블-퀴버-플래터-피닉스
@@ -125,7 +143,6 @@ class JobGenerator(ck.JobGenerator):
         AdvancedQuibberAttack_ArrowRain = core.DamageSkill("어드밴스드 퀴버(애로우 레인)", 0, 260, 1, modifier=MortalBlow).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 210, 0.7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
-        # TODO: 폭풍의 시 선딜 반영해야 함
         ArrowOfStorm = ArrowOfStormWrapper(core.DamageSkill("폭풍의 시", 120, (350+combat*3)*0.75, 1+1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 10) + MortalBlow).setV(vEhc, 0, 2, True), ArmorPiercing, combat)
         ArrowFlatter = core.SummonSkill("애로우 플래터", 600, 210, 85+90+combat*3, 1, 30 * 1000, modifier = core.CharacterModifier(pdamage = 30)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper) # 딜레이 모름
         
