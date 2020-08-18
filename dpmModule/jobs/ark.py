@@ -9,6 +9,32 @@ from . import globalSkill
 from .jobbranch import pirates
 from . import jobutils
 
+class ReturningHateWrapper(core.DamageSkillWrapper):
+    def __init__(self, vEhc):
+        self.vEhc = vEhc
+        self.stack = 0
+        self._max = 12
+        skill = core.DamageSkill("돌아오는 증오", 0, 320, 6, cooltime=12000).setV(vEhc, 0, 2, True)
+        super(ReturningHateWrapper, self).__init__(skill)
+        self.modifierInvariantFlag = False
+        
+    def _use(self, rem = 0, red = 0):
+        self.cooltimeLeft = self.skill.cooltime * (1-0.01*red*self.skill.red)
+        if self.cooltimeLeft > 0:
+            self.available = False
+        
+        mdf = self.skill.get_modifier()
+        stack = self.stack
+        self.stack = 0
+        return core.ResultObject(0, mdf.copy(), 320, sname = self._id, spec = 'deal', hit = 6 * stack)
+        
+    def _addStack(self, d):
+        self.stack = min(self.stack + d, self._max)
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
+    
+    def addStack(self, d):
+        return core.TaskHolder(core.Task(self, partial(self._addStack, d)), name = '돌아오는 증오 추가')
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):
         super(JobGenerator, self).__init__(vEhc = vEhc)
@@ -17,6 +43,9 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'mess')
         
         self.preEmptiveSkills = 2
+
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(crit=20)
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -55,6 +84,8 @@ class JobGenerator(ck.JobGenerator):
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         연계 시 플레인 차지드라이브 540 → 240ms, 끝나지 않는 흉몽 540 → 180ms
+
+        스펠 불릿 수동 사용
         
         하이퍼 : 배틀아츠-리인포스, 보스킬러, 이그노어 가드 / 엑스트라 힐링, 인핸스
         
@@ -111,8 +142,7 @@ class JobGenerator(ck.JobGenerator):
         
         ##### 스펙터 상태일 때 #####
         UpcomingDeath = core.DamageSkill("다가오는 죽음", 0, 450, 2).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        ReturningHate = core.DamageSkill("돌아오는 증오", 0, 320, 6 * 0.2).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)    #12초당 최대 12회
-        ReturningHate_Infinity = core.DamageSkill("돌아오는 증오(인피니티)", 0, 320, 6 * 12, cooltime = 12*1000).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        ReturningHate = ReturningHateWrapper(vEhc)
 
         EndlessBadDream = core.DamageSkill("끝나지 않는 흉몽", 540, 445, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
         EndlessBadDream_Link = core.DamageSkill("끝나지 않는 흉몽(연계)", 180, 445, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
@@ -183,10 +213,8 @@ class JobGenerator(ck.JobGenerator):
             skill.onBefore(core.OptionalElement(SpectorState.is_active, EndlessBadDream_Link, PlainChargeDrive_Link))
   
         # 보스 1:1 시 공격 1회 당 다가오는 죽음 1개 생성, 인피니티 스펠 상태 시 강화레벨에 따라 총 3 ~ 4개 생성
-        UpcomingDeath_Connected = core.OptionalElement(InfinitySpell.is_active, core.RepeatElement(UpcomingDeath, 3 + round(vEhc.getV(0,0)/25)), UpcomingDeath)
-        # 인피니티 스펠 상태 시 돌아오는 증오 12초에 12개로 제한
-        UpcomingDeath.onAfter(core.OptionalElement(InfinitySpell.is_not_active, ReturningHate))
-        ReturningHate_Infinity.onConstraint(core.ConstraintElement("증오 최대생성 제한", InfinitySpell, InfinitySpell.is_active))
+        UpcomingDeath_Connected = core.OptionalElement(InfinitySpell.is_active, core.RepeatElement(UpcomingDeath, 3 + vEhc.getV(0,0) // 25), UpcomingDeath)
+        UpcomingDeath.onAfter(ReturningHate.addStack(0.2))
         
 
         # 기본 연결 설정(레프)
@@ -270,7 +298,7 @@ class JobGenerator(ck.JobGenerator):
             skill.onConstraint(core.ConstraintElement("레프 모드", SpectorState, SpectorState.is_not_active) )
         
         # Constraint 추가하기 : 스펙터 모드
-        for skill in [EndlessBadDream, UncurableHurt, UnfulfilledHunger, UncontrollableChaos, TenaciousInstinct, ReturningHate_Infinity,
+        for skill in [EndlessBadDream, UncurableHurt, UnfulfilledHunger, UncontrollableChaos, TenaciousInstinct, ReturningHate,
                 EndlessBadDream_Link, UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, TenaciousInstinct_Link]:
             skill.onConstraint(core.ConstraintElement("스펙터 모드", SpectorState, SpectorState.is_active) )
 
@@ -298,7 +326,7 @@ class JobGenerator(ck.JobGenerator):
                     globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes()
                     ] +\
                 [EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, 
-                    CrawlingFear_Link, MemoryOfSource, EndlessPain, RaptRestriction,ReturningHate_Infinity, Impulse1, Impulse2,
+                    CrawlingFear_Link, MemoryOfSource, EndlessPain, RaptRestriction, ReturningHate, Impulse1, Impulse2,
                     UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, 
                     AbyssSpell, RaptRestrictionSummon
                     ] +\
