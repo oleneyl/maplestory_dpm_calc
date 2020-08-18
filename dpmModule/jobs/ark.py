@@ -298,7 +298,7 @@ class JobGenerator(ck.JobGenerator):
                             ([GustChargeDrive, GustChargeDrive_Link], "거스트"),
                             ([AbyssChargeDrive, AbyssChargeDrive_Link], "어비스")]:
             for skill in skills:
-                skill.onAfter(DeviousNightmare.reduceCooltime(1000, id))
+                skill.onAfter(DeviousNightmare.reduceCooltime(1000, _id))
         for skills, _id in [([UncurableHurt_Link, UncurableHurt], "상처"),
                             ([UnfulfilledHunger_Link, UnfulfilledHunger], "굶주림"),
                             ([UncontrollableChaos_Link, UncontrollableChaos], "혼돈"),
