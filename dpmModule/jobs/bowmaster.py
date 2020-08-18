@@ -125,6 +125,7 @@ class JobGenerator(ck.JobGenerator):
         AdvancedQuibberAttack_ArrowRain = core.DamageSkill("어드밴스드 퀴버(애로우 레인)", 0, 260, 1, modifier=MortalBlow).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 210, 0.7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
+        # TODO: 폭풍의 시 선딜 반영해야 함
         ArrowOfStorm = ArrowOfStormWrapper(core.DamageSkill("폭풍의 시", 120, (350+combat*3)*0.75, 1+1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 10) + MortalBlow).setV(vEhc, 0, 2, True), ArmorPiercing, combat)
         ArrowFlatter = core.SummonSkill("애로우 플래터", 600, 210, 85+90+combat*3, 1, 30 * 1000, modifier = core.CharacterModifier(pdamage = 30)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper) # 딜레이 모름
         
