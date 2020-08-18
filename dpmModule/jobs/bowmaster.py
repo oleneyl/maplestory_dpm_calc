@@ -20,14 +20,15 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
         return self._result_object_cache
 
 class ArrowOfStormWrapper(core.DamageSkillWrapper):
-    def __init__(self, skill, armorPiercing):
+    def __init__(self, skill, armorPiercing, combat):
         super(ArrowOfStormWrapper, self).__init__(skill)
         self.armorPiercing = armorPiercing
+        self.combat = combat
         
     def _use(self, rem = 0, red = 0):
         modifier = self.get_modifier()
         if self.armorPiercing.is_available():
-            modifier += self.armorPiercing.get_modifier_forced()
+            modifier += core.CharacterModifier(pdamage_indep = 300 * (1 + self.combat * 0.05), armor_ignore = 50 * (1 + self.combat * 0.02))
             self.armorPiercing._use()
         else:
             self.armorPiercing.reduce_cooltime(1000)
@@ -35,9 +36,10 @@ class ArrowOfStormWrapper(core.DamageSkillWrapper):
         return core.ResultObject(self.skill.delay, modifier, self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
 
 class GuidedArrowWrapper(bowmen.GuidedArrowWrapper):
-    def __init__(self, vEhc, num1, num2, armorPiercing):
+    def __init__(self, vEhc, num1, num2, armorPiercing, combat):
         super(GuidedArrowWrapper, self).__init__(vEhc, num1, num2)
         self.armorPiercing = armorPiercing
+        self.combat = combat
             
     def _useTick(self):
         if self.onoff and self.tick <= 0:
@@ -45,7 +47,7 @@ class GuidedArrowWrapper(bowmen.GuidedArrowWrapper):
 
             modifier = self.get_modifier()
             if self.armorPiercing.is_available():
-                modifier += self.armorPiercing.get_modifier_forced()
+                modifier += core.CharacterModifier(pdamage_indep = 300 * (1 + self.combat * 0.05), armor_ignore = 50 * (1 + self.combat * 0.02))
                 self.armorPiercing._use()
             else:
                 self.armorPiercing.reduce_cooltime(1000)
@@ -116,14 +118,14 @@ class JobGenerator(ck.JobGenerator):
         Preparation = core.BuffSkill("프리퍼레이션", 900, 30 * 1000, cooltime = 90 * 1000, att = 50, boss_pdamage = 20).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
-        ArmorPiercing = ArmorPiercingWrapper(core.BuffSkill("아머 피어싱", 0, 0, 9000, pdamage_indep = 300 * (1 + self.combat * 0.05), armor_ignore = 50 * (1 + self.combat * 0.02)))
+        ArmorPiercing = ArmorPiercingWrapper(core.BuffSkill("아머 피어싱", 0, 0, 9000))
     
         #Damage Skills
         AdvancedQuibberAttack = core.DamageSkill("어드밴스드 퀴버", 0, 260, 0.6, modifier=MortalBlow).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
         AdvancedQuibberAttack_ArrowRain = core.DamageSkill("어드밴스드 퀴버(애로우 레인)", 0, 260, 1, modifier=MortalBlow).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 210, 0.7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
-        ArrowOfStorm = ArrowOfStormWrapper(core.DamageSkill("폭풍의 시", 120, (350+combat*3)*0.75, 1+1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 10) + MortalBlow).setV(vEhc, 0, 2, True), ArmorPiercing)
+        ArrowOfStorm = ArrowOfStormWrapper(core.DamageSkill("폭풍의 시", 120, (350+combat*3)*0.75, 1+1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 10) + MortalBlow).setV(vEhc, 0, 2, True), ArmorPiercing, combat)
         ArrowFlatter = core.SummonSkill("애로우 플래터", 600, 210, 85+90+combat*3, 1, 30 * 1000, modifier = core.CharacterModifier(pdamage = 30)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper) # 딜레이 모름
         
         GrittyGust = core.DamageSkill("윈드 오브 프레이", 720, 500, 8, cooltime = 15 * 1000, modifier=MortalBlow).setV(vEhc, 6, 2, True).wrap(core.DamageSkillWrapper)
@@ -134,7 +136,7 @@ class JobGenerator(ck.JobGenerator):
         
         #Summon Skills
         Pheonix = core.SummonSkill("피닉스", 0, 2670, 390, 1, 220 * 1000).setV(vEhc, 5, 3, True).wrap(core.SummonSkillWrapper) # 이볼브가 끝나면 자동으로 소환되므로 딜레이 0
-        GuidedArrow = GuidedArrowWrapper(vEhc, 4, 4, ArmorPiercing)
+        GuidedArrow = GuidedArrowWrapper(vEhc, 4, 4, ArmorPiercing, combat)
         Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(5,5)))*1000).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
         
         #잔영의시 미적용
