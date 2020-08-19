@@ -72,6 +72,57 @@ class DeviousWrapper(core.DamageSkillWrapper):
         self.reduceDict = set()
         return super(DeviousWrapper, self)._use(rem, red)
 
+class SpectorWrapper(core.BuffSkillWrapper):
+    def __init__(self, memoryBuff, endlessBuff):
+        skill = core.BuffSkill("스펙터 상태", 0, 9999999, att = 30, cooltime = -1)
+        self.gauge = 1000
+        self.memoryBuff = memoryBuff
+        self.endlessBuff = endlessBuff
+        self.schedule = None
+        self.cooldown = 0
+        self.lockdown = 0
+        super(SpectorWrapper, self).__init__(skill)
+
+    def spend_time(self, time):
+        """
+        1020ms마다 게이지가 갱신되며, 레프 상태에서는 +13, 스펙터 상태에서는 -23씩 변동.
+        스펙터 잠식-엑스트라 힐링 사용 시 회복량 10% 증가.
+        잠식 제어를 통한 상태 전환은 3초의 쿨타임이 있음.
+        근원의 기억 시작 후 30초, 끝없는 고통 키다운 3초간은 정신력 소모되지 않음.
+        """
+        self.cooldown -= time
+        self.lockdown -= time
+        if self.onoff:
+            if self.memoryBuff.is_not_active() and self.endlessBuff.is_not_active():
+                self.gauge = max(self.gauge - 23 * time / 1020, 0)
+        else:
+            if self.lockdown <= 0:
+                self.gauge = min(self.gauge + 13 * 1.1 * time / 1020, 1000) # 하이퍼 엑스트라 힐링 적용
+
+        if self.gauge <= 0:
+            self.onoff = False
+            self.lockdown = 20000
+            raise ValueError("The Gauge is exhausted. Fix schedule.") # 게이지 고갈시 에러 발생. 고갈을 허용하고 싶으면 제거.
+        else:
+            onoff = self.schedule(self.gauge)
+            if self.onoff != onoff and self.cooldown <= 0:
+                self.onoff = onoff
+                self.cooldown = 3000
+
+    def registerSchedule(self, schedule):
+        self.schedule = schedule
+
+    def setOnoff(self, onoff):
+        self.onoff = onoff
+        return self._result_object_cache
+    
+    def onoffController(self, onoff):
+        return core.TaskHolder(core.Task(self, partial(self.setOnoff, onoff)), name = "상태 변경")
+        
+    def judge(self, gauge, direction):
+        if (self.gauge-gauge)*direction>=0:return True
+        else: return False
+    
 class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):
         super(JobGenerator, self).__init__(vEhc = vEhc)
@@ -143,7 +194,6 @@ class JobGenerator(ck.JobGenerator):
 
         # Buff skills
         ContactCaravan = core.BuffSkill("컨택트 카라반", 720, 300 * 1000, cooltime = 600 * 1000, pdamage = 2 + 1).wrap(core.BuffSkillWrapper)
-        SpectorState = core.BuffSkill("스펙터 상태", 0, 45000/112*210/2, att = 30, cooltime = 210/2 * 1000, rem = False, red = False).wrap(core.BuffSkillWrapper)
         Booster = core.BuffSkill("부스터", 0, 200 * 1000).wrap(core.BuffSkillWrapper)
         
 
@@ -204,6 +254,7 @@ class JobGenerator(ck.JobGenerator):
         EndlessPainTick = core.DamageSkill("끝없는 고통(틱)", 180, 300, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #15타
         EndlessPainEnd = core.DamageSkill("끝없는 고통(종결)", 1200, 500*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 딜레이 : 1200ms 또는 1050ms(이후 연계 시). 일단 1200으로.
         EndlessPainEnd_Link = core.DamageSkill("끝없는 고통(종결,연계)", 1050, 500*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        EndlessPainBuff = core.BuffSkill("끝없는 고통(버프)", 0, 30 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper) # 정신력 소모되지 않음
         
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60*1000, pdamage = 10, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         
@@ -221,12 +272,14 @@ class JobGenerator(ck.JobGenerator):
         MemoryOfSource = core.DamageSkill("근원의 기억", 0, 0, 0, cooltime = 200 * 1000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         MemoryOfSourceTick = core.DamageSkill("근원의 기억(틱)", 250, 400 + 16 * vEhc.getV(1,1), 6).wrap(core.DamageSkillWrapper)    # 43타
         MemoryOfSourceEnd = core.DamageSkill("근원의 기억(종결)", 0, 1200 + 48 * vEhc.getV(1,1), 12 * 6).wrap(core.DamageSkillWrapper)
-        MemoryOfSourceBuff = core.BuffSkill("근원의 기억(버프)", 0, 30 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper) #정신력 소모되지 않음
+        MemoryOfSourceBuff = core.BuffSkill("근원의 기억(버프)", 0, 30 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper) # 정신력 소모되지 않음
                 
         InfinitySpell = core.BuffSkill("인피니티 스펠", 720, (40 + 2*vEhc.getV(0,0)) * 1000, cooltime = 240 * 1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
         DeviousNightmare = core.DamageSkill("새어 나오는 악몽", 0, 500 + 20*vEhc.getV(2,2), 9, cooltime = 10 * 1000).isV(vEhc,2,2).wrap(DeviousWrapper)
         DeviousDream = core.DamageSkill("새어 나오는 흉몽", 0, 600 + 24*vEhc.getV(2,2), 9, cooltime = 10 * 1000).wrap(DeviousWrapper)
+
+        SpectorState = SpectorWrapper(MemoryOfSourceBuff, EndlessPainBuff)
         
         # 기본 연결 설정(스펙터)
         for skill in [UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, TenaciousInstinct_Link]:
@@ -261,12 +314,17 @@ class JobGenerator(ck.JobGenerator):
         
         AbyssSpell.onAfter(AbyssBuff)
         AbyssChargeDrive_Link.onAfter(AbyssSpell)
+        AbyssChargeDrive_Link.onAfter(AbyssChargeDrive_After)
         
+        RaptRestriction.onAfter(SpectorState.onoffController(True))
         RaptRestriction.onAfter(RaptRestrictionSummon)
         RaptRestriction.onAfter(RaptRestrictionEnd.controller(9000))
         
-        EndlessPain.onAfter(core.RepeatElement(EndlessPainTick, 15))
-        EndlessPain.onAfter(EndlessPainEnd_Link)
+        EndlessPainRepeat = core.RepeatElement(EndlessPainTick, 15)
+        EndlessPainRepeat.onAfter(EndlessPainEnd_Link)
+        EndlessPain.onAfter(SpectorState.onoffController(True))
+        EndlessPain.onAfter(EndlessPainBuff)
+        EndlessPain.onAfter(EndlessPainRepeat)
         
         MagicCircuitFullDriveStorm.onConstraint(core.ConstraintElement('매서풀 버프가 지속되는 동안에만 마력 폭풍 발생', MagicCircuitFullDrive, MagicCircuitFullDrive.is_active))  
 
@@ -303,27 +361,48 @@ class JobGenerator(ck.JobGenerator):
         # Constraint 추가하기 : 레프 모드
         for skill in [PlainChargeDrive, PlainChargeDrive_Link, ScarletChargeDrive, ScarletChargeDrive_Link,
                 EndlessNightmare_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, UnstoppableImpulse_Link]:
-            
-            skill.onConstraint(core.ConstraintElement("레프 모드", SpectorState, SpectorState.is_not_active) )
+            skill.onConstraint(core.ConstraintElement("레프 모드", SpectorState, SpectorState.is_not_active))
         
         # Constraint 추가하기 : 스펙터 모드
         for skill in [EndlessBadDream, UnfulfilledHunger, UncontrollableChaos, ReturningHate,
                 EndlessBadDream_Link, UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, TenaciousInstinct_Link]:
-            skill.onConstraint(core.ConstraintElement("스펙터 모드", SpectorState, SpectorState.is_active) )
+            skill.onConstraint(core.ConstraintElement("스펙터 모드", SpectorState, SpectorState.is_active))
 
-        MemoryOfSource.onConstraint(core.ConstraintElement("스펙터 모드", SpectorState, SpectorState.is_active) )
-        
-        def MemoryOfSourceHandleSpector(spector_state, time):
-            spector_state.timeLeft += time
-            spector_state.cooltimeLeft += time
-            return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = 'Graph Element', spec = 'graph control')
-        
-        MemoryOfSource.onAfter(core.TaskHolder(core.Task(SpectorState, partial(MemoryOfSourceHandleSpector, SpectorState, 30*1000)), "30초 더 지속" ))                
-        MemoryOfSource.onAfter(core.RepeatElement(MemoryOfSourceTick, 43))
-        MemoryOfSource.onAfter(MemoryOfSourceEnd)
+        CrawlingFear.onAfter(SpectorState.onoffController(True))
+        CrawlingFear_Link.onAfter(SpectorState.onoffController(True))
+
+        MemoryOfSourceRepeat = core.RepeatElement(MemoryOfSourceTick, 43)
+        MemoryOfSourceRepeat.onAfter(MemoryOfSourceEnd)
+        MemoryOfSource.onAfter(SpectorState.onoffController(True))
         MemoryOfSource.onAfter(MemoryOfSourceBuff)
+        MemoryOfSource.onAfter(MemoryOfSourceRepeat)
 
-        ScarletBuff.set_disabled_and_time_left(0)
+        def schedule(gauge):
+            """
+            스펙터 <-> 레프 상태 스케쥴링을 담당합니다.
+            True를 리턴하면 스펙터, False를 리턴하면 레프 상태로 변환합니다.
+            """
+            if gauge < 150:
+                return False
+
+            if AbyssBuff.is_not_active() and AbyssChargeDrive_Link.is_available():
+                return False
+            if ScarletBuff.is_not_active() and ScarletChargeDrive_Link.is_available():
+                return False
+
+            if MemoryOfSourceBuff.is_active():
+                return True
+            if InfinitySpell.is_active():
+                return True
+
+            if gauge > 500:
+                return True
+            
+            return False
+
+        SpectorState.registerSchedule(schedule)
+
+        ScarletBuff.set_disabled_and_time_left(0) # 스칼렛/어비스 버프가 있는 채로 딜 시작하는 것을 가정함.
         AbyssBuff.set_disabled_and_time_left(0)
 
         DeviousNightmare.protect_from_running()
@@ -333,9 +412,9 @@ class JobGenerator(ck.JobGenerator):
                 [ContactCaravan, ScarletBuff, AbyssBuff, SpectorState, Booster,
                     ChargeSpellAmplification, WraithOfGod,
                     LuckyDice, Overdrive, OverdrivePenalty,
-                    MagicCircuitFullDrive, MemoryOfSourceBuff,
+                    MagicCircuitFullDrive, MemoryOfSourceBuff, EndlessPainBuff,
                     InfinitySpell,
-                    globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes()
+                    globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.soul_contract()
                     ] +\
                 [EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, 
                     CrawlingFear_Link, MemoryOfSource, EndlessPain, RaptRestriction, ReturningHate, UnstoppableImpulse_Link, TenaciousInstinct_Link,
