@@ -148,7 +148,6 @@ class JobGenerator(ck.JobGenerator):
         
 
         # 일반 공격들        
-        EndlessNightmare = core.DamageSkill("끝나지 않는 악몽", 540, 440, 6, cooltime = 2000, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         EndlessNightmare_Link = core.DamageSkill("끝나지 않는 악몽(연계)", 540, 440, 6, cooltime = 2000, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         PlainChargeDrive = core.DamageSkill('플레인 차지드라이브', 540, 610, 3, modifier=BattleArtsHyper).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
@@ -162,16 +161,13 @@ class JobGenerator(ck.JobGenerator):
         ScarletSpell = core.DamageSkill("스칼렛 스펠", 0, 220, 5, modifier=SpellBullet).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         ScarletBuff = core.BuffSkill("스칼렛 버프", 0, 60 * 1000, cooltime = -1, att = 30, crit = 20).wrap(core.BuffSkillWrapper)
         
-        UnstoppableImpulse = MultipleDamageSkillWrapper(core.DamageSkill("멈출 수 없는 충동", 540, 435, 5, cooltime = 6000, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False), 2)
         UnstoppableImpulse_Link = MultipleDamageSkillWrapper(core.DamageSkill("멈출 수 없는 충동(연계)", 540, 435, 5, cooltime = 6000, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False), 2)
 
-        GustChargeDrive = core.DamageSkill("거스트 차지드라이브", 450, 400, 6, cooltime = 5000, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         GustChargeDrive_Link = core.DamageSkill("거스트 차지드라이브(연계)", 450, 400, 6, cooltime = 5000, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         GustSpell = core.DamageSkill('거스트 스펠', 0, 230, 4, modifier=SpellBullet).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         GustBuff = core.BuffSkill("거스트 버프", 0, 60*1000, cooltime = -1).wrap(core.BuffSkillWrapper) # dpm에 영향을 주지 않아 미사용        
         
-        AbyssChargeDrive = core.DamageSkill("어비스 차지드라이브", 630, 340, 4, cooltime = 9000, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        AbyssChargeDrive_Link = core.DamageSkill("어비스 차지 드라이브(연계)", 630, 340, 4, cooltime = 9000, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        AbyssChargeDrive_Link = core.DamageSkill("어비스 차지드라이브(연계)", 630, 340, 4, cooltime = 9000, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         AbyssChargeDrive_After = core.DamageSkill("어비스 차지드라이브(후속타)", 0, 410, 6, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         AbyssSpell = core.SummonSkill("어비스 스펠", 0, 300*0.75, 70, 2, 3000, cooltime = -1, modifier=SpellBullet).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
         AbyssBuff = core.BuffSkill("어비스 버프", 0, 60*1000, cooltime = -1, pdamage = 20, boss_pdamage = 30, armor_ignore = 20).wrap(core.BuffSkillWrapper)
@@ -184,14 +180,12 @@ class JobGenerator(ck.JobGenerator):
         EndlessBadDream = core.DamageSkill("끝나지 않는 흉몽", 540, 445, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
         EndlessBadDream_Link = core.DamageSkill("끝나지 않는 흉몽(연계)", 270, 445, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
 
-        UncurableHurt = core.DamageSkill("지워지지 않는 상처", 480, 510, 6, cooltime = 3000, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  #스칼렛 차지 드라이브의 변형
-        UncurableHurt_Link = core.DamageSkill("지워지지 않는 상처(연계)", 480, 510, 6, cooltime = 3000, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        UncurableHurt_Link = core.DamageSkill("지워지지 않는 상처(연계)", 480, 510, 6, cooltime = 3000, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  #스칼렛 차지 드라이브의 변형
         
-        TenaciousInstinct = MultipleDamageSkillWrapper(core.DamageSkill("멈출 수 없는 본능", 540, 460, 6, cooltime = 6000, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False), 2)
         TenaciousInstinct_Link = MultipleDamageSkillWrapper(core.DamageSkill("멈출 수 없는 본능(연계)", 540, 460, 6, cooltime = 6000, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False), 2)
 
         UnfulfilledHunger = core.DamageSkill("채워지지 않는 굶주림", 750, 510, 7, cooltime = 5000, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #거스트 차지 드라이브 변형
-        UnfulfilledHunger_Link = core.DamageSkill("채워지지 않는 굶주림(연계)", 660, 320, 7, cooltime = 5000, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        UnfulfilledHunger_Link = core.DamageSkill("채워지지 않는 굶주림(연계)", 660, 510, 7, cooltime = 5000, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
         CrawlingFear = core.DamageSkill("기어 다니는 공포", 30 + 630, 1390, 12, cooltime = 60*1000, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         CrawlingFear_Link = core.DamageSkill("기어 다니는 공포(연계)", 30 + 360, 1390, 12, cooltime = 60*1000, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
@@ -207,7 +201,7 @@ class JobGenerator(ck.JobGenerator):
         ChargeSpellAmplification = core.BuffSkill("차지 스펠 앰플리피케이션", 720, 60000, att = 30, crit = 20, pdamage = 20, armor_ignore = 20, boss_pdamage = 30, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         
         EndlessPain = core.DamageSkill("끝없는 고통", 360, 0, 0, cooltime = 3030 + 60 * 1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   # onTick==> 다가오는 죽음
-        EndlessPainTick = core.DamageSkill("끝없는 고통(틱)", 180,  300, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #15타
+        EndlessPainTick = core.DamageSkill("끝없는 고통(틱)", 180, 300, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #15타
         EndlessPainEnd = core.DamageSkill("끝없는 고통(종결)", 1200, 500*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 딜레이 : 1200ms 또는 1050ms(이후 연계 시). 일단 1200으로.
         EndlessPainEnd_Link = core.DamageSkill("끝없는 고통(종결,연계)", 1050, 500*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
@@ -263,16 +257,13 @@ class JobGenerator(ck.JobGenerator):
         ScarletChargeDrive_Link.onAfter(ScarletSpell)      
         ScarletChargeDrive.onAfter(ScarletChargeDrive_After)
 
-        GustChargeDrive.onAfter(GustSpell)
         GustChargeDrive_Link.onAfter(GustSpell)
         
         AbyssSpell.onAfter(AbyssBuff)
-        AbyssChargeDrive.onAfter(AbyssSpell)
         AbyssChargeDrive_Link.onAfter(AbyssSpell)
-        AbyssChargeDrive.onAfter(AbyssChargeDrive_After)
         
         RaptRestriction.onAfter(RaptRestrictionSummon)
-        RaptRestriction.onAfter(RaptRestrictionEnd)
+        RaptRestriction.onAfter(RaptRestrictionEnd.controller(9000))
         
         EndlessPain.onAfter(core.RepeatElement(EndlessPainTick, 15))
         EndlessPain.onAfter(EndlessPainEnd_Link)
@@ -281,27 +272,26 @@ class JobGenerator(ck.JobGenerator):
 
         # 스펙터 상태 파이널어택류 연계
         for skill in [EndlessBadDream, EndlessBadDream_Link, DeviousDream,
-            UncurableHurt, UnfulfilledHunger, UncontrollableChaos, TenaciousInstinct, 
+            UnfulfilledHunger, UncontrollableChaos, 
             UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, TenaciousInstinct_Link,
             CrawlingFear_Link, EndlessPainTick, EndlessPainEnd, EndlessPainEnd_Link]:
             skill.onAfter(UpcomingDeath_Connected)
         MagicCircuitFullDriveStorm.onAfter(core.OptionalElement(SpectorState.is_active, UpcomingDeath_Connected))
         
         # 5차 - 새어나오는 악몽 / 흉몽 연계
-        for skill in [EndlessNightmare, EndlessNightmare_Link]:
-            skill.onAfter(core.OptionalElement(DeviousNightmare.is_available, DeviousNightmare))
-        for skill in [EndlessBadDream, EndlessBadDream_Link]:
-            skill.onAfter(core.OptionalElement(DeviousDream.is_available, DeviousDream))
+        EndlessNightmare_Link.onAfter(core.OptionalElement(DeviousNightmare.is_available, DeviousNightmare))
+        EndlessBadDream.onAfter(core.OptionalElement(DeviousDream.is_available, DeviousDream))
+        EndlessBadDream_Link.onAfter(core.OptionalElement(DeviousDream.is_available, DeviousDream))
 
         for skills, _id in [([ScarletChargeDrive, ScarletChargeDrive_Link], "스칼렛"), 
-                            ([GustChargeDrive, GustChargeDrive_Link], "거스트"),
-                            ([AbyssChargeDrive, AbyssChargeDrive_Link], "어비스")]:
+                            ([GustChargeDrive_Link], "거스트"),
+                            ([AbyssChargeDrive_Link], "어비스")]:
             for skill in skills:
                 skill.onAfter(DeviousNightmare.reduceCooltime(1000, _id))
-        for skills, _id in [([UncurableHurt_Link, UncurableHurt], "상처"),
+        for skills, _id in [([UncurableHurt_Link], "상처"),
                             ([UnfulfilledHunger_Link, UnfulfilledHunger], "굶주림"),
                             ([UncontrollableChaos_Link, UncontrollableChaos], "혼돈"),
-                            ([TenaciousInstinct_Link, TenaciousInstinct], "본능"),
+                            ([TenaciousInstinct_Link], "본능"),
                             ([CrawlingFear_Link, CrawlingFear], "공포")]:
             for skill in skills:
                 skill.onAfter(DeviousDream.reduceCooltime(1000, _id))
@@ -311,13 +301,13 @@ class JobGenerator(ck.JobGenerator):
         PlainAttack.onAfter(core.OptionalElement(SpectorState.is_active, EndlessBadDream, PlainChargeDrive))
         
         # Constraint 추가하기 : 레프 모드
-        for skill in [PlainChargeDrive, EndlessNightmare, ScarletChargeDrive, GustChargeDrive, AbyssChargeDrive, UnstoppableImpulse,
-                PlainChargeDrive_Link, EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, UnstoppableImpulse_Link]:
+        for skill in [PlainChargeDrive, PlainChargeDrive_Link, ScarletChargeDrive, ScarletChargeDrive_Link,
+                EndlessNightmare_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, UnstoppableImpulse_Link]:
             
             skill.onConstraint(core.ConstraintElement("레프 모드", SpectorState, SpectorState.is_not_active) )
         
         # Constraint 추가하기 : 스펙터 모드
-        for skill in [EndlessBadDream, UncurableHurt, UnfulfilledHunger, UncontrollableChaos, TenaciousInstinct, ReturningHate,
+        for skill in [EndlessBadDream, UnfulfilledHunger, UncontrollableChaos, ReturningHate,
                 EndlessBadDream_Link, UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, TenaciousInstinct_Link]:
             skill.onConstraint(core.ConstraintElement("스펙터 모드", SpectorState, SpectorState.is_active) )
 
@@ -350,7 +340,7 @@ class JobGenerator(ck.JobGenerator):
                 [EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, 
                     CrawlingFear_Link, MemoryOfSource, EndlessPain, RaptRestriction, ReturningHate, UnstoppableImpulse_Link, TenaciousInstinct_Link,
                     UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, 
-                    AbyssSpell, RaptRestrictionSummon, DeviousNightmare, DeviousDream,
+                    AbyssSpell, RaptRestrictionSummon, RaptRestrictionEnd, DeviousNightmare, DeviousDream,
                     ] +\
                 [MagicCircuitFullDriveStorm] +\
                 [PlainAttack])
