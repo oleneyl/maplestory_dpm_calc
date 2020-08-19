@@ -28,7 +28,7 @@ class ShadowBatStackWrapper(core.StackSkillWrapper):
             self.throwCount -= 3
             if len(self.batQueue) < self._max - self.stack:
                 self.batQueue = self.batQueue + [self.currentTime]
-        return core.ResultObject(0, core.CharacterModifier(), 0, 0, '표창 사용 추가')
+        return self._result_object_cache
 
     def add_throw(self):
         return core.TaskHolder(core.Task(self, self._add_throw), name="표창 사용 추가")
