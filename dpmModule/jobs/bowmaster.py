@@ -16,10 +16,22 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
     '''
     아머 피어싱 - 적 방어율만큼 최종뎀 추가, 방무+50%. 쿨타임 9초, 공격마다 1초씩 감소, 최소 재발동 대기시간 1초
     '''
-    def reduce_cooltime(self, time):
+    def __init__(self, combat):
+        self.piercingModifier = core.CharacterModifier(pdamage_indep = 300 * (1 + combat * 0.05), armor_ignore = 50 * (1 + combat * 0.02))
+        self.emptyModifier = core.CharacterModifier()
+        skill = core.BuffSkill("아머 피어싱", 0, 0, 9000)
+        super(ArmorPiercingWrapper, self).__init__(skill)
+
+    def check(self):
+        if self.available:
+            self.cooltimeLeft = self.skill.cooltime # TODO: 쿨감 적용 어떻게???
+            self.available = False
+            return self.piercingModifier
+
         if self.cooltimeLeft > 1000:
-            self.cooltimeLeft = max(self.cooltimeLeft - time, 1000)
-        return self._result_object_cache
+            self.cooltimeLeft = max(self.cooltimeLeft - 1000, 1000)
+        
+        return self.emptyModifier
 
 class ArrowOfStormWrapper(core.DamageSkillWrapper):
     def __init__(self, skill, armorPiercing, combat):
@@ -40,11 +52,7 @@ class ArrowOfStormWrapper(core.DamageSkillWrapper):
         딜레이가 0인 버프가 끼어들 수 있기에 정확한 구현은 아님.
         '''
         modifier = self.get_modifier()
-        if self.armorPiercing.is_available():
-            modifier += core.CharacterModifier(pdamage_indep = 300 * (1 + self.combat * 0.05), armor_ignore = 50 * (1 + self.combat * 0.02))
-            self.armorPiercing._use()
-        else:
-            self.armorPiercing.reduce_cooltime(1000)
+        modifier += self.armorPiercing.check()
         
         delay = self.skill.delay
         if self.currentTime > self.lastUsed:
@@ -64,11 +72,7 @@ class GuidedArrowWrapper(bowmen.GuidedArrowWrapper):
             self.tick += self.skill.delay
 
             modifier = self.get_modifier()
-            if self.armorPiercing.is_available():
-                modifier += core.CharacterModifier(pdamage_indep = 300 * (1 + self.combat * 0.05), armor_ignore = 50 * (1 + self.combat * 0.02))
-                self.armorPiercing._use()
-            else:
-                self.armorPiercing.reduce_cooltime(1000)
+            modifier += self.armorPiercing.check()
             
             return core.ResultObject(0, modifier, self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
         else:
@@ -136,7 +140,7 @@ class JobGenerator(ck.JobGenerator):
         Preparation = core.BuffSkill("프리퍼레이션", 900, 30 * 1000, cooltime = 90 * 1000, att = 50, boss_pdamage = 20).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
-        ArmorPiercing = ArmorPiercingWrapper(core.BuffSkill("아머 피어싱", 0, 0, 9000))
+        ArmorPiercing = ArmorPiercingWrapper(combat)
     
         #Damage Skills
         AdvancedQuibberAttack = core.DamageSkill("어드밴스드 퀴버", 0, 260, 0.6, modifier=MortalBlow).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
