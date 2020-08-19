@@ -71,7 +71,6 @@ class DeviousWrapper(core.DamageSkillWrapper):
     def _use(self, rem = 0, red = 0):
         self.reduceDict = set()
         return super(DeviousWrapper, self)._use(rem, red)
-        #return delay, mdf, dmg, self.cascade
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):
@@ -143,7 +142,7 @@ class JobGenerator(ck.JobGenerator):
 
 
         # Buff skills
-        ContactCaravan = core.BuffSkill("컨택트 카라반", 720, 300 * 1000, cooltime = 500 * 1000, pdamage = 2 + 1).wrap(core.BuffSkillWrapper)
+        ContactCaravan = core.BuffSkill("컨택트 카라반", 720, 300 * 1000, cooltime = 600 * 1000, pdamage = 2 + 1).wrap(core.BuffSkillWrapper)
         SpectorState = core.BuffSkill("스펙터 상태", 0, 45000/112*210/2, att = 30, cooltime = 210/2 * 1000, rem = False, red = False).wrap(core.BuffSkillWrapper)
         Booster = core.BuffSkill("부스터", 0, 200 * 1000).wrap(core.BuffSkillWrapper)
         
@@ -153,7 +152,7 @@ class JobGenerator(ck.JobGenerator):
         EndlessNightmare_Link = core.DamageSkill("끝나지 않는 악몽(연계)", 540, 440, 6, cooltime = 2000, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         PlainChargeDrive = core.DamageSkill('플레인 차지드라이브', 540, 610, 3, modifier=BattleArtsHyper).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        PlainChargeDrive_Link = core.DamageSkill('플레인 차지드라이브(연계)', 240, 610, 3, modifier=BattleArtsHyper).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        PlainChargeDrive_Link = core.DamageSkill('플레인 차지드라이브(연계)', 270, 610, 3, modifier=BattleArtsHyper).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         PlainSpell = core.DamageSkill("플레인 스펠", 0, 370, 2, modifier=SpellBullet).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         PlainBuff = core.BuffSkill("플레인 버프", 0, 60 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper)  # dpm에 영향을 주지 않아 미사용
         
@@ -183,7 +182,7 @@ class JobGenerator(ck.JobGenerator):
         ReturningHate = ReturningHateWrapper(vEhc)
 
         EndlessBadDream = core.DamageSkill("끝나지 않는 흉몽", 540, 445, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
-        EndlessBadDream_Link = core.DamageSkill("끝나지 않는 흉몽(연계)", 180, 445, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
+        EndlessBadDream_Link = core.DamageSkill("끝나지 않는 흉몽(연계)", 270, 445, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
 
         UncurableHurt = core.DamageSkill("지워지지 않는 상처", 480, 510, 6, cooltime = 3000, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  #스칼렛 차지 드라이브의 변형
         UncurableHurt_Link = core.DamageSkill("지워지지 않는 상처(연계)", 480, 510, 6, cooltime = 3000, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
@@ -207,8 +206,8 @@ class JobGenerator(ck.JobGenerator):
         # 하이퍼
         ChargeSpellAmplification = core.BuffSkill("차지 스펠 앰플리피케이션", 720, 60000, att = 30, crit = 20, pdamage = 20, armor_ignore = 20, boss_pdamage = 30, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         
-        EndlessPain = core.DamageSkill("끝없는 고통", 30, 0, 0, cooltime = 3030 + 60 * 1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   # onTick==> 다가오는 죽음
-        EndlessPainTick = core.DamageSkill("끝없는 고통(틱)", 200,  300, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #15타
+        EndlessPain = core.DamageSkill("끝없는 고통", 360, 0, 0, cooltime = 3030 + 60 * 1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   # onTick==> 다가오는 죽음
+        EndlessPainTick = core.DamageSkill("끝없는 고통(틱)", 180,  300, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #15타
         EndlessPainEnd = core.DamageSkill("끝없는 고통(종결)", 1200, 500*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 딜레이 : 1200ms 또는 1050ms(이후 연계 시). 일단 1200으로.
         EndlessPainEnd_Link = core.DamageSkill("끝없는 고통(종결,연계)", 1050, 500*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
