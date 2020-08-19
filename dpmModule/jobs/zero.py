@@ -125,7 +125,8 @@ class JobGenerator(ck.JobGenerator):
 
         #### 알파 ####
         MoonStrike = core.DamageSkill("문 스트라이크", 390, 120, 6).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-        MoonStrikeTAG = core.DamageSkill("문 스트라이크(태그)", 0, 120, 6).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        #MoonStrikeTAG = core.DamageSkill("문 스트라이크(태그)", 0, 120, 6).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        MoonStrikeTAG = core.DamageSkill("문 스트라이크(태그)(오류)", 0, 120, 6).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         
         PierceStrike = core.DamageSkill("피어스 쓰러스트", 510, 170, 6 ).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
         PierceStrikeTAG = core.DamageSkill("피어스 쓰러스트(태그)", 0, 170, 6 ).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
@@ -137,7 +138,8 @@ class JobGenerator(ck.JobGenerator):
         ShadowStrikeAura = core.DamageSkill("쉐도우 스트라이크", 0, 310, 1)
         '''
         FlashAssault = core.DamageSkill("플래시 어썰터", 480, 165, 8 ).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        FlashAssaultTAG = core.DamageSkill("플래시 어썰터(태그)", 0, 165, 8 ).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        #FlashAssaultTAG = core.DamageSkill("플래시 어썰터(태그)", 0, 165, 8 ).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        FlashAssaultTAG = core.DamageSkill("플래시 어썰터(태그)(오류)", 0, 0, 0 ).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         
         ### Dummy Skills
         _SpinCutter = core.DamageSkill("스핀 커터", 630, 260, 10 ).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) 
@@ -176,7 +178,8 @@ class JobGenerator(ck.JobGenerator):
         
 
         UpperStrike = core.DamageSkill("어퍼 슬래시", 690, 210, 6, modifier = beta_enrage(6, vEhc.getV(5 , 3))).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-        UpperStrikeTAG = core.DamageSkill("어퍼 슬래시(태그)", 0, 210, 6, modifier = beta_enrage(6, vEhc.getV(5 , 3))).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        #UpperStrikeTAG = core.DamageSkill("어퍼 슬래시(태그)", 0, 210, 6, modifier = beta_enrage(6, vEhc.getV(5 , 3))).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        UpperStrikeTAG = core.DamageSkill("어퍼 슬래시(태그)(오류)", 0, 0, 0, modifier = beta_enrage(6, vEhc.getV(5 , 3))).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         
         AirRiot = core.DamageSkill("어드밴스드 파워 스텀프", 570, 330, 9, modifier = beta_enrage(6, vEhc.getV(0 , 3))).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
         AirRiotTAG = core.DamageSkill("어드밴스드 파워 스텀프(태그)", 0, 330, 9, modifier = beta_enrage(6, vEhc.getV(0 , 3))).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
