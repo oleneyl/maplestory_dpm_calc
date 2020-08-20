@@ -90,7 +90,7 @@ class Factory():
     @staticmethod
     def getSetOption(rank):
         li = [it.CharacterModifier(), 
-                it.CharacterModifier(), 
+                it.CharacterModifier(stat_main=20, stat_sub=20), 
                 it.CharacterModifier(att=50),
                 it.CharacterModifier(boss_pdamage=30)]
         
