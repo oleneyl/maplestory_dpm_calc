@@ -23,7 +23,7 @@ WeaponFactory = it.WeaponFactoryClass(140, _valueMap, modifier = it.CharacterMod
 
 class Factory():
     @staticmethod
-    def getArmorSetDict(star = 0, enhance = 70, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
+    def getArmorSetDict(star, enhance, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
         assert(enhance in [100, 70, 30])
         #TODO : Simplyfy this dirty codes.
         if not hammer: 
@@ -56,7 +56,7 @@ class Factory():
         return package
         
     @staticmethod
-    def getWeapon(_type, star = 0, elist = [0,0,9,0], potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonusAttIndex = 0, bonusElse = it.CharacterModifier()):
+    def getWeapon(_type, star, elist, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonusAttIndex = 0, bonusElse = it.CharacterModifier()):
         return WeaponFactory.getWeapon(_type, star = star, elist = elist, potential = potential, additional_potential = additional_potential, bonusAttIndex = bonusAttIndex, bonusElse = bonusElse )
         
     @staticmethod

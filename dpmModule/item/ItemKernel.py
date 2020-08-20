@@ -242,7 +242,7 @@ class EnhancerFactory():
         return CharacterModifier(stat_main = stli[min(star, len(stli) - 1)], stat_sub = stli[min(star, len(stli) - 1)], att = atli[min(star, len(atli) - 1)])  
     
     @classmethod    
-    def get_glove_scroll_enhancement(self, level, elist = [0, 0, 0]):
+    def get_glove_scroll_enhancement(self, level, elist):
         if level <= 70:
             idx = 0
         else:
@@ -253,7 +253,7 @@ class EnhancerFactory():
         return CharacterModifier(att = att)
     
     @classmethod
-    def get_armor_scroll_enhancement(self, level, elist = [0,0,0]):
+    def get_armor_scroll_enhancement(self, level, elist):
         if level <= 70:
             idx = 0
         elif level <= 110:
@@ -301,7 +301,7 @@ class EnhancerFactory():
         return EnhancerFactory.get_glove_bonus_starforce_enhancement(star) + EnhancerFactory.get_armor_starforce_enhancement(level, star)
     
     @classmethod
-    def get_weapon_scroll_enhancement(self, level, elist = [0,0,0,0]):
+    def get_weapon_scroll_enhancement(self, level, elist):
         if level <= 70:
             idx = 0
         elif level <= 110:
@@ -346,7 +346,7 @@ class WeaponFactoryClass():
         self.valueMap = valueMap
         self.modifier = modifier
         
-    def getWeapon(self, _type, star = 0, elist = [0,0,0,0], potential = CharacterModifier(), additional_potential = CharacterModifier(), bonusAttIndex = 0, bonusElse = CharacterModifier()):
+    def getWeapon(self, _type, star, elist, potential = CharacterModifier(), additional_potential = CharacterModifier(), bonusAttIndex = 0, bonusElse = CharacterModifier()):
         assert(_type in self.wholeType)
         if _type == '블레이드':
             _type = '단검'
@@ -361,7 +361,7 @@ class WeaponFactoryClass():
         item.set_additional_potential(additional_potential)
         return item
 
-    def getBlade(self, _type, star = 0, elist = [0,0,0,0], potential = CharacterModifier(), additional_potential = CharacterModifier(), bonusElse = CharacterModifier()):
+    def getBlade(self, _type, star, elist, potential = CharacterModifier(), additional_potential = CharacterModifier(), bonusElse = CharacterModifier()):
         assert(_type == '블레이드')
         def get_blade_modifier():
             if self.modifier.stat_main == 100:
