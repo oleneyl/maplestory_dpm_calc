@@ -66,7 +66,7 @@ class Factory():
         return WeaponFactory.getWeapon(_type, star = star, elist = elist, potential = potential, additional_potential = additional_potential, bonusAttIndex = bonusAttIndex, bonusElse = bonusElse)
 
     @staticmethod
-    def getBlade(_type, star = 0, elist = [0,0,0,0], potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonusElse = it.CharacterModifier()):
+    def getBlade(_type, star = 0, elist = [0,0,0,9], potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonusElse = it.CharacterModifier()):
 
         return WeaponFactory.getBlade(_type, star = star, elist = elist, potential = potential, additional_potential = additional_potential, bonusElse = bonusElse)
     

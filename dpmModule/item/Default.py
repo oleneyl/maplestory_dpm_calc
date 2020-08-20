@@ -23,7 +23,7 @@ def getEmblem(potential = it.CharacterModifier(), additional_potential = it.Char
     item.set_additional_potential(additional_potential)
     return item
 
-def get_subweapon_covering_exception(_type, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), factory_hook=None, star=17):
+def get_subweapon_covering_exception(_type, star, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), factory_hook=None):
     if _type == '블레이드':
         return factory_hook.getBlade(_type, star=star, potential = potential, additional_potential = additional_potential)
     else:
