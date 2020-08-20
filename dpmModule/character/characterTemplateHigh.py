@@ -1,5 +1,4 @@
 from .characterKernel import ItemedCharacter as ichar
-from .characterKernel import LinkSkill
 from .characterTemplate import AbstractTemplateGenerator, register_template_generator
 from ..item import Arcane, Absolab, Empress, RootAbyss, BossAccesory, Default, Else, Meister, Darkness
 from ..item.ItemKernel import CharacterModifier as MDF
@@ -45,8 +44,7 @@ def getU4000CharacterTemplate(_type):
     카루타 + 여제 + 보장
     '''
     #Temporal union object..
-    link = LinkSkill.get_full_link()
-    template = ichar(modifierlist = [link], level = 215)
+    template = ichar(modifierlist = [], level = 215)
     
     template.add_summary("에디셔널 잠재능력: 없음")
 
@@ -114,8 +112,7 @@ def getU4000CharacterTemplate(_type):
 
 def getU5000CharacterTemplate(_type):
     #Temporal union object..
-    link = LinkSkill.get_full_link()
-    template = ichar(modifierlist = [link], level = 230)
+    template = ichar(modifierlist = [], level = 230)
 
     weaponAPtnl = MDF(att = 3)
     subAPtnl = MDF()
@@ -183,8 +180,7 @@ def getU5000CharacterTemplate(_type):
 
 def getU6000CharacterTemplate(_type):
     #Temporal union object..
-    link = LinkSkill.get_full_link()
-    template = ichar(modifierlist = [link], level = 240)
+    template = ichar(modifierlist = [], level = 240)
     
     template.add_summary("에디: 공10, 무기류 공6%")
 
@@ -258,8 +254,7 @@ def getU6000CharacterTemplate(_type):
 
 def getU7000CharacterTemplate(_type):
     #Temporal union object..
-    link = LinkSkill.get_full_link()
-    template = ichar(modifierlist = [link], level = 250)
+    template = ichar(modifierlist = [], level = 250)
     
     template.add_summary("에디: 2줄, 무기류 공21%")
 
@@ -350,8 +345,7 @@ def getU7000CharacterTemplate(_type):
 
 def getU8000CharacterTemplate(_type):
     #Temporal union object..
-    link = LinkSkill.get_full_link()
-    template = ichar(modifierlist = [link], level = 255)
+    template = ichar(modifierlist = [], level = 255)
     
     template.add_summary("에디: 2.5줄, 무기류 공21%")
 
@@ -446,8 +440,7 @@ def getU8000CharacterTemplate(_type):
     
 def getU8500CharacterTemplate(_type):
     #Temporal union object..
-    link = LinkSkill.get_full_link()
-    template = ichar(modifierlist = [link], level = 260)
+    template = ichar(modifierlist = [], level = 260)
     
     template.add_summary("에디: 레전 3줄, 무기류 공24%")
 

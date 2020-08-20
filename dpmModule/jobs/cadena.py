@@ -55,6 +55,7 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = False
         self.vEnhanceNum = 11
         self.jobtype = "luk"
+        self.jobname = "카데나"
         self.ability_list = Ability_tool.get_ability_set('reuse', 'boss_pdamage', 'mess')
         self.preEmptiveSkills = 1
         

@@ -23,6 +23,7 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = False
         self.vEnhanceNum = 14
         self.jobtype = "dex"
+        self.jobname = "메카닉"
         self.ability_list = Ability_tool.get_ability_set('passive_level', 'boss_pdamage', 'crit')
         self.preEmptiveSkills = 1
         

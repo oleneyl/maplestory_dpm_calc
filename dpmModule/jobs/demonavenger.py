@@ -16,6 +16,7 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.buffrem = False
         self.jobtype = "str"
+        self.jobname = "데몬어벤져"
         self.vEnhanceNum = 12
         # 쓸샾, 쓸뻥, 쓸오더(아직 미구현)
         self.preEmptiveSkills = 3
