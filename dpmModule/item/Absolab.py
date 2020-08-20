@@ -23,7 +23,7 @@ _valueMap = [[103, [0,16,23,32,42,53]],
                 [97,[0,13,18,25,33,42]],
                 [203,[0,11,23,38,56,76]]]#Need blade & Zero weapon
 
-WeaponFactory = it.WeaponFactoryClass(160, _valueMap, modifier = it.CharacterModifier(stat_main = 40, stat_sub = 40, pdamage = 30, armor_ignore = 10))
+WeaponFactory = it.WeaponFactoryClass(160, _valueMap, modifier = it.CharacterModifier(stat_main = 60, stat_sub = 60, pdamage = 30, armor_ignore = 10))
 
 
 class Factory():
