@@ -46,7 +46,7 @@ Eye135 = it.Item(name="블랙빈 마크", stat_main = 7, stat_sub = 7, att = 1, 
 
 class Factory():
     @staticmethod
-    def get11SetDict(star = 0, enhance = 70, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
+    def get11SetDict(star, enhance, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
         package = [Eye100.copy(), Face110.copy(), Ear130.copy(), Ring110.copy(), Ring120.copy(), \
                     Pendant120.copy(), Pendant140.copy(), Belt140.copy(), Pocket140.copy(), \
                     Badge130.copy(), Shoulder120.copy()]
@@ -85,7 +85,7 @@ class Factory():
         return package
     
     @staticmethod    
-    def getBetter11SetDict(star = 0, enhance = 70, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
+    def getBetter11SetDict(star, enhance, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
         package = {"eye" : Eye145.copy(), "face" : Face110.copy(), "ear" : Ear130.copy(), "ring1" : Ring110.copy(), \
                     "ring2" : Ring120.copy(), "pendant1" : Pendant120.copy(), "pendant2" : Pendant140Fragment.copy(), \
                     "belt" : Belt140.copy(), "pocket" : Pocket140.copy(), \

@@ -69,7 +69,7 @@ def getU4000CharacterTemplate(_type):
 
     template.add_summary("장신구: 보장9셋")
     template.add_summary("방어구: 여제5셋, 카루타 4셋")
-    bossAccesorySet = BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, star = accStar)
+    bossAccesorySet = BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, enhance = 70)
     rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar)
     
     empressSet = Empress.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar)
@@ -285,11 +285,12 @@ def getU7000CharacterTemplate(_type):
 
     template.add_summary("장신구: 보장7셋, 마이, 칠요")
     template.add_summary("방어구: 앱솔5셋, 카루타 2셋, 1아케인(무기)")
-    bossAccesorySet = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, additional_potential = accAPtnl)
+    bossAccesorySet = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, bonus = accBonus, enhance = 30, star = accStar, additional_potential = accAPtnl)
     rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
     
     bossAccesorySurprise = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, 
-                                                                bonus = accBonus, 
+                                                                bonus = accBonus,
+                                                                enhance = 30,
                                                                 star = 0, 
                                                                 additional_potential = accAPtnl)
     
@@ -377,12 +378,13 @@ def getU8000CharacterTemplate(_type):
 
     template.add_summary("장신구: 보장5셋, 마이, 칠요")
     template.add_summary("방어구: 앱솔5셋, 카루타 2셋, 아케인셰이드")
-    bossAccesorySet = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, additional_potential = accAPtnl)
+    bossAccesorySet = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, bonus = accBonus, enhance = 30, star = accStar, additional_potential = accAPtnl)
     rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
     
     ## 놀장 적용
     bossAccesorySurprise = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, 
-                                                                bonus = accBonus, 
+                                                                bonus = accBonus,
+                                                                enhance = 30,
                                                                 star = 0, 
                                                                 additional_potential = accAPtnl)
     
@@ -478,7 +480,8 @@ def getU8500CharacterTemplate(_type):
 
     ## 놀장 적용
     bossAccesorySurprise = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, 
-                                                                bonus = accBonus, 
+                                                                bonus = accBonus,
+                                                                enhance = 30,
                                                                 star = 0, 
                                                                 additional_potential = accAPtnl)
     
