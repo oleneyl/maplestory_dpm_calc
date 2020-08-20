@@ -20,12 +20,12 @@ class JaguerStack(core.DamageSkillWrapper, core.TimeStackSkillWrapper):
             vary_ = 1
         else: vary_ = vary
         self.queue.append([vary_, left])
-        return core.ResultObject(0, core.CharacterModifier(), 0, sname = self._id, spec = 'graph control')        
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self._id, spec = 'graph control')        
         
     def _use(self, rem = 0, red = 0):
         mdf = self.get_modifier()
         dmg = 60*self.getStack() + int(self.level/3)
-        return core.ResultObject(0, mdf,  dmg, sname = self._id, spec = 'deal')
+        return core.ResultObject(0, mdf, dmg, 1, sname = self._id, spec = 'deal')
 
     def is_usable(self):
         return False

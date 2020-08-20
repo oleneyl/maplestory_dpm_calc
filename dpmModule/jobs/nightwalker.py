@@ -66,14 +66,14 @@ class JobGenerator(ck.JobGenerator):
         JUMPRATE = 1
         BATRATE = 0.3333
 
-        ElementalDarkness = core.BuffSkill("엘리멘탈 : 다크니스", 1440, 180000, armor_ignore = (4+1+1+1) * (2+1+1+1)).wrap(core.BuffSkillWrapper)
+        ElementalDarkness = core.BuffSkill("엘리멘탈 : 다크니스", 900, 180000, armor_ignore = (4+1+1+1) * (2+1+1+1)).wrap(core.BuffSkillWrapper)
         ElementalDarknessDOT = core.DotSkill("엘리멘탈 : 다크니스(도트)", (80 + 40 + 50 + 50) * (2+1+1+1), 100000000).wrap(core.SummonSkillWrapper)
         Heist = core.BuffSkill("헤이스트", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper)
-        Booster = core.BuffSkill("부스터", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper)
-        ShadowServent = core.BuffSkill("쉐도우 서번트", 990, 180000).wrap(core.BuffSkillWrapper)
-        SpiritThrowing = core.BuffSkill("스피릿 스로잉", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper)
+        Booster = core.BuffSkill("부스터", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper) # 펫버프
+        ShadowServent = core.BuffSkill("쉐도우 서번트", 0, 180000).wrap(core.BuffSkillWrapper) # 펫버프
+        SpiritThrowing = core.BuffSkill("스피릿 스로잉", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper) # 펫버프
         
-        ShadowBat = core.DamageSkill("쉐도우 배트", 0, 150 + 120 + 150 + 200 - 30, BATRATE).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)  #3회 공격당 1번 소환
+        ShadowBat = core.DamageSkill("쉐도우 배트", 0, 150 + 120 + 150 + 200, BATRATE).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)  #3회 공격당 1번 소환
         
         #점샷기준(400ms)
         QuintupleThrow = core.DamageSkill("퀸터플 스로우", (400 * JUMPRATE + 630 * (1-JUMPRATE)), 340, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, crit = 10, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
@@ -89,8 +89,8 @@ class JobGenerator(ck.JobGenerator):
         QuintupleThrowFinal_V = core.DamageSkill("퀸터플 스로우(5차)(막타)", 0, 475 * 0.01 * (20+vEhc.getV(0,0)), 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, crit = 10, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
     
         #하이퍼스킬
-        ShadowElusion = core.BuffSkill("쉐도우 일루전", 990, 30000, cooltime = 180000).wrap(core.BuffSkillWrapper)
-        Dominion = core.BuffSkill("도미니언", 2680, 30000, crit = 100, pdamage_indep = 20, cooltime = 180000).wrap(core.BuffSkillWrapper)
+        ShadowElusion = core.BuffSkill("쉐도우 일루전", 690, 30000, cooltime = 180000).wrap(core.BuffSkillWrapper)
+        Dominion = core.BuffSkill("도미니언", 1890, 30000, crit = 100, pdamage_indep = 20, cooltime = 180000).wrap(core.BuffSkillWrapper)
         DominionAttack = core.DamageSkill("도미니언(공격)", 0, 1000, 10).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
@@ -99,16 +99,18 @@ class JobGenerator(ck.JobGenerator):
 
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 3, 3)
 
-        ShadowSpear = core.BuffSkill("쉐도우 스피어", 600, (50+vEhc.getV(0,0))*1000, red = True, cooltime = (181-vEhc.getV(0,0)//2)*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        ShadowSpear = core.BuffSkill("쉐도우 스피어", 600, (50+vEhc.getV(0,0))*1000, red = True, cooltime = int(181 - vEhc.getV(0,0) / 2)*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ShadowSpearSmall = core.DamageSkill("쉐도우 스피어(창)", 0, 100+4*vEhc.getV(0,0), 4).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ShadowSpearSmallBat = core.DamageSkill("쉐도우 스피어(창)(배트)", 0, 100+4*vEhc.getV(0,0), 4.0*BATRATE).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        ShadowSpearLarge = core.SummonSkill("쉐도우 스피어(거대 창)", 0, 3000, 400 + 32*vEhc.getV(0,0), 6, (50+vEhc.getV(0,0))*1000 - 1, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        ShadowSpearLarge = core.SummonSkill("쉐도우 스피어(거대 창)", 0, 3000, 400 + 16*vEhc.getV(0,0), 6, (50+vEhc.getV(0,0))*1000 - 1, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
 
         ShadowServentExtend = core.BuffSkill("쉐도우 서번트 익스텐드", 570, (30+vEhc.getV(1,1)//2)*1000, red = True, cooltime = 60000).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
 
-        ShadowBite = core.DamageSkill("쉐도우 바이트", 810, 600+24*vEhc.getV(2,2), 14, red = True, cooltime = 20000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ShadowBite = core.DamageSkill("쉐도우 바이트", 630, 600+24*vEhc.getV(2,2), 14, red = True, cooltime = 20000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         ShadowBiteBuff = core.BuffSkill("쉐도우 바이트(버프)", 0, (15+vEhc.getV(2,2)//10)*1000, pdamage_indep = (8+vEhc.getV(2,2)//4), cooltime = -1).isV(vEhc,2,2).wrap(core.BuffSkillWrapper)
         ######   Skill Wrapper   ######
+
+        ElementalDarkness.onAfter(ElementalDarknessDOT)
 
         #_VenomBurst = core.DamageSkill("베놈 버스트", ??) ## 패시브 50%확률로 10초간 160+6*vlevel dot. 사용시 도트뎀 모두 피해 + (500+20*vlevel) * 5. 어차피 안쓰는 스킬이므로 작성X
 

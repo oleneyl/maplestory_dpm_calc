@@ -73,8 +73,8 @@ class JobGenerator(ck.JobGenerator):
         
         CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
         
-        SelestialDanceInit = core.BuffSkill("셀레스티얼 댄스", 700, (40+vEhc.getV(0,0))*1000, cooltime = 150 * 1000, red = True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        SelestialDanceSummon = core.SummonSkill("셀레스티얼 댄스(추가타)", 0, 5000, (1200 + 40 * vEhc.getV(0,0)), 3, (40 + vEhc.getV(0,0)) * 1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) #딜레이 모름
+        SelestialDanceInit = core.BuffSkill("셀레스티얼 댄스", 570, (40+vEhc.getV(0,0))*1000, cooltime = 150 * 1000, red = True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        SelestialDanceSummon = core.SummonSkill("셀레스티얼 댄스(추가타)", 0, 5000, (1200 + 40 * vEhc.getV(0,0)), 3, (40 + vEhc.getV(0,0)) * 1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         SelestialDanceAttack = core.DamageSkill("댄스오브 문/스피딩 선셋(셀레스티얼)", 0, 400*0.01*(30+vEhc.getV(0,0)), 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + FallingMoon).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    #직접사용 X
         
         #엘리시온 38타 / 3타

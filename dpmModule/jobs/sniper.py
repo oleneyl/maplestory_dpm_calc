@@ -80,12 +80,12 @@ class JobGenerator(ck.JobGenerator):
         # 롱레인지 트루샷: 나무위키피셜 DPM 떨어지므로 보류
 
         Snipping = core.DamageSkill("스나이핑", 630, 465+combat*5, 9 + 1, modifier = core.CharacterModifier(crit = 100, armor_ignore = 20 + combat * 1, pdamage = 20, boss_pdamage = 10) + PASSIVE_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        TrueSnippingTick = core.DamageSkill("트루 스나이핑(타격)", 700, 950+vEhc.getV(2,2)*30, 14+1, modifier = core.CharacterModifier(pdamage = 100, armor_ignore = 100) + PASSIVE_MODIFIER).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        TrueSnipping = core.DamageSkill("트루 스나이핑", 0, 0, 0, cooltime = 180 * 1000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        TrueSnippingTick = core.DamageSkill("트루 스나이핑(타격)", 690, 950+vEhc.getV(2,2)*30, 14+1, modifier = core.CharacterModifier(pdamage = 100, armor_ignore = 100) + PASSIVE_MODIFIER).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        TrueSnipping = core.DamageSkill("트루 스나이핑", 120, 0, 0, cooltime = 180 * 1000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         #TODO : 차지드 애로우용 홀더 생성이 필요함.
-        ChargedArrow = core.DamageSkill("차지드 애로우", 0, 750 + vEhc.getV(1,1)*30, 10+1, cooltime = -1, modifier = PASSIVE_MODIFIER).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        ChargedArrowUse = core.DamageSkill("차지드 애로우(차징)", 0, 0, 0, cooltime = 10000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        ChargedArrow = core.DamageSkill("차지드 애로우(차징)", 0, 750 + vEhc.getV(1,1)*30, 10+1, cooltime = -1, modifier = PASSIVE_MODIFIER).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        ChargedArrowUse = core.DamageSkill("차지드 애로우", 360, 0, 0, cooltime = 10000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         #Summon Skills
         Freezer = core.SummonSkill("프리저", 900, 3030, 390, 1, 220 * 1000).setV(vEhc, 3, 3, False).wrap(core.SummonSkillWrapper)
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)

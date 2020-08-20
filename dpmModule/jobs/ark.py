@@ -280,7 +280,7 @@ class JobGenerator(ck.JobGenerator):
         def MemoryOfSourceHandleSpector(spector_state, time):
             spector_state.timeLeft += time
             spector_state.cooltimeLeft += time
-            return core.ResultObject(0, core.CharacterModifier(), 0, sname = 'Graph Element', spec = 'graph control')
+            return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = 'Graph Element', spec = 'graph control')
             
         MemoryOfSource.onAfter(core.TaskHolder(core.Task(SpectorState, partial(MemoryOfSourceHandleSpector, SpectorState, 30*1000)), "30초 더 지속" ))
 

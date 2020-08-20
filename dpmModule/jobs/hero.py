@@ -32,7 +32,7 @@ class ComboAttackWrapper(core.StackSkillWrapper):
     
     def toggle(self, state):
         self.instinct = state
-        return core.ResultObject(0, core.CharacterModifier(), 0, sname = self.skill.name, spec = 'graph control')
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
         
     def toggleController(self, state):
         task = core.Task(self, partial(self.toggle, state))
@@ -43,7 +43,7 @@ class ComboAttackWrapper(core.StackSkillWrapper):
         if diff > 0 and not self.instinct : self.stack -= (diff * 0.2)
         if diff > 0 and self.instinct : self.stack -= (diff * 0.7)
         self.stack = max(min(10,self.stack),0)
-        return core.ResultObject(0, core.CharacterModifier(), 0, sname = self.skill.name, spec = 'graph control')
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
 
     def get_modifier(self):
         return core.CharacterModifier(pdamage = 2 * self.stack * (1 + self.instinct * 0.01 * (5 + 0.5*self.vEhc.getV(1,1))), 
@@ -106,20 +106,21 @@ class JobGenerator(ck.JobGenerator):
         RaisingBlowInrage = core.DamageSkill("레이징 블로우(인레이지)", 600, 215, 6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함.
         RaisingBlowInrageFinalizer = core.DamageSkill("레이징 블로우(인레이지)(최종타)", 0, 215, 2, modifier = core.CharacterModifier(pdamage = 20, crit = 100)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함. 둘을 연결해야 함.
         
-        Insizing = core.DamageSkill("인사이징", 660, 576, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #870->640 오더스 적용 필요함. 도트뎀 (30초간 2초당 165%), 크리율에따른 뎀증 반영필요.
+        Insizing = core.DamageSkill("인사이징", 660, 576, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    #870->640 오더스 적용 필요함.
         InsizingBuff = core.BuffSkill("인사이징(버프)", 0, 30 * 1000, cooltime = -1, pdamage = 25).wrap(core.BuffSkillWrapper)
+        InsizingDot = core.DotSkill("인사이징(도트)", 165, 30 * 1000).wrap(core.SummonSkillWrapper)
     
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 170, 3 * 0.75).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
         RisingRage = core.DamageSkill("레이지 업라이징", 750, 500, 8, cooltime = 10*1000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        Valhalla = core.BuffSkill("발할라", 840, 30 * 1000, cooltime = 150 * 1000, crit = 30, att = 50).wrap(core.BuffSkillWrapper)  #임의 배정된 공격속도.
+        Valhalla = core.BuffSkill("발할라", 900, 30 * 1000, cooltime = 150 * 1000, crit = 30, att = 50).wrap(core.BuffSkillWrapper)
         SwordOfBurningSoul = core.SummonSkill("소드 오브 버닝 소울", 820, 1000, (315+12*vEhc.getV(0,0)), 6, (60+0.5*vEhc.getV(0,0)) * 1000, cooltime = 120 * 1000, modifier = core.CharacterModifier(crit = 50)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)       #시전 딜레이 모름.
         
-        ComboDesfort = core.DamageSkill("콤보 데스폴트", 1680, 800 + 32*vEhc.getV(2,3), 7, cooltime = 20 * 1000).isV(vEhc, 2, 3).wrap(core.DamageSkillWrapper)
+        ComboDesfort = core.DamageSkill("콤보 데스폴트", 1260, 800 + 32*vEhc.getV(2,3), 7, cooltime = 20 * 1000).isV(vEhc, 2, 3).wrap(core.DamageSkillWrapper)
         ComboDesfortBuff = core.BuffSkill("콤보 데스폴트 종료 지시자", 0, 5 * 1000, pdamage_indep = 48.6, rem = False, cooltime = -1).isV(vEhc, 2, 3).wrap(core.BuffSkillWrapper)
         
-        ComboInstinct = core.BuffSkill("콤보 인스팅트", 450, 30 * 1000, cooltime = 240 * 1000, rem = False, red = True).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper)
+        ComboInstinct = core.BuffSkill("콤보 인스팅트", 360, 30 * 1000, cooltime = 240 * 1000, rem = False, red = True).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper)
         ComboInstinctFringe = core.DamageSkill("콤보 인스팅트 균열", 0, 200 + 8*vEhc.getV(1,1), 18).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
         ComboInstinctOff = core.BuffSkill("콤보 인스팅트 종료", 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper)
 
@@ -136,7 +137,7 @@ class JobGenerator(ck.JobGenerator):
 
         RisingRage.onAfter(ComboAttack.stackController(1))
     
-        Insizing.onAfters([InsizingBuff, AdvancedFinalAttack, ComboAttack.stackController(-2)])
+        Insizing.onAfters([InsizingBuff, InsizingDot, AdvancedFinalAttack, ComboAttack.stackController(-2)])
     
         ComboDesfort.onAfters([ComboDesfortBuff, ComboAttack.stackController(-6)])    #is_usable() 콜로 체크 필수.
 
@@ -152,7 +153,7 @@ class JobGenerator(ck.JobGenerator):
         return(RaisingBlowInrage,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
                     ComboAttack, Fury, EpicAdventure, Valhalla, 
-                    InsizingBuff, AuraWeaponBuff, ComboDesfortBuff, 
+                    InsizingBuff, InsizingDot, AuraWeaponBuff, ComboDesfortBuff, 
                     ComboInstinct, ComboInstinctOff, PanicBuff,
                     globalSkill.soul_contract()] +\
                 [Panic, Insizing, ComboDesfort, RisingRage] +\

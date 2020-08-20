@@ -68,9 +68,9 @@ class JobGenerator(ck.JobGenerator):
         # 힐+마오팬보다 분노가 허수아비딜은 잘나옴
         # TalentOfPhantomII = core.BuffSkill("힐(탤팬2)", 450, 2*1000, cooltime=10*1000, pdamage_indep=10).wrap(core.BuffSkillWrapper)
         TalentOfPhantomIII = core.BuffSkill("크로스 오버 체인(탤팬3)", 0, 180000, rem = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
-        FinalCut = core.DamageSkill("탤런트 오브 팬텀시프 IV(파이널 컷)", 870, 2000, 1, cooltime = 90000).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
+        FinalCut = core.DamageSkill("탤런트 오브 팬텀시프 IV(파이널 컷)", 450, 2000, 1, cooltime = 90000).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
         FinalCutBuff = core.BuffSkill("파이널 컷(버프, 탤팬4)", 0, 60000, cooltime = -1, rem = True, pdamage_indep = 40).wrap(core.BuffSkillWrapper)
-        BoolsEye = core.BuffSkill("불스아이(탤팬5)", 600, 30 * 1000, cooltime = 180 * 1000, crit = 20, crit_damage = 10, armor_ignore = 20, pdamage = 20).wrap(core.BuffSkillWrapper)
+        BoolsEye = core.BuffSkill("불스아이(탤팬5)", 960, 30 * 1000, cooltime = 180 * 1000, crit = 20, crit_damage = 10, armor_ignore = 20, pdamage = 20).wrap(core.BuffSkillWrapper)
     
         JudgementBuff = core.BuffSkill("저지먼트(버프)", 0, 999999999, crit = 0).wrap(core.BuffSkillWrapper)    #확률성 크리티컬
         
@@ -96,14 +96,14 @@ class JobGenerator(ck.JobGenerator):
         # Twilight = core.BuffSkill("트와일라이트", 120, 15000, cooltime = 15000, armor_ignore = 20).wrap(core.BuffSkillWrapper)
         # TwilightHit = core.DamageSkill("트와일라이트(공격)", 540, 450, 3, cooltime = -1).wrap(core.DamageSkillWrapper)
 
-        JokerInit = core.DamageSkill("조커(시전)", 720, 0, 0, cooltime = 150000, red = True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
-        JokerDamage = core.DamageSkill("조커", 100*5, 240+9*vEhc.getV(4,4), 30).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)  #14회 반복, 총 420타이므로 30타로 적용
-        JokerBuff = core.BuffSkill("조커(버프)", 0, 30000, cooltime = -1, pdamage_indep = (1 + (vEhc.getV(4,4) - 1) // 5) * 2 / 5).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
+        JokerInit = core.DamageSkill("조커(시전)", 540, 0, 0, cooltime = 150000, red = True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
+        JokerDamage = core.DamageSkill("조커", 460, 240+9*vEhc.getV(4,4), 30).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)  #14회 반복, 총 420타이므로 30타로 적용
+        JokerBuff = core.BuffSkill("조커(버프)", 1230, 30000, cooltime = -1, pdamage_indep = (1 + (vEhc.getV(4,4) - 1) // 5) * 2 / 5).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         
         BlackJack = core.SummonSkill("블랙잭", 570, 250, 400+16*vEhc.getV(1,1), 1, 5000-1, cooltime = 15000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         BlackJackFinal = core.DamageSkill("블랙잭(최종)", 0, 1200+48*vEhc.getV(1,1), 6, cooltime = -1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         
-        MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 900, 600+24*vEhc.getV(2,2), 3 * 7, cooltime = 30000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 690, 600+24*vEhc.getV(2,2), 3 * 7, cooltime = 30000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         MarkOfPhantomEnd = core.DamageSkill("마크 오브 팬텀(최종)", 0, 1200+48*vEhc.getV(2,2), 12).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         #### 그래프 빌드

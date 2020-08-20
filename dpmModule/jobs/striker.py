@@ -4,7 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
-from . import contrib
+from . import jobutils
 from .jobbranch import pirates
 from .jobclass import cygnus
 from . import jobutils
@@ -65,7 +65,7 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
-        하이퍼 : 질풍-보너스어택 + 섬멸-리인포스/보스킬러  + 벽력-리인포스/보너스어택
+        하이퍼 : 질풍-보너스어택 + 섬멸-리인포스/이그노어 가드/보스킬러  + 벽력-보너스어택
         
         코강 : 10개
         섬멸, 벽력, 승천, (뇌성)
@@ -76,13 +76,11 @@ class JobGenerator(ck.JobGenerator):
         천지개벽 ON: 태풍 - 섬멸
         천지개벽 OFF: 벽력 - 섬멸
         
-        벽섬 : 1080ms (420 / 660)
+        벽섬 : 1020ms
+        태섬 : 900ms
         
-        팔랑크스의 타수를 2/3만 적용되도록 함
         모든 스킬은 쿨타임마다 사용
         '''
-
-        PALANKSRATE = 2 / 3
         CHOOKROI = 0.7
         #Buff skills
 
@@ -93,16 +91,12 @@ class JobGenerator(ck.JobGenerator):
     
         LightningStack = LightningWrapper(core.BuffSkill("엘리멘탈 : 라이트닝", 0, 99999999))
 
-        # 5차 강화에 포함해야 할 수도 있음
-        HuricaneConcat = core.DamageSkill("태풍(연계)", 420, 390, 5+1).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
+        HuricaneConcat = core.DamageSkill("태풍(연계)", 420, 390, 5+1, modifier = core.CharacterModifier(pdamage_indep = 20)).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
         
-        Destroy = core.DamageSkill("섬멸", 480, 350, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Thunder = core.DamageSkill("벽력", 540, 320, 5 + 1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        DestroyConcat = core.DamageSkill("섬멸(연계)", 480, 350, 2 + 5, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20, pdamage_indep = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        ThunderConcat = core.DamageSkill("벽력(연계)", 540, 320, 5 + 1, modifier = core.CharacterModifier(pdamage = 20, pdamage_indep = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #연계최종뎀 20%
-        
-        #BasicAttack = core.DamageSkill("섬멸(기본공격)", 420, 350, 2 + 5, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        #BasicAttack = core.DamageSkill("벽력(기본공격)", 660, 320, 5 + 1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)        
+        Destroy = core.DamageSkill("섬멸", 480, 350, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Thunder = core.DamageSkill("벽력", 540, 320, 5 + 1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        DestroyConcat = core.DamageSkill("섬멸(연계)", 480, 350, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20, pdamage_indep = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        ThunderConcat = core.DamageSkill("벽력(연계)", 540, 320, 5 + 1, modifier = core.CharacterModifier(pdamage_indep = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #연계최종뎀 20%
 
         # 하이퍼
         # 딜레이 추가 필요
@@ -110,7 +104,7 @@ class JobGenerator(ck.JobGenerator):
         
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        CygnusPalanks = core.SummonSkill("시그너스 팔랑크스", 780, 120, 450 + 18*vEhc.getV(4,4), 1, 120 * (40 + vEhc.getV(4,4)) * PALANKSRATE, cooltime = 30 * 1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
+        CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,1,3).wrap(core.BuffSkillWrapper)
 
         #오버드라이브 (앱솔 가정)
@@ -118,14 +112,14 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.get_weapon_att("너클")
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
 
-        ShinNoiHapL = core.BuffSkill("신뇌합일", 0, (30+vEhc.getV(3,2)//2) * 1000, red = True, cooltime = (121-vEhc.getV(3,2)//2)*1000, pdamage_indep=4+vEhc.getV(3,2)//5).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
+        ShinNoiHapL = core.BuffSkill("신뇌합일", 540, (30+vEhc.getV(3,2)//2) * 1000, red = True, cooltime = (121-vEhc.getV(3,2)//2)*1000, pdamage_indep=4+vEhc.getV(3,2)//5).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
         ShinNoiHapLAttack = core.SummonSkill("신뇌합일(공격)", 0, 3000, 16*vEhc.getV(3,2) + 400, 7, (30+vEhc.getV(3,2)//2) * 1000, cooltime = -1).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
         ShinNoiHapLAttack_ChookRoi = core.DamageSkill('신뇌합일(축뢰)', 0, (16*vEhc.getV(3,2) + 400) * CHOOKROI, 7 ).wrap(core.DamageSkillWrapper)
         GioaTan = core.DamageSkill("교아탄", 480, 1000+40*vEhc.getV(2,1), 7, cooltime = 8000, modifier = core.CharacterModifier(pdamage_indep = 20)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper) #  교아탄-벽력 콤보 사용함
 
         NoiShinChanGeuk = core.DamageSkill("뇌신창격", 0, 150+6*vEhc.getV(0,0), 6, cooltime = 7000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        NoiShinChanGeukAttack = core.SummonSkill("뇌신창격(공격)", 0, 1000, 200 + 8*vEhc.getV(0,0), 7, 3999, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)    #4번 발동
-        NoiShinChanGeukAttack_ChookRoi = core.DamageSkill("뇌신창격(축뢰)", 0, (200 + 8*vEhc.getV(0,0)) * CHOOKROI, 7).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        NoiShinChanGeukAttack = core.SummonSkill("뇌신창격(후속타)", 0, 1000, 200 + 8*vEhc.getV(0,0), 7, 3999, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)    #4번 발동
+        NoiShinChanGeukAttack_ChookRoi = core.DamageSkill("뇌신창격(후속타)(축뢰)", 0, (200 + 8*vEhc.getV(0,0)) * CHOOKROI, 7).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         #섬멸 연계
 
         BasicAttack = core.OptionalElement(SkyOpen.is_active, HuricaneConcat, ThunderConcat)
@@ -136,7 +130,7 @@ class JobGenerator(ck.JobGenerator):
         ThunderConcat.onAfter(DestroyConcat)
         
         for skill in [Destroy, Thunder, DestroyConcat, ThunderConcat, HuricaneConcat, GioaTan, NoiShinChanGeuk]:
-            contrib.create_auxilary_attack(skill, CHOOKROI)
+            jobutils.create_auxilary_attack(skill, CHOOKROI, "(축뢰)")
 
         for skill in [Destroy, Thunder, DestroyConcat, ThunderConcat, NoiShinChanGeuk]:
             skill.onAfter(LightningStack.stackController(1))
