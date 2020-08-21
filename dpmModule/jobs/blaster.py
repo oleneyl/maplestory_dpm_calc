@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, InactiveRule
+from ..execution.rules import RuleSet, InactiveRule, ReservationRule
 from . import globalSkill
 from .jobbranch import warriors
 from .jobclass import resistance
@@ -51,6 +51,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule('벙커 버스터', '맥시마이즈 캐논'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('발칸 펀치', '벙커 버스터'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('발칸 펀치', '맥시마이즈 캐논'), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule('소울 컨트랙트', '버닝 브레이커'), RuleSet.BASE)
         
         return ruleset
 
