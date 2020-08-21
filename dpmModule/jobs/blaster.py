@@ -96,31 +96,34 @@ class JobGenerator(ck.JobGenerator):
         
         발칸 펀치의 피격시 최종 데미지는 적용하지 않음
         '''          
-        MAGPANGDELAY = 510
-        CHARGETIME = math.ceil(480 * (1 - 2 * (20 + self._passive_level) * 0.01) // 30) * 30 # 어드밴스드 차지 마스터리 적용된 차지 속도 계산
+        CHARGE_TIME = math.ceil(480 * (1 - 2 * (20 + self._passive_level) * 0.01) // 30) * 30 # 어드밴스드 차지 마스터리 적용된 차지 속도 계산
+        CANCEL_DELAY = 180 # 최소 150
+        DUCKING_DELAY = 150 # 최소 110 (30 + 80)
         passive_level = self._passive_level + self._combat
         
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
+
+        DuckingDelay = core.DamageSkill("더킹 딜레이", DUCKING_DELAY, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
         
-        MagnumPunch = core.DamageSkill("매그넘 펀치", 0, 430 + 2*self._combat, 3, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        MagnumPunch = core.DamageSkill("매그넘 펀치", 180, 430 + 2*self._combat, 3, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         MagnumPunch_Revolve = core.DamageSkill("리볼빙 캐논(매그넘 펀치)", 0, 180 + passive_level, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         MagnumPunch_Revolve_Maximize = core.DamageSkill("리볼빙 캐논(매그넘 펀치)(맥시마이즈)", 0, 180 + passive_level, 3, modifier = core.CharacterModifier(pdamage = 50)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         Cylinder = core.StackSkillWrapper(core.BuffSkill("실린더 게이지", 0, 9999999), 6)
         Overheat = core.BuffSkill("실린더 과열", 0, 0, cooltime = -1).wrap(core.BuffSkillWrapper)
 
-        ReleaseFileBunker = core.DamageSkill("릴리즈 파일 벙커", CHARGETIME + 30, 370 + passive_level, 8, modifier = core.CharacterModifier(pdamage = 20, armor_ignore = 80)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ReleaseFileBunker = core.DamageSkill("릴리즈 파일 벙커", CANCEL_DELAY, 370 + passive_level, 8, modifier = core.CharacterModifier(pdamage = 20, armor_ignore = 80)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         ReleaseFileBunker_A = core.DamageSkill("릴리즈 파일 벙커(A)", 0, 220 + passive_level, 6, modifier = core.CharacterModifier(pdamage = 15)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         ReleaseFileBunker_B = core.DamageSkill("릴리즈 파일 벙커(B)", 0, 230 + passive_level, 6, modifier = core.CharacterModifier(pdamage = 15)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         ReleaseFileBunker_C = core.DamageSkill("릴리즈 파일 벙커(C)", 0, 270 + passive_level, 6, modifier = core.CharacterModifier(pdamage = 15)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         ReleaseFileBunker_D = core.DamageSkill("릴리즈 파일 벙커(D)", 0, 320 + passive_level, 6, modifier = core.CharacterModifier(pdamage = 15)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        DoublePang = core.DamageSkill("더블 팡", 0, 360 + 2*self._combat, 4, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        DoublePang = core.DamageSkill("더블 팡", CANCEL_DELAY, 360 + 2*self._combat, 4, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         DoublePang_Revolve = core.DamageSkill("리볼빙 캐논(더블 팡)", 0, 180 + passive_level, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         DoublePang_Revolve_Maximize = core.DamageSkill("리볼빙 캐논(더블 팡)(맥시마이즈)", 0, 180 + passive_level, 3, modifier = core.CharacterModifier(pdamage = 50)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
-        HammerSmash = core.DamageSkill("해머 스매시", 0, 395 + 2*self._combat, 6, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        HammerSmash = core.DamageSkill("해머 스매시", CANCEL_DELAY, 395 + 2*self._combat, 6, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         HammerSmashWave = core.SummonSkill("해머 스매시(충격파)", 0, 1500, 150, 2+2, 5000, cooltime = -1).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
         HammerSmashDebuff = core.BuffSkill("해머 스매시(디버프)", 0, 10*1000, pdamage_indep = 10, rem = False, cooltime = -1).wrap(core.BuffSkillWrapper)
         
@@ -154,6 +157,7 @@ class JobGenerator(ck.JobGenerator):
             ))
         ReleaseFileBunker.onAfters([ReleaseFileBunker_A, ReleaseFileBunker_B, ReleaseFileBunker_C, ReleaseFileBunker_D])
         HammerSmash.onAfters([HammerSmashWave, HammerSmashDebuff])
+        HammerSmashWave.onTick(HammerSmashDebuff)
 
         #발칸 펀치
         BalkanPunch.onAfter(core.RepeatElement(BalkanPunchTick, 43))
@@ -181,16 +185,18 @@ class JobGenerator(ck.JobGenerator):
         HammerSmash.onAfter(core.OptionalElement(BunkerBuster.is_active, BunkerBusterAttack_WithMaximize))
         
         # 기본 콤보
-        Mag_Pang = core.DamageSkill("매그-팡", MAGPANGDELAY, 0, 0).wrap(core.DamageSkillWrapper)
+        Mag_Pang = core.DamageSkill("매그-팡", 0, 0, 0).wrap(core.DamageSkillWrapper)
         Mag_Pang.onAfter(MagnumPunch)
         Mag_Pang.onAfter(DoublePang)
+        Mag_Pang.onAfter(DuckingDelay)
         
         ReleaseHammer = core.DamageSkill("릴파벙해머", 0, 0, 0).wrap(core.DamageSkillWrapper)
         ReleaseHammer.onConstraint(core.ConstraintElement("실린더 게이지 최대", Cylinder, partial(Cylinder.judge, 6, 1)))
         ReleaseHammer.onAfter(ReleaseFileBunker)
         ReleaseHammer.onAfter(HammerSmash)
+        ReleaseHammer.onAfter(DuckingDelay)
         
-        for wrp in [MagnumPunch, DoublePang, HammerSmash]:
+        for wrp in [MagnumPunch, DoublePang, HammerSmash, BalkanPunch, BalkanPunchTick, BurningBreaker]:
             wrp.onAfter(RevolvingCannonMastery)
 
         # 오라 웨폰
