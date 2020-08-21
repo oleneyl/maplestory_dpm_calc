@@ -115,8 +115,8 @@ class JobGenerator(ck.JobGenerator):
         ReleaseFileBunker_D = core.DamageSkill("릴리즈 파일 벙커(D)", 0, 320 + passive_level, 6, modifier = core.CharacterModifier(pdamage = 15)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         DoublePang = core.DamageSkill("더블 팡", 0, 360 + 2*self._combat, 4, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        DoublePang_Revolve = core.DamageSkill("더블 팡(리볼빙 캐논)", 0, 180 + passive_level, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        DoublePang_Revolve_Maximize = core.DamageSkill("더블 팡(리볼빙 캐논,맥시마이즈)", 0, 180 + passive_level, 3, modifier = core.CharacterModifier(pdamage = 50)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        DoublePang_Revolve = core.DamageSkill("리볼빙 캐논(더블 팡)", 0, 180 + passive_level, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        DoublePang_Revolve_Maximize = core.DamageSkill("리볼빙 캐논(더블 팡)(맥시마이즈)", 0, 180 + passive_level, 3, modifier = core.CharacterModifier(pdamage = 50)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         HammerSmash = core.DamageSkill("해머 스매시", 0, 395 + 2*self._combat, 6, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         HammerSmashWave = core.SummonSkill("해머 스매시(충격파)", 0, 1500, 150, 2+2, 5000, cooltime = -1).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
