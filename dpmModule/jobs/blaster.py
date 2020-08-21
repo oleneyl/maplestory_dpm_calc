@@ -94,6 +94,7 @@ class JobGenerator(ck.JobGenerator):
         벙커버스터는 버닝 브레이커, 맥시마이즈 캐논과 같이 사용하지 않음
         발칸 펀치는 벙커 버스터, 맥시마이즈 캐논과 같이 사용하지 않음
         
+        발칸 펀치의 피격시 최종 데미지는 적용하지 않음
         '''          
         MAGPANGDELAY = 510
         CHARGETIME = math.ceil(480 * (1 - 2 * (20 + self._passive_level) * 0.01) // 30) * 30 # 어드밴스드 차지 마스터리 적용된 차지 속도 계산
