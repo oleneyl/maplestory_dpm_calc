@@ -64,7 +64,7 @@ class JobGenerator(ck.JobGenerator):
 
         #Damage Skills
         # 하이퍼: 데미지 증가, 보스 데미지 증가
-        SongOfHeaven = core.DamageSkill("천공의 노래", 120, 345 + combat*3, 1, modifier = core.CharacterModifier(pdamage = (((1.2 + combat*0.01)**4 - 1) * 100 + 20), boss_pdamage = 30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #코강렙 20이상 가정.
+        SongOfHeaven = core.DamageSkill("천공의 노래", 120, 345 + combat*3, 1, modifier = core.CharacterModifier(pdamage = ((1.2 + combat*0.01)**4 - 1) * 100 + 20, boss_pdamage = 30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #코강렙 20이상 가정.
         
         CygnusPalanks = core.SummonSkill("시그너스 팔랑크스", 600, 120 * 5, 450 + 18*vEhc.getV(0,0), 5, 120 * (40 + vEhc.getV(0,0)), cooltime = 30 * 1000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         
