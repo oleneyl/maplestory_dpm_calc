@@ -29,10 +29,11 @@ class JobGenerator(ck.JobGenerator):
     
         AdvancedWeaponMastery = core.InformedCharacterModifier("어드밴스드 웨폰 마스터리",att = 30, crit_damage = 15)
         ReincarnationBuff = core.InformedCharacterModifier("리인카네이션(패시브)",pdamage_indep = 30, crit = 10, crit_damage = 15)
+        ReincarnationHyper = core.InformedCharacterModifier("리인카네이션-크리티컬 레이트", crit = 20)
     
         SacrificePassive = core.InformedCharacterModifier("새크리파이스(패시브)",armor_ignore = 30)
         CrossoverChainPassive = core.InformedCharacterModifier("크로스 오버 체인(패시브)", pdamage_indep=50)
-        return [WeaponMastery, PhisicalTraining, LordOfDarkness, AdvancedWeaponMastery, ReincarnationBuff, SacrificePassive, CrossoverChainPassive]
+        return [WeaponMastery, PhisicalTraining, LordOfDarkness, AdvancedWeaponMastery, ReincarnationBuff, ReincarnationHyper, SacrificePassive, CrossoverChainPassive]
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 49)
@@ -46,8 +47,8 @@ class JobGenerator(ck.JobGenerator):
         창 사용
         크오체 풀피 가정
         비홀더 - 리인포스
-        리인카네이션 - 데미지
-        궁그닐 - 리인포스, 이그노어 가드, 보스 킬러
+        리인카네이션 - 데미지, 크리티컬 레이트
+        궁그닐 - 리인포스, 이그노어 가드
         
         비홀더 임팩트 9타
         피어스 사이클론 25타
@@ -67,8 +68,8 @@ class JobGenerator(ck.JobGenerator):
         BiholderShock = core.DamageSkill("비홀더 쇼크", 0, 215+300, 6, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).wrap(core.DamageSkillWrapper)
         
         DarkImpail = core.DamageSkill("다크 임페일", 630, 280, 6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        GoungnilDescentNoCooltime = core.DamageSkill("궁그닐 디센트(무한)", 600, 225, 12, modifier = core.CharacterModifier(armor_ignore = 44, pdamage = 20, boss_pdamage = 10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    
-        GoungnilDescent = core.DamageSkill("궁그닐 디센트", 600, 225, 12, cooltime = 8000, modifier = core.CharacterModifier(armor_ignore = 44, pdamage = 20, boss_pdamage = 10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        GoungnilDescentNoCooltime = core.DamageSkill("궁그닐 디센트(무한)", 600, 225, 12, modifier = core.CharacterModifier(armor_ignore = 44, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    
+        GoungnilDescent = core.DamageSkill("궁그닐 디센트", 600, 225, 12, cooltime = 8000, modifier = core.CharacterModifier(armor_ignore = 44, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         Sacrifice = core.BuffSkill("새크리파이스", 1080, 30*1000, rem = True, red = True, cooltime = 70000, armor_ignore = 10, boss_pdamage = 10).wrap(core.BuffSkillWrapper)   #궁그닐 쿨 무시, 비홀더 공격시 쿨0.3감소
         Reincarnation = core.BuffSkill("리인카네이션", 0, 40*1000, cooltime = 600000, rem = True, red = True, pdamage_indep=30).wrap(core.BuffSkillWrapper) #궁그닐 쿨 무시
