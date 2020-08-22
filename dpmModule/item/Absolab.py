@@ -23,12 +23,12 @@ _valueMap = [[103, [0,16,23,32,42,53]],
                 [97,[0,13,18,25,33,42]],
                 [203,[0,11,23,38,56,76]]]#Need blade & Zero weapon
 
-WeaponFactory = it.WeaponFactoryClass(160, _valueMap, modifier = it.CharacterModifier(stat_main = 40, stat_sub = 40, pdamage = 30, armor_ignore = 10))
+WeaponFactory = it.WeaponFactoryClass(160, _valueMap, modifier = it.CharacterModifier(stat_main = 60, stat_sub = 60, pdamage = 30, armor_ignore = 10))
 
 
 class Factory():
     @staticmethod
-    def getArmorSetDict(star = 0, enhance = 30, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
+    def getArmorSetDict(star, enhance, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
         assert(enhance in [100, 70, 30])
         #TODO : Simplyfy this dirty codes.
         if not hammer: 
@@ -61,12 +61,12 @@ class Factory():
         return package
     
     @staticmethod
-    def getWeapon(_type, star = 0, elist = [0,0,0,9], potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonusAttIndex = 0, bonusElse = it.CharacterModifier()):
+    def getWeapon(_type, star, elist, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonusAttIndex = 0, bonusElse = it.CharacterModifier()):
         
         return WeaponFactory.getWeapon(_type, star = star, elist = elist, potential = potential, additional_potential = additional_potential, bonusAttIndex = bonusAttIndex, bonusElse = bonusElse)
 
     @staticmethod
-    def getBlade(_type, star = 0, elist = [0,0,0,0], potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonusElse = it.CharacterModifier()):
+    def getBlade(_type, star, elist, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonusElse = it.CharacterModifier()):
 
         return WeaponFactory.getBlade(_type, star = star, elist = elist, potential = potential, additional_potential = additional_potential, bonusElse = bonusElse)
     

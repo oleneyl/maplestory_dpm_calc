@@ -67,10 +67,10 @@ def getU4000CharacterTemplate(_type):
 
     template.add_summary("장신구: 보장9셋")
     template.add_summary("방어구: 여제5셋, 카루타 4셋")
-    bossAccesorySet = BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, star = accStar)
-    rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar)
+    bossAccesorySet = BossAccesory.Factory.get11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, enhance = 70)
+    rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, enhance = 70)
     
-    empressSet = Empress.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar)
+    empressSet = Empress.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, enhance = 70)
     
     template.add_summary("기타: 킹오루, 우르스 격파왕, 하트X, 펫공 X")
 
@@ -94,8 +94,8 @@ def getU4000CharacterTemplate(_type):
         "pendant2": bossAccesorySet["pendant2"],
         "pocket": bossAccesorySet["pocket"],
         "badge": bossAccesorySet["badge"],
-        "weapon": RootAbyss.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ),
-        "subweapon": Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=RootAbyss.Factory),
+        "weapon": RootAbyss.Factory.getWeapon(_type, elist = [0,0,0,9], bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ),
+        "subweapon": Default.get_subweapon_covering_exception(_type, elist = [0,0,0,9], star=weaponStar, potential = MDF(), additional_potential = subAPtnl, factory_hook=RootAbyss.Factory),
         "emblem": Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl),
         "medal": Else.get_medal(7),
         "heart": it.Item(),
@@ -162,7 +162,7 @@ def getU5000CharacterTemplate(_type):
         "pocket": bossAccesorySet["pocket"],
         "badge": bossAccesorySet["badge"],
         "weapon": Absolab.Factory.getWeapon(_type, elist = [0,0,0,9], bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ),
-        "subweapon": Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Absolab.Factory),
+        "subweapon": Default.get_subweapon_covering_exception(_type, elist = [0,0,0,9], star=weaponStar, potential = MDF(), additional_potential = subAPtnl, factory_hook=Absolab.Factory),
         "emblem": Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl),
         "medal": Else.get_medal(7),
         "heart": Else.get_heart(30),
@@ -236,7 +236,7 @@ def getU6000CharacterTemplate(_type):
         "pocket": bossAccesorySet["pocket"],
         "badge": bossAccesorySet["badge"],
         "weapon": Absolab.Factory.getWeapon(_type, elist = [0,0,0,9], bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ),
-        "subweapon": Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Absolab.Factory),
+        "subweapon": Default.get_subweapon_covering_exception(_type, elist = [0,0,0,9], star=weaponStar, potential = MDF(), additional_potential = subAPtnl, factory_hook=Absolab.Factory),
         "emblem": Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl),
         "medal": Else.get_medal(7),
         "heart": Else.get_heart(50),
@@ -280,11 +280,12 @@ def getU7000CharacterTemplate(_type):
 
     template.add_summary("장신구: 보장7셋, 마이, 칠요")
     template.add_summary("방어구: 앱솔5셋, 카루타 2셋, 1아케인(무기)")
-    bossAccesorySet = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, additional_potential = accAPtnl)
-    rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
+    bossAccesorySet = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, bonus = accBonus, enhance = 30, star = accStar, additional_potential = accAPtnl)
+    rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, enhance = 30, star = armorStar, additional_potential = armorAPtnl)
     
     bossAccesorySurprise = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, 
-                                                                bonus = accBonus, 
+                                                                bonus = accBonus,
+                                                                enhance = 30,
                                                                 star = 0, 
                                                                 additional_potential = accAPtnl)
     
@@ -298,7 +299,7 @@ def getU7000CharacterTemplate(_type):
     meisterSet["ring3"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
 
     absolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, additional_potential = armorAPtnl, 
-                                                        bonus = armorBonus, star = armorStar)
+                                                        bonus = armorBonus, star = armorStar, enhance = 30)
     absolabSet["glove"].set_potential(MDF(crit_damage = 8))
     
     weeklySet = Else.get_weekly_set()
@@ -325,8 +326,8 @@ def getU7000CharacterTemplate(_type):
         "pendant2": bossAccesorySurprise["pendant2"],
         "pocket": bossAccesorySet["pocket"],
         "badge": weeklySet["badge"],
-        "weapon": Arcane.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ),
-        "subweapon": Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Arcane.Factory),
+        "weapon": Arcane.Factory.getWeapon(_type, elist = [0,0,0,9], bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ),
+        "subweapon": Default.get_subweapon_covering_exception(_type, elist = [0,0,0,9], star=weaponStar, potential = MDF(), additional_potential = subAPtnl, factory_hook=Arcane.Factory),
         "emblem": Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl),
         "medal": weeklySet["medal"],
         "heart": Else.get_heart(95, accPtnl, accAPtnl),
@@ -371,12 +372,13 @@ def getU8000CharacterTemplate(_type):
 
     template.add_summary("장신구: 보장5셋, 마이, 칠요")
     template.add_summary("방어구: 앱솔5셋, 카루타 2셋, 아케인셰이드")
-    bossAccesorySet = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, bonus = accBonus, star = accStar, additional_potential = accAPtnl)
-    rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
+    bossAccesorySet = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, bonus = accBonus, enhance = 30, star = accStar, additional_potential = accAPtnl)
+    rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, enhance = 30, star = armorStar, additional_potential = armorAPtnl)
     
     ## 놀장 적용
     bossAccesorySurprise = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, 
-                                                                bonus = accBonus, 
+                                                                bonus = accBonus,
+                                                                enhance = 30,
                                                                 star = 0, 
                                                                 additional_potential = accAPtnl)
     
@@ -392,7 +394,7 @@ def getU8000CharacterTemplate(_type):
     meisterSet["ear"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
     meisterSet["ring2"].add_main_option(it.EnhancerFactory.get_surprise_enhancement(140, 12))
     
-    absolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
+    absolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, enhance = 30, star = armorStar, additional_potential = armorAPtnl)
     absolabSet["glove"].set_potential(MDF(crit_damage = 16))
 
     weeklySet = Else.get_weekly_set()
@@ -420,8 +422,8 @@ def getU8000CharacterTemplate(_type):
         "pendant2": bossAccesorySurprise["pendant2"],
         "pocket": bossAccesorySet["pocket"],
         "badge": weeklySet["badge"],
-        "weapon": Arcane.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ),
-        "subweapon": Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Arcane.Factory),
+        "weapon": Arcane.Factory.getWeapon(_type, elist = [0,0,0,9], bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ),
+        "subweapon": Default.get_subweapon_covering_exception(_type, elist = [0,0,0,9], star=weaponStar, potential = MDF(), additional_potential = subAPtnl, factory_hook=Arcane.Factory),
         "emblem": Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl),
         "medal": weeklySet["medal"],
         "heart": Else.get_heart(120, accPtnl, accAPtnl),
@@ -467,11 +469,12 @@ def getU8500CharacterTemplate(_type):
     template.add_summary("장신구: 칠흑셋, 칠요")
     template.add_summary("방어구 : 아케인6셋, 카루타 2셋")
 
-    rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
+    rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, enhance = 30, star = armorStar, additional_potential = armorAPtnl)
 
     ## 놀장 적용
     bossAccesorySurprise = BossAccesory.Factory.getBetter11SetDict(potential = accPtnl, 
-                                                                bonus = accBonus, 
+                                                                bonus = accBonus,
+                                                                enhance = 30,
                                                                 star = 0, 
                                                                 additional_potential = accAPtnl)
     
@@ -493,7 +496,7 @@ def getU8500CharacterTemplate(_type):
                                                     enhancer = it.CharacterModifier(att = 6)
                                                     )
     
-    arcaneSet = Arcane.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, star = armorStar, additional_potential = armorAPtnl)
+    arcaneSet = Arcane.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, enhance = 30, star = armorStar, additional_potential = armorAPtnl)
     arcaneSet["glove"].set_potential(MDF(crit_damage = 16, stat_main = 9))
     
     weeklySet = Else.get_weekly_set()
@@ -520,8 +523,8 @@ def getU8500CharacterTemplate(_type):
         "pendant2": bossAccesorySurprise["pendant2"],
         "pocket": darknessSet["pocket"],
         "badge": weeklySet["badge"],
-        "weapon": Arcane.Factory.getWeapon(_type, bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ),
-        "subweapon": Default.get_subweapon_covering_exception(_type, potential = MDF(), additional_potential = subAPtnl, factory_hook=Arcane.Factory),
+        "weapon": Arcane.Factory.getWeapon(_type, elist = [0,0,0,9], bonusAttIndex = bonusAttIndex, star = weaponStar, potential = MDF(), additional_potential = weaponAPtnl ),
+        "subweapon": Default.get_subweapon_covering_exception(_type, elist = [0,0,0,9], star=weaponStar, potential = MDF(), additional_potential = subAPtnl, factory_hook=Arcane.Factory),
         "emblem": Default.getEmblem(potential = MDF(), additional_potential = emblemAPtnl),
         "medal": weeklySet["medal"],
         "heart": Else.get_heart(160, accPtnl, accAPtnl),
