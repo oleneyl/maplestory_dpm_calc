@@ -1,19 +1,25 @@
 from .. import jobs as maplejobs
-from ..jobs.template import vEnhancer as vEhc
-from ..jobs import template as jt
+from ..kernel.core import DirectVBuilder
+from ..kernel import core
 from ..character.characterKernel import ItemedCharacter as ichar
+from dpmModule.kernel import policy
+from dpmModule.execution import rules
 
 def getpassiveInformation(enjob):
     gen = maplejobs.getGenerator(maplejobs.getKoJobName(enjob)).JobGenerator()
     template = ichar()
     
     #1레벨
-    no_enhancer = vEhc()
-    no_enhancer.set_state_direct([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
-    no_enhancer.set_vlevel_direct([1,1,1,1,1,1,1,1,1,1,1])    
-    graph_bare = gen.package_bare(template, vEhc = no_enhancer)
+    no_enhancer = DirectVBuilder([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], [1,1,1,1,1,1,1,1,1,1,1])
+    graph_bare = gen.package_bare(template, v_builder = no_enhancer)
 
-    scheduler = jt.Scheduler(graph_bare)
+    scheduler = policy.AdvancedGraphScheduler(graph_bare,
+            policy.TypebaseFetchingPolicy(priority_list = [
+                core.BuffSkillWrapper,
+                core.SummonSkillWrapper,
+                core.DamageSkillWrapper
+            ]), 
+            [rules.UniquenessRule()])
     scheduler.initialize(0)
     buffs = [{'name' : wrp.skill.name, 'stat' : wrp.skill.static_character_modifier.as_dict(js_flag = True)} for wrp,tf in scheduler._buffMdfCalcZip if (not tf)]
 
@@ -24,16 +30,14 @@ def getpassiveInformation(enjob):
     
     return {"passive_direct" : passive_skill_direct, "passive_indirect" : passive_skill_indirect, "static_buff" : buffs}
 
-def extractSkillInfo(enjob):
+def extract_skill_info(enjob):
     gen = maplejobs.getGenerator(maplejobs.getKoJobName(enjob)).JobGenerator()
     template = ichar()
     
     #1레벨
-    no_enhancer = vEhc()
-    no_enhancer.set_state_direct([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
-    no_enhancer.set_vlevel_direct([1,1,1,1,1,1,1,1,1,1,1])    
-    graph_bare = gen.package_bare(template, vEhc = no_enhancer)
-    
+    no_enhancer = DirectVBuilder([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], [1,1,1,1,1,1,1,1,1,1,1])
+    graph_bare = gen.package_bare(template, v_builder = no_enhancer)
+
     #25레벨
     gen = maplejobs.getGenerator(maplejobs.getKoJobName(enjob)).JobGenerator()
     graph_full = gen.package_bare(template, useFullCore = True)
@@ -46,19 +50,17 @@ def extractSkillInfo(enjob):
     
     return {"bare" : info_bare, "full" : info_full , "vskill" : info_vskill}
 
-def extractEverySkillInfo(enjob):
+def extract_every_skill_info(enjob):
     gen = maplejobs.getGenerator(maplejobs.getKoJobName(enjob)).JobGenerator()
     template = ichar()
     
     #1레벨
-    no_enhancer = vEhc()
-    no_enhancer.set_state_direct([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
-    no_enhancer.set_vlevel_direct([1,1,1,1,1,1,1,1,1,1,1])    
-    graph_bare = gen.package_bare(template, vEhc = no_enhancer)
+    no_enhancer = DirectVBuilder([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], [1,1,1,1,1,1,1,1,1,1,1])
+    graph_bare = gen.package_bare(template, v_builder = no_enhancer)
     
     #25레벨
     gen = maplejobs.getGenerator(maplejobs.getKoJobName(enjob)).JobGenerator()
-    graph_full = gen.package_bare(template, useFullCore = True)
+    graph_full = gen.package_bare(template, v_builder = no_enhancer)
     
     info_vskill = gen.vEhc.get_priority()
     

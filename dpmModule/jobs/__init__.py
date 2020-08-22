@@ -36,12 +36,14 @@ from . import pathfinder
 from . import cadena
 from . import ark
 from . import blaster
+from . import aran
+from . import adele
 
 __all__ = ["archmageFb", "archmageTc", "hero", "paladin", "sniper", "windbreaker", "soulmaster", 
             "flamewizard", "mercedes", "luminous", "bishop", "battlemage", "mechanic", "demonslayer", "darknight", "wildhunter",
             "shadower", "cannonshooter", "michael", "dualblade", "kaiser", "captain", "angelicbuster", "phantom", "nightlord",
             "eunwol", "viper", "nightwalker", "striker","evan", "bowmaster", "zero", "kinesis", "ilium", "pathfinder", "cadena",
-            "ark", "blaster"]
+            "ark", "blaster", "aran", 'adele']
 
 jobMap = {"아크메이지불/독" : archmageFb,
         "아크메이지썬/콜" : archmageTc,
@@ -81,6 +83,8 @@ jobMap = {"아크메이지불/독" : archmageFb,
         "카데나" : cadena,
         "아크" : ark,
         "블래스터" : blaster,
+        "아란" : aran,
+        '아델' : adele
 }
 
 jobList = {"archmageFb" : "아크메이지불/독",
@@ -121,6 +125,8 @@ jobList = {"archmageFb" : "아크메이지불/독",
         "cadena" : "카데나",
         "ark" : "아크",
         "blaster" : "블래스터",
+        "aran" : "아란",
+        "adele" : "아델"
 }
 
 weaponList = {"아크메이지불/독" : "스태프",
@@ -144,7 +150,7 @@ weaponList = {"아크메이지불/독" : "스태프",
         "섀도어" : "단검",
         "캐논슈터" : "핸드캐논",
         "미하일" : "한손검",
-        "듀얼블레이드" : "단검",
+        "듀얼블레이드" : "블레이드",
         "카이저" : "두손검",
         "캡틴" : "건",
         "엔젤릭버스터" : "소울슈터",
@@ -160,14 +166,16 @@ weaponList = {"아크메이지불/독" : "스태프",
         "패스파인더" : "활",
         "카데나" : "아대",
         "아크" : "너클",
-        "블래스터" : "너클"
+        "블래스터" : "너클",
+        "아란" : "폴암",
+        "아델" : "튜너"
 }
 
 jobListOrder = ["archmageFb", "archmageTc", "hero", "paladin", "sniper", "windbreaker", "soulmaster", 
             "flamewizard", "mercedes", "luminous", "bishop", "battlemage", "mechanic", "demonslayer", "darknight", "wildhunter",
             "shadower", "cannonshooter", "michael", "dualblade", "kaiser", "captain", "angelicbuster", "phantom", "nightlord",
             "eunwol", "viper", "nightwalker", "striker", "evan", "bowmaster", "zero", "kinesis", "ilium", "pathfinder", "cadena", "ark",
-            "blaster"]
+            "blaster", "aran", "adele"]
 
 def getKoJobName(enJob):
         if enJob in jobList:

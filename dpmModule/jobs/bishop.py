@@ -5,29 +5,8 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, SynchronizeRule
 from . import globalSkill
 from functools import partial
-#Infinity Graph Element
-class InfinityWrapper(core.BuffSkillWrapper):
-    def __init__(self, serverlag = 3):
-        skill = core.BuffSkill("인피니티", 960, 40000, cooltime = 180 * 1000, rem = True, red = True)
-        super(InfinityWrapper, self).__init__(skill)
-        self.passedTime = 0
-        self.serverlag = serverlag
-        
-    def spend_time(self, time):
-        if self.onoff:
-            self.passedTime += time
-        super(InfinityWrapper, self).spend_time(time)
-            
-    def get_modifier(self):
-        if self.onoff:
-            return core.CharacterModifier(pdamage_indep = (65 + 4 * (self.passedTime // ((3+self.serverlag)*1000))) )
-        else:
-            return core.CharacterModifier()
-        
-    def _use(self, rem = 0, red = 0):
-        self.passedTime = 0
-        return super(InfinityWrapper, self)._use(rem = rem, red = red)
-
+from .jobclass import adventurer
+from .jobbranch import magicians
 #비숍 소환수 뎀증보너스 적용
 class SacredMarkWrapper(core.BuffSkillWrapper):
     def __init__(self):
@@ -49,7 +28,7 @@ class SacredMarkWrapper(core.BuffSkillWrapper):
     def getFlow(self, diff, bonus = 0):
         def retftn():
             self.flow(diff, bonus)
-            return core.ResultObject(0, core.CharacterModifier(), 0, sname = 'Sacred Mark', spec = 'frost effect control')
+            return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = 'Sacred Mark', spec = 'frost effect control')
         return core.Task(self, retftn)
         
     def getFlowHandler(self, diff, bonus):
@@ -71,6 +50,7 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.buffrem = True
         self.jobtype = "int"
+        self.jobname = "비숍"
         self.vEnhanceNum = 8
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
         self.preEmptiveSkills = 1
@@ -88,7 +68,6 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self):
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
         SpellMastery = core.InformedCharacterModifier("스펠 마스터리",att = 10)
-        BlessingEnsemble = core.InformedCharacterModifier("블레싱 앙상블",pdamage_indep = 3)
         
         MagicCritical = core.InformedCharacterModifier("매직 크리티컬",crit = 30, crit_damage = 13)
         HolyFocus = core.InformedCharacterModifier("홀리 포커스",crit = 40)
@@ -99,15 +78,16 @@ class JobGenerator(ck.JobGenerator):
         VengenceOfAngelOff = core.InformedCharacterModifier("벤전스 오브 엔젤(off)",pdamage = 40)
         #엔젤레이 반영 필요
         
-        return [HighWisdom, SpellMastery, MagicCritical, HolyFocus, MasterMagic, ArcaneAim, BlessingEnsemble]
+        return [HighWisdom, SpellMastery, MagicCritical, HolyFocus, MasterMagic, ArcaneAim, VengenceOfAngelOff]
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5)       
-        
+        BlessingEnsemble = core.InformedCharacterModifier("블레싱 앙상블",pdamage_indep = 3)
+
         ArcaneAim = core.InformedCharacterModifier("아케인 에임",pdamage = 40)
-        VengenceOfAngelOn = core.InformedCharacterModifier("벤전스 오브 엔젤(on)", att = 50, pdamage_indep = 30, armor_ignore = 20)#속서애성을 pdamage_indep으로 임시 계싼
-        return [WeaponConstant, Mastery, ArcaneAim, VengenceOfAngelOn]
+        VengenceOfAngelOn = core.InformedCharacterModifier("벤전스 오브 엔젤(on)", att = 50, pdamage_indep = 30, armor_ignore = 20, pdamage=-40)#속서애성을 pdamage_indep으로 임시 계싼
+        return [WeaponConstant, Mastery, ArcaneAim, VengenceOfAngelOn, BlessingEnsemble]
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         ######   Skill   ###### 
@@ -124,15 +104,15 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 240000, rem = True).wrap(core.BuffSkillWrapper)
         AdvancedBless = core.BuffSkill("어드밴스드 블레스", 0, 240000, att = 30 + combat*1 + 20, boss_pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        OverloadMana = core.BuffSkill("오버로드 마나", 0, 99999 * 10000, pdamage_indep = 8+int(0.1*vEhc.getV(1,4))).isV(vEhc,1,4).wrap(core.BuffSkillWrapper)
+        OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 4)
         
         charMainStat = chtr.get_modifier().stat_main * (1 + 0.01 * chtr.get_modifier().pstat_main)
         Pray = core.BuffSkill("프레이", 810, 1000 * (30 + 0.5 * vEhc.getV(2,2)), cooltime = 180 * 1000, red = True, pdamage_indep = (5 + (charMainStat // 2500))).isV(vEhc, 2,2).wrap(core.BuffSkillWrapper)
         
         #Damage Skills
-        AngelRay = core.DamageSkill("엔젤레이", 630, 315 + 6*combat, 10).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
-        AngelRay_25 = core.DamageSkill("엔젤레이(25)", 630, 315 + 6*combat, 10, modifier = core.CharacterModifier(pdamage_indep = 25)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
-        AngelRay_50 = core.DamageSkill("엔젤레이(50)", 630, 315 + 6*combat, 10, modifier = core.CharacterModifier(pdamage_indep = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
+        AngelRay = core.DamageSkill("엔젤레이", 630, 225 + 5*combat, 14).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
+        AngelRay_25 = core.DamageSkill("엔젤레이(25)", 630, 225 + 5*combat, 14, modifier = core.CharacterModifier(pdamage_indep = 25)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
+        AngelRay_50 = core.DamageSkill("엔젤레이(50)", 630, 225 + 5*combat, 14, modifier = core.CharacterModifier(pdamage_indep = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
         
         HeavensDoor = core.DamageSkill("헤븐즈도어", 1080, 1000, 8, cooltime = 180 * 1000).wrap(core.DamageSkillWrapper)   #사용하지 않는다--> 일단 Wrapper 제작 안할 것.
         PeaceMaker = core.DamageSkill("피스메이커", 750, 350 + 14*vEhc.getV(0,0), 12, cooltime = 10 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) #풀스택시 미발동..
@@ -141,10 +121,10 @@ class JobGenerator(ck.JobGenerator):
     
         #Summoning skill
         Bahamutt = core.SummonSkill("바하뮤트", 600, 3030, 500+6*combat, 1, 90 * 1000, cooltime = 120 * 1000, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #최종뎀25%스택
-        AngelOfLibra = core.SummonSkill("리브라", 540, 3333, 500 + 20*vEhc.getV(3,1), 12, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,3,1).wrap(core.SummonSkillWrapper)    #바하뮤트와 겹치지 않도록 재정의 필요, 최종뎀50%스택
+        AngelOfLibra = core.SummonSkill("엔젤 오브 리브라", 540, 3333, 500 + 20*vEhc.getV(3,1), 12, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,3,1).wrap(core.SummonSkillWrapper)    #바하뮤트와 겹치지 않도록 재정의 필요, 최종뎀50%스택
         
         ######   Wrappers    ######
-        Infinity = InfinityWrapper()
+        Infinity = adventurer.InfinityWrapper()
         SacredMark = SacredMarkWrapper()
         
         MarkIncrement25 = SacredMark.getFlowHandler(1, 25)

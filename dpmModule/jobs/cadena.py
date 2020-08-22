@@ -4,6 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import thieves
 
 #TODO : 5차 신스킬 적용
 # Refernce : https://m.blog.naver.com/oe135/221095516055
@@ -24,11 +25,11 @@ class WeaponVarietyStackWrapper(core.StackSkillWrapper):
         if stack and (target not in self.stackLog):
             self.stackLog.append(target)
         
-        res = core.ResultObject(0, core.CharacterModifier(), 0, sname = self.skill.name, spec = 'graph control')
+        res = core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
         if self.currentAttack != target:
             if self.currentAttackTime < 0:
                 res.cascade = [self.final_attack_task]
-                self.currentAttackTime = 500
+                self.currentAttackTime = 250
             
         return res	
     
@@ -54,7 +55,8 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = False
         self.vEnhanceNum = 11
         self.jobtype = "luk"
-        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'buff_rem', 'crit')
+        self.jobname = "카데나"
+        self.ability_list = Ability_tool.get_ability_set('reuse', 'boss_pdamage', 'mess')
         self.preEmptiveSkills = 1
         
     def get_passive_skill_list(self):
@@ -67,9 +69,10 @@ class JobGenerator(ck.JobGenerator):
         
         WeaponMastery = core.InformedCharacterModifier("웨폰 엑스퍼트", att = 30, crit = 30, crit_damage = 15)
         QuickserviceMind_II = core.InformedCharacterModifier("퀵서비스 마인드 II", att = 30, crit_damage  =5, crit = 10)
+        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(self.vEhc, 2, 3)
         
         return [CollectingForLeap, PhisicalTraining,
-                                    QuickserviceMind, BasicDetection, WeaponMastery, QuickserviceMind_II]
+                                    QuickserviceMind, BasicDetection, WeaponMastery, QuickserviceMind_II, ReadyToDiePassive]
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 20, crit_damage = 20, pdamage = 20)
@@ -121,13 +124,13 @@ class JobGenerator(ck.JobGenerator):
         
         ChainArts_Chais = core.DamageSkill("체인아츠:체이스", 0, 100, 1).wrap(core.DamageSkillWrapper)
 
-        #ChainArts_ToughHustleInit = core.DamageSkill("체인아츠:터프허슬", 0, 0, 0, cooltime = 45000).setV(vEhc, 0, 2, False) #지속형		
+        #ChainArts_ToughHustleInit = core.DamageSkill("체인아츠:터프허슬", 0, 0, 0, cooltime = 50000).setV(vEhc, 0, 2, False) #지속형		
         #ChainArts_ToughHustle = core.DamageSkill("체인아츠:터프허슬", 5000000, 600, 2).setV(vEhc, 0, 2, False) #지속형, 6초, 미사용
         
-        ChainArts_takedown = core.DamageSkill("체인아츠:테이크다운", 5360, 990, 15, cooltime = 150*1000, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        ChainArts_takedown_wave = core.DamageSkill("체인아츠:테이크다운(파동)", 0, 600, 16, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        ChainArts_takedown_final = core.DamageSkill("체인아츠:테이크다운(최종)", 0, 5000, 1, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        ChainArts_takedown_bind = core.BuffSkill("체인아츠:테이크다운(바인드)", 0, 15000, crit=2, crit_damage = 10, cooltime = -1).wrap(core.BuffSkillWrapper)
+        # ChainArts_takedown = core.DamageSkill("체인아츠:테이크다운", 5360, 990, 15, cooltime = 150*1000, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        # ChainArts_takedown_wave = core.DamageSkill("체인아츠:테이크다운(파동)", 0, 600, 16, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        # ChainArts_takedown_final = core.DamageSkill("체인아츠:테이크다운(최종)", 0, 5000, 1, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        # ChainArts_takedown_bind = core.BuffSkill("체인아츠:테이크다운(바인드)", 0, 15000, crit=2, crit_damage = 10, cooltime = -1).wrap(core.BuffSkillWrapper)
         #논체인아츠 스킬
         
         SummonCuttingSimiter = core.DamageSkill("서먼 커팅 시미터", 360, 425, 5, cooltime = 4000, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
@@ -143,31 +146,31 @@ class JobGenerator(ck.JobGenerator):
         
         SummonReleasingBoom = core.DamageSkill("서먼 릴리징 봄", 420, 535, 6, cooltime = 8000, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         SummonStrikingBrick = core.DamageSkill("서먼 스트라이킹 브릭", 720, 485, 7, cooltime = 8000, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        SummonBeatingNeedlebat_1 = core.DamageSkill("서먼 비팅 니들배트(1타)", 360, 450, 6, modifier = core.CharacterModifier(pdamage = 35 + 20, boss_pdamage = 20, pdamage_indep = 15), cooltime = 12000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        SummonBeatingNeedlebat_2 = core.DamageSkill("서먼 비팅 니들배트(2타)", 420, 555, 6, modifier = core.CharacterModifier(pdamage = 35 + 20, boss_pdamage = 20, pdamage_indep = 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        SummonBeatingNeedlebat_3 = core.DamageSkill("서먼 비팅 니들배트(3타)", 600, 715, 6, modifier = core.CharacterModifier(pdamage = 45 + 20, boss_pdamage = 20, pdamage_indep = 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SummonBeatingNeedlebat_1 = core.DamageSkill("서먼 비팅 니들배트(1타)", 360, 450, 6, modifier = core.CharacterModifier(pdamage = 25 + 20, boss_pdamage = 20, pdamage_indep = 15), cooltime = 12000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SummonBeatingNeedlebat_2 = core.DamageSkill("서먼 비팅 니들배트(2타)", 420, 555, 7, modifier = core.CharacterModifier(pdamage = 35, boss_pdamage = 20, pdamage_indep = 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SummonBeatingNeedlebat_3 = core.DamageSkill("서먼 비팅 니들배트(3타)", 600, 715, 8, modifier = core.CharacterModifier(pdamage = 45, boss_pdamage = 20, pdamage_indep = 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         SummonBeatingNeedlebat_Honmy = core.BuffSkill("서먼 비팅 니들배트(혼미)", 0, 15000, crit=2, crit_damage = 10, cooltime = -1).wrap(core.BuffSkillWrapper)
           
         VenomBurst = core.SummonSkill("베놈 버스트", 0, 1000, 160+6*vEhc.getV(4,4), 1, 99999999).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
-        VenomBurst_Poison = core.BuffSkill("베놈 버스트(중독)", 0, 15000, crit=2, crit_damage = 10, cooltime = -1).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
+        VenomBurst_Poison = core.BuffSkill("베놈 버스트(중독)", 0, 99999999, crit=2, crit_damage = 10, cooltime = -1).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         
-        ReadyToDie = core.BuffSkill("레디 투 다이", 780, 15*1000, cooltime = (90-int(0.5*vEhc.getV(2,3)))*1000, pdamage_indep = 30+int(0.2*vEhc.getV(2,3))).isV(vEhc,2,3).wrap(core.BuffSkillWrapper)
+        ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 3)
         
         ChainArts_Fury = core.BuffSkill("체인아츠:퓨리", 540, (35+vEhc.getV(0,0))*1000, cooltime = (180-vEhc.getV(0,0))*1000 ).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ChainArts_Fury_Damage = core.DamageSkill("체인아츠:퓨리(공격)", 0, 250+10*vEhc.getV(0,0), 6).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ChainArts_Fury_Dummy = core.BuffSkill("체인아츠:퓨리(재사용대기)", 0, 600, cooltime = -1).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
-        AD_Odnunce = core.SummonSkill("A.D 오드넌스", 450, 330, 145+6*vEhc.getV(1,1), 4, 10000, cooltime = 25000, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
-        AD_Odnunce_Final = core.DamageSkill("A.D 오드넌스(막타)", 0, 735+29*vEhc.getV(1,1), 8, cooltime = -1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        AD_Odnunce = core.SummonSkill("A.D 오드넌스", 450, 330, 225+9*vEhc.getV(1,1), 5, 10000, cooltime = 25000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
+        AD_Odnunce_Final = core.DamageSkill("A.D 오드넌스(막타)", 0, 750+30*vEhc.getV(1,1), 8, cooltime = -1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         
-        ChainArts_maelstorm = core.SummonSkill("체인아츠:메일스트롬", 720, 240, 300+12*vEhc.getV(3,2), 4, 4000, cooltime = -1).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
+        ChainArts_maelstorm = core.SummonSkill("체인아츠:메일스트롬", 720, 800, 300+12*vEhc.getV(3,2), 4, 8000, cooltime = -1).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
         ChainArts_maelstorm_slow = core.BuffSkill("체인아츠:메일스트롬(중독)", 0, 14000, crit=2, crit_damage = 10, cooltime = -1).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
         ######   Skill Wrapper   ######
 
         #기본 연계 연결
         #ChainArts_ToughHustleInit.onAfter(ChainArts_ToughHustle) 터프허슬 미사용
-        ChainArts_takedown.onAfter(ChainArts_takedown_bind)
-        ChainArts_takedown_bind.onAfters([ChainArts_takedown_wave, ChainArts_takedown_final])
+        # ChainArts_takedown.onAfter(ChainArts_takedown_bind)
+        # ChainArts_takedown_bind.onAfters([ChainArts_takedown_wave, ChainArts_takedown_final])
         
         SummonThrowingWingdagger.onAfter(SummonThrowingWingdaggerInit)
         SummonThrowingWingdaggerInit.onAfter(SummonThrowingWingdaggerEnd)	#타이밍 변경 필요
@@ -282,9 +285,9 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     WeaponVarietyAttack, Booster, SpecialPotion, ProfessionalAgent,
                     ReadyToDie, ChainArts_Fury, 
-                    ChainArts_takedown_bind, SummonSlachingKnife_Horror, SummonBeatingNeedlebat_Honmy, VenomBurst_Poison, ChainArts_maelstorm_slow,
+                    SummonSlachingKnife_Horror, SummonBeatingNeedlebat_Honmy, VenomBurst_Poison, ChainArts_maelstorm_slow,
                     globalSkill.soul_contract()] +\
-                [ChainArts_takedown, AD_Odnunce_Final,
+                [AD_Odnunce_Final,
                     WingDaggerBatCombo, BommBrickCombo, ShootgunClawCombo, SimiterChaseCombo, KnifeCombo] +\
                 [SummonThrowingWingdaggerInit, VenomBurst, AD_Odnunce, ChainArts_maelstorm] +\
                 [ChainArts_Fury_Dummy, SummonShootingShotgun, SummonStretchingClaw,

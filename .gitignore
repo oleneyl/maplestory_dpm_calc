@@ -1,3 +1,10 @@
 dist/
 build/
 *.pyc
+.idea
+*.suo
+*.db
+*.opendb
+*.json
+*.sqlite
+dpm_output.txt

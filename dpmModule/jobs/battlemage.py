@@ -5,6 +5,12 @@ from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
+from .jobclass import resistance
+from .jobbranch import magicians
+# TODO: 오버로드 마나를 정말 안쓰는 것인지 확인필요
+
+# TODO: [블랙 매직 알터] : 제단이 설치되어 있지 않을 때 아래 방향키와 함께 사용하면 자신의 위치와 전방에 총 2개의 제단이 한번에 설치되는 기능이 추가됩니다. 설치 개수가 2개를 초과했을 때 초과한 개수에 비례해 저주의 이동속도가 증가하는 기능이 공격 횟수가 증가하는 기능으로 변경됩니다.
+
 ######   Passive Skill   ######
 
 class JobGenerator(ck.JobGenerator):
@@ -12,6 +18,7 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.buffrem = False
         self.jobtype = "int"
+        self.jobname = "배틀메이지"
         self.vEnhanceNum = 10
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'reuse')
         self.preEmptiveSkills = 2
@@ -28,7 +35,7 @@ class JobGenerator(ck.JobGenerator):
         ArtOfStaff = core.InformedCharacterModifier("아트 오브 스태프",att = 20, crit = 15)
         StaffMastery = core.InformedCharacterModifier("스태프 마스터리",att = 30, crit = 20)
         HighWisdom =  core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
-        BattleMastery = core.InformedCharacterModifier("배틀 마스터리",pdamage = 20, crit_damage = 20)
+        BattleMastery = core.InformedCharacterModifier("배틀 마스터리",pdamage_indep = 15, crit_damage = 20)
         DarkAuraPassive = core.InformedCharacterModifier("다크 오라(패시브)", patt=15)
         
         #택 1
@@ -77,14 +84,17 @@ class JobGenerator(ck.JobGenerator):
         FinishBlow_U = core.DamageSkill("사신의 낫", 720+60, 300, 12, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         FinishBlow_M_U = core.DamageSkill("사신의 낫(마오데)", 720+60, 300, 12+1, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
+        # 마스터 오브 데스의 지속시간 중 데스의 최종 데미지 50% 증가
+        # 올바르게 작동하는지 확인 필요
         Death = core.SummonSkill("데스", 0, 5000, 200+chtr.level, 12, 99999*100000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
+        DeathAfterMOD = core.SummonSkill("데스 (마스터 오브 데스)", 0, 5000, (200+chtr.level) * 0.5, 12, 30*1000, cooltime = -1).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         
-        RegistanceLineInfantry = core.SummonSkill("레지스탕스 라인 인팬트리", 360, 1000, 215+8*vEhc.getV(4,4), 9, 10*1000, cooltime = 25000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
-        UnionAura = core.BuffSkill("유니온 오라", 810, (vEhc.getV(1,1)+30)*1000, cooltime = 150*1000, pdamage=20, boss_pdamage=10).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
+        RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 4, 4)
+        UnionAura = core.BuffSkill("유니온 오라", 810, (vEhc.getV(1,1)//2+25)*1000, cooltime = 100*1000, pdamage=20, boss_pdamage=10, att=50).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         BlackMagicAlter = core.SummonSkill("블랙 매직 알터", 690 * 2*2.5, 800, 800+32*vEhc.getV(0,0), 4, 40*1000, cooltime = 50*1000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)    #가동률 60%
-        GrimReaper = core.SummonSkill("그림 리퍼", 720, 4000, 800+32*vEhc.getV(2,2), 12, 62*1000, cooltime=120*1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #공격시 지속2초증가->지속62s
+        GrimReaper = core.SummonSkill("그림 리퍼", 720, 4000, 800+32*vEhc.getV(2,2), 12, 62*1000, cooltime=100*1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #공격시 지속2초증가->지속62s
     
-        MasterOfDeath = core.BuffSkill("마스터 오브 데스", 1020, 30*1000, cooltime = 200*1000).wrap(core.BuffSkillWrapper)
+        MasterOfDeath = core.BuffSkill("마스터 오브 데스", 1020, 30*1000, cooltime = 200*1000, red=False).wrap(core.BuffSkillWrapper)
         BattlekingBar = core.DamageSkill("배틀킹 바", 200, 650, 2, cooltime = 13*1000, modifier = core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         BattlekingBar2 = core.DamageSkill("배틀킹 바(2타)", 250, 650, 5, modifier =  core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
@@ -110,6 +120,10 @@ class JobGenerator(ck.JobGenerator):
         FinishBlowEndpoint = core.DamageSkill('기본공격', 0, 0, 0).wrap(core.DamageSkillWrapper)
         FinishBlowEndpoint.onAfter(FinishBlow)
         
+        # 확인 필요
+
+        MasterOfDeath.onAfter(DeathAfterMOD)
+
         #DarkLightening.onAfters([MarkStack.stackController(1), UseMark])
         DarkLightening.onAfters([MarkStack.stackController(1), FinalAttack])
         
@@ -117,12 +131,16 @@ class JobGenerator(ck.JobGenerator):
         BattlekingBar2.onAfter(UseMark)
         
         BlackMagicAlter.onTick(MarkStack.stackController(1))
-                
+
+        # DeathAfterMOD는 처음에 비활성화됨
+        DeathAfterMOD.set_disabled_and_time_left(-1)
+
+        # 쓸윈 제거 ([너브 스티뮬레이션] : 공격 속도가 1단계 증가하는 기능이 추가됩니다.)
         return(FinishBlowEndpoint,
                 [Booster, WillOfLiberty, MasterOfDeath, UnionAura,
-                globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), #globalSkill.useful_wind_booster(),
                 globalSkill.soul_contract()] +\
                 [DarkGenesis, BattlekingBar] +\
-                [RegistanceLineInfantry, Death, BlackMagicAlter, GrimReaper] +\
+                [RegistanceLineInfantry, Death, DeathAfterMOD, BlackMagicAlter, GrimReaper] +\
                 [] +\
                 [FinishBlowEndpoint])

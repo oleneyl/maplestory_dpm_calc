@@ -4,20 +4,8 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobbranch import bowmen
 #TODO : 5차 신스킬 적용
-
-class CriticalReinforceWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc, character : ck.AbstractCharacter):
-        skill = core.BuffSkill("크리티컬 리인포스", 780, 30 * 1000, cooltime = 120 * 1000).isV(vEhc, 1, 1)
-        super(CriticalReinforceWrapper, self).__init__(skill)
-        self.char = character
-        self.inhancer = (20 + vEhc.getV(1,1))*0.01
-        
-    def get_modifier(self):
-        if self.onoff:
-            return core.CharacterModifier(crit_damage = self.inhancer * max(0,self.char.get_modifier().crit+20))
-        else:
-            return self.disabledModifier    
 
 class CardinalStateWrapper(core.BuffSkillWrapper):
     def __init__(self, ancient_force_skills):
@@ -42,7 +30,6 @@ class CardinalStateWrapper(core.BuffSkillWrapper):
             self.state = state
             for skill in self.ancient_force_skills:
                 skill.reduce_cooltime(1000)
-                #print(skill._id, skill.cooltimeLeft)
             return True
         else:
             return False
@@ -79,6 +66,7 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.buffrem = False
         self.jobtype = "dex"
+        self.jobname = "패스파인더"
         self.vEnhanceNum = 11
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
@@ -88,15 +76,14 @@ class JobGenerator(ck.JobGenerator):
         AncientBowMastery = core.InformedCharacterModifier("에인션트 보우 마스터리", att = 30)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         
-        AncientGuidance = core.InformedCharacterModifier("에인션트 가이던스(패시브)", pdamage_indep = 10)
-        EssenceOfArcher = core.InformedCharacterModifier("에센스 오브 아처", crit = 10, pdamage = 20, armor_ignore = 30)
+        EssenceOfArcher = core.InformedCharacterModifier("에센스 오브 아처", crit = 10, pdamage = 10, armor_ignore = 30)
         
         AdditionalTransitionPassive = core.InformedCharacterModifier("에디셔널 트랜지션(패시브)", patt = 20)
         
         AncientBowExpert = core.InformedCharacterModifier("에인션트 보우 엑스퍼트", att=60, crit_damage = 10)
         IllusionStep = core.InformedCharacterModifier("일루젼 스텝", stat_main = 80)
         return [CriticalShot, AncientBowMastery, PhisicalTraining,
-                                    AncientGuidance, EssenceOfArcher, AdditionalTransitionPassive, 
+                                    EssenceOfArcher, AdditionalTransitionPassive, 
                                         AncientBowExpert, IllusionStep]
 
     def get_not_implied_skill_list(self):
@@ -202,7 +189,7 @@ class JobGenerator(ck.JobGenerator):
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
         # 5차
-        GuidedArrow = core.SummonSkill("가이디드 애로우", 720, 330, 400+16*vEhc.getV(3,3), 1, 30 * 1000, cooltime = 60 * 1000).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
+        GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 3, 3)
         
         Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(5,5)))*1000).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
         UltimateBlast = core.DamageSkill("얼티밋 블래스트", 1800, 2500+100*vEhc.getV(2,2), 15, cooltime = 120*1000, 
@@ -218,7 +205,7 @@ class JobGenerator(ck.JobGenerator):
         Raven.onConstraint(core.ConstraintElement("이볼브 사용시 사용 금지", Evolve, Evolve.is_not_active))
         
     
-        CriticalReinforce = CriticalReinforceWrapper(vEhc, chtr) #Maybe need to sync
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 1, 1, 20) #Maybe need to sync
     
         RelicCharge = RelicChargeStack(AncientGuidanceBuff)
         CardinalState = CardinalStateWrapper([SplitMistel, EdgeOfResonance, ComboAssultHolder, AncientAstraHolder])

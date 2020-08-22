@@ -75,8 +75,8 @@ class StorageLinkedGraph(NameIndexedGraph):
         return self.storage
 
     def export_task(self, common_args = {}, tick_args = {}):
-        self._task_map = {k:self._all_elements[k].build_task(**common_args) for k in self._element_map}
-        self._tick_task_map = {k:self._all_elements[k].build_periodic_task(**tick_args)
+        self._task_map = {k: self._element_map[k].build_task(**common_args) for k in self._element_map}
+        self._tick_task_map = {k: self._element_map[k].build_periodic_task(**tick_args)
                  for k in self._element_map if hasattr(self._element_map[k], 'is_periodic') and getattr(self._element_map[k], 'is_periodic')}
 
     def set_v_enhancer(self, vEhc):
@@ -91,6 +91,28 @@ class StorageLinkedGraph(NameIndexedGraph):
 
     def get_task_from_element(self, element):
         return self._task_map[element._id]
+
+    def get_network_information(self, information_type):
+        if information_type == 'merged':
+            return self.get_single_network_information(self.get_all(), is_list=True)
+        elif information_type == "damage":
+            return self.get_single_network_information(self.filter_elements(lambda x:isinstance(x, DamageSkillWrapper)), is_list = True)
+        elif information_type == "summon":
+            return self.get_single_network_information(self.filter_elements(lambda x:isinstance(x, SummonSkillWrapper)), is_list = True)
+        elif information_type == "spend":
+            return self.get_single_network_information([], is_list = True)
+        elif information_type == "buff":
+            return self.get_single_network_information(self.filter_elements(lambda x:isinstance(x, BuffSkillWrapper)), is_list = True)
+
+    def get_whole_skill_info(self, expl_level = 0):
+        return{
+            #"basic" : [self.default_task[0].skill.get_info(expl_level = expl_level)],
+            "buff" : self.get_network_information('buff'),
+            "damage" : self.get_network_information('damage'),
+            "summon" : self.get_network_information('summon'),
+            "spend" : self.get_network_information('spend'),
+        }
+
 
 class AdvancedGraphScheduler(AbstractScheduler):
     def __init__(self, graph, fetching_policy, rules):

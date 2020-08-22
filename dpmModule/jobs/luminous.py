@@ -4,6 +4,8 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobclass import heroes
+from .jobbranch import magicians
 '''아포 22회
 라리플 25회
 '''
@@ -43,7 +45,7 @@ class LuminousStateController(core.BuffSkillWrapper):
             self.remain = 17 * (1 + 0.01* self.buff_rem) * 1000  #오더스?
             self.equalCallback()
             
-        return core.ResultObject(0, core.CharacterModifier(),  0, '루미너스 스택 변경')     
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, '루미너스 스택 변경')     
     
     def memorize(self):
         if self.state != LuminousStateController.EQUAL:
@@ -51,7 +53,7 @@ class LuminousStateController(core.BuffSkillWrapper):
         self.remain = 17*1000
         self.state = LuminousStateController.EQUAL
         self.equalCallback()
-        return core.ResultObject(0, core.CharacterModifier(), 0, sname = '메모라이즈', spec = 'graph control')
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = '메모라이즈', spec = 'graph control')
         
     def memorizeNode(self):
         task = core.Task(self, self.memorize)
@@ -69,35 +71,7 @@ class LuminousStateController(core.BuffSkillWrapper):
     def isNotEqual(self):
         return (self.state != LuminousStateController.EQUAL)
         
-class FridWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc):
-        super(FridWrapper, self).__init__(skill = core.BuffSkill("프리드의 가호 더미", 0,0))
-        self.vlevel = vEhc.getV(0,0)
-        vlevel= self.vlevel
-        self.skillList = [core.BuffSkill("프리드의 가호 0스택(더미)", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 1스택", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 2스택", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 3스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25),
-                    core.BuffSkill("프리드의 가호 4스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel)),
-                    core.BuffSkill("프리드의 가호 5스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel)),
-                    core.BuffSkill("프리드의 가호 6스택", 0, 30 * 1000, cooltime = 240 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel))]
-        self.state = 0
 
-    def _use(self, rem = 0, red = 0) -> core.ResultObject:
-        self.onoff = True
-        self.state += 1
-        if self.state > 6:
-            self.state -= 6        
-        self.skill = self.skillList[self.state]
-        self.timeLeft = self.skill.remain * (1 + 0.01*rem * self.skill.rem)
-        self.cooltimeLeft = self.skill.cooltime * (1 - 0.01*red* self.skill.red)
-        self.onoff = True
-        if self.cooltimeLeft > 0:
-            self.available = False
-        delay = self.skill.delay
-        mdf = self.get_modifier()
-        return core.ResultObject(delay, mdf, 0, sname = self._id, spec = 'buff', kwargs = {"remain" : self.skill.remain * (1+0.01*rem*self.skill.rem)})
-        #return delay, mdf, 0, self.cascade
 
 
 class PunishingResonatorWrapper(core.SummonSkillWrapper):
@@ -128,7 +102,7 @@ class LightAndDarknessWrapper(core.DamageSkillWrapper):
         if self.stack <= 0:
             self.cooltimeLeft = 0
             self.available = True
-        return core.ResultObject(0, core.CharacterModifier(), 0, sname = '빛과 어둠의 세례 스택 증가', spec = 'graph control')            
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = '빛과 어둠의 세례 스택 증가', spec = 'graph control')            
             
     def reduceStackNode(self):
         return core.TaskHolder(core.Task(self, self.reduceStack))
@@ -141,6 +115,7 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = True
         self.vEnhanceNum = 13
         self.jobtype = "int"
+        self.jobname = "루미너스"
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
         self.preEmptiveSkills = 2
         
@@ -180,18 +155,18 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
         PodicMeditaion = core.BuffSkill("포딕 메디테이션", 0, 1800000, att = 40).wrap(core.BuffSkillWrapper)
-        DarkCrescendo = core.BuffSkill("다크 크레센도", 780, 180 * 1000, pdamage = 28, rem = True).wrap(core.BuffSkillWrapper)#<- 제대로 계산 필요함. 딜레이 모름
-        DarknessSocery = core.BuffSkill("다크니스 소서리(버프)", 780, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
+        DarkCrescendo = core.BuffSkill("다크 크레센도", 360, 180 * 1000, pdamage = 28, rem = True).wrap(core.BuffSkillWrapper)#<- 제대로 계산 필요함. 딜레이 모름
+        DarknessSocery = core.BuffSkill("다크니스 소서리(버프)", 210, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
         Memorize = core.BuffSkill("메모라이즈", 600, 10, cooltime = 150 * 1000, rem = True).wrap(core.BuffSkillWrapper)#Memorize <- 역시 제대로 계산 필요함. 딜레이 모음
     
-        OverloadMana = core.BuffSkill("오버로드 마나", 0, 99999 * 10000, pdamage_indep = 8+int(0.1*vEhc.getV(2,3))).isV(vEhc,2,3).wrap(core.BuffSkillWrapper)
+        OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 2, 3)
     
         #Damage Skills
 
         DoorOfTruth = core.SummonSkill("진리의 문", 870, 3030, 375 + 15 * vEhc.getV(4,4), 10, (25 + 0.5*vEhc.getV(4,4)) * 1000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #이퀄시 사용 가능해짐.
 
-        Frid = FridWrapper(vEhc)
+        Frid = heroes.FridWrapper(vEhc, 0, 0)
         LightAndDarkness = LightAndDarknessWrapper(vEhc)
     
         LuminousState = LuminousStateController(core.BuffSkill("루미너스 상태", 0, 99999999), chtr)
@@ -201,11 +176,12 @@ class JobGenerator(ck.JobGenerator):
         Attack = core.DamageSkill('기본 공격', 0, 0, 0).wrap(core.DamageSkillWrapper)
         
         
-        LightReflection = core.DamageSkill("라이트 리플렉션", 780, 400, 4 * 1.5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        Apocalypse = core.DamageSkill("아포칼립스", 1140, 340, 7 * 1.5,modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        LightReflection = core.DamageSkill("라이트 리플렉션", 690, 400, 4 * 1.5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        Apocalypse = core.DamageSkill("아포칼립스", 720, 340, 7 * 1.5,modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         AbsoluteKill = core.DamageSkill("앱솔루트 킬", 600, 385, 7*2,modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(쿨타임)', 600, 385, 7*2, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(쿨타임)', 600, 385, 7, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        AbsoluteKillCooltimedHalf = core.DamageSkill('앱솔루트 킬(쿨타임)', 0, 385*0.5, 7, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         LightReflection.onAfter(LuminousState.modifyStack(22))
         Apocalypse.onAfter(LuminousState.modifyStack(25))
@@ -213,9 +189,11 @@ class JobGenerator(ck.JobGenerator):
         IsLight = core.OptionalElement(partial(LuminousState.isState, LuminousStateController.LIGHT), LightReflection, Apocalypse, name = '빛이면 라리플 사용')
         IsEqual = core.OptionalElement(partial(LuminousState.isState, LuminousStateController.EQUAL), AbsoluteKill, IsLight, name = '이퀄리브리엄이면 이퀄 사용')
         Attack.onAfter(IsEqual)
+
+        AbsoluteKillCooltimed.onAfter(AbsoluteKillCooltimedHalf)
         
         for absolute in [AbsoluteKillCooltimed, AbsoluteKill]:
-            absolute.onAfter(core.create_task('빛과 어둠의 세례 쿨다운 감소', LightAndDarkness.reduceStack, LightAndDarkness))
+            absolute.onAfter(core.create_task('빛과 어둠의 세례 쿨다운 스택 1 감소', LightAndDarkness.reduceStack, LightAndDarkness))
         
         Memorize.onAfter(core.create_task("메모라이즈", LuminousState.memorize, LuminousState))
         PunishingResonator = PunishingResonatorWrapper(vEhc, LuminousState.getState)

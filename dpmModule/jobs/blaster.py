@@ -5,13 +5,15 @@ from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, InactiveRule
 from . import globalSkill
-
+from .jobbranch import warriors
+from .jobclass import resistance
 #TODO : 5차 신스킬 적용
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.jobtype = "str"
+        self.jobname = "블래스터"
         self.vEnhanceNum = 12
         self.ability_list = Ability_tool.get_ability_set('passive_level', 'boss_pdamage', 'crit')
 
@@ -30,15 +32,14 @@ class JobGenerator(ck.JobGenerator):
         ChargeMastery= core.InformedCharacterModifier("차지 마스터리", pdamage = 20)
         GuntletExpert = core.InformedCharacterModifier("건틀렛 엑스퍼트", crit_damage = 15, boss_pdamage = 15)
         AdvancedChargeMastery= core.InformedCharacterModifier("어드밴스드 차지 마스터리", armor_ignore = 35)
-        CombinationTraining = core.InformedCharacterModifier("콤비네이션 트레이닝II", att = 40)	#패시브스킬+1, 오더스+1
-     
+        CombinationTraining = core.InformedCharacterModifier("콤비네이션 트레이닝II", att = 44)	#패시브스킬+1, 오더스+1
         return [GuntletMastery, PhisicalTraining, ChargeMastery, 
                         GuntletExpert, AdvancedChargeMastery, CombinationTraining]
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
-        CombinationTraining = core.InformedCharacterModifier("콤비네이션 트레이닝II", pdamage_indep = 60, crit = 40)	#패시브스킬+1, 오더스+1
+        CombinationTraining = core.InformedCharacterModifier("콤비네이션 트레이닝II", pdamage_indep = 70, crit = 40)	#패시브스킬+1, 오더스+1
         
 
         return [WeaponConstant, Mastery, CombinationTraining]
@@ -64,8 +65,8 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
         
         MagnumPunch = core.DamageSkill("매그넘 펀치", 0, 430, 3, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        MagnumPunch_Revolve = core.DamageSkill("매그넘 펀치(리볼빙 캐논)", 0, 180, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        MagnumPunch_Revolve_Maximize = core.DamageSkill("매그넘 펀치(리볼빙 캐논)", 0, 180*1.5, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        MagnumPunch_Revolve = core.DamageSkill("리볼빙 캐논(매그넘 펀치)", 0, 180, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        MagnumPunch_Revolve_Maximize = core.DamageSkill("리볼빙 캐논(매그넘 펀치)(맥시마이즈)", 0, 180*1.5, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         ReleaseFileBunker = core.DamageSkill("릴리즈 파일 벙커", 600, 370, 8, modifier = core.CharacterModifier(pdamage = 20, armor_ignore = 80)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #임의 딜레이 600
         ReleaseFileBunker_A = core.DamageSkill("릴리즈 파일 벙커(A)", 0, 220, 6, modifier = core.CharacterModifier(pdamage = 15, armor_ignore = 80)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
@@ -88,27 +89,20 @@ class JobGenerator(ck.JobGenerator):
         # 불릿을 사용하는 스킬 데미지 50% 증가, 불릿자동리로드 70$%감소, 릴파벙이후 과열시간 1초로 감소
         WillOfLiberty = core.BuffSkill("윌 오브 리버티", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        
-    
-        AuraWeaponBuff = core.BuffSkill("오라웨폰 버프", 0, (80 +2*vEhc.getV(2,2)) * 1000, cooltime = 180 * 1000, armor_ignore = 15, pdamage_indep = (vEhc.getV(2,2) // 5)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!    
-        AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 4000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 4초간 발동되지 않도록 합니다.
-    
         RegistanceLineInfantry = core.SummonSkill("레지스탕스 라인 인팬트리", 360, 1000, 215+8*vEhc.getV(3,3), 9, 10*1000, cooltime = 25000).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
         
-        
-        
-        BunkerBuster = core.BuffSkill("벙커 버스터", 720, 45000, cooltime = 120000, rem = False).wrap(core.BuffSkillWrapper)    #임의딜레이 720
-        BunkerBusterAttack = core.DamageSkill("벙커 버스터(공격)", 0, 120 + 9* vEhc.getV(0,0), 8, modifier = core.CharacterModifier(armor_ignore = 100)).wrap(core.DamageSkillWrapper)
-        BunkerBusterAttack_Maximize = core.DamageSkill("벙커 버스터(맥시마이즈)", 0, (120 + 9* vEhc.getV(0,0))*1.5, 8, modifier = core.CharacterModifier(armor_ignore = 100)).wrap(core.DamageSkillWrapper)
+        BunkerBuster = core.BuffSkill("벙커 버스터", 720, 45000, cooltime = 120000, rem = False).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)    #임의딜레이 720
+        BunkerBusterAttack = core.DamageSkill("벙커 버스터(공격)", 0, 120 + 9* vEhc.getV(0,0), 8, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        BunkerBusterAttack_Maximize = core.DamageSkill("벙커 버스터(맥시마이즈)", 0, (120 + 9* vEhc.getV(0,0))*1.5, 8, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         
         #발칸 펀치는 최대딜사이클에서는 사용하지 않음.
-        BalkanPunch = core.DamageSkill("발칸 펀치", 720, 1000 + 40* vEhc.getV(4,4), 6, cooltime = 60 * 1000).wrap(core.DamageSkillWrapper) #임의 딜레이 720
-        BalkanPunchTick = core.DamageSkill("발칸 펀치(틱)", 180, 450 + 8*vEhc.getV(4,4), 5).wrap(core.DamageSkillWrapper)	#8초간 43번
+        BalkanPunch = core.DamageSkill("발칸 펀치", 720, 1000 + 40* vEhc.getV(4,4), 6, cooltime = 60 * 1000).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper) #임의 딜레이 720
+        BalkanPunchTick = core.DamageSkill("발칸 펀치(틱)", 180, 450 + 8*vEhc.getV(4,4), 5).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)	#8초간 43번
         
         
-        BurningBreaker = core.DamageSkill("버닝 브레이커", 5000, 1500 + 60*vEhc.getV(1,1), 15, cooltime = 100*1000, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).wrap(core.DamageSkillWrapper)
-        BurningBreakerSplash = core.DamageSkill("버닝 브레이커(스플래시)", 0, 1200+48*vEhc.getV(1,1), 15 * 6, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).wrap(core.DamageSkillWrapper)
-        BurningBreakerSplash_Maximize = core.DamageSkill("버닝 브레이커(스플래시,맥시마이즈)", 0, (1200+48*vEhc.getV(1,1))*1.5, 15 * 6, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).wrap(core.DamageSkillWrapper)
+        BurningBreaker = core.DamageSkill("버닝 브레이커", 5000, 1500 + 60*vEhc.getV(1,1), 15, cooltime = 100*1000, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        BurningBreakerSplash = core.DamageSkill("버닝 브레이커(스플래시)", 0, 1200+48*vEhc.getV(1,1), 15 * 6, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        BurningBreakerSplash_Maximize = core.DamageSkill("버닝 브레이커(스플래시,맥시마이즈)", 0, (1200+48*vEhc.getV(1,1))*1.5, 15 * 6, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
         
         #스킬 기본 연계 연결
         ReleaseFileBunker.onAfters([ReleaseFileBunker_A, ReleaseFileBunker_B, ReleaseFileBunker_C, ReleaseFileBunker_D])
@@ -125,7 +119,7 @@ class JobGenerator(ck.JobGenerator):
         
         
         # 리볼빙 캐논 발동
-       
+        
         MagnumPunch_Revolve_Final = core.OptionalElement(BunkerBuster.is_active, BunkerBusterAttack_WithMaximize, MagnumPunch_Revolve_WithMaximize)
         DoublePang_Revolve_Final = core.OptionalElement(BunkerBuster.is_active, BunkerBusterAttack_WithMaximize, DoublePang_Revolve_WithMaximize)
         MagnumPunch.onAfter(MagnumPunch_Revolve_Final)
@@ -144,10 +138,12 @@ class JobGenerator(ck.JobGenerator):
             wrp.onAfter(RevolvingCannonMastery)
 
         # 오라 웨폰
-        def AuraWeapon_connection_builder(origin_skill, target_skill):
-            optional = core.OptionalElement(lambda : (AuraWeaponCooltimeDummy.is_not_active() and AuraWeaponBuff.is_active()), target_skill)
-            origin_skill.onAfter(optional)
-            target_skill.onAfter(AuraWeaponCooltimeDummy)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
+        # 리스트 내용 검증 필요
+        for sk in [ReleaseHammer, BurningBreaker, HammerSmashWave, Mag_Pang]:
+            auraweapon_builder.add_aura_weapon(sk)
+        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+
         
         return(Mag_Pang,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

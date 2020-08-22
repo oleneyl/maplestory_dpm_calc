@@ -76,6 +76,14 @@ class GlobalOperation():
     def set_storage(self, storage):
         _unsafe_access_global_storage().set_storage(storage)
 
+    @classmethod
+    def export_storage_without_complex_option(cls):
+        GlobalOperation.assign_storage()
+        GlobalOperation.attach_namespace()
+        GlobalOperation.save_storage()
+        GlobalOperation.convert_to_static()
+        return GlobalOperation.export_collection()
+
 
 class GlobalCollection():
     historical_track_prefix = '_temporal_save_'
@@ -111,8 +119,7 @@ class GlobalCollection():
                 
     def attach_namespace(self):
         for obj in self._found_dynamic_object:
-            for kwd in obj.get_dynamic_variables():
-                obj.attach_namespace()
+            obj.attach_namespace()
 
     def convert_to_static(self):
         for obj in self._found_dynamic_object:       
@@ -499,7 +506,7 @@ class DynamicVariableFromConfigurationStorage(AbstractDynamicVariableInstance):
     def __repr__(self):
         return f"DynamicVariable({self._fetch_name})"
 
-    def evaluate(self):
+    def evaluate_override(self):
         try:
             return self._fetch_origin[self._fetch_name]
         except:
@@ -622,7 +629,7 @@ class DynamicVariableMimicingConstant(DynamicVariableInstance):
         return []
 
 class AbstractGraphBuilder():
-    def psuedo_building_sequence(storage = None):
+    def psuedo_building_sequence(self, storage = None):
         initialize_global_properties()
         if storage is not None:
             GlobalOperation.set_storage(storage)

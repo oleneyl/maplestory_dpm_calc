@@ -51,7 +51,7 @@ def get_optimal_hyper_union(spec, job, otherspec, hyper, union):
     ref = ref - hyper.mdf
     ref = ref - union.mdf
     
-    buffremFlag = (union.buffrem > 0)
+    buffremFlag = (union.buff_rem > 0)
     
     newHyper = HyperStat.get_hyper_object(ref, hyper.level)
     ref += newHyper.mdf
@@ -61,7 +61,7 @@ def get_optimal_hyper_union(spec, job, otherspec, hyper, union):
     return {"hyper" : newHyper, "union" : newUnion }
 
 
-def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False, vEhc = None, seed_rings = False):
+def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False, v_builder = None, seed_rings = False, weaponAtt = None):
     '''주어진 값과 직업값으로부터 dpm을 계산해서 리턴합니다.
     입력값 : CharacterModifier, job, otherspec
     출력값 : float(DPM)
@@ -89,28 +89,30 @@ def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False,
             template.cooltimeReduce = otherspec["cooltimereduce"]    
     
     template.apply_modifiers([spec])
-    graph = gen.package_bare(template, useFullCore = False, vEhc = vEhc)
+
+    graph = gen.package_bare(template, useFullCore = False, v_builder = v_builder)
     sche = policy.AdvancedGraphScheduler(graph,
         policy.TypebaseFetchingPolicy(priority_list = [
             core.BuffSkillWrapper,
             core.SummonSkillWrapper,
             core.DamageSkillWrapper
         ]), 
-        [rules.UniquenessRule()]) #가져온 그래프를 토대로 스케줄러를 생성합니다.
-    analytics = core.Analytics()  #데이터를 분석할 분석기를 생성합니다.
+        [rules.UniquenessRule()] + gen.get_predefined_rules(rules.RuleSet.BASE)) #가져온 그래프를 토대로 스케줄러를 생성합니다.
+    analytics = core.Analytics(printFlag=False)  #데이터를 분석할 분석기를 생성합니다.
     control = core.Simulator(sche, template, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
     control.start_simulation(180*1000)
     
-    
+    if weaponAtt is None:
+        weaponAtt = Absolab.WeaponFactory.getWeapon(maplejobs.weaponList[koJob], star = 17, elist = [0,0,0,9] ).att
+
     if seed_rings:
         seed_ring_specs = [
             {"name" : "리스크테이커", "effect" : [ [12000 + 6000*i, MDF(patt = 20 + 10*i)] for i in range(4) ]},
             {"name" : "리스트레인트", "effect" : [ [9000 + 2000*i, MDF(patt = 25 + 25*i)] for i in range(4) ]},
-            {"name" : "웨폰퍼프", "effect" : [ [9000 + 2000*i, MDF(stat_main = Absolab.WeaponFactory.getWeapon(maplejobs.weaponList[koJob], star = 17, elist = [0,0,0,9] ).att * (i+1))] for i in range(4) ]}, 
+            {"name" : "웨폰퍼프", "effect" : [ [9000 + 2000*i, MDF(stat_main = weaponAtt * (i+1))] for i in range(4) ]}, 
             {"name" : "크리데미지", "effect" : [ [9000 + 2000*i, MDF(crit_damage = 7+ 7*i)] for i in range(4) ]}
         ]
         
-        print("wpf att", Absolab.WeaponFactory.getWeapon(maplejobs.weaponList[koJob], star = 17, elist = [0,0,0,9] ).att)
         return_ring_dpms = []
         
         for spec in seed_ring_specs:

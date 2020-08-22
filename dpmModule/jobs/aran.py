@@ -1,129 +1,241 @@
-from . import template as jt
-from .template import VSkillModifier as V
+"""Advisor : 아지르캐리(크로아)
+"""
+
+from ..kernel import core
+from ..kernel.core import VSkillModifier as V
+from ..kernel.graph import DynamicVariableOperation
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from .jobclass import heroes
+from .jobbranch import warriors
+from ..execution.rules import RuleSet, InactiveRule, ConditionRule
+
+# 최저 콤보 카운트 500 가정
 
 #TODO : 5차 신스킬 적용
+#TODO : 펜릴 크래시 이후에 파이널 블로우가 아닌 다른 스킬이 오면 30ms 딜레이가 추가되어야 함
+#TODO : 게더링 캐쳐로 프리드, 오라웨폰 딜레이도 캔슬해야 함
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.buffrem = True
         self.jobtype = "str"
-        self.vEnhanceNum = 9
-        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'buff_rem', 'crit')
+        self.jobname = "아란"
+        self.vEnhanceNum = 13
+        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
+    
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(armor_ignore = 20)
         
-    def buildPassiveSkillList(self):
-        WeaponMastery = jt.InformedCharacterModifier("웨폰 마스터리",pdamage = 5)
-        PhisicalTraining = jt.InformedCharacterModifier("피지컬 드레이닝",stat_main = 30, stat_sub = 30)
-        
-        LordOfDarkness = jt.InformedCharacterModifier("로드 오브 다크니스",crit=30, critDamage = 8)
-    
-        AdvancedWeaponMastery = jt.InformedCharacterModifier("어드밴스드 웨폰 마스터리",att = 30, critDamage = 15)
-        ReincarnationBuff = jt.InformedCharacterModifier("리인카네이션(패시브)",pdamage_indep = 30, crit = 10, critDamage = 15)
-    
-        SacrificePassive = jt.InformedCharacterModifier("새크리파이스(패시브)",armor_ignore = 30)
-    
-        self.passiveSkillList = [WeaponMastery, PhisicalTraining, LordOfDarkness, AdvancedWeaponMastery, ReincarnationBuff, SacrificePassive]
+    def get_passive_skill_list(self):
+        RetrievedMemory = core.InformedCharacterModifier("되찾은 기억", patt=5)
+        SnowChargePassive = core.InformedCharacterModifier("스노우 차지(패시브)", pdamage=10)
+        PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
+        AdvancedComboAbilityPassive = core.InformedCharacterModifier("어드밴스드 콤보 어빌리티", att=10, crit=20, crit_damage=10)
+        CleavingAttack = core.InformedCharacterModifier("클리빙 어택", armor_ignore=40, pdamage=10)
+        Might = core.InformedCharacterModifier("마이트", att=40)
+        HighMastery = core.InformedCharacterModifier("하이 마스터리", att=30, crit_damage=8) 
+        AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)", att=30)
 
-    def getNotImpliedSkillList(self):
-        WeaponConstant = jt.InformedCharacterModifier("무기상수",pdamage_indep = 49)
-        Mastery = jt.InformedCharacterModifier("숙련도",pdamage_indep = -5)        
-        BiholdersBuff = jt.InformedCharacterModifier("비홀더스 버프",att = 40+30, crit = 10)
+        return [RetrievedMemory, SnowChargePassive, PhisicalTraining, 
+            AdvancedComboAbilityPassive, CleavingAttack, Might, HighMastery, AdvancedFinalAttackPassive]
+
+    def get_not_implied_skill_list(self):
+        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 49)
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)        
+        return [WeaponConstant, Mastery]
+
+    def get_ruleset(self):
+        def check_soul_contract_time(adrenaline_el):
+            return (adrenaline_el.is_not_active() or (adrenaline_el.is_time_left(10*1000, 1)))
+
+        ruleset = RuleSet()
+        ruleset.add_rule(InactiveRule('브랜디쉬 마하(홀더)', '아드레날린 부스트'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('히어로즈 오쓰', '아드레날린 부스트'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('쓸만한 샤프 아이즈', '아드레날린 부스트'), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('소울 컨트랙트', '아드레날린 부스트', check_soul_contract_time), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('부스트 엔드-헌터즈 타겟팅', '아드레날린 부스트', lambda x:x.is_time_left(10*1000, -1)), RuleSet.BASE)
         
-        return [WeaponConstant, Mastery, BiholdersBuff]
-        
-    def generate(self, chtr : ck.AbstractCharacter, combat : bool = False , vEhc = jt.vEnhancer()):
+        # ruleset.add_rule(InactiveRule('쓸만한 컴뱃 오더스', '아드레날린 부스트'), RuleSet.BASE)
+        return ruleset
+
+
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
-        창 사용
-        크오체 풀피 가정
-        비홀더 - 리인포스 / 버프 리인포스
-        궁그닐 - 리인포스, 이그노어 가드, 보스 킬러
-        
-        비홀더 임팩트 9타
-        피어스 사이클론 22타
-        
-        임페일-궁그닐-비홀더-파이널어택
+        하이퍼 : 비욘더(3종)
+        스윙 - 리메인타임 리인포스
+        아드레날린 부스트 - 퍼시스트
+
+        코어강화 순서 어파-파블-비욘더-헌터즈타겟팅-스매시스윙
+
+        브랜디쉬 마하 / 인스톨 마하 / 마하의 영역 : 게더링 캐쳐로 캔슬(600ms)
+        아드레날린 부스트 도중에 다음을 사용하지 않음 : 브랜디쉬 마하, 히어로즈 오쓰, 쓸만한 샤프 아이즈
+        소울 컨트랙트는 아드레날린 부스트가 10초 이상 남았다면 사용함
 
         '''
+        JUDGEMENT_DELAY=600
+        BOOST_END_HUNTERS_TARGETING_DELAY=1100
+        ADRENALINE_GENERATOR_DELAY=600
+        ADRENALINE_BOOST_REMAIN = (20+3)*1000
 
+        def get_beyonder_pdamage(excess_target, reinforce = True):
+            return int(1.06 ** excess_target * 100 - 100 + reinforce * 20)
+
+        BEYONDER_PDAMAGE = get_beyonder_pdamage(6)
+        BEYONDER_ADRENALINE_PDAMAGE = get_beyonder_pdamage(11)
+        PENRIL_PDAMAGE = get_beyonder_pdamage(10)
+        PENRIL_ADRENALINE_PDAMAGE = get_beyonder_pdamage(15)
+        
+        SmashSwing = core.DamageSkill("스매시 스윙", 360, 800, 2).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        SmashSwingIncr = core.BuffSkill("스매시 스윙(최종데미지)", 0, 5000+3000, pdamage_indep=15, pdamage=20, cooltime=-1).wrap(core.BuffSkillWrapper)
+        SmashSwingIllusion = core.DamageSkill("스매시 스윙(잔상)", 0, 280, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+
+        FinalBlow = core.DamageSkill("파이널 블로우", 420, 445+20, 5, modifier=core.CharacterModifier(armor_ignore=15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+
+        Booster = core.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
+        SnowCharge = core.BuffSkill("스노우 차지", 0, 200*1000, pdamage=10).wrap(core.BuffSkillWrapper) # 펫버프
+
+        FinalAttack = core.DamageSkill("파이널 어택", 0, 85+100, 3*0.6).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper) # 아드레날린 부스트의 퍼뎀, 타수 효과 적용됨
+        FinalAttackAdrenaline = core.DamageSkill("파이널 어택(아드레날린)", 0, 85+100+150, (3+2)*0.6).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        FinalAttackHolder = core.DamageSkill("파이널어택(홀더)", 0, 0, 0).wrap(core.DamageSkillWrapper)
+
+        AdvancedComboAbility = core.BuffSkill("어드밴스드 콤보 어빌리티", 0, 9999*9999, att=2*10, crit=3*10).wrap(core.BuffSkillWrapper)
+        ComboAbility = core.BuffSkill("콤보 어빌리티", 0, 9999*9999, att=2*10).wrap(core.BuffSkillWrapper) 
+        Judgement = core.DamageSkill("저지먼트", JUDGEMENT_DELAY, 380, 4).wrap(core.DamageSkillWrapper)
+        JudgementDot = core.DotSkill("저지먼트(도트)", 200, 6000).wrap(core.SummonSkillWrapper)
+
+        BlessingMaha = core.BuffSkill("블레싱 마하", 0, 200*1000, att=30).wrap(core.BuffSkillWrapper)   #펫버프
+
+        BeyonderFirst = core.DamageSkill("비욘더(1타)", 420, 385, 6, modifier=core.CharacterModifier(pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        BeyonderSecond = core.DamageSkill("비욘더(2타)", 360, 400, 6, modifier=core.CharacterModifier(pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        BeyonderThird = core.DamageSkill("비욘더(3타)", 420, 415, 6, modifier=core.CharacterModifier(pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+
+        AdrenalineBoost = core.BuffSkill("아드레날린 부스트", 0, ADRENALINE_BOOST_REMAIN).wrap(core.BuffSkillWrapper)
+        AdrenalineBoostEndDummy = core.BuffSkill("아드레날린 부스트(종료 더미)", 0, 0, cooltime=-1).wrap(core.BuffSkillWrapper)
+
+        AdrenalineSmashSwing = core.DamageSkill("스매시 스윙(아드레날린)", 360, 950, 4).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        AdrenalineFinalBlow = core.DamageSkill("파이널 블로우(아드레날린)", 420, 595+20, 7, modifier=core.CharacterModifier(armor_ignore=15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        FinalBlowWaveAdrenaline = core.DamageSkill("파이널 블로우(파동)", 0, 350, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+
+        AdrenalineBeyonderFirst = core.DamageSkill("비욘더(1타)(아드레날린)", 420, 535, 8, modifier=core.CharacterModifier(pdamage=BEYONDER_ADRENALINE_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdrenalineBeyonderSecond = core.DamageSkill("비욘더(2타)(아드레날린)", 360, 550, 8, modifier=core.CharacterModifier(pdamage=BEYONDER_ADRENALINE_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdrenalineBeyonderThird = core.DamageSkill("비욘더(3타)(아드레날린)", 420, 565, 8, modifier=core.CharacterModifier(pdamage=BEYONDER_ADRENALINE_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdrenalineBeyonderWave = core.DamageSkill("비욘더(파동)", 0, 400, 5).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+
+        BoostEndHuntersTargeting = core.DamageSkill("부스트 엔드-헌터즈 타겟팅", BOOST_END_HUNTERS_TARGETING_DELAY, 1500+20, 15*5, cooltime=-1).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+
+        AdrenalineGenerator = core.BuffSkill("아드레날린 제네레이터", ADRENALINE_GENERATOR_DELAY, 0, cooltime=240*1000).wrap(core.BuffSkillWrapper)
+        MahaRegion = core.SummonSkill("마하의 영역", 600, 1000, 500, 3, 10*1000, cooltime=150*1000).wrap(core.SummonSkillWrapper) # 게더링캐쳐 캔슬 : 1680 -> 600
+        MahaRegionInit = core.DamageSkill("마하의 영역(시전)", 0, 800, 5).wrap(core.DamageSkillWrapper)
+        HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime=120*1000, pdamage=10).wrap(core.BuffSkillWrapper)
+
+        # modifierInvariantFlag = False
+        Frid = heroes.FridWrapper(vEhc, 0, 0, False)
+
+        InstallMaha = core.BuffSkill("인스톨 마하", 600, (30+vEhc.getV(1,1))*1000, patt=5+vEhc.getV(1,1), cooltime=150*1000).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper) # 게더링캐쳐 캔슬 : 960 -> 600
+        InstallMahaBlizzard = core.SummonSkill("인스톨 마하(눈보라)", 0, 3000, 450+18*vEhc.getV(1,1), 5, 60*1000, cooltime=-1).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)
+
+        BrandishMahaNormal = core.DamageSkill('브랜디쉬 마하', 600, 600+vEhc.getV(2,2)*24+20+100, 15*2, cooltime=20*1000, modifier=core.CharacterModifier(boss_pdamage=20)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)  # 게더링캐쳐 캔슬 : 960 -> 600
+        BrandishMaha = core.DamageSkill('브랜디쉬 마하(홀더)', 0, 0, 0, cooltime=20*1000, modifier=core.CharacterModifier(boss_pdamage=20)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
+        BrandishMahaAdrenaline = core.DamageSkill('브랜디쉬 마하(아드레날린)', 600, 600+vEhc.getV(2,2)*24+20+100+150, 15*2, cooltime=20*1000, modifier=core.CharacterModifier(boss_pdamage=20)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
+
+        GatheringCatcher = core.DamageSkill('게더링 캐쳐(캔슬)', 0, 170+20, 2).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        
+        PenrilCrashHit = 6 + vEhc.getV(3,3) // 30 + 1
+        PenrilCrash = core.DamageSkill('펜릴 크래시', 420, 100+500+vEhc.getV(3,3)*5, PenrilCrashHit, modifier=core.CharacterModifier(crit=100, armor_ignore=60,pdamage=PENRIL_PDAMAGE)).setV(vEhc, 2, 2, False).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
+        AdrenalinePenrilCrash = core.DamageSkill('펜릴 크래시(아드레날린)', 420, 150+100+500+vEhc.getV(3,3)*5, PenrilCrashHit + 2, modifier=core.CharacterModifier(crit=100, armor_ignore=60,pdamage=PENRIL_ADRENALINE_PDAMAGE)).setV(vEhc, 2, 2, False).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)       
+        PenrilCrashIceburg = core.DamageSkill('펜릴 크래시(빙산)', 0, 500+vEhc.getV(3,3)*5, 6).setV(vEhc, 2, 2, False).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
+        
+        Combo = core.BuffSkill("아란(콤보)", 0, 99999999)
+        Combo = core.StackSkillWrapper(Combo, 1000)
+        Combo.set_name_style("콤보 %d만큼 증가")
+
+        # 인스톨 마하
+        InstallMaha.onAfter(InstallMahaBlizzard)
+        InstallMaha.onAfter(Combo.stackController(100))
+        
+        # 브랜디쉬 마하
+        BrandishMaha.onAfter(core.OptionalElement(AdrenalineBoost.is_active, BrandishMahaAdrenaline, BrandishMahaNormal))
+        BrandishMaha.onAfter(core.OptionalElement(InstallMaha.is_active, BrandishMaha.controller(10*1000, 'reduce_cooltime')))
+        
+        # 파이널어택
+        FinalAttackHolder.onAfter(core.OptionalElement(AdrenalineBoost.is_active, FinalAttackAdrenaline, FinalAttack))
+
+        # 콤보 계산, 오라 웨폰
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 1)
+        for sk in [SmashSwing, AdrenalineSmashSwing, FinalBlow, AdrenalineFinalBlow,
+                Judgement, MahaRegionInit, GatheringCatcher,
+                BeyonderFirst, BeyonderSecond, BeyonderThird,
+                AdrenalineBeyonderFirst, AdrenalineBeyonderSecond, AdrenalineBeyonderThird,
+                PenrilCrash, AdrenalinePenrilCrash, BrandishMahaNormal, BrandishMahaAdrenaline]:
+            sk.onAfter(FinalAttackHolder)
+            sk.onAfter(Combo.stackController(DynamicVariableOperation.reveal_argument(sk.skill.hit)))
+            auraweapon_builder.add_aura_weapon(sk)
+        
+        BoostEndHuntersTargeting.onAfter(core.RepeatElement(FinalAttackHolder, 5))
+        auraweapon_builder.add_aura_weapon(BoostEndHuntersTargeting)
             
-        
-        #Buff skills
-        Booster = jt.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(jt.BuffSkillWrapper)
-        CrossoverChain = jt.BuffSkill("크로스 오버 체인", 0, 200*1000, pdamage_indep = 80).wrap(jt.BuffSkillWrapper)
-        FinalAttack = jt.DamageSkill("파이널 어택", 0, 150, 0.4).setV(vEhc, 3, 4, True).wrap(jt.DamageSkillWrapper)
-        BiholderDominant = jt.SummonSkill("비홀더 도미넌트", 0, 10000, 210, 1, 99999*10000, modifier = jt.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).wrap(jt.SummonSkillWrapper)
-        BiholderShock = jt.DamageSkill("비홀더 쇼크", 0, 640, 2, cooltime = 12000, modifier = jt.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).wrap(jt.DamageSkillWrapper)
-        
-        DarkImpail = jt.DamageSkill("다크 임페일", 630, 280, 6).setV(vEhc, 1, 2, False).wrap(jt.DamageSkillWrapper)
-        GoungnilDescentNoCooltime = jt.DamageSkill("궁그닐 디센트", 600, 225, 12, modifier = jt.CharacterModifier(armor_ignore = 30+20, pdamage = 20, boss_pdamage = 10)).setV(vEhc, 0, 2, False).wrap(jt.DamageSkillWrapper)    
-        GoungnilDescent = jt.DamageSkill("궁그닐 디센트", 600, 225, 12, cooltime = 8000, modifier = jt.CharacterModifier(armor_ignore = 30+20, pdamage = 20, boss_pdamage = 10)).setV(vEhc, 0, 2, False).wrap(jt.DamageSkillWrapper)
+        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
 
-        GoungnilDescent_AuraWeapon = jt.DamageSkill("오라 웨폰", 0, 225 * (75 + vEhc.getV(2,1))*0.01, 12, modifier = jt.CharacterModifier(armor_ignore = 30+20, pdamage = 20, boss_pdamage = 10)).wrap(jt.DamageSkillWrapper)
-        
-        Sacrifice = jt.BuffSkill("새크리파이스", 1080, 30*1000, rem = True, red = True, cooltime = 70000, armor_ignore = 10, boss_pdamage = 10).wrap(jt.BuffSkillWrapper)   #궁그닐 쿨 무시, 비홀더 공격시 쿨0.3감소
-        Reincarnation = jt.BuffSkill("리인카네이션", 0, 40*1000, cooltime = 600000, rem = True, red = True).wrap(jt.BuffSkillWrapper) #궁그닐 쿨 무시
-        
-        #하이퍼
-        DarkThurst = jt.BuffSkill("다크 서스트", 900, 30000, cooltime = 120*1000, att = 80).wrap(jt.BuffSkillWrapper)
-        EpicAdventure = jt.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(jt.BuffSkillWrapper)
-    
-        AuraWeaponBuff = jt.BuffSkill("오라웨폰 버프", 0, (80 +2*vEhc.getV(2,1)) * 1000, cooltime = 180 * 1000, armor_ignore = 15, pdamage_indep = (vEhc.getV(2,1) // 5)).isV(vEhc,2,1).wrap(jt.BuffSkillWrapper)  #두 스킬 syncronize 할 것!    
-        AuraWeaponCooltimeDummy = jt.BuffSkill("오라웨폰(딜레이 더미)", 0, 4000, cooltime = -1).wrap(jt.BuffSkillWrapper)   # 한 번 발동된 이후에는 4초간 발동되지 않도록 합니다.
-    
-        DarkSpear = jt.DamageSkill("다크 스피어", 990, 350+10*vEhc.getV(1,0), 7*7, cooltime = 10000, red = True, modifier = jt.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc,1,0).wrap(jt.DamageSkillWrapper)
-        BiholderImpact = jt.SummonSkill("비홀더 임팩트", 0, 100, 300+3*vEhc.getV(0,2), 2, 801, cooltime = 20000, red = True, modifier = jt.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).isV(vEhc,0,2).wrap(jt.SummonSkillWrapper)#onTick으로 0.3초씩
-        PierceCyclone = jt.DamageSkill("피어스 사이클론(더미)", 90, 0, 0, cooltime = 180*1000).wrap(jt.DamageSkillWrapper)
-        PierceCycloneTick = jt.DamageSkill("피어스 사이클론", 9000/22, 400+16*vEhc.getV(3,3), 12, modifier = jt.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(jt.DamageSkillWrapper) #22타
-        PierceCycloneEnd = jt.DamageSkill("피어스 사이클론(종료)", 0, 1500+60*vEhc.getV(3,3), 15, modifier = jt.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(jt.DamageSkillWrapper)
-        PierceCycloneEnd_AuraWeapon = jt.DamageSkill("오라 웨폰", 0, 1500+60*vEhc.getV(3,3) * (75 + vEhc.getV(2,1))*0.01, 15, modifier = jt.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(jt.DamageSkillWrapper)
-        
-        ######   Skill Wrapper   ######
-    
-        #Damage skill
-    
-        Reincarnation.setDisabledAndTimeLeft(30000)
-        
-        def InfGoungnil():
-            return (Sacrifice.isOnOff() or Reincarnation.isOnOff())
-        
-        DarkImpail.onAfter(FinalAttack)
-        GoungnilDescentNoCooltime.onAfter(FinalAttack)
-        GoungnilDescent.onAfter(FinalAttack)
-        BasicAttack = jt.OptionalElement(InfGoungnil, GoungnilDescentNoCooltime, DarkImpail)
-        
-        BiholderDominant.onTick(Sacrifice.controller(300,'reduceCooltime'))
-        BiholderShock.onAfter(Sacrifice.controller(300,'reduceCooltime'))
-        BiholderImpact.onTick(Sacrifice.controller(300,'reduceCooltime'))
-        
-        PierceCyclone_ = jt.RepeatElement(PierceCycloneTick, 22)
-        PierceCyclone_.onAfter(PierceCycloneEnd)
-        PierceCyclone.onAfter(PierceCyclone_)
+        # 기본 공격
+        BasicAttack = core.DamageSkill("기본 공격", 0,0,0).wrap(core.DamageSkillWrapper)
 
-        # 오라 웨폰
-        def AuraWeapon_connection_builder(origin_skill, target_skill):
-            optional = jt.OptionalElement(lambda : (AuraWeaponCooltimeDummy.isOffOn() and AuraWeaponBuff.isOnOff()), target_skill)
-            origin_skill.onAfter(optional)
-            target_skill.onAfter(AuraWeaponCooltimeDummy)
-            
-        AuraWeapon_connection_builder(GoungnilDescent, GoungnilDescent_AuraWeapon)
-        AuraWeapon_connection_builder(PierceCycloneEnd, PierceCycloneEnd_AuraWeapon)
+        FinalBlow.onAfter(BeyonderFirst)
+        BeyonderFirst.onAfter(BeyonderSecond)
+        BeyonderSecond.onAfter(BeyonderThird)
+        BeyonderThird.onAfter(PenrilCrash)
+
+        AdrenalineFinalBlow.onAfter(AdrenalineBeyonderFirst)
+        AdrenalineFinalBlow.onAfter(FinalBlowWaveAdrenaline)
+        AdrenalineBeyonderFirst.onAfter(AdrenalineBeyonderSecond)
+        AdrenalineBeyonderSecond.onAfter(AdrenalineBeyonderThird)
+        AdrenalineBeyonderThird.onAfter(AdrenalinePenrilCrash)
         
+        AdrenalineBeyonderFirst.onAfter(AdrenalineBeyonderWave)
+        AdrenalineBeyonderSecond.onAfter(AdrenalineBeyonderWave)
+        AdrenalineBeyonderThird.onAfter(AdrenalineBeyonderWave)
         
-        schedule = jt.ScheduleGraph()
+        AdrenalinePenrilCrash.onAfter(PenrilCrashIceburg)
+
+        BasicAttack.onAfter(core.OptionalElement(AdrenalineBoost.is_active, AdrenalineFinalBlow, FinalBlow))
         
-        schedule.build_graph(
-                chtr, 
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-                    Booster, CrossoverChain, Sacrifice, Reincarnation,EpicAdventure, DarkThurst, AuraWeaponBuff,
-                    globalSkill.soul_contract()],
-                [BiholderShock, GoungnilDescent, DarkSpear, PierceCyclone],
-                [BiholderDominant, BiholderImpact],
-                [AuraWeaponCooltimeDummy],
-                BasicAttack)
+        # 스매시 스윙
+        SmashSwing.onAfter(SmashSwingIncr)
+        SmashSwing.onAfter(SmashSwingIllusion)
+
+        AdrenalineSmashSwing.onAfter(SmashSwingIncr)
+        AdrenalineSmashSwing.onAfter(SmashSwingIllusion)
+
+        SmashSwingHolder = core.DamageSkill("스매시 스윙", 0,0,0).wrap(core.DamageSkillWrapper)
+        SmashSwingHolder.onAfter(core.OptionalElement(AdrenalineBoost.is_active, AdrenalineSmashSwing, SmashSwing))
+        SmashSwingHolder.onConstraint(core.ConstraintElement('스매시 스윙이 없을때', SmashSwingIncr, SmashSwingIncr.is_not_active))      
         
-        return schedule
+        # 게캐 캔슬
+        BrandishMaha.onAfter(GatheringCatcher)
+        MahaRegion.onAfter(GatheringCatcher)
+        InstallMaha.onAfter(GatheringCatcher)
+
+        Combo.set_stack(0)
+
+        # 아드레날린
+        AdrenalineBoost.onConstraint(core.ConstraintElement('콤보가 1000이상', Combo, partial(Combo.judge,1000,1) ))
+        AdrenalineBoost.onAfter(AdrenalineBoostEndDummy.controller(ADRENALINE_BOOST_REMAIN))
+        AdrenalineBoost.onAfter(Combo.stackController(-999999999, dtype='set'))
+        AdrenalineBoost.onAfter(BoostEndHuntersTargeting.controller(1))
+        AdrenalineBoostEndDummy.onAfter(Combo.stackController(500, dtype='set'))
+        AdrenalineGenerator.onConstraint(core.ConstraintElement('아드레날린부스트가 불가능할때', AdrenalineBoost, AdrenalineBoost.is_not_active))
+        AdrenalineGenerator.onAfter(AdrenalineBoost)
+        return(BasicAttack, 
+                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), HerosOath,
+                    Booster, SmashSwingIncr, SnowCharge, AdvancedComboAbility, ComboAbility,
+                    BlessingMaha, AdrenalineBoost, AdrenalineBoostEndDummy,
+                    AdrenalineGenerator, 
+                    Frid, InstallMaha, InstallMahaBlizzard, Combo, AuraWeaponCooltimeDummy, AuraWeaponBuff,
+                    globalSkill.soul_contract()] +\
+                [SmashSwingHolder, BrandishMaha, BoostEndHuntersTargeting] +\
+                [MahaRegion] +\
+                [BasicAttack])

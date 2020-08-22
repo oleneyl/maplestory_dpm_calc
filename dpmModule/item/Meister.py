@@ -1,21 +1,19 @@
 from . import ItemKernel as it
 
-Ring = it.Item(stat_main = 5, stat_sub = 5, att = 1)
-Ear = it.Item(stat_main = 5, stat_sub = 5, att = 4)
-Soulder = it.Item(stat_main = 13, stat_sub = 13, att = 9)
+Ring = it.Item(name="마이스터링", stat_main = 5, stat_sub = 5, att = 1, level = 140)
+Ear = it.Item(name="마이스터 이어링", stat_main = 5, stat_sub = 5, att = 4, level = 140)
+Soulder = it.Item(name="마이스터 숄더", stat_main = 13, stat_sub = 13, att = 9, level = 140)
 
 
 class Factory():
     
     @staticmethod
-    def getAccesoryDict(nth_ring, star = 0, enhance = True, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
+    def getAccesoryDict(nth_ring, star, enhance = True, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
         #Always use 30% enhance scroll. if False, do not apply.
         if not hammer:
             upgrades = [6,1,1]
         else:
             upgrades = [7,2,2]
-            
-        item_level = 140
         
         miester_ring = Ring.copy()
         miester_ear = Ear.copy()

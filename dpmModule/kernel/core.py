@@ -4,8 +4,10 @@ from functools import partial
 import math
 
 NOTWANTTOEXECUTE = 99999999
-MAX_DAMAGE_RESTRICTION = 10000 * 10000 * 100 - 1
+MAX_DAMAGE_RESTRICTION = 10000 * 10000 * 100
 
+def infinite_time():
+    return NOTWANTTOEXECUTE
 
 class CharacterModifier(object):
     __slots__ = 'crit', 'crit_damage', 'pdamage', 'pdamage_indep', 'stat_main', 'stat_sub', 'pstat_main', 'pstat_sub', 'boss_pdamage', 'armor_ignore', 'patt', 'att', 'stat_main_fixed', 'stat_sub_fixed'
@@ -71,7 +73,23 @@ class CharacterModifier(object):
         self.stat_main_fixed += arg.stat_main_fixed
         self.stat_sub_fixed += arg.stat_sub_fixed
         return self
-
+    
+    def __add__(self, arg):
+        return CharacterModifier(crit = (self.crit + arg.crit),   \
+                        crit_damage = (self.crit_damage + arg.crit_damage) , \
+                        pdamage = (self.pdamage + arg.pdamage), \
+                        pdamage_indep = self.pdamage_indep + arg.pdamage_indep + (self.pdamage_indep * arg.pdamage_indep) * 0.01, \
+                        stat_main = (self.stat_main + arg.stat_main),\
+                        stat_sub = (self.stat_sub + arg.stat_sub), \
+                        pstat_main = (self.pstat_main + arg.pstat_main), \
+                        pstat_sub = (self.pstat_sub + arg.pstat_sub), \
+                        boss_pdamage = (self.boss_pdamage + arg.boss_pdamage),\
+                        armor_ignore = 100 - 0.01 * ((100 - self.armor_ignore) * (100 - arg.armor_ignore)), \
+                        patt = (self.patt + arg.patt), \
+                        att = (self.att + arg.att), \
+                        stat_main_fixed = (self.stat_main_fixed + arg.stat_main_fixed), \
+                        stat_sub_fixed = (self.stat_sub_fixed + arg.stat_sub_fixed))
+    
     def __sub__(self, arg):
         return CharacterModifier(crit = (self.crit - arg.crit),   \
                         crit_damage = (self.crit_damage - arg.crit_damage) , \
@@ -112,50 +130,80 @@ class CharacterModifier(object):
         factor = (1 + 0.01 * (self.pdamage)) * (1 + 0.01 * self.pdamage_indep)
         return stat * adap * factor * 0.01
     
-    def calculate_damage(self, damage, reference_hit, armor = 300):
+    def calculate_damage(self, damage, hit, spec, armor = 300):
         '''Return : (damage, loss) tuple
         숙련도는 90~100으로 가정함(5% deviation)
         '''
+        def restricted_damage(x1, x2, y1, y2, M):
+            '''Calculated expected value of min(M, xy) in [x1~x2, y1~y2]
+            '''
+            normalizer = (x2 - x1) * (y2 - y1)
+            basis = (x1 + x2) / 2 * (y1 + y2) / 2
+            
+            if M > x2 * y2:
+                return basis
+            else:
+                if M > x1 * y2 and M > x2 * y1:
+                    x_p = M / y2
+                    # Case 1
+                    excess = M * y2 * (x2 - x_p) - (y2 * y2 / 4) *(x2 * x2 - x_p * x_p) - (M * M / 2) * math.log(x2 / x_p)
+                    
+                    return basis + excess / normalizer
+                elif M < x1 * y2 and M > x2 * y1:
+                    # Case 2
+                    x_p = x1
+                    # Case 1
+                    excess = M * y2 * (x2 - x_p) - (y2 * y2 / 4) *(x2 * x2 - x_p * x_p) - (M * M / 2) * math.log(x2 / x_p)
+                    return basis + excess / normalizer
+
+                elif M > x1 * y2 and M < x2 * y1:
+                    # Case 3 -> change to Case 2
+                    return restricted_damage(y1, y2, x1, x2, M)
+                    
+                elif M > x1 * y1:
+                    x_p = M / y1
+                    excess = M * y1 * (x_p - x1) - (y1 * y1 / 4) * (x_p * x_p - x1 * x1) - (M * M / 2) * math.log(x_p / x1)
+                    return M + excess / normalizer
+
+                else:
+                    return M
+
         #Optimized
         real_crit = min(100, self.crit)
         stat = (4 * self.stat_main * (1 + 0.01 * self.pstat_main) + self.stat_sub * (1 + 0.01 * self.pstat_sub)) + (4 * self.stat_main_fixed + self.stat_sub_fixed )
         adap = self.att * (1 + 0.01 * self.patt)
         factor_crit_removed = (1 + 0.01 * (max(self.pdamage + self.boss_pdamage, 0))) * (1 + 0.01 * self.pdamage_indep)
-        ignorance = max((100 - armor * (1 - 0.01* self.armor_ignore)) * 0.01, 0)        
+        ignorance = max((100 - armor * (1 - 0.01* self.armor_ignore)) * 0.01, 0)
+        expert_max = 100 / 95
+        expert_min = 90 / 95
+
+        if spec == "dot":
+            real_crit = 0
+            factor_crit_removed = 1
+            ignorance = 1
+            expert_min = expert_max
         
         factor_aggregated = stat * adap * factor_crit_removed * ignorance * damage * 0.0001
         
-        max_crit_factor = (1 + 0.0001 * max(0, real_crit) * (self.crit_damage + 50)) * (100/95)
-        min_crit_factor = (1 + 0.0001 * max(0, real_crit) * (self.crit_damage + 20)) * (90/95)
+        max_crit_factor = (1 + 0.0001 * max(0, real_crit) * (self.crit_damage + 50))
+        min_crit_factor = (1 + 0.0001 * max(0, real_crit) * (self.crit_damage + 20))
         
-        res_damage = reference_hit * MAX_DAMAGE_RESTRICTION
-        
-        max_damage = max_crit_factor * factor_aggregated 
-        min_damage = min_crit_factor * factor_aggregated
-        real_damage = 0.5 * (max_damage + min_damage)
-        
-        if max_damage < res_damage:
-            #Not restricted by max damage
-            return (real_damage, 0)
-        else:
-            #restricted by max damage
-            if min_damage > res_damage:
-                #print(res_damage, real_damage)
-                return (res_damage, real_damage - res_damage)
-            else:
-                #print('---', min_damage, res_damage, max_damage)
-                exp_damage = (((res_damage - min_damage) * (res_damage - min_damage)) + (max_damage - res_damage) * res_damage ) / (max_damage - min_damage)
-                #print(exp_damage, real_damage)
-                return (exp_damage, real_damage - exp_damage)
+        max_damage_factor = factor_aggregated * expert_max
+        min_damage_factor = factor_aggregated * expert_min
+
+        real_damage = hit * (max_crit_factor + min_crit_factor) / 2 * (max_damage_factor + min_damage_factor) / 2 # W/O restriction
+        res_damage = hit * restricted_damage(min_damage_factor, max_damage_factor, min_crit_factor, max_crit_factor, MAX_DAMAGE_RESTRICTION)  # W/ restriction
+
+        return (res_damage, real_damage - res_damage)
 
     def log(self):
         txt = ("crit rate : %.1f, crit damage %.1f\n")%(self.crit, self.crit_damage)
         txt += "pdamage : %.1f, pdamage_indep %.1f\n"%(self.pdamage, self.pdamage_indep)
         txt += "stat_main : %.1f, stat_sub %.1f\n"%(self.stat_main, self.stat_sub)
         txt += "pstat_main : %.1f, pstat_sub %.1f\n"%(self.pstat_main, self.pstat_sub)
+        txt += "stat_main_fixed : %.1f, stat_sub_fixed %.1f\n"%(self.stat_main_fixed, self.stat_sub_fixed)
         txt += "boss_pdamage : %.1f, armor_ignore %.1f\n"%(self.boss_pdamage, self.armor_ignore)
         txt += "att : %.1f, patt %.1f\n"%(self.att, self.patt)
-        txt += "Fixed stat : main %.1f, sub %.1f\n"%(self.stat_main_fixed, self.stat_sub_fixed)
         txt += "damageFactor : %.1f"%(self.get_damage_factor())
         return txt
     
@@ -360,9 +408,9 @@ class VSkillModifier():
     @staticmethod
     def get_reinforcement(incr, lv, crit = False):
         armor = 0
-        if lv > 40:
+        if lv >= 40:
             armor = 20
-        if lv > 20 and crit:
+        if lv >= 20 and crit:
             return CharacterModifier(crit = 5, pdamage_indep = (lv * incr), armor_ignore = armor)
         else:
             return CharacterModifier(crit = 0, pdamage_indep = (lv * incr), armor_ignore = armor)
@@ -526,9 +574,6 @@ class DamageSkill(AbstractSkill):
         self._static_skill_modifier = self._static_skill_modifier + v_enhancer.get_reinforcement_with_register(index, incr, crit, self)
         return self
         
-    def get_damage(self):
-        return self.damage * self.hit
-        
     def get_modifier(self):
         return self._static_skill_modifier
         
@@ -574,9 +619,7 @@ class SummonSkill(AbstractSkill):
     def setV(self, v_enhancer, index, incr, crit = False):
         self._static_skill_modifier = self._static_skill_modifier + v_enhancer.get_reinforcement_with_register(index, incr, crit, self)
         return self
-        
-    def get_damage(self):
-        return self.damage * self.hit
+
         
     def get_modifier(self):
         return self._static_skill_modifier
@@ -604,13 +647,7 @@ class DotSkill(SummonSkill):
         if expl_level < 2:
             li = li[3:7] + [li[10]]
             
-        return self._parse_list_info_into_string(li)        
-        
-
-class EjaculateSkill(SummonSkill):
-    def __init__(self, name, delay, damage, hit, remain, modifier = CharacterModifier()):
-        super(EjaculateSkill, self).__init__(name, 0, delay, damage, hit, remain, cooltime = -1, modifier = modifier)
-        self.spec = "ejac"
+        return self._parse_list_info_into_string(li)
         
 class Task():
     def __init__(self, ref, ftn):
@@ -623,7 +660,7 @@ class Task():
     def getRef(self):
         return self._ref
         
-    def do(self):
+    def do(self, **kwargs):
         return self._ftn()
         
     def onAfter(self, afters):
@@ -642,16 +679,22 @@ class Task():
         retTask.onJustAfter(self._justAfter)
         return retTask
 
+class ContextReferringTask(Task):
+    def do(self, **kwargs):
+        return self._ftn(**kwargs)
+
 class ResultObject():
-    def __init__(self, delay, mdf, damage, sname = 'Not specified', spec = 'Undefined', kwargs = {}, cascade = [], hit = 1):
-        self.delay = delay
-        self.damage = damage
-        self.mdf = mdf
-        self.sname = sname
-        self.spec = spec        #buff, deal, summon
-        self.kwargs = kwargs
-        self.cascade = cascade
-        self.hit = hit
+    def __init__(self, delay, mdf, damage, hit, sname = 'Not specified', spec = 'Undefined', kwargs = {}, cascade = []):
+        """Result object must be static; alway to be ensure it is revealed.
+        """
+        self.delay = DynamicVariableOperation.reveal_argument(delay)
+        self.damage = DynamicVariableOperation.reveal_argument(damage)
+        self.hit = DynamicVariableOperation.reveal_argument(hit)
+        self.mdf = DynamicVariableOperation.reveal_argument(mdf)
+        self.sname = DynamicVariableOperation.reveal_argument(sname)
+        self.spec = DynamicVariableOperation.reveal_argument(spec)        #buff, deal, summon
+        self.kwargs = DynamicVariableOperation.reveal_argument(kwargs)
+        self.cascade = DynamicVariableOperation.reveal_argument(cascade)
         self.time = None
         
     def setTime(self, time):
@@ -659,7 +702,7 @@ class ResultObject():
 
 '''Default Values. Forbidden to editting.
 '''
-taskTerminater = ResultObject(0, CharacterModifier(), 0, sname = 'terminator', spec = 'graph control')
+taskTerminater = ResultObject(0, CharacterModifier(), 0, 0, sname = 'terminator', spec = 'graph control')
 
 class AccessibleBossState:
     NO_FLAG = 1
@@ -695,7 +738,7 @@ class GraphElement():
         self._after = []    #Tasks that must be executed after this task.
         self._run = []  #Tasks that must be executed if this task runs., deprecated.
         self._justAfter = []
-        self._result_object_cache = ResultObject(0, CharacterModifier(), 0, sname = 'Graph Element', spec = 'graph control')
+        self._result_object_cache = ResultObject(0, CharacterModifier(), 0, 0, sname = 'Graph Element', spec = 'graph control')
         self._flag = 0
         self.accessible_boss_state = AccessibleBossState.NO_FLAG
         
@@ -733,10 +776,10 @@ class GraphElement():
         elif lang == "en":
             return "Type:graph Element"
         
-    def _use(self):
+    def _use(self) -> ResultObject:
         return self._result_object_cache
         
-    def build_task(self, **kwargs):
+    def build_task(self, **kwargs) -> Task:
         task = Task(self, self._use)
         self.sync(task)
         return task
@@ -826,13 +869,13 @@ class OptionalTask(Task):
         self._result = task
         self._name = name
         self._failtask = failtask
-        self._result_object_cache = ResultObject(0, CharacterModifier(), 0, sname = self._name, spec = 'graph control', cascade = [self._result])
+        self._result_object_cache = ResultObject(0, CharacterModifier(), 0, 0, sname = self._name, spec = 'graph control', cascade = [self._result])
         if failtask == None:
-            self._fail = ResultObject(0, CharacterModifier(), 0, sname = self._name + " fail", spec = 'graph control')
+            self._fail = ResultObject(0, CharacterModifier(), 0, 0, sname = self._name + " fail", spec = 'graph control')
         else:
-            self._fail = ResultObject(0, CharacterModifier(), 0, sname = self._name, spec = 'graph control', cascade = [failtask])
+            self._fail = ResultObject(0, CharacterModifier(), 0, 0, sname = self._name, spec = 'graph control', cascade = [failtask])
 
-    def do(self):
+    def do(self, **kwargs):
         if(self._discriminator()):
             return self._result_object_cache
         else:
@@ -878,7 +921,7 @@ class RepeatElement(GraphElement):
         for i in range(itr):
             self.onAfter(target)
         self.set_flag(self.Flag_Repeat)
-        self._result_object_cache = ResultObject(0, CharacterModifier(), 0, sname = 'Repeat Element', spec = 'graph control')
+        self._result_object_cache = ResultObject(0, CharacterModifier(), 0, 0, sname = 'Repeat Element', spec = 'graph control')
 
     def get_explanation(self, lang = "ko"):
         if lang == "ko":
@@ -933,10 +976,20 @@ class AbstractSkillWrapper(GraphElement):
         self.cooltimeLeft = 0   # indicate how much tiume left for use again this wrapper.
         self.timeLeft = 0       # indicate how much time left for continuing this wrapper.
         self.constraint = []
-        self._result_object_cache = ResultObject(0, CharacterModifier(), 0, sname = self.skill.name, spec = 'graph control')
+        self._result_object_cache = ResultObject(0, CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
         if DynamicVariableOperation.reveal_argument(self.skill.cooltime) == NOTWANTTOEXECUTE:
             self.set_disabled_and_time_left(-1)
         self.accessible_boss_state = AccessibleBossState.NO_FLAG
+
+        # Context referring
+        self._refer_runtime_context = False
+
+    def enable_referring_runtime_context(self):
+        '''If this is true, given skill wrapper may use runtime context.
+        with this option, you MUST override _use() method with **kwargs argument is enabled.
+        given context may passed by **kwargs option.
+        '''
+        self._refer_runtime_context = True
 
     def protect_from_running(self):
         constraint = ConstraintElement('사용 금지', self, lambda:False)
@@ -996,14 +1049,23 @@ class AbstractSkillWrapper(GraphElement):
             return TaskHolder(task, name = name)
         else:
             return TaskHolder(task, name = _name)
-        
-    def _use(self, rem = 0, red = 0):
+
+    def _use(self, ftn, rem = 0, red = 0, **kwargs) -> ResultObject:
         raise NotImplementedError
         
-    def build_task(self, rem = 0, red = 0):
-        task = Task(self, partial(self._use, rem, red))
+    def build_task(self, rem = 0, red = 0) -> Task:
+        if self._refer_runtime_context:
+            task = self._build_task_with_referring_context(rem=rem, red=red)
+        else:
+            task = Task(self, partial(self._use, rem, red))
         self.sync(task)
         return task
+
+    def _build_task_with_referring_context(self, rem = 0, red = 0):
+        def context_referring_function(**kwargs):   # Task가 실행시킬 함수
+            return self._use(rem=rem, red=red, **kwargs)
+        
+        return ContextReferringTask(self, context_referring_function)
         
     def is_usable(self):
         if len(self.constraint) > 0:
@@ -1039,7 +1101,7 @@ class AbstractSkillWrapper(GraphElement):
 
 class BuffSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill : BuffSkill, name = None):
-        self._disabledResultobjectCache = ResultObject(0, CharacterModifier(), 0, sname = skill.name, spec = 'graph control')
+        self._disabledResultobjectCache = ResultObject(0, CharacterModifier(), 0, 0, sname = skill.name, spec = 'graph control')
         super(BuffSkillWrapper, self).__init__(skill, name = name)
         self.set_flag(self.Flag_BuffSkill)
         self.onoff = False
@@ -1059,7 +1121,7 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         if self.cooltimeLeft > 0:
             self.available = False
         mdf = self.get_modifier()
-        return ResultObject(0, mdf, 0, sname = self.skill.name, spec = 'buff', kwargs = {"remain" : time})
+        return ResultObject(0, mdf, 0, 0, sname = self.skill.name, spec = 'buff', kwargs = {"remain" : time})
         
     def set_disabled_and_time_left(self, time):
         self.timeLeft = 0
@@ -1085,7 +1147,7 @@ class BuffSkillWrapper(AbstractSkillWrapper):
             self.available = False
         delay = self.skill.delay
         #mdf = self.get_modifier()
-        return ResultObject(delay, CharacterModifier(), 0, sname = self.skill.name, spec = 'buff', kwargs = {"remain" : self.skill.remain * (1+0.01*rem*self.skill.rem)})
+        return ResultObject(delay, CharacterModifier(), 0, 0, sname = self.skill.name, spec = self.skill.spec, kwargs = {"remain" : self.skill.remain * (1+0.01*rem*self.skill.rem)})
 
     def get_modifier(self) -> CharacterModifier:
         if self.onoff:
@@ -1115,13 +1177,20 @@ class StackSkillWrapper(BuffSkillWrapper):
         
     def vary(self, d):
         self.stack = max(min((self.stack + d), self._max), 0)
-        return ResultObject(0, CharacterModifier(), 0, sname = self.skill.name, spec = 'graph control')
-        
+        return ResultObject(0, CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
+    
+    def set_stack(self, d):
+        self.stack = d
+        return ResultObject(0, CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
+
     def get_modifier(self):
         return CharacterModifier()
     
-    def stackController(self, d, name = None):
-        task = Task(self, partial(self.vary, d))
+    def stackController(self, d, name = None, dtype='vary'):
+        if dtype=='vary':
+            task = Task(self, partial(self.vary, d))
+        elif dtype=='set':
+            task = Task(self, partial(self.set_stack, d))
         if self._style is not None and name is None:
             name = self._style % (d)
         return TaskHolder(task, name = name)
@@ -1139,7 +1208,7 @@ class TimeStackSkillWrapper(AbstractSkillWrapper):
         
     def addStack(self, vary, left):
         self.queue.append([vary, left])
-        return ResultObject(0, CharacterModifier(), 0, sname = self.skill.name, spec = 'graph control')
+        return ResultObject(0, CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
 
     def stackController(self, vary, left, name = None):
         task = Task(self, partial(self.addStack, vary, left))
@@ -1172,7 +1241,7 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         self.cooltimeLeft = time
         if time == -1: self.cooltimeLeft = NOTWANTTOEXECUTE
         self.available = False
-        return ResultObject(0, CharacterModifier(), 0, sname = self.skill.name, spec = 'graph control')
+        return ResultObject(0, CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
         
     def spend_time(self, time : int) -> None:
         self.cooltimeLeft -= time
@@ -1183,14 +1252,11 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         self.cooltimeLeft = self.skill.cooltime * (1-0.01*red*self.skill.red)
         if self.cooltimeLeft > 0:
             self.available = False
-        return ResultObject(self.skill.delay, self.get_modifier(),  self.skill.get_damage(), sname = self.skill.name, spec = 'deal', hit = self.skill.hit)
+        return ResultObject(self.skill.delay, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
         #return delay, mdf, dmg, self.cascade
         
     def get_modifier(self) -> CharacterModifier:
         return self.skill.get_modifier() + self.modifier
-        
-    def get_damage(self) -> float:
-        return self.skill.get_damage()
 
         
 class SummonSkillWrapper(AbstractSkillWrapper):
@@ -1217,7 +1283,7 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self.timeLeft = -1
         self.tick = 0
         if time == -1: self.cooltimeLeft = NOTWANTTOEXECUTE
-        return ResultObject(0, CharacterModifier(), 0, sname = self.skill.name, spec = 'graph control')
+        return ResultObject(0, CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
         
     def need_count(self):
         if self.onoff and (self.tick < 0):
@@ -1242,14 +1308,14 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self.timeLeft = self.skill.remain * (1+0.01*rem*self.skill.rem)
         if self.cooltimeLeft > 0:
             self.available = False
-        return ResultObject(self.skill.summondelay, self.disabledModifier, 0, sname = self.skill.name, spec = 'summon')
+        return ResultObject(self.skill.summondelay, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
     
     def _useTick(self):
         if self.onoff and self.tick <= 0:
             self.tick += self.skill.delay
-            return ResultObject(0, self.get_modifier(), self.get_damage(), sname = self.skill.name, spec = 'summon', hit = self.skill.hit)
+            return ResultObject(0, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
         else:
-            return ResultObject(0, self.disabledModifier, 0,sname = self.skill.name, spec = 'summon')    
+            return ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)    
     
     def build_periodic_task(self):
         task = Task(self, self._useTick)
@@ -1265,9 +1331,6 @@ class SummonSkillWrapper(AbstractSkillWrapper):
     def get_modifier(self):
         retMdf = self.skill.get_modifier() + self.modifier
         return retMdf        
-    
-    def get_damage(self) -> float:
-        return self.skill.get_damage()
     
 class ScheduleGraph(AbstractScenarioGraph):
     def __init__(self, collection = None):
@@ -1310,15 +1373,15 @@ class ScheduleGraph(AbstractScenarioGraph):
         '''
         
         if style == "buff":
-            return self.get_single_network_information(self.buff, isList = True)
+            return self.get_single_network_information(self.buff, is_list = True)
         elif style == "damage":
-            return self.get_single_network_information(self.damage + [self.default_task], isList = True)
+            return self.get_single_network_information(self.damage + [self.default_task], is_list = True)
         elif style == "summon":
-            return self.get_single_network_information(self.summon, isList = True)
+            return self.get_single_network_information(self.summon, is_list = True)
         elif style == "tick":
-            return self.get_single_network_information(self.tick, isList = True)
+            return self.get_single_network_information(self.tick, is_list = True)
         elif style == "merged":
-            return self.get_single_network_information(self.buff + self.damage + self.summon + self.spend + self.tick + [self.default_task], isList = True)
+            return self.get_single_network_information(self.buff + self.damage + self.summon + self.spend + self.tick + [self.default_task], is_list = True)
 
     def get_default_buff_modifier(self):
         mdf = CharacterModifier()
@@ -1396,7 +1459,7 @@ class ScheduleGraph(AbstractScenarioGraph):
         return {"dict" : retli, "li" : snames}
             
 class Simulator(object):
-    __slots__ = 'scheduler', 'character', 'analytics', '_modifier_cache_and_time'
+    __slots__ = 'scheduler', 'character', 'analytics', '_modifier_cache_and_time', '_default_modifier'
     def __init__(self, scheduler, chtr, analytics):
         self.scheduler = scheduler
         self.character = chtr
@@ -1407,6 +1470,14 @@ class Simulator(object):
         
         #Buff modifier를 시간별도 캐싱하여 연산량을 줄입니다.
         self._modifier_cache_and_time = [-1,CharacterModifier()]
+
+        self._default_modifier = CharacterModifier()
+
+    def set_default_modifier(self, modifier):
+        self._default_modifier = modifier
+
+    def get_default_modifier(self):
+        return self._default_modifier
     
     def get_skill_info(self):
         return self.analytics.get_skill_info()
@@ -1418,8 +1489,11 @@ class Simulator(object):
         mod = self.character.get_buffed_modifier()
         return self.analytics.get_metadata(mod)
         
-    def getDPM(self):
-        return self.analytics.total_damage / (self.scheduler.total_time_initial) * 60000
+    def getDPM(self, restricted = True):
+        if not restricted:
+            return self.get_unrestricted_DPM()
+        else:
+            return self.analytics.total_damage / (self.scheduler.total_time_initial) * 60000
 
     def get_unrestricted_DPM(self):
         return self.analytics.total_damage_without_restriction / (self.scheduler.total_time_initial) * 60000
@@ -1463,9 +1537,11 @@ class Simulator(object):
         stack = task._before
         while len(stack) != 0:
             dt += self.run_individual_task(stack.pop())
-        result = task.do()
+
+        runtime_context_modifier = self.scheduler.get_buff_modifier() + self.get_default_modifier()
+        result = task.do(runtime_context_modifier=runtime_context_modifier + self.character.get_modifier())
         if result.damage > 0:
-            result.mdf = result.mdf + self.scheduler.get_buff_modifier()
+            result.mdf += runtime_context_modifier
         result.setTime(self.scheduler.get_current_time())
         self.analytics.analyze(self.character, result)
         dt += result.delay
@@ -1480,10 +1556,11 @@ class Simulator(object):
         while len(stack) != 0:
             self.run_task_recursive(stack.pop())
         
-        result = task.do()
+        runtime_context_modifier = self.scheduler.get_buff_modifier() + self.get_default_modifier()
+        result = task.do(runtime_context_modifier=runtime_context_modifier + self.character.get_modifier())
         
         if result.damage > 0:
-            result.mdf += self.scheduler.get_buff_modifier()
+            result.mdf += runtime_context_modifier
 
         result.setTime(self.scheduler.get_current_time())
         self.analytics.analyze(self.character, result)
@@ -1553,13 +1630,20 @@ class Analytics():
     def statistics(self):
         self.log("Total damage %.1f in %d second" % (self.total_damage, self.totalTime / 1000) )
         countDict = {}
+        damageDict = {}
         for log in self.logList:
             if log["result"].sname not in countDict:
                 countDict[log["result"].sname] = 0
+                damageDict[log["result"].sname] = 0
             countDict[log["result"].sname] += 1
+            damageDict[log["result"].sname] += log["deal"]
         
         for i in countDict:
             self.log("SKILL %s Used %d" % (i, countDict[i]))
+
+        for i in damageDict:         
+            if damageDict[i] > 0:   
+                self.log("SKILL %s share is %f,  %.4f percent" % (i, damageDict[i], damageDict[i] / self.total_damage * 100))
         #self.log("Percent damage per second is %.2f" % (100*self.total_damage / self.character.get_modifier().get_damage_factor() / self.totalTimeInitial * 1000))
 
     def skill_share(self):
@@ -1597,7 +1681,7 @@ class Analytics():
         if result.damage > 0:
             mdf = charmdf + result.mdf
             
-            deal, loss = mdf.calculate_damage(result.damage, result.hit)
+            deal, loss = mdf.calculate_damage(result.damage, result.hit, result.spec)
             free_deal = deal + loss
             
             #free_deal = mdf.get_damage_factor() * result.damage * 0.01
@@ -1613,7 +1697,7 @@ class Analytics():
         
         #For speed acceleration
         if self.print_calculation_progress:
-            self.log('At Time %.1f, Skill [%s] ... Damage [%.1f] ... Delay [%.1f]' % (result.time, result.sname, deal, result.delay))
+            self.log('At Time %.1f, Skill [%s] ... Damage [%.1f] ... Loss [%.1f] ... Delay [%.1f]' % (result.time, result.sname, deal, free_deal - deal, result.delay))
             self.log(f'{result.mdf}')
         if deal > 0:
             self.logList.append({"result":result, "time" : (result.time), "deal" : deal, "loss" : free_deal - deal})
@@ -1693,7 +1777,7 @@ class Analytics():
                 mdf = self.chtrmdf + result.mdf
                 if log["time"] >= maximal_time_loc and log["time"] < maximal_time_loc + continue_time_length:
                     mdf += temporal_modifier
-                deal, loss = mdf.calculate_damage(result.damage, result.hit)
+                deal, loss = mdf.calculate_damage(result.damage, result.hit, result.spec)
                 total_damage += deal
         
         simple_increment = ((self.chtrmdf + temporal_modifier).get_damage_factor() / (self.chtrmdf.get_damage_factor()) - 1) * (continue_time_length / self.totalTime)
@@ -1718,8 +1802,8 @@ class BasicVEnhancer(AbstractVEnhancer):
         for vskill in self.v_skill_priority:
             v_skill_list_sorted[vskill["useIdx"]].append(vskill)
         
-        return {"enhance" : [{"name" : skills[0].name} for skills in self.enhancer_priority if len(skills) > 0],
-                "vskill" : [{"name" : skills[0]["target"].name} for skills in v_skill_list_sorted if len(skills) > 0]}
+        return {"enhance" : [{"name" : skills[0].name.split('(')[0]} for skills in self.enhancer_priority if len(skills) > 0],
+                "vskill" : [{"name" : skills[0]["target"].name.split('(')[0]} for skills in v_skill_list_sorted if len(skills) > 0]}
     
     def set_state_direct(self, li):
         self.enhance_list = li
@@ -1762,6 +1846,16 @@ class DirectVBuilder(AbstractVBuilder):
         enhancer = BasicVEnhancer()
         enhancer.set_state_direct(self.direct_enhance_state)
         enhancer.set_vlevel_direct(self.direct_v_state)
+        return enhancer
+
+class AlwaysMaximumVBuilder(AbstractVBuilder):
+    def __init__(self):
+        pass
+
+    def build_enhancer(self, character, generator):
+        enhancer = BasicVEnhancer()
+        enhancer.set_state_direct([60 for i in range(15)])
+        enhancer.set_vlevel_direct([30 for i in range(15)])        
         return enhancer
 
 class NjbStyleVBuilder(AbstractVBuilder):

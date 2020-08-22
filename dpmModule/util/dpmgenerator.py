@@ -4,8 +4,7 @@ import threading
 
 from ..kernel import core
 
-from ..character import characterTemplate as CT
-import dpmModule.character.characterTemplateHigh as CT_high
+from ..character.characterTemplate import get_template_generator
 import dpmModule.character.characterKernel
 
 import dpmModule.jobs as maplejobs
@@ -27,13 +26,13 @@ class IndividualDPMGenerator():
     def set_runtime(self, time):
         self.runtime = time
 
-    def get_dpm(self, ulevel = 6000, weaponstat = [4,9], level = 230, printFlag = False):
+    def get_dpm(self, ulevel = 6000, level=None, weaponstat = [4,9], printFlag = False, restricted = True, default_modifier=core.CharacterModifier()):
         #TODO target을 동적으로 생성할 수 있도록.
         target = self.template(maplejobs.weaponList[self.job])
-        target.level = level
+        if level is not None:
+            target.unsafe_change_level(level)
         gen = (self.supplier).JobGenerator()
-
-        v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17)
+        v_builder = core.AlwaysMaximumVBuilder()
         graph = gen.package(target, v_builder, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
         sche = policy.AdvancedGraphScheduler(graph,
             policy.TypebaseFetchingPolicy(priority_list = [
@@ -41,22 +40,24 @@ class IndividualDPMGenerator():
                 core.SummonSkillWrapper,
                 core.DamageSkillWrapper
             ]), 
-            [rules.UniquenessRule()]) #가져온 그래프를 토대로 스케줄러를 생성합니다.
+            [rules.UniquenessRule()] + gen.get_predefined_rules(rules.RuleSet.BASE)) #가져온 그래프를 토대로 스케줄러를 생성합니다.
         analytics = core.Analytics(printFlag=printFlag)  #데이터를 분석할 분석기를 생성합니다.
+        if printFlag:
+            print(target.get_modifier())
         control = core.Simulator(sche, target, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
+        control.set_default_modifier(default_modifier)
         control.start_simulation(self.runtime)
+        control.analytics.statistics()
+        return control.getDPM(restricted=restricted)
 
-        return control.getDPM()
-
-    def get_detailed_dpm(self, ulevel = 6000, weaponstat = [4,9], level = 230):
+    def get_detailed_dpm(self, ulevel = 6000, weaponstat = [4,9]):
         #TODO target을 동적으로 생성할 수 있도록.
         
         target = self.template(maplejobs.weaponList[self.job])
-        target.level = level
         gen = (self.supplier).JobGenerator()
         
         #코어강화량 설정
-        v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17)
+        v_builder = core.AlwaysMaximumVBuilder()
         graph = gen.package(target, v_builder, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
         sche = policy.AdvancedGraphScheduler(graph,
             policy.TypebaseFetchingPolicy(priority_list = [
@@ -64,12 +65,12 @@ class IndividualDPMGenerator():
                 core.SummonSkillWrapper,
                 core.DamageSkillWrapper
             ]), 
-            [rules.UniquenessRule()]) #가져온 그래프를 토대로 스케줄러를 생성합니다.
+            [rules.UniquenessRule()] + gen.get_predefined_rules(rules.RuleSet.BASE)) #가져온 그래프를 토대로 스케줄러를 생성합니다.
         analytics = core.Analytics()  #데이터를 분석할 분석기를 생성합니다.
         control = core.Simulator(sche, target, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
         control.start_simulation(self.runtime)
 
-        return {"data" : control.get_results(), 
+        return {"data" : control.get_results(),
                 "meta" : control.get_metadata(),
                 "skill" : control.get_skill_info(), 
                 "graph" : graph.get_network_information("merged"),
@@ -84,8 +85,7 @@ class DpmSetting():
     '''DpmSetting은 모든 직업의 dpm 설정값을 연산합니다. IndividualDPMGenerator에 필요한 메타데이터를 저장합니다.
     '''
     itemGrade = ["노말", "레어", "에픽", "유니크", "레전"]
-    def __init__(self, template, v_builder = core.NjbStyleVBuilder(), ulevel = 0, weaponstat = [3,0], level = 200):
-        self.level = level
+    def __init__(self, template, v_builder = core.AlwaysMaximumVBuilder(), ulevel = 0, weaponstat = [3,0]):
         self.ulevel = ulevel
         self.weaponstat = weaponstat
         self.template = template
@@ -99,7 +99,7 @@ class DpmSetting():
         return retli
 
 
-    def process(self):
+    def process(self, restricted=True, default_modifier=core.CharacterModifier()):
         print("ulevel : " + str(self.ulevel))
         jobli = maplejobs.jobListOrder
         retli = []
@@ -108,7 +108,7 @@ class DpmSetting():
         for _job, idx in zip(jobli, range(len(jobli))):
             job = maplejobs.jobList[_job]
             generator = IndividualDPMGenerator(job, self.template)
-            dpm = generator.get_dpm(ulevel = self.ulevel, weaponstat = self.weaponstat, level = self.level)
+            dpm = generator.get_dpm(ulevel = self.ulevel, weaponstat = self.weaponstat, restricted=restricted, default_modifier=default_modifier)
             retli.append(dpm)
             value = {"name" : job, "dpm" : dpm}
             #print(value)
@@ -122,110 +122,39 @@ class DpmSetting():
     def processJob(self, koJob, runtime = 180000):
         generator = IndividualDPMGenerator(koJob, self.template)
         generator.set_runtime(runtime)
-        return generator.get_detailed_dpm( ulevel = self.ulevel, weaponstat = self.weaponstat, level = self.level)
+        return generator.get_detailed_dpm(ulevel = self.ulevel, weaponstat = self.weaponstat)
 
 
+class DpmInterface():
+    def __init__(self, template_generator_name):
+        self.generator_name = template_generator_name
+
+    def get_template_generator(self):
+        return get_template_generator(self.generator_name)
+
+    def calculate_every(self):
+        settings = []
+        for ulevel, template, weapon_stat in self.get_template_generator()():
+            settings.append(DpmSetting(template, ulevel=ulevel, weaponstat=weapon_stat))
         
+        retval = [{"data" : setting.process() , "prefix" : "u" + str(setting.ulevel)} for setting in settings]
+        return retval
 
-def CalculateEvery():
-    U4000DpmSetting = DpmSetting(CT.getU4000CharacterTemplate, ulevel = 4000, weaponstat = [3,3], level = 210)
-    U5000DpmSetting = DpmSetting(CT.getU5000CharacterTemplate, ulevel = 5000, weaponstat = [3,6], level = 220)
-    U6000DpmSetting = DpmSetting(CT.getU6000CharacterTemplate, ulevel = 6000, weaponstat = [4,3], level = 225)
-    U7000DpmSetting = DpmSetting(CT.getU7000CharacterTemplate, ulevel = 7000, weaponstat = [4,6], level = 235)
-    U8000DpmSetting = DpmSetting(CT.getU8000CharacterTemplate, ulevel = 8000, weaponstat = [4,8], level = 245)
-    U8500DpmSetting = DpmSetting(CT.getU8500CharacterTemplate, ulevel = 8500, weaponstat = [4,9], level = 255)
-    
-    settings = [U4000DpmSetting, 
-                U5000DpmSetting, 
-                U6000DpmSetting, 
-                U7000DpmSetting, 
-                U8000DpmSetting, 
-                U8500DpmSetting]
-    
-    retval = [{"data" : setting.process() , "prefix" : "u" + str(setting.ulevel)} for setting in settings]
-    return retval
+    def calculate(self, ulevel, restricted=True, default_modifier=core.CharacterModifier()):
+        template_generator = self.get_template_generator()()
+        template, weaponstat = template_generator.query(ulevel)
+        setting = DpmSetting(template, ulevel=ulevel, weaponstat=weaponstat)
+        return {"data" : setting.process(restricted=restricted, default_modifier=default_modifier) , "prefix" : "u" + str(setting.ulevel)}
 
-def CalculateEveryHigh():
-    U4000DpmSetting = DpmSetting(CT_high.getU4000CharacterTemplate, ulevel = 4000, weaponstat = [2,6], level = 215)
-    U5000DpmSetting = DpmSetting(CT_high.getU5000CharacterTemplate, ulevel = 5000, weaponstat = [3,6], level = 230)
-    U6000DpmSetting = DpmSetting(CT_high.getU6000CharacterTemplate, ulevel = 6000, weaponstat = [4,9], level = 240)
-    U7000DpmSetting = DpmSetting(CT_high.getU7000CharacterTemplate, ulevel = 7000, weaponstat = [4,9], level = 250)
-    U8000DpmSetting = DpmSetting(CT_high.getU8000CharacterTemplate, ulevel = 8000, weaponstat = [4,9], level = 255)
-    U8500DpmSetting = DpmSetting(CT_high.getU8500CharacterTemplate, ulevel = 8500, weaponstat = [4,9], level = 260)
-    
-    settings = [U4000DpmSetting, 
-                U5000DpmSetting, 
-                U6000DpmSetting, 
-                U7000DpmSetting, 
-                U8000DpmSetting, 
-                U8500DpmSetting]
-    
-    retval = [{"data" : setting.process() , "prefix" : "u" + str(setting.ulevel)} for setting in settings]
-    return retval
-
-def CalculateAt(ulevel):
-    settings = {
-    4000 : DpmSetting(CT.getU4000CharacterTemplate, ulevel = 4000, weaponstat = [3,3], level = 210),
-    5000 :  DpmSetting(CT.getU5000CharacterTemplate, ulevel = 5000, weaponstat = [3,6], level = 220),
-    6000 :  DpmSetting(CT.getU6000CharacterTemplate, ulevel = 6000, weaponstat = [4,3], level = 225),
-    7000 :  DpmSetting(CT.getU7000CharacterTemplate, ulevel = 7000, weaponstat = [4,6], level = 235),
-    8000 :  DpmSetting(CT.getU8000CharacterTemplate, ulevel = 8000, weaponstat = [4,8], level = 245),
-    8500 :  DpmSetting(CT.getU8500CharacterTemplate, ulevel = 8500, weaponstat = [4,9], level = 255)}
-    
-    setting = settings[ulevel]
-    return {"data" : setting.process() , "prefix" : "u" + str(setting.ulevel)}
-
-def CalculateHighAt(ulevel):
-    settings = {
-    4000 : DpmSetting(CT_high.getU4000CharacterTemplate, ulevel = 4000, weaponstat = [2,6], level = 215),
-    5000 :  DpmSetting(CT_high.getU5000CharacterTemplate, ulevel = 5000, weaponstat = [3,6], level = 230),
-    6000 :  DpmSetting(CT_high.getU6000CharacterTemplate, ulevel = 6000, weaponstat = [4,9], level = 240),
-    7000 :  DpmSetting(CT_high.getU7000CharacterTemplate, ulevel = 7000, weaponstat = [4,9], level = 250),
-    8000 :  DpmSetting(CT_high.getU8000CharacterTemplate, ulevel = 8000, weaponstat = [4,9], level = 255),
-    8500 :  DpmSetting(CT_high.getU8500CharacterTemplate, ulevel = 8500, weaponstat = [4,9], level = 260)}
-    
-    setting = settings[ulevel]
-    return {"data" : setting.process() , "prefix" : "u" + str(setting.ulevel)}
-
-def CalculateJobHigh(koJob, ulevel, runtime = 180*1000):
-    if ulevel not in [4000, 5000, 6000, 7000, 8000, 8500]:
-        raise TypeError("ULEVEL must be in available ulevel list")
-    
-    if ulevel == 4000:
-        dpmSetting = DpmSetting(CT_high.getU4000CharacterTemplate, ulevel = 4000, weaponstat = [2,6], level = 215)
-    elif ulevel == 5000:
-        dpmSetting = DpmSetting(CT_high.getU5000CharacterTemplate, ulevel = 5000, weaponstat = [3,6], level = 230)
-    elif ulevel == 6000:        
-        dpmSetting = DpmSetting(CT_high.getU6000CharacterTemplate, ulevel = 6000, weaponstat = [4,9], level = 240)
-    elif ulevel == 7000:                
-        dpmSetting = DpmSetting(CT_high.getU7000CharacterTemplate, ulevel = 7000, weaponstat = [4,9], level = 250)
-    elif ulevel == 8000:                
-        dpmSetting = DpmSetting(CT_high.getU8000CharacterTemplate, ulevel = 8000, weaponstat = [4,9], level = 255)
-    elif ulevel == 8500:        
-        dpmSetting = DpmSetting(CT_high.getU8500CharacterTemplate, ulevel = 8500, weaponstat = [4,9], level = 260)
-    else:
-        raise TypeError("Undefined Action")
-    
-    return dpmSetting.processJob(koJob, runtime = runtime)    
-    
-def CalculateJob(koJob, ulevel, runtime = 180000):
-
-    if ulevel not in [2000, 4000, 5000, 6000, 6500, 7000, 7500, 8000, 8200, 8500]:
-        raise TypeError("ULEVEL must be in available ulevel list")
-    
-    if ulevel == 4000:
-        dpmSetting = DpmSetting(CT.getU4000CharacterTemplate, ulevel = 4000, weaponstat = [3,3], level = 210)
-    elif ulevel == 5000:
-        dpmSetting = DpmSetting(CT.getU5000CharacterTemplate, ulevel = 5000, weaponstat = [3,6], level = 220)
-    elif ulevel == 6000:        
-        dpmSetting = DpmSetting(CT.getU6000CharacterTemplate, ulevel = 6000, weaponstat = [4,6], level = 225)
-    elif ulevel == 7000:                
-        dpmSetting = DpmSetting(CT.getU7000CharacterTemplate, ulevel = 7000, weaponstat = [4,7], level = 235)
-    elif ulevel == 8000:                
-        dpmSetting = DpmSetting(CT.getU8000CharacterTemplate, ulevel = 8000, weaponstat = [4,8], level = 245)
-    elif ulevel == 8500:        
-        dpmSetting = DpmSetting(CT.getU8500CharacterTemplate, ulevel = 8500, weaponstat = [4,9], level = 255)
-    else:
-        raise TypeError("Undefined Action")
-    
-    return dpmSetting.processJob(koJob, runtime = runtime)
+    def calculate_job(self, koJob, ulevel, runtime = 180*1000):
+        template_generator = self.get_template_generator()()
+        try:
+            template, weaponstat = template_generator.query(ulevel)
+        except KeyError as e:
+            raise e
+        except Exception as e:
+            print('Unknown error occured')
+            raise e
+        setting = DpmSetting(template, ulevel=ulevel, weaponstat=weaponstat)
+        
+        return setting.processJob(koJob, runtime = runtime)

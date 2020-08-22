@@ -3,52 +3,12 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ReservationRule
+from ..execution.rules import RuleSet, ReservationRule, ConcurrentRunRule
 from . import globalSkill
+from .jobclass import heroes
+from .jobbranch import bowmen
 
 #TODO : 5차 신스킬 적용
-class FridWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc):
-        super(FridWrapper, self).__init__(skill = core.BuffSkill("프리드의 가호 더미", 3,3).isV(vEhc,3,3))
-        self.vlevel = vEhc.getV(0,0)
-        vlevel = self.vlevel
-        self.skillList = [core.BuffSkill("프리드의 가호 0스택(더미)", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 1스택", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 2스택", 0, 30 * 1000),
-                    core.BuffSkill("프리드의 가호 3스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25),
-                    core.BuffSkill("프리드의 가호 4스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel)),
-                    core.BuffSkill("프리드의 가호 5스택", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel)),
-                    core.BuffSkill("프리드의 가호 6스택", 0, 30 * 1000, cooltime = 240 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel))]
-        self.state = 0
-
-    def _use(self, rem = 0, red = 0) -> core.ResultObject:
-        self.onoff = True
-        self.state += 1
-        if self.state > 6:
-            self.state -= 6        
-        self.skill = self.skillList[self.state]
-        self.timeLeft = self.skill.remain * (1 + 0.01*rem * self.skill.rem)
-        self.cooltimeLeft = self.skill.cooltime * (1 - 0.01*red* self.skill.red)
-        self.onoff = True
-        if self.cooltimeLeft > 0:
-            self.available = False
-        delay = self.skill.delay
-        mdf = self.get_modifier()
-        return core.ResultObject(delay, mdf, 0, sname = self._id, spec = 'buff', kwargs = {"remain" : self.skill.remain * (1+0.01*rem*self.skill.rem)})
-        #return delay, mdf, 0, self.cascade
-
-class CriticalReinforceWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc, character : ck.AbstractCharacter):
-        skill = core.BuffSkill("크리티컬 리인포스", 780, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,2,2)
-        super(CriticalReinforceWrapper, self).__init__(skill)
-        self.char = character
-        self.inhancer = (20 + vEhc.getV(2,2))*0.01
-        
-    def get_modifier(self):
-        if self.onoff:
-            return core.CharacterModifier(crit_damage = self.inhancer * max(0,self.char.get_modifier().crit))
-        else:
-            return self.disabledModifier  
 
 class ElementalGhostWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, target1, target2):
@@ -68,7 +28,7 @@ class ElementalGhostWrapper(core.BuffSkillWrapper):
             self.available = True
     
     def _use(self, rem = 0, red = 0):
-        self.target[0].pdamage_indep = 56.8125 * 0.01 * (30 + self.vlevel)
+        self.target[0].pdamage_indep = 64.687 * 0.01 * (30 + self.vlevel)
         self.target[1].pdamage_indep = 184.5 * 0.01 * (30 + self.vlevel)
         return super(ElementalGhostWrapper, self)._use()
 
@@ -79,14 +39,18 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = False
         self.vEnhanceNum = 11
         self.jobtype = "dex"
+        self.jobname = "메르세데스"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ReservationRule('소울 컨트랙트', '이르킬라의 숨결'), RuleSet.BASE)
-        ruleset.add_rule(ReservationRule('히어로즈 오쓰', '이르킬라의 숨결'), RuleSet.BASE)
-        ruleset.add_rule(ReservationRule('크리티컬 리인포스', '이르킬라의 숨결'), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule('엘리멘탈 고스트', '소울 컨트랙트'), RuleSet.BASE)
+        # ruleset.add_rule(ReservationRule('히어로즈 오쓰', '이르칼라의 숨결'), RuleSet.BASE)
+        # ruleset.add_rule(ReservationRule('크리티컬 리인포스', '이르칼라의 숨결'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('크리티컬 리인포스', '엘리멘탈 고스트'), RuleSet.BASE)
+        # ruleset.add_rule(ReservationRule('엘리멘탈 고스트', '이르칼라의 숨결'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('이르칼라의 숨결','엘리멘탈 고스트'), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self):
@@ -99,7 +63,7 @@ class JobGenerator(ck.JobGenerator):
         IgnisRoar = core.InformedCharacterModifier("이그니스 로어",pdamage_indep = 15, att = 40)
 
         DualbowgunExpert = core.InformedCharacterModifier("듀얼보우건 엑스퍼트",att = 30, crit_damage =10)
-        DefenceBreak = core.InformedCharacterModifier("디펜스 브레이크",armor_ignore=25, pdamage_indep=20, boss_pdamage = 15, crit_damage = 15)
+        DefenceBreak = core.InformedCharacterModifier("디펜스 브레이크",armor_ignore=25, pdamage_indep=20, boss_pdamage = 20, crit_damage = 20)
         AdvancedFinalAttack = core.InformedCharacterModifier("어드밴스드 파이널 어택",att = 20)
         
         return [PotentialPower, SharpAiming, SpiritInfusion, 
@@ -122,7 +86,7 @@ class JobGenerator(ck.JobGenerator):
         
         이슈, 스듀/파택, 엘리멘탈, 래쓰오브엔릴, 레전드리, 유니콘
         
-        엘리멘탈 고스트는 최종뎀으로 계산되며 각각 56.812, 184.5%의 최종뎀을 받음
+        엘리멘탈 고스트는 최종뎀으로 계산되며 각각 64.687, 184.5%의 최종뎀을 받음
         최종뎀으로 계산함으로서 맥뎀 부분에서 약간의 오류가 발생할 수 있으나 미미함
         소울 컨트랙트, 히어로즈 오쓰, 크리티컬 리인포스는 모두 이르칼라와 함께 사용되도록 함
         '''
@@ -153,10 +117,10 @@ class JobGenerator(ck.JobGenerator):
         
         Sylphidia = core.BuffSkill("실피디아", 0, (30 + 0.5*vEhc.getV(5,5)) * 1000, cooltime = 150 * 1000, patt = (5+0.5*vEhc.getV(5,5))).isV(vEhc,5,5).wrap(core.BuffSkillWrapper)  #정보 없음..
         
-        IrkilaBreathInit = core.DamageSkill("이르킬라의 숨결", 720, 0, 0, cooltime = 150 * 1000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        IrkilaBreathTick = core.DamageSkill("이르킬라의 숨결(틱)", 150, 425+15*vEhc.getV(1,1), 8).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        IrkilaBreathInit = core.DamageSkill("이르칼라의 숨결", 720, 0, 0, cooltime = 150 * 1000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        IrkilaBreathTick = core.DamageSkill("이르칼라의 숨결(틱)", 150, 425+15*vEhc.getV(1,1), 8).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
 
-        GuidedArrow = core.SummonSkill("가이디드 애로우", 720, 330, 400+16*vEhc.getV(4,4), 1, 30 * 1000, cooltime = 60 * 1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
+        GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
 
         ElementalGhostFast = core.CharacterModifier()
         ElementalGhostSlow = core.CharacterModifier()
@@ -164,12 +128,12 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill Wrapper   ######
         #Buff
         ElementalGhost = ElementalGhostWrapper(vEhc, ElementalGhostFast, ElementalGhostSlow)
-        Frid = FridWrapper(vEhc)
+        Frid = heroes.FridWrapper(vEhc, 3, 3)
         
         AdvancedFinalAttackFast.modifier = ElementalGhostFast
         AdvancedFinalAttackSlow.modifier = ElementalGhostSlow
         
-        CriticalReinforce = CriticalReinforceWrapper(vEhc, chtr)
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 2, 2, 10)
     
         #Damage
         UnicornSpike.onAfter(UnicornSpikeBuff.controller(1))
@@ -192,7 +156,7 @@ class JobGenerator(ck.JobGenerator):
     
         return(IshtarRing,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), 
-                    Booster, AncientSpirit, ElvishBlessing, HerosOath, Frid, Sylphidia.ignore(), CriticalReinforce, UnicornSpikeBuff, RegendrySpearBuff, ElementalGhost,
+                    Booster, ElvishBlessing, AncientSpirit, HerosOath, Frid, Sylphidia.ignore(), CriticalReinforce, UnicornSpikeBuff, RegendrySpearBuff, ElementalGhost,
                     SoulContract] +\
                 [UnicornSpike, RegendrySpear, WrathOfEllil, IrkilaBreathInit] +\
                 [ElementalKnights, GuidedArrow] +\

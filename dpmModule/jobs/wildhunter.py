@@ -4,19 +4,9 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
-
-class CriticalReinforceWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc, character : ck.AbstractCharacter):
-        skill = core.BuffSkill("크리티컬 리인포스", 780, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,1,1)
-        super(CriticalReinforceWrapper, self).__init__(skill)
-        self.char = character
-        self.inhancer = (20 + vEhc.getV(1,1))*0.01
-        
-    def get_modifier(self):
-        if self.onoff:
-            return core.CharacterModifier(crit_damage = self.inhancer * max(0,self.char.get_modifier().crit + 20))
-        else:
-            return self.disabledModifier
+from .jobclass import resistance
+from .jobbranch import bowmen
+# TODO: 재규어 맥시멈, 드릴 컨테이너 추가
 
 class JaguerStack(core.DamageSkillWrapper, core.TimeStackSkillWrapper):
     def __init__(self, level, vEhc):
@@ -30,12 +20,12 @@ class JaguerStack(core.DamageSkillWrapper, core.TimeStackSkillWrapper):
             vary_ = 1
         else: vary_ = vary
         self.queue.append([vary_, left])
-        return core.ResultObject(0, core.CharacterModifier(), 0, sname = self._id, spec = 'graph control')        
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self._id, spec = 'graph control')        
         
     def _use(self, rem = 0, red = 0):
         mdf = self.get_modifier()
         dmg = 60*self.getStack() + int(self.level/3)
-        return core.ResultObject(0, mdf,  dmg, sname = self._id, spec = 'deal')
+        return core.ResultObject(0, mdf, dmg, 1, sname = self._id, spec = 'deal')
 
     def is_usable(self):
         return False
@@ -49,6 +39,7 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = False
         self.vEnhanceNum = 11
         self.jobtype = "dex"
+        self.jobname = "와일드헌터"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'crit')
         self.preEmptiveSkills = 0
         
@@ -56,13 +47,13 @@ class JobGenerator(ck.JobGenerator):
         Jaguer = core.InformedCharacterModifier("재규어",crit=5)
         NaturesWrath = core.InformedCharacterModifier("네이처스 래쓰",crit=25)
         AutomaticShootingDevice = core.InformedCharacterModifier("오토매팅 슈팅 디바이스",att=20)
-        CrossbowMastery = core.InformedCharacterModifier("크로스보우 마스터리",patt = 10)
+        CrossbowMastery = core.InformedCharacterModifier("크로스보우 마스터리",pdamage = 10)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         Flurry = core.InformedCharacterModifier("플러리", stat_main = 40)
         JaugerLink = core.InformedCharacterModifier("재규어 링크",crit = 18, crit_damage = 12, att = 10)
-        CrossbowExpert = core.InformedCharacterModifier("크로스보우 엑스퍼트",att=30, crit_damage = 8)
+        CrossbowExpert = core.InformedCharacterModifier("크로스보우 엑스퍼트",att=30, crit_damage = 20)
         WildInstinct = core.InformedCharacterModifier("와일드 인스팅트",armor_ignore = 30)
-        ExtentMagazine = core.InformedCharacterModifier("익스텐드 매거진", pdamage_indep=15, stat_main=60, stat_sub=60)
+        ExtentMagazine = core.InformedCharacterModifier("익스텐드 매거진", pdamage_indep=20, stat_main=60, stat_sub=60)
         AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)", att = 20)
     
         return [Jaguer, NaturesWrath, AutomaticShootingDevice,
@@ -89,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
         #재규어 스킬들
         JAGUERNUMBER = 3
         
-        Normal = core.DamageSkill("재규어 공격", 0, 140+chtr.level, 1, cooltime = 60000/37, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        Normal = core.DamageSkill("서먼 재규어(재규어 공격)", 0, 140+chtr.level, 1, cooltime = 60000/37, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         ClawCut = core.DamageSkill("클로우 컷", 0, 200+chtr.level, 4, cooltime = 5000*0.9, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         Crossroad = core.DamageSkill("크로스 로드", 0, 450+2*chtr.level, 1, cooltime = 6000*0.9, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
         SonicBoom = core.DamageSkill("소닉 붐", 0, 220+chtr.level, 6, cooltime = 6000*0.9, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
@@ -111,26 +102,31 @@ class JobGenerator(ck.JobGenerator):
         Hauling = core.BuffSkill("하울링", 0, 300*1000, rem = True, patt = 10).wrap(core.BuffSkillWrapper)
         BeastForm = core.BuffSkill("비스트 폼", 0, 300*1000, rem = True, patt=20+5).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill("샤프 아이즈", 1080, 300 * 1000, crit = 20 + combat*1, crit_damage = 15 + combat*1, rem = True).wrap(core.BuffSkillWrapper)
-        SilentRampage = core.BuffSkill("사일런트 램피지", 1020, 40*1000, pdamage=40, cooltime = 160000).wrap(core.BuffSkillWrapper)
+        SilentRampage = core.BuffSkill("사일런트 램피지", 1020, 40*1000, pdamage=40, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         
         WillOfLiberty = core.BuffSkill("윌 오브 리버티", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
         FinalAttack70 = core.DamageSkill("파이널 어택(70)", 0, 210, 0.7).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         FinalAttack100 = core.DamageSkill("파이널 어택(100)", 0, 210, 1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
-        HuntingUnit = core.SummonSkill("헌팅 유닛", 660, 31000/90, 150, 1.5, 31000).setV(vEhc, 4, 3, False).wrap(core.SummonSkillWrapper)
+        HuntingUnit = core.SummonSkill("어시스턴트 헌팅 유닛", 660, 31000/90, 150, 1.5, 31000).setV(vEhc, 4, 3, False).wrap(core.SummonSkillWrapper)
     
         WildBalkan = core.DamageSkill("와일드 발칸", 120, 340, 1, modifier = core.CharacterModifier(boss_pdamage=10+20, pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
     
-        GuidedArrow = core.SummonSkill("가이디드 애로우", 720, 330, 400+16*vEhc.getV(4,4), 1, 30 * 1000, cooltime = 60 * 1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
-        RegistanceLineInfantry = core.SummonSkill("레지스탕스 라인 인팬트리", 360, 1000, 215+8*vEhc.getV(3,3), 9, 10*1000, cooltime = 25000).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
+        GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
+        RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3)
     
-        CriticalReinforce = CriticalReinforceWrapper(vEhc, chtr)
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 1, 1, 20)
     
         JaguerStorm = core.BuffSkill("재규어 스톰", 840, 40*1000, cooltime = (150-vEhc.getV(0,0))*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
         AnotherBite = JaguerStack(chtr.level, vEhc)
         #JaguerMaximum = core. 안씀..
+        #TODO : 재규어맥시멈 사용여부
+# MP 1000 소비, 12초[10초+10레벨당 1초] 동안 무적이 되어 최대 15명의 적을 2000%의 데미지로 연속해서 12번 공격하는 공격을 3회 시전 후 3600%의 데미지로 15번 마무리 공격[기본 공격: (스킬 레벨*40+1000)%의 데미지, 마무리 공격: (스킬 레벨*72+1800)%의 데미지], 추가 크리티컬 확률 100%, 몬스터 방어율 100% 추가 무시
+#공격 중 스킬을 다시 사용하여 즉시 마무리 공격 사용 가능
+#재규어에 탑승하지 않았다면 탑승한 후에 스킬을 사용하며, 탑승할 때도 무적 적용
+#재사용 대기시간 150초
         WildGrenade = core.SummonSkill("와일드 그레네이드", 0, 4500, 600+24*vEhc.getV(2,2), 5, 9999*10000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
     
         FinalAttack = core.OptionalElement(SilentRampage.is_active, FinalAttack100, FinalAttack70)

@@ -5,8 +5,11 @@ from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
+from .jobbranch import warriors
 
 #TODO : 5차 신스킬 적용
+# 4차 스킬은 컴뱃오더스 적용 기준으로 작성해야 함.
+# 생츄어리 필요한지 확인바람 (딜레이 750)
 
 ######   Passive Skill   ######
 
@@ -16,6 +19,7 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = False
         self.vEnhanceNum = 10
         self.jobtype = "str"
+        self.jobname = "팔라딘"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
 
@@ -28,8 +32,7 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         ShieldMastery = core.InformedCharacterModifier("실드 마스터리",att = 10)
         
-        PaladinExpert = core.InformedCharacterModifier("팔라딘 엑스퍼트",crit_damage = 15+5, pdamage_indep = 42, crit = 42, armor_ignore = 31)
-        PaladinExpertSec = core.InformedCharacterModifier("팔라딘 엑스퍼트(2)",armor_ignore = 10)
+        PaladinExpert = core.InformedCharacterModifier("팔라딘 엑스퍼트(두손둔기)",crit_damage = 15+5, pdamage_indep = 42, crit = 42, armor_ignore = 37.9)
         
         return [PhisicalTraining, ShieldMastery, PaladinExpert]
 
@@ -44,74 +47,71 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
-        블래-라차-디차-파택
+        두손둔기
+
+        블래-라차-디차-생츄-파택
         
         블레싱 아머 미적용.
+
+        블래스트-리인포스, 보너스 어택 / 생츄어리-보너스 어택, 쿨타임 리듀스 / 위협-인핸스
         '''
 
         
         #Buff skills
-        Threat = core.BuffSkill("위협", 1350, 80 * 1000, armor_ignore = 30 + 20).wrap(core.BuffSkillWrapper)
+        Threat = core.BuffSkill("위협", 1440, 80 * 1000, armor_ignore = 30 + 20).wrap(core.BuffSkillWrapper) # 기본 1080, 75% 확률 반영 딜레이
         BlessingArmor = core.BuffSkill("블레싱 아머", 0, 30 * 1000, cooltime = 90 * 1000, att = 20, rem = True).wrap(core.BuffSkillWrapper)
-        ElementalForce = core.BuffSkill("엘리멘탈 포스", 810, 206 * 1000, pdamage_indep = 21, rem = True).wrap(core.BuffSkillWrapper)
+        ElementalForce = core.BuffSkill("엘리멘탈 포스", 0, 206 * 1000, pdamage_indep = 21, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
         
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
-        HolyUnity = core.BuffSkill("홀리 유니티", 600, (40 + vEhc.getV(0,0)) * 1000, cooltime = 120 * 1000, pdamage_indep = (35 + 0.5*vEhc.getV(0,0))).isV(vEhc,0,0).wrap(core.BuffSkillWrapper) #딜레이 반영.
+        HolyUnity = core.BuffSkill("홀리 유니티", 600, (40 + vEhc.getV(0,0)) * 1000, cooltime = 120 * 1000, red = True, pdamage_indep = int(35 + 0.5*vEhc.getV(0,0))).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
     
         #Damage Skills
-        LighteningCharge = core.DamageSkill("라이트닝 차지", 810, 462, 3, cooltime = 60 * 1000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        LighteningCharge = core.DamageSkill("라이트닝 차지", 630, 462, 3+2, cooltime = 60 * 1000 * (1 + chtr.buff_rem * 0.01)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) # 엘리멘탈 차지의 벞지 적용 고려함
         LighteningChargeDOT = core.DotSkill("라이트닝 차지(도트)", 115, 6000).wrap(core.SummonSkillWrapper)
-        DivineCharge = core.DamageSkill("디바인 차지", 810, 462, 3, cooltime = 60 * 1000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        
-        Blast = core.DamageSkill("블래스트", 630, 318, 8+2+1, modifier = core.CharacterModifier(crit=20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        Blast_AuraWeapon = core.DamageSkill("오라 웨폰(블래스트)", 0, 318 * (75 + vEhc.getV(2,2))*0.01, 8+2+1, modifier = core.CharacterModifier(crit=20, pdamage = 20)).wrap(core.DamageSkillWrapper)
+        DivineCharge = core.DamageSkill("디바인 차지", 630, 462, 3+2, cooltime = 60 * 1000 * (1 + chtr.buff_rem * 0.01)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        Sanctuary = core.DamageSkill("생츄어리", 750, 580, 8+2, cooltime = 14 * 0.7 * 1000, red = True, modifier = core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+
+        Blast = core.DamageSkill("블래스트", 630, 291, 9+2+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         #Summon Skills
-        BlessedHammer = core.SummonSkill("블레스드 해머", 0, 600, (250 + vEhc.getV(1,1)*10), 2, 999999* 10000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)   #딜레이 반영
-        BlessedHammerActive = core.SummonSkill("블레스드 해머(활성화)", 0, 600, (525+vEhc.getV(1,1)*21)*3-(250+vEhc.getV(1,1)*10)*2, 1, 30 * 1000, cooltime = 60 * 1000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)#딜레이 반영
-        
-        AuraWeaponBuff = core.BuffSkill("오라웨폰 버프", 0, (80 +2*vEhc.getV(2,2)) * 1000, cooltime = 180*1000, armor_ignore = 15, pdamage_indep = (vEhc.getV(2,2) // 5)).isV(vEhc,2,2).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!    
-        AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 4000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 4초간 발동되지 않도록 합니다.
-        
-        #http://www.inven.co.kr/board/maple/2294/21881?category=%ED%8C%94%EB%9D%BC%EB%94%98&name=subject&keyword=%EA%B7%B8%ED%81%AC
-        #TODO : 오라웨폰 미발동 적용해야 할 필요 있음.
-        GrandCrossSmallTick = core.DamageSkill("그랜드 크로스(작은)", 800, 350 + vEhc.getV(3,3)*14, 13, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
-        GrandCrossLargeTick = core.DamageSkill("그랜드 크로스(강화)", 800, 600 + vEhc.getV(3,3)*24, 43, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
-        GrandCross = core.DamageSkill("그랜드 크로스", 480, 0, 0, cooltime = 150 * 1000).wrap(core.DamageSkillWrapper)#Loop = 480인걸로 봐서 재정의 필요할 수도 있음
-        
-        GrandCrossSmallTick_AuraWeapon = core.DamageSkill("오라 웨폰(그크)", 0, (350 + vEhc.getV(3,3)*14) * (75 + vEhc.getV(2,2))*0.01, 6, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
-        GrandCrossLargeTick_AuraWeapon = core.DamageSkill("오라 웨폰(그크)(강화)", 0, (600 + vEhc.getV(3,3)*24) * (75 + vEhc.getV(2,2))*0.01, 6, modifier = core.CharacterModifier(crit = 100, crit_damage = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s
-        
-        FinalAttack = core.DamageSkill("파이널 어택", 0, 150, 0.4).setV(vEhc, 3, 5, True).wrap(core.DamageSkillWrapper)
+        BlessedHammer = core.SummonSkill("블래스드 해머", 0, 600, 250 + vEhc.getV(1,1)*10, 2, 999999 * 10000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
+        BlessedHammerActive = core.SummonSkill("블레스드 해머(활성화)", 360, 600, 525+vEhc.getV(1,1)*21, 3, 30 * 1000, cooltime = 60 * 1000, red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
+        GrandCross = core.DamageSkill("그랜드 크로스", 900, 0, 0, cooltime = 150 * 1000, red = True).wrap(core.DamageSkillWrapper)
+        GrandCrossSmallTick = core.DamageSkill("그랜드 크로스(작은)", 200, 350 + vEhc.getV(3,3)*14, 6, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #3s, 15*6타
+        GrandCrossLargeTick = core.DamageSkill("그랜드 크로스(강화)", 146, 600 + vEhc.getV(3,3)*24, 6, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s, 41*6타
+        GrandCrossEnd = core.DamageSkill("그랜드 크로스(종료)", 450, 0, 0).wrap(core.DamageSkillWrapper)
+                
+        FinalAttack = core.DamageSkill("파이널 어택", 0, 80, 2*0.4).setV(vEhc, 4, 5, True).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
     
         #Damage skill
         Blast.onAfter(FinalAttack)
+        Sanctuary.onAfter(FinalAttack)
         LighteningCharge.onAfter(FinalAttack)
+        LighteningCharge.onAfter(LighteningChargeDOT)
         DivineCharge.onAfter(FinalAttack)
         
-        GrandCrossSmallTick.onAfters([FinalAttack, FinalAttack, FinalAttack])
-        GrandCrossLargeTick.onAfters([FinalAttack, FinalAttack, FinalAttack])
-        GrandCross.onAfters([core.RepeatElement(GrandCrossLargeTick, 6), 
-                            core.RepeatElement(GrandCrossSmallTick, 6)])
+        GrandCrossSmallTick.onAfter(FinalAttack)
+        GrandCrossLargeTick.onAfter(FinalAttack)
+        GrandCross.onAfters([GrandCrossEnd,
+                            core.RepeatElement(GrandCrossLargeTick, 41), 
+                            core.RepeatElement(GrandCrossSmallTick, 15)])
+
+        BlessedHammerActive.onAfter(BlessedHammer.controller(30 * 1000))
         
         # 오라 웨폰
-        def AuraWeapon_connection_builder(origin_skill, target_skill):
-            optional = core.OptionalElement(lambda : (AuraWeaponCooltimeDummy.is_not_active() and AuraWeaponBuff.is_active()), target_skill)
-            origin_skill.onAfter(optional)
-            target_skill.onAfter(AuraWeaponCooltimeDummy)
-            
-        AuraWeapon_connection_builder(Blast, Blast_AuraWeapon)
-        AuraWeapon_connection_builder(GrandCrossSmallTick, GrandCrossSmallTick_AuraWeapon)
-        AuraWeapon_connection_builder(GrandCrossLargeTick, GrandCrossLargeTick_AuraWeapon)
-        
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
+        for sk in [Blast, Sanctuary, GrandCrossSmallTick, GrandCrossLargeTick]:
+            auraweapon_builder.add_aura_weapon(sk)
+        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+                        
         return(Blast,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                    Threat, BlessingArmor, ElementalForce, EpicAdventure, HolyUnity, AuraWeaponBuff,
+                [globalSkill.maple_heros(chtr.level, combat_level = 2), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                    Threat, ElementalForce, EpicAdventure, HolyUnity, AuraWeaponBuff,
                     globalSkill.soul_contract()] +\
-                [LighteningCharge, DivineCharge, GrandCross] +\
+                [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, GrandCross] +\
                 [BlessedHammer, BlessedHammerActive] +\
                 [AuraWeaponCooltimeDummy] +\
                 [Blast])
