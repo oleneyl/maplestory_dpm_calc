@@ -65,23 +65,23 @@ class RiyoWrapper(core.SummonSkillWrapper):
     """
     def __init__(self, skill):
         super(RiyoWrapper, self).__init__(skill)
-        self.hit = 0
+        self.count = 0
 
     def _use(self, rem = 0, red = 0):
-        self.hit = 0
+        self.count = 0
         return super(RiyoWrapper, self)._use(rem, red)
     
     def _useTick(self):
         if self.onoff and self.tick <= 0:
-            if self.hit < 10:
+            if self.count < 10:
                 damage = 160
-            if self.hit < 20:
+            if self.count < 20:
                 damage = 200
             else:
                 damage = 300
-            self.hit += 1
-            if self.hit >= 40:
-                self.hit = 0
+            self.count += 1
+            if self.count >= 40:
+                self.count = 0
             
             self.tick += self.skill.delay
             return core.ResultObject(0, self.get_modifier(), damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
@@ -109,7 +109,7 @@ class GramHolderWrapper(core.SummonSkillWrapper):
             modifier = self.get_modifier()
             if self.gloryWing.is_active() or self.crystalCharge.judge(self.chargeBefore + 3, 1):
                 modifier = modifier + core.CharacterModifier(pdamage_indep = 100)
-            
+            self.chargeBefore = self.crystalCharge.stack
             self.tick += self.skill.delay
             return core.ResultObject(0, modifier, self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
         else:
