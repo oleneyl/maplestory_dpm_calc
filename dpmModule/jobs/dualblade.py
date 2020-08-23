@@ -23,19 +23,19 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 40)
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         Karma = core.InformedCharacterModifier("카르마", att = 30)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝", stat_main = 30, stat_sub = 30)
         
         SornsEffect = core.InformedCharacterModifier("쏜즈 이펙트", att = 30)
         DualBladeExpert = core.InformedCharacterModifier("이도류 엑스퍼트", att = 30, pdamage_indep = 20)
         Sharpness = core.InformedCharacterModifier("샤프니스", crit = 35, crit_damage = 13)
-        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(self.vEhc, 2, 2)
+        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 2, 2)
         
         return [Karma, PhisicalTraining, SornsEffect, DualBladeExpert, Sharpness,
                             ReadyToDiePassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5)    #오더스 기본적용!   
         return [WeaponConstant, Mastery]

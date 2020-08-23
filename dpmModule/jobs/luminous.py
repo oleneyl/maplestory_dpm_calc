@@ -119,7 +119,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
         self.preEmptiveSkills = 2
                 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
 
         PowerOfLight = core.InformedCharacterModifier("파워 오브 라이트",stat_main = 20)
         SpellMastery =  core.InformedCharacterModifier("스펠 마스터리",att = 10)
@@ -131,7 +131,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [PowerOfLight, SpellMastery, HighWisdom, LifeTidal, MagicMastery, MorningStarfall, DarknessSocery]
 
-    def get_not_implied_skill_list(self): 
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter): 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5)
         

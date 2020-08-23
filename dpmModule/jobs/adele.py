@@ -24,7 +24,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         return ruleset
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         # 매직 서킷: 앱솔 기준 15.4
         WEAPON_ATT = jobutils.get_weapon_att("튜너")
         
@@ -42,7 +42,7 @@ class JobGenerator(ck.JobGenerator):
 
         return [MagicCircuit, Pace, Rudiment, Mastery, Train, Accent, Expert, Demolition, Attain]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
 

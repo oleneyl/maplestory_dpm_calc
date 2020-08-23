@@ -17,8 +17,7 @@ class JobGenerator(ck.JobGenerator):
         
         self.preEmptiveSkills = 2
     
-    def get_passive_skill_list(self):
-        vEhc = self.vEhc
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         SoulShooterMastery = core.InformedCharacterModifier("소울슈터 마스터리", att = 20)
         InnerFire = core.InformedCharacterModifier("이너 파이어", stat_sub = 40)
         
@@ -34,7 +33,7 @@ class JobGenerator(ck.JobGenerator):
                             CallOfAncient, AffinityIII, AffinityIV, TrinityPassive, SoulShooterExpert,
                             LoadedDicePassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5)        
         

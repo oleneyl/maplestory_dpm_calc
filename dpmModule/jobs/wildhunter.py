@@ -43,7 +43,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'crit')
         self.preEmptiveSkills = 0
         
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         Jaguer = core.InformedCharacterModifier("재규어",crit=5)
         NaturesWrath = core.InformedCharacterModifier("네이처스 래쓰",crit=25)
         AutomaticShootingDevice = core.InformedCharacterModifier("오토매팅 슈팅 디바이스",att=20)
@@ -60,7 +60,7 @@ class JobGenerator(ck.JobGenerator):
                             CrossbowMastery, PhisicalTraining, Flurry, JaugerLink, CrossbowExpert, 
                             WildInstinct, ExtentMagazine, AdvancedFinalAttackPassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 35)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)
         

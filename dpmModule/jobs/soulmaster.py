@@ -27,9 +27,9 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(pdamage = 20)
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트", patt = 10)
-        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니", stat_main = self.chtr.level // 2)
+        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니", stat_main = chtr.level // 2)
         
         SwordOfLight = core.InformedCharacterModifier("소드 오브 라이트",att = 20)
         Soul = core.InformedCharacterModifier("소울",armor_ignore = 10)
@@ -44,7 +44,7 @@ class JobGenerator(ck.JobGenerator):
         return [ElementalHarmony, ElementalExpert, SwordOfLight, Soul, InnerTrust,
                             BodyAndSoul, InnerShout, SoulPledge, SwordExpert, Unforseeable]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
         TrueSightHyper = core.InformedCharacterModifier("트루 사이트(하이퍼)", prop_ignore = 10)

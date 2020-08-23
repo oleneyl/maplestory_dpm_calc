@@ -52,7 +52,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         SuperSensitive = core.InformedCharacterModifier("초감각",crit = 10)
         PsychicForce1Passive = core.InformedCharacterModifier("사이킥 포스1(패시브)",att = 10)
         Inertia1 = core.InformedCharacterModifier("내재 1",att = 10)
@@ -80,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
                             MindEnhance, Accurate, PsychicChargingPassive, PsychicForce3Passive,
                              ESPBattleOrder, Transcendence, Transport, Mastery]
 
-    def get_not_implied_skill_list(self):     
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):     
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
         PsychicForce3Passive = core.InformedCharacterModifier("사이킥 포스 3(패시브)", pdamage_indep = 20)

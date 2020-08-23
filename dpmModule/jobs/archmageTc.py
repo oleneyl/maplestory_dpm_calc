@@ -38,7 +38,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('라이트닝 스피어', '인피니티'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         ######   Passive Skill   ######
         
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤", stat_main = 40)
@@ -53,7 +53,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [HighWisdom, SpellMastery, MagicCritical, ElementalReset, MasterMagic, ElementAmplication, ArcaneAim]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5)
         ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", pdamage_indep = 20)

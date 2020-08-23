@@ -60,7 +60,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('reuse', 'boss_pdamage', 'mess')
         self.preEmptiveSkills = 1
         
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         CollectingForLeap = core.InformedCharacterModifier("콜렉팅 포리프", stat_main = 50)
         
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝", stat_main = 30, stat_sub = 30)
@@ -70,7 +70,7 @@ class JobGenerator(ck.JobGenerator):
         
         WeaponMastery = core.InformedCharacterModifier("웨폰 엑스퍼트", att = 30, crit = 30, crit_damage = 15)
         QuickserviceMind_II = core.InformedCharacterModifier("퀵서비스 마인드 II", att = 30, crit_damage  =5, crit = 10)
-        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(self.vEhc, 2, 3)
+        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 2, 3)
         
         return [CollectingForLeap, PhisicalTraining,
                                     QuickserviceMind, BasicDetection, WeaponMastery, QuickserviceMind_II, ReadyToDiePassive]
@@ -78,7 +78,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 20, crit_damage = 20, pdamage = 20)
                               
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 75)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)	#오더스 기본적용!
         

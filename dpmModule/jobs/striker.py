@@ -36,8 +36,8 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 40) # 뇌전 스택으로 평균 35~40%의 방무 적용
 
-    def get_passive_skill_list(self):
-        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",stat_main = self.chtr.level // 2)
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",stat_main = chtr.level // 2)
         ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니",patt = 10)
 
         NoieBack = core.InformedCharacterModifier("뇌백",att = 20)
@@ -50,14 +50,14 @@ class JobGenerator(ck.JobGenerator):
         
         SkyOpenPassive = core.InformedCharacterModifier("천지개벽(패시브)",pdamage_indep = 20)
         
-        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(self.vEhc, 1, 3)
+        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 3)
 
         
         return [ElementalHarmony, ElementalExpert,
             NoieBack, PhisicalTraining, Gekgap, NoiGe, NuckleExpert, NoiShin,
             SkyOpenPassive, LoadedDicePassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
         

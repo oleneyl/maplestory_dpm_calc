@@ -28,10 +28,10 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConditionRule('소울 컨트랙트', '인피니티 플레임 서클(개시)', check_ifc_time), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         ######   Skill   ######
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트", patt = 10)
-        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니", stat_main = self.chtr.level // 2)
+        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니", stat_main = chtr.level // 2)
         
         SpellControl = core.InformedCharacterModifier("주문 연마",att = 10)
         LiberatedMagic = core.InformedCharacterModifier("해방된 마력",pdamage_indep = 30)
@@ -41,7 +41,7 @@ class JobGenerator(ck.JobGenerator):
 
         return [ElementalExpert, ElementalHarmony, SpellControl, LiberatedMagic, BurningFocus, BriliantEnlightenment, PureMagic]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5)
         SpiritOfFlameActive = core.InformedCharacterModifier("스피릿 오브 플레임(이그니션)", prop_ignore = 10)

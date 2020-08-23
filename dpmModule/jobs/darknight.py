@@ -21,7 +21,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(boss_pdamage=10, armor_ignore=44)
         
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리",pdamage = 5)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 드레이닝",stat_main = 30, stat_sub = 30)
         
@@ -35,7 +35,7 @@ class JobGenerator(ck.JobGenerator):
         CrossoverChainPassive = core.InformedCharacterModifier("크로스 오버 체인(패시브)", pdamage_indep=50)
         return [WeaponMastery, PhisicalTraining, LordOfDarkness, AdvancedWeaponMastery, ReincarnationBuff, ReincarnationHyper, SacrificePassive, CrossoverChainPassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 49)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)        
         BiholdersBuff = core.InformedCharacterModifier("비홀더스 버프",att = 40, crit = 10)

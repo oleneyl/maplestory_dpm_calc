@@ -17,7 +17,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'buff_rem')
         self.preEmptiveSkills = 1
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         InheritWill = core.InformedCharacterModifier("상속된 의지",att = 10, stat_main = 10)
         LinkedMagic = core.InformedCharacterModifier("링크드 매직",att = 20)
         
@@ -38,7 +38,7 @@ class JobGenerator(ck.JobGenerator):
             HighWisdom, SpellMastery, ElementalReset, CriticalMagic, MagicAmplification, DragonPotential,
             MagicMastery, DragonFury, HighDragonPotential]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 0)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5)  
         Interaction = core.InformedCharacterModifier("연계",pdamage = 20)

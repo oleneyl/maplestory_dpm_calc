@@ -22,7 +22,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         HighDexterity = core.InformedCharacterModifier("하이 덱스터리티",stat_sub = 40)
         LuckMonopoly = core.InformedCharacterModifier("럭 모노폴리",stat_main = 60)
         LuckOfPhantomtheif = core.InformedCharacterModifier("럭오브팬텀시프",stat_main = 60)
@@ -30,13 +30,13 @@ class JobGenerator(ck.JobGenerator):
         AcuteSence = core.InformedCharacterModifier("어큐트 센스",crit = 35, pdamage_indep = 30)
         CainExpert = core.InformedCharacterModifier("케인 엑스퍼트", att = 40+self.combat, crit_damage = 15, pdamage_indep = 25 + int(self.combat * 0.5))
     
-        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(self.vEhc, 3, 3)
+        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 3, 3)
 
         return [
                             HighDexterity, LuckMonopoly, LuckOfPhantomtheif, MoonLight, AcuteSence, CainExpert,
                                 ReadyToDiePassive]
                                 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
         

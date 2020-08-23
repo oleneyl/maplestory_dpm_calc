@@ -27,7 +27,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(MutualRule('도트 퍼니셔', '포이즌 노바'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤", stat_main = 40)
         SpellMastery = core.InformedCharacterModifier("스펠 마스터리", att = 10)
         MagicCritical = core.InformedCharacterModifier("매직 크리티컬", crit = 30, crit_damage = 13)
@@ -41,7 +41,7 @@ class JobGenerator(ck.JobGenerator):
         return [HighWisdom, SpellMastery, MagicCritical, ElementalReset, 
                                     MasterMagic, ElementAmplication, ArcaneAim]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5)
         ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", pdamage_indep = 20)

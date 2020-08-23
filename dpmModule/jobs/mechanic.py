@@ -56,7 +56,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 10, pdamage = 28+20)
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         
         HiddenPiece = core.InformedCharacterModifier("히든 피스",pdamage = 10)
         MechanicMastery = core.InformedCharacterModifier("메카닉 마스터리",att = 20, crit = 10, crit_damage = 5)
@@ -64,11 +64,11 @@ class JobGenerator(ck.JobGenerator):
         
         OverTunning = core.InformedCharacterModifier("오버 튜닝",pdamage_indep = 20, crit=20, armor_ignore=30)
         MetalArmorExtreme=core.InformedCharacterModifier("메탈아머 익스트림",att=55)
-        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(self.vEhc, 1, 2)
+        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
         
         return [HiddenPiece, MechanicMastery, PhisicalTraining, LoadedDicePassive, MetalArmorExtreme, OverTunning]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 50)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)
 

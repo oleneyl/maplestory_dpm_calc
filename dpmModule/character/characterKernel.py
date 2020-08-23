@@ -124,7 +124,6 @@ class JobGenerator():
         self._passive_skill_list = [] #각 생성기가 자동으로 그래프 생성 시점에서 연산합니다.
         self.constructedSchedule = None
         self.combat = False
-        self.chtr = None
         self.ability_list = Ability_tool.get_ability_set(None, None, None)
         self._use_critical_reinforce = False
             
@@ -151,10 +150,10 @@ class JobGenerator():
     def apply_specific_schedule(self, graph):
         return
     
-    def build(self, chtr, combat = False, storage_handler=None):
+    def build(self, vEhc, chtr, combat = False, storage_handler=None):
         initialize_global_properties()
 
-        base_element, all_elements = self.generate(self.vEhc, chtr, combat = combat)
+        base_element, all_elements = self.generate(vEhc, chtr, combat = combat)
 
         GlobalOperation.assign_storage()
         GlobalOperation.attach_namespace()
@@ -174,22 +173,20 @@ class JobGenerator():
     def generate(self, vEhc, chtr : AbstractCharacter, combat : bool = False):
         raise NotImplementedError
     
-    def build_passive_skill_list(self):
-        self._passive_skill_list = self.get_passive_skill_list()
+    def build_passive_skill_list(self, vEhc, chtr : AbstractCharacter):
+        self._passive_skill_list = self.get_passive_skill_list(vEhc, chtr)
         return
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : AbstractCharacter):
         raise NotImplementedError("You must fill get_passive_skill_list function.")
-        return 
     
-    def build_not_implied_skill_list(self):
-        notImpliedBuffList = self.get_not_implied_skill_list()
+    def build_not_implied_skill_list(self, vEhc, chtr : AbstractCharacter):
+        notImpliedBuffList = self.get_not_implied_skill_list(vEhc, chtr)
         self._passive_skill_list += notImpliedBuffList
         return
     
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : AbstractCharacter):
         raise NotImplementedError('You must fill get_not_implied_skill_list function.')
-        return []
     
     def get_passive_skill_modifier(self):
         passive_modifier = ExMDF()
@@ -198,16 +195,15 @@ class JobGenerator():
         return passive_modifier
     
     def package_bare(self, chtr, v_builder, useFullCore = False, vEnhanceGenerateFlag = None):
-        self.vEhc = v_builder.build_enhancer(chtr, self)
-        self.chtr = chtr
+        vEhc = v_builder.build_enhancer(chtr, self)
         
         # Since given character specification already imply both option; ignore these two.
 
-        self.build_not_implied_skill_list()
+        self.build_not_implied_skill_list(vEhc, chtr)
         chtr.apply_modifiers([self.get_passive_skill_modifier()])
         
-        graph = self.build(chtr)
-        graph.set_v_enhancer(self.vEhc)
+        graph = self.build(vEhc, chtr)
+        graph.set_v_enhancer(vEhc)
         
         return graph
         
@@ -221,12 +217,12 @@ class JobGenerator():
                     storage_handler=None ):
         '''Packaging function
         '''
-        self.vEhc = v_builder.build_enhancer(chtr, self)
+        vEhc = v_builder.build_enhancer(chtr, self)
         self.combat = combat
-        self.chtr = chtr
+        chtr = chtr
         
-        self.build_passive_skill_list()
-        self.build_not_implied_skill_list()
+        self.build_passive_skill_list(vEhc, chtr)
+        self.build_not_implied_skill_list(vEhc, chtr)
         
         #어빌리티 적용
         adjusted_ability = Ability_tool.adjusted_ability(ability_grade, self.ability_list[0], self.ability_list[1], self.ability_list[2])
@@ -237,7 +233,7 @@ class JobGenerator():
         personality = Personality.get_personality(100)
         chtr.apply_modifiers([personality])
                 
-        graph = self.build(chtr, combat = combat, storage_handler=storage_handler)
+        graph = self.build(vEhc, chtr, combat = combat, storage_handler=storage_handler)
 
         def log_modifier(modifier, name):
             if log:
@@ -314,8 +310,8 @@ class JobGenerator():
         log_buffed_character(chtr)
         
         #그래프를 다시 빌드합니다.
-        graph = self.build(chtr, combat = combat, storage_handler=storage_handler)
-        graph.set_v_enhancer(self.vEhc)
+        graph = self.build(vEhc, chtr, combat = combat, storage_handler=storage_handler)
+        graph.set_v_enhancer(vEhc)
 
         log_character(chtr)
         log_buffed_character(chtr)

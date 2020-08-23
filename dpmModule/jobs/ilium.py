@@ -140,8 +140,7 @@ class JobGenerator(ck.JobGenerator):
         # ruleset.add_rule(ConditionRule("글로리 윙(진입)", "크리스탈 이그니션(시전)", lambda x:x.is_cooltime_left(20000, 1) or x.is_cooltime_left(10000, -1)), RuleSet.BASE)
         return ruleset
         
-    def get_passive_skill_list(self):
-        vEhc = self.vEhc
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         # 앱솔 무기 마력 241
         WEAPON_ATT = jobutils.get_weapon_att("건틀렛")
         MagicCircuit = core.InformedCharacterModifier("매직 서킷", att = WEAPON_ATT*0.2)
@@ -157,7 +156,7 @@ class JobGenerator(ck.JobGenerator):
         return [MagicCircuit, MagicGuntletMastery, BlessMarkPassive,
             LefMastery, DestinyPioneer, ContinualResearch, CrystalSecret ]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5)
         

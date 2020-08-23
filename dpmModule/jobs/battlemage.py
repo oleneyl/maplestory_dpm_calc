@@ -28,7 +28,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('마스터 오브 데스', '그림 리퍼'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         ArtOfStaff = core.InformedCharacterModifier("아트 오브 스태프",att = 20, crit = 15)
         StaffMastery = core.InformedCharacterModifier("스태프 마스터리",att = 30, crit = 20)
         HighWisdom =  core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
@@ -42,7 +42,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [ArtOfStaff, StaffMastery, HighWisdom, BattleMastery, DarkAuraPassive, StaffExpert, SpellBoost] #디버프오라 미적용
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수")
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5)
         

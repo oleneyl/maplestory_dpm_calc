@@ -72,7 +72,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit = 40)
         AncientBowMastery = core.InformedCharacterModifier("에인션트 보우 마스터리", att = 30)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
@@ -87,7 +87,7 @@ class JobGenerator(ck.JobGenerator):
                                     EssenceOfArcher, AdditionalTransitionPassive, 
                                         AncientBowExpert, IllusionStep]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)
 

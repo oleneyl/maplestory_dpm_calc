@@ -28,7 +28,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('그랜드 크로스', '홀리 유니티'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         ShieldMastery = core.InformedCharacterModifier("실드 마스터리",att = 10)
         
@@ -36,7 +36,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [PhisicalTraining, ShieldMastery, PaladinExpert]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -4.5)    #오더스 기본적용!
         
