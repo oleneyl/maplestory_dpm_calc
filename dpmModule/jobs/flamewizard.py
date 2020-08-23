@@ -82,7 +82,7 @@ class JobGenerator(ck.JobGenerator):
         DragonSlaveInit = core.DamageSkill("드래곤 슬레이브 개시(더미)", 0, 0, 0, cooltime = 90 * 1000).wrap(core.DamageSkillWrapper)
         DragonSlaveEnd = core.DamageSkill("드래곤 슬레이브 종결", 810, 500, 10).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
-        IgnitionDOT = core.DotSkill("이그니션", 220*1.6, 10*1000).wrap(core.SummonSkillWrapper)
+        IgnitionDOT = core.DotSkill("이그니션", 220*1.6, 10*1000, cooltime = 0).wrap(core.SummonSkillWrapper)
 
         #여우 사용
         SavageFlameStack = core.StackSkillWrapper(core.BuffSkill("플레임 디스차지(스택)", 0, 99999999), 6)
