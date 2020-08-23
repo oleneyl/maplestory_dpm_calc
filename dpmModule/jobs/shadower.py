@@ -15,7 +15,7 @@ class MesoStack(core.DamageSkillWrapper, core.StackSkillWrapper):
         super(core.DamageSkillWrapper, self).__init__(skill, 20)
         self.modifierInvariantFlag = False
         
-    def _use(self, rem = 0, red = 0):
+    def _use(self, skill_modifier):
         mdf = self.skill.get_modifier()
         dmg = 120
         stack = self.stack

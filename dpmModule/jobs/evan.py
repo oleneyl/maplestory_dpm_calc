@@ -16,9 +16,6 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "에반"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'buff_rem')
         self.preEmptiveSkills = 1
-    
-    def apply_complex_options(self, chtr):
-        chtr.add_property_ignorance(10)
 
     def get_passive_skill_list(self):
         InheritWill = core.InformedCharacterModifier("상속된 의지",att = 10, stat_main = 10)
@@ -45,8 +42,9 @@ class JobGenerator(ck.JobGenerator):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 0)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5)  
         Interaction = core.InformedCharacterModifier("연계",pdamage = 20)
+        ElementalResetActive = core.InformedCharacterModifier("엘리멘탈 리셋(사용)", prop_ignore = 10)
         
-        return [WeaponConstant, Mastery,Interaction]
+        return [WeaponConstant, Mastery, Interaction, ElementalResetActive]
     
     def getMergedSkill(self, sname, tick, mirRem, vEhc = None, passive = False, nametag = ''):
         '''You must give vEnhance and vlevel.

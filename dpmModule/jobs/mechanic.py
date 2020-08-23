@@ -88,7 +88,7 @@ class JobGenerator(ck.JobGenerator):
         매시브-호밍-디스토션-마그네틱필드-RM7-RM1
         '''
         #Constants
-        ROBOT_SUMMON_REMAIN = 1 + chtr.summonRemain + 0.4
+        ROBOT_SUMMON_REMAIN = 1 + chtr.get_base_modifier().summon_rem + 0.4
         ROBOT_MASTERY = core.CharacterModifier(pdamage_indep = 108 + combat * 3)
 
         #Buff skills

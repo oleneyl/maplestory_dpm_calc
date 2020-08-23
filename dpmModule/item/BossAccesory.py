@@ -46,7 +46,7 @@ Eye135 = it.Item(name="블랙빈 마크", stat_main = 7, stat_sub = 7, att = 1, 
 
 class Factory():
     @staticmethod
-    def get11SetDict(star, enhance, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
+    def get11SetDict(star, enhance, potential = it.ExMDF(), additional_potential = it.ExMDF(), bonus = it.ExMDF(), hammer = True):
         package = [Eye100.copy(), Face110.copy(), Ear130.copy(), Ring110.copy(), Ring120.copy(), \
                     Pendant120.copy(), Pendant140.copy(), Belt140.copy(), Pocket140.copy(), \
                     Badge130.copy(), Shoulder120.copy()]
@@ -85,7 +85,7 @@ class Factory():
         return package
     
     @staticmethod    
-    def getBetter11SetDict(star, enhance, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
+    def getBetter11SetDict(star, enhance, potential = it.ExMDF(), additional_potential = it.ExMDF(), bonus = it.ExMDF(), hammer = True):
         package = {"eye" : Eye145.copy(), "face" : Face110.copy(), "ear" : Ear130.copy(), "ring1" : Ring110.copy(), \
                     "ring2" : Ring120.copy(), "pendant1" : Pendant120.copy(), "pendant2" : Pendant140Fragment.copy(), \
                     "belt" : Belt140.copy(), "pocket" : Pocket140.copy(), \
@@ -120,15 +120,15 @@ class Factory():
         
     @staticmethod
     def getSetOption(rank):
-        li = [it.CharacterModifier(), 
-                it.CharacterModifier(), 
-                it.CharacterModifier(stat_main = 10, stat_sub = 10, att = 5), 
-                it.CharacterModifier(), 
-                it.CharacterModifier(stat_main = 10, stat_sub = 10, att = 5), 
-                it.CharacterModifier(), 
-                it.CharacterModifier(att = 10, stat_main = 10, stat_sub = 10, armor_ignore = 10), 
-                it.CharacterModifier(), 
-                it.CharacterModifier(att = 10, stat_main = 15, stat_sub = 15, boss_pdamage = 10)]
+        li = [it.ExMDF(), 
+                it.ExMDF(), 
+                it.ExMDF(stat_main = 10, stat_sub = 10, att = 5), 
+                it.ExMDF(), 
+                it.ExMDF(stat_main = 10, stat_sub = 10, att = 5), 
+                it.ExMDF(), 
+                it.ExMDF(att = 10, stat_main = 10, stat_sub = 10, armor_ignore = 10), 
+                it.ExMDF(), 
+                it.ExMDF(att = 10, stat_main = 15, stat_sub = 15, boss_pdamage = 10)]
         
         retval = li[0]
         for i in range(rank):

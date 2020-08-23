@@ -10,14 +10,14 @@ from .jobbranch import thieves
 # Refernce : https://m.blog.naver.com/oe135/221095516055
 ######   Passive Skill   ######
 
-class WeaponVarietyStackWrapper(core.StackSkillWrapper):
-    def __init__(self, _max, prof_agent, final_attack_wrp):
+class WeaponVarietyStackWrapper(core.StackSkillWrapper): # TODO: 굳이 관리할 필요 없이 항상 최대 스택 가정해도 되지 않을까?
+    def __init__(self, _max, prof_agent, final_attack_wrp, chtr):
         super(WeaponVarietyStackWrapper , self).__init__(core.BuffSkill("웨폰 버라이어티 스택", 0, 99999999), _max)
         self.stackLog = []
         self.currentAttack = None
         self.currentAttackTime = 0
         self.final_attack_wrp = final_attack_wrp
-        self.final_attack_task = self.final_attack_wrp.build_task()
+        self.final_attack_task = self.final_attack_wrp.build_task(chtr.get_skill_modifier())
         self.modifierInvariantFlag = False
         self.prof_agent = prof_agent
         
@@ -27,6 +27,7 @@ class WeaponVarietyStackWrapper(core.StackSkillWrapper):
         
         res = core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
         if self.currentAttack != target:
+            self.currentAttack = target
             if self.currentAttackTime < 0:
                 res.cascade = [self.final_attack_task]
                 self.currentAttackTime = 250
@@ -115,7 +116,7 @@ class JobGenerator(ck.JobGenerator):
         
         #웨폰버라이어티 추가타	
         WeaponVarietyAttackSkill = core.DamageSkill("웨폰 버라이어티", 0, 350, 4).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        WeaponVarietyAttack = WeaponVarietyStackWrapper(11, ProfessionalAgent, WeaponVarietyAttackSkill)
+        WeaponVarietyAttack = WeaponVarietyStackWrapper(11, ProfessionalAgent, WeaponVarietyAttackSkill, chtr)
         
         
         #체인아츠

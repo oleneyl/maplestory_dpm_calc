@@ -118,9 +118,6 @@ class JobGenerator(ck.JobGenerator):
         for sk in [Snipping, TrueSnippingTick, ChargedArrow]:
             sk.onAfter(FinalAttack)
         
-        ### 제한
-        schedule = core.ScheduleGraph()
-        
         return(Snipping,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_wind_booster(),
                     SoulArrow, ElusionStep, SharpEyes, BoolsEye, EpicAdventure, CriticalReinforce, SplitArrowBuff,

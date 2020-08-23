@@ -44,11 +44,12 @@ class CardinalStateWrapper(core.BuffSkillWrapper):
         return self.check_state(2)
 
 class RelicChargeStack(core.StackSkillWrapper):
-    def __init__(self, ancient_guidance_buff):
+    def __init__(self, ancient_guidance_buff, chtr):
         skill = core.BuffSkill("렐릭 차지", 0, 99999999)
         super(RelicChargeStack, self).__init__(skill, 1000)
         self.ancient_guidance_stack = 0
         self.ancient_guidance_buff = ancient_guidance_buff
+        self.ancient_guidance_task = ancient_guidance_buff.build_task(chtr.get_skill_modifier())
         
     def vary(self, d):
         res = super(RelicChargeStack, self).vary(d)
@@ -56,7 +57,7 @@ class RelicChargeStack(core.StackSkillWrapper):
             self.ancient_guidance_stack += max(d,0)
         if self.ancient_guidance_stack > 1000:
             self.ancient_guidance_stack = 0
-            res.cascade = [self.ancient_guidance_buff.build_task()]   #For stability
+            res.cascade = [self.ancient_guidance_task]   #For stability
         #print(self.stack, self.ancient_guidance_stack)
         return res
     
@@ -207,7 +208,7 @@ class JobGenerator(ck.JobGenerator):
     
         CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 1, 1, 20) #Maybe need to sync
     
-        RelicCharge = RelicChargeStack(AncientGuidanceBuff)
+        RelicCharge = RelicChargeStack(AncientGuidanceBuff, chtr)
         CardinalState = CardinalStateWrapper([SplitMistel, EdgeOfResonance, ComboAssultHolder, AncientAstraHolder])
         
         # 기본적인 스킬연계 연결

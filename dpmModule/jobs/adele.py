@@ -20,9 +20,6 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
-    def apply_complex_options(self, chtr):
-        return
-
     def get_ruleset(self):
         ruleset = RuleSet()
         return ruleset

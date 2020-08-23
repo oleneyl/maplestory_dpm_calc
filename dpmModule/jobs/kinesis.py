@@ -51,9 +51,6 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "키네시스"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
-        
-    def apply_complex_options(self, chtr):
-        chtr.buff_rem += 20
 
     def get_passive_skill_list(self):
         SuperSensitive = core.InformedCharacterModifier("초감각",crit = 10)
@@ -72,6 +69,7 @@ class JobGenerator(ck.JobGenerator):
         
         ESPBattleOrder = core.InformedCharacterModifier("ESP 배틀오더",att = 50, pdamage = 20)
         Transcendence = core.InformedCharacterModifier("각성",pdamage_indep = 25)
+        SupremeConcentration = core.InformedCharacterModifier("정신집중-유지", buff_rem = 20)
         Transport = core.InformedCharacterModifier("전달",armor_ignore = 25)
         Mastery = core.InformedCharacterModifier("마스터리",crit_damage = 10)
         #TODO

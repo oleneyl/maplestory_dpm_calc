@@ -58,6 +58,7 @@ class JobGenerator(ck.JobGenerator):
         # 데몬 슬래시 - 리인포스, 리메인타임 리인포스
         # 데몬 임팩트 - 리인포스, 보너스 어택, 리듀스 포스        
         '''
+        buff_rem = chtr.get_base_modifier().buff_rem
 
     
 
@@ -82,7 +83,7 @@ class JobGenerator(ck.JobGenerator):
         
         InfinityForce = core.BuffSkill("인피니티 포스", 990, 50*1000, cooltime = 200 * 1000).wrap(core.BuffSkillWrapper)
         Metamorphosis = core.BuffSkill("메타모포시스", 1680, 180*1000, rem = True, pdamage = 35).wrap(core.BuffSkillWrapper)
-        MetamorphosisSummon = core.SummonSkill("메타모포시스(소환)", 0, 510, 250, 1, 180*1000*(1+chtr.buff_rem/100), cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        MetamorphosisSummon = core.SummonSkill("메타모포시스(소환)", 0, 510, 250, 1, 180*1000*(1+buff_rem/100), cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         MetamorphosisSummon_BB = core.DamageSkill("메타모포시스(블블)", 0, 250 * 0.9, 1, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         #블루블러드는 소환수 적용이 안됨.

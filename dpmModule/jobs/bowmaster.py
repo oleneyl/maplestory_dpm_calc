@@ -45,7 +45,7 @@ class ArrowOfStormWrapper(core.DamageSkillWrapper):
         self.currentTime += time
         super(ArrowOfStormWrapper, self).spend_time(time)
         
-    def _use(self, rem = 0, red = 0):
+    def _use(self, skill_modifier):
         '''
         아머 피어싱 적용.
         현재 시간 > 마지막 시전 시간 + 딜레이 인 경우에 선딜을 추가함.

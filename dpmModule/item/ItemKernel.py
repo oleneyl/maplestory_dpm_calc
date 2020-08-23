@@ -1,7 +1,5 @@
 import json
-#issue : Need to import CharacterModifier.
-from ..kernel.core import CharacterModifier
-MDF = CharacterModifier
+from ..kernel.core import ExtendedCharacterModifier as ExMDF
 
 class Item():
     '''Class Item : Holds informations about Item
@@ -17,10 +15,10 @@ class Item():
       .pdamage : Damage increment %
       .armor_ignore : Armor ignorant %
       
-      .potential : Potential Value.(CharacterModifier)
-      .add_potential : Additional Potential Value. (CharacterModifier)
+      .potential : Potential Value.(ExtendedCharacterModifier)
+      .add_potential : Additional Potential Value. (ExtendedCharacterModifier)
     '''
-    def __init__(self, name = 'DEFAULT', level = 150, stat_main = 0, stat_sub = 0, att = 0, patt = 0, pdamage = 0, armor_ignore = 0, pstat_main = 0, pstat_sub = 0, potential = CharacterModifier(), additional_potential = CharacterModifier()):
+    def __init__(self, name = 'DEFAULT', level = 150, stat_main = 0, stat_sub = 0, att = 0, patt = 0, pdamage = 0, armor_ignore = 0, pstat_main = 0, pstat_sub = 0, potential = ExMDF(), additional_potential = ExMDF()):
         #Prototypical option
         self.name = name
         #Main options
@@ -40,11 +38,10 @@ class Item():
         self.level = level
 
     def get_modifier(self):
-        #Returns (CharacterModifier, CharacterModifier) tuple
-        myModifier = CharacterModifier(stat_main = self.stat_main, stat_sub = self.stat_sub, att = self.att, patt = self.patt, pdamage = self.pdamage, armor_ignore = self.armor_ignore)
-        return myModifier, self.potential + self.additional_potential
+        myModifier = ExMDF(stat_main = self.stat_main, stat_sub = self.stat_sub, att = self.att, patt = self.patt, pdamage = self.pdamage, armor_ignore = self.armor_ignore)
+        return myModifier + self.potential + self.additional_potential
         
-    def add_main_option(self, mf : CharacterModifier):
+    def add_main_option(self, mf : ExMDF):
         self.stat_main += mf.stat_main
         self.stat_sub += mf.stat_sub
         self.att += mf.att
@@ -55,7 +52,7 @@ class Item():
         self.pstat_main += mf.pstat_main
         self.pstat_sub += mf.pstat_sub
     
-    def set_main_option(self, mf : CharacterModifier):
+    def set_main_option(self, mf : ExMDF):
         self.stat_main = mf.stat_main
         self.stat_sub = mf.stat_sub
         self.att = mf.att
@@ -66,10 +63,10 @@ class Item():
         self.pstat_main = mf.pstat_main
         self.pstat_sub = mf.pstat_sub
         
-    def set_potential(self, mdf : CharacterModifier):
+    def set_potential(self, mdf : ExMDF):
         self.potential = mdf.copy()
         
-    def set_additional_potential(self, mdf : CharacterModifier):
+    def set_additional_potential(self, mdf : ExMDF):
         self.additional_potential = mdf.copy()
         
     def copy(self):
@@ -80,9 +77,13 @@ class Item():
         additional_potential = self.additional_potential)
         
     def as_dict(self):
+        potential_dict = self.potential.as_dict()
+        potential_dict["cooltime_reduce"] = self.potential.skill_modifier.cooltime_reduce
+        additional_potential_dict = self.additional_potential.as_dict()
+        additional_potential_dict["cooltime_reduce"] = self.additional_potential.skill_modifier.cooltime_reduce
         return {"main" : {"stat_main" : self.stat_main, "stat_sub" : self.stat_sub, "att" : self.att, "armor_ignore" : self.armor_ignore, "pstat_main" : self.pstat_main, "pstat_sub" : self.pstat_sub},
-                "potential" : self.potential.as_dict(),
-                "additional_potential" : self.additional_potential.as_dict()}
+                "potential" : potential_dict,
+                "additional_potential" : additional_potential_dict}
         
     def log(self):
         txt = "name : %s, level : %d\n"%(self.name, self.level)
@@ -95,11 +96,13 @@ class Item():
         txt += "att : %.1f, patt %.1f\n"%(self.potential.att, self.potential.patt)
         txt += "pdamage : %.1f, armor_ignore %.1f\n"%(self.potential.pdamage, self.potential.armor_ignore)
         txt += "crit : %.1f, crit_damage %.1f\n"%(self.potential.crit, self.potential.crit_damage)
+        txt += "cooltime_reduce : %.1f\n"%(self.potential.skill_modifier.cooltime_reduce)
         txt += "==additional_potential==\n"
         txt += "pstat_main : %.1f, pstat_sub %.1f\n"%(self.additional_potential.pstat_main, self.additional_potential.pstat_sub)
         txt += "att : %.1f, patt %.1f\n"%(self.additional_potential.att, self.additional_potential.patt)
         txt += "pdamage : %.1f, armor_ignore %.1f\n"%(self.additional_potential.pdamage, self.additional_potential.armor_ignore)
-        txt += "crit : %.1f, crit_damage %.1f\n"%(self.potential.crit, self.potential.crit_damage)
+        txt += "crit : %.1f, crit_damage %.1f\n"%(self.additional_potential.crit, self.additional_potential.crit_damage)
+        txt += "cooltime_reduce : %.1f\n"%(self.additional_potential.skill_modifier.cooltime_reduce)
         return txt
 
 class EnhancerFactory():
@@ -205,14 +208,14 @@ class EnhancerFactory():
     @classmethod
     def get_surprise_enhancement(self, level, star):
         enhance_list = EnhancerFactory.get_surprise_enhance_list(level)
-        retMDF = MDF()
+        retMDF = ExMDF()
         
         now_star = 0
         while now_star < star:
             if now_star < 5:
-                retMDF += MDF(stat_main = enhance_list[now_star], stat_sub = enhance_list[now_star])
+                retMDF += ExMDF(stat_main = enhance_list[now_star], stat_sub = enhance_list[now_star])
             else:
-                retMDF += MDF(att = enhance_list[now_star])
+                retMDF += ExMDF(att = enhance_list[now_star])
             now_star += 1
         
         return retMDF
@@ -239,7 +242,7 @@ class EnhancerFactory():
             stli, atli = EnhancerFactory.starforce_200_stat, EnhancerFactory.starforce_200_armor_att            
         else:
             raise TypeError("Level Must be 90, 100, 110, 120, 130, 140, 150, 160, 200")
-        return CharacterModifier(stat_main = stli[min(star, len(stli) - 1)], stat_sub = stli[min(star, len(stli) - 1)], att = atli[min(star, len(atli) - 1)])  
+        return ExMDF(stat_main = stli[min(star, len(stli) - 1)], stat_sub = stli[min(star, len(stli) - 1)], att = atli[min(star, len(atli) - 1)])  
     
     @classmethod    
     def get_glove_scroll_enhancement(self, level, elist):
@@ -250,7 +253,7 @@ class EnhancerFactory():
         att = 0
         for i in range(3):
             att += elist[i] * self.glove_scroll_list[idx][i]
-        return CharacterModifier(att = att)
+        return ExMDF(att = att)
     
     @classmethod
     def get_armor_scroll_enhancement(self, level, elist):
@@ -265,11 +268,11 @@ class EnhancerFactory():
             stat_main += elist[i] * self.armor_scroll_list[idx][i]
         att = 0
         if elist[0] + elist[1] + elist[2] >= 4: att = 1
-        return CharacterModifier(stat_main = stat_main, att = att)  
+        return ExMDF(stat_main = stat_main, att = att)  
 
     @classmethod
     def get_glove_bonus_starforce_enhancement(self, star):
-        return CharacterModifier(att = self.glove_starforce_att_list[star])
+        return ExMDF(att = self.glove_starforce_att_list[star])
         
     @classmethod
     def get_weapon_starforce_enhancement(self, weapon, level, star):
@@ -294,7 +297,7 @@ class EnhancerFactory():
                 att += (att // 50) + 1
             else:
                 att += atli[i]
-        return CharacterModifier(stat_main = stli[star], stat_sub = stli[star], att  = (att - att_init))
+        return ExMDF(stat_main = stli[star], stat_sub = stli[star], att  = (att - att_init))
     
     @classmethod
     def get_glove_starforce_enhancement(self, level, star):
@@ -313,7 +316,7 @@ class EnhancerFactory():
         for i in range(4):
             att += elist[i] * self.weapon_scroll_att[idx][i]
             stat += elist[i] * self.weapon_scroll_stat[idx][i]
-        return CharacterModifier(stat_main = stat, att = att)
+        return ExMDF(stat_main = stat, att = att)
 
 class WeaponFactoryClass():
     '''This is code for writing about weapon factory.
@@ -339,14 +342,14 @@ class WeaponFactoryClass():
                     "블레이드":10,
                     "제로무기":11}
                         
-    def __init__(self, level, valueMap, modifier = CharacterModifier()):
+    def __init__(self, level, valueMap, modifier = ExMDF()):
         '''_dict : Dictionary for type - {"item" : Item, "bonus" : [0, int, int, int, int, int]}
         '''
         self.level = level
         self.valueMap = valueMap
         self.modifier = modifier
         
-    def getWeapon(self, _type, star, elist, potential = CharacterModifier(), additional_potential = CharacterModifier(), bonusAttIndex = 0, bonusElse = CharacterModifier()):
+    def getWeapon(self, _type, star, elist, potential = ExMDF(), additional_potential = ExMDF(), bonusAttIndex = 0, bonusElse = ExMDF()):
         assert(_type in self.wholeType)
         if _type == '블레이드':
             _type = '단검'
@@ -354,22 +357,22 @@ class WeaponFactoryClass():
         item = Item(name = _type, att = _att, level = self.level)
         item.add_main_option(self.modifier)
         item.add_main_option(EnhancerFactory.get_weapon_scroll_enhancement(self.level, elist))
-        item.add_main_option(CharacterModifier(att = _bonus[-1*bonusAttIndex]))
+        item.add_main_option(ExMDF(att = _bonus[-1*bonusAttIndex]))
         item.add_main_option(EnhancerFactory.get_weapon_starforce_enhancement(item, self.level, star))
         item.add_main_option(bonusElse)
         item.set_potential(potential)
         item.set_additional_potential(additional_potential)
         return item
 
-    def getBlade(self, _type, star, elist, potential = CharacterModifier(), additional_potential = CharacterModifier(), bonusElse = CharacterModifier()):
+    def getBlade(self, _type, star, elist, potential = ExMDF(), additional_potential = ExMDF(), bonusElse = ExMDF()):
         assert(_type == '블레이드')
         def get_blade_modifier():
             if self.modifier.stat_main == 100:
-                return CharacterModifier(stat_main=65)
+                return ExMDF(stat_main=65)
             if self.modifier.stat_main == 60:
-                return CharacterModifier(stat_main=40)
+                return ExMDF(stat_main=40)
             if self.modifier.stat_main == 40:
-                return CharacterModifier(stat_main=30)
+                return ExMDF(stat_main=30)
             raise TypeError("Invalid blade, (Arcane, Absolab, RootAbyss) is allowed.")
 
         _att, _bonus = self.getMap(_type)

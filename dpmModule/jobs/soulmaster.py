@@ -24,9 +24,6 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule('셀레스티얼 댄스', '엘리시온'), RuleSet.BASE)
         return ruleset
 
-    def apply_complex_options(self, chtr):
-        chtr.add_property_ignorance(10)
-
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(pdamage = 20)
 
@@ -50,8 +47,9 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
+        TrueSightHyper = core.InformedCharacterModifier("트루 사이트(하이퍼)", prop_ignore = 10)
         
-        return [WeaponConstant, Mastery]
+        return [WeaponConstant, Mastery, TrueSightHyper]
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
@@ -63,7 +61,7 @@ class JobGenerator(ck.JobGenerator):
 
         #Buff skills
         NimbleFinger = core.BuffSkill("님블 핑거", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
-        TrueSight = core.BuffSkill("트루 사이트", 990, 30 * 1000, armor_ignore = 10+10, pdamage_indep = 5).wrap(core.BuffSkillWrapper) # 내성무시는 complex_option에 있음
+        TrueSight = core.BuffSkill("트루 사이트", 990, 30 * 1000, armor_ignore = 10+10, pdamage_indep = 5).wrap(core.BuffSkillWrapper) # 내성무시는 not_implied_skill_list에 있음
         SolunaTime = core.BuffSkill("솔루나 타임", 0, 200 * 1000, rem = True, crit = 35, pdamage_indep = 25, att = 45).wrap(core.BuffSkillWrapper)  # 딜레이 없음
         SoulForge = core.BuffSkill("소울 포지", 0, 180 * 1000, att = 50, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)

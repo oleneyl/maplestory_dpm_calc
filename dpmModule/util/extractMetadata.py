@@ -21,12 +21,12 @@ def getpassiveInformation(enjob):
             ]), 
             [rules.UniquenessRule()])
     scheduler.initialize(0)
-    buffs = [{'name' : wrp.skill.name, 'stat' : wrp.skill.static_character_modifier.as_dict(js_flag = True)} for wrp,tf in scheduler._buffMdfCalcZip if (not tf)]
+    buffs = [{'name' : wrp.skill.name, 'stat' : wrp.skill.static_character_modifier.as_dict()} for wrp,tf in scheduler._buffMdfCalcZip if (not tf)]
 
     gen.build_passive_skill_list()
-    passive_skill_direct = [info.as_dict(js_flag = True) for info in gen.get_passive_skill_list()]
+    passive_skill_direct = [info.as_dict() for info in gen.get_passive_skill_list()]
     
-    passive_skill_indirect = [info.as_dict(js_flag = True) for info in gen.get_not_implied_skill_list()]
+    passive_skill_indirect = [info.as_dict() for info in gen.get_not_implied_skill_list()]
     
     return {"passive_direct" : passive_skill_direct, "passive_indirect" : passive_skill_indirect, "static_buff" : buffs}
 

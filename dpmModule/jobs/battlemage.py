@@ -28,9 +28,6 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('마스터 오브 데스', '그림 리퍼'), RuleSet.BASE)
         return ruleset
 
-    def apply_complex_options(self, chtr):
-        chtr.add_property_ignorance(10)
-
     def get_passive_skill_list(self):
         ArtOfStaff = core.InformedCharacterModifier("아트 오브 스태프",att = 20, crit = 15)
         StaffMastery = core.InformedCharacterModifier("스태프 마스터리",att = 30, crit = 20)
@@ -49,7 +46,7 @@ class JobGenerator(ck.JobGenerator):
         WeaponConstant = core.InformedCharacterModifier("무기상수")
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5)
         
-        DebuffAura = core.InformedCharacterModifier("디버프 오라", armor_ignore = 20, pdamage_indep = 10)
+        DebuffAura = core.InformedCharacterModifier("디버프 오라", armor_ignore = 20, pdamage_indep = 10, prop_ignore = 10)
         BattleRage = core.InformedCharacterModifier("배틀 레이지",pdamage = 40, crit_damage = 8, crit=20)
         return [WeaponConstant, Mastery, DebuffAura, BattleRage ]
 

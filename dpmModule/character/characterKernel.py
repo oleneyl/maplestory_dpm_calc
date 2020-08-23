@@ -1,5 +1,4 @@
-from ..kernel.core import CharacterModifier, InformedCharacterModifier
-from ..kernel.core import ExtendedCharacterModifier as EXMDF
+from ..kernel.core import ExtendedCharacterModifier, InformedCharacterModifier, SkillModifier
 from ..item import ItemKernel as ik
 from ..item.ItemKernel import Item
 from ..status.ability import Ability_tool, Ability_grade
@@ -7,7 +6,7 @@ from ..kernel.graph import GlobalOperation, initialize_global_properties, _unsaf
 from ..kernel import policy
 from functools import reduce
 
-MDF = CharacterModifier
+ExMDF = ExtendedCharacterModifier
 '''Clas AbstractCharacter : Basic template for build specific User. User is such object that contains
 - Items
 - Buff Skill Wrappers
@@ -17,22 +16,12 @@ MDF = CharacterModifier
 
 class AbstractCharacter():
     #TODO : get/set :: use decorator? could be...
-    def __init__(self, modifierlist = [], level = 230, buff_rem = 0, summonRemain = 0, cooltimeReduce = 4):
+    def __init__(self, level = 230):
         #Initialize Items
         self.level = level
-        self.basic_character_modifier = CharacterModifier(stat_main = 18 + level * 5, stat_sub = 4, crit = 5)
-        self.potential_modifier = CharacterModifier()
+        self.base_modifier = ExMDF(stat_main = 18 + level * 5, stat_sub = 4, crit = 5)
         self.itemlist = {}
-        for md in modifierlist:
-            self.basic_character_modifier = self.basic_character_modifier + md
-        self.static_character_modifier = self.basic_character_modifier.copy()
-
-        self.buff_rem = buff_rem
-        self.summonRemain = summonRemain
-        self.cooltimeReduce = cooltimeReduce
-        
-        self._property_ignorance = 0
-        
+                
         self.about = ""
         self.add_summary("레벨 %d" % level)
         
@@ -42,56 +31,50 @@ class AbstractCharacter():
         level_delta = level - self.level
         self.add_summary(f"레벨 강제 변경 : {self.level} -> {level}")
         self.level = level
-        self.basic_character_modifier += CharacterModifier(stat_main = level_delta * 5)        
+        self.base_modifier += ExMDF(stat_main = level_delta * 5)        
 
     def add_summary(self, txt):
         self.about += "\n" + txt
-    
-    def add_property_ignorance(self, val):
-        self._property_ignorance += val
-        
-    def get_property_ignorance(self):
-        return self._property_ignorance
         
     def get_property_ignorance_modifier(self):
-        return MDF(pdamage_indep = self.get_property_ignorance()) + MDF(pdamage_indep = -50)
+        return ExMDF(pdamage_indep = self.base_modifier.prop_ignore) + ExMDF(pdamage_indep = -50)
 
     def apply_modifiers(self, li):
         '''Be careful! This function PERMANENTLY change character's property.
         You must sure that this function call is appropriate.
         '''
         for mdf in li:
-            self.static_character_modifier += mdf
-            self.basic_character_modifier += mdf
+            self.base_modifier += mdf
     
     def generate_modifier_cache(self):
-        self._modifier_cache = self.get_static_modifier() + self.get_potential_modifier() + self.get_property_ignorance_modifier()
+        self._modifier_cache = self.get_static_modifier() + self.get_property_ignorance_modifier()
+    
+    def get_base_modifier(self):
+        return self.base_modifier.copy()
+
+    def get_skill_modifier(self):
+        return self.base_modifier.to_skill_modifier()
     
     def get_modifier(self):
         if self._modifier_cache is None:
-            return self.get_static_modifier() + self.get_potential_modifier() + self.get_property_ignorance_modifier()
+            return self.get_static_modifier() + self.get_property_ignorance_modifier()
         else:
             return self._modifier_cache
     
     def get_buffed_modifier(self):
-        mod = self.get_static_modifier() + self.get_potential_modifier() + self.get_property_ignorance_modifier()
+        mod = self.get_static_modifier() + self.get_property_ignorance_modifier()
         return mod
         
     def get_static_modifier(self):
-        return self.static_character_modifier.copy()
-        
-    def get_potential_modifier(self):
-        return self.potential_modifier.copy()
+        return self.base_modifier.degenerate()
         
     def remove_item_modifier(self, item):
-        basic, ptnl = item.get_modifier()
-        self.potential_modifier = self.potential_modifier - ptnl
-        self.static_character_modifier = self.static_character_modifier - basic
+        mdf = item.get_modifier()
+        self.base_modifier = self.base_modifier - mdf
 
     def add_item_modifier(self, item):
-        basic, ptnl = item.get_modifier()
-        self.potential_modifier = self.potential_modifier + ptnl
-        self.static_character_modifier = self.static_character_modifier + basic      
+        mdf = item.get_modifier()
+        self.base_modifier = self.base_modifier + mdf
 
     def set_items(self, item_dict):
         keys = ["head", "glove", "top", "bottom", "shoes", "cloak",
@@ -116,9 +99,7 @@ class JobGenerator():
     
     .generate(chtr : ck.AbstractCharacter, combat : bool = False , vlevel : int = 0, vEnhance : list = [0,0,0]) : 
         This function generate given chtr's graph and returns schedule.
-    
-    .apply_complex_options(self, chtr) : apply other setting values etc ) 
-    
+        
     - Values that you must re-  implement
     
     .buffrem : Boolean, option that this character will use bufrem property in union, card, etc.
@@ -147,9 +128,6 @@ class JobGenerator():
         self.ability_list = Ability_tool.get_ability_set(None, None, None)
         self._use_critical_reinforce = False
             
-    def apply_complex_options(self, chtr):
-        return
-
     def get_ruleset(self):
         return
 
@@ -161,14 +139,14 @@ class JobGenerator():
             return ruleset.get_rules(rule_type)
 
     def get_total_modifier_optimization_hint(self):
-        return self.get_modifier_optimization_hint() + CharacterModifier(armor_ignore = 20)
+        return self.get_modifier_optimization_hint().extend() + ExMDF(armor_ignore = 20)
 
     def get_modifier_optimization_hint(self):
         '''
         Modifier optimization에서 사용될 Modifier Hint를 기입합니다.
         
         '''
-        return CharacterModifier()
+        return ExMDF()
     
     def apply_specific_schedule(self, graph):
         return
@@ -214,7 +192,7 @@ class JobGenerator():
         return []
     
     def get_passive_skill_modifier(self):
-        passive_modifier = CharacterModifier()
+        passive_modifier = ExMDF()
         for _mdf in self._passive_skill_list:
             passive_modifier += _mdf        
         return passive_modifier
@@ -258,10 +236,7 @@ class JobGenerator():
         #성향 적용
         personality = Personality.get_personality(100)
         chtr.apply_modifiers([personality])
-        
-        self.chtr.buff_rem = self.chtr.buff_rem + adjusted_ability.buff_rem + personality.buff_rem
-        self.chtr.add_property_ignorance(personality.prop_ignore)
-        
+                
         graph = self.build(chtr, combat = combat, storage_handler=storage_handler)
 
         def log_modifier(modifier, name):
@@ -272,17 +247,17 @@ class JobGenerator():
         def log_character(chtr):
             if log:
                 print("\n---basic CHTR---")
-                print(chtr.get_modifier().log())
+                print(chtr.get_base_modifier().log())
 
         def log_buffed_character(chtr):
             if log:
                 print("\n---final---")
-                buffed = graph.get_default_buff_modifier() + chtr.get_modifier()
+                buffed = graph.get_default_buff_modifier().extend() + chtr.get_base_modifier()
                 print(buffed.log())
 
         # refMDF는 상시 - 시전되는 버프에 관련된 정보를 담고 있습니다.
         def get_reference_modifier(chtr):
-            return graph.get_default_buff_modifier() + chtr.get_modifier() + self.get_total_modifier_optimization_hint()
+            return graph.get_default_buff_modifier().extend() + chtr.get_base_modifier() + self.get_total_modifier_optimization_hint()
 
         log_character(chtr)
         log_buffed_character(chtr)
@@ -290,9 +265,9 @@ class JobGenerator():
         # 무기 소울
         refMDF = get_reference_modifier(chtr)
         if refMDF.crit < 88:
-            weapon_soul_modifier = CharacterModifier(crit = 12)
+            weapon_soul_modifier = ExMDF(crit = 12)
         else:
-            weapon_soul_modifier = CharacterModifier(patt = 3)
+            weapon_soul_modifier = ExMDF(patt = 3)
         log_modifier(weapon_soul_modifier, "weapon soul")
         chtr.apply_modifiers([weapon_soul_modifier])
         log_buffed_character(chtr)
@@ -307,7 +282,6 @@ class JobGenerator():
         unionCard = Card.get_card(self.jobtype, ulevel, True)[0]
         log_modifier(unionCard, "union card")
         chtr.apply_modifiers([unionCard])
-        self.chtr.buff_rem = self.chtr.buff_rem + 20 #메카닉 벞지 적용
         log_buffed_character(chtr)
 
         # 링크 스킬
@@ -326,10 +300,9 @@ class JobGenerator():
 
         # 유니온 점령
         refMDF = get_reference_modifier(chtr)
-        union, unionBuffRem = Union.get_union(refMDF, ulevel, buffrem = self.buffrem, critical_reinforce = self._use_critical_reinforce)
+        union = Union.get_union(refMDF, ulevel, buffrem = self.buffrem, critical_reinforce = self._use_critical_reinforce)
         log_modifier(union, "union")
         chtr.apply_modifiers([union])
-        chtr.buff_rem += unionBuffRem #유니온 벞지 적용
         log_buffed_character(chtr)
 
         # 무기류 잠재능력
@@ -340,8 +313,6 @@ class JobGenerator():
         chtr.set_weapon_potential(weaponli)
         log_buffed_character(chtr)
         
-        ## 기타 옵션 적용
-        self.apply_complex_options(chtr)
         #그래프를 다시 빌드합니다.
         graph = self.build(chtr, combat = combat, storage_handler=storage_handler)
         graph.set_v_enhancer(self.vEhc)
@@ -353,8 +324,8 @@ class JobGenerator():
 
 
 class ItemedCharacter(AbstractCharacter):
-    def __init__(self, modifierlist = [], level = 230):
-        super(ItemedCharacter, self).__init__(modifierlist, level)
+    def __init__(self, level = 230):
+        super(ItemedCharacter, self).__init__(level)
         
         #6 items for armor
         self.itemlist["head"] = Item()
@@ -399,7 +370,7 @@ class ItemedCharacter(AbstractCharacter):
         itemOrder = ["weapon", "subweapon", "emblem"]    
         
         for i in range(3):
-            ptnl = CharacterModifier()
+            ptnl = ExMDF()
             for j in range((len(li) - i - 1) // 3):
                 ptnl  = ptnl + li[i+j*3]
                 
@@ -454,8 +425,8 @@ class Union():
         
     @staticmethod
     def get_union(mdf, ulevel, buffrem = False, asIndex = False, slot = None, critical_reinforce = False):
-        '''get_union(mdf, ulevel, buffrem = False, asIndex = False) : return optimized MDF value.
-        return value : (MDF, buffremain) tuple.
+        '''get_union(mdf, ulevel, buffrem = False, asIndex = False) : return optimized ExMDF value.
+        return value : (ExMDF, buffremain) tuple.
         '''
         if slot is None:
             slots = Union.get_apt_slot(ulevel)
@@ -504,20 +475,20 @@ class Union():
             if state[3] > 100:
                 print(state)
                 raise ValueError("something gonna wrong")
-            return Union._get_union_from_state(state), state[6]
+            return Union._get_union_from_state(state)
     
     @staticmethod
     def _get_union_increment_from_state(mdf, state, critical_reinforce = False):
         mdfCopy = mdf + Union._get_union_from_state(state)
         if critical_reinforce:
-            mdfCopy += MDF(crit_damage = max(0, mdfCopy.crit)*0.125)
+            mdfCopy += ExMDF(crit_damage = max(0, mdfCopy.crit)*0.125)
         return mdfCopy.get_damage_factor()
 
     @staticmethod
     def _get_union_from_state(state):
-        return (MDF(att = state[0]) + MDF(stat_main = 5 * state[1]) + \
-                            MDF(boss_pdamage = state[2]) + MDF(armor_ignore = state[3]) + \
-                            MDF(crit = state[4]) + MDF(crit_damage = state[5] * 0.5))
+        return (ExMDF(att = state[0]) + ExMDF(stat_main = 5 * state[1]) + \
+                            ExMDF(boss_pdamage = state[2]) + ExMDF(armor_ignore = state[3]) + \
+                            ExMDF(crit = state[4]) + ExMDF(crit_damage = state[5] * 0.5) + ExMDF(buff_rem = state[6]))
         
         
 class LinkSkill():
@@ -671,33 +642,35 @@ class Card():
     
     제로 : 경치
     '''
-    #주스텟 / 부스텟 / 크리 / 공마 / 크뎀 / 보공 / 방무 / 총뎀 / 제논
-    CList = [[MDF(stat_main_fixed = i) for i in [10,20,40,80,100]],
-            [MDF(stat_sub_fixed = i) for i in [10,20,40,80,100]],
-            [MDF(crit = i) for i in [1,2,3,4,5]],
-            [MDF(att = i) for i in [5,10,15,20, None]],
-            [MDF(crit_damage = i) for i in [1,2,3,5,6]],
-            [MDF(armor_ignore = i) for i in [1,2,3,5,6]],
-            [MDF(boss_pdamage = i) for i in [1,2,3,5,6]],
-            [MDF(pdamage = i) for i in [0.8,1.6,2.4,3.2,4]],
-            [MDF(stat_main_fixed = i, stat_sub_fixed = i) for i in [5,10,20,40,50]]]
+    #주스텟 / 부스텟 / 크리 / 공마 / 크뎀 / 보공 / 방무 / 총뎀 / 제논 / 쿨감 / 벞지
+    CList = [[ExMDF(stat_main_fixed = i) for i in [10,20,40,80,100]],
+            [ExMDF(stat_sub_fixed = i) for i in [10,20,40,80,100]],
+            [ExMDF(crit = i) for i in [1,2,3,4,5]],
+            [ExMDF(att = i) for i in [5,10,15,20, None]],
+            [ExMDF(crit_damage = i) for i in [1,2,3,5,6]],
+            [ExMDF(armor_ignore = i) for i in [1,2,3,5,6]],
+            [ExMDF(boss_pdamage = i) for i in [1,2,3,5,6]],
+            [ExMDF(pdamage = i) for i in [0.8,1.6,2.4,3.2,4]],
+            [ExMDF(stat_main_fixed = i, stat_sub_fixed = i) for i in [5,10,20,40,50]],
+            [ExMDF(pcooltime_reduce = i) for i in [2,3,4,5,6]],
+            [ExMDF(buff_rem = i) for i in [5,10,15,20,25]]]
     
     priority = {
         "str" : {
-            "order" : [2,4,5,6,7,0,8,1],
-            "max" : [8,4,2,1,1,1,1,1,1]
+            "order" : [2,4,5,6,7,9,10,0,8,1], # 크확, 크뎀, 방무, 보공, 뎀퍼, 쿨감, 벞지, 주스탯, 제논, 부스탯
+            "max" : [8,4,2,1,1,1,1,1,1,1,1]
         },
         "dex" : {
-            "order" : [2,4,5,6,7,0,8,1],
-            "max" : [4,8,2,1,1,1,1,1,1]
+            "order" : [2,4,5,6,7,9,10,0,8,1],
+            "max" : [4,8,2,1,1,1,1,1,1,1,1]
         },
         "int" : {
-            "order" : [2,4,5,6,7,0,8,1],
-            "max" : [7,5,2,1,1,1,1,1,1]
+            "order" : [2,4,5,6,7,9,10,0,8,1],
+            "max" : [7,5,2,1,1,1,1,1,1,1,1]
         },
         "luk" : {
-            "order" : [2,4,5,6,7,0,8,1],
-            "max" : [5,4,2,1,1,1,1,1,1]
+            "order" : [2,4,5,6,7,9,10,0,8,1],
+            "max" : [5,4,2,1,1,1,1,1,1,1,1]
         }
     }
         
@@ -722,7 +695,7 @@ class Card():
         '''
         if jobtype not in ["str", "dex", "int", "luk"]:
             raise TypeError("jobtype must str, dex, int or luk, get:"+str(jobtype))
-        retmdf = MDF()
+        retmdf = ExMDF()
         card_4, card_3 = Card.get_apt_slot(ulevel, maplem = maplem)
         order = [i for i in Card.priority[jobtype]["order"]]
         lefts = [i for i in Card.priority[jobtype]["max"]]
@@ -749,18 +722,18 @@ class Card():
 
 class WeaponPotential():
     storageWeapon = [[None],[None], 
-                        [[MDF(pdamage=6), MDF(patt = 6), MDF(armor_ignore = 15)], [MDF(pdamage=3), MDF(att=3)]],
-                        [[MDF(boss_pdamage=30), MDF(patt = 9), MDF(armor_ignore = 30)], 
-                            [MDF(boss_pdamage=20), MDF(patt = 6), MDF(armor_ignore = 20)]],
-                        [[MDF(boss_pdamage=40), MDF(patt = 12), MDF(armor_ignore = 40)], 
-                            [MDF(boss_pdamage=30), MDF(patt = 9), MDF(armor_ignore = 30)]]]
+                        [[ExMDF(pdamage=6), ExMDF(patt = 6), ExMDF(armor_ignore = 15)], [ExMDF(pdamage=3), ExMDF(att=3)]],
+                        [[ExMDF(boss_pdamage=30), ExMDF(patt = 9), ExMDF(armor_ignore = 30)], 
+                            [ExMDF(boss_pdamage=20), ExMDF(patt = 6), ExMDF(armor_ignore = 20)]],
+                        [[ExMDF(boss_pdamage=40), ExMDF(patt = 12), ExMDF(armor_ignore = 40)], 
+                            [ExMDF(boss_pdamage=30), ExMDF(patt = 9), ExMDF(armor_ignore = 30)]]]
                             
     storageEmblem = [[None],[None], 
-                        [[MDF(pdamage=6), MDF(patt = 6), MDF(armor_ignore = 15)], [MDF(pdamage=3), MDF(patt=3)]],
-                        [[MDF(patt = 9), MDF(armor_ignore = 30)], 
-                            [MDF(patt = 6), MDF(armor_ignore = 20)]],
-                        [[MDF(patt = 12), MDF(armor_ignore = 40)], 
-                            [MDF(patt = 9), MDF(armor_ignore = 30)]]]
+                        [[ExMDF(pdamage=6), ExMDF(patt = 6), ExMDF(armor_ignore = 15)], [ExMDF(pdamage=3), ExMDF(patt=3)]],
+                        [[ExMDF(patt = 9), ExMDF(armor_ignore = 30)], 
+                            [ExMDF(patt = 6), ExMDF(armor_ignore = 20)]],
+                        [[ExMDF(patt = 12), ExMDF(armor_ignore = 40)], 
+                            [ExMDF(patt = 9), ExMDF(armor_ignore = 30)]]]
                                 
     @staticmethod
     def get_weapon_pontential(mdf, tier, number):
@@ -777,7 +750,7 @@ class WeaponPotential():
             raise TypeError("Tier must be 2, 3 or 4.")
             
         target = mdf.copy()
-        enhancement = MDF()
+        enhancement = ExMDF()
         retli = []
         for i in range(number):
             if i < 3: j = 0
@@ -786,7 +759,7 @@ class WeaponPotential():
             if i%3==0: sto = WeaponPotential.storageEmblem
             else: sto = WeaponPotential.storageWeapon
             
-            cand = MDF()
+            cand = ExMDF()
             ehc = 0
             for mdfCandidate in sto[tier][j]:
                 _ehc = (target + enhancement + mdfCandidate).get_damage_factor()
@@ -800,14 +773,14 @@ class WeaponPotential():
 
 class HyperStat():
     requirement = [1,2,4,8,10,15,20,25,30,35,50,65,80,95,110,9999]
-    enhancement = [[MDF(stat_main_fixed = 30) for i in range(16)],
-                    [MDF(stat_sub_fixed = 30) for i in range(16)],
-                    [MDF(crit = 1) for i in range(5)] + [MDF(crit=2) for i in range(11)],
-                    [MDF(crit_damage = 1) for i in range(16)],
-                    [MDF(armor_ignore = 3*(i+1)) - MDF(armor_ignore = 3*i) for i in range(16)],
-                    [MDF(pdamage = 3) for i in range(16)],
-                    [MDF(boss_pdamage = 3) for i in range(5)] + [MDF(boss_pdamage = 4) for i in range(11)],
-                    [MDF(att = 3) for i in range(16)] ]
+    enhancement = [[ExMDF(stat_main_fixed = 30) for i in range(16)],
+                    [ExMDF(stat_sub_fixed = 30) for i in range(16)],
+                    [ExMDF(crit = 1) for i in range(5)] + [ExMDF(crit=2) for i in range(11)],
+                    [ExMDF(crit_damage = 1) for i in range(16)],
+                    [ExMDF(armor_ignore = 3*(i+1)) - ExMDF(armor_ignore = 3*i) for i in range(16)],
+                    [ExMDF(pdamage = 3) for i in range(16)],
+                    [ExMDF(boss_pdamage = 3) for i in range(5)] + [ExMDF(boss_pdamage = 4) for i in range(11)],
+                    [ExMDF(att = 3) for i in range(16)] ]
     def __init__(self, mdf, level):
         self.mdf = mdf
         self.level = level
@@ -835,7 +808,7 @@ class HyperStat():
         hyper_size = 8
         idxList = [0 for i in range(hyper_size)]
         point_left = HyperStat.get_point(level)
-        mdfSum = MDF()
+        mdfSum = ExMDF()
         while True:
             not_enough = True
             fix_enhance = (mdf + mdfSum).get_damage_factor()
@@ -845,7 +818,7 @@ class HyperStat():
             for i in range(hyper_size):
                 enhanced_mdf = HyperStat.enhancement[i][idxList[i]] + mdf + mdfSum
                 if critical_reinforce:
-                    enhanced_mdf += MDF(crit_damage = max(0, enhanced_mdf.crit) * 0.125)
+                    enhanced_mdf += ExMDF(crit_damage = max(0, enhanced_mdf.crit) * 0.125)
                 _ehc = ((enhanced_mdf).get_damage_factor() - fix_enhance) / \
                             HyperStat.requirement[idxList[i]]
                 if _ehc >= ehc and HyperStat.requirement[idxList[i]] < point_left:
@@ -878,25 +851,25 @@ class HyperStat():
         return HyperStat.get_hyper_index(mdf, level, isIndex = False, critical_reinforce = critical_reinforce)
 
 class Doping():
-    dopingListAtt = {"길드의 축복" : MDF(att = 20),
-                    "우뿌" : MDF(att = 30),
-                    "익스레드/블루" : MDF(att = 30),
-                    "MVP 버프" : MDF(att = 30)}
+    dopingListAtt = {"길드의 축복" : ExMDF(att = 20),
+                    "우뿌" : ExMDF(att = 30),
+                    "익스레드/블루" : ExMDF(att = 30),
+                    "MVP 버프" : ExMDF(att = 30)}
 
-    dopingListStat = {"향상된 10단계 물약" : MDF(stat_main = 30)}
+    dopingListStat = {"향상된 10단계 물약" : ExMDF(stat_main = 30)}
     
-    dopingListDamage = {"매칭" : MDF(boss_pdamage = 10),
-                        "노블레스(뎀퍼)" : MDF(pdamage = 30),
-                        "노블레스(보공)" : MDF(boss_pdamage = 28),
-                        "반빨별" : MDF(boss_pdamage = 20)}
+    dopingListDamage = {"매칭" : ExMDF(boss_pdamage = 10),
+                        "노블레스(뎀퍼)" : ExMDF(pdamage = 30),
+                        "노블레스(보공)" : ExMDF(boss_pdamage = 28),
+                        "반빨별" : ExMDF(boss_pdamage = 20)}
                         
-    dopingListArmor = {"고관비" : MDF(armor_ignore = 20)}
+    dopingListArmor = {"고관비" : ExMDF(armor_ignore = 20)}
                         
-    dopingListCritDamage = {"노블레스(크뎀)" : MDF(crit_damage = 30)}
+    dopingListCritDamage = {"노블레스(크뎀)" : ExMDF(crit_damage = 30)}
                         
     @staticmethod
     def get_full_doping():
-        retMdf = MDF()
+        retMdf = ExMDF()
         
         for name in Doping.dopingListAtt:
             retMdf = retMdf + Doping.dopingListAtt[name]
@@ -914,11 +887,11 @@ class Doping():
 class Personality():
     @staticmethod
     def get_personality(avg_level):
-        return EXMDF(armor_ignore = (avg_level // 5) * 0.5, buff_rem = (avg_level // 10) * 1, prop_ignore = 0.5 * (avg_level // 10))
+        return ExMDF(armor_ignore = (avg_level // 5) * 0.5, buff_rem = (avg_level // 10) * 1, prop_ignore = 0.5 * (avg_level // 10))
 
 
 def testonly():            
-    test = MDF(armor_ignore = 80, pdamage = 100, stat_main = 1000, att = 100)
+    test = ExMDF(armor_ignore = 80, pdamage = 100, stat_main = 1000, att = 100)
     for i in range(140, 220, 5):
         print("level" + str(i))
         print(HyperStat.get_hyper_index(test, i))

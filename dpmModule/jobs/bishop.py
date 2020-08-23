@@ -55,10 +55,6 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
         self.preEmptiveSkills = 1
 
-    def apply_complex_options(self, chtr):
-        chtr.buff_rem += 50
-        chtr.add_property_ignorance(10)
-
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(SynchronizeRule('소울 컨트랙트', '인피니티', 35000, -1), RuleSet.BASE)
@@ -72,7 +68,7 @@ class JobGenerator(ck.JobGenerator):
         MagicCritical = core.InformedCharacterModifier("매직 크리티컬",crit = 30, crit_damage = 13)
         HolyFocus = core.InformedCharacterModifier("홀리 포커스",crit = 40)
         
-        MasterMagic = core.InformedCharacterModifier("마스터 매직",att = 30)
+        MasterMagic = core.InformedCharacterModifier("마스터 매직",att = 30, buff_rem = 50)
         ArcaneAim = core.InformedCharacterModifier("아케인 에임", armor_ignore = 20)
         
         VengenceOfAngelOff = core.InformedCharacterModifier("벤전스 오브 엔젤(off)",pdamage = 40)
@@ -86,7 +82,7 @@ class JobGenerator(ck.JobGenerator):
         BlessingEnsemble = core.InformedCharacterModifier("블레싱 앙상블",pdamage_indep = 3)
 
         ArcaneAim = core.InformedCharacterModifier("아케인 에임",pdamage = 40)
-        VengenceOfAngelOn = core.InformedCharacterModifier("벤전스 오브 엔젤(on)", att = 50, pdamage_indep = 30, armor_ignore = 20, pdamage=-40)#속서애성을 pdamage_indep으로 임시 계싼
+        VengenceOfAngelOn = core.InformedCharacterModifier("벤전스 오브 엔젤(on)", att = 50, pdamage_indep = 30, armor_ignore = 20, pdamage=-40, prop_ignore=10)
         return [WeaponConstant, Mastery, ArcaneAim, VengenceOfAngelOn, BlessingEnsemble]
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):

@@ -21,10 +21,6 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
         self.preEmptiveSkills = 2
 
-    def apply_complex_options(self, chtr):
-        chtr.buff_rem += 50
-        chtr.add_property_ignorance(10)
-
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(SynchronizeRule('소울 컨트랙트', '인피니티', 35000, -1), RuleSet.BASE)
@@ -39,7 +35,7 @@ class JobGenerator(ck.JobGenerator):
         
         ElementalReset = core.InformedCharacterModifier("엘리멘탈 리셋", pdamage_indep = 40)
         
-        MasterMagic = core.InformedCharacterModifier("마스터 매직", att = 30)
+        MasterMagic = core.InformedCharacterModifier("마스터 매직", att = 30, buff_rem = 50)
         ArcaneAim = core.InformedCharacterModifier("아케인 에임", armor_ignore = 20)
         
         return [HighWisdom, SpellMastery, MagicCritical, ElementalReset, 
@@ -51,8 +47,9 @@ class JobGenerator(ck.JobGenerator):
         ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", pdamage_indep = 20)
         ArcaneAim = core.InformedCharacterModifier("아케인 (실시간)", pdamage = 40)
         PerventDrain = core.InformedCharacterModifier("퍼번트 드레인", pdamage_indep = 25)
+        ElementalResetActive = core.InformedCharacterModifier("엘리멘탈 리셋(사용)", prop_ignore = 10)
         
-        return [WeaponConstant, Mastery, ExtremeMagic, PerventDrain, ArcaneAim]
+        return [WeaponConstant, Mastery, ExtremeMagic, PerventDrain, ArcaneAim, ElementalResetActive]
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''

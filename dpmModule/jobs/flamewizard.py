@@ -16,9 +16,6 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "플레임위자드"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
-        
-    def apply_complex_options(self, chtr):
-        chtr.add_property_ignorance(10)
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 20, pdamage = 50)
@@ -46,9 +43,10 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5)       
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5)
+        SpiritOfFlameActive = core.InformedCharacterModifier("스피릿 오브 플레임(이그니션)", prop_ignore = 10)
         
-        return [WeaponConstant, Mastery]
+        return [WeaponConstant, Mastery, SpiritOfFlameActive]
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
@@ -116,8 +114,6 @@ class JobGenerator(ck.JobGenerator):
         StackCheck4 = core.OptionalElement(partial(SavageFlameStack.judge, 4, 1), SavageFlame_4, StackCheck3, name = "스택 확인")
         SavageFlame.onAfter(StackCheck4)
         SavageFlame.onAfter(SavageFlameStack.stackController(-15))
-
-        schedule = core.ScheduleGraph()
         
         return (OrbitalFlame,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),

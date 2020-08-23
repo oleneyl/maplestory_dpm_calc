@@ -16,8 +16,8 @@ class SoulTrapStackWrapper(core.StackSkillWrapper):
         self.DEBUF_PERSISTENCE_TIME = 8000 # 8000ms
         super(SoulTrapStackWrapper, self).__init__(skill, 10)
 
-    def _use(self, rem = 0, red = 0):
-        return super(SoulTrapStackWrapper, self)._use()
+    def _use(self, skill_modifier):
+        return super(SoulTrapStackWrapper, self)._use(skill_modifier)
 
     def _add_debuff(self):
         # 디버프 추가, 최대 _max(10)개로 유지
@@ -184,7 +184,6 @@ class JobGenerator(ck.JobGenerator):
 
         #파쇄철조
         BladeImp.onAfter(BladeImpBuff)
-        schedule = core.ScheduleGraph()
 
         #소혼장막
         SpiritFrenzy.onAfter(core.RepeatElement(SpiritFrenzy_Tick, 56))
@@ -200,5 +199,3 @@ class JobGenerator(ck.JobGenerator):
                 [EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init, EnhanceSpiritLinkSummon_J, SoulConcentrateSummon] +\
                 [RealSoulAttackCounter, DoubleBodyRegistance, SpiritFrenzy] +\
                 [BasicAttackWrapper])
-
-        return schedule

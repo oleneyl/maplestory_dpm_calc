@@ -27,10 +27,10 @@ class ElementalGhostWrapper(core.BuffSkillWrapper):
         if self.cooltimeLeft < 0:
             self.available = True
     
-    def _use(self, rem = 0, red = 0):
+    def _use(self, skill_modifier):
         self.target[0].pdamage_indep = 64.687 * 0.01 * (30 + self.vlevel)
         self.target[1].pdamage_indep = 184.5 * 0.01 * (30 + self.vlevel)
-        return super(ElementalGhostWrapper, self)._use()
+        return super(ElementalGhostWrapper, self)._use(skill_modifier)
 
 
 class JobGenerator(ck.JobGenerator):
