@@ -17,6 +17,32 @@ from . import jobutils
 
 ######   Passive Skill   ######
 
+class MultipleOptionWrapper(core.SummonSkillWrapper):
+    """
+    미사일 3회 - 개틀링 5회가 반복됨. 1530ms 간격.
+    30레벨 기준 미사일 33회, 개틀링 55회.
+    """
+    def __init__(self, vEhc, modifier):
+        self.cycle = 0
+        self.vEhc = vEhc
+        skill = core.SummonSkill("멀티플 옵션", 780, 1530, 0, 0, (75+2*vEhc.getV(2,1))*1000, modifier = modifier, cooltime = 200 * 1000).isV(vEhc,2,1)
+        super(MultipleOptionWrapper, self).__init__(skill)
+
+    def _useTick(self):
+        if self.onoff and self.tick <= 0:
+            if self.cycle < 3:
+                damage = 350+10*self.vEhc.getV(2,1)
+                hit = 8
+            else:
+                damage = 200+8*self.vEhc.getV(2,1)
+                hit = 6
+            self.cycle = (self.cycle + 1) % 8
+
+            self.tick += self.skill.delay
+            return core.ResultObject(0, self.get_modifier(), damage, hit, sname = self.skill.name, spec = self.skill.spec)
+        else:
+            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)    
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -28,9 +54,9 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 1
         
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 20, pdamage = 28+20)
+        return core.CharacterModifier(armor_ignore = 10, pdamage = 28+20)
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         
         HiddenPiece = core.InformedCharacterModifier("히든 피스",pdamage = 10)
         MechanicMastery = core.InformedCharacterModifier("메카닉 마스터리",att = 20, crit = 10, crit_damage = 5)
@@ -38,11 +64,11 @@ class JobGenerator(ck.JobGenerator):
         
         OverTunning = core.InformedCharacterModifier("오버 튜닝",pdamage_indep = 20, crit=20, armor_ignore=30)
         MetalArmorExtreme=core.InformedCharacterModifier("메탈아머 익스트림",att=55)
-        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(self.vEhc, 1, 2)
+        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
         
         return [HiddenPiece, MechanicMastery, PhisicalTraining, LoadedDicePassive, MetalArmorExtreme, OverTunning]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 50)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)
 
@@ -62,18 +88,18 @@ class JobGenerator(ck.JobGenerator):
         매시브-호밍-디스토션-마그네틱필드-RM7-RM1
         '''
         #Constants
-        ROBOT_SUMMON_REMAIN = 1 + chtr.summonRemain + 0.4
+        ROBOT_SUMMON_REMAIN = 1 + chtr.get_base_modifier().summon_rem + 0.4
         ROBOT_MASTERY = core.CharacterModifier(pdamage_indep = 108 + combat * 3)
 
         #Buff skills
-        Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
+        Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
         WillOfLiberty = core.BuffSkill("윌 오브 리버티", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
         MassiveFire = core.DamageSkill("매시브 파이어", 600, 285, 6+1, modifier = core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         MassiveFire2 = core.DamageSkill("매시브 파이어(2)", 0, 350, 1, modifier = core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         #로디드 데미지 고정.
-        LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 40*1/72 + 30*1/6 + 20*(59/72)).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
+        LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20 + 10/6 + 10/6*0.5).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
         
         #로봇들 :: 로봇당 총뎀6%, 어빌리티 적용 시 7%
         
@@ -99,8 +125,9 @@ class JobGenerator(ck.JobGenerator):
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
 
         RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3, ROBOT_MASTERY) # 메카닉은 인팬트리에 로봇 마스터리 최종뎀이 적용됨
-        MultipleOptionGattling = core.SummonSkill("멀티플 옵션(개틀링)", 780, 1901, (200+8*vEhc.getV(2,1)), 6, (75+2*vEhc.getV(2,1))*1000, modifier = ROBOT_MASTERY, cooltime = 200 * 1000).isV(vEhc,2,1).wrap(core.SummonSkillWrapper) # 원래 공격주기는 1500이나, 미사일로 인해 손실되는 타수를 보정하기 위해 1901로 기입함.
-        MultipleOptionMissle = core.SummonSkill("멀티플 옵션(미사일)", 0, 8000, (350+10*vEhc.getV(2,1)), 24, (75+2*vEhc.getV(2,1))*1000, modifier = ROBOT_MASTERY, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
+        
+        MultipleOption = MultipleOptionWrapper(vEhc, ROBOT_MASTERY)
+        MultipleOptionBuff = core.BuffSkill("멀티플 옵션(버프)", 0, MultipleOption.skill.remain, cooltime = -1, pdamage = 7).wrap(core.BuffSkillWrapper)
         
         MicroMissle = core.DamageSkill("마이크로 미사일 컨테이너", 540, 375+17*vEhc.getV(0,0), (30 + vEhc.getV(0,0) // 3) * 5, cooltime = 25000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         BusterCall_ = core.DamageSkill("메탈아머 전탄발사", 8670/49, 400+16*vEhc.getV(4,4), 11).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
@@ -118,7 +145,7 @@ class JobGenerator(ck.JobGenerator):
         
         HommingMissleHolder = core.SummonSkill("호밍 미사일(더미)", 0, 660, 0, 0, 99999 * 100000).wrap(core.SummonSkillWrapper)
         
-        MultipleOptionGattling.onAfter(MultipleOptionMissle)
+        MultipleOption.onAfter(MultipleOptionBuff)
         
         IsBuster_B = core.OptionalElement(BusterCallBuff.is_active, HommingMissle_B_Bu, HommingMissle_B)
         IsBuster = core.OptionalElement(BusterCallBuff.is_active, HommingMissle_Bu, HommingMissle_)
@@ -144,9 +171,9 @@ class JobGenerator(ck.JobGenerator):
         
         return(MassiveFire,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-                    Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, RoboFactoryBuff, BomberTime, Overdrive, OverdrivePenalty,
+                    Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, RoboFactoryBuff, MultipleOptionBuff, BomberTime, Overdrive, OverdrivePenalty,
                     globalSkill.soul_contract()] +\
                 [MicroMissle, BusterCallInit] +\
-                [HommingMissleHolder, RegistanceLineInfantry, SupportWaver, Robolauncher, RoboFactory, DistortionField, MultipleOptionGattling, MultipleOptionMissle] +\
+                [HommingMissleHolder, RegistanceLineInfantry, SupportWaver, Robolauncher, RoboFactory, DistortionField, MultipleOption] +\
                 [BusterCallBuff, BusterCallPenalty] +\
                 [MassiveFire])

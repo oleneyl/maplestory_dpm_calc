@@ -16,8 +16,8 @@ class SoulTrapStackWrapper(core.StackSkillWrapper):
         self.DEBUF_PERSISTENCE_TIME = 8000 # 8000ms
         super(SoulTrapStackWrapper, self).__init__(skill, 10)
 
-    def _use(self, rem = 0, red = 0):
-        return super(SoulTrapStackWrapper, self)._use()
+    def _use(self, skill_modifier):
+        return super(SoulTrapStackWrapper, self)._use(skill_modifier)
 
     def _add_debuff(self):
         # 디버프 추가, 최대 _max(10)개로 유지
@@ -49,7 +49,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'mess')
         self.preEmptiveSkills = 2
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 60)
         SpiritLink_3 = core.InformedCharacterModifier("정령 결속 3",att = 20, pdamage = 20)
 
@@ -58,12 +58,12 @@ class JobGenerator(ck.JobGenerator):
         WeaknessFinding = core.InformedCharacterModifier("약점 간파",crit = 25)
         #체력 50%이하인 적에게 크리율 65%, 크뎀 20% 증가??
 
-        LoadedDicePassive = core.InformedCharacterModifier("로디드 다이스(패시브)", att = self.vEhc.getV(4,4) + 10)
+        LoadedDicePassive = core.InformedCharacterModifier("로디드 다이스(패시브)", att = vEhc.getV(4,4) + 10)
 
         return [PhisicalTraining, SpiritLink_3, 
                 SpiritLink_4, AdvancedNuckleMastery, WeaknessFinding, LoadedDicePassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5)   
         Weakness = core.InformedCharacterModifier("약화",pdamage = 20) #디버프지만 상시발동가정    
@@ -184,7 +184,6 @@ class JobGenerator(ck.JobGenerator):
 
         #파쇄철조
         BladeImp.onAfter(BladeImpBuff)
-        schedule = core.ScheduleGraph()
 
         #소혼장막
         SpiritFrenzy.onAfter(core.RepeatElement(SpiritFrenzy_Tick, 56))
@@ -200,5 +199,3 @@ class JobGenerator(ck.JobGenerator):
                 [EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init, EnhanceSpiritLinkSummon_J, SoulConcentrateSummon] +\
                 [RealSoulAttackCounter, DoubleBodyRegistance, SpiritFrenzy] +\
                 [BasicAttackWrapper])
-
-        return schedule

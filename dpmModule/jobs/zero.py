@@ -63,7 +63,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
 
         ResolutionTime = core.InformedCharacterModifier("리졸브 타임",pdamage_indep = 25, stat_main = 50)
@@ -75,7 +75,7 @@ class JobGenerator(ck.JobGenerator):
 
         return [Mastery, ResolutionTime, AlphaState]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         ArmorSplit = core.InformedCharacterModifier("아머 스플릿", armor_ignore = 50)
         return [ArmorSplit]
 

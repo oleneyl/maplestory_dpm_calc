@@ -22,20 +22,20 @@ class FridWrapper(core.BuffSkillWrapper):
         # 이 변수가 무슨 뜻인지 확인필요. 직업별 스크립트 중 에반에만 존재.
         self.modifierInvariantFlag = invariant
 
-    def _use(self, rem = 0, red = 0) -> core.ResultObject:
+    def _use(self, skill_modifier) -> core.ResultObject:
         self.onoff = True
         self.state += 1
         if self.state > 6:
             self.state -= 6        
         self.skill = self.skillList[self.state]
-        self.timeLeft = self.skill.remain * (1 + 0.01*rem * self.skill.rem)
-        self.cooltimeLeft = self.skill.cooltime * (1 - 0.01*red* self.skill.red)
+        self.timeLeft = self.skill.remain * (1 + 0.01*skill_modifier.buff_rem * self.skill.rem)
+        self.cooltimeLeft = self.skill.cooltime * (1 - 0.01*skill_modifier.pcooltime_reduce* self.skill.red)
         self.onoff = True
         if self.cooltimeLeft > 0:
             self.available = False
         delay = self.skill.delay
         mdf = self.get_modifier()
-        return core.ResultObject(delay, mdf, 0, 0, sname = self._id, spec = 'buff', kwargs = {"remain" : self.skill.remain * (1+0.01*rem*self.skill.rem)})
+        return core.ResultObject(delay, mdf, 0, 0, sname = self._id, spec = 'buff', kwargs = {"remain" : self.skill.remain * (1+0.01*skill_modifier.buff_rem*self.skill.rem)})
         #return delay, mdf, 0, self.cascade
 
 

@@ -26,7 +26,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('얼티밋 다크 사이트', '스프레드 스로우'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         NimbleBody = core.InformedCharacterModifier("님블 바디",stat_main = 20)
         CriticalThrow = core.InformedCharacterModifier("크리티컬 스로우", crit=50, crit_damage = 5)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
@@ -37,12 +37,12 @@ class JobGenerator(ck.JobGenerator):
         DarkSerenity = core.InformedCharacterModifier("다크 세레니티",att = 40, armor_ignore = 30)
         
         JavelineExpert = core.InformedCharacterModifier("자벨린 엑스퍼트",att = 30, crit_damage = 15)
-        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(self.vEhc, 1, 1)
+        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 1, 1)
         
         return [NimbleBody, CriticalThrow, PhisicalTraining, 
                 Adrenalin, JavelinMastery, PurgeAreaPassive, DarkSerenity, JavelineExpert, ReadyToDiePassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 75)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)    #오더스 기본적용!        
         

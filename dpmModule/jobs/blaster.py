@@ -55,7 +55,7 @@ class JobGenerator(ck.JobGenerator):
         
         return ruleset
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = self._passive_level + self._combat
         GuntletMastery = core.InformedCharacterModifier("건틀렛 마스터리", crit= 30, att = 20)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
@@ -69,7 +69,7 @@ class JobGenerator(ck.JobGenerator):
         return [GuntletMastery, PhisicalTraining, ChargeMastery, 
                         GuntletExpert, AdvancedChargeMastery, CombinationTraining]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = self._passive_level + self._combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5 * math.ceil(passive_level / 2))

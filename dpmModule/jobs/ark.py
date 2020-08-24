@@ -23,9 +23,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(MutualRule('인피니티 스펠', '근원의 기억'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self):
-        vEhc = self.vEhc
-        
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         # 매직 서킷: 앱솔 기준 15.4
         WEAPON_ATT = jobutils.get_weapon_att("너클")
         
@@ -42,7 +40,7 @@ class JobGenerator(ck.JobGenerator):
                                     NuckleMastery, PhisicalTraining, 
                                     FusionProgress, NuckleExpret, FusionComplete, BattleRage]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5)        
         
