@@ -38,6 +38,15 @@ class OrderWrapper(core.SummonSkillWrapper):
         
         self.stack = len(self.queue) * 2
         super(OrderWrapper, self).spend_time(time)
+
+    def _delayQueue(self, time): # 게더링/블로섬 도중에는 오더의 지속시간이 흐르지 않음
+        self.set_disabled_and_time_left(time)
+        self.queue = [x + time for x in self.queue]
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
+
+    def delayQueue(self, time):
+        task = core.Task(self, partial(self._delayQueue, time))
+        return core.TaskHolder(task, name = "오더 지속시간 지연")
         
     def judge(self, stack, direction):
         if (self.stack-stack)*direction>=0:return True
@@ -100,7 +109,7 @@ class JobGenerator(ck.JobGenerator):
 
         전분 참조 : https://youtu.be/m2LX8otP-9w
 
-        게더링-블로섬
+        게더링-디바이드-블로섬
 
         게더링, 블로섬 80% 히트
 
@@ -143,7 +152,7 @@ class JobGenerator(ck.JobGenerator):
         Divide = core.DamageSkill('디바이드', 600, 375+self._combat*3, 6, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #트리거 스킬, 클라공속 780ms
 
         # TODO: 쿨마다 사용하는게 나을 수 있음
-        Grave = core.DamageSkill('그레이브', 630, 800+self._combat*20, 10, cooltime=-1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) #한 번만 사용, 클라공속 840ms
+        Grave = core.DamageSkill('그레이브', 630, 800+self._combat*20, 10, cooltime=90000, red=True).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) #한 번만 사용, 클라공속 840ms
         GraveDebuff = core.BuffSkill('그레이브(디버프)', 0, 999999999, pdamage=20, armor_ignore=10, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         Blossom = core.DamageSkill('블로섬', 420, 650+self._combat*6, 8, cooltime=20*1000*0.75, red=True).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 50%결정. 클라공속 420ms, 공속 안받음
@@ -210,11 +219,10 @@ class JobGenerator(ck.JobGenerator):
 
         # 게더링-블로섬
         Blossom.onConstraint(core.ConstraintElement('오더가 있을 때', Order, partial(Order.judge, 1, 1)))
-        Blossom.onBefores([Divide, Gathering]) # 게더링->디바이드->블로섬 순서, _befores는 리스트의 끝부터 실행됨
+        Blossom.onBefores([Divide, Gathering, Order.delayQueue(600+1410)]) # 게더링->디바이드->블로섬 순서, _befores는 리스트의 끝부터 실행됨. 2010ms동안 오더가 멈춤.
         Blossom.onAfter(BlossomExceed)
 
         Grave.onAfter(GraveDebuff)
-        Grave.set_disabled_and_time_left(1)
 
         # 루인
         Ruin.onAfter(RuinFirstTick)
