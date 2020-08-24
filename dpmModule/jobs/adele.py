@@ -123,7 +123,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self._combat
 
         ShardActive = core.DamageSkill("샤드(액티브)", 0, 80+30+115+225+passive_level*3, 3 * 5).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) # 자동사용만, 최종 450*3
-        Shard = core.DamageSkill("샤드", 0, 80+30+115+225+passive_level*3, 3 * 5, cooltime=8000).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) # 8초마다 트리거 스킬 적중시 시전
+        Shard = core.DamageSkill("샤드", 0, 80+30+115+225+passive_level*3, 3 * 5, cooltime=8000, red=True).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) # 8초마다 트리거 스킬 적중시 시전
 
         Ether = core.StackSkillWrapper(core.BuffSkill('에테르', 0, 9999999), 400)
         EtherTick = core.SummonSkill('에테르(자연 회복)', 0, 10020, 0, 0, 9999999).wrap(core.SummonSkillWrapper)
