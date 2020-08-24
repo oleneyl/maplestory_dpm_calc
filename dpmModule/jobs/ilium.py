@@ -15,8 +15,8 @@ class IliumStackWrapper(core.StackSkillWrapper):
         self.fastChargeJudge = fastChargeJudge
         self.stopJudge = stopJudge
 
-    def addTrigger(self, controller, stack, isLast = False):
-        self.triggers.append({"controller":controller.build_task(), "stack" : stack, "state" : False, "isLast" : isLast})
+    def addTrigger(self, skill, stack, isLast = False):
+        self.triggers.append({"skill" : skill, "stack" : stack, "state" : False, "isLast" : isLast})
     
     def vary(self, d):
         delta = d
@@ -30,10 +30,8 @@ class IliumStackWrapper(core.StackSkillWrapper):
             result = super().vary(0)
 
         for trigger in self.triggers:
-            if (trigger["stack"] < self.stack) and (not trigger["state"]):
-                #result.cascade.append(trigger["controller"])
-                #Insafe mode running! But this prevents event loop.
-                trigger["controller"].do()
+            if (trigger["stack"] <= self.stack) and (not trigger["state"]):
+                trigger["skill"].set_disabled_and_time_left(1)
                 trigger["state"] = True
                 
                 if trigger["isLast"]:
@@ -67,9 +65,9 @@ class RiyoWrapper(core.SummonSkillWrapper):
         super(RiyoWrapper, self).__init__(skill)
         self.count = 0
 
-    def _use(self, rem = 0, red = 0):
+    def _use(self, skill_modifier):
         self.count = 0
-        return super(RiyoWrapper, self)._use(rem, red)
+        return super(RiyoWrapper, self)._use(skill_modifier)
     
     def _useTick(self):
         if self.onoff and self.tick <= 0:
@@ -142,8 +140,7 @@ class JobGenerator(ck.JobGenerator):
         # ruleset.add_rule(ConditionRule("글로리 윙(진입)", "크리스탈 이그니션(시전)", lambda x:x.is_cooltime_left(20000, 1) or x.is_cooltime_left(10000, -1)), RuleSet.BASE)
         return ruleset
         
-    def get_passive_skill_list(self):
-        vEhc = self.vEhc
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         # 앱솔 무기 마력 241
         WEAPON_ATT = jobutils.get_weapon_att("건틀렛")
         MagicCircuit = core.InformedCharacterModifier("매직 서킷", att = WEAPON_ATT*0.2)
@@ -159,7 +156,7 @@ class JobGenerator(ck.JobGenerator):
         return [MagicCircuit, MagicGuntletMastery, BlessMarkPassive,
             LefMastery, DestinyPioneer, ContinualResearch, CrystalSecret ]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5)
         
@@ -272,9 +269,9 @@ class JobGenerator(ck.JobGenerator):
 
         #스택 연결
         CrystalCharge = IliumStackWrapper(GloryWingStackSkill, 160, FastCharge, GloryWingUse.is_active ,name = "크리스탈 차지")
-        CrystalCharge.addTrigger(CrystalSkill_MortalSwing.controller(1), 30)
-        CrystalCharge.addTrigger(CrystalSkill_Deus.controller(1), 90)
-        CrystalCharge.addTrigger(GloryWingUse.controller(1), 150, isLast = True)
+        CrystalCharge.addTrigger(CrystalSkill_MortalSwing, 30)
+        CrystalCharge.addTrigger(CrystalSkill_Deus, 90)
+        CrystalCharge.addTrigger(GloryWingUse, 150, isLast = True)
 
         GloryWingUse.onConstraint(core.ConstraintElement("소오크 가동중", SoulOfCrystal, SoulOfCrystal.is_active))
         GloryWingUse.onAfter(SoulOfCrystal.turnOffController())

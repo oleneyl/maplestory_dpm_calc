@@ -28,7 +28,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('그랜드 크로스', '홀리 유니티'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         ShieldMastery = core.InformedCharacterModifier("실드 마스터리",att = 10)
         
@@ -36,7 +36,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [PhisicalTraining, ShieldMastery, PaladinExpert]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -4.5)    #오더스 기본적용!
         
@@ -55,7 +55,7 @@ class JobGenerator(ck.JobGenerator):
 
         블래스트-리인포스, 보너스 어택 / 생츄어리-보너스 어택, 쿨타임 리듀스 / 위협-인핸스
         '''
-
+        buff_rem = chtr.get_base_modifier().buff_rem
         
         #Buff skills
         Threat = core.BuffSkill("위협", 1440, 80 * 1000, armor_ignore = 30 + 20).wrap(core.BuffSkillWrapper) # 기본 1080, 75% 확률 반영 딜레이
@@ -67,9 +67,9 @@ class JobGenerator(ck.JobGenerator):
         HolyUnity = core.BuffSkill("홀리 유니티", 600, (40 + vEhc.getV(0,0)) * 1000, cooltime = 120 * 1000, red = True, pdamage_indep = int(35 + 0.5*vEhc.getV(0,0))).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
     
         #Damage Skills
-        LighteningCharge = core.DamageSkill("라이트닝 차지", 630, 462, 3+2, cooltime = 60 * 1000 * (1 + chtr.buff_rem * 0.01)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) # 엘리멘탈 차지의 벞지 적용 고려함
+        LighteningCharge = core.DamageSkill("라이트닝 차지", 630, 462, 3+2, cooltime = 60 * 1000 * (1 + buff_rem * 0.01)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) # 엘리멘탈 차지의 벞지 적용 고려함
         LighteningChargeDOT = core.DotSkill("라이트닝 차지(도트)", 115, 6000).wrap(core.SummonSkillWrapper)
-        DivineCharge = core.DamageSkill("디바인 차지", 630, 462, 3+2, cooltime = 60 * 1000 * (1 + chtr.buff_rem * 0.01)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        DivineCharge = core.DamageSkill("디바인 차지", 630, 462, 3+2, cooltime = 60 * 1000 * (1 + buff_rem * 0.01)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         Sanctuary = core.DamageSkill("생츄어리", 750, 580, 8+2, cooltime = 14 * 0.7 * 1000, red = True, modifier = core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
 
         Blast = core.DamageSkill("블래스트", 630, 291, 9+2+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)

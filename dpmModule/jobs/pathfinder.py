@@ -44,11 +44,12 @@ class CardinalStateWrapper(core.BuffSkillWrapper):
         return self.check_state(2)
 
 class RelicChargeStack(core.StackSkillWrapper):
-    def __init__(self, ancient_guidance_buff):
+    def __init__(self, ancient_guidance_buff, chtr):
         skill = core.BuffSkill("렐릭 차지", 0, 99999999)
         super(RelicChargeStack, self).__init__(skill, 1000)
         self.ancient_guidance_stack = 0
         self.ancient_guidance_buff = ancient_guidance_buff
+        self.ancient_guidance_task = ancient_guidance_buff.build_task(chtr.get_skill_modifier())
         
     def vary(self, d):
         res = super(RelicChargeStack, self).vary(d)
@@ -56,7 +57,7 @@ class RelicChargeStack(core.StackSkillWrapper):
             self.ancient_guidance_stack += max(d,0)
         if self.ancient_guidance_stack > 1000:
             self.ancient_guidance_stack = 0
-            res.cascade = [self.ancient_guidance_buff.build_task()]   #For stability
+            res.cascade = [self.ancient_guidance_task]   #For stability
         #print(self.stack, self.ancient_guidance_stack)
         return res
     
@@ -71,7 +72,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit = 40)
         AncientBowMastery = core.InformedCharacterModifier("에인션트 보우 마스터리", att = 30)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
@@ -86,7 +87,7 @@ class JobGenerator(ck.JobGenerator):
                                     EssenceOfArcher, AdditionalTransitionPassive, 
                                         AncientBowExpert, IllusionStep]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)
 
@@ -207,7 +208,7 @@ class JobGenerator(ck.JobGenerator):
     
         CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 1, 1, 20) #Maybe need to sync
     
-        RelicCharge = RelicChargeStack(AncientGuidanceBuff)
+        RelicCharge = RelicChargeStack(AncientGuidanceBuff, chtr)
         CardinalState = CardinalStateWrapper([SplitMistel, EdgeOfResonance, ComboAssultHolder, AncientAstraHolder])
         
         # 기본적인 스킬연계 연결

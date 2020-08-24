@@ -23,7 +23,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(crit = 20)
 
-    def get_passive_skill_list(self):        
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):        
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",patt = 10)
         
         PhisicalTraiging = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
@@ -39,7 +39,7 @@ class JobGenerator(ck.JobGenerator):
                             InvigoratePassive, Intension, ShiningCharge, CombatMastery, AdvancedSowrdMastery,
                             AdvancedFinalAttackPassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         PARTYPEOPLE = 1        
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)

@@ -18,9 +18,9 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self._use_critical_reinforce = True
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트", patt = 10)
-        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니", stat_main = self.chtr.level // 2)
+        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니", stat_main = chtr.level // 2)
         
         WhisperOfWind = core.InformedCharacterModifier("위스퍼 오브 윈드",att = 20)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝", stat_main = 30, stat_sub = 30)
@@ -29,7 +29,7 @@ class JobGenerator(ck.JobGenerator):
         BowExpert = core.InformedCharacterModifier("보우 엑스퍼트", att = 30 + self.combat*1, crit_damage = 20, pdamage_indep = 25 + self.combat*1, boss_pdamage = 40 + self.combat*1)
         return [ElementalExpert, ElementalHarmony, WhisperOfWind, PhisicalTraining, BowExpert, WindBlessingPassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + self.combat*0.5)
         

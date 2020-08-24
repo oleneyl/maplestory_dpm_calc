@@ -31,7 +31,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 20)
         
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         RetrievedMemory = core.InformedCharacterModifier("되찾은 기억", patt=5)
         SnowChargePassive = core.InformedCharacterModifier("스노우 차지(패시브)", pdamage=10)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
@@ -44,7 +44,7 @@ class JobGenerator(ck.JobGenerator):
         return [RetrievedMemory, SnowChargePassive, PhisicalTraining, 
             AdvancedComboAbilityPassive, CleavingAttack, Might, HighMastery, AdvancedFinalAttackPassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 49)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)        
         return [WeaponConstant, Mastery]

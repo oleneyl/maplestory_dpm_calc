@@ -5,9 +5,9 @@ from . import ItemKernel as it
 #칭호들
 
 
-KingOfRootAbyss = it.Item(name="킹 오브 루타비스", att=3, stat_main = 8, stat_sub=8, potential = it.CharacterModifier(armor_ignore = 5, boss_pdamage = 5))
-PingkbinAndMe = it.Item(name="핑아일체", att = 5, stat_main = 10, stat_sub=10, potential = it.CharacterModifier( boss_pdamage = 10))
-MaplewellKnown = it.Item(name="메이플을 잘 아는", att = 5, stat_main = 10, stat_sub=10, potential = it.CharacterModifier( armor_ignore = 10))
+KingOfRootAbyss = it.Item(name="킹 오브 루타비스", att=3, stat_main = 8, stat_sub=8, potential = it.ExMDF(armor_ignore = 5, boss_pdamage = 5))
+PingkbinAndMe = it.Item(name="핑아일체", att = 5, stat_main = 10, stat_sub=10, potential = it.ExMDF( boss_pdamage = 10))
+MaplewellKnown = it.Item(name="메이플을 잘 아는", att = 5, stat_main = 10, stat_sub=10, potential = it.ExMDF( armor_ignore = 10))
 
 
 # 칠요셋
@@ -25,19 +25,19 @@ def get_medal(value):
 def get_pet(att):   
     return it.Item(name="펫장비", att = att)
 
-def get_heart(att, ptnl = it.CharacterModifier(), aptnl = it.CharacterModifier()):
+def get_heart(att, ptnl = it.ExMDF(), aptnl = it.ExMDF()):
     return it.Item(name="하트", att = att, potential = ptnl, additional_potential = aptnl)
 
-def ocean_glow(star, each_enhance = it.CharacterModifier(), potential = it.CharacterModifier(),
-                        additional_potential = it.CharacterModifier(),
-                        bonus = it.CharacterModifier()):
+def ocean_glow(star, each_enhance = it.ExMDF(), potential = it.ExMDF(),
+                        additional_potential = it.ExMDF(),
+                        bonus = it.ExMDF()):
     
     OceanGlowEaring = it.Item(name="오션 글로우 이어링", stat_main = 7, stat_sub = 5, att = 5)
     OceanGlowEaring.add_main_option(bonus)
     OceanGlowEaring.set_potential(potential)
     OceanGlowEaring.set_additional_potential(additional_potential)
     
-    scroll_enhance = it.CharacterModifier()
+    scroll_enhance = it.ExMDF()
     for i in range(8):
         scroll_enhance += each_enhance
     OceanGlowEaring.add_main_option(scroll_enhance)
