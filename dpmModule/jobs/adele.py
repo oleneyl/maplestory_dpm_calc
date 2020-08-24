@@ -123,7 +123,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self._combat
 
         ShardActive = core.DamageSkill("샤드(액티브)", 0, 80+30+115+225+passive_level*3, 3 * 5).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) # 자동사용만, 최종 450*3
-        Shard = core.SummonSkill("샤드", 0, 8000, 80+30+115+225+passive_level*3, 3 * 5, 99999999).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper) # 8초마다 자동시전
+        Shard = core.DamageSkill("샤드", 0, 80+30+115+225+passive_level*3, 3 * 5, cooltime=8000).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) # 8초마다 트리거 스킬 적중시 시전
 
         Ether = core.StackSkillWrapper(core.BuffSkill('에테르', 0, 9999999), 400)
         EtherTick = core.SummonSkill('에테르(자연 회복)', 0, 10020, 0, 0, 9999999).wrap(core.SummonSkillWrapper)
@@ -181,7 +181,7 @@ class JobGenerator(ck.JobGenerator):
         RuinFirstTick = core.SummonSkill('루인(소환)', 0, 160, 250 + vEhc.getV(2,2)*10, 6, 2000, cooltime=-1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 12번, 2초에 나누어 사용으로 가정
         RuinSecondTick = core.SummonSkill('루인(공격)', 0, 250, 450 + vEhc.getV(2,2)*18, 9, 2000, cooltime=-1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 8번, 2초에 나누어 사용으로 가정
 
-        Infinite = core.SummonSkill('인피니트', 540, 1080, 350 + vEhc.getV(0,0) * 14, 2 * 18, 30000, cooltime=180*1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) #매 공격마다 5% 결정생성. 전분 기준 514회 타격 -> 평균 514/18 = 28회 공격(1080ms). 
+        Infinite = core.SummonSkill('인피니트', 540, 342, 350 + vEhc.getV(0,0) * 14, 2 * 6, 30000, cooltime=180*1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) #매 공격마다 5% 결정생성. 전분 기준 517회 타격 -> 18개를 6개씩 묶어서 타격 가정. (30000-540)//342*6 = 516.
         Restore = core.BuffSkill('리스토어', 720, 30*1000, pdamage=15+vEhc.getV(1,1), cooltime=180*1000, red=True).isV(vEhc,1,1).wrap(core.BuffSkillWrapper) #소드 2개 증가, 에테르획득량 40+d(x/2)%증가
         RestoreTick = core.SummonSkill('리스토어(주기공격)', 0, 2970, 900+36*vEhc.getV(1,1), 3, 30*1000, cooltime=-1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # 11회 시전
 
@@ -240,7 +240,11 @@ class JobGenerator(ck.JobGenerator):
         # 크리에이션
         Divide.onAfter(core.OptionalElement(Creation.is_available, Creation))
 
+        # 원더
+        Divide.onAfter(core.OptionalElement(Shard.is_available, Shard))
+
         Creation.protect_from_running()
+        Shard.protect_from_running()
 
         return(Divide,
                 [globalSkill.maple_heros(chtr.level), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
