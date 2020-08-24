@@ -116,7 +116,7 @@ class JobGenerator(ck.JobGenerator):
         레조넌스 10초마다 사용
 
         코어 강화 순서
-        디바이드 - 오더(그레이브) - 테리토리(트레드) - 블로섬(스콜) - 임페일(레조넌스/마커) - 크리에이션(게더링) - 샤드 - 레조넌스
+        디바이드 - 오더(그레이브) - 테리토리(트레드) - 블로섬(스콜) - 임페일(레조넌스/마커) - 크리에이션(게더링) - 샤드(원더)
         인피니트 - 리스토어 - 루인 - 매서풀 - 오라웨폰 - (바오스)
 
         '''
@@ -251,7 +251,7 @@ class JobGenerator(ck.JobGenerator):
                     AuraWeaponBuff, AuraWeaponCooltimeDummy, MagicCircuitFullDrive, 
                     globalSkill.useful_sharp_eyes(), globalSkill.soul_contract()] +\
                 [Resonance, Grave, Blossom, Marker, Ruin] +\
-                [Order, Shard, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, ManaStorm] +\
+                [Order, Shard, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, Scool, ManaStorm] +\
                 [] +\
                 [Divide])        
 
