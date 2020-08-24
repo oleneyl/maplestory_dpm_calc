@@ -83,9 +83,8 @@ class JobGenerator(ck.JobGenerator):
         TrueSnippingTick = core.DamageSkill("트루 스나이핑(타격)", 690, 950+vEhc.getV(2,2)*30, 14+1, modifier = core.CharacterModifier(pdamage = 100, armor_ignore = 100) + PASSIVE_MODIFIER).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         TrueSnipping = core.DamageSkill("트루 스나이핑", 120, 0, 0, cooltime = 180 * 1000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
-        #TODO : 차지드 애로우용 홀더 생성이 필요함.
-        ChargedArrow = core.DamageSkill("차지드 애로우(차징)", 0, 750 + vEhc.getV(1,1)*30, 10+1, cooltime = -1, modifier = PASSIVE_MODIFIER).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        ChargedArrowUse = core.DamageSkill("차지드 애로우", 360, 0, 0, cooltime = 10000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        ChargedArrow = core.DamageSkill("차지드 애로우", 0, 750 + vEhc.getV(1,1)*30, 10+1, cooltime = -1, modifier = PASSIVE_MODIFIER).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        ChargedArrowHold = core.SummonSkill("차지드 애로우(더미)", 0, 10000, 0, 0, 9999999, cooltime = -1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # TODO: 공격 주기에 쿨감 적용해야 함
         #Summon Skills
         Freezer = core.SummonSkill("프리저", 900, 3030, 390, 1, 220 * 1000).setV(vEhc, 3, 3, False).wrap(core.SummonSkillWrapper)
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
@@ -110,19 +109,22 @@ class JobGenerator(ck.JobGenerator):
         Snipping.onAfter(SplitArrowOption)
     
         TrueSnippingDeal = core.RepeatElement(TrueSnippingTick, 7)
+        TrueSnipping.onBefore(ChargedArrowHold.controller(10000, name = "차징 유예"))
         TrueSnipping.onAfter(TrueSnippingDeal)
-        TrueSnipping.onAfter(ChargedArrow.controller(9999999, name = "차징 해제"))
         
-        ChargedArrowUse.onAfter(ChargedArrow.controller(5000))
+        ChargedArrowHold.onTick(Snipping) # 완충시 스나이핑 즉시 발사됨
+        ChargedArrowHold.onTick(ChargedArrow)
 
         for sk in [Snipping, TrueSnippingTick, ChargedArrow]:
             sk.onAfter(FinalAttack)
+        
+        ChargedArrowHold.set_disabled_and_time_left(5000) # 최초 차징 시간
         
         return(Snipping,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_wind_booster(),
                     SoulArrow, ElusionStep, SharpEyes, BoolsEye, EpicAdventure, CriticalReinforce, SplitArrowBuff,
                         globalSkill.soul_contract()] +\
-                [TrueSnipping, ChargedArrowUse, ChargedArrow] +\
+                [TrueSnipping, ChargedArrowHold, ChargedArrow] +\
                 [Evolve,Freezer, GuidedArrow] +\
                 [] +\
                 [Snipping])
