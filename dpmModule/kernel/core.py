@@ -676,8 +676,8 @@ class SummonSkill(AbstractSkill):
         return self._static_skill_modifier
 
 class DotSkill(SummonSkill):
-    def __init__(self, name, damage, remain):
-        super(DotSkill, self).__init__(name, 0, 1000, damage, 1, remain, cooltime = -1, modifier = CharacterModifier(crit=-9999, armor_ignore=100))
+    def __init__(self, name, damage, remain, cooltime = -1):
+        super(DotSkill, self).__init__(name, 0, 1000, damage, 1, remain, cooltime = cooltime, modifier = CharacterModifier(crit=-9999, armor_ignore=100))
         self.spec = "dot"
 
     def _get_explanation_internal(self, detail = False, lang = "ko", expl_level = 2):
