@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, InactiveRule, ReservationRule
+from ..execution.rules import RuleSet, InactiveRule, SynchronizeRule
 from . import globalSkill
 from .jobbranch import warriors
 from .jobclass import resistance
@@ -45,12 +45,15 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
 
-        ruleset.add_rule(InactiveRule('버닝 브레이커','벙커 버스터'), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule('버닝 브레이커','맥시마이즈 캐논'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('버닝 브레이커(준비)','벙커 버스터'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('버닝 브레이커(준비)','맥시마이즈 캐논'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('맥시마이즈 캐논','벙커 버스터'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('벙커 버스터', '맥시마이즈 캐논'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('발칸 펀치', '벙커 버스터'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('발칸 펀치', '맥시마이즈 캐논'), RuleSet.BASE)
+
+        ruleset.add_rule(SynchronizeRule('버닝 브레이커(준비)', '해머 스매시(디버프)', 4500, 1), RuleSet.BASE)
+        ruleset.add_rule(SynchronizeRule('발칸 펀치', '해머 스매시(디버프)', 8000, 1), RuleSet.BASE)
         
         return ruleset
 
@@ -136,16 +139,18 @@ class JobGenerator(ck.JobGenerator):
         #5차
         RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3)
         
-        BunkerBuster = core.BuffSkill("벙커 버스터", 720, 45000, cooltime = 120000, rem = False).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
+        BunkerBuster = core.BuffSkill("벙커 버스터", 720, 45000, cooltime = 120000, red = True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
         BunkerBusterAttack = core.DamageSkill("벙커 버스터(공격)", 0, 180 + 7 * vEhc.getV(0,0), 8, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         BunkerBusterAttack_Maximize = core.DamageSkill("벙커 버스터(맥시마이즈)", 0, 180 + 7 * vEhc.getV(0,0), 8, modifier = core.CharacterModifier(pdamage = 50, armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         
-        BalkanPunch = core.DamageSkill("발칸 펀치", 1560, 1000 + 40 * vEhc.getV(4,4), 6, cooltime = 60 * 1000).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper) # 420 + 키다운 준비 1140
+        BalkanPunch = core.DamageSkill("발칸 펀치", 1560, 1000 + 40 * vEhc.getV(4,4), 6, cooltime = 60 * 1000, red = True).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper) # 420 + 키다운 준비 1140
         BalkanPunchTick = core.DamageSkill("발칸 펀치(틱)", 150, 450 + 18 * vEhc.getV(4,4), 5).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper) # 43회 반복
+        BalkanPunchEnd = core.DamageSkill("발칸 펀치(후딜)", 360, 0, 0).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
         
-        BurningBreaker = core.DamageSkill("버닝 브레이커", 5000, 1500 + 60*vEhc.getV(1,1), 15, cooltime = 100*1000, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
-        BurningBreakerSplash = core.DamageSkill("버닝 브레이커(스플래시)", 0, 1200+48*vEhc.getV(1,1), 15 * 6, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
-        BurningBreakerSplash_Maximize = core.DamageSkill("버닝 브레이커(스플래시,맥시마이즈)", 0, 1200+48*vEhc.getV(1,1), 15 * 6, modifier = core.CharacterModifier(pdamage = 50, armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        BurningBreaker = core.DamageSkill("버닝 브레이커(준비)", 2010, 0, 0, cooltime = 100*1000, red = True).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        BurningBreakerRush = core.DamageSkill("버닝 브레이커(돌진)", 2220, 1500 + 60*vEhc.getV(1,1), 15, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper) # 공속 적용됨, 2940ms -> 2220ms
+        BurningBreakerExplode = core.DamageSkill("버닝 브레이커(폭발)", 0, 1200+48*vEhc.getV(1,1), 15 * 6, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        BurningBreakerExplode_Maximize = core.DamageSkill("버닝 브레이커(폭발,맥시마이즈)", 0, 1200+48*vEhc.getV(1,1), 15 * 6, modifier = core.CharacterModifier(pdamage = 50, armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
         
         #스킬 기본 연계 연결
         ReleaseFileBunker.onAfter(Cylinder.stackController(-6))
@@ -158,17 +163,20 @@ class JobGenerator(ck.JobGenerator):
         HammerSmash.onAfters([HammerSmashWave, HammerSmashDebuff])
 
         #발칸 펀치
-        BalkanPunch.onAfter(core.RepeatElement(BalkanPunchTick, 43))
+        BalkanPunchRepeat = core.RepeatElement(BalkanPunchTick, 43)
+        BalkanPunch.onAfter(BalkanPunchRepeat)
+        BalkanPunchRepeat.onAfter(BalkanPunchEnd)
         
         #맥시마이즈 캐논
-        BurningBreakerSplash_WithMaximize = core.OptionalElement(MaximizeCannon.is_active, BurningBreakerSplash_Maximize, BurningBreakerSplash, name = "맥시마이즈 캐논 여부")
-        BurningBreaker.onAfter(BurningBreakerSplash_WithMaximize)
+        BurningBreakerExplode_WithMaximize = core.OptionalElement(MaximizeCannon.is_active, BurningBreakerExplode_Maximize, BurningBreakerExplode, name = "맥시마이즈 캐논 여부")
         
         BunkerBusterAttack_WithMaximize = core.OptionalElement(MaximizeCannon.is_active, BunkerBusterAttack_Maximize, BunkerBusterAttack, name = "맥시마이즈 캐논 여부")
         MagnumPunch_Revolve_WithMaximize = core.OptionalElement(MaximizeCannon.is_active, MagnumPunch_Revolve_Maximize, MagnumPunch_Revolve, name = "맥시마이즈 캐논 여부")
         DoublePang_Revolve_WithMaximize = core.OptionalElement(MaximizeCannon.is_active, DoublePang_Revolve_Maximize, DoublePang_Revolve, name = "맥시마이즈 캐논 여부")
         
-        
+        #버닝 브레이커
+        BurningBreaker.onAfter(BurningBreakerRush)
+        BurningBreakerRush.onAfter(BurningBreakerExplode_WithMaximize)
         
         # 리볼빙 캐논 발동
         AddCylinder = core.OptionalElement(Overheat.is_not_active, Cylinder.stackController(1))
@@ -188,6 +196,7 @@ class JobGenerator(ck.JobGenerator):
         Mag_Pang.onAfter(DoublePang)
         Mag_Pang.onAfter(DuckingDelay)
         
+        # TODO: 맥시마이즈 캐논일땐 매번 릴파벙해머를 쓸 필요가 없음
         ReleaseHammer = core.DamageSkill("릴파벙해머", 0, 0, 0).wrap(core.DamageSkillWrapper)
         ReleaseHammer.onConstraint(core.ConstraintElement("실린더 게이지 최대", Cylinder, partial(Cylinder.judge, 6, 1)))
         ReleaseHammer.onAfter(ReleaseFileBunker)
