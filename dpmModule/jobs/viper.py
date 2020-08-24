@@ -53,7 +53,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         CriticalRoar = core.InformedCharacterModifier("크리티컬 로어",crit = 20, crit_damage = 5)
         
         MentalClearity = core.InformedCharacterModifier("멘탈 클리어리티",att = 30)
@@ -65,11 +65,11 @@ class JobGenerator(ck.JobGenerator):
         
         EchoOfHero = core.InformedCharacterModifier("영웅의 메아리", patt = 4) #타임리프
 
-        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(self.vEhc, 2, 3)
+        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 2, 3)
         
         return [CriticalRoar, MentalClearity, PhisicalTraining, CriticalRage, StimulatePassive, EchoOfHero, LoadedDicePassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
 

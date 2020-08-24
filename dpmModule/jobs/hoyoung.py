@@ -28,7 +28,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 40)
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         FiendSeal = core.InformedCharacterModifier("괴이봉인", patt = 10, pdamage_indep = 10)
         RitualFanMastery = core.InformedCharacterModifier("부채 숙련", att = 25)
         ThirdEye = core.InformedCharacterModifier("심안", crit = 30, crit_damage = 10)
@@ -41,7 +41,7 @@ class JobGenerator(ck.JobGenerator):
 
         return [FiendSeal, RitualFanMastery, ThirdEye, FortuneFitness, Asura, AdvancedRitualFanMastery, Enlightenment, DragonsEye, ReadyToDiePassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -(5-0.5*combat))    #오더스 기본적용!
         SpiritAffinity = core.BuffSkill("정령친화") # 더미

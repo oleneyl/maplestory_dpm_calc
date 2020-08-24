@@ -15,14 +15,14 @@ class LuminousStateController(core.BuffSkillWrapper):
     LIGHT = 1
     EQUAL = 2
     STACK = 550
-    def __init__(self, skill, ch : ck.AbstractCharacter, combat = True):
+    def __init__(self, skill, buff_rem, combat = True):
         super(LuminousStateController, self).__init__(skill)
         self.state = LuminousStateController.LIGHT
         self.currentState = LuminousStateController.LIGHT
         self.stack = LuminousStateController.STACK
         
         self.remain = 0
-        self.buff_rem = ch.buff_rem
+        self.buff_rem = buff_rem
         self.stackList = [25, 22, 0]
         self.equalCallback = lambda:None
         self.absoluteKillCallback = lambda:None
@@ -83,9 +83,9 @@ class PunishingResonatorWrapper(core.SummonSkillWrapper):
         self.vlevel = vEhc.getV(3,2)
         self.getState = stateGetter
 
-    def _use(self, rem = 0, red = 0):
+    def _use(self, skill_modifier):
         self.skill = self.skillList[self.getState()]
-        return super(PunishingResonatorWrapper, self)._use()
+        return super(PunishingResonatorWrapper, self)._use(skill_modifier)
 
 class LightAndDarknessWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc):
@@ -93,9 +93,9 @@ class LightAndDarknessWrapper(core.DamageSkillWrapper):
         self.stack = 12
         self.vlevel = vEhc.getV(1,1)
 
-    def _use(self, rem = 0, red = 0):
+    def _use(self, skill_modifier):
         self.stack = 12
-        return super(LightAndDarknessWrapper, self)._use()
+        return super(LightAndDarknessWrapper, self)._use(skill_modifier)
 
     def reduceStack(self):
         self.stack -= 1
@@ -118,11 +118,8 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "루미너스"
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
         self.preEmptiveSkills = 2
-        
-    def apply_complex_options(self, chtr):
-        chtr.add_property_ignorance(10)
-        
-    def get_passive_skill_list(self):
+                
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
 
         PowerOfLight = core.InformedCharacterModifier("파워 오브 라이트",stat_main = 20)
         SpellMastery =  core.InformedCharacterModifier("스펠 마스터리",att = 10)
@@ -134,13 +131,14 @@ class JobGenerator(ck.JobGenerator):
         
         return [PowerOfLight, SpellMastery, HighWisdom, LifeTidal, MagicMastery, MorningStarfall, DarknessSocery]
 
-    def get_not_implied_skill_list(self): 
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter): 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5)
         
         BlessOfDarkness =  core.InformedCharacterModifier("블레스 오브 다크니스",att = 30)   #15 -> 24 -> 30
+        DarknessSoceryActive = core.InformedCharacterModifier("다크니스 소서리(사용)", prop_ignore = 10)
 
-        return [WeaponConstant, Mastery, BlessOfDarkness]
+        return [WeaponConstant, Mastery, BlessOfDarkness, DarknessSoceryActive]
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
@@ -169,7 +167,7 @@ class JobGenerator(ck.JobGenerator):
         Frid = heroes.FridWrapper(vEhc, 0, 0)
         LightAndDarkness = LightAndDarknessWrapper(vEhc)
     
-        LuminousState = LuminousStateController(core.BuffSkill("루미너스 상태", 0, 99999999), chtr)
+        LuminousState = LuminousStateController(core.BuffSkill("루미너스 상태", 0, 99999999), chtr.get_base_modifier().buff_rem)
         
         LuminousState.equalCallback = partial(DoorOfTruth.set_disabled_and_time_left, 1)
         

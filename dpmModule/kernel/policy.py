@@ -47,16 +47,12 @@ class StorageLinkedGraph(NameIndexedGraph):
         self._tick_task_map = {}
     
     def build(self, chtr):
-        rem = chtr.buff_rem
-        red = chtr.cooltimeReduce
-        
-        self._rem = rem
-        self._red = red
+        skill_modifier = chtr.get_skill_modifier()
 
         for name, wrp in self._element_map.items():
-            self._task_map[name] = wrp.build_task(rem = rem, red = red)
+            self._task_map[name] = wrp.build_task(skill_modifier)
             if hasattr(wrp, 'build_periodic_task'):
-                self._tick_task_map[name] = wrp.build_periodic_task()
+                self._tick_task_map[name] = wrp.build_periodic_task(skill_modifier)
 
     def spend_time(self, t):
         for _, wrp in self._element_map.items():

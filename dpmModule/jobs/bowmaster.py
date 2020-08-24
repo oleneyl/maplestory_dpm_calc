@@ -45,7 +45,7 @@ class ArrowOfStormWrapper(core.DamageSkillWrapper):
         self.currentTime += time
         super(ArrowOfStormWrapper, self).spend_time(time)
         
-    def _use(self, rem = 0, red = 0):
+    def _use(self, skill_modifier):
         '''
         아머 피어싱 적용.
         현재 시간 > 마지막 시전 시간 + 딜레이 인 경우에 선딜을 추가함.
@@ -98,7 +98,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule("소울 컨트랙트", "퀴버 풀버스트"), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit = 40)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         
@@ -110,7 +110,7 @@ class JobGenerator(ck.JobGenerator):
         return [CriticalShot, PhisicalTraining,MarkmanShip, 
                             CrossBowExpert, AdvancedFinalAttackPassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)
 

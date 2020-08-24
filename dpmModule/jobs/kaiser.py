@@ -30,7 +30,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
         
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         InnerBlaze = core.InformedCharacterModifier("이너 블레이즈",stat_main = 20)
         AdvancedInnerBlaze = core.InformedCharacterModifier("어드밴스드 이너 블레이즈",stat_main = 30)
         # 모프 게이지 단계당 데미지 3% 증가
@@ -43,7 +43,7 @@ class JobGenerator(ck.JobGenerator):
         return [InnerBlaze, AdvancedInnerBlaze, Catalyze, 
                 AdvancedWillOfSwordPassive, UnflinchingCourage, AdvancedSwordMastery]
                 
-    def get_not_implied_skill_list(self):        
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):        
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
         
