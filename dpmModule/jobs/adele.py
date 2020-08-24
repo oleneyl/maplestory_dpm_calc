@@ -146,7 +146,7 @@ class JobGenerator(ck.JobGenerator):
         Grave = core.DamageSkill('그레이브', 630, 800+self._combat*20, 10, cooltime=-1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) #한 번만 사용, 클라공속 840ms
         GraveDebuff = core.BuffSkill('그레이브(디버프)', 0, 999999999, pdamage=20, armor_ignore=10, cooltime=-1).wrap(core.BuffSkillWrapper)
 
-        Blossom = core.DamageSkill('블로섬', 330, 650+self._combat*6, 8, cooltime=20*1000*0.75, red=True).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 50%결정. 클라공속 420ms
+        Blossom = core.DamageSkill('블로섬', 420, 650+self._combat*6, 8, cooltime=20*1000*0.75, red=True).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 50%결정. 클라공속 420ms, 공속 안받음
         BlossomExceed = core.StackDamageSkillWrapper(
             core.DamageSkill('블로섬(초과)', 0, 650+self._combat*6, 8, cooltime=-1, modifier=core.CharacterModifier(pdamage_indep=-25)).setV(vEhc, 3, 2, False),
             Order,
@@ -210,7 +210,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 게더링-블로섬
         Blossom.onConstraint(core.ConstraintElement('오더가 있을 때', Order, partial(Order.judge, 1, 1)))
-        Blossom.onBefore(Gathering)
+        Blossom.onBefores([Divide, Gathering]) # 게더링->디바이드->블로섬 순서, _befores는 리스트의 끝부터 실행됨
         Blossom.onAfter(BlossomExceed)
 
         Grave.onAfter(GraveDebuff)
