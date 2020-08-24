@@ -15,10 +15,10 @@ class RevolvingCannonMasteryWrapper(core.DamageSkillWrapper):
     실린더 게이지 1개일때 기본 데미지, 2개 이상부터 개당 1.1배 복리 계산.
     실린더 과열 도중에는 게이지 최대치로 취급함.
     """
-    def __init__(self, cylinder, overheat, combat, passive_level):
+    def __init__(self, cylinder, overheat, passive_level):
         self.cylinder = cylinder
         self.overheat = overheat
-        skill = core.DamageSkill("리볼빙 캐논 마스터리", 0, 215 + combat + passive_level, 1)
+        skill = core.DamageSkill("리볼빙 캐논 마스터리", 0, 215 + passive_level, 1)
         super(RevolvingCannonMasteryWrapper, self).__init__(skill)
         
     def _use(self, rem = 0, red = 0):
@@ -41,7 +41,6 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 12
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'mess')
         self._combat = 1 # 임시 사용, vEhc에서 받아오게 해야 함
-        self._passive_level = 0 # 임시 사용, JobGenerator에 추가되어야 함
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -56,7 +55,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = self._passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         GuntletMastery = core.InformedCharacterModifier("건틀렛 마스터리", crit= 30, att = 20)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         ChargeMastery= core.InformedCharacterModifier("차지 마스터리", pdamage = 20)
@@ -70,7 +69,7 @@ class JobGenerator(ck.JobGenerator):
                         GuntletExpert, AdvancedChargeMastery, CombinationTraining]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = self._passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5 * math.ceil(passive_level / 2))
         CombinationTraining = core.InformedCharacterModifier("콤비네이션 트레이닝II",
@@ -96,10 +95,10 @@ class JobGenerator(ck.JobGenerator):
         
         발칸 펀치의 피격시 최종 데미지는 적용하지 않음
         '''          
-        CHARGE_TIME = math.ceil(480 * (1 - 2 * (20 + self._passive_level) * 0.01) // 30) * 30 # 어드밴스드 차지 마스터리 적용된 차지 속도 계산
         CANCEL_DELAY = 180 # 최소 150
         DUCKING_DELAY = 150 # 최소 110 (30 + 80)
-        passive_level = self._passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        CHARGE_TIME = math.ceil(480 * (1 - 2 * (20 + passive_level) * 0.01) // 30) * 30 # 어드밴스드 차지 마스터리 적용된 차지 속도 계산
         
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
@@ -127,7 +126,7 @@ class JobGenerator(ck.JobGenerator):
         HammerSmashWave = core.SummonSkill("해머 스매시(충격파)", 0, 1500, 150, 2+2, 5000, cooltime = -1).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
         HammerSmashDebuff = core.BuffSkill("해머 스매시(디버프)", 0, 10*1000, pdamage_indep = 10, rem = False, cooltime = -1).wrap(core.BuffSkillWrapper)
         
-        RevolvingCannonMastery = RevolvingCannonMasteryWrapper(Cylinder, Overheat, self._combat, self._passive_level)
+        RevolvingCannonMastery = RevolvingCannonMasteryWrapper(Cylinder, Overheat, passive_level)
         
         #하이퍼
         # 불릿을 사용하는 스킬 데미지 50% 증가, 불릿자동리로드 70%감소, 릴파벙이후 과열시간 1초로 감소
