@@ -46,11 +46,11 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
 
         ruleset.add_rule(InactiveRule('버닝 브레이커','벙커 버스터'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('버닝 브레이커','맥시마이즈 캐논'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('맥시마이즈 캐논','벙커 버스터'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('벙커 버스터', '맥시마이즈 캐논'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('발칸 펀치', '벙커 버스터'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('발칸 펀치', '맥시마이즈 캐논'), RuleSet.BASE)
-        ruleset.add_rule(ReservationRule('소울 컨트랙트', '버닝 브레이커'), RuleSet.BASE)
         
         return ruleset
 
@@ -124,7 +124,7 @@ class JobGenerator(ck.JobGenerator):
         
         HammerSmash = core.DamageSkill("해머 스매시", CANCEL_DELAY, 395 + 2*self._combat, 6, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         HammerSmashWave = core.SummonSkill("해머 스매시(충격파)", 0, 1500, 150, 2+2, 5000, cooltime = -1).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
-        HammerSmashDebuff = core.BuffSkill("해머 스매시(디버프)", 0, 10*1000, pdamage_indep = 10, rem = False, cooltime = -1).wrap(core.BuffSkillWrapper)
+        HammerSmashDebuff = core.BuffSkill("해머 스매시(디버프)", 0, 10*1000+5000, pdamage_indep = 10, rem = False, cooltime = -1).wrap(core.BuffSkillWrapper) # 기본 10초, 충격파의 지속시간 합산
         
         RevolvingCannonMastery = RevolvingCannonMasteryWrapper(Cylinder, Overheat, passive_level)
         
@@ -156,7 +156,6 @@ class JobGenerator(ck.JobGenerator):
             ))
         ReleaseFileBunker.onAfters([ReleaseFileBunker_A, ReleaseFileBunker_B, ReleaseFileBunker_C, ReleaseFileBunker_D])
         HammerSmash.onAfters([HammerSmashWave, HammerSmashDebuff])
-        HammerSmashWave.onTick(HammerSmashDebuff)
 
         #발칸 펀치
         BalkanPunch.onAfter(core.RepeatElement(BalkanPunchTick, 43))
@@ -205,11 +204,15 @@ class JobGenerator(ck.JobGenerator):
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
 
+        SoulContract = globalSkill.soul_contract()
+        BurningBreaker.onBefore(SoulContract)
+
+        SoulContract.protect_from_running()
         
         return(Mag_Pang,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, MaximizeCannon, WillOfLiberty, AuraWeaponBuff, BunkerBuster, Cylinder, Overheat, HammerSmashDebuff,
-                    globalSkill.soul_contract()] +\
+                    SoulContract] +\
                 [ReleaseHammer, BurningBreaker, BalkanPunch] +\
                 [RegistanceLineInfantry, HammerSmashWave] +\
                 [AuraWeaponCooltimeDummy] +\
