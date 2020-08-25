@@ -26,8 +26,6 @@ class OrderWrapper(core.SummonSkillWrapper):
     def add(self):
         self.ether.vary(-100)
         self.queue = self.queue + [self.currentTime + self.REMAIN_TIME]
-        self.stack = len(self.queue) * 2
-        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
 
     def spend_time(self, time):
         self.currentTime += time
@@ -49,8 +47,7 @@ class OrderWrapper(core.SummonSkillWrapper):
         return core.TaskHolder(task, name = "오더 지속시간 지연")
         
     def judge(self, stack, direction):
-        if (self.stack-stack)*direction>=0:return True
-        else: return False
+        return (self.stack-stack)*direction>=0
 
     def _useTick(self):
         if self.onoff and self.tick <= 0:
@@ -159,7 +156,7 @@ class JobGenerator(ck.JobGenerator):
         BlossomExceed = core.StackDamageSkillWrapper(
             core.DamageSkill('블로섬(초과)', 0, 650+self._combat*6, 8, cooltime=-1, modifier=core.CharacterModifier(pdamage_indep=-25)).setV(vEhc, 3, 2, False),
             Order,
-            lambda order: order.stack * 0.8 - 1
+            lambda order: max(order.stack * 0.8 - 1, 0)
         )
 
         Marker = core.DamageSkill('마커', 690, 1000, 3*2, cooltime=60*1000, modifier=core.CharacterModifier(pdamage_indep=300)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 최종뎀 300% 증가, 임의위치 조각 5개, 1히트, 결정 5개, 생성/파쇄 각각 공격, 클라공속 900ms

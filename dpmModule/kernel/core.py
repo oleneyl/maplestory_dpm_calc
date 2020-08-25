@@ -1240,8 +1240,7 @@ class StackSkillWrapper(BuffSkillWrapper):
         return TaskHolder(task, name = name)
         
     def judge(self, stack, direction):
-        if (self.stack-stack)*direction>=0:return True
-        else: return False
+        return (self.stack-stack)*direction>=0
 
 class TimeStackSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill, max_, name = None):
@@ -1303,7 +1302,7 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         return self.skill.get_modifier() + self.modifier
         
 class StackDamageSkillWrapper(DamageSkillWrapper):
-    def __init__(self, skill : DamageSkill, stack_skill: AbstractSkill, fn, modifier = CharacterModifier(), name = None):
+    def __init__(self, skill : DamageSkill, stack_skill: AbstractSkillWrapper, fn, modifier = CharacterModifier(), name = None):
         super(StackDamageSkillWrapper, self).__init__(skill, modifier = modifier, name = name)
         self.stack_skill = stack_skill
         self.fn = fn
