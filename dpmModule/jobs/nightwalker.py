@@ -49,11 +49,11 @@ class ShadowBatWrapper(core.DamageSkillWrapper):
         self.stackSkill = stackSkill
         super(ShadowBatWrapper, self).__init__(skill)
 
-    def _use(self, rem = 0, red = 0):
+    def _use(self, skill_modifier):
         if self.stackSkill.judge(0, -1):
             raise ValueError("Not enough stack. Consider using OptionalElement.")
         self.stackSkill.vary(-1)
-        return super(ShadowBatWrapper, self)._use()
+        return super(ShadowBatWrapper, self)._use(skill_modifier)
 
 #TODO : 5차 신스킬 적용
 class JobGenerator(ck.JobGenerator):
