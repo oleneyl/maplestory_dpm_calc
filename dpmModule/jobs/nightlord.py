@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobbranch import thieves
+from . import jobutils
 #TODO : 5차 신스킬 적용
 
 ######   Passive Skill   ######
@@ -66,7 +67,7 @@ class JobGenerator(ck.JobGenerator):
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
         
-        QuarupleThrow =core.DamageSkill("쿼드러플 스로우", 600, 378, 5 * 1.7, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)    #쉐도우 파트너 적용
+        QuarupleThrow =core.DamageSkill("쿼드러플 스로우", 600, 378, 5, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)    #쉐도우 파트너 적용
         
         MarkOfNightlord = core.DamageSkill("마크 오브 나이트로드", 0, (60 + chtr.level), 0.375*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         MarkOfNightlordPungma = core.DamageSkill("마크 오브 나이트로드(풍마)", 0, (60 + chtr.level), 0.375*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 툴팁대로면 19.355%가 맞으나, 쿼드러플과 동일한 37.5%로 적용되는 중
@@ -81,13 +82,19 @@ class JobGenerator(ck.JobGenerator):
         #조건부 파이널어택으로 설정함.
         SpreadThrowTick = core.DamageSkill("스프레드 스로우(틱)", 0, 378*0.85, 5*3, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         SpreadThrowInit = core.BuffSkill("스프레드 스로우", 540, (30+vEhc.getV(0,0))*1000, cooltime = (240-vEhc.getV(0,0))*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        Pungma = core.SummonSkill("풍마수리검", 360, 100, 250+vEhc.getV(4,4)*10, 5*1.7, 1450, cooltime = 25*1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #10타 가정
+        Pungma = core.SummonSkill("풍마수리검", 360, 100, 250+vEhc.getV(4,4)*10, 5, 1450, cooltime = 25*1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #10타 가정
+        Pungma_SP = core.SummonSkill("풍마수리검(쉐도우파트너)", 0, 100, (250+vEhc.getV(4,4)*10)*0.7, 5, 1450, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
         ArcaneOfDarklord = core.SummonSkill("다크로드의 비전서", 360, 1020, 350+14*vEhc.getV(2,2), 7 + 5, 11990, cooltime = 60*1000, modifier=core.CharacterModifier(boss_pdamage=30)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 132타
         ArcaneOfDarklordFinal = core.DamageSkill("다크로드의 비전서(막타)", 0, 900+36*vEhc.getV(2,2), 10, cooltime = -1, modifier=core.CharacterModifier(boss_pdamage=30)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
 
         #조건부 파이널어택으로 설정함.
+        for sk in [QuarupleThrow]:
+            jobutils.create_auxilary_attack(sk, 0.7, nametag= '쉐도우파트너')
+        
+        Pungma.onAfter(Pungma_SP)
+
         SpreadThrow = core.OptionalElement(SpreadThrowInit.is_active, SpreadThrowTick)
         SpreadThrowTick.onAfter(core.RepeatElement(MarkOfNightlord, 15))
         Pungma.onTick(MarkOfNightlordPungma)
@@ -107,5 +114,5 @@ class JobGenerator(ck.JobGenerator):
                     UltimateDarksight, ReadyToDie, SpreadThrowInit,
                     globalSkill.soul_contract()] + \
                 [ArcaneOfDarklordFinal] + \
-                [Pungma, ArcaneOfDarklord, BleedingToxinDot, FatalVenom] +\
+                [Pungma, Pungma_SP, ArcaneOfDarklord, BleedingToxinDot, FatalVenom] +\
                 [] + [QuarupleThrow])
