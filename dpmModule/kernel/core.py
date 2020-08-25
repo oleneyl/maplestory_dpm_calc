@@ -1143,6 +1143,28 @@ class AbstractSkillWrapper(GraphElement):
         if (self.timeLeft - time) * direction > 0 : return True
         else: return False
 
+    def calculate_cooltime(self, skill_modifier: SkillModifier):
+        if self.skill.red == False:
+            return self.skill.cooltime
+            
+        cooltime = self.skill.cooltime
+        pcooltime_reduce = skill_modifier.pcooltime_reduce # 쿨감%
+        cooltime_reduce = skill_modifier.cooltime_reduce # 쿨감+ (ms)
+        
+        if cooltime * (1 - 0.01*pcooltime_reduce) <= 1000: # 쿨감%부터 적용, 최소 1초까지
+            cd = min(cooltime, 1000)
+        else:
+            cd = cooltime * (1 - 0.01*pcooltime_reduce)
+        
+        if cd - cooltime_reduce <= 10000:
+            cooltime_cap = min(10000, cd)
+            cdr_left = (cooltime_reduce - (cd - cooltime_cap)) / 1000 # 10초 이하에서 쿨감되는 수치 계산
+            cdr_applied = cooltime_cap * (1 - cdr_left * 0.05) # 1초당 5%씩 감소
+        else:
+            cdr_applied = cd - cooltime_reduce
+        
+        return max(cdr_applied, min(cd, 5000)) # 5초까지 감소, 단 이미 스킬쿨이 5초 아래였을 경우 그대로 사용
+
 class BuffSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill : BuffSkill, name = None):
         self._disabledResultobjectCache = ResultObject(0, CharacterModifier(), 0, 0, sname = skill.name, spec = 'graph control')
@@ -1185,7 +1207,7 @@ class BuffSkillWrapper(AbstractSkillWrapper):
     
     def _use(self, skill_modifier) -> ResultObject:
         self.timeLeft = self.skill.remain * (1 + 0.01*skill_modifier.buff_rem * self.skill.rem)
-        self.cooltimeLeft = self.skill.cooltime * (1 - 0.01*skill_modifier.pcooltime_reduce* self.skill.red)
+        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         self.onoff = True
         if self.cooltimeLeft > 0:
             self.available = False
@@ -1292,7 +1314,7 @@ class DamageSkillWrapper(AbstractSkillWrapper):
             self.available = True
         
     def _use(self, skill_modifier):
-        self.cooltimeLeft = self.skill.cooltime * (1-0.01*skill_modifier.pcooltime_reduce*self.skill.red)
+        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         if self.cooltimeLeft > 0:
             self.available = False
         return ResultObject(self.skill.delay, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
@@ -1308,7 +1330,7 @@ class StackDamageSkillWrapper(DamageSkillWrapper):
         self.fn = fn
         
     def _use(self, skill_modifier):
-        self.cooltimeLeft = self.skill.cooltime * (1-0.01*skill_modifier.pcooltime_reduce*self.skill.red)
+        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         if self.cooltimeLeft > 0:
             self.available = False
 
@@ -1365,7 +1387,7 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self.tick = 0
         self.onoff = True
         self.timeLeft = self.skill.remain * (1+0.01*skill_modifier.summon_rem*self.skill.rem)
-        self.cooltimeLeft = self.skill.cooltime * (1-0.01*skill_modifier.pcooltime_reduce*self.skill.red)
+        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         if self.cooltimeLeft > 0:
             self.available = False
         return ResultObject(self.skill.summondelay, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)

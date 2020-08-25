@@ -29,7 +29,7 @@ class FridWrapper(core.BuffSkillWrapper):
             self.state -= 6        
         self.skill = self.skillList[self.state]
         self.timeLeft = self.skill.remain * (1 + 0.01*skill_modifier.buff_rem * self.skill.rem)
-        self.cooltimeLeft = self.skill.cooltime * (1 - 0.01*skill_modifier.pcooltime_reduce* self.skill.red)
+        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         self.onoff = True
         if self.cooltimeLeft > 0:
             self.available = False

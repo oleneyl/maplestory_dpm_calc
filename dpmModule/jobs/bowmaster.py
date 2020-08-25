@@ -16,15 +16,16 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
     '''
     아머 피어싱 - 적 방어율만큼 최종뎀 추가, 방무+50%. 쿨타임 9초, 공격마다 1초씩 감소, 최소 재발동 대기시간 1초
     '''
-    def __init__(self, combat):
+    def __init__(self, combat, chtr):
         self.piercingModifier = core.CharacterModifier(pdamage_indep = 300 * (1 + combat * 0.05), armor_ignore = 50 * (1 + combat * 0.02))
         self.emptyModifier = core.CharacterModifier()
-        skill = core.BuffSkill("아머 피어싱", 0, 0, 9000)
+        self.skill_modifier = chtr.get_skill_modifier()
+        skill = core.BuffSkill("아머 피어싱", 0, 0, 9000, red=True)
         super(ArmorPiercingWrapper, self).__init__(skill)
 
     def check(self):
         if self.available:
-            self.cooltimeLeft = self.skill.cooltime # TODO: 쿨감 적용 어떻게???
+            self.cooltimeLeft = self.calculate_cooltime(self.skill_modifier)
             self.available = False
             return self.piercingModifier
 
@@ -141,7 +142,7 @@ class JobGenerator(ck.JobGenerator):
         Preparation = core.BuffSkill("프리퍼레이션", 900, 30 * 1000, cooltime = 90 * 1000, att = 50, boss_pdamage = 20).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
-        ArmorPiercing = ArmorPiercingWrapper(combat)
+        ArmorPiercing = ArmorPiercingWrapper(combat, chtr)
     
         #Damage Skills
         AdvancedQuibberAttack = core.DamageSkill("어드밴스드 퀴버", 0, 260, 0.6, modifier=MortalBlow).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
