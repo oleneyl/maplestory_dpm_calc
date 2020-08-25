@@ -161,7 +161,7 @@ class JobGenerator(ck.JobGenerator):
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 1, 1)
         for sk in [GigaSlasher_, GigaSlasher_Fig, DrakeSlasher, DrakeSlasher_, DrakeSlasher_Fig, DrakeSlasher_Fig_]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+        AuraWeaponBuff = auraweapon_builder.get_buff()
         
         #쿨 초기화
         MajestyOfKaiser.onAfters([WillOfSwordStrike.controller(1)])
@@ -193,7 +193,7 @@ class JobGenerator(ck.JobGenerator):
     
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-                    RegainStrenth, BlazeUp, FinalFiguration, MajestyOfKaiser, FinalTrance, AuraWeaponBuff, AuraWeaponCooltimeDummy,
+                    RegainStrenth, BlazeUp, FinalFiguration, MajestyOfKaiser, FinalTrance, AuraWeaponBuff,
                     globalSkill.soul_contract()] +\
                 [AdvancedWillOfSword] +\
                 [Wingbit_1, Wingbit_2, GuardianOfNova_1, GuardianOfNova_2, GuardianOfNova_3] +\

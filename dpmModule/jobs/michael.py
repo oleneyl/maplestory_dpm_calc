@@ -126,7 +126,7 @@ class JobGenerator(ck.JobGenerator):
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
         for sk in [SoullightSlash, SoulAssult]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+        AuraWeaponBuff = auraweapon_builder.get_buff()
         
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
@@ -135,5 +135,4 @@ class JobGenerator(ck.JobGenerator):
                     globalSkill.soul_contract()] +\
                 [CygnusPalanks, LoyalGuard_5, ShiningCross, DeadlyCharge, ClauSolis] +\
                 [ShiningCrossInstall, ClauSolisSummon] +\
-                [AuraWeaponCooltimeDummy] +\
                 [BasicAttackWrapper])

@@ -114,7 +114,7 @@ class JobGenerator(ck.JobGenerator):
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 1)
         for sk in [GoungnilDescent, GoungnilDescentNoCooltime, DarkImpail, PierceCycloneEnd]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+        AuraWeaponBuff = auraweapon_builder.get_buff()
         
         return(BasicAttackWrapped, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
@@ -122,5 +122,4 @@ class JobGenerator(ck.JobGenerator):
                     globalSkill.soul_contract()] +\
                 [BiholderShock, GoungnilDescent, DarkSpear, PierceCyclone] +\
                 [BiholderDominant, BiholderImpact] +\
-                [AuraWeaponCooltimeDummy] +\
                 [BasicAttackWrapped])

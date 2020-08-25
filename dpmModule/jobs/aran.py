@@ -179,7 +179,7 @@ class JobGenerator(ck.JobGenerator):
         BoostEndHuntersTargeting.onAfter(core.RepeatElement(FinalAttackHolder, 5))
         auraweapon_builder.add_aura_weapon(BoostEndHuntersTargeting)
             
-        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+        AuraWeaponBuff = auraweapon_builder.get_buff()
 
         # 기본 공격
         BasicAttack = core.DamageSkill("기본 공격", 0,0,0).wrap(core.DamageSkillWrapper)
@@ -234,7 +234,7 @@ class JobGenerator(ck.JobGenerator):
                     Booster, SmashSwingIncr, SnowCharge, AdvancedComboAbility, ComboAbility,
                     BlessingMaha, AdrenalineBoost, AdrenalineBoostEndDummy,
                     AdrenalineGenerator, 
-                    Frid, InstallMaha, InstallMahaBlizzard, Combo, AuraWeaponCooltimeDummy, AuraWeaponBuff,
+                    Frid, InstallMaha, InstallMahaBlizzard, Combo, AuraWeaponBuff,
                     globalSkill.soul_contract()] +\
                 [SmashSwingHolder, BrandishMaha, BoostEndHuntersTargeting] +\
                 [MahaRegion] +\

@@ -211,7 +211,7 @@ class JobGenerator(ck.JobGenerator):
         # 리스트 내용 검증 필요
         for sk in [ReleaseHammer, BurningBreaker, HammerSmashWave, Mag_Pang]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+        AuraWeaponBuff = auraweapon_builder.get_buff()
 
         SoulContract = globalSkill.soul_contract()
         BurningBreaker.onBefore(SoulContract)
@@ -224,5 +224,4 @@ class JobGenerator(ck.JobGenerator):
                     SoulContract] +\
                 [ReleaseHammer, BurningBreaker, BalkanPunch] +\
                 [RegistanceLineInfantry, HammerSmashWave] +\
-                [AuraWeaponCooltimeDummy] +\
                 [Mag_Pang])

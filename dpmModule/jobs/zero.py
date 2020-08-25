@@ -353,7 +353,7 @@ class JobGenerator(ck.JobGenerator):
                     AdvancedRollingCurve, AdvancedRollingAssulter, StormBreak, UpperStrike, AirRiot, GigaCrash,
                     FallingStar, AdvancedEarthBreak, TwinBladeOfTime_end]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+        AuraWeaponBuff = auraweapon_builder.get_buff()
 
         DivineLeer.set_disabled_and_time_left(1)
 
@@ -374,6 +374,5 @@ class JobGenerator(ck.JobGenerator):
                     SoulContract]+\
                 [ShadowRain, TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta]+\
                 [StormBreakSummon, WindCutterSummon, ThrowingWeapon]+\
-                [AuraWeaponCooltimeDummy]+\
                 []+\
                 [ComboHolder])
