@@ -211,7 +211,7 @@ class JobGenerator(ck.JobGenerator):
         # 리스트 내용 검증 필요
         for sk in [ReleaseHammer, BurningBreaker, HammerSmashWave, Mag_Pang]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff = auraweapon_builder.get_buff()
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         SoulContract = globalSkill.soul_contract()
         BurningBreaker.onBefore(SoulContract)
@@ -220,7 +220,7 @@ class JobGenerator(ck.JobGenerator):
         
         return(Mag_Pang,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    Booster, MaximizeCannon, WillOfLiberty, AuraWeaponBuff, BunkerBuster, Cylinder, Overheat, HammerSmashDebuff,
+                    Booster, MaximizeCannon, WillOfLiberty, AuraWeaponBuff, AuraWeapon, BunkerBuster, Cylinder, Overheat, HammerSmashDebuff,
                     SoulContract] +\
                 [ReleaseHammer, BurningBreaker, BalkanPunch] +\
                 [RegistanceLineInfantry, HammerSmashWave] +\

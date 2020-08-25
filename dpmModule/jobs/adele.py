@@ -107,7 +107,7 @@ class JobGenerator(ck.JobGenerator):
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 4, 4)
         for sk in [Divide]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff = auraweapon_builder.get_buff()
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         MagicCircuitFullDrive = core.BuffSkill("매직 서킷 풀드라이브", 720, (30+vEhc.getV(3,3))*1000, pdamage = (20 + vEhc.getV(3,3)), cooltime = 200*1000).isV(vEhc,3,3).wrap(core.BuffSkillWrapper)
 
@@ -144,7 +144,7 @@ class JobGenerator(ck.JobGenerator):
 
         return(Divide,
                 [globalSkill.maple_heros(chtr.level), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
-                    AuraWeaponBuff, MagicCircuitFullDrive, 
+                    AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive, 
                     globalSkill.useful_sharp_eyes(), globalSkill.soul_contract()] +\
                 [Resonance, Grave, Blossom, Marker, Ruin] +\
                 [Order, Shard, Territory, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, OrderRestore, Creation] +\

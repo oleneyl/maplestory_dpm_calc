@@ -151,11 +151,11 @@ class JobGenerator(ck.JobGenerator):
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
         for sk in [Execution_0, Execution_1, Execution_2, Execution_3, ExecutionExceed, ShieldChasing, ArmorBreak, DemonicBlast]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff = auraweapon_builder.get_buff()
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
         
         return(BasicAttackWrapper,
                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-                    Booster, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, DemonAwakning,
+                    Booster, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
                     globalSkill.soul_contract()] +\
                 [Execution, Cerberus, DevilCry, SpiritOfRageEnd] +\
                 [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_] +\

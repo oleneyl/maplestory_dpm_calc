@@ -166,12 +166,12 @@ class JobGenerator(ck.JobGenerator):
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
         for sk in [RaisingBlowInrageFinalizer, ComboDesfort, Panic, Insizing, RisingRage]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff = auraweapon_builder.get_buff()
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         return(RaisingBlowInrage,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
                     ComboAttack, Fury, EpicAdventure, Valhalla, 
-                    InsizingBuff, InsizingDot, AuraWeaponBuff, ComboDesfortBuff, 
+                    InsizingBuff, InsizingDot, AuraWeaponBuff, AuraWeapon, ComboDesfortBuff, 
                     ComboInstinct, ComboInstinctOff, PanicBuff,
                     globalSkill.soul_contract()] +\
                 [Panic, Insizing, ComboDesfort, RisingRage] +\
