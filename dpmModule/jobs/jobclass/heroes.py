@@ -17,7 +17,7 @@ class FridWrapper(core.BuffSkillWrapper):
                     core.BuffSkill("프리드의 가호(3스택)", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25),
                     core.BuffSkill("프리드의 가호(4스택)", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel)),
                     core.BuffSkill("프리드의 가호(5스택)", 0, 30 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel)),
-                    core.BuffSkill("프리드의 가호(6스택)", 0, 30 * 1000, cooltime = 240 * 1000, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel))]
+                    core.BuffSkill("프리드의 가호(6스택)", 0, 30 * 1000, cooltime = 240 * 1000, red=True, stat_main = vlevel+25, stat_sub = vlevel+25, att = (10 + 0.5*vlevel), boss_pdamage = (10 + 0.5 * vlevel))]
         self.state = 0
         # 이 변수가 무슨 뜻인지 확인필요. 직업별 스크립트 중 에반에만 존재.
         self.modifierInvariantFlag = invariant

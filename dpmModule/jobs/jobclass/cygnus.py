@@ -5,7 +5,7 @@ from ...character import characterKernel as ck
 from functools import partial
 
 def PhalanxChargeWrapper(vEhc, num1, num2, hit_rate = 1):
-    PhalanxCharge = core.SummonSkill("시그너스 팔랑크스", 600, 120, 450 + 18*vEhc.getV(num1, num2), 1, 120 * (40 + vEhc.getV(num1, num2)) * hit_rate, cooltime = 30 * 1000).isV(vEhc, num1, num2).wrap(core.SummonSkillWrapper)
+    PhalanxCharge = core.SummonSkill("시그너스 팔랑크스", 600, 120, 450 + 18*vEhc.getV(num1, num2), 1, 120 * (40 + vEhc.getV(num1, num2)) * hit_rate, cooltime = 30 * 1000, red=True).isV(vEhc, num1, num2).wrap(core.SummonSkillWrapper)
     return PhalanxCharge
 
 class CygnusBlessWrapper(core.BuffSkillWrapper):

@@ -66,15 +66,15 @@ class JobGenerator(ck.JobGenerator):
         # 하이퍼: 데미지 증가, 보스 데미지 증가
         SongOfHeaven = core.DamageSkill("천공의 노래", 120, 345 + combat*3, 1, modifier = core.CharacterModifier(pdamage = ((1.2 + combat*0.01)**4 - 1) * 100 + 20, boss_pdamage = 30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #코강렙 20이상 가정.
         
-        CygnusPalanks = core.SummonSkill("시그너스 팔랑크스", 600, 120 * 5, 450 + 18*vEhc.getV(0,0), 5, 120 * (40 + vEhc.getV(0,0)), cooltime = 30 * 1000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        CygnusPalanks = core.SummonSkill("시그너스 팔랑크스", 600, 120 * 5, 450 + 18*vEhc.getV(0,0), 5, 120 * (40 + vEhc.getV(0,0)), cooltime = 30 * 1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         
-        Mercilesswind = core.DamageSkill("아이들 윔", 600, (500 + 20*vEhc.getV(4,4)) * 0.775, 10 * 3, cooltime = 10 * 1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper) #도트 데미지 9초간 초당 1000%
+        Mercilesswind = core.DamageSkill("아이들 윔", 600, (500 + 20*vEhc.getV(4,4)) * 0.775, 10 * 3, cooltime = 10 * 1000, red=True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper) #도트 데미지 9초간 초당 1000%
         MercilesswindDOT = core.DotSkill("아이들 윔(도트)", (500 + 20*vEhc.getV(4,4)), 9000).wrap(core.SummonSkillWrapper)
     
         #Summon Skills
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 5, 5)
         HowlingGail = core.SummonSkill("하울링 게일", 630, 10 * 1000 / 33, 250 + 10*vEhc.getV(1, 1), 2 * 3, 10000, cooltime = 20 * 1000).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper) #딜레이 모름, 허수아비/1스택 기준 64타 (총 66타)
-        WindWall = core.SummonSkill("윈드 월", 720, 2000, (550 + vEhc.getV(2, 2)*22) / 2, 5 * 3 , 45 * 1000, cooltime = 90 * 1000).isV(vEhc, 2, 2).wrap(core.SummonSkillWrapper)
+        WindWall = core.SummonSkill("윈드 월", 720, 2000, (550 + vEhc.getV(2, 2)*22) / 2, 5 * 3 , 45 * 1000, cooltime = 90 * 1000, red=True).isV(vEhc, 2, 2).wrap(core.SummonSkillWrapper)
         
         ######   Skill Wrapper   #####
         

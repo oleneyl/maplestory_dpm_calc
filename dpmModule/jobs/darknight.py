@@ -65,11 +65,11 @@ class JobGenerator(ck.JobGenerator):
         CrossoverChain = core.BuffSkill("크로스 오버 체인", 0, 200*1000, pdamage_indep = 20).wrap(core.BuffSkillWrapper) # 펫버프
         FinalAttack = core.DamageSkill("파이널 어택", 0, 80, 2*0.4).setV(vEhc, 3, 4, True).wrap(core.DamageSkillWrapper)
         BiholderDominant = core.SummonSkill("비홀더 도미넌트", 0, 10000, 210, 1, 99999*10000, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).wrap(core.SummonSkillWrapper)
-        BiholderShock = core.DamageSkill("비홀더 쇼크", 0, 215+300, 6, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).wrap(core.DamageSkillWrapper)
+        BiholderShock = core.DamageSkill("비홀더 쇼크", 0, 215+300, 6, cooltime = 12000, red=True, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).wrap(core.DamageSkillWrapper)
         
         DarkImpail = core.DamageSkill("다크 임페일", 630, 280, 6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         GoungnilDescentNoCooltime = core.DamageSkill("궁그닐 디센트(무한)", 600, 225, 12, modifier = core.CharacterModifier(armor_ignore = 44, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    
-        GoungnilDescent = core.DamageSkill("궁그닐 디센트", 600, 225, 12, cooltime = 8000, modifier = core.CharacterModifier(armor_ignore = 44, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        GoungnilDescent = core.DamageSkill("궁그닐 디센트", 600, 225, 12, cooltime = 8000, red=True, modifier = core.CharacterModifier(armor_ignore = 44, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         Sacrifice = core.BuffSkill("새크리파이스", 1080, 30*1000, rem = True, red = True, cooltime = 70000, armor_ignore = 10, boss_pdamage = 10).wrap(core.BuffSkillWrapper)   #궁그닐 쿨 무시, 비홀더 공격시 쿨0.3감소
         Reincarnation = core.BuffSkill("리인카네이션", 0, 40*1000, cooltime = 600000, rem = True, red = True, pdamage_indep=30).wrap(core.BuffSkillWrapper) #궁그닐 쿨 무시

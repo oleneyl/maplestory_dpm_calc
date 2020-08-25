@@ -136,12 +136,12 @@ class JobGenerator(ck.JobGenerator):
         # modifierInvariantFlag = False
         Frid = heroes.FridWrapper(vEhc, 0, 0, False)
 
-        InstallMaha = core.BuffSkill("인스톨 마하", 600, (30+vEhc.getV(1,1))*1000, patt=5+vEhc.getV(1,1), cooltime=150*1000).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper) # 게더링캐쳐 캔슬 : 960 -> 600
+        InstallMaha = core.BuffSkill("인스톨 마하", 600, (30+vEhc.getV(1,1))*1000, patt=5+vEhc.getV(1,1), cooltime=150*1000, red=True).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper) # 게더링캐쳐 캔슬 : 960 -> 600
         InstallMahaBlizzard = core.SummonSkill("인스톨 마하(눈보라)", 0, 3000, 450+18*vEhc.getV(1,1), 5, 60*1000, cooltime=-1).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)
 
-        BrandishMahaNormal = core.DamageSkill('브랜디쉬 마하', 600, 600+vEhc.getV(2,2)*24+20+100, 15*2, cooltime=20*1000, modifier=core.CharacterModifier(boss_pdamage=20)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)  # 게더링캐쳐 캔슬 : 960 -> 600
-        BrandishMaha = core.DamageSkill('브랜디쉬 마하(홀더)', 0, 0, 0, cooltime=20*1000, modifier=core.CharacterModifier(boss_pdamage=20)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
-        BrandishMahaAdrenaline = core.DamageSkill('브랜디쉬 마하(아드레날린)', 600, 600+vEhc.getV(2,2)*24+20+100+150, 15*2, cooltime=20*1000, modifier=core.CharacterModifier(boss_pdamage=20)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
+        BrandishMahaNormal = core.DamageSkill('브랜디쉬 마하', 600, 600+vEhc.getV(2,2)*24+20+100, 15*2, cooltime=-1, red=True, modifier=core.CharacterModifier(boss_pdamage=20)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)  # 게더링캐쳐 캔슬 : 960 -> 600
+        BrandishMaha = core.DamageSkill('브랜디쉬 마하(홀더)', 0, 0, 0, cooltime=20*1000, red=True, modifier=core.CharacterModifier(boss_pdamage=20)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
+        BrandishMahaAdrenaline = core.DamageSkill('브랜디쉬 마하(아드레날린)', 600, 600+vEhc.getV(2,2)*24+20+100+150, 15*2, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=20)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
 
         GatheringCatcher = core.DamageSkill('게더링 캐쳐(캔슬)', 0, 170+20, 2).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         
@@ -160,7 +160,7 @@ class JobGenerator(ck.JobGenerator):
         
         # 브랜디쉬 마하
         BrandishMaha.onAfter(core.OptionalElement(AdrenalineBoost.is_active, BrandishMahaAdrenaline, BrandishMahaNormal))
-        BrandishMaha.onAfter(core.OptionalElement(InstallMaha.is_active, BrandishMaha.controller(10*1000, 'reduce_cooltime')))
+        BrandishMaha.onAfter(core.OptionalElement(InstallMaha.is_active, BrandishMaha.controller(0.5, 'reduce_cooltime_p')))
         
         # 파이널어택
         FinalAttackHolder.onAfter(core.OptionalElement(AdrenalineBoost.is_active, FinalAttackAdrenaline, FinalAttack))

@@ -6,7 +6,7 @@ from functools import partial
 
 # 마스테마 클로우를 쿨타임마다 시전한다고 가정
 def CallMastemaWrapper(vEhc, num1, num2):
-    CallMastema = core.BuffSkill("콜 마스테마(버프)", 690, (30 + vEhc.getV(num1, num2))*1000, cooltime = 150*1000).wrap(core.BuffSkillWrapper)
+    CallMastema = core.BuffSkill("콜 마스테마(버프)", 690, (30 + vEhc.getV(num1, num2))*1000, cooltime = 150*1000, red=True).wrap(core.BuffSkillWrapper)
     MastemaClaw_Attack = core.DamageSkill("마스테마 클로우", 0, 500 + 20 *vEhc.getV(num1, num2), 8, cooltime=4000).wrap(core.DamageSkillWrapper)
     MastemaClaw = core.OptionalElement(CallMastema.is_active(), MastemaClaw_Attack)
     return CallMastema, MastemaClaw

@@ -80,14 +80,14 @@ class JobGenerator(ck.JobGenerator):
         TeleportMastery = core.DamageSkill("텔레포트 마스터리", 0, 272, 1, cooltime=-1).setV(vEhc, 9, 3, True).wrap(core.DamageSkillWrapper)
         
         #Need to connect Both Skill by cascade.
-        FlameHeize = core.DamageSkill("플레임 헤이즈", 1080, 504 + 8*combat, 6, cooltime = 10 * 1000).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
-        MistEruption = core.DamageSkill("미스트 이럽션", 720, 416.25 +12.25*combat, 15, cooltime = 4 * 1000, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 52)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        FlameHeize = core.DamageSkill("플레임 헤이즈", 1080, 504 + 8*combat, 6, cooltime = 10 * 1000, red=True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
+        MistEruption = core.DamageSkill("미스트 이럽션", 720, 416.25 +12.25*combat, 15, cooltime = 4 * 1000, red=True, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 52)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         DotPunisher = core.DamageSkill("도트 퍼니셔", 690, (400+vEhc.getV(0,0)*15), 5 * (1 + (DOT_PUNISHER_HIT - 1) * 0.75), cooltime = 25 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)#=775*(1+0.75*19)*5
         PoisonNova = core.DamageSkill("포이즌 노바", 570, 500 + 20*vEhc.getV(2,1), 6, cooltime = 25*1000, red = True).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
         PoisonNovaErupt = core.DamageSkill("포이즌 노바(폭발)", 0, 450 + 18*vEhc.getV(2,1), 6 * (3 + 0.50)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
     
-        Meteor = core.DamageSkill("메테오", 720, 470+combat*5, 8, cooltime = 45 * 1000).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
+        Meteor = core.DamageSkill("메테오", 720, 470+combat*5, 8, cooltime = 45 * 1000, red=True).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
         MegidoFlame = core.DamageSkill("메기도 플레임", 690, 700, 9, cooltime = 50 * 1000).setV(vEhc, 8, 2, True).wrap(core.DamageSkillWrapper)
         
         #Summoning skill

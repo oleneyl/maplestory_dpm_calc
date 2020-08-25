@@ -89,7 +89,7 @@ class JobGenerator(ck.JobGenerator):
         STACK2RATE = 100
 
         #Buff skills
-        Booster = core.BuffSkill("부스터", 0, 200*1000).wrap(core.BuffSkillWrapper)
+        Booster = core.BuffSkill("부스터", 0, 200*1000, rem = True).wrap(core.BuffSkillWrapper)
         FlipTheCoin = core.BuffSkill("플립 더 코인", 0, 24000, pdamage = 5*5, crit = 10*5).wrap(core.BuffSkillWrapper)
         ShadowerInstinct = core.BuffSkill("섀도어 인스팅트", 900, 200*1000, rem = True, att = 40+30).wrap(core.BuffSkillWrapper)
         #StealPotion = core.BuffSkill("스틸 (포션)", 0, 180000, cooltime = -1, att = 30).wrap(core.BuffSkillWrapper)
@@ -105,9 +105,9 @@ class JobGenerator(ck.JobGenerator):
         
         BailOfShadow = core.SummonSkill("베일 오브 섀도우", 1080 + 120, 12000 / 14, 800, 1, 12*1000, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper) # 다크 사이트 딜레이 합산
 
-        DarkFlare = core.SummonSkill("다크 플레어", 600, 60000 / 62, 360, 1, 60*1000, cooltime = 60000).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)
+        DarkFlare = core.SummonSkill("다크 플레어", 600, 60000 / 62, 360, 1, 60*1000, cooltime = 60000, red=True).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)
     
-        Smoke = core.BuffSkill("연막탄", 1080 + 120, 30000, cooltime = 150000, crit_damage = 20).wrap(core.BuffSkillWrapper) # 다크 사이트 딜레이 합산
+        Smoke = core.BuffSkill("연막탄", 1080 + 120, 30000, cooltime = 150000, crit_damage = 20, red=True).wrap(core.BuffSkillWrapper) # 다크 사이트 딜레이 합산
         Venom = core.DotSkill("페이탈 베놈", 480, 89999 * 1000).wrap(core.SummonSkillWrapper)
         
         AdvancedDarkSight = core.BuffSkill("어드밴스드 다크 사이트", 0, 10000, cooltime = -1, pdamage_indep = 5).wrap(core.BuffSkillWrapper)
@@ -121,15 +121,16 @@ class JobGenerator(ck.JobGenerator):
         
         UltimateDarksight = core.BuffSkill("얼티밋 다크 사이트", 750, 30000,
             cooltime = (220-vEhc.getV(3, 3))*1000,
-            pdamage_indep= (100 + 10 + 5 + vEhc.getV(3, 3)//5) / (100 + 5) * 100 - 100 # (얼닼사 + 어닼사) - (어닼사) 최종뎀 연산
+            pdamage_indep= (100 + 10 + 5 + vEhc.getV(3, 3)//5) / (100 + 5) * 100 - 100, # (얼닼사 + 어닼사) - (어닼사) 최종뎀 연산
+            red = True
         ).isV(vEhc, 3, 3).wrap(core.BuffSkillWrapper)
 
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 2)
         
-        Eviscerate = core.DamageSkill("절개", 570, 1900+76*vEhc.getV(0,0), 7, modifier = core.CharacterModifier(crit=100, armor_ignore=100), cooltime = 14000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 720ms - 150ms(암살 2타연계)
+        Eviscerate = core.DamageSkill("절개", 570, 1900+76*vEhc.getV(0,0), 7, modifier = core.CharacterModifier(crit=100, armor_ignore=100), cooltime = 14000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 720ms - 150ms(암살 2타연계)
 		
 		# 1.2.324 패치 적용
-        SonicBlow = core.DamageSkill("소닉 블로우", 900, 0, 0, cooltime = 80 * 1000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        SonicBlow = core.DamageSkill("소닉 블로우", 900, 0, 0, cooltime = 80 * 1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         SonicBlowTick = core.DamageSkill("소닉 블로우(틱)", 107, 500+20*vEhc.getV(1,1), 7, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper, name = "소닉 블로우(사용)") # 7 * 15
         
         ### build graph relationships

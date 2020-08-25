@@ -7,7 +7,7 @@ from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import pirates
 from . import jobutils
-from ..execution.rules import RuleSet, InactiveRule, ReservationRule, ConcurrentRunRule
+from ..execution.rules import RuleSet, InactiveRule, ConditionRule
 
 class SoulTrapStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
@@ -72,7 +72,7 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(InactiveRule("파쇄철조-회", "파쇄철조-반"), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule("소혼 장막(시전)", "진 귀참(딜레이)"), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("소혼 장막(시전)", "진 귀참", lambda x: not x.is_available()), RuleSet.BASE)
         #ruleset.add_rule(ReservationRule("소울 컨트랙트", "정령 집속"), RuleSet.BASE)
         return ruleset
 
@@ -130,16 +130,15 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.get_weapon_att("너클")
         Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         
-        SoulConcentrate = core.BuffSkill("정령 집속", 900, (30+vEhc.getV(2,1))*1000, cooltime = 120*1000, pdamage_indep = (5+vEhc.getV(2,1)//2)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
+        SoulConcentrate = core.BuffSkill("정령 집속", 900, (30+vEhc.getV(2,1))*1000, cooltime = 120*1000, red=True, pdamage_indep = (5+vEhc.getV(2,1)//2)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
         SoulConcentrateSummon = core.SummonSkill("정령 집속(무작위)", 0, 2000, 1742, 1, (30+vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
 
         # 귀문진: 정령을 한번에 2마리 소환함
-        SoulTrap = core.SummonSkill("귀문진", 990, 1280, 0, 3 * 2, 40000, cooltime = (120-vEhc.getV(3,2))*1000).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
+        SoulTrap = core.SummonSkill("귀문진", 990, 1280, 0, 3 * 2, 40000, cooltime = (120-vEhc.getV(3,2))*1000, red=True).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
         SoulTrap_D_Normal = core.DamageSkill("귀문진 공격", 0, 600+24*vEhc.getV(3,2), 3 * 2, cooltime = -1).isV(vEhc,3,2).wrap(core.DamageSkillWrapper)
         SoulTrap_D_DoubleBody = core.DamageSkill("귀문진 공격(분혼 격참)", 0, (600+24*vEhc.getV(3,2))*DOUBLEBODYMULTIPLIER, 3 * 2, cooltime = -1).isV(vEhc,3,2).wrap(core.DamageSkillWrapper)
 
-        RealSoulAttack = core.DamageSkill("진 귀참", 540, 540+6*vEhc.getV(1,3), 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20) + core.CharacterModifier(armor_ignore=50)).setV(vEhc, 0, 2, False).isV(vEhc,1,3).wrap(core.DamageSkillWrapper)
-        RealSoulAttackCounter = core.BuffSkill("진 귀참(딜레이)", 0, 6000, cooltime = -1).wrap(core.BuffSkillWrapper)
+        RealSoulAttack = core.DamageSkill("진 귀참", 540, 540+6*vEhc.getV(1,3), 12 + 1, cooltime=6000, red=True, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20) + core.CharacterModifier(armor_ignore=50)).setV(vEhc, 0, 2, False).isV(vEhc,1,3).wrap(core.DamageSkillWrapper)
         DoubleBodyRegistance = core.BuffSkill("분혼 격참(저항)", 0, 90000, cooltime = -1).wrap(core.BuffSkillWrapper)
 
         # 파쇄철조 (디버프용)
@@ -168,8 +167,8 @@ class JobGenerator(ck.JobGenerator):
         SoulTrap.onTick(core.OptionalElement(DoubleBody.is_active, SoulTrap_D_DoubleBody, SoulTrap_D_Normal, name = "분혼격참 중 귀문진 발동?"))
 
         #진 귀참 알고리즘
-        RealSoulAttack.onAfter(RealSoulAttackCounter)
-        BasicAttack = core.OptionalElement(RealSoulAttackCounter.is_active, SoulAttack, RealSoulAttack, name = "진 귀참 발동 불가능?")
+        BasicAttack = core.OptionalElement(RealSoulAttack.is_available, RealSoulAttack, SoulAttack, name = "진 귀참 발동 가능?")
+        RealSoulAttack.protect_from_running()
 
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
@@ -197,5 +196,5 @@ class JobGenerator(ck.JobGenerator):
                     globalSkill.soul_contract()] +\
                 [BladeImp, BladeImpBuff, SoulTrap] +\
                 [EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init, EnhanceSpiritLinkSummon_J, SoulConcentrateSummon] +\
-                [RealSoulAttackCounter, DoubleBodyRegistance, SpiritFrenzy] +\
+                [RealSoulAttack, DoubleBodyRegistance, SpiritFrenzy] +\
                 [BasicAttackWrapper])

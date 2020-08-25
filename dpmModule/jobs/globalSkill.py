@@ -47,7 +47,7 @@ def useful_advanced_bless(slevel = 1, useHP = False):
 class SpiderInMirrorBuilder():
     def __init__(self, enhancer, skill_importance, enhance_importance, chtr_level):
         self.MirrorBreak = core.DamageSkill(
-            "스파이더 인 미러(공간 붕괴)", 960, 750+30*enhancer.getV(skill_importance, enhance_importance), 12, cooltime = 250*1000
+            "스파이더 인 미러(공간 붕괴)", 960, 750+30*enhancer.getV(skill_importance, enhance_importance), 12, cooltime = 250*1000, red = True
         ).wrap(core.DamageSkillWrapper)
         # 5번 연속 공격 후 종료, 재돌입 대기시간 3초
         self.MirrorSpider = core.SummonSkill(
@@ -61,7 +61,7 @@ class SpiderInMirrorBuilder():
 
 # 모험가, 영웅, 레지스탕스가 사용
 def MapleHeroes2Wrapper(vEhc, num1, num2, level):
-    MapleHeroes2 = core.BuffSkill("메이플월드 여신의 축복", 450, 60*1000, stat_main = 0.01 * (100 + 10 * vEhc.getV(num1, num2)) * (25 + level * 5), pdamage = 5 + vEhc.getV(num1, num2) // 2, cooltime = 180*1000).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
+    MapleHeroes2 = core.BuffSkill("메이플월드 여신의 축복", 450, 60*1000, stat_main = 0.01 * (100 + 10 * vEhc.getV(num1, num2)) * (25 + level * 5), pdamage = 5 + vEhc.getV(num1, num2) // 2, cooltime = 180*1000, red = True).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
     return MapleHeroes2
 
 # 창조의 아이온 (즉시 재시전)
