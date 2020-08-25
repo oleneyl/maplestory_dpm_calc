@@ -11,6 +11,7 @@ from . import globalSkill
 from .jobclass import resistance
 from .jobbranch import pirates
 from . import jobutils
+import math
 
 # TODO: 워머신 타이탄 추가 (로봇 마스터리 적용)
 # TODO: [메탈아머 전탄발사] : 호밍 미사일 리로드 지속시간이 4초에서 2초로 감소되고 지속시간이 좀 더 정확하게 적용됩니다.
@@ -52,6 +53,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "메카닉"
         self.ability_list = Ability_tool.get_ability_set('passive_level', 'boss_pdamage', 'crit')
         self.preEmptiveSkills = 1
+        self._combat = 0
         
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 10, pdamage = 28+20)
@@ -65,8 +67,10 @@ class JobGenerator(ck.JobGenerator):
         OverTunning = core.InformedCharacterModifier("오버 튜닝",pdamage_indep = 20, crit=20, armor_ignore=30)
         MetalArmorExtreme=core.InformedCharacterModifier("메탈아머 익스트림",att=55)
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
+
+        PureGoldSet = core.InformedCharacterModifier("메카닉 전용장비", att = 16, stat_main = 18, stat_sub = 18) # 작당 평균 +2 가정
         
-        return [HiddenPiece, MechanicMastery, PhisicalTraining, LoadedDicePassive, MetalArmorExtreme, OverTunning]
+        return [HiddenPiece, MechanicMastery, PhisicalTraining, LoadedDicePassive, MetalArmorExtreme, OverTunning, PureGoldSet]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 50)
@@ -88,33 +92,35 @@ class JobGenerator(ck.JobGenerator):
         매시브-호밍-디스토션-마그네틱필드-RM7-RM1
         '''
         #Constants
-        ROBOT_SUMMON_REMAIN = 1 + chtr.get_base_modifier().summon_rem + 0.4
-        ROBOT_MASTERY = core.CharacterModifier(pdamage_indep = 108 + combat * 3)
+        passive_level = self._combat + chtr.get_base_modifier().passive_level
+        ROBOT_SUMMON_REMAIN = 1 + chtr.get_base_modifier().summon_rem + 0.4 + passive_level * 0.01
+        ROBOT_MASTERY = core.CharacterModifier(pdamage_indep = 105 + passive_level * 3)
+        ROBOT_BUFF = 6 + math.ceil(passive_level / 5)
 
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
         WillOfLiberty = core.BuffSkill("윌 오브 리버티", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        MassiveFire = core.DamageSkill("매시브 파이어", 600, 285, 6+1, modifier = core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        MassiveFire2 = core.DamageSkill("매시브 파이어(2)", 0, 350, 1, modifier = core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        MassiveFire = core.DamageSkill("매시브 파이어", 600, 285+self._combat*6, 6+1, modifier = core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        MassiveFire2 = core.DamageSkill("매시브 파이어(2)", 0, 350+self._combat*10, 1, modifier = core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         #로디드 데미지 고정.
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20 + 10/6 + 10/6*0.5).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
         
         #로봇들 :: 로봇당 총뎀6%, 어빌리티 적용 시 7%
         
-        Robolauncher = core.SummonSkill("로봇 런처(:RM7)", 630, 1000, (250+135), 1, 60*1000*ROBOT_SUMMON_REMAIN, modifier = ROBOT_MASTERY).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
-        RobolauncherFinal = core.DamageSkill("로봇 런처(:RM7)(폭발)", 0, 400, 1, modifier = ROBOT_MASTERY, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        RobolauncherBuff = core.BuffSkill("로봇 런처(:RM7)(버프)", 0, 60*1000*ROBOT_SUMMON_REMAIN, cooltime = -1, pdamage = 7).wrap(core.BuffSkillWrapper)
+        Robolauncher = core.SummonSkill("로봇 런처(:RM7)", 630, 1000, 250+135+passive_level*4, 1, 60*1000*ROBOT_SUMMON_REMAIN, modifier = ROBOT_MASTERY).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        RobolauncherFinal = core.DamageSkill("로봇 런처(:RM7)(폭발)", 0, 400+135+passive_level*4, 1, modifier = ROBOT_MASTERY, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        RobolauncherBuff = core.BuffSkill("로봇 런처(:RM7)(버프)", 0, 60*1000*ROBOT_SUMMON_REMAIN, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
         #MagneticField = core.SummonSkill("마그네틱 필드", ?, ?, 200, 60*1000, cooltime = 180*1000) 자폭 550% V.getEhc(2, vEnhance[0])
         
         SupportWaver = core.SummonSkill("서포트 웨이버", 630, 80000*ROBOT_SUMMON_REMAIN, 0, 0, 80*1000*ROBOT_SUMMON_REMAIN).wrap(core.SummonSkillWrapper)
-        SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*ROBOT_SUMMON_REMAIN, pdamage_indep=16, pdamage = 7, cooltime = -1, armor_ignore=10).wrap(core.BuffSkillWrapper)
-        SupportWaverFinal = core.DamageSkill("서포트 웨이버(폭발)", 0, 1100, 1, modifier = ROBOT_MASTERY, cooltime = -1).wrap(core.DamageSkillWrapper)
+        SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*ROBOT_SUMMON_REMAIN, pdamage_indep=10+5+math.ceil(passive_level/3), pdamage = ROBOT_BUFF, cooltime = -1, armor_ignore=10).wrap(core.BuffSkillWrapper)
+        SupportWaverFinal = core.DamageSkill("서포트 웨이버(폭발)", 0, 1100+passive_level*20, 1, modifier = ROBOT_MASTERY, cooltime = -1).wrap(core.DamageSkillWrapper)
         
-        RoboFactory = core.SummonSkill("로봇 팩토리", 630, 3000, 500, 3, 30*1000*ROBOT_SUMMON_REMAIN, modifier = ROBOT_MASTERY, cooltime=60*1000).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
-        RoboFactoryBuff = core.BuffSkill("로봇 팩토리(버프)", 0, 30*1000*ROBOT_SUMMON_REMAIN, cooltime = -1, pdamage = 7).wrap(core.BuffSkillWrapper)
-        RoboFactoryFinal = core.DamageSkill("로봇 팩토리(폭발)", 0, 1000, 1, modifier = ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        RoboFactory = core.SummonSkill("로봇 팩토리", 630, 3000, 500+self._combat*5, 3, 30*1000*ROBOT_SUMMON_REMAIN, modifier = ROBOT_MASTERY, cooltime=60*1000).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
+        RoboFactoryBuff = core.BuffSkill("로봇 팩토리(버프)", 0, 30*1000*ROBOT_SUMMON_REMAIN, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
+        RoboFactoryFinal = core.DamageSkill("로봇 팩토리(폭발)", 0, 1000+self._combat*10, 1, modifier = ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
         BomberTime = core.BuffSkill("봄버 타임", 900, 10*1000, cooltime = 100*1000).wrap(core.BuffSkillWrapper)
         DistortionField = core.SummonSkill("디스토션 필드", 690, 4000/15, 350, 2, 4000-1, cooltime = 8000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
@@ -127,7 +133,7 @@ class JobGenerator(ck.JobGenerator):
         RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3, ROBOT_MASTERY) # 메카닉은 인팬트리에 로봇 마스터리 최종뎀이 적용됨
         
         MultipleOption = MultipleOptionWrapper(vEhc, ROBOT_MASTERY)
-        MultipleOptionBuff = core.BuffSkill("멀티플 옵션(버프)", 0, MultipleOption.skill.remain, cooltime = -1, pdamage = 7).wrap(core.BuffSkillWrapper)
+        MultipleOptionBuff = core.BuffSkill("멀티플 옵션(버프)", 0, MultipleOption.skill.remain, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
         
         MicroMissle = core.DamageSkill("마이크로 미사일 컨테이너", 540, 375+17*vEhc.getV(0,0), (30 + vEhc.getV(0,0) // 3) * 5, cooltime = 25000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         BusterCall_ = core.DamageSkill("메탈아머 전탄발사", 8670/49, 400+16*vEhc.getV(4,4), 11).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
@@ -138,10 +144,10 @@ class JobGenerator(ck.JobGenerator):
         
         MassiveFire.onAfter(MassiveFire2)
         #### 호밍 미사일 정의 ####
-        HommingMissle_ = core.DamageSkill("호밍 미사일", 0, 500*0.6, 9+1+combat*1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        HommingMissle_B = core.DamageSkill("호밍 미사일(봄버)", 0, 500*0.6, 9+1+combat*1+6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        HommingMissle_Bu = core.DamageSkill("호밍 미사일(전탄)", 0, 500, 9+1+combat*1+7).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        HommingMissle_B_Bu = core.DamageSkill("호밍 미사일(봄버)(전탄)", 0, 500, 9+1+combat*1+6+7).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        HommingMissle_ = core.DamageSkill("호밍 미사일", 0, 500*0.6, 9+passive_level).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        HommingMissle_B = core.DamageSkill("호밍 미사일(봄버)", 0, 500*0.6, 9+passive_level+6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        HommingMissle_Bu = core.DamageSkill("호밍 미사일(전탄)", 0, 500, 9+passive_level+7).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        HommingMissle_B_Bu = core.DamageSkill("호밍 미사일(봄버)(전탄)", 0, 500, 9+passive_level+6+7).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         HommingMissleHolder = core.SummonSkill("호밍 미사일(더미)", 0, 660, 0, 0, 99999 * 100000).wrap(core.SummonSkillWrapper)
         
