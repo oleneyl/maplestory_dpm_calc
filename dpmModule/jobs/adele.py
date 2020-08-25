@@ -170,7 +170,7 @@ class JobGenerator(ck.JobGenerator):
         for sk in [Divide, Resonance]:
             auraweapon_builder.add_aura_weapon(sk)
             magic_curcuit_full_drive_builder.add_trigger(sk)
-        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
         MagicCircuitFullDrive, ManaStorm = magic_curcuit_full_drive_builder.get_skill()
 
         # TODO: 5차 스킬 딜레이 공속 적용여부 테스트
@@ -245,7 +245,7 @@ class JobGenerator(ck.JobGenerator):
 
         return(Divide,
                 [globalSkill.maple_heros(chtr.level), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
-                    AuraWeaponBuff, AuraWeaponCooltimeDummy, MagicCircuitFullDrive, 
+                    AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive, 
                     globalSkill.useful_sharp_eyes(), globalSkill.soul_contract()] +\
                 [Resonance, Grave, Blossom, Marker, Ruin] +\
                 [Order, Shard, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, Scool, ManaStorm] +\

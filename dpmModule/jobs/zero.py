@@ -353,7 +353,7 @@ class JobGenerator(ck.JobGenerator):
                     AdvancedRollingCurve, AdvancedRollingAssulter, StormBreak, UpperStrike, AirRiot, GigaCrash,
                     FallingStar, AdvancedEarthBreak, TwinBladeOfTime_end]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         DivineLeer.set_disabled_and_time_left(1)
 
@@ -370,10 +370,9 @@ class JobGenerator(ck.JobGenerator):
 
         return(ComboHolder,
                 [globalSkill.maple_heros(chtr.level, combat_level = 0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                    AlphaState, BetaState, DivineLeer, AuraWeaponBuff, DoubleTime, TimeDistortion, TimeHolding, IntensiveTime, LimitBreak,
+                    AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, DoubleTime, TimeDistortion, TimeHolding, IntensiveTime, LimitBreak,
                     SoulContract]+\
                 [ShadowRain, TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta]+\
                 [StormBreakSummon, WindCutterSummon, ThrowingWeapon]+\
-                [AuraWeaponCooltimeDummy]+\
                 []+\
                 [ComboHolder])

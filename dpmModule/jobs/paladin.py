@@ -105,13 +105,12 @@ class JobGenerator(ck.JobGenerator):
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
         for sk in [Blast, Sanctuary, GrandCrossSmallTick, GrandCrossLargeTick]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
                         
         return(Blast,
                 [globalSkill.maple_heros(chtr.level, combat_level = 2), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                    Threat, ElementalForce, EpicAdventure, HolyUnity, AuraWeaponBuff,
+                    Threat, ElementalForce, EpicAdventure, HolyUnity, AuraWeaponBuff, AuraWeapon,
                     globalSkill.soul_contract()] +\
                 [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, GrandCross] +\
                 [BlessedHammer, BlessedHammerActive] +\
-                [AuraWeaponCooltimeDummy] +\
                 [Blast])

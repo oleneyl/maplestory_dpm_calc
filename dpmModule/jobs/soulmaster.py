@@ -107,14 +107,13 @@ class JobGenerator(ck.JobGenerator):
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2, modifier=FallingMoon, hit=6*2)
         for sk in [SpeedingDance, ElisionStyx]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     NimbleFinger, TrueSight, SolunaTime, SoulForge, 
-                    GloryOfGuardians, AuraWeaponBuff, globalSkill.soul_contract(), Elision, ElisionBreak, SelestialDanceInit, 
+                    GloryOfGuardians, AuraWeaponBuff, AuraWeapon, globalSkill.soul_contract(), Elision, ElisionBreak, SelestialDanceInit, 
                     ] +\
                 [CygnusPalanks, SolunaDivide] +\
                 [SelestialDanceSummon, SoulEclipse] +\
-                [AuraWeaponCooltimeDummy] +\
                 [BasicAttackWrapper])

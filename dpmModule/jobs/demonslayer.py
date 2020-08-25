@@ -11,7 +11,7 @@ from . import jobutils
 class AuraWeaponBuilder_BB(warriors.AuraWeaponBuilder):
     def __init__(self, enhancer, skill_importance, enhance_importance):
         super(AuraWeaponBuilder_BB, self).__init__(enhancer, skill_importance, enhance_importance)
-        jobutils.create_auxilary_attack(self.target_skill, 0.9, "(블블)")
+        jobutils.create_auxilary_attack(self.AuraWeapon, 0.9, "(블루 블러드)")
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -139,19 +139,18 @@ class JobGenerator(ck.JobGenerator):
 
         # 블블 추가타 적용
         for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DevilCry]:
-            jobutils.create_auxilary_attack(sk, 0.9, "(블블)")
+            jobutils.create_auxilary_attack(sk, 0.9, "(블루 블러드))")
 
         # 오라 웨폰
         auraweapon_builder = AuraWeaponBuilder_BB(vEhc, 3, 2)
         for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-                    Booster, DemonSlashRemainTime, DemonSlashTrigger, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, DemonAwakning,
+                    Booster, DemonSlashRemainTime, DemonSlashTrigger, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
                     globalSkill.soul_contract()] +\
                 [Cerberus, DevilCry, SpiritOfRageEnd] +\
                 [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_] +\
-                [AuraWeaponCooltimeDummy] +\
                 [BasicAttackWrapper])
