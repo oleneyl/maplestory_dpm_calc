@@ -18,6 +18,7 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.buffrem = False
         self.jobtype = "int"
+        self.jobname = "배틀메이지"
         self.vEnhanceNum = 10
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'reuse')
         self.preEmptiveSkills = 2
@@ -27,10 +28,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('마스터 오브 데스', '그림 리퍼'), RuleSet.BASE)
         return ruleset
 
-    def apply_complex_options(self, chtr):
-        chtr.add_property_ignorance(10)
-
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         ArtOfStaff = core.InformedCharacterModifier("아트 오브 스태프",att = 20, crit = 15)
         StaffMastery = core.InformedCharacterModifier("스태프 마스터리",att = 30, crit = 20)
         HighWisdom =  core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
@@ -44,11 +42,11 @@ class JobGenerator(ck.JobGenerator):
         
         return [ArtOfStaff, StaffMastery, HighWisdom, BattleMastery, DarkAuraPassive, StaffExpert, SpellBoost] #디버프오라 미적용
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수")
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5)
         
-        DebuffAura = core.InformedCharacterModifier("디버프 오라", armor_ignore = 20, pdamage_indep = 10)
+        DebuffAura = core.InformedCharacterModifier("디버프 오라", armor_ignore = 20, pdamage_indep = 10, prop_ignore = 10)
         BattleRage = core.InformedCharacterModifier("배틀 레이지",pdamage = 40, crit_damage = 8, crit=20)
         return [WeaponConstant, Mastery, DebuffAura, BattleRage ]
 

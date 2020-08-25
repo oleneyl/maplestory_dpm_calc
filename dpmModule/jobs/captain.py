@@ -13,11 +13,12 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.buffrem = False
         self.jobtype = "dex"
+        self.jobname = "캡틴"
         self.vEnhanceNum = 14
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'buff_rem', 'crit')
         self.preEmptiveSkills = 1
     
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
 
         
         CriticalRoar = core.InformedCharacterModifier("크리티컬 로어",crit = 20, crit_damage = 5)
@@ -28,12 +29,12 @@ class JobGenerator(ck.JobGenerator):
         CaptainDignitiyPassive = core.InformedCharacterModifier("캡틴 디그니티(패시브)",att = 30)
         CrueCommandership = core.InformedCharacterModifier("크루 커맨더쉽",crit_damage = 25)
     
-        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(self.vEhc, 1, 2)
+        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
     
         return [CriticalRoar, PhisicalTraining, HalopointBullet, ContinualAimingPassive,
             FullMetaJacket, CaptainDignitiyPassive, CrueCommandership]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 50)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)
         ContinualAimingPassive = core.InformedCharacterModifier("컨티뉴얼 에이밍(액티브)",pdamage_indep = 25)

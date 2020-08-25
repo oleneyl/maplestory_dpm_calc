@@ -48,13 +48,11 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = True
         self.vEnhanceNum = 13
         self.jobtype = "int"
+        self.jobname = "키네시스"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
-        
-    def apply_complex_options(self, chtr):
-        chtr.buff_rem += 20
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         SuperSensitive = core.InformedCharacterModifier("초감각",crit = 10)
         PsychicForce1Passive = core.InformedCharacterModifier("사이킥 포스1(패시브)",att = 10)
         Inertia1 = core.InformedCharacterModifier("내재 1",att = 10)
@@ -71,6 +69,7 @@ class JobGenerator(ck.JobGenerator):
         
         ESPBattleOrder = core.InformedCharacterModifier("ESP 배틀오더",att = 50, pdamage = 20)
         Transcendence = core.InformedCharacterModifier("각성",pdamage_indep = 25)
+        SupremeConcentration = core.InformedCharacterModifier("정신집중-유지", buff_rem = 20)
         Transport = core.InformedCharacterModifier("전달",armor_ignore = 25)
         Mastery = core.InformedCharacterModifier("마스터리",crit_damage = 10)
         #TODO
@@ -81,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
                             MindEnhance, Accurate, PsychicChargingPassive, PsychicForce3Passive,
                              ESPBattleOrder, Transcendence, Transport, Mastery]
 
-    def get_not_implied_skill_list(self):     
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):     
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
         PsychicForce3Passive = core.InformedCharacterModifier("사이킥 포스 3(패시브)", pdamage_indep = 20)
@@ -111,7 +110,7 @@ class JobGenerator(ck.JobGenerator):
         PsychicShield = core.BuffSkill("사이킥 실드", 0, 180000).wrap(core.BuffSkillWrapper)
 
         Ultimate_Material = core.DamageSkill("얼티메이트-메테리얼", 630, 700, 10, modifier = core.CharacterModifier(crit_damage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)#   7
-        PsychicDrain = core.SummonSkill("싸이킥 드레인", 510, 500, 150, 1, 10000, cooltime = 5000, rem = False).setV(vEhc, 4, 5, False).wrap(core.SummonSkillWrapper) # 1칸+
+        PsychicDrain = core.SummonSkill("싸이킥 드레인", 540, 500, 150, 1, 10000, cooltime = 5000, rem = False).setV(vEhc, 4, 5, False).wrap(core.SummonSkillWrapper) # 1칸+
         
         PsychicForce3 = core.DamageSkill("싸이킥 포스3", 270, 0, 0).wrap(core.DamageSkillWrapper)
         PsychicForce3Dot = core.DotSkill("싸이킥 포스3(도트)", 403.125, 20000).wrap(core.SummonSkillWrapper) # ~20초 평균 퍼뎀
@@ -143,7 +142,7 @@ class JobGenerator(ck.JobGenerator):
             raise
 
         PsychicTornado = core.SummonSkill("싸이킥 토네이도", 540, 1000, 500+20*vEhc.getV(2,2), 4, 20000, red = True, cooltime = 120000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)# -15
-        PsychicTornadoFinal_1 = core.DamageSkill("싸이킥 토네이도(1)", 0, (200+3*vEhc.getV(2,2))*3, 2, cooltime=-1).wrap(core.DamageSkillWrapper)
+        PsychicTornadoFinal_1 = core.DamageSkill("싸이킥 토네이도(1)", 540, (200+3*vEhc.getV(2,2))*3, 2, cooltime=-1).wrap(core.DamageSkillWrapper)
         PsychicTornadoFinal_2 = core.DamageSkill("싸이킥 토네이도(2)", 0, (350+10*vEhc.getV(2,2))*3, 10*3, cooltime=-1).wrap(core.DamageSkillWrapper)
 
         UltimateMovingMatter = core.SummonSkill("얼티메이트-무빙 매터", 480, 25000/64, 500+20*vEhc.getV(0,0), 5, 25000, cooltime = 90000, modifier = core.CharacterModifier(crit_damage=20)).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)# -10
@@ -176,7 +175,7 @@ class JobGenerator(ck.JobGenerator):
         
         ### Psychic point
         Ultimate_Material.onConstraint(core.ConstraintElement("7포인트", PsychicPoint, partial(PsychicPoint.judge_ultimate,7)))
-        Ultimate_Material.onConstraint(core.ConstraintElement("트레인 깔려있으면", UltimateTrain, partial(UltimateTrain.is_time_left, 0, 1)))
+        Ultimate_Material.onConstraint(core.ConstraintElement("트레인 깔려있으면", UltimateTrain, partial(UltimateTrain.is_time_left, 0, 1))) # 0 -> 2000으로 조절하면 트레인 비중 높은 딜사이클이 됨
         Ultimate_Material.onBefore(PsychicPoint.stackController(-7))
         
         PsychicForce3.onConstraint(core.ConstraintElement("도트 종료시", PsychicForce3Dot, PsychicForce3Dot.is_not_active))

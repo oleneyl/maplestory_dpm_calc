@@ -8,16 +8,12 @@ from .jobbranch import warriors
 from . import jobutils
 ######   Passive Skill   ######
 
-class AuraWeaponBuilder_BB(warriors.AuraWeaponBuilder):
-    def __init__(self, enhancer, skill_importance, enhance_importance):
-        super(AuraWeaponBuilder_BB, self).__init__(enhancer, skill_importance, enhance_importance)
-        jobutils.create_auxilary_attack(self.target_skill, 0.9, "(블블)")
-
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.buffrem = False
         self.jobtype = "str"
+        self.jobname = "데몬슬레이어"
         self.vEnhanceNum = 15
         self.preEmptiveSkills = 1
         
@@ -26,7 +22,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 50, pdamage = 200)
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
 
         
         #데몬스퓨리 : 보공15%, 링크에 반영되므로 미고려.
@@ -40,7 +36,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [DeathCurse, Outrage, PhisicalTraining, Concentration, AdvancedWeaponMastery, DarkBindPassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)        
 
@@ -57,11 +53,12 @@ class JobGenerator(ck.JobGenerator):
         # 데몬 슬래시 - 리인포스, 리메인타임 리인포스
         # 데몬 임팩트 - 리인포스, 보너스 어택, 리듀스 포스        
         '''
+        buff_rem = chtr.get_base_modifier().buff_rem
 
     
 
         #Buff skills
-        Booster = core.BuffSkill("부스터", 600, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
+        Booster = core.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
 
         DemonSlashRemainTime = core.BuffSkill("데몬 슬래시-리메인타임", 0, 9999999, 0, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
         
@@ -76,17 +73,17 @@ class JobGenerator(ck.JobGenerator):
         
         DemonImpact = core.DamageSkill("데몬 임팩트", 660, 460, (6+1), modifier = core.CharacterModifier(crit = 100, armor_ignore = 30, boss_pdamage = 40, pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
-        DevilCry = core.DamageSkill("데빌 크라이", 1620, 515, 7, cooltime = 20 * 1000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)   #이블 토쳐 위해 사용필수.
+        DevilCry = core.DamageSkill("데빌 크라이", 1260, 515, 7, cooltime = 20 * 1000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)   #이블 토쳐 위해 사용필수.
         DevilCryBuff = core.BuffSkill("데빌 크라이(위협)", 0, 20000, cooltime = -1, armor_ignore = 15).wrap(core.BuffSkillWrapper)
         
         InfinityForce = core.BuffSkill("인피니티 포스", 990, 50*1000, cooltime = 200 * 1000).wrap(core.BuffSkillWrapper)
         Metamorphosis = core.BuffSkill("메타모포시스", 1680, 180*1000, rem = True, pdamage = 35).wrap(core.BuffSkillWrapper)
-        MetamorphosisSummon = core.SummonSkill("메타모포시스(소환)", 0, 500, 250, 1, 180*1000*(1+chtr.buff_rem/100), cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        MetamorphosisSummon = core.SummonSkill("메타모포시스(소환)", 0, 510, 250, 1, 180*1000*(1+buff_rem/100), cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         MetamorphosisSummon_BB = core.DamageSkill("메타모포시스(블블)", 0, 250 * 0.9, 1, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         #블루블러드는 소환수 적용이 안됨.
         BlueBlood = core.BuffSkill("블루 블러드", 1020, 60000, cooltime = 120000 - 60000).wrap(core.BuffSkillWrapper) #모든 공격에 최종데미지의 90%로 추가타 발생. 포스50수급시 -3초, 인피니티 포스시 4초마다 2초 감소, 모든 스킬 포스소모량 20%감소.
-        Cerberus = core.DamageSkill("서버러스", 900, 450, 6, cooltime = 5000, modifier = core.CharacterModifier(boss_pdamage = 50, armor_ignore = 50)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)#포스50 추가흡수
+        Cerberus = core.DamageSkill("서버러스", 690, 450, 6, cooltime = 5000, modifier = core.CharacterModifier(boss_pdamage = 50, armor_ignore = 50)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)#포스50 추가흡수
         DemonFortitude = core.BuffSkill("데몬 포티튜드", 0, 60000, cooltime = 120000).wrap(core.BuffSkillWrapper)
             
         CallMastema = core.SummonSkill("콜 마스테마", 690, 5000, 1100, 8, (30+vEhc.getV(4,4))*1000, cooltime = 150*1000).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
@@ -97,7 +94,7 @@ class JobGenerator(ck.JobGenerator):
         
         SpiritOfRage = core.SummonSkill("요르문간드", 810, 1080, (850+34*vEhc.getV(3,3)), 12, (10+int(0.2*vEhc.getV(3,3)))*1000, cooltime = (120 - int(0.5*vEhc.getV(3,3)))*1000, modifier = core.CharacterModifier(crit = 100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
         SpiritOfRageEnd = core.DamageSkill("요르문간드(종료)", 0, 900+36*vEhc.getV(3,3), 15, cooltime = -1).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
-        Orthros = core.SummonSkill("오르트로스(네메아)", 1000, 2000, 400+16*vEhc.getV(1,1), 12, 40000, cooltime = 120*1000, modifier = core.CharacterModifier(crit = 100, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
+        Orthros = core.SummonSkill("오르트로스(네메아)", 510, 2000, 400+16*vEhc.getV(1,1), 12, 40000, cooltime = 120*1000, modifier = core.CharacterModifier(crit = 100, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         Orthros_ = core.SummonSkill("오르트로스(게리온)", 0, 3000, 900+36*vEhc.getV(1,1), 10, 40000, cooltime = -1, modifier = core.CharacterModifier(crit = 100, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         ######   Skill Wrapper   ######
         '''딜 사이클 정리
@@ -135,21 +132,20 @@ class JobGenerator(ck.JobGenerator):
         Metamorphosis.onAfter(MetamorphosisSummon)
         MetamorphosisSummon.onTick(MetamorphosisSummon_BB)
 
-        # 블블 추가타 적용
-        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DevilCry]:
-            jobutils.create_auxilary_attack(sk, 0.9, "(블블)")
-
         # 오라 웨폰
-        auraweapon_builder = AuraWeaponBuilder_BB(vEhc, 3, 2)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
         for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
+
+        # 블블 추가타 적용
+        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DevilCry, AuraWeapon]:
+            jobutils.create_auxilary_attack(sk, 0.9, "(블루 블러드)")
 
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-                    Booster, DemonSlashRemainTime, DemonSlashTrigger, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, DemonAwakning,
+                    Booster, DemonSlashRemainTime, DemonSlashTrigger, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
                     globalSkill.soul_contract()] +\
                 [Cerberus, DevilCry, SpiritOfRageEnd] +\
                 [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_] +\
-                [AuraWeaponCooltimeDummy] +\
                 [BasicAttackWrapper])

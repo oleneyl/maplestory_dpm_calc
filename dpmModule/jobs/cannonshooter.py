@@ -13,11 +13,12 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.buffrem = False
         self.jobtype = "str"
+        self.jobname = "캐논슈터"
         self.vEnhanceNum = 16
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'reuse')
         self.preEmptiveSkills = 2
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         BuildupCanon = core.InformedCharacterModifier("빌드업 캐논",att = 20)
         CriticalFire = core.InformedCharacterModifier("크리티컬 파이어",crit=20, crit_damage=5)
         PirateTraining = core.InformedCharacterModifier("파이렛 트레이닝",stat_main=30, stat_sub=30)
@@ -28,13 +29,13 @@ class JobGenerator(ck.JobGenerator):
         PirateSpirit = core.InformedCharacterModifier("파이렛 스피릿",boss_pdamage=40)
         OverburningCanon = core.InformedCharacterModifier("오버버닝 캐논",pdamage_indep=30, armor_ignore=20)
     
-        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(self.vEhc, 3, 4)
+        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 3, 4)
     
         return [BuildupCanon, CriticalFire, 
                             PirateTraining, MonkeyWavePassive, OakRuletPassive, ReinforceCanon,
                             PirateSpirit, OverburningCanon, LoadedDicePassive]
         
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 50)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)        
         return [WeaponConstant, Mastery]

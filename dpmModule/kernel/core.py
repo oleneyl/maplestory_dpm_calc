@@ -73,7 +73,23 @@ class CharacterModifier(object):
         self.stat_main_fixed += arg.stat_main_fixed
         self.stat_sub_fixed += arg.stat_sub_fixed
         return self
-
+    
+    def __add__(self, arg):
+        return CharacterModifier(crit = (self.crit + arg.crit), \
+                        crit_damage = (self.crit_damage + arg.crit_damage) , \
+                        pdamage = (self.pdamage + arg.pdamage), \
+                        pdamage_indep = self.pdamage_indep + arg.pdamage_indep + (self.pdamage_indep * arg.pdamage_indep) * 0.01, \
+                        stat_main = (self.stat_main + arg.stat_main),\
+                        stat_sub = (self.stat_sub + arg.stat_sub), \
+                        pstat_main = (self.pstat_main + arg.pstat_main), \
+                        pstat_sub = (self.pstat_sub + arg.pstat_sub), \
+                        boss_pdamage = (self.boss_pdamage + arg.boss_pdamage),\
+                        armor_ignore = 100 - 0.01 * ((100 - self.armor_ignore) * (100 - arg.armor_ignore)), \
+                        patt = (self.patt + arg.patt), \
+                        att = (self.att + arg.att), \
+                        stat_main_fixed = (self.stat_main_fixed + arg.stat_main_fixed), \
+                        stat_sub_fixed = (self.stat_sub_fixed + arg.stat_sub_fixed))
+    
     def __sub__(self, arg):
         return CharacterModifier(crit = (self.crit - arg.crit),   \
                         crit_damage = (self.crit_damage - arg.crit_damage) , \
@@ -92,6 +108,12 @@ class CharacterModifier(object):
 
     def copy(self):
         return CharacterModifier(crit = self.crit, crit_damage = self.crit_damage, pdamage = self.pdamage, 
+                    pdamage_indep = self.pdamage_indep, stat_main = self.stat_main, stat_sub = self.stat_sub, 
+                    pstat_main = self.pstat_main, pstat_sub = self.pstat_sub, boss_pdamage = self.boss_pdamage, 
+                    armor_ignore = self.armor_ignore, patt = self.patt, att = self.att, stat_main_fixed = self.stat_main_fixed, stat_sub_fixed = self.stat_sub_fixed)
+
+    def extend(self):
+        return ExtendedCharacterModifier(crit = self.crit, crit_damage = self.crit_damage, pdamage = self.pdamage, 
                     pdamage_indep = self.pdamage_indep, stat_main = self.stat_main, stat_sub = self.stat_sub, 
                     pstat_main = self.pstat_main, pstat_sub = self.pstat_sub, boss_pdamage = self.boss_pdamage, 
                     armor_ignore = self.armor_ignore, patt = self.patt, att = self.att, stat_main_fixed = self.stat_main_fixed, stat_sub_fixed = self.stat_sub_fixed)
@@ -181,15 +203,14 @@ class CharacterModifier(object):
         return (res_damage, real_damage - res_damage)
 
     def log(self):
-        txt = ("crit rate : %.1f, crit damage %.1f\n")%(self.crit, self.crit_damage)
-        txt += "pdamage : %.1f, pdamage_indep %.1f\n"%(self.pdamage, self.pdamage_indep)
-        txt += "stat_main : %.1f, stat_sub %.1f\n"%(self.stat_main, self.stat_sub)
-        txt += "pstat_main : %.1f, pstat_sub %.1f\n"%(self.pstat_main, self.pstat_sub)
-        txt += "stat_main_fixed : %.1f, stat_sub_fixed %.1f\n"%(self.stat_main_fixed, self.stat_sub_fixed)
-        txt += "boss_pdamage : %.1f, armor_ignore %.1f\n"%(self.boss_pdamage, self.armor_ignore)
-        txt += "att : %.1f, patt %.1f\n"%(self.att, self.patt)
-        txt += "Fixed stat : main %.1f, sub %.1f\n"%(self.stat_main_fixed, self.stat_sub_fixed)
-        txt += "damageFactor : %.1f"%(self.get_damage_factor())
+        txt = ("crit rate : %.1f, crit damage : %.1f\n")%(self.crit, self.crit_damage)
+        txt += "pdamage : %.1f, pdamage_indep : %.1f\n"%(self.pdamage, self.pdamage_indep)
+        txt += "stat_main : %.1f, stat_sub : %.1f\n"%(self.stat_main, self.stat_sub)
+        txt += "pstat_main : %.1f, pstat_sub : %.1f\n"%(self.pstat_main, self.pstat_sub)
+        txt += "stat_main_fixed : %.1f, stat_sub_fixed : %.1f\n"%(self.stat_main_fixed, self.stat_sub_fixed)
+        txt += "boss_pdamage : %.1f, armor_ignore : %.1f\n"%(self.boss_pdamage, self.armor_ignore)
+        txt += "att : %.1f, patt : %.1f\n"%(self.att, self.patt)
+        txt += "damageFactor : %.1f\n"%(self.get_damage_factor())
         return txt
     
     def __repr__(self):
@@ -229,54 +250,22 @@ class CharacterModifier(object):
         for i in el:
             if i[1] != 0: retel.append(i)
         return retel
-        
-    def __add__(self, arg):
-        return CharacterModifier(crit = (self.crit + arg.crit), \
-                        crit_damage = (self.crit_damage + arg.crit_damage) , \
-                        pdamage = (self.pdamage + arg.pdamage), \
-                        pdamage_indep = (self.pdamage_indep + arg.pdamage_indep + (self.pdamage_indep * arg.pdamage_indep) * 0.01), \
-                        stat_main = (self.stat_main + arg.stat_main),\
-                        stat_sub = (self.stat_sub + arg.stat_sub), \
-                        pstat_main = (self.pstat_main + arg.pstat_main), \
-                        pstat_sub = (self.pstat_sub + arg.pstat_sub), \
-                        boss_pdamage = (self.boss_pdamage + arg.boss_pdamage),\
-                        armor_ignore = 100 - 0.01 * ((100 - self.armor_ignore) * (100 - arg.armor_ignore)), \
-                        patt = (self.patt + arg.patt), \
-                        att = (self.att + arg.att), \
-                        stat_main_fixed = (self.stat_main_fixed + arg.stat_main_fixed), \
-                        stat_sub_fixed = (self.stat_sub_fixed + arg.stat_sub_fixed))
     
-    def as_dict(self, js_flag = False):
-        if js_flag:
-            return {"crit" : self.crit,
-                            "crit_damage" : self.crit_damage,
-                            "pdamage" : self.pdamage,
-                            "pdamage_indep" : self.pdamage_indep,
-                            "stat_main" : self.stat_main,
-                            "stat_sub" : self.stat_sub,
-                            "pstat_main":self.pstat_main,
-                            "pstat_sub" : self.pstat_sub,
-                            "boss_pdamage":self.boss_pdamage,
-                            "armor_ignore":self.armor_ignore,
-                            "patt":self.patt,
-                            "att":self.att,
-                            "stat_main_fixed":self.stat_main_fixed,
-                            "stat_sub_fixed":self.stat_sub_fixed}        
-        else:
-            return {"crit" : self.crit,
-                            "crit_damage" : self.crit_damage,
-                            "pdamage" : self.pdamage,
-                            "pdamage_indep" : self.pdamage_indep,
-                            "stat_main" : self.stat_main,
-                            "stat_sub" : self.stat_sub,
-                            "pstat_main":self.pstat_main,
-                            "pstat_sub" : self.pstat_sub,
-                            "boss_pdamage":self.boss_pdamage,
-                            "armor_ignore":self.armor_ignore,
-                            "patt":self.patt,
-                            "att":self.att,
-                            "stat_main_fixed":self.stat_main_fixed,
-                            "stat_sub_fixed":self.stat_sub_fixed}
+    def as_dict(self):
+        return {"crit" : self.crit,
+                "crit_damage" : self.crit_damage,
+                "pdamage" : self.pdamage,
+                "pdamage_indep" : self.pdamage_indep,
+                "stat_main" : self.stat_main,
+                "stat_sub" : self.stat_sub,
+                "pstat_main":self.pstat_main,
+                "pstat_sub" : self.pstat_sub,
+                "boss_pdamage":self.boss_pdamage,
+                "armor_ignore":self.armor_ignore,
+                "patt":self.patt,
+                "att":self.att,
+                "stat_main_fixed":self.stat_main_fixed,
+                "stat_sub_fixed":self.stat_sub_fixed}
 
     def _dynamic_variable_hint(self, character_modifier):
         if not isinstance(character_modifier, DynamicCharacterModifier):
@@ -307,87 +296,164 @@ class DynamicCharacterModifier(DynamicVariableInstance, CharacterModifier):
                     patt = self.patt.evaluate(), 
                     att = self.att.evaluate(), stat_main_fixed = self.stat_main_fixed.evaluate(), 
                     stat_sub_fixed = self.stat_sub_fixed.evaluate())
+
+class SkillModifier():
+    def __init__(self, buff_rem = 0, summon_rem = 0, cooltime_reduce = 0, pcooltime_reduce = 0, reuse_chance = 0):
+        self.buff_rem = buff_rem
+        self.summon_rem = summon_rem
+        self.cooltime_reduce = cooltime_reduce
+        self.pcooltime_reduce = pcooltime_reduce
+        self.reuse_chance = reuse_chance
     
-
-class InformedCharacterModifier(CharacterModifier):
-    __slots__ = "name"
-    def __init__(self, name, crit = 0, crit_damage = 0, pdamage = 0, pdamage_indep = 0, stat_main = 0, stat_sub = 0, pstat_main = 0, pstat_sub = 0, boss_pdamage = 0, armor_ignore = 0, patt = 0, att = 0, stat_main_fixed = 0, stat_sub_fixed = 0):
-        super(InformedCharacterModifier, self).__init__(crit = crit, crit_damage = crit_damage, pdamage = pdamage, 
-                    pdamage_indep = pdamage_indep, stat_main = stat_main, stat_sub = stat_sub, 
-                    pstat_main = pstat_main, pstat_sub = pstat_sub, boss_pdamage = boss_pdamage, 
-                    armor_ignore = armor_ignore, patt = patt, att = att, stat_main_fixed = stat_main_fixed, stat_sub_fixed = stat_sub_fixed)
-        self.name = name
-
-    def as_dict(self, js_flag = False):
-        ret_dict = super(InformedCharacterModifier, self).as_dict(js_flag = js_flag)
-        ret_dict['name'] = self.name
-        return ret_dict
+    def copy(self):
+        return SkillModifier(buff_rem = self.buff_rem, summon_rem = self.summon_rem, cooltime_reduce = self.cooltime_reduce,
+            pcooltime_reduce = self.pcooltime_reduce, reuse_chance = self.reuse_chance)
+        
+    def __add__(self, arg):
+        return SkillModifier(
+            buff_rem = self.buff_rem + arg.buff_rem,
+            summon_rem = self.summon_rem + arg.summon_rem,
+            cooltime_reduce = self.cooltime_reduce + arg.cooltime_reduce,
+            pcooltime_reduce = self.pcooltime_reduce + arg.pcooltime_reduce,
+            reuse_chance = self.reuse_chance + arg.reuse_chance)
 
 class ExtendedCharacterModifier(CharacterModifier):
-    def __init__(self, buff_rem = 0, summon_rem = 0, cooltime_reduce = 0,prop_ignore = 0, **kwargs):
+    def __init__(self, buff_rem = 0, summon_rem = 0, cooltime_reduce = 0, pcooltime_reduce = 0, reuse_chance = 0,
+            prop_ignore = 0, additional_target = 0, passive_level = 0, **kwargs):
         super(ExtendedCharacterModifier, self).__init__(**kwargs)
         self.buff_rem = buff_rem
         self.summon_rem = summon_rem
         self.cooltime_reduce = cooltime_reduce
+        self.pcooltime_reduce = pcooltime_reduce
+        self.reuse_chance = reuse_chance
         self.prop_ignore = prop_ignore
+        self.additional_target = additional_target
+        self.passive_level = passive_level
+
+    def log(self):
+        txt = super(ExtendedCharacterModifier, self).log()
+        txt + "buff_rem : %.1f, summon_rem : %.1f\n" % (self.buff_rem, self.summon_rem)
+        txt += "cooltime_reduce : %.1f pcooltime_reduce : %.1f\n" % (self.cooltime_reduce, self.pcooltime_reduce)
+        txt += "reuse_chance : %.1f prop_ignore : %.1f\n" % (self.reuse_chance, self.prop_ignore)
+        txt += "additional_target : %d passive_level : %d\n" % (self.additional_target, self.passive_level)
+        return txt
+    
+    def copy(self):
+        return ExtendedCharacterModifier(
+            buff_rem = self.buff_rem, summon_rem = self.summon_rem, cooltime_reduce = self.cooltime_reduce, pcooltime_reduce = self.pcooltime_reduce,
+            reuse_chance = self.reuse_chance, prop_ignore = self.prop_ignore, additional_target = self.additional_target, passive_level = self.passive_level,
+            crit = self.crit, crit_damage = self.crit_damage, pdamage = self.pdamage, 
+            pdamage_indep = self.pdamage_indep, stat_main = self.stat_main, stat_sub = self.stat_sub, 
+            pstat_main = self.pstat_main, pstat_sub = self.pstat_sub, boss_pdamage = self.boss_pdamage, 
+            armor_ignore = self.armor_ignore, patt = self.patt, att = self.att, stat_main_fixed = self.stat_main_fixed, stat_sub_fixed = self.stat_sub_fixed
+        )
 
     def degenerate(self):
         return super(ExtendedCharacterModifier, self).copy()
 
-    def log(self):
-        txt = super(ExtendedCharacterModifier, self).log()
-        txt += "buff_rem %.1f, summon_rem %.1f, cooltime_reduce %.1f\n" % (self.buff_rem, self.summon_rem, self.cooltime_reduce)
-        return txt
-    
-    def copy(self):
-        return ExtendedCharacterModifier(buff_rem = self.buff_rem, summon_rem = self.summon_rem, cooltime_reduce = self.cooltime_reduce, prop_ignore = self.prop_ignore,
-                    crit = self.crit, crit_damage = self.crit_damage, pdamage = self.pdamage, 
-                    pdamage_indep = self.pdamage_indep, stat_main = self.stat_main, stat_sub = self.stat_sub, 
-                    pstat_main = self.pstat_main, pstat_sub = self.pstat_sub, boss_pdamage = self.boss_pdamage, 
-                    armor_ignore = self.armor_ignore, patt = self.patt, att = self.att, stat_main_fixed = self.stat_main_fixed, stat_sub_fixed = self.stat_sub_fixed)        
+    def to_skill_modifier(self):
+        return SkillModifier(buff_rem = self.buff_rem, summon_rem = self.summon_rem,
+            cooltime_reduce = self.cooltime_reduce, pcooltime_reduce = self.pcooltime_reduce, reuse_chance = self.reuse_chance)
+
+    def as_dict(self):
+        ret_dict = super(ExtendedCharacterModifier, self).as_dict()
+        return {
+            **ret_dict,
+            "buff_rem": self.buff_rem,
+            "summon_rem": self.summon_rem,
+            "cooltime_reduce": self.cooltime_reduce,
+            "pcooltime_reduce": self.pcooltime_reduce,
+            "reuse_chance": self.reuse_chance,
+            "prop_ignore": self.prop_ignore,
+            "additional_target": self.additional_target,
+            "passive_level": self.passive_level
+        }
+
+    def __iadd__(self, arg):
+        self.buff_rem += arg.buff_rem
+        self.summon_rem += arg.summon_rem
+        self.cooltime_reduce += arg.cooltime_reduce
+        self.pcooltime_reduce += arg.pcooltime_reduce
+        self.reuse_chance += arg.reuse_chance
+        self.prop_ignore += arg.prop_ignore
+        self.additional_target += arg.additional_target
+        self.passive_level += arg.passive_level
+        self.crit += arg.crit
+        self.crit_damage += arg.crit_damage
+        self.pdamage += arg.pdamage
+        self.pdamage_indep += arg.pdamage_indep + (self.pdamage_indep * arg.pdamage_indep) * 0.01
+        self.stat_main += arg.stat_main
+        self.stat_sub += arg.stat_sub
+        self.pstat_main += arg.pstat_main
+        self.pstat_sub += arg.pstat_sub
+        self.boss_pdamage += arg.boss_pdamage
+        self.armor_ignore = 100 - 0.01 * ((100 - self.armor_ignore) * (100 - arg.armor_ignore))
+        self.patt += arg.patt
+        self.att += arg.att 
+        self.stat_main_fixed += arg.stat_main_fixed
+        self.stat_sub_fixed += arg.stat_sub_fixed
+        return self
         
     def __add__(self, arg):
         return ExtendedCharacterModifier(
-                        prop_ignore = self.prop_ignore + arg.prop_ignore,
-                        buff_rem = (self.buff_rem + arg.buff_rem), 
+                        buff_rem = (self.buff_rem + arg.buff_rem),
                         summon_rem = (self.summon_rem + arg.summon_rem),
                         cooltime_reduce = (self.cooltime_reduce + arg.cooltime_reduce),
-                        crit = (self.crit + arg.crit), \
-                        crit_damage = (self.crit_damage + arg.crit_damage) , \
-                        pdamage = (self.pdamage + arg.pdamage), \
-                        pdamage_indep = (self.pdamage_indep + arg.pdamage_indep + (self.pdamage_indep * arg.pdamage_indep) * 0.01), \
-                        stat_main = (self.stat_main + arg.stat_main),\
-                        stat_sub = (self.stat_sub + arg.stat_sub), \
-                        pstat_main = (self.pstat_main + arg.pstat_main), \
-                        pstat_sub = (self.pstat_sub + arg.pstat_sub), \
-                        boss_pdamage = (self.boss_pdamage + arg.boss_pdamage),\
-                        armor_ignore = 100 - 0.01 * ((100 - self.armor_ignore) * (100 - arg.armor_ignore)), \
-                        patt = (self.patt + arg.patt), \
-                        att = (self.att + arg.att), \
-                        stat_main_fixed = (self.stat_main_fixed + arg.stat_main_fixed), \
-                        stat_sub_fixed = (self.stat_sub_fixed + arg.stat_sub_fixed))        
+                        pcooltime_reduce = (self.pcooltime_reduce + arg.pcooltime_reduce),
+                        reuse_chance = (self.reuse_chance + arg.reuse_chance),
+                        prop_ignore = (self.prop_ignore + arg.prop_ignore),
+                        additional_target = (self.additional_target + arg.additional_target),
+                        passive_level = (self.passive_level + arg.passive_level),
+                        crit = (self.crit + arg.crit),
+                        crit_damage = (self.crit_damage + arg.crit_damage) ,
+                        pdamage = (self.pdamage + arg.pdamage),
+                        pdamage_indep = (self.pdamage_indep + arg.pdamage_indep + (self.pdamage_indep * arg.pdamage_indep) * 0.01),
+                        stat_main = (self.stat_main + arg.stat_main),
+                        stat_sub = (self.stat_sub + arg.stat_sub),
+                        pstat_main = (self.pstat_main + arg.pstat_main),
+                        pstat_sub = (self.pstat_sub + arg.pstat_sub),
+                        boss_pdamage = (self.boss_pdamage + arg.boss_pdamage),
+                        armor_ignore = 100 - 0.01 * ((100 - self.armor_ignore) * (100 - arg.armor_ignore)),
+                        patt = (self.patt + arg.patt),
+                        att = (self.att + arg.att),
+                        stat_main_fixed = (self.stat_main_fixed + arg.stat_main_fixed),
+                        stat_sub_fixed = (self.stat_sub_fixed + arg.stat_sub_fixed))
 
-    def __iadd__(self, arg):
+    def __sub__(self, arg):
         return ExtendedCharacterModifier(
-                        prop_ignore = self.prop_ignore + arg.prop_ignore,
-                        buff_rem = (self.buff_rem + arg.buff_rem), 
-                        summon_rem = (self.summon_rem + arg.summon_rem),
-                        cooltime_reduce = (self.cooltime_reduce + arg.cooltime_reduce),
-                        crit = (self.crit + arg.crit), \
-                        crit_damage = (self.crit_damage + arg.crit_damage) , \
-                        pdamage = (self.pdamage + arg.pdamage), \
-                        pdamage_indep = (self.pdamage_indep + arg.pdamage_indep + (self.pdamage_indep * arg.pdamage_indep) * 0.01), \
-                        stat_main = (self.stat_main + arg.stat_main),\
-                        stat_sub = (self.stat_sub + arg.stat_sub), \
-                        pstat_main = (self.pstat_main + arg.pstat_main), \
-                        pstat_sub = (self.pstat_sub + arg.pstat_sub), \
-                        boss_pdamage = (self.boss_pdamage + arg.boss_pdamage),\
-                        armor_ignore = 100 - 0.01 * ((100 - self.armor_ignore) * (100 - arg.armor_ignore)), \
-                        patt = (self.patt + arg.patt), \
-                        att = (self.att + arg.att), \
-                        stat_main_fixed = (self.stat_main_fixed + arg.stat_main_fixed), \
-                        stat_sub_fixed = (self.stat_sub_fixed + arg.stat_sub_fixed))  
+                        buff_rem = (self.buff_rem - arg.buff_rem),
+                        summon_rem = (self.summon_rem - arg.summon_rem),
+                        cooltime_reduce = (self.cooltime_reduce - arg.cooltime_reduce),
+                        pcooltime_reduce = (self.pcooltime_reduce - arg.pcooltime_reduce),
+                        reuse_chance = (self.reuse_chance - arg.reuse_chance),
+                        prop_ignore = (self.prop_ignore - arg.prop_ignore),
+                        additional_target = (self.additional_target - arg.additional_target),
+                        passive_level = (self.passive_level - arg.passive_level),
+                        crit = (self.crit - arg.crit),
+                        crit_damage = (self.crit_damage - arg.crit_damage),
+                        pdamage = (self.pdamage - arg.pdamage),
+                        pdamage_indep = (100 + self.pdamage_indep) / (100 + arg.pdamage_indep) * 100 - 100,
+                        stat_main = (self.stat_main - arg.stat_main),
+                        stat_sub = (self.stat_sub - arg.stat_sub),
+                        pstat_main = (self.pstat_main - arg.pstat_main),
+                        pstat_sub = (self.pstat_sub - arg.pstat_sub),
+                        boss_pdamage = (self.boss_pdamage - arg.boss_pdamage),
+                        armor_ignore = 100 - 100 * (100 - self.armor_ignore) / (100 - arg.armor_ignore),
+                        patt = (self.patt - arg.patt),
+                        att = (self.att - arg.att),
+                        stat_main_fixed = (self.stat_main_fixed - arg.stat_main_fixed),
+                        stat_sub_fixed = (self.stat_sub_fixed - arg.stat_sub_fixed))
 
+class InformedCharacterModifier(ExtendedCharacterModifier):
+    __slots__ = "name"
+    def __init__(self, name, **kwargs):
+        super(InformedCharacterModifier, self).__init__(**kwargs)
+        self.name = name
+
+    def as_dict(self):
+        ret_dict = super(InformedCharacterModifier, self).as_dict()
+        ret_dict['name'] = self.name
+        return ret_dict
 
 class VSkillModifier():
     @staticmethod
@@ -610,8 +676,8 @@ class SummonSkill(AbstractSkill):
         return self._static_skill_modifier
 
 class DotSkill(SummonSkill):
-    def __init__(self, name, damage, remain):
-        super(DotSkill, self).__init__(name, 0, 1000, damage, 1, remain, cooltime = -1, modifier = CharacterModifier(crit=-9999, armor_ignore=100))
+    def __init__(self, name, damage, remain, cooltime = -1):
+        super(DotSkill, self).__init__(name, 0, 1000, damage, 1, remain, cooltime = cooltime, modifier = CharacterModifier(crit=-9999, armor_ignore=100))
         self.spec = "dot"
 
     def _get_explanation_internal(self, detail = False, lang = "ko", expl_level = 2):
@@ -632,13 +698,7 @@ class DotSkill(SummonSkill):
         if expl_level < 2:
             li = li[3:7] + [li[10]]
             
-        return self._parse_list_info_into_string(li)        
-        
-
-class EjaculateSkill(SummonSkill):
-    def __init__(self, name, delay, damage, hit, remain, modifier = CharacterModifier()):
-        super(EjaculateSkill, self).__init__(name, 0, delay, damage, hit, remain, cooltime = -1, modifier = modifier)
-        self.spec = "ejac"
+        return self._parse_list_info_into_string(li)
         
 class Task():
     def __init__(self, ref, ftn):
@@ -727,7 +787,6 @@ class GraphElement():
         self._id = _id
         self._before = []   #Tasks that must be executed before this task.
         self._after = []    #Tasks that must be executed after this task.
-        self._run = []  #Tasks that must be executed if this task runs., deprecated.
         self._justAfter = []
         self._result_object_cache = ResultObject(0, CharacterModifier(), 0, 0, sname = 'Graph Element', spec = 'graph control')
         self._flag = 0
@@ -770,19 +829,13 @@ class GraphElement():
     def _use(self) -> ResultObject:
         return self._result_object_cache
         
-    def build_task(self, **kwargs) -> Task:
+    def build_task(self, skill_modifier, **kwargs) -> Task:
         task = Task(self, self._use)
-        self.sync(task)
+        self.sync(task, skill_modifier)
         return task
         
     def spend_time(self, time):
         return
-
-    def onRun(self, el):
-        self._run.append(el)
-        
-    def onRuns(self, ellist : list):
-        self._run += ellist
         
     def onAfter(self, el):
         self._after = [el] + self._after 
@@ -796,10 +849,10 @@ class GraphElement():
     def onBefores(self, ellist : list):
         self._before += ellist
         
-    def sync(self, task):
-        task.onBefore([el.build_task() for el in self._before])
-        task.onAfter([el.build_task() for el in (self._run + self._after)])
-        task.onJustAfter([el.build_task() for el in (self._justAfter)])
+    def sync(self, task, skill_modifier):
+        task.onBefore([el.build_task(skill_modifier) for el in self._before])
+        task.onAfter([el.build_task(skill_modifier) for el in self._after])
+        task.onJustAfter([el.build_task(skill_modifier) for el in (self._justAfter)])
         
     def onJustAfter(self, task):
         self._justAfter += [task] + self._justAfter
@@ -840,9 +893,9 @@ class TaskHolder(GraphElement):
         elif lang == "en":
             return "type:task holder\nname:%s" % self._id
         
-    def build_task(self, **kwargs):
+    def build_task(self, skill_modifier, **kwargs):
         task = self._taskholder.copy()
-        self.sync(task)
+        self.sync(task, skill_modifier)
         return task
         
     def get_link(self):
@@ -886,13 +939,13 @@ class OptionalElement(GraphElement):
         elif lang == "en":
             return "type:Optional Element\nname:%s" % self._id
         
-    def build_task(self, **kwargs):
+    def build_task(self, skill_modifier, **kwargs):
         if self.fail == None:
             fail = None
         else:
-            fail = self.fail.build_task()
-        task = OptionalTask(self, self.disc, self.after.build_task(), failtask = fail, name = self._id)
-        self.sync(task)
+            fail = self.fail.build_task(skill_modifier)
+        task = OptionalTask(self, self.disc, self.after.build_task(skill_modifier), failtask = fail, name = self._id)
+        self.sync(task, skill_modifier)
         return task
         
     def get_link(self):
@@ -1041,20 +1094,20 @@ class AbstractSkillWrapper(GraphElement):
         else:
             return TaskHolder(task, name = _name)
 
-    def _use(self, ftn, rem = 0, red = 0, **kwargs) -> ResultObject:
+    def _use(self, ftn, skill_modifier, **kwargs) -> ResultObject:
         raise NotImplementedError
         
-    def build_task(self, rem = 0, red = 0) -> Task:
+    def build_task(self, skill_modifier) -> Task:
         if self._refer_runtime_context:
-            task = self._build_task_with_referring_context(rem=rem, red=red)
+            task = self._build_task_with_referring_context(skill_modifier)
         else:
-            task = Task(self, partial(self._use, rem, red))
-        self.sync(task)
+            task = Task(self, partial(self._use, skill_modifier))
+        self.sync(task, skill_modifier)
         return task
 
-    def _build_task_with_referring_context(self, rem = 0, red = 0):
+    def _build_task_with_referring_context(self, skill_modifier):
         def context_referring_function(**kwargs):   # Task가 실행시킬 함수
-            return self._use(rem=rem, red=red, **kwargs)
+            return self._use(skill_modifier, **kwargs)
         
         return ContextReferringTask(self, context_referring_function)
         
@@ -1089,6 +1142,28 @@ class AbstractSkillWrapper(GraphElement):
     def is_time_left(self, time, direction):
         if (self.timeLeft - time) * direction > 0 : return True
         else: return False
+
+    def calculate_cooltime(self, skill_modifier: SkillModifier):
+        if self.skill.red == False:
+            return self.skill.cooltime
+            
+        cooltime = self.skill.cooltime
+        pcooltime_reduce = skill_modifier.pcooltime_reduce # 쿨감%
+        cooltime_reduce = skill_modifier.cooltime_reduce # 쿨감+ (ms)
+        
+        if cooltime * (1 - 0.01*pcooltime_reduce) <= 1000: # 쿨감%부터 적용, 최소 1초까지
+            cd = min(cooltime, 1000)
+        else:
+            cd = cooltime * (1 - 0.01*pcooltime_reduce)
+        
+        if cd - cooltime_reduce <= 10000:
+            cooltime_cap = min(10000, cd)
+            cdr_left = (cooltime_reduce - (cd - cooltime_cap)) / 1000 # 10초 이하에서 쿨감되는 수치 계산
+            cdr_applied = cooltime_cap * (1 - cdr_left * 0.05) # 1초당 5%씩 감소
+        else:
+            cdr_applied = cd - cooltime_reduce
+        
+        return max(cdr_applied, min(cd, 5000)) # 5초까지 감소, 단 이미 스킬쿨이 5초 아래였을 경우 그대로 사용
 
 class BuffSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill : BuffSkill, name = None):
@@ -1130,15 +1205,15 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         if self.cooltimeLeft < 0:
             self.available = True
     
-    def _use(self, rem = 0, red = 0) -> ResultObject:
-        self.timeLeft = self.skill.remain * (1 + 0.01*rem * self.skill.rem)
-        self.cooltimeLeft = self.skill.cooltime * (1 - 0.01*red* self.skill.red)
+    def _use(self, skill_modifier) -> ResultObject:
+        self.timeLeft = self.skill.remain * (1 + 0.01*skill_modifier.buff_rem * self.skill.rem)
+        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         self.onoff = True
         if self.cooltimeLeft > 0:
             self.available = False
         delay = self.skill.delay
         #mdf = self.get_modifier()
-        return ResultObject(delay, CharacterModifier(), 0, 0, sname = self.skill.name, spec = self.skill.spec, kwargs = {"remain" : self.skill.remain * (1+0.01*rem*self.skill.rem)})
+        return ResultObject(delay, CharacterModifier(), 0, 0, sname = self.skill.name, spec = self.skill.spec, kwargs = {"remain" : self.skill.remain * (1+0.01*skill_modifier.buff_rem*self.skill.rem)})
 
     def get_modifier(self) -> CharacterModifier:
         if self.onoff:
@@ -1156,7 +1231,7 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         self._end += tasklist
 
 class StackSkillWrapper(BuffSkillWrapper):
-    def __init__(self, skill, max_, modifier = CharacterModifier(), name = None):
+    def __init__(self, skill, max_, name = None):
         super(StackSkillWrapper, self).__init__(skill, name = name)
         self.stack = 0
         self._max = max_
@@ -1187,11 +1262,10 @@ class StackSkillWrapper(BuffSkillWrapper):
         return TaskHolder(task, name = name)
         
     def judge(self, stack, direction):
-        if (self.stack-stack)*direction>=0:return True
-        else: return False
+        return (self.stack-stack)*direction>=0
 
 class TimeStackSkillWrapper(AbstractSkillWrapper):
-    def __init__(self, skill, max_, modifier = CharacterModifier(), name = None):
+    def __init__(self, skill, max_, name = None):
         super(TimeStackSkillWrapper, self).__init__(skill, name = name)
         self.stack = 0
         self._max = max_
@@ -1239,8 +1313,8 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         if self.cooltimeLeft < 0:
             self.available = True
         
-    def _use(self, rem = 0, red = 0):
-        self.cooltimeLeft = self.skill.cooltime * (1-0.01*red*self.skill.red)
+    def _use(self, skill_modifier):
+        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         if self.cooltimeLeft > 0:
             self.available = False
         return ResultObject(self.skill.delay, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
@@ -1248,6 +1322,23 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         
     def get_modifier(self) -> CharacterModifier:
         return self.skill.get_modifier() + self.modifier
+        
+class StackDamageSkillWrapper(DamageSkillWrapper):
+    def __init__(self, skill : DamageSkill, stack_skill: AbstractSkillWrapper, fn, modifier = CharacterModifier(), name = None):
+        super(StackDamageSkillWrapper, self).__init__(skill, modifier = modifier, name = name)
+        self.stack_skill = stack_skill
+        self.fn = fn
+        
+    def _use(self, skill_modifier):
+        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
+        if self.cooltimeLeft > 0:
+            self.available = False
+
+        stack = self.fn(self.stack_skill)
+        if stack <= 0:
+            return ResultObject(self.skill.delay, self.get_modifier(), 0, 0, sname = self.skill.name, spec = self.skill.spec)
+
+        return ResultObject(self.skill.delay, self.get_modifier(), self.skill.damage, self.skill.hit * stack, sname = self.skill.name, spec = self.skill.spec)
 
         
 class SummonSkillWrapper(AbstractSkillWrapper):
@@ -1292,11 +1383,11 @@ class SummonSkillWrapper(AbstractSkillWrapper):
             self.available = True
     
     #_use only alloted for start.
-    def _use(self, rem = 0, red = 0):
+    def _use(self, skill_modifier):
         self.tick = 0
         self.onoff = True
-        self.cooltimeLeft = self.skill.cooltime * (1-0.01*red*self.skill.red)
-        self.timeLeft = self.skill.remain * (1+0.01*rem*self.skill.rem)
+        self.timeLeft = self.skill.remain * (1+0.01*skill_modifier.summon_rem*self.skill.rem)
+        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         if self.cooltimeLeft > 0:
             self.available = False
         return ResultObject(self.skill.summondelay, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
@@ -1308,9 +1399,9 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         else:
             return ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)    
     
-    def build_periodic_task(self):
+    def build_periodic_task(self, skill_modifier):
         task = Task(self, self._useTick)
-        task.onAfter([el.build_task() for el in self._onTick])
+        task.onAfter([el.build_task(skill_modifier) for el in self._onTick])
         return task
     
     def onTick(self, task):
@@ -1321,133 +1412,7 @@ class SummonSkillWrapper(AbstractSkillWrapper):
     
     def get_modifier(self):
         retMdf = self.skill.get_modifier() + self.modifier
-        return retMdf        
-    
-class ScheduleGraph(AbstractScenarioGraph):
-    def __init__(self, collection = None):
-        super(ScheduleGraph, self).__init__()
-        self._vEhc = None
-        
-        self.default_task = None
-        
-        self._rem = 0
-        self._red = 0
-        
-        self.buff = []
-        self.damage = []
-        self.summon = []
-        self.spend = []
-        
-        self.tick = []
-        
-        self.node = []  #Show direct view of graph!
-
-    def get_accessibles(self):
-        wrps = []
-        for wrp, _ in (self.buff + self.damage + self.summon + self.spend + [self.default_task]):
-            wrps.append(wrp)
-        return wrps
-
-    def set_v_enhancer(self, vEhc):
-        self._vEhc = vEhc
-
-    def add_timer(self, timer):
-        self.spend.append([timer, timer.build_task()])
-
-    @staticmethod
-    def generateNode(graph, task):
-        pass
-    
-    def get_network_information(self, style = "total"):
-        '''get_network_information (param style : String)
-        Return network information list as given style.
-        '''
-        
-        if style == "buff":
-            return self.get_single_network_information(self.buff, is_list = True)
-        elif style == "damage":
-            return self.get_single_network_information(self.damage + [self.default_task], is_list = True)
-        elif style == "summon":
-            return self.get_single_network_information(self.summon, is_list = True)
-        elif style == "tick":
-            return self.get_single_network_information(self.tick, is_list = True)
-        elif style == "merged":
-            return self.get_single_network_information(self.buff + self.damage + self.summon + self.spend + self.tick + [self.default_task], is_list = True)
-
-    def get_default_buff_modifier(self):
-        mdf = CharacterModifier()
-        for wrp, _ in self.buff:
-            if wrp.skill.cooltime == 0:
-                mdf = mdf + wrp.skill.get_modifier()
-        return mdf
-        
-    def build_graph(self, chtr, buffli, damageli, summonli, spendli, default_skill_wrapper):
-        self.default_task = [default_skill_wrapper, default_skill_wrapper.build_task()]
-        
-        rem = chtr.buff_rem
-        red = chtr.cooltimeReduce
-        
-        self._rem = rem
-        self._red = red
-        
-        for wrp in buffli:
-            if wrp is not None:
-                self.buff.append([wrp, wrp.build_task(rem = rem, red = red)])
-        for wrp in damageli:
-            if wrp is not None:
-                self.damage.append([wrp, wrp.build_task(rem = rem, red = red)])
-        for wrp in summonli:
-            if wrp is not None:
-                self.summon.append([wrp, wrp.build_task(rem = rem, red = red)])
-                self.tick.append([wrp, wrp.build_periodic_task()])
-        for wrp in spendli:
-            if wrp is not None:
-                self.spend.append([wrp, wrp.build_task(rem = rem, red = red)])
-                #self.tick.append([wrp, wrp.build_periodic_task()])
-    
-    def rebuild(self):
-        for skill_list in [self.buff, self.damage, self.summon, self.spend]:
-            for i, wx in enumerate(skill_list):
-                skill_list[i][1] = wx.build_task(rem = self._rem, red = self._red)
-    
-    def initialize(self):
-        pass
-    
-    def get_whole_skill_info(self, expl_level = 0):
-        return{
-            #"basic" : [self.default_task[0].skill.get_info(expl_level = expl_level)],
-            "buff" : self.get_network_information(style = 'buff'),
-            "damage" : self.get_network_information(style = 'damage'),
-            "summon" : self.get_network_information(style = 'summon'),
-            "spend" : self.get_network_information(style = 'spend'),
-        }
-    
-    def get_detailed_skill_info(self, expl_level = 0):
-        '''get_skill_info와 달리, 이 action은 더 자세한 정보를 리턴합니다.
-        '''
-        return{
-            #"basic" : [self.default_task[0].skill.get_info(expl_level = expl_level)],
-            "buff" : [s[0].skill.get_info(expl_level = expl_level) for s in self.buff],
-            "damage" : [s[0].skill.get_info(expl_level = expl_level) for s in self.damage],
-            "summon" : [s[0].skill.get_info(expl_level = expl_level) for s in self.summon],
-            "spend" : [s[0].skill.get_info(expl_level = expl_level) for s in self.spend],
-        }
-    
-    def spend_time(self, time):
-        for wrp, _ in (self.buff + self.damage + self.summon + self.spend):
-            wrp.spend_time(time)
-    
-    def get_skill_info(self):
-        retli = {}
-        snames = []
-        for sk, name in self.buff + self.damage + self.summon + self.tick:
-            if sk.skill.cooltime > 0: cooltime = 1
-            else: cooltime = 0
-            retli[sk._id] = {"cooltime" : cooltime, "type" : sk.skill.spec}
-            if sk._id not in snames:
-                snames.append(sk._id)
-        
-        return {"dict" : retli, "li" : snames}
+        return retMdf
             
 class Simulator(object):
     __slots__ = 'scheduler', 'character', 'analytics', '_modifier_cache_and_time', '_default_modifier'
@@ -1507,11 +1472,7 @@ class Simulator(object):
                 print("error raised")
                 print("---")
                 raise e
-    
-    #recursive call
-    def generate_task_stackStack(self, task):
-        return (task._after + [task] + task._before)
-    
+        
     def run_task(self, task):
         self.run_task_recursive(task)
         
