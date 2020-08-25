@@ -1240,11 +1240,10 @@ class StackSkillWrapper(BuffSkillWrapper):
         return TaskHolder(task, name = name)
         
     def judge(self, stack, direction):
-        if (self.stack-stack)*direction>=0:return True
-        else: return False
+        return (self.stack-stack)*direction>=0
 
 class TimeStackSkillWrapper(AbstractSkillWrapper):
-    def __init__(self, skill, max_, modifier = CharacterModifier(), name = None):
+    def __init__(self, skill, max_, name = None):
         super(TimeStackSkillWrapper, self).__init__(skill, name = name)
         self.stack = 0
         self._max = max_
@@ -1301,6 +1300,23 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         
     def get_modifier(self) -> CharacterModifier:
         return self.skill.get_modifier() + self.modifier
+        
+class StackDamageSkillWrapper(DamageSkillWrapper):
+    def __init__(self, skill : DamageSkill, stack_skill: AbstractSkillWrapper, fn, modifier = CharacterModifier(), name = None):
+        super(StackDamageSkillWrapper, self).__init__(skill, modifier = modifier, name = name)
+        self.stack_skill = stack_skill
+        self.fn = fn
+        
+    def _use(self, skill_modifier):
+        self.cooltimeLeft = self.skill.cooltime * (1-0.01*skill_modifier.pcooltime_reduce*self.skill.red)
+        if self.cooltimeLeft > 0:
+            self.available = False
+
+        stack = self.fn(self.stack_skill)
+        if stack <= 0:
+            return ResultObject(self.skill.delay, self.get_modifier(), 0, 0, sname = self.skill.name, spec = self.skill.spec)
+
+        return ResultObject(self.skill.delay, self.get_modifier(), self.skill.damage, self.skill.hit * stack, sname = self.skill.name, spec = self.skill.spec)
 
         
 class SummonSkillWrapper(AbstractSkillWrapper):
