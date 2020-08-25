@@ -90,11 +90,11 @@ class JobGenerator(ck.JobGenerator):
         BFGCannonball = core.SummonSkill("빅 휴즈 기간틱 캐논볼", 600, 210, (450+15*vEhc.getV(0,0)) * 0.45, 4 * 3, 210*COCOBALLHIT, cooltime = 25000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
 
 
-        ICBM = core.DamageSkill("ICBM", 1140, (1200+48*vEhc.getV(1,1)) * 0.45, 5*ICBMHIT * 3, cooltime = 30000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        ICBM = core.DamageSkill("ICBM", 1140, (1200+48*vEhc.getV(1,1)) * 0.45, 5*ICBMHIT * 3, cooltime = 30000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         ICBMDOT = core.SummonSkill("ICBM(장판)", 0, 15000/27, (500+20*vEhc.getV(1,1)) * 0.45, 1 * 3, 15000, cooltime = -1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) #27타
     
-        SpecialMonkeyEscort_Canon = core.SummonSkill("스페셜 몽키 에스코트", 780, int(45000 / 97), 300+12*vEhc.getV(2,2), 4, (30+int(0.5*vEhc.getV(2,2)))*1000 - 1500, cooltime = 120000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
-        SpecialMonkeyEscort_Boom = core.SummonSkill("스페셜 몽키 에스코트(폭탄)", 0, int(45000 / 17), 450+18*vEhc.getV(2,2), 7, (30+int(0.5*vEhc.getV(2,2)))*5000 - 1500, cooltime = 120000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
+        SpecialMonkeyEscort_Canon = core.SummonSkill("스페셜 몽키 에스코트", 780, int(45000 / 97), 300+12*vEhc.getV(2,2), 4, (30+int(0.5*vEhc.getV(2,2)))*1000 - 1500, cooltime = 120000, red=True).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
+        SpecialMonkeyEscort_Boom = core.SummonSkill("스페셜 몽키 에스코트(폭탄)", 0, int(45000 / 17), 450+18*vEhc.getV(2,2), 7, (30+int(0.5*vEhc.getV(2,2)))*5000 - 1500, cooltime = -1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
         ### build graph relationships
     
         MonkeyWave.onAfter(MonkeyWaveBuff)

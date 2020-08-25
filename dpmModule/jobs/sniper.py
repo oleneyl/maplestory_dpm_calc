@@ -81,7 +81,7 @@ class JobGenerator(ck.JobGenerator):
 
         Snipping = core.DamageSkill("스나이핑", 630, 465+combat*5, 9 + 1, modifier = core.CharacterModifier(crit = 100, armor_ignore = 20 + combat * 1, pdamage = 20, boss_pdamage = 10) + PASSIVE_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         TrueSnippingTick = core.DamageSkill("트루 스나이핑(타격)", 690, 950+vEhc.getV(2,2)*30, 14+1, modifier = core.CharacterModifier(pdamage = 100, armor_ignore = 100) + PASSIVE_MODIFIER).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        TrueSnipping = core.DamageSkill("트루 스나이핑", 120, 0, 0, cooltime = 180 * 1000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        TrueSnipping = core.DamageSkill("트루 스나이핑", 120, 0, 0, cooltime = 180 * 1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         ChargedArrow = core.DamageSkill("차지드 애로우", 0, 750 + vEhc.getV(1,1)*30, 10+1, cooltime = -1, modifier = PASSIVE_MODIFIER).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         ChargedArrowHold = core.SummonSkill("차지드 애로우(더미)", 0, 10000, 0, 0, 9999999, cooltime = -1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # TODO: 공격 주기에 쿨감 적용해야 함
@@ -89,10 +89,10 @@ class JobGenerator(ck.JobGenerator):
         Freezer = core.SummonSkill("프리저", 900, 3030, 390, 1, 220 * 1000).setV(vEhc, 3, 3, False).wrap(core.SummonSkillWrapper)
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         
-        Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (int(121-0.5*vEhc.getV(5,5)))*1000).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
+        Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (int(121-0.5*vEhc.getV(5,5)))*1000, red=True).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
         
         SplitArrow = core.DamageSkill("스플릿 애로우(공격)", 0, 600 + vEhc.getV(0,0) * 24, 5+1, modifier = PASSIVE_MODIFIER).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        SplitArrowBuff = core.BuffSkill("스플릿 애로우", 810, 60 * 1000, 120 * 1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        SplitArrowBuff = core.BuffSkill("스플릿 애로우", 810, 60 * 1000, 120 * 1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         #TODO : 스플릿애로우 계산
         
         FinalAttack = core.DamageSkill("파이널 어택", 0, 150, 0.4, modifier = PASSIVE_MODIFIER).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)

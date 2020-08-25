@@ -66,15 +66,15 @@ class JobGenerator(ck.JobGenerator):
         DarkSight = core.BuffSkill("다크 사이트", 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper)#, pdamage_indep = 20 + 10 + int(0.2*vEhc.getV(3,3))).wrap(core.BuffSkillWrapper)
         
         PhantomBlow = core.DamageSkill("팬텀 블로우", 540, 315, 6+1, modifier = core.CharacterModifier(armor_ignore = 44, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        SuddenRaid = core.DamageSkill("써든레이드", 690, 1150, 3, cooltime = 30000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)    #파컷의 남은 쿨타임 20% 감소
+        SuddenRaid = core.DamageSkill("써든레이드", 690, 1150, 3, cooltime = 30000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)    #파컷의 남은 쿨타임 20% 감소
         SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 210, 10000).wrap(core.SummonSkillWrapper)
         
-        FinalCut = core.DamageSkill("파이널 컷", 450, 2000, 1, cooltime = 90000).wrap(core.DamageSkillWrapper)
+        FinalCut = core.DamageSkill("파이널 컷", 450, 2000, 1, cooltime = 90000, red=True).wrap(core.DamageSkillWrapper)
         FinalCutBuff = core.BuffSkill("파이널 컷(버프)", 0, 60000, rem = True, cooltime = -1, pdamage_indep = 40).wrap(core.BuffSkillWrapper)
         
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        FlashBang = core.DamageSkill("플래시 뱅", 390, 250, 1, cooltime = 60000).wrap(core.DamageSkillWrapper)  #임의 딜레이.
+        FlashBang = core.DamageSkill("플래시 뱅", 390, 250, 1, cooltime = 60000, red=True).wrap(core.DamageSkillWrapper)  #임의 딜레이.
         FlashBangDebuff = core.BuffSkill("플래시 뱅(디버프)", 0, 50000/2, cooltime = -1, pdamage = 10 * 0.9).wrap(core.BuffSkillWrapper)
         Venom = core.DotSkill("페이탈 베놈", 160*3, 8000).wrap(core.SummonSkillWrapper)
         

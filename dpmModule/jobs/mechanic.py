@@ -25,7 +25,7 @@ class MultipleOptionWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, modifier):
         self.cycle = 0
         self.vEhc = vEhc
-        skill = core.SummonSkill("멀티플 옵션", 780, 1530, 0, 0, (75+2*vEhc.getV(2,1))*1000, modifier = modifier, cooltime = 200 * 1000).isV(vEhc,2,1)
+        skill = core.SummonSkill("멀티플 옵션", 780, 1530, 0, 0, (75+2*vEhc.getV(2,1))*1000, modifier = modifier, cooltime = 200 * 1000, red=True).isV(vEhc,2,1)
         super(MultipleOptionWrapper, self).__init__(skill)
 
     def _useTick(self):
@@ -129,9 +129,9 @@ class JobGenerator(ck.JobGenerator):
         MultipleOption = MultipleOptionWrapper(vEhc, ROBOT_MASTERY)
         MultipleOptionBuff = core.BuffSkill("멀티플 옵션(버프)", 0, MultipleOption.skill.remain, cooltime = -1, pdamage = 7).wrap(core.BuffSkillWrapper)
         
-        MicroMissle = core.DamageSkill("마이크로 미사일 컨테이너", 540, 375+17*vEhc.getV(0,0), (30 + vEhc.getV(0,0) // 3) * 5, cooltime = 25000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        MicroMissle = core.DamageSkill("마이크로 미사일 컨테이너", 540, 375+17*vEhc.getV(0,0), (30 + vEhc.getV(0,0) // 3) * 5, cooltime = 25000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         BusterCall_ = core.DamageSkill("메탈아머 전탄발사", 8670/49, 400+16*vEhc.getV(4,4), 11).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
-        BusterCallInit = core.DamageSkill("메탈아머 전탄발사(시전)", 1330, 0, 0, cooltime = 200*1000).wrap(core.DamageSkillWrapper) # 선딜레이
+        BusterCallInit = core.DamageSkill("메탈아머 전탄발사(시전)", 1330, 0, 0, cooltime = 200*1000, red=True).wrap(core.DamageSkillWrapper) # 선딜레이
         BusterCallBuff = core.BuffSkill("메탈아머 전탄발사(버프)", 0, 8670, cooltime = -1).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         BusterCallEnd = core.DamageSkill("메탈아머 전탄발사(하차)", 1800, 0, 0).wrap(core.DamageSkillWrapper)
         BusterCallPenalty = core.BuffSkill("메탈아머 전탄발사(페널티)", 0, 2000, cooltime = -1).wrap(core.BuffSkillWrapper)
