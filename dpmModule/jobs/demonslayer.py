@@ -8,11 +8,6 @@ from .jobbranch import warriors
 from . import jobutils
 ######   Passive Skill   ######
 
-class AuraWeaponBuilder_BB(warriors.AuraWeaponBuilder):
-    def __init__(self, enhancer, skill_importance, enhance_importance):
-        super(AuraWeaponBuilder_BB, self).__init__(enhancer, skill_importance, enhance_importance)
-        jobutils.create_auxilary_attack(self.AuraWeapon, 0.9, "(블루 블러드)")
-
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -137,15 +132,15 @@ class JobGenerator(ck.JobGenerator):
         Metamorphosis.onAfter(MetamorphosisSummon)
         MetamorphosisSummon.onTick(MetamorphosisSummon_BB)
 
-        # 블블 추가타 적용
-        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DevilCry]:
-            jobutils.create_auxilary_attack(sk, 0.9, "(블루 블러드))")
-
         # 오라 웨폰
-        auraweapon_builder = AuraWeaponBuilder_BB(vEhc, 3, 2)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
         for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
+
+        # 블블 추가타 적용
+        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DevilCry, AuraWeapon]:
+            jobutils.create_auxilary_attack(sk, 0.9, "(블루 블러드)")
 
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
