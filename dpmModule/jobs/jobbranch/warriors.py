@@ -10,7 +10,7 @@ class AuraWeaponBuilder():
             "오라 웨폰(버프)", 720, (80 +2*enhancer.getV(skill_importance,enhance_importance)) * 1000, 
             cooltime = 180 * 1000, armor_ignore = 15, pdamage_indep = (enhancer.getV(skill_importance, enhance_importance) // 5)
         ).isV(enhancer, skill_importance, enhance_importance).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!
-        self.AuraWeapon = core.DamageSkill("오라웨폰(파동)", 0, 500 + 20 * enhancer.getV(skill_importance,enhance_importance), hit, modifier=modifier, cooltime = 5000).wrap(core.DamageSkillWrapper)
+        self.AuraWeapon = core.DamageSkill("오라 웨폰(파동)", 0, 500 + 20 * enhancer.getV(skill_importance,enhance_importance), hit, modifier=modifier, cooltime = 5000).wrap(core.DamageSkillWrapper)
         self.AuraWeapon.protect_from_running()
         self.AuraWeaponOptional = core.OptionalElement(lambda : (self.AuraWeapon.is_available() and self.AuraWeaponBuff.is_active()), self.AuraWeapon)
 
