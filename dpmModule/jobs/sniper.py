@@ -15,6 +15,7 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = False
         self.vEnhanceNum = 10
         self.jobtype = "dex"
+        self.jobname = "신궁"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
@@ -32,7 +33,7 @@ class JobGenerator(ck.JobGenerator):
 
         return ruleset
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit = 40)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         
@@ -43,7 +44,7 @@ class JobGenerator(ck.JobGenerator):
         return [CriticalShot, PhisicalTraining, MarkmanShip, 
                 CrossBowExpert]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 35)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5 * self.combat)
 
@@ -82,9 +83,8 @@ class JobGenerator(ck.JobGenerator):
         TrueSnippingTick = core.DamageSkill("트루 스나이핑(타격)", 690, 950+vEhc.getV(2,2)*30, 14+1, modifier = core.CharacterModifier(pdamage = 100, armor_ignore = 100) + PASSIVE_MODIFIER).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         TrueSnipping = core.DamageSkill("트루 스나이핑", 120, 0, 0, cooltime = 180 * 1000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
-        #TODO : 차지드 애로우용 홀더 생성이 필요함.
-        ChargedArrow = core.DamageSkill("차지드 애로우(차징)", 0, 750 + vEhc.getV(1,1)*30, 10+1, cooltime = -1, modifier = PASSIVE_MODIFIER).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        ChargedArrowUse = core.DamageSkill("차지드 애로우", 360, 0, 0, cooltime = 10000).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        ChargedArrow = core.DamageSkill("차지드 애로우", 0, 750 + vEhc.getV(1,1)*30, 10+1, cooltime = -1, modifier = PASSIVE_MODIFIER).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        ChargedArrowHold = core.SummonSkill("차지드 애로우(더미)", 0, 10000, 0, 0, 9999999, cooltime = -1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # TODO: 공격 주기에 쿨감 적용해야 함
         #Summon Skills
         Freezer = core.SummonSkill("프리저", 900, 3030, 390, 1, 220 * 1000).setV(vEhc, 3, 3, False).wrap(core.SummonSkillWrapper)
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
@@ -109,22 +109,22 @@ class JobGenerator(ck.JobGenerator):
         Snipping.onAfter(SplitArrowOption)
     
         TrueSnippingDeal = core.RepeatElement(TrueSnippingTick, 7)
+        TrueSnipping.onBefore(ChargedArrowHold.controller(10000, name = "차징 유예"))
         TrueSnipping.onAfter(TrueSnippingDeal)
-        TrueSnipping.onAfter(ChargedArrow.controller(9999999, name = "차징 해제"))
         
-        ChargedArrowUse.onAfter(ChargedArrow.controller(5000))
+        ChargedArrowHold.onTick(Snipping) # 완충시 스나이핑 즉시 발사됨
+        ChargedArrowHold.onTick(ChargedArrow)
 
         for sk in [Snipping, TrueSnippingTick, ChargedArrow]:
             sk.onAfter(FinalAttack)
         
-        ### 제한
-        schedule = core.ScheduleGraph()
+        ChargedArrowHold.set_disabled_and_time_left(5000) # 최초 차징 시간
         
         return(Snipping,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_wind_booster(),
                     SoulArrow, ElusionStep, SharpEyes, BoolsEye, EpicAdventure, CriticalReinforce, SplitArrowBuff,
                         globalSkill.soul_contract()] +\
-                [TrueSnipping, ChargedArrowUse, ChargedArrow] +\
+                [TrueSnipping, ChargedArrowHold, ChargedArrow] +\
                 [Evolve,Freezer, GuidedArrow] +\
                 [] +\
                 [Snipping])

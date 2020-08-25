@@ -11,13 +11,13 @@ class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):
         super(JobGenerator, self).__init__(vEhc = vEhc)
         self.jobtype = "dex"
+        self.jobname = "엔젤릭버스터"
         self.vEnhanceNum = 12
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         
         self.preEmptiveSkills = 2
     
-    def get_passive_skill_list(self):
-        vEhc = self.vEhc
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         SoulShooterMastery = core.InformedCharacterModifier("소울슈터 마스터리", att = 20)
         InnerFire = core.InformedCharacterModifier("이너 파이어", stat_sub = 40)
         
@@ -33,7 +33,7 @@ class JobGenerator(ck.JobGenerator):
                             CallOfAncient, AffinityIII, AffinityIV, TrinityPassive, SoulShooterExpert,
                             LoadedDicePassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5)        
         

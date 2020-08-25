@@ -8,16 +8,12 @@ from .jobbranch import warriors
 from . import jobutils
 ######   Passive Skill   ######
 
-class AuraWeaponBuilder_BB(warriors.AuraWeaponBuilder):
-    def __init__(self, enhancer, skill_importance, enhance_importance):
-        super(AuraWeaponBuilder_BB, self).__init__(enhancer, skill_importance, enhance_importance)
-        jobutils.create_auxilary_attack(self.target_skill, 0.9, "(블블)")
-
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.buffrem = False
         self.jobtype = "str"
+        self.jobname = "데몬슬레이어"
         self.vEnhanceNum = 15
         self.preEmptiveSkills = 1
         
@@ -26,7 +22,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 50, pdamage = 200)
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
 
         
         #데몬스퓨리 : 보공15%, 링크에 반영되므로 미고려.
@@ -40,7 +36,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [DeathCurse, Outrage, PhisicalTraining, Concentration, AdvancedWeaponMastery, DarkBindPassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)        
 
@@ -57,6 +53,7 @@ class JobGenerator(ck.JobGenerator):
         # 데몬 슬래시 - 리인포스, 리메인타임 리인포스
         # 데몬 임팩트 - 리인포스, 보너스 어택, 리듀스 포스        
         '''
+        buff_rem = chtr.get_base_modifier().buff_rem
 
     
 
@@ -81,7 +78,7 @@ class JobGenerator(ck.JobGenerator):
         
         InfinityForce = core.BuffSkill("인피니티 포스", 990, 50*1000, cooltime = 200 * 1000).wrap(core.BuffSkillWrapper)
         Metamorphosis = core.BuffSkill("메타모포시스", 1680, 180*1000, rem = True, pdamage = 35).wrap(core.BuffSkillWrapper)
-        MetamorphosisSummon = core.SummonSkill("메타모포시스(소환)", 0, 510, 250, 1, 180*1000*(1+chtr.buff_rem/100), cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        MetamorphosisSummon = core.SummonSkill("메타모포시스(소환)", 0, 510, 250, 1, 180*1000*(1+buff_rem/100), cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         MetamorphosisSummon_BB = core.DamageSkill("메타모포시스(블블)", 0, 250 * 0.9, 1, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         #블루블러드는 소환수 적용이 안됨.
@@ -135,21 +132,20 @@ class JobGenerator(ck.JobGenerator):
         Metamorphosis.onAfter(MetamorphosisSummon)
         MetamorphosisSummon.onTick(MetamorphosisSummon_BB)
 
-        # 블블 추가타 적용
-        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DevilCry]:
-            jobutils.create_auxilary_attack(sk, 0.9, "(블블)")
-
         # 오라 웨폰
-        auraweapon_builder = AuraWeaponBuilder_BB(vEhc, 3, 2)
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
         for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
+
+        # 블블 추가타 적용
+        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DevilCry, AuraWeapon]:
+            jobutils.create_auxilary_attack(sk, 0.9, "(블루 블러드)")
 
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-                    Booster, DemonSlashRemainTime, DemonSlashTrigger, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, DemonAwakning,
+                    Booster, DemonSlashRemainTime, DemonSlashTrigger, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
                     globalSkill.soul_contract()] +\
                 [Cerberus, DevilCry, SpiritOfRageEnd] +\
                 [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_] +\
-                [AuraWeaponCooltimeDummy] +\
                 [BasicAttackWrapper])

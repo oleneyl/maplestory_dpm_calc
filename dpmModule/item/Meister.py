@@ -8,7 +8,7 @@ Soulder = it.Item(name="마이스터 숄더", stat_main = 13, stat_sub = 13, att
 class Factory():
     
     @staticmethod
-    def getAccesoryDict(nth_ring, star = 0, enhance = True, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
+    def getAccesoryDict(nth_ring, star, enhance = True, potential = it.ExMDF(), additional_potential = it.ExMDF(), bonus = it.ExMDF(), hammer = True):
         #Always use 30% enhance scroll. if False, do not apply.
         if not hammer:
             upgrades = [6,1,1]

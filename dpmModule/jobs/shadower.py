@@ -15,7 +15,7 @@ class MesoStack(core.DamageSkillWrapper, core.StackSkillWrapper):
         super(core.DamageSkillWrapper, self).__init__(skill, 20)
         self.modifierInvariantFlag = False
         
-    def _use(self, rem = 0, red = 0):
+    def _use(self, skill_modifier):
         mdf = self.skill.get_modifier()
         dmg = 120
         stack = self.stack
@@ -29,13 +29,14 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = False
         self.vEnhanceNum = 10
         self.jobtype = "luk"
+        self.jobname = "섀도어"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(pdamage = 70, armor_ignore = 20)
         
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
 
         
         NimbleBody = core.InformedCharacterModifier("님블 바디",stat_main = 20)
@@ -50,7 +51,7 @@ class JobGenerator(ck.JobGenerator):
         BoomerangStepPassive = core.InformedCharacterModifier("부메랑 스텝(패시브)",pdamage_indep = 25)
         
         ShadowerInstinctPassive = core.InformedCharacterModifier("섀도어 인스팅트(패시브)",armor_ignore = 20)
-        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(self.vEhc, 2, 2)
+        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 2, 2)
     
         DaggerExpert = core.InformedCharacterModifier("대거 엑스퍼트",att = 40, crit_damage = 15)
         
@@ -58,7 +59,7 @@ class JobGenerator(ck.JobGenerator):
                         PhisicalTraining, SheildMastery, Grid, PrimaCriticalPassive,
                         PrimaCritical, BoomerangStepPassive, ShadowerInstinctPassive, ReadyToDiePassive, DaggerExpert]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)    #오더스 기본적용!
         

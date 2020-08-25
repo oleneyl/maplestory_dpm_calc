@@ -25,15 +25,12 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.buffrem = True
         self.jobtype = "int"
+        self.jobname = "아크메이지썬/콜"
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
         self.preEmptiveSkills = 2
         
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 20, pdamage = 60, crit_damage = 15)
-
-    def apply_complex_options(self, chtr):
-        chtr.buff_rem += 50
-        chtr.add_property_ignorance(10)
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -41,7 +38,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('라이트닝 스피어', '인피니티'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         ######   Passive Skill   ######
         
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤", stat_main = 40)
@@ -51,18 +48,19 @@ class JobGenerator(ck.JobGenerator):
         
         ElementalReset = core.InformedCharacterModifier("엘리멘탈 리셋", pdamage_indep = 50)
         
-        MasterMagic = core.InformedCharacterModifier("마스터 매직", att = 30)
+        MasterMagic = core.InformedCharacterModifier("마스터 매직", att = 30, buff_rem = 50)
         ArcaneAim = core.InformedCharacterModifier("아케인 에임", armor_ignore = 20)
         
         return [HighWisdom, SpellMastery, MagicCritical, ElementalReset, MasterMagic, ElementAmplication, ArcaneAim]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5)
         ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", pdamage_indep = 20)
         ArcaneAim = core.InformedCharacterModifier("아케인 에임(실시간)", pdamage = 40)
+        ElementalResetActive = core.InformedCharacterModifier("엘리멘탈 리셋(사용)", prop_ignore = 10)
         
-        return [WeaponConstant, Mastery, ExtremeMagic, ArcaneAim]
+        return [WeaponConstant, Mastery, ExtremeMagic, ArcaneAim, ElementalResetActive]
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''

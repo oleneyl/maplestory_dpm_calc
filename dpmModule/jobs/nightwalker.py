@@ -17,11 +17,12 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.vEnhanceNum = 9
         self.jobtype = "luk"
+        self.jobname = "나이트워커"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
         
-    def get_passive_skill_list(self):
-        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",stat_main = self.chtr.level // 2)
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",stat_main = chtr.level // 2)
         ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니",patt = 10)
 
         ThrowingMastery = core.InformedCharacterModifier("스로잉 마스터리",pdamage = 30)
@@ -32,13 +33,13 @@ class JobGenerator(ck.JobGenerator):
         ThrowingExpert = core.InformedCharacterModifier("스로잉 엑스퍼트",att = 30, crit_damage = 10)
         DarknessBlessing = core.InformedCharacterModifier("다크니스 블레싱",att = 30, armor_ignore = 15)
 
-        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(self.vEhc, 3, 3)
+        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 3, 3)
 
         return [ElementalExpert, ElementalHarmony, ThrowingMastery, CriticalThrowing, PhisicalTraining, 
             Adrenalin, ThrowingExpert, DarknessBlessing,
             ReadyToDiePassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 75)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)    #오더스 기본적용!
         

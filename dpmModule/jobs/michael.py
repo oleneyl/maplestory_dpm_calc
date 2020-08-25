@@ -16,13 +16,14 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = False
         self.vEnhanceNum = 9
         self.jobtype = "str"
+        self.jobname = "미하일"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'mess')
         self.preEmptiveSkills = 1
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(crit = 20)
 
-    def get_passive_skill_list(self):        
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):        
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",patt = 10)
         
         PhisicalTraiging = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
@@ -38,7 +39,7 @@ class JobGenerator(ck.JobGenerator):
                             InvigoratePassive, Intension, ShiningCharge, CombatMastery, AdvancedSowrdMastery,
                             AdvancedFinalAttackPassive]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         PARTYPEOPLE = 1        
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
@@ -125,14 +126,13 @@ class JobGenerator(ck.JobGenerator):
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
         for sk in [SoullightSlash, SoulAssult]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
         
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     GuardOfLight, LoyalGuardBuff, SoulAttack, Booster, Invigorate, SacredCube, 
-                    DeadlyChargeBuff, QueenOfTomorrow, AuraWeaponBuff, RoIias, SwordOfSoullight,
+                    DeadlyChargeBuff, QueenOfTomorrow, AuraWeaponBuff, AuraWeapon, RoIias, SwordOfSoullight,
                     globalSkill.soul_contract()] +\
                 [CygnusPalanks, LoyalGuard_5, ShiningCross, DeadlyCharge, ClauSolis] +\
                 [ShiningCrossInstall, ClauSolisSummon] +\
-                [AuraWeaponCooltimeDummy] +\
                 [BasicAttackWrapper])

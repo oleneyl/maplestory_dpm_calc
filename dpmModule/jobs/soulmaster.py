@@ -14,6 +14,7 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = False
         self.vEnhanceNum = 10
         self.jobtype = "str"
+        self.jobname = "소울마스터"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
@@ -23,15 +24,12 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule('셀레스티얼 댄스', '엘리시온'), RuleSet.BASE)
         return ruleset
 
-    def apply_complex_options(self, chtr):
-        chtr.add_property_ignorance(10)
-
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(pdamage = 20)
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트", patt = 10)
-        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니", stat_main = self.chtr.level // 2)
+        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니", stat_main = chtr.level // 2)
         
         SwordOfLight = core.InformedCharacterModifier("소드 오브 라이트",att = 20)
         Soul = core.InformedCharacterModifier("소울",armor_ignore = 10)
@@ -46,11 +44,12 @@ class JobGenerator(ck.JobGenerator):
         return [ElementalHarmony, ElementalExpert, SwordOfLight, Soul, InnerTrust,
                             BodyAndSoul, InnerShout, SoulPledge, SwordExpert, Unforseeable]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
+        TrueSightHyper = core.InformedCharacterModifier("트루 사이트(하이퍼)", prop_ignore = 10)
         
-        return [WeaponConstant, Mastery]
+        return [WeaponConstant, Mastery, TrueSightHyper]
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
@@ -62,7 +61,7 @@ class JobGenerator(ck.JobGenerator):
 
         #Buff skills
         NimbleFinger = core.BuffSkill("님블 핑거", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
-        TrueSight = core.BuffSkill("트루 사이트", 990, 30 * 1000, armor_ignore = 10+10, pdamage_indep = 5).wrap(core.BuffSkillWrapper) # 내성무시는 complex_option에 있음
+        TrueSight = core.BuffSkill("트루 사이트", 990, 30 * 1000, armor_ignore = 10+10, pdamage_indep = 5).wrap(core.BuffSkillWrapper) # 내성무시는 not_implied_skill_list에 있음
         SolunaTime = core.BuffSkill("솔루나 타임", 0, 200 * 1000, rem = True, crit = 35, pdamage_indep = 25, att = 45).wrap(core.BuffSkillWrapper)  # 딜레이 없음
         SoulForge = core.BuffSkill("소울 포지", 0, 180 * 1000, att = 50, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
@@ -108,14 +107,13 @@ class JobGenerator(ck.JobGenerator):
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2, modifier=FallingMoon, hit=6*2)
         for sk in [SpeedingDance, ElisionStyx]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     NimbleFinger, TrueSight, SolunaTime, SoulForge, 
-                    GloryOfGuardians, AuraWeaponBuff, globalSkill.soul_contract(), Elision, ElisionBreak, SelestialDanceInit, 
+                    GloryOfGuardians, AuraWeaponBuff, AuraWeapon, globalSkill.soul_contract(), Elision, ElisionBreak, SelestialDanceInit, 
                     ] +\
                 [CygnusPalanks, SolunaDivide] +\
                 [SelestialDanceSummon, SoulEclipse] +\
-                [AuraWeaponCooltimeDummy] +\
                 [BasicAttackWrapper])

@@ -10,13 +10,12 @@ class AuraWeaponBuilder():
             "오라 웨폰(버프)", 720, (80 +2*enhancer.getV(skill_importance,enhance_importance)) * 1000, 
             cooltime = 180 * 1000, armor_ignore = 15, pdamage_indep = (enhancer.getV(skill_importance, enhance_importance) // 5)
         ).isV(enhancer, skill_importance, enhance_importance).wrap(core.BuffSkillWrapper)  #두 스킬 syncronize 할 것!
-        self.AuraWeaponCooltimeDummy = core.BuffSkill("오라웨폰(딜레이 더미)", 0, 5000, cooltime = -1).wrap(core.BuffSkillWrapper)   # 한 번 발동된 이후에는 4초간 발동되지 않도록 합니다.
-        self.target_skill = core.DamageSkill("오라웨폰(파동)", 0, 500 + 20 * enhancer.getV(skill_importance,enhance_importance), hit, modifier=modifier).wrap(core.DamageSkillWrapper)
-        self.target_skill.onAfter(self.AuraWeaponCooltimeDummy)
-        self.optional_skill = core.OptionalElement(lambda : (self.AuraWeaponCooltimeDummy.is_not_active() and self.AuraWeaponBuff.is_active()), self.target_skill)
+        self.AuraWeapon = core.DamageSkill("오라 웨폰(파동)", 0, 500 + 20 * enhancer.getV(skill_importance,enhance_importance), hit, modifier=modifier, cooltime = 5000).wrap(core.DamageSkillWrapper)
+        self.AuraWeapon.protect_from_running()
+        self.AuraWeaponOptional = core.OptionalElement(lambda : (self.AuraWeapon.is_available() and self.AuraWeaponBuff.is_active()), self.AuraWeapon)
 
     def add_aura_weapon(self, origin_skill):
-        origin_skill.onAfter(self.optional_skill)
+        origin_skill.onAfter(self.AuraWeaponOptional)
 
     def get_buff(self):
-        return self.AuraWeaponBuff, self.AuraWeaponCooltimeDummy
+        return self.AuraWeaponBuff, self.AuraWeapon

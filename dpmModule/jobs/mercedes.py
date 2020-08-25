@@ -27,10 +27,10 @@ class ElementalGhostWrapper(core.BuffSkillWrapper):
         if self.cooltimeLeft < 0:
             self.available = True
     
-    def _use(self, rem = 0, red = 0):
+    def _use(self, skill_modifier):
         self.target[0].pdamage_indep = 64.687 * 0.01 * (30 + self.vlevel)
         self.target[1].pdamage_indep = 184.5 * 0.01 * (30 + self.vlevel)
-        return super(ElementalGhostWrapper, self)._use()
+        return super(ElementalGhostWrapper, self)._use(skill_modifier)
 
 
 class JobGenerator(ck.JobGenerator):
@@ -39,6 +39,7 @@ class JobGenerator(ck.JobGenerator):
         self.buffrem = False
         self.vEnhanceNum = 11
         self.jobtype = "dex"
+        self.jobname = "메르세데스"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
@@ -52,7 +53,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('이르칼라의 숨결','엘리멘탈 고스트'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         PotentialPower = core.InformedCharacterModifier("포텐셜 파워",pdamage = 20)
         SharpAiming = core.InformedCharacterModifier("샤프 에이밍",crit = 40)
         
@@ -68,7 +69,7 @@ class JobGenerator(ck.JobGenerator):
         return [PotentialPower, SharpAiming, SpiritInfusion, 
                 PhisicalTraining, IgnisRoar, DualbowgunExpert, DefenceBreak, AdvancedFinalAttack]
         
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)        
 

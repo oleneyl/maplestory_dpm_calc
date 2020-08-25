@@ -26,9 +26,9 @@ class InfinityWrapper(core.BuffSkillWrapper):
         else:
             return core.CharacterModifier()
         
-    def _use(self, rem = 0, red = 0):
+    def _use(self, skill_modifier):
         self.passedTime = 0
-        return super(InfinityWrapper, self)._use(rem = rem, red = red)
+        return super(InfinityWrapper, self)._use(skill_modifier)
 
 # 이하 모든 코드 테스트 필요
 
