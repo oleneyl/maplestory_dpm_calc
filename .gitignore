@@ -8,3 +8,4 @@ build/
 *.json
 *.sqlite
 dpm_output.txt
+docs/_build/
