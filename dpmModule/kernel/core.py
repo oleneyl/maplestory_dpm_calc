@@ -735,7 +735,7 @@ class ContextReferringTask(Task):
         return self._ftn(**kwargs)
 
 class ResultObject():
-    def __init__(self, delay, mdf, damage, hit, sname = 'Not specified', spec = 'Undefined', kwargs = {}, cascade = []):
+    def __init__(self, delay, mdf, damage, hit, sname, spec, kwargs = {}, cascade = []):
         """Result object must be static; alway to be ensure it is revealed.
         """
         self.delay = DynamicVariableOperation.reveal_argument(delay)
@@ -1187,7 +1187,7 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         if self.cooltimeLeft > 0:
             self.available = False
         mdf = self.get_modifier()
-        return ResultObject(0, mdf, 0, 0, sname = self.skill.name, spec = 'buff', kwargs = {"remain" : time})
+        return ResultObject(0, mdf, 0, 0, sname = self.skill.name, spec = self.skill.spec, kwargs = {"remain" : time})
         
     def set_disabled_and_time_left(self, time):
         self.timeLeft = 0
@@ -1554,10 +1554,6 @@ class Analytics():
     def analyze(self, chtr, result):
         self.add_damage_from_result_with_log(chtr.get_modifier(), result)
 
-    def log(self, txt):
-        if self.print_calculation_progress:
-            print(txt)
-
     def get_skill_info(self):
         return {"dict" : self.skillList, "li" : list(self.skillList.keys())}    
     
@@ -1580,22 +1576,46 @@ class Analytics():
         return meta
         
     def statistics(self):
-        self.log("Total damage %.1f in %d second" % (self.total_damage, self.totalTime / 1000) )
-        countDict = {}
-        damageDict = {}
-        for log in self.logList:
-            if log["result"].sname not in countDict:
-                countDict[log["result"].sname] = 0
-                damageDict[log["result"].sname] = 0
-            countDict[log["result"].sname] += 1
-            damageDict[log["result"].sname] += log["deal"]
-        
-        for i in countDict:
-            self.log("SKILL %s Used %d" % (i, countDict[i]))
+        print("Total damage %.1f in %d second" % (self.total_damage, self.totalTime / 1000) )
 
-        for i in damageDict:         
-            if damageDict[i] > 0:   
-                self.log("SKILL %s share is %f,  %.4f percent" % (i, damageDict[i], damageDict[i] / self.total_damage * 100))
+        def getSkillNames(logList):
+            return sorted(set(map(lambda log: log["result"].sname, logList)))
+
+        print("\n===Buff Skills===")
+        buffList = list(filter(lambda log: log["result"].spec == "buff", self.logList))
+        names = getSkillNames(buffList)
+        for name in names:
+            skillLog = list(filter(lambda log: log["result"].sname == name, buffList))
+            use = len(skillLog)
+            print(f"{name} Used {use}")
+
+        print("\n===Damage Skills===")
+        damageList = list(filter(lambda log: log["result"].spec == "damage", self.logList))
+        names = getSkillNames(damageList)
+        for name in names:
+            skillLog = list(filter(lambda log: log["result"].sname == name, damageList))
+            use = len(skillLog)
+            hit = sum(map(lambda log: log["result"].hit, skillLog))
+            damage = sum(map(lambda log: log["deal"], skillLog))
+            share = damage / self.total_damage * 100
+            print(f"{name} Used {use}")
+            print(f"Hit {hit} Damage {damage}")
+            print(f"Share {share:.4f}%")
+
+        print("\n===Summon/DoT Skills===")
+        summonList = list(filter(lambda log: log["result"].spec in ["summon", "dot"], self.logList))
+        names = getSkillNames(summonList)
+        for name in names:
+            skillLog = list(filter(lambda log: log["result"].sname == name, summonList))
+            summon = len(list(filter(lambda log: log["deal"] == 0, skillLog)))
+            use = len(skillLog) - summon
+            hit = sum(map(lambda log: log["result"].hit, skillLog))
+            damage = sum(map(lambda log: log["deal"], skillLog))
+            share = damage / self.total_damage * 100
+            print(f"{name} Summoned {summon}")
+            print(f"Used {use} Hit {hit} Damage {damage}")
+            print(f"Share {share:.4f}%")
+
         #self.log("Percent damage per second is %.2f" % (100*self.total_damage / self.character.get_modifier().get_damage_factor() / self.totalTimeInitial * 1000))
 
     def skill_share(self):
@@ -1628,7 +1648,7 @@ class Analytics():
         
         return
         
-    def add_damage_from_result_with_log(self, charmdf, result):
+    def add_damage_from_result_with_log(self, charmdf, result: ResultObject):
         mdf = 0
         if result.damage > 0:
             mdf = charmdf + result.mdf
@@ -1649,8 +1669,8 @@ class Analytics():
         
         #For speed acceleration
         if self.print_calculation_progress:
-            self.log('At Time %.1f, Skill [%s] ... Damage [%.1f] ... Loss [%.1f] ... Delay [%.1f]' % (result.time, result.sname, deal, free_deal - deal, result.delay))
-            self.log(f'{result.mdf}')
+            print('At Time %.1f, Skill [%s] ... Damage [%.1f] ... Loss [%.1f] ... Delay [%.1f] ... Spec [%s]' % (result.time, result.sname, deal, free_deal - deal, result.delay, result.spec))
+            print(f'{result.mdf}')
         if deal > 0:
             self.logList.append({"result":result, "time" : (result.time), "deal" : deal, "loss" : free_deal - deal})
         else:
