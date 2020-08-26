@@ -768,10 +768,9 @@ class AccessibleBossState:
         pass
 
 class GraphElement():
-    '''class AbstractWrapper
-    This clas define graph element's basic behaviors.
-    Every graph elements must be connected with GraphElement.
+    '''Manage time dependent feature of each execution
     '''
+    
     Flag_Skill = 1
     Flag_BaseSkill = 2
     Flag_BuffSkill = 4
@@ -782,6 +781,15 @@ class GraphElement():
     Flag_Constraint = 128
     
     def __init__(self, _id):
+        """
+        Initialzie Graph Element.
+
+        Parameters
+        ----------
+        _id : str or AbstractDynamicVariableInstance
+            해당 GraphElement가 부여받게 될 identifier입니다. unique할 필요는 없습니다.
+
+        """
         if isinstance(_id, AbstractDynamicVariableInstance):
             _id = _id.evaluate()
         self._id = _id
@@ -810,7 +818,14 @@ class GraphElement():
     def remove_flag(self, flag):
         self._flag = self._flag & (~flag)
     
-    def get_link(self):
+    def get_link(self) -> list:
+        '''
+        주어진 Element가 상호작용하는 다른 Element들을 가져옵니다.
+
+        Returns
+        -------
+        list of [self, GraphElement, link_type(string)]
+        '''
         li = []
         for el in self._before:
             li.append([self, el, "before"])
@@ -821,35 +836,108 @@ class GraphElement():
         return li
 
     def get_explanation(self, lang = "ko"):
+        '''
+        해당 그래프 요소에 대한 설명을 받아옵니다.
+
+        이 함수는 상속 과정에서 재정의 되는 것이 좋습니다.
+
+        Parameters
+        ----------
+        lang
+            Language type. Korean : ko, English : en.
+
+        Returns
+        -------
+        string
+        '''
         if lang == "ko":
             return "종류:그래프 요소"
         elif lang == "en":
             return "Type:graph Element"
         
     def _use(self) -> ResultObject:
+        '''
+        해당 그래프 요소를 작동시키고자 할 때 수행해야 하는 작업을 정의합니다.
+
+        이 함수는 상속 과정에서 반드시 재정의되어야 합니다.
+
+        Returns
+        ------
+        ResultObject
+            해당 그래프 요소가 작동하고 난 후의 결과물
+        '''
         return self._result_object_cache
         
-    def build_task(self, skill_modifier, **kwargs) -> Task:
+    def build_task(self, skill_modifier : SkillModifier, **kwargs) -> Task:
+        '''
+        그래프 요소의 실행을 정의하는 Task를 반환합니다.
+        
+
+        Parameters
+        ----------
+        skill_modifier: SkillModifier
+
+        Returns
+        -------
+        Task
+        '''
         task = Task(self, self._use)
         self.sync(task, skill_modifier)
         return task
         
     def spend_time(self, time):
+        '''        
+        시간이 흘렀을 때의 행동을 정의합니다.
+        이 함수는 ``Simulator`` 에 의해서 전체 ``GraphElement`` 들이 일괄적으로 처리될 때 호출됩니다.
+
+        Parameters
+        ----------
+        time : float
+            지나간 시간입니다.
+        '''
         return
         
     def onAfter(self, el):
+        '''해당 그래프 요소가 실행된 후에 el 요소를 실행하도록 합니다.
+        만약 ``onAfter`` 를 통해 chaining된 GraphElement는 해당 그래프 요소가 실행되었다면, 어떠한 경우에 있어서도 chaining됩니다.
+
+        onAfter메서드가 두 번 호출되었다면, 먼저 호출에 포함된 인자가 우선 수행됩니다.
+
+        Parameters
+        ----------
+        el : GraphElement
+            다음에 실행되어야 할 ``GraphElement``
+        '''
         self._after = [el] + self._after 
         
     def onAfters(self, ellist : list):
         self._after = self._after  + ellist
         
     def onBefore(self, el):
+        '''해당 그래프 요소가 실행된 후에 el 요소를 실행하도록 합니다.
+        만약 ``onBefore`` 를 통해 chaining된 GraphElement는 해당 그래프 요소가 실행되었다면, 어떠한 경우에 있어서도 chaining됩니다.
+
+        onAfter메서드가 두 번 호출되었다면, 먼저 호출에 포함된 인자가 나중에 수행됩니다.
+
+        Parameters
+        ----------
+        el : GraphElement
+            이전에 실행되어야 할 ``GraphElement``
+        '''
         self._before = self._before + [el]
         
     def onBefores(self, ellist : list):
         self._before += ellist
         
     def sync(self, task, skill_modifier):
+        '''
+        주어진 ``task`` 가 자신과 연결된 다른 ``GraphElement`` 와 동일한 연결 구조를 가지도록 합니다.
+
+        Parameters
+        ----------
+        task : Task
+        skill_modifier : SkillModifier
+        '''
         task.onBefore([el.build_task(skill_modifier) for el in self._before])
         task.onAfter([el.build_task(skill_modifier) for el in self._after])
         task.onJustAfter([el.build_task(skill_modifier) for el in (self._justAfter)])
@@ -870,7 +958,16 @@ class GraphElement():
             return None
     
     def ensure(self, ehc, index_1, index_2):
-        '''Shortcut(Hack)
+        '''주어진 ``ehc`` 의 코어 강화가 존재하지 않는다면, ``None`` 을 반환하여 실행되지 못하도록 막습니다.
+        
+        Parameters
+        ----------
+        ehc: AbstractVEnhancer
+        index_1 : int
+            ``ehc`` 가 첫번째 인자로 받게 될 index
+        index_2 : int
+            ``ehc`` 가 두번째 인자로 받게 될 index
+
         '''
         if ehc.getV(index_1, index_2) > 0:
             return self
@@ -880,6 +977,7 @@ class GraphElement():
 
 class TaskHolder(GraphElement):
     '''This class only holds given task(Do not modify any property of task).
+    주어진 Task를 수행하는 ``GraphElement`` 입니다. 단순히 ``Task`` 를 감싸기 위한 용도로 사용합니다.
     '''
     def __init__(self, task, name = None):
         if name is None:
@@ -926,6 +1024,19 @@ class OptionalTask(Task):
             return self._fail
 
 class OptionalElement(GraphElement):
+    '''조건에 따라서, 다른 Task를 수행하는 ``GraphElement`` 입니다.
+
+    Parameters
+    ----------
+    disc : function
+        조건 판별시에 수행될 함수입니다.
+    after : GraphElement
+        ``disc()`` 함수 호출의 반환값이 ``True`` 일 때 실행될 ``GraphElement`` 입니다.
+    fail : GraphElement(default:None)
+        ``disc()`` 함수 호출의 반환값이 ``False`` 일 때 실행될 ``GraphElement`` 입니다. 값이 주어지지 않을 경우 실행되지 않습니다.
+    name : string
+        ``GraphElement`` 의 이름입니다. Unique할 필요는 없습니다.
+    '''
     def __init__(self, disc, after, fail = None, name = "Optional Element"):
         super(OptionalElement, self).__init__(name)
         self.disc = disc
@@ -933,13 +1044,13 @@ class OptionalElement(GraphElement):
         self.fail = fail
         self.set_flag(self.Flag_Optional)
         
-    def get_explanation(self, lang = "ko"):
+    def get_explanation(self, lang = "ko") -> str:
         if lang == "ko":
             return "종류:조건적 실행\n%s" % self._id
         elif lang == "en":
             return "type:Optional Element\nname:%s" % self._id
         
-    def build_task(self, skill_modifier, **kwargs):
+    def build_task(self, skill_modifier, **kwargs) -> Task:
         if self.fail == None:
             fail = None
         else:
@@ -948,7 +1059,7 @@ class OptionalElement(GraphElement):
         self.sync(task, skill_modifier)
         return task
         
-    def get_link(self):
+    def get_link(self) -> list:
         li = super(OptionalElement, self).get_link()
         li.append([self, self.after, "if-true"])
         if self.fail is not None:

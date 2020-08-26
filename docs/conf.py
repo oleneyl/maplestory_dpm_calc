@@ -16,7 +16,6 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 
-import sphinx_rtd_theme
 
 # -- Project information -----------------------------------------------------
 
@@ -41,11 +40,11 @@ release = ''
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     "sphinx_rtd_theme",
+    'sphinx.ext.napoleon',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -81,6 +80,8 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
+import sphinx_rtd_theme
+
 html_theme = "sphinx_rtd_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
