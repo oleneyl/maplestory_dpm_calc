@@ -36,19 +36,30 @@ class ReturningHateWrapper(core.DamageSkillWrapper):
 
 # TODO: core쪽으로 옮길 것, .wrap()과 함께 사용 가능하게 할 것
 class MultipleDamageSkillWrapper(core.DamageSkillWrapper):
-    def __init__(self, skill, _max):
+    def __init__(self, skill, _max, _timeLimit):
         self._max = _max
+        self._timeLimit = _timeLimit
         self.count = 0
+        self.timer = _timeLimit
         super(MultipleDamageSkillWrapper, self).__init__(skill)
         
     def _use(self, skill_modifier):
         self.count += 1
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
+        self.timer = self._timeLimit
         if self.count >= self._max:
             self.count = 0
             self.available = False 
         return core.ResultObject(self.skill.delay, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
 
+    def spend_time(self, time):
+        self.cooltimeLeft -= time
+        self.timer -= time
+        if self.timer < 0:
+            self.count = 0
+            self.available = False 
+        if self.cooltimeLeft < 0:
+            self.available = True
         
 
 class DeviousWrapper(core.DamageSkillWrapper):
@@ -245,7 +256,7 @@ class JobGenerator(ck.JobGenerator):
         RaptRestrictionSummon = core.SummonSkill("황홀한 구속(소환)", 0, 450, 400, 3, 9000, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)  #임의주기 300ms, DPM 미사용.
         RaptRestrictionEnd = core.DamageSkill("황홀한 구속(종결)", 0, 1000, 8, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
-        Impulse_Connected = MultipleDamageSkillWrapper(core.DamageSkill("충동/본능 연결", 0, 0, 0, cooltime = 6000, red=True, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False), 2)
+        Impulse_Connected = MultipleDamageSkillWrapper(core.DamageSkill("충동/본능 연결", 0, 0, 0, cooltime = 6000, red=True, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False), 2, 1500)
 
         # 하이퍼
         ChargeSpellAmplification = core.BuffSkill("차지 스펠 앰플리피케이션", 720, 60000, att = 30, crit = 20, pdamage = 20, armor_ignore = 20, boss_pdamage = 30, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
