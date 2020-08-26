@@ -31,7 +31,7 @@ class RevolvingCannonMasteryWrapper(core.DamageSkillWrapper):
         if stack <= 0:
             return self._result_object_cache
         
-        return core.ResultObject(0, self.get_modifier(), self.skill.damage * multiplier, self.skill.hit, sname = self._id, spec = 'deal')
+        return core.ResultObject(0, self.get_modifier(), self.skill.damage * multiplier, self.skill.hit, sname = self._id, spec = 'damage')
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):

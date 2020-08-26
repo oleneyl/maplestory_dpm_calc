@@ -25,7 +25,7 @@ class JaguerStack(core.DamageSkillWrapper, core.TimeStackSkillWrapper):
     def _use(self, skill_modifier):
         mdf = self.get_modifier()
         dmg = 60*self.getStack() + int(self.level/3)
-        return core.ResultObject(0, mdf, dmg, 1, sname = self._id, spec = 'deal')
+        return core.ResultObject(0, mdf, dmg, 1, sname = self._id, spec = 'damage')
 
     def is_usable(self):
         return False

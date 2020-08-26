@@ -28,7 +28,7 @@ class SacredMarkWrapper(core.BuffSkillWrapper):
     def getFlow(self, diff, bonus = 0):
         def retftn():
             self.flow(diff, bonus)
-            return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = 'Sacred Mark', spec = 'frost effect control')
+            return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = 'Sacred Mark', spec = 'graph control')
         return core.Task(self, retftn)
         
     def getFlowHandler(self, diff, bonus):
