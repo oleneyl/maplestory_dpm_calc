@@ -1,0 +1,401 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="ko" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>GraphElement &mdash; DpmModule  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="색인" href="genindex.html" />
+    <link rel="search" title="검색" href="search.html" />
+    <link rel="prev" title="설치" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> DpmModule
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">설치</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">GraphElement</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">GraphElement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#taskholder">TaskHolder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optionalelement">OptionalElement</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DpmModule</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>GraphElement</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/GraphElement.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="graphelement">
+<h1>GraphElement<a class="headerlink" href="#graphelement" title="제목 주소">¶</a></h1>
+<p><cite>dpmModule.core.GraphElement</cite> object는 시뮬레이션의 실행에서 구분되어지는 제일 기본적인 객체입니다.</p>
+<div class="section" id="id1">
+<h2>GraphElement<a class="headerlink" href="#id1" title="제목 주소">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">GraphElement</span></code> 기본 객체입니다.
+<code class="docutils literal notranslate"><span class="pre">GraphElement</span></code> Object는 구현 과정에서 반드시 <code class="docutils literal notranslate"><span class="pre">_use()</span></code> 메서드를 재정의하여 의도되어야 하는 행동을 정의해야 합니다.</p>
+<dl class="class">
+<dt id="dpmModule.kernel.core.GraphElement">
+<em class="property">class </em><code class="descclassname">dpmModule.kernel.core.</code><code class="descname">GraphElement</code><span class="sig-paren">(</span><em>_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dpmModule/kernel/core.html#GraphElement"><span class="viewcode-link">[소스]</span></a><a class="headerlink" href="#dpmModule.kernel.core.GraphElement" title="정의 주소">¶</a></dt>
+<dd><p>Manage time dependent feature of each execution</p>
+<dl class="method">
+<dt id="dpmModule.kernel.core.GraphElement.build_task">
+<code class="descname">build_task</code><span class="sig-paren">(</span><em>skill_modifier: dpmModule.kernel.core.SkillModifier</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; dpmModule.kernel.core.Task<a class="reference internal" href="_modules/dpmModule/kernel/core.html#GraphElement.build_task"><span class="viewcode-link">[소스]</span></a><a class="headerlink" href="#dpmModule.kernel.core.GraphElement.build_task" title="정의 주소">¶</a></dt>
+<dd><p>그래프 요소의 실행을 정의하는 Task를 반환합니다.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">매개 변수:</th><td class="field-body"><strong>skill_modifier</strong> (<em>SkillModifier</em>) -- </td>
+</tr>
+<tr class="field-even field"><th class="field-name">반환:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">반환 형식:</th><td class="field-body">Task</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dpmModule.kernel.core.GraphElement.ensure">
+<code class="descname">ensure</code><span class="sig-paren">(</span><em>ehc</em>, <em>index_1</em>, <em>index_2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dpmModule/kernel/core.html#GraphElement.ensure"><span class="viewcode-link">[소스]</span></a><a class="headerlink" href="#dpmModule.kernel.core.GraphElement.ensure" title="정의 주소">¶</a></dt>
+<dd><p>주어진 <code class="docutils literal notranslate"><span class="pre">ehc</span></code> 의 코어 강화가 존재하지 않는다면, <code class="docutils literal notranslate"><span class="pre">None</span></code> 을 반환하여 실행되지 못하도록 막습니다.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">매개 변수:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ehc</strong> (<em>AbstractVEnhancer</em>) -- </li>
+<li><strong>index_1</strong> (<em>int</em>) -- <code class="docutils literal notranslate"><span class="pre">ehc</span></code> 가 첫번째 인자로 받게 될 index</li>
+<li><strong>index_2</strong> (<em>int</em>) -- <code class="docutils literal notranslate"><span class="pre">ehc</span></code> 가 두번째 인자로 받게 될 index</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dpmModule.kernel.core.GraphElement.get_explanation">
+<code class="descname">get_explanation</code><span class="sig-paren">(</span><em>lang='ko'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dpmModule/kernel/core.html#GraphElement.get_explanation"><span class="viewcode-link">[소스]</span></a><a class="headerlink" href="#dpmModule.kernel.core.GraphElement.get_explanation" title="정의 주소">¶</a></dt>
+<dd><p>해당 그래프 요소에 대한 설명을 받아옵니다.</p>
+<p>이 함수는 상속 과정에서 재정의 되는 것이 좋습니다.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">매개 변수:</th><td class="field-body"><strong>lang</strong> -- Language type. Korean : ko, English : en.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">반환:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">반환 형식:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dpmModule.kernel.core.GraphElement.get_link">
+<code class="descname">get_link</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/dpmModule/kernel/core.html#GraphElement.get_link"><span class="viewcode-link">[소스]</span></a><a class="headerlink" href="#dpmModule.kernel.core.GraphElement.get_link" title="정의 주소">¶</a></dt>
+<dd><p>주어진 Element가 상호작용하는 다른 Element들을 가져옵니다.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">반환:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">반환 형식:</th><td class="field-body">list of [self, <a class="reference internal" href="#dpmModule.kernel.core.GraphElement" title="dpmModule.kernel.core.GraphElement">GraphElement</a>, link_type(string)]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dpmModule.kernel.core.GraphElement.onAfter">
+<code class="descname">onAfter</code><span class="sig-paren">(</span><em>el</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dpmModule/kernel/core.html#GraphElement.onAfter"><span class="viewcode-link">[소스]</span></a><a class="headerlink" href="#dpmModule.kernel.core.GraphElement.onAfter" title="정의 주소">¶</a></dt>
+<dd><p>해당 그래프 요소가 실행된 후에 el 요소를 실행하도록 합니다.
+만약 <code class="docutils literal notranslate"><span class="pre">onAfter</span></code> 를 통해 chaining된 GraphElement는 해당 그래프 요소가 실행되었다면, 어떠한 경우에 있어서도 chaining됩니다.</p>
+<p>onAfter메서드가 두 번 호출되었다면, 먼저 호출에 포함된 인자가 우선 수행됩니다.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">매개 변수:</th><td class="field-body"><strong>el</strong> (<a class="reference internal" href="#dpmModule.kernel.core.GraphElement" title="dpmModule.kernel.core.GraphElement"><em>GraphElement</em></a>) -- 다음에 실행되어야 할 <code class="docutils literal notranslate"><span class="pre">GraphElement</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dpmModule.kernel.core.GraphElement.onBefore">
+<code class="descname">onBefore</code><span class="sig-paren">(</span><em>el</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dpmModule/kernel/core.html#GraphElement.onBefore"><span class="viewcode-link">[소스]</span></a><a class="headerlink" href="#dpmModule.kernel.core.GraphElement.onBefore" title="정의 주소">¶</a></dt>
+<dd><p>해당 그래프 요소가 실행된 후에 el 요소를 실행하도록 합니다.
+만약 <code class="docutils literal notranslate"><span class="pre">onBefore</span></code> 를 통해 chaining된 GraphElement는 해당 그래프 요소가 실행되었다면, 어떠한 경우에 있어서도 chaining됩니다.</p>
+<p>onAfter메서드가 두 번 호출되었다면, 먼저 호출에 포함된 인자가 나중에 수행됩니다.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">매개 변수:</th><td class="field-body"><strong>el</strong> (<a class="reference internal" href="#dpmModule.kernel.core.GraphElement" title="dpmModule.kernel.core.GraphElement"><em>GraphElement</em></a>) -- 이전에 실행되어야 할 <code class="docutils literal notranslate"><span class="pre">GraphElement</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dpmModule.kernel.core.GraphElement.spend_time">
+<code class="descname">spend_time</code><span class="sig-paren">(</span><em>time</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dpmModule/kernel/core.html#GraphElement.spend_time"><span class="viewcode-link">[소스]</span></a><a class="headerlink" href="#dpmModule.kernel.core.GraphElement.spend_time" title="정의 주소">¶</a></dt>
+<dd><p>시간이 흘렀을 때의 행동을 정의합니다.
+이 함수는 <code class="docutils literal notranslate"><span class="pre">Simulator</span></code> 에 의해서 전체 <code class="docutils literal notranslate"><span class="pre">GraphElement</span></code> 들이 일괄적으로 처리될 때 호출됩니다.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">매개 변수:</th><td class="field-body"><strong>time</strong> (<em>float</em>) -- 지나간 시간입니다.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dpmModule.kernel.core.GraphElement.sync">
+<code class="descname">sync</code><span class="sig-paren">(</span><em>task</em>, <em>skill_modifier</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dpmModule/kernel/core.html#GraphElement.sync"><span class="viewcode-link">[소스]</span></a><a class="headerlink" href="#dpmModule.kernel.core.GraphElement.sync" title="정의 주소">¶</a></dt>
+<dd><p>주어진 <code class="docutils literal notranslate"><span class="pre">task</span></code> 가 자신과 연결된 다른 <code class="docutils literal notranslate"><span class="pre">GraphElement</span></code> 와 동일한 연결 구조를 가지도록 합니다.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">매개 변수:</th><td class="field-body"><ul class="first last simple">
+<li><strong>task</strong> (<em>Task</em>) -- </li>
+<li><strong>skill_modifier</strong> (<em>SkillModifier</em>) -- </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="taskholder">
+<h2>TaskHolder<a class="headerlink" href="#taskholder" title="제목 주소">¶</a></h2>
+<dl class="class">
+<dt id="dpmModule.kernel.core.TaskHolder">
+<em class="property">class </em><code class="descclassname">dpmModule.kernel.core.</code><code class="descname">TaskHolder</code><span class="sig-paren">(</span><em>task</em>, <em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dpmModule/kernel/core.html#TaskHolder"><span class="viewcode-link">[소스]</span></a><a class="headerlink" href="#dpmModule.kernel.core.TaskHolder" title="정의 주소">¶</a></dt>
+<dd><p>This class only holds given task(Do not modify any property of task).
+주어진 Task를 수행하는 <code class="docutils literal notranslate"><span class="pre">GraphElement</span></code> 입니다. 단순히 <code class="docutils literal notranslate"><span class="pre">Task</span></code> 를 감싸기 위한 용도로 사용합니다.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="optionalelement">
+<h2>OptionalElement<a class="headerlink" href="#optionalelement" title="제목 주소">¶</a></h2>
+<dl class="class">
+<dt id="dpmModule.kernel.core.OptionalElement">
+<em class="property">class </em><code class="descclassname">dpmModule.kernel.core.</code><code class="descname">OptionalElement</code><span class="sig-paren">(</span><em>disc</em>, <em>after</em>, <em>fail=None</em>, <em>name='Optional Element'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dpmModule/kernel/core.html#OptionalElement"><span class="viewcode-link">[소스]</span></a><a class="headerlink" href="#dpmModule.kernel.core.OptionalElement" title="정의 주소">¶</a></dt>
+<dd><p>조건에 따라서, 다른 Task를 수행하는 <code class="docutils literal notranslate"><span class="pre">GraphElement</span></code> 입니다.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">매개 변수:</th><td class="field-body"><ul class="first last simple">
+<li><strong>disc</strong> (<em>function</em>) -- 조건 판별시에 수행될 함수입니다.</li>
+<li><strong>after</strong> (<a class="reference internal" href="#dpmModule.kernel.core.GraphElement" title="dpmModule.kernel.core.GraphElement"><em>GraphElement</em></a>) -- <code class="docutils literal notranslate"><span class="pre">disc()</span></code> 함수 호출의 반환값이 <code class="docutils literal notranslate"><span class="pre">True</span></code> 일 때 실행될 <code class="docutils literal notranslate"><span class="pre">GraphElement</span></code> 입니다.</li>
+<li><strong>fail</strong> (<a class="reference internal" href="#dpmModule.kernel.core.GraphElement" title="dpmModule.kernel.core.GraphElement"><em>GraphElement</em></a><em>(</em><em>default:None</em><em>)</em>) -- <code class="docutils literal notranslate"><span class="pre">disc()</span></code> 함수 호출의 반환값이 <code class="docutils literal notranslate"><span class="pre">False</span></code> 일 때 실행될 <code class="docutils literal notranslate"><span class="pre">GraphElement</span></code> 입니다. 값이 주어지지 않을 경우 실행되지 않습니다.</li>
+<li><strong>name</strong> (<em>string</em>) -- <code class="docutils literal notranslate"><span class="pre">GraphElement</span></code> 의 이름입니다. Unique할 필요는 없습니다.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="installation.html" class="btn btn-neutral float-left" title="설치" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 저작권 2020, meson3241@gmail.com
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
