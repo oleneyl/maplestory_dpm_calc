@@ -36,11 +36,16 @@ class ReturningHateWrapper(core.DamageSkillWrapper):
 
 # TODO: core쪽으로 옮길 것, .wrap()과 함께 사용 가능하게 할 것
 class MultipleDamageSkillWrapper(core.DamageSkillWrapper):
-    def __init__(self, skill, _max, _timeLimit):
+    def __init__(self, skill, _max, timeLimit):
         self._max = _max
-        self._timeLimit = _timeLimit
         self.count = 0
-        self.timer = _timeLimit
+        cooltime_o = skill.cooltime.evaluate_override()
+        if (timeLimit >= cooltime_o): 
+            self._timeLimit = cooltime_o // 3    # 제한시간이 이상하면 제한시간을 쿨타임/3으로 가정
+        else:
+            self._timeLimit = timeLimit
+        self._timeLimit = timeLimit
+        self.timer = self._timeLimit
         super(MultipleDamageSkillWrapper, self).__init__(skill)
         
     def _use(self, skill_modifier):
@@ -55,11 +60,12 @@ class MultipleDamageSkillWrapper(core.DamageSkillWrapper):
     def spend_time(self, time):
         self.cooltimeLeft -= time
         self.timer -= time
-        if self.timer < 0:
-            self.count = 0
-            self.available = False 
         if self.cooltimeLeft < 0:
             self.available = True
+        else:
+            if self.timer < 0:
+                self.count = 0
+                self.available = False 
         
 
 class DeviousWrapper(core.DamageSkillWrapper):
