@@ -1,6 +1,7 @@
 from .graph import EvaluativeGraphElement, DynamicVariableOperation, DynamicVariableInstance, AbstractDynamicVariableInstance
 from .abstract import AbstractScenarioGraph, AbstractVEnhancer, AbstractVBuilder
 from functools import partial
+from collections import defaultdict
 import math
 
 NOTWANTTOEXECUTE = 99999999
@@ -1700,6 +1701,8 @@ class Analytics():
             use = len(skillLog)
             print(f"{name} Used {use}")
 
+        shareDict = defaultdict(int)
+
         print("\n===Damage Skills===")
         damageList = list(filter(lambda log: log["result"].spec == "damage", self.logList))
         names = getSkillNames(damageList)
@@ -1709,6 +1712,7 @@ class Analytics():
             hit = sum(map(lambda log: log["result"].hit, skillLog))
             damage = sum(map(lambda log: log["deal"], skillLog))
             share = damage / self.total_damage * 100
+            shareDict[name.split('(')[0]] += share
             print(f"{name} Used {use}")
             print(f"Hit {hit} Damage {damage}")
             print(f"Share {share:.4f}%")
@@ -1723,9 +1727,15 @@ class Analytics():
             hit = sum(map(lambda log: log["result"].hit, skillLog))
             damage = sum(map(lambda log: log["deal"], skillLog))
             share = damage / self.total_damage * 100
+            shareDict[name.split('(')[0]] += share
             print(f"{name} Summoned {summon}")
             print(f"Used {use} Hit {hit} Damage {damage}")
             print(f"Share {share:.4f}%")
+
+        print("\n===Skill Share===")
+        for name, share in sorted(shareDict.items(), key=lambda x: x[1], reverse = True):
+            if share > 0:
+                print(f"{name}, {share:.4f}%")
 
         #self.log("Percent damage per second is %.2f" % (100*self.total_damage / self.character.get_modifier().get_damage_factor() / self.totalTimeInitial * 1000))
 
