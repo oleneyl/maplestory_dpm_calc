@@ -1532,6 +1532,7 @@ class DamageSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill : DamageSkill, modifier = CharacterModifier(), name = None):
         super(DamageSkillWrapper, self).__init__(skill, name = name)
         self.modifier = modifier
+        self.runtime_modifier_list = []
         self.accessible_boss_state = AccessibleBossState.NO_FLAG
 
     def set_disabled_and_time_left(self, time):
@@ -1553,7 +1554,13 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         #return delay, mdf, dmg, self.cascade
         
     def get_modifier(self) -> CharacterModifier:
-        return self.skill.get_modifier() + self.modifier
+        modifier = self.skill.get_modifier() + self.modifier
+        for skill, fn in self.runtime_modifier_list:
+            modifier += fn(skill)
+        return modifier
+
+    def add_runtime_modifier(self, skill: AbstractSkillWrapper, fn):
+        self.runtime_modifier_list.append((skill, fn))
         
 class StackDamageSkillWrapper(DamageSkillWrapper):
     def __init__(self, skill : DamageSkill, stack_skill: AbstractSkillWrapper, fn, modifier = CharacterModifier(), name = None):

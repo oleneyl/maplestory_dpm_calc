@@ -7,44 +7,24 @@ from . import globalSkill
 from functools import partial
 from .jobclass import adventurer
 from .jobbranch import magicians
-#비숍 소환수 뎀증보너스 적용
-class SacredMarkWrapper(core.BuffSkillWrapper):
-    def __init__(self):
-        #special skills
-        skill = core.BuffSkill("소환수 표식", 0, 999999 * 1000)
-        super(SacredMarkWrapper, self).__init__(skill)
-        self.stack = 1  #Better point!
-        self.bonus = 25 # This value is 25 or 50
-        
-    def flow(self, diff, bonus = 0):
-        self.stack += diff
-        self.stack = max(min(1,self.stack),0)
-        if diff == 1:
-            self.bonus = bonus
+from math import ceil
+
+class PrayWrapper(core.BuffSkillWrapper):
+    def __init__(self, vEhc, num1, num2):
+        super(PrayWrapper, self).__init__(core.BuffSkill("프레이", 360, 1000 * (30 + vEhc.getV(num1,num2) // 2), cooltime = 180 * 1000, red = True).isV(vEhc, num1, num2))
+        self.enable_referring_runtime_context()
+        self.stat = None
+
+    def _use(self, skill_modifier, runtime_context_modifier):
+        self.stat = runtime_context_modifier.stat_main * (1 + 0.01 * runtime_context_modifier.pstat_main) + runtime_context_modifier.stat_main_fixed
+        return super(PrayWrapper, self)._use(skill_modifier)
 
     def get_modifier(self):
-        return core.CharacterModifier(pdamage_indep = self.stack*self.bonus)
+      if self.onoff:
+          return core.CharacterModifier(pdamage_indep = 5 + min(self.stat // 2500, 45))
+      else:
+          return self.disabledModifier
 
-    def getFlow(self, diff, bonus = 0):
-        def retftn():
-            self.flow(diff, bonus)
-            return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = 'Sacred Mark', spec = 'graph control')
-        return core.Task(self, retftn)
-        
-    def getFlowHandler(self, diff, bonus):
-        return core.TaskHolder(self.getFlow(diff, bonus), "소환수 표식")
-    
-    def statusChecker(self, bonus):
-        def checker():
-            if self.stack == 1 and self.bonus == bonus:
-                return True
-            else:
-                return False
-        
-        return checker
-    
-'''This function is recommended.
-'''
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -54,6 +34,7 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 8
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
         self.preEmptiveSkills = 1
+        self._combat = 0 # 임시 사용, vEhc에서 받아오게 해야 함
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -62,103 +43,95 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
         SpellMastery = core.InformedCharacterModifier("스펠 마스터리",att = 10)
         
         MagicCritical = core.InformedCharacterModifier("매직 크리티컬",crit = 30, crit_damage = 13)
         HolyFocus = core.InformedCharacterModifier("홀리 포커스",crit = 40)
         
-        MasterMagic = core.InformedCharacterModifier("마스터 매직",att = 30, buff_rem = 50)
+        MasterMagic = core.InformedCharacterModifier("마스터 매직",att = 30 + passive_level * 3, buff_rem = 50 + passive_level * 5)
         ArcaneAim = core.InformedCharacterModifier("아케인 에임", armor_ignore = 20)
         
         VengenceOfAngelOff = core.InformedCharacterModifier("벤전스 오브 엔젤(off)",pdamage = 40)
-        #엔젤레이 반영 필요
         
         return [HighWisdom, SpellMastery, MagicCritical, HolyFocus, MasterMagic, ArcaneAim, VengenceOfAngelOff]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5)       
         BlessingEnsemble = core.InformedCharacterModifier("블레싱 앙상블",pdamage_indep = 3)
 
-        ArcaneAim = core.InformedCharacterModifier("아케인 에임",pdamage = 40)
+        ArcaneAim = core.InformedCharacterModifier("아케인 에임",pdamage = 40 + ceil(passive_level / 2))
         VengenceOfAngelOn = core.InformedCharacterModifier("벤전스 오브 엔젤(on)", att = 50, pdamage_indep = 30, armor_ignore = 20, pdamage=-40, prop_ignore=10)
-        return [WeaponConstant, Mastery, ArcaneAim, VengenceOfAngelOn, BlessingEnsemble]
+        AngelRayArmorIgnore = core.InformedCharacterModifier("엔젤레이(방깎)", armor_ignore = (10 + ceil(self._combat / 3)) * 4)
+        return [WeaponConstant, Mastery, ArcaneAim, VengenceOfAngelOn, BlessingEnsemble, AngelRayArmorIgnore]
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         ######   Skill   ###### 
         '''리브라 ON
         서버렉 3초
-        피스메이커 즉시 폭발
+        피스메이커 3히트
         
         프레이는 인피가 종료될 때 같이 종료되도록 맞추어서 사용
         소울 컨트랙트는 인피 마지막과 맞춰서 사용
         리브라는 쿨마다 사용
         '''
-        serverlag = 3
+        SERVERLAG = 3
+        PEACEMAKER_HIT = 3
+
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 240000, rem = True).wrap(core.BuffSkillWrapper)
-        AdvancedBless = core.BuffSkill("어드밴스드 블레스", 0, 240000, att = 30 + combat*1 + 20, boss_pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
+        AdvancedBless = core.BuffSkill("어드밴스드 블레스", 0, 240000, att = 30 + self._combat*1 + 20, boss_pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 4)
+        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 4)
         
-        charMainStat = chtr.get_modifier().stat_main * (1 + 0.01 * chtr.get_modifier().pstat_main)
-        Pray = core.BuffSkill("프레이", 810, 1000 * (30 + 0.5 * vEhc.getV(2,2)), cooltime = 180 * 1000, red = True, pdamage_indep = (5 + (charMainStat // 2500))).isV(vEhc, 2,2).wrap(core.BuffSkillWrapper)
+        Pray = PrayWrapper(vEhc, 2, 2)
         
         #Damage Skills
-        AngelRay = core.DamageSkill("엔젤레이", 630, 225 + 5*combat, 14).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
-        AngelRay_25 = core.DamageSkill("엔젤레이(25)", 630, 225 + 5*combat, 14, modifier = core.CharacterModifier(pdamage_indep = 25)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
-        AngelRay_50 = core.DamageSkill("엔젤레이(50)", 630, 225 + 5*combat, 14, modifier = core.CharacterModifier(pdamage_indep = 50)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
+        AngelRay = core.DamageSkill("엔젤레이", 630, 225 + 5*self._combat, 14).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
         
-        HeavensDoor = core.DamageSkill("헤븐즈도어", 1080, 1000, 8, cooltime = 180 * 1000).wrap(core.DamageSkillWrapper)   #사용하지 않는다--> 일단 Wrapper 제작 안할 것.
-        PeaceMaker = core.DamageSkill("피스메이커", 750, 350 + 14*vEhc.getV(0,0), 12, cooltime = 10 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) #풀스택시 미발동..
-        PeaceMakerFinal = core.DamageSkill("피스메이커 최종", 0, 500 + 20*vEhc.getV(0,0), 8).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        PeaceMakerFinalBuff = core.BuffSkill("피스메이커 최종 버프", 0, (8 + serverlag)*1000, pdamage = (5 + vEhc.getV(0,0) // 5) + 12, cooltime = -1).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)  #풀스택 가정
+        HeavensDoor = core.DamageSkill("헤븐즈도어", 270, 1000, 8, cooltime = 180 * 1000).wrap(core.DamageSkillWrapper)
+
+        PeaceMakerInit = core.DamageSkill("피스메이커(시전)", 750, 0, 0, cooltime = 10 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        PeaceMaker = core.DamageSkill("피스메이커", 0, 350 + 14*vEhc.getV(0,0), 4, cooltime = -1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        PeaceMakerFinal = core.DamageSkill("피스메이커(폭발)", 0, 500 + 20*vEhc.getV(0,0), 8).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        PeaceMakerFinalBuff = core.BuffSkill("피스메이커(버프)", 0, (8 + SERVERLAG)*1000, pdamage = (5 + vEhc.getV(0,0) // 5) + (12 - PEACEMAKER_HIT), cooltime = -1).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
     
         #Summoning skill
-        Bahamutt = core.SummonSkill("바하뮤트", 600, 3030, 500+6*combat, 1, 90 * 1000, cooltime = 120 * 1000, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #최종뎀25%스택
-        AngelOfLibra = core.SummonSkill("엔젤 오브 리브라", 540, 3333, 500 + 20*vEhc.getV(3,1), 12, 30 * 1000, cooltime = 120 * 1000).isV(vEhc,3,1).wrap(core.SummonSkillWrapper)    #바하뮤트와 겹치지 않도록 재정의 필요, 최종뎀50%스택
+        Bahamutt = core.SummonSkill("바하뮤트", 600, 3030, 500+6*self._combat, 1, 90 * 1000, cooltime = 120 * 1000, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #최종뎀25%스택
+        AngelOfLibra = core.SummonSkill("엔젤 오브 리브라", 540, 4020, 500 + 20*vEhc.getV(3,1), 12, 30 * 1000, cooltime = 120 * 1000, red=True).isV(vEhc,3,1).wrap(core.SummonSkillWrapper)    #최종뎀50%스택
         
         ######   Wrappers    ######
-        Infinity = adventurer.InfinityWrapper()
-        SacredMark = SacredMarkWrapper()
+        Infinity = adventurer.InfinityWrapper(self._combat, SERVERLAG)
+        SacredMark = core.StackSkillWrapper(core.BuffSkill("소환수 표식", 0, 999999 * 1000), 50)
+            
+        # Sacred Mark Control
+        Bahamutt.onTick(SacredMark.stackController(25, dtype="set"))
+        AngelOfLibra.onTick(SacredMark.stackController(50, dtype="set"))
+
+        for sk in [AngelRay, PeaceMaker, PeaceMakerFinal]:
+            sk.onJustAfter(SacredMark.stackController(0, dtype="set"))
+            sk.add_runtime_modifier(SacredMark, lambda skill: core.CharacterModifier(pdamage_indep = skill.stack))
         
-        MarkIncrement25 = SacredMark.getFlowHandler(1, 25)
-        MarkIncrement50 = SacredMark.getFlowHandler(1, 50)
-        MarkDecrement = SacredMark.getFlowHandler(-1, 0)
-    
-        #damage skills
-        AngelRay.onJustAfter(MarkDecrement)
-        AngelRay_25.onJustAfter(MarkDecrement)
-        AngelRay_50.onJustAfter(MarkDecrement)
-        PeaceMakerFinalBuff.set_disabled_and_time_left(-1)
+        # Peace Maker
+        PeaceMakerRepeat = core.RepeatElement(PeaceMaker, PEACEMAKER_HIT)
+        PeaceMakerInit.onAfter(PeaceMakerRepeat)
+        PeaceMakerRepeat.onAfter(PeaceMakerFinal)
+        PeaceMakerFinal.onAfter(PeaceMakerFinalBuff)
         
-        PeaceMakerFinal.onJustAfter(MarkDecrement)
-        PeaceMaker.onAfters([PeaceMakerFinal, PeaceMakerFinalBuff, MarkDecrement])
-        
-        Bahamutt.onTick(MarkIncrement25)
-        AngelOfLibra.onTick(MarkIncrement50)
-        
-        #Scheduling(?)
-        
-        PeaceMakerFinalBuff.set_disabled_and_time_left(-1)
-        
-        AngelOfLibra.onAfter(core.TaskHolder(core.Task(Bahamutt, partial(Bahamutt.set_disabled_and_time_left,1))))
+        # Libra - Bahamutt exclusive
+        AngelOfLibra.onAfter(Bahamutt.controller(1))
         Bahamutt.onConstraint(core.ConstraintElement("리브라와 동시사용 불가", AngelOfLibra, AngelOfLibra.is_not_active))
-
-        AngelRay_is25 = core.OptionalElement(SacredMark.statusChecker(25), AngelRay_25, AngelRay)
-        MainAttack = core.OptionalElement(SacredMark.statusChecker(50), AngelRay_50, AngelRay_is25)
-
-        MainAttackWrapped = core.DamageSkill('기본공격',0,0,0).wrap(core.DamageSkillWrapper)
-        MainAttackWrapped.onAfter(MainAttack)
-
-        SoulContract = globalSkill.soul_contract()
         
-        return(MainAttackWrapped, 
+        return(AngelRay, 
                 [Booster, SacredMark, Infinity, PeaceMakerFinalBuff, Pray, EpicAdventure, OverloadMana,
-                globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                SoulContract] +\
-                [PeaceMaker] +\
-                [AngelOfLibra, Bahamutt] +\
+                globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(), AdvancedBless,
+                globalSkill.soul_contract()] +\
+                [PeaceMakerInit] +\
+                [AngelOfLibra, Bahamutt, HeavensDoor] +\
                 [] +\
-                [MainAttackWrapped])
+                [AngelRay])
