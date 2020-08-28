@@ -27,7 +27,7 @@ if errorlevel 9009 (
 
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS%
 if "%1%" == "html" (
- xcopy %BUILDDIR%\html docs /I /E /Y
+ xcopy %BUILDDIR%\html ..\docs /I /E /Y
 )
 
 goto end
