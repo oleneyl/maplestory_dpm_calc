@@ -145,7 +145,7 @@ class JobGenerator(ck.JobGenerator):
         LifeTidal = core.InformedCharacterModifier("라이프 타이달",crit = 30) #OR pdamage = 20
         MagicMastery = core.InformedCharacterModifier("매직 마스터리",att = 30 + passive_level, crit_damage = 15 + passive_level // 3, crit = 15 + passive_level // 3)
         DarknessSocery = core.InformedCharacterModifier("다크니스 소서리", pdamage_indep = 40 + self._combat, armor_ignore = 40 + self._combat)
-        MorningStarfall = core.InformedCharacterModifier("모닝 스타폴(패시브)",pdamage_indep = 30)
+        MorningStarfall = core.InformedCharacterModifier("모닝 스타폴(패시브)",pdamage_indep = 30 + self._combat)
         
         return [PowerOfLight, SpellMastery, HighWisdom, LifeTidal, MagicMastery, MorningStarfall, DarknessSocery]
 
