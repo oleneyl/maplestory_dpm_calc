@@ -333,7 +333,7 @@ class ExtendedCharacterModifier(CharacterModifier):
 
     def log(self):
         txt = super(ExtendedCharacterModifier, self).log()
-        txt + "buff_rem : %.1f, summon_rem : %.1f\n" % (self.buff_rem, self.summon_rem)
+        txt += "buff_rem : %.1f, summon_rem : %.1f\n" % (self.buff_rem, self.summon_rem)
         txt += "cooltime_reduce : %.1f pcooltime_reduce : %.1f\n" % (self.cooltime_reduce, self.pcooltime_reduce)
         txt += "reuse_chance : %.1f prop_ignore : %.1f\n" % (self.reuse_chance, self.prop_ignore)
         txt += "additional_target : %d passive_level : %d\n" % (self.additional_target, self.passive_level)

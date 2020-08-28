@@ -46,7 +46,6 @@ class EnergyChargeWrapper(core.StackSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.vEnhanceNum = 10
         self.jobtype = "str"
         self.jobname = "바이퍼"

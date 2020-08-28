@@ -112,7 +112,7 @@ class LightAndDarknessWrapper(core.DamageSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = True
+        self.buffrem = (0, 40)
         self.vEnhanceNum = 13
         self.jobtype = "int"
         self.jobname = "루미너스"

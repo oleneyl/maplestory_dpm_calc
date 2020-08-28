@@ -83,7 +83,6 @@ class GuidedArrowWrapper(bowmen.GuidedArrowWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.jobtype = "dex"
         self.jobname = "보우마스터"
         self.vEnhanceNum = 11

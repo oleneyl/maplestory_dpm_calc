@@ -11,7 +11,6 @@ from . import jobutils
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.jobtype = "dex"
         self.jobname = "캡틴"
         self.vEnhanceNum = 14

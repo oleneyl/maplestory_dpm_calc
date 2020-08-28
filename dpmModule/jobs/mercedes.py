@@ -36,7 +36,6 @@ class ElementalGhostWrapper(core.BuffSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.vEnhanceNum = 11
         self.jobtype = "dex"
         self.jobname = "메르세데스"
