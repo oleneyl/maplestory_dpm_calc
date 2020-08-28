@@ -7,6 +7,7 @@ from ..execution.rules import RuleSet, ConditionRule
 from . import globalSkill, jobutils
 from .jobclass import heroes
 from .jobbranch import magicians
+from math import ceil
 
 class LuminousStateController(core.BuffSkillWrapper):
     DARK = 0
@@ -127,6 +128,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "루미너스"
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
         self.preEmptiveSkills = 2
+        self._combat = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -134,20 +136,23 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
                 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
 
         PowerOfLight = core.InformedCharacterModifier("파워 오브 라이트",stat_main = 20)
         SpellMastery = core.InformedCharacterModifier("스펠 마스터리",att = 10)
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
         LifeTidal = core.InformedCharacterModifier("라이프 타이달",crit = 30) #OR pdamage = 20
-        MagicMastery = core.InformedCharacterModifier("매직 마스터리",att = 30, crit_damage = 15, crit = 15)  #오더스 적용필요
-        DarknessSocery = core.InformedCharacterModifier("다크니스 소서리", pdamage_indep = 40, armor_ignore = 40)
+        MagicMastery = core.InformedCharacterModifier("매직 마스터리",att = 30 + passive_level, crit_damage = 15 + passive_level // 3, crit = 15 + passive_level // 3)
+        DarknessSocery = core.InformedCharacterModifier("다크니스 소서리", pdamage_indep = 40 + self._combat, armor_ignore = 40 + self._combat)
         MorningStarfall = core.InformedCharacterModifier("모닝 스타폴(패시브)",pdamage_indep = 30)
         
         return [PowerOfLight, SpellMastery, HighWisdom, LifeTidal, MagicMastery, MorningStarfall, DarknessSocery]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter): 
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5)
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5 + 0.5 * ceil(passive_level / 2))
         
         BlessOfDarkness =  core.InformedCharacterModifier("블레스 오브 다크니스",att = 30)   #15 -> 24 -> 30
         DarknessSoceryActive = core.InformedCharacterModifier("다크니스 소서리(사용)", prop_ignore = 10)
@@ -167,16 +172,16 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
         PodicMeditaion = core.BuffSkill("포딕 메디테이션", 0, 1800000, att = 40).wrap(core.BuffSkillWrapper) # 펫버프
-        DarkCrescendo = core.BuffSkill("다크 크레센도", 0, 180 * 1000, pdamage = 28, rem = True).wrap(core.BuffSkillWrapper) # 펫버프. 스택 제대로 계산 필요함.
-        DarknessSocery = core.BuffSkill("다크니스 소서리(버프)", 270, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)
+        DarkCrescendo = core.BuffSkill("다크 크레센도", 0, (180 + 4*self._combat) * 1000, pdamage = 28, rem = True).wrap(core.BuffSkillWrapper) # 펫버프. 스택 제대로 계산 필요함.
+        DarknessSocery = core.BuffSkill("다크니스 소서리(버프)", 270, (180 + 5*self._combat) * 1000, rem = True).wrap(core.BuffSkillWrapper)
     
         LuminousState = LuminousStateController(core.BuffSkill("루미너스 상태", 0, 99999999), chtr.get_base_modifier().buff_rem)
 
         #Damage Skills
-        LightReflection = core.DamageSkill("라이트 리플렉션", 690, 400, 4, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        Apocalypse = core.DamageSkill("아포칼립스", 720, 340, 7, modifier = core.CharacterModifier(pdamage = 20) + DarkAffinity).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AbsoluteKill = core.DamageSkill("앱솔루트 킬", 630, 385, 7*2, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(이퀄X)', 630, 385, 7, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) # 안쓰는게 dpm이 더 높음
+        LightReflection = core.DamageSkill("라이트 리플렉션", 690, 400+5*self._combat, 4, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        Apocalypse = core.DamageSkill("아포칼립스", 720, 340+4*self._combat, 7, modifier = core.CharacterModifier(pdamage = 20) + DarkAffinity).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AbsoluteKill = core.DamageSkill("앱솔루트 킬", 630, 385+3*self._combat, 7*2, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(이퀄X)', 630, 385+3*self._combat, 7, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) # 안쓰는게 dpm이 더 높음
 
         # Hyper
         Memorize = core.BuffSkill("메모라이즈", 900, 10, cooltime = 150 * 1000).wrap(core.BuffSkillWrapper)
