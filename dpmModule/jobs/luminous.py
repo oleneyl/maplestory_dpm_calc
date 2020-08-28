@@ -80,7 +80,7 @@ class LuminousStateController(core.BuffSkillWrapper):
 
 class PunishingResonatorWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, stateGetter):
-        skill = core.SummonSkill("퍼니싱 리소네이터", 990, 6000/28, 0, 0, 6000-1, cooltime = 30 * 1000, modifier = core.CharacterModifier(crit = 15)).isV(vEhc,3,2)
+        skill = core.SummonSkill("퍼니싱 리소네이터", 990, 180, 0, 0, 6000, cooltime = 30 * 1000, red=True, modifier = core.CharacterModifier(crit = 15)).isV(vEhc,3,2)
         super(PunishingResonatorWrapper, self).__init__(skill)
         self.skillList = [
             (250 + vEhc.getV(3,2)*10, 5),
@@ -101,7 +101,7 @@ class PunishingResonatorWrapper(core.SummonSkillWrapper):
 
 class LightAndDarknessWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc):
-        skill = core.DamageSkill("빛과 어둠의 세례", 840, 15 * vEhc.getV(1,1)+375, 13 * 7, cooltime = 45*1000, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc,1,1)
+        skill = core.DamageSkill("빛과 어둠의 세례", 840, 15 * vEhc.getV(1,1)+375, 13 * 7, cooltime = 45*1000, red=True, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc,1,1)
         super(LightAndDarknessWrapper, self).__init__(skill)
         self.stack = 12
 
@@ -133,6 +133,7 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(ConditionRule('소울 컨트랙트', '루미너스 상태', lambda state: state.isEqual() and state.isEqualLeft(20000)), RuleSet.BASE) # TODO: 소울 컨트랙트의 벞지 적용된 지속시간을 가져와야 함
+        ruleset.add_rule(ConditionRule('퍼니싱 리소네이터', '루미너스 상태', lambda state: state.isEqual()), RuleSet.BASE)
         return ruleset
                 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
@@ -181,7 +182,7 @@ class JobGenerator(ck.JobGenerator):
         LightReflection = core.DamageSkill("라이트 리플렉션", 690, 400+5*self._combat, 4, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         Apocalypse = core.DamageSkill("아포칼립스", 720, 340+4*self._combat, 7, modifier = core.CharacterModifier(pdamage = 20) + DarkAffinity).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         AbsoluteKill = core.DamageSkill("앱솔루트 킬", 630, 385+3*self._combat, 7*2, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(이퀄X)', 630, 385+3*self._combat, 7, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) # 안쓰는게 dpm이 더 높음
+        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(이퀄X)', 630, 385+3*self._combat, 7, cooltime = 12000, red=True, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) # 안쓰는게 dpm이 더 높음
 
         # Hyper
         Memorize = core.BuffSkill("메모라이즈", 900, 10, cooltime = 150 * 1000).wrap(core.BuffSkillWrapper)
