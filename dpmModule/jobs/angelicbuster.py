@@ -20,6 +20,7 @@ class JobGenerator(ck.JobGenerator):
         self._combat = 0
     
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         SoulShooterMastery = core.InformedCharacterModifier("소울슈터 마스터리", att = 20)
         InnerFire = core.InformedCharacterModifier("이너 파이어", stat_sub = 40)
         
@@ -27,7 +28,7 @@ class JobGenerator(ck.JobGenerator):
         AffinityIII = core.InformedCharacterModifier("어피니티 III", stat_main = 40, pdamage = 20)
         AffinityIV = core.InformedCharacterModifier("어피니티 IV", pdamage = 30)
         TrinityPassive = core.InformedCharacterModifier("트리니티(패시브)", pdamage_indep = math.ceil((30 + self._combat) / 3), armor_ignore = math.ceil((30 + self._combat) / 2))
-        SoulShooterExpert = core.InformedCharacterModifier("소울슈터 엑스퍼트", att = 30 + self._combat, crit = 30 + self._combat, crit_damage = 15 + math.ceil(self._combat / 2))
+        SoulShooterExpert = core.InformedCharacterModifier("소울슈터 엑스퍼트", att = 30 + passive_level, crit = 30 + passive_level, crit_damage = 15 + math.ceil(passive_level / 2))
         
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
     
@@ -36,8 +37,9 @@ class JobGenerator(ck.JobGenerator):
                             LoadedDicePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5 * math.ceil(self._combat / 2))        
+        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5 * math.ceil(passive_level / 2))        
         
         return [WeaponConstant, Mastery]        
         
