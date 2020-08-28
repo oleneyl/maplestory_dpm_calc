@@ -69,22 +69,27 @@ class LuminousStateController(core.BuffSkillWrapper):
     
     def isNotEqual(self):
         return (self.state != LuminousStateController.EQUAL)
-        
-
-
 
 class PunishingResonatorWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, stateGetter):
-        super(PunishingResonatorWrapper, self).__init__(skill = core.SummonSkill("퍼니싱 리소네이터", 0, 0, 0, 0, 0))
-        self.skillList = [core.SummonSkill("퍼니싱 리소네이터(어둠)", 990, 6000/28, 250 + vEhc.getV(3,2)*10, 5, 6000-1, cooltime = 30 * 1000, modifier = core.CharacterModifier(crit = 15)).isV(vEhc,3,2),
-                        core.SummonSkill("퍼니싱 리소네이터(빛)", 990, 6000/28, 350 + vEhc.getV(3,2)*14, 4, 6000-1, cooltime = 30 * 1000, modifier = core.CharacterModifier(crit = 15)).isV(vEhc,3,2),
-                        core.SummonSkill("퍼니싱 리소네이터(이퀄)", 990, 6000/28, 340 + vEhc.getV(3,2)*13, 6, 6000-1, cooltime = 30 * 1000, modifier = core.CharacterModifier(crit = 15)).isV(vEhc,3,2)]
+        skill = core.SummonSkill("퍼니싱 리소네이터", 990, 6000/28, 0, 0, 6000-1, cooltime = 30 * 1000, modifier = core.CharacterModifier(crit = 15)).isV(vEhc,3,2)
+        super(PunishingResonatorWrapper, self).__init__(skill)
+        self.skillList = [
+            (250 + vEhc.getV(3,2)*10, 5),
+            (350 + vEhc.getV(3,2)*14, 4),
+            (340 + vEhc.getV(3,2)*13, 6)
+        ]
         self.vlevel = vEhc.getV(3,2)
         self.getState = stateGetter
+    
+    def _useTick(self):
+        if self.onoff and self.tick <= 0:
+            self.tick += self.skill.delay
 
-    def _use(self, skill_modifier):
-        self.skill = self.skillList[self.getState()]
-        return super(PunishingResonatorWrapper, self)._use(skill_modifier)
+            damage, hit = self.skillList[self.getState()]
+            return core.ResultObject(0, self.get_modifier(), damage, hit, sname = self.skill.name, spec = self.skill.spec)
+        else:
+            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
 
 class LightAndDarknessWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc):
@@ -173,8 +178,8 @@ class JobGenerator(ck.JobGenerator):
         
         LightReflection = core.DamageSkill("라이트 리플렉션", 690, 400, 4, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         Apocalypse = core.DamageSkill("아포칼립스", 720, 340, 7, modifier = core.CharacterModifier(pdamage = 20) + DarkAffinity).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AbsoluteKill = core.DamageSkill("앱솔루트 킬", 600, 385, 7*2, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(이퀄X)', 600, 385, 7, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) # 안쓰는게 dpm이 더 높음
+        AbsoluteKill = core.DamageSkill("앱솔루트 킬", 630, 385, 7*2, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(이퀄X)', 630, 385, 7, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) # 안쓰는게 dpm이 더 높음
         
         LightReflection.onAfter(LuminousState.modifyStack(22))
         Apocalypse.onAfter(LuminousState.modifyStack(25))
