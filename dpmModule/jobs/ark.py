@@ -37,14 +37,8 @@ class ReturningHateWrapper(core.DamageSkillWrapper):
 
 # TODO: core쪽으로 옮길 것, .wrap()과 함께 사용 가능하게 할 것
 class MultipleDamageSkillWrapper(core.DamageSkillWrapper):
-    def __init__(self, skill, _max, timeLimit = -1):
-        cooltime_o = DynamicVariableOperation.reveal_argument(skill.cooltime)
-        if timeLimit == -1:
-            self._timeLimit = cooltime_o // 3
-        elif timeLimit > cooltime_o:
-            raise ValueError("timeLimit must be smaller than skill.cooltime.")
-        else:
-            self._timeLimit = timeLimit            
+    def __init__(self, skill, _max, timeLimit):
+        self._timeLimit = timeLimit            
         self.timer = self._timeLimit
         self._max = _max
         self.count = 0   
