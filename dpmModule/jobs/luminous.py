@@ -76,7 +76,7 @@ class LuminousStateController(core.BuffSkillWrapper):
 
 class PunishingResonatorWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, stateGetter):
-        skill = core.SummonSkill("퍼니싱 리소네이터", 990, 180, 0, 0, 6000, cooltime = 30 * 1000, red=True, modifier = core.CharacterModifier(crit = 15)).isV(vEhc,3,2)
+        skill = core.SummonSkill("퍼니싱 리소네이터", 990, 6000/28, 0, 0, 6000-1, cooltime = 30 * 1000, red=True, modifier = core.CharacterModifier(crit = 15)).isV(vEhc,3,2)
         super(PunishingResonatorWrapper, self).__init__(skill)
         self.skillList = [
             (250 + vEhc.getV(3,2)*10, 5),
