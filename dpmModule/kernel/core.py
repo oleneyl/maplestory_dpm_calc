@@ -1,6 +1,7 @@
 from .graph import EvaluativeGraphElement, DynamicVariableOperation, DynamicVariableInstance, AbstractDynamicVariableInstance
 from .abstract import AbstractScenarioGraph, AbstractVEnhancer, AbstractVBuilder
 from functools import partial
+from collections import defaultdict
 import math
 
 NOTWANTTOEXECUTE = 99999999
@@ -735,7 +736,7 @@ class ContextReferringTask(Task):
         return self._ftn(**kwargs)
 
 class ResultObject():
-    def __init__(self, delay, mdf, damage, hit, sname = 'Not specified', spec = 'Undefined', kwargs = {}, cascade = []):
+    def __init__(self, delay, mdf, damage, hit, sname, spec, kwargs = {}, cascade = []):
         """Result object must be static; alway to be ensure it is revealed.
         """
         self.delay = DynamicVariableOperation.reveal_argument(delay)
@@ -1067,6 +1068,15 @@ class OptionalElement(GraphElement):
         return li
 
 class RepeatElement(GraphElement):
+    '''주어진 ``GraphElement`` 를 반복 시행하고 싶을 때 사용합니다.
+    
+    Parameters
+    -----------
+    target : GraphElement
+        반복 수행할 대상
+    itr : int
+        반복 수행할 횟수
+    '''
     def __init__(self, target, itr, name = None):
         if name is None:
             name = "%d회 반복" % itr
@@ -1098,6 +1108,17 @@ class RepeatElement(GraphElement):
         return li
 
 class ConstraintElement(GraphElement):
+    '''특정 요소의 검사를 Graph로 추적하기 위해 사용되는 더미 요소 입니다.
+
+    Parameters
+    ----------
+    name : str
+        ``constraint`` 에 대한 설명입니다.
+    ref : GraphElement
+        제한조건을 파악하기 위해 참조하는 ``GraphElement`` 입니다.
+    cnst : function
+        조건을 검사하고자 할 때 실행되는 함수입니다. ``False``가 반환될 경우 제한합니다.
+    '''
     def __init__(self, name, ref, cnst):
         super(ConstraintElement, self).__init__(name)
         self._ref = ref
@@ -1120,6 +1141,14 @@ class ConstraintElement(GraphElement):
         return [[self, self._ref, "check"]]
         
 class AbstractSkillWrapper(GraphElement):
+    '''특정 스킬의 사용을 제어하는 ``GraphElement`` 입니다. 이 객체의 _use() 함수 호출은 
+    인게임 내에서 대응되는 스킬의 시전과 동일하게 작용합니다.
+
+    Parameters
+    ----------
+    skill : AbstractSkill
+        제어 대상이 되는 스킬입니다.
+    '''
     def __init__(self, skill, name = None):
         if name is None:
             super(AbstractSkillWrapper, self).__init__(skill.name)
@@ -1143,10 +1172,15 @@ class AbstractSkillWrapper(GraphElement):
         '''If this is true, given skill wrapper may use runtime context.
         with this option, you MUST override _use() method with **kwargs argument is enabled.
         given context may passed by **kwargs option.
+
+        이 함수가 호출될 경우, _use() 함수의 실행 시점에서 `runtime_context`를 참조할 수 있습니다.
         '''
         self._refer_runtime_context = True
 
     def protect_from_running(self):
+        ''' ``Scheduler`` 에 의해 이 객체가 선책되는 것을 방지합니다.
+        이는 ``onAfter()`` 과 같은 chaining을 통한 실행은 막지 않습니다.
+        '''
         constraint = ConstraintElement('사용 금지', self, lambda:False)
         self.onConstraint(constraint)
 
@@ -1169,20 +1203,66 @@ class AbstractSkillWrapper(GraphElement):
         self.onConstraint(ConstraintElement(const_name, const_ref, const_ftn))
         
     def onConstraint(self, constraint):
+        '''주어진 제한 조건을 실행 ``constraint`` 목록에 추가합니다.
+        해당 제한 조건이 만족되지 않을경우, 이 ``GraphElement``는 ``Scheduler`` 에 의해 실행되지 않습니다.
+        
+        이는 ``onAfter()`` 과 같은 chaining을 통한 실행은 막지 않습니다.
+
+        Parameters
+        ----------
+        constraint : ConstraintElement
+        '''
         self.constraint.append(constraint)
         
     def set_disabled_and_time_left(self, time):
+        '''주어진 요소를 실행 불가 상태로 만들고, ``time`` 이후에 실행가능하도록 합니다.
+
+        Parameters
+        ----------
+        time : float(ms)
+        '''
         raise NotImplementedError
     
-    def reduce_cooltime(self, time):
+    def reduce_cooltime(self, time) -> ResultObject:
+        '''주어진 요소의 남은 ``cooltime``을  ``time`` 만큼  감소시킵니다. 
+
+        Parameters
+        ----------
+        time : float(ms)
+        '''
         self.cooltimeLeft -= time
         return self._result_object_cache
 
     def reduce_cooltime_p(self, p):
+        '''주어진 요소의 남은 ``cooltime``을  ``p`` 만큼 비율로  감소시킵니다. 
+
+        Parameters
+        ----------
+        p : float
+            0에서 1 사이의 값이어야 합니다. 1일 경우 모든 쿨타임이 제거됩니다. 0일 경우 아무 일도 일어나지 않습니다.
+        '''
         self.cooltimeLeft -= self.cooltimeLeft * p
         return self._result_object_cache
     
-    def controller(self, time, type_ = 'set_disabled_and_time_left', name = None):
+    def controller(self, time, type_ = 'set_disabled_and_time_left', name = None) -> TaskHolder:
+        ''' ``AbstractSkillWrapper`` 의 시간을 제어하는 그래프 요소를 생성합니다.
+        이 메서드는 ``TaskHolder`` 를 반환하므로, 반환된 요소를 다른 ``GraphElement`` 들의 ``onAfter`` 등을 통해 chaining할 수 있습니다.
+
+        Parameters
+        ----------
+        time : float
+            ``reduce_cooltime_p`` 인 경우 0에서 1 사이의 값, 그렇지 않을 경우 ms단위의 시간
+        type_ : str
+            set_disabled_and_time_left, reduce_cooltime, reduce_cooltime_p, set_enabled_and_time_left
+        name : str(default:None)
+            반환될 요소의 이름
+
+        Returns
+        -------
+        element : TaskHolder
+            실행될 경우, 해당 ``GraphElement`` 의 잔여 시간을 제어하는 ``TaskHolder`` 
+
+        '''
         if type_ == 'set_disabled_and_time_left':
             if time == -1:
                 _name = ("사용 불가")
@@ -1222,17 +1302,26 @@ class AbstractSkillWrapper(GraphElement):
         
         return ContextReferringTask(self, context_referring_function)
         
-    def is_usable(self):
+    def is_usable(self) -> bool:
+        '''이 ``GraphElement`` 가 실행가능한지 여부를 반환합니다.
+        이 과정에서 ``constraint`` 들은 검사됩니다.
+        '''
         if len(self.constraint) > 0:
             for cnst in self.constraint:
                 if not cnst.check():
                     return False
         return self.available
 
-    def is_available(self):
+    def is_available(self) -> bool:
+        '''이 ``GraphElement`` 가 실행가능한지 여부를 반환합니다.
+        이 과정에서 ``constraint`` 들은 검사되지 않습니다.
+        '''
         return self.available
     
-    def is_not_usable(self):
+    def is_not_usable(self) -> bool:
+        '''이 ``GraphElement`` 가 실행 불가능한지 여부를 반환합니다.
+        이 과정에서 ``constraint`` 들은 검사됩니다.
+        '''        
         return (not self.is_usable())
         
     def spend_time(self, time):
@@ -1241,20 +1330,52 @@ class AbstractSkillWrapper(GraphElement):
         self.cooltimeLeft -= time
         
     def is_active(self):
+        '''이 ``GraphElement`` 가 실행되고 있는지에 대한 여부를 반환합니다.
+        지속 시간이 있는 객체에 대해서만 사용합니다.
+        '''  
         return self.onoff
 
     def is_not_active(self):
         return (not self.onoff)
         
     def is_cooltime_left(self, time, direction):
+        '''남은 쿨타임이 ``time`` 과 비교할 때의 대소를 반환합니다.
+        
+        Parameters
+        ----------
+        time : float
+            비교 기준이 되는 시간입니다.
+        
+        direction : 1 or -1
+            direction > 0 이면 ``time`` 보다 남은 ``cooltime`` 이 길 경우 True입니다.
+            direction < 0 이면 ``time`` 보다 남은 ``cooltime`` 이 짧을 경우 True입니다.
+        '''  
         if (self.cooltimeLeft - time)*direction > 0: return True
         else : return False
         
     def is_time_left(self, time, direction):
+        '''남은 지속시간이  ``time`` 과 비교할 때의 대소를 반환합니다.
+    
+        Parameters
+        ----------
+        time : float
+            비교 기준이 되는 시간입니다.
+        
+        direction : 1 or -1
+            direction > 0 이면 ``time`` 보다 남은 지속시간이 길 경우 True입니다.
+            direction < 0 이면 ``time`` 보다 남은 지속시간이 짧을 경우 True입니다.
+        '''  
         if (self.timeLeft - time) * direction > 0 : return True
         else: return False
 
     def calculate_cooltime(self, skill_modifier: SkillModifier):
+        ''' ``skill_modifier`` 를 바탕으로, 주어진 ``Skill`` 의 실질적 쿨타임을 계산합니다.
+    
+        Parameters
+        ----------
+        skill_modifier : SkillModifier
+            현재 스킬을 사용하는 ``Character`` 가 제공한 ``SkillModifier`` 입니다.
+        '''  
         if self.skill.red == False:
             return self.skill.cooltime
             
@@ -1298,7 +1419,7 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         if self.cooltimeLeft > 0:
             self.available = False
         mdf = self.get_modifier()
-        return ResultObject(0, mdf, 0, 0, sname = self.skill.name, spec = 'buff', kwargs = {"remain" : time})
+        return ResultObject(0, mdf, 0, 0, sname = self.skill.name, spec = self.skill.spec, kwargs = {"remain" : time})
         
     def set_disabled_and_time_left(self, time):
         self.timeLeft = 0
@@ -1665,10 +1786,6 @@ class Analytics():
     def analyze(self, chtr, result):
         self.add_damage_from_result_with_log(chtr.get_modifier(), result)
 
-    def log(self, txt):
-        if self.print_calculation_progress:
-            print(txt)
-
     def get_skill_info(self):
         return {"dict" : self.skillList, "li" : list(self.skillList.keys())}    
     
@@ -1691,22 +1808,55 @@ class Analytics():
         return meta
         
     def statistics(self):
-        self.log("Total damage %.1f in %d second" % (self.total_damage, self.totalTime / 1000) )
-        countDict = {}
-        damageDict = {}
-        for log in self.logList:
-            if log["result"].sname not in countDict:
-                countDict[log["result"].sname] = 0
-                damageDict[log["result"].sname] = 0
-            countDict[log["result"].sname] += 1
-            damageDict[log["result"].sname] += log["deal"]
-        
-        for i in countDict:
-            self.log("SKILL %s Used %d" % (i, countDict[i]))
+        print("Total damage %.1f in %d second" % (self.total_damage, self.totalTime / 1000) )
 
-        for i in damageDict:         
-            if damageDict[i] > 0:   
-                self.log("SKILL %s share is %f,  %.4f percent" % (i, damageDict[i], damageDict[i] / self.total_damage * 100))
+        def getSkillNames(logList):
+            return sorted(set(map(lambda log: log["result"].sname, logList)))
+
+        print("\n===Buff Skills===")
+        buffList = list(filter(lambda log: log["result"].spec == "buff", self.logList))
+        names = getSkillNames(buffList)
+        for name in names:
+            skillLog = list(filter(lambda log: log["result"].sname == name, buffList))
+            use = len(skillLog)
+            print(f"{name} Used {use}")
+
+        shareDict = defaultdict(int)
+
+        print("\n===Damage Skills===")
+        damageList = list(filter(lambda log: log["result"].spec == "damage", self.logList))
+        names = getSkillNames(damageList)
+        for name in names:
+            skillLog = list(filter(lambda log: log["result"].sname == name, damageList))
+            use = len(skillLog)
+            hit = sum(map(lambda log: log["result"].hit, skillLog))
+            damage = sum(map(lambda log: log["deal"], skillLog))
+            share = damage / self.total_damage * 100
+            shareDict[name.split('(')[0]] += share
+            print(f"{name} Used {use}")
+            print(f"Hit {hit} Damage {damage}")
+            print(f"Share {share:.4f}%")
+
+        print("\n===Summon/DoT Skills===")
+        summonList = list(filter(lambda log: log["result"].spec in ["summon", "dot"], self.logList))
+        names = getSkillNames(summonList)
+        for name in names:
+            skillLog = list(filter(lambda log: log["result"].sname == name, summonList))
+            summon = len(list(filter(lambda log: log["deal"] == 0, skillLog)))
+            use = len(skillLog) - summon
+            hit = sum(map(lambda log: log["result"].hit, skillLog))
+            damage = sum(map(lambda log: log["deal"], skillLog))
+            share = damage / self.total_damage * 100
+            shareDict[name.split('(')[0]] += share
+            print(f"{name} Summoned {summon}")
+            print(f"Used {use} Hit {hit} Damage {damage}")
+            print(f"Share {share:.4f}%")
+
+        print("\n===Skill Share===")
+        for name, share in sorted(shareDict.items(), key=lambda x: x[1], reverse = True):
+            if share > 0:
+                print(f"{name}, {share:.4f}%")
+
         #self.log("Percent damage per second is %.2f" % (100*self.total_damage / self.character.get_modifier().get_damage_factor() / self.totalTimeInitial * 1000))
 
     def skill_share(self):
@@ -1739,7 +1889,7 @@ class Analytics():
         
         return
         
-    def add_damage_from_result_with_log(self, charmdf, result):
+    def add_damage_from_result_with_log(self, charmdf, result: ResultObject):
         mdf = 0
         if result.damage > 0:
             mdf = charmdf + result.mdf
@@ -1760,8 +1910,8 @@ class Analytics():
         
         #For speed acceleration
         if self.print_calculation_progress:
-            self.log('At Time %.1f, Skill [%s] ... Damage [%.1f] ... Loss [%.1f] ... Delay [%.1f]' % (result.time, result.sname, deal, free_deal - deal, result.delay))
-            self.log(f'{result.mdf}')
+            print('At Time %.1f, Skill [%s] ... Damage [%.1f] ... Loss [%.1f] ... Delay [%.1f] ... Spec [%s]' % (result.time, result.sname, deal, free_deal - deal, result.delay, result.spec))
+            print(f'{result.mdf}')
         if deal > 0:
             self.logList.append({"result":result, "time" : (result.time), "deal" : deal, "loss" : free_deal - deal})
         else:

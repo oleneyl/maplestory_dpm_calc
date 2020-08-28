@@ -23,7 +23,7 @@ class SoulTrapStackWrapper(core.StackSkillWrapper):
         # 디버프 추가, 최대 _max(10)개로 유지
         self.debuffQueue = ([self.currentTime] + self.debuffQueue)[:self._max]
         self.stack = len(self.debuffQueue)
-        return core.ResultObject(0, core.CharacterModifier(), 0, 0, '귀문진 디버프 변경')
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, '귀문진 디버프 변경', spec = 'graph control')
 
     def add_debuff(self):
         return core.TaskHolder(core.Task(self, self._add_debuff), name="귀문진 디버프 추가")

@@ -21,7 +21,7 @@ class MesoStack(core.DamageSkillWrapper, core.StackSkillWrapper):
         stack = self.stack
         self.stack = 0
         # 확인 필요
-        return core.ResultObject(0, mdf.copy(),  dmg, 2 * stack, sname = self._id, spec = 'deal')
+        return core.ResultObject(0, mdf.copy(),  dmg, 2 * stack, sname = self._id, spec = 'damage')
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -90,7 +90,7 @@ class JobGenerator(ck.JobGenerator):
 
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 200*1000, rem = True).wrap(core.BuffSkillWrapper)
-        FlipTheCoin = core.BuffSkill("플립 더 코인", 0, 24000, pdamage = 5*5, crit = 10*5).wrap(core.BuffSkillWrapper)
+        FlipTheCoin = core.BuffSkill("플립 더 코인", 0, 120*1000, pdamage = 5*5, crit = 10*5).wrap(core.BuffSkillWrapper)
         ShadowerInstinct = core.BuffSkill("섀도어 인스팅트", 900, 200*1000, rem = True, att = 40+30).wrap(core.BuffSkillWrapper)
         #StealPotion = core.BuffSkill("스틸 (포션)", 0, 180000, cooltime = -1, att = 30).wrap(core.BuffSkillWrapper)
         

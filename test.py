@@ -23,6 +23,7 @@ def get_args():
     parser.add_argument('--ulevel', type=int, default=6000)
     parser.add_argument('--time', type=int, default=1800)
     parser.add_argument('--log', action='store_true')
+    parser.add_argument('--stat', action='store_true')
     parser.add_argument('--task',default='dpm')
 
     return parser.parse_args()
@@ -54,7 +55,8 @@ def dpm(args):
             dpm = parser.get_dpm(ulevel = args.ulevel,
             level = args.level,
             weaponstat = weaponstat,
-            printFlag=args.log)
+            printFlag=args.log,
+            statistics=args.stat or args.log)
         except:
             raise
         finally:
