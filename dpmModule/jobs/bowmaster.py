@@ -36,10 +36,9 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
         return self.emptyModifier
 
 class ArrowOfStormWrapper(core.DamageSkillWrapper):
-    def __init__(self, skill, armorPiercing, combat):
+    def __init__(self, skill, armorPiercing):
         super(ArrowOfStormWrapper, self).__init__(skill)
         self.armorPiercing = armorPiercing
-        self.combat = combat
         self.lastUsed = -9999
         self.currentTime = 0
 
@@ -64,10 +63,9 @@ class ArrowOfStormWrapper(core.DamageSkillWrapper):
         return core.ResultObject(delay, modifier, self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
 
 class GuidedArrowWrapper(bowmen.GuidedArrowWrapper):
-    def __init__(self, vEhc, num1, num2, armorPiercing, combat):
+    def __init__(self, vEhc, num1, num2, armorPiercing):
         super(GuidedArrowWrapper, self).__init__(vEhc, num1, num2)
         self.armorPiercing = armorPiercing
-        self.combat = combat
             
     def _useTick(self):
         if self.onoff and self.tick <= 0:
@@ -108,7 +106,7 @@ class JobGenerator(ck.JobGenerator):
         
         MarkmanShip = core.InformedCharacterModifier("마크맨쉽",armor_ignore = 25, patt = 25)
 
-        BowExpert = core.InformedCharacterModifier("보우 엑스퍼트",att=60 + passive_level, crit_damage = 8 + passive_level // 6)
+        BowExpert = core.InformedCharacterModifier("보우 엑스퍼트",att=60 + passive_level, crit_damage = 8)
         AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)",att = 20 + math.ceil(self._combat / 2)) #오더스 적용필요
         
         return [CriticalShot, PhisicalTraining,MarkmanShip, 
@@ -154,7 +152,7 @@ class JobGenerator(ck.JobGenerator):
         AdvancedQuibberAttack_ArrowRain = core.DamageSkill("어드밴스드 퀴버(애로우 레인)", 0, 260, 1, modifier=MortalBlow).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 210 + 2 * passive_level, 0.7 + 0.01 * passive_level).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
-        ArrowOfStorm = ArrowOfStormWrapper(core.DamageSkill("폭풍의 시", 120, (350+self._combat*3)*0.75, 1+1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 10) + MortalBlow).setV(vEhc, 0, 2, True), ArmorPiercing, self._combat)
+        ArrowOfStorm = ArrowOfStormWrapper(core.DamageSkill("폭풍의 시", 120, (350+self._combat*3)*0.75, 1+1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 10) + MortalBlow).setV(vEhc, 0, 2, True), ArmorPiercing)
         ArrowFlatter = core.SummonSkill("애로우 플래터", 600, 210, 85+90+self._combat*3, 1, 30 * 1000, modifier = core.CharacterModifier(pdamage = 30)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper) # 딜레이 모름
         
         GrittyGust = core.DamageSkill("윈드 오브 프레이", 720, 500, 8, cooltime = 15 * 1000, modifier=MortalBlow).setV(vEhc, 6, 2, True).wrap(core.DamageSkillWrapper)
@@ -165,7 +163,7 @@ class JobGenerator(ck.JobGenerator):
         
         #Summon Skills
         Pheonix = core.SummonSkill("피닉스", 0, 2670, 390, 1, 220 * 1000).setV(vEhc, 5, 3, True).wrap(core.SummonSkillWrapper) # 이볼브가 끝나면 자동으로 소환되므로 딜레이 0
-        GuidedArrow = GuidedArrowWrapper(vEhc, 4, 4, ArmorPiercing, self._combat)
+        GuidedArrow = GuidedArrowWrapper(vEhc, 4, 4, ArmorPiercing)
         Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(5,5)))*1000, red=True).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
         
         #잔영의시 미적용
