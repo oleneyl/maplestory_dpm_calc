@@ -1,6 +1,7 @@
 from ..kernel import core
 from ..kernel.policy import TypebaseFetchingPolicy
 from ..kernel.core import VSkillModifier as V
+from ..kernel.graph import DynamicVariableOperation
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -36,16 +37,17 @@ class ReturningHateWrapper(core.DamageSkillWrapper):
 
 # TODO: core쪽으로 옮길 것, .wrap()과 함께 사용 가능하게 할 것
 class MultipleDamageSkillWrapper(core.DamageSkillWrapper):
-    def __init__(self, skill, _max, timeLimit):
-        self._max = _max
-        self.count = 0
-        cooltime_o = skill.cooltime.evaluate_override()
-        if (timeLimit >= cooltime_o): 
-            self._timeLimit = cooltime_o // 3    # 제한시간이 이상하면 제한시간을 쿨타임/3으로 가정
+    def __init__(self, skill, _max, timeLimit = -1):
+        cooltime_o = DynamicVariableOperation.reveal_argument(skill.cooltime)
+        if timeLimit == -1:
+            self._timeLimit = cooltime_o // 3
+        elif timeLimit > cooltime_o:
+            raise ValueError("timeLimit must be smaller than skill.cooltime.")
         else:
-            self._timeLimit = timeLimit
-        self._timeLimit = timeLimit
+            self._timeLimit = timeLimit            
         self.timer = self._timeLimit
+        self._max = _max
+        self.count = 0   
         super(MultipleDamageSkillWrapper, self).__init__(skill)
         
     def _use(self, skill_modifier):
@@ -62,10 +64,9 @@ class MultipleDamageSkillWrapper(core.DamageSkillWrapper):
         self.timer -= time
         if self.cooltimeLeft < 0:
             self.available = True
-        else:
-            if self.timer < 0:
-                self.count = 0
-                self.available = False 
+        elif self.timer < 0:
+            self.count = 0
+            self.available = False 
         
 
 class DeviousWrapper(core.DamageSkillWrapper):
