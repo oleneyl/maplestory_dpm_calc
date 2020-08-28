@@ -93,9 +93,9 @@ class PunishingResonatorWrapper(core.SummonSkillWrapper):
 
 class LightAndDarknessWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc):
-        super(LightAndDarknessWrapper, self).__init__(skill = core.DamageSkill("빛과 어둠의 세례", 840, 15 * vEhc.getV(1,1)+375, 13 * 7, cooltime = 45*1000, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc,1,1))
+        skill = core.DamageSkill("빛과 어둠의 세례", 840, 15 * vEhc.getV(1,1)+375, 13 * 7, cooltime = 45*1000, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc,1,1)
+        super(LightAndDarknessWrapper, self).__init__(skill)
         self.stack = 12
-        self.vlevel = vEhc.getV(1,1)
 
     def _use(self, skill_modifier):
         self.stack = 12
@@ -111,8 +111,6 @@ class LightAndDarknessWrapper(core.DamageSkillWrapper):
     def reduceStackNode(self):
         return core.TaskHolder(core.Task(self, self.reduceStack))
 
-
-
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -126,8 +124,8 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
 
         PowerOfLight = core.InformedCharacterModifier("파워 오브 라이트",stat_main = 20)
-        SpellMastery =  core.InformedCharacterModifier("스펠 마스터리",att = 10)
-        HighWisdom =  core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
+        SpellMastery = core.InformedCharacterModifier("스펠 마스터리",att = 10)
+        HighWisdom = core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
         LifeTidal = core.InformedCharacterModifier("라이프 타이달",crit = 30) #OR pdamage = 20
         MagicMastery = core.InformedCharacterModifier("매직 마스터리",att = 30, crit_damage = 15, crit = 15)  #오더스 적용필요
         DarknessSocery = core.InformedCharacterModifier("다크니스 소서리", pdamage_indep = 40, armor_ignore = 40)
@@ -159,28 +157,27 @@ class JobGenerator(ck.JobGenerator):
         PodicMeditaion = core.BuffSkill("포딕 메디테이션", 0, 1800000, att = 40).wrap(core.BuffSkillWrapper) # 펫버프
         DarkCrescendo = core.BuffSkill("다크 크레센도", 0, 180 * 1000, pdamage = 28, rem = True).wrap(core.BuffSkillWrapper) # 펫버프. 스택 제대로 계산 필요함.
         DarknessSocery = core.BuffSkill("다크니스 소서리(버프)", 270, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)
-        HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        Memorize = core.BuffSkill("메모라이즈", 900, 10, cooltime = 150 * 1000).wrap(core.BuffSkillWrapper)
-    
-        OverloadMana = magicians.OverloadManaWrapper(vEhc, 2, 3)
-    
-        #Damage Skills
-
-        DoorOfTruth = core.SummonSkill("진리의 문", 870, 3030, 375 + 15 * vEhc.getV(4,4), 10, (25 + vEhc.getV(4,4) // 2) * 1000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #이퀄시 사용 가능해짐.
-
-        Frid = heroes.FridWrapper(vEhc, 0, 0)
-        LightAndDarkness = LightAndDarknessWrapper(vEhc)
     
         LuminousState = LuminousStateController(core.BuffSkill("루미너스 상태", 0, 99999999), chtr.get_base_modifier().buff_rem)
-        
-        LuminousState.equalCallback = partial(DoorOfTruth.set_disabled_and_time_left, 1)
-        
-        
+
+        #Damage Skills
         LightReflection = core.DamageSkill("라이트 리플렉션", 690, 400, 4, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         Apocalypse = core.DamageSkill("아포칼립스", 720, 340, 7, modifier = core.CharacterModifier(pdamage = 20) + DarkAffinity).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         AbsoluteKill = core.DamageSkill("앱솔루트 킬", 630, 385, 7*2, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(이퀄X)', 630, 385, 7, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) # 안쓰는게 dpm이 더 높음
-        
+
+        # Hyper
+        Memorize = core.BuffSkill("메모라이즈", 900, 10, cooltime = 150 * 1000).wrap(core.BuffSkillWrapper)
+        HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
+
+        # 5th
+        Frid = heroes.FridWrapper(vEhc, 0, 0)
+        OverloadMana = magicians.OverloadManaWrapper(vEhc, 2, 3)
+        DoorOfTruth = core.SummonSkill("진리의 문", 870, 3030, 375 + 15 * vEhc.getV(4,4), 10, (25 + vEhc.getV(4,4) // 2) * 1000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #이퀄시 사용 가능해짐.
+        PunishingResonator = PunishingResonatorWrapper(vEhc, LuminousState.getState)
+        LightAndDarkness = LightAndDarknessWrapper(vEhc)
+
+        # Skill Wrapper - Basic Attack
         LightReflection.onAfter(LuminousState.modifyStack(22))
         Apocalypse.onAfter(LuminousState.modifyStack(25))
         
@@ -192,15 +189,17 @@ class JobGenerator(ck.JobGenerator):
         for sk in [LightReflection, Apocalypse, AbsoluteKillCooltimed]:
             jobutils.create_auxilary_attack(sk, 0.5, "(선파이어/이클립스)")
         
+        # Skill Wrapper - Memorize
+        Memorize.onAfter(core.create_task("메모라이즈", LuminousState.memorize, LuminousState))
+        Memorize.onConstraint(core.ConstraintElement('이퀄일때는 사용하지 않음', LuminousState, LuminousState.isNotEqual))
+
+        # Skill Wrapper - Door of Truth
+        LuminousState.equalCallback = partial(DoorOfTruth.set_disabled_and_time_left, 1)
+        
+        # Skill Wrapper - Light and Darkness
         for absolute in [AbsoluteKillCooltimed, AbsoluteKill]:
             absolute.onAfter(core.create_task('빛과 어둠의 세례 쿨다운 스택 1 감소', LightAndDarkness.reduceStack, LightAndDarkness))
         
-        Memorize.onAfter(core.create_task("메모라이즈", LuminousState.memorize, LuminousState))
-        PunishingResonator = PunishingResonatorWrapper(vEhc, LuminousState.getState)
-        
-        
-        Memorize.onConstraint(core.ConstraintElement('이퀄일때는 사용하지 않음', LuminousState, LuminousState.isNotEqual ) ) 
-
         SoulContract = globalSkill.soul_contract()
 
         return(Attack, 
