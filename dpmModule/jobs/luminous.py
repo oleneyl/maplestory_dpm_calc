@@ -52,10 +52,6 @@ class LuminousStateController(core.BuffSkillWrapper):
         self.state = LuminousStateController.EQUAL
         self.equalCallback()
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = '메모라이즈', spec = 'graph control')
-        
-    def memorizeNode(self):
-        task = core.Task(self, self.memorize)
-        return core.TaskHolder(task, "메모라이즈")    
     
     def modifyStack(self, stack):
         return core.create_task('스택 변경', partial(self._modify_stack, stack), self)
@@ -114,10 +110,7 @@ class LightAndDarknessWrapper(core.DamageSkillWrapper):
         if self.stack <= 0:
             self.cooltimeLeft = 0
             self.available = True
-        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = '빛과 어둠의 세례 스택 증가', spec = 'graph control')            
-            
-    def reduceStackNode(self):
-        return core.TaskHolder(core.Task(self, self.reduceStack))
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = '빛과 어둠의 세례 스택 증가', spec = 'graph control')
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
