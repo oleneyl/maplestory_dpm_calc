@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, ConditionRule
 from . import globalSkill, jobutils
 from .jobclass import heroes
 from .jobbranch import magicians
@@ -63,12 +64,21 @@ class LuminousStateController(core.BuffSkillWrapper):
 
     def getState(self):
         return self.state
+
+    def isLight(self):
+        return (self.state == LuminousStateController.LIGHT)
+
+    def isDark(self):
+        return (self.state == LuminousStateController.DARK)
     
-    def isState(self, state):
-        return (self.state == state)
+    def isEqual(self):
+        return (self.state == LuminousStateController.EQUAL)
     
     def isNotEqual(self):
         return (self.state != LuminousStateController.EQUAL)
+
+    def isEqualLeft(self, time):
+        return self.remain - time > 0
 
 class PunishingResonatorWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, stateGetter):
@@ -120,6 +130,11 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "루미너스"
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
         self.preEmptiveSkills = 2
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(ConditionRule('소울 컨트랙트', '루미너스 상태', lambda state: state.isEqual() and state.isEqualLeft(20000)), RuleSet.BASE) # TODO: 소울 컨트랙트의 벞지 적용된 지속시간을 가져와야 함
+        return ruleset
                 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
 
@@ -146,7 +161,7 @@ class JobGenerator(ck.JobGenerator):
         '''
         아포 22회 / 라리플 25회가 이퀄리브리엄 진입까지 요구됨
         
-        소울 컨트랙트는 이퀄리브리엄에 상관없이 사용
+        소울 컨트랙트는 이퀄리브리엄에 맞춰 사용
         메모라이즈는 이퀄이 아니고 쿨타임이 돌아 있으면 사용
         '''
         ######   Skill   ######
@@ -182,8 +197,8 @@ class JobGenerator(ck.JobGenerator):
         Apocalypse.onAfter(LuminousState.modifyStack(25))
         
         Attack = core.DamageSkill('기본 공격', 0, 0, 0).wrap(core.DamageSkillWrapper)
-        IsLight = core.OptionalElement(partial(LuminousState.isState, LuminousStateController.LIGHT), LightReflection, Apocalypse, name = '빛이면 라리플 사용')
-        IsEqual = core.OptionalElement(partial(LuminousState.isState, LuminousStateController.EQUAL), AbsoluteKill, IsLight, name = '이퀄리브리엄이면 앱킬 사용')
+        IsLight = core.OptionalElement(LuminousState.isLight, LightReflection, Apocalypse, name = '빛이면 라리플 사용')
+        IsEqual = core.OptionalElement(LuminousState.isEqual, AbsoluteKill, IsLight, name = '이퀄리브리엄이면 앱킬 사용')
         Attack.onAfter(IsEqual)
 
         for sk in [LightReflection, Apocalypse, AbsoluteKillCooltimed]:
