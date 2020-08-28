@@ -144,10 +144,10 @@ class JobGenerator(ck.JobGenerator):
         아포 22회 / 라리플 25회가 이퀄리브리엄 진입까지 요구됨
         
         소울 컨트랙트는 이퀄리브리엄에 상관없이 사용
-        빛, 어둠 상태에서도 쿨마다 앱솔루트 킬을 사용
         메모라이즈는 이퀄이 아니고 쿨타임이 돌아 있으면 사용
         '''
         ######   Skill   ######
+        DarkAffinity = core.CharacterModifier(pdamage_indep = 5) # 어둠 마법 강화
 
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
@@ -161,7 +161,7 @@ class JobGenerator(ck.JobGenerator):
     
         #Damage Skills
 
-        DoorOfTruth = core.SummonSkill("진리의 문", 870, 3030, 375 + 15 * vEhc.getV(4,4), 10, (25 + 0.5*vEhc.getV(4,4)) * 1000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #이퀄시 사용 가능해짐.
+        DoorOfTruth = core.SummonSkill("진리의 문", 870, 3030, 375 + 15 * vEhc.getV(4,4), 10, (25 + vEhc.getV(4,4) // 2) * 1000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #이퀄시 사용 가능해짐.
 
         Frid = heroes.FridWrapper(vEhc, 0, 0)
         LightAndDarkness = LightAndDarknessWrapper(vEhc)
@@ -172,17 +172,16 @@ class JobGenerator(ck.JobGenerator):
         
         
         LightReflection = core.DamageSkill("라이트 리플렉션", 690, 400, 4, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        Apocalypse = core.DamageSkill("아포칼립스", 720, 340, 7, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(이퀄X)', 600, 385, 7, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        
-        AbsoluteKill = core.DamageSkill("앱솔루트 킬", 600, 385, 7*2, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Apocalypse = core.DamageSkill("아포칼립스", 720, 340, 7, modifier = core.CharacterModifier(pdamage = 20) + DarkAffinity).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AbsoluteKill = core.DamageSkill("앱솔루트 킬", 600, 385, 7*2, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(이퀄X)', 600, 385, 7, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) # 안쓰는게 dpm이 더 높음
         
         LightReflection.onAfter(LuminousState.modifyStack(22))
         Apocalypse.onAfter(LuminousState.modifyStack(25))
         
         Attack = core.DamageSkill('기본 공격', 0, 0, 0).wrap(core.DamageSkillWrapper)
         IsLight = core.OptionalElement(partial(LuminousState.isState, LuminousStateController.LIGHT), LightReflection, Apocalypse, name = '빛이면 라리플 사용')
-        IsEqual = core.OptionalElement(partial(LuminousState.isState, LuminousStateController.EQUAL), AbsoluteKill, IsLight, name = '이퀄리브리엄이면 이퀄 사용')
+        IsEqual = core.OptionalElement(partial(LuminousState.isState, LuminousStateController.EQUAL), AbsoluteKill, IsLight, name = '이퀄리브리엄이면 앱킬 사용')
         Attack.onAfter(IsEqual)
 
         for sk in [LightReflection, Apocalypse, AbsoluteKillCooltimed]:
@@ -203,7 +202,7 @@ class JobGenerator(ck.JobGenerator):
                 [LuminousState, globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Booster, PodicMeditaion, DarknessSocery, DarkCrescendo, HerosOath, Memorize, Frid, OverloadMana,
                     SoulContract] +\
-                [LightAndDarkness, AbsoluteKillCooltimed] +\
+                [LightAndDarkness] +\
                 [PunishingResonator, DoorOfTruth] +\
                 [] +\
                 [Attack])
