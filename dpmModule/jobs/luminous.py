@@ -7,15 +7,12 @@ from ..execution.rules import RuleSet, ConditionRule
 from . import globalSkill, jobutils
 from .jobclass import heroes
 from .jobbranch import magicians
-'''아포 22회
-라리플 25회
-'''
 
 class LuminousStateController(core.BuffSkillWrapper):
     DARK = 0
     LIGHT = 1
     EQUAL = 2
-    STACK = 550 # 22 * 25
+    STACK = 10000
     def __init__(self, skill, buff_rem, combat = True):
         super(LuminousStateController, self).__init__(skill)
         self.state = LuminousStateController.LIGHT
@@ -24,7 +21,7 @@ class LuminousStateController(core.BuffSkillWrapper):
         
         self.remain = 0
         self.buff_rem = buff_rem
-        self.stackList = [25, 22, 0] # 아포 22회, 라리플 25회 = 아포 게이지 25, 라리플 게이지 22
+        self.stackList = [410 + 40, 390, 0] # 아포칼립스-리차지 +40
         self.equalCallback = lambda:None
         
     def spend_time(self, time : int) -> None:
@@ -36,7 +33,7 @@ class LuminousStateController(core.BuffSkillWrapper):
             self.stack = LuminousStateController.STACK
 
     def _modify_stack(self, stack):
-        self.stack -= self.stackList[self.state]
+        self.stack -= self.stackList[self.state] * 1.05
         
         if self.stack <= 0:
             self.stack = LuminousStateController.STACK
