@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobclass import heroes
 from .jobbranch import magicians
 '''아포 22회
@@ -14,7 +14,7 @@ class LuminousStateController(core.BuffSkillWrapper):
     DARK = 0
     LIGHT = 1
     EQUAL = 2
-    STACK = 550
+    STACK = 550 # 22 * 25
     def __init__(self, skill, buff_rem, combat = True):
         super(LuminousStateController, self).__init__(skill)
         self.state = LuminousStateController.LIGHT
@@ -23,9 +23,8 @@ class LuminousStateController(core.BuffSkillWrapper):
         
         self.remain = 0
         self.buff_rem = buff_rem
-        self.stackList = [25, 22, 0]
+        self.stackList = [25, 22, 0] # 아포 22회, 라리플 25회 = 아포 게이지 25, 라리플 게이지 22
         self.equalCallback = lambda:None
-        self.absoluteKillCallback = lambda:None
         
     def spend_time(self, time : int) -> None:
         super(LuminousStateController, self).spend_time(time)
@@ -151,14 +150,14 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill   ######
 
         #Buff skills
-        Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
-        PodicMeditaion = core.BuffSkill("포딕 메디테이션", 0, 1800000, att = 40).wrap(core.BuffSkillWrapper)
-        DarkCrescendo = core.BuffSkill("다크 크레센도", 360, 180 * 1000, pdamage = 28, rem = True).wrap(core.BuffSkillWrapper)#<- 제대로 계산 필요함. 딜레이 모름
-        DarknessSocery = core.BuffSkill("다크니스 소서리(버프)", 210, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
-        HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
-        Memorize = core.BuffSkill("메모라이즈", 600, 10, cooltime = 150 * 1000, rem = True).wrap(core.BuffSkillWrapper)#Memorize <- 역시 제대로 계산 필요함. 딜레이 모음
+        Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
+        PodicMeditaion = core.BuffSkill("포딕 메디테이션", 0, 1800000, att = 40).wrap(core.BuffSkillWrapper) # 펫버프
+        DarkCrescendo = core.BuffSkill("다크 크레센도", 0, 180 * 1000, pdamage = 28, rem = True).wrap(core.BuffSkillWrapper) # 펫버프. 스택 제대로 계산 필요함.
+        DarknessSocery = core.BuffSkill("다크니스 소서리(버프)", 270, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)
+        HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
+        Memorize = core.BuffSkill("메모라이즈", 900, 10, cooltime = 150 * 1000).wrap(core.BuffSkillWrapper)
     
-        OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 2, 3)
+        OverloadMana = magicians.OverloadManaWrapper(vEhc, 2, 3)
     
         #Damage Skills
 
@@ -171,24 +170,23 @@ class JobGenerator(ck.JobGenerator):
         
         LuminousState.equalCallback = partial(DoorOfTruth.set_disabled_and_time_left, 1)
         
-        Attack = core.DamageSkill('기본 공격', 0, 0, 0).wrap(core.DamageSkillWrapper)
         
+        LightReflection = core.DamageSkill("라이트 리플렉션", 690, 400, 4, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        Apocalypse = core.DamageSkill("아포칼립스", 720, 340, 7, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(이퀄X)', 600, 385, 7, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        LightReflection = core.DamageSkill("라이트 리플렉션", 690, 400, 4 * 1.5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        Apocalypse = core.DamageSkill("아포칼립스", 720, 340, 7 * 1.5,modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AbsoluteKill = core.DamageSkill("앱솔루트 킬", 600, 385, 7*2,modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        
-        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(쿨타임)', 600, 385, 7, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        AbsoluteKillCooltimedHalf = core.DamageSkill('앱솔루트 킬(쿨타임)', 0, 385*0.5, 7, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        AbsoluteKill = core.DamageSkill("앱솔루트 킬", 600, 385, 7*2, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         LightReflection.onAfter(LuminousState.modifyStack(22))
         Apocalypse.onAfter(LuminousState.modifyStack(25))
         
+        Attack = core.DamageSkill('기본 공격', 0, 0, 0).wrap(core.DamageSkillWrapper)
         IsLight = core.OptionalElement(partial(LuminousState.isState, LuminousStateController.LIGHT), LightReflection, Apocalypse, name = '빛이면 라리플 사용')
         IsEqual = core.OptionalElement(partial(LuminousState.isState, LuminousStateController.EQUAL), AbsoluteKill, IsLight, name = '이퀄리브리엄이면 이퀄 사용')
         Attack.onAfter(IsEqual)
 
-        AbsoluteKillCooltimed.onAfter(AbsoluteKillCooltimedHalf)
+        for sk in [LightReflection, Apocalypse, AbsoluteKillCooltimed]:
+            jobutils.create_auxilary_attack(sk, 0.5, "(선파이어/이클립스)")
         
         for absolute in [AbsoluteKillCooltimed, AbsoluteKill]:
             absolute.onAfter(core.create_task('빛과 어둠의 세례 쿨다운 스택 1 감소', LightAndDarkness.reduceStack, LightAndDarkness))
