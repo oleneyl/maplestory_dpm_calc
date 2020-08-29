@@ -105,7 +105,7 @@ class JobGenerator(ck.JobGenerator):
         MassiveFire2 = core.DamageSkill("매시브 파이어(2)", 0, 350+self._combat*10, 1, modifier = core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         #로디드 데미지 고정.
-        LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20 + 10/6 + 10/6*0.5).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
+        LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, rem = True, pdamage = 20 + 10/6 + 10/6*(5+passive_level)*0.1).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
         
         #로봇들 :: 로봇당 총뎀6%, 어빌리티 적용 시 7%
         
