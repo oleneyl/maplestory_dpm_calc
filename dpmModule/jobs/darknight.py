@@ -82,7 +82,7 @@ class JobGenerator(ck.JobGenerator):
         GoungnilDescent = core.DamageSkill("궁그닐 디센트", 600, 225 + self._combat, 12, cooltime = 8000, red=True, modifier = GOUNGNIL_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         Sacrifice = core.BuffSkill("새크리파이스", 1080, (30 + self._combat // 2)*1000, rem = True, red = True, cooltime = 70000, armor_ignore = 10 + self._combat // 3, boss_pdamage = 10 + self._combat // 3).wrap(core.BuffSkillWrapper)   #궁그닐 쿨 무시, 비홀더 공격시 쿨0.3감소
-        Reincarnation = core.BuffSkill("리인카네이션", 0, (40+passive_level)*1000, cooltime = (600 - 7 * passive_level) * 1000, rem = True, red = True, pdamage_indep=30).wrap(core.BuffSkillWrapper) #궁그닐 쿨 무시
+        Reincarnation = core.BuffSkill("리인카네이션", 0, (40+passive_level)*1000, cooltime = (900 - 7 * passive_level) * 1000, rem = True, red = True, pdamage_indep=30).wrap(core.BuffSkillWrapper) #궁그닐 쿨 무시
         
         #하이퍼
         DarkThurst = core.BuffSkill("다크 서스트", 900, 30000, cooltime = 120*1000, att = 80).wrap(core.BuffSkillWrapper)
@@ -100,6 +100,7 @@ class JobGenerator(ck.JobGenerator):
         #Damage skill
     
         Reincarnation.set_disabled_and_time_left(30000)
+        Reincarnation.onAfter(Reincarnation.controller(300*1000, 'reduce_cooltime'))
         
         def InfGoungnil():
             return (Sacrifice.is_active() or Reincarnation.is_active())
