@@ -145,7 +145,7 @@ class JobGenerator(ck.JobGenerator):
         #논체인아츠 스킬
         
         SummonCuttingSimiter = core.DamageSkill("서먼 커팅 시미터", 360, 425 + 5 * passive_level, 5, cooltime = 4000, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
-        SummonStretchingClaw = core.DamageSkill("서먼 스트레칭 클로", 330, 455 + 5 * passive_level, 4, cooltime = 3000, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper) #660을 샷건과 분배
+        SummonScratchingClaw = core.DamageSkill("서먼 스크래칭 클로", 330, 455 + 5 * passive_level, 4, cooltime = 3000, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper) #660을 샷건과 분배
         
         SummonThrowingWingdagger = core.DamageSkill("서먼 스로잉 윙대거", 0, 0, 0, cooltime = 10000, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).wrap(core.DamageSkillWrapper)
         SummonThrowingWingdaggerInit = core.SummonSkill("서먼 스로잉 윙대거(시전)", 600, 300, 425 + 5 * passive_level, 1, 300*3, cooltime= -1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
@@ -206,7 +206,7 @@ class JobGenerator(ck.JobGenerator):
     
         # 웨폰 버라이어티 호출
         SummonCuttingSimiter.onAfter(WeaponVarietyAttack.stackController(SummonCuttingSimiter))
-        SummonStretchingClaw.onAfter(WeaponVarietyAttack.stackController(SummonStretchingClaw))
+        SummonScratchingClaw.onAfter(WeaponVarietyAttack.stackController(SummonScratchingClaw))
         SummonThrowingWingdaggerInit.onAfter(WeaponVarietyAttack.stackController(SummonThrowingWingdaggerInit))
         
         SummonShootingShotgun.onAfter(WeaponVarietyAttack.stackController(SummonShootingShotgun))
@@ -222,11 +222,11 @@ class JobGenerator(ck.JobGenerator):
         
         #샷건-클로
         ShootgunClawCombo = core.DamageSkill('샷건-클로', 0, 0, 0).wrap(core.DamageSkillWrapper)
-        for i in [ChainArts_Stroke_1, SummonShootingShotgun, SummonStretchingClaw, ChainArts_Stroke_2]:
+        for i in [ChainArts_Stroke_1, SummonShootingShotgun, SummonScratchingClaw, ChainArts_Stroke_2]:
             ShootgunClawCombo.onAfter(i)
         
         for c in [core.ConstraintElement('샷건', SummonShootingShotgun, SummonShootingShotgun.is_available),
-                    core.ConstraintElement('클로', SummonStretchingClaw, SummonStretchingClaw.is_available)]:
+                    core.ConstraintElement('클로', SummonScratchingClaw, SummonScratchingClaw.is_available)]:
             ShootgunClawCombo.onConstraint(c)
         
         #시미터 - 체이스
@@ -275,16 +275,16 @@ class JobGenerator(ck.JobGenerator):
         
         #체인아츠 - 퓨리 연동
         for s in [ChainArts_Stroke_1, ChainArts_Stroke_2,
-                                SummonCuttingSimiter, SummonStretchingClaw, SummonThrowingWingdagger, SummonShootingShotgun, SummonSlachingKnife, 
+                                SummonCuttingSimiter, SummonScratchingClaw, SummonThrowingWingdagger, SummonShootingShotgun, SummonSlachingKnife, 
                                 SummonReleasingBoom, SummonStrikingBrick, SummonBeatingNeedlebat_1]:
             s.onAfter(ChainArts_Fury_Use)
             
-        for s in [SummonCuttingSimiter, SummonStretchingClaw, SummonThrowingWingdagger, SummonShootingShotgun, SummonSlachingKnife, 
+        for s in [SummonCuttingSimiter, SummonScratchingClaw, SummonThrowingWingdagger, SummonShootingShotgun, SummonSlachingKnife, 
                     SummonReleasingBoom, SummonStrikingBrick, SummonBeatingNeedlebat_1, SummonBeatingNeedlebat_2, SummonBeatingNeedlebat_3,
                         ChainArts_maelstorm, ChainArts_Fury_Damage]:
             s.onAfter(ProfessionalAgent_Attack)
         
-        for s in [ChainArts_Fury_Dummy, SummonShootingShotgun, SummonStretchingClaw,
+        for s in [ChainArts_Fury_Dummy, SummonShootingShotgun, SummonScratchingClaw,
                         SummonCuttingSimiter, SummonSlachingKnife,
                             SummonReleasingBoom, SummonStrikingBrick,
                                 SummonBeatingNeedlebat_1, SummonThrowingWingdagger]:
@@ -299,7 +299,7 @@ class JobGenerator(ck.JobGenerator):
                 [AD_Odnunce_Final,
                     WingDaggerBatCombo, BommBrickCombo, ShootgunClawCombo, SimiterChaseCombo, KnifeCombo] +\
                 [SummonThrowingWingdaggerInit, VenomBurst, AD_Odnunce, ChainArts_maelstorm] +\
-                [ChainArts_Fury_Dummy, SummonShootingShotgun, SummonStretchingClaw,
+                [ChainArts_Fury_Dummy, SummonShootingShotgun, SummonScratchingClaw,
                         SummonCuttingSimiter, SummonSlachingKnife,
                             SummonReleasingBoom, SummonStrikingBrick,
                                 SummonBeatingNeedlebat_1, SummonThrowingWingdagger] +\
