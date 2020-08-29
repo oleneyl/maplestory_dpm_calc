@@ -8,7 +8,7 @@ from . import globalSkill
 from .jobbranch import warriors
 from .jobclass import flora
 from . import jobutils
-import math
+from math import ceil
 
 class OrderWrapper(core.SummonSkillWrapper):
     def __init__(self, skill, ether: core.StackSkillWrapper):
@@ -84,14 +84,14 @@ class JobGenerator(ck.JobGenerator):
         Accent = core.InformedCharacterModifier("어센트", att=30, pdamage_indep=15, crit=20)
         Expert = core.InformedCharacterModifier("엑스퍼트", att=30)
         Demolition = core.InformedCharacterModifier("데몰리션", pdamage_indep=30+passive_level, armor_ignore=20+passive_level)
-        Attain = core.InformedCharacterModifier("어테인", att=30+passive_level, boss_pdamage=10+math.ceil(passive_level/2), crit=20+passive_level)
+        Attain = core.InformedCharacterModifier("어테인", att=30+passive_level, boss_pdamage=10+ceil(passive_level/2), crit=20+passive_level)
 
         return [MagicCircuit, Pace, Rudiment, Mastery, Train, Accent, Expert, Demolition, Attain]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self._combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5 * math.ceil(passive_level / 2))
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5 * ceil(passive_level / 2))
 
         return [WeaponConstant, Mastery]
 

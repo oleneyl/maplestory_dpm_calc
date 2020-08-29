@@ -7,7 +7,7 @@ from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobclass import resistance
 from .jobbranch import magicians
-import math
+from math import ceil
 # TODO: 오버로드 마나를 정말 안쓰는 것인지 확인필요
 
 # TODO: [블랙 매직 알터] : 제단이 설치되어 있지 않을 때 아래 방향키와 함께 사용하면 자신의 위치와 전방에 총 2개의 제단이 한번에 설치되는 기능이 추가됩니다. 설치 개수가 2개를 초과했을 때 초과한 개수에 비례해 저주의 이동속도가 증가하는 기능이 공격 횟수가 증가하는 기능으로 변경됩니다.
@@ -40,18 +40,18 @@ class JobGenerator(ck.JobGenerator):
         
         #택 1
         #DarkAura = core.InformedCharacterModifier(pdamage = 20, boss_pdamage = 10)
-        StaffExpert = core.InformedCharacterModifier("스태프 엑스퍼트",att = 30 + passive_level, crit_damage = 20 + math.ceil(passive_level / 2))
-        SpellBoost = core.InformedCharacterModifier("스펠 부스트", patt = 25 + passive_level // 2, pdamage = 10 + math.ceil(passive_level / 3), armor_ignore = 30 + passive_level)
+        StaffExpert = core.InformedCharacterModifier("스태프 엑스퍼트",att = 30 + passive_level, crit_damage = 20 + ceil(passive_level / 2))
+        SpellBoost = core.InformedCharacterModifier("스펠 부스트", patt = 25 + passive_level // 2, pdamage = 10 + ceil(passive_level / 3), armor_ignore = 30 + passive_level)
         
         return [ArtOfStaff, StaffMastery, HighWisdom, BattleMastery, DarkAuraPassive, StaffExpert, SpellBoost] #디버프오라 미적용
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self._combat
         WeaponConstant = core.InformedCharacterModifier("무기상수")
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5 * math.ceil(passive_level / 2))
+        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5 * ceil(passive_level / 2))
         
         DebuffAura = core.InformedCharacterModifier("디버프 오라", armor_ignore = 20, pdamage_indep = 10, prop_ignore = 10)
-        BattleRage = core.InformedCharacterModifier("배틀 레이지",pdamage = 40 + self._combat, crit_damage = 8 + self._combat // 6, crit=20 + math.ceil(self._combat / 3))
+        BattleRage = core.InformedCharacterModifier("배틀 레이지",pdamage = 40 + self._combat, crit_damage = 8 + self._combat // 6, crit=20 + ceil(self._combat / 3))
         return [WeaponConstant, Mastery, DebuffAura, BattleRage ]
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
@@ -80,8 +80,8 @@ class JobGenerator(ck.JobGenerator):
         MarkStack = core.StackSkillWrapper(core.BuffSkill("마크 스택", 0, 99999*10000), 1)
         
         #배페 좌우텔 분당 86회 기준.
-        FinishBlow_ = core.DamageSkill("피니쉬 블로우", 720, 330 + 3 * self._combat, 6, modifier = core.CharacterModifier(crit=25 + math.ceil(self._combat / 2), armor_ignore=2 * math.ceil((30 + self._combat)/3)) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        FinishBlow_M = core.DamageSkill("피니쉬 블로우(마오데)", 720, 330 + 3 * self._combat, 6+1, modifier = core.CharacterModifier(crit=25 + math.ceil(self._combat / 2), armor_ignore= 2 * math.ceil((30 + self._combat)/3)) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        FinishBlow_ = core.DamageSkill("피니쉬 블로우", 720, 330 + 3 * self._combat, 6, modifier = core.CharacterModifier(crit=25 + ceil(self._combat / 2), armor_ignore=2 * ceil((30 + self._combat)/3)) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        FinishBlow_M = core.DamageSkill("피니쉬 블로우(마오데)", 720, 330 + 3 * self._combat, 6+1, modifier = core.CharacterModifier(crit=25 + ceil(self._combat / 2), armor_ignore= 2 * ceil((30 + self._combat)/3)) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         FinishBlow_U = core.DamageSkill("사신의 낫", 720+60, 300, 12, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         FinishBlow_M_U = core.DamageSkill("사신의 낫(마오데)", 720+60, 300, 12+1, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         

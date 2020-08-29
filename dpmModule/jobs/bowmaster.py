@@ -6,7 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobbranch import bowmen
-import math
+from math import ceil
 
 """
 Advisor : 저격장(레드)
@@ -107,7 +107,7 @@ class JobGenerator(ck.JobGenerator):
         MarkmanShip = core.InformedCharacterModifier("마크맨쉽",armor_ignore = 25, patt = 25)
 
         BowExpert = core.InformedCharacterModifier("보우 엑스퍼트",att=60 + passive_level, crit_damage = 8)
-        AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)",att = 20 + math.ceil(self._combat / 2)) #오더스 적용필요
+        AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)",att = 20 + ceil(self._combat / 2)) #오더스 적용필요
         
         return [CriticalShot, PhisicalTraining,MarkmanShip, 
                             BowExpert, AdvancedFinalAttackPassive]
@@ -115,7 +115,7 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self._combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5 *math.ceil(passive_level / 2))
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5 *ceil(passive_level / 2))
 
         ExtremeArchery = core.InformedCharacterModifier("익스트림 아처리",att = 40, pdamage_indep = 30)
         
@@ -140,7 +140,7 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         SoulArrow = core.BuffSkill("소울 애로우", 0, 300 * 1000, att = 30).wrap(core.BuffSkillWrapper) # 펫버프
         AdvancedQuibber = core.BuffSkill("어드밴스드 퀴버", 0, 30 * 1000, crit_damage = 8).wrap(core.BuffSkillWrapper)   #쿨타임 무시 가능, 딜레이 없앰
-        SharpEyes = core.BuffSkill("샤프 아이즈", 690, 300 * 1000, crit = 20 + 5 + math.ceil(self._combat / 2), crit_damage = 15 + math.ceil(self._combat / 2), armor_ignore = 5).wrap(core.BuffSkillWrapper)
+        SharpEyes = core.BuffSkill("샤프 아이즈", 690, 300 * 1000, crit = 20 + 5 + ceil(self._combat / 2), crit_damage = 15 + ceil(self._combat / 2), armor_ignore = 5).wrap(core.BuffSkillWrapper)
         ElusionStep = core.BuffSkill("일루젼 스탭", 0, (300 + 8 * self._combat) * 1000, rem = True, stat_main = 80 + self._combat).wrap(core.BuffSkillWrapper) # 펫버프
         Preparation = core.BuffSkill("프리퍼레이션", 900, 30 * 1000, cooltime = 90 * 1000, att = 50, boss_pdamage = 20).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)

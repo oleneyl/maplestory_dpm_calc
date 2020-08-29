@@ -7,7 +7,7 @@ from ..execution.rules import RuleSet, InactiveRule, SynchronizeRule
 from . import globalSkill
 from .jobbranch import warriors
 from .jobclass import resistance
-import math
+from math import ceil
 #TODO : 5차 신스킬 적용
 
 class RevolvingCannonMasteryWrapper(core.DamageSkillWrapper):
@@ -63,8 +63,8 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         ChargeMastery= core.InformedCharacterModifier("차지 마스터리", pdamage = 20)
         GuntletExpert = core.InformedCharacterModifier("건틀렛 엑스퍼트",
-            crit_damage = 15 + math.ceil(passive_level / 2),
-            boss_pdamage = 15 + math.ceil(passive_level / 2)
+            crit_damage = 15 + ceil(passive_level / 2),
+            boss_pdamage = 15 + ceil(passive_level / 2)
         )
         AdvancedChargeMastery= core.InformedCharacterModifier("어드밴스드 차지 마스터리", armor_ignore = 35 + 3 * passive_level)
         CombinationTraining = core.InformedCharacterModifier("콤비네이션 트레이닝II", att = 40 + 2 * passive_level)
@@ -74,10 +74,10 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self._combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5 * math.ceil(passive_level / 2))
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5 * ceil(passive_level / 2))
         CombinationTraining = core.InformedCharacterModifier("콤비네이션 트레이닝II",
-            pdamage_indep = 10 * (4 + math.ceil((20 + passive_level) / 10)),
-            crit = 10 * math.ceil((20 + passive_level) / 7)
+            pdamage_indep = 10 * (4 + ceil((20 + passive_level) / 10)),
+            crit = 10 * ceil((20 + passive_level) / 7)
         )
 
         return [WeaponConstant, Mastery, CombinationTraining]
@@ -101,7 +101,7 @@ class JobGenerator(ck.JobGenerator):
         CANCEL_DELAY = 180 # 최소 150
         DUCKING_DELAY = 150 # 최소 110 (30 + 80)
         passive_level = chtr.get_base_modifier().passive_level + self._combat
-        CHARGE_TIME = math.ceil(480 * (1 - 2 * (20 + passive_level) * 0.01) // 30) * 30 # 어드밴스드 차지 마스터리 적용된 차지 속도 계산
+        CHARGE_TIME = ceil(480 * (1 - 2 * (20 + passive_level) * 0.01) // 30) * 30 # 어드밴스드 차지 마스터리 적용된 차지 속도 계산
         
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
