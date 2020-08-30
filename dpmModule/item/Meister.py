@@ -1,8 +1,9 @@
 from . import ItemKernel as it
+ExMDF = it.ExMDF
 
-Ring = it.Item(name="마이스터링", stat_main = 5, stat_sub = 5, att = 1, level = 140)
-Ear = it.Item(name="마이스터 이어링", stat_main = 5, stat_sub = 5, att = 4, level = 140)
-Soulder = it.Item(name="마이스터 숄더", stat_main = 13, stat_sub = 13, att = 9, level = 140)
+Ring = it.Item(name="마이스터링", level = 140, main_option = ExMDF(stat_main = 5, stat_sub = 5, att = 1))
+Ear = it.Item(name="마이스터 이어링", level = 140, main_option = ExMDF(stat_main = 5, stat_sub = 5, att = 4))
+Soulder = it.Item(name="마이스터 숄더", level = 140, main_option = ExMDF(stat_main = 13, stat_sub = 13, att = 9))
 
 
 class Factory():

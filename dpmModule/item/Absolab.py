@@ -1,10 +1,11 @@
 from . import ItemKernel as it
+ExMDF = it.ExMDF
 
-Head = it.Item(name="앱솔랩스 모자", stat_main = 45, stat_sub = 45, att = 3, armor_ignore = 10, level = 160)
-Glove = it.Item(name="앱솔랩스 장갑", stat_main = 20, stat_sub = 20, att = 5, level = 160)
-Shoes = it.Item(name="앱솔랩스 신발", stat_main = 20, stat_sub = 20, att = 5, level = 160)
-Cloak = it.Item(name="앱솔랩스 망토", stat_main = 15, stat_sub = 15, att = 2, level = 160)
-Shoulder = it.Item(name="앱솔랩스 견장", stat_main = 14, stat_sub = 14, att = 10, level = 160)
+Head = it.Item(name="앱솔랩스 모자", level = 160, main_option = ExMDF(stat_main = 45, stat_sub = 45, att = 3, armor_ignore = 10))
+Glove = it.Item(name="앱솔랩스 장갑", level = 160, main_option = ExMDF(stat_main = 20, stat_sub = 20, att = 5))
+Shoes = it.Item(name="앱솔랩스 신발", level = 160, main_option = ExMDF(stat_main = 20, stat_sub = 20, att = 5))
+Cloak = it.Item(name="앱솔랩스 망토", level = 160, main_option = ExMDF(stat_main = 15, stat_sub = 15, att = 2))
+Shoulder = it.Item(name="앱솔랩스 견장", level = 160, main_option = ExMDF(stat_main = 14, stat_sub = 14, att = 10))
 
 # 업횟 11+1
 # 일반적인 템셋에서 카벨 모자를 사용할 직업은 제로뿐이므로 앱솔/아케인 무기 착용으로 가정
@@ -23,7 +24,7 @@ _valueMap = [[103, [0,16,23,32,42,53]],
                 [97,[0,13,18,25,33,42]],
                 [203,[0,11,23,38,56,76]]]#Need blade & Zero weapon
 
-WeaponFactory = it.WeaponFactoryClass(160, _valueMap, modifier = it.ExMDF(stat_main = 60, stat_sub = 60, pdamage = 30, armor_ignore = 10))
+WeaponFactory = it.WeaponFactoryClass(160, _valueMap, modifier = it.ExMDF(stat_main = 60, stat_sub = 60, boss_pdamage = 30, armor_ignore = 10))
 
 
 class Factory():

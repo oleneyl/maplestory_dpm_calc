@@ -1,10 +1,11 @@
 from . import ItemKernel as it
+ExMDF = it.ExMDF
 
-Head = it.Item(name="아케인셰이드 모자", stat_main = 65, stat_sub = 65, att = 7, armor_ignore = 15, level = 200)
-Glove = it.Item(name="아케인셰이드 장갑", stat_main = 40, stat_sub = 40, att = 9, level = 200)
-Shoes = it.Item(name="아케인셰이드 신발", stat_main = 40, stat_sub = 40, att = 9, level = 200)
-Cloak = it.Item(name="아케인셰이드 망토", stat_main = 35, stat_sub = 35, att = 6, level = 200)
-Shoulder = it.Item(name="아케인셰이드 견장", stat_main = 35, stat_sub = 35, att = 20, level = 200)
+Head = it.Item(name="아케인셰이드 모자", level = 200, main_option=ExMDF(stat_main = 65, stat_sub = 65, att = 7, armor_ignore = 15))
+Glove = it.Item(name="아케인셰이드 장갑", level = 200, main_option = ExMDF(stat_main = 40, stat_sub = 40, att = 9))
+Shoes = it.Item(name="아케인셰이드 신발", level = 200, main_option = ExMDF(stat_main = 40, stat_sub = 40, att = 9))
+Cloak = it.Item(name="아케인셰이드 망토", level = 200, main_option = ExMDF(stat_main = 35, stat_sub = 35, att = 6))
+Shoulder = it.Item(name="아케인셰이드 견장", level = 200, main_option = ExMDF(stat_main = 35, stat_sub = 35, att = 20))
 
 _valueMap = [[149, [0,27,40,55,72,92]],
                 [216,[0,39,58,79,104,133]],
@@ -19,7 +20,7 @@ _valueMap = [[149, [0,27,40,55,72,92]],
                 [140,[0,0,0,0,0,0]],
                 [295,[0,18,40,65,95,131]]]
 
-WeaponFactory = it.WeaponFactoryClass(200, _valueMap, modifier = it.ExMDF(stat_main = 100, stat_sub = 100, pdamage = 30, armor_ignore = 20))
+WeaponFactory = it.WeaponFactoryClass(200, _valueMap, modifier = it.ExMDF(stat_main = 100, stat_sub = 100, boss_pdamage = 30, armor_ignore = 20))
 
 
 class Factory():
