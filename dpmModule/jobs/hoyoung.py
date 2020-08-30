@@ -19,7 +19,6 @@ def AnimaGoddessBlessWrapper(vEhc, num1, num2):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.jobtype = "luk"
         self.jobname = "호영"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'buff_rem', 'mess')

@@ -17,7 +17,6 @@ from math import ceil
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.jobtype = "int"
         self.jobname = "배틀메이지"
         self.vEnhanceNum = 10

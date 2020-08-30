@@ -12,6 +12,7 @@ class JaguerStack(core.DamageSkillWrapper, core.TimeStackSkillWrapper):
     def __init__(self, level, vEhc):
         self.level = level
         self.modifier = core.CharacterModifier()
+        self._runtime_modifier_list = []
         skill = core.DamageSkill("어나더 바이트", 0, 0, 0, cooltime=-1).setV(vEhc, 1, 2, False)
         super(core.DamageSkillWrapper, self).__init__(skill, 3)
         
@@ -36,7 +37,6 @@ class JaguerStack(core.DamageSkillWrapper, core.TimeStackSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.vEnhanceNum = 11
         self.jobtype = "dex"
         self.jobname = "와일드헌터"

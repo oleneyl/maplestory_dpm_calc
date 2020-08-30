@@ -55,7 +55,6 @@ def beta_enrage(target, vlevel):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = True
         self.vSkillNum = 5
         self.vEnhanceNum = 13
         self.jobtype = "str"

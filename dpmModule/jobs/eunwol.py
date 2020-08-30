@@ -43,7 +43,6 @@ class SoulTrapStackWrapper(core.StackSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.jobtype = "str"
         self.jobname = "은월"
         self.vEnhanceNum = 15

@@ -5,6 +5,7 @@ from ..status.ability import Ability_tool, Ability_grade
 from ..kernel.graph import GlobalOperation, initialize_global_properties, _unsafe_access_global_storage
 from ..kernel import policy
 from functools import reduce
+from math import ceil
 
 ExMDF = ExtendedCharacterModifier
 '''Clas AbstractCharacter : Basic template for build specific User. User is such object that contains
@@ -86,7 +87,7 @@ class AbstractCharacter():
             item = item_dict[key]
             if item == None:
                 raise TypeError(key + " item is missing")
-            self.itemlist[key] = item_dict[key]            
+            self.itemlist[key] = item_dict[key]
             self.add_item_modifier(item_dict[key])
 
 
@@ -115,7 +116,7 @@ class JobGenerator():
     미하일까지..
     '''
     def __init__(self, vEhc = None):
-        self.buffrem = False
+        self.buffrem = (0, 0)
         self.vEnhanceNum = 10
         self.vSkillNum = 3 + 3
         self.preEmptiveSkills = 0
@@ -303,10 +304,14 @@ class JobGenerator():
 
         # 무기류 잠재능력
         refMDF = get_reference_modifier(chtr)
-        weaponli = WeaponPotential.get_weapon_pontential(refMDF, weaponstat[0], weaponstat[1])
-        for index, wp in enumerate(weaponli):
+        weapon_potential = WeaponPotential.get_weapon_pontential(refMDF, weaponstat[0], weaponstat[1])
+        for index, wp in enumerate(weapon_potential["weapon"]):
             log_modifier(wp, "weapon " + str(index + 1))
-        chtr.set_weapon_potential(weaponli)
+        for index, wp in enumerate(weapon_potential["subweapon"]):
+            log_modifier(wp, "subweapon " + str(index + 1))
+        for index, wp in enumerate(weapon_potential["emblem"]):
+            log_modifier(wp, "emblem " + str(index + 1))
+        chtr.set_weapon_potential(weapon_potential)
         log_buffed_character(chtr)
         
         #그래프를 다시 빌드합니다.
@@ -324,53 +329,57 @@ class ItemedCharacter(AbstractCharacter):
         super(ItemedCharacter, self).__init__(level)
         
         #6 items for armor
-        self.itemlist["head"] = Item()
-        self.itemlist["glove"] = Item()
-        self.itemlist["top"] = Item()
-        self.itemlist["bottom"] =Item()
-        self.itemlist["shoes"] = Item()
-        self.itemlist["cloak"] = Item()
+        self.itemlist["head"] = None
+        self.itemlist["glove"] = None
+        self.itemlist["top"] = None
+        self.itemlist["bottom"] =None
+        self.itemlist["shoes"] = None
+        self.itemlist["cloak"] = None
 
         #13 items for accessory
         
-        self.itemlist["eye"] = Item()
-        self.itemlist["face"] = Item()
-        self.itemlist["ear"] = Item()
-        self.itemlist["belt"] = Item()
-        self.itemlist["ring1"] = Item()
-        self.itemlist["ring2"] = Item()
-        self.itemlist["ring3"] = Item()
-        self.itemlist["ring4"] = Item()
-        self.itemlist["shoulder"] = Item()
-        self.itemlist["pendant1"] = Item()
-        self.itemlist["pendant2"] = Item()
-        self.itemlist["pocket"] = Item()
-        self.itemlist["badge"] = Item()
+        self.itemlist["eye"] = None
+        self.itemlist["face"] = None
+        self.itemlist["ear"] = None
+        self.itemlist["belt"] = None
+        self.itemlist["ring1"] = None
+        self.itemlist["ring2"] = None
+        self.itemlist["ring3"] = None
+        self.itemlist["ring4"] = None
+        self.itemlist["shoulder"] = None
+        self.itemlist["pendant1"] = None
+        self.itemlist["pendant2"] = None
+        self.itemlist["pocket"] = None
+        self.itemlist["badge"] = None
         
         # 3 items for weapon
         
-        self.itemlist["weapon"] = Item()
-        self.itemlist["subweapon"] = Item()
-        self.itemlist["emblem"] = Item()
+        self.itemlist["weapon"] = None
+        self.itemlist["subweapon"] = None
+        self.itemlist["emblem"] = None
         
         #2 items for else
         
-        self.itemlist["medal"] = Item()
-        self.itemlist["heart"] = Item()
-        self.itemlist["title"] = Item()
-        self.itemlist["pet"] = Item()
+        self.itemlist["medal"] = None
+        self.itemlist["heart"] = None
+        self.itemlist["title"] = None
+        self.itemlist["pet"] = None
         
-    def set_weapon_potential(self, li):
-        if len(li) > 9: 
-            raise TypeError("무기 잠재능력은 최대 9개입니다.")
-        itemOrder = ["weapon", "subweapon", "emblem"]    
-        
-        for i in range(3):
+    def set_weapon_potential(self, weapon_potential):
+        for item_id in ["weapon", "subweapon", "emblem"]:
+            potentials = weapon_potential[item_id]
             ptnl = ExMDF()
-            for j in range((len(li) - i - 1) // 3):
-                ptnl  = ptnl + li[i+j*3]
-                
-            self.itemlist[itemOrder[i]].set_potential(ptnl)
+
+            if len(potentials) > 3: 
+                raise TypeError("무기류 잠재능력은 아이템당 최대 3개입니다.")
+
+            for i in range(len(potentials)):
+                ptnl = ptnl + potentials[i]
+
+            item = self.itemlist[item_id]
+            self.remove_item_modifier(item)
+            item.set_potential(ptnl)
+            self.add_item_modifier(item)
 
     def print_items(self):
         for item in self.itemlist:
@@ -389,7 +398,6 @@ class Union():
     #기본적으로 보공과 방무를 연결합니다. 6칸씩 버림.(12칸)
 
     initial_state = [6,6,1,1,0,0,0]
-    initial_state_with_buff_rem = [6,5,1,0,0,0,6]
 
     def __init__(self, mdf, buff_rem, slots, ulevel):
         self.mdf = mdf
@@ -406,22 +414,21 @@ class Union():
     @staticmethod
     def get_apt_slot(ulevel, maplem = True):
         '''get_apt_slot(ulevel, maplem = True) : Return Apt union slot.
-        유니온 캐릭터는 2000레벨부터 300레벨당 200짜리가 1개씩 증가합니다. 기본적으로 하나를 가집니다.
-        점령 가능한 개수는 아래와 같습니다.
+        유니온 캐릭터는 기본적으로 200레벨 하나를 가지며, 유니온 레벨을 맞추기 위한 최소한의 200레벨 캐릭터를 가집니다.
         '''
-        numOf200 = min((ulevel - 2000) // 300 + 1, Union.peoples[ulevel//500])
-        _else = (ulevel - numOf200 * 200) // 140
-        return numOf200 * 4 + min(_else, Union.peoples[ulevel//500] - numOf200) * 3 + (maplem * 3)
+        limit = Union.peoples[ulevel//500]
+        numOf200 = min(max(ceil((ulevel - 5600) / 60), 1), limit)
+        return numOf200 * 4 + (limit - numOf200) * 3 + (maplem * 3)
     
     #TODO :: -1을 리턴하지 않도록,
     @staticmethod
-    def get_union_object(mdf, ulevel, buffrem = False, asIndex = False, slot = None):
+    def get_union_object(mdf, ulevel, buffrem, asIndex = False, slot = None):
         mdf, buffrem = Union.get_union(mdf, ulevel, buffrem = buffrem, asIndex = asIndex, slot = slot)
         return Union(mdf, buffrem, -1, ulevel)
         
     @staticmethod
-    def get_union(mdf, ulevel, buffrem = False, asIndex = False, slot = None, critical_reinforce = False):
-        '''get_union(mdf, ulevel, buffrem = False, asIndex = False) : return optimized ExMDF value.
+    def get_union(mdf, ulevel, buffrem, asIndex = False, slot = None, critical_reinforce = False):
+        '''get_union(mdf, ulevel, buffrem, asIndex = False) : return optimized ExMDF value.
         return value : (ExMDF, buffremain) tuple.
         '''
         if slot is None:
@@ -429,14 +436,15 @@ class Union():
         else:
             slots = slot
         maxvalue = Union.maxSlot[min((ulevel-2000) // 1000, 4)]
+
+        buffrem_min, buffrem_max = buffrem
         
-        if buffrem:
-            state = [i for i in Union.initial_state_with_buff_rem]
-            while state[6] < maxvalue and slots > 0:
-                state[6] += 1
-                slots -= 1
-        else:
-            state = [i for i in Union.initial_state]
+        state = [i for i in Union.initial_state]
+        slots -= sum(state)
+        
+        while state[6] < buffrem_min and slots > 0:
+            state[6] += 1
+            slots -= 1
         
         while slots > 0:
             idx = -1
@@ -462,8 +470,14 @@ class Union():
                             eff = _eff                
                     print("Current state : %s\nslots : %d\n" % (str(state), slots))
                     raise ArithmeticError("Something gonna wrong")
+            if idx in [0, 1] and state[6] < min(buffrem_max, maxvalue): # 보공, 방무, 크확, 크뎀 점령이 끝났으면 벞지를 추가 수급
+                idx = 6
             state[idx] += 1
             slots -= 1
+
+            if state[6] >= 6 and state[0] >= 6: # 벞지가 6칸 이상이면 벞지-방무를 이어서 내부 점령 1칸을 절약함
+                state[0] -= 1
+                slots += 1
         
         if asIndex:
             return state
@@ -730,6 +744,25 @@ class WeaponPotential():
                             [ExMDF(patt = 6), ExMDF(armor_ignore = 20)]],
                         [[ExMDF(patt = 12), ExMDF(armor_ignore = 40)], 
                             [ExMDF(patt = 9), ExMDF(armor_ignore = 30)]]]
+
+    @staticmethod
+    def get_single_potential(refMdf, tier, number, sto):
+        retli = []
+        enhancement = ExMDF()
+        for i in range(number):
+            is_first = 0 if i == 0 else 1
+            cand = ExMDF()
+            ehc = 0
+            for mdfCandidate in sto[tier][is_first]:
+                if i >= 2 and retli[0].boss_pdamage > 0 and retli[1].boss_pdamage > 0 and mdfCandidate.boss_pdamage > 0:
+                    continue
+                _ehc = (refMdf + enhancement + mdfCandidate).get_damage_factor()
+                if _ehc > ehc:
+                    cand = mdfCandidate
+                    ehc = _ehc
+            retli.append(cand.copy())
+            enhancement = enhancement + cand
+        return retli, enhancement
                                 
     @staticmethod
     def get_weapon_pontential(mdf, tier, number):
@@ -746,26 +779,27 @@ class WeaponPotential():
             raise TypeError("Tier must be 2, 3 or 4.")
             
         target = mdf.copy()
-        enhancement = ExMDF()
-        retli = []
-        for i in range(number):
-            if i < 3: j = 0
-            else: j = 1
-            
-            if i%3==0: sto = WeaponPotential.storageEmblem
-            else: sto = WeaponPotential.storageWeapon
-            
-            cand = ExMDF()
-            ehc = 0
-            for mdfCandidate in sto[tier][j]:
-                _ehc = (target + enhancement + mdfCandidate).get_damage_factor()
-                if _ehc > ehc:
-                    cand = mdfCandidate
-                    ehc = _ehc
-            retli.append(cand.copy())
-            enhancement = enhancement + cand
+        result = {
+            "weapon": [],
+            "subweapon": [],
+            "emblem": [],
+        }
+        emblem_count = number // 3
+        subweapon_count = (number - emblem_count) // 2
+        weapon_count = number - subweapon_count - emblem_count
+
+        potential_list, potential_sum = WeaponPotential.get_single_potential(target, tier, emblem_count, WeaponPotential.storageEmblem)
+        result["emblem"] = potential_list
+        target += potential_sum
+
+        potential_list, potential_sum = WeaponPotential.get_single_potential(target, tier, subweapon_count, WeaponPotential.storageWeapon)
+        result["subweapon"] = potential_list
+        target += potential_sum
+
+        potential_list, potential_sum = WeaponPotential.get_single_potential(target, tier, weapon_count, WeaponPotential.storageWeapon)
+        result["weapon"] = potential_list
         
-        return retli
+        return result
 
 class HyperStat():
     requirement = [1,2,4,8,10,15,20,25,30,35,50,65,80,95,110,9999]

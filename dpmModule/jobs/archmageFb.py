@@ -14,7 +14,7 @@ from .jobbranch import magicians
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = True
+        self.buffrem = (0, 40)
         self.jobtype = "int"
         self.jobname = "아크메이지불/독"
         self.vEnhanceNum = 13
@@ -111,7 +111,7 @@ class JobGenerator(ck.JobGenerator):
         PoisonNovaDOT = core.DotSkill("도트(포이즌 노바)", 300+12*vEhc.getV(2,1), 20000).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         
         
-        Infinity = adventurer.InfinityWrapper()
+        Infinity = adventurer.InfinityWrapper(combat)
         
         Paralyze.onAfters([MeteorPassive, Ignite, ParalyzeDOT.controller(1)])
         TeleportMastery.onAfter(TeleportMasteryDOT.controller(1))
