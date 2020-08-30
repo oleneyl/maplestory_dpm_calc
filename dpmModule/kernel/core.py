@@ -1532,8 +1532,14 @@ class DamageSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill : DamageSkill, modifier = CharacterModifier(), name = None):
         super(DamageSkillWrapper, self).__init__(skill, name = name)
         self.modifier = modifier
-        self.runtime_modifier_list = []
+        self._runtime_modifier_list = []
         self.accessible_boss_state = AccessibleBossState.NO_FLAG
+    
+    def get_link(self):
+        li = super(DamageSkillWrapper, self).get_link()
+        for sk, _ in self._runtime_modifier_list:
+            li.append([self, sk, "modifier"])
+        return li
 
     def set_disabled_and_time_left(self, time):
         self.cooltimeLeft = time
@@ -1555,12 +1561,12 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         
     def get_modifier(self) -> CharacterModifier:
         modifier = self.skill.get_modifier() + self.modifier
-        for skill, fn in self.runtime_modifier_list:
+        for skill, fn in self._runtime_modifier_list:
             modifier += fn(skill)
         return modifier
 
     def add_runtime_modifier(self, skill: AbstractSkillWrapper, fn):
-        self.runtime_modifier_list.append((skill, fn))
+        self._runtime_modifier_list.append((skill, fn))
         
 class StackDamageSkillWrapper(DamageSkillWrapper):
     def __init__(self, skill : DamageSkill, stack_skill: AbstractSkillWrapper, fn, modifier = CharacterModifier(), name = None):
@@ -1586,6 +1592,7 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self.tick = 0
         self.onoff = False
         self.modifier = modifier
+        self._runtime_modifier_list = []
         self.disabledModifier = CharacterModifier()
         self._onTick = []
         self.accessible_boss_state = AccessibleBossState.NO_FLAG
@@ -1595,6 +1602,8 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         li = super(SummonSkillWrapper, self).get_link()
         for el in self._onTick:
             li.append([self, el, "tick"])
+        for sk, _ in self._runtime_modifier_list:
+            li.append([self, sk, "modifier"])
         return li
         
     def set_disabled_and_time_left(self, time):
@@ -1648,10 +1657,15 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         
     def onTicks(self, tasklist):
         self._onTick += tasklist
+
+    def add_runtime_modifier(self, skill: AbstractSkillWrapper, fn):
+        self._runtime_modifier_list.append((skill, fn))
     
     def get_modifier(self):
-        retMdf = self.skill.get_modifier() + self.modifier
-        return retMdf
+        modifier = self.skill.get_modifier() + self.modifier
+        for skill, fn in self._runtime_modifier_list:
+            modifier += fn(skill)
+        return modifier
             
 class Simulator(object):
     __slots__ = 'scheduler', 'character', 'analytics', '_modifier_cache_and_time', '_default_modifier'
