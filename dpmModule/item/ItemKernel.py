@@ -18,9 +18,9 @@ class Item():
         #Prototypical option
         self.name = name
         #Main options
-        self.main_option = main_option
-        self.potential = potential
-        self.additional_potential = additional_potential
+        self.main_option = main_option.copy()
+        self.potential = potential.copy()
+        self.additional_potential = additional_potential.copy()
         
         self.level = level
 
