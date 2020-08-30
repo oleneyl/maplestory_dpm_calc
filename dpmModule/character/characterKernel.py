@@ -86,7 +86,7 @@ class AbstractCharacter():
             item = item_dict[key]
             if item == None:
                 raise TypeError(key + " item is missing")
-            self.itemlist[key] = item_dict[key]            
+            self.itemlist[key] = item_dict[key]
             self.add_item_modifier(item_dict[key])
 
 
@@ -324,53 +324,56 @@ class ItemedCharacter(AbstractCharacter):
         super(ItemedCharacter, self).__init__(level)
         
         #6 items for armor
-        self.itemlist["head"] = Item()
-        self.itemlist["glove"] = Item()
-        self.itemlist["top"] = Item()
-        self.itemlist["bottom"] =Item()
-        self.itemlist["shoes"] = Item()
-        self.itemlist["cloak"] = Item()
+        self.itemlist["head"] = None
+        self.itemlist["glove"] = None
+        self.itemlist["top"] = None
+        self.itemlist["bottom"] =None
+        self.itemlist["shoes"] = None
+        self.itemlist["cloak"] = None
 
         #13 items for accessory
         
-        self.itemlist["eye"] = Item()
-        self.itemlist["face"] = Item()
-        self.itemlist["ear"] = Item()
-        self.itemlist["belt"] = Item()
-        self.itemlist["ring1"] = Item()
-        self.itemlist["ring2"] = Item()
-        self.itemlist["ring3"] = Item()
-        self.itemlist["ring4"] = Item()
-        self.itemlist["shoulder"] = Item()
-        self.itemlist["pendant1"] = Item()
-        self.itemlist["pendant2"] = Item()
-        self.itemlist["pocket"] = Item()
-        self.itemlist["badge"] = Item()
+        self.itemlist["eye"] = None
+        self.itemlist["face"] = None
+        self.itemlist["ear"] = None
+        self.itemlist["belt"] = None
+        self.itemlist["ring1"] = None
+        self.itemlist["ring2"] = None
+        self.itemlist["ring3"] = None
+        self.itemlist["ring4"] = None
+        self.itemlist["shoulder"] = None
+        self.itemlist["pendant1"] = None
+        self.itemlist["pendant2"] = None
+        self.itemlist["pocket"] = None
+        self.itemlist["badge"] = None
         
         # 3 items for weapon
         
-        self.itemlist["weapon"] = Item()
-        self.itemlist["subweapon"] = Item()
-        self.itemlist["emblem"] = Item()
+        self.itemlist["weapon"] = None
+        self.itemlist["subweapon"] = None
+        self.itemlist["emblem"] = None
         
         #2 items for else
         
-        self.itemlist["medal"] = Item()
-        self.itemlist["heart"] = Item()
-        self.itemlist["title"] = Item()
-        self.itemlist["pet"] = Item()
+        self.itemlist["medal"] = None
+        self.itemlist["heart"] = None
+        self.itemlist["title"] = None
+        self.itemlist["pet"] = None
         
     def set_weapon_potential(self, li):
         if len(li) > 9: 
             raise TypeError("무기 잠재능력은 최대 9개입니다.")
-        itemOrder = ["weapon", "subweapon", "emblem"]    
+        itemOrder = ["weapon", "subweapon", "emblem"]
         
         for i in range(3):
             ptnl = ExMDF()
             for j in range((len(li) - i - 1) // 3):
                 ptnl  = ptnl + li[i+j*3]
-                
-            self.itemlist[itemOrder[i]].set_potential(ptnl)
+
+            item = self.itemlist[itemOrder[i]]
+            self.remove_item_modifier(item)
+            item.set_potential(ptnl)
+            self.add_item_modifier(item)
 
     def print_items(self):
         for item in self.itemlist:

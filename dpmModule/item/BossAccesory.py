@@ -1,46 +1,47 @@
 from . import ItemKernel as it
+ExMDF = it.ExMDF
 
 #No upgrade
 
 #자쿰 얼장(응축된 힘의 결정석)...(5)
-Face110 = it.Item(name="응축된 힘의 결정석", stat_main = 5, stat_sub = 5, att = 5, level = 110)
+Face110 = it.Item(name="응축된 힘의 결정석", level = 110, main_option = ExMDF(stat_main = 5, stat_sub = 5, att = 5))
 #자쿰 눈장....(3)
-Eye100 = it.Item(name="아쿠아틱 레터 눈장식", stat_main = 6, stat_sub = 6, att = 1, level = 100)
+Eye100 = it.Item(name="아쿠아틱 레터 눈장식", level = 100, main_option = ExMDF(stat_main = 6, stat_sub = 6, att = 1))
 #자쿰 벨트....(3)
-Belt150 =  it.Item(name="분노한 자쿰의 벨트", stat_main = 18, stat_sub = 18, att = 1, level = 150)
+Belt150 =  it.Item(name="분노한 자쿰의 벨트", level = 150, main_option = ExMDF(stat_main = 18, stat_sub = 18, att = 1))
 
 #매그너스 숄더..(1)
-Shoulder120 =  it.Item(name="로얄 블랙메탈 숄더", stat_main = 10, stat_sub = 10, att = 6, level = 120)
+Shoulder120 =  it.Item(name="로얄 블랙메탈 숄더", level = 120, main_option = ExMDF(stat_main = 10, stat_sub = 10, att = 6))
 #매그너스 뱃지..(0)
-Badge130 =  it.Item(name="크리스탈 웬투스 뱃지", stat_main = 10, stat_sub = 10, att = 5, level = 130)
+Badge130 =  it.Item(name="크리스탈 웬투스 뱃지", level = 130, main_option = ExMDF(stat_main = 10, stat_sub = 10, att = 5))
 
 #힐라 -> 미사용, 무시
 
 #파풀 눈장..(5)
-Eye145 =  it.Item(name="파풀라투스 마크", stat_main = 8, stat_sub = 8, att = 1, level = 140) # 145제는 140제와 같은 강화 테이블 사용
+Eye145 =  it.Item(name="파풀라투스 마크", level = 140, main_option = ExMDF(stat_main = 8, stat_sub = 8, att = 1)) # 145제는 140제와 같은 강화 테이블 사용
 
 #반레온보장..(2)
-Ring120 =  it.Item(name="고귀한 이피아의 반지", stat_main = 5, stat_sub = 5, att = 2, level = 120)
+Ring120 =  it.Item(name="고귀한 이피아의 반지", level = 120, main_option = ExMDF(stat_main = 5, stat_sub = 5, att = 2))
 
 #혼테일 귀고리...(6)
-Ear130 =  it.Item(name="데아 시두스 이어림", stat_main = 5, stat_sub = 5, att = 2, level = 130)
+Ear130 =  it.Item(name="데아 시두스 이어림", level = 130, main_option = ExMDF(stat_main = 5, stat_sub = 5, att = 2))
 #혼테일 링...(2)
-Ring110 =  it.Item(name="실버블라썸 링", stat_main = 5, stat_sub = 5, att = 2, level = 110)
+Ring110 =  it.Item(name="실버블라썸 링", level = 110, main_option = ExMDF(stat_main = 5, stat_sub = 5, att = 2))
 #혼테일 목걸이..(0) -> 알발린상태로 계산 필요
 
 #아카이럼 매커...(2)
-Pendant120 =  it.Item(name="매커네이터 펜던트", stat_main = 10, stat_sub = 10, att = 1, level = 120)
+Pendant120 =  it.Item(name="매커네이터 펜던트", level = 120, main_option = ExMDF(stat_main = 10, stat_sub = 10, att = 1))
 
 #아카이럼 도미...(6 or 0) 파편작 가정
-Pendant140 =  it.Item(name="도미네이터 펜던트", stat_main = 5, stat_sub = 5, att = 5, level = 140)
-Pendant140Fragment = it.Item(name="도미네이터 펜던트", stat_main = 23, stat_sub = 23, att = 23, level = 140)
+Pendant140 =  it.Item(name="도미네이터 펜던트", level = 140, main_option = ExMDF(stat_main = 5, stat_sub = 5, att = 5))
+Pendant140Fragment = it.Item(name="도미네이터 펜던트", level = 140, main_option = ExMDF(stat_main = 23, stat_sub = 23, att = 23))
 
 #핑크빈 포켓 ... 0
-Pocket140 = it.Item(name="핑크빛 성배", stat_main = 5, stat_sub = 5, att = 5, level = 140)
+Pocket140 = it.Item(name="핑크빛 성배", level = 140, main_option = ExMDF(stat_main = 5, stat_sub = 5, att = 5))
 #핑크빈 벨트 ... 3
-Belt140 =  it.Item(name="골든 클로버 벨트", stat_main = 15, stat_sub = 15, att = 1, level = 140)
+Belt140 =  it.Item(name="골든 클로버 벨트", level = 140, main_option = ExMDF(stat_main = 15, stat_sub = 15, att = 1))
 #핑크빈 얼장 ... 5
-Eye135 = it.Item(name="블랙빈 마크", stat_main = 7, stat_sub = 7, att = 1, level = 130) # 135제는 130제와 같은 강화 테이블 사용
+Eye135 = it.Item(name="블랙빈 마크", level = 130, main_option = ExMDF(stat_main = 7, stat_sub = 7, att = 1)) # 135제는 130제와 같은 강화 테이블 사용
 
 
 
