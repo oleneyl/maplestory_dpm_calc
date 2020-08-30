@@ -47,7 +47,6 @@ class MultipleOptionWrapper(core.SummonSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.vEnhanceNum = 14
         self.jobtype = "dex"
         self.jobname = "메카닉"

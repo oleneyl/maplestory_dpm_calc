@@ -12,7 +12,6 @@ from .jobbranch import bowmen
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.vEnhanceNum = 10
         self.jobtype = "dex"
         self.jobname = "신궁"

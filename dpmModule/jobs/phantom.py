@@ -15,7 +15,7 @@ from .jobbranch import thieves
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
+        self.buffrem = (12, 12)
         self.vEnhanceNum = 14
         self.jobtype = "luk"
         self.jobname = "팬텀"

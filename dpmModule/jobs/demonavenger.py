@@ -14,7 +14,6 @@ from .jobclass import demon
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.jobtype = "str"
         self.jobname = "데몬어벤져"
         self.vEnhanceNum = 12

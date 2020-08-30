@@ -14,7 +14,6 @@ from . import jobutils
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.jobtype = "luk"
         self.jobname = "듀얼블레이드"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')

@@ -65,7 +65,6 @@ class RelicChargeStack(core.StackSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.jobtype = "dex"
         self.jobname = "패스파인더"
         self.vEnhanceNum = 11

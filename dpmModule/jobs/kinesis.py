@@ -45,7 +45,6 @@ class KinesisStackWrapper(core.StackSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = True
         self.vEnhanceNum = 13
         self.jobtype = "int"
         self.jobname = "키네시스"

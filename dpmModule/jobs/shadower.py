@@ -26,7 +26,6 @@ class MesoStack(core.DamageSkillWrapper, core.StackSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.vEnhanceNum = 10
         self.jobtype = "luk"
         self.jobname = "섀도어"
