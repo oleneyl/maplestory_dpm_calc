@@ -48,7 +48,7 @@ class SacredMarkWrapper(core.BuffSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = True
+        self.buffrem = (0, 40)
         self.jobtype = "int"
         self.jobname = "비숍"
         self.vEnhanceNum = 8

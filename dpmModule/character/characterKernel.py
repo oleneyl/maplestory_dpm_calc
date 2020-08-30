@@ -5,6 +5,7 @@ from ..status.ability import Ability_tool, Ability_grade
 from ..kernel.graph import GlobalOperation, initialize_global_properties, _unsafe_access_global_storage
 from ..kernel import policy
 from functools import reduce
+from math import ceil
 
 ExMDF = ExtendedCharacterModifier
 '''Clas AbstractCharacter : Basic template for build specific User. User is such object that contains
@@ -115,7 +116,7 @@ class JobGenerator():
     미하일까지..
     '''
     def __init__(self, vEhc = None):
-        self.buffrem = False
+        self.buffrem = (0, 0)
         self.vEnhanceNum = 10
         self.vSkillNum = 3 + 3
         self.preEmptiveSkills = 0
@@ -389,7 +390,6 @@ class Union():
     #기본적으로 보공과 방무를 연결합니다. 6칸씩 버림.(12칸)
 
     initial_state = [6,6,1,1,0,0,0]
-    initial_state_with_buff_rem = [6,5,1,0,0,0,6]
 
     def __init__(self, mdf, buff_rem, slots, ulevel):
         self.mdf = mdf
@@ -406,22 +406,21 @@ class Union():
     @staticmethod
     def get_apt_slot(ulevel, maplem = True):
         '''get_apt_slot(ulevel, maplem = True) : Return Apt union slot.
-        유니온 캐릭터는 2000레벨부터 300레벨당 200짜리가 1개씩 증가합니다. 기본적으로 하나를 가집니다.
-        점령 가능한 개수는 아래와 같습니다.
+        유니온 캐릭터는 기본적으로 200레벨 하나를 가지며, 유니온 레벨을 맞추기 위한 최소한의 200레벨 캐릭터를 가집니다.
         '''
-        numOf200 = min((ulevel - 2000) // 300 + 1, Union.peoples[ulevel//500])
-        _else = (ulevel - numOf200 * 200) // 140
-        return numOf200 * 4 + min(_else, Union.peoples[ulevel//500] - numOf200) * 3 + (maplem * 3)
+        limit = Union.peoples[ulevel//500]
+        numOf200 = min(max(ceil((ulevel - 5600) / 60), 1), limit)
+        return numOf200 * 4 + (limit - numOf200) * 3 + (maplem * 3)
     
     #TODO :: -1을 리턴하지 않도록,
     @staticmethod
-    def get_union_object(mdf, ulevel, buffrem = False, asIndex = False, slot = None):
+    def get_union_object(mdf, ulevel, buffrem, asIndex = False, slot = None):
         mdf, buffrem = Union.get_union(mdf, ulevel, buffrem = buffrem, asIndex = asIndex, slot = slot)
         return Union(mdf, buffrem, -1, ulevel)
         
     @staticmethod
-    def get_union(mdf, ulevel, buffrem = False, asIndex = False, slot = None, critical_reinforce = False):
-        '''get_union(mdf, ulevel, buffrem = False, asIndex = False) : return optimized ExMDF value.
+    def get_union(mdf, ulevel, buffrem, asIndex = False, slot = None, critical_reinforce = False):
+        '''get_union(mdf, ulevel, buffrem, asIndex = False) : return optimized ExMDF value.
         return value : (ExMDF, buffremain) tuple.
         '''
         if slot is None:
@@ -429,14 +428,15 @@ class Union():
         else:
             slots = slot
         maxvalue = Union.maxSlot[min((ulevel-2000) // 1000, 4)]
+
+        buffrem_min, buffrem_max = buffrem
         
-        if buffrem:
-            state = [i for i in Union.initial_state_with_buff_rem]
-            while state[6] < maxvalue and slots > 0:
-                state[6] += 1
-                slots -= 1
-        else:
-            state = [i for i in Union.initial_state]
+        state = [i for i in Union.initial_state]
+        slots -= sum(state)
+        
+        while state[6] < buffrem_min and slots > 0:
+            state[6] += 1
+            slots -= 1
         
         while slots > 0:
             idx = -1
@@ -462,8 +462,14 @@ class Union():
                             eff = _eff                
                     print("Current state : %s\nslots : %d\n" % (str(state), slots))
                     raise ArithmeticError("Something gonna wrong")
+            if idx in [0, 1] and state[6] < min(buffrem_max, maxvalue): # 보공, 방무, 크확, 크뎀 점령이 끝났으면 벞지를 추가 수급
+                idx = 6
             state[idx] += 1
             slots -= 1
+
+            if state[6] >= 6 and state[0] >= 6: # 벞지가 6칸 이상이면 벞지-방무를 이어서 내부 점령 1칸을 절약함
+                state[0] -= 1
+                slots += 1
         
         if asIndex:
             return state

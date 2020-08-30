@@ -53,7 +53,6 @@ class WeaponVarietyStackWrapper(core.StackSkillWrapper): # TODO: 굳이 관리�
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.vEnhanceNum = 11
         self.jobtype = "luk"
         self.jobname = "카데나"

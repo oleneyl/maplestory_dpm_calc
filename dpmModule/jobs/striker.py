@@ -26,7 +26,6 @@ class LightningWrapper(core.StackSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = True
         self.vEnhanceNum = 10
         self.jobtype = "str"
         self.jobname = "스트라이커"

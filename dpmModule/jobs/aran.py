@@ -21,7 +21,6 @@ from ..execution.rules import RuleSet, InactiveRule, ConditionRule
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = True
         self.jobtype = "str"
         self.jobname = "아란"
         self.vEnhanceNum = 13
