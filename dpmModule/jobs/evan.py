@@ -16,8 +16,11 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "에반"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'buff_rem')
         self.preEmptiveSkills = 1
+        self._combat = 0
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+
         InheritWill = core.InformedCharacterModifier("상속된 의지",att = 10, stat_main = 10)
         LinkedMagic = core.InformedCharacterModifier("링크드 매직",att = 20)
         
@@ -30,17 +33,19 @@ class JobGenerator(ck.JobGenerator):
         MagicAmplification = core.InformedCharacterModifier("매직 엠플리피케이션",pdamage_indep = 30)
         DragonPotential = core.InformedCharacterModifier("드래곤 포텐셜",armor_ignore = 20)
         
-        MagicMastery = core.InformedCharacterModifier("매직 마스터리",att = 30, crit_damage = 20)
-        DragonFury = core.InformedCharacterModifier("드래곤 퓨리",patt = 35)
-        HighDragonPotential = core.InformedCharacterModifier("하이 드래곤 포텐셜",boss_pdamage = 20)
+        MagicMastery = core.InformedCharacterModifier("매직 마스터리",att = 30 + passive_level, crit_damage = 20 + passive_level//2)
+        DragonFury = core.InformedCharacterModifier("드래곤 퓨리",patt = 35 + passive_level)
+        HighDragonPotential = core.InformedCharacterModifier("하이 드래곤 포텐셜",boss_pdamage = 20+passive_level)
         
         return [InheritWill, LinkedMagic,
             HighWisdom, SpellMastery, ElementalReset, CriticalMagic, MagicAmplification, DragonPotential,
             MagicMastery, DragonFury, HighDragonPotential]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 0)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5)  
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5 + 0.5*passive_level)  
         Interaction = core.InformedCharacterModifier("연계",pdamage = 20)
         ElementalResetActive = core.InformedCharacterModifier("엘리멘탈 리셋(사용)", prop_ignore = 10)
         
@@ -54,23 +59,23 @@ class JobGenerator(ck.JobGenerator):
         #SwiftOfWind 
         #DiveOfThunder
         if sname == "스위프트 오브 썬더":
-            SwiftOfThunderTick = core.DamageSkill("스위프트 오브 썬더"+nametag, 330, 150+80+300, 6 + 1, cooltime = 8000) # 5회 공격 별그림
-            SwiftOfThunder = core.SummonSkill("스위프트 오브 썬더(소환)", 0, 330, 150+80+300, 6+1, tick * 330 - 1, cooltime = (-1 if passive else 8000)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+            SwiftOfThunderTick = core.DamageSkill("스위프트 오브 썬더"+nametag, 330, 150+80+300+self._combat, 6 + 1, cooltime = 8000) # 5회 공격 별그림
+            SwiftOfThunder = core.SummonSkill("스위프트 오브 썬더(소환)", 0, 330, 150+80+300+self._combat, 6+1, tick * 330 - 1, cooltime = (-1 if passive else 8000)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
             SwiftOfThunder.onAfter(mirRem.controller(330*tick, "set_enabled_and_time_left"))
             return SwiftOfThunder
         elif sname =="브레스 오브 윈드":
-            BreathOfWindTick = core.DamageSkill("브레스 오브 윈드(틱)", 450, 215, 5, cooltime = 7500) # 3.5초 지속, 8회 공격
-            BreathOfWind = core.SummonSkill("브레스 오브 윈드"+nametag, 0, 450, 215, 5, tick * 450 - 1, cooltime = (-1 if passive else 7500)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
+            BreathOfWindTick = core.DamageSkill("브레스 오브 윈드(틱)", 450, 215+self._combat, 5, cooltime = 7500) # 3.5초 지속, 8회 공격
+            BreathOfWind = core.SummonSkill("브레스 오브 윈드"+nametag, 0, 450, 215+self._combat, 5, tick * 450 - 1, cooltime = (-1 if passive else 7500)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
             BreathOfWind.onAfter(mirRem.controller(450*tick, "set_enabled_and_time_left"))
             return BreathOfWind
         elif sname == "브레스 오브 어스":
-            BreathOfEarthTick = core.DamageSkill("브레스 오브 어스(틱)", 480, 280, 5, cooltime = 7500) #3.5초 지속, 7회 공격
-            BreathOfEarth = core.SummonSkill("브레스 오브 어스"+nametag, 0, 480, 280, 5, tick * 480 - 1, cooltime = (-1 if passive else 7500)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+            BreathOfEarthTick = core.DamageSkill("브레스 오브 어스(틱)", 480, 280+self._combat, 5, cooltime = 7500) #3.5초 지속, 7회 공격
+            BreathOfEarth = core.SummonSkill("브레스 오브 어스"+nametag, 0, 480, 280+self._combat, 5, tick * 480 - 1, cooltime = (-1 if passive else 7500)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
             BreathOfEarth.onAfter(mirRem.controller(480*tick, "set_enabled_and_time_left"))
             return BreathOfEarth
         elif sname == "다이브 오브 어스":
-            DiveOfEarthTick = core.DamageSkill("다이브 오브 어스(틱)", 480, 190 + 420, 6, cooltime = 6000, modifier = MDF(pdamage = 20)) # 4타
-            DiveOfEarth = core.SummonSkill("다이브 오브 어스"+nametag, 0, 480, 190+420, 6, tick * 480 - 1, cooltime = (-1 if passive else 6000), modifier = MDF(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+            DiveOfEarthTick = core.DamageSkill("다이브 오브 어스(틱)", 480, 190 + self._combat + 420+2*self._combat, 6, cooltime = 6000, modifier = MDF(pdamage = 20)) # 4타
+            DiveOfEarth = core.SummonSkill("다이브 오브 어스"+nametag, 0, 480, 190+self._combat+420+2*self._combat, 6, tick * 480 - 1, cooltime = (-1 if passive else 6000), modifier = MDF(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
             DiveOfEarth.onAfter(mirRem.controller(480*tick, "set_enabled_and_time_left"))
             return DiveOfEarth
         elif sname == "임페리얼 브레스":
@@ -102,31 +107,31 @@ class JobGenerator(ck.JobGenerator):
         서오썬(스오썬, 다오썬), 드래곤 마스터, 잔해
         '''
 
-        
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         ######   Skill   ######
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
-        OnixBless = core.BuffSkill("오닉스의 축복", 0, 180000, rem = True, att = 80).wrap(core.BuffSkillWrapper)
+        OnixBless = core.BuffSkill("오닉스의 축복", 0, (180+2*self._combat)*1000, rem = True, att = 80+2*self._combat).wrap(core.BuffSkillWrapper)
 
 
-        CircleOfMana = core.DamageSkill("서클 오브 마나 IV", 600, 315, 8).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    #클라값 510
+        CircleOfMana = core.DamageSkill("서클 오브 마나 IV", 600, 315 + self._combat, 8).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    #클라값 510
         DragonSparking = core.DamageSkill("드래곤 스파킹", 0, 150, 1).setV(vEhc,6,2).wrap(core.DamageSkillWrapper)  
         #MagicParticle = core.DamageSkill("마법 잔해", 110, 1) 0.4초마다 생성, +100 (5개당 증가) -> 6초마다 사용
-        MagicParticle = core.DamageSkill("마법 잔해", 0, 410, 15, cooltime = 10000).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
+        MagicParticle = core.DamageSkill("마법 잔해", 0, 110+2*self._combat + 4*(100+self._combat), 15, cooltime = 10000).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
         
         ### 에반 스킬
-        CircleOfWind = core.DamageSkill("서클 오브 윈드", 780,270 + 150 + 660, 2).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        CircleOfThunder = core.DamageSkill("서클 오브 썬더", 750, 170 + 200, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        CircleOfEarth = core.DamageSkill("서클 오브 어스", 900, 370, 5).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        CircleOfWind = core.DamageSkill("서클 오브 윈드", 780, 270 + 150 + 660, 2).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        CircleOfThunder = core.DamageSkill("서클 오브 썬더", 750, 170 + 200 + self._combat, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        CircleOfEarth = core.DamageSkill("서클 오브 어스", 900, 370+self._combat, 5).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         ### 미르 스킬
-        SwiftOfWind = core.DamageSkill("스위프트 오브 윈드", 480, (55+30+160) * 0.65, 2 *3, cooltime = 8000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 3.5초 지속 
-        DragonDive = core.DamageSkill("드래곤 다이브", 420, 130 + 195, 3, cooltime = 6000).wrap(core.DamageSkillWrapper) #3.5초 지속, 9회 타격 임의딜레이 420
-        DragonBreath = core.DamageSkill("드래곤 브레스", 390, 240, 5, cooltime = 7500).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 3초 지속, 8타
+        SwiftOfWind = core.DamageSkill("스위프트 오브 윈드", 480, (55+30+160+self._combat) * 0.65, 2 *3, cooltime = 8000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 3.5초 지속 
+        DragonDive = core.DamageSkill("드래곤 다이브", 420, 130 + 195 + self._combat, 3, cooltime = 6000).wrap(core.DamageSkillWrapper) #3.5초 지속, 9회 타격 임의딜레이 420
+        DragonBreath = core.DamageSkill("드래곤 브레스", 390, 240 + self._combat, 5, cooltime = 7500).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 3초 지속, 8타
         
         ### 돌아와!
         SwiftBack = core.BuffSkill("스위프트-돌아와!", 0, 60000, cooltime = -1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
-        BreathBack = core.DotSkill("브레스-돌아와!", 150, 30000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
+        BreathBack = core.DotSkill("브레스-돌아와!", 150+self._combat, (30+self._combat // 2)*1000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         
         # 하이퍼
         SummonOnixDragon = core.SummonSkill("서먼 오닉스 드래곤", 900, 3030, 550, 2, 4000, cooltime = 80000).wrap(core.SummonSkillWrapper)
