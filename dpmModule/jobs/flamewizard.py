@@ -16,6 +16,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "플레임위자드"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
+        self._combat = 0
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 20, pdamage = 50)
@@ -29,6 +30,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         ######   Skill   ######
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트", patt = 10)
         ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니", stat_main = chtr.level // 2)
@@ -37,13 +39,14 @@ class JobGenerator(ck.JobGenerator):
         LiberatedMagic = core.InformedCharacterModifier("해방된 마력",pdamage_indep = 30)
         BurningFocus = core.InformedCharacterModifier("약점 분석",crit = 30, crit_damage = 15)
         BriliantEnlightenment = core.InformedCharacterModifier("번뜩이는 깨달음",stat_main = 60)
-        PureMagic = core.InformedCharacterModifier("마법의 진리", att = 20, pdamage_indep = 50)
+        PureMagic = core.InformedCharacterModifier("마법의 진리", att = 20 + passive_level, pdamage_indep = 50 + 3*passive_level)
 
         return [ElementalExpert, ElementalHarmony, SpellControl, LiberatedMagic, BurningFocus, BriliantEnlightenment, PureMagic]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5)
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5 + 0.5*passive_level)
         SpiritOfFlameActive = core.InformedCharacterModifier("스피릿 오브 플레임(이그니션)", prop_ignore = 10)
         
         return [WeaponConstant, Mastery, SpiritOfFlameActive]
@@ -55,24 +58,24 @@ class JobGenerator(ck.JobGenerator):
         블비탈 4히트
         오비탈 1350타 / 분
         '''
-        
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         flamewizardDefaultSpeed = 60000 / ((1350) / 6)  #266
         blazingOrbitalHit = 4
         
         #Buff skills
         WordOfFire = core.BuffSkill("북 오브 파이어", 0, 300000, att = 20).wrap(core.BuffSkillWrapper)
-        FiresOfCreation = core.BuffSkill("스피릿 오브 플레임", 600, 300 * 1000, armor_ignore = 30).wrap(core.BuffSkillWrapper)
-        BurningRegion = core.BuffSkill("버닝 리전", 1080, 30 * 1000, cooltime =45 * 1000, rem = True, pdamage = 60).wrap(core.BuffSkillWrapper)
+        FiresOfCreation = core.BuffSkill("스피릿 오브 플레임", 600, 300 * 1000, armor_ignore = 30+self._combat).wrap(core.BuffSkillWrapper)
+        BurningRegion = core.BuffSkill("버닝 리전", 1080, 30 * 1000, cooltime =45 * 1000, rem = True, pdamage = 60+self._combat).wrap(core.BuffSkillWrapper)
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        Flame = core.BuffSkill("플레임", 0, 8000, att = 40).wrap(core.BuffSkillWrapper) # 벞지 적용 안되는 스킬
+        Flame = core.BuffSkill("플레임", 0, 8000, att = 40 + passive_level).wrap(core.BuffSkillWrapper) # 벞지 적용 안되는 스킬
         
         OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         #Damage Skills
-        InfernoRize = core.DamageSkill("인페르노라이즈", 570, 350, 10, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage_indep = 90), red = True).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        InfernoRize = core.DamageSkill("인페르노라이즈", 570, 350+3*self._combat, 10, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage_indep = 90 + self._combat), red = True).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         #Full speed, No Combat Orders
-        OrbitalFlame = core.DamageSkill("오비탈 플레임 IV", 210, 215, 3 * 2 * (210 / flamewizardDefaultSpeed), modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        # BlazingExtinction = core.SummonSkill("블레이징 익스팅션", 1020, 2500, 310, 3+1, 10000, cooltime=5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+        OrbitalFlame = core.DamageSkill("오비탈 플레임 IV", 210, 215 + self._combat, 3 * 2 * (210 / flamewizardDefaultSpeed), modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        # BlazingExtinction = core.SummonSkill("블레이징 익스팅션", 1020, 2500, 310+2*self._combat, 3+1, 10000, cooltime=5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
         CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 2, 1)
         BlazingOrbital = core.DamageSkill("블레이징 오비탈 플레임", 210, 330+13*vEhc.getV(0,0), 6 * blazingOrbitalHit, cooltime = 5000, red = True, modifier = core.CharacterModifier(armor_ignore = 50)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)    #4타 가정
         
@@ -80,7 +83,7 @@ class JobGenerator(ck.JobGenerator):
         DragonSlaveInit = core.DamageSkill("드래곤 슬레이브 개시(더미)", 0, 0, 0, cooltime = 90 * 1000).wrap(core.DamageSkillWrapper)
         DragonSlaveEnd = core.DamageSkill("드래곤 슬레이브 종결", 810, 500, 10).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
-        IgnitionDOT = core.DotSkill("이그니션", 220*1.6, 10*1000, cooltime = 0).wrap(core.SummonSkillWrapper)
+        IgnitionDOT = core.DotSkill("이그니션", 220*0.01*(100 + 60 + 2*passive_level), 10*1000, cooltime = 0).wrap(core.SummonSkillWrapper)
 
         #여우 사용
         SavageFlameStack = core.StackSkillWrapper(core.BuffSkill("플레임 디스차지(스택)", 0, 99999999), 6)
