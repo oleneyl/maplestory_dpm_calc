@@ -303,10 +303,14 @@ class JobGenerator():
 
         # 무기류 잠재능력
         refMDF = get_reference_modifier(chtr)
-        weaponli = WeaponPotential.get_weapon_pontential(refMDF, weaponstat[0], weaponstat[1])
-        for index, wp in enumerate(weaponli):
+        weapon_potential = WeaponPotential.get_weapon_pontential(refMDF, weaponstat[0], weaponstat[1])
+        for index, wp in enumerate(weapon_potential["weapon"]):
             log_modifier(wp, "weapon " + str(index + 1))
-        chtr.set_weapon_potential(weaponli)
+        for index, wp in enumerate(weapon_potential["subweapon"]):
+            log_modifier(wp, "subweapon " + str(index + 1))
+        for index, wp in enumerate(weapon_potential["emblem"]):
+            log_modifier(wp, "emblem " + str(index + 1))
+        chtr.set_weapon_potential(weapon_potential)
         log_buffed_character(chtr)
         
         #그래프를 다시 빌드합니다.
@@ -360,17 +364,18 @@ class ItemedCharacter(AbstractCharacter):
         self.itemlist["title"] = None
         self.itemlist["pet"] = None
         
-    def set_weapon_potential(self, li):
-        if len(li) > 9: 
-            raise TypeError("무기 잠재능력은 최대 9개입니다.")
-        itemOrder = ["weapon", "subweapon", "emblem"]
-        
-        for i in range(3):
+    def set_weapon_potential(self, weapon_potential):
+        for item_id in ["weapon", "subweapon", "emblem"]:
+            potentials = weapon_potential[item_id]
             ptnl = ExMDF()
-            for j in range((len(li) - i - 1) // 3):
-                ptnl  = ptnl + li[i+j*3]
 
-            item = self.itemlist[itemOrder[i]]
+            if len(potentials) > 3: 
+                raise TypeError("무기류 잠재능력은 아이템당 최대 3개입니다.")
+
+            for i in range(len(potentials)):
+                ptnl = ptnl + potentials[i]
+
+            item = self.itemlist[item_id]
             self.remove_item_modifier(item)
             item.set_potential(ptnl)
             self.add_item_modifier(item)
@@ -733,6 +738,25 @@ class WeaponPotential():
                             [ExMDF(patt = 6), ExMDF(armor_ignore = 20)]],
                         [[ExMDF(patt = 12), ExMDF(armor_ignore = 40)], 
                             [ExMDF(patt = 9), ExMDF(armor_ignore = 30)]]]
+
+    @staticmethod
+    def get_single_potential(refMdf, tier, number, sto):
+        retli = []
+        enhancement = ExMDF()
+        for i in range(number):
+            is_first = 0 if i == 0 else 1
+            cand = ExMDF()
+            ehc = 0
+            for mdfCandidate in sto[tier][is_first]:
+                if i >= 2 and retli[0].boss_pdamage > 0 and retli[1].boss_pdamage > 0 and mdfCandidate.boss_pdamage > 0:
+                    continue
+                _ehc = (refMdf + enhancement + mdfCandidate).get_damage_factor()
+                if _ehc > ehc:
+                    cand = mdfCandidate
+                    ehc = _ehc
+            retli.append(cand.copy())
+            enhancement = enhancement + cand
+        return retli, enhancement
                                 
     @staticmethod
     def get_weapon_pontential(mdf, tier, number):
@@ -749,26 +773,27 @@ class WeaponPotential():
             raise TypeError("Tier must be 2, 3 or 4.")
             
         target = mdf.copy()
-        enhancement = ExMDF()
-        retli = []
-        for i in range(number):
-            if i < 3: j = 0
-            else: j = 1
-            
-            if i%3==0: sto = WeaponPotential.storageEmblem
-            else: sto = WeaponPotential.storageWeapon
-            
-            cand = ExMDF()
-            ehc = 0
-            for mdfCandidate in sto[tier][j]:
-                _ehc = (target + enhancement + mdfCandidate).get_damage_factor()
-                if _ehc > ehc:
-                    cand = mdfCandidate
-                    ehc = _ehc
-            retli.append(cand.copy())
-            enhancement = enhancement + cand
+        result = {
+            "weapon": [],
+            "subweapon": [],
+            "emblem": [],
+        }
+        emblem_count = number // 3
+        subweapon_count = (number - emblem_count) // 2
+        weapon_count = number - subweapon_count - emblem_count
+
+        potential_list, potential_sum = WeaponPotential.get_single_potential(target, tier, emblem_count, WeaponPotential.storageEmblem)
+        result["emblem"] = potential_list
+        target += potential_sum
+
+        potential_list, potential_sum = WeaponPotential.get_single_potential(target, tier, subweapon_count, WeaponPotential.storageWeapon)
+        result["subweapon"] = potential_list
+        target += potential_sum
+
+        potential_list, potential_sum = WeaponPotential.get_single_potential(target, tier, weapon_count, WeaponPotential.storageWeapon)
+        result["weapon"] = potential_list
         
-        return retli
+        return result
 
 class HyperStat():
     requirement = [1,2,4,8,10,15,20,25,30,35,50,65,80,95,110,9999]
