@@ -126,7 +126,7 @@ class JobGenerator(ck.JobGenerator):
         BlizzardPassive = core.DamageSkill("블리자드 패시브", 0, (220+4*combat) * (0.6+0.01*combat), 1).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         
         #special skills
-        Infinity = adventurer.InfinityWrapper()
+        Infinity = adventurer.InfinityWrapper(combat)
         FrostEffect = core.BuffSkill("프로스트 이펙트", 0, 999999 * 1000).wrap(FrostEffectWrapper)
         
         ######   Skill Wrapper   ######

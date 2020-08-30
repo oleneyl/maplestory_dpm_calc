@@ -12,6 +12,7 @@ class JaguerStack(core.DamageSkillWrapper, core.TimeStackSkillWrapper):
     def __init__(self, level, vEhc):
         self.level = level
         self.modifier = core.CharacterModifier()
+        self._runtime_modifier_list = []
         skill = core.DamageSkill("어나더 바이트", 0, 0, 0, cooltime=-1).setV(vEhc, 1, 2, False)
         super(core.DamageSkillWrapper, self).__init__(skill, 3)
         

@@ -111,7 +111,7 @@ class JobGenerator(ck.JobGenerator):
         PoisonNovaDOT = core.DotSkill("도트(포이즌 노바)", 300+12*vEhc.getV(2,1), 20000).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         
         
-        Infinity = adventurer.InfinityWrapper()
+        Infinity = adventurer.InfinityWrapper(combat)
         
         Paralyze.onAfters([MeteorPassive, Ignite, ParalyzeDOT.controller(1)])
         TeleportMastery.onAfter(TeleportMasteryDOT.controller(1))
