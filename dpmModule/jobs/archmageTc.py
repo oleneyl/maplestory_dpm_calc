@@ -17,7 +17,7 @@ class FrostEffectWrapper(core.StackSkillWrapper):
         self.modifierInvariantFlag = False
     
     def get_modifier(self):
-        return core.CharacterModifier(crit_damage = 3*self.stack, pdamage = 12*self.stack, armor_ignore = 0.2*5*self.stack)
+        return core.CharacterModifier(crit_damage = 3*self.stack, armor_ignore = 0.2*5*self.stack)
 
 
 class JobGenerator(ck.JobGenerator):
@@ -133,6 +133,8 @@ class JobGenerator(ck.JobGenerator):
         #Frost Effect
         FrostIncrement = FrostEffect.stackController(1)
         FrostDecrement = FrostEffect.stackController(-1)
+        def applyFrostEffect(sk: FrostEffect):
+            return core.CharacterModifier(pdamage = sk.stack * 12)
         
         #Ejaculator
         FrozenOrbEjac.onTick(FrostIncrement)
@@ -140,8 +142,10 @@ class JobGenerator(ck.JobGenerator):
 
         #Lightening Spear
         LighteningSpearSingle.onAfter(BlizzardPassive)
+        LighteningSpearSingle.add_runtime_modifier(FrostEffect, applyFrostEffect)
         LighteningSpearSingle.onAfter(FrostDecrement)
         LighteningSpearFinalizer.onAfter(BlizzardPassive)
+        LighteningSpearFinalizer.add_runtime_modifier(FrostEffect, applyFrostEffect)
         LighteningSpearFinalizer.onAfter(FrostDecrement)
         
         LighteningRepeator = core.RepeatElement(LighteningSpearSingle, 30)
@@ -152,6 +156,8 @@ class JobGenerator(ck.JobGenerator):
         #damage skills
         ChainLightening.onAfter(BlizzardPassive)
         ChainLightening.onAfter(FrostDecrement)
+
+        ThunderStorm.add_runtime_modifier(FrostEffect, applyFrostEffect)
         
         IceAgeSummon.onTicks([BlizzardPassive, FrostIncrement])
         IceAgeInit.onBefore(FrostIncrement)
@@ -168,6 +174,7 @@ class JobGenerator(ck.JobGenerator):
         node_before = ThunderBrake
         
         for node in [ThunderBrake1, ThunderBrake2, ThunderBrake3, ThunderBrake4, ThunderBrake5, ThunderBrake6, ThunderBrake7, ThunderBrake8]:
+            node.add_runtime_modifier(FrostEffect, applyFrostEffect)
             node.onAfter(FrostDecrement)
             node.onAfter(BlizzardPassive)
             node_before.onAfter(node)
