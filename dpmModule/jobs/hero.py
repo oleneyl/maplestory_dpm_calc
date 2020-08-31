@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, InactiveRule
 from . import globalSkill
 from .jobbranch import warriors
+from math import ceil
 
 #TODO : 5차 신스킬 적용
 '''히어로 스킬 정리
@@ -21,6 +22,7 @@ from .jobbranch import warriors
 '''
 
 #ComboAttack
+#TODO: 컴뱃 오더스 적용
 class ComboAttackWrapper(core.StackSkillWrapper):
     def __init__(self, skill, desfortBuff, vEhc, combat = False):
         super(ComboAttackWrapper, self).__init__(skill, 10)
@@ -62,6 +64,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "히어로"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'mess')
         self.preEmptiveSkills = 2
+        self._combat = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -71,20 +74,23 @@ class JobGenerator(ck.JobGenerator):
 
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        # TODO: 두손검으로 변경 필요
         WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리",pdamage_indep = 10, pdamage = 5)   #도끼 사용
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         
         ChanceAttack = core.InformedCharacterModifier("찬스 어택(패시브)",crit = 20)
 
-        CombatMastery = core.InformedCharacterModifier("컴뱃 마스터리",armor_ignore = 50)
-        AdvancedFinalAttack = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)",att = 30)
+        CombatMastery = core.InformedCharacterModifier("컴뱃 마스터리",armor_ignore = 50 + passive_level)
+        AdvancedFinalAttack = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)",att = 30 + passive_level)
         
         return [WeaponMastery, PhisicalTraining, ChanceAttack, CombatMastery, AdvancedFinalAttack]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 44)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5)        
-        Enrage = core.InformedCharacterModifier("인레이지",pdamage_indep = 25, crit_damage = 20)
+        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5 * (passive_level // 2))        
+        Enrage = core.InformedCharacterModifier("인레이지",pdamage_indep = 25 + self._combat // 2, crit_damage = 20 + self._combat // 3)
         
         return [WeaponConstant, Mastery, Enrage]
         
@@ -105,7 +111,7 @@ class JobGenerator(ck.JobGenerator):
         6%  - 1개
         70% - 0개
         '''
-        #combat = True
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         ######   Skill   ######
         #Buff skills
         Fury = core.BuffSkill("분노", 0, 200*1000, att = 30, rem = True).wrap(core.BuffSkillWrapper)
@@ -115,15 +121,16 @@ class JobGenerator(ck.JobGenerator):
         Panic = core.DamageSkill("패닉", 720, 1150, 1, cooltime = 40000).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         PanicBuff = core.BuffSkill("패닉(디버프)", 0, 40000, cooltime = -1, pdamage_indep = 25, rem = False).wrap(core.BuffSkillWrapper)
         
-        RaisingBlow = core.DamageSkill("레이징 블로우", 600, 200, 8, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        RaisingBlowInrage = core.DamageSkill("레이징 블로우(인레이지)", 600, 215, 6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함.
-        RaisingBlowInrageFinalizer = core.DamageSkill("레이징 블로우(인레이지)(최종타)", 0, 215, 2, modifier = core.CharacterModifier(pdamage = 20, crit = 100)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함. 둘을 연결해야 함.
+        RaisingBlow = core.DamageSkill("레이징 블로우", 600, 200 + 3*self._combat, 8, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        RaisingBlowInrage = core.DamageSkill("레이징 블로우(인레이지)", 600, 215+3*self._combat, 6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함.
+        RaisingBlowInrageFinalizer = core.DamageSkill("레이징 블로우(인레이지)(최종타)", 0, 215+3*self._combat, 2, modifier = core.CharacterModifier(pdamage = 20, crit = 100)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함. 둘을 연결해야 함.
         
-        Insizing = core.DamageSkill("인사이징", 660, 576, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    # 오더스 적용 필요함.
-        InsizingBuff = core.BuffSkill("인사이징(버프)", 0, 30 * 1000, cooltime = -1, pdamage = 25).wrap(core.BuffSkillWrapper)
-        InsizingDot = core.DotSkill("인사이징(도트)", 165, 30 * 1000).wrap(core.SummonSkillWrapper)
+        Insizing = core.DamageSkill("인사이징", 660, 576 + 7 * self._combat, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    # 오더스 적용 필요함.
+        InsizingBuff = core.BuffSkill("인사이징(버프)", 0, (30 + self._combat // 2) * 1000, cooltime = -1, pdamage = 25 + ceil(self._combat / 2)).wrap(core.BuffSkillWrapper)
+        # TODO: 2초마다 공격으로 바꿔야 함.
+        InsizingDot = core.DotSkill("인사이징(도트)", 165 + 3*self._combat, (30 + self._combat // 2) * 1000).wrap(core.SummonSkillWrapper)
     
-        AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 170, 3 * 0.75).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 170 + 2*passive_level, 3 * 0.01 * (60 + ceil(passive_level/2) + 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
         RisingRage = core.DamageSkill("레이지 업라이징", 750, 500, 8, cooltime = 10*1000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
@@ -138,7 +145,7 @@ class JobGenerator(ck.JobGenerator):
         ComboInstinctOff = core.BuffSkill("콤보 인스팅트 종료", 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper)
 
         ######   Skill Wrapper   ######
-        ComboAttack = ComboAttackWrapper(core.BuffSkill("콤보어택", 0, 999999 * 1000), ComboDesfortBuff, vEhc, combat)
+        ComboAttack = ComboAttackWrapper(core.BuffSkill("콤보어택", 0, 999999 * 1000), ComboDesfortBuff, vEhc, passive_level)
         
         #Final attack type
         ComboInstinct.onAfter(ComboInstinctOff.controller(30 * 1000))
