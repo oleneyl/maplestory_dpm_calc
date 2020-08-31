@@ -7,6 +7,7 @@ from ..execution.rules import RuleSet, ReservationRule, ConcurrentRunRule
 from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import bowmen
+from math import ceil
 
 #TODO : 5차 신스킬 적용
 
@@ -41,6 +42,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "메르세데스"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
+        self._combat = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -53,6 +55,8 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+
         PotentialPower = core.InformedCharacterModifier("포텐셜 파워",pdamage = 20)
         SharpAiming = core.InformedCharacterModifier("샤프 에이밍",crit = 40)
         
@@ -61,16 +65,17 @@ class JobGenerator(ck.JobGenerator):
         
         IgnisRoar = core.InformedCharacterModifier("이그니스 로어",pdamage_indep = 15, att = 40)
 
-        DualbowgunExpert = core.InformedCharacterModifier("듀얼보우건 엑스퍼트",att = 30, crit_damage =10)
-        DefenceBreak = core.InformedCharacterModifier("디펜스 브레이크",armor_ignore=25, pdamage_indep=20, boss_pdamage = 20, crit_damage = 20)
-        AdvancedFinalAttack = core.InformedCharacterModifier("어드밴스드 파이널 어택",att = 20)
+        DualbowgunExpert = core.InformedCharacterModifier("듀얼보우건 엑스퍼트",att = 30+passive_level, crit_damage= 10+ceil(passive_level/3))
+        DefenceBreak = core.InformedCharacterModifier("디펜스 브레이크",armor_ignore= 25+passive_level, pdamage_indep= 20+passive_level, boss_pdamage = 20+3*(passive_level//4), crit_damage = 20+3*(passive_level//4))
+        AdvancedFinalAttack = core.InformedCharacterModifier("어드밴스드 파이널 어택",att = 20 + ceil(passive_level / 2))
         
         return [PotentialPower, SharpAiming, SpiritInfusion, 
                 PhisicalTraining, IgnisRoar, DualbowgunExpert, DefenceBreak, AdvancedFinalAttack]
         
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)        
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5+0.5*ceil(passive_level/2))        
 
         IgnisRoarStack = core.InformedCharacterModifier("이그니스 로어(스택)",pdamage_indep = 2*10)#유지되나?       
         
@@ -89,19 +94,20 @@ class JobGenerator(ck.JobGenerator):
         최종뎀으로 계산함으로서 맥뎀 부분에서 약간의 오류가 발생할 수 있으나 미미함
         소울 컨트랙트, 히어로즈 오쓰, 크리티컬 리인포스는 모두 이르칼라와 함께 사용되도록 함
         '''
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
 
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        UnicornSpike = core.DamageSkill("유니콘 스파이크", 780, 315+100, 5, modifier = core.CharacterModifier(crit=100), cooltime = 30 * 1000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)#딜레이 모름
+        UnicornSpike = core.DamageSkill("유니콘 스파이크", 780, 315+100 + 2*self._combat, 5, modifier = core.CharacterModifier(crit=100), cooltime = 30 * 1000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)#딜레이 모름
         UnicornSpikeBuff = core.BuffSkill("유니콘 스파이크(버프)", 0, 30 * 1000, pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper)  #직접시전 금지
         
-        IshtarRing = core.DamageSkill("이슈타르의 링", 120, 220, 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        RegendrySpear = core.DamageSkill("레전드리 스피어", 660, 700, 3, modifier = core.CharacterModifier(crit=100, pdamage = 20), cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  #870 -> 660
-        RegendrySpearBuff = core.BuffSkill("레전드리 스피어(버프)", 0, 30 * 1000, armor_ignore = 30+20, cooltime = 99999 * 1000).wrap(core.BuffSkillWrapper) #직접시전 금지
+        IshtarRing = core.DamageSkill("이슈타르의 링", 120, 220 + self._combat, 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        RegendrySpear = core.DamageSkill("레전드리 스피어", 660, 700 + 10*self._combat, 3, modifier = core.CharacterModifier(crit=100, pdamage = 20), cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  #870 -> 660
+        RegendrySpearBuff = core.BuffSkill("레전드리 스피어(버프)", 0, (30+self._combat) * 1000, armor_ignore = 30+20+self._combat, cooltime = 99999 * 1000).wrap(core.BuffSkillWrapper) #직접시전 금지
         
-        AncientSpirit = core.BuffSkill("엔시언트 스피릿", 780, 200 * 1000, patt = 30).wrap(core.BuffSkillWrapper)#딜레이 모름    
+        AncientSpirit = core.BuffSkill("엔시언트 스피릿", 780, (200+5*self._combat) * 1000, patt = 30+self._combat).wrap(core.BuffSkillWrapper)#딜레이 모름    
     
         AdvanceStrikeDualShot = core.DamageSkill("어드밴스드 스트라이크 듀얼샷", 480, 380, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)    #630 -> 480
     
@@ -109,8 +115,8 @@ class JobGenerator(ck.JobGenerator):
         
         ElvishBlessing = core.BuffSkill("엘비시 블레싱", 780, 60 * 1000, cooltime = 90 * 1000, att = 80).wrap(core.BuffSkillWrapper) #딜레이 모름!
         
-        AdvancedFinalAttackFast = core.DamageSkill("어드밴스드 파이널 어택(속사)", 0, 120, 2*0.75).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedFinalAttackSlow = core.DamageSkill("어드밴스드 파이널 어택(일반)", 0, 120, 2*0.75).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedFinalAttackFast = core.DamageSkill("어드밴스드 파이널 어택(속사)", 0, 120 + passive_level, 2*0.01*(75 + passive_level)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedFinalAttackSlow = core.DamageSkill("어드밴스드 파이널 어택(일반)", 0, 120 + passive_level, 2*0.01*(75 + passive_level)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
     
         WrathOfEllil = core.DamageSkill("래쓰 오브 엔릴", 600, 400, 10, cooltime = 7 * 1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)#연꼐시 1초 감소, 딜레이 모름!=>7초로 감소 반영.
         
