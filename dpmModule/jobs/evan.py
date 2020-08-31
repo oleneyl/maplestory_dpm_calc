@@ -117,7 +117,7 @@ class JobGenerator(ck.JobGenerator):
         CircleOfMana = core.DamageSkill("서클 오브 마나 IV", 600, 315 + self._combat, 8).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    #클라값 510
         DragonSparking = core.DamageSkill("드래곤 스파킹", 0, 150, 1).setV(vEhc,6,2).wrap(core.DamageSkillWrapper)  
         #MagicParticle = core.DamageSkill("마법 잔해", 110, 1) 0.4초마다 생성, +100 (5개당 증가) -> 6초마다 사용
-        MagicParticle = core.DamageSkill("마법 잔해", 0, 110+2*self._combat + 4*(100+self._combat), 15, cooltime = 10000).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
+        MagicParticle = core.DamageSkill("마법 잔해", 0, 110+2*passive_level + 3*(100+passive_level), 15, cooltime = 10000).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
         
         ### 에반 스킬
         CircleOfWind = core.DamageSkill("서클 오브 윈드", 780, 270 + 150 + 660, 2).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
