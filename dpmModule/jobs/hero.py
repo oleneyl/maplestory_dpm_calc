@@ -23,7 +23,7 @@ from math import ceil
 
 #ComboAttack
 class ComboAttackWrapper(core.StackSkillWrapper):
-    def __init__(self, skill, desfortBuff, vEhc, combat = False):
+    def __init__(self, skill, desfortBuff, vEhc, combat):
         super(ComboAttackWrapper, self).__init__(skill, 10)
         self.desfortBuff = desfortBuff
         self.vEhc = vEhc
