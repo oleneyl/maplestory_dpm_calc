@@ -22,14 +22,14 @@ from math import ceil
 '''
 
 #ComboAttack
-#TODO: 컴뱃 오더스 적용
 class ComboAttackWrapper(core.StackSkillWrapper):
     def __init__(self, skill, desfortBuff, vEhc, combat = False):
         super(ComboAttackWrapper, self).__init__(skill, 10)
         self.desfortBuff = desfortBuff
         self.vEhc = vEhc
+        self.combat = combat
         self.stack = 10  #Better point!
-        self.tick = 12 + combat * 1
+        self.tick = 12 + ceil(self.combat / 6)
         self.instinct = False
         self.set_name_style("%d 만큼 콤보 변화")
     
@@ -44,7 +44,7 @@ class ComboAttackWrapper(core.StackSkillWrapper):
     def vary(self, diff):
         if diff > 0:
             chance = 0.8 - self.instinct * 0.5
-            chanceDouble = chance * 0.8
+            chanceDouble = chance * (0.8+0.02*self.combat)
             diff = diff * (2 * chanceDouble + chance)
         self.stack += diff
         self.stack = max(min(10,self.stack),0)
@@ -75,8 +75,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self._combat
-        # TODO: 두손검으로 변경 필요
-        WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리",pdamage_indep = 10, pdamage = 5)   #도끼 사용
+        WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리",pdamage_indep = 10) #두손검 사용
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         
         ChanceAttack = core.InformedCharacterModifier("찬스 어택(패시브)",crit = 20)
@@ -127,8 +126,8 @@ class JobGenerator(ck.JobGenerator):
         
         Insizing = core.DamageSkill("인사이징", 660, 576 + 7 * self._combat, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    # 오더스 적용 필요함.
         InsizingBuff = core.BuffSkill("인사이징(버프)", 0, (30 + self._combat // 2) * 1000, cooltime = -1, pdamage = 25 + ceil(self._combat / 2)).wrap(core.BuffSkillWrapper)
-        # TODO: 2초마다 공격으로 바꿔야 함.
-        InsizingDot = core.DotSkill("인사이징(도트)", 165 + 3*self._combat, (30 + self._combat // 2) * 1000).wrap(core.SummonSkillWrapper)
+        # TODO: 데미지값 절반으로 임시조치. 2초마다 공격으로 바꿔야 함.
+        InsizingDot = core.DotSkill("인사이징(도트)", (165 + 3*self._combat) / 2, (30 + self._combat // 2) * 1000).wrap(core.SummonSkillWrapper)
     
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 170 + 2*passive_level, 3 * 0.01 * (60 + ceil(passive_level/2) + 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
