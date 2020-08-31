@@ -110,11 +110,11 @@ class JobGenerator(ck.JobGenerator):
         SacredMark = core.StackSkillWrapper(core.BuffSkill("소환수 표식", 0, 999999 * 1000), 50)
             
         # Sacred Mark Control
-        Bahamutt.onTick(SacredMark.stackController(25, dtype="set"))
-        AngelOfLibra.onTick(SacredMark.stackController(50, dtype="set"))
+        Bahamutt.onTick(SacredMark.stackController(25, name="표식(25%)", dtype="set"))
+        AngelOfLibra.onTick(SacredMark.stackController(50, name="표식(50%)", dtype="set"))
 
         for sk in [AngelRay, PeaceMaker, PeaceMakerFinal]:
-            sk.onJustAfter(SacredMark.stackController(0, dtype="set"))
+            sk.onJustAfter(SacredMark.stackController(0, name="표식(소모)", dtype="set"))
             sk.add_runtime_modifier(SacredMark, lambda skill: core.CharacterModifier(pdamage_indep = skill.stack))
         
         # Peace Maker
