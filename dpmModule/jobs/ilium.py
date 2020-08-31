@@ -121,6 +121,7 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 12
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
+        self._combat = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -169,29 +170,30 @@ class JobGenerator(ck.JobGenerator):
         소환수 강화 아직 미적용
         
         '''
-        
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 200*1000).wrap(core.BuffSkillWrapper)
-        FastCharge = core.BuffSkill("패스트 차지", 30, 10000, cooltime = 120000, rem=True).wrap(core.BuffSkillWrapper)
+        FastCharge = core.BuffSkill("패스트 차지", 30, 10000, cooltime = (120-5*self._combat)*1000, rem=True).wrap(core.BuffSkillWrapper)
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60000, pdamage = 10, cooltime = 120000).wrap(core.BuffSkillWrapper)
         
-        Craft_Orb = core.DamageSkill("크래프트:오브", 390, 300, 1).wrap(core.DamageSkillWrapper)
+        Craft_Orb = core.DamageSkill("크래프트:오브", 390, 300+4*self._combat, 1).wrap(core.DamageSkillWrapper)
         Reaction_Domination = core.DamageSkill("리액션:도미네이션", 0, 550, 2, cooltime = 4000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         Craft_Javelin_EnhanceBuff = core.BuffSkill("크래프트:오브(자벨린 강화버프)", 0, 2000, cooltime = -1).wrap(core.BuffSkillWrapper)
         
-        Craft_Javelin = core.DamageSkill("크래프트:자벨린", 390, 375, 4 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Craft_Javelin_AfterOrb = core.DamageSkill("크래프트:자벨린(오브 이후)", 390, 375, 4 * 3, modifier = core.CharacterModifier(pdamage = 20 + 15, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Craft_Javelin = core.DamageSkill("크래프트:자벨린", 390, 375 + 2*self._combat, 4 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Craft_Javelin_AfterOrb = core.DamageSkill("크래프트:자벨린(오브 이후)", 390, 375 + 2*self._combat, 4 * 3, modifier = core.CharacterModifier(pdamage = 20 + 15, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
-        Craft_Javelin_Fragment = core.DamageSkill("크래프트:자벨린(파편)", 0, 130, 2 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Craft_Javelin_Fragment = core.DamageSkill("크래프트:자벨린(파편)", 0, 130 + 2*self._combat, 2 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Reaction_Destruction = core.DamageSkill("리액션:디스트럭션", 0, 550, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 4000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
-        Craft_Longinus = core.DamageSkill("크래프트:롱기누스", 600+180, 950, 8, cooltime = 15000).wrap(core.DamageSkillWrapper) # 자체딜레이 600 + 자벨린-오브 연계 취소 180
+        Craft_Longinus = core.DamageSkill("크래프트:롱기누스", 600+180 +10*self._combat, 950, 8, cooltime = (15-self._combat//2)*1000).wrap(core.DamageSkillWrapper) # 자체딜레이 600 + 자벨린-오브 연계 취소 180
         
         Riyo = RiyoWrapper(core.SummonSkill("리요", 0, 510, 240, 1, 180000).setV(vEhc, 3, 2, False)) # 최초 사용 이후로는 항상 데우스 종료때 딜레이 없이 리필됨
         Machina = core.SummonSkill("마키나", 0, 1980, 250, 4, 180000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)    # 최초 사용 이후로는 항상 데우스 종료때 딜레이 없이 리필됨
         
-        CrystalSkill_MortalSwing = core.DamageSkill("크리스탈 스킬:모탈스윙", 0, 600, 10, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)    #30
-        CrystalSkill_Deus = core.SummonSkill("크리스탈 스킬:데우스", 30, 4800, 500, 5+1, 30*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)   #90, 7타
+        CrystalSkill_MortalSwing = core.DamageSkill("크리스탈 스킬:모탈스윙", 0, 600 + 2* passive_level, 10, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)    #30
+        # 데우스 패시브 리요 뎀증은 컴뱃 미적용
+        CrystalSkill_Deus = core.SummonSkill("크리스탈 스킬:데우스", 30, 4800, 500+4*self._combat, 5+1, (30+self._combat//3)*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)   #90, 7타
         CrystalSkill_Deus_Satelite = RiyoWrapper(core.SummonSkill("크리스탈 스킬:데우스(위성)", 0, 510, 240, 1+1, 30*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False))
         
         LonginusZone = core.DamageSkill("롱기누스 존", 690, 1500, 12, cooltime = 180*1000)    #안씀
@@ -205,10 +207,10 @@ class JobGenerator(ck.JobGenerator):
         
         GloryWingUse = core.BuffSkill("글로리 윙(진입)", 30, 20000, pdamage_indep = 25, pdamage = (vEhc.getV(1,0) + 5) * 2, boss_pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper) # 소오크 2개에 항상 맞춰 사용
         
-        GloryWing_MortalWingbit = core.DamageSkill("글로리 윙:모탈 윙비트", 630, 2000, 8, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #1회
+        GloryWing_MortalWingbit = core.DamageSkill("글로리 윙:모탈 윙비트", 630, 2000 + 40*self._combat, 8, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #1회
         
-        GloryWing_Craft_Javelin = core.DamageSkill("글로리 윙:자벨린", 420, 465, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = 40)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        GloryWing_Craft_Javelin_Fragment = core.DamageSkill("글로리 윙:자벨린(매직 미사일)", 0, 250, 3*3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        GloryWing_Craft_Javelin = core.DamageSkill("글로리 윙:자벨린", 420, 465 + 3*self._combat, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = 40)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        GloryWing_Craft_Javelin_Fragment = core.DamageSkill("글로리 윙:자벨린(매직 미사일)", 0, 250 + 5*self._combat, 3*3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         #5차 스킬들
         OverloadMana = magicians.OverloadManaWrapper(vEhc, 0, 3)

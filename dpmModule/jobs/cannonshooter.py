@@ -7,6 +7,7 @@ from . import globalSkill
 from .jobbranch import pirates
 from .jobclass import adventurer
 from . import jobutils
+from math import ceil
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -16,8 +17,11 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 16
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'reuse')
         self.preEmptiveSkills = 2
+        self._combat = 0
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+
         BuildupCanon = core.InformedCharacterModifier("빌드업 캐논",att = 20)
         CriticalFire = core.InformedCharacterModifier("크리티컬 파이어",crit=20, crit_damage=5)
         PirateTraining = core.InformedCharacterModifier("파이렛 트레이닝",stat_main=30, stat_sub=30)
@@ -25,8 +29,8 @@ class JobGenerator(ck.JobGenerator):
         MonkeyWavePassive = core.InformedCharacterModifier("몽키 웨이브(패시브)",crit=20)
         OakRuletPassive = core.InformedCharacterModifier("오크통 룰렛(패시브)",pdamage_indep = 10) 
         ReinforceCanon = core.InformedCharacterModifier("리인포스 캐논",att = 40)
-        PirateSpirit = core.InformedCharacterModifier("파이렛 스피릿",boss_pdamage=40)
-        OverburningCanon = core.InformedCharacterModifier("오버버닝 캐논",pdamage_indep=30, armor_ignore=20)
+        PirateSpirit = core.InformedCharacterModifier("파이렛 스피릿",boss_pdamage=40 + self._combat)
+        OverburningCanon = core.InformedCharacterModifier("오버버닝 캐논",pdamage_indep=30 + passive_level, armor_ignore=20 + passive_level // 2)
     
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 3, 4)
     
@@ -35,8 +39,9 @@ class JobGenerator(ck.JobGenerator):
                             PirateSpirit, OverburningCanon, LoadedDicePassive]
         
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 50)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)        
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5*ceil(passive_level / 2))        
         return [WeaponConstant, Mastery]
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
@@ -52,6 +57,7 @@ class JobGenerator(ck.JobGenerator):
         '''
         COCOBALLHIT = 27
         ICBMHIT = 4
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 200*1000).wrap(core.BuffSkillWrapper)
@@ -64,18 +70,18 @@ class JobGenerator(ck.JobGenerator):
         MonkeyFuriousDot = core.DotSkill("몽키 퓨리어스(도트)", 200, 30000).wrap(core.SummonSkillWrapper)
         OakRulet = core.BuffSkill("오크통 룰렛", 840, 180000, rem = True, cooltime = 180000, crit_damage = 1.25).wrap(core.BuffSkillWrapper)
         OakRuletDOT = core.DotSkill("오크통 도트", 50, 5000).wrap(core.SummonSkillWrapper)
-        MonkeyMagic = core.BuffSkill("하이퍼 몽키 스펠", 0, 180000, rem = True, stat_main=60, stat_sub=60).wrap(core.BuffSkillWrapper)
+        MonkeyMagic = core.BuffSkill("하이퍼 몽키 스펠", 0, 180000, rem = True, stat_main=60 + passive_level, stat_sub=60 + passive_level).wrap(core.BuffSkillWrapper)
     
-        CanonBuster = core.DamageSkill("캐논 버스터", 690, 750*0.45, 3*(4+1), modifier = core.CharacterModifier(crit=15, armor_ignore=20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        CanonBuster = core.DamageSkill("캐논 버스터", 690, (750 + 5 * self._combat)*0.45, 3*(4+1), modifier = core.CharacterModifier(crit=15 + ceil(self._combat / 2), armor_ignore=20 + self._combat // 2, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
     
-        #서포트 몽키 트윈스 공격주기 확ㄷ인
-        SupportMonkeyTwins = core.SummonSkill("서포트 몽키 트윈스", 720, 60000/195*3, 3*295*0.6, 2, 60000, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+        #서포트 몽키 트윈스 공격주기 확인
+        SupportMonkeyTwins = core.SummonSkill("서포트 몽키 트윈스", 720, 60000/195*3, 3*(295 + 8 * self._combat)*0.6, 2, 60000 + 2000 * self._combat, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
         
         RollingCanonRainbow = core.SummonSkill("롤링 캐논 레인보우", 480, 12000/26, 600, 3, 12000, cooltime = 90000).setV(vEhc, 3, 2, True).wrap(core.SummonSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
         #로디드 데미지 고정.
-        LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 40*1/72 + 30*1/6 + 20*(59/72)).isV(vEhc,3,4).wrap(core.BuffSkillWrapper)
+        LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20+10/6+(5+passive_level)*0.1*10/6).isV(vEhc,3,4).wrap(core.BuffSkillWrapper)
     
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
