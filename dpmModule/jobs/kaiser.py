@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import warriors
+from math import ceil
 
 #Combo Instinct - generated sub deal
 #TODO: [윌 오브 소드-스트라이크] : 불길 적중 시 드라코슬래셔의 재사용 대기시간이 즉시 초기화되고 이후 3회 드라코 슬래셔의 재사용 대기시간이 적용되지 않는버프가 걸리는 기능이 추가됩니다. 해당 버프는 윌 오브 소드-스트라이크의재사용 대기시간 동안만 유지됩니다.
@@ -29,23 +30,28 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "카이저"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
+        self._combat = 0
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+
         InnerBlaze = core.InformedCharacterModifier("이너 블레이즈",stat_main = 20)
         AdvancedInnerBlaze = core.InformedCharacterModifier("어드밴스드 이너 블레이즈",stat_main = 30)
         # 모프 게이지 단계당 데미지 3% 증가
         IronWill = core.InformedCharacterModifier("아이언 윌",pdamage = 9)
         Catalyze = core.InformedCharacterModifier("카탈라이즈",patt=30, pdamage_indep=20)
-        AdvancedWillOfSwordPassive = core.InformedCharacterModifier("어드밴스드 윌 오브 소드(패시브)",att = 20)
-        UnflinchingCourage = core.InformedCharacterModifier("언플린칭 커리지",armor_ignore = 40)
-        AdvancedSwordMastery = core.InformedCharacterModifier("어드밴스드 소드 마스터리", att = 30, crit_damage = 15, crit=20)
+        AdvancedWillOfSwordPassive = core.InformedCharacterModifier("어드밴스드 윌 오브 소드(패시브)",att = 20 + 2*ceil(passive_level/3))
+        UnflinchingCourage = core.InformedCharacterModifier("언플린칭 커리지",armor_ignore = 40 + passive_level)
+        AdvancedSwordMastery = core.InformedCharacterModifier("어드밴스드 소드 마스터리", att = 30 + passive_level, crit_damage = 15 + passive_level//3, crit=20 + passive_level//2)
     
-        return [InnerBlaze, AdvancedInnerBlaze, Catalyze, 
+        return [InnerBlaze, AdvancedInnerBlaze, IronWill, Catalyze, 
                 AdvancedWillOfSwordPassive, UnflinchingCourage, AdvancedSwordMastery]
                 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):        
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level / 2))
         
         ReshuffleSwitchAttack = core.InformedCharacterModifier("리셔플스위치:공격",att = 45, crit = 20, boss_pdamage = 18 + 10)
         
@@ -74,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
         V강화 : 기가/윙비트/소드 스트라이크/윌오소
         '''
 
-        
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         #Buff skills
         RegainStrenth = core.BuffSkill("리게인 스트렝스", 0, 240000, rem = True, pdamage_indep = 15).wrap(core.BuffSkillWrapper)
         BlazeUp = core.BuffSkill("블레이즈 업", 0, 240000, att = 20, rem = True).wrap(core.BuffSkillWrapper)
@@ -83,18 +89,18 @@ class JobGenerator(ck.JobGenerator):
         Wingbit_1 = core.SummonSkill("윙비트", 360, 300, 200, 1, 19400, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)  #48타
         Wingbit_2 = core.SummonSkill("윙비트(2)", 360, 300, 200, 1, 19400, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)  #48타
         
-        GigaSlasher_ = core.DamageSkill("기가 슬래셔", 540, 330, 9+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        GigaSlasher_Fig = core.DamageSkill("기가 슬래셔(변신)", 540, 330, 11+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        GigaSlasher_ = core.DamageSkill("기가 슬래셔", 540, 330 + 2*self._combat, 9+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        GigaSlasher_Fig = core.DamageSkill("기가 슬래셔(변신)", 540, 330+2*self._combat, 11+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
     
         AdvancedWillOfSword = core.DamageSkill("어드밴스드 윌 오브 소드(시전)", 180, 0, 0, cooltime = 10000).wrap(core.DamageSkillWrapper)
         
-        AdvancedWillOfSword_ = core.DamageSkill("어드밴스드 윌 오브 소드", 0, 400, 4*5, cooltime = 10000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedWillOfSword_Fig = core.DamageSkill("어드밴스드 윌 오브 소드(변신)", 0, 400, (4+1)*5, cooltime = 10000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedWillOfSword_ = core.DamageSkill("어드밴스드 윌 오브 소드", 0, 400+3*passive_level, 4*5, cooltime = 10000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedWillOfSword_Fig = core.DamageSkill("어드밴스드 윌 오브 소드(변신)", 0, 400+3*passive_level, (4+1)*5, cooltime = 10000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
     
-        SwordStrike = core.DamageSkill("소드 스트라이크", 600 , 300, 5).wrap(core.DamageSkillWrapper)#쿨타임 모름, 실전 미사용.
-        SwordStrike_ = core.DamageSkill("소드 스트라이크(폭발)", 0, 225, 4).wrap(core.DamageSkillWrapper)
+        SwordStrike = core.DamageSkill("소드 스트라이크", 600 , 300+8*self._combat, 5).wrap(core.DamageSkillWrapper)#쿨타임 모름, 실전 미사용.
+        SwordStrike_ = core.DamageSkill("소드 스트라이크(폭발)", 0, 225+6*self._combat, 4).wrap(core.DamageSkillWrapper)
     
-        InfernalBreath = core.DamageSkill("인퍼널 브레스", 1170, 300, 8).wrap(core.DamageSkillWrapper)
+        InfernalBreath = core.DamageSkill("인퍼널 브레스", 1170, 300 + 4*self._combat, 8).wrap(core.DamageSkillWrapper)
     
         #하이퍼
         MajestyOfKaiser = core.BuffSkill("마제스티 오브 카이저", 670, 30000, att = 30, cooltime = 90000).wrap(core.BuffSkillWrapper)
