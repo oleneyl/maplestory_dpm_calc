@@ -22,7 +22,6 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "팔라딘"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
-        self._combat = 2
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -34,7 +33,7 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         ShieldMastery = core.InformedCharacterModifier("실드 마스터리",att = 10)
         
-        PaladinExpert = core.InformedCharacterModifier("팔라딘 엑스퍼트(두손둔기)",crit_damage = 15+passive_level//3+5, pdamage_indep = 42+passive_level, crit = 42+passive_level, armor_ignore = 37.9)
+        PaladinExpert = core.InformedCharacterModifier("팔라딘 엑스퍼트(두손둔기)",crit_damage = 5 + (32+passive_level) // 3, pdamage_indep = 42+passive_level, crit = 42+passive_level, armor_ignore = 15+ceil((32+passive_level)/2)) + core.ExtendedCharacterModifier(crit_damage= 5, armor_ignore = 10)
         
         return [PhisicalTraining, ShieldMastery, PaladinExpert]
 
