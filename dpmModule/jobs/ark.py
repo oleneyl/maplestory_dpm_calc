@@ -1,7 +1,6 @@
 from ..kernel import core
 from ..kernel.policy import TypebaseFetchingPolicy
 from ..kernel.core import VSkillModifier as V
-from ..kernel.graph import DynamicVariableOperation
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -9,12 +8,12 @@ from ..execution.rules import RuleSet, MutualRule, ConcurrentRunRule
 from . import globalSkill
 from .jobbranch import pirates
 from . import jobutils
+from math import ceil, floor
 
 class ReturningHateWrapper(core.DamageSkillWrapper):
-    def __init__(self, vEhc):
+    def __init__(self, skill):
         self.stack = 0
         self._max = 12
-        skill = core.DamageSkill("돌아오는 증오", 0, 320, 6, cooltime=12000, red=True).setV(vEhc, 0, 2, True)
         super(ReturningHateWrapper, self).__init__(skill)
         self.modifierInvariantFlag = False
         
@@ -141,7 +140,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "아크"
         self.vEnhanceNum = 12
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'mess')
-        
+        self._combat = 0
         self.preEmptiveSkills = 2
 
     def get_modifier_optimization_hint(self):
@@ -156,6 +155,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         # 매직 서킷: 앱솔 기준 15.4
         WEAPON_ATT = jobutils.get_weapon_att("너클")
         
@@ -164,9 +164,9 @@ class JobGenerator(ck.JobGenerator):
         NuckleMastery = core.InformedCharacterModifier("너클 마스터리", att = 20)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝", stat_main = 60)
         FusionProgress = core.InformedCharacterModifier("융합 진행", pdamage_indep = 10, crit = 20)
-        NuckleExpret = core.InformedCharacterModifier("너클 엑스퍼트", att = 30, crit = 20)
-        FusionComplete = core.InformedCharacterModifier("융합 완성", att = 40, crit = 10, armor_ignore = 30, boss_pdamage = 30)
-        BattleRage = core.InformedCharacterModifier("전투 광란", pdamage_indep = 20)
+        NuckleExpret = core.InformedCharacterModifier("너클 엑스퍼트", att = 30 + passive_level, crit_damage= 30 + passive_level)
+        FusionComplete = core.InformedCharacterModifier("융합 완성", att = 40 + passive_level, crit = 10 + ceil(passive_level/3), armor_ignore = 30 + passive_level, boss_pdamage = 30 + passive_level)
+        BattleRage = core.InformedCharacterModifier("전투 광란", pdamage_indep = 20 + passive_level)
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 3, 4)
     
         return [MagicCircuit, MisticArtsMastery, 
@@ -175,7 +175,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5)        
+        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5*ceil((chtr.get_base_modifier().passive_level + self._combat)/2))
         
         return [WeaponConstant, Mastery]        
         
@@ -197,7 +197,7 @@ class JobGenerator(ck.JobGenerator):
         - 스칼렛/상처 - 거스트/굶주림 - 어비스/혼돈 - 충동/본능
         
         '''
-        
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         BattleArtsHyper = core.CharacterModifier(pdamage=20, boss_pdamage=20, armor_ignore=20)  # 하이퍼 - 배틀아츠 modifier
         SpellBullet = core.CharacterModifier(pdamage=20)
 
@@ -208,54 +208,54 @@ class JobGenerator(ck.JobGenerator):
         
 
         # 일반 공격들        
-        EndlessNightmare_Link = core.DamageSkill("끝나지 않는 악몽(연계)", 540, 440, 6, cooltime = 2000, red=True, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        EndlessNightmare_Link = core.DamageSkill("끝나지 않는 악몽(연계)", 540, 440 + 3*passive_level, 6, cooltime = 2000, red=True, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
-        PlainChargeDrive = core.DamageSkill('플레인 차지드라이브', 540, 610, 3, modifier=BattleArtsHyper).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        PlainChargeDrive_Link = core.DamageSkill('플레인 차지드라이브(연계)', 240, 610, 3, modifier=BattleArtsHyper).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        PlainSpell = core.DamageSkill("플레인 스펠", 0, 370, 2, modifier=SpellBullet).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        PlainChargeDrive = core.DamageSkill('플레인 차지드라이브', 540, 610 + 3*passive_level, 3, modifier=BattleArtsHyper).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        PlainChargeDrive_Link = core.DamageSkill('플레인 차지드라이브(연계)', 240, 610 + 3*passive_level, 3, modifier=BattleArtsHyper).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        PlainSpell = core.DamageSkill("플레인 스펠", 0, 370 + 3*passive_level, 2, modifier=SpellBullet).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         PlainBuff = core.BuffSkill("플레인 버프", 0, 60 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper)  # dpm에 영향을 주지 않아 미사용
         
-        ScarletChargeDrive = core.DamageSkill("스칼렛 차지드라이브", 540, 350, 3, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        ScarletChargeDrive_Link = core.DamageSkill("스칼렛 차지드라이브(연계)", 510, 350, 3, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        ScarletChargeDrive_After = core.DamageSkill("스칼렛 차지드라이브(후속타)", 0, 350, 3, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        ScarletSpell = core.DamageSkill("스칼렛 스펠", 0, 220, 5, modifier=SpellBullet).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        ScarletChargeDrive = core.DamageSkill("스칼렛 차지드라이브", 540, 350 + 3*passive_level, 3, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        ScarletChargeDrive_Link = core.DamageSkill("스칼렛 차지드라이브(연계)", 510, 350 + 3*passive_level, 3, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        ScarletChargeDrive_After = core.DamageSkill("스칼렛 차지드라이브(후속타)", 0, 350 + 3*passive_level, 3, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        ScarletSpell = core.DamageSkill("스칼렛 스펠", 0, 220 + passive_level, 5, modifier=SpellBullet).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         ScarletBuff = core.BuffSkill("스칼렛 버프", 0, 60 * 1000, cooltime = -1, rem=True, att = 30, crit = 20).wrap(core.BuffSkillWrapper)
         
-        UnstoppableImpulse_Link = core.DamageSkill("멈출 수 없는 충동(연계)", 540, 435, 5, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        UnstoppableImpulse_Link = core.DamageSkill("멈출 수 없는 충동(연계)", 540, 435 + 3*passive_level, 5, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
 
-        GustChargeDrive_Link = core.DamageSkill("거스트 차지드라이브(연계)", 450, 400, 6, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
-        GustSpell = core.DamageSkill('거스트 스펠', 0, 230, 4, modifier=SpellBullet).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        GustChargeDrive_Link = core.DamageSkill("거스트 차지드라이브(연계)", 450, 400 + 3*passive_level, 6, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        GustSpell = core.DamageSkill('거스트 스펠', 0, 230 + passive_level, 4, modifier=SpellBullet).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         GustBuff = core.BuffSkill("거스트 버프", 0, 60*1000, cooltime = -1).wrap(core.BuffSkillWrapper) # dpm에 영향을 주지 않아 미사용        
         
-        AbyssChargeDrive_Link = core.DamageSkill("어비스 차지드라이브(연계)", 630, 340, 4, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        AbyssChargeDrive_After = core.DamageSkill("어비스 차지드라이브(후속타)", 0, 410, 6, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        AbyssSpell = core.SummonSkill("어비스 스펠", 0, 300*0.75, 70, 2, 3000, cooltime = -1, modifier=SpellBullet).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
-        AbyssBuff = core.BuffSkill("어비스 버프", 0, 60*1000, cooltime = -1, rem=True, pdamage = 20, boss_pdamage = 30, armor_ignore = 20).wrap(core.BuffSkillWrapper)
+        AbyssChargeDrive_Link = core.DamageSkill("어비스 차지드라이브(연계)", 630, 340 + 3*self._combat, 4, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        AbyssChargeDrive_After = core.DamageSkill("어비스 차지드라이브(후속타)", 0, 410 + 3*self._combat, 6, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        AbyssSpell = core.SummonSkill("어비스 스펠", 0, 300*0.75, 70 + 2*self._combat, 2, 3000, cooltime = -1, modifier=SpellBullet).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
+        AbyssBuff = core.BuffSkill("어비스 버프", 0, 60*1000, cooltime = -1, rem=True, pdamage = 20 + floor(self._combat/2), boss_pdamage = 30 + self._combat, armor_ignore = 20 + floor(self._combat/2)).wrap(core.BuffSkillWrapper)
 
         
         ##### 스펙터 상태일 때 #####
-        UpcomingDeath = core.DamageSkill("다가오는 죽음", 0, 450, 2).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        ReturningHate = ReturningHateWrapper(vEhc)
+        UpcomingDeath = core.DamageSkill("다가오는 죽음", 0, 450 + 3*passive_level, 2).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        ReturningHate = ReturningHateWrapper(core.DamageSkill("돌아오는 증오", 0, 320 + 3*passive_level, 6, cooltime=12000, red=True).setV(vEhc, 0, 2, True))
 
-        EndlessBadDream = core.DamageSkill("끝나지 않는 흉몽", 540, 445, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
-        EndlessBadDream_Link = core.DamageSkill("끝나지 않는 흉몽(연계)", 180, 445, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
+        EndlessBadDream = core.DamageSkill("끝나지 않는 흉몽", 540, 445 + 3*passive_level, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
+        EndlessBadDream_Link = core.DamageSkill("끝나지 않는 흉몽(연계)", 180, 445 + 3*passive_level, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
 
-        UncurableHurt_Link = core.DamageSkill("지워지지 않는 상처(연계)", 480, 510, 6, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  #스칼렛 차지 드라이브의 변형
+        UncurableHurt_Link = core.DamageSkill("지워지지 않는 상처(연계)", 480, 510 + 3*passive_level, 6, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  #스칼렛 차지 드라이브의 변형
         
-        TenaciousInstinct_Link = core.DamageSkill("멈출 수 없는 본능(연계)", 540, 460, 6, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        TenaciousInstinct_Link = core.DamageSkill("멈출 수 없는 본능(연계)", 540, 460 + 3*passive_level, 6, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
 
-        UnfulfilledHunger = core.DamageSkill("채워지지 않는 굶주림", 750, 510, 7, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #거스트 차지 드라이브 변형
-        UnfulfilledHunger_Link = core.DamageSkill("채워지지 않는 굶주림(연계)", 660, 510, 7, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        UnfulfilledHunger = core.DamageSkill("채워지지 않는 굶주림", 750, 510 + 3*passive_level, 7, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #거스트 차지 드라이브 변형
+        UnfulfilledHunger_Link = core.DamageSkill("채워지지 않는 굶주림(연계)", 660, 510 + 3*passive_level, 7, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
-        CrawlingFear = core.DamageSkill("기어 다니는 공포", 30 + 630, 1390, 12, cooltime = 60*1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        CrawlingFear_Link = core.DamageSkill("기어 다니는 공포(연계)", 30 + 360, 1390, 12, cooltime = 60*1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        CrawlingFear = core.DamageSkill("기어 다니는 공포", 30 + 630, 1390 + 3*passive_level, 12, cooltime = 60*1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        CrawlingFear_Link = core.DamageSkill("기어 다니는 공포(연계)", 30 + 360, 1390 + 3*passive_level, 12, cooltime = 60*1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
 
-        UncontrollableChaos = core.DamageSkill("걷잡을 수 없는 혼돈", 810, 440, 12, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) #어비스 차지 드라이브 변형
-        UncontrollableChaos_Link = core.DamageSkill("걷잡을 수 없는 혼돈(연계)", 720, 440, 12, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        UncontrollableChaos = core.DamageSkill("걷잡을 수 없는 혼돈", 810, 440 + 3*self._combat, 12, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) #어비스 차지 드라이브 변형
+        UncontrollableChaos_Link = core.DamageSkill("걷잡을 수 없는 혼돈(연계)", 720, 440 + 3*self._combat, 12, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
 
-        RaptRestriction = core.DamageSkill("황홀한 구속", 690, 600, 6, cooltime = 180 * 1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        RaptRestrictionSummon = core.SummonSkill("황홀한 구속(소환)", 0, 450, 400, 3, 9000, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)  #임의주기 300ms, DPM 미사용.
-        RaptRestrictionEnd = core.DamageSkill("황홀한 구속(종결)", 0, 1000, 8, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        RaptRestriction = core.DamageSkill("황홀한 구속", 690, 600 + 10*self._combat, 6, cooltime = 180 * 1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        RaptRestrictionSummon = core.SummonSkill("황홀한 구속(소환)", 0, 450, 400 + 10*self._combat, 3, 9000, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)  #임의주기 300ms, DPM 미사용.
+        RaptRestrictionEnd = core.DamageSkill("황홀한 구속(종결)", 0, 1000 + 10*self._combat, 8, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
         Impulse_Connected = MultipleDamageSkillWrapper(core.DamageSkill("충동/본능 연결", 0, 0, 0, cooltime = 6000, red=True, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False), 2, 1500)
 
