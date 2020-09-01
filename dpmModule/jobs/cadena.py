@@ -29,7 +29,7 @@ class WeaponVarietyStackWrapper(core.StackSkillWrapper): # TODO: 굳이 관리�
         res = core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
         if self.currentAttack != target:
             self.currentAttack = target
-            if self.currentAttackTime < 0:
+            if self.currentAttackTime <= 0:
                 res.cascade = [self.final_attack_task]
                 self.currentAttackTime = 250
             
@@ -109,7 +109,7 @@ class JobGenerator(ck.JobGenerator):
         
         봄-브릭 / 샷건-클로 / 나이프 / 윙대거 / 배트 / 시미터-체이스 / 메일스트롬 4초당 1회 
         '''
-        STROKE1_CANCEL_TIME = 90
+        STROKE1_CANCEL_TIME = 100
         CANCEL_TIME = 150
 
         passive_level = chtr.get_base_modifier().passive_level + self._combat
@@ -206,7 +206,7 @@ class JobGenerator(ck.JobGenerator):
         ChainArts_Maelstorm.onAfter(ChainArts_Maelstorm_Slow)
 
         #조건부 파이널어택으로 설정함.
-        ProfessionalAgent_Attack = core.OptionalElement(ProfessionalAgent.is_active, ProfessionalAgentAdditionalDamage, name= " 프로페셔널 에이전트 추가타")
+        ProfessionalAgent_Attack = core.OptionalElement(ProfessionalAgent.is_active, ProfessionalAgentAdditionalDamage, name= "프로페셔널 에이전트 추가타")
     
     
         # 웨폰 버라이어티 호출
