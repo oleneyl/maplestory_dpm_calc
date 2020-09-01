@@ -103,9 +103,9 @@ class JobGenerator(ck.JobGenerator):
         테리토리-퍼시스트
         블로섬-쿨타임 리듀스
 
-        전분 참조 : https://youtu.be/m2LX8otP-9w
+        전분 참조 : https://youtu.be/PiTnzyy0F1M
 
-        게더링-디바이드-블로섬
+        게더링-블로섬 1020ms
 
         게더링, 블로섬 80% 히트
 
@@ -140,10 +140,10 @@ class JobGenerator(ck.JobGenerator):
         Order = OrderWrapper(core.SummonSkill('오더', 0, 1140, 240+120+passive_level*3, 2, 99999999).setV(vEhc, 1, 2, False), Ether) # 15% 에테르 결정, 시전딜레이 없음으로 가정, 공격주기 1140ms(인피니트로부터 추정됨)
 
         Gathering = core.StackDamageSkillWrapper(
-            core.DamageSkill('게더링', 0, 260+300+passive_level*3, 4, cooltime=12*1000, red=True).setV(vEhc, 5, 2, False),
+            core.DamageSkill('게더링', 600, 260+300+passive_level*3, 4, cooltime=12*1000, red=True).setV(vEhc, 5, 2, False),
             Order,
             lambda order: order.stack * 0.8
-        ) # 칼 불러오기. 블라섬과 연계됨, 딜레이 0 가정
+        ) # 칼 불러오기. 블라섬과 연계됨, 모이는데 약 600ms 가정
 
         Divide = core.DamageSkill('디바이드', 600, 375+self._combat*3, 6, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #트리거 스킬, 클라공속 780ms
 
@@ -215,7 +215,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 게더링-블로섬
         Blossom.onConstraint(core.ConstraintElement('오더가 있을 때', Order, partial(Order.judge, 1, 1)))
-        Blossom.onBefores([Divide, Gathering, Order.delayQueue(600+1410)]) # 게더링->디바이드->블로섬 순서, _befores는 리스트의 끝부터 실행됨. 2010ms동안 오더가 멈춤.
+        Blossom.onBefores([Gathering, Order.delayQueue(600+1410)]) # 게더링->블로섬 순서, _befores는 리스트의 끝부터 실행됨. 2010ms동안 오더가 멈춤.
         Blossom.onAfter(BlossomExceed)
 
         Grave.onAfter(GraveDebuff)
