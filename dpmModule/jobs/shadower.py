@@ -156,7 +156,9 @@ class JobGenerator(ck.JobGenerator):
         SonicBlowTick.onAfter(MesoStack.stackController(7*2*0.4, name = "메소 생성"))
         SonicBlow.onAfter(core.RepeatElement(SonicBlowTick, 15))
         
-        Assasinate2_D.onAfter(core.OptionalElement(Eviscerate.is_available, Eviscerate, name = "절개 연계 여부"))
+        UseEviscerate = core.OptionalElement(Eviscerate.is_available, Eviscerate, name = "절개 연계 여부")
+        Assasinate2.onAfter(UseEviscerate)
+        Assasinate2_D.onAfter(UseEviscerate)
         Eviscerate.onAfter(MesoStack.stackController(7*2*0.4, name = "메소 생성"))
         Eviscerate.protect_from_running()
         
