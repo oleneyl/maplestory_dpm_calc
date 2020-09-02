@@ -86,9 +86,7 @@ class JobGenerator(ck.JobGenerator):
         논체인아츠-리인포스, 보스킬러
         체인아츠스트로크-넥스트어택 리인포스, 리인포스
         
-        체인아츠:테이크다운:쿨리듀스
-        
-        아직적용 안함.
+        체인아츠:테이크다운-쿨타임 리듀스
         
         코강순서:
         스트로크,버라이어티,허슬 - 니들배트 - 브릭 - 샷건/봄 - 에이전트 - 시미터/클로 - 나이프/윙대거 - 테이크다운
@@ -99,13 +97,14 @@ class JobGenerator(ck.JobGenerator):
         
         서먼 스로잉 윙대거 3타 후 폭발
         
-        시미터, 샷건, 나이프, 봄, 니들배트, 윙대거는 최종뎀 15%를 받고 있음.
+        시미터, 샷건, 나이프, 브릭, 니들배트 1타, 윙대거 1틱은 최종뎀 15%를 받고 있음.
         
         봄-브릭 / 샷건-클로 / 나이프 / 윙대거 / 배트 / 시미터-체이스 / 메일스트롬 4초당 1회 
         '''
         STROKE1_HIT_RATE = 1
         STROKE1_CANCEL_TIME = 100
         CANCEL_TIME = 150
+        WINGDAGGER_HIT = 3
 
         passive_level = chtr.get_base_modifier().passive_level + self._combat
         CheapShotII = core.CharacterModifier(crit = 2, crit_damage = 10 + ceil(passive_level / 4)) # 위크포인트 컨버징 어택
@@ -149,15 +148,15 @@ class JobGenerator(ck.JobGenerator):
         SummonScratchingClaw = core.DamageSkill("서먼 스크래칭 클로", CANCEL_TIME, 455 + 5 * passive_level, 4, cooltime = 3000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
         SummonThrowingWingdagger = core.DamageSkill("서먼 스로잉 윙대거", 780, 0, 0, cooltime = 10000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).wrap(core.DamageSkillWrapper)
-        SummonThrowingWingdaggerSummon = core.SummonSkill("서먼 스로잉 윙대거(소환)", 0, 300, 425 + 5 * passive_level, 1, 300*3, cooltime= -1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
-        SummonThrowingWingdaggerEnd = core.DamageSkill("서먼 스로잉 윙대거(폭발)", 0, 670 + 5 * passive_level, 3, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        SummonThrowingWingdaggerSummon = core.SummonSkill("서먼 스로잉 윙대거(소환)", 0, 300, 425 + 5 * passive_level, 1, 300*WINGDAGGER_HIT, cooltime= -1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15 / WINGDAGGER_HIT)).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
+        SummonThrowingWingdaggerEnd = core.DamageSkill("서먼 스로잉 윙대거(폭발)", 0, 670 + 5 * passive_level, 3, cooltime = -1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         
         SummonShootingShotgun = core.DamageSkill("서먼 슈팅 샷건", CANCEL_TIME, 510 + 5 * passive_level, 7, cooltime = 5000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         SummonSlachingKnife = core.DamageSkill("서먼 슬래싱 나이프", CANCEL_TIME, 435 + 5 * passive_level, 8, cooltime = 10000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         SummonSlachingKnife_Horror = core.BuffSkill("서먼 슬래싱 나이프(공포)", 0, 10000, armor_ignore = 30, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         SummonReleasingBoom = core.DamageSkill("서먼 릴리징 봄", CANCEL_TIME, 535 + 5 * passive_level, 6, cooltime = 8000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        SummonStrikingBrick = core.DamageSkill("서먼 스트라이킹 브릭", CANCEL_TIME, 485 + 8*self._combat, 7, cooltime = 8000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        SummonStrikingBrick = core.DamageSkill("서먼 스트라이킹 브릭", CANCEL_TIME, 485 + 8*self._combat, 7, cooltime = 8000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         SummonBeatingNeedlebat_1 = core.DamageSkill("서먼 비팅 니들배트(1타)", 360, 450 + 10 * self._combat, 6, modifier = core.CharacterModifier(pdamage = 40 + 20, boss_pdamage = 20, pdamage_indep = 15), cooltime = 12000, red = True).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         SummonBeatingNeedlebat_2 = core.DamageSkill("서먼 비팅 니들배트(2타)", 420, 555 + 10 * self._combat, 7, modifier = core.CharacterModifier(pdamage = 40 + 20, boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         SummonBeatingNeedlebat_3 = core.DamageSkill("서먼 비팅 니들배트(3타)", CANCEL_TIME, 715 + 10 * self._combat, 8, modifier = core.CharacterModifier(pdamage = 50 + 20, boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
@@ -168,7 +167,7 @@ class JobGenerator(ck.JobGenerator):
         
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 3)
         
-        ChainArts_Fury = core.BuffSkill("체인아츠:퓨리", 540, (35+vEhc.getV(0,0))*1000, cooltime = (180-vEhc.getV(0,0))*1000, red = True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        ChainArts_Fury = core.BuffSkill("체인아츠:퓨리", 420, (35+vEhc.getV(0,0))*1000, cooltime = (180-vEhc.getV(0,0))*1000, red = True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ChainArts_Fury_Damage = core.DamageSkill("체인아츠:퓨리(공격)", 0, 250+10*vEhc.getV(0,0), 6).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ChainArts_Fury_Dummy = core.BuffSkill("체인아츠:퓨리(재사용대기)", 0, 600, cooltime = -1).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
@@ -185,7 +184,7 @@ class JobGenerator(ck.JobGenerator):
         # ChainArts_takedown_bind.onAfters([ChainArts_takedown_wave, ChainArts_takedown_final])
         
         SummonThrowingWingdagger.onAfter(SummonThrowingWingdaggerSummon)
-        SummonThrowingWingdaggerSummon.onAfter(SummonThrowingWingdaggerEnd)	#타이밍 변경 필요
+        SummonThrowingWingdaggerSummon.onAfter(SummonThrowingWingdaggerEnd.controller(300*WINGDAGGER_HIT))
         
         SummonSlachingKnife.onAfter(SummonSlachingKnife_Horror)
         
@@ -202,6 +201,7 @@ class JobGenerator(ck.JobGenerator):
         SummonCuttingSimiter.onAfter(WeaponVariety.stackController("시미터"))
         SummonScratchingClaw.onAfter(WeaponVariety.stackController("클로"))
         SummonThrowingWingdaggerSummon.onTick(WeaponVariety.stackController("윙대거"))
+        SummonThrowingWingdaggerEnd.onAfter(WeaponVariety.stackController("윙대거"))
         
         SummonShootingShotgun.onAfter(WeaponVariety.stackController("샷건"))
         SummonSlachingKnife.onAfter(WeaponVariety.stackController("나이프"))
@@ -283,7 +283,7 @@ class JobGenerator(ck.JobGenerator):
         # 체인아츠 - 퓨리 연동
         # TODO: 퓨리, 프로페셔널 추가타 발동에 터프허슬/테이크다운 추가
         for s in [ChainArts_Stroke_1, ChainArts_Stroke_2, ChainArts_Stroke_1_Cancel, ChainArts_Stroke_2_Cancel,
-                                SummonCuttingSimiter, SummonScratchingClaw, SummonShootingShotgun, SummonSlachingKnife, ChainArts_Chais,
+                                SummonCuttingSimiter, SummonScratchingClaw, SummonShootingShotgun, SummonSlachingKnife, ChainArts_Chais, SummonThrowingWingdaggerEnd,
                                 SummonReleasingBoom, SummonStrikingBrick, SummonBeatingNeedlebat_1, SummonBeatingNeedlebat_2, SummonBeatingNeedlebat_3]:
             s.onAfter(ChainArts_Fury_Use)
         for s in [SummonThrowingWingdaggerSummon, ChainArts_Maelstorm]:
@@ -291,7 +291,7 @@ class JobGenerator(ck.JobGenerator):
         
         # 프로페셔널 에이전트 추가타
         for s in [ChainArts_Stroke_1, ChainArts_Stroke_2, ChainArts_Stroke_1_Cancel, ChainArts_Stroke_2_Cancel,
-                    SummonCuttingSimiter, SummonScratchingClaw, SummonShootingShotgun, SummonSlachingKnife, ChainArts_Chais,
+                    SummonCuttingSimiter, SummonScratchingClaw, SummonShootingShotgun, SummonSlachingKnife, ChainArts_Chais, SummonThrowingWingdaggerEnd,
                     SummonReleasingBoom, SummonStrikingBrick, SummonBeatingNeedlebat_1, SummonBeatingNeedlebat_2, SummonBeatingNeedlebat_3,
                         ChainArts_Maelstorm, ChainArts_Fury_Damage]:
             s.onAfter(ProfessionalAgent_Attack)
@@ -315,7 +315,7 @@ class JobGenerator(ck.JobGenerator):
                 [AD_Odnunce_Final,
                     WingDaggerCombo, BatCombo, BommBrickCombo, ShootgunClawCombo, SimiterChaseCombo, KnifeCombo, MaleStromCombo] +\
                 [WeaponVarietyAttack, SummonThrowingWingdaggerSummon, VenomBurst, AD_Odnunce, ChainArts_Maelstorm] +\
-                [ChainArts_Fury_Dummy, SummonShootingShotgun, SummonScratchingClaw,
+                [ChainArts_Fury_Dummy, SummonThrowingWingdaggerEnd, SummonShootingShotgun, SummonScratchingClaw,
                         SummonCuttingSimiter, SummonSlachingKnife,
                             SummonReleasingBoom, SummonStrikingBrick,
                                 SummonBeatingNeedlebat_1, SummonThrowingWingdagger] +\
