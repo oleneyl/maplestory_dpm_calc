@@ -48,7 +48,7 @@ class JobGenerator(ck.JobGenerator):
         
         Gekgap = core.InformedCharacterModifier("극갑",pdamage = 5)
         NoiGe = core.InformedCharacterModifier("뇌제",att = 30)
-        NuckleExpert = core.InformedCharacterModifier("너클 엑스퍼트",att = 30 + passive_level, crit_damage = 30 + passive_level)
+        NuckleExpert = core.InformedCharacterModifier("너클 엑스퍼트",att = 30 + passive_level, crit_damage = 20 + passive_level // 2)
         NoiShin = core.InformedCharacterModifier("뇌신",crit = 30, crit_damage = 25)
         
         SkyOpenPassive = core.InformedCharacterModifier("천지개벽(패시브)",pdamage_indep = 20)
