@@ -171,8 +171,7 @@ class JobGenerator(ck.JobGenerator):
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 3)
         
         ChainArts_Fury = core.BuffSkill("체인아츠:퓨리", 420, (35+vEhc.getV(0,0))*1000, cooltime = (180-vEhc.getV(0,0))*1000, red = True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        ChainArts_Fury_Damage = core.DamageSkill("체인아츠:퓨리(공격)", 0, 250+10*vEhc.getV(0,0), 6).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        ChainArts_Fury_Dummy = core.BuffSkill("체인아츠:퓨리(재사용대기)", 0, 600, cooltime = -1).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        ChainArts_Fury_Damage = core.DamageSkill("체인아츠:퓨리(공격)", 0, 250+10*vEhc.getV(0,0), 6, cooltime = 600).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         AD_Odnunce = core.SummonSkill("A.D 오드넌스", 360, 270, 225+9*vEhc.getV(1,1), 5, 10000, cooltime = 25000, red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # 37*5타
         AD_Odnunce_Final = core.DamageSkill("A.D 오드넌스(막타)", 0, 750+30*vEhc.getV(1,1), 8, cooltime = -1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
@@ -193,8 +192,7 @@ class JobGenerator(ck.JobGenerator):
         
         VenomBurst.onAfter(VenomBurst_Poison)
         
-        ChainArts_Fury_Use = core.OptionalElement(lambda : ChainArts_Fury_Dummy.is_not_active() and ChainArts_Fury.is_active(), ChainArts_Fury_Dummy, name = "체인아츠:퓨리 발동조건")
-        ChainArts_Fury_Dummy.onAfter(ChainArts_Fury_Damage)
+        ChainArts_Fury_Use = core.OptionalElement(lambda : ChainArts_Fury_Damage.is_available() and ChainArts_Fury.is_active(), ChainArts_Fury_Damage, name = "체인아츠:퓨리 발동조건")
         
         AD_Odnunce.onAfter(AD_Odnunce_Final.controller(10000))
         ChainArts_Maelstorm.onAfter(ChainArts_Maelstorm_Slow)
@@ -301,7 +299,7 @@ class JobGenerator(ck.JobGenerator):
         for s in [SummonThrowingWingdaggerSummon]:
             s.onTick(ProfessionalAgent_Attack)
         
-        for s in [ChainArts_Fury_Dummy, SummonShootingShotgun, SummonScratchingClaw,
+        for s in [ChainArts_Fury_Damage, SummonShootingShotgun, SummonScratchingClaw,
                         SummonCuttingSimiter, SummonSlachingKnife,
                             SummonReleasingBoom, SummonStrikingBrick,
                                 SummonBeatingNeedlebat_1, SummonThrowingWingdagger, ChainArts_Maelstorm, WeaponVarietyAttack]:
@@ -318,7 +316,7 @@ class JobGenerator(ck.JobGenerator):
                 [AD_Odnunce_Final,
                     WingDaggerCombo, BatCombo, BommBrickCombo, ShootgunClawCombo, SimiterChaseCombo, KnifeCombo, MaleStromCombo] +\
                 [WeaponVarietyAttack, SummonThrowingWingdaggerSummon, VenomBurst, AD_Odnunce, ChainArts_Maelstorm] +\
-                [ChainArts_Fury_Dummy, SummonThrowingWingdaggerEnd, SummonShootingShotgun, SummonScratchingClaw,
+                [ChainArts_Fury_Damage, SummonThrowingWingdaggerEnd, SummonShootingShotgun, SummonScratchingClaw,
                         SummonCuttingSimiter, SummonSlachingKnife,
                             SummonReleasingBoom, SummonStrikingBrick,
                                 SummonBeatingNeedlebat_1, SummonThrowingWingdagger] +\
