@@ -11,12 +11,12 @@ from math import ceil
 ######   Passive Skill   ######
 
 class WeaponVarietyStackWrapper(core.StackSkillWrapper): # TODO: 굳이 관리할 필요 없이 항상 최대 스택 가정해도 되지 않을까?
-    def __init__(self, _max, prof_agent, final_attack, prof_agent_attack):
+    def __init__(self, _max, prof_agent, final_attack, use_prof_agent_attack):
         super(WeaponVarietyStackWrapper, self).__init__(core.BuffSkill("웨폰 버라이어티 스택", 0, 99999999), _max)
         self.stackLog = []
         self.currentWeapon = None
-        self.final_attack = final_attack
-        self.prof_agent_attack = prof_agent_attack
+        self.use_final_attack = core.OptionalElement(final_attack.is_available, final_attack, name = "웨폰 버라이어티 쿨타임")
+        self.use_prof_agent_attack = use_prof_agent_attack
         self.prof_agent = prof_agent
         self.modifierInvariantFlag = False
         
@@ -40,8 +40,8 @@ class WeaponVarietyStackWrapper(core.StackSkillWrapper): # TODO: 굳이 관리�
     def stackController(self, weapon):
         task = core.Task(self, partial(self.vary, weapon))
         taskHolder = core.TaskHolder(task, name = "웨버 스택")
-        taskHolder.onAfter(core.OptionalElement(lambda: self.final_attack.is_available, self.final_attack, name = "웨폰 버라이어티 쿨타임"))
-        taskHolder.onAfter(self.prof_agent_attack)
+        taskHolder.onAfter(self.use_final_attack)
+        taskHolder.onAfter(self.use_prof_agent_attack)
         conditionalTask = core.OptionalElement(partial(self._changed, weapon), taskHolder, name = "무기 교체")
         return conditionalTask
 
@@ -126,7 +126,7 @@ class JobGenerator(ck.JobGenerator):
         
         
         #체인아츠
-        ChainArts_Stroke_1 = core.DamageSkill("체인아츠:스트로크(1타)", 240, 150, 2, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ChainArts_Stroke_1 = core.DamageSkill("체인아츠:스트로크(1타)", 210, 150, 2, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         ChainArts_Stroke_1_Cancel = core.DamageSkill("체인아츠:스트로크(1타)(캔슬)", STROKE1_CANCEL_TIME, 150, 2, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         ChainArts_Stroke_2 = core.DamageSkill("체인아츠:스트로크(2타)", 390, 400, 5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         ChainArts_Stroke_2_Cancel = core.DamageSkill("체인아츠:스트로크(2타)(캔슬)", CANCEL_TIME, 400, 5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
@@ -190,7 +190,7 @@ class JobGenerator(ck.JobGenerator):
         
         VenomBurst.onAfter(VenomBurst_Poison)
         
-        ChainArts_Fury_Use = core.OptionalElement(lambda : ChainArts_Fury_Dummy.is_not_active() and ChainArts_Fury.is_active(), ChainArts_Fury_Dummy)
+        ChainArts_Fury_Use = core.OptionalElement(lambda : ChainArts_Fury_Dummy.is_not_active() and ChainArts_Fury.is_active(), ChainArts_Fury_Dummy, name = "체인아츠:퓨리 발동조건")
         ChainArts_Fury_Dummy.onAfter(ChainArts_Fury_Damage)
         
         AD_Odnunce.onAfter(AD_Odnunce_Final.controller(10000))
@@ -218,7 +218,7 @@ class JobGenerator(ck.JobGenerator):
         
         #샷건-클로
         ShootgunClawCombo = core.DamageSkill('샷건-클로', 0, 0, 0).wrap(core.DamageSkillWrapper)
-        for i in [ChainArts_Stroke_1_Cancel, SummonShootingShotgun, SummonScratchingClaw]:
+        for i in [ChainArts_Stroke_1_Cancel, SummonShootingShotgun, ChainArts_Stroke_1, ChainArts_Stroke_2_Cancel, SummonScratchingClaw]:
             ShootgunClawCombo.onAfter(i)
         
         for c in [core.ConstraintElement('샷건', SummonShootingShotgun, SummonShootingShotgun.is_available),
