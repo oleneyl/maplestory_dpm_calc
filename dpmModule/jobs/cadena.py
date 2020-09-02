@@ -89,11 +89,13 @@ class JobGenerator(ck.JobGenerator):
         체인아츠:테이크다운-쿨타임 리듀스
         
         코강순서:
-        스트로크,버라이어티,허슬 - 니들배트 - 브릭 - 샷건/봄 - 에이전트 - 시미터/클로 - 나이프/윙대거 - 테이크다운
+        스트로크,버라이어티,허슬 - 니들배트 - 브릭 - 샷건/봄 - 크러시/에이전트 - 시미터/클로 - 나이프/윙대거 - 테이크다운
         
         스킬강화순서:
         퓨리-오드-버스트-멜-레투다
         
+        1타캔슬 120ms
+        캔슬 180ms
         
         서먼 스로잉 윙대거 3타 후 폭발
         
@@ -102,8 +104,8 @@ class JobGenerator(ck.JobGenerator):
         봄-브릭 / 샷건-클로 / 나이프 / 윙대거 / 배트 / 시미터-체이스 / 메일스트롬 4초당 1회 
         '''
         STROKE1_HIT_RATE = 1
-        STROKE1_CANCEL_TIME = 100
-        CANCEL_TIME = 150
+        STROKE1_CANCEL_TIME = 120
+        CANCEL_TIME = 180
         WINGDAGGER_HIT = 3
 
         passive_level = chtr.get_base_modifier().passive_level + self._combat
@@ -117,7 +119,7 @@ class JobGenerator(ck.JobGenerator):
         SpecialPotion = core.BuffSkill("상인단 특제 비약", 570, 60*1000, pdamage = 10, crit = 10, cooltime = 120*1000).wrap(core.BuffSkillWrapper) # 카데나만 딜레이있음
         
         ProfessionalAgent = core.BuffSkill("프로페셔널 에이전트", 570, 30000, cooltime = 200000).wrap(core.BuffSkillWrapper)
-        ProfessionalAgentAdditionalDamage = core.DamageSkill("프로페셔널 에이전트(공격)", 0, 255, 2).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ProfessionalAgentAdditionalDamage = core.DamageSkill("프로페셔널 에이전트(공격)", 0, 255, 2).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         ProfessionalAgent_Attack = core.OptionalElement(ProfessionalAgent.is_active, ProfessionalAgentAdditionalDamage, name= "프로페셔널 에이전트 추가타")
         
         #웨폰버라이어티 추가타	
@@ -132,6 +134,7 @@ class JobGenerator(ck.JobGenerator):
         ChainArts_Stroke_2_Cancel = core.DamageSkill("체인아츠:스트로크(2타)(캔슬)", CANCEL_TIME, 400, 5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         ChainArts_Chais = core.DamageSkill("체인아츠:체이스", 150, 100, 1).wrap(core.DamageSkillWrapper)
+        ChainArts_Crush = core.DamageSkill("체인아츠:크러시", 990, 950, 8, cooltime = 30000).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper) # 미사용
 
         #ChainArts_ToughHustleInit = core.DamageSkill("체인아츠:터프허슬", 0, 0, 0, cooltime = 50000).setV(vEhc, 0, 2, False) #지속형		
         #ChainArts_ToughHustle = core.DamageSkill("체인아츠:터프허슬", 5000000, 600 + 7 * self._combat, 2).setV(vEhc, 0, 2, False) #지속형, 6초, 미사용
@@ -161,7 +164,7 @@ class JobGenerator(ck.JobGenerator):
         SummonBeatingNeedlebat_2 = core.DamageSkill("서먼 비팅 니들배트(2타)", 420, 555 + 10 * self._combat, 7, modifier = core.CharacterModifier(pdamage = 40 + 20, boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         SummonBeatingNeedlebat_3 = core.DamageSkill("서먼 비팅 니들배트(3타)", CANCEL_TIME, 715 + 10 * self._combat, 8, modifier = core.CharacterModifier(pdamage = 50 + 20, boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         SummonBeatingNeedlebat_Honmy = core.BuffSkill("서먼 비팅 니들배트(혼미)", 0, 15000, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage, cooltime = -1).wrap(core.BuffSkillWrapper)
-          
+        
         VenomBurst = core.DotSkill("베놈 버스트", 160+6*vEhc.getV(4,4), 99999999).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
         VenomBurst_Poison = core.BuffSkill("베놈 버스트(중독)", 0, 99999999, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage, cooltime = -1).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         
