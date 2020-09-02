@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, MutualRule, ConcurrentRunRule, ReservationRule
 from . import globalSkill
 from .jobbranch import bowmen
+from math import ceil
 #TODO : 5차 신스킬 적용    
 
 
@@ -17,6 +18,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "신궁"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
+        self._combat = 0
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 50)
@@ -33,19 +35,21 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit = 40)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         
         MarkmanShip = core.InformedCharacterModifier("마크맨쉽",armor_ignore = 25, pdamage = 15)
 
-        CrossBowExpert = core.InformedCharacterModifier("크로스보우 엑스퍼트",att= 30+self.combat*1, crit_damage = 8)
+        CrossBowExpert = core.InformedCharacterModifier("크로스보우 엑스퍼트",att= 30+passive_level, crit_damage = 8)
         
         return [CriticalShot, PhisicalTraining, MarkmanShip, 
                 CrossBowExpert]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 35)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5 * self.combat)
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5*ceil(passive_level/2))
 
         MortalBlow = core.InformedCharacterModifier("모탈 블로우",pdamage = 2)        
         ExtremeArchery = core.InformedCharacterModifier("익스트림 아처리:석궁",crit_damage = 20)
@@ -60,16 +64,17 @@ class JobGenerator(ck.JobGenerator):
         스나, 피어싱, 롱레트, 프리저
         '''
         distance = 400
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
 
-        WEAKNESS_FINDING = core.CharacterModifier(armor_ignore = 50 + self.combat * 1)
-        DISTANCING_SENSE = core.CharacterModifier(pdamage_indep = 40 + self.combat * 2)
-        LASTMAN_STANDING = core.CharacterModifier(pdamage_indep = 20 + self.combat * 2)
+        WEAKNESS_FINDING = core.CharacterModifier(armor_ignore = 50 + passive_level)
+        DISTANCING_SENSE = core.CharacterModifier(pdamage_indep = 40 + passive_level)
+        LASTMAN_STANDING = core.CharacterModifier(pdamage_indep = 20 + 2*passive_level)
         PASSIVE_MODIFIER = WEAKNESS_FINDING + DISTANCING_SENSE + LASTMAN_STANDING
         
         #Buff skills
         SoulArrow = core.BuffSkill("소울 애로우", 0, 300 * 1000, att = 30, rem = True).wrap(core.BuffSkillWrapper)
-        ElusionStep = core.BuffSkill("일루젼 스탭", 0, (300+combat*16) * 1000, stat_main = 40 + combat*1, rem = True).wrap(core.BuffSkillWrapper)
-        SharpEyes = core.BuffSkill("샤프 아이즈", 660, 300 * 1000, crit = 20 + combat*1, crit_damage = 15 + combat*1, rem = True).wrap(core.BuffSkillWrapper)
+        ElusionStep = core.BuffSkill("일루젼 스탭", 0, (300+self._combat*8) * 1000, stat_main = 40 + self._combat, rem = True).wrap(core.BuffSkillWrapper)
+        SharpEyes = core.BuffSkill("샤프 아이즈", 660, (300+10*self._combat) * 1000, crit = 20 + ceil(self._combat/2), crit_damage = 15 + ceil(self._combat/2), rem = True).wrap(core.BuffSkillWrapper)
         #크리티컬 리인포스 - >재정의 필요함..
         
         BoolsEye = core.BuffSkill("불스아이", 960, 30 * 1000, cooltime = 90 * 1000, crit = 20, crit_damage = 10, armor_ignore = 20, pdamage = 20).wrap(core.BuffSkillWrapper)
@@ -78,7 +83,7 @@ class JobGenerator(ck.JobGenerator):
         #Damage Skills
         # 롱레인지 트루샷: 나무위키피셜 DPM 떨어지므로 보류
 
-        Snipping = core.DamageSkill("스나이핑", 630, 465+combat*5, 9 + 1, modifier = core.CharacterModifier(crit = 100, armor_ignore = 20 + combat * 1, pdamage = 20, boss_pdamage = 10) + PASSIVE_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Snipping = core.DamageSkill("스나이핑", 630, 465+self._combat*5, 9 + 1, modifier = core.CharacterModifier(crit = 100, armor_ignore = 20 + combat * 1, pdamage = 20, boss_pdamage = 10) + PASSIVE_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         TrueSnippingTick = core.DamageSkill("트루 스나이핑(타격)", 690, 950+vEhc.getV(2,2)*30, 14+1, modifier = core.CharacterModifier(pdamage = 100, armor_ignore = 100) + PASSIVE_MODIFIER).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         TrueSnipping = core.DamageSkill("트루 스나이핑", 120, 0, 0, cooltime = 180 * 1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         

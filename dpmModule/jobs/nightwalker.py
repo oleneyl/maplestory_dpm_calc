@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobclass import cygnus
 from .jobbranch import thieves
+from math import ceil
 
 class ShadowBatStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
@@ -64,8 +65,11 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "나이트워커"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
+        self._combat = 0
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",stat_main = chtr.level // 2)
         ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니",patt = 10)
 
@@ -74,8 +78,8 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 60)
         Adrenalin = core.InformedCharacterModifier("아드레날린",crit_damage = 10)
 
-        ThrowingExpert = core.InformedCharacterModifier("스로잉 엑스퍼트",att = 30, crit_damage = 10)
-        DarknessBlessing = core.InformedCharacterModifier("다크니스 블레싱",att = 30, armor_ignore = 15)
+        ThrowingExpert = core.InformedCharacterModifier("스로잉 엑스퍼트",att = 30 + passive_level, crit_damage = 10 + ceil(passive_level/3))
+        DarknessBlessing = core.InformedCharacterModifier("다크니스 블레싱",att = 30 + passive_level, armor_ignore = 15 + ceil(passive_level/2))
 
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 3, 3)
 
@@ -84,8 +88,10 @@ class JobGenerator(ck.JobGenerator):
             ReadyToDiePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 75)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)    #오더스 기본적용!
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5+0.5*ceil(passive_level/2))    #오더스 기본적용!
         
         return [WeaponConstant, Mastery]
 
@@ -104,6 +110,7 @@ class JobGenerator(ck.JobGenerator):
         
         퀸터-배트
         '''
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         ######   Skill   ######
 
         JUMPRATE = 1
@@ -116,22 +123,22 @@ class JobGenerator(ck.JobGenerator):
         SpiritThrowing = core.BuffSkill("스피릿 스로잉", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper) # 펫버프
 
         ShadowBatStack = ShadowBatStackWrapper(core.BuffSkill("쉐도우 배트(스택)", 0, 0, cooltime=-1))
-        ShadowBat = ShadowBatWrapper(core.DamageSkill("쉐도우 배트", 0, 150 + 120 + 150 + 200, 1).setV(vEhc, 1, 2, True), ShadowBatStack)
+        ShadowBat = ShadowBatWrapper(core.DamageSkill("쉐도우 배트", 0, 150 + 120 + 150 + 200 + 4*passive_level, 1).setV(vEhc, 1, 2, True), ShadowBatStack)
         
         #점샷기준(400ms)
-        QuintupleThrow = core.DamageSkill("퀸터플 스로우", (400 * JUMPRATE + 630 * (1-JUMPRATE)), 340, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal = core.DamageSkill("퀸터플 스로우(막타)", 0, 475, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow = core.DamageSkill("퀸터플 스로우", (400 * JUMPRATE + 630 * (1-JUMPRATE)), 340+self._combat, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal = core.DamageSkill("퀸터플 스로우(막타)", 0, 475+self._combat, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        QuintupleThrow_Sv = core.DamageSkill("퀸터플 스로우(서번트)", 0, 340*0.7, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal_Sv = core.DamageSkill("퀸터플 스로우(서번트)(막타)", 0, 475*0.7, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow_Sv = core.DamageSkill("퀸터플 스로우(서번트)", 0, (340+self._combat)*0.7, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal_Sv = core.DamageSkill("퀸터플 스로우(서번트)(막타)", 0, (475+self._combat)*0.7, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        QuintupleThrow_I50 = core.DamageSkill("퀸터플 스로우(일루젼 50%)", 0, 340*0.5, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal_I50 = core.DamageSkill("퀸터플 스로우(일루젼 50%)(막타)", 0, 475*0.5, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrow_I30 = core.DamageSkill("퀸터플 스로우(일루젼 30%)", 0, 340*0.3, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal_I30 = core.DamageSkill("퀸터플 스로우(일루젼 30%)(막타)", 0, 475*0.3, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow_I50 = core.DamageSkill("퀸터플 스로우(일루젼 50%)", 0, (340+self._combat)*0.5, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal_I50 = core.DamageSkill("퀸터플 스로우(일루젼 50%)(막타)", 0, (475+self._combat)*0.5, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow_I30 = core.DamageSkill("퀸터플 스로우(일루젼 30%)", 0, (340+self._combat)*0.3, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal_I30 = core.DamageSkill("퀸터플 스로우(일루젼 30%)(막타)", 0, (475+self._combat)*0.3, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        QuintupleThrow_V = core.DamageSkill("퀸터플 스로우(5차)", 0, 340 * 0.01 * (25+vEhc.getV(0,0)), 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal_V = core.DamageSkill("퀸터플 스로우(5차)(막타)", 0, 475 * 0.01 * (25+vEhc.getV(0,0)), 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow_V = core.DamageSkill("퀸터플 스로우(5차)", 0, (340+self._combat) * 0.01 * (25+vEhc.getV(0,0)), 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal_V = core.DamageSkill("퀸터플 스로우(5차)(막타)", 0, (475+self._combat) * 0.01 * (25+vEhc.getV(0,0)), 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
     
         #하이퍼스킬
         ShadowElusion = core.BuffSkill("쉐도우 일루전", 690, 30000, cooltime = 180000).wrap(core.BuffSkillWrapper)

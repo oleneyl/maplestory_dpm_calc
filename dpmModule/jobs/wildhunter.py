@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobclass import resistance
 from .jobbranch import bowmen
+from math import ceil
 # TODO: 재규어 맥시멈, 드릴 컨테이너 추가
 
 class JaguerStack(core.DamageSkillWrapper, core.TimeStackSkillWrapper):
@@ -42,8 +43,11 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "와일드헌터"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'crit')
         self.preEmptiveSkills = 0
+        self._combat = 0
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+
         Jaguer = core.InformedCharacterModifier("재규어",crit=5)
         NaturesWrath = core.InformedCharacterModifier("네이처스 래쓰",crit=25)
         AutomaticShootingDevice = core.InformedCharacterModifier("오토매팅 슈팅 디바이스",att=20)
@@ -51,18 +55,20 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         Flurry = core.InformedCharacterModifier("플러리", stat_main = 40)
         JaugerLink = core.InformedCharacterModifier("재규어 링크",crit = 18, crit_damage = 12, att = 10)
-        CrossbowExpert = core.InformedCharacterModifier("크로스보우 엑스퍼트",att=30, crit_damage = 20)
-        WildInstinct = core.InformedCharacterModifier("와일드 인스팅트",armor_ignore = 30)
-        ExtentMagazine = core.InformedCharacterModifier("익스텐드 매거진", pdamage_indep=20, stat_main=60, stat_sub=60)
-        AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)", att = 20)
+        CrossbowExpert = core.InformedCharacterModifier("크로스보우 엑스퍼트",att=30 + passive_level, crit_damage = 20 + passive_level//2)
+        WildInstinct = core.InformedCharacterModifier("와일드 인스팅트",armor_ignore = 30 + 3*passive_level)
+        ExtentMagazine = core.InformedCharacterModifier("익스텐드 매거진", pdamage_indep=20 + passive_level // 3, stat_main=60 + 2*passive_level, stat_sub=60 + 2*passive_level)
+        AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)", att = 20 + ceil(passive_level/2))
     
         return [Jaguer, NaturesWrath, AutomaticShootingDevice,
                             CrossbowMastery, PhisicalTraining, Flurry, JaugerLink, CrossbowExpert, 
                             WildInstinct, ExtentMagazine, AdvancedFinalAttackPassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 35)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5*ceil(passive_level/2))
         
         SummonJaguer = core.InformedCharacterModifier("서먼 재규어", crit_damage = 8)
         
@@ -76,7 +82,7 @@ class JobGenerator(ck.JobGenerator):
         발칸 - (서먼/어나더) - 파택 - 클로우컷 - 헌팅유닛- 램피지애즈원/플래시레인 - 소닉붐 - 재규어소울 - 크로스 로드
         '''
 
-        
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         #재규어 스킬들
         JAGUERNUMBER = 3
         
@@ -101,17 +107,17 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
         Hauling = core.BuffSkill("하울링", 0, 300*1000, rem = True, patt = 10).wrap(core.BuffSkillWrapper)
         BeastForm = core.BuffSkill("비스트 폼", 0, 300*1000, rem = True, patt=20+5).wrap(core.BuffSkillWrapper)
-        SharpEyes = core.BuffSkill("샤프 아이즈", 1080, 300 * 1000, crit = 20 + combat*1, crit_damage = 15 + combat*1, rem = True).wrap(core.BuffSkillWrapper)
+        SharpEyes = core.BuffSkill("샤프 아이즈", 1080, (300+3*self._combat) * 1000, crit = 20 + ceil(self._combat/2), crit_damage = 15 + ceil(self._combat/2), rem = True).wrap(core.BuffSkillWrapper)
         SilentRampage = core.BuffSkill("사일런트 램피지", 1020, 40*1000, pdamage=40, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         
         WillOfLiberty = core.BuffSkill("윌 오브 리버티", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        FinalAttack70 = core.DamageSkill("파이널 어택(70)", 0, 210, 0.7).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        FinalAttack100 = core.DamageSkill("파이널 어택(100)", 0, 210, 1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        FinalAttack70 = core.DamageSkill("파이널 어택(70)", 0, 210 + 2*passive_level, 0.01*(70+passive_level)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        FinalAttack100 = core.DamageSkill("파이널 어택(100)", 0, 210 + 2*passive_level, 1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
         HuntingUnit = core.SummonSkill("어시스턴트 헌팅 유닛", 660, 31000/90, 150, 1.5, 31000).setV(vEhc, 4, 3, False).wrap(core.SummonSkillWrapper)
     
-        WildBalkan = core.DamageSkill("와일드 발칸", 120, 340, 1, modifier = core.CharacterModifier(boss_pdamage=10+20, pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        WildBalkan = core.DamageSkill("와일드 발칸", 120, 370 + 2*self._combat, 1, modifier = core.CharacterModifier(boss_pdamage=10+20, pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
     
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3)

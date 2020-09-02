@@ -8,6 +8,7 @@ from . import jobutils
 from .jobbranch import pirates
 from .jobclass import cygnus
 from . import jobutils
+from math import ceil
 
 #TODO : 5차 신스킬 적용
 #TODO : 천지개벽 발동 중에는 태풍을 노쿨로 사용하도록
@@ -31,11 +32,14 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "스트라이커"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
+        self._combat = 0
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 40) # 뇌전 스택으로 평균 35~40%의 방무 적용
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",stat_main = chtr.level // 2)
         ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니",patt = 10)
 
@@ -44,7 +48,7 @@ class JobGenerator(ck.JobGenerator):
         
         Gekgap = core.InformedCharacterModifier("극갑",pdamage = 5)
         NoiGe = core.InformedCharacterModifier("뇌제",att = 30)
-        NuckleExpert = core.InformedCharacterModifier("너클 숙련",att = 30, crit_damage = 20)
+        NuckleExpert = core.InformedCharacterModifier("너클 엑스퍼트",att = 30 + passive_level, crit_damage = 20 + passive_level // 2)
         NoiShin = core.InformedCharacterModifier("뇌신",crit = 30, crit_damage = 25)
         
         SkyOpenPassive = core.InformedCharacterModifier("천지개벽(패시브)",pdamage_indep = 20)
@@ -57,8 +61,10 @@ class JobGenerator(ck.JobGenerator):
             SkyOpenPassive, LoadedDicePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level/2))
         
         return [WeaponConstant, Mastery]
         
@@ -80,22 +86,23 @@ class JobGenerator(ck.JobGenerator):
         
         모든 스킬은 쿨타임마다 사용
         '''
-        CHOOKROI = 0.7
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        CHOOKROI = 0.7 + 0.01*passive_level
         #Buff skills
 
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
-        ChookRoi = core.BuffSkill("축뢰", 1620, 180000, rem = True).wrap(core.BuffSkillWrapper) # 타수증가 적용으로 계싼할지는 염두에 두어야 함
-        WindBooster = core.BuffSkill("윈드 부스터", 0, 300000, rem = True).wrap(core.BuffSkillWrapper)
-        HuricaneBuff = core.BuffSkill("태풍(버프)", 0, 90000, rem = True, pdamage = 35).wrap(core.BuffSkillWrapper)
+        ChookRoi = core.BuffSkill("축뢰", 1620, (180+5*self._combat)*1000, rem = True).wrap(core.BuffSkillWrapper) # 타수증가 적용으로 계싼할지는 염두에 두어야 함
+        WindBooster = core.BuffSkill("윈드 부스터", 0, (300+5*passive_level)*1000, rem = True).wrap(core.BuffSkillWrapper)
+        HuricaneBuff = core.BuffSkill("태풍(버프)", 0, (90+passive_level)*1000, rem = True, pdamage = 35).wrap(core.BuffSkillWrapper)
     
         LightningStack = LightningWrapper(core.BuffSkill("엘리멘탈 : 라이트닝", 0, 99999999))
 
-        HuricaneConcat = core.DamageSkill("태풍(연계)", 420, 390, 5+1, modifier = core.CharacterModifier(pdamage_indep = 20)).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
+        HuricaneConcat = core.DamageSkill("태풍(연계)", 420, 390+3*passive_level, 5+1, modifier = core.CharacterModifier(pdamage_indep = 20)).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
         
-        Destroy = core.DamageSkill("섬멸", 480, 350, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Thunder = core.DamageSkill("벽력", 540, 320, 5 + 1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        DestroyConcat = core.DamageSkill("섬멸(연계)", 480, 350, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20, pdamage_indep = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        ThunderConcat = core.DamageSkill("벽력(연계)", 540, 320, 5 + 1, modifier = core.CharacterModifier(pdamage_indep = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #연계최종뎀 20%
+        Destroy = core.DamageSkill("섬멸", 480, 350 + 4*self._combat, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Thunder = core.DamageSkill("벽력", 540, 320 + 4*self._combat, 5 + 1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        DestroyConcat = core.DamageSkill("섬멸(연계)", 480, 350 + 4*self._combat, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20, pdamage_indep = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        ThunderConcat = core.DamageSkill("벽력(연계)", 540, 320 + 4*self._combat, 5 + 1, modifier = core.CharacterModifier(pdamage_indep = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #연계최종뎀 20%
 
         # 하이퍼
         # 딜레이 추가 필요

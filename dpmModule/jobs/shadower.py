@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import thieves
 from . import jobutils
+from math import ceil
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -15,12 +16,13 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "섀도어"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
+        self._combat = 0
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(pdamage = 70, armor_ignore = 20)
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         
         NimbleBody = core.InformedCharacterModifier("님블 바디",stat_main = 20)
         Karma = core.InformedCharacterModifier("카르마",att = 30)
@@ -31,20 +33,21 @@ class JobGenerator(ck.JobGenerator):
         PrimaCriticalPassive = core.InformedCharacterModifier("프리마 크리티컬(패시브)",stat_main = 10, crit_damage = 20)
         PrimaCritical = core.InformedCharacterModifier("프리마 크리티컬", crit_damage = 8.8) #스택식으로도 계산 가능.
         
-        BoomerangStepPassive = core.InformedCharacterModifier("부메랑 스텝(패시브)",pdamage_indep = 25)
+        BoomerangStepPassive = core.InformedCharacterModifier("부메랑 스텝(패시브)",pdamage_indep = 25+2*(self._combat//3))
         
-        ShadowerInstinctPassive = core.InformedCharacterModifier("섀도어 인스팅트(패시브)",armor_ignore = 20)
+        ShadowerInstinctPassive = core.InformedCharacterModifier("섀도어 인스팅트(패시브)",armor_ignore = 20 + self._combat)
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 2, 2)
     
-        DaggerExpert = core.InformedCharacterModifier("대거 엑스퍼트",att = 40, crit_damage = 15)
+        DaggerExpert = core.InformedCharacterModifier("대거 엑스퍼트",att = 40 + passive_level, crit_damage = 15 + passive_level//3)
         
         return [NimbleBody, Karma,
                         PhisicalTraining, SheildMastery, Grid, PrimaCriticalPassive,
                         PrimaCritical, BoomerangStepPassive, ShadowerInstinctPassive, ReadyToDiePassive, DaggerExpert]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)    #오더스 기본적용!
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5+0.5*ceil(passive_level/2))    #오더스 기본적용!
         
         return [WeaponConstant, Mastery]
     
@@ -65,8 +68,10 @@ class JobGenerator(ck.JobGenerator):
         # http://m.inven.co.kr/board/powerbbs.php?come_idx=2297&stype=subject&svalue=%EC%8A%A4%ED%83%9D&l=52201
 
         # 1타 94.6%, 2타 100%
-        # 크로아 서버 스킨헤드님 (https://maple.gg/u/%EC%8A%A4%ED%82%A8%ED%97%A4%EB%93%9C)
+        # 크로아 서버 스킨헤드님
         # https://drive.google.com/file/d/1ORJc-F77ELssCSVWgHiuQP49pifgCjpo/view
+
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
 
         STACK1RATE = 94.6
         STACK2RATE = 100
@@ -74,17 +79,17 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 200*1000, rem = True).wrap(core.BuffSkillWrapper)
         FlipTheCoin = core.BuffSkill("플립 더 코인", 0, 120*1000, pdamage = 5*5, crit = 10*5).wrap(core.BuffSkillWrapper)
-        ShadowerInstinct = core.BuffSkill("섀도어 인스팅트", 900, 200*1000, rem = True, att = 40+30).wrap(core.BuffSkillWrapper)
+        ShadowerInstinct = core.BuffSkill("섀도어 인스팅트", 900, (200+6*self._combat)*1000, rem = True, att = 40+30+2*self._combat).wrap(core.BuffSkillWrapper)
         #StealPotion = core.BuffSkill("스틸 (포션)", 0, 180000, cooltime = -1, att = 30).wrap(core.BuffSkillWrapper)
         
         ShadowPartner = core.BuffSkill("섀도우 파트너", 0, 2000*1000, rem = True).wrap(core.BuffSkillWrapper)
         
         #킬포3개 사용시 최종뎀 100% 증가.
-        Assasinate1 = core.DamageSkill("암살(1타)", 630, 275, 6, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타")   #쉐파
-        Assasinate2 = core.DamageSkill("암살(2타)", 420, 350, 6, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타")   #쉐파
+        Assasinate1 = core.DamageSkill("암살(1타)", 630, 275+4*self._combat, 6, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타")   #쉐파
+        Assasinate2 = core.DamageSkill("암살(2타)", 420, 350+5*self._combat, 6, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타")   #쉐파
         
-        Assasinate1_D = core.DamageSkill("암살(1타)(다크사이트)", 630, 275, 6, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타(닼사)")   #쉐파
-        Assasinate2_D = core.DamageSkill("암살(2타)(다크사이트)", 420, 350, 6, modifier = core.CharacterModifier(pdamage=20+150, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타(닼사)")   #쉐파
+        Assasinate1_D = core.DamageSkill("암살(1타)(다크사이트)", 630, 275+4*self._combat, 6, modifier = core.CharacterModifier(pdamage=20+150+4*self._combat, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타(닼사)")   #쉐파
+        Assasinate2_D = core.DamageSkill("암살(2타)(다크사이트)", 420, 350+5*self._combat, 6, modifier = core.CharacterModifier(pdamage=20+150+4*self._combat, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타(닼사)")   #쉐파
 
         MesoStack = core.StackSkillWrapper(core.BuffSkill("픽파킷", 0, 9999999), 20)
         MesoExplosion = core.StackDamageSkillWrapper(core.DamageSkill("메소 익스플로전", 0, 120, 2).setV(vEhc, 2, 3, False), MesoStack, lambda skill: skill.stack)
@@ -93,8 +98,8 @@ class JobGenerator(ck.JobGenerator):
 
         DarkFlare = core.SummonSkill("다크 플레어", 600, 60000 / 62, 360, 1, 60*1000, cooltime = 60000, red=True).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)
     
-        Smoke = core.BuffSkill("연막탄", 1080 + 120, 30000, cooltime = 150000, crit_damage = 20, red=True).wrap(core.BuffSkillWrapper) # 다크 사이트 딜레이 합산
-        Venom = core.DotSkill("페이탈 베놈", 480, 89999 * 1000).wrap(core.SummonSkillWrapper)
+        Smoke = core.BuffSkill("연막탄", 1080 + 120, 30000, cooltime = (150-2*self._combat)*1000, crit_damage = 20+ceil(self._combat/3), red=True).wrap(core.BuffSkillWrapper) # 다크 사이트 딜레이 합산
+        Venom = core.DotSkill("페이탈 베놈", (160+5*passive_level)*3, 89999 * 1000).wrap(core.SummonSkillWrapper)
         
         AdvancedDarkSight = core.BuffSkill("어드밴스드 다크 사이트", 0, 10000, cooltime = -1, pdamage_indep = 5).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
