@@ -7,6 +7,7 @@ from . import globalSkill
 from .jobbranch import pirates
 from .jobclass import adventurer
 from . import jobutils
+from math import ceil
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -16,17 +17,18 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 14
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'buff_rem', 'crit')
         self.preEmptiveSkills = 1
+        self._combat = 0
     
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         
         CriticalRoar = core.InformedCharacterModifier("크리티컬 로어",crit = 20, crit_damage = 5)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         HalopointBullet = core.InformedCharacterModifier("할로포인트 불릿",att = 60)
         FullMetaJacket = core.InformedCharacterModifier("풀 메탈 재킷",pdamage_indep = 20, crit = 30, armor_ignore = 20)
-        ContinualAimingPassive = core.InformedCharacterModifier("컨티뉴얼 에이밍(패시브)",crit_damage = 20)
-        CaptainDignitiyPassive = core.InformedCharacterModifier("캡틴 디그니티(패시브)",att = 30)
-        CrueCommandership = core.InformedCharacterModifier("크루 커맨더쉽",crit_damage = 25)
+        ContinualAimingPassive = core.InformedCharacterModifier("컨티뉴얼 에이밍(패시브)",crit_damage = 20 + self._combat)
+        CaptainDignitiyPassive = core.InformedCharacterModifier("캡틴 디그니티(패시브)",att = 30 + passive_level)
+        CrueCommandership = core.InformedCharacterModifier("크루 커맨더쉽",crit_damage = 25 + passive_level)
     
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
     
@@ -34,9 +36,11 @@ class JobGenerator(ck.JobGenerator):
             FullMetaJacket, CaptainDignitiyPassive, CrueCommandership]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
+
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 50)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)
-        ContinualAimingPassive = core.InformedCharacterModifier("컨티뉴얼 에이밍(액티브)",pdamage_indep = 25)
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5*ceil(passive_level/2))
+        ContinualAimingPassive = core.InformedCharacterModifier("컨티뉴얼 에이밍(액티브)",pdamage_indep = 25 +2*self._combat)
         
         return [WeaponConstant, Mastery, ContinualAimingPassive]
         
@@ -65,26 +69,20 @@ class JobGenerator(ck.JobGenerator):
         헤드샷 / 배틀쉽/ 옥타
         서먼크루 / 스트봄 / 노틸러스
         '''
+        passive_level = chtr.get_base_modifier().passive_level + self._combat
         DEADEYEACC = 3
         BULLET_PARTY_TICK = 120
         
         ######   Skill   ######
         #Buff skills
     
-        SummonCrew = core.SummonSkill("서먼 크루", 900, 60000/17, 465 * 1.15, 2, 120000, rem = True).setV(vEhc, 6, 2, True).wrap(core.SummonSkillWrapper)   #분당 17타, 평균 퍼뎀 465
-        SummonCrewBuff = core.BuffSkill("서먼 크루(버프)", 0, 120000, rem = True, crit = 15/2, crit_damage = 5/2, cooltime = -1, att = 45).wrap(core.BuffSkillWrapper)
+        SummonCrew = core.SummonSkill("서먼 크루", 900, 60000/17, 465, 2, 120000, modifier=core.CharacterModifier(pdamage_indep = 15 + passive_level), rem = True).setV(vEhc, 6, 2, True).wrap(core.SummonSkillWrapper)   #분당 17타, 평균 퍼뎀 465
+        SummonCrewBuff = core.BuffSkill("서먼 크루(버프)", 0, 120000, rem = True, crit = (15+passive_level)/2, crit_damage = 5/2, cooltime = -1, att = 45 + 3*passive_level).wrap(core.BuffSkillWrapper)
     
         OctaQuaterdeck = core.SummonSkill("옥타 쿼터덱", 630, 60000/110, 300, 1, 30000, rem = True, cooltime = 10000).setV(vEhc, 5, 2, True).wrap(core.SummonSkillWrapper)
-        RapidFire = core.DamageSkill("래피드 파이어", 120, 325, 1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        RapidFire = core.DamageSkill("래피드 파이어", 120, 325 + 3*self._combat, 1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
         # TODO : 지속시간 30초 -> 60초, 쿨타임 60초 -> 30초
-        # 소환수 데미지 변경 계산 필요
-        BattleshipBomber = core.DamageSkill("배틀쉽 봄버", 0,0,0, red = True, cooltime = 60000).wrap(core.DamageSkillWrapper)
-        BattleshipBomber_1_ON = core.BuffSkill("배틀쉽봄버-1", 0, 30000, rem = True, cooltime = -1).wrap(core.BuffSkillWrapper)
-        BattleshipBomber_2_ON = core.BuffSkill("배틀쉽봄버-2", 0, 30000, rem = True, cooltime = -1).wrap(core.BuffSkillWrapper)
-        BattleshipBomber_1 = core.SummonSkill("배틀쉽 봄버(소환,1)", 300, 600, 297, 3, 30000, rem = True, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
-        BattleshipBomber_2 = core.SummonSkill("배틀쉽 봄버(소환, 2)", 300, 600, 297, 3, 30000, rem = True, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
-
         '''
         돈틀레스 : 330 보통 13/22 타수3 600
         블랙바크 : 445 느림 15/18 타수3 810
@@ -92,16 +90,23 @@ class JobGenerator(ck.JobGenerator):
         조나단 : 320 보통   12/20 타수3 600
         평균 데미지 600ms당 297
         '''
-        
 
-        Headshot = core.DamageSkill("헤드 샷", 420, 525, 12+1, cooltime = 5000, modifier = core.CharacterModifier(crit=100, armor_ignore=60, pdamage = 20)).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
+        BB_AVERAGE = ((330+3*self._combat) + (445+3*self._combat)*(600/810) + (200+3*self._combat)*(600/570) + (320+3*self._combat))/4
+
+        BattleshipBomber = core.DamageSkill("배틀쉽 봄버", 0,0,0, red = True, cooltime = 60000).wrap(core.DamageSkillWrapper)
+        BattleshipBomber_1_ON = core.BuffSkill("배틀쉽봄버-1", 0, 30000, rem = True, cooltime = -1).wrap(core.BuffSkillWrapper)
+        BattleshipBomber_2_ON = core.BuffSkill("배틀쉽봄버-2", 0, 30000, rem = True, cooltime = -1).wrap(core.BuffSkillWrapper)
+        BattleshipBomber_1 = core.SummonSkill("배틀쉽 봄버(소환,1)", 300, 600, BB_AVERAGE, 3, 30000, rem = True, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
+        BattleshipBomber_2 = core.SummonSkill("배틀쉽 봄버(소환,2)", 300, 600, BB_AVERAGE, 3, 30000, rem = True, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
         
-        Nautilus = core.DamageSkill("노틸러스", 690, 440+130, 7, red = True, cooltime = 30000).setV(vEhc, 8, 2, True).wrap(core.DamageSkillWrapper)
-        PirateStyle = core.BuffSkill("파이렛 스타일", 0, 180000, rem = True, patt = 20).wrap(core.BuffSkillWrapper)
-        CaptainDignitiyNormal = core.DamageSkill("캡틴 디그니티", 0, 275, 1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        CaptainDignitiyEnhance = core.DamageSkill("캡틴 디그니티(강화)", 0, 275*1.3, 1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper, name = "디그니티(강화)")
+        Headshot = core.DamageSkill("헤드 샷", 420, 525+5*self._combat, 12+1, cooltime = 5000, modifier = core.CharacterModifier(crit=100, armor_ignore=60, pdamage = 20)).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
         
-        QuickDraw = core.BuffSkill("퀵 드로우", 0, core.infinite_time(), cooltime = -1, pdamage_indep = 25).wrap(core.BuffSkillWrapper)
+        Nautilus = core.DamageSkill("노틸러스", 690, 440+130+4*self._combat, 7, red = True, cooltime = 30000).setV(vEhc, 8, 2, True).wrap(core.DamageSkillWrapper)
+        PirateStyle = core.BuffSkill("파이렛 스타일", 0, (180+6*self._combat)*1000, rem = True, patt = 20 + self._combat).wrap(core.BuffSkillWrapper)
+        CaptainDignitiyNormal = core.DamageSkill("캡틴 디그니티", 0, 275 + 3*passive_level, 1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        CaptainDignitiyEnhance = core.DamageSkill("캡틴 디그니티(강화)", 0, (275 + 3*passive_level)*1.3, 1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper, name = "디그니티(강화)")
+        
+        QuickDraw = core.BuffSkill("퀵 드로우", 0, core.infinite_time(), cooltime = -1, pdamage_indep = 25 + self._combat).wrap(core.BuffSkillWrapper)
         
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
         InfiniteBullet = core.BuffSkill("인피닛 불릿", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
