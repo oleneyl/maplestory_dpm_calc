@@ -31,7 +31,7 @@ class JobGenerator(ck.JobGenerator):
         Grid = core.InformedCharacterModifier("그리드",att = 5)
         
         PrimaCriticalPassive = core.InformedCharacterModifier("프리마 크리티컬(패시브)",stat_main = 10, crit_damage = 20)
-        PrimaCritical = core.InformedCharacterModifier("프리마 크리티컬", crit_damage = 8.8) #스택식으로도 계산 가능.
+        PrimaCritical = core.InformedCharacterModifier("프리마 크리티컬", crit_damage = 8.33) # 스택식으로도 계산 가능. 150 / 18 = 8.33...
         
         BoomerangStepPassive = core.InformedCharacterModifier("부메랑 스텝(패시브)",pdamage_indep = 25+2*(self._combat//3))
         
@@ -55,7 +55,7 @@ class JobGenerator(ck.JobGenerator):
         '''
         일반 다크사이트는 깡으로 사용하지 않음.
         
-        프리마 크리티컬 크뎀 : 8.8%
+        프리마 크리티컬 크뎀 : 8.33%
         쉐도우 파트너는 절개, 암살, 소닉 블로우에만 적용.
         
         하이퍼 : 메익 인핸스, 암살 리인포스 / 보킬 / 이그노어 가드.
@@ -156,7 +156,9 @@ class JobGenerator(ck.JobGenerator):
         SonicBlowTick.onAfter(MesoStack.stackController(7*2*0.4, name = "메소 생성"))
         SonicBlow.onAfter(core.RepeatElement(SonicBlowTick, 15))
         
-        Assasinate2_D.onAfter(core.OptionalElement(Eviscerate.is_available, Eviscerate, name = "절개 연계 여부"))
+        UseEviscerate = core.OptionalElement(Eviscerate.is_available, Eviscerate, name = "절개 연계 여부")
+        Assasinate2.onAfter(UseEviscerate)
+        Assasinate2_D.onAfter(UseEviscerate)
         Eviscerate.onAfter(MesoStack.stackController(7*2*0.4, name = "메소 생성"))
         Eviscerate.protect_from_running()
         
