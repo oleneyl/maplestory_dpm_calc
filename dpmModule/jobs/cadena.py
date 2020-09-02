@@ -108,7 +108,7 @@ class JobGenerator(ck.JobGenerator):
         CANCEL_TIME = 150
 
         passive_level = chtr.get_base_modifier().passive_level + self._combat
-        CheapShotII = core.CharacterModifier(crit = 2, crit_damage = 10) # 위크포인트 컨버징 어택
+        CheapShotII = core.CharacterModifier(crit = 2, crit_damage = 10 + ceil(passive_level / 4)) # 위크포인트 컨버징 어택
         CheapShotIIBleed = core.DotSkill("위크포인트 컨버징 어택(출혈)", 110 + 2 * passive_level, 99999999).wrap(core.SummonSkillWrapper)
         CheapShotIIBleedBuff = core.BuffSkill("위크포인트 컨버징 어택(출혈)(디버프)", 0, 99999999, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
         CheapShotIIAdventureMageBuff = core.BuffSkill("위크포인트 컨버징 어택(모법링크)", 0, 99999999, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
