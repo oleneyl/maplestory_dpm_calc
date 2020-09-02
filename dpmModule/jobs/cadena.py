@@ -45,6 +45,32 @@ class WeaponVarietyStackWrapper(core.StackSkillWrapper): # TODO: 굳이 관리�
         conditionalTask = core.OptionalElement(partial(self._changed, weapon), taskHolder, name = "무기 교체")
         return conditionalTask
 
+class MaelstromWrapper(core.SummonSkillWrapper):
+    def __init__(self, vEhc, tick):
+        self.tick_list = [840, 120, 180, 270, 390, 540, 720, 930, 1170, 1440, 1740, 99999999]
+        self.currentTick = len(self.tick_list)
+        self.reuseTick = tick
+        skill = core.SummonSkill("체인아츠:메일스트롬", 540, 0, 300+12*vEhc.getV(3,2), 4, 8540).isV(vEhc,3,2)
+        super(MaelstromWrapper, self).__init__(skill)
+
+    def check_use(self):
+        return self.currentTick >= self.reuseTick
+
+    def _use(self, skill_modifier):
+        result = super(MaelstromWrapper, self)._use(skill_modifier)
+        self.currentTick = 0
+        self.tick = self.tick_list[0]
+        self.currentTick += 1
+        return result
+
+    def _useTick(self):
+        if self.onoff and self.tick <= 0:
+            self.tick += self.tick_list[self.currentTick]
+            self.currentTick += 1
+            return core.ResultObject(0, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
+        else:
+            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)    
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -72,7 +98,7 @@ class JobGenerator(ck.JobGenerator):
                                     QuickserviceMind, BasicDetection, WeaponMastery, QuickserviceMind_II, ReadyToDiePassive]
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 30, crit_damage = 40, pdamage = 20, crit = 8)
+        return core.CharacterModifier(armor_ignore = 30, crit_damage = 40, pdamage = 20, crit = 6)
                               
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self._combat
@@ -176,7 +202,7 @@ class JobGenerator(ck.JobGenerator):
         AD_Odnunce = core.SummonSkill("A.D 오드넌스", 360, 270, 225+9*vEhc.getV(1,1), 5, 10000, cooltime = 25000, red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # 37*5타
         AD_Odnunce_Final = core.DamageSkill("A.D 오드넌스(막타)", 0, 750+30*vEhc.getV(1,1), 8, cooltime = -1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         
-        ChainArts_Maelstorm = core.SummonSkill("체인아츠:메일스트롬", 540, 4000/8, 300+12*vEhc.getV(3,2), 4, 4000, cooltime = 4000).isV(vEhc,3,2).wrap(core.SummonSkillWrapper) # 4초간 32타로 가정
+        ChainArts_Maelstorm = MaelstromWrapper(vEhc, 8)
         ChainArts_Maelstorm_Slow = core.BuffSkill("체인아츠:메일스트롬(중독)", 0, 4000+6000, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage, cooltime = -1).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
         ######   Skill Wrapper   ######
 
@@ -278,7 +304,7 @@ class JobGenerator(ck.JobGenerator):
         for i in [ChainArts_Stroke_1, ChainArts_Stroke_2_Cancel, ChainArts_Maelstorm]:
             MaleStromCombo.onAfter(i)
 
-        for c in [core.ConstraintElement('메일스트롬', ChainArts_Maelstorm, ChainArts_Maelstorm.is_available)]:
+        for c in [core.ConstraintElement('메일스트롬', ChainArts_Maelstorm, ChainArts_Maelstorm.check_use)]:
             MaleStromCombo.onConstraint(c)
         
         # 체인아츠 - 퓨리 연동
