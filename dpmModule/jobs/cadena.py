@@ -103,6 +103,7 @@ class JobGenerator(ck.JobGenerator):
         
         봄-브릭 / 샷건-클로 / 나이프 / 윙대거 / 배트 / 시미터-체이스 / 메일스트롬 4초당 1회 
         '''
+        STROKE1_HIT_RATE = 1
         STROKE1_CANCEL_TIME = 100
         CANCEL_TIME = 150
 
@@ -126,8 +127,8 @@ class JobGenerator(ck.JobGenerator):
         
         
         #체인아츠
-        ChainArts_Stroke_1 = core.DamageSkill("체인아츠:스트로크(1타)", 210, 150, 2, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        ChainArts_Stroke_1_Cancel = core.DamageSkill("체인아츠:스트로크(1타)(캔슬)", STROKE1_CANCEL_TIME, 150, 2, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ChainArts_Stroke_1 = core.DamageSkill("체인아츠:스트로크(1타)", 210, 150, 2 * STROKE1_HIT_RATE, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ChainArts_Stroke_1_Cancel = core.DamageSkill("체인아츠:스트로크(1타)(캔슬)", STROKE1_CANCEL_TIME, 150, 2 * STROKE1_HIT_RATE, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         ChainArts_Stroke_2 = core.DamageSkill("체인아츠:스트로크(2타)", 390, 400, 5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         ChainArts_Stroke_2_Cancel = core.DamageSkill("체인아츠:스트로크(2타)(캔슬)", CANCEL_TIME, 400, 5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
