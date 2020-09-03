@@ -189,11 +189,8 @@ class JobGenerator(ck.JobGenerator):
 
         DoubleTime = core.BuffSkill("래피드 타임", 0, 9999*10000, crit = 20, pdamage = 10).wrap(core.BuffSkillWrapper)
         TimeDistortion = core.BuffSkill("타임 디스토션", 540, 30000, cooltime = 240 * 1000, pdamage = 25).wrap(core.BuffSkillWrapper)
-        TimeHolding = core.BuffSkill("타임 홀딩", 1080, 90000, 180*1000, pdamage = 10).wrap(core.BuffSkillWrapper) #  쿨타임 초기화.(타임 리와 / 리미트 브레이크 제외)
+        TimeHolding = core.BuffSkill("타임 홀딩", 1080, 90000, cooltime = 180*1000, pdamage = 10, red = False).wrap(core.BuffSkillWrapper) #  쿨타임 초기화.(타임 리와 / 리미트 브레이크 제외)
         IntensiveTime = core.BuffSkill("인탠시브 타임", 0, 40*60*1000, patt = 4).wrap(core.BuffSkillWrapper)
-        
-        # 딜레이 확인필요, 딜사이클에 포함되는 스킬인지 확인필요
-        ShadowRain = core.DamageSkill("쉐도우 레인", 0, 1400, 14, cooltime = 300*1000).wrap(core.DamageSkillWrapper)
         
         SoulContract = globalSkill.soul_contract()
 
@@ -311,7 +308,7 @@ class JobGenerator(ck.JobGenerator):
 
         LimitBreakCDR = core.BuffSkill("리미트 브레이크(재사용 대기시간 감소)", 0, 0, cooltime = -1).wrap(core.BuffSkillWrapper)
         LimitBreak.onAfter(LimitBreakCDR)
-        for sk in [ShadowRain, TimeDistortion, SoulContract]:
+        for sk in [TimeDistortion, SoulContract]:
             # 재사용 대기시간 초기화의 효과를 받지 않는 스킬을 제외한 스킬의 재사용 대기시간이 (기본 200%에 5레벨마다 10%씩) 더 빠르게 감소
             LimitBreakCDR.onAfter(sk.controller(2000 + 20 * vEhc.getV(0, 0), 'reduce_cooltime'))
         
@@ -325,8 +322,7 @@ class JobGenerator(ck.JobGenerator):
         li.reverse()
         ComboHolder.onAfters(li)
 
-        TimeHolding.onAfters([TimeDistortion.controller(1), ShadowRain.controller(1)])
-        TimeHolding.onConstraint(core.ConstraintElement("쉐레사용 이후사용", ShadowRain, ShadowRain.is_not_usable))
+        TimeHolding.onAfter(TimeDistortion.controller(1))
 
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 3)
@@ -346,14 +342,14 @@ class JobGenerator(ck.JobGenerator):
             sk.onAfter(RhinneBlessAttack)
 
         스킬 쿨타임 초기화
-        RhinneBless.onAfters(TimeDistortion.controller(1, 'reduce_cooltime_p'), ShadowRain.controller(1, 'reduce_cooltime_p'), SoulContract.controller(1, 'reduce_cooltime_p'))
+        RhinneBless.onAfters(TimeDistortion.controller(1, 'reduce_cooltime_p'), SoulContract.controller(1, 'reduce_cooltime_p'))
         '''
 
         return(ComboHolder,
                 [globalSkill.maple_heros(chtr.level, combat_level = 0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, DoubleTime, TimeDistortion, TimeHolding, IntensiveTime, LimitBreak,
                     SoulContract]+\
-                [ShadowRain, TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta]+\
+                [TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta]+\
                 [StormBreakSummon, WindCutterSummon, ThrowingWeapon]+\
                 []+\
                 [ComboHolder])
