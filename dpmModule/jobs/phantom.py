@@ -84,7 +84,7 @@ class JobGenerator(ck.JobGenerator):
         MileAiguillesInit = core.BuffSkill("얼티밋 드라이브(개시)", 240, 240).wrap(core.BuffSkillWrapper)
         MileAiguilles = core.DamageSkill("얼티밋 드라이브", 150, 125 + self._combat, 3, modifier = core.CharacterModifier(pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
-        CarteNoir = core.DamageSkill("느와르 카르트", 0, 270 + 2*passive_level, min(chtr.get_modifier().crit/100 + 0.1, 1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        CarteNoir = core.DamageSkill("느와르 카르트", 0, 270, min(chtr.get_modifier().crit/100 + 0.1, 1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         CarteNoir_ = core.DamageSkill("느와르 카르트(저지먼트)", 0, 270, 10).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
         PrieredAria = core.BuffSkill("프레이 오브 아리아", 0, (240+7*self._combat)*1000, pdamage = 30+self._combat, armor_ignore = 30+self._combat).wrap(core.BuffSkillWrapper)
