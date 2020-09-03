@@ -50,6 +50,9 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 2
         self._combat = 0
 
+        self.Alpha = core.CharacterModifier(pdamage_indep = 34, crit = 40, att = 40, armor_ignore = 30, crit_damage = 50)
+        self.Beta = core.CharacterModifier(pdamage_indep = 49, crit = 15, boss_pdamage = 30, att = 80)
+
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
 
@@ -91,12 +94,8 @@ class JobGenerator(ck.JobGenerator):
         어파스 기준
         '''
         #### 마스터리 ####
-        AlphaMastery = core.CharacterModifier(pdamage_indep = 34) + \
-            core.CharacterModifier(att = 40, armor_ignore = 30) + \
-            core.CharacterModifier(crit = 40) + \
-            core.CharacterModifier(crit_damage = 50)
-        BetaMastery = core.CharacterModifier(pdamage_indep = 49) + \
-                    core.CharacterModifier(crit = 15, boss_pdamage = 30, att = 80)
+        AlphaMastery = self.Alpha
+        BetaMastery = self.Beta
 
         AlphaBetaDiff = BetaMastery - AlphaMastery
         
