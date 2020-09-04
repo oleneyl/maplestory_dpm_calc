@@ -128,6 +128,7 @@ class JobGenerator(ck.JobGenerator):
         GuardianOfNova_2 = core.SummonSkill("가디언 오브 노바(2)", 0, 45000/34, 250+10*vEhc.getV(2,2), 6, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 34*6타
         GuardianOfNova_3 = core.SummonSkill("가디언 오브 노바(3)", 0, 45000/26, 900+35*vEhc.getV(2,2), 2, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 26*2타
     
+        # 윌 오브 소드: 스트라이크는 소환, 시전 2회 모두 액션 딜레이가 적용됨. 일반 150ms 변신 600ms
         WillOfSwordStrike_Dummy = core.DamageSkill("윌 오브 소드: 스트라이크(시전)", 0, 0, 0, cooltime = 30000, red=True).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
         WillOfSwordStrike = core.DamageSkill("윌 오브 소드: 스트라이크", 150*2, 500+20*vEhc.getV(3,3), 4*5).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
         WillOfSwordStrike_Explode = core.DamageSkill("윌 오브 소드: 스트라이크(폭발)", 0, 1000+40*vEhc.getV(3,3), 6*5).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
