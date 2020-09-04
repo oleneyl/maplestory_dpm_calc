@@ -1432,9 +1432,9 @@ class BuffSkillWrapper(AbstractSkillWrapper):
     def spend_time(self, time : int) -> None :  #TODO : can make this process more faster.. maybe
         self.timeLeft -= time
         self.cooltimeLeft -= time
-        if self.timeLeft <= 0:
+        if self.timeLeft < 0:
             self.onoff = False
-        if self.cooltimeLeft <= 0:
+        if self.cooltimeLeft < 0:
             self.available = True
     
     def _use(self, skill_modifier) -> ResultObject:
@@ -1549,7 +1549,7 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         
     def spend_time(self, time : int) -> None:
         self.cooltimeLeft -= time
-        if self.cooltimeLeft <= 0:
+        if self.cooltimeLeft < 0:
             self.available = True
         
     def _use(self, skill_modifier):
@@ -1625,9 +1625,9 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self.timeLeft -= time
         self.cooltimeLeft -= time
         self.tick -= time
-        if self.timeLeft <= 0:
+        if self.timeLeft < 0:
             self.onoff = False
-        if self.cooltimeLeft <= 0:
+        if self.cooltimeLeft < 0:
             self.available = True
     
     #_use only alloted for start.
