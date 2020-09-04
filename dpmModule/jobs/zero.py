@@ -123,6 +123,8 @@ class JobGenerator(ck.JobGenerator):
         OnlyAlpha = core.CharacterModifier(crit_damage = (20*4/35)) - AlphaBetaDiff
         OnlyBeta = core.CharacterModifier() - OnlyAlpha
 
+        Assist = core.BuffSkill("어시스트 상태", 0, 3000, cooltime = -1, rem = False, red = False).wrap(core.BuffSkillWrapper)
+
         extra_dmg = lambda x, y : (core.CharacterModifier(pdamage = (x - 1 + int(y))*8))
 
         #### 알파 ####
@@ -321,11 +323,13 @@ class JobGenerator(ck.JobGenerator):
         
         ### 상태 태그! ###
         SetAlpha = core.GraphElement("알파로 태그")
-        SetAlpha.onAfter(AlphaState)
-        SetAlpha.onAfter(BetaState.controller(-1))
+        #SetAlpha.onAfter(AlphaState)
+        #SetAlpha.onAfter(BetaState.controller(-1))
+        SetAlpha.onAfters([AlphaState, BetaState.controller(-1), Assist])
         SetBeta = core.GraphElement("베타로 태그")
-        SetBeta.onAfter(BetaState)
-        SetBeta.onAfter(AlphaState.controller(-1))
+        #SetBeta.onAfter(BetaState)
+        #SetBeta.onAfter(AlphaState.controller(-1))
+        SetBeta.onAfters([BetaState, AlphaState.controller(-1), Assist])
         
         ### 5차 스킬들 ###
         TwinBladeOfTime.onAfters([TwinBladeOfTime_end, TwinBladeOfTime_3, TwinBladeOfTime_2, TwinBladeOfTime_1])
