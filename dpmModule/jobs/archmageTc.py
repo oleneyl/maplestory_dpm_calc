@@ -95,7 +95,7 @@ class JobGenerator(ck.JobGenerator):
         FrozenOrbEjac = core.SummonSkill("프로즌 오브", 690, 210, 220+4*combat, 1, 4000, cooltime = 5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
     
         LighteningSpear = core.DamageSkill("라이트닝 스피어", 0, 0, 1, cooltime = 75 * 1000).wrap(core.DamageSkillWrapper)
-        LighteningSpearSingle = core.DamageSkill("라이트닝 스피어(키다운)", 270, 200, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        LighteningSpearSingle = core.DamageSkill("라이트닝 스피어(키다운)", 267, 200, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 총 8010ms
         LighteningSpearFinalizer = core.DamageSkill("라이트닝 스피어(막타)", 1080, 1500, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
         IceAgeInit = core.DamageSkill("아이스 에이지(개시)", 660, 500 + vEhc.getV(2,3)*20, 10, cooltime = 60 * 1000, red = True).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
