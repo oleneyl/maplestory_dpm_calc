@@ -158,12 +158,12 @@ class JobGenerator(ck.JobGenerator):
         AdvancedRollingCurve = core.DamageSkill("어드밴스드 롤링 커브", 960, 365+3*self._combat, 12).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedRollingCurveTAG = core.DamageSkill("어드밴스드 롤링 커브(태그)", 0, 365+3*self._combat, 12).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedRollingCurveAura = core.DamageSkill("어드밴스드 롤링 커브(오라)", 0, 350+self._combat, 2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingCurveAuraTAG = core.DamageSkill("어드밴스드 롤링 커브(오라)(태그)", 0, 350+self._combat, 2, modifier = OnlyAlpha).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingCurveAuraTAG = core.DamageSkill("어드밴스드 롤링 커브(오라)(태그)", 0, 350+self._combat, 2*2, modifier = OnlyAlpha).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
         AdvancedRollingAssulter = core.DamageSkill("어드밴스드 롤링 어썰터", 960, 375+2*self._combat, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedRollingAssulterTAG = core.DamageSkill("어드밴스드 롤링 어썰터(태그)", 0, 375+2*self._combat, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedRollingAssulterAura = core.DamageSkill("어드밴스드 롤링 어썰터(오라)", 0, 250+self._combat, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingAssulterAuraTAG = core.DamageSkill("어드밴스드 롤링 어썰터(오라)(태그)", 0, 250+self._combat, 3, modifier = OnlyAlpha).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingAssulterAuraTAG = core.DamageSkill("어드밴스드 롤링 어썰터(오라)(태그)", 0, 250+self._combat, 3*4, modifier = OnlyAlpha).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
         WindCutter = core.DamageSkill("윈드 커터", 540, 165, 8).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         WindCutterSummon = core.SummonSkill("윈드 커터(소환)", 0, 500, 110, 3, 3000, cooltime=-1).setV(vEhc, 7, 2, False).wrap(core.SummonSkillWrapper)
