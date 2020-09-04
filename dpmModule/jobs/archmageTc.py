@@ -95,8 +95,8 @@ class JobGenerator(ck.JobGenerator):
         FrozenOrbEjac = core.SummonSkill("프로즌 오브", 690, 210, 220+4*combat, 1, 4000, cooltime = 5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
     
         LighteningSpear = core.DamageSkill("라이트닝 스피어", 0, 0, 1, cooltime = 75 * 1000).wrap(core.DamageSkillWrapper)
-        LighteningSpearSingle = core.DamageSkill("라이트닝 스피어(단일)", 270, 200, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        LighteningSpearFinalizer = core.DamageSkill("라이트닝 스피어 막타", 1080, 1500, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        LighteningSpearSingle = core.DamageSkill("라이트닝 스피어(키다운)", 270, 200, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        LighteningSpearFinalizer = core.DamageSkill("라이트닝 스피어(막타)", 1080, 1500, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
         IceAgeInit = core.DamageSkill("아이스 에이지(개시)", 660, 500 + vEhc.getV(2,3)*20, 10, cooltime = 60 * 1000, red = True).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
         IceAgeSummon = core.SummonSkill("아이스 에이지(장판)", 0, 810, 125 + vEhc.getV(2,3)*5, 3, 15 * 1000, cooltime = -1).isV(vEhc,2,3).wrap(core.SummonSkillWrapper)
@@ -141,12 +141,12 @@ class JobGenerator(ck.JobGenerator):
         FrozenOrbEjac.onTick(BlizzardPassive)
 
         #Lightening Spear
-        LighteningSpearSingle.onAfter(BlizzardPassive)
         LighteningSpearSingle.add_runtime_modifier(FrostEffect, applyFrostEffect)
         LighteningSpearSingle.onAfter(FrostDecrement)
-        LighteningSpearFinalizer.onAfter(BlizzardPassive)
+        LighteningSpearSingle.onAfter(BlizzardPassive)
         LighteningSpearFinalizer.add_runtime_modifier(FrostEffect, applyFrostEffect)
         LighteningSpearFinalizer.onAfter(FrostDecrement)
+        LighteningSpearFinalizer.onAfter(BlizzardPassive)
         
         LighteningRepeator = core.RepeatElement(LighteningSpearSingle, 30)
         LighteningRepeator.onAfter(LighteningSpearFinalizer)
@@ -154,20 +154,21 @@ class JobGenerator(ck.JobGenerator):
         LighteningSpear.onAfter(LighteningRepeator)
         
         #damage skills
-        ChainLightening.onAfter(BlizzardPassive)
+        ChainLightening.add_runtime_modifier(FrostEffect, applyFrostEffect)
         ChainLightening.onAfter(FrostDecrement)
+        ChainLightening.onAfter(BlizzardPassive)
 
         ThunderStorm.add_runtime_modifier(FrostEffect, applyFrostEffect)
         
         IceAgeSummon.onTicks([BlizzardPassive, FrostIncrement])
-        IceAgeInit.onBefore(FrostIncrement)
+        IceAgeInit.onAfter(FrostIncrement)
         IceAgeInit.onAfter(BlizzardPassive)
         IceAgeInit.onAfter(IceAgeSummon)
         
         Elquiness.onTick(FrostIncrement)
         
-        Blizzard.onBefore(FrostIncrement)
-        BlizzardPassive.onBefore(FrostEffect.stackController(0.6))
+        Blizzard.onAfter(FrostIncrement)
+        BlizzardPassive.onAfter(FrostEffect.stackController(0.6))
         
         SpiritOfSnow.onTick(FrostEffect.stackController(3))
         
