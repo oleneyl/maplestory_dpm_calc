@@ -355,6 +355,9 @@ class JobGenerator(ck.JobGenerator):
 
         TimeHolding.onAfter(TimeDistortion.controller(1))
 
+        def aura_weapon_beta(betaState):
+            return extra_dmg(10, False) if betaState.is_active() else core.CharacterModifier()
+        
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 3)
         for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
@@ -362,6 +365,7 @@ class JobGenerator(ck.JobGenerator):
                     FallingStar, AdvancedEarthBreak, TwinBladeOfTime_end]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
+        AuraWeapon.add_runtime_modifier(BetaState, aura_weapon_beta)
 
         DivineLeer.set_disabled_and_time_left(1)
 
