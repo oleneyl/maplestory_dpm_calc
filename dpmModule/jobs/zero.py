@@ -15,6 +15,8 @@ from math import ceil
 항상 알파: 스핀 커터 오라, 롤링 커브 오라, 롤링 어썰터 오라
 항상 베타: 파워 스텀프 충격파
 
+알파 스킬에 대검 마스터리의 데미지 증가 적용 여부는 아직 모름
+
 https://github.com/Monolith11/memo/wiki/Zero-Skill-Mechanics
 '''
 
@@ -118,6 +120,9 @@ class JobGenerator(ck.JobGenerator):
             crit_damage = AlphaBetaDiff.crit_damage
         ).wrap(core.BuffSkillWrapper)
 
+        OnlyAlpha = core.CharacterModifier(crit_damage = (20*4/35)) - AlphaBetaDiff
+        OnlyBeta = core.CharacterModifier() - OnlyAlpha
+
         extra_dmg = lambda x, y : (core.CharacterModifier(pdamage = (x - 1 + int(y))*8))
 
         #### 알파 ####
@@ -146,14 +151,17 @@ class JobGenerator(ck.JobGenerator):
         AdvancedSpinCutter = core.DamageSkill("어드밴스드 스핀 커터", 630, 260+3*self._combat, 10).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedSpinCutterTAG = core.DamageSkill("어드밴스드 스핀 커터(태그)", 0, 260+3*self._combat, 10).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedSpinCutterAura = core.DamageSkill("어드밴스드 스핀 커터(오라)", 0, 130+3*self._combat, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedSpinCutterAuraTAG = core.DamageSkill("어드밴스드 스핀 커터(오라)(태그)", 0, 130+3*self._combat, 4, modifier = OnlyAlpha).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         AdvancedRollingCurve = core.DamageSkill("어드밴스드 롤링 커브", 960, 365+3*self._combat, 12).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedRollingCurveTAG = core.DamageSkill("어드밴스드 롤링 커브(태그)", 0, 365+3*self._combat, 12).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedRollingCurveAura = core.DamageSkill("어드밴스드 롤링 커브(오라)", 0, 350+self._combat, 2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingCurveAuraTAG = core.DamageSkill("어드밴스드 롤링 커브(오라)(태그)", 0, 350+self._combat, 2, modifier = OnlyAlpha).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
         AdvancedRollingAssulter = core.DamageSkill("어드밴스드 롤링 어썰터", 960, 375+2*self._combat, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedRollingAssulterTAG = core.DamageSkill("어드밴스드 롤링 어썰터(태그)", 0, 375+2*self._combat, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedRollingAssulterAura = core.DamageSkill("어드밴스드 롤링 어썰터(오라)", 0, 250+self._combat, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingAssulterAuraTAG = core.DamageSkill("어드밴스드 롤링 어썰터(오라)(태그)", 0, 250+self._combat, 3, modifier = OnlyAlpha).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
         WindCutter = core.DamageSkill("윈드 커터", 540, 165, 8).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         WindCutterSummon = core.SummonSkill("윈드 커터(소환)", 0, 500, 110, 3, 3000, cooltime=-1).setV(vEhc, 7, 2, False).wrap(core.SummonSkillWrapper)
@@ -172,16 +180,13 @@ class JobGenerator(ck.JobGenerator):
 
         #### 베타 ####
 
-        #대검 마스터리: 스킬 사용 시 공격 받은 적이 스킬의 최대 공격 가능한 몬스터 수보다 적을 때 1명 당 8%의 데미지 증가
-        #각각 베타 스킬에 꼭 적용해주세요. 툴팁에 나와있는 몬스터 수를 그대로 작성해주시면 됩니다.
-        #일반 스킬은 True, 5차 스킬은 False
-
         UpperStrike = core.DamageSkill("어퍼 슬래시", 690, 210, 6, modifier = extra_dmg(6, True)).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         UpperStrikeTAG = core.DamageSkill("어퍼 슬래시(태그)", 0, 210, 6, modifier = extra_dmg(6, True)).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         
         AirRiot = core.DamageSkill("어드밴스드 파워 스텀프", 570, 330 + 5*self._combat, 9, modifier = extra_dmg(6, True)).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
         AirRiotTAG = core.DamageSkill("어드밴스드 파워 스텀프(태그)", 0, 330 + 5*self._combat, 9, modifier = extra_dmg(6, True)).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
         AirRiotWave = core.DamageSkill("어드밴스드 파워 스텀프(파동)", 0, 330 + 5*self._combat, 9, modifier = extra_dmg(6, True)).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        AirRiotWaveTAG = core.DamageSkill("어드밴스드 파워 스텀프(파동)(태그)", 0, 330 + 5*self._combat, 9, modifier = OnlyBeta).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
         
         THROWINGHIT = 5
         FlashCut = core.DamageSkill("프론트 슬래시", 630, 205, 6, modifier = extra_dmg(6, True)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
@@ -270,16 +275,16 @@ class JobGenerator(ck.JobGenerator):
         AdvancedSpinCutter.onAfter(AdvancedSpinCutterAura)
         
         FlashAssaultTAG.onAfter(AdvancedSpinCutterTAG)
-        AdvancedSpinCutterTAG.onAfter(AdvancedSpinCutterAura)
+        AdvancedSpinCutterTAG.onAfter(AdvancedSpinCutterAuraTAG)
         
         AdvancedRollingCurve.onAfter(AdvancedRollingCurveAura)
-        AdvancedRollingCurveTAG.onAfter(AdvancedRollingCurveAura)
+        AdvancedRollingCurveTAG.onAfter(AdvancedRollingCurveAuraTAG)
         
         AdvancedRollingCurve.onAfter(AdvancedRollingAssulter)
         AdvancedRollingCurveTAG.onAfter(AdvancedRollingAssulterTAG)
         
         AdvancedRollingAssulter.onAfter(AdvancedRollingAssulterAura)
-        AdvancedRollingAssulterTAG.onAfter(AdvancedRollingAssulterAura)
+        AdvancedRollingAssulterTAG.onAfter(AdvancedRollingAssulterAuraTAG)
         
         WindCutter.onAfter(WindCutterSummon)
         WindCutter.onAfter(WindStrike)
@@ -291,7 +296,7 @@ class JobGenerator(ck.JobGenerator):
         UpperStrikeTAG.onAfter(AirRiotTAG)
         
         AirRiot.onAfter(AirRiotWave)
-        AirRiotTAG.onAfter(AirRiotWave)
+        AirRiotTAG.onAfter(AirRiotWaveTAG)
         
         FlashCut.onAfter(ThrowingWeapon)
         SpinDriver.onAfter(AdvancedWheelWind)
