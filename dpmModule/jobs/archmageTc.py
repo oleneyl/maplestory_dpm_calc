@@ -86,7 +86,7 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill   ######
         #Buff skills
         Meditation = core.BuffSkill("메디테이션", 0, 240*1000, att = 30, rem = True, red = True).wrap(core.BuffSkillWrapper)
-        EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10, red = True).wrap(core.BuffSkillWrapper)
+        EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         
         #Damage Skills
@@ -142,10 +142,10 @@ class JobGenerator(ck.JobGenerator):
 
         #Lightening Spear
         LighteningSpearSingle.add_runtime_modifier(FrostEffect, applyFrostEffect)
-        LighteningSpearSingle.onAfter(FrostDecrement)
+        LighteningSpearSingle.onJustAfter(FrostDecrement)
         LighteningSpearSingle.onAfter(BlizzardPassive)
         LighteningSpearFinalizer.add_runtime_modifier(FrostEffect, applyFrostEffect)
-        LighteningSpearFinalizer.onAfter(FrostDecrement)
+        LighteningSpearFinalizer.onJustAfter(FrostDecrement)
         LighteningSpearFinalizer.onAfter(BlizzardPassive)
         
         LighteningRepeator = core.RepeatElement(LighteningSpearSingle, 30)
@@ -155,20 +155,20 @@ class JobGenerator(ck.JobGenerator):
         
         #damage skills
         ChainLightening.add_runtime_modifier(FrostEffect, applyFrostEffect)
-        ChainLightening.onAfter(FrostDecrement)
+        ChainLightening.onJustAfter(FrostDecrement)
         ChainLightening.onAfter(BlizzardPassive)
 
         ThunderStorm.add_runtime_modifier(FrostEffect, applyFrostEffect)
         
         IceAgeSummon.onTicks([BlizzardPassive, FrostIncrement])
-        IceAgeInit.onAfter(FrostIncrement)
+        IceAgeInit.onJustAfter(FrostIncrement)
         IceAgeInit.onAfter(BlizzardPassive)
         IceAgeInit.onAfter(IceAgeSummon)
         
         Elquiness.onTick(FrostIncrement)
         
-        Blizzard.onAfter(FrostIncrement)
-        BlizzardPassive.onAfter(FrostEffect.stackController(0.6))
+        Blizzard.onJustAfter(FrostIncrement)
+        BlizzardPassive.onJustAfter(FrostEffect.stackController(0.6))
         
         SpiritOfSnow.onTick(FrostEffect.stackController(3))
         
@@ -176,7 +176,7 @@ class JobGenerator(ck.JobGenerator):
         
         for node in [ThunderBrake1, ThunderBrake2, ThunderBrake3, ThunderBrake4, ThunderBrake5, ThunderBrake6, ThunderBrake7, ThunderBrake8]:
             node.add_runtime_modifier(FrostEffect, applyFrostEffect)
-            node.onAfter(FrostDecrement)
+            node.onJustAfter(FrostDecrement)
             node.onAfter(BlizzardPassive)
             node_before.onAfter(node)
         
