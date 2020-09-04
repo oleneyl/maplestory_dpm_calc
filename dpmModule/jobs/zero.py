@@ -144,8 +144,8 @@ class JobGenerator(ck.JobGenerator):
         StormBreak = core.DamageSkill("어드밴스드 스톰 브레이크", 690, 335+2*self._combat, 10, modifier = AlphaSkill).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         StormBreakSummon = core.SummonSkill("어드밴스드 스톰 브레이크(소환)", 0, 500, 335+2*self._combat, 4, 3000, cooltime=-1, modifier = AlphaSkill).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         #StormBreakSummon = core.DamageSkill("어드밴스드 스톰 브레이크(소환)", 0, 335+2*self._combat, 4, modifier = AlphaSkill).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) #2타 타격
-        #StormBreakElectric = core.DotSkill("어드밴스드 스톰 브레이크(전기)", 230+2*self._combat, (3+ ceil(self._combat /10))*1000, modifier = AlphaSkill).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
-        StormBreakElectric = core.DamageSkill("어드밴스드 스톰 브레이크(전기)", 0, 230+2*self._combat, 3+ceil(self._combat /10), modifier = AlphaSkill).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        StormBreakElectric = core.SummonSkill("어드밴스드 스톰 브레이크(전기)", 0, 1000, 230+2*self._combat, 1, (3+ ceil(self._combat /10))*1000, cooltime = -1, modifier = AlphaSkill).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        #StormBreakElectric = core.DamageSkill("어드밴스드 스톰 브레이크(전기)", 0, 230+2*self._combat, 3+ceil(self._combat /10), modifier = AlphaSkill, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
         # 도트스킬은 크뎀 미적용이므로 AlphaSkill 추가할 필요없음.
         DivineLeer = core.DotSkill("디바인 리어", 200, 99999999).wrap(core.SummonSkillWrapper)
@@ -185,7 +185,9 @@ class JobGenerator(ck.JobGenerator):
         AdvancedEarthBreakWave = core.DamageSkill("어드밴스드 어스 브레이크(파동)", 0, 285+3*self._combat, 10, modifier = BetaSkill(6, True)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         #AdvancedEarthBreakElectric = core.DotSkill("어드밴스드 어스 브레이크(전기)", 340+3*self._combat, 5).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
-        AdvancedEarthBreakElectric = core.DamageSkill("어드밴스드 어스 브레이크(전기)", 0, 340+3*self._combat, 5, modifier = BetaSkill(6, True)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        #AdvancedEarthBreakElectric = core.DamageSkill("어드밴스드 어스 브레이크(전기)", 0, 340+3*self._combat, 5, modifier = BetaSkill(6, True), cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedEarthBreakElectric = core.SummonSkill("어드밴스드 어스 브레이크(전기)", 0, 1000, 340+3*self._combat, 1, 5000, cooltime = -1, modifier = BetaSkill(6, True)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+
 
         DoubleTime = core.BuffSkill("래피드 타임", 0, 9999*10000, crit = 20, pdamage = 10).wrap(core.BuffSkillWrapper)
         TimeDistortion = core.BuffSkill("타임 디스토션", 540, 30000, cooltime = 240 * 1000, pdamage = 25).wrap(core.BuffSkillWrapper)
@@ -350,6 +352,6 @@ class JobGenerator(ck.JobGenerator):
                     AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, DoubleTime, TimeDistortion, TimeHolding, IntensiveTime, LimitBreak,
                     SoulContract]+\
                 [TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta]+\
-                [StormBreakSummon, WindCutterSummon, ThrowingWeapon]+\
+                [StormBreakSummon, StormBreakElectric, AdvancedEarthBreakElectric, WindCutterSummon, ThrowingWeapon]+\
                 []+\
                 [ComboHolder])
