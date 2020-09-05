@@ -20,6 +20,22 @@ def getAffinityIV(duration):
     ratio = (1 - prob) * (1 - 0.5 ** count) + prob * (1 - 0.5 ** (count + 1))
     return core.InformedCharacterModifier("어피니티 IV", pdamage = 30 * ratio)
 
+class TrinityBuffWrapper(core.StackSkillWrapper):
+    def __init__(self):
+        super(TrinityBuffWrapper, self).__init__(core.BuffSkill("트리니티(버프)", 0, 7000, cooltime = -1), 3)
+
+    def _use(self, skill_modifier):
+        if self.stack >= self._max:
+            return self._result_object_cache
+        
+        self.vary(1)
+        return super(TrinityBuffWrapper, self)._use(skill_modifier)
+
+    def spend_time(self, time):
+        super().spend_time(time)
+        if self.onoff == False:
+            self.set_stack(0)
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):
         super(JobGenerator, self).__init__(vEhc = vEhc)
@@ -57,7 +73,8 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
-        트리니티 버프는 2.8중첩으로 계산
+        어피니티IV 가동률 94.18%
+        트리니티 버프 지속시간 갱신불가 적용
         
         하이퍼 : 소울시커-메이크업/리인포스, 피나투라페투치아-쿨리듀스
         트리니티 - 리인포스/스플릿데미지
@@ -65,9 +82,8 @@ class JobGenerator(ck.JobGenerator):
         스포트라이트 히트 3, 공격주기 800ms
         패밀리어 공격속도 2.5초당 1타
         
-        95% 재생성, 최대6회 : 1 + 0.95 + 0.95*0.95 + ... + (6타) = 6.033타
-        
-        어피니티IV의 리차지시 50%로성공을 항시적용
+        시커 1개당 타수
+        : 95% 재생성, 최대6회 : 1 + 0.95 + 0.95*0.95 + ... + (6타) = 6.033타
         샤이니 버블 브레스 
         : 지속시간 3초 210ms당 1타(3초당 14타) 버블당 0.4초 버블은 최대8개
         
@@ -91,10 +107,11 @@ class JobGenerator(ck.JobGenerator):
         SoulSeekerExpert_PR = core.DamageSkill("소울 시커(소울 익절트)", 0, 320 * 0.75, 1 * 0.01 * (50+self._combat) * 12.066, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
         # -70은 스플릿 어택
-        TRINITY_RATIO = 360 + 12 * (30 + self._combat) - 70
-        Trinity_1 = core.DamageSkill("트리니티", 360, TRINITY_RATIO, 2+1, modifier = core.CharacterModifier(pdamage =20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(1타)")
-        Trinity_2 = core.DamageSkill("트리니티(2타)", 360, TRINITY_RATIO, 3+1, modifier = core.CharacterModifier(pdamage =20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(2타)")
-        Trinity_3 = core.DamageSkill("트리니티(3타)", 360, TRINITY_RATIO, 4+1, modifier = core.CharacterModifier(pdamage =20) +core.CharacterModifier(pdamage =28, armor_ignore=28)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper, name = "트리니티(3타)")
+        TRINITY_DAMAGE = 360 + 12 * (30 + self._combat) - 70
+        Trinity_1 = core.DamageSkill("트리니티", 360, TRINITY_DAMAGE, 2+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Trinity_2 = core.DamageSkill("트리니티(2타)", 360, TRINITY_DAMAGE, 3+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Trinity_3 = core.DamageSkill("트리니티(3타)", 360, TRINITY_DAMAGE, 4+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Trinity_Buff = TrinityBuffWrapper()
         
         FinaturaFettuccia = core.DamageSkill("피니투라 페투치아", 1020, 1900 + 70*(30 + self._combat), 1, red = True, cooltime = 40000*0.75).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         FinaturaFettucciaBuff = core.BuffSkill("피니투라 페투치아(버프)", 0, 20000, cooltime = -1, pdamage_indep=25).wrap(core.BuffSkillWrapper)
@@ -128,6 +145,16 @@ class JobGenerator(ck.JobGenerator):
         Trinity_1.onAfter(Trinity_2)
         Trinity_2.onAfter(Trinity_3)
     
+        def get_trinity_modifier(trinity_buff):
+            return core.CharacterModifier(pdamage = 10 * trinity_buff.stack, armor_ignore = 10 * trinity_buff.stack)
+
+        Trinity_1.onJustAfter(Trinity_Buff)
+        Trinity_2.onJustAfter(Trinity_Buff)
+        Trinity_3.onJustAfter(Trinity_Buff)
+        Trinity_1.add_runtime_modifier(Trinity_Buff, get_trinity_modifier)
+        Trinity_2.add_runtime_modifier(Trinity_Buff, get_trinity_modifier)
+        Trinity_3.add_runtime_modifier(Trinity_Buff, get_trinity_modifier)
+    
         FinaturaFettuccia.onAfter(FinaturaFettucciaBuff)
         SpotLight.onAfter(SpotLightBuff)
         MascortFamilier.onAfter(MascortFamilierAttack)
@@ -148,7 +175,7 @@ class JobGenerator(ck.JobGenerator):
         return (Trinity_1,
                 [Booster, SoulGaze, LuckyDice, FinalContract,
                     SoulExult, SoulContract,Overdrive, OverdrivePenalty,
-                    FinaturaFettucciaBuff, SpotLightBuff, MascortFamilier,
+                    FinaturaFettucciaBuff, SpotLightBuff, Trinity_Buff, MascortFamilier,
                     globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster()] +\
                 [FinaturaFettuccia, EnergyBurst] +\
                 [SuperNova, MascortFamilierAttack, ShinyBubbleBreath, SpotLight] +\
