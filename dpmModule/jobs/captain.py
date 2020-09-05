@@ -110,7 +110,7 @@ class JobGenerator(ck.JobGenerator):
         
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
         InfiniteBullet = core.BuffSkill("인피닛 불릿", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
-        LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20 * 4 / 3, crit = 15 * 2/3 - 5 /36).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
+        LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20+10/6+10/6*(5/6+1/11)*(10*(5+passive_level)*0.01)).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
         #1중첩 럭다 재사용 50초 감소 / 방어력30% / 체엠 20% / 크리율15% / 뎀증20 / 경치30
         #2중첩 럭다 재사용 50초 감소 / 방어력40% / 체엠 30% / 크리율25% / 뎀증30 / 경치40
         #7 발동시 방무 20 -> 30
