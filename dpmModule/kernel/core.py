@@ -1190,7 +1190,7 @@ class AbstractSkillWrapper(GraphElement):
     def get_link(self):
         li = super(AbstractSkillWrapper, self).get_link()
         for el in self.constraint:
-            li.append([self, el, "abstract"])
+            li.append([self, el, "constraint"])
         return li
         
     def assert_level_is_positive(self, reference_level):
@@ -1326,8 +1326,6 @@ class AbstractSkillWrapper(GraphElement):
         
     def spend_time(self, time):
         raise NotImplementedError
-        self.time -= time
-        self.cooltimeLeft -= time
         
     def is_active(self):
         '''이 ``GraphElement`` 가 실행되고 있는지에 대한 여부를 반환합니다.
@@ -1443,9 +1441,12 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         self.onoff = True
         if self.cooltimeLeft > 0:
             self.available = False
-        delay = self.skill.delay
+        delay = self.get_delay()
         #mdf = self.get_modifier()
         return ResultObject(delay, CharacterModifier(), 0, 0, sname = self.skill.name, spec = self.skill.spec, kwargs = {"remain" : self.skill.remain * (1+0.01*skill_modifier.buff_rem*self.skill.rem)})
+
+    def get_delay(self):
+        return self.skill.delay
 
     def get_modifier(self) -> CharacterModifier:
         if self.onoff:
@@ -1556,8 +1557,17 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         if self.cooltimeLeft > 0:
             self.available = False
-        return ResultObject(self.skill.delay, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
+        return ResultObject(self.get_delay(), self.get_modifier(), self.get_damage(), self.get_hit(), sname = self.skill.name, spec = self.skill.spec)
         #return delay, mdf, dmg, self.cascade
+
+    def get_delay(self):
+        return self.skill.delay
+
+    def get_damage(self):
+        return self.skill.damage
+
+    def get_hit(self):
+        return self.skill.hit
         
     def get_modifier(self) -> CharacterModifier:
         modifier = self.skill.get_modifier() + self.modifier
@@ -1573,18 +1583,16 @@ class StackDamageSkillWrapper(DamageSkillWrapper):
         super(StackDamageSkillWrapper, self).__init__(skill, modifier = modifier, name = name)
         self.stack_skill = stack_skill
         self.fn = fn
-        
-    def _use(self, skill_modifier):
-        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
-        if self.cooltimeLeft > 0:
-            self.available = False
 
+    def get_damage(self):
         stack = self.fn(self.stack_skill)
         if stack <= 0:
-            return ResultObject(self.skill.delay, self.get_modifier(), 0, 0, sname = self.skill.name, spec = self.skill.spec)
+            return 0
+        return self.skill.damage
 
-        return ResultObject(self.skill.delay, self.get_modifier(), self.skill.damage, self.skill.hit * stack, sname = self.skill.name, spec = self.skill.spec)
-
+    def get_hit(self):
+        stack = self.fn(self.stack_skill)
+        return self.skill.hit * stack
         
 class SummonSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill : SummonSkill, modifier = CharacterModifier(), name = None):
@@ -1638,12 +1646,12 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         if self.cooltimeLeft > 0:
             self.available = False
-        return ResultObject(self.skill.summondelay, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+        return ResultObject(self.get_summon_delay(), self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
     
     def _useTick(self):
         if self.onoff and self.tick <= 0:
             self.tick += self.skill.delay
-            return ResultObject(0, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
+            return ResultObject(0, self.get_modifier(), self.get_damage(), self.get_hit(), sname = self.skill.name, spec = self.skill.spec)
         else:
             return ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)    
     
@@ -1658,14 +1666,23 @@ class SummonSkillWrapper(AbstractSkillWrapper):
     def onTicks(self, tasklist):
         self._onTick += tasklist
 
-    def add_runtime_modifier(self, skill: AbstractSkillWrapper, fn):
-        self._runtime_modifier_list.append((skill, fn))
+    def get_summon_delay(self):
+        return self.skill.summondelay
+
+    def get_damage(self):
+        return self.skill.damage
+
+    def get_hit(self):
+        return self.skill.hit
     
     def get_modifier(self):
         modifier = self.skill.get_modifier() + self.modifier
         for skill, fn in self._runtime_modifier_list:
             modifier += fn(skill)
         return modifier
+
+    def add_runtime_modifier(self, skill: AbstractSkillWrapper, fn):
+        self._runtime_modifier_list.append((skill, fn))
             
 class Simulator(object):
     __slots__ = 'scheduler', 'character', 'analytics', '_modifier_cache_and_time', '_default_modifier'
@@ -1840,7 +1857,8 @@ class Analytics():
         for name in names:
             skillLog = list(filter(lambda log: log["result"].sname == name, buffList))
             use = len(skillLog)
-            print(f"{name} Used {use}")
+            delay = sum(map(lambda log: log["result"].delay, skillLog))
+            print(f"{name} Used {use} Delay {delay}")
 
         shareDict = defaultdict(int)
 
@@ -1852,9 +1870,10 @@ class Analytics():
             use = len(skillLog)
             hit = sum(map(lambda log: log["result"].hit, skillLog))
             damage = sum(map(lambda log: log["deal"], skillLog))
+            delay = sum(map(lambda log: log["result"].delay, skillLog))
             share = damage / self.total_damage * 100
             shareDict[name.split('(')[0]] += share
-            print(f"{name} Used {use}")
+            print(f"{name} Used {use} Delay {delay}")
             print(f"Hit {hit} Damage {damage}")
             print(f"Share {share:.4f}%")
 
@@ -1867,9 +1886,10 @@ class Analytics():
             use = len(skillLog) - summon
             hit = sum(map(lambda log: log["result"].hit, skillLog))
             damage = sum(map(lambda log: log["deal"], skillLog))
+            delay = sum(map(lambda log: log["result"].delay, skillLog))
             share = damage / self.total_damage * 100
             shareDict[name.split('(')[0]] += share
-            print(f"{name} Summoned {summon}")
+            print(f"{name} Summoned {summon} Delay {delay}")
             print(f"Used {use} Hit {hit} Damage {damage}")
             print(f"Share {share:.4f}%")
 
