@@ -1366,7 +1366,7 @@ class AbstractSkillWrapper(GraphElement):
         if (self.timeLeft - time) * direction > 0 : return True
         else: return False
 
-    def calculate_cooltime(self, skill_modifier: SkillModifier):
+    def calculate_cooltime(self, cooltime, skill_modifier: SkillModifier):
         ''' ``skill_modifier`` 를 바탕으로, 주어진 ``Skill`` 의 실질적 쿨타임을 계산합니다.
     
         Parameters
@@ -1375,9 +1375,8 @@ class AbstractSkillWrapper(GraphElement):
             현재 스킬을 사용하는 ``Character`` 가 제공한 ``SkillModifier`` 입니다.
         '''  
         if self.skill.red == False:
-            return self.skill.cooltime
-            
-        cooltime = self.skill.cooltime
+            return cooltime
+        
         pcooltime_reduce = skill_modifier.pcooltime_reduce # 쿨감%
         cooltime_reduce = skill_modifier.cooltime_reduce # 쿨감+ (ms)
         
@@ -1404,6 +1403,7 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         self._end = []
         self.disabledModifier = CharacterModifier()
         self.modifierInvariantFlag = True
+        self.uniqueFlag = True
         self.accessible_boss_state = AccessibleBossState.ALWAYS
         
     def set_enabled_and_time_left(self, time):
@@ -1437,7 +1437,7 @@ class BuffSkillWrapper(AbstractSkillWrapper):
     
     def _use(self, skill_modifier) -> ResultObject:
         self.timeLeft = self.skill.remain * (1 + 0.01*skill_modifier.buff_rem * self.skill.rem)
-        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
+        self.cooltimeLeft = self.calculate_cooltime(self.skill.cooltime, skill_modifier)
         self.onoff = True
         if self.cooltimeLeft > 0:
             self.available = False
@@ -1554,7 +1554,7 @@ class DamageSkillWrapper(AbstractSkillWrapper):
             self.available = True
         
     def _use(self, skill_modifier):
-        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
+        self.cooltimeLeft = self.calculate_cooltime(self.skill.cooltime, skill_modifier)
         if self.cooltimeLeft > 0:
             self.available = False
         return ResultObject(self.get_delay(), self.get_modifier(), self.get_damage(), self.get_hit(), sname = self.skill.name, spec = self.skill.spec)
@@ -1603,6 +1603,7 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self._runtime_modifier_list = []
         self.disabledModifier = CharacterModifier()
         self._onTick = []
+        self.uniqueFlag = True
         self.accessible_boss_state = AccessibleBossState.NO_FLAG
         self.is_periodic = True
     
@@ -1643,7 +1644,7 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self.tick = 0
         self.onoff = True
         self.timeLeft = self.skill.remain * (1+0.01*skill_modifier.summon_rem*self.skill.rem)
-        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
+        self.cooltimeLeft = self.calculate_cooltime(self.skill.cooltime, skill_modifier)
         if self.cooltimeLeft > 0:
             self.available = False
         return ResultObject(self.get_summon_delay(), self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
