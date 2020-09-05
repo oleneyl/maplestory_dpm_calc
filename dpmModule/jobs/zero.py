@@ -220,6 +220,9 @@ class JobGenerator(ck.JobGenerator):
         TimeDistortion = core.BuffSkill("타임 디스토션", 540, 30000, cooltime = 240 * 1000, pdamage = 25).wrap(core.BuffSkillWrapper)
         TimeHolding = core.BuffSkill("타임 홀딩", 1080, 90000, cooltime = 180*1000, pdamage = 10, red = False).wrap(core.BuffSkillWrapper) #  쿨타임 초기화.(타임 리와 / 리미트 브레이크 제외)
         IntensiveTime = core.BuffSkill("인탠시브 타임", 0, 40*60*1000, patt = 4).wrap(core.BuffSkillWrapper)
+
+        # 알파 4410ms 베타 4980ms
+        #ShadowRain = core.DamageSkill("쉐도우 레인", 0, 1400, 14, cooltime = 300*1000).wrap(core.DamageSkillWrapper)
         
         SoulContract = globalSkill.soul_contract()
 
