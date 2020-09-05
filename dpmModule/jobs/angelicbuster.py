@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobbranch import pirates
 from . import jobutils
@@ -46,6 +47,11 @@ class JobGenerator(ck.JobGenerator):
         
         self.preEmptiveSkills = 2
         self._combat = 0
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '스포트라이트'), RuleSet.BASE)
+        return ruleset
     
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self._combat
