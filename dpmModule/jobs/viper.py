@@ -90,7 +90,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self._combat
         serverlag = 3
 
-        LuckyDice = core.BuffSkill("로디드 다이스", 600, 180 * 1000, pdamage = 20 *4/3).isV(vEhc, 2, 2).wrap(core.BuffSkillWrapper)#딜레이 모름
+        LuckyDice = core.BuffSkill("로디드 다이스", 600, 180 * 1000, pdamage = 20+10/6+10/6*(5/6+1/11)*(10*(5+passive_level)*0.01)).isV(vEhc, 2, 2).wrap(core.BuffSkillWrapper)#딜레이 모름
         #1중첩 럭다 재사용 50초 감소 / 방어력30% / 체엠 20% / 크리율15% / 뎀증20 / 경치30
         #2중첩 럭다 재사용 50초 감소 / 방어력40% / 체엠 30% / 크리율25% / 뎀증30 / 경치40
         #7 발동시 방무 20 -> 30
