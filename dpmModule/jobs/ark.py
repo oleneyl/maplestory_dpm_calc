@@ -18,7 +18,7 @@ class ReturningHateWrapper(core.DamageSkillWrapper):
         self.modifierInvariantFlag = False
         
     def _use(self, skill_modifier):
-        self.cooltimeLeft = self.calculate_cooltime(self.skill.cooltime, skill_modifier)
+        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         if self.cooltimeLeft > 0:
             self.available = False
         
@@ -45,7 +45,7 @@ class MultipleDamageSkillWrapper(core.DamageSkillWrapper):
         
     def _use(self, skill_modifier):
         self.count += 1
-        self.cooltimeLeft = self.calculate_cooltime(self.skill.cooltime, skill_modifier)
+        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         self.timer = self._timeLimit
         if self.count >= self._max:
             self.count = 0

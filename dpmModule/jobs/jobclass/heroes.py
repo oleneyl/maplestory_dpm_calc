@@ -21,21 +21,19 @@ class FridWrapper(core.BuffSkillWrapper):
         self.modifierInvariantFlag = False
         self.uniqueFlag = False
 
+    def get_cooltime(self):
+        if self.state == 6:
+            return 240 * 1000
+        else:
+            return 25 * 1000
+
     def _use(self, skill_modifier) -> core.ResultObject:
+        result = super(FridWrapper, self)._use(skill_modifier)
         self.state += 1
         if self.state > 6:
             self.state = 0
-        
-        self.timeLeft = self.skill.remain * (1 + 0.01*skill_modifier.buff_rem * self.skill.rem)
-        if self.state == 0:
-            self.cooltimeLeft = self.calculate_cooltime(240*1000, skill_modifier)
-        else:
-            self.cooltimeLeft = self.calculate_cooltime(25*1000, skill_modifier)
-        self.onoff = True
-        if self.cooltimeLeft > 0:
-            self.available = False
-        delay = self.get_delay()
-        return core.ResultObject(delay, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = self.skill.spec, kwargs = {"remain" : self.skill.remain * (1+0.01*skill_modifier.buff_rem*self.skill.rem)})
+
+        return result
 
     def get_modifier(self):
         return self.modifierList[self.state]
