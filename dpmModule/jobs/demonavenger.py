@@ -90,9 +90,8 @@ class JobGenerator(ck.JobGenerator):
         # 익시드 5스택 이상
         ExecutionExceed = core.DamageSkill("익시드: 엑스큐션 (강화)", 540, 540+8*self._combat, 6, modifier = core.CharacterModifier(armor_ignore = 30 + self._combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
-        # 방어력 2배 무시가 30퍼를 한번 더 계산하는건지, 아니면 60퍼로 적용되는건지 알아볼 필요가 있음.
         # 최대 10회 공격
-        ShieldChasing = core.DamageSkill("실드 체이싱", 540, 500 + 10 * self._combat, 2*2*(8+2), cooltime = 6000, modifier = core.CharacterModifier(armor_ignore = 30, pdamage=20, patt = 20), red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
+        ShieldChasing = core.DamageSkill("실드 체이싱", 540, 500 + 10 * self._combat, 2*2*(8+2), cooltime = 6000, modifier = core.CharacterModifier(armor_ignore = 30, pdamage=20+20), red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
 
         ArmorBreak = core.DamageSkill("아머 브레이크", 0, 350 + 5 * self._combat, 4, cooltime = (30+self._combat)*1000).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         ArmorBreakBuff = core.BuffSkill("아머 브레이크(디버프)", 720, (30+self._combat)*1000, armor_ignore = 30 + self._combat).wrap(core.BuffSkillWrapper)
