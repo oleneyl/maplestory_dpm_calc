@@ -63,9 +63,6 @@ class WillOfSwordSummonWrapper(core.BuffSkillWrapper):
         else:
             return 150
 
-    def spend_time(self, time):
-        return super().spend_time(time)
-
     def _off(self):
         self.onoff = False
         self.timeLeft = 0

@@ -115,8 +115,6 @@ class JobGenerator(ck.JobGenerator):
         
         FinalCut.onAfter(FinalCutBuff.controller(1))
         
-        Frid = heroes.FridWrapper(vEhc, 0, 0)
-        
         CardStack = core.StackSkillWrapper(core.BuffSkill("카드 스택", 0, 99999999), 40, name = "느와르 카르트 스택")
         
         AddCard = CardStack.stackController(1, name = "스택 1 증가")
@@ -154,7 +152,7 @@ class JobGenerator(ck.JobGenerator):
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
                     TalentOfPhantomII, TalentOfPhantomIII, FinalCutBuff, BoolsEye,
-                    JudgementBuff, Booster, PrieredAria, HerosOath, ReadyToDie, JokerBuff, Frid,
+                    JudgementBuff, Booster, PrieredAria, HerosOath, ReadyToDie, JokerBuff,
                     globalSkill.soul_contract()] +\
                 [FinalCut, JokerInit, MarkOfPhantom, BlackJackFinal] +\
                 [BlackJack] +\

@@ -20,7 +20,10 @@ class UniquenessRule(AbstractRule):
             reference_graph.filter_elements(lambda x:isinstance(x, SummonSkillWrapper))
 
     def check(self, caller, reference_graph, context = None):
-        return not caller.onoff
+        if caller.uniqueFlag:
+            return not caller.onoff
+        else:
+            return True
 
 class ConcurrentRunRule(AbstractRule):
     def __init__(self, state_element, checking_element):

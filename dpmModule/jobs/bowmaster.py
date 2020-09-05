@@ -26,7 +26,7 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
 
     def check(self):
         if self.available:
-            self.cooltimeLeft = self.calculate_cooltime(self.skill_modifier)
+            self.cooltimeLeft = self.calculate_cooltime(self.skill.cooltime, self.skill_modifier)
             self.available = False
             return self.piercingModifier
 
