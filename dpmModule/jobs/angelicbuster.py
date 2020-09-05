@@ -8,6 +8,18 @@ from .jobbranch import pirates
 from . import jobutils
 from math import ceil
 
+def getAffinityIV(duration):
+    """
+    어피니티IV의 지속시간은 5000ms
+    평균 리차지 주기에 따라 5000ms 사이에 n회, n+1회 공격할 확률을 각각 구한 다음
+    리차지가 5000ms동안 전부 실패할 확률을 계산해 가동률을 구합니다.
+    """
+    count = 5000 // duration
+    timeDiv = 5000 - duration * count
+    prob = timeDiv / duration
+    ratio = (1 - prob) * (1 - 0.5 ** count) + prob * (1 - 0.5 ** (count + 1))
+    return core.InformedCharacterModifier("어피니티 IV", pdamage = 30 * ratio)
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):
         super(JobGenerator, self).__init__(vEhc = vEhc)
@@ -22,11 +34,11 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self._combat
         SoulShooterMastery = core.InformedCharacterModifier("소울슈터 마스터리", att = 20)
-        InnerFire = core.InformedCharacterModifier("이너 파이어", stat_sub = 40)
+        InnerFire = core.InformedCharacterModifier("이너 파이어", stat_main = 40)
         
         CallOfAncient = core.InformedCharacterModifier("콜 오브 에인션트", att = 40)
         AffinityIII = core.InformedCharacterModifier("어피니티 III", stat_main = 40, pdamage = 20)
-        AffinityIV = core.InformedCharacterModifier("어피니티 IV", pdamage = 30)
+        AffinityIV = getAffinityIV(1208.46) # 트리니티 평균 주기가 바뀔 때 마다 변경해 줘야함. 1000 * time(초) / (트리니티 사용 횟수).
         TrinityPassive = core.InformedCharacterModifier("트리니티(패시브)", pdamage_indep = ceil((30 + self._combat) / 3), armor_ignore = ceil((30 + self._combat) / 2))
         SoulShooterExpert = core.InformedCharacterModifier("소울슈터 엑스퍼트", att = 30 + passive_level, crit = 30 + passive_level, crit_damage = 15 + ceil(passive_level / 2))
         
@@ -39,7 +51,7 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self._combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5 * ceil(passive_level / 2))        
+        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5 * ceil(passive_level / 2))
         
         return [WeaponConstant, Mastery]        
         
