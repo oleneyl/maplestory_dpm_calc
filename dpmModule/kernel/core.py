@@ -1285,7 +1285,7 @@ class AbstractSkillWrapper(GraphElement):
         else:
             return TaskHolder(task, name = _name)
 
-    def _use(self, ftn, skill_modifier, **kwargs) -> ResultObject:
+    def _use(self, skill_modifier, **kwargs) -> ResultObject:
         raise NotImplementedError
         
     def build_task(self, skill_modifier) -> Task:
@@ -1404,7 +1404,6 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         super(BuffSkillWrapper, self).__init__(skill, name = name)
         self.set_flag(self.Flag_BuffSkill)
         self.onoff = False
-        self._end = []
         self.disabledModifier = CharacterModifier()
         self.modifierInvariantFlag = True
         self.uniqueFlag = True
@@ -1460,12 +1459,6 @@ class BuffSkillWrapper(AbstractSkillWrapper):
 
     def get_modifier_forced(self):
         return self.skill.get_modifier()
-
-    def onEnd(self, task):
-        self._end.append(task)
-        
-    def onEnds(self, tasklist):
-        self._end += tasklist
 
 class StackSkillWrapper(BuffSkillWrapper):
     def __init__(self, skill, max_, name = None):
@@ -1655,7 +1648,7 @@ class SummonSkillWrapper(AbstractSkillWrapper):
     
     def _useTick(self):
         if self.onoff and self.tick <= 0:
-            self.tick += self.skill.delay
+            self.tick += self.get_delay()
             return ResultObject(0, self.get_modifier(), self.get_damage(), self.get_hit(), sname = self.skill.name, spec = self.skill.spec)
         else:
             return ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)    
@@ -1673,6 +1666,9 @@ class SummonSkillWrapper(AbstractSkillWrapper):
 
     def get_summon_delay(self):
         return self.skill.summondelay
+
+    def get_delay(self):
+        return self.skill.delay
 
     def get_damage(self):
         return self.skill.damage
@@ -1750,33 +1746,6 @@ class Simulator(object):
         
     def run_task(self, task):
         self.run_task_recursive(task)
-        
-    def run_individual_task(self, task):
-        '''
-        try:
-            print(task._ref._id)
-        except:
-            print(task)
-            print(task.skill.name)
-            raise AttributeError
-        '''
-        dt = 0
-        stack = task._before
-        while len(stack) != 0:
-            dt += self.run_individual_task(stack.pop())
-
-        runtime_context_modifier = self.scheduler.get_buff_modifier() + self.get_default_modifier()
-        result = task.do(runtime_context_modifier=runtime_context_modifier + self.character.get_modifier())
-        if result.damage > 0:
-            result.mdf += runtime_context_modifier
-        result.setTime(self.scheduler.get_current_time())
-        self.analytics.analyze(self.character, result)
-        dt += result.delay
-        
-        stack = task._after + result.cascade
-        while len(stack) != 0:
-            dt += self.run_individual_task(stack.pop())
-        return dt
 
     def run_task_recursive(self, task):
         stack = task._before + []
