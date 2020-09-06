@@ -99,7 +99,7 @@ class JobGenerator(ck.JobGenerator):
         DarkFlare = core.SummonSkill("다크 플레어", 600, 60000 / 62, 360, 1, 60*1000, cooltime = 60000, red=True).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)
     
         Smoke = core.BuffSkill("연막탄", 1080 + 120, 30000, cooltime = (150-2*self._combat)*1000, crit_damage = 20+ceil(self._combat/3), red=True).wrap(core.BuffSkillWrapper) # 다크 사이트 딜레이 합산
-        Venom = core.DotSkill("페이탈 베놈", (160+5*passive_level)*3, 89999 * 1000).wrap(core.SummonSkillWrapper)
+        Venom = core.DotSkill("페이탈 베놈", 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 89999 * 1000).wrap(core.SummonSkillWrapper)
         
         AdvancedDarkSight = core.BuffSkill("어드밴스드 다크 사이트", 0, 10000, cooltime = -1, pdamage_indep = 5).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)

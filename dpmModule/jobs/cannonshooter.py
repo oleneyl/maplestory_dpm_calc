@@ -67,9 +67,9 @@ class JobGenerator(ck.JobGenerator):
         MonkeyWaveBuff = core.BuffSkill("몽키 웨이브(버프)", 0, 30000, cooltime = -1, crit_damage = 5).wrap(core.BuffSkillWrapper)
         MonkeyFurious = core.DamageSkill("몽키 퓨리어스", 720, 180, 3, cooltime = 30*1000).wrap(core.DamageSkillWrapper)
         MonkeyFuriousBuff = core.BuffSkill("몽키 퓨리어스(버프)", 0, 30000, cooltime = -1, pdamage = 40).wrap(core.BuffSkillWrapper)
-        MonkeyFuriousDot = core.DotSkill("몽키 퓨리어스(도트)", 200, 30000).wrap(core.SummonSkillWrapper)
+        MonkeyFuriousDot = core.DotSkill("몽키 퓨리어스(도트)", 0, 1000, 200, 1, 30000, cooltime = -1).wrap(core.SummonSkillWrapper)
         OakRulet = core.BuffSkill("오크통 룰렛", 840, 180000, rem = True, cooltime = 180000, crit_damage = 1.25).wrap(core.BuffSkillWrapper)
-        OakRuletDOT = core.DotSkill("오크통 도트", 50, 5000).wrap(core.SummonSkillWrapper)
+        OakRuletDOT = core.DotSkill("오크통 룰렛(도트)", 0, 1000, 50, 1, 5000, cooltime = -1).wrap(core.SummonSkillWrapper)
         MonkeyMagic = core.BuffSkill("하이퍼 몽키 스펠", 0, 180000, rem = True, stat_main=60 + passive_level, stat_sub=60 + passive_level).wrap(core.BuffSkillWrapper)
     
         CanonBuster = core.DamageSkill("캐논 버스터", 690, (750 + 5 * self._combat)*0.45, 3*(4+1), modifier = core.CharacterModifier(crit=15 + ceil(self._combat / 2), armor_ignore=20 + self._combat // 2, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)

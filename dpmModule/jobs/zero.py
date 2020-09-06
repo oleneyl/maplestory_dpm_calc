@@ -158,7 +158,7 @@ class JobGenerator(ck.JobGenerator):
         #StormBreakElectric = core.DotSkill("어드밴스드 스톰 브레이크(전기)", 230+2*self._combat, (3+ ceil(self._combat /10))*1000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         StormBreakElectric = core.DamageSkill("어드밴스드 스톰 브레이크(전기)", 0, 230+2*self._combat, 3+ceil(self._combat /10)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
-        DivineLeer = core.DotSkill("디바인 리어", 200, 99999999).wrap(core.SummonSkillWrapper)
+        DivineLeer = core.DotSkill("디바인 리어", 0, 1000, 200, 1, 99999999).wrap(core.SummonSkillWrapper)
 
         #### 베타 ####
 
@@ -345,8 +345,6 @@ class JobGenerator(ck.JobGenerator):
                     FallingStar, AdvancedEarthBreak, TwinBladeOfTime_end]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
-
-        DivineLeer.set_disabled_and_time_left(1)
 
         '''
         스킬 사용 후 초월자 륀느의 기원 발동

@@ -124,10 +124,9 @@ class JobGenerator(ck.JobGenerator):
         RaisingBlowInrage = core.DamageSkill("레이징 블로우(인레이지)", 600, 215+3*self._combat, 6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함.
         RaisingBlowInrageFinalizer = core.DamageSkill("레이징 블로우(인레이지)(최종타)", 0, 215+3*self._combat, 2, modifier = core.CharacterModifier(pdamage = 20, crit = 100)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함. 둘을 연결해야 함.
         
-        Insizing = core.DamageSkill("인사이징", 660, 576 + 7 * self._combat, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)    # 오더스 적용 필요함.
+        Insizing = core.DamageSkill("인사이징", 660, 576 + 7 * self._combat, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         InsizingBuff = core.BuffSkill("인사이징(버프)", 0, (30 + self._combat // 2) * 1000, cooltime = -1, pdamage = 25 + ceil(self._combat / 2)).wrap(core.BuffSkillWrapper)
-        # TODO: 데미지값 절반으로 임시조치. 2초마다 공격으로 바꿔야 함.
-        InsizingDot = core.DotSkill("인사이징(도트)", (165 + 3*self._combat) / 2, (30 + self._combat // 2) * 1000).wrap(core.SummonSkillWrapper)
+        InsizingDot = core.DotSkill("인사이징(도트)", 0, 2000, 165 + 3*self._combat, 1, (30 + self._combat // 2) * 1000, cooltime = -1).wrap(core.SummonSkillWrapper)
     
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 170 + 2*passive_level, 3 * 0.01 * (60 + ceil(passive_level/2) + 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
