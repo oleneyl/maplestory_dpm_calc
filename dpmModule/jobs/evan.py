@@ -131,7 +131,7 @@ class JobGenerator(ck.JobGenerator):
         
         ### 돌아와!
         SwiftBack = core.BuffSkill("스위프트-돌아와!", 0, 60000, cooltime = -1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
-        BreathBack = core.DotSkill("브레스-돌아와!", 150+self._combat, (30+self._combat // 2)*1000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
+        BreathBack = core.SummonSkill("브레스-돌아와!", 0, 450, 150+self._combat, 1, (30+self._combat // 2)*1000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         
         # 하이퍼
         SummonOnixDragon = core.SummonSkill("서먼 오닉스 드래곤", 900, 3030, 550, 2, 4000, cooltime = 80000).wrap(core.SummonSkillWrapper)

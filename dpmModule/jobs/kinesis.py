@@ -116,7 +116,7 @@ class JobGenerator(ck.JobGenerator):
         PsychicDrain = core.SummonSkill("싸이킥 드레인", 540, 500, 150, 1, 10000, cooltime = 5000, rem = False).setV(vEhc, 4, 5, False).wrap(core.SummonSkillWrapper) # 1칸+
         
         PsychicForce3 = core.DamageSkill("싸이킥 포스3", 270, 0, 0).wrap(core.DamageSkillWrapper)
-        PsychicForce3Dot = core.DotSkill("싸이킥 포스3(도트)", 403.125, 20000).wrap(core.SummonSkillWrapper) # ~20초 평균 퍼뎀
+        PsychicForce3Dot = core.DotSkill("싸이킥 포스3(도트)", 0, 1000, 403.125, 1, 20000, cooltime = -1).wrap(core.SummonSkillWrapper) # ~20초 평균 퍼뎀
         PsychicGround = core.BuffSkill("싸이킥 그라운드2", 270, 20000 + 10000, rem = False, armor_ignore = 10 + 6*1, pdamage_indep = 10 + 3*1).wrap(core.BuffSkillWrapper)
         PsychicGroundDamage = core.DamageSkill("싸이킥 그라운드2(공격)", 0, 500+10*self._combat, 1).wrap(core.DamageSkillWrapper) # +1
         PsycoBreak = core.BuffSkill("싸이코 브레이크", 720, 30000, pdamage_indep = 5 * 2, rem = False).wrap(core.BuffSkillWrapper) #+1
