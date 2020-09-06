@@ -174,7 +174,7 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         return(RaisingBlowInrage,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
                     ComboAttack, Fury, EpicAdventure, Valhalla, 
                     InsizingBuff, InsizingDot, AuraWeaponBuff, AuraWeapon, ComboDesfortBuff, 
                     ComboInstinct, ComboInstinctOff, PanicBuff,

@@ -157,7 +157,7 @@ class JobGenerator(ck.JobGenerator):
         AnotherBite.protect_from_running()
 
         return(WildBalkan,
-                [globalSkill.maple_heros(chtr.level),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat),
                     CriticalReinforce, SoulArrow, Booster, Hauling, BeastForm, SharpEyes, SilentRampage, JaguerStorm,
                     globalSkill.soul_contract()] +\
                 [Normal, ClawCut, Crossroad, SonicBoom, JaguarSoul, RampageAsOne] +\

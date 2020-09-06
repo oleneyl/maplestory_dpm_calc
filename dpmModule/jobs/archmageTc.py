@@ -190,7 +190,7 @@ class JobGenerator(ck.JobGenerator):
 
         return(ChainLightening,
                 [Infinity, Meditation, EpicAdventure, OverloadMana, FrostEffect,
-                globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                 SoulContract] +\
                 [IceAgeInit, Blizzard, LighteningSpear, ThunderBrake] +\
                 [ThunderStorm, Elquiness, IceAura, IceAgeSummon, FrozenOrbEjac, SpiritOfSnow] +\

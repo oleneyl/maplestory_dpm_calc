@@ -154,7 +154,7 @@ class JobGenerator(ck.JobGenerator):
         NoiShinChanGeuk.onAfter(NoiShinChanGeukAttack)
 
         return(BasicAttackWrapper,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
                     LightningStack, Booster, ChookRoi, WindBooster, LuckyDice,
                     HuricaneBuff, GloryOfGuardians, SkyOpen, Overdrive, OverdrivePenalty, ShinNoiHapL,
                     globalSkill.soul_contract()] +\

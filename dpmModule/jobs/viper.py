@@ -178,7 +178,7 @@ class JobGenerator(ck.JobGenerator):
         SerpentScrew.onConstraint(EnergyConstraint)
     
         return (BasicAttackWrapper,
-            [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+            [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
             LuckyDice, Viposition, Stimulate, EpicAdventure, PirateFlag, Overdrive, Transform, NautilusBuff,
             UnityOfPowerBuff, OverdrivePenalty, DragonStrikeBuff, EnergyCharge,
             SerpentScrewTrackingBuff, globalSkill.soul_contract()] +\

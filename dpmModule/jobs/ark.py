@@ -432,7 +432,7 @@ class JobGenerator(ck.JobGenerator):
                     LuckyDice, Overdrive, OverdrivePenalty,
                     MagicCircuitFullDrive, MemoryOfSourceBuff, EndlessPainBuff,
                     InfinitySpell,
-                    globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.soul_contract()
+                    globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.soul_contract()
                     ] +\
                 [EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, 
                     CrawlingFear_Link, MemoryOfSource, EndlessPain, RaptRestriction, ReturningHate, Impulse_Connected,

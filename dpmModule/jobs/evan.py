@@ -216,7 +216,7 @@ class JobGenerator(ck.JobGenerator):
             i.onAfter(DragonSparking)
             
         return(CircleOfMana,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     OverloadMana, Booster, OnixBless, Frid, HerosOath, SwiftBack, ElementalBlastBuff,
                     globalSkill.soul_contract()] +\
                 [ZodiakRayInit, DragonBreak, MagicParticle] +\

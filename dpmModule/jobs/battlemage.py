@@ -138,7 +138,7 @@ class JobGenerator(ck.JobGenerator):
         # 쓸윈 제거 ([너브 스티뮬레이션] : 공격 속도가 1단계 증가하는 기능이 추가됩니다.)
         return(FinishBlowEndpoint,
                 [Booster, WillOfLiberty, MasterOfDeath, UnionAura,
-                globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), #globalSkill.useful_wind_booster(),
+                globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), #globalSkill.useful_wind_booster(),
                 globalSkill.soul_contract()] +\
                 [DarkGenesis, BattlekingBar] +\
                 [RegistanceLineInfantry, Death, DeathAfterMOD, BlackMagicAlter, GrimReaper] +\

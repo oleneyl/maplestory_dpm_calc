@@ -216,7 +216,7 @@ class JobGenerator(ck.JobGenerator):
             sk.protect_from_running()
     
         return(BasicAttack,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
                     RegainStrenth, BlazeUp, FinalFiguration, MajestyOfKaiser, FinalTrance, AuraWeaponBuff, AuraWeapon, MorphGauge,
                     SoulContract] +\
                 [AdvancedWillOfSword_Dummy] +\

@@ -307,7 +307,7 @@ class JobGenerator(ck.JobGenerator):
         
         ### Exports ###
         return(CardinalBlastBasic,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_wind_booster(),
                     AncientBowBooster, CurseTolerance, CurseTransition, SharpEyes,
                     RelicEvolution, EpicAdventure,
                     AncientGuidanceBuff, AdditionalTransition, CriticalReinforce,
