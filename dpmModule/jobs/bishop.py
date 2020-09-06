@@ -2,7 +2,7 @@ from ..kernel import core
 from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, SynchronizeRule
+from ..execution.rules import RuleSet, SynchronizeRule, InactiveRule
 from . import globalSkill
 from functools import partial
 from .jobclass import adventurer
@@ -39,7 +39,8 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(SynchronizeRule('소울 컨트랙트', '인피니티', 35000, -1), RuleSet.BASE)
-        ruleset.add_rule(SynchronizeRule('프레이', '인피니티', 45000, -1), RuleSet.BASE)        
+        ruleset.add_rule(SynchronizeRule('프레이', '인피니티', 45000, -1), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('언스테이블 메모라이즈', '인피니티'), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
@@ -55,8 +56,10 @@ class JobGenerator(ck.JobGenerator):
         ArcaneAim = core.InformedCharacterModifier("아케인 에임", armor_ignore = 20)
         
         VengenceOfAngelOff = core.InformedCharacterModifier("벤전스 오브 엔젤(off)",pdamage = 40)
+
+        UnstableMemorizePassive = adventurer.UnstableMemorizePassiveWrapper(vEhc, 4, 4)
         
-        return [HighWisdom, SpellMastery, MagicCritical, HolyFocus, MasterMagic, ArcaneAim, VengenceOfAngelOff]
+        return [HighWisdom, SpellMastery, MagicCritical, HolyFocus, MasterMagic, ArcaneAim, VengenceOfAngelOff, UnstableMemorizePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self._combat
@@ -76,6 +79,7 @@ class JobGenerator(ck.JobGenerator):
         서버렉 3초
         피스메이커 3히트
         
+        언스테이블 메모라이즈는 인피니티가 꺼져있을때 사용
         프레이는 인피가 종료될 때 같이 종료되도록 맞추어서 사용
         소울 컨트랙트는 인피 마지막과 맞춰서 사용
         리브라는 쿨마다 사용
@@ -86,6 +90,7 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 240000, rem = True).wrap(core.BuffSkillWrapper)
         AdvancedBless = core.BuffSkill("어드밴스드 블레스", 0, 240000, att = 30 + self._combat*1 + 20, boss_pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
+        Infinity = adventurer.InfinityWrapper(self._combat, SERVERLAG)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 4)
         
@@ -104,16 +109,34 @@ class JobGenerator(ck.JobGenerator):
         #Summoning skill
         Bahamutt = core.SummonSkill("바하뮤트", 600, 3030, 500+6*self._combat, 1, 90 * 1000, cooltime = 120 * 1000, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #최종뎀25%스택
         AngelOfLibra = core.SummonSkill("엔젤 오브 리브라", 540, 4020, 500 + 20*vEhc.getV(3,1), 12, 30 * 1000, cooltime = 120 * 1000, red=True).isV(vEhc,3,1).wrap(core.SummonSkillWrapper)    #최종뎀50%스택
+
+        #Unstable Memorize skills
+        EnergyBolt = core.DamageSkill("에너지 볼트", 660, 309, 1).wrap(core.DamageSkillWrapper)
+        HolyArrow = core.DamageSkill("홀리 애로우", 660, 518, 1).wrap(core.DamageSkillWrapper)
+        Heal = core.BuffSkill("힐", 600, 2000, cooltime=4000, pdamage_indep=10).wrap(core.BuffSkillWrapper)
+        ShiningRay = core.DamageSkill("샤이닝 레이", 690, 254, 4).wrap(core.DamageSkillWrapper)
+        HolyFountain = core.DamageSkill("홀리 파운틴", 960, 0, 0).wrap(core.DamageSkillWrapper)
+        Dispell = core.DamageSkill("디스펠", 900, 0, 0).wrap(core.DamageSkillWrapper)
+        DivineProtection = core.DamageSkill("디바인 프로텍션", 870, 0, 0).wrap(core.DamageSkillWrapper)
+        Genesis = core.DamageSkill("제네시스", 630, 820, 6, cooltime=45000, red=True).wrap(core.DamageSkillWrapper)
+        BigBang = core.DamageSkill("빅뱅", 630, 480+6*self._combat, 4).wrap(core.DamageSkillWrapper)
+        Resurrection = core.DamageSkill("리저렉션", 900, 0, 0).wrap(core.DamageSkillWrapper)
         
         ######   Wrappers    ######
-        Infinity = adventurer.InfinityWrapper(self._combat, SERVERLAG)
-        SacredMark = core.StackSkillWrapper(core.BuffSkill("소환수 표식", 0, 999999 * 1000), 50)
+        #Unstable Memorize
+        UnstableMemorize = adventurer.UnstableMemorizeWrapper(vEhc, 4, 4, chtr.get_skill_modifier())
+        
+        for sk, weight in [(EnergyBolt, 1), (HolyArrow, 10), (Heal, 10), (ShiningRay, 10),
+                            (HolyFountain, 10), (Dispell, 25), (DivineProtection, 10), (AngelRay, 25), (Genesis, 25),
+                            (BigBang, 25), (Resurrection, 25), (Infinity, 25), (Bahamutt, 25), (HeavensDoor, 10), (EpicAdventure, 10)]:
+            UnstableMemorize.add_skill(sk, weight)
             
         # Sacred Mark Control
+        SacredMark = core.StackSkillWrapper(core.BuffSkill("소환수 표식", 0, 999999 * 1000), 50)
         Bahamutt.onTick(SacredMark.stackController(25, name="표식(25%)", dtype="set"))
         AngelOfLibra.onTick(SacredMark.stackController(50, name="표식(50%)", dtype="set"))
 
-        for sk in [AngelRay, PeaceMaker, PeaceMakerFinal]:
+        for sk in [HolyArrow, ShiningRay, Genesis, BigBang, AngelRay, PeaceMaker, PeaceMakerFinal]:
             sk.onJustAfter(SacredMark.stackController(0, name="표식(소모)", dtype="set"))
             sk.add_runtime_modifier(SacredMark, lambda skill: core.CharacterModifier(pdamage_indep = skill.stack))
         
@@ -133,5 +156,5 @@ class JobGenerator(ck.JobGenerator):
                 globalSkill.soul_contract()] +\
                 [PeaceMakerInit] +\
                 [AngelOfLibra, Bahamutt, HeavensDoor] +\
-                [] +\
+                [UnstableMemorize] +\
                 [AngelRay])

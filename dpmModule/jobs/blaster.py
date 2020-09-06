@@ -21,7 +21,7 @@ class RevolvingCannonMasteryWrapper(core.DamageSkillWrapper):
         skill = core.DamageSkill("리볼빙 캐논 마스터리", 0, 215 + passive_level, 1)
         super(RevolvingCannonMasteryWrapper, self).__init__(skill)
         
-    def _use(self, rem = 0, red = 0):
+    def _use(self, skill_modifier):
         if self.overheat.is_active():
             stack = 6
         else:

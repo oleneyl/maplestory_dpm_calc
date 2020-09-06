@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, SynchronizeRule, ConcurrentRunRule
+from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
 from . import globalSkill
 from .jobclass import adventurer
 from .jobbranch import magicians
@@ -36,8 +36,8 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(SynchronizeRule('소울 컨트랙트', '인피니티', 35000, -1), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('라이트닝 스피어', '인피니티'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('언스테이블 메모라이즈', '인피니티'), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
@@ -53,8 +53,10 @@ class JobGenerator(ck.JobGenerator):
         
         MasterMagic = core.InformedCharacterModifier("마스터 매직", att = 30 + 3*passive_level, buff_rem = 50 + 5*passive_level)
         ArcaneAim = core.InformedCharacterModifier("아케인 에임", armor_ignore = 20 + ceil(passive_level / 2))
+
+        UnstableMemorizePassive = adventurer.UnstableMemorizePassiveWrapper(vEhc, 4, 4)
         
-        return [HighWisdom, SpellMastery, MagicCritical, ElementalReset, MasterMagic, ElementAmplication, ArcaneAim]
+        return [HighWisdom, SpellMastery, MagicCritical, ElementalReset, MasterMagic, ElementAmplication, ArcaneAim, UnstableMemorizePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
@@ -77,14 +79,11 @@ class JobGenerator(ck.JobGenerator):
         체인 라이트닝 - 리인포스/보너스어택/타겟수 증가
         오브 - 뎀증
 
-        언스테이블 메모라이즈를 사용하지 않음
+        언스테이블 메모라이즈는 인피니티가 꺼져있을때 사용
         라이트닝 스피어는 인피니티가 켜져 있을때만 사용함
-        소울 컨트랙트는 인피니티 마지막과 맞춰서 사용
         
         그 외의 극딜기는 쿨마다 사용
-        오브는 쿨마다 사용, 19타
-        썬브는 풀히트는 가정
-
+        프로즌 오브 쿨마다 사용, 19타
         '''
         ######   Skill   ######
         #Buff skills
@@ -95,7 +94,7 @@ class JobGenerator(ck.JobGenerator):
         #Damage Skills
         ChainLightening = core.DamageSkill("체인 라이트닝", 600, 185 + 3*self._combat, 10+1, modifier = core.CharacterModifier(crit = 25+ceil(self._combat/2), pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        FrozenOrbEjac = core.SummonSkill("프로즌 오브", 690, 210, 220+4*self._combat, 1, 4000, cooltime = 5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
+        FrozenOrb = core.SummonSkill("프로즌 오브", 690, 210, 220+4*self._combat, 1, 4000, cooltime = 5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
     
         LighteningSpear = core.DamageSkill("라이트닝 스피어", 0, 0, 1, cooltime = 75 * 1000).wrap(core.DamageSkillWrapper)
         LighteningSpearSingle = core.DamageSkill("라이트닝 스피어(키다운)", 267, 200, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 총 8010ms
@@ -118,7 +117,7 @@ class JobGenerator(ck.JobGenerator):
         
         # 단일 대상 기준
         SpiritOfSnow = core.SummonSkill("스피릿 오브 스노우", 720, 3000, 850+34*vEhc.getV(3,1), 9, 30000, red = True, cooltime = 120*1000).isV(vEhc, 3,1).wrap(core.SummonSkillWrapper)
-                
+        
         #Summoning skill
         ThunderStorm = core.SummonSkill("썬더 스톰", 900, 1770, 430, 1, 90000, cooltime = 30000).setV(vEhc, 5, 3, False).wrap(core.SummonSkillWrapper)
         Elquiness = core.SummonSkill("엘퀴네스", 600, 3030, 380+6*self._combat, 1, (260+5*self._combat)*1000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
@@ -131,17 +130,68 @@ class JobGenerator(ck.JobGenerator):
         #special skills
         Infinity = adventurer.InfinityWrapper(self._combat)
         FrostEffect = core.BuffSkill("프로스트 이펙트", 0, 999999 * 1000).wrap(FrostEffectWrapper)
+
+        #Unstable Memorize skills
+        EnergyBolt = core.DamageSkill("에너지 볼트", 630, 309, 1).wrap(core.DamageSkillWrapper)
+        ColdBeam = core.DamageSkill("콜드 빔", 630, 199, 3).wrap(core.DamageSkillWrapper)
+        ThunderBolt = core.DamageSkill("썬더 볼트", 630, 210, 3).wrap(core.DamageSkillWrapper)
+        IceStrike = core.DamageSkill("아이스 스트라이크", 630, 335, 4).wrap(core.DamageSkillWrapper)
+        GlacialChain = core.DamageSkill("글레이셜 체인", 630, 383, 3).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
+        #Unstable Memorize
+        UnstableMemorize = adventurer.UnstableMemorizeWrapper(vEhc, 4, 4, chtr.get_skill_modifier())
+        
+        for sk, weight in [(EnergyBolt, 1), (ColdBeam, 5), (ThunderBolt, 5), (IceStrike, 10),
+                            (GlacialChain, 10), (ThunderStorm, 10), (ChainLightening, 25), (Blizzard, 25), (FrozenOrb, 25),
+                            (Infinity, 25), (Elquiness, 25), (LighteningSpear, 10), (EpicAdventure, 10)]:
+            UnstableMemorize.add_skill(sk, weight)
+
         #Frost Effect
         FrostIncrement = FrostEffect.stackController(1)
         FrostDecrement = FrostEffect.stackController(-1)
         def applyFrostEffect(sk: FrostEffect):
             return core.CharacterModifier(pdamage = sk.stack * 12)
+
+        #Energy Bolt
+        EnergyBolt.onAfter(BlizzardPassive)
+
+        #Cold Beam
+        ColdBeam.onJustAfter(FrostIncrement)
+        ColdBeam.onAfter(BlizzardPassive)
+
+        #Thunder Bolt
+        ThunderBolt.add_runtime_modifier(FrostEffect, applyFrostEffect)
+        ThunderBolt.onJustAfter(FrostDecrement)
+        ThunderBolt.onAfter(BlizzardPassive)
+
+        #Ice Strike
+        IceStrike.onJustAfter(FrostIncrement)
+        IceStrike.onAfter(BlizzardPassive)
+
+        #Glacial Chain
+        GlacialChain.onJustAfter(FrostIncrement)
+        GlacialChain.onAfter(BlizzardPassive)
+
+        #Thunder Storm
+        ThunderStorm.add_runtime_modifier(FrostEffect, applyFrostEffect)
         
-        #Ejaculator
-        FrozenOrbEjac.onTick(FrostIncrement)
-        FrozenOrbEjac.onTick(BlizzardPassive)
+        #Elquiness
+        Elquiness.onTick(BlizzardPassive) # TODO: onTick 실행순서 바뀌면 순서 조정해야 함
+        Elquiness.onTick(FrostIncrement)
+        
+        #Frozen Orb
+        FrozenOrb.onTick(BlizzardPassive) # TODO: onTick 실행순서 바뀌면 순서 조정해야 함
+        FrozenOrb.onTick(FrostIncrement)
+        
+        #Chain Lightening
+        ChainLightening.add_runtime_modifier(FrostEffect, applyFrostEffect)
+        ChainLightening.onJustAfter(FrostDecrement)
+        ChainLightening.onAfter(BlizzardPassive)
+        
+        #Blizzard
+        Blizzard.onJustAfter(FrostIncrement)
+        BlizzardPassive.onJustAfter(FrostEffect.stackController(0.6))
 
         #Lightening Spear
         LighteningSpearSingle.add_runtime_modifier(FrostEffect, applyFrostEffect)
@@ -156,43 +206,31 @@ class JobGenerator(ck.JobGenerator):
     
         LighteningSpear.onAfter(LighteningRepeator)
         
-        #damage skills
-        ChainLightening.add_runtime_modifier(FrostEffect, applyFrostEffect)
-        ChainLightening.onJustAfter(FrostDecrement)
-        ChainLightening.onAfter(BlizzardPassive)
-
-        ThunderStorm.add_runtime_modifier(FrostEffect, applyFrostEffect)
+        #Ice Aura
+        IceAura.onTick(FrostIncrement)
         
-        IceAgeSummon.onTicks([BlizzardPassive, FrostIncrement])
+        #Ice Age
+        IceAgeSummon.onTick(BlizzardPassive) # TODO: onTick 실행순서 바뀌면 순서 조정해야 함
+        IceAgeSummon.onTick(FrostIncrement)
         IceAgeInit.onJustAfter(FrostIncrement)
         IceAgeInit.onAfter(BlizzardPassive)
         IceAgeInit.onAfter(IceAgeSummon)
         
-        Elquiness.onTick(FrostIncrement)
-        
-        Blizzard.onJustAfter(FrostIncrement)
-        BlizzardPassive.onJustAfter(FrostEffect.stackController(0.6))
-        
-        SpiritOfSnow.onTick(FrostEffect.stackController(3))
-        
-        node_before = ThunderBrake
-        
+        #Thunder Break
         for node in [ThunderBrake1, ThunderBrake2, ThunderBrake3, ThunderBrake4, ThunderBrake5, ThunderBrake6, ThunderBrake7, ThunderBrake8]:
             node.add_runtime_modifier(FrostEffect, applyFrostEffect)
             node.onJustAfter(FrostDecrement)
             node.onAfter(BlizzardPassive)
-            node_before.onAfter(node)
+            ThunderBrake.onAfter(node)
         
-        Elquiness.onTick(BlizzardPassive)
-        IceAura.onTick(FrostIncrement)
-        
-        SoulContract = globalSkill.soul_contract()
+        #Spirit of Snow
+        SpiritOfSnow.onTick(FrostEffect.stackController(3))
 
         return(ChainLightening,
                 [Infinity, Meditation, EpicAdventure, OverloadMana, FrostEffect,
                 globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                SoulContract] +\
+                globalSkill.soul_contract()] +\
                 [IceAgeInit, Blizzard, LighteningSpear, ThunderBrake] +\
-                [ThunderStorm, Elquiness, IceAura, IceAgeSummon, FrozenOrbEjac, SpiritOfSnow] +\
-                [] +\
+                [ThunderStorm, Elquiness, IceAura, IceAgeSummon, FrozenOrb, SpiritOfSnow] +\
+                [UnstableMemorize] +\
                 [ChainLightening])
