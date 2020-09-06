@@ -304,7 +304,7 @@ class JobGenerator(ck.JobGenerator):
         Reaction_Spectrum.protect_from_running()
 
         return(BasicAttackWrapper,
-                [SoulOfCrystalPassive, globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
+                [SoulOfCrystalPassive, globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self._combat), globalSkill.useful_sharp_eyes(),
                     Booster, FastCharge, WraithOfGod, MagicCircuitFullDrive, SoulOfCrystal,
                     Craft_Javelin_EnhanceBuff, CrystalCharge, GloryWingUse,
                     OverloadMana, BlessMark, CurseMark,

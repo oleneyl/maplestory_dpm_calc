@@ -243,7 +243,7 @@ class JobGenerator(ck.JobGenerator):
         Shard.protect_from_running()
 
         return(Divide,
-                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
+                [globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self._combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
                     AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive, 
                     globalSkill.useful_sharp_eyes(), globalSkill.soul_contract()] +\
                 [Resonance, Grave, Blossom, Marker, Ruin] +\
