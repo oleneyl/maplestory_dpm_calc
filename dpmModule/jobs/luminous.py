@@ -75,8 +75,8 @@ class LuminousStateController(core.BuffSkillWrapper):
         return self.remain - time > 0
 
 class PunishingResonatorWrapper(core.SummonSkillWrapper):
-    def __init__(self, vEhc, stateGetter):
-        skill = core.SummonSkill("퍼니싱 리소네이터", 990, 6000/28, 0, 0, 6000-1, cooltime = 30 * 1000, red=True, modifier = core.CharacterModifier(crit = 15)).isV(vEhc,3,2)
+    def __init__(self, vEhc, num1, num2, stateGetter):
+        skill = core.SummonSkill("퍼니싱 리소네이터", 990, 6000/28, 0, 0, 6000-1, cooltime = 30 * 1000, red=True, modifier = core.CharacterModifier(crit = 15)).isV(vEhc,num1,num2)
         super(PunishingResonatorWrapper, self).__init__(skill)
         self.skillList = [
             (250 + vEhc.getV(3,2)*10, 5),
@@ -96,8 +96,8 @@ class PunishingResonatorWrapper(core.SummonSkillWrapper):
             return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
 
 class LightAndDarknessWrapper(core.DamageSkillWrapper):
-    def __init__(self, vEhc):
-        skill = core.DamageSkill("빛과 어둠의 세례", 840, 15 * vEhc.getV(1,1)+375, 13 * 7, cooltime = 45*1000, red=True, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc,1,1)
+    def __init__(self, vEhc, num1, num2):
+        skill = core.DamageSkill("빛과 어둠의 세례", 840, 15 * vEhc.getV(1,1)+375, 13 * 7, cooltime = 45*1000, red=True, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc,num1,num2)
         super(LightAndDarknessWrapper, self).__init__(skill)
         self.stack = 12
 
@@ -183,11 +183,10 @@ class JobGenerator(ck.JobGenerator):
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
         # 5th
-        Frid = heroes.FridWrapper(vEhc, 0, 0)
-        OverloadMana = magicians.OverloadManaWrapper(vEhc, 2, 3)
-        DoorOfTruth = core.SummonSkill("진리의 문", 870, 3030, 375 + 15 * vEhc.getV(4,4), 10, (25 + vEhc.getV(4,4) // 2) * 1000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #이퀄시 사용 가능해짐.
-        PunishingResonator = PunishingResonatorWrapper(vEhc, LuminousState.getState)
-        LightAndDarkness = LightAndDarknessWrapper(vEhc)
+        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
+        DoorOfTruth = core.SummonSkill("진리의 문", 870, 3030, 375 + 15 * vEhc.getV(4,4), 10, (25 + vEhc.getV(4,4) // 2) * 1000, cooltime = -1).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)   #이퀄시 사용 가능해짐.
+        PunishingResonator = PunishingResonatorWrapper(vEhc, 2, 1, LuminousState.getState)
+        LightAndDarkness = LightAndDarknessWrapper(vEhc, 0, 0)
 
         # Skill Wrapper - Basic Attack
         LightReflection.onAfter(LuminousState.modifyStack(22))
@@ -216,7 +215,7 @@ class JobGenerator(ck.JobGenerator):
 
         return(Attack, 
                 [LuminousState, globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                    Booster, PodicMeditaion, DarknessSocery, DarkCrescendo, HerosOath, Memorize, Frid, OverloadMana,
+                    Booster, PodicMeditaion, DarknessSocery, DarkCrescendo, HerosOath, Memorize, OverloadMana,
                     SoulContract] +\
                 [LightAndDarkness] +\
                 [PunishingResonator, DoorOfTruth] +\
