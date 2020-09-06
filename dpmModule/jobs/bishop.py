@@ -2,7 +2,7 @@ from ..kernel import core
 from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, SynchronizeRule, InactiveRule
+from ..execution.rules import RuleSet, SynchronizeRule, InactiveRule, DisableRule
 from . import globalSkill
 from functools import partial
 from .jobclass import adventurer
@@ -41,6 +41,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(SynchronizeRule('소울 컨트랙트', '인피니티', 35000, -1), RuleSet.BASE)
         ruleset.add_rule(SynchronizeRule('프레이', '인피니티', 45000, -1), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('언스테이블 메모라이즈', '인피니티'), RuleSet.BASE)
+        ruleset.add_rule(DisableRule('힐'), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
@@ -90,6 +91,7 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 240000, rem = True).wrap(core.BuffSkillWrapper)
         AdvancedBless = core.BuffSkill("어드밴스드 블레스", 0, 240000, att = 30 + self._combat*1 + 20, boss_pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
+        Heal = core.BuffSkill("힐", 600, 2000, cooltime=4000, pdamage_indep=10, red=True).wrap(core.BuffSkillWrapper)
         Infinity = adventurer.InfinityWrapper(self._combat, SERVERLAG)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 4)
@@ -113,7 +115,6 @@ class JobGenerator(ck.JobGenerator):
         #Unstable Memorize skills
         EnergyBolt = core.DamageSkill("에너지 볼트", 660, 309, 1).wrap(core.DamageSkillWrapper)
         HolyArrow = core.DamageSkill("홀리 애로우", 660, 518, 1).wrap(core.DamageSkillWrapper)
-        Heal = core.BuffSkill("힐", 600, 2000, cooltime=4000, pdamage_indep=10).wrap(core.BuffSkillWrapper)
         ShiningRay = core.DamageSkill("샤이닝 레이", 690, 254, 4).wrap(core.DamageSkillWrapper)
         HolyFountain = core.DamageSkill("홀리 파운틴", 960, 0, 0).wrap(core.DamageSkillWrapper)
         Dispell = core.DamageSkill("디스펠", 900, 0, 0).wrap(core.DamageSkillWrapper)
@@ -155,7 +156,7 @@ class JobGenerator(ck.JobGenerator):
         
         return(AngelRay, 
                 [Booster, SacredMark, Infinity, PeaceMakerFinalBuff, Pray, EpicAdventure, OverloadMana,
-                globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(), AdvancedBless,
+                globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(), AdvancedBless, Heal,
                 globalSkill.soul_contract()] +\
                 [PeaceMakerInit] +\
                 [AngelOfLibra, Bahamutt, HeavensDoor] +\

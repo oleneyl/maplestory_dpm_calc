@@ -85,6 +85,8 @@ class JobGenerator(ck.JobGenerator):
         그 외의 극딜기는 쿨마다 사용
         프로즌 오브 쿨마다 사용, 19타
         '''
+        THUNDER_BREAK_HIT = 8
+
         ######   Skill   ######
         #Buff skills
         Meditation = core.BuffSkill("메디테이션", 0, 240*1000, att = 30, rem = True, red = True).wrap(core.BuffSkillWrapper)
@@ -217,7 +219,7 @@ class JobGenerator(ck.JobGenerator):
         IceAgeInit.onAfter(IceAgeSummon)
         
         #Thunder Break
-        for node in [ThunderBrake1, ThunderBrake2, ThunderBrake3, ThunderBrake4, ThunderBrake5, ThunderBrake6, ThunderBrake7, ThunderBrake8]:
+        for node in [ThunderBrake1, ThunderBrake2, ThunderBrake3, ThunderBrake4, ThunderBrake5, ThunderBrake6, ThunderBrake7, ThunderBrake8][:THUNDER_BREAK_HIT]:
             node.add_runtime_modifier(FrostEffect, applyFrostEffect)
             node.onJustAfter(FrostDecrement)
             node.onAfter(BlizzardPassive)
