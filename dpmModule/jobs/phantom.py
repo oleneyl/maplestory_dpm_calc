@@ -150,7 +150,7 @@ class JobGenerator(ck.JobGenerator):
         #이들 정보교환 부분을 굳이 Task exchange로 표현할 필요가 있을까?
         
         return(BasicAttackWrapper,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
                     TalentOfPhantomII, TalentOfPhantomIII, FinalCutBuff, BoolsEye,
                     JudgementBuff, Booster, PrieredAria, HerosOath, ReadyToDie, JokerBuff,
                     globalSkill.soul_contract()] +\

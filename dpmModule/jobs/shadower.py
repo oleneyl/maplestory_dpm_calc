@@ -170,7 +170,7 @@ class JobGenerator(ck.JobGenerator):
             jobutils.create_auxilary_attack(sk, 0.7, nametag = '(쉐도우파트너)')
         
         return(BasicAttackWrapper, 
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
                     Booster, FlipTheCoin, ShadowerInstinct, ShadowPartner, Smoke, AdvancedDarkSight, EpicAdventure, UltimateDarksight, MesoStack,
                         ReadyToDie, globalSkill.soul_contract()] +\
                 [Eviscerate, SonicBlow, BailOfShadow, DarkFlare]+\

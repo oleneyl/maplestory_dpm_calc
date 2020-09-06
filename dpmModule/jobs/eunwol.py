@@ -190,7 +190,7 @@ class JobGenerator(ck.JobGenerator):
         SpiritFrenzy.onConstraint(SpiritFrenzyConstraint)
 
         return(BasicAttackWrapper, 
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     EnhanceSpiritLink, LuckyDice, HerosOath,
                     Overdrive, OverdrivePenalty, SoulConcentrate, DoubleBody, SoulTrapStack,
                     globalSkill.soul_contract()] +\

@@ -360,7 +360,7 @@ class JobGenerator(ck.JobGenerator):
         '''
 
         return(ComboHolder,
-                [globalSkill.maple_heros(chtr.level, combat_level = 0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, name = "륀느의 가호", combat_level = 0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, DoubleTime, TimeDistortion, TimeHolding, IntensiveTime, LimitBreak,
                     SoulContract]+\
                 [ShadowRain, TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta]+\

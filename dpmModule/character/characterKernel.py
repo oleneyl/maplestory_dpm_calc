@@ -110,7 +110,7 @@ class JobGenerator():
     
     from . import globalSkill
     self.preEmptiveSkills = 2
-    globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster()
+    globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster()
     globalSkill.soul_contract()
     
     미하일까지..

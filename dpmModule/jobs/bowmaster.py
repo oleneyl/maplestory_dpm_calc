@@ -200,7 +200,7 @@ class JobGenerator(ck.JobGenerator):
 
         ### Exports ###
         return(ArrowOfStorm,
-                [globalSkill.maple_heros(chtr.level),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat),
                     SoulArrow, AdvancedQuibber, SharpEyes, ElusionStep, Preparation, EpicAdventure, ArmorPiercing,
                     ArrowRainBuff, CriticalReinforce, QuibberFullBurstBuff, QuibberFullBurstDOT, ImageArrowPassive,
                     globalSkill.soul_contract()] +\

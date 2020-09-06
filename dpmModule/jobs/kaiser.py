@@ -310,7 +310,7 @@ class JobGenerator(ck.JobGenerator):
         DrakeSlasher.protect_from_running()
     
         return(BasicAttack,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), MorphGauge,
+                [globalSkill.maple_heros(chtr.level, name = "노바의 용사", combat_level=self._combat), globalSkill.useful_sharp_eyes(), MorphGauge,
                     RegainStrenth, BlazeUp, FinalFiguration, MajestyOfKaiser, FinalTrance, AuraWeaponBuff, AuraWeapon,
                     SoulContract] +\
                 [AdvancedWillOfSword_Summon, WillOfSwordStrike, AdvancedWillOfSword] +\

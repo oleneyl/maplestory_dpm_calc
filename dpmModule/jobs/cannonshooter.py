@@ -115,7 +115,7 @@ class JobGenerator(ck.JobGenerator):
         SpecialMonkeyEscort_Canon.onAfter(SpecialMonkeyEscort_Boom)
     
         return(CanonBuster,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Booster, MonkeyWaveBuff, MonkeyFuriousBuff, MonkeyFuriousDot, OakRulet, Buckshot, MonkeyMagic,
                     EpicAdventure, LuckyDice, Overdrive, OverdrivePenalty, PirateFlag,
                     globalSkill.soul_contract()] +\

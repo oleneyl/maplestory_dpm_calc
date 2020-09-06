@@ -152,4 +152,4 @@ class JobGenerator(ck.JobGenerator):
         Sage_Elemental_Clone_Attack_Opt = core.OptionalElement(Sage_Elemental_Clone_Attack.is_active(), Sage_Elemental_Clone_Attack_Active_Opt, Sage_Elemental_Clone_Attack_Passive_Opt)
 
 
-        return()
+        return(globalSkill.maple_heros(chtr.level, name = "아니마의 용사", combat_level=self._combat))

@@ -133,7 +133,7 @@ class JobGenerator(ck.JobGenerator):
             jobutils.create_auxilary_attack(sk, 0.7, nametag = '(미러이미징)')
         
         return(PhantomBlow,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
                     Booster, DarkSight, FinalCutBuff, EpicAdventure, FlashBangDebuff, HiddenBladeBuff, UltimateDarksight, ReadyToDie,
                     globalSkill.soul_contract()] +\
                 [FinalCut, FlashBang, BladeTornado, SuddenRaid, KarmaFury, BladeStorm, Asura] +\

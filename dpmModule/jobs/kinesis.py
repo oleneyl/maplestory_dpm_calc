@@ -217,7 +217,7 @@ class JobGenerator(ck.JobGenerator):
         UltimateTrain.onBefore(PsychicPoint.stackController(-15))
         
         return(PsychicGrab2,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, name = "이계의 용사", combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Booster, PsychicShield, PsychicGround, 
                     PsycoBreak, UltimatePsychicBuff, PsychicCharging, 
                     PsychicOver, OverloadMana, PsychicPoint,

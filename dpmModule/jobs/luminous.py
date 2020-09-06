@@ -214,7 +214,7 @@ class JobGenerator(ck.JobGenerator):
         SoulContract = globalSkill.soul_contract()
 
         return(Attack, 
-                [LuminousState, globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                [LuminousState, globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Booster, PodicMeditaion, DarknessSocery, DarkCrescendo, HerosOath, Memorize, OverloadMana,
                     SoulContract] +\
                 [LightAndDarkness] +\

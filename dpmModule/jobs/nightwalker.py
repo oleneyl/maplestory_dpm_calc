@@ -195,7 +195,7 @@ class JobGenerator(ck.JobGenerator):
         ShadowBite.onAfter(ShadowBiteBuff.controller(2000))
                 
         return( QuintupleThrow,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self._combat), globalSkill.useful_sharp_eyes(),
                     ElementalDarkness, Heist, Booster, ShadowServent, SpiritThrowing, ShadowBatStack,
                     ShadowElusion, ReadyToDie, Dominion, GloryOfGuardians, ShadowSpear, ShadowServentExtend, ShadowBite, ShadowBiteBuff,
                     globalSkill.soul_contract()] +\

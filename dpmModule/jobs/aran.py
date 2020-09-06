@@ -230,7 +230,7 @@ class JobGenerator(ck.JobGenerator):
         AdrenalineGenerator.onConstraint(core.ConstraintElement('아드레날린부스트가 불가능할때', AdrenalineBoost, AdrenalineBoost.is_not_active))
         AdrenalineGenerator.onAfter(AdrenalineBoost)
         return(BasicAttack, 
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), HerosOath,
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), HerosOath,
                     Booster, SmashSwingIncr, SnowCharge, AdvancedComboAbility, ComboAbility,
                     BlessingMaha, AdrenalineBoost, AdrenalineBoostEndDummy,
                     AdrenalineGenerator, 

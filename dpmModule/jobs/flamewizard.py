@@ -118,7 +118,7 @@ class JobGenerator(ck.JobGenerator):
         SavageFlame.onAfter(SavageFlameStack.stackController(-15))
         
         return (OrbitalFlame,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self._combat), globalSkill.useful_sharp_eyes(),
                     WordOfFire, FiresOfCreation, BurningRegion, GloryOfGuardians, OverloadMana, Flame,
                     globalSkill.soul_contract()] +\
                 [CygnusPalanks, BlazingOrbital, DragonSlaveInit, SavageFlame, InfinityFlameCircleInit, 

@@ -96,7 +96,7 @@ class JobGenerator(ck.JobGenerator):
         Mercilesswind.onAfter(MercilesswindDOT)
 
         return(SongOfHeaven, 
-                [globalSkill.maple_heros(chtr.level), 
+                [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self._combat), 
                     Storm, SylphsAid, Albatross, SharpEyes, GloryOfGuardians, StormBringerDummy, CriticalReinforce,
                     PinPointPierceDebuff,
                     globalSkill.soul_contract()] +\

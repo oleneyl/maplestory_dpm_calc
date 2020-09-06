@@ -182,7 +182,7 @@ class JobGenerator(ck.JobGenerator):
                 [Booster, SoulGaze, LuckyDice, FinalContract,
                     SoulExult, SoulContract,Overdrive, OverdrivePenalty,
                     FinaturaFettucciaBuff, SpotLightBuff, Trinity_Buff, MascortFamilier,
-                    globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster()] +\
+                    globalSkill.maple_heros(chtr.level, name = "노바의 용사", combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster()] +\
                 [FinaturaFettuccia, EnergyBurst] +\
                 [SuperNova, MascortFamilierAttack, ShinyBubbleBreath, SpotLight] +\
                 [] +\

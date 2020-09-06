@@ -125,7 +125,7 @@ class JobGenerator(ck.JobGenerator):
         ChargedArrowHold.set_disabled_and_time_left(5000) # 최초 차징 시간
         
         return(Snipping,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_wind_booster(),
                     SoulArrow, ElusionStep, SharpEyes, BoolsEye, EpicAdventure, CriticalReinforce, SplitArrowBuff,
                         globalSkill.soul_contract()] +\
                 [TrueSnipping, ChargedArrowHold, ChargedArrow] +\

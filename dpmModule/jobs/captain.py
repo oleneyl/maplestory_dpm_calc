@@ -163,7 +163,7 @@ class JobGenerator(ck.JobGenerator):
     
         QuickDraw.set_disabled_and_time_left(-1)
         return (RapidFire,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
                     SummonCrewBuff, PirateStyle, Booster, InfiniteBullet, LuckyDice, UnwierdingNectar, EpicAdventure, PirateFlag, Overdrive, OverdrivePenalty,
                     BattleshipBomber_1_ON, BattleshipBomber_2_ON, QuickDraw,
                     globalSkill.soul_contract()] +\

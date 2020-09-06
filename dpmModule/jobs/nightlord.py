@@ -111,7 +111,7 @@ class JobGenerator(ck.JobGenerator):
             sk.onAfter(FatalVenom)
 
         return (QuarupleThrow, 
-            [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+            [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
                     ShadowPartner, SpiritJavelin, PurgeArea, BleedingToxin, EpicAdventure, 
                     UltimateDarksight, ReadyToDie, SpreadThrowInit,
                     globalSkill.soul_contract()] + \

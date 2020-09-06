@@ -143,7 +143,7 @@ class JobGenerator(ck.JobGenerator):
             jobutils.create_auxilary_attack(sk, 0.9, "(블루 블러드)")
 
         return(BasicAttackWrapper,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
                     Booster, DemonSlashRemainTime, DemonSlashTrigger, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
                     globalSkill.soul_contract()] +\
                 [Cerberus, DevilCry, SpiritOfRageEnd] +\

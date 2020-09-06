@@ -219,7 +219,7 @@ class JobGenerator(ck.JobGenerator):
         SoulContract.protect_from_running()
         
         return(Mag_Pang,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, MaximizeCannon, WillOfLiberty, AuraWeaponBuff, AuraWeapon, BunkerBuster, Cylinder, Overheat, HammerSmashDebuff,
                     SoulContract] +\
                 [ReleaseHammer, BurningBreaker, BalkanPunch] +\
