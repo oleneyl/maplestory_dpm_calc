@@ -121,10 +121,13 @@ class JobGenerator(ck.JobGenerator):
         Genesis = core.DamageSkill("제네시스", 630, 820, 6, cooltime=45000, red=True).wrap(core.DamageSkillWrapper)
         BigBang = core.DamageSkill("빅뱅", 630, 480+6*self._combat, 4).wrap(core.DamageSkillWrapper)
         Resurrection = core.DamageSkill("리저렉션", 900, 0, 0).wrap(core.DamageSkillWrapper)
+
+        VengenceOfAngel_Delay = core.DamageSkill("벤전스 오브 엔젤(딜레이)", 480, 0, 0).wrap(core.DamageSkillWrapper)
         
         ######   Wrappers    ######
         #Unstable Memorize
         UnstableMemorize = adventurer.UnstableMemorizeWrapper(vEhc, 4, 4, chtr.get_skill_modifier())
+        UnstableMemorize.onAfter(VengenceOfAngel_Delay) # 벤전스 OFF(딜레이 0) - 언스테이블 - 벤전스 ON(딜레이 480)
         
         for sk, weight in [(EnergyBolt, 1), (HolyArrow, 10), (Heal, 10), (ShiningRay, 10),
                             (HolyFountain, 10), (Dispell, 25), (DivineProtection, 10), (AngelRay, 25), (Genesis, 25),
