@@ -1821,6 +1821,7 @@ class Analytics():
         
     def statistics(self):
         print("Total damage %.1f in %d second" % (self.total_damage, self.totalTime / 1000) )
+        print(f"Loss {self.total_damage_without_restriction - self.total_damage:.1f}")
 
         def getSkillNames(logList):
             return sorted(set(map(lambda log: log["result"].sname, logList)))
@@ -1844,11 +1845,12 @@ class Analytics():
             use = len(skillLog)
             hit = sum(map(lambda log: log["result"].hit, skillLog))
             damage = sum(map(lambda log: log["deal"], skillLog))
+            loss = sum(map(lambda log: log["loss"], skillLog))
             delay = sum(map(lambda log: log["result"].delay, skillLog))
             share = damage / self.total_damage * 100
             shareDict[name.split('(')[0]] += share
             print(f"{name} Used {use} Delay {delay}")
-            print(f"Hit {hit} Damage {damage}")
+            print(f"Hit {hit} Damage {damage:.1f} Loss {loss:.1f}")
             print(f"Share {share:.4f}%")
 
         print("\n===Summon/DoT Skills===")
@@ -1860,11 +1862,13 @@ class Analytics():
             use = len(skillLog) - summon
             hit = sum(map(lambda log: log["result"].hit, skillLog))
             damage = sum(map(lambda log: log["deal"], skillLog))
+            loss = sum(map(lambda log: log["loss"], skillLog))
             delay = sum(map(lambda log: log["result"].delay, skillLog))
             share = damage / self.total_damage * 100
             shareDict[name.split('(')[0]] += share
             print(f"{name} Summoned {summon} Delay {delay}")
-            print(f"Used {use} Hit {hit} Damage {damage}")
+            print(f"Used {use} Hit {hit}")
+            print(f"Damage {damage:.1f} Loss {loss:.1f}")
             print(f"Share {share:.4f}%")
 
         print("\n===Skill Share===")
