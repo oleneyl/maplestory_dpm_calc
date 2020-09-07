@@ -18,11 +18,10 @@ class EnergyChargeWrapper(core.StackSkillWrapper):
         self.stack = 0
         self.charged = False
         self.combat = combat
+        self.drainCallback = None
     
-    def vary(self, val):
-        if val >= 10000:
-            self.stack = 10000
-        if (not self.charged) and val > 0:
+    def charge(self, val, force):
+        if (force or not self.charged) and val > 0:
             self.stack = min(self.stack + val, 10000)
         elif val < 0:
             self.stack = max(self.stack + val, 0)
@@ -30,7 +29,14 @@ class EnergyChargeWrapper(core.StackSkillWrapper):
             self.charged = False
         elif (not self.charged) and self.stack >= 10000:
             self.charged = True
+        if self.stack <= 0:
+            self.drainCallback() # 게이지 고갈시 서펜트 종료
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
+
+    def chargeController(self, val, force = False):
+        task = core.Task(self, partial(self.charge, val, force))
+        name = f"게이지 {val}"
+        return core.TaskHolder(task, name = name)
 
     def get_modifier(self):
         if self.charged == 1:
@@ -57,8 +63,9 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         # ruleset.add_rule(ConditionRule('에너지 오브(더미)', '에너지 차지', lambda sk: sk.isStateOff()), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule('트랜스 폼', '에너지 차지', lambda sk: sk.judge(5000, -1)), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule('스티뮬레이트', '에너지 차지', lambda sk: sk.judge(7500, -1)), RuleSet.BASE)
+        # ruleset.add_rule(ConditionRule('트랜스 폼', '에너지 차지', lambda sk: sk.judge(5000, -1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('스티뮬레이트', '에너지 차지', lambda sk: sk.judge(1000, -1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('유니티 오브 파워', '유니티 오브 파워(디버프)', lambda sk: sk.is_time_left(1000, -1)), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
@@ -86,10 +93,9 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
-        울트라 차지 : 공격시 350충전, 최대 차지시 공50, 보스공격시 2배 충전. 최대스택 10000.
+        울트라 차지 : 공격시 350충전, 보스공격시 2배 충전. 최대스택 10000.
 
-        트랜스 폼은 게이지 5000 이하일때 사용
-        스티뮬레이트는 게이지 7500 이하일때 사용
+        스티뮬레이트는 게이지 1000 이하일때 사용
 
         더블 럭키 다이스-인핸스
         피스트 인레이지-리인포스, 보스킬러, 보너스 어택
@@ -122,12 +128,12 @@ class JobGenerator(ck.JobGenerator):
         # Hyper
         Stimulate = core.BuffSkill("스티뮬레이트", 930, 120 * 1000, cooltime = 240 * 1000, pdamage = 20).wrap(core.BuffSkillWrapper)# 에너지 주기적으로 800씩 증가, 미완충시 풀완충.
         StimulateSummon = core.SummonSkill("스티뮬레이트(게이지 증가 더미)", 0, (5 + serverlag) * 1000, 0, 0, 120 * 1000).wrap(core.SummonSkillWrapper)
-        UnityOfPower = core.DamageSkill("유니티 오브 파워", 1080, 650, 5, cooltime = 90000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #완충시에만 사용 가능, 에너지 1500 소모.
+        UnityOfPower = core.DamageSkill("유니티 오브 파워", 1080, 650, 5, cooltime = 10000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #완충시에만 사용 가능, 에너지 1500 소모.
         UnityOfPowerBuff = core.BuffSkill("유니티 오브 파워(디버프)", 0, 90 * 1000, cooltime = -1, crit_damage = 40).wrap(core.BuffSkillWrapper)   #4스택 가정.
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
         # 5th
-        PirateFlag = PirateFlag = adventurer.PirateFlagWrapper(vEhc, 3, 2, chtr.level)
+        PirateFlag = adventurer.PirateFlagWrapper(vEhc, 3, 2, chtr.level)
         
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
@@ -136,7 +142,7 @@ class JobGenerator(ck.JobGenerator):
         
         Transform = core.BuffSkill("트랜스 폼", 450, (50+vEhc.getV(1,1))*1000, cooltime = 180 * 1000, red=True, pdamage_indep = 20 + vEhc.getV(1,1) // 5).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         TransformEnergyOrbDummy = core.DamageSkill("에너지 오브(더미)", 0, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
-        TransformEnergyOrb = core.DamageSkill("에너지 오브", 750, 450 +vEhc.getV(1,1)*18, 3 * TRANSFORM_HIT, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TransformEnergyOrb = core.DamageSkill("에너지 오브", 780, 450 +vEhc.getV(1,1)*18, 3 * TRANSFORM_HIT, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
 
         SerpentScrew = core.SummonSkill("서펜트 스크류", 600, 260, 360 + vEhc.getV(0,0)*14, 3, 99999 * 10000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         SerpentScrewDummy = core.SummonSkill("서펜트 스크류(지속)", 0, 1000, 0, 0, 99999 * 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
@@ -146,24 +152,23 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill Wrapper   ######
         # Energy Charge
         EnergyCharge = EnergyChargeWrapper(passive_level)
-        EnergyCharge.set_name_style("게이지 %d")
         EnergyConstraint = core.ConstraintElement("에너지 차지 상태에서만 사용 가능", EnergyCharge, EnergyCharge.isStateOn)
 
-        Stimulate.onAfter(EnergyCharge.stackController(10000))
-        Transform.onAfter(EnergyCharge.stackController(10000))
-        TransformEnergyOrb.onAfter(EnergyCharge.stackController(700 * TRANSFORM_HIT))
-        StimulateSummon.onTick(EnergyCharge.stackController(800))
-        FistInrage.onAfter(EnergyCharge.stackController(700))
-        Nautilus.onAfter(EnergyCharge.stackController(700))
-        NautilusFinalAttack.onAfter(EnergyCharge.stackController(700))
-        SerpentScrewDummy.onTick(EnergyCharge.stackController(-85))
-        SerpentScrew.onTick(EnergyCharge.stackController(-85*0.3))
-        FistInrage_T.onAfter(EnergyCharge.stackController(-150))
-        DragonStrike.onAfter(EnergyCharge.stackController(-180))
-        UnityOfPower.onAfter(EnergyCharge.stackController(-1500))
+        Stimulate.onAfter(EnergyCharge.chargeController(10000, force=True))
+        Transform.onAfter(EnergyCharge.chargeController(10000, force=True))
+        TransformEnergyOrb.onAfter(EnergyCharge.chargeController(700 * TRANSFORM_HIT))
+        StimulateSummon.onTick(EnergyCharge.chargeController(800, force=True))
+        FistInrage.onAfter(EnergyCharge.chargeController(700))
+        Nautilus.onAfter(EnergyCharge.chargeController(700))
+        NautilusFinalAttack.onAfter(EnergyCharge.chargeController(700))
+        SerpentScrewDummy.onTick(EnergyCharge.chargeController(-85))
+        SerpentScrew.onTick(EnergyCharge.chargeController(-85*0.3))
+        FistInrage_T.onAfter(EnergyCharge.chargeController(-150))
+        DragonStrike.onAfter(EnergyCharge.chargeController(-180))
+        UnityOfPower.onAfter(EnergyCharge.chargeController(-1500))
         
         # Basic Attack
-        BasicAttack = core.OptionalElement(EnergyCharge.isStateOn, FistInrage_T, FistInrage)
+        BasicAttack = core.OptionalElement(EnergyCharge.isStateOn, FistInrage_T, FistInrage, "에너지 완충")
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
 
@@ -172,7 +177,7 @@ class JobGenerator(ck.JobGenerator):
         DragonStrike.onAfter(DragonStrikeBuff)
     
         # Final Attack
-        FinalAttack = core.OptionalElement(lambda: not Nautilus.is_available(), NautilusFinalAttack)
+        FinalAttack = core.OptionalElement(lambda: not Nautilus.is_available(), NautilusFinalAttack, name="노틸러스 쿨타임")
         FistInrage.onAfter(FinalAttack)
         FistInrage_T.onAfter(FinalAttack)
         FuriousCharge.onAfter(FinalAttack)
@@ -186,14 +191,12 @@ class JobGenerator(ck.JobGenerator):
         
         # Transform
         Transform.onAfter(TransformEnergyOrbDummy.controller(1))
+        TransformEnergyOrbDummy.onConstraint(core.ConstraintElement("트랜스폼 상태에서만 사용가능", Transform, Transform.is_active))
         TransformEnergyOrbDummy.onAfter(core.RepeatElement(TransformEnergyOrb, 2 + vEhc.getV(1, 1) // 30))
         
         # Serpent Screw
         SerpentScrew.onConstraint(core.ConstraintElement("에너지 100 이상", EnergyCharge, partial(EnergyCharge.judge, 100, 1)))
-        SerpentScrewOff = SerpentScrew.controller(150, name = "서펜트 스크류 사용 종료")
-        SerpentScrewOff.onAfter(SerpentScrewDummy.controller(-1))
-        
-        SerpentScrew.onTick(core.OptionalElement(partial(EnergyCharge.judge, 100, -1), SerpentScrewOff, name = "서펜트 스크류 사용 종료(100 미만 게이지일 경우)"))
+        EnergyCharge.drainCallback = partial(SerpentScrew.set_disabled_and_time_left, 1)
             
         return (BasicAttackWrapper,
             [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
