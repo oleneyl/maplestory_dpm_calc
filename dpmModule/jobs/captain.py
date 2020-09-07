@@ -121,7 +121,7 @@ class JobGenerator(ck.JobGenerator):
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("건")
-        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 4, 4, WEAPON_ATT)
+        Overdrive = pirates.OverdriveWrapper(vEhc, 4, 4, WEAPON_ATT)
         
         BulletParty = core.DamageSkill("불릿 파티", 0, 0, 0, cooltime = 75000, red = True).wrap(core.DamageSkillWrapper)
         BulletPartyTick = core.DamageSkill("불릿 파티(틱)", BULLET_PARTY_TICK, 230+9*vEhc.getV(5,5), 5, modifier = CONTINUAL_AIMING).isV(vEhc,5,5).wrap(core.DamageSkillWrapper) #12초간 지속 -> 50회 시전
@@ -167,7 +167,7 @@ class JobGenerator(ck.JobGenerator):
 
         return (RapidFire,
                 [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
-                    SummonCrewBuff, PirateStyle, Booster, InfiniteBullet, LuckyDice, UnwierdingNectar, EpicAdventure, PirateFlag, Overdrive, OverdrivePenalty,
+                    SummonCrewBuff, PirateStyle, Booster, InfiniteBullet, LuckyDice, UnwierdingNectar, EpicAdventure, PirateFlag, Overdrive,
                     QuickDraw, globalSkill.soul_contract()] +\
                 [BattleshipBomber, Headshot, Nautilus, DeadEye, StrangeBomb] +\
                 [OctaQuaterdeck, BattleshipBomber_1, BattleshipBomber_2, NautilusAssult, NautilusAssult_2, SummonCrew] +\

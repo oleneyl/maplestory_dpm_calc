@@ -276,7 +276,7 @@ class JobGenerator(ck.JobGenerator):
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("너클")
-        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
+        Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
     
         MagicCircuitFullDrive = core.BuffSkill("매직 서킷 풀드라이브", 720, (30+vEhc.getV(4,3))*1000, pdamage = (20 + vEhc.getV(4,3)), cooltime = 200*1000, red=True).isV(vEhc,4,3).wrap(core.BuffSkillWrapper)
         MagicCircuitFullDriveStorm = core.DamageSkill("매직 서킷 풀드라이브(마력 폭풍)", 0, 500+20*vEhc.getV(4,3), 3, cooltime=4000).wrap(core.DamageSkillWrapper)
@@ -429,7 +429,7 @@ class JobGenerator(ck.JobGenerator):
         return(PlainAttack, 
                 [ContactCaravan, ScarletBuff, AbyssBuff, SpectorState, Booster,
                     ChargeSpellAmplification, WraithOfGod,
-                    LuckyDice, Overdrive, OverdrivePenalty,
+                    LuckyDice, Overdrive,
                     MagicCircuitFullDrive, MemoryOfSourceBuff, EndlessPainBuff,
                     InfinitySpell,
                     globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.soul_contract()
