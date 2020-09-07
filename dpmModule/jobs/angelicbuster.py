@@ -135,7 +135,7 @@ class JobGenerator(ck.JobGenerator):
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("소울슈터")
-        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 3, 3, WEAPON_ATT)
+        Overdrive = pirates.OverdriveWrapper(vEhc, 3, 3, WEAPON_ATT)
     
         EnergyBurst = core.DamageSkill("에너지 버스트", 900, (600+20*vEhc.getV(4,4)) * 3, 12, red = True, cooltime = 120 * 1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         
@@ -180,7 +180,7 @@ class JobGenerator(ck.JobGenerator):
     
         return (Trinity_1,
                 [Booster, SoulGaze, LuckyDice, FinalContract,
-                    SoulExult, SoulContract,Overdrive, OverdrivePenalty,
+                    SoulExult, SoulContract, Overdrive,
                     FinaturaFettucciaBuff, SpotLightBuff, Trinity_Buff, MascortFamilier,
                     globalSkill.maple_heros(chtr.level, name = "노바의 용사", combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster()] +\
                 [FinaturaFettuccia, EnergyBurst] +\

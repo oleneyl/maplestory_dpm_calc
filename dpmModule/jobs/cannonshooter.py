@@ -86,7 +86,7 @@ class JobGenerator(ck.JobGenerator):
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("핸드캐논")
-        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
+        Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
     
         PirateFlag = adventurer.PirateFlagWrapper(vEhc, 4, 3, chtr.level)
 
@@ -117,7 +117,7 @@ class JobGenerator(ck.JobGenerator):
         return(CanonBuster,
                 [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Booster, MonkeyWaveBuff, MonkeyFuriousBuff, MonkeyFuriousDot, OakRulet, Buckshot, MonkeyMagic,
-                    EpicAdventure, LuckyDice, Overdrive, OverdrivePenalty, PirateFlag,
+                    EpicAdventure, LuckyDice, Overdrive, PirateFlag,
                     globalSkill.soul_contract()] +\
                 [MonkeyWave, MonkeyFurious, ICBM] +\
                 [OakRuletDOT, SupportMonkeyTwins, RollingCanonRainbow, BFGCannonball, ICBMDOT, SpecialMonkeyEscort_Boom, SpecialMonkeyEscort_Canon] +\
