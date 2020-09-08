@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ConditionRule
+from ..execution.rules import RuleSet, ConditionRule, MutualRule
 from . import globalSkill
 from .jobbranch import pirates
 from .jobclass import adventurer
@@ -30,13 +30,12 @@ class EnergyChargeWrapper(core.StackSkillWrapper):
         elif (not self.charged) and self.stack >= 10000:
             self.charged = True
         if self.stack <= 0:
-            self.drainCallback() # 게이지 고갈시 서펜트 종료
+            self.drainCallback() # 게이지 고갈시 서펜트 종료. 카데나와 같이 Taskholder에 체이닝해서 구현하는게 좋지만, 성능 문제로 이와 같이 해둠.
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
 
     def chargeController(self, val, force = False):
         task = core.Task(self, partial(self.charge, val, force))
-        name = f"게이지 {val}"
-        return core.TaskHolder(task, name = name)
+        return core.TaskHolder(task, name = f"게이지 {val}")
 
     def get_modifier(self):
         if self.charged == 1:
@@ -62,9 +61,9 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        # ruleset.add_rule(ConditionRule('에너지 오브(더미)', '에너지 차지', lambda sk: sk.isStateOff()), RuleSet.BASE)
-        # ruleset.add_rule(ConditionRule('트랜스 폼', '에너지 차지', lambda sk: sk.judge(5000, -1)), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule('스티뮬레이트', '에너지 차지', lambda sk: sk.judge(1000, -1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('에너지 오브(더미)', '에너지 차지', lambda sk: sk.isStateOff()), RuleSet.BASE)
+        ruleset.add_rule(MutualRule('스티뮬레이트', '트랜스 폼'), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('스티뮬레이트', '에너지 차지', lambda sk: sk.judge(2000, -1) or sk.isStateOff()), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('유니티 오브 파워', '유니티 오브 파워(디버프)', lambda sk: sk.is_time_left(1000, -1)), RuleSet.BASE)
         return ruleset
 
@@ -95,7 +94,8 @@ class JobGenerator(ck.JobGenerator):
         '''
         울트라 차지 : 공격시 350충전, 보스공격시 2배 충전. 최대스택 10000.
 
-        스티뮬레이트는 게이지 1000 이하일때 사용
+        스티뮬레이트는 완충 상태가 아니거나 게이지 2000 이하일때 사용
+        에너지 오브는 게이지 회복용으로 사용
 
         더블 럭키 다이스-인핸스
         피스트 인레이지-리인포스, 보스킬러, 보너스 어택
@@ -127,7 +127,7 @@ class JobGenerator(ck.JobGenerator):
 
         # Hyper
         Stimulate = core.BuffSkill("스티뮬레이트", 930, 120 * 1000, cooltime = 240 * 1000, pdamage = 20).wrap(core.BuffSkillWrapper)# 에너지 주기적으로 800씩 증가, 미완충시 풀완충.
-        StimulateSummon = core.SummonSkill("스티뮬레이트(게이지 증가 더미)", 0, (5 + serverlag) * 1000, 0, 0, 120 * 1000).wrap(core.SummonSkillWrapper)
+        StimulateSummon = core.SummonSkill("스티뮬레이트(게이지 증가 더미)", 0, (5 + serverlag) * 1000, 0, 0, 120 * 1000, cooltime = -1).wrap(core.SummonSkillWrapper)
         UnityOfPower = core.DamageSkill("유니티 오브 파워", 1080, 650, 5, cooltime = 10000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #완충시에만 사용 가능, 에너지 1500 소모.
         UnityOfPowerBuff = core.BuffSkill("유니티 오브 파워(디버프)", 0, 90 * 1000, cooltime = -1, crit_damage = 40).wrap(core.BuffSkillWrapper)   #4스택 가정.
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
@@ -160,7 +160,6 @@ class JobGenerator(ck.JobGenerator):
         StimulateSummon.onTick(EnergyCharge.chargeController(800, force=True))
         FistInrage.onAfter(EnergyCharge.chargeController(700))
         Nautilus.onAfter(EnergyCharge.chargeController(700))
-        NautilusFinalAttack.onAfter(EnergyCharge.chargeController(700))
         SerpentScrewDummy.onTick(EnergyCharge.chargeController(-85))
         SerpentScrew.onTick(EnergyCharge.chargeController(-85*0.3))
         FistInrage_T.onAfter(EnergyCharge.chargeController(-150))
@@ -196,7 +195,8 @@ class JobGenerator(ck.JobGenerator):
         
         # Serpent Screw
         SerpentScrew.onConstraint(core.ConstraintElement("에너지 100 이상", EnergyCharge, partial(EnergyCharge.judge, 100, 1)))
-        EnergyCharge.drainCallback = partial(SerpentScrew.set_disabled_and_time_left, 1)
+        SerpentScrew.onAfter(SerpentScrewDummy)
+        EnergyCharge.drainCallback = lambda: [SerpentScrew.set_disabled_and_time_left(1), SerpentScrewDummy.set_disabled_and_time_left(-1)]
             
         return (BasicAttackWrapper,
             [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
