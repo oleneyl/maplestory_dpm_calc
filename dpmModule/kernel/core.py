@@ -1493,38 +1493,6 @@ class StackSkillWrapper(BuffSkillWrapper):
         
     def judge(self, stack, direction):
         return (self.stack-stack)*direction>=0
-
-class TimeStackSkillWrapper(AbstractSkillWrapper):
-    def __init__(self, skill, max_, name = None):
-        super(TimeStackSkillWrapper, self).__init__(skill, name = name)
-        self.stack = 0
-        self._max = max_
-        self.queue = []
-        
-    def addStack(self, vary, left):
-        self.queue.append([vary, left])
-        return ResultObject(0, CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
-
-    def stackController(self, vary, left, name = None):
-        task = Task(self, partial(self.addStack, vary, left))
-        return TaskHolder(task, name = name)
-        
-    def spend_time(self, time):
-        queue = []
-        for el in self.queue:
-            el[1] -= time
-            if el[1] > 0:
-                queue.append(el)
-        self.queue = queue
-    
-    def getStack(self):
-        total = 0 
-        for el in self.queue:
-            total += el[0]
-        return max(min(total, self._max), 0)
-        
-    def get_modifier(self):
-        return CharacterModifier()
         
 class DamageSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill : DamageSkill, modifier = CharacterModifier(), name = None):
