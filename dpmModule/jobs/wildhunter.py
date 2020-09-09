@@ -7,7 +7,6 @@ from . import globalSkill
 from .jobclass import resistance
 from .jobbranch import bowmen
 from math import ceil
-# TODO: 드릴 컨테이너 추가
 
 class JaguerStack(core.DamageSkillWrapper):
     def __init__(self, level, vEhc):
