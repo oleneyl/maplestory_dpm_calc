@@ -4,7 +4,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import DisableRule, RuleSet
+from ..execution.rules import ConditionRule, DisableRule, RuleSet
 from . import globalSkill
 from .jobbranch import bowmen
 from math import ceil
@@ -78,6 +78,8 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(DisableRule('에인션트 아스트라'), RuleSet.BASE)
+        ruleset.add_rule(DisableRule('카디널 트랜지션'), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('콤보 어썰트', '커스 트랜지션', lambda sk: sk.is_time_left(2000, -1)), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
@@ -107,10 +109,8 @@ class JobGenerator(ck.JobGenerator):
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
-        카디널 : 20, 
-        카디널 디스차지 : 10,(화살당)
-        레이븐 : 10,
-        다른 카디널 포스 사용시 : 에인션트포스/인챈트포스 1초 쿨감소
+        에인션트 아스트라 사용하지 않음
+        콤보 어썰트는 커스 트랜지션의 지속시간이 2초 이하 남았을때 사용
         
         하이퍼
         
@@ -168,7 +168,7 @@ class JobGenerator(ck.JobGenerator):
         
         ComboAssultDischarge = core.DamageSkill("콤보 어썰트(디스차지)", 0, 600+10*self._combat, 7,
                 modifier = ENCHANT_FORCE).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)# 디버프 +1
-        ComboAssultDischargeArrow = core.DamageSkill("콤보 어썰트(디스차지)(화살)", 0, 650+10*self._combat, 4,
+        ComboAssultDischargeArrow = core.DamageSkill("콤보 어썰트(디스차지)(화살)", 0, 650+10*self._combat, 5,
                 modifier = ENCHANT_FORCE).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         
         ComboAssultBlast = core.DamageSkill("콤보 어썰트(블래스트)", 0, 600+10*self._combat, 8,
@@ -176,7 +176,7 @@ class JobGenerator(ck.JobGenerator):
         ComboAssultBlastArrow = core.DamageSkill("콤보 어썰트(블래스트)(화살)", 0, 600+10*self._combat, 5,
                 modifier = ENCHANT_FORCE).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         
-        ComboAssultTransition = core.DamageSkill("콤보 어썰트(트랜지션)", 0, 600+10*self._combat, 6,
+        ComboAssultTransition = core.DamageSkill("콤보 어썰트(트랜지션)", 0, 600+10*self._combat, 7,
                 modifier = ENCHANT_FORCE).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)# 디버프 +5
         ComboAssultTransitionArrow = core.DamageSkill("콤보 어썰트(트랜지션)(화살)", 0, 650+10*self._combat, 5,
                 modifier = ENCHANT_FORCE).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
@@ -285,16 +285,13 @@ class JobGenerator(ck.JobGenerator):
         ComboAssultDischarge.onAfter(CurseTransition)
         ComboAssultBlast.onAfter(CurseTransition)
         ComboAssultTransition.onAfter(CurseTransition)
+        CardinalTransition.onAfter(CurseTransition)
         
         # 기본공격 = 블래스트-디스차지
         CardinalBlast.onAfter(CardinalDischarge)
         
         #레이븐 설정
         RavenTempest.onAfter(Raven.controller(25000))
-        
-        # 12초마다 트랜지션 사용
-        CardinalTransition_ForceUse = core.DamageSkill("카디널 트랜지션(강제)", 0, 0, 0, cooltime = 12000).wrap(core.DamageSkillWrapper)
-        CardinalTransition_ForceUse.onAfter(CardinalTransition)
         
         # 아스트라는 디스차지로 사용
         AncientAstraHolder.onBefore(CardinalDischarge)
@@ -306,9 +303,8 @@ class JobGenerator(ck.JobGenerator):
                     RelicEvolution, EpicAdventure,
                     AncientGuidance, AdditionalTransition, CriticalReinforce,
                     globalSkill.soul_contract()] +\
-                [CardinalTransition_ForceUse, 
-                    AncientAstraHolder, TripleImpact, EdgeOfResonance, 
-                        ComboAssultHolder, UltimateBlast] +\
+                [AncientAstraHolder, TripleImpact, EdgeOfResonance, 
+                        ComboAssultHolder, UltimateBlast, CardinalTransition] +\
                 [Evolve, Raven, GuidedArrow, RavenTempest, ObsidionBarrierBlast] +\
                 [] +\
                 [CardinalBlast])
