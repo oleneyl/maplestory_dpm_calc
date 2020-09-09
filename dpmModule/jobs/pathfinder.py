@@ -13,7 +13,7 @@ from math import ceil
 class CardinalStateWrapper(core.BuffSkillWrapper):
     def __init__(self, ancient_force_skills):
         '''
-        DISCHARGE / BLAST / TRANSISION
+        DISCHARGE / BLAST / TRANSITION
         '''
         skill = core.BuffSkill("카디널 차지", 0, 99999999)
         super(CardinalStateWrapper, self).__init__(skill)
@@ -74,6 +74,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(DisableRule('스플릿 미스텔'), RuleSet.BASE)
         ruleset.add_rule(DisableRule('카디널 트랜지션'), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('콤보 어썰트', '커스 트랜지션', lambda sk: sk.is_time_left(2000, -1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('얼티밋 블래스트', '렐릭 차지', lambda sk: sk.judge(1000, 1)), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self):
@@ -204,7 +205,7 @@ class JobGenerator(ck.JobGenerator):
             
         RavenTempest = core.SummonSkill("레이븐 템페스트", 540, 250, 400+20*vEhc.getV(0,0), 5, 25*1000, cooltime = 120*1000, red=True, modifier = ANCIENT_ARCHERY).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
 
-        ObsidionBarrierBlast = core.SummonSkill("옵시디언 배리어", 60, 480, 400+12*vEhc.getV(4,4), 4, 15000, cooltime = 200*1000, red=True, modifier = ANCIENT_ARCHERY).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
+        ObsidionBarrierBlast = core.SummonSkill("옵시디언 배리어", 60, 510, 400+12*vEhc.getV(4,4), 4, (10+vEhc.getV(4,4)//5)*1000, cooltime = 200*1000, red=True, modifier = ANCIENT_ARCHERY).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
         ######   Skill Wrapper   ######
 
         #이볼브 연계 설정
@@ -306,7 +307,7 @@ class JobGenerator(ck.JobGenerator):
         ### Exports ###
         return(CardinalBlast,
                 [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_wind_booster(),
-                    AncientBowBooster, CurseTolerance, CurseTransition, SharpEyes,
+                    RelicCharge, AncientBowBooster, CurseTolerance, CurseTransition, SharpEyes,
                     RelicEvolution, EpicAdventure,
                     AncientGuidance, AdditionalTransition, CriticalReinforce,
                     globalSkill.soul_contract()] +\
