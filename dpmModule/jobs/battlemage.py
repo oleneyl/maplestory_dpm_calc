@@ -117,21 +117,21 @@ class JobGenerator(ck.JobGenerator):
         FinishBlow = core.DamageSkill("피니쉬 블로우", 720, 330 + 3 * self._combat, 6, modifier = core.CharacterModifier(crit=25 + ceil(self._combat / 2), armor_ignore=2 * ceil((30 + self._combat)/3)) + OVERLOAD_MANA).setV(vEhc, 1, 2, False).wrap(BlowSkillWrapper)
         ReaperScythe = core.DamageSkill("사신의 낫", 720, 300, 12, modifier = core.CharacterModifier(crit=50, armor_ignore=50) + OVERLOAD_MANA).setV(vEhc, 1, 2, False).wrap(BlowSkillWrapper)
         
-        DarkGenesis = core.DamageSkill("다크 제네시스", 870, 520 + 10 * self._combat, 8, cooltime = 30*1000).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
+        DarkGenesis = core.DamageSkill("다크 제네시스", 690, 520 + 10 * self._combat, 8, cooltime = 30*1000).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
         DarkGenesisFinalAttack = core.DamageSkill("다크 제네시스(추가타)", 0, 220 + 4 * self._combat, 1).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
 
         Death = core.DamageSkill("데스", 0, 200+chtr.level, 12, cooltime = 5000, modifier=OVERLOAD_MANA).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         #Hyper
         MasterOfDeath = core.BuffSkill("마스터 오브 데스", 1020, 30*1000, cooltime = 200*1000, red=False).wrap(core.BuffSkillWrapper)
-        BattlekingBar = core.DamageSkill("배틀킹 바", 200, 650, 2, cooltime = 13*1000, modifier = OVERLOAD_MANA).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        BattlekingBar2 = core.DamageSkill("배틀킹 바(2타)", 250, 650, 5, modifier = OVERLOAD_MANA).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        BattlekingBar = core.DamageSkill("배틀킹 바", 180, 650, 2, cooltime = 13*1000, modifier = OVERLOAD_MANA).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        BattlekingBar2 = core.DamageSkill("배틀킹 바(2타)", 240, 650, 5, modifier = OVERLOAD_MANA).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         WillOfLiberty = core.BuffSkill("윌 오브 리버티", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
         #5th
         RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 4, 4)
         UnionAura = core.BuffSkill("유니온 오라", 810, (vEhc.getV(1,1)//3+30)*1000, cooltime = 100*1000, pdamage=20, boss_pdamage=10, att=vEhc.getV(1,1)*2).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
-        BlackMagicAlter = core.SummonSkill("블랙 매직 알터", 690, 800, 800+32*vEhc.getV(0,0), 4, 40*1000, cooltime = 50*1000, modifier = OVERLOAD_MANA).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) # 2개 충전할때 마다 사용
+        BlackMagicAlter = core.SummonSkill("블랙 매직 알터", 690, 1220, 800+32*vEhc.getV(0,0), 4, 40*1000, cooltime = 50*1000, modifier = OVERLOAD_MANA).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) # 2개 충전할때 마다 사용
         GrimReaper = GrimReaperWrapper(vEhc, 2, 2, MasterOfDeath)
         
         #Build Graph
@@ -151,11 +151,13 @@ class JobGenerator(ck.JobGenerator):
         AddMark = MarkStack.stackController(1, "징표 생성")
         UseMark = core.OptionalElement(partial(MarkStack.judge, 1, 1), DarkLighteningMark, name = '징표 사용여부 결정')
         DarkLighteningMark.onAfter(MarkStack.stackController(-1, "징표 사용"))
+        DarkLightening.onAfter(AddMark)
 
         # 다크 제네시스
         FinalAttackRoulette = Roulette((60 + 2 * self._combat) * 0.01)
         FinalAttack = core.OptionalElement(lambda: DarkGenesis.is_not_usable() and FinalAttackRoulette.draw(), DarkGenesisFinalAttack, name = "다크 제네시스 추가타 검증")
         DarkGenesis.onJustAfter(UseMark)
+        DarkGenesis.onAfter(DarkLightening)
         DarkGenesisFinalAttack.onJustAfter(UseMark)
         
         # 피니시 블로우
@@ -178,20 +180,18 @@ class JobGenerator(ck.JobGenerator):
         BlackMagicAlter.onTick(ReduceDeath)
         GrimReaper.onTick(ReduceDeath)
         Death.add_runtime_modifier(MasterOfDeath, lambda sk: core.CharacterModifier(pdamage_indep = 50 * sk.is_active()))
-
-        # 다크 라이트닝
-        DarkLightening.onAfter(AddMark)
         
         # 배틀킹 바
         BattlekingBar.onJustAfter(UseMark)
         BattlekingBar.onAfter(FinalAttack)
         BattlekingBar.onAfter(BattlekingBar2)
         BattlekingBar2.onJustAfter(UseMark)
+        BattlekingBar2.onAfter(DarkLightening)
         BattlekingBar2.onAfter(FinalAttack)
         
         # 블랙 매직 알터
+        BlackMagicAlter.onTick(FinalAttack) # TODO: onTick 실행순서 바꿀 시 AddMark -> FinalAttack 순으로 터지는 것을 유지해야 함
         BlackMagicAlter.onTick(AddMark)
-        BlackMagicAlter.onAfter(FinalAttack)
 
         return(BasicAttack,
                 [Booster, WillOfLiberty, MasterOfDeath, UnionAura,
