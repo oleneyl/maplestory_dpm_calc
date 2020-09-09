@@ -222,12 +222,14 @@ class JobGenerator(ck.JobGenerator):
         ComboAssultBlast.onAfter(ComboAssultBlastArrow)
         ComboAssultDischarge.onAfter(ComboAssultDischargeArrow)
         ComboAssultTransition.onAfter(ComboAssultTransitionArrow)
+
+        TripleImpact.onAfter(TripleImpact.controller(-540, "reduce_cooltime", "쿨타임 지연 540ms"))
         
         AncientAstraDischarge.onAfter(AncientAstraDischargeArrow)
         
         AncientAstraBlastRepeat = core.RepeatElement(AncientAstraBlast, 10)
         AncientAstraDischargeRepeat = core.RepeatElement(AncientAstraDischarge, 60)
-        AncientAstraTransitionRepeat = core.RepeatElement(AncientAstraTransition, 60) 
+        AncientAstraTransitionRepeat = core.RepeatElement(AncientAstraTransition, 60)
         
         # 렐릭 차지 연결
         CardinalDischarge.onAfter(RelicCharge.stackController(10*2))
