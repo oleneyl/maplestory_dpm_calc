@@ -3,12 +3,13 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
 from . import globalSkill
 from .jobbranch import warriors
 from . import jobutils
 from math import ceil
-######   Passive Skill   ######
 
+# TODO: 블블 100% 가정하는 중. 포스 사용을 반영해서 블블 지속시간 시뮬레이션(엄청 어려울듯)
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -19,6 +20,22 @@ class JobGenerator(ck.JobGenerator):
         self._combat = 0
         
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'mess')
+
+    def get_ruleset(self):
+        '''딜 사이클 정리
+        어웨이크닝 ON
+        데몬 슬래시 + 데빌 크라이(이블 토쳐 유지)
+        어웨이크닝 OFF
+        데몬 임팩트 + 서버러스 + 데몬 슬래시 1타(리메인타임)
+
+        나머지는 알아서 시전
+        '''
+        ruleset = RuleSet()
+        ruleset.add_rule(InactiveRule('데몬 슬래시(1타)', '데몬 어웨이크닝'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('데몬 슬래시(1타)', '데몬 슬래시-리메인타임'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('서버러스', '데몬 어웨이크닝'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('데빌 크라이', '데몬 어웨이크닝'), RuleSet.BASE)
+        return ruleset
     
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 50, pdamage = 200)
@@ -52,18 +69,17 @@ class JobGenerator(ck.JobGenerator):
         슬래시-임팩트-서버-익스플로전-메타-데빌크라이
 
         ##### 하이퍼 #####
-        # 데몬 슬래시 - 리인포스, 리메인타임 리인포스
-        # 데몬 임팩트 - 리인포스, 보너스 어택, 리듀스 포스        
+        # 데몬 슬래시 - 엑스트라 포스, 리인포스, 리메인타임 리인포스
+        # 데몬 임팩트 - 리인포스, 보너스 어택
         '''
         buff_rem = chtr.get_base_modifier().buff_rem
 
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
 
-        DemonSlashRemainTime = core.BuffSkill("데몬 슬래시-리메인타임", 0, 9999999, 0, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
+        DemonSlashRemainTime = core.BuffSkill("데몬 슬래시-리메인타임", 0, 4000, cooltime = -1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
         
-        # 리메인타임의 최종뎀은 데몬 슬래시에는 적용되지 않음. 어웨OFF시 4초마다 일반 슬래시 1타만 사용. 1타만 사용시 딜레이가 2타로 이어질때보다 김.
-        DemonSlashTrigger = core.BuffSkill("데몬 슬래시(더미)", 0, 0, cooltime = 4000).wrap(core.BuffSkillWrapper)
+        # 1타만 사용시 딜레이가 2타로 이어질때보다 김.
         DemonSlash1 = core.DamageSkill("데몬 슬래시(1타)", 390, 110, 2, modifier = core.CharacterModifier(pdamage = 370, pdamage_indep = -10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         DemonSlashAW1 = core.DamageSkill("데몬 슬래시 강화(1타)", 270, 600, 3, modifier = core.CharacterModifier(pdamage = 370+50, armor_ignore = 50, pdamage_indep = -10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
@@ -97,18 +113,6 @@ class JobGenerator(ck.JobGenerator):
         Orthros = core.SummonSkill("오르트로스(네메아)", 510, 2000, 400+16*vEhc.getV(1,1), 12, 40000, cooltime = 120*1000, red=True, modifier = core.CharacterModifier(crit = 100, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         Orthros_ = core.SummonSkill("오르트로스(게리온)", 0, 3000, 900+36*vEhc.getV(1,1), 10, 40000, cooltime = -1, modifier = core.CharacterModifier(crit = 100, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         ######   Skill Wrapper   ######
-        '''딜 사이클 정리
-        어웨이크닝일 경우 -> 데몬슬래시
-        어웨이크닝 없을 경우 -> 데몬 임팩트
-        나머지 쿨마다 시전
-        데빌 크라인 20초마다 시전
-        서버러스 자동시전만 시전
-        나머지는 알아서 시전
-        
-        가정 : 블블 100%
-        
-        TODO--> 포스 사용을 반영해서 블블 지속시간 시뮬레이션(엄청 어려울듯)
-        '''
         DemonSlashAW1.onAfter(DemonSlashAW2)
         DemonSlashAW2.onAfter(DemonSlashAW3)
         DemonSlashAW3.onAfter(DemonSlashAW4)
@@ -117,10 +121,6 @@ class JobGenerator(ck.JobGenerator):
         BasicAttackWrapper = core.DamageSkill('기본 공격', 0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
 
-        DemonSlashTrigger.onConstraint(core.ConstraintElement("어웨이크닝 OFF일때만", DemonAwakning, DemonAwakning.is_not_active))
-        DemonSlashTrigger.onAfter(DemonSlash1)
-
-        DevilCry.onConstraint(core.ConstraintElement("어웨이크닝 ON일때만", DemonAwakning, DemonAwakning.is_active))
         DevilCry.onAfter(DevilCryBuff)
         
         DemonAwakning.onAfter(DemonAwakningSummon)
@@ -131,6 +131,11 @@ class JobGenerator(ck.JobGenerator):
         
         Metamorphosis.onAfter(MetamorphosisSummon)
         MetamorphosisSummon.onTick(MetamorphosisSummon_BB)
+
+        # 리메인타임
+        # TODO: 리메인타임 ON일때만 데몬 슬래시 최종뎀 -10% 해야함. 현재 항상 적용중. add_runtime_modifier를 사용하면 블블 추가타에 적용이 안됨.
+        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonSlash1]:
+            sk.onAfter(DemonSlashRemainTime)
 
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
@@ -144,8 +149,8 @@ class JobGenerator(ck.JobGenerator):
 
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
-                    Booster, DemonSlashRemainTime, DemonSlashTrigger, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
+                    Booster, DemonSlashRemainTime, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
                     globalSkill.soul_contract()] +\
-                [Cerberus, DevilCry, SpiritOfRageEnd] +\
+                [Cerberus, DevilCry, DemonSlash1, SpiritOfRageEnd] +\
                 [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_] +\
                 [BasicAttackWrapper])
