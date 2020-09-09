@@ -9,6 +9,49 @@ from .jobclass import resistance
 from .jobbranch import magicians
 from math import ceil
 
+class GrimReaperWrapper(core.SummonSkillWrapper):
+    def __init__(self, vEhc, num1, num2, masterOfDeath):
+        skill = core.SummonSkill("그림 리퍼", 720, 4000, 800+32*vEhc.getV(num1,num2), 12, 30*1000, cooltime=100*1000).isV(vEhc,num1,num2)
+        super(GrimReaperWrapper, self).__init__(skill)
+        self.masterOfDeath = masterOfDeath
+
+    def _useTick(self):
+        if self.onoff and self.tick <= 0 and self.masterOfDeath.is_not_active():
+            self.timeLeft += 2000
+        return super(GrimReaperWrapper, self)._useTick()
+
+    def get_delay(self):
+        if self.masterOfDeath.is_active():
+            return self.skill.delay / 2
+        else:
+            return self.skill.delay
+
+class BlowSkillWrapper(core.DamageSkillWrapper):
+    def __init__(self, skill):
+        super(BlowSkillWrapper, self).__init__(skill)
+        self.masterOfDeath = None
+
+    def get_hit(self):
+        if self.masterOfDeath.is_active():
+            return self.skill.hit + 1
+        else:
+            return self.skill.hit
+
+    def registerMOD(self, skill):
+        self.masterOfDeath = skill
+
+class Roulette():
+    def __init__(self, prob):
+        self.stack = 0
+        self.prob = prob
+
+    def draw(self):
+        self.stack += self.prob
+        if self.stack >= 1:
+            self.stack -= 1
+            return True
+        return False
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -60,83 +103,101 @@ class JobGenerator(ck.JobGenerator):
         마스터 오브 데스는 리퍼와 같이 사용함
         알터는 쿨마다 사용함
         '''
+        OVERLOAD_MANA = core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)
+
         #Buff skills
-        Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
-        MarkStack = core.StackSkillWrapper(core.BuffSkill("마크 스택", 0, 99999*10000), 1)
+        Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)
+        MarkStack = core.StackSkillWrapper(core.BuffSkill("징표 스택", 0, 99999*10000), 1)
 
         #Damage Skills
-        DarkLightening = core.DamageSkill("다크 라이트닝", 0, 225, 4, modifier = core.CharacterModifier(pdamage = 60 + self._combat)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #캔슬
-        DarkLighteningMark = core.DamageSkill("다크 라이크닝 (마크)", 0, 350, 4, modifier = core.CharacterModifier(boss_pdamage=20, pdamage = 60)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DarkLightening = core.DamageSkill("다크 라이트닝", 0, 225, 4, modifier = core.CharacterModifier(pdamage = 60 + self._combat) + OVERLOAD_MANA).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #캔슬
+        DarkLighteningMark = core.DamageSkill("다크 라이트닝(징표)", 0, 350, 4, modifier = core.CharacterModifier(boss_pdamage=20, pdamage = 60)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         #좌우텔 분당 83회 기준.
-        FinishBlow_ = core.DamageSkill("피니쉬 블로우", 720, 330 + 3 * self._combat, 6, modifier = core.CharacterModifier(crit=25 + ceil(self._combat / 2), armor_ignore=2 * ceil((30 + self._combat)/3)) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        FinishBlow_M = core.DamageSkill("피니쉬 블로우(마오데)", 720, 330 + 3 * self._combat, 6+1, modifier = core.CharacterModifier(crit=25 + ceil(self._combat / 2), armor_ignore= 2 * ceil((30 + self._combat)/3)) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        FinishBlow_U = core.DamageSkill("사신의 낫", 720, 300, 12, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        FinishBlow_M_U = core.DamageSkill("사신의 낫(마오데)", 720, 300, 12+1, modifier = core.CharacterModifier(crit=25, armor_ignore=20) + core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        FinishBlow = core.DamageSkill("피니쉬 블로우", 720, 330 + 3 * self._combat, 6, modifier = core.CharacterModifier(crit=25 + ceil(self._combat / 2), armor_ignore=2 * ceil((30 + self._combat)/3)) + OVERLOAD_MANA).setV(vEhc, 1, 2, False).wrap(BlowSkillWrapper)
+        ReaperScythe = core.DamageSkill("사신의 낫", 720, 300, 12, modifier = core.CharacterModifier(crit=50, armor_ignore=50) + OVERLOAD_MANA).setV(vEhc, 1, 2, False).wrap(BlowSkillWrapper)
         
-        DarkGenesis = core.DamageSkill("다크 제네시스", 870, 520 + 10 * self._combat, 8, cooltime = 30*1000).wrap(core.DamageSkillWrapper)
-        DarkGenesisFinalAttack = core.DamageSkill("다크 제네시스(추가타)", 0, 220 + 4 * self._combat, 0.01 * (60 + 2 * self._combat)).wrap(core.DamageSkillWrapper)
+        DarkGenesis = core.DamageSkill("다크 제네시스", 870, 520 + 10 * self._combat, 8, cooltime = 30*1000).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
+        DarkGenesisFinalAttack = core.DamageSkill("다크 제네시스(추가타)", 0, 220 + 4 * self._combat, 1).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
 
-        Death = core.DamageSkill("데스", 0, 200+chtr.level, 12, cooltime = 5000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        Death = core.DamageSkill("데스", 0, 200+chtr.level, 12, cooltime = 5000, modifier=OVERLOAD_MANA).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         #Hyper
         MasterOfDeath = core.BuffSkill("마스터 오브 데스", 1020, 30*1000, cooltime = 200*1000, red=False).wrap(core.BuffSkillWrapper)
-        BattlekingBar = core.DamageSkill("배틀킹 바", 200, 650, 2, cooltime = 13*1000, modifier = core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        BattlekingBar2 = core.DamageSkill("배틀킹 바(2타)", 250, 650, 5, modifier = core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        BattlekingBar = core.DamageSkill("배틀킹 바", 200, 650, 2, cooltime = 13*1000, modifier = OVERLOAD_MANA).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        BattlekingBar2 = core.DamageSkill("배틀킹 바(2타)", 250, 650, 5, modifier = OVERLOAD_MANA).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         WillOfLiberty = core.BuffSkill("윌 오브 리버티", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
         #5th
         RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 4, 4)
-        UnionAura = core.BuffSkill("유니온 오라", 810, (vEhc.getV(1,1)//3+30)*1000, cooltime = 100*1000, pdamage=20, boss_pdamage=10, att=50).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
-        BlackMagicAlter = core.SummonSkill("블랙 매직 알터", 690, 800, 800+32*vEhc.getV(0,0), 4, 40*1000, cooltime = 50*1000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)    #가동률 60%
-        GrimReaper = core.SummonSkill("그림 리퍼", 720, 4000, 800+32*vEhc.getV(2,2), 12, 62*1000, cooltime=100*1000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) #공격시 지속2초증가->지속62s
+        UnionAura = core.BuffSkill("유니온 오라", 810, (vEhc.getV(1,1)//3+30)*1000, cooltime = 100*1000, pdamage=20, boss_pdamage=10, att=vEhc.getV(1,1)*2).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
+        BlackMagicAlter = core.SummonSkill("블랙 매직 알터", 690, 800, 800+32*vEhc.getV(0,0), 4, 40*1000, cooltime = 50*1000, modifier = OVERLOAD_MANA).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) # 2개 충전할때 마다 사용
+        GrimReaper = GrimReaperWrapper(vEhc, 2, 2, MasterOfDeath)
         
         #Build Graph
-        FinalAttack = core.OptionalElement(DarkGenesis.is_not_usable, DarkGenesisFinalAttack, name = "다크 제네시스 추가타 검증")
-        AddStack = MarkStack.stackController(1, "마크 생성")
-        UseStack = MarkStack.stackController(-1, "마크 사용")
-        DarkLighteningMark.onAfter(UseStack)
-        UseMark = core.OptionalElement(partial(MarkStack.judge, 1, 1), DarkLighteningMark, name ='마크 사용여부 결정')
+        """
+        스킬간 발동관계 참고 링크
+        http://www.inven.co.kr/board/maple/2295/19973
+        http://www.inven.co.kr/board/maple/2295/4339
+        """
+        # 데스
+        UseDeath = core.OptionalElement(Death.is_available, Death, name = "데스 쿨타임 확인")
+        for sk in [FinishBlow, ReaperScythe, BattlekingBar, BattlekingBar2, DarkGenesis, DarkGenesisFinalAttack]:
+            sk.onAfter(UseDeath)
+
+        Death.protect_from_running()
+
+        # 다크 라이트닝
+        AddMark = MarkStack.stackController(1, "징표 생성")
+        UseMark = core.OptionalElement(partial(MarkStack.judge, 1, 1), DarkLighteningMark, name = '징표 사용여부 결정')
+        DarkLighteningMark.onAfter(MarkStack.stackController(-1, "징표 사용"))
+
+        # 다크 제네시스
+        FinalAttackRoulette = Roulette((60 + 2 * self._combat) * 0.01)
+        FinalAttack = core.OptionalElement(lambda: DarkGenesis.is_not_usable() and FinalAttackRoulette.draw(), DarkGenesisFinalAttack, name = "다크 제네시스 추가타 검증")
+        DarkGenesis.onJustAfter(UseMark)
+        DarkGenesisFinalAttack.onJustAfter(UseMark)
         
         # 피니시 블로우
-        IsUnion_ = core.OptionalElement(UnionAura.is_active, FinishBlow_U, FinishBlow_, name = "유니온오라 여부(데스 off)")
-        IsUnion_M = core.OptionalElement(UnionAura.is_active, FinishBlow_M_U, FinishBlow_M, name = "유니온오라 여부(데스 on)")
-        FinishBlow = core.OptionalElement(MasterOfDeath.is_active, IsUnion_M, IsUnion_, name = "마스터 오브 데스 여부")
-        FinishBlow.onAfter(UseMark)
+        FinishBlow.registerMOD(MasterOfDeath) # 마스터 오브 데스 스킬 등록
+        FinishBlow.onJustAfter(UseMark)
         FinishBlow.onAfter(DarkLightening)
         FinishBlow.onAfter(FinalAttack)
-        FinishBlowEndpoint = core.DamageSkill('기본공격', 0, 0, 0).wrap(core.DamageSkillWrapper)
-        FinishBlowEndpoint.onAfter(FinishBlow)
+        ReaperScythe.registerMOD(MasterOfDeath)
+        ReaperScythe.onJustAfter(UseMark)
+        ReaperScythe.onAfter(DarkLightening)
+        ReaperScythe.onAfter(FinalAttack)
+        BasicAttack = core.DamageSkill('기본공격', 0, 0, 0).wrap(core.DamageSkillWrapper)
+        BasicAttack.onAfter(core.OptionalElement(UnionAura.is_active, ReaperScythe, FinishBlow, name = "유니온오라 여부"))
         
         # 마스터 오브 데스
         ReduceDeath = core.OptionalElement(MasterOfDeath.is_active, Death.controller(500, 'reduce_cooltime'), name="마스터 오브 데스 ON")
-        DarkGenesisFinalAttack.onAfter(core.OptionalElement(MasterOfDeath.is_active, Death.controller(500 * 0.01 * (60 + 2 * self._combat), 'reduce_cooltime'), name="마스터 오브 데스 ON"))
+        DarkGenesisFinalAttack.onAfter(ReduceDeath)
         DarkGenesis.onAfter(ReduceDeath)
-        FinishBlow_U.onAfter(ReduceDeath)
-        FinishBlow_M_U.onAfter(ReduceDeath)
+        ReaperScythe.onAfter(ReduceDeath)
         BlackMagicAlter.onTick(ReduceDeath)
         GrimReaper.onTick(ReduceDeath)
         Death.add_runtime_modifier(MasterOfDeath, lambda sk: core.CharacterModifier(pdamage_indep = 50 * sk.is_active()))
 
         # 다크 라이트닝
-        DarkLightening.onAfter(FinalAttack)
-        DarkLightening.onAfter(AddStack)
+        DarkLightening.onAfter(AddMark)
         
         # 배틀킹 바
+        BattlekingBar.onJustAfter(UseMark)
         BattlekingBar.onAfter(FinalAttack)
-        BattlekingBar.onAfter(UseMark)
         BattlekingBar.onAfter(BattlekingBar2)
+        BattlekingBar2.onJustAfter(UseMark)
         BattlekingBar2.onAfter(FinalAttack)
-        BattlekingBar2.onAfter(UseMark)
         
         # 블랙 매직 알터
-        BlackMagicAlter.onTick(AddStack)
+        BlackMagicAlter.onTick(AddMark)
+        BlackMagicAlter.onAfter(FinalAttack)
 
-        return(FinishBlowEndpoint,
+        return(BasicAttack,
                 [Booster, WillOfLiberty, MasterOfDeath, UnionAura,
                 globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
                 globalSkill.soul_contract()] +\
                 [DarkGenesis, BattlekingBar] +\
                 [RegistanceLineInfantry, Death, BlackMagicAlter, GrimReaper] +\
                 [] +\
-                [FinishBlowEndpoint])
+                [BasicAttack])
