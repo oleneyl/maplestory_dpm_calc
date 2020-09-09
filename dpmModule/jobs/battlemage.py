@@ -65,6 +65,7 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(ConcurrentRunRule('마스터 오브 데스', '그림 리퍼'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '유니온 오라'), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
@@ -78,7 +79,7 @@ class JobGenerator(ck.JobGenerator):
         StaffExpert = core.InformedCharacterModifier("스태프 엑스퍼트",att = 30 + passive_level, crit_damage = 20 + ceil(passive_level / 2))
         SpellBoost = core.InformedCharacterModifier("스펠 부스트", patt = 25 + passive_level // 2, pdamage = 10 + ceil(passive_level / 3), armor_ignore = 30 + passive_level)
         
-        return [ArtOfStaff, StaffMastery, HighWisdom, BattleMastery, DarkAuraPassive, StaffExpert, SpellBoost] #디버프오라 미적용
+        return [ArtOfStaff, StaffMastery, HighWisdom, BattleMastery, DarkAuraPassive, StaffExpert, SpellBoost]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self._combat
@@ -87,13 +88,19 @@ class JobGenerator(ck.JobGenerator):
         
         DebuffAura = core.InformedCharacterModifier("디버프 오라", armor_ignore = 20, pdamage_indep = 10, prop_ignore = 10)
         BattleRage = core.InformedCharacterModifier("배틀 레이지",pdamage = 40 + self._combat, crit_damage = 8 + self._combat // 6, crit=20 + ceil(self._combat / 3))
-        return [WeaponConstant, Mastery, DebuffAura, BattleRage ]
+        return [WeaponConstant, Mastery, DebuffAura, BattleRage]
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
         '''
         오라스위칭 미사용
         디버프 오라 사용
         알터 히트율 100%, 50초마다 40초간 유지되는 2개 알터 사용
+
+        하이퍼 :
+        다크 제네시스-쿨타임 리듀스
+        다크 오라-보스 킬러
+        디버프 오라-엘리멘탈 리셋
+        쉘터-쿨타임 리듀스, 퍼시스트
         
         코강 순서 : 
         닼라-피블-데스-킹바-닼제네-배틀스퍼트
@@ -111,13 +118,13 @@ class JobGenerator(ck.JobGenerator):
 
         #Damage Skills
         DarkLightening = core.DamageSkill("다크 라이트닝", 0, 225, 4, modifier = core.CharacterModifier(pdamage = 60 + self._combat) + OVERLOAD_MANA).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #캔슬
-        DarkLighteningMark = core.DamageSkill("다크 라이트닝(징표)", 0, 350, 4, modifier = core.CharacterModifier(boss_pdamage=20, pdamage = 60)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DarkLighteningMark = core.DamageSkill("다크 라이트닝(징표)", 0, 350, 4, modifier = core.CharacterModifier(boss_pdamage=20, pdamage = 60 + self._combat)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         #좌우텔 분당 83회 기준.
         FinishBlow = core.DamageSkill("피니쉬 블로우", 720, 330 + 3 * self._combat, 6, modifier = core.CharacterModifier(crit=25 + ceil(self._combat / 2), armor_ignore=2 * ceil((30 + self._combat)/3)) + OVERLOAD_MANA).setV(vEhc, 1, 2, False).wrap(BlowSkillWrapper)
         ReaperScythe = core.DamageSkill("사신의 낫", 720, 300, 12, modifier = core.CharacterModifier(crit=50, armor_ignore=50) + OVERLOAD_MANA).setV(vEhc, 1, 2, False).wrap(BlowSkillWrapper)
         
-        DarkGenesis = core.DamageSkill("다크 제네시스", 690, 520 + 10 * self._combat, 8, cooltime = 30*1000).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
+        DarkGenesis = core.DamageSkill("다크 제네시스", 690, 520 + 10 * self._combat, 8, cooltime = 14*1000, red=True).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
         DarkGenesisFinalAttack = core.DamageSkill("다크 제네시스(추가타)", 0, 220 + 4 * self._combat, 1).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
 
         Death = core.DamageSkill("데스", 0, 200+chtr.level, 12, cooltime = 5000, modifier=OVERLOAD_MANA).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
@@ -194,8 +201,8 @@ class JobGenerator(ck.JobGenerator):
         BlackMagicAlter.onTick(AddMark)
 
         return(BasicAttack,
-                [Booster, WillOfLiberty, MasterOfDeath, UnionAura,
-                globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
+                [Booster, globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
+                WillOfLiberty, MasterOfDeath, UnionAura,
                 globalSkill.soul_contract()] +\
                 [DarkGenesis, BattlekingBar] +\
                 [RegistanceLineInfantry, Death, BlackMagicAlter, GrimReaper] +\
