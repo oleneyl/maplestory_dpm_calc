@@ -1,3 +1,4 @@
+from dpmModule import boss
 from ..kernel import core
 from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
@@ -53,13 +54,13 @@ class RelicChargeStack(core.StackSkillWrapper):
         self.ancient_guidance_task = ancient_guidance_buff.build_task(chtr.get_skill_modifier())
         
     def vary(self, d):
+        stack_before = self.stack
         res = super(RelicChargeStack, self).vary(d)
         if(self.ancient_guidance_buff.is_not_active()):
-            self.ancient_guidance_stack += max(d,0)
+            self.ancient_guidance_stack += max(self.stack - stack_before,0)
         if self.ancient_guidance_stack > 1000:
             self.ancient_guidance_stack = 0
             res.cascade = [self.ancient_guidance_task]   #For stability
-        #print(self.stack, self.ancient_guidance_stack)
         return res
     
             
@@ -107,8 +108,8 @@ class JobGenerator(ck.JobGenerator):
         
         하이퍼
         
-        에인션트 - 보킬, 카디널 - 리인포스, 카디널 - 보너스어택
-        에인션트 - 이그노어 가드, 카디널 - 에디셔널 인핸스
+        에인션트 포스 - 보스 킬러, 이그노어 가드
+        카디널 포스- 리인포스, 에디셔널 인핸스, 보너스 어택
         
         코강 순서
         카디 - 카블 - 에인션트아스트라 - 카트 - 임팩트 - 미스텔 - 어썰트 - 레조넌스 - 레이븐
@@ -119,64 +120,60 @@ class JobGenerator(ck.JobGenerator):
         미스텔 미사용(데미지 감소함)
         '''
         passive_level = chtr.get_base_modifier().passive_level + self._combat
+        ANCIENT_FORCE = core.CharacterModifier(pdamage_indep=10, boss_pdamage=50+20, armor_ignore=20)
+        ENCHANT_FORCE = core.CharacterModifier(pdamage_indep=10, boss_pdamage=50)
         ######   Skill   ######
-        AncientBowBooster = core.BuffSkill("에인션트 보우 부스터", 0, 300*1000).wrap(core.BuffSkillWrapper)
-        CurseTolerance = core.BuffSkill("커스 톨레랑스", 690, 300*1000).wrap(core.BuffSkillWrapper)
+        # Buff skills
+        AncientBowBooster = core.BuffSkill("에인션트 보우 부스터", 0, 300*1000, rem=True).wrap(core.BuffSkillWrapper)
+        CurseTolerance = core.BuffSkill("커스 톨러런스", 0, 300*1000, rem=True).wrap(core.BuffSkillWrapper)
+        SharpEyes = core.BuffSkill("샤프 아이즈", 0, (300+10*self._combat)*1000, crit = 20+ceil(self._combat/2), crit_damage = 15+ceil(self._combat/2), rem=True).wrap(core.BuffSkillWrapper)
+        AncientGuidance = core.BuffSkill("에인션트 가이던스(버프)", 0, 30000, pdamage_indep = 15, cooltime = -1, rem = False).wrap(core.BuffSkillWrapper)
+        CurseTransition = core.BuffSkill("커스 트랜지션", 0, 15*1000, crit_damage = 20, cooltime=-1).wrap(core.BuffSkillWrapper) # 5스택 유지 가정
+
+        # Summon skills
+        Raven = core.SummonSkill("레이븐", 450, 2670, 390, 4, 220*1000).setV(vEhc, 8, 3, False).wrap(core.SummonSkillWrapper)
         
+        # Damage skills
+        # 카디널 포스
         CardinalDischarge = core.DamageSkill("카디널 디스차지", 360+5*passive_level, (4 + 1)*2, 300, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         AdditionalDischarge = core.DamageSkill("에디셔널 디스차지", 0, 100 + 50 + passive_level, 3*(3+1)*(0.4+0.02*passive_level+0.1)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         CardinalBlast = core.DamageSkill("카디널 블래스트", 140, 4 + 1, (400+5*passive_level) * 1.1 * 1.1 * 1.1 * 1.1 * 1.1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        CardinalBlastBasic = core.DamageSkill("카디널 블래스트(기본)", 140, 4 + 1, (400+5*passive_level) * 1.1 * 1.1 * 1.1 * 1.1 * 1.1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         AdditionalBlast = core.DamageSkill("에디셔널 블래스트", 0, 150 + 50 + passive_level, (2+1)*3*(0.4+0.02*passive_level+0.1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
-        AncientGuidanceBuff = core.BuffSkill("에인션트 가이던스(버프)", 0, 30000, pdamage_indep = 15, cooltime = -1, rem = False).wrap(core.BuffSkillWrapper)
-
         CardinalTransition = core.DamageSkill("카디널 트랜지션", 330, 540+7*passive_level, 5).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        #고대의저주 1중첩
-        #기운 7 -> 3초당 1개, 최대 5개
+        AdditionalTransition = core.BuffSkill("에디셔널 트랜지션", 0, 7000, cooltime = -1).wrap(core.BuffSkillWrapper) #전환시 카디널 디스/블래 사용시 40%확률로 고대 1중첩
 
+        # 에인션트 포스
         SplitMistel = core.DamageSkill("스플릿 미스텔", 540, 200+350+7*passive_level, 4, cooltime = 10*1000,
-                    modifier = core.CharacterModifier(pdamage_indep = 10, boss_pdamage = 70 + passive_level, armor_ignore = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+                    modifier = ANCIENT_FORCE).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         SplitMistelBonus = core.DamageSkill("스플릿 미스텔(보너스)", 0, 100+200+4*passive_level, 4 * 2,
-                    modifier = core.CharacterModifier(pdamage_indep = 10, boss_pdamage = 70 + passive_level, armor_ignore = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+                    modifier = ANCIENT_FORCE).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
 
-        Raven = core.SummonSkill("레이븐", 450, 2670, 390, 4, 220*1000).setV(vEhc, 8, 3, False).wrap(core.SummonSkillWrapper)
-        
         TripleImpact = core.DamageSkill("트리플 임팩트", 420, 400 + 200+5*passive_level, 5*3, cooltime = 10*1000,
-                    modifier = core.CharacterModifier(pdamage_indep = 10, boss_pdamage = 70 + passive_level, armor_ignore = 20)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        
-        
-        CurseTransitionSkill = core.BuffSkill("커스 트랜지션", 0, 99999999, crit_damage = 20)
-        CurseTransition = core.StackSkillWrapper(CurseTransitionSkill, 5)
-        
-        AdditionalTransition = core.BuffSkill("에디셔널 트랜지션", 0, 7000, cooltime = -1).wrap(core.BuffSkillWrapper)
-        #전환시 카디널 디스/블래 사용시 40%확률로 고대 1중첩
-        
+                    modifier = ANCIENT_FORCE).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+                
         #스택당 최종뎀 50이나 5스택 가정, 엣오레 임의딜레이 720
         EdgeOfResonance = core.DamageSkill("엣지 오브 레조넌스", 720, 800+15*self._combat, 6, cooltime = 15*1000,
-                        modifier = core.CharacterModifier(pdamage_indep = 10, boss_pdamage = 70 + passive_level, armor_ignore = 20) + core.CharacterModifier(pdamage_indep = 61)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+                        modifier = ANCIENT_FORCE + core.CharacterModifier(pdamage_indep = 61.051)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         
+        # 인챈트 포스
         ComboAssultHolder = core.DamageSkill("콤보 어썰트", 720, 0, 0, cooltime = 20 * 1000).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         
         ComboAssultDischarge = core.DamageSkill("콤보 어썰트(디스차지)", 0, 600+10*self._combat, 7,
-                modifier = core.CharacterModifier(pdamage_indep = 10, boss_pdamage = 50 + passive_level)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)# 디버프 +1
+                modifier = ENCHANT_FORCE).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)# 디버프 +1
         ComboAssultDischargeArrow = core.DamageSkill("콤보 어썰트(디스차지)(화살)", 0, 650+10*self._combat, 4,
-                modifier = core.CharacterModifier(pdamage_indep = 10, boss_pdamage = 50 + passive_level)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+                modifier = ENCHANT_FORCE).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         
         ComboAssultBlast = core.DamageSkill("콤보 어썰트(블래스트)", 0, 600+10*self._combat, 8,
-                modifier = core.CharacterModifier(pdamage_indep = 10, boss_pdamage = 70 + passive_level, armor_ignore = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)# 디버프 +1
+                modifier = ENCHANT_FORCE).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)# 디버프 +1
         ComboAssultBlastArrow = core.DamageSkill("콤보 어썰트(블래스트)(화살)", 0, 600+10*self._combat, 5,
-                modifier = core.CharacterModifier(pdamage_indep = 10, boss_pdamage = 50 + passive_level)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+                modifier = ENCHANT_FORCE).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         
         ComboAssultTransition = core.DamageSkill("콤보 어썰트(트랜지션)", 0, 600+10*self._combat, 6,
-                modifier = core.CharacterModifier(pdamage_indep = 10, boss_pdamage = 50 + passive_level)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)# 디버프 +5
+                modifier = ENCHANT_FORCE).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)# 디버프 +5
         ComboAssultTransitionArrow = core.DamageSkill("콤보 어썰트(트랜지션)(화살)", 0, 650+10*self._combat, 5,
-                modifier = core.CharacterModifier(pdamage_indep = 10, boss_pdamage = 50 + passive_level)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        
-        
-        
-        SharpEyes = core.BuffSkill("샤프 아이즈", 690, (300+10*self._combat)*1000, crit = 20+ceil(self._combat/2), crit_damage = 15+ceil(self._combat/2)).wrap(core.BuffSkillWrapper)
+                modifier = ENCHANT_FORCE).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         
         ## 하이퍼
         RelicEvolution = core.BuffSkill("렐릭 에볼루션", 0, 0, cooltime = 120*1000).wrap(core.BuffSkillWrapper)
@@ -185,13 +182,13 @@ class JobGenerator(ck.JobGenerator):
         AncientAstraHolder = core.DamageSkill("에인션트 아스트라", 630, 0, 0, cooltime = 80*1000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
         # 21회 / 4회 사용
-        AncientAstraDischarge = core.DamageSkill("에인션트 아스트라(디스차지)", 710, 450, 5, modifier = core.CharacterModifier(pdamage_indep = 10, boss_pdamage = 50 + passive_level)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AncientAstraDischarge = core.DamageSkill("에인션트 아스트라(디스차지)", 710, 450, 5, modifier = ENCHANT_FORCE).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         AncientAstraDischargeArrow = core.DamageSkill("에인션트 아스트라(디스차지)(화살)", 0, 300, 0.3*2*2,
-                modifier = core.CharacterModifier(pdamage_indep = 10, boss_pdamage = 50 + passive_level)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+                modifier = ENCHANT_FORCE).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
-        AncientAstraBlast = core.DamageSkill("에인션트 아스트라(블래스트)", 3750, 1800, 10, modifier = core.CharacterModifier(pdamage_indep = 10, boss_pdamage = 50 + passive_level)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AncientAstraBlast = core.DamageSkill("에인션트 아스트라(블래스트)", 3750, 1800, 10, modifier = ENCHANT_FORCE).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
-        AncientAstraTransition = core.DamageSkill("에인션트 아스트라(트랜지션)", 710, 450, 6*3, modifier = core.CharacterModifier(pdamage_indep = 10, boss_pdamage = 50 + passive_level)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AncientAstraTransition = core.DamageSkill("에인션트 아스트라(트랜지션)", 710, 450, 6*3, modifier = ENCHANT_FORCE).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
@@ -200,11 +197,11 @@ class JobGenerator(ck.JobGenerator):
         
         Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(5,5)))*1000).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
         UltimateBlast = core.DamageSkill("얼티밋 블래스트", 1800, 2500+100*vEhc.getV(2,2), 15, cooltime = 120*1000, 
-                modifier = core.CharacterModifier(armor_ignore = 100, pdamage_indep = 100) + core.CharacterModifier(pdamage_indep = 10, boss_pdamage = 70 + passive_level, armor_ignore = 20)).isV(vEhc, 2,2).wrap(core.DamageSkillWrapper)
+                modifier = core.CharacterModifier(armor_ignore = 100, pdamage_indep = 100) + ANCIENT_FORCE).isV(vEhc, 2,2).wrap(core.DamageSkillWrapper)
             
-        RavenTempest = core.SummonSkill("레이븐 템페스트", 720, 250, 500+20*vEhc.getV(0,0), 5, 25*1000, cooltime = 120*1000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        RavenTempest = core.SummonSkill("레이븐 템페스트", 720, 250, 500+20*vEhc.getV(0,0), 5, 25*1000, cooltime = 120*1000, modifier = ANCIENT_FORCE).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
 
-        ObsidionBarrierBlast = core.SummonSkill("옵시디언 배리어", 60, 480, 500+18*vEhc.getV(4,4), 4, 15000,cooltime = 200*1000, modifier = core.CharacterModifier(pdamage_indep = 10, boss_pdamage = 50 + passive_level)).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
+        ObsidionBarrierBlast = core.SummonSkill("옵시디언 배리어", 60, 480, 500+18*vEhc.getV(4,4), 4, 15000,cooltime = 200*1000, modifier = ENCHANT_FORCE).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
         ######   Skill Wrapper   ######
 
         #이볼브 연계 설정
@@ -212,9 +209,9 @@ class JobGenerator(ck.JobGenerator):
         Raven.onConstraint(core.ConstraintElement("이볼브 사용시 사용 금지", Evolve, Evolve.is_not_active))
         
     
-        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 1, 1, 20) #Maybe need to sync
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 1, 1, 20)
     
-        RelicCharge = RelicChargeStack(AncientGuidanceBuff, chtr)
+        RelicCharge = RelicChargeStack(AncientGuidance, chtr)
         CardinalState = CardinalStateWrapper([SplitMistel, EdgeOfResonance, ComboAssultHolder, AncientAstraHolder])
         
         # 기본적인 스킬연계 연결
@@ -267,7 +264,6 @@ class JobGenerator(ck.JobGenerator):
         TransitionUsed = core.OptionalElement(CardinalState.check_state_transition, AdditionalTransition)
         
         CardinalBlast.onAfter(BlastUsed)
-        CardinalBlastBasic.onAfter(BlastUsed)
         CardinalDischarge.onAfter(DischargeUsed)
         CardinalTransition.onAfter(TransitionUsed)
         
@@ -282,12 +278,12 @@ class JobGenerator(ck.JobGenerator):
         AncientAstraHolder.onAfter(AncientAstraOptional)
         
         # 커스 트랜지션
-        ComboAssultDischarge.onAfter(CurseTransition.stackController(1))
-        ComboAssultBlast.onAfter(CurseTransition.stackController(1))
-        ComboAssultTransition.onAfter(CurseTransition.stackController(5))
+        ComboAssultDischarge.onAfter(CurseTransition)
+        ComboAssultBlast.onAfter(CurseTransition)
+        ComboAssultTransition.onAfter(CurseTransition)
         
         # 기본공격 = 블래스트-디스차지
-        CardinalBlastBasic.onAfter(CardinalDischarge)
+        CardinalBlast.onAfter(CardinalDischarge)
         
         #레이븐 설정
         RavenTempest.onAfter(Raven.controller(25000))
@@ -302,19 +298,19 @@ class JobGenerator(ck.JobGenerator):
         #ObsidionBarrierBlast.set_disabled_and_time_left(10000)
         
         # 딜비중 높은 극딜기는 가이던스와 싱크로. -> 미사용함.
-        #RavenTempest.onConstraint(core.ConstraintElement("가이던스와 같이", AncientGuidanceBuff, AncientGuidanceBuff.is_active))
-        #UltimateBlast.onConstraint(core.ConstraintElement("가이던스와 같이", AncientGuidanceBuff, AncientGuidanceBuff.is_active))
+        #RavenTempest.onConstraint(core.ConstraintElement("가이던스와 같이", AncientGuidance, AncientGuidance.is_active))
+        #UltimateBlast.onConstraint(core.ConstraintElement("가이던스와 같이", AncientGuidance, AncientGuidance.is_active))
         
         ### Exports ###
-        return(CardinalBlastBasic,
+        return(CardinalBlast,
                 [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_wind_booster(),
                     AncientBowBooster, CurseTolerance, CurseTransition, SharpEyes,
                     RelicEvolution, EpicAdventure,
-                    AncientGuidanceBuff, AdditionalTransition, CriticalReinforce,
+                    AncientGuidance, AdditionalTransition, CriticalReinforce,
                     globalSkill.soul_contract()] +\
                 [CardinalTransition_ForceUse, 
                     AncientAstraHolder, TripleImpact, EdgeOfResonance, 
                         ComboAssultHolder, UltimateBlast] +\
                 [Evolve, Raven, GuidedArrow, RavenTempest, ObsidionBarrierBlast] +\
                 [] +\
-                [CardinalBlastBasic])
+                [CardinalBlast])
