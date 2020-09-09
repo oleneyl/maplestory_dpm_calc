@@ -13,14 +13,12 @@ from math import ceil
 class CardinalStateWrapper(core.BuffSkillWrapper):
     def __init__(self, ancient_force_skills):
         '''
-        0 : 디스차지
-        1 : 블래스트
-        2 : 트랜지션
+        DISCHARGE / BLAST / TRANSISION
         '''
         skill = core.BuffSkill("카디널 차지", 0, 99999999)
         super(CardinalStateWrapper, self).__init__(skill)
         
-        self.state = 0
+        self.state = "DISCHARGE"
         self.ancient_force_skills = ancient_force_skills
         
     def is_state(self, state):
@@ -28,28 +26,23 @@ class CardinalStateWrapper(core.BuffSkillWrapper):
             return True
         return False
 
-    def check_state(self, state):
+    def _change_state(self, state):
+        assert(state in ["DISCHARGE", "BLAST", "TRANSITION"])
         if self.state != state:
             self.state = state
             for skill in self.ancient_force_skills:
                 skill.reduce_cooltime(1000)
-            return True
-        else:
-            return False
-            
-    def check_state_discharge(self):
-        return self.check_state(0)
-    
-    def check_state_blast(self):
-        return self.check_state(1)
-    
-    def check_state_transition(self):
-        return self.check_state(2)
+        return self._result_object_cache
+        
+    def change_state(self, state):
+        task = core.Task(self, partial(self._change_state, state))
+        return core.TaskHolder(task, name="문양 변경")
 
 class RelicChargeStack(core.StackSkillWrapper):
     def __init__(self, ancient_guidance_buff, chtr):
         skill = core.BuffSkill("렐릭 차지", 0, 99999999)
         super(RelicChargeStack, self).__init__(skill, 1000)
+        self.set_name_style("%d")
         self.ancient_guidance_stack = 0
         self.ancient_guidance_buff = ancient_guidance_buff
         self.ancient_guidance_task = ancient_guidance_buff.build_task(chtr.get_skill_modifier())
@@ -78,6 +71,7 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(DisableRule('에인션트 아스트라'), RuleSet.BASE)
+        ruleset.add_rule(DisableRule('스플릿 미스텔'), RuleSet.BASE)
         ruleset.add_rule(DisableRule('카디널 트랜지션'), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('콤보 어썰트', '커스 트랜지션', lambda sk: sk.is_time_left(2000, -1)), RuleSet.BASE)
         return ruleset
@@ -141,13 +135,15 @@ class JobGenerator(ck.JobGenerator):
         
         # Damage skills
         # 카디널 포스
-        CardinalDischarge = core.DamageSkill("카디널 디스차지", 360, (4 + 1)*2, 300+5*passive_level, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        AdditionalDischarge = core.DamageSkill("에디셔널 디스차지", 0, 100 + 50 + passive_level, 3*(3+1)*(0.4+0.02*passive_level+0.1)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        CardinalDischarge = core.DamageSkill("카디널 디스차지", 250, (4 + 1)*2, 300+5*passive_level, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        AdditionalDischarge = core.DamageSkill("에디셔널 디스차지", 0, 100 + 50 + passive_level, 3*3*(0.4+0.1)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        AdditionalDischargeEvolution = core.DamageSkill("에디셔널 디스차지(렐릭 에볼루션)", 0, 100 + 50 + passive_level, 3*(0.4+0.1)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
-        CardinalBlast = core.DamageSkill("카디널 블래스트", 140, 4 + 1, (400+5*passive_level) * 1.1 * 1.1 * 1.1 * 1.1 * 1.1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AdditionalBlast = core.DamageSkill("에디셔널 블래스트", 0, 150 + 50 + passive_level, (2+1)*3*(0.4+0.02*passive_level+0.1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        CardinalBlast = core.DamageSkill("카디널 블래스트", 250, 4 + 1, 400+5*passive_level, modifier = core.CharacterModifier(pdamage = 20, pdamage_indep = 61.051)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdditionalBlast = core.DamageSkill("에디셔널 블래스트", 0, 150 + 50 + passive_level, 2*3*(0.4+0.1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        AdditionalBlastEvolution = core.DamageSkill("에디셔널 블래스트(렐릭 에볼루션)", 0, 150 + 50 + passive_level, 3*(0.4+0.1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
-        CardinalTransition = core.DamageSkill("카디널 트랜지션", 330, 540+7*passive_level, 5).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        CardinalTransition = core.DamageSkill("카디널 트랜지션", 250, 540+7*passive_level, 5).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         AdditionalTransition = core.BuffSkill("에디셔널 트랜지션", 0, 7000, cooltime = -1).wrap(core.BuffSkillWrapper) #전환시 카디널 디스/블래 사용시 40%확률로 고대 1중첩
 
         # 에인션트 포스
@@ -182,7 +178,7 @@ class JobGenerator(ck.JobGenerator):
                 modifier = ENCHANT_FORCE).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         
         ## 하이퍼
-        RelicEvolution = core.BuffSkill("렐릭 에볼루션", 0, 0, cooltime = 120*1000).wrap(core.BuffSkillWrapper) #렐릭 게이지 최대로 충전, 딜레이 0으로 가정
+        RelicEvolution = core.BuffSkill("렐릭 에볼루션", 0, 30*1000, cooltime = 120*1000).wrap(core.BuffSkillWrapper) # 딜레이 0으로 가정
         
         AncientAstraHolder = core.DamageSkill("에인션트 아스트라", 420, 0, 0, cooltime = 80*1000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
@@ -237,46 +233,50 @@ class JobGenerator(ck.JobGenerator):
         Raven.onTick(RelicCharge.stackController(10))
         
         SplitMistel.onAfter(RelicCharge.stackController(-50))
-        SplitMistel.onConstraint(core.ConstraintElement('50', RelicCharge, partial(RelicCharge.judge, 50, 1)))
+        SplitMistel.onConstraint(core.ConstraintElement('50 이상', RelicCharge, partial(RelicCharge.judge, 50, 1)))
         
         TripleImpact.onAfter(RelicCharge.stackController(-50))
-        TripleImpact.onConstraint(core.ConstraintElement('50', RelicCharge, partial(RelicCharge.judge, 50, 1)))  
+        TripleImpact.onConstraint(core.ConstraintElement('50 이상', RelicCharge, partial(RelicCharge.judge, 50, 1)))  
 
         EdgeOfResonance.onAfter(RelicCharge.stackController(-100))
-        EdgeOfResonance.onConstraint(core.ConstraintElement('100', RelicCharge, partial(RelicCharge.judge, 100, 1)))
+        EdgeOfResonance.onConstraint(core.ConstraintElement('100 이상', RelicCharge, partial(RelicCharge.judge, 100, 1)))
     
         ComboAssultHolder.onAfter(RelicCharge.stackController(-150))
-        ComboAssultHolder.onConstraint(core.ConstraintElement('150', RelicCharge, partial(RelicCharge.judge, 150, 1)))
+        ComboAssultHolder.onConstraint(core.ConstraintElement('150 이상', RelicCharge, partial(RelicCharge.judge, 150, 1)))
         
-        AncientAstraHolder.onConstraint(core.ConstraintElement('300', RelicCharge, partial(RelicCharge.judge, 300, 1)))
+        AncientAstraHolder.onConstraint(core.ConstraintElement('300 이상', RelicCharge, partial(RelicCharge.judge, 300, 1)))
         AncientAstraBlast.onAfter(RelicCharge.stackController(-65*1.57))
         AncientAstraDischarge.onAfter(RelicCharge.stackController(-65*0.27))
         AncientAstraTransition.onAfter(RelicCharge.stackController(-65*0.27))
         
-        RavenTempest.onConstraint(core.ConstraintElement('300', RelicCharge, partial(RelicCharge.judge, 300, 1)))
+        RavenTempest.onConstraint(core.ConstraintElement('300 이상', RelicCharge, partial(RelicCharge.judge, 300, 1)))
         RavenTempest.onAfter(RelicCharge.stackController(-300))
         RavenTempest.onTick(RelicCharge.stackController(20))
         
-        ObsidionBarrierBlast.onConstraint(core.ConstraintElement('500', RelicCharge, partial(RelicCharge.judge, 500, 1)))
+        ObsidionBarrierBlast.onConstraint(core.ConstraintElement('500 이상', RelicCharge, partial(RelicCharge.judge, 500, 1)))
         ObsidionBarrierBlast.onAfter(RelicCharge.stackController(-500))
         
         RelicEvolution.onAfter(RelicCharge.stackController(1000))
         
         #카디널 차지 연결
-        DischargeUsed = core.OptionalElement(CardinalState.check_state_discharge, AdditionalDischarge)
-        BlastUsed = core.OptionalElement(CardinalState.check_state_blast, AdditionalBlast)
-        TransitionUsed = core.OptionalElement(CardinalState.check_state_transition, AdditionalTransition)
+        CardinalBlast.onAfter(core.OptionalElement(partial(CardinalState.is_state, "DISCHARGE"), AdditionalDischarge))
+        CardinalBlast.onAfter(core.OptionalElement(partial(CardinalState.is_state, "TRANSITION"), AdditionalTransition))
+        CardinalDischarge.onAfter(core.OptionalElement(partial(CardinalState.is_state, "BLAST"), AdditionalBlast))
+        CardinalDischarge.onAfter(core.OptionalElement(partial(CardinalState.is_state, "TRANSITION"), AdditionalTransition))
         
-        CardinalBlast.onAfter(BlastUsed)
-        CardinalDischarge.onAfter(DischargeUsed)
-        CardinalTransition.onAfter(TransitionUsed)
+        CardinalBlast.onAfter(CardinalState.change_state("BLAST"))
+        CardinalDischarge.onAfter(CardinalState.change_state("DISCHARGE"))
+        CardinalTransition.onAfter(CardinalState.change_state("TRANSITION"))
+
+        AdditionalBlast.onAfter(core.OptionalElement(RelicEvolution.is_active, AdditionalBlastEvolution))
+        AdditionalDischarge.onAfter(core.OptionalElement(RelicEvolution.is_active, AdditionalDischargeEvolution))
         
         #인챈트 포스 설정
-        ComboAssultOptional = core.OptionalElement(partial(CardinalState.is_state,0), ComboAssultDischarge, 
-                                core.OptionalElement(partial(CardinalState.is_state,1), ComboAssultBlast, ComboAssultTransition))
+        ComboAssultOptional = core.OptionalElement(partial(CardinalState.is_state, "DISCHARGE"), ComboAssultDischarge, 
+                                core.OptionalElement(partial(CardinalState.is_state, "BLAST"), ComboAssultBlast, ComboAssultTransition))
         
-        AncientAstraOptional = core.OptionalElement(partial(CardinalState.is_state,0), AncientAstraDischargeRepeat, 
-                                core.OptionalElement(partial(CardinalState.is_state,1), AncientAstraBlastRepeat, AncientAstraTransitionRepeat))
+        AncientAstraOptional = core.OptionalElement(partial(CardinalState.is_state, "DISCHARGE"), AncientAstraDischargeRepeat, 
+                                core.OptionalElement(partial(CardinalState.is_state, "BLAST"), AncientAstraBlastRepeat, AncientAstraTransitionRepeat))
         
         ComboAssultHolder.onAfter(ComboAssultOptional)
         AncientAstraHolder.onAfter(AncientAstraOptional)
@@ -304,7 +304,7 @@ class JobGenerator(ck.JobGenerator):
                     AncientGuidance, AdditionalTransition, CriticalReinforce,
                     globalSkill.soul_contract()] +\
                 [AncientAstraHolder, TripleImpact, EdgeOfResonance, 
-                        ComboAssultHolder, UltimateBlast, CardinalTransition] +\
+                        ComboAssultHolder, UltimateBlast, SplitMistel, CardinalTransition] +\
                 [Evolve, Raven, GuidedArrow, RavenTempest, ObsidionBarrierBlast] +\
                 [] +\
                 [CardinalBlast])
