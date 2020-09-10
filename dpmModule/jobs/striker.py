@@ -116,7 +116,7 @@ class JobGenerator(ck.JobGenerator):
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("너클")
-        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
+        Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
 
         ShinNoiHapL = core.BuffSkill("신뇌합일", 540, (30+vEhc.getV(3,2)//2) * 1000, red = True, cooltime = (121-vEhc.getV(3,2)//2)*1000, pdamage_indep=4+vEhc.getV(3,2)//5).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
         ShinNoiHapLAttack = core.SummonSkill("신뇌합일(공격)", 0, 3000, 16*vEhc.getV(3,2) + 400, 7, (30+vEhc.getV(3,2)//2) * 1000, cooltime = -1).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
@@ -154,9 +154,9 @@ class JobGenerator(ck.JobGenerator):
         NoiShinChanGeuk.onAfter(NoiShinChanGeukAttack)
 
         return(BasicAttackWrapper,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self._combat), globalSkill.useful_sharp_eyes(),
                     LightningStack, Booster, ChookRoi, WindBooster, LuckyDice,
-                    HuricaneBuff, GloryOfGuardians, SkyOpen, Overdrive, OverdrivePenalty, ShinNoiHapL,
+                    HuricaneBuff, GloryOfGuardians, SkyOpen, Overdrive, ShinNoiHapL,
                     globalSkill.soul_contract()] +\
                 [GioaTan, CygnusPalanks, NoiShinChanGeuk] +\
                 [ShinNoiHapLAttack, NoiShinChanGeukAttack] +\

@@ -103,7 +103,7 @@ class JobGenerator(ck.JobGenerator):
         Humanity_Gold_Banded_Cudgel_2 = core.DamageSkill("금고봉 : 인 (2타)", 0, 420 + self._combat, 8, modifier = core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         
         Thousand_Ton_Stone = core.DamageSkill("둔갑 천근석", 0, 275 + 3*self._combat, 6, cooltime = 500).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
-        Thousand_Ton_Stone_DOT = core.DotSkill("둔갑 천근석 (출혈)", 270 + self._combat, 10000).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
+        Thousand_Ton_Stone_DOT = core.DotSkill("둔갑 천근석 (출혈)", 0, 1000, 270 + self._combat, 1, 10000, cooltime = -1).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
         Thousand_Ton_Stone.onAfter(Thousand_Ton_Stone_DOT)
 
         Scroll_Star_Vortex = core.SummonSkill("권술 : 흡성와류", 0, 0, 240 + 4*self._combat, 6, 40000 * SUMMON_REMAIN).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
@@ -152,4 +152,4 @@ class JobGenerator(ck.JobGenerator):
         Sage_Elemental_Clone_Attack_Opt = core.OptionalElement(Sage_Elemental_Clone_Attack.is_active(), Sage_Elemental_Clone_Attack_Active_Opt, Sage_Elemental_Clone_Attack_Passive_Opt)
 
 
-        return()
+        return(globalSkill.maple_heros(chtr.level, name = "아니마의 용사", combat_level=self._combat))

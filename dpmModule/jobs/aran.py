@@ -109,7 +109,7 @@ class JobGenerator(ck.JobGenerator):
         AdvancedComboAbility = core.BuffSkill("어드밴스드 콤보 어빌리티", 0, 9999*9999, att=2*10, crit=3*10).wrap(core.BuffSkillWrapper)
         ComboAbility = core.BuffSkill("콤보 어빌리티", 0, 9999*9999, att=2*10).wrap(core.BuffSkillWrapper) 
         Judgement = core.DamageSkill("저지먼트", JUDGEMENT_DELAY, 380 + (60 + 2 * passive_level) + (20 + passive_level), 4).wrap(core.DamageSkillWrapper)
-        JudgementDot = core.DotSkill("저지먼트(도트)", 200, 6000).wrap(core.SummonSkillWrapper)
+        JudgementDot = core.DotSkill("저지먼트(도트)", 0, 1000, 200, 1, 6000, cooltime = -1).wrap(core.SummonSkillWrapper)
 
         BlessingMaha = core.BuffSkill("블레싱 마하", 0, 200*1000, att=30).wrap(core.BuffSkillWrapper)   #펫버프
 
@@ -135,9 +135,6 @@ class JobGenerator(ck.JobGenerator):
         MahaRegion = core.SummonSkill("마하의 영역", 600, 1000, 500, 3, 10*1000, cooltime=150*1000).wrap(core.SummonSkillWrapper) # 게더링캐쳐 캔슬 : 1680 -> 600
         MahaRegionInit = core.DamageSkill("마하의 영역(시전)", 0, 800, 5).wrap(core.DamageSkillWrapper)
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime=120*1000, pdamage=10).wrap(core.BuffSkillWrapper)
-
-        # modifierInvariantFlag = False
-        Frid = heroes.FridWrapper(vEhc, 0, 0, False)
 
         InstallMaha = core.BuffSkill("인스톨 마하", 600, (30+vEhc.getV(1,1))*1000, patt=5+vEhc.getV(1,1), cooltime=150*1000, red=True).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper) # 게더링캐쳐 캔슬 : 960 -> 600
         InstallMahaBlizzard = core.SummonSkill("인스톨 마하(눈보라)", 0, 3000, 450+18*vEhc.getV(1,1), 5, 60*1000, cooltime=-1).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)
@@ -233,11 +230,11 @@ class JobGenerator(ck.JobGenerator):
         AdrenalineGenerator.onConstraint(core.ConstraintElement('아드레날린부스트가 불가능할때', AdrenalineBoost, AdrenalineBoost.is_not_active))
         AdrenalineGenerator.onAfter(AdrenalineBoost)
         return(BasicAttack, 
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), HerosOath,
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), HerosOath,
                     Booster, SmashSwingIncr, SnowCharge, AdvancedComboAbility, ComboAbility,
                     BlessingMaha, AdrenalineBoost, AdrenalineBoostEndDummy,
                     AdrenalineGenerator, 
-                    Frid, InstallMaha, InstallMahaBlizzard, Combo, AuraWeaponBuff, AuraWeapon, 
+                    InstallMaha, InstallMahaBlizzard, Combo, AuraWeaponBuff, AuraWeapon, 
                     globalSkill.soul_contract()] +\
                 [SmashSwingHolder, BrandishMaha, BoostEndHuntersTargeting] +\
                 [MahaRegion] +\

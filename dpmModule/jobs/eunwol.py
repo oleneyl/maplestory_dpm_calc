@@ -17,9 +17,6 @@ class SoulTrapStackWrapper(core.StackSkillWrapper):
         self.DEBUF_PERSISTENCE_TIME = 8000 # 8000ms
         super(SoulTrapStackWrapper, self).__init__(skill, 10)
 
-    def _use(self, skill_modifier):
-        return super(SoulTrapStackWrapper, self)._use(skill_modifier)
-
     def _add_debuff(self):
         # 디버프 추가, 최대 _max(10)개로 유지
         self.debuffQueue = ([self.currentTime] + self.debuffQueue)[:self._max]
@@ -126,13 +123,12 @@ class JobGenerator(ck.JobGenerator):
 
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        Frid = heroes.FridWrapper(vEhc, 0, 0)
 
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
 
         WEAPON_ATT = jobutils.get_weapon_att("너클")
-        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
+        Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         
         SoulConcentrate = core.BuffSkill("정령 집속", 900, (30+vEhc.getV(2,1))*1000, cooltime = 120*1000, red=True, pdamage_indep = (5+vEhc.getV(2,1)//2)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
         SoulConcentrateSummon = core.SummonSkill("정령 집속(무작위)", 0, 2000, 1742, 1, (30+vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
@@ -194,9 +190,9 @@ class JobGenerator(ck.JobGenerator):
         SpiritFrenzy.onConstraint(SpiritFrenzyConstraint)
 
         return(BasicAttackWrapper, 
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                    EnhanceSpiritLink, LuckyDice, HerosOath, Frid, 
-                    Overdrive, OverdrivePenalty, SoulConcentrate, DoubleBody, SoulTrapStack,
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                    EnhanceSpiritLink, LuckyDice, HerosOath,
+                    Overdrive, SoulConcentrate, DoubleBody, SoulTrapStack,
                     globalSkill.soul_contract()] +\
                 [BladeImp, BladeImpBuff, SoulTrap] +\
                 [EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init, EnhanceSpiritLinkSummon_J, SoulConcentrateSummon] +\

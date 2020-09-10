@@ -131,7 +131,7 @@ class JobGenerator(ck.JobGenerator):
         
         ### 돌아와!
         SwiftBack = core.BuffSkill("스위프트-돌아와!", 0, 60000, cooltime = -1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
-        BreathBack = core.DotSkill("브레스-돌아와!", 150+self._combat, (30+self._combat // 2)*1000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
+        BreathBack = core.SummonSkill("브레스-돌아와!", 0, 450, 150+self._combat, 1, (30+self._combat // 2)*1000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         
         # 하이퍼
         SummonOnixDragon = core.SummonSkill("서먼 오닉스 드래곤", 900, 3030, 550, 2, 4000, cooltime = 80000).wrap(core.SummonSkillWrapper)
@@ -141,9 +141,7 @@ class JobGenerator(ck.JobGenerator):
         
         OverloadMana = core.BuffSkill("오버로드 마나", 0, 99999 * 10000, pdamage = 8+int(0.1*vEhc.getV(1,4))).isV(vEhc,1,4).wrap(core.BuffSkillWrapper)
         
-        
-        # modifierInvariantFlag = False
-        Frid = heroes.FridWrapper(vEhc, 0, 0, False)
+        Frid = heroes.FridWrapper(vEhc, 0, 0)
         
         ElementalBlast = core.DamageSkill("엘리멘탈 블래스트", 1500, (750+30*vEhc.getV(2,3)) * 1.1, 6 * 4, cooltime = 60000, red = True, modifier = MDF(crit = 100)).isV(vEhc,2,3).wrap(core.DamageSkillWrapper) #4연속, 임의 딜레이
         ElementalBlastBuff = core.BuffSkill("엘리멘탈 블래스트(버프)", 0, 10000, pdamage_indep = 20).isV(vEhc,2,3).wrap(core.BuffSkillWrapper)
@@ -216,7 +214,7 @@ class JobGenerator(ck.JobGenerator):
             i.onAfter(DragonSparking)
             
         return(CircleOfMana,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     OverloadMana, Booster, OnixBless, Frid, HerosOath, SwiftBack, ElementalBlastBuff,
                     globalSkill.soul_contract()] +\
                 [ZodiakRayInit, DragonBreak, MagicParticle] +\

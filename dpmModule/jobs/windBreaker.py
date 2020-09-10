@@ -51,7 +51,9 @@ class JobGenerator(ck.JobGenerator):
         트라이플링 윔 평균치로 계산
         
         '''
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        base_modifier = chtr.get_base_modifier()
+        additional_target = base_modifier.additional_target
+        passive_level = base_modifier.passive_level + self._combat
         #Buff skills
         Storm = core.BuffSkill("엘리멘트(스톰)", 0, 200 * 1000, pdamage = 10, rem = True).wrap(core.BuffSkillWrapper) #딜레이 모름
         SylphsAid = core.BuffSkill("실프스 에이드", 0, 200 * 1000, att = 20, crit = 10, rem = True).wrap(core.BuffSkillWrapper) #딜레이 모름
@@ -70,12 +72,13 @@ class JobGenerator(ck.JobGenerator):
 
         #Damage Skills
         # 하이퍼: 데미지 증가, 보스 데미지 증가
-        SongOfHeaven = core.DamageSkill("천공의 노래", 120, 345 + self._combat*3, 1, modifier = core.CharacterModifier(pdamage = ((1.2 + self._combat*0.01)**4 - 1) * 100 + 20, boss_pdamage = 30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #코강렙 20이상 가정.
+        target_pdamage = ((120 + self._combat // 2) / 100) ** (4 + additional_target) * 100 - 100 # 코강렙 20이상 가정. 툴팁은 u(x/2)로 되어있으나 실제 동작은 d(x/2)로 버림처리됨.
+        SongOfHeaven = core.DamageSkill("천공의 노래", 120, 345 + self._combat*3, 1, modifier = core.CharacterModifier(pdamage = target_pdamage + 20, boss_pdamage = 30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         CygnusPalanks = core.SummonSkill("시그너스 팔랑크스", 600, 120 * 5, 450 + 18*vEhc.getV(0,0), 5, 120 * (40 + vEhc.getV(0,0)), cooltime = 30 * 1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         
         Mercilesswind = core.DamageSkill("아이들 윔", 600, (500 + 20*vEhc.getV(4,4)) * 0.775, 10 * 3, cooltime = 10 * 1000, red=True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper) #도트 데미지 9초간 초당 1000%
-        MercilesswindDOT = core.DotSkill("아이들 윔(도트)", (500 + 20*vEhc.getV(4,4)), 9000).wrap(core.SummonSkillWrapper)
+        MercilesswindDOT = core.DotSkill("아이들 윔(도트)", 0, 1000, 500 + 20*vEhc.getV(4,4), 1, 9000, cooltime = -1).wrap(core.SummonSkillWrapper)
     
         #Summon Skills
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 5, 5)
@@ -96,7 +99,7 @@ class JobGenerator(ck.JobGenerator):
         Mercilesswind.onAfter(MercilesswindDOT)
 
         return(SongOfHeaven, 
-                [globalSkill.maple_heros(chtr.level), 
+                [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self._combat), 
                     Storm, SylphsAid, Albatross, SharpEyes, GloryOfGuardians, StormBringerDummy, CriticalReinforce,
                     PinPointPierceDebuff,
                     globalSkill.soul_contract()] +\

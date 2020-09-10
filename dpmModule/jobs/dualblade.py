@@ -71,7 +71,7 @@ class JobGenerator(ck.JobGenerator):
         
         PhantomBlow = core.DamageSkill("팬텀 블로우", 540, 315 + 3 * self._combat, 6+1, modifier = core.CharacterModifier(armor_ignore = 44, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         SuddenRaid = core.DamageSkill("써든레이드", 690, 1150 + 15 * self._combat, 3, cooltime = (30-2*self._combat//2)*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)    #파컷의 남은 쿨타임 20% 감소
-        SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 210 + 4 * self._combat, 10000).wrap(core.SummonSkillWrapper)
+        SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 0, 1000, 210 + 4 * self._combat, 1, 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
         
         FinalCut = core.DamageSkill("파이널 컷", 450, 2000 + 20 * self._combat, 1, cooltime = 90000, red=True).wrap(core.DamageSkillWrapper)
         FinalCutBuff = core.BuffSkill("파이널 컷(버프)", 0, 60000, rem = True, cooltime = -1, pdamage_indep = 40 + self._combat).wrap(core.BuffSkillWrapper)
@@ -80,8 +80,8 @@ class JobGenerator(ck.JobGenerator):
         
         FlashBang = core.DamageSkill("플래시 뱅", 390, 250, 1, cooltime = 60000, red=True).wrap(core.DamageSkillWrapper)  #임의 딜레이.
         FlashBangDebuff = core.BuffSkill("플래시 뱅(디버프)", 0, 50000/2, cooltime = -1, pdamage = 10 * 0.9).wrap(core.BuffSkillWrapper)
-        Venom = core.DotSkill("페이탈 베놈", (160+5*passive_level)*3, 8000).wrap(core.SummonSkillWrapper)
-        # TODO: 버프 시전 딜레이 적용
+        Venom = core.DotSkill("페이탈 베놈", 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 8000, cooltime = -1).wrap(core.SummonSkillWrapper) # 3회 중첩
+
         HiddenBladeBuff = core.BuffSkill("히든 블레이드(버프)", 0, 60000, cooltime = 90000, pdamage = 10).wrap(core.BuffSkillWrapper)
         HiddenBlade = core.DamageSkill("히든 블레이드", 0, 140, 1).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
         
@@ -104,7 +104,7 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill Wrapper   ######
     
         SuddenRaid.onAfter(SuddenRaidDOT)
-        FinalCut.onAfter(FinalCutBuff.controller(1))
+        FinalCut.onAfter(FinalCutBuff)
         
         HiddenBladeOpt = core.OptionalElement(HiddenBladeBuff.is_active, HiddenBlade)
         
@@ -133,7 +133,7 @@ class JobGenerator(ck.JobGenerator):
             jobutils.create_auxilary_attack(sk, 0.7, nametag = '(미러이미징)')
         
         return(PhantomBlow,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
                     Booster, DarkSight, FinalCutBuff, EpicAdventure, FlashBangDebuff, HiddenBladeBuff, UltimateDarksight, ReadyToDie,
                     globalSkill.soul_contract()] +\
                 [FinalCut, FlashBang, BladeTornado, SuddenRaid, KarmaFury, BladeStorm, Asura] +\

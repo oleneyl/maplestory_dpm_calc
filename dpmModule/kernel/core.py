@@ -677,8 +677,8 @@ class SummonSkill(AbstractSkill):
         return self._static_skill_modifier
 
 class DotSkill(SummonSkill):
-    def __init__(self, name, damage, remain, cooltime = -1):
-        super(DotSkill, self).__init__(name, 0, 1000, damage, 1, remain, cooltime = cooltime, modifier = CharacterModifier(crit=-9999, armor_ignore=100))
+    def __init__(self, name, summondelay, delay, damage, hit, remain, cooltime = 0, red = 0):
+        super(DotSkill, self).__init__(name, summondelay, delay, damage, hit, remain, cooltime = cooltime, red = red)
         self.spec = "dot"
 
     def _get_explanation_internal(self, detail = False, lang = "ko", expl_level = 2):
@@ -1190,7 +1190,7 @@ class AbstractSkillWrapper(GraphElement):
     def get_link(self):
         li = super(AbstractSkillWrapper, self).get_link()
         for el in self.constraint:
-            li.append([self, el, "abstract"])
+            li.append([self, el, "constraint"])
         return li
         
     def assert_level_is_positive(self, reference_level):
@@ -1285,7 +1285,7 @@ class AbstractSkillWrapper(GraphElement):
         else:
             return TaskHolder(task, name = _name)
 
-    def _use(self, ftn, skill_modifier, **kwargs) -> ResultObject:
+    def _use(self, skill_modifier, **kwargs) -> ResultObject:
         raise NotImplementedError
         
     def build_task(self, skill_modifier) -> Task:
@@ -1326,8 +1326,6 @@ class AbstractSkillWrapper(GraphElement):
         
     def spend_time(self, time):
         raise NotImplementedError
-        self.time -= time
-        self.cooltimeLeft -= time
         
     def is_active(self):
         '''이 ``GraphElement`` 가 실행되고 있는지에 대한 여부를 반환합니다.
@@ -1377,9 +1375,9 @@ class AbstractSkillWrapper(GraphElement):
             현재 스킬을 사용하는 ``Character`` 가 제공한 ``SkillModifier`` 입니다.
         '''  
         if self.skill.red == False:
-            return self.skill.cooltime
+            return self.get_cooltime()
             
-        cooltime = self.skill.cooltime
+        cooltime = self.get_cooltime()
         pcooltime_reduce = skill_modifier.pcooltime_reduce # 쿨감%
         cooltime_reduce = skill_modifier.cooltime_reduce # 쿨감+ (ms)
         
@@ -1397,15 +1395,18 @@ class AbstractSkillWrapper(GraphElement):
         
         return max(cdr_applied, min(cd, 5000)) # 5초까지 감소, 단 이미 스킬쿨이 5초 아래였을 경우 그대로 사용
 
+    def get_cooltime(self):
+        return self.skill.cooltime
+
 class BuffSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill : BuffSkill, name = None):
         self._disabledResultobjectCache = ResultObject(0, CharacterModifier(), 0, 0, sname = skill.name, spec = 'graph control')
         super(BuffSkillWrapper, self).__init__(skill, name = name)
         self.set_flag(self.Flag_BuffSkill)
         self.onoff = False
-        self._end = []
         self.disabledModifier = CharacterModifier()
         self.modifierInvariantFlag = True
+        self.uniqueFlag = True
         self.accessible_boss_state = AccessibleBossState.ALWAYS
         
     def set_enabled_and_time_left(self, time):
@@ -1443,9 +1444,12 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         self.onoff = True
         if self.cooltimeLeft > 0:
             self.available = False
-        delay = self.skill.delay
+        delay = self.get_delay()
         #mdf = self.get_modifier()
         return ResultObject(delay, CharacterModifier(), 0, 0, sname = self.skill.name, spec = self.skill.spec, kwargs = {"remain" : self.skill.remain * (1+0.01*skill_modifier.buff_rem*self.skill.rem)})
+
+    def get_delay(self):
+        return self.skill.delay
 
     def get_modifier(self) -> CharacterModifier:
         if self.onoff:
@@ -1455,12 +1459,6 @@ class BuffSkillWrapper(AbstractSkillWrapper):
 
     def get_modifier_forced(self):
         return self.skill.get_modifier()
-
-    def onEnd(self, task):
-        self._end.append(task)
-        
-    def onEnds(self, tasklist):
-        self._end += tasklist
 
 class StackSkillWrapper(BuffSkillWrapper):
     def __init__(self, skill, max_, name = None):
@@ -1495,38 +1493,6 @@ class StackSkillWrapper(BuffSkillWrapper):
         
     def judge(self, stack, direction):
         return (self.stack-stack)*direction>=0
-
-class TimeStackSkillWrapper(AbstractSkillWrapper):
-    def __init__(self, skill, max_, name = None):
-        super(TimeStackSkillWrapper, self).__init__(skill, name = name)
-        self.stack = 0
-        self._max = max_
-        self.queue = []
-        
-    def addStack(self, vary, left):
-        self.queue.append([vary, left])
-        return ResultObject(0, CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
-
-    def stackController(self, vary, left, name = None):
-        task = Task(self, partial(self.addStack, vary, left))
-        return TaskHolder(task, name = name)
-        
-    def spend_time(self, time):
-        queue = []
-        for el in self.queue:
-            el[1] -= time
-            if el[1] > 0:
-                queue.append(el)
-        self.queue = queue
-    
-    def getStack(self):
-        total = 0 
-        for el in self.queue:
-            total += el[0]
-        return max(min(total, self._max), 0)
-        
-    def get_modifier(self):
-        return CharacterModifier()
         
 class DamageSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill : DamageSkill, modifier = CharacterModifier(), name = None):
@@ -1556,8 +1522,17 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         if self.cooltimeLeft > 0:
             self.available = False
-        return ResultObject(self.skill.delay, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
+        return ResultObject(self.get_delay(), self.get_modifier(), self.get_damage(), self.get_hit(), sname = self.skill.name, spec = self.skill.spec)
         #return delay, mdf, dmg, self.cascade
+
+    def get_delay(self):
+        return self.skill.delay
+
+    def get_damage(self):
+        return self.skill.damage
+
+    def get_hit(self):
+        return self.skill.hit
         
     def get_modifier(self) -> CharacterModifier:
         modifier = self.skill.get_modifier() + self.modifier
@@ -1573,18 +1548,16 @@ class StackDamageSkillWrapper(DamageSkillWrapper):
         super(StackDamageSkillWrapper, self).__init__(skill, modifier = modifier, name = name)
         self.stack_skill = stack_skill
         self.fn = fn
-        
-    def _use(self, skill_modifier):
-        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
-        if self.cooltimeLeft > 0:
-            self.available = False
 
+    def get_damage(self):
         stack = self.fn(self.stack_skill)
         if stack <= 0:
-            return ResultObject(self.skill.delay, self.get_modifier(), 0, 0, sname = self.skill.name, spec = self.skill.spec)
+            return 0
+        return self.skill.damage
 
-        return ResultObject(self.skill.delay, self.get_modifier(), self.skill.damage, self.skill.hit * stack, sname = self.skill.name, spec = self.skill.spec)
-
+    def get_hit(self):
+        stack = self.fn(self.stack_skill)
+        return self.skill.hit * stack
         
 class SummonSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill : SummonSkill, modifier = CharacterModifier(), name = None):
@@ -1595,6 +1568,7 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self._runtime_modifier_list = []
         self.disabledModifier = CharacterModifier()
         self._onTick = []
+        self.uniqueFlag = True
         self.accessible_boss_state = AccessibleBossState.NO_FLAG
         self.is_periodic = True
     
@@ -1638,12 +1612,12 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         if self.cooltimeLeft > 0:
             self.available = False
-        return ResultObject(self.skill.summondelay, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+        return ResultObject(self.get_summon_delay(), self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
     
     def _useTick(self):
         if self.onoff and self.tick <= 0:
-            self.tick += self.skill.delay
-            return ResultObject(0, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
+            self.tick += self.get_delay()
+            return ResultObject(0, self.get_modifier(), self.get_damage(), self.get_hit(), sname = self.skill.name, spec = self.skill.spec)
         else:
             return ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)    
     
@@ -1658,14 +1632,26 @@ class SummonSkillWrapper(AbstractSkillWrapper):
     def onTicks(self, tasklist):
         self._onTick += tasklist
 
-    def add_runtime_modifier(self, skill: AbstractSkillWrapper, fn):
-        self._runtime_modifier_list.append((skill, fn))
+    def get_summon_delay(self):
+        return self.skill.summondelay
+
+    def get_delay(self):
+        return self.skill.delay
+
+    def get_damage(self):
+        return self.skill.damage
+
+    def get_hit(self):
+        return self.skill.hit
     
     def get_modifier(self):
         modifier = self.skill.get_modifier() + self.modifier
         for skill, fn in self._runtime_modifier_list:
             modifier += fn(skill)
         return modifier
+
+    def add_runtime_modifier(self, skill: AbstractSkillWrapper, fn):
+        self._runtime_modifier_list.append((skill, fn))
             
 class Simulator(object):
     __slots__ = 'scheduler', 'character', 'analytics', '_modifier_cache_and_time', '_default_modifier'
@@ -1728,33 +1714,6 @@ class Simulator(object):
         
     def run_task(self, task):
         self.run_task_recursive(task)
-        
-    def run_individual_task(self, task):
-        '''
-        try:
-            print(task._ref._id)
-        except:
-            print(task)
-            print(task.skill.name)
-            raise AttributeError
-        '''
-        dt = 0
-        stack = task._before
-        while len(stack) != 0:
-            dt += self.run_individual_task(stack.pop())
-
-        runtime_context_modifier = self.scheduler.get_buff_modifier() + self.get_default_modifier()
-        result = task.do(runtime_context_modifier=runtime_context_modifier + self.character.get_modifier())
-        if result.damage > 0:
-            result.mdf += runtime_context_modifier
-        result.setTime(self.scheduler.get_current_time())
-        self.analytics.analyze(self.character, result)
-        dt += result.delay
-        
-        stack = task._after + result.cascade
-        while len(stack) != 0:
-            dt += self.run_individual_task(stack.pop())
-        return dt
 
     def run_task_recursive(self, task):
         stack = task._before + []
@@ -1830,6 +1789,7 @@ class Analytics():
         
     def statistics(self):
         print("Total damage %.1f in %d second" % (self.total_damage, self.totalTime / 1000) )
+        print(f"Loss {self.total_damage_without_restriction - self.total_damage:.1f}")
 
         def getSkillNames(logList):
             return sorted(set(map(lambda log: log["result"].sname, logList)))
@@ -1840,7 +1800,8 @@ class Analytics():
         for name in names:
             skillLog = list(filter(lambda log: log["result"].sname == name, buffList))
             use = len(skillLog)
-            print(f"{name} Used {use}")
+            delay = sum(map(lambda log: log["result"].delay, skillLog))
+            print(f"{name} Used {use} Delay {delay}")
 
         shareDict = defaultdict(int)
 
@@ -1852,10 +1813,12 @@ class Analytics():
             use = len(skillLog)
             hit = sum(map(lambda log: log["result"].hit, skillLog))
             damage = sum(map(lambda log: log["deal"], skillLog))
+            loss = sum(map(lambda log: log["loss"], skillLog))
+            delay = sum(map(lambda log: log["result"].delay, skillLog))
             share = damage / self.total_damage * 100
             shareDict[name.split('(')[0]] += share
-            print(f"{name} Used {use}")
-            print(f"Hit {hit} Damage {damage}")
+            print(f"{name} Used {use} Delay {delay}")
+            print(f"Hit {hit} Damage {damage:.1f} Loss {loss:.1f}")
             print(f"Share {share:.4f}%")
 
         print("\n===Summon/DoT Skills===")
@@ -1867,10 +1830,13 @@ class Analytics():
             use = len(skillLog) - summon
             hit = sum(map(lambda log: log["result"].hit, skillLog))
             damage = sum(map(lambda log: log["deal"], skillLog))
+            loss = sum(map(lambda log: log["loss"], skillLog))
+            delay = sum(map(lambda log: log["result"].delay, skillLog))
             share = damage / self.total_damage * 100
             shareDict[name.split('(')[0]] += share
-            print(f"{name} Summoned {summon}")
-            print(f"Used {use} Hit {hit} Damage {damage}")
+            print(f"{name} Summoned {summon} Delay {delay}")
+            print(f"Used {use} Hit {hit}")
+            print(f"Damage {damage:.1f} Loss {loss:.1f}")
             print(f"Share {share:.4f}%")
 
         print("\n===Skill Share===")

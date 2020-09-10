@@ -198,6 +198,7 @@ class JobGenerator(ck.JobGenerator):
         
         '''
         passive_level = chtr.get_base_modifier().passive_level + self._combat
+        LINK_DELAY = 30
         BattleArtsHyper = core.CharacterModifier(pdamage=20, boss_pdamage=20, armor_ignore=20)  # 하이퍼 - 배틀아츠 modifier
         SpellBullet = core.CharacterModifier(pdamage=20)
 
@@ -211,7 +212,7 @@ class JobGenerator(ck.JobGenerator):
         EndlessNightmare_Link = core.DamageSkill("끝나지 않는 악몽(연계)", 540, 440 + 3*passive_level, 6, cooltime = 2000, red=True, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         PlainChargeDrive = core.DamageSkill('플레인 차지드라이브', 540, 610 + 3*passive_level, 3, modifier=BattleArtsHyper).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        PlainChargeDrive_Link = core.DamageSkill('플레인 차지드라이브(연계)', 240, 610 + 3*passive_level, 3, modifier=BattleArtsHyper).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        PlainChargeDrive_Link = core.DamageSkill('플레인 차지드라이브(연계)', 240+LINK_DELAY, 610 + 3*passive_level, 3, modifier=BattleArtsHyper).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         PlainSpell = core.DamageSkill("플레인 스펠", 0, 370 + 3*passive_level, 2, modifier=SpellBullet).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         PlainBuff = core.BuffSkill("플레인 버프", 0, 60 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper)  # dpm에 영향을 주지 않아 미사용
         
@@ -238,7 +239,7 @@ class JobGenerator(ck.JobGenerator):
         ReturningHate = ReturningHateWrapper(core.DamageSkill("돌아오는 증오", 0, 320 + 3*passive_level, 6, cooltime=12000, red=True).setV(vEhc, 0, 2, True))
 
         EndlessBadDream = core.DamageSkill("끝나지 않는 흉몽", 540, 445 + 3*passive_level, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
-        EndlessBadDream_Link = core.DamageSkill("끝나지 않는 흉몽(연계)", 180, 445 + 3*passive_level, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
+        EndlessBadDream_Link = core.DamageSkill("끝나지 않는 흉몽(연계)", 180+LINK_DELAY, 445 + 3*passive_level, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
 
         UncurableHurt_Link = core.DamageSkill("지워지지 않는 상처(연계)", 480, 510 + 3*passive_level, 6, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  #스칼렛 차지 드라이브의 변형
         
@@ -276,7 +277,7 @@ class JobGenerator(ck.JobGenerator):
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("너클")
-        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
+        Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
     
         MagicCircuitFullDrive = core.BuffSkill("매직 서킷 풀드라이브", 720, (30+vEhc.getV(4,3))*1000, pdamage = (20 + vEhc.getV(4,3)), cooltime = 200*1000, red=True).isV(vEhc,4,3).wrap(core.BuffSkillWrapper)
         MagicCircuitFullDriveStorm = core.DamageSkill("매직 서킷 풀드라이브(마력 폭풍)", 0, 500+20*vEhc.getV(4,3), 3, cooltime=4000).wrap(core.DamageSkillWrapper)
@@ -429,10 +430,10 @@ class JobGenerator(ck.JobGenerator):
         return(PlainAttack, 
                 [ContactCaravan, ScarletBuff, AbyssBuff, SpectorState, Booster,
                     ChargeSpellAmplification, WraithOfGod,
-                    LuckyDice, Overdrive, OverdrivePenalty,
+                    LuckyDice, Overdrive,
                     MagicCircuitFullDrive, MemoryOfSourceBuff, EndlessPainBuff,
                     InfinitySpell,
-                    globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.soul_contract()
+                    globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.soul_contract()
                     ] +\
                 [EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, 
                     CrawlingFear_Link, MemoryOfSource, EndlessPain, RaptRestriction, ReturningHate, Impulse_Connected,

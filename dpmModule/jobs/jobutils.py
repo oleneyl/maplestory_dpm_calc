@@ -24,3 +24,6 @@ def get_weapon_att(WEAPON_NAME, spec = 6000):
     else:
         #아케인
         return Arcane.WeaponFactory.getWeapon(WEAPON_NAME, star = 0, elist = [0,0,0,0] ).main_option.att
+
+def debug_skill(skill_wrapper):
+    skill_wrapper.onJustAfter(core.BuffSkill(skill_wrapper._id+"(디버그)", 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper))

@@ -178,7 +178,7 @@ class JobGenerator(ck.JobGenerator):
         #StormBreakElectric = core.DamageSkill("어드밴스드 스톰 브레이크(전기)", 0, 230+2*self._combat, 3+ceil(self._combat /10), cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
         # 도트스킬은 크뎀 미적용이므로 AlphaSkill 추가할 필요없음.
-        DivineLeer = core.DotSkill("디바인 리어", 200, 99999999).wrap(core.SummonSkillWrapper)
+        DivineLeer = core.DotSkill("디바인 리어", 0, 1000, 200, 1, 99999999).wrap(core.SummonSkillWrapper)
 
         #### 베타 ####
 
@@ -370,8 +370,6 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
         AuraWeapon.add_runtime_modifier(BetaState, aura_weapon_beta)
 
-        DivineLeer.set_disabled_and_time_left(1)
-
         '''
         스킬 사용 후 초월자 륀느의 기원 발동
         for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
@@ -384,7 +382,7 @@ class JobGenerator(ck.JobGenerator):
         '''
 
         return(ComboHolder,
-                [globalSkill.maple_heros(chtr.level, combat_level = 0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, name = "륀느의 가호", combat_level = 0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, DoubleTime, TimeDistortion, TimeHolding, IntensiveTime, LimitBreak,
                     SoulContract]+\
                 [TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta]+\

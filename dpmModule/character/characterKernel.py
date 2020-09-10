@@ -110,7 +110,7 @@ class JobGenerator():
     
     from . import globalSkill
     self.preEmptiveSkills = 2
-    globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster()
+    globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster()
     globalSkill.soul_contract()
     
     미하일까지..
@@ -176,6 +176,9 @@ class JobGenerator():
     
     def build_passive_skill_list(self, vEhc, chtr : AbstractCharacter):
         self._passive_skill_list = self.get_passive_skill_list(vEhc, chtr)
+        self._passive_skill_list += [InformedCharacterModifier("여제의 축복", att = 30)]
+        if self.jobname != "제로":
+            self._passive_skill_list += [InformedCharacterModifier("연합의 의지", att = 5, stat_main = 5, stat_sub = 5)]
         return
 
     def get_passive_skill_list(self, vEhc, chtr : AbstractCharacter):
@@ -262,9 +265,9 @@ class JobGenerator():
         # 무기 소울
         refMDF = get_reference_modifier(chtr)
         if refMDF.crit < 88:
-            weapon_soul_modifier = ExMDF(crit = 12)
+            weapon_soul_modifier = ExMDF(crit = 12, att = 20)
         else:
-            weapon_soul_modifier = ExMDF(patt = 3)
+            weapon_soul_modifier = ExMDF(patt = 3, att = 20)
         log_modifier(weapon_soul_modifier, "weapon soul")
         chtr.apply_modifiers([weapon_soul_modifier])
         log_buffed_character(chtr)
@@ -884,7 +887,8 @@ class Doping():
     dopingListAtt = {"길드의 축복" : ExMDF(att = 20),
                     "우뿌" : ExMDF(att = 30),
                     "익스레드/블루" : ExMDF(att = 30),
-                    "MVP 버프" : ExMDF(att = 30)}
+                    "MVP 버프" : ExMDF(att = 30),
+                    "영웅의 메아리" : ExMDF(patt = 4)}
 
     dopingListStat = {"향상된 10단계 물약" : ExMDF(stat_main = 30)}
     

@@ -104,7 +104,7 @@ class JobGenerator(ck.JobGenerator):
         MassiveFire2 = core.DamageSkill("매시브 파이어(2)", 0, 350+self._combat*10, 1, modifier = core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         #로디드 데미지 고정.
-        LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20 + 10/6 + 10/6*0.5).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
+        LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20+10/6+10/6*(5/6+1/11)*(10*(5+passive_level)*0.01)).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
         
         #로봇들 :: 로봇당 총뎀6%, 어빌리티 적용 시 7%
         
@@ -127,7 +127,7 @@ class JobGenerator(ck.JobGenerator):
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("건")
-        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
+        Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
 
         RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3, ROBOT_MASTERY) # 메카닉은 인팬트리에 로봇 마스터리 최종뎀이 적용됨
         
@@ -175,8 +175,8 @@ class JobGenerator(ck.JobGenerator):
         RoboFactory.onAfter(RoboFactoryBuff.controller(1))
         
         return(MassiveFire,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
-                    Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, RoboFactoryBuff, MultipleOptionBuff, BomberTime, Overdrive, OverdrivePenalty,
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
+                    Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, RoboFactoryBuff, MultipleOptionBuff, BomberTime, Overdrive,
                     globalSkill.soul_contract()] +\
                 [MicroMissle, BusterCallInit] +\
                 [HommingMissleHolder, RegistanceLineInfantry, SupportWaver, Robolauncher, RoboFactory, DistortionField, MultipleOption] +\

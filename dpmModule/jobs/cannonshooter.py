@@ -67,9 +67,9 @@ class JobGenerator(ck.JobGenerator):
         MonkeyWaveBuff = core.BuffSkill("몽키 웨이브(버프)", 0, 30000, cooltime = -1, crit_damage = 5).wrap(core.BuffSkillWrapper)
         MonkeyFurious = core.DamageSkill("몽키 퓨리어스", 720, 180, 3, cooltime = 30*1000).wrap(core.DamageSkillWrapper)
         MonkeyFuriousBuff = core.BuffSkill("몽키 퓨리어스(버프)", 0, 30000, cooltime = -1, pdamage = 40).wrap(core.BuffSkillWrapper)
-        MonkeyFuriousDot = core.DotSkill("몽키 퓨리어스(도트)", 200, 30000).wrap(core.SummonSkillWrapper)
+        MonkeyFuriousDot = core.DotSkill("몽키 퓨리어스(도트)", 0, 1000, 200, 1, 30000, cooltime = -1).wrap(core.SummonSkillWrapper)
         OakRulet = core.BuffSkill("오크통 룰렛", 840, 180000, rem = True, cooltime = 180000, crit_damage = 1.25).wrap(core.BuffSkillWrapper)
-        OakRuletDOT = core.DotSkill("오크통 도트", 50, 5000).wrap(core.SummonSkillWrapper)
+        OakRuletDOT = core.DotSkill("오크통 룰렛(도트)", 0, 1000, 50, 1, 5000, cooltime = -1).wrap(core.SummonSkillWrapper)
         MonkeyMagic = core.BuffSkill("하이퍼 몽키 스펠", 0, 180000, rem = True, stat_main=60 + passive_level, stat_sub=60 + passive_level).wrap(core.BuffSkillWrapper)
     
         CanonBuster = core.DamageSkill("캐논 버스터", 690, (750 + 5 * self._combat)*0.45, 3*(4+1), modifier = core.CharacterModifier(crit=15 + ceil(self._combat / 2), armor_ignore=20 + self._combat // 2, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
@@ -81,12 +81,12 @@ class JobGenerator(ck.JobGenerator):
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
         #로디드 데미지 고정.
-        LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20+10/6+(5+passive_level)*0.1*10/6).isV(vEhc,3,4).wrap(core.BuffSkillWrapper)
+        LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20+10/6+10/6*(5/6+1/11)*(10*(5+passive_level)*0.01)).isV(vEhc,3,4).wrap(core.BuffSkillWrapper)
     
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("핸드캐논")
-        Overdrive, OverdrivePenalty = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
+        Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
     
         PirateFlag = adventurer.PirateFlagWrapper(vEhc, 4, 3, chtr.level)
 
@@ -115,9 +115,9 @@ class JobGenerator(ck.JobGenerator):
         SpecialMonkeyEscort_Canon.onAfter(SpecialMonkeyEscort_Boom)
     
         return(CanonBuster,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Booster, MonkeyWaveBuff, MonkeyFuriousBuff, MonkeyFuriousDot, OakRulet, Buckshot, MonkeyMagic,
-                    EpicAdventure, LuckyDice, Overdrive, OverdrivePenalty, PirateFlag,
+                    EpicAdventure, LuckyDice, Overdrive, PirateFlag,
                     globalSkill.soul_contract()] +\
                 [MonkeyWave, MonkeyFurious, ICBM] +\
                 [OakRuletDOT, SupportMonkeyTwins, RollingCanonRainbow, BFGCannonball, ICBMDOT, SpecialMonkeyEscort_Boom, SpecialMonkeyEscort_Canon] +\

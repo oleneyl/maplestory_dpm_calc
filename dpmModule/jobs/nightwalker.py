@@ -116,7 +116,7 @@ class JobGenerator(ck.JobGenerator):
         JUMPRATE = 1
 
         ElementalDarkness = core.BuffSkill("엘리멘탈 : 다크니스", 900, 180000, armor_ignore = (4+1+1+1) * (2+1+1+1), att = 60).wrap(core.BuffSkillWrapper) # 사이펀 바이탈리티-리인포스 합산
-        ElementalDarknessDOT = core.DotSkill("엘리멘탈 : 다크니스(도트)", (80 + 40 + 50 + 50) * (2+1+1+1), 100000000).wrap(core.SummonSkillWrapper)
+        ElementalDarknessDOT = core.DotSkill("엘리멘탈 : 다크니스(도트)", 0, 1000, 80 + 40 + 50 + 50, 2+1+1+1, 100000000, cooltime = -1).wrap(core.SummonSkillWrapper)
         Heist = core.BuffSkill("헤이스트", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper)
         Booster = core.BuffSkill("부스터", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper) # 펫버프
         ShadowServent = core.BuffSkill("쉐도우 서번트", 990, 180000).wrap(core.BuffSkillWrapper) # 펫버프 등록불가
@@ -195,7 +195,7 @@ class JobGenerator(ck.JobGenerator):
         ShadowBite.onAfter(ShadowBiteBuff.controller(2000))
                 
         return( QuintupleThrow,
-                [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+                [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self._combat), globalSkill.useful_sharp_eyes(),
                     ElementalDarkness, Heist, Booster, ShadowServent, SpiritThrowing, ShadowBatStack,
                     ShadowElusion, ReadyToDie, Dominion, GloryOfGuardians, ShadowSpear, ShadowServentExtend, ShadowBite, ShadowBiteBuff,
                     globalSkill.soul_contract()] +\

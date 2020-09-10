@@ -69,7 +69,7 @@ class JobGenerator(ck.JobGenerator):
         SpiritJavelin = core.BuffSkill("스피릿 자벨린", 0, 200 * 1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
         PurgeArea = core.BuffSkill("퍼지 에어리어", 600, (40+self._combat) * 1000, armor_ignore=30+self._combat).wrap(core.BuffSkillWrapper) #딜레이 모름
         BleedingToxin = core.BuffSkill("블리딩 톡신", 780, 90*1000, cooltime = 200 * 1000, att = 60).wrap(core.BuffSkillWrapper)
-        BleedingToxinDot = core.DotSkill("블리딩 톡신(도트)", 1000, 90*1000).wrap(core.SummonSkillWrapper)
+        BleedingToxinDot = core.DotSkill("블리딩 톡신(도트)", 0, 1000, 1000, 1, 90*1000, cooltime = -1).wrap(core.SummonSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
         
@@ -79,8 +79,7 @@ class JobGenerator(ck.JobGenerator):
         MarkOfNightlord = core.DamageSkill("마크 오브 나이트로드", 0, (60+3*passive_level+chtr.level), MARK_PROP*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         MarkOfNightlordPungma = core.DamageSkill("마크 오브 나이트로드(풍마)", 0, (60+3*passive_level+chtr.level), MARK_PROP*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 툴팁대로면 19.355%가 맞으나, 쿼드러플과 동일한 37.5%로 적용되는 중
 
-        # TODO: 타수 분리    
-        FatalVenom = core.DotSkill("페이탈 베놈", (160+5*passive_level)*(2+(10+passive_level)//6), 8000).wrap(core.SummonSkillWrapper)
+        FatalVenom = core.DotSkill("페이탈 베놈", 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 8000, cooltime = -1).wrap(core.SummonSkillWrapper)
     
         #_VenomBurst = core.DamageSkill("베놈 버스트", ??) ## 패시브 50%확률로 10초간 160+6*vlevel dot. 사용시 도트뎀 모두 피해 + (500+20*vlevel) * 5. 어차피 안쓰는 스킬이므로 작성X
         
@@ -111,7 +110,7 @@ class JobGenerator(ck.JobGenerator):
             sk.onAfter(FatalVenom)
 
         return (QuarupleThrow, 
-            [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+            [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
                     ShadowPartner, SpiritJavelin, PurgeArea, BleedingToxin, EpicAdventure, 
                     UltimateDarksight, ReadyToDie, SpreadThrowInit,
                     globalSkill.soul_contract()] + \
