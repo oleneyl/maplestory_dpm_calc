@@ -164,8 +164,6 @@ class JobGenerator(ck.JobGenerator):
         # 5차
         OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 4)
         
-        Frid = heroes.FridWrapper(vEhc, 0, 0)
-        
         # 각 타마다 최종뎀 스택이 적용됨. 1타(0%)-2타(5%)-3타(10%)-4타(15%) = 평균 7.5%
         ElementalBlast = core.DamageSkill("엘리멘탈 블래스트", 600, 750+30*vEhc.getV(2,3), 6 * 4, cooltime = 60000, red = True, modifier = MDF(crit = 100, pdamage_indep = 7.5)).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
         ElementalBlastBuff = core.BuffSkill("엘리멘탈 블래스트(버프)", 0, 10000, pdamage_indep = 20, cooltime=-1).isV(vEhc,2,3).wrap(core.BuffSkillWrapper)
@@ -247,7 +245,7 @@ class JobGenerator(ck.JobGenerator):
             
         return(CircleOfMana1,
                 [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                    Mir, OverloadMana, Booster, OnixBless, Frid, HerosOath, ElementalBlastBuff,
+                    Mir, OverloadMana, Booster, OnixBless, HerosOath, ElementalBlastBuff,
                     globalSkill.soul_contract()] +\
                 [ZodiacRayInit, MagicParticle] +\
                 [SummonOnixDragon, ZodiacRay, DragonBreak, DragonBreakBack, ElementalBlast, ImperialBreath,
