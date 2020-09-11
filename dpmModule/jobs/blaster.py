@@ -142,8 +142,8 @@ class JobGenerator(ck.JobGenerator):
         BunkerBusterAttack = core.DamageSkill("벙커 버스터(공격)", 0, 180 + 7 * vEhc.getV(0,0), 8, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         BunkerBusterAttack_Maximize = core.DamageSkill("벙커 버스터(맥시마이즈)", 0, 180 + 7 * vEhc.getV(0,0), 8, modifier = core.CharacterModifier(pdamage = 50, armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         
-        BalkanPunch = core.DamageSkill("발칸 펀치", 1560, 1000 + 40 * vEhc.getV(4,4), 6, cooltime = 60 * 1000, red = True).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper) # 420 + 키다운 준비 1140
-        BalkanPunchTick = core.DamageSkill("발칸 펀치(틱)", 150, 450 + 18 * vEhc.getV(4,4), 5).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper) # 43회 반복
+        BalkanPunch = core.DamageSkill("발칸 펀치", 1140, 1000 + 40 * vEhc.getV(4,4), 6, cooltime = 60 * 1000, red = True).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        BalkanPunchTick = core.DamageSkill("발칸 펀치(틱)", 150, 450 + 18 * vEhc.getV(4,4), 5).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper) # 46회 반복
         BalkanPunchEnd = core.DamageSkill("발칸 펀치(후딜)", 360, 0, 0).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
         
         BurningBreaker = core.DamageSkill("버닝 브레이커(준비)", 2010, 0, 0, cooltime = 100*1000, red = True).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
@@ -162,7 +162,7 @@ class JobGenerator(ck.JobGenerator):
         HammerSmash.onAfters([HammerSmashWave, HammerSmashDebuff])
 
         #발칸 펀치
-        BalkanPunchRepeat = core.RepeatElement(BalkanPunchTick, 43)
+        BalkanPunchRepeat = core.RepeatElement(BalkanPunchTick, 46)
         BalkanPunch.onAfter(BalkanPunchRepeat)
         BalkanPunchRepeat.onAfter(BalkanPunchEnd)
         
