@@ -41,7 +41,6 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "메르세데스"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
-        self._combat = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -51,7 +50,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         PotentialPower = core.InformedCharacterModifier("포텐셜 파워",pdamage = 20)
         SharpAiming = core.InformedCharacterModifier("샤프 에이밍",crit = 40)
@@ -69,7 +68,7 @@ class JobGenerator(ck.JobGenerator):
                 PhisicalTraining, IgnisRoar, DualbowgunExpert, DefenceBreak, AdvancedFinalAttack]
         
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5+0.5*ceil(passive_level/2))        
 
@@ -80,7 +79,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 60, pdamage = 30)
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         하이퍼
         이슈타르의 링-리인포스, 이그노어 가드, 보스 킬러
@@ -96,11 +95,11 @@ class JobGenerator(ck.JobGenerator):
         엘고 연계
         스듀-엔릴-스듀-유니콘-스듀-스피어-맆토-거다
         '''
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         # Buff skill
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
-        AncientSpirit = core.BuffSkill("엔시언트 스피릿", 0, (200+5*self._combat) * 1000, patt = 30+self._combat, rem=True).wrap(core.BuffSkillWrapper)
+        AncientSpirit = core.BuffSkill("엔시언트 스피릿", 0, (200+5*self.combat) * 1000, patt = 30+self.combat, rem=True).wrap(core.BuffSkillWrapper)
 
         # Summon skill
         ElementalKnights = core.DamageSkill("엘리멘탈 나이트", 0, 0, 0, cooltime=120*1000, red=True).setV(vEhc, 2, 3, False).wrap(core.DamageSkillWrapper) #도트 반영필요
@@ -108,17 +107,17 @@ class JobGenerator(ck.JobGenerator):
         ElementalKnights_2 = core.SummonSkill("엘리멘탈 나이트(2)", 0, 1470, (385+385+485)/3, 1, 210 * 1000, cooltime=-1, rem=True).setV(vEhc, 2, 3, False).wrap(core.SummonSkillWrapper)
         
         # Damage skill
-        IshtarRing = core.DamageSkill("이슈타르의 링", 120, 220 + self._combat, 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        IshtarRing = core.DamageSkill("이슈타르의 링", 120, 220 + self.combat, 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         # 연계 스킬들 - 연계시 딜레이로 작성
-        UnicornSpike = core.DamageSkill("유니콘 스파이크", 450, 315+100 + 2*self._combat, 5, modifier = core.CharacterModifier(crit=100), cooltime = 10 * 1000, red=True).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        UnicornSpike = core.DamageSkill("유니콘 스파이크", 450, 315+100 + 2*self.combat, 5, modifier = core.CharacterModifier(crit=100), cooltime = 10 * 1000, red=True).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         UnicornSpikeBuff = core.BuffSkill("유니콘 스파이크(버프)", 0, 30 * 1000, pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper)  #직접시전 금지
-        RegendrySpear = core.DamageSkill("레전드리 스피어", 690, 700 + 10*self._combat, 3, cooltime = 5 * 1000, red=True, modifier = core.CharacterModifier(crit=100)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        RegendrySpearBuff = core.BuffSkill("레전드리 스피어(버프)", 0, (30+self._combat) * 1000, armor_ignore = 30+20+self._combat, cooltime = -1).wrap(core.BuffSkillWrapper) #직접시전 금지
-        LightningEdge = core.DamageSkill("라이트닝 엣지", 630, 420 + 5*self._combat, 3).wrap(core.DamageSkillWrapper)
+        RegendrySpear = core.DamageSkill("레전드리 스피어", 690, 700 + 10*self.combat, 3, cooltime = 5 * 1000, red=True, modifier = core.CharacterModifier(crit=100)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        RegendrySpearBuff = core.BuffSkill("레전드리 스피어(버프)", 0, (30+self.combat) * 1000, armor_ignore = 30+20+self.combat, cooltime = -1).wrap(core.BuffSkillWrapper) #직접시전 금지
+        LightningEdge = core.DamageSkill("라이트닝 엣지", 630, 420 + 5*self.combat, 3).wrap(core.DamageSkillWrapper)
         LightningEdgeBuff = core.BuffSkill("라이트닝 엣지(버프)", 0, 30000, cooltime=-1).wrap(core.BuffSkillWrapper)
-        LeapTornado = core.DamageSkill("리프 토네이도", 390, 390+30+3*self._combat, 0).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
-        GustDive = core.DamageSkill("거스트 다이브", 480, 430 + 3*self._combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        LeapTornado = core.DamageSkill("리프 토네이도", 390, 390+30+3*self.combat, 0).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        GustDive = core.DamageSkill("거스트 다이브", 480, 430 + 3*self.combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
         AdvanceStrikeDualShot = core.DamageSkill("어드밴스드 스트라이크 듀얼샷", 480, 380, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         AdvanceStrikeDualShot_Link = core.DamageSkill("어드밴스드 스트라이크 듀얼샷(연계)", 360, 380, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
@@ -214,7 +213,7 @@ class JobGenerator(ck.JobGenerator):
             sk.set_disabled_and_time_left(1) # 버프 묻은 채로 측정 시작
     
         return(BasicAttack,
-                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), 
+                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), 
                     Booster, ElvishBlessing, AncientSpirit, HerosOath, Sylphidia.ignore(), CriticalReinforce, UnicornSpikeBuff, RegendrySpearBuff, LightningEdgeBuff, ElementalGhost,
                     globalSkill.soul_contract()] +\
                 [ElementalGhostSpirit, UnicornSpike, RegendrySpear, WrathOfEllil, IrkilaBreathInit] +\

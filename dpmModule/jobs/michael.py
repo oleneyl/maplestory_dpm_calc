@@ -18,13 +18,12 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "미하일"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'mess')
         self.preEmptiveSkills = 1
-        self._combat = 0
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(crit = 20)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",patt = 10)
         
@@ -42,17 +41,17 @@ class JobGenerator(ck.JobGenerator):
                             AdvancedFinalAttackPassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         PARTYPEOPLE = 1        
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level/2))
         
         SoulLink = core.InformedCharacterModifier("소울 링크",pdamage = 5*PARTYPEOPLE)
-        SoulRage = core.InformedCharacterModifier("소울 레이지", pdamage_indep = 30+self._combat, crit_damage = 8)
+        SoulRage = core.InformedCharacterModifier("소울 레이지", pdamage_indep = 30+self.combat, crit_damage = 8)
         
         return [WeaponConstant, Mastery, SoulLink, SoulRage]
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         파티원 1명
         
@@ -66,7 +65,7 @@ class JobGenerator(ck.JobGenerator):
         
         로얄 가드는 6초마다 사용하며 다른 스킬로 인해 약간 나중에 사용할 수도 있음. 로얄 가드 5중첩 버프를 상시 유지하도록 가정.
         '''
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         # Buff skills
         GuardOfLight = core.BuffSkill("빛의 수호", 900, 30000, rem = True, red = True, cooltime = 180000, pdamage = 20).wrap(core.BuffSkillWrapper)
@@ -82,11 +81,11 @@ class JobGenerator(ck.JobGenerator):
         LoyalGuard_5 = core.DamageSkill("로얄 가드(5)", 630, 250+chtr.level*3, 7, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         LoyalGuardBuff = core.BuffSkill("로얄 가드", 0, 12000, att = 45).wrap(core.BuffSkillWrapper)  #10->15->20->30->45
         
-        SoulAssult = core.DamageSkill("소울 어썰트", 600, 210+3*self._combat, 11+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   #암흑 20%
+        SoulAssult = core.DamageSkill("소울 어썰트", 600, 210+3*self.combat, 11+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   #암흑 20%
         
         FinalAttack = core.DamageSkill("파이널 어택", 0, 95+passive_level, 4*0.01*(75+passive_level)).setV(vEhc, 3, 4, False).wrap(core.DamageSkillWrapper)
         
-        ShiningCross = core.DamageSkill("샤이닝 크로스", 600, 440+3*self._combat, 4+1, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #암흑 30% 10초
+        ShiningCross = core.DamageSkill("샤이닝 크로스", 600, 440+3*self.combat, 4+1, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #암흑 30% 10초
         ShiningCrossInstall = core.SummonSkill("샤이닝 크로스-인스톨", 0, 1200, 75, 4+1, 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #100% 암흑 5초
         
         # Hyper
@@ -137,7 +136,7 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
         
         return(BasicAttackWrapper, 
-                [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self._combat), globalSkill.useful_sharp_eyes(),
+                [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     GuardOfLight, LoyalGuardBuff, SoulAttack, Booster, Invigorate, SacredCube, 
                     DeadlyChargeBuff, QueenOfTomorrow, AuraWeaponBuff, AuraWeapon, RoIias, SwordOfSoullight,
                     globalSkill.soul_contract()] +\

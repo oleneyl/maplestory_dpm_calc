@@ -64,7 +64,6 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "히어로"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'mess')
         self.preEmptiveSkills = 2
-        self._combat = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -74,7 +73,7 @@ class JobGenerator(ck.JobGenerator):
 
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리",pdamage_indep = 10) #두손검 사용
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         
@@ -86,14 +85,14 @@ class JobGenerator(ck.JobGenerator):
         return [WeaponMastery, PhisicalTraining, ChanceAttack, CombatMastery, AdvancedFinalAttack]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 44)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5 * (passive_level // 2))        
-        Enrage = core.InformedCharacterModifier("인레이지",pdamage_indep = 25 + self._combat // 2, crit_damage = 20 + self._combat // 3)
+        Enrage = core.InformedCharacterModifier("인레이지",pdamage_indep = 25 + self.combat // 2, crit_damage = 20 + self.combat // 3)
         
         return [WeaponConstant, Mastery, Enrage]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         코강 순서:
         레블 - 파택 - 업라이징 - 샤우트 - 인사이징 - 패닉
@@ -110,7 +109,7 @@ class JobGenerator(ck.JobGenerator):
         6%  - 1개
         70% - 0개
         '''
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         ######   Skill   ######
         #Buff skills
         Fury = core.BuffSkill("분노", 0, 200*1000, att = 30, rem = True).wrap(core.BuffSkillWrapper)
@@ -120,13 +119,13 @@ class JobGenerator(ck.JobGenerator):
         Panic = core.DamageSkill("패닉", 720, 1150, 1, cooltime = 40000).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         PanicBuff = core.BuffSkill("패닉(디버프)", 0, 40000, cooltime = -1, pdamage_indep = 25, rem = False).wrap(core.BuffSkillWrapper)
         
-        RaisingBlow = core.DamageSkill("레이징 블로우", 600, 200 + 3*self._combat, 8, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        RaisingBlowInrage = core.DamageSkill("레이징 블로우(인레이지)", 600, 215+3*self._combat, 6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함.
-        RaisingBlowInrageFinalizer = core.DamageSkill("레이징 블로우(인레이지)(최종타)", 0, 215+3*self._combat, 2, modifier = core.CharacterModifier(pdamage = 20, crit = 100)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함. 둘을 연결해야 함.
+        RaisingBlow = core.DamageSkill("레이징 블로우", 600, 200 + 3*self.combat, 8, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        RaisingBlowInrage = core.DamageSkill("레이징 블로우(인레이지)", 600, 215+3*self.combat, 6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함.
+        RaisingBlowInrageFinalizer = core.DamageSkill("레이징 블로우(인레이지)(최종타)", 0, 215+3*self.combat, 2, modifier = core.CharacterModifier(pdamage = 20, crit = 100)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함. 둘을 연결해야 함.
         
-        Insizing = core.DamageSkill("인사이징", 660, 576 + 7 * self._combat, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        InsizingBuff = core.BuffSkill("인사이징(버프)", 0, (30 + self._combat // 2) * 1000, cooltime = -1, pdamage = 25 + ceil(self._combat / 2)).wrap(core.BuffSkillWrapper)
-        InsizingDot = core.DotSkill("인사이징(도트)", 0, 2000, 165 + 3*self._combat, 1, (30 + self._combat // 2) * 1000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        Insizing = core.DamageSkill("인사이징", 660, 576 + 7 * self.combat, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        InsizingBuff = core.BuffSkill("인사이징(버프)", 0, (30 + self.combat // 2) * 1000, cooltime = -1, pdamage = 25 + ceil(self.combat / 2)).wrap(core.BuffSkillWrapper)
+        InsizingDot = core.DotSkill("인사이징(도트)", 0, 2000, 165 + 3*self.combat, 1, (30 + self.combat // 2) * 1000, cooltime = -1).wrap(core.SummonSkillWrapper)
     
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 170 + 2*passive_level, 3 * 0.01 * (60 + ceil(passive_level/2) + 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
@@ -173,7 +172,7 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         return(RaisingBlowInrage,
-                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     ComboAttack, Fury, EpicAdventure, Valhalla, 
                     InsizingBuff, InsizingDot, AuraWeaponBuff, AuraWeapon, ComboDesfortBuff, 
                     ComboInstinct, ComboInstinctOff, PanicBuff,

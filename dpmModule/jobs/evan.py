@@ -63,10 +63,9 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "에반"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'buff_rem')
         self.preEmptiveSkills = 1
-        self._combat = 0
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         InheritWill = core.InformedCharacterModifier("계승된 의지",att = 10, stat_main = 10, stat_sub = 10)
         LinkedMagic = core.InformedCharacterModifier("링크드 매직",att = 20)
@@ -89,7 +88,7 @@ class JobGenerator(ck.JobGenerator):
             MagicMastery, DragonFury, HighDragonPotential]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 0)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5 + 0.5*passive_level)  
@@ -98,7 +97,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, Interaction, ElementalResetActive]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         다오어-브레스-브오어
 
@@ -115,7 +114,7 @@ class JobGenerator(ck.JobGenerator):
         서오마, 서오어 (+ 다오어, 브오어), 브레스(브레스-돌아와), 서오윈,(+ 브오윈, 스오윈)
         서오썬(스오썬, 다오썬), 드래곤 마스터, 마법 잔해, 드래곤 스파킹, 스위프트
         '''
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         SWIFT_OF_THUNDER_HIT = 2
         DIVE_OF_EARTH_HIT = 3
         BREATH_OF_WIND_BONUS = False
@@ -123,37 +122,37 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill   ######
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)
-        OnixBless = core.BuffSkill("오닉스의 축복", 0, (180+2*self._combat)*1000, rem = True, att = 80+2*self._combat).wrap(core.BuffSkillWrapper)
+        OnixBless = core.BuffSkill("오닉스의 축복", 0, (180+2*self.combat)*1000, rem = True, att = 80+2*self.combat).wrap(core.BuffSkillWrapper)
 
         ### 에반 스킬
-        CircleOfMana1 = core.DamageSkill("서클 오브 마나 IV(1타)", 180, 290 + self._combat, 4).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        CircleOfMana2 = core.DamageSkill("서클 오브 마나 IV(2타)", 390, 330 + self._combat, 4).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        CircleOfMana1 = core.DamageSkill("서클 오브 마나 IV(1타)", 180, 290 + self.combat, 4).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        CircleOfMana2 = core.DamageSkill("서클 오브 마나 IV(2타)", 390, 330 + self.combat, 4).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DragonSparking = core.DamageSkill("드래곤 스파킹", 0, 150, 1).setV(vEhc, 7, 3, True).wrap(core.DamageSkillWrapper)
         MagicParticle = MagicParticleWrapper(vEhc, 6, passive_level)
         
-        CircleOfWind = core.DamageSkill("서클 오브 윈드", 660, 320+self._combat, 5).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        CircleOfThunder = core.DamageSkill("서클 오브 썬더", 660, 320+self._combat, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        CircleOfEarth = core.DamageSkill("서클 오브 어스", 660, 320+self._combat, 5).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        DarkFog = core.DamageSkill("다크 포그", 870, 400+2*self._combat, 6, cooltime = 40000, red=True).wrap(core.DamageSkillWrapper)
+        CircleOfWind = core.DamageSkill("서클 오브 윈드", 660, 320+self.combat, 5).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        CircleOfThunder = core.DamageSkill("서클 오브 썬더", 660, 320+self.combat, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        CircleOfEarth = core.DamageSkill("서클 오브 어스", 660, 320+self.combat, 5).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        DarkFog = core.DamageSkill("다크 포그", 870, 400+2*self.combat, 6, cooltime = 40000, red=True).wrap(core.DamageSkillWrapper)
         
         ### 미르 스킬
         Mir = core.BuffSkill("미르(공격중)", 0, 0, cooltime=-1).wrap(core.BuffSkillWrapper)
-        DragonSwift = core.SummonSkill("드래곤 스위프트", 0, 540, 415 + 2*self._combat, 4, 3360, cooltime = 6000, red=True).setV(vEhc, 8, 2, False).wrap(MirSkillWrapper)
-        DragonDive = core.SummonSkill("드래곤 다이브", 0, 360, 325 + self._combat, 3, 3480, cooltime = 6000, red=True).wrap(MirSkillWrapper)
-        DragonBreath = core.SummonSkill("드래곤 브레스", 0, 360, 240 + self._combat, 5, 2880, cooltime = 7500, red=True).setV(vEhc, 2, 2, False).wrap(MirSkillWrapper)
+        DragonSwift = core.SummonSkill("드래곤 스위프트", 0, 540, 415 + 2*self.combat, 4, 3360, cooltime = 6000, red=True).setV(vEhc, 8, 2, False).wrap(MirSkillWrapper)
+        DragonDive = core.SummonSkill("드래곤 다이브", 0, 360, 325 + self.combat, 3, 3480, cooltime = 6000, red=True).wrap(MirSkillWrapper)
+        DragonBreath = core.SummonSkill("드래곤 브레스", 0, 360, 240 + self.combat, 5, 2880, cooltime = 7500, red=True).setV(vEhc, 2, 2, False).wrap(MirSkillWrapper)
 
         ## 융합 스킬
-        SwiftOfWind = core.SummonSkill("스위프트 오브 윈드", 0, 360, 215 + self._combat, 2*3, 3360, cooltime=-1, modifier=MDF(pdamage_indep=-35)).setV(vEhc, 3, 2, False).wrap(MirSkillWrapper)
-        SwiftOfThunder = core.SummonSkill("스위프트 오브 썬더", 0, 2280/SWIFT_OF_THUNDER_HIT, 450 + self._combat, 6+1, 2280, cooltime=-1).setV(vEhc, 4, 2, False).wrap(MirSkillWrapper)
+        SwiftOfWind = core.SummonSkill("스위프트 오브 윈드", 0, 360, 215 + self.combat, 2*3, 3360, cooltime=-1, modifier=MDF(pdamage_indep=-35)).setV(vEhc, 3, 2, False).wrap(MirSkillWrapper)
+        SwiftOfThunder = core.SummonSkill("스위프트 오브 썬더", 0, 2280/SWIFT_OF_THUNDER_HIT, 450 + self.combat, 6+1, 2280, cooltime=-1).setV(vEhc, 4, 2, False).wrap(MirSkillWrapper)
         # DiveOfThunder - 안씀
-        DiveOfEarth = core.SummonSkill("다이브 오브 어스", 0, 2310/DIVE_OF_EARTH_HIT, 190+self._combat+420+2*self._combat, 6, 2310, cooltime=-1, modifier = MDF(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(MirSkillWrapper)
-        BreathOfWind = core.SummonSkill("브레스 오브 윈드", 0, 450, 215+self._combat+BREATH_OF_WIND_BONUS*(65+self._combat), 5, 3510, cooltime=-1).setV(vEhc, 3, 2, False).wrap(MirSkillWrapper)
-        BreathOfEarth = core.SummonSkill("브레스 오브 어스", 0, 450, 280+self._combat, 5, 3510, cooltime=-1).setV(vEhc, 1, 2, False).wrap(MirSkillWrapper)
+        DiveOfEarth = core.SummonSkill("다이브 오브 어스", 0, 2310/DIVE_OF_EARTH_HIT, 190+self.combat+420+2*self.combat, 6, 2310, cooltime=-1, modifier = MDF(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(MirSkillWrapper)
+        BreathOfWind = core.SummonSkill("브레스 오브 윈드", 0, 450, 215+self.combat+BREATH_OF_WIND_BONUS*(65+self.combat), 5, 3510, cooltime=-1).setV(vEhc, 3, 2, False).wrap(MirSkillWrapper)
+        BreathOfEarth = core.SummonSkill("브레스 오브 어스", 0, 450, 280+self.combat, 5, 3510, cooltime=-1).setV(vEhc, 1, 2, False).wrap(MirSkillWrapper)
         
         ### 돌아와!
         SwiftBack = core.BuffSkill("스위프트-돌아와!", 660, 60000, cooltime=-1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
         DiveBack = core.BuffSkill("다이브-돌아와!", 660, 60000, cooltime=-1, rem=True).wrap(core.BuffSkillWrapper)
-        BreathBack = core.SummonSkill("브레스-돌아와!", 660, 450, 150+self._combat, 1, (30+self._combat // 2)*1000, cooltime=-1).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
+        BreathBack = core.SummonSkill("브레스-돌아와!", 660, 450, 150+self.combat, 1, (30+self.combat // 2)*1000, cooltime=-1).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         
         # 하이퍼
         SummonOnixDragon = core.SummonSkill("서먼 오닉스 드래곤", 900, 3030, 550, 2, 40000, cooltime = 80000).wrap(core.SummonSkillWrapper)
@@ -244,7 +243,7 @@ class JobGenerator(ck.JobGenerator):
             i.onAfter(DragonSparking)
             
         return(CircleOfMana1,
-                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     Mir, OverloadMana, Booster, OnixBless, HerosOath, ElementalBlastBuff,
                     globalSkill.soul_contract()] +\
                 [ZodiacRayInit, MagicParticle] +\

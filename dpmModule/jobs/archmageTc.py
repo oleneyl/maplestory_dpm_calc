@@ -29,7 +29,6 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "아크메이지썬/콜"
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
         self.preEmptiveSkills = 2
-        self._combat = 0
         
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 20, pdamage = 60, crit_damage = 15)
@@ -41,7 +40,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         ######   Passive Skill   ######
         
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤", stat_main = 40)
@@ -60,14 +59,14 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5*ceil(self._combat/2))
+        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5*ceil(self.combat/2))
         ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", pdamage_indep = 20)
         ArcaneAim = core.InformedCharacterModifier("아케인 에임(실시간)", pdamage = 40)
         ElementalResetActive = core.InformedCharacterModifier("엘리멘탈 리셋(사용)", prop_ignore = 10)
         
         return [WeaponConstant, Mastery, ExtremeMagic, ArcaneAim, ElementalResetActive]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         코강 순서
         체라-라스피-블자-오브-엘퀴-썬더스톰
@@ -94,9 +93,9 @@ class JobGenerator(ck.JobGenerator):
         OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         
         #Damage Skills
-        ChainLightening = core.DamageSkill("체인 라이트닝", 600, 185 + 3*self._combat, 10+1, modifier = core.CharacterModifier(crit = 25+ceil(self._combat/2), pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ChainLightening = core.DamageSkill("체인 라이트닝", 600, 185 + 3*self.combat, 10+1, modifier = core.CharacterModifier(crit = 25+ceil(self.combat/2), pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        FrozenOrb = core.SummonSkill("프로즌 오브", 690, 210, 220+4*self._combat, 1, 4000, cooltime = 5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
+        FrozenOrb = core.SummonSkill("프로즌 오브", 690, 210, 220+4*self.combat, 1, 4000, cooltime = 5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
     
         LighteningSpear = core.DamageSkill("라이트닝 스피어", 0, 0, 1, cooltime = 75 * 1000).wrap(core.DamageSkillWrapper)
         LighteningSpearSingle = core.DamageSkill("라이트닝 스피어(키다운)", 267, 200, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 총 8010ms
@@ -122,15 +121,15 @@ class JobGenerator(ck.JobGenerator):
         
         #Summoning skill
         ThunderStorm = core.SummonSkill("썬더 스톰", 900, 1770, 430, 1, 90000, cooltime = 30000).setV(vEhc, 5, 3, False).wrap(core.SummonSkillWrapper)
-        Elquiness = core.SummonSkill("엘퀴네스", 600, 3030, 380+6*self._combat, 1, (260+5*self._combat)*1000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        Elquiness = core.SummonSkill("엘퀴네스", 600, 3030, 380+6*self.combat, 1, (260+5*self.combat)*1000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         IceAura = core.SummonSkill("아이스 오라", 0, 1200, 0, 1, 999999999).wrap(core.SummonSkillWrapper)
         
         #FinalAttack
-        Blizzard = core.DamageSkill("블리자드", 720, 450+5*self._combat, 8, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
-        BlizzardPassive = core.DamageSkill("블리자드 패시브", 0, (220+4*self._combat) * (0.6+0.01*self._combat), 1).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
+        Blizzard = core.DamageSkill("블리자드", 720, 450+5*self.combat, 8, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
+        BlizzardPassive = core.DamageSkill("블리자드 패시브", 0, (220+4*self.combat) * (0.6+0.01*self.combat), 1).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         
         #special skills
-        Infinity = adventurer.InfinityWrapper(self._combat)
+        Infinity = adventurer.InfinityWrapper(self.combat)
         FrostEffect = core.BuffSkill("프로스트 이펙트", 0, 999999 * 1000).wrap(FrostEffectWrapper)
 
         #Unstable Memorize skills
@@ -230,7 +229,7 @@ class JobGenerator(ck.JobGenerator):
 
         return(ChainLightening,
                 [Infinity, Meditation, EpicAdventure, OverloadMana, FrostEffect,
-                globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                 globalSkill.soul_contract()] +\
                 [IceAgeInit, Blizzard, LighteningSpear, ThunderBrake] +\
                 [ThunderStorm, Elquiness, IceAura, IceAgeSummon, FrozenOrb, SpiritOfSnow] +\

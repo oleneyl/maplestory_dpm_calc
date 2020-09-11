@@ -66,7 +66,6 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 11
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
-        self._combat = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -81,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
         return core.CharacterModifier(pdamage=50, armor_ignore=15, crit_damage=20)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit = 40)
         AncientBowMastery = core.InformedCharacterModifier("에인션트 보우 마스터리", att = 30)
@@ -98,14 +97,14 @@ class JobGenerator(ck.JobGenerator):
                                         AncientBowExpert, IllusionStep]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5*ceil(passive_level /2))
 
         return [WeaponConstant, Mastery]
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         에인션트 아스트라 사용하지 않음
         콤보 어썰트는 커스 트랜지션의 지속시간이 2초 이하 남았을때 사용
@@ -124,13 +123,13 @@ class JobGenerator(ck.JobGenerator):
         
         미스텔 미사용(데미지 감소함)
         '''
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         ANCIENT_ARCHERY = core.CharacterModifier(pdamage_indep=10, boss_pdamage=50+20, armor_ignore=20)
         ######   Skill   ######
         # Buff skills
         AncientBowBooster = core.BuffSkill("에인션트 보우 부스터", 0, 300*1000, rem=True).wrap(core.BuffSkillWrapper)
         CurseTolerance = core.BuffSkill("커스 톨러런스", 0, 300*1000, rem=True).wrap(core.BuffSkillWrapper)
-        SharpEyes = core.BuffSkill("샤프 아이즈", 0, (300+10*self._combat)*1000, crit = 20+ceil(self._combat/2), crit_damage = 15+ceil(self._combat/2), rem=True).wrap(core.BuffSkillWrapper)
+        SharpEyes = core.BuffSkill("샤프 아이즈", 0, (300+10*self.combat)*1000, crit = 20+ceil(self.combat/2), crit_damage = 15+ceil(self.combat/2), rem=True).wrap(core.BuffSkillWrapper)
         AncientGuidance = core.BuffSkill("에인션트 가이던스(버프)", 0, 30000, pdamage_indep = 15, cooltime = -1, rem = False).wrap(core.BuffSkillWrapper)
         CurseTransition = core.BuffSkill("커스 트랜지션", 0, 15*1000, crit_damage = 20, cooltime=-1).wrap(core.BuffSkillWrapper) # 5스택 유지 가정
 
@@ -160,25 +159,25 @@ class JobGenerator(ck.JobGenerator):
                     modifier = ANCIENT_ARCHERY).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
                 
         # 5스택 가정, 다른 스킬 사용 중에 시전가능
-        EdgeOfResonance = core.DamageSkill("엣지 오브 레조넌스", 0, 800+15*self._combat, 6, cooltime = 15*1000, red=True,
+        EdgeOfResonance = core.DamageSkill("엣지 오브 레조넌스", 0, 800+15*self.combat, 6, cooltime = 15*1000, red=True,
                         modifier = ANCIENT_ARCHERY + core.CharacterModifier(pdamage_indep = 61.051)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         
         # 인챈트 포스
         ComboAssultHolder = core.DamageSkill("콤보 어썰트", 0, 0, 0, cooltime = 20 * 1000, red=True).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         
-        ComboAssultDischarge = core.DamageSkill("콤보 어썰트(디스차지)", 600, 600+10*self._combat, 7,
+        ComboAssultDischarge = core.DamageSkill("콤보 어썰트(디스차지)", 600, 600+10*self.combat, 7,
                 modifier = ANCIENT_ARCHERY).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)# 디버프 +1
-        ComboAssultDischargeArrow = core.DamageSkill("콤보 어썰트(디스차지)(화살)", 150, 650+10*self._combat, 5,
+        ComboAssultDischargeArrow = core.DamageSkill("콤보 어썰트(디스차지)(화살)", 150, 650+10*self.combat, 5,
                 modifier = ANCIENT_ARCHERY).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         
-        ComboAssultBlast = core.DamageSkill("콤보 어썰트(블래스트)", 600, 600+10*self._combat, 8,
+        ComboAssultBlast = core.DamageSkill("콤보 어썰트(블래스트)", 600, 600+10*self.combat, 8,
                 modifier = ANCIENT_ARCHERY).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)# 디버프 +1
-        ComboAssultBlastArrow = core.DamageSkill("콤보 어썰트(블래스트)(화살)", 150, 600+10*self._combat, 5,
+        ComboAssultBlastArrow = core.DamageSkill("콤보 어썰트(블래스트)(화살)", 150, 600+10*self.combat, 5,
                 modifier = ANCIENT_ARCHERY).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         
-        ComboAssultTransition = core.DamageSkill("콤보 어썰트(트랜지션)", 600, 600+10*self._combat, 7,
+        ComboAssultTransition = core.DamageSkill("콤보 어썰트(트랜지션)", 600, 600+10*self.combat, 7,
                 modifier = ANCIENT_ARCHERY).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)# 디버프 +5
-        ComboAssultTransitionArrow = core.DamageSkill("콤보 어썰트(트랜지션)(화살)", 150, 650+10*self._combat, 5,
+        ComboAssultTransitionArrow = core.DamageSkill("콤보 어썰트(트랜지션)(화살)", 150, 650+10*self.combat, 5,
                 modifier = ANCIENT_ARCHERY).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         
         ## 하이퍼
@@ -308,7 +307,7 @@ class JobGenerator(ck.JobGenerator):
         
         ### Exports ###
         return(CardinalBlast,
-                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
                     RelicCharge, AncientBowBooster, CurseTolerance, CurseTransition, SharpEyes,
                     RelicEvolution, EpicAdventure,
                     AncientGuidance, AdditionalTransition, CriticalReinforce,

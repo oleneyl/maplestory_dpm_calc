@@ -47,7 +47,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, ElementalCharge, ParashockGuard]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         두손둔기
 

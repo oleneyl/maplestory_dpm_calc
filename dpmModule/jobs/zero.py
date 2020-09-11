@@ -45,7 +45,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "제로"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
-        self._combat = 0
+        self.combat = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -66,7 +66,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(crit = 15, pdamage = 80, armor_ignore = 20, crit_damage = 25)
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         마스터리 별개로 적용 : 알파 : 1.34, 베타 : 1.49
         
@@ -127,29 +127,29 @@ class JobGenerator(ck.JobGenerator):
         FlashAssault = core.DamageSkill("플래시 어썰터", 270, 165, 8).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         FlashAssaultTAG = core.DamageSkill("플래시 어썰터(태그)", 0, 165, 8).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
 
-        AdvancedSpinCutter = core.DamageSkill("어드밴스드 스핀 커터", 270, 260+3*self._combat, 10).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedSpinCutterTAG = core.DamageSkill("어드밴스드 스핀 커터(태그)", 0, 260+3*self._combat, 10).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedSpinCutterAura = core.DamageSkill("어드밴스드 스핀 커터(오라)", 0, 130+3*self._combat, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedSpinCutterAuraTAG = core.DamageSkill("어드밴스드 스핀 커터(오라)(태그)", 0, 130+3*self._combat, 4, modifier=AlphaMDF-BetaMDF).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 항상 알파 스탯이 적용됨
+        AdvancedSpinCutter = core.DamageSkill("어드밴스드 스핀 커터", 270, 260+3*self.combat, 10).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedSpinCutterTAG = core.DamageSkill("어드밴스드 스핀 커터(태그)", 0, 260+3*self.combat, 10).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedSpinCutterAura = core.DamageSkill("어드밴스드 스핀 커터(오라)", 0, 130+3*self.combat, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedSpinCutterAuraTAG = core.DamageSkill("어드밴스드 스핀 커터(오라)(태그)", 0, 130+3*self.combat, 4, modifier=AlphaMDF-BetaMDF).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 항상 알파 스탯이 적용됨
         
-        AdvancedRollingCurve = core.DamageSkill("어드밴스드 롤링 커브", 960, 365+3*self._combat, 12).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingCurveTAG = core.DamageSkill("어드밴스드 롤링 커브(태그)", 0, 365+3*self._combat, 12).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingCurveAura = core.DamageSkill("어드밴스드 롤링 커브(오라)", 0, 350+self._combat, 2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingCurveAuraTAG = core.DamageSkill("어드밴스드 롤링 커브(오라)(태그)", 0, 350+self._combat, 2*2, modifier=AlphaMDF-BetaMDF).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) # 항상 알파 스탯이 적용됨, 각 투사체가 2회 타격함
+        AdvancedRollingCurve = core.DamageSkill("어드밴스드 롤링 커브", 960, 365+3*self.combat, 12).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingCurveTAG = core.DamageSkill("어드밴스드 롤링 커브(태그)", 0, 365+3*self.combat, 12).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingCurveAura = core.DamageSkill("어드밴스드 롤링 커브(오라)", 0, 350+self.combat, 2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingCurveAuraTAG = core.DamageSkill("어드밴스드 롤링 커브(오라)(태그)", 0, 350+self.combat, 2*2, modifier=AlphaMDF-BetaMDF).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) # 항상 알파 스탯이 적용됨, 각 투사체가 2회 타격함
         
-        AdvancedRollingAssulter = core.DamageSkill("어드밴스드 롤링 어썰터", 960, 375+2*self._combat, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingAssulterTAG = core.DamageSkill("어드밴스드 롤링 어썰터(태그)", 0, 375+2*self._combat, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingAssulterAura = core.DamageSkill("어드밴스드 롤링 어썰터(오라)", 0, 250+self._combat, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingAssulterAuraTAG = core.DamageSkill("어드밴스드 롤링 어썰터(오라)(태그)", 0, 250+self._combat, 3*2*2, modifier=AlphaMDF-BetaMDF).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 항상 알파 스탯이 적용됨, 2회 사출, 각 투사체가 2회 타격함
+        AdvancedRollingAssulter = core.DamageSkill("어드밴스드 롤링 어썰터", 960, 375+2*self.combat, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingAssulterTAG = core.DamageSkill("어드밴스드 롤링 어썰터(태그)", 0, 375+2*self.combat, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingAssulterAura = core.DamageSkill("어드밴스드 롤링 어썰터(오라)", 0, 250+self.combat, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingAssulterAuraTAG = core.DamageSkill("어드밴스드 롤링 어썰터(오라)(태그)", 0, 250+self.combat, 3*2*2, modifier=AlphaMDF-BetaMDF).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 항상 알파 스탯이 적용됨, 2회 사출, 각 투사체가 2회 타격함
         
         WindCutter = core.DamageSkill("윈드 커터", 420, 165, 8).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         WindCutterSummon = core.DamageSkill("윈드 커터(소용돌이)", 0, 110, 3*2, cooltime=-1).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper) # 최대 3초지속, 2회 타격
 
         WindStrike = core.DamageSkill("윈드 스트라이크", 480, 250, 8).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
 
-        AdvancedStormBreak = core.DamageSkill("어드밴스드 스톰 브레이크", 690, 335+2*self._combat, 10).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedStormBreakSummon = core.DamageSkill("어드밴스드 스톰 브레이크(소용돌이)", 0, 335+2*self._combat, 4, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 최대 3초지속, 1회 타격
-        AdvancedStormBreakElectric = core.SummonSkill("어드밴스드 스톰 브레이크(전기)", 0, 1000, 230+2*self._combat, 1, (3+ ceil(self._combat /10))*1000, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        AdvancedStormBreak = core.DamageSkill("어드밴스드 스톰 브레이크", 690, 335+2*self.combat, 10).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedStormBreakSummon = core.DamageSkill("어드밴스드 스톰 브레이크(소용돌이)", 0, 335+2*self.combat, 4, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 최대 3초지속, 1회 타격
+        AdvancedStormBreakElectric = core.SummonSkill("어드밴스드 스톰 브레이크(전기)", 0, 1000, 230+2*self.combat, 1, (3+ ceil(self.combat /10))*1000, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
 
         # 도트스킬은 크뎀 미적용이므로 AlphaSkill 추가할 필요없음.
         DivineLeer = core.DotSkill("디바인 리어", 0, 1000, 200, 1, 99999999).wrap(core.SummonSkillWrapper)
@@ -159,17 +159,17 @@ class JobGenerator(ck.JobGenerator):
         UpperSlash = core.DamageSkill("어퍼 슬래시", 390, 210, 6, modifier = extra_dmg(6, True)).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         UpperSlashTAG = core.DamageSkill("어퍼 슬래시(태그)", 0, 210, 6, modifier = extra_dmg(6, True)).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         
-        AdvancedPowerStomp = core.DamageSkill("어드밴스드 파워 스텀프", 570, 330 + 5*self._combat, 9, modifier = extra_dmg(6, True)).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
-        AdvancedPowerStompTAG = core.DamageSkill("어드밴스드 파워 스텀프(태그)", 0, 330 + 5*self._combat, 9, modifier = extra_dmg(6, True)).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
-        AdvancedPowerStompWave = core.DamageSkill("어드밴스드 파워 스텀프(파동)", 0, 330 + 5*self._combat, 9, modifier = extra_dmg(6, True)).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
-        AdvancedPowerStompWaveTAG = core.DamageSkill("어드밴스드 파워 스텀프(파동)(태그)", 0, 330 + 5*self._combat, 9, modifier = extra_dmg(6, True) + BetaMDF-AlphaMDF).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper) # 항상 베타 스탯이 적용됨
+        AdvancedPowerStomp = core.DamageSkill("어드밴스드 파워 스텀프", 570, 330 + 5*self.combat, 9, modifier = extra_dmg(6, True)).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        AdvancedPowerStompTAG = core.DamageSkill("어드밴스드 파워 스텀프(태그)", 0, 330 + 5*self.combat, 9, modifier = extra_dmg(6, True)).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        AdvancedPowerStompWave = core.DamageSkill("어드밴스드 파워 스텀프(파동)", 0, 330 + 5*self.combat, 9, modifier = extra_dmg(6, True)).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        AdvancedPowerStompWaveTAG = core.DamageSkill("어드밴스드 파워 스텀프(파동)(태그)", 0, 330 + 5*self.combat, 9, modifier = extra_dmg(6, True) + BetaMDF-AlphaMDF).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper) # 항상 베타 스탯이 적용됨
         
         THROWINGHIT = 5
         FrontSlash = core.DamageSkill("프론트 슬래시", 450, 205, 6, modifier = extra_dmg(6, True)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        ThrowingWeapon = core.SummonSkill("어드밴스드 스로잉 웨폰", 360, 300, 550 + 5*self._combat, 2, THROWINGHIT*300, cooltime=-1, modifier = extra_dmg(6, True)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+        ThrowingWeapon = core.SummonSkill("어드밴스드 스로잉 웨폰", 360, 300, 550 + 5*self.combat, 2, THROWINGHIT*300, cooltime=-1, modifier = extra_dmg(6, True)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
         
         TurningDrive = core.DamageSkill("터닝 드라이브", 360, 260, 6, modifier = extra_dmg(6, True)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedWheelWind = core.DamageSkill("어드밴스드 휠 윈드", 900, 200+2*self._combat, 2*7, modifier = extra_dmg(6, True)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)     #   0.1초당 1타, 최대 7초, 7타로 적용
+        AdvancedWheelWind = core.DamageSkill("어드밴스드 휠 윈드", 900, 200+2*self.combat, 2*7, modifier = extra_dmg(6, True)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)     #   0.1초당 1타, 최대 7초, 7타로 적용
         
         GigaCrash = core.DamageSkill("기가 크래시", 540, 250, 6, modifier = extra_dmg(6, True)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         GigaCrashTAG = core.DamageSkill("기가 크래시(태그)", 0, 250, 6, modifier = extra_dmg(6, True)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
@@ -178,11 +178,11 @@ class JobGenerator(ck.JobGenerator):
         JumpingCrashTAG = core.DamageSkill("점핑 크래시(태그)", 0, 225, 6, modifier = extra_dmg(6, True)).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
         JumpingCrashWave = core.DamageSkill("점핑 크래시(충격파)", 0, 225, 3, modifier = extra_dmg(6, True)).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
         
-        AdvancedEarthBreak = core.DamageSkill("어드밴스드 어스 브레이크", 630+390, 380+3*self._combat, 10, modifier = extra_dmg(6, True)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedEarthBreakTAG = core.DamageSkill("어드밴스드 어스 브레이크(태그)", 0, 380+3*self._combat, 10, modifier = extra_dmg(6, True)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) 
+        AdvancedEarthBreak = core.DamageSkill("어드밴스드 어스 브레이크", 630+390, 380+3*self.combat, 10, modifier = extra_dmg(6, True)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedEarthBreakTAG = core.DamageSkill("어드밴스드 어스 브레이크(태그)", 0, 380+3*self.combat, 10, modifier = extra_dmg(6, True)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) 
         
-        AdvancedEarthBreakWave = core.DamageSkill("어드밴스드 어스 브레이크(파동)", 0, 285+3*self._combat, 10, modifier = extra_dmg(6, True)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedEarthBreakElectric = core.SummonSkill("어드밴스드 어스 브레이크(전기)", 0, 1000, 340+3*self._combat, 1, 5000, cooltime = -1, modifier = extra_dmg(6, True)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        AdvancedEarthBreakWave = core.DamageSkill("어드밴스드 어스 브레이크(파동)", 0, 285+3*self.combat, 10, modifier = extra_dmg(6, True)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedEarthBreakElectric = core.SummonSkill("어드밴스드 어스 브레이크(전기)", 0, 1000, 340+3*self.combat, 1, 5000, cooltime = -1, modifier = extra_dmg(6, True)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
 
         CriticalBind = CriticalBindWrapper(AlphaState, BetaState)
 
