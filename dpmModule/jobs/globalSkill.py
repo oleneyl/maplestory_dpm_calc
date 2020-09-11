@@ -55,7 +55,7 @@ class SpiderInMirrorBuilder():
             "스파이더 인 미러(거울 속의 거미)", 0, 3000, 175+17*enhancer.getV(skill_importance, enhance_importance), 8, 15*1000, cooltime = -1
         ).wrap(core.SummonSkillWrapper)
         self.MirrorBreak.onAfter(self.MirrorSpider.controller(3000))
-        self.SpiderInMirror = core.OptionalElement(cthr_level >= 235, MirrorBreak)
+        self.SpiderInMirror = core.OptionalElement(lambda: chtr_level >= 235, self.MirrorBreak)
 
     def get_skill(self):
         return self.SpiderInMirror
