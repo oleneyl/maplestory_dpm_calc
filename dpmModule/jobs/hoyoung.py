@@ -64,7 +64,7 @@ class JobGenerator(ck.JobGenerator):
         
         # 1차
         #부채 타격 가정
-        Humanity_As_You_Will_Fan = core.DamageSkill("여의선 : 인", 0, 525 + 5*passive_level, 5, modifier = core.CharacterModifier(pdamage_indep = 10)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Humanity_As_You_Will_Fan = core.DamageSkill("여의선 : 인", 0, 530 + 5*passive_level, 5, modifier = core.CharacterModifier(pdamage_indep = 10)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Talisman_Evil_Sealing_Gourd = core.DamageSkill("마봉 호로부", 0, 1000 + 10 * passive_level, 6, cooltime = -1, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
 
         # 2차

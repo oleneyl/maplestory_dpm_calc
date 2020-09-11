@@ -160,7 +160,7 @@ class JobGenerator(ck.JobGenerator):
         ChainArts_Stroke_2_Cancel = core.DamageSkill("체인아츠:스트로크(2타)(캔슬)", CANCEL_TIME, 400, 5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         ChainArts_Chais = core.DamageSkill("체인아츠:체이스", 150, 100, 1).wrap(core.DamageSkillWrapper)
-        ChainArts_Crush = core.DamageSkill("체인아츠:크러시", 990, 950, 8, cooltime = 30000).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper) # 미사용
+        ChainArts_Crush = core.DamageSkill("체인아츠:크러시", 750, 510, 15, cooltime = 30000).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper) # 미사용
 
         #ChainArts_ToughHustleInit = core.DamageSkill("체인아츠:터프허슬", 0, 0, 0, cooltime = 50000).setV(vEhc, 0, 2, False) #지속형		
         #ChainArts_ToughHustle = core.DamageSkill("체인아츠:터프허슬", 5000000, 600 + 7 * self._combat, 2).setV(vEhc, 0, 2, False) #지속형, 6초, 미사용
@@ -168,7 +168,7 @@ class JobGenerator(ck.JobGenerator):
         # TODO: 향후 딜사이클에 사용될 경우 컴뱃 오더스 적용할것
         # ChainArts_takedown = core.DamageSkill("체인아츠:테이크다운", 5360, 990, 15, cooltime = 150*1000, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         # ChainArts_takedown_wave = core.DamageSkill("체인아츠:테이크다운(파동)", 0, 600, 16, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        # ChainArts_takedown_final = core.DamageSkill("체인아츠:테이크다운(최종)", 0, 5000, 1, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        # ChainArts_takedown_final = core.DamageSkill("체인아츠:테이크다운(최종)", 0, 500, 10, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         # ChainArts_takedown_bind = core.BuffSkill("체인아츠:테이크다운(바인드)", 0, 15000, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         #논체인아츠 스킬

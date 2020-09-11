@@ -133,7 +133,7 @@ class JobGenerator(ck.JobGenerator):
         
         #하이퍼
         # 불릿을 사용하는 스킬 데미지 50% 증가, 불릿자동리로드 70%감소, 릴파벙이후 과열시간 1초로 감소
-        MaximizeCannon = core.BuffSkill("맥시마이즈 캐논", 870, 30*1000, cooltime = 210 * 1000).wrap(core.BuffSkillWrapper)
+        MaximizeCannon = core.BuffSkill("맥시마이즈 캐논", 870, 35*1000, cooltime = 240 * 1000).wrap(core.BuffSkillWrapper)
         WillOfLiberty = core.BuffSkill("윌 오브 리버티", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
         #5차

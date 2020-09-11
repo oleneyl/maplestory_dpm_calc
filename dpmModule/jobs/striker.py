@@ -91,7 +91,7 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
 
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
-        ChookRoi = core.BuffSkill("축뢰", 1620, (180+5*self._combat)*1000, rem = True).wrap(core.BuffSkillWrapper) # 타수증가 적용으로 계싼할지는 염두에 두어야 함
+        ChookRoi = core.BuffSkill("축뢰", 690, (180+5*self._combat)*1000, rem = True).wrap(core.BuffSkillWrapper) # 타수증가 적용으로 계싼할지는 염두에 두어야 함
         WindBooster = core.BuffSkill("윈드 부스터", 0, (300+5*passive_level)*1000, rem = True).wrap(core.BuffSkillWrapper)
         HuricaneBuff = core.BuffSkill("태풍(버프)", 0, (90+passive_level)*1000, rem = True, pdamage = 35).wrap(core.BuffSkillWrapper)
     

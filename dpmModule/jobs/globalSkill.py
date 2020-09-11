@@ -47,7 +47,7 @@ def useful_advanced_bless(slevel = 1, useHP = False):
 class SpiderInMirrorBuilder():
     def __init__(self, enhancer, skill_importance, enhance_importance, chtr_level):
         self.MirrorBreak = core.DamageSkill(
-            "스파이더 인 미러(공간 붕괴)", 960, 750+30*enhancer.getV(skill_importance, enhance_importance), 12, cooltime = 250*1000, red = True
+            "스파이더 인 미러(공간 붕괴)", 960, 450+18*enhancer.getV(skill_importance, enhance_importance), 15, cooltime = 250*1000, red = True
         ).wrap(core.DamageSkillWrapper)
         # 5번 연속 공격 후 종료, 재돌입 대기시간 3초
         self.MirrorSpider = core.SummonSkill(

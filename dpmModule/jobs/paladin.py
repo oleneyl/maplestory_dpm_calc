@@ -80,8 +80,8 @@ class JobGenerator(ck.JobGenerator):
         BlessedHammer = core.SummonSkill("블래스드 해머", 0, 600, 250 + vEhc.getV(1,1)*10, 2, 999999 * 10000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         BlessedHammerActive = core.SummonSkill("블레스드 해머(활성화)", 360, 600, 525+vEhc.getV(1,1)*21, 3, 30 * 1000, cooltime = 60 * 1000, red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         GrandCross = core.DamageSkill("그랜드 크로스", 900, 0, 0, cooltime = 150 * 1000, red = True).wrap(core.DamageSkillWrapper)
-        GrandCrossSmallTick = core.DamageSkill("그랜드 크로스(작은)", 200, 350 + vEhc.getV(3,3)*14, 6, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #3s, 15*6타
-        GrandCrossLargeTick = core.DamageSkill("그랜드 크로스(강화)", 146, 600 + vEhc.getV(3,3)*24, 6, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s, 41*6타
+        GrandCrossSmallTick = core.DamageSkill("그랜드 크로스(작은)", 200, 175 + vEhc.getV(3,3)*7, 6, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #3s, 15*6타
+        GrandCrossLargeTick = core.DamageSkill("그랜드 크로스(강화)", 146, 300 + vEhc.getV(3,3)*12, 6, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s, 41*6타
         GrandCrossEnd = core.DamageSkill("그랜드 크로스(종료)", 450, 0, 0).wrap(core.DamageSkillWrapper)
                 
         FinalAttack = core.DamageSkill("파이널 어택", 0, 80, 2*0.4).setV(vEhc, 4, 5, True).wrap(core.DamageSkillWrapper)

@@ -122,11 +122,11 @@ class JobGenerator(ck.JobGenerator):
         
         #Summoning skill
         ThunderStorm = core.SummonSkill("썬더 스톰", 900, 1770, 430, 1, 90000, cooltime = 30000).setV(vEhc, 5, 3, False).wrap(core.SummonSkillWrapper)
-        Elquiness = core.SummonSkill("엘퀴네스", 600, 3030, 380+6*self._combat, 1, (260+5*self._combat)*1000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        Elquiness = core.SummonSkill("엘퀴네스", 600, 3030, 127+2*self._combat, 3, (260+5*self._combat)*1000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         IceAura = core.SummonSkill("아이스 오라", 0, 1200, 0, 1, 999999999).wrap(core.SummonSkillWrapper)
         
         #FinalAttack
-        Blizzard = core.DamageSkill("블리자드", 720, 450+5*self._combat, 8, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
+        Blizzard = core.DamageSkill("블리자드", 690, 301+3*self._combat, 12, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         BlizzardPassive = core.DamageSkill("블리자드 패시브", 0, (220+4*self._combat) * (0.6+0.01*self._combat), 1).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         
         #special skills

@@ -29,11 +29,13 @@ class JobGenerator(ck.JobGenerator):
         ContinualAimingPassive = core.InformedCharacterModifier("컨티뉴얼 에이밍(패시브)",crit_damage = 20 + self._combat)
         CaptainDignityPassive = core.InformedCharacterModifier("캡틴 디그니티(패시브)",att = 30 + passive_level)
         CrueCommandership = core.InformedCharacterModifier("크루 커맨더쉽",crit_damage = 25 + passive_level)
+
+        UnwierdingNectar = core.InformedCharacterModifier("언위어링 넥타", crit=10)
     
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
     
         return [CriticalRoar, PhisicalTraining, HalopointBullet, ContinualAimingPassive,
-            FullMetaJacket, CaptainDignityPassive, CrueCommandership, LoadedDicePassive]
+            FullMetaJacket, CaptainDignityPassive, CrueCommandership, UnwierdingNectar, LoadedDicePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self._combat
@@ -112,7 +114,6 @@ class JobGenerator(ck.JobGenerator):
         CaptainDignityEnhance = core.DamageSkill("캡틴 디그니티(강화)", 0, (275 + 3*passive_level)*1.3, 1, modifier = CONTINUAL_AIMING).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
         # Hyper
-        UnwierdingNectar = core.BuffSkill("언위어링 넥타", 0, 180000, crit=10).wrap(core.BuffSkillWrapper)
         StrangeBomb = core.DamageSkill("스트레인지 봄", 810, 400, 12, cooltime = 30000, modifier = CONTINUAL_AIMING).setV(vEhc, 7, 2, True).wrap(core.DamageSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 150 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
@@ -125,7 +126,7 @@ class JobGenerator(ck.JobGenerator):
         
         BulletParty = core.DamageSkill("불릿 파티", 0, 0, 0, cooltime = 75000, red = True).wrap(core.DamageSkillWrapper)
         BulletPartyTick = core.DamageSkill("불릿 파티(틱)", BULLET_PARTY_TICK, 230+9*vEhc.getV(5,5), 5, modifier = CONTINUAL_AIMING).isV(vEhc,5,5).wrap(core.DamageSkillWrapper) #12초간 지속 -> 50회 시전
-        DeadEye = core.DamageSkill("데드아이", 450, (800+32*vEhc.getV(3,3))*DEADEYEACC, 6, cooltime = 30000, red = True, modifier = core.CharacterModifier(crit = 100, pdamage_indep = 4*11) + CONTINUAL_AIMING).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        DeadEye = core.DamageSkill("데드아이", 450, (320+13*vEhc.getV(3,3))*DEADEYEACC, 15, cooltime = 30000, red = True, modifier = core.CharacterModifier(crit = 100, pdamage_indep = 4*11) + CONTINUAL_AIMING).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
         NautilusAssult = core.SummonSkill("노틸러스 어썰트", 690, 360, 600+24*vEhc.getV(0,0), 6, 360*7-1, cooltime = 180000, red = True, modifier = CONTINUAL_AIMING).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)#7회 2초간
         NautilusAssult_2 = core.SummonSkill("노틸러스 어썰트(일제 사격)", 0, 160, 300+12*vEhc.getV(0,0), 12, 160*36-1, cooltime = -1, modifier = CONTINUAL_AIMING).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)#36회 6초간
 
@@ -167,7 +168,7 @@ class JobGenerator(ck.JobGenerator):
 
         return (RapidFire,
                 [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
-                    SummonCrewBuff, PirateStyle, Booster, InfiniteBullet, LuckyDice, UnwierdingNectar, EpicAdventure, PirateFlag, Overdrive,
+                    SummonCrewBuff, PirateStyle, Booster, InfiniteBullet, LuckyDice, EpicAdventure, PirateFlag, Overdrive,
                     QuickDraw, globalSkill.soul_contract()] +\
                 [BattleshipBomber, Headshot, Nautilus, DeadEye, StrangeBomb] +\
                 [OctaQuaterdeck, BattleshipBomber_1, BattleshipBomber_2, NautilusAssult, NautilusAssult_2, SummonCrew] +\
