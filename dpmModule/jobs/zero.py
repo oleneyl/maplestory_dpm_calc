@@ -143,12 +143,12 @@ class JobGenerator(ck.JobGenerator):
         AdvancedRollingAssulterAuraTAG = core.DamageSkill("어드밴스드 롤링 어썰터(오라)(태그)", 0, 250+self._combat, 3*2*2, modifier=AlphaMDF-BetaMDF).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 항상 알파 스탯이 적용됨, 2회 사출, 각 투사체가 2회 타격함
         
         WindCutter = core.DamageSkill("윈드 커터", 420, 165, 8).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        WindCutterSummon = core.SummonSkill("윈드 커터(소환)", 0, 500, 110, 3, 3000, cooltime=-1).setV(vEhc, 7, 2, False).wrap(core.SummonSkillWrapper)
+        WindCutterSummon = core.DamageSkill("윈드 커터(소용돌이)", 0, 110, 3*2, cooltime=-1).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper) # 최대 3초지속, 2회 타격
 
         WindStrike = core.DamageSkill("윈드 스트라이크", 480, 250, 8).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
 
         AdvancedStormBreak = core.DamageSkill("어드밴스드 스톰 브레이크", 690, 335+2*self._combat, 10).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedStormBreakSummon = core.SummonSkill("어드밴스드 스톰 브레이크(소환)", 0, 500, 335+2*self._combat, 4, 3000, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        AdvancedStormBreakSummon = core.DamageSkill("어드밴스드 스톰 브레이크(소용돌이)", 0, 335+2*self._combat, 4, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 최대 3초지속, 1회 타격
         AdvancedStormBreakElectric = core.SummonSkill("어드밴스드 스톰 브레이크(전기)", 0, 1000, 230+2*self._combat, 1, (3+ ceil(self._combat /10))*1000, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
 
         # 도트스킬은 크뎀 미적용이므로 AlphaSkill 추가할 필요없음.
@@ -268,7 +268,7 @@ class JobGenerator(ck.JobGenerator):
         SetBeta.onAfter(BetaState)
         SetBeta.onAfter(AlphaState.controller(-1))
 
-        AlphaState.controller(1) # 알파로 시작
+        BetaState.controller(1) # 베타로 시작
         
         ### 어파스 생성
         # 윈커(0ms) - 윈스(420ms) - 스톰(900ms) - 문스(1590ms) - 피어싱(1920ms) - 문스(2280ms) - 피어싱(2610ms) - 2970ms -> 태그 쿨타임 대기 +130ms
@@ -294,6 +294,7 @@ class JobGenerator(ck.JobGenerator):
             TwinBladeOfTime.onAfter(sk)
         ShadowFlashAlpha.onAfter(ShadowFlashAlphaEnd)
         ShadowFlashBeta.onAfter(ShadowFlashBetaEnd)
+        LimitBreak.onBefore(SetBeta)
         LimitBreak.onAfter(LimitBreakAttack)
         LimitBreak.onAfter(LimitBreakCDR)
         for sk in [TimeDistortion, SoulContract]:
