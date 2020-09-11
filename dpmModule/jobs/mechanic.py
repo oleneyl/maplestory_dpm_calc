@@ -52,7 +52,6 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "메카닉"
         self.ability_list = Ability_tool.get_ability_set('passive_level', 'boss_pdamage', 'crit')
         self.preEmptiveSkills = 1
-        self._combat = 0
         
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 10, pdamage = 28+20)
@@ -85,13 +84,13 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('봄버 타임', '소울 컨트랙트'), RuleSet.BASE)
         ruleset.add_rule(ReservationRule('소울 컨트랙트', '봄버 타임'), RuleSet.BASE)
         return ruleset
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         코강 순서:
         매시브-호밍-디스토션-마그네틱필드-RM7-RM1
         '''
         #Constants
-        passive_level = self._combat + chtr.get_base_modifier().passive_level
+        passive_level = self.combat + chtr.get_base_modifier().passive_level
         ROBOT_SUMMON_REMAIN = 1 + chtr.get_base_modifier().summon_rem + 0.4 + passive_level * 0.01
         ROBOT_MASTERY = core.CharacterModifier(pdamage_indep = 105 + passive_level * 3)
         ROBOT_BUFF = 6 + math.ceil(passive_level / 5)
@@ -100,8 +99,8 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
         WillOfLiberty = core.BuffSkill("윌 오브 리버티", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        MassiveFire = core.DamageSkill("매시브 파이어", 600, 285+self._combat*6, 6+1, modifier = core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        MassiveFire2 = core.DamageSkill("매시브 파이어(2)", 0, 350+self._combat*10, 1, modifier = core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        MassiveFire = core.DamageSkill("매시브 파이어", 600, 285+self.combat*6, 6+1, modifier = core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        MassiveFire2 = core.DamageSkill("매시브 파이어(2)", 0, 350+self.combat*10, 1, modifier = core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         #로디드 데미지 고정.
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20+10/6+10/6*(5/6+1/11)*(10*(5+passive_level)*0.01)).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
@@ -117,9 +116,9 @@ class JobGenerator(ck.JobGenerator):
         SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*ROBOT_SUMMON_REMAIN, pdamage_indep=10+5+math.ceil(passive_level/3), pdamage = ROBOT_BUFF, cooltime = -1, armor_ignore=10).wrap(core.BuffSkillWrapper)
         SupportWaverFinal = core.DamageSkill("서포트 웨이버(폭발)", 0, 1100+passive_level*20, 1, modifier = ROBOT_MASTERY, cooltime = -1).wrap(core.DamageSkillWrapper)
         
-        RoboFactory = core.SummonSkill("로봇 팩토리", 630, 3000, 500+self._combat*5, 3, 30*1000*ROBOT_SUMMON_REMAIN, modifier = ROBOT_MASTERY, cooltime=60*1000).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
+        RoboFactory = core.SummonSkill("로봇 팩토리", 630, 3000, 500+self.combat*5, 3, 30*1000*ROBOT_SUMMON_REMAIN, modifier = ROBOT_MASTERY, cooltime=60*1000).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
         RoboFactoryBuff = core.BuffSkill("로봇 팩토리(버프)", 0, 30*1000*ROBOT_SUMMON_REMAIN, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
-        RoboFactoryFinal = core.DamageSkill("로봇 팩토리(폭발)", 0, 1000+self._combat*10, 1, modifier = ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        RoboFactoryFinal = core.DamageSkill("로봇 팩토리(폭발)", 0, 1000+self.combat*10, 1, modifier = ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
         BomberTime = core.BuffSkill("봄버 타임", 900, 10*1000, cooltime = 100*1000).wrap(core.BuffSkillWrapper)
         DistortionField = core.SummonSkill("디스토션 필드", 690, 4000/15, 350, 2, 4000-1, cooltime = 8000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
@@ -175,7 +174,7 @@ class JobGenerator(ck.JobGenerator):
         RoboFactory.onAfter(RoboFactoryBuff.controller(1))
         
         return(MassiveFire,
-                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, RoboFactoryBuff, MultipleOptionBuff, BomberTime, Overdrive,
                     globalSkill.soul_contract()] +\
                 [MicroMissle, BusterCallInit] +\

@@ -1,11 +1,10 @@
-from ..kernel.core import ExtendedCharacterModifier, InformedCharacterModifier, SkillModifier
-from ..item import ItemKernel as ik
-from ..item.ItemKernel import Item
+from ..kernel.core import ExtendedCharacterModifier, InformedCharacterModifier
 from ..status.ability import Ability_tool, Ability_grade
 from ..kernel.graph import GlobalOperation, initialize_global_properties, _unsafe_access_global_storage
 from ..kernel import policy
 from functools import reduce
 from math import ceil
+from typing import List
 
 ExMDF = ExtendedCharacterModifier
 '''Clas AbstractCharacter : Basic template for build specific User. User is such object that contains
@@ -98,7 +97,7 @@ class JobGenerator():
     
     - Functions that you must re - implement
     
-    .generate(chtr : ck.AbstractCharacter, combat : bool = False , vlevel : int = 0, vEnhance : list = [0,0,0]) : 
+    .generate(chtr : ck.AbstractCharacter, vlevel : int = 0, vEnhance : list = [0,0,0]) : 
         This function generate given chtr's graph and returns schedule.
         
     - Values that you must re-  implement
@@ -110,7 +109,7 @@ class JobGenerator():
     
     from . import globalSkill
     self.preEmptiveSkills = 2
-    globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster()
+    globalSkill.maple_heros(chtr.level, combat_level=combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster()
     globalSkill.soul_contract()
     
     미하일까지..
@@ -123,8 +122,7 @@ class JobGenerator():
         self.jobname = None
         self.jobtype = "str" #재상속 하도록 명시할 필요가 있음.
         self._passive_skill_list = [] #각 생성기가 자동으로 그래프 생성 시점에서 연산합니다.
-        self.constructedSchedule = None
-        self.combat = False
+        self.combat = 1
         self.ability_list = Ability_tool.get_ability_set(None, None, None)
         self._use_critical_reinforce = False
             
@@ -148,13 +146,10 @@ class JobGenerator():
         '''
         return ExMDF()
     
-    def apply_specific_schedule(self, graph):
-        return
-    
-    def build(self, vEhc, chtr, combat = False, storage_handler=None):
+    def build(self, vEhc, chtr, storage_handler=None):
         initialize_global_properties()
 
-        base_element, all_elements = self.generate(vEhc, chtr, combat = combat)
+        base_element, all_elements = self.generate(vEhc, chtr)
 
         GlobalOperation.assign_storage()
         GlobalOperation.attach_namespace()
@@ -171,25 +166,25 @@ class JobGenerator():
         
         return graph
     
-    def generate(self, vEhc, chtr : AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : AbstractCharacter):
         raise NotImplementedError
     
-    def build_passive_skill_list(self, vEhc, chtr : AbstractCharacter):
+    def build_passive_skill_list(self, vEhc, chtr : AbstractCharacter) -> None:
         self._passive_skill_list = self.get_passive_skill_list(vEhc, chtr)
         self._passive_skill_list += [InformedCharacterModifier("여제의 축복", att = 30)]
         if self.jobname != "제로":
             self._passive_skill_list += [InformedCharacterModifier("연합의 의지", att = 5, stat_main = 5, stat_sub = 5)]
         return
 
-    def get_passive_skill_list(self, vEhc, chtr : AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : AbstractCharacter) -> List[InformedCharacterModifier]:
         raise NotImplementedError("You must fill get_passive_skill_list function.")
     
-    def build_not_implied_skill_list(self, vEhc, chtr : AbstractCharacter):
+    def build_not_implied_skill_list(self, vEhc, chtr : AbstractCharacter) -> None:
         notImpliedBuffList = self.get_not_implied_skill_list(vEhc, chtr)
         self._passive_skill_list += notImpliedBuffList
         return
     
-    def get_not_implied_skill_list(self, vEhc, chtr : AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : AbstractCharacter) -> List[InformedCharacterModifier]:
         raise NotImplementedError('You must fill get_not_implied_skill_list function.')
     
     def get_passive_skill_modifier(self):
@@ -211,7 +206,7 @@ class JobGenerator():
         
         return graph
         
-    def package(self, chtr, v_builder, combat : bool = False, 
+    def package(self, chtr, v_builder,
                     vlevel : int = 0,
                     ulevel : int = 4000,
                     weaponstat = [3,6],
@@ -222,7 +217,6 @@ class JobGenerator():
         '''Packaging function
         '''
         vEhc = v_builder.build_enhancer(chtr, self)
-        self.combat = combat
         chtr = chtr
         
         self.build_passive_skill_list(vEhc, chtr)
@@ -237,7 +231,7 @@ class JobGenerator():
         personality = Personality.get_personality(100)
         chtr.apply_modifiers([personality])
                 
-        graph = self.build(vEhc, chtr, combat = combat, storage_handler=storage_handler)
+        graph = self.build(vEhc, chtr, storage_handler=storage_handler)
 
         def log_modifier(modifier, name):
             if log:
@@ -318,7 +312,7 @@ class JobGenerator():
         log_buffed_character(chtr)
         
         #그래프를 다시 빌드합니다.
-        graph = self.build(vEhc, chtr, combat = combat, storage_handler=storage_handler)
+        graph = self.build(vEhc, chtr, storage_handler=storage_handler)
         graph.set_v_enhancer(vEhc)
 
         log_character(chtr)

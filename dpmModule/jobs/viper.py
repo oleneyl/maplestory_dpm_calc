@@ -57,7 +57,6 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "바이퍼"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
-        self._combat = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -79,10 +78,10 @@ class JobGenerator(ck.JobGenerator):
         return [CriticalRoar, MentalClearity, PhisicalTraining, CriticalRage, StimulatePassive, LoadedDicePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(self._combat/2))
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(self.combat/2))
 
         CriticalRage = core.InformedCharacterModifier("크리티컬 레이지(보스)",crit = 20)    #보스상대 추가+20% 크리율
         GuardCrush = core.InformedCharacterModifier("가드 크러시",armor_ignore = 40 + 2*passive_level) #40% 확률로 방무 100% 무시.
@@ -90,7 +89,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, CriticalRage, GuardCrush]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         울트라 차지 : 공격시 350충전, 보스공격시 2배 충전. 최대스택 10000.
 
@@ -104,7 +103,7 @@ class JobGenerator(ck.JobGenerator):
         인레이지-노틸-드스-유니티
         '''
         ######   Skill   ######
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         serverlag = 3
         TRANSFORM_HIT = 12
 
@@ -113,17 +112,17 @@ class JobGenerator(ck.JobGenerator):
         DICE_POOL = 115
         DICE_PROC = DICE_WEIGHT / DICE_POOL # 더블 럭키 다이스 - 인핸스
         LuckyDice = core.BuffSkill("로디드 다이스", 990, 180 * 1000, pdamage = 20+10*DICE_PROC+10*DICE_PROC*((1-DICE_PROC)+DICE_WEIGHT/(DICE_POOL*2-DICE_WEIGHT))*(10*(5+passive_level)*0.01)).isV(vEhc, 2, 2).wrap(core.BuffSkillWrapper)
-        Viposition = core.BuffSkill("바이퍼지션", 0, (180+4*self._combat) * 1000, patt = 30+self._combat).wrap(core.BuffSkillWrapper)
+        Viposition = core.BuffSkill("바이퍼지션", 0, (180+4*self.combat) * 1000, patt = 30+self.combat).wrap(core.BuffSkillWrapper)
 
         # Damage Skill    
-        FistInrage = core.DamageSkill("피스트 인레이지", 690, 320 + 4*self._combat, 8 + 1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        FistInrage_T = core.DamageSkill("피스트 인레이지(변신)", 690, 320+4*self._combat, 8 + 1 + 2, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        FistInrage = core.DamageSkill("피스트 인레이지", 690, 320 + 4*self.combat, 8 + 1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        FistInrage_T = core.DamageSkill("피스트 인레이지(변신)", 690, 320+4*self.combat, 8 + 1 + 2, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        DragonStrike = core.DamageSkill("드래곤 스트라이크", 690, 300 + 4*self._combat, 12, cooltime = 15 * 1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        DragonStrikeBuff = core.BuffSkill("드래곤 스트라이크(디버프)", 0, 15 * 1000, cooltime = -1, pdamage_indep = 20 + self._combat//2).wrap(core.BuffSkillWrapper)
+        DragonStrike = core.DamageSkill("드래곤 스트라이크", 690, 300 + 4*self.combat, 12, cooltime = 15 * 1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        DragonStrikeBuff = core.BuffSkill("드래곤 스트라이크(디버프)", 0, 15 * 1000, cooltime = -1, pdamage_indep = 20 + self.combat//2).wrap(core.BuffSkillWrapper)
         
-        Nautilus = core.DamageSkill("노틸러스", 690, 440+4*self._combat, 7, cooltime = 60 * 1000, red=True).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        NautilusFinalAttack = core.DamageSkill("노틸러스(파이널 어택)", 0, 165+2*self._combat, 2).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        Nautilus = core.DamageSkill("노틸러스", 690, 440+4*self.combat, 7, cooltime = 60 * 1000, red=True).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        NautilusFinalAttack = core.DamageSkill("노틸러스(파이널 어택)", 0, 165+2*self.combat, 2).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
 
         # Hyper
         Stimulate = core.BuffSkill("스티뮬레이트", 930, 120 * 1000, cooltime = 240 * 1000, pdamage = 20).wrap(core.BuffSkillWrapper)# 에너지 주기적으로 800씩 증가, 미완충시 풀완충.
@@ -199,7 +198,7 @@ class JobGenerator(ck.JobGenerator):
         EnergyCharge.drainCallback = lambda: [SerpentScrew.set_disabled_and_time_left(1), SerpentScrewDummy.set_disabled_and_time_left(-1)]
             
         return (BasicAttackWrapper,
-            [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
+            [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                 LuckyDice, Viposition, Stimulate, EpicAdventure, PirateFlag, Overdrive, Transform,
                 UnityOfPowerBuff, DragonStrikeBuff, EnergyCharge,
                 globalSkill.soul_contract()] +\

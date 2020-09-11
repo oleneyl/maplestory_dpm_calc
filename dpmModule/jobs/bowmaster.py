@@ -87,7 +87,6 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 11
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
-        self._combat = 0
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(pdamage = 18)
@@ -99,20 +98,20 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit = 40)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         
         MarkmanShip = core.InformedCharacterModifier("마크맨쉽",armor_ignore = 25, patt = 25)
 
         BowExpert = core.InformedCharacterModifier("보우 엑스퍼트",att=60 + passive_level, crit_damage = 8)
-        AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)",att = 20 + ceil(self._combat / 2)) #오더스 적용필요
+        AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)",att = 20 + ceil(self.combat / 2)) #오더스 적용필요
         
         return [CriticalShot, PhisicalTraining,MarkmanShip, 
                             BowExpert, AdvancedFinalAttackPassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5 *ceil(passive_level / 2))
 
@@ -120,7 +119,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, ExtremeArchery]
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         잔영의 시 : 액티브 13*3타, 패시브 3.5*3타. 패시브는 쿨타임동안 10~11회 사용
         애로우 레인 : 1줄기, 떨어질 때 마다 3.5회 타격
@@ -132,15 +131,15 @@ class JobGenerator(ck.JobGenerator):
         
         프리퍼레이션, 엔버링크를 120초 주기에 맞춰 사용
         '''
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         MortalBlow = core.CharacterModifier(pdamage = 80/10) # 반응하는 스킬이 정해져있음. Issue # 247 참고.
 
         ######   Skill   ######
         #Buff skills
         SoulArrow = core.BuffSkill("소울 애로우", 0, 300 * 1000, att = 30).wrap(core.BuffSkillWrapper) # 펫버프
         AdvancedQuibber = core.BuffSkill("어드밴스드 퀴버", 0, 30 * 1000, crit_damage = 8).wrap(core.BuffSkillWrapper)   #쿨타임 무시 가능, 딜레이 없앰
-        SharpEyes = core.BuffSkill("샤프 아이즈", 690, 300 * 1000, crit = 20 + 5 + ceil(self._combat / 2), crit_damage = 15 + ceil(self._combat / 2), armor_ignore = 5).wrap(core.BuffSkillWrapper)
-        ElusionStep = core.BuffSkill("일루젼 스탭", 0, (300 + 8 * self._combat) * 1000, rem = True, stat_main = 80 + self._combat).wrap(core.BuffSkillWrapper) # 펫버프
+        SharpEyes = core.BuffSkill("샤프 아이즈", 690, 300 * 1000, crit = 20 + 5 + ceil(self.combat / 2), crit_damage = 15 + ceil(self.combat / 2), armor_ignore = 5).wrap(core.BuffSkillWrapper)
+        ElusionStep = core.BuffSkill("일루젼 스탭", 0, (300 + 8 * self.combat) * 1000, rem = True, stat_main = 80 + self.combat).wrap(core.BuffSkillWrapper) # 펫버프
         Preparation = core.BuffSkill("프리퍼레이션", 900, 30 * 1000, cooltime = 90 * 1000, att = 50, boss_pdamage = 20).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
@@ -151,8 +150,8 @@ class JobGenerator(ck.JobGenerator):
         AdvancedQuibberAttack_ArrowRain = core.DamageSkill("어드밴스드 퀴버(애로우 레인)", 0, 260, 1, modifier=MortalBlow).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 210 + 2 * passive_level, 0.7 + 0.01 * passive_level).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
-        ArrowOfStorm = ArrowOfStormWrapper(core.DamageSkill("폭풍의 시", 120, (350+self._combat*3)*0.75, 1+1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 10) + MortalBlow).setV(vEhc, 0, 2, True), ArmorPiercing)
-        ArrowFlatter = core.SummonSkill("애로우 플래터", 600, 210, 85+90+self._combat*3, 1, 30 * 1000, modifier = core.CharacterModifier(pdamage = 30)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper) # 딜레이 모름
+        ArrowOfStorm = ArrowOfStormWrapper(core.DamageSkill("폭풍의 시", 120, (350+self.combat*3)*0.75, 1+1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 10) + MortalBlow).setV(vEhc, 0, 2, True), ArmorPiercing)
+        ArrowFlatter = core.SummonSkill("애로우 플래터", 600, 210, 85+90+self.combat*3, 1, 30 * 1000, modifier = core.CharacterModifier(pdamage = 30)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper) # 딜레이 모름
         
         GrittyGust = core.DamageSkill("윈드 오브 프레이", 720, 500, 8, cooltime = 15 * 1000, modifier=MortalBlow).setV(vEhc, 6, 2, True).wrap(core.DamageSkillWrapper)
         GrittyGustDOT = core.DotSkill("윈드 오브 프레이(도트)", 0, 1000, 200, 1, 10*1000, cooltime = -1).wrap(core.SummonSkillWrapper)
@@ -200,7 +199,7 @@ class JobGenerator(ck.JobGenerator):
 
         ### Exports ###
         return(ArrowOfStorm,
-                [globalSkill.maple_heros(chtr.level, combat_level=self._combat),
+                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_combat_orders(),
                     SoulArrow, AdvancedQuibber, SharpEyes, ElusionStep, Preparation, EpicAdventure, ArmorPiercing,
                     ArrowRainBuff, CriticalReinforce, QuibberFullBurstBuff, QuibberFullBurstDOT, GrittyGustDOT, ImageArrowPassive,
                     globalSkill.soul_contract()] +\

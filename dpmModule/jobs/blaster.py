@@ -40,7 +40,6 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "블래스터"
         self.vEnhanceNum = 12
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'mess')
-        self._combat = 1 # 임시 사용, vEhc에서 받아오게 해야 함
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -58,7 +57,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         GuntletMastery = core.InformedCharacterModifier("건틀렛 마스터리", crit= 30, att = 20)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         ChargeMastery= core.InformedCharacterModifier("차지 마스터리", pdamage = 20)
@@ -72,7 +71,7 @@ class JobGenerator(ck.JobGenerator):
                         GuntletExpert, AdvancedChargeMastery, CombinationTraining]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5 * ceil(passive_level / 2))
         CombinationTraining = core.InformedCharacterModifier("콤비네이션 트레이닝II",
@@ -82,7 +81,7 @@ class JobGenerator(ck.JobGenerator):
 
         return [WeaponConstant, Mastery, CombinationTraining]
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         하이퍼 : 쇼크웨이브 보너스어택 / 펀치-리인포스, 펀치-이그노어 가드, 릴파벙-리인포스, 릴파벙-숔웨리인포스
         
@@ -100,7 +99,7 @@ class JobGenerator(ck.JobGenerator):
         '''          
         CANCEL_DELAY = 180 # 최소 150
         DUCKING_DELAY = 150 # 최소 110 (30 + 80)
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         CHARGE_TIME = ceil(480 * (1 - 2 * (20 + passive_level) * 0.01) // 30) * 30 # 어드밴스드 차지 마스터리 적용된 차지 속도 계산
         
         #Buff skills
@@ -108,7 +107,7 @@ class JobGenerator(ck.JobGenerator):
 
         DuckingDelay = core.DamageSkill("더킹 딜레이", DUCKING_DELAY, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
         
-        MagnumPunch = core.DamageSkill("매그넘 펀치", 180, 430 + 2*self._combat, 3, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        MagnumPunch = core.DamageSkill("매그넘 펀치", 180, 430 + 2*self.combat, 3, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         MagnumPunch_Revolve = core.DamageSkill("리볼빙 캐논(매그넘 펀치)", 0, 180 + passive_level, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         MagnumPunch_Revolve_Maximize = core.DamageSkill("리볼빙 캐논(매그넘 펀치)(맥시마이즈)", 0, 180 + passive_level, 3, modifier = core.CharacterModifier(pdamage = 50)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
@@ -121,11 +120,11 @@ class JobGenerator(ck.JobGenerator):
         ReleaseFileBunker_C = core.DamageSkill("릴리즈 파일 벙커(C)", 0, 270 + passive_level, 6, modifier = core.CharacterModifier(pdamage = 15)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         ReleaseFileBunker_D = core.DamageSkill("릴리즈 파일 벙커(D)", 0, 320 + passive_level, 6, modifier = core.CharacterModifier(pdamage = 15)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        DoublePang = core.DamageSkill("더블 팡", CANCEL_DELAY, 360 + 2*self._combat, 4, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        DoublePang = core.DamageSkill("더블 팡", CANCEL_DELAY, 360 + 2*self.combat, 4, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         DoublePang_Revolve = core.DamageSkill("리볼빙 캐논(더블 팡)", 0, 180 + passive_level, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         DoublePang_Revolve_Maximize = core.DamageSkill("리볼빙 캐논(더블 팡)(맥시마이즈)", 0, 180 + passive_level, 3, modifier = core.CharacterModifier(pdamage = 50)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
-        HammerSmash = core.DamageSkill("해머 스매시", CANCEL_DELAY, 395 + 2*self._combat, 6, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        HammerSmash = core.DamageSkill("해머 스매시", CANCEL_DELAY, 395 + 2*self.combat, 6, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         HammerSmashWave = core.SummonSkill("해머 스매시(충격파)", 0, 1500, 150, 2+2, 5000, cooltime = -1).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
         HammerSmashDebuff = core.BuffSkill("해머 스매시(디버프)", 0, 10*1000+5000, pdamage_indep = 10, rem = False, cooltime = -1).wrap(core.BuffSkillWrapper) # 기본 10초, 충격파의 지속시간 합산
         
@@ -219,7 +218,7 @@ class JobGenerator(ck.JobGenerator):
         SoulContract.protect_from_running()
         
         return(Mag_Pang,
-                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, MaximizeCannon, WillOfLiberty, AuraWeaponBuff, AuraWeapon, BunkerBuster, Cylinder, Overheat, HammerSmashDebuff,
                     SoulContract] +\
                 [ReleaseHammer, BurningBreaker, BalkanPunch] +\
