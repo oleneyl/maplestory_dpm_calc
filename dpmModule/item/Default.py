@@ -27,5 +27,7 @@ def getEmblem(potential = it.ExMDF(), additional_potential = it.ExMDF()):
 def get_subweapon_covering_exception(_type, star, elist, potential = it.ExMDF(), additional_potential = it.ExMDF(), factory_hook=None):
     if _type == '블레이드':
         return factory_hook.getBlade(_type, star=star, elist=elist, potential = potential, additional_potential = additional_potential)
+    elif _type == '제로무기':
+        return factory_hook.getZeroSubweapon(_type, potential = potential, additional_potential = additional_potential)
     else:
         return getSubweapon(potential=potential, additional_potential=additional_potential)

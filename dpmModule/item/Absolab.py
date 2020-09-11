@@ -72,6 +72,11 @@ class Factory():
         return WeaponFactory.getBlade(_type, star = star, elist = elist, potential = potential, additional_potential = additional_potential, bonusElse = bonusElse)
     
     @staticmethod
+    def getZeroSubweapon(_type, potential = it.ExMDF(), additional_potential = it.ExMDF(), bonusElse = it.ExMDF()):
+
+        return WeaponFactory.getZeroSubweapon(_type, potential = potential, additional_potential = additional_potential, bonusElse = bonusElse)
+    
+    @staticmethod
     def getSetOption(rank):
         li = [it.ExMDF(), 
                 it.ExMDF(att = 20), 
