@@ -230,6 +230,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 5차
         Phanteon = core.DamageSkill("판테온", 420, 2000+80*vEhc.getV(4,4), 10, cooltime = 1200*1000, red=True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         GuardianOfNova_1 = core.SummonSkill("가디언 오브 노바(1)", 600, 45000/46, 450+15*vEhc.getV(2,2), 4, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = 120000, red=True).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 46*4타
         GuardianOfNova_2 = core.SummonSkill("가디언 오브 노바(2)", 0, 45000/34, 250+10*vEhc.getV(2,2), 6, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 34*6타
@@ -314,5 +315,5 @@ class JobGenerator(ck.JobGenerator):
                     SoulContract] +\
                 [AdvancedWillOfSword_Summon, WillOfSwordStrike, AdvancedWillOfSword] +\
                 [Wingbit_1, Wingbit_2, GuardianOfNova_1, GuardianOfNova_2, GuardianOfNova_3] +\
-                [DrakeSlasher, InfernalBreath, InfernalBreath_Tile, Petrified, Prominence, Phanteon] +\
+                [DrakeSlasher, InfernalBreath, InfernalBreath_Tile, Petrified, Prominence, Phanteon, MirrorBreak, MirrorSpider] +\
                 [BasicAttack])

@@ -80,6 +80,7 @@ class JobGenerator(ck.JobGenerator):
     
         #Summon Skills
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 5, 5)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0) # TODO: 윔 발생여부 확인할것
         HowlingGail = core.SummonSkill("하울링 게일", 630, 10 * 1000 / 33, 250 + 10*vEhc.getV(1, 1), 2 * 3, 10000, cooltime = 20 * 1000).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper) #딜레이 모름, 허수아비/1스택 기준 64타 (총 66타)
         WindWall = core.SummonSkill("윈드 월", 720, 2000, (550 + vEhc.getV(2, 2)*22) / 2, 5 * 3 , 45 * 1000, cooltime = 90 * 1000, red=True).isV(vEhc, 2, 2).wrap(core.SummonSkillWrapper)
         
@@ -102,6 +103,6 @@ class JobGenerator(ck.JobGenerator):
                     PinPointPierceDebuff,
                     globalSkill.soul_contract()] +\
                 [Mercilesswind]+\
-                [GuidedArrow, HowlingGail, WindWall, MercilesswindDOT, CygnusPalanks, PinPointPierce]+\
+                [GuidedArrow, HowlingGail, WindWall, MercilesswindDOT, CygnusPalanks, PinPointPierce, MirrorBreak, MirrorSpider]+\
                 []+\
                 [SongOfHeaven])

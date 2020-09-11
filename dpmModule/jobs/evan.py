@@ -162,6 +162,7 @@ class JobGenerator(ck.JobGenerator):
         
         # 5차
         OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 4)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         # 각 타마다 최종뎀 스택이 적용됨. 1타(0%)-2타(5%)-3타(10%)-4타(15%) = 평균 7.5%
         ElementalBlast = core.DamageSkill("엘리멘탈 블래스트", 600, 750+30*vEhc.getV(2,3), 6 * 4, cooltime = 60000, red = True, modifier = MDF(crit = 100, pdamage_indep = 7.5)).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
@@ -248,6 +249,6 @@ class JobGenerator(ck.JobGenerator):
                     globalSkill.soul_contract()] +\
                 [ZodiacRayInit, MagicParticle] +\
                 [SummonOnixDragon, ZodiacRay, DragonBreak, DragonBreakBack, ElementalBlast, ImperialBreath,
-                    DragonSwift, SwiftBack, DragonDive, DiveOfEarth, DiveBack, DragonBreath, BreathOfEarth, BreathBack] +\
+                    DragonSwift, SwiftBack, DragonDive, DiveOfEarth, DiveBack, DragonBreath, BreathOfEarth, BreathBack, MirrorBreak, MirrorSpider] +\
                 [] +\
                 [CircleOfMana1])

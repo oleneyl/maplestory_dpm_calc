@@ -88,6 +88,7 @@ class JobGenerator(ck.JobGenerator):
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
     
         PirateFlag = adventurer.PirateFlagWrapper(vEhc, 4, 3, chtr.level)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         # 쿨타임마다 사용
         # 허수아비 대상 27회 충돌
@@ -118,7 +119,7 @@ class JobGenerator(ck.JobGenerator):
                     Booster, MonkeyWaveBuff, MonkeyFuriousBuff, MonkeyFuriousDot, OakRulet, Buckshot, MonkeyMagic,
                     EpicAdventure, LuckyDice, Overdrive, PirateFlag,
                     globalSkill.soul_contract()] +\
-                [MonkeyWave, MonkeyFurious, ICBM] +\
+                [MonkeyWave, MonkeyFurious, ICBM, MirrorBreak, MirrorSpider] +\
                 [OakRuletDOT, SupportMonkeyTwins, RollingCanonRainbow, BFGCannonball, ICBMDOT, SpecialMonkeyEscort_Boom, SpecialMonkeyEscort_Canon] +\
                 [] +\
                 [CanonBuster])

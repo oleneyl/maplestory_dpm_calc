@@ -95,6 +95,7 @@ class JobGenerator(ck.JobGenerator):
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 3, 3)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         # 트와일라이트 미적용 상태
         # Twilight = core.BuffSkill("트와일라이트", 120, 15000, cooltime = 15000, armor_ignore = 20 + self.combat//2).wrap(core.BuffSkillWrapper)
@@ -154,6 +155,6 @@ class JobGenerator(ck.JobGenerator):
                     JudgementBuff, Booster, PrieredAria, HerosOath, ReadyToDie, JokerBuff,
                     globalSkill.soul_contract()] +\
                 [FinalCut, JokerInit, MarkOfPhantom, BlackJackFinal] +\
-                [BlackJack] +\
+                [BlackJack, MirrorBreak, MirrorSpider] +\
                 [MileAiguillesInit] +\
                 [BasicAttackWrapper])

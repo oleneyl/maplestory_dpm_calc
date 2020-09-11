@@ -138,6 +138,7 @@ class JobGenerator(ck.JobGenerator):
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("너클")
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0) # TODO: 에너지 충전 여부 확인할것
         
         Transform = core.BuffSkill("트랜스 폼", 450, (50+vEhc.getV(1,1))*1000, cooltime = 180 * 1000, red=True, pdamage_indep = 20 + vEhc.getV(1,1) // 5).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         TransformEnergyOrbDummy = core.DamageSkill("에너지 오브(더미)", 0, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
@@ -202,7 +203,7 @@ class JobGenerator(ck.JobGenerator):
                 LuckyDice, Viposition, Stimulate, EpicAdventure, PirateFlag, Overdrive, Transform,
                 UnityOfPowerBuff, DragonStrikeBuff, EnergyCharge,
                 globalSkill.soul_contract()] +\
-            [UnityOfPower, Nautilus, DragonStrike, FuriousCharge, TransformEnergyOrbDummy] +\
+            [UnityOfPower, Nautilus, DragonStrike, FuriousCharge, TransformEnergyOrbDummy, MirrorBreak, MirrorSpider] +\
             [SerpentScrew, SerpentScrewDummy, StimulateSummon] +\
             [] +\
             [BasicAttackWrapper])

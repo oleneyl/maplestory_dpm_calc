@@ -136,6 +136,7 @@ class JobGenerator(ck.JobGenerator):
 
         #5th
         RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 4, 4)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         UnionAura = core.BuffSkill("유니온 오라", 810, (vEhc.getV(1,1)//3+30)*1000, cooltime = 100*1000, pdamage=20, boss_pdamage=10, att=vEhc.getV(1,1)*2).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         BlackMagicAlter = core.SummonSkill("블랙 매직 알터", 690, 1220, 800+32*vEhc.getV(0,0), 4, 40*1000, cooltime = 50*1000, modifier = OVERLOAD_MANA).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) # 2개 충전할때 마다 사용
         GrimReaper = GrimReaperWrapper(vEhc, 2, 2, MasterOfDeath)
@@ -204,6 +205,6 @@ class JobGenerator(ck.JobGenerator):
                 WillOfLiberty, MasterOfDeath, UnionAura,
                 globalSkill.soul_contract()] +\
                 [DarkGenesis, BattlekingBar] +\
-                [RegistanceLineInfantry, Death, BlackMagicAlter, GrimReaper] +\
+                [RegistanceLineInfantry, Death, BlackMagicAlter, GrimReaper, MirrorBreak, MirrorSpider] +\
                 [] +\
                 [BasicAttack])

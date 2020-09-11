@@ -116,6 +116,7 @@ class JobGenerator(ck.JobGenerator):
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("너클")
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         ShinNoiHapL = core.BuffSkill("신뇌합일", 540, (30+vEhc.getV(3,2)//2) * 1000, red = True, cooltime = (121-vEhc.getV(3,2)//2)*1000, pdamage_indep=4+vEhc.getV(3,2)//5).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
         ShinNoiHapLAttack = core.SummonSkill("신뇌합일(공격)", 0, 3000, 16*vEhc.getV(3,2) + 400, 7, (30+vEhc.getV(3,2)//2) * 1000, cooltime = -1).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
@@ -157,7 +158,7 @@ class JobGenerator(ck.JobGenerator):
                     LightningStack, Booster, ChookRoi, WindBooster, LuckyDice,
                     HuricaneBuff, GloryOfGuardians, SkyOpen, Overdrive, ShinNoiHapL,
                     globalSkill.soul_contract()] +\
-                [GioaTan, CygnusPalanks, NoiShinChanGeuk] +\
+                [GioaTan, CygnusPalanks, NoiShinChanGeuk, MirrorBreak, MirrorSpider] +\
                 [ShinNoiHapLAttack, NoiShinChanGeukAttack] +\
                 [] +\
                 [BasicAttackWrapper])

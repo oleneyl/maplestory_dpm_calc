@@ -201,6 +201,7 @@ class JobGenerator(ck.JobGenerator):
         #### 5차 스킬 ####
         # 5차스킬들 마스터리 알파/베타 구분해서 적용할것.
         # 리미트 브레이크, 조인트 어택은 베타 상태에서 사용
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0) # TODO: 베타 타겟당 데미지 증가 적용여부 확인할것
         
         LimitBreakAttack = core.DamageSkill("리미트 브레이크", 0, 400+15*vEhc.getV(0,0), 5, modifier = extra_dmg(15, False)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         # 리미트 브레이크 중에는 디바인 포스 사용 (공격력 20 증가)
@@ -325,7 +326,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, name = "륀느의 가호", combat_level = 0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, CriticalBind,
                     SoulContract]+\
-                [TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta]+\
+                [TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta, MirrorBreak, MirrorSpider]+\
                 [AdvancedStormBreakSummon, AdvancedStormBreakElectric, AdvancedEarthBreakElectric, WindCutterSummon, ThrowingWeapon]+\
                 []+\
                 [ComboHolder])
