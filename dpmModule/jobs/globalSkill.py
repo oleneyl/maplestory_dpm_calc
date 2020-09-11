@@ -41,7 +41,7 @@ def useful_wind_booster(slevel = 1):
     return UsefulWindBooster
 
 # TODO: 제논, 데몬어벤져용 각각 분리
-def useful_advanced_bless(slevel = 1, useHP = False):
+def useful_advanced_bless(slevel = 1):
     UsefulAdvancedBless = core.BuffSkill("쓸만한 어드밴스드 블레스", 600, usefulSkillRemain(slevel), rem = False, att = 20).wrap(core.BuffSkillWrapper)
     return UsefulAdvancedBless
 
