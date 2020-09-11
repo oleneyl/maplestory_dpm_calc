@@ -213,6 +213,7 @@ class JobGenerator(ck.JobGenerator):
 
         #5차 스킬들
         OverloadMana = magicians.OverloadManaWrapper(vEhc, 0, 3)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         GramHolder = GramHolderWrapper(core.SummonSkill("그람홀더", 0, 3000, 1000+25*vEhc.getV(4,3), 6, 40000, cooltime = 180000).isV(vEhc,4,3)) # 클라 딜레이 없음
         
         MagicCircuitFullDrive = core.BuffSkill("매직 서킷 풀드라이브", 720, (30+vEhc.getV(3,2))*1000, pdamage = (20 + vEhc.getV(3,2)), cooltime = 200*1000).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
@@ -308,7 +309,7 @@ class JobGenerator(ck.JobGenerator):
                     Craft_Javelin_EnhanceBuff, CrystalCharge, GloryWingUse,
                     OverloadMana, BlessMark, CurseMark,
                     globalSkill.soul_contract()] +\
-                [CrystalSkill_MortalSwing, GloryWing_MortalWingbit, CrystalIgnitionInit] +\
+                [CrystalSkill_MortalSwing, GloryWing_MortalWingbit, CrystalIgnitionInit, MirrorBreak, MirrorSpider] +\
                 [Riyo, Machina, CrystalSkill_Deus, CrystalSkill_Deus_Satelite,
                     GramHolder, MagicCircuitFullDriveStorm] +\
                 [Reaction_Domination, Reaction_Destruction, Reaction_Spectrum] +\

@@ -147,8 +147,8 @@ class JobGenerator(ck.JobGenerator):
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
         CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
-
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 3, 3)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         ShadowSpear = core.BuffSkill("쉐도우 스피어", 600, (50+vEhc.getV(0,0))*1000, red = True, cooltime = int(181 - vEhc.getV(0,0) / 2)*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ShadowSpearSmall = core.DamageSkill("쉐도우 스피어(창)", 0, 100+4*vEhc.getV(0,0), 4).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
@@ -198,7 +198,7 @@ class JobGenerator(ck.JobGenerator):
                     ElementalDarkness, Heist, Booster, ShadowServent, SpiritThrowing, ShadowBatStack,
                     ShadowElusion, ReadyToDie, Dominion, GloryOfGuardians, ShadowSpear, ShadowServentExtend, ShadowBite, ShadowBiteBuff,
                     globalSkill.soul_contract()] +\
-                [CygnusPalanks] +\
+                [CygnusPalanks, MirrorBreak, MirrorSpider] +\
                 [ElementalDarknessDOT, ShadowSpearLarge] +\
                 [] +\
                 [QuintupleThrow])

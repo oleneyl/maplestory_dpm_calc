@@ -75,6 +75,7 @@ class JobGenerator(ck.JobGenerator):
         SpeedingDance = core.DamageSkill("댄스오브 문/스피딩 선셋", (360+270)/2, 400+4*self.combat, 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + FallingMoon).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         SelestialDanceInit = core.BuffSkill("셀레스티얼 댄스", 570, (40+vEhc.getV(0,0))*1000, cooltime = 150 * 1000, red = True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         SelestialDanceSummon = core.SummonSkill("셀레스티얼 댄스(추가타)", 0, 5000, (1200 + 40 * vEhc.getV(0,0)), 3, (40 + vEhc.getV(0,0)) * 1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
@@ -114,10 +115,10 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         return(BasicAttackWrapper,
-                [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(),
                     NimbleFinger, TrueSight, SolunaTime, SoulForge, 
                     GloryOfGuardians, AuraWeaponBuff, AuraWeapon, globalSkill.soul_contract(), Elision, ElisionBreak, SelestialDanceInit, 
                     ] +\
                 [CygnusPalanks, SolunaDivide] +\
-                [SelestialDanceSummon, SoulEclipse] +\
+                [SelestialDanceSummon, SoulEclipse, MirrorBreak, MirrorSpider] +\
                 [BasicAttackWrapper])

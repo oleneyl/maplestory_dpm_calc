@@ -185,6 +185,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 5th
         OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         DoorOfTruth = core.SummonSkill("진리의 문", 870, 3030, 375 + 15 * vEhc.getV(4,4), 10, (25 + vEhc.getV(4,4) // 2) * 1000, cooltime = -1).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)   #이퀄시 사용 가능해짐.
         PunishingResonator = PunishingResonatorWrapper(vEhc, 2, 1, LuminousState.getState)
         LightAndDarkness = LightAndDarknessWrapper(vEhc, 0, 0)
@@ -219,6 +220,6 @@ class JobGenerator(ck.JobGenerator):
                     Booster, PodicMeditaion, DarknessSocery, DarkCrescendo, HerosOath, Memorize, OverloadMana,
                     SoulContract] +\
                 [LightAndDarkness] +\
-                [PunishingResonator, DoorOfTruth] +\
+                [PunishingResonator, DoorOfTruth, MirrorBreak, MirrorSpider] +\
                 [] +\
                 [Attack])

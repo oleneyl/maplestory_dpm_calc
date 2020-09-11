@@ -84,6 +84,7 @@ class JobGenerator(ck.JobGenerator):
         
         UltimateDarksight = thieves.UltimateDarkSightWrapper(vEhc, 3, 3)
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 1, 1)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         #조건부 파이널어택으로 설정함.
         SpreadThrowTick = core.DamageSkill("스프레드 스로우(틱)", 0, 378*0.85, 5*3, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
@@ -114,5 +115,5 @@ class JobGenerator(ck.JobGenerator):
                     UltimateDarksight, ReadyToDie, SpreadThrowInit,
                     globalSkill.soul_contract()] + \
                 [ArcaneOfDarklordFinal] + \
-                [Pungma, ArcaneOfDarklord, BleedingToxinDot, FatalVenom] +\
+                [Pungma, ArcaneOfDarklord, MirrorBreak, MirrorSpider, BleedingToxinDot, FatalVenom] +\
                 [] + [QuarupleThrow])

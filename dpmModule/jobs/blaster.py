@@ -137,6 +137,7 @@ class JobGenerator(ck.JobGenerator):
         
         #5차
         RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         BunkerBuster = core.BuffSkill("벙커 버스터", 720, 45000, cooltime = 120000, red = True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
         BunkerBusterAttack = core.DamageSkill("벙커 버스터(공격)", 0, 180 + 7 * vEhc.getV(0,0), 8, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
@@ -221,6 +222,6 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, MaximizeCannon, WillOfLiberty, AuraWeaponBuff, AuraWeapon, BunkerBuster, Cylinder, Overheat, HammerSmashDebuff,
                     SoulContract] +\
-                [ReleaseHammer, BurningBreaker, BalkanPunch] +\
+                [ReleaseHammer, BurningBreaker, BalkanPunch, MirrorBreak, MirrorSpider] +\
                 [RegistanceLineInfantry, HammerSmashWave] +\
                 [Mag_Pang])

@@ -180,6 +180,8 @@ class JobGenerator(ck.JobGenerator):
             
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
+
         # 기본 공격
         BasicAttack = core.DamageSkill("기본 공격", 0,0,0).wrap(core.DamageSkillWrapper)
 
@@ -235,6 +237,6 @@ class JobGenerator(ck.JobGenerator):
                     AdrenalineGenerator, 
                     InstallMaha, InstallMahaBlizzard, Combo, AuraWeaponBuff, AuraWeapon, 
                     globalSkill.soul_contract()] +\
-                [SmashSwingHolder, BrandishMaha, BoostEndHuntersTargeting] +\
+                [SmashSwingHolder, BrandishMaha, BoostEndHuntersTargeting, MirrorBreak, MirrorSpider] +\
                 [MahaRegion] +\
                 [BasicAttack])

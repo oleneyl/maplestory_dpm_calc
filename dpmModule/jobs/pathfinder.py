@@ -197,6 +197,7 @@ class JobGenerator(ck.JobGenerator):
         
         # 5차
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 3, 3)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(5,5)))*1000, red=True).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
         UltimateBlast = core.DamageSkill("얼티밋 블래스트", 1350, 2000+100*vEhc.getV(2,2), 15, cooltime = 120*1000, red=True, 
@@ -314,6 +315,6 @@ class JobGenerator(ck.JobGenerator):
                     globalSkill.soul_contract()] +\
                 [AncientAstraHolder, TripleImpact, EdgeOfResonance, 
                         ComboAssultHolder, UltimateBlast, SplitMistel, CardinalTransition] +\
-                [Evolve, Raven, GuidedArrow, RavenTempest, ObsidionBarrierBlast] +\
+                [Evolve, Raven, GuidedArrow, RavenTempest, ObsidionBarrierBlast, MirrorBreak, MirrorSpider] +\
                 [] +\
                 [CardinalBlast])

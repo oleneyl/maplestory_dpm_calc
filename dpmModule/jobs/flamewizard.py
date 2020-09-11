@@ -83,6 +83,7 @@ class JobGenerator(ck.JobGenerator):
         
         IgnitionDOT = core.DotSkill("이그니션", 0, 1000, 220*0.01*(100 + 60 + 2*passive_level), 1, 10*1000).wrap(core.SummonSkillWrapper)
 
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         #여우 사용
         SavageFlameStack = core.StackSkillWrapper(core.BuffSkill("플레임 디스차지(스택)", 0, 99999999), 6)
         
@@ -121,7 +122,7 @@ class JobGenerator(ck.JobGenerator):
                     WordOfFire, FiresOfCreation, BurningRegion, GloryOfGuardians, OverloadMana, Flame,
                     globalSkill.soul_contract()] +\
                 [CygnusPalanks, BlazingOrbital, DragonSlaveInit, SavageFlame, InfinityFlameCircleInit, 
-                    InfernoRize] +\
+                    InfernoRize, MirrorBreak, MirrorSpider] +\
                 [IgnitionDOT] +\
                 [] +\
                 [OrbitalFlame])    

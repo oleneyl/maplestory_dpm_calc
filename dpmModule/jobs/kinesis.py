@@ -137,12 +137,11 @@ class JobGenerator(ck.JobGenerator):
         #Psycometry = core.DamageSkill()
         PsychicOver = core.BuffSkill("싸이킥 오버", 0, 30000, cooltime = 210000).wrap(core.BuffSkillWrapper) # 소모량 절반 / 포인트 지속증가(초당 1)
         PsychicOverSummon = core.SummonSkill("싸이킥 오버(소환)", 0, 750, 0, 0, 30000, cooltime = -1).wrap(core.SummonSkillWrapper)
-        try:
-            OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 1)
-        except:
-            print(vEhc)
-            raise
-
+        
+        #5차
+        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 1)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
+        
         PsychicTornado = core.SummonSkill("싸이킥 토네이도", 540, 1000, 500+20*vEhc.getV(2,2), 4, 20000, red = True, cooltime = 120000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)# -15
         PsychicTornadoFinal_1 = core.DamageSkill("싸이킥 토네이도(1)", 540, (200+3*vEhc.getV(2,2))*3, 2, cooltime=-1).wrap(core.DamageSkillWrapper)
         PsychicTornadoFinal_2 = core.DamageSkill("싸이킥 토네이도(2)", 0, (350+10*vEhc.getV(2,2))*3, 10*3, cooltime=-1).wrap(core.DamageSkillWrapper)
@@ -223,5 +222,5 @@ class JobGenerator(ck.JobGenerator):
                     globalSkill.soul_contract()] +\
                 [EverPsychic, Ultimate_Material] +\
                 [PsychicDrain, PsychicForce3, PsychicForce3Dot, UltimateBPM, PsychicOverSummon, PsychicTornado, UltimateMovingMatter, PsychicTornadoFinal_1, PsychicTornadoFinal_2] +\
-                [UltimateTrain] +\
+                [UltimateTrain, MirrorBreak, MirrorSpider] +\
                 [PsychicGrab2])

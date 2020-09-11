@@ -94,6 +94,7 @@ class JobGenerator(ck.JobGenerator):
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         
         Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (int(121-0.5*vEhc.getV(5,5)))*1000, red=True).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         SplitArrow = core.DamageSkill("스플릿 애로우(공격)", 0, 600 + vEhc.getV(0,0) * 24, 5+1, modifier = PASSIVE_MODIFIER).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         SplitArrowBuff = core.BuffSkill("스플릿 애로우", 810, 60 * 1000, 120 * 1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
@@ -129,6 +130,6 @@ class JobGenerator(ck.JobGenerator):
                     SoulArrow, ElusionStep, SharpEyes, BoolsEye, EpicAdventure, CriticalReinforce, SplitArrowBuff,
                         globalSkill.soul_contract()] +\
                 [TrueSnipping, ChargedArrowHold, ChargedArrow] +\
-                [Evolve,Freezer, GuidedArrow] +\
+                [Evolve,Freezer, GuidedArrow, MirrorBreak, MirrorSpider] +\
                 [] +\
                 [Snipping])

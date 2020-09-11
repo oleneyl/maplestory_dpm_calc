@@ -194,6 +194,7 @@ class JobGenerator(ck.JobGenerator):
         VenomBurst_Poison = core.BuffSkill("베놈 버스트(중독)", 0, 99999999, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage, cooltime = -1).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 3)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0) # TODO: 퓨리, 프로페셔널 에이전트 트리거 여부 확인
         
         ChainArts_Fury = core.BuffSkill("체인아츠:퓨리", 420, (35+vEhc.getV(0,0))*1000, cooltime = (180-vEhc.getV(0,0))*1000, red = True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ChainArts_Fury_Damage = core.DamageSkill("체인아츠:퓨리(공격)", 0, 250+10*vEhc.getV(0,0), 6, cooltime = 600).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
@@ -337,7 +338,7 @@ class JobGenerator(ck.JobGenerator):
                     SummonSlachingKnife_Horror, SummonBeatingNeedlebat_Honmy, VenomBurst_Poison, ChainArts_Maelstorm_Slow,
                     globalSkill.soul_contract(), CheapShotIIBleed, CheapShotIIBleedBuff, CheapShotIIAdventureMageBuff] +\
                 [AD_Odnunce_Final,
-                    WingDaggerCombo, BatCombo, BommBrickCombo, ShootgunClawCombo, SimiterChaseCombo, KnifeCombo, MaleStromCombo] +\
+                    WingDaggerCombo, BatCombo, BommBrickCombo, ShootgunClawCombo, SimiterChaseCombo, KnifeCombo, MaleStromCombo, MirrorBreak, MirrorSpider] +\
                 [WeaponVarietyAttack, SummonThrowingWingdaggerSummon, VenomBurst, AD_Odnunce, ChainArts_Maelstorm] +\
                 [ChainArts_Fury_Damage, SummonThrowingWingdaggerEnd, SummonShootingShotgun, SummonScratchingClaw,
                         SummonCuttingSimiter, SummonSlachingKnife,

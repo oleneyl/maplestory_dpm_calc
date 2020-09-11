@@ -117,6 +117,7 @@ class JobGenerator(ck.JobGenerator):
     
         # 5th
         PirateFlag = adventurer.PirateFlagWrapper(vEhc, 2, 1, chtr.level)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("건")
@@ -168,7 +169,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     SummonCrewBuff, PirateStyle, Booster, InfiniteBullet, LuckyDice, UnwierdingNectar, EpicAdventure, PirateFlag, Overdrive,
                     QuickDraw, globalSkill.soul_contract()] +\
-                [BattleshipBomber, Headshot, Nautilus, DeadEye, StrangeBomb] +\
+                [BattleshipBomber, Headshot, Nautilus, DeadEye, StrangeBomb, MirrorBreak, MirrorSpider] +\
                 [OctaQuaterdeck, BattleshipBomber_1, BattleshipBomber_2, NautilusAssult, NautilusAssult_2, SummonCrew] +\
                 [BulletParty] +\
                 [RapidFire])

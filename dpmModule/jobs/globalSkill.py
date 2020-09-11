@@ -40,24 +40,21 @@ def useful_wind_booster(slevel = 1):
     UsefulWindBooster = core.BuffSkill("쓸만한 윈드 부스터", 900, usefulSkillRemain(slevel), rem = False, stat_main = passiveStat(slevel), stat_sub = passiveStat(slevel)).wrap(core.BuffSkillWrapper)
     return UsefulWindBooster
 
-def useful_advanced_bless(slevel = 1, useHP = False):
-    # TODO: HP, MP 475 증가 반영
-    UsefulAdvancedBless = core.BuffSkill("쓸만한 어드밴스드 블레스", usefulSkillRemain(slevel), rem = False, att = 20, stat_main = 475 * useHP).wrap(core.BuffSkillWrapper)
+# TODO: 제논, 데몬어벤져용 각각 분리
+def useful_advanced_bless(slevel = 1):
+    UsefulAdvancedBless = core.BuffSkill("쓸만한 어드밴스드 블레스", 600, usefulSkillRemain(slevel), rem = False, att = 20).wrap(core.BuffSkillWrapper)
+    return UsefulAdvancedBless
 
-class SpiderInMirrorBuilder():
-    def __init__(self, enhancer, skill_importance, enhance_importance, chtr_level):
-        self.MirrorBreak = core.DamageSkill(
-            "스파이더 인 미러(공간 붕괴)", 960, 750+30*enhancer.getV(skill_importance, enhance_importance), 12, cooltime = 250*1000, red = True
-        ).wrap(core.DamageSkillWrapper)
-        # 5번 연속 공격 후 종료, 재돌입 대기시간 3초
-        self.MirrorSpider = core.SummonSkill(
-            "스파이더 인 미러(거울 속의 거미)", 0, 3000, 175+17*enhancer.getV(skill_importance, enhance_importance), 8, 15*1000, cooltime = -1
-        ).wrap(core.SummonSkillWrapper)
-        self.MirrorBreak.onAfter(self.MirrorSpider.controller(3000))
-        self.SpiderInMirror = core.OptionalElement(cthr_level >= 235, MirrorBreak)
-
-    def get_skill(self):
-        return self.SpiderInMirror
+def SpiderInMirrorBuilder(enhancer, skill_importance, enhance_importance):
+    MirrorBreak = core.DamageSkill(
+        "스파이더 인 미러(공간 붕괴)", 720, 750+30*enhancer.getV(skill_importance, enhance_importance), 12, cooltime = 250*1000, red = True
+    ).wrap(core.DamageSkillWrapper)
+    # 5번 연속 공격 후 종료, 재돌입 대기시간 3초
+    MirrorSpider = core.SummonSkill(
+        "스파이더 인 미러(거울 속의 거미)", 0, 3000, 175+7*enhancer.getV(skill_importance, enhance_importance), 8*5, 15*1000, cooltime = -1
+    ).wrap(core.SummonSkillWrapper)
+    MirrorBreak.onAfter(MirrorSpider.controller(3000))
+    return MirrorSpider, MirrorBreak
 
 # 모험가, 영웅, 레지스탕스가 사용
 def MapleHeroes2Wrapper(vEhc, num1, num2, level):

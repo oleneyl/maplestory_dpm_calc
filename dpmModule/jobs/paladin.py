@@ -77,6 +77,7 @@ class JobGenerator(ck.JobGenerator):
         Blast = core.DamageSkill("블래스트", 630, 291, 9+2+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         #Summon Skills
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         BlessedHammer = core.SummonSkill("블래스드 해머", 0, 600, 250 + vEhc.getV(1,1)*10, 2, 999999 * 10000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         BlessedHammerActive = core.SummonSkill("블레스드 해머(활성화)", 360, 600, 525+vEhc.getV(1,1)*21, 3, 30 * 1000, cooltime = 60 * 1000, red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         GrandCross = core.DamageSkill("그랜드 크로스", 900, 0, 0, cooltime = 150 * 1000, red = True).wrap(core.DamageSkillWrapper)
@@ -113,6 +114,6 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, combat_level = 2), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Threat, ElementalForce, EpicAdventure, HolyUnity, AuraWeaponBuff, AuraWeapon,
                     globalSkill.soul_contract()] +\
-                [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, GrandCross] +\
+                [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, GrandCross, MirrorBreak, MirrorSpider] +\
                 [BlessedHammer, BlessedHammerActive] +\
                 [Blast])

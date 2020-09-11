@@ -138,6 +138,7 @@ class JobGenerator(ck.JobGenerator):
         IrkilaBreathTick = core.DamageSkill("이르칼라의 숨결(틱)", 150, 400+16*vEhc.getV(1,1), 8).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
 
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
     
         ######   Skill Wrapper   ######
         #Buff
@@ -217,6 +218,6 @@ class JobGenerator(ck.JobGenerator):
                     Booster, ElvishBlessing, AncientSpirit, HerosOath, Sylphidia.ignore(), CriticalReinforce, UnicornSpikeBuff, RegendrySpearBuff, LightningEdgeBuff, ElementalGhost,
                     globalSkill.soul_contract()] +\
                 [ElementalGhostSpirit, UnicornSpike, RegendrySpear, WrathOfEllil, IrkilaBreathInit] +\
-                [ElementalKnights, ElementalKnights_1, ElementalKnights_2, GuidedArrow] +\
+                [ElementalKnights, ElementalKnights_1, ElementalKnights_2, GuidedArrow, MirrorBreak, MirrorSpider] +\
                 [] +\
                 [BasicAttack])

@@ -116,6 +116,7 @@ class JobGenerator(ck.JobGenerator):
         ).isV(vEhc, 3, 3).wrap(core.BuffSkillWrapper)
 
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 2)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         Eviscerate = core.DamageSkill("절개", 570, 1900+76*vEhc.getV(0,0), 7, modifier = core.CharacterModifier(crit=100, armor_ignore=100), cooltime = 14000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 720ms - 150ms(암살 2타연계)
 		
@@ -172,7 +173,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, FlipTheCoin, ShadowerInstinct, ShadowPartner, Smoke, AdvancedDarkSight, EpicAdventure, UltimateDarksight, MesoStack,
                         ReadyToDie, globalSkill.soul_contract()] +\
-                [Eviscerate, SonicBlow, BailOfShadow, DarkFlare]+\
+                [Eviscerate, SonicBlow, BailOfShadow, DarkFlare, MirrorBreak, MirrorSpider]+\
                 [Venom]+\
                 []+\
                 [BasicAttackWrapper])
