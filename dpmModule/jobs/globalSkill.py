@@ -40,9 +40,10 @@ def useful_wind_booster(slevel = 1):
     UsefulWindBooster = core.BuffSkill("쓸만한 윈드 부스터", 900, usefulSkillRemain(slevel), rem = False, stat_main = passiveStat(slevel), stat_sub = passiveStat(slevel)).wrap(core.BuffSkillWrapper)
     return UsefulWindBooster
 
+# TODO: 제논, 데몬어벤져용 각각 분리
 def useful_advanced_bless(slevel = 1, useHP = False):
-    # TODO: HP, MP 475 증가 반영
-    UsefulAdvancedBless = core.BuffSkill("쓸만한 어드밴스드 블레스", usefulSkillRemain(slevel), rem = False, att = 20, stat_main = 475 * useHP).wrap(core.BuffSkillWrapper)
+    UsefulAdvancedBless = core.BuffSkill("쓸만한 어드밴스드 블레스", 600, usefulSkillRemain(slevel), rem = False, att = 20).wrap(core.BuffSkillWrapper)
+    return UsefulAdvancedBless
 
 class SpiderInMirrorBuilder():
     def __init__(self, enhancer, skill_importance, enhance_importance, chtr_level):
