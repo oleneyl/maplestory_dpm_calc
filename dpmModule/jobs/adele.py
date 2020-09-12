@@ -171,6 +171,7 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
         MagicCircuitFullDrive, ManaStorm = magic_curcuit_full_drive_builder.get_skill()
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
+        FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att("튜너"))
 
         # TODO: 5차 스킬 딜레이 공속 적용여부 테스트
         Ruin = core.DamageSkill('루인(시전)', 780, 0, 0, cooltime=60*1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper) # 4초에 나누어서 시전되는 것으로 가정
@@ -244,7 +245,7 @@ class JobGenerator(ck.JobGenerator):
 
         return(Divide,
                 [globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
-                    AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive,
+                    AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive, FloraGoddessBless,
                     globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract()] +\
                 [Resonance, Grave, Blossom, Marker, Ruin, MirrorBreak, MirrorSpider] +\
                 [Order, Shard, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, Scool, ManaStorm] +\

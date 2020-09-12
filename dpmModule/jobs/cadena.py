@@ -5,6 +5,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import thieves
+from .jobclass import nova
 from math import ceil
 
 #TODO : 5차 신스킬 적용
@@ -195,6 +196,7 @@ class JobGenerator(ck.JobGenerator):
         
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 3)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0) # TODO: 퓨리, 프로페셔널 에이전트 트리거 여부 확인
+        NovaGoddessBless = nova.NovaGoddessBlessWrapper(vEhc, 0, 0)
         
         ChainArts_Fury = core.BuffSkill("체인아츠:퓨리", 420, (35+vEhc.getV(0,0))*1000, cooltime = (180-vEhc.getV(0,0))*1000, red = True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ChainArts_Fury_Damage = core.DamageSkill("체인아츠:퓨리(공격)", 0, 250+10*vEhc.getV(0,0), 6, cooltime = 600).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
@@ -334,7 +336,7 @@ class JobGenerator(ck.JobGenerator):
         return(NormalAttack,
                 [globalSkill.maple_heros(chtr.level, name = "노바의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     WeaponVariety, Booster, SpecialPotion, ProfessionalAgent,
-                    ReadyToDie, ChainArts_Fury, 
+                    ReadyToDie, ChainArts_Fury, NovaGoddessBless,
                     SummonSlachingKnife_Horror, SummonBeatingNeedlebat_Honmy, VenomBurst_Poison, ChainArts_Maelstorm_Slow,
                     globalSkill.soul_contract(), CheapShotIIBleed, CheapShotIIBleedBuff, CheapShotIIAdventureMageBuff] +\
                 [AD_Odnunce_Final,

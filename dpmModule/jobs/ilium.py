@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, MutualRule, InactiveRule, ConcurrentRunRule, ReservationRule, ConditionRule
 from . import globalSkill
 from .jobbranch import magicians
+from .jobclass import flora
 from . import jobutils
 
 class IliumStackWrapper(core.StackSkillWrapper):
@@ -214,6 +215,7 @@ class JobGenerator(ck.JobGenerator):
         #5차 스킬들
         OverloadMana = magicians.OverloadManaWrapper(vEhc, 0, 3)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
+        FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att("건틀렛"))
         GramHolder = GramHolderWrapper(core.SummonSkill("그람홀더", 0, 3000, 1000+25*vEhc.getV(4,3), 6, 40000, cooltime = 180000).isV(vEhc,4,3)) # 클라 딜레이 없음
         
         MagicCircuitFullDrive = core.BuffSkill("매직 서킷 풀드라이브", 720, (30+vEhc.getV(3,2))*1000, pdamage = (20 + vEhc.getV(3,2)), cooltime = 200*1000).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
@@ -305,7 +307,7 @@ class JobGenerator(ck.JobGenerator):
 
         return(BasicAttackWrapper,
                 [SoulOfCrystalPassive, globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    Booster, FastCharge, WraithOfGod, MagicCircuitFullDrive, SoulOfCrystal,
+                    Booster, FastCharge, WraithOfGod, MagicCircuitFullDrive, FloraGoddessBless, SoulOfCrystal,
                     Craft_Javelin_EnhanceBuff, CrystalCharge, GloryWingUse,
                     OverloadMana, BlessMark, CurseMark,
                     globalSkill.soul_contract()] +\
