@@ -196,7 +196,8 @@ class JobGenerator(ck.JobGenerator):
         return( QuintupleThrow,
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     ElementalDarkness, Heist, Booster, ShadowServent, SpiritThrowing, ShadowBatStack,
-                    ShadowElusion, ReadyToDie, Dominion, GloryOfGuardians, ShadowSpear, ShadowServentExtend, ShadowBite, ShadowBiteBuff,
+                    ShadowElusion, ReadyToDie, Dominion, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
+                    GloryOfGuardians, ShadowSpear, ShadowServentExtend, ShadowBite, ShadowBiteBuff,
                     globalSkill.soul_contract()] +\
                 [CygnusPalanks, MirrorBreak, MirrorSpider] +\
                 [ElementalDarknessDOT, ShadowSpearLarge] +\

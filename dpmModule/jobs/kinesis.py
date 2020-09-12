@@ -10,6 +10,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import magicians
+from .jobclass import demon
 
 class KinesisStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill, _max, psychicoverjudge, name = None):
@@ -141,6 +142,8 @@ class JobGenerator(ck.JobGenerator):
         #5차
         OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 1)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
+        AnotherGoddessBuff, AnotherVoid = demon.AnotherWorldWrapper(vEhc, 0, 0)
+        AnotherHeal = core.DamageSkill("회복의 축복", 0, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
         
         PsychicTornado = core.SummonSkill("싸이킥 토네이도", 540, 1000, 500+20*vEhc.getV(2,2), 4, 20000, red = True, cooltime = 120000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)# -15
         PsychicTornadoFinal_1 = core.DamageSkill("싸이킥 토네이도(1)", 540, (200+3*vEhc.getV(2,2))*3, 2, cooltime=-1).wrap(core.DamageSkillWrapper)
@@ -159,7 +162,10 @@ class JobGenerator(ck.JobGenerator):
         ### Telekinesis
         for sk in [PsychicGrab2, PsychicGroundDamage, PsycoBreakDamage, EverPsychicFinal, PsychicTornadoFinal_1, PsychicTornadoFinal_2]:
             sk.onAfter(TeleKinesis)
-        
+
+        ### 회복의 축복
+        AnotherVoid.onTick(AnotherHeal.controller(4000))
+        AnotherHeal.onAfter(PsychicPoint.stackController(40*0.01*(vEhc.getV(0,0)//2)))
         
         ### Tandem skill connection
         PsychicForce3.onAfter(PsychicForce3Dot)
@@ -218,7 +224,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, name = "이계의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     Booster, PsychicShield, PsychicGround, 
                     PsycoBreak, UltimatePsychicBuff, PsychicCharging, 
-                    PsychicOver, OverloadMana, PsychicPoint,
+                    AnotherGoddessBuff, AnotherVoid, AnotherHeal, PsychicOver, OverloadMana, PsychicPoint,
                     globalSkill.soul_contract()] +\
                 [EverPsychic, Ultimate_Material] +\
                 [PsychicDrain, PsychicForce3, PsychicForce3Dot, UltimateBPM, PsychicOverSummon, PsychicTornado, UltimateMovingMatter, PsychicTornadoFinal_1, PsychicTornadoFinal_2] +\

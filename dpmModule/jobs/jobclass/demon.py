@@ -3,6 +3,7 @@ from ...kernel.core import VSkillModifier as V
 from ...kernel.core import CharacterModifier as MDF
 from ...character import characterKernel as ck
 from functools import partial
+from math import ceil
 
 # 마스테마 클로우를 쿨타임마다 시전한다고 가정
 def CallMastemaWrapper(vEhc, num1, num2):
@@ -15,7 +16,7 @@ def AnotherWorldWrapper(vEhc, num1, num2):
     # 축복 발동시간 4초, 처음으로 이계의 공허가 발동되며 4개의 축복이 돌아가면서 발동
     void_delay = 4000
     void_chance = 0.25
-    AnotherGoddessBuff = core.BuffSkill("이계 여신의 축복", 630, 40000, cooltime = 120000, pdamage_indep=6+(vEhc.getV(num1, num2)-1)//5).wrap(core.BuffSkillWrapper)
+    AnotherGoddessBuff = core.BuffSkill("이계 여신의 축복", 480, 40000, cooltime = 120000, red=True, pdamage_indep=5+ceil(vEhc.getV(num1, num2)/5)).wrap(core.BuffSkillWrapper)
     AnotherVoid = core.SummonSkill("이계의 공허", 0, void_delay / void_chance, 1200+48*vEhc.getV(num1, num2), 12, 40000, cooltime = -1).wrap(core.SummonSkillWrapper)
     AnotherGoddessBuff.onAfter(AnotherVoid)
     return AnotherGoddessBuff, AnotherVoid

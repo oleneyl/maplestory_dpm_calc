@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
 from . import globalSkill
 from .jobbranch import warriors
+from .jobclass import demon
 from . import jobutils
 from math import ceil
 
@@ -150,7 +151,7 @@ class JobGenerator(ck.JobGenerator):
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, DemonSlashRemainTime, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
-                    globalSkill.soul_contract()] +\
+                    *demon.AnotherWorldWrapper(vEhc, 0, 0), globalSkill.soul_contract()] +\
                 [Cerberus, DevilCry, DemonSlash1, SpiritOfRageEnd] +\
                 [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_, MirrorBreak, MirrorSpider] +\
                 [BasicAttackWrapper])

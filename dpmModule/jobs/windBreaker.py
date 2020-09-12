@@ -99,7 +99,7 @@ class JobGenerator(ck.JobGenerator):
 
         return(SongOfHeaven, 
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_combat_orders(),
-                    Storm, SylphsAid, Albatross, SharpEyes, GloryOfGuardians, StormBringerDummy, CriticalReinforce,
+                    Storm, SylphsAid, Albatross, SharpEyes, GloryOfGuardians, StormBringerDummy, CriticalReinforce, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                     PinPointPierceDebuff,
                     globalSkill.soul_contract()] +\
                 [Mercilesswind]+\
