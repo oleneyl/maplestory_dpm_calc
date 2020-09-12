@@ -139,9 +139,9 @@ class JobGenerator(ck.JobGenerator):
 
         RealSoulAttack = core.DamageSkill("진 귀참", 540, 540+6*vEhc.getV(1,3), 12 + 1, cooltime=6000, red=True, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20) + core.CharacterModifier(armor_ignore=50)).setV(vEhc, 0, 2, False).isV(vEhc,1,3).wrap(core.DamageSkillWrapper)
 
-        ChainBombPunchInit = core.DamageSkill("파쇄 연권(시전)", 390, 0, 0, cooltime=90*1000, red=True).wrap(core.DamageSkillWrapper)
-        ChainBombPunchTick = core.DamageSkill("파쇄 연권(키다운)", 930/8, 400+16*vEhc.getV(0,0), 5, cooltime=-1).wrap(core.DamageSkillWrapper) # 5타씩 8회, 시전+키다운 1320ms
-        ChainBombPunchFinal = core.DamageSkill("파쇄 연권(막타)", 810, 950+38*vEhc.getV(0,0), 15*3, cooltime=-1).wrap(core.DamageSkillWrapper) # 15타씩 3회
+        ChainBombPunchInit = core.DamageSkill("파쇄 연권(시전)", 390, 0, 0, cooltime=90*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        ChainBombPunchTick = core.DamageSkill("파쇄 연권(키다운)", 930/8, 400+16*vEhc.getV(0,0), 5, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 5타씩 8회, 시전+키다운 1320ms
+        ChainBombPunchFinal = core.DamageSkill("파쇄 연권(막타)", 810, 950+38*vEhc.getV(0,0), 15*3, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 15타씩 3회
 
         # 파쇄철조 (디버프용)
         BladeImp = core.DamageSkill("파쇄철조-회", 360, 160, 4).wrap(core.DamageSkillWrapper)
