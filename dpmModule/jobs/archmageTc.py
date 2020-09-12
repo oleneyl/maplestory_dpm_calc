@@ -72,6 +72,7 @@ class JobGenerator(ck.JobGenerator):
         체라-라스피-블자-오브-엘퀴-썬더스톰
         
         썬브 8히트
+        아이스 에이지 장판 2히트
         
         하이퍼 : 
         텔레포트 - 애드 레인지
@@ -85,6 +86,7 @@ class JobGenerator(ck.JobGenerator):
         프로즌 오브 쿨마다 사용, 19타
         '''
         THUNDER_BREAK_HIT = 8
+        ICE_AGE_SUMMON_HIT = 2
 
         ######   Skill   ######
         #Buff skills
@@ -102,7 +104,7 @@ class JobGenerator(ck.JobGenerator):
         LighteningSpearFinalizer = core.DamageSkill("라이트닝 스피어(막타)", 1080, 1500, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
         IceAgeInit = core.DamageSkill("아이스 에이지(개시)", 660, 500 + vEhc.getV(2,3)*20, 10, cooltime = 60 * 1000, red = True).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
-        IceAgeSummon = core.SummonSkill("아이스 에이지(장판)", 0, 810, 125 + vEhc.getV(2,3)*5, 3, 15 * 1000, cooltime = -1).isV(vEhc,2,3).wrap(core.SummonSkillWrapper)
+        IceAgeSummon = core.SummonSkill("아이스 에이지(장판)", 0, 810, 125 + vEhc.getV(2,3)*5, 3*ICE_AGE_SUMMON_HIT, 15 * 1000, cooltime = -1).isV(vEhc,2,3).wrap(core.SummonSkillWrapper)
                 
         # 중첩당 감소량 5%
         # TODO: 썬브가 이전 스킬 딜레이 캔슬하는것 구현해야 함
@@ -212,8 +214,7 @@ class JobGenerator(ck.JobGenerator):
         IceAura.onTick(FrostIncrement)
         
         #Ice Age
-        IceAgeSummon.onTick(BlizzardPassive) # TODO: onTick 실행순서 바뀌면 순서 조정해야 함
-        IceAgeSummon.onTick(FrostIncrement)
+        IceAgeSummon.onTick(core.RepeatElement(FrostIncrement, ICE_AGE_SUMMON_HIT))
         IceAgeInit.onJustAfter(FrostIncrement)
         IceAgeInit.onAfter(BlizzardPassive)
         IceAgeInit.onAfter(IceAgeSummon)
