@@ -123,6 +123,9 @@ class JobGenerator(ck.JobGenerator):
 		# 1.2.324 패치 적용
         SonicBlow = core.DamageSkill("소닉 블로우", 900, 0, 0, cooltime = 80 * 1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         SonicBlowTick = core.DamageSkill("소닉 블로우(틱)", 107, 500+20*vEhc.getV(1,1), 7, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper, name = "소닉 블로우(사용)") # 7 * 15
+
+        ShadowFormation = core.SummonSkill("멸귀참영진", 0, 8000/12, 425+17*vEhc.getV(0,0), 12, 8000-1, cooltime=90000, red=True).wrap(core.SummonSkillWrapper)
+        ShadowFormationFinal = core.DamageSkill("멸귀참영진(우두머리)", 0, 625+25*vEhc.getV(0,0), 15*4, cooltime=-1).wrap(core.DamageSkillWrapper)
         
         ### build graph relationships
         def isNotDarkSight():
@@ -161,6 +164,8 @@ class JobGenerator(ck.JobGenerator):
         Assasinate2_D.onAfter(UseEviscerate)
         Eviscerate.onAfter(MesoStack.stackController(7*2*0.4, name = "메소 생성"))
         Eviscerate.protect_from_running()
+
+        ShadowFormation.onAfter(ShadowFormationFinal.controller(8000))
         
         Assasinate = core.OptionalElement(AdvancedDarkSight.is_active, Assasinate1_D, Assasinate1, name = "닼사 여부")
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
@@ -173,7 +178,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, FlipTheCoin, ShadowerInstinct, ShadowPartner, Smoke, AdvancedDarkSight, EpicAdventure, UltimateDarksight, MesoStack,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), ReadyToDie, globalSkill.soul_contract()] +\
-                [Eviscerate, SonicBlow, BailOfShadow, DarkFlare, MirrorBreak, MirrorSpider]+\
+                [ShadowFormation, ShadowFormationFinal, Eviscerate, SonicBlow, BailOfShadow, DarkFlare, MirrorBreak, MirrorSpider]+\
                 [Venom]+\
                 []+\
                 [BasicAttackWrapper])
