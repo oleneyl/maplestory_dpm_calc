@@ -96,18 +96,18 @@ class JobGenerator(ck.JobGenerator):
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         SOULENHANCEREM = 100
-        DOUBLEBODYMULTIPLIER = (100/120) * (0.5 * 1 + 0.5 * 0.2)
 
         ######   Skill   ######
 
         #Buff skills
 
-        FoxSoul_Normal = core.DamageSkill("여우령", 0, 200 + 5 * passive_level, 3 * (25 + 10 + passive_level // 2) * 0.01).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        FoxSoul_DoubleBody = core.DamageSkill("여우령(분혼 격참)", 0, (200 + 5 * passive_level) * DOUBLEBODYMULTIPLIER, 3 * (25 + 10 + passive_level // 2) * 0.01).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        FoxSoul = core.DamageSkill("여우령", 0, 200 + 5 * passive_level, 3 * (25 + 10 + passive_level // 2) * 0.01).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        FoxSoul_100 = core.DamageSkill("여우령(100%)", 0, 200 + 5 * passive_level, 3).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         SoulAttack = core.DamageSkill("귀참", 630 + 5 * self.combat, 265, 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DoubleBodyAttack = core.DamageSkill("분혼 격참(공격)", 0, 2000 + 40*self.combat, 1).wrap(core.DamageSkillWrapper)
         DoubleBody = core.BuffSkill("분혼 격참", 810, 10000, cooltime = (180-6*self.combat) * 1000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
+        DoubleBodyRegistance = core.BuffSkill("분혼 격참(저항)", 0, 90000, cooltime = -1).wrap(core.BuffSkillWrapper)
 
         #하이퍼스킬
         #정결극 유지율 100%
@@ -135,11 +135,13 @@ class JobGenerator(ck.JobGenerator):
 
         # 귀문진: 정령을 한번에 2마리 소환함
         SoulTrap = core.SummonSkill("귀문진", 990, 1280, 0, 3 * 2, 40000, cooltime = (120-vEhc.getV(3,2))*1000, red=True).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
-        SoulTrap_D_Normal = core.DamageSkill("귀문진 공격", 0, 600+24*vEhc.getV(3,2), 3 * 2, cooltime = -1).isV(vEhc,3,2).wrap(core.DamageSkillWrapper)
-        SoulTrap_D_DoubleBody = core.DamageSkill("귀문진 공격(분혼 격참)", 0, (600+24*vEhc.getV(3,2))*DOUBLEBODYMULTIPLIER, 3 * 2, cooltime = -1).isV(vEhc,3,2).wrap(core.DamageSkillWrapper)
+        SoulTrap_D = core.DamageSkill("귀문진 공격", 0, 600+24*vEhc.getV(3,2), 3 * 2, cooltime = -1).isV(vEhc,3,2).wrap(core.DamageSkillWrapper)
 
         RealSoulAttack = core.DamageSkill("진 귀참", 540, 540+6*vEhc.getV(1,3), 12 + 1, cooltime=6000, red=True, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20) + core.CharacterModifier(armor_ignore=50)).setV(vEhc, 0, 2, False).isV(vEhc,1,3).wrap(core.DamageSkillWrapper)
-        DoubleBodyRegistance = core.BuffSkill("분혼 격참(저항)", 0, 90000, cooltime = -1).wrap(core.BuffSkillWrapper)
+
+        ChainBombPunchInit = core.DamageSkill("파쇄 연권(시전)", 390, 0, 0, cooltime=90*1000, red=True).wrap(core.DamageSkillWrapper)
+        ChainBombPunchTick = core.DamageSkill("파쇄 연권(키다운)", 930/8, 400+16*vEhc.getV(0,0), 5, cooltime=-1).wrap(core.DamageSkillWrapper) # 5타씩 8회, 시전+키다운 1320ms
+        ChainBombPunchFinal = core.DamageSkill("파쇄 연권(막타)", 810, 950+38*vEhc.getV(0,0), 15*3, cooltime=-1).wrap(core.DamageSkillWrapper) # 15타씩 3회
 
         # 파쇄철조 (디버프용)
         BladeImp = core.DamageSkill("파쇄철조-회", 360, 160, 4).wrap(core.DamageSkillWrapper)
@@ -153,6 +155,12 @@ class JobGenerator(ck.JobGenerator):
         DoubleBodyConstraint = core.ConstraintElement("분혼 격참(저항)(제한)", DoubleBodyRegistance, DoubleBodyRegistance.is_not_active)
         DoubleBody.onConstraint(DoubleBodyConstraint)
 
+        def double_body_single_target(doubleBody):
+            if doubleBody.is_active():
+                # 분혼 도중 1타겟 스킬 데미지 감소, (100/120) * (0.5*1 + 0.5*0.2)
+                return core.CharacterModifier(pdamage_indep=-40) - core.CharacterModifier(pdamage_indep=20)
+            return core.CharacterModifier()
+
         #정결극 위계
         EnhanceSpiritLink.onAfters([EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init])
         EnhanceSpiritLinkSummon_J_Init.onTick(EnhanceSpiritLinkSummon_J)
@@ -164,7 +172,8 @@ class JobGenerator(ck.JobGenerator):
         #귀문진
         SoulTrapStack = SoulTrapStackWrapper(core.BuffSkill("귀문진(버프)", 0, 9999999, cooltime = -1))
         SoulTrap.onTick(core.RepeatElement(SoulTrapStack.add_debuff(), 2)) # 한 번에 디버프 두 개 생성
-        SoulTrap.onTick(core.OptionalElement(DoubleBody.is_active, SoulTrap_D_DoubleBody, SoulTrap_D_Normal, name = "분혼격참 중 귀문진 발동?"))
+        SoulTrap.onTick(SoulTrap_D)
+        SoulTrap_D.add_runtime_modifier(DoubleBody, double_body_single_target)
 
         #진 귀참 알고리즘
         BasicAttack = core.OptionalElement(RealSoulAttack.is_available, RealSoulAttack, SoulAttack, name = "진 귀참 발동 가능?")
@@ -173,13 +182,20 @@ class JobGenerator(ck.JobGenerator):
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
 
+        #파쇄 연권
+        ChainBombPunchInit.onAfter(core.RepeatElement(ChainBombPunchTick, 8))
+        ChainBombPunchInit.onAfter(ChainBombPunchFinal)
+
         #여우령
-        FoxSoul = core.OptionalElement(DoubleBody.is_active, FoxSoul_DoubleBody, FoxSoul_Normal, name = "분혼격참 중 여우령 발동?")
+        FoxSoul.add_runtime_modifier(DoubleBody, double_body_single_target)
+        FoxSoul_100.add_runtime_modifier(DoubleBody, double_body_single_target)
         BasicAttack.onAfter(FoxSoul)
         SoulTrap.onTick(core.RepeatElement(FoxSoul, 2))
         SoulConcentrateSummon.onTick(core.RepeatElement(FoxSoul, 2))
         SpiritFrenzy_Tick.onAfter(FoxSoul)
         BladeImp.onAfter(FoxSoul)
+        ChainBombPunchTick.onAfter(FoxSoul_100)
+        ChainBombPunchFinal.onAfter(core.RepeatElement(FoxSoul_100, 3))
 
         #파쇄철조
         BladeImp.onAfter(BladeImpBuff)
@@ -196,5 +212,5 @@ class JobGenerator(ck.JobGenerator):
                     globalSkill.soul_contract()] +\
                 [BladeImp, BladeImpBuff, SoulTrap] +\
                 [EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init, EnhanceSpiritLinkSummon_J, SoulConcentrateSummon] +\
-                [RealSoulAttack, DoubleBodyRegistance, SpiritFrenzy, MirrorBreak, MirrorSpider] +\
+                [RealSoulAttack, DoubleBodyRegistance, SpiritFrenzy, ChainBombPunchInit, MirrorBreak, MirrorSpider] +\
                 [BasicAttackWrapper])
