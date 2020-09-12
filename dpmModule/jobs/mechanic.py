@@ -42,7 +42,32 @@ class MultipleOptionWrapper(core.SummonSkillWrapper):
             self.tick += self.skill.delay
             return core.ResultObject(0, self.get_modifier(), damage, hit, sname = self.skill.name, spec = self.skill.spec)
         else:
+            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+
+class MechCarrierWrapper(core.SummonSkillWrapper):
+    def __init__(self, vEhc, num1, num2, modifier):
+        skill = core.SummonSkill("메카 캐리어", 720, 2850, 250+10*vEhc.getV(num1,num2), 4, 70000, cooltime=200*1000, red=True, modifier=modifier).isV(vEhc,num1,num2)
+        super(MechCarrierWrapper, self).__init__(skill)
+        self.interceptor = 9
+
+    def _use(self, skill_modifier):
+        self.interceptor = 9
+        return super(MechCarrierWrapper, self)._use(skill_modifier)
+    
+    def _useTick(self):
+        if self.onoff and self.tick <= 0: # TODO: afterTick() 같은 콜백 만들자....
+            self.tick += self.get_delay()
+            hit = self.get_hit()
+            self.interceptor = min(self.interceptor + 1, 16)
+            return core.ResultObject(0, self.get_modifier(), self.get_damage(), hit, sname = self.skill.name, spec = self.skill.spec)
+        else:
             return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)    
+
+    def get_hit(self):
+        return self.skill.hit * self.interceptor
+
+    def get_delay(self):
+        return self.skill.delay + self.interceptor * 120
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -141,6 +166,8 @@ class JobGenerator(ck.JobGenerator):
         BusterCallBuff = core.BuffSkill("메탈아머 전탄발사(버프)", 0, 8670, cooltime = -1).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         BusterCallEnd = core.DamageSkill("메탈아머 전탄발사(하차)", 1800, 0, 0).wrap(core.DamageSkillWrapper)
         BusterCallPenalty = core.BuffSkill("메탈아머 전탄발사(페널티)", 0, 2000, cooltime = -1).wrap(core.BuffSkillWrapper)
+
+        MechCarrier = MechCarrierWrapper(vEhc, 0, 0, ROBOT_MASTERY)
         
         MassiveFire.onAfter(MassiveFire2)
         #### 호밍 미사일 정의 ####
@@ -179,7 +206,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, RoboFactoryBuff, MultipleOptionBuff, BomberTime, Overdrive,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-                [MicroMissle, BusterCallInit] +\
+                [MicroMissle, MechCarrier, BusterCallInit] +\
                 [HommingMissleHolder, RegistanceLineInfantry, SupportWaver, Robolauncher, RoboFactory, DistortionField, MultipleOption, MirrorBreak, MirrorSpider] +\
                 [BusterCallBuff, BusterCallPenalty] +\
                 [MassiveFire])
