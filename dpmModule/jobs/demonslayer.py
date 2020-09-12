@@ -77,8 +77,8 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
 
-        # 앞줄의 -10%는 리메인타임 패널티 / 최종 데미지 43% = 최종강화 30% + 리인포스 10%
-        DS_MODIFIER = core.CharacterModifier(pdamage_indep = -10) + core.CharacterModifier(pdamage = 30 + 30, pdamage_indep = 43)
+        # 뒤의 최종뎀 -10%는 리메인타임 패널티 / 최종뎀 43% = 최종강화 30% + 리인포스 10%
+        DS_MODIFIER = core.CharacterModifier(pdamage = 30 + 30, pdamage_indep = 43) - core.CharacterModifier(pdamage_indep = 10)
         AW_MODIFIER = DS_MODIFIER + core.CharacterModifier(armor_ignore = 50, boss_pdamage = 50)
 
         DemonSlashRemainTime = core.BuffSkill("데몬 슬래시-리메인타임", 0, 4000, cooltime = -1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
