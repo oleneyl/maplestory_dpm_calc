@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobbranch import pirates
+from .jobclass import nova
 from . import jobutils
 from math import ceil
 
@@ -136,6 +137,7 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.get_weapon_att("소울슈터")
         Overdrive = pirates.OverdriveWrapper(vEhc, 3, 3, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
+        NovaGoddessBless = nova.NovaGoddessBlessWrapper(vEhc, 0, 0)
     
         EnergyBurst = core.DamageSkill("에너지 버스트", 900, (600+20*vEhc.getV(4,4)) * 3, 12, red = True, cooltime = 120 * 1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         
@@ -181,7 +183,7 @@ class JobGenerator(ck.JobGenerator):
         return (Trinity_1,
                 [Booster, SoulGaze, LuckyDice, FinalContract,
                     SoulExult, SoulContract, Overdrive,
-                    FinaturaFettucciaBuff, SpotLightBuff, Trinity_Buff, MascortFamilier,
+                    FinaturaFettucciaBuff, SpotLightBuff, Trinity_Buff, MascortFamilier, NovaGoddessBless,
                     globalSkill.maple_heros(chtr.level, name = "노바의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster()] +\
                 [FinaturaFettuccia, EnergyBurst, MirrorBreak, MirrorSpider] +\
                 [SuperNova, MascortFamilierAttack, ShinyBubbleBreath, SpotLight] +\

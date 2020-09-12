@@ -57,8 +57,10 @@ def SpiderInMirrorBuilder(enhancer, skill_importance, enhance_importance):
     return MirrorSpider, MirrorBreak
 
 # 모험가, 영웅, 레지스탕스가 사용
-def MapleHeroes2Wrapper(vEhc, num1, num2, level):
-    MapleHeroes2 = core.BuffSkill("메이플월드 여신의 축복", 450, 60*1000, stat_main = 0.01 * (100 + 10 * vEhc.getV(num1, num2)) * (25 + level * 5), pdamage = 5 + vEhc.getV(num1, num2) // 2, cooltime = 180*1000, red = True).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
+def MapleHeroes2Wrapper(vEhc, num1, num2, level, combat_level):
+    MapleHeroes2 = core.BuffSkill("메이플월드 여신의 축복", 450, 60*1000,
+        stat_main = (2+vEhc.getV(num1,num2)/10)*math.ceil(15 + 0.5 * combat_level)*0.01*(25 + level * 5),
+        pdamage = 5 + vEhc.getV(num1, num2) // 2, cooltime = 180*1000, red = True).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
     return MapleHeroes2
 
 # 창조의 아이온 (즉시 재시전)

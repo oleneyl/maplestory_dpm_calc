@@ -113,7 +113,7 @@ class JobGenerator(ck.JobGenerator):
         return(Blast,
                 [globalSkill.maple_heros(chtr.level, combat_level = 2), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Threat, ElementalForce, EpicAdventure, HolyUnity, AuraWeaponBuff, AuraWeapon,
-                    globalSkill.soul_contract()] +\
+                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
                 [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, GrandCross, MirrorBreak, MirrorSpider] +\
                 [BlessedHammer, BlessedHammerActive] +\
                 [Blast])

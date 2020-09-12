@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, InactiveRule, ConditionRule
 from . import globalSkill
 from .jobbranch import warriors
+from .jobclass import nova
 from math import ceil
 
 ######   Passive Skill   ######
@@ -21,14 +22,17 @@ class MorphGaugeWrapper(core.StackSkillWrapper):
         else:
             return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self._id, spec = 'graph control')
 
-    def get_modifier(self): # 아이언 윌 - 모프 게이지 단계당 데미지 3% 증가
+    def get_morph_level(self):
         if self.final_figuration.is_active() or self.stack >= 700: # 3단계
-            return core.CharacterModifier(pdamage = 9)
+            return 3
         if self.stack >= 300: # 2단계
-            return core.CharacterModifier(pdamage = 6)
+            return 2
         if self.stack >= 100: # 1단계
-            return core.CharacterModifier(pdamage = 3)
-        return core.CharacterModifier()
+            return 1
+        return 0
+
+    def get_modifier(self): # 아이언 윌 - 모프 게이지 단계당 데미지 3% 증가
+        return core.CharacterModifier(pdamage = 3 * self.get_morph_level())
 
 class GigaSlasherWrapper(core.DamageSkillWrapper):
     def __init__(self, skill, final_figuration):
@@ -231,6 +235,7 @@ class JobGenerator(ck.JobGenerator):
         # 5차
         Phanteon = core.DamageSkill("판테온", 420, 2000+80*vEhc.getV(4,4), 10, cooltime = 1200*1000, red=True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
+        NovaGoddessBless = nova.NovaGoddessBlessWrapper(vEhc, 0, 0, MorphGauge)
 
         GuardianOfNova_1 = core.SummonSkill("가디언 오브 노바(1)", 600, 45000/46, 450+15*vEhc.getV(2,2), 4, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = 120000, red=True).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 46*4타
         GuardianOfNova_2 = core.SummonSkill("가디언 오브 노바(2)", 0, 45000/34, 250+10*vEhc.getV(2,2), 6, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 34*6타
@@ -311,7 +316,7 @@ class JobGenerator(ck.JobGenerator):
     
         return(BasicAttack,
                 [globalSkill.maple_heros(chtr.level, name = "노바의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), MorphGauge,
-                    RegainStrenth, BlazeUp, FinalFiguration, MajestyOfKaiser, FinalTrance, AuraWeaponBuff, AuraWeapon,
+                    RegainStrenth, BlazeUp, FinalFiguration, MajestyOfKaiser, FinalTrance, AuraWeaponBuff, AuraWeapon, NovaGoddessBless,
                     SoulContract] +\
                 [AdvancedWillOfSword_Summon, WillOfSwordStrike, AdvancedWillOfSword] +\
                 [Wingbit_1, Wingbit_2, GuardianOfNova_1, GuardianOfNova_2, GuardianOfNova_3] +\

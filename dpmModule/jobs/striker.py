@@ -156,7 +156,7 @@ class JobGenerator(ck.JobGenerator):
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     LightningStack, Booster, ChookRoi, WindBooster, LuckyDice,
-                    HuricaneBuff, GloryOfGuardians, SkyOpen, Overdrive, ShinNoiHapL,
+                    HuricaneBuff, GloryOfGuardians, SkyOpen, Overdrive, ShinNoiHapL, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                     globalSkill.soul_contract()] +\
                 [GioaTan, CygnusPalanks, NoiShinChanGeuk, MirrorBreak, MirrorSpider] +\
                 [ShinNoiHapLAttack, NoiShinChanGeukAttack] +\

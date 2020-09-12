@@ -4,17 +4,12 @@ from ...character import characterKernel as ck
 from functools import partial
 # 모험가 및 모험가 직업 공용 5차스킬 통합코드
 
-#TODO: 얼닼사
-
-# 모험가 법사
-# 3% 증가로 알고있는데... 확인필요
-
 class InfinityWrapper(core.BuffSkillWrapper):
-    def __init__(self, combat, serverlag = 3):
+    def __init__(self, combat, interval = 7):
         skill = core.BuffSkill("인피니티", 600, (40+combat)*1000, cooltime = 180 * 1000, rem = True, red = True)
         super(InfinityWrapper, self).__init__(skill)
         self.passedTime = 0
-        self.serverlag = serverlag
+        self.interval = interval
         self.combat = combat
         
     def spend_time(self, time):
@@ -24,7 +19,7 @@ class InfinityWrapper(core.BuffSkillWrapper):
             
     def get_modifier(self):
         if self.onoff:
-            return core.CharacterModifier(pdamage_indep = (70 + self.combat + 3 * (self.passedTime // ((4+self.serverlag)*1000))) )
+            return core.CharacterModifier(pdamage_indep = (70 + self.combat + 3 * (self.passedTime // (self.interval*1000))) )
         else:
             return core.CharacterModifier()
         

@@ -65,6 +65,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         ruleset.add_rule(ConcurrentRunRule('마스터 오브 데스', '그림 리퍼'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '유니온 오라'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('메이플월드 여신의 축복', '유니온 오라'), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
@@ -108,6 +109,7 @@ class JobGenerator(ck.JobGenerator):
         
         마스터 오브 데스는 리퍼와 같이 사용함
         알터는 쿨마다 사용함
+        메여축은 유니온 오라와 같이 사용함
         '''
         OVERLOAD_MANA = core.CharacterModifier(pdamage_indep = 8+vEhc.getV(3,3)//10)
 
@@ -202,7 +204,7 @@ class JobGenerator(ck.JobGenerator):
 
         return(BasicAttack,
                 [Booster, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                WillOfLiberty, MasterOfDeath, UnionAura,
+                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), WillOfLiberty, MasterOfDeath, UnionAura,
                 globalSkill.soul_contract()] +\
                 [DarkGenesis, BattlekingBar] +\
                 [RegistanceLineInfantry, Death, BlackMagicAlter, GrimReaper, MirrorBreak, MirrorSpider] +\

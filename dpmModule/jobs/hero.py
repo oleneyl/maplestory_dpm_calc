@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, InactiveRule
+from ..execution.rules import ReservationRule, RuleSet, InactiveRule
 from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
@@ -69,6 +69,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         ruleset.add_rule(InactiveRule('콤보 데스폴트', '콤보 인스팅트'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('레이지 업라이징', '콤보 인스팅트'), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule('메이플월드 여신의 축복', '콤보 인스팅트'), RuleSet.BASE)
         return ruleset
 
 
@@ -98,6 +99,8 @@ class JobGenerator(ck.JobGenerator):
         레블 - 파택 - 업라이징 - 샤우트 - 인사이징 - 패닉
 
         어드밴스드 콤보-리인포스, 보스 킬러 / 어드밴스드 파이널 어택-보너스 찬스 / 레이징 블로우-리인포스, 보너스 어택
+
+        메여축을 인스팅트에 맞춰 사용
         
         콤보 카운터 증가 확률
         64% - 2개
@@ -176,7 +179,7 @@ class JobGenerator(ck.JobGenerator):
 
         return(RaisingBlowInrage,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
-                    ComboAttack, Fury, EpicAdventure, Valhalla, 
+                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), ComboAttack, Fury, EpicAdventure, Valhalla, 
                     InsizingBuff, InsizingDot, AuraWeaponBuff, AuraWeapon, ComboDesfortBuff, 
                     ComboInstinct, ComboInstinctOff, PanicBuff,
                     globalSkill.soul_contract()] +\

@@ -226,13 +226,10 @@ class JobGenerator(ck.JobGenerator):
         ShadowFlashBetaEnd = core.DamageSkill("쉐도우 플래시(베타)(종료)", 660, 750+30*vEhc.getV(2,2), 12 * 2, modifier = extra_dmg(8, False)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         #초월자 륀느의 기원
-        '''
-        RhinneBless = core.BuffSkill("초월자 륀느의 기원", 630, 30+vEhc.getV(0, 0)//2, cooltime = 240000, att = 10+3*vEhc.getV(0, 0)).wrap(core.BuffSkillWrapper)
+        RhinneBless = core.BuffSkill("초월자 륀느의 기원", 480, (30+vEhc.getV(0,0)//2)*1000, cooltime = 240000, att = 10+3*vEhc.getV(0,0)).wrap(core.BuffSkillWrapper)
         RhinneBlessAttack_hit = core.DamageSkill("초월자 륀느의 기원 (타격)", 0, 125+5*vEhc.getV(0, 0), 5, cooltime = -1).wrap(core.DamageSkillWrapper)
-        RhinneBlessAttack = core.OptionalElement(RhinneBless.is_active(), RhinneBlessAttack_hit)
-        '''
-
-
+        RhinneBlessAttack = core.OptionalElement(RhinneBless.is_active, RhinneBlessAttack_hit)
+        
         ######   Skill Wrapper   ######
         ### 스킬 연결 ###
         ### 알파 ###
@@ -305,26 +302,28 @@ class JobGenerator(ck.JobGenerator):
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 3)
         for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
-                    AdvancedRollingCurve, AdvancedRollingAssulter, AdvancedStormBreak, UpperSlash, AdvancedPowerStomp, GigaCrash,
+                    AdvancedRollingCurve, AdvancedRollingAssulter, WindCutter, WindStrike, AdvancedStormBreak,
+                    UpperSlash, AdvancedPowerStomp, FrontSlash, TurningDrive, AdvancedWheelWind, GigaCrash,
                     JumpingCrash, AdvancedEarthBreak, TwinBladeOfTime_end]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
         AuraWeapon.add_runtime_modifier(BetaState, lambda beta: extra_dmg(10, False) if beta.is_active() else core.CharacterModifier()) # 베타시 오라 웨폰에 대검 마스터리 적용
 
-        '''
-        스킬 사용 후 초월자 륀느의 기원 발동
+        
+        # 초월자 륀느의 기원
         for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
-                    AdvancedRollingCurve, AdvancedRollingAssulter, AdvancedStormBreak, UpperSlash, AdvancedPowerStomp, GigaCrash,
+                    AdvancedRollingCurve, AdvancedRollingAssulter, WindCutter, WindStrike, AdvancedStormBreak,
+                    UpperSlash, AdvancedPowerStomp, FrontSlash, TurningDrive, AdvancedWheelWind, GigaCrash,
                     JumpingCrash, AdvancedEarthBreak]:
             sk.onAfter(RhinneBlessAttack)
 
-        스킬 쿨타임 초기화
-        RhinneBless.onAfters(TimeDistortion.controller(1, 'reduce_cooltime_p'), SoulContract.controller(1, 'reduce_cooltime_p'))
-        '''
-
+        RhinneBless.onAfter(TimeDistortion.controller(1.0, 'reduce_cooltime_p'))
+        RhinneBless.onAfter(SoulContract.controller(1.0, 'reduce_cooltime_p'))
+        
         return(ComboHolder,
                 [globalSkill.maple_heros(chtr.level, name = "륀느의 가호", combat_level = 0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                    AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, CriticalBind,
+                    AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, RhinneBless,
+                    DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, CriticalBind,
                     SoulContract]+\
                 [TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta, MirrorBreak, MirrorSpider]+\
                 [AdvancedStormBreakSummon, AdvancedStormBreakElectric, AdvancedEarthBreakElectric, WindCutterSummon, ThrowingWeapon]+\
