@@ -109,6 +109,7 @@ class JobGenerator(ck.JobGenerator):
         에인션트 아스트라 사용하지 않음
         콤보 어썰트는 커스 트랜지션의 지속시간이 2초 이하 남았을때 사용
         블래 210ms 디차 270ms (http://m.inven.co.kr/board/maple/2304/17507)
+        렐릭 언바운드 디스차지로 사용
         
         하이퍼
         
@@ -206,6 +207,9 @@ class JobGenerator(ck.JobGenerator):
         RavenTempest = core.SummonSkill("레이븐 템페스트", 540, 250, 400+20*vEhc.getV(0,0), 5, 25*1000, cooltime = 120*1000, red=True, modifier = ANCIENT_ARCHERY).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
 
         ObsidionBarrierBlast = core.SummonSkill("옵시디언 배리어", 60, 510, 400+12*vEhc.getV(4,4), 4, (10+vEhc.getV(4,4)//5)*1000, cooltime = 200*1000, red=True, modifier = ANCIENT_ARCHERY).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
+
+        RelicUnboundDischarge = core.SummonSkill("렐릭 언바운드(디스차지)", 600, 360, 500+20*vEhc.getV(0,0), 3, 22000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        # RelicUnboundBlast = core.SummonSkill("렐릭 언바운드(블래스트)", 600, 2000, 625+25*vEhc.getV(0,0), 8*4, 2000*4-1, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         ######   Skill Wrapper   ######
 
         #이볼브 연계 설정
@@ -267,6 +271,9 @@ class JobGenerator(ck.JobGenerator):
         UltimateBlast.onConstraint(core.ConstraintElement('200 이상', RelicCharge, partial(RelicCharge.judge, 200, 1)))
         UltimateBlast.onAfter(RelicCharge.stackController(-1000))
         UltimateBlast.add_runtime_modifier(RelicCharge, lambda charge: core.CharacterModifier(pdamage_indep = (charge.stack // 250) * 25))
+
+        RelicUnboundDischarge.onConstraint(core.ConstraintElement('350 이상', RelicCharge, partial(RelicCharge.judge, 350, 1)))
+        RelicUnboundDischarge.onAfter(RelicCharge.stackController(-350))
         
         #카디널 차지 연결
         CardinalBlast.onAfter(core.OptionalElement(partial(CardinalState.is_state, "DISCHARGE"), AdditionalDischarge))
@@ -313,7 +320,7 @@ class JobGenerator(ck.JobGenerator):
                     RelicEvolution, EpicAdventure,
                     AncientGuidance, AdditionalTransition,globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), CriticalReinforce,
                     globalSkill.soul_contract()] +\
-                [AncientAstraHolder, TripleImpact, EdgeOfResonance, 
+                [RelicUnboundDischarge, AncientAstraHolder, TripleImpact, EdgeOfResonance,
                         ComboAssultHolder, UltimateBlast, SplitMistel, CardinalTransition] +\
                 [Evolve, Raven, GuidedArrow, RavenTempest, ObsidionBarrierBlast, MirrorBreak, MirrorSpider] +\
                 [] +\
