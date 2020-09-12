@@ -75,6 +75,10 @@ class JobGenerator(ck.JobGenerator):
         Sanctuary = core.DamageSkill("생츄어리", 750, 580, 8+2, cooltime = 14 * 0.7 * 1000, red = True, modifier = core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
 
         Blast = core.DamageSkill("블래스트", 630, 291, 9+2+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+
+        MightyMjollnirInit = core.DamageSkill("마이티 묠니르(시전)", 630, 0, 0, cooltime=15000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        MightyMjollnir = core.DamageSkill("마이티 묠니르", 0, 225+9*vEhc.getV(0,0), 6, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        MightyMjollnirWave = core.DamageSkill("마이티 묠니르(충격파)", 0, 250+10*vEhc.getV(0,0), 9, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         #Summon Skills
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
@@ -103,10 +107,13 @@ class JobGenerator(ck.JobGenerator):
                             core.RepeatElement(GrandCrossSmallTick, 15)])
 
         BlessedHammerActive.onAfter(BlessedHammer.controller(30 * 1000))
+
+        MightyMjollnirInit.onAfter(core.RepeatElement(MightyMjollnir, 4))
+        MightyMjollnir.onAfter(MightyMjollnirWave)
         
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
-        for sk in [Blast, Sanctuary, GrandCrossSmallTick, GrandCrossLargeTick]:
+        for sk in [Blast, Sanctuary, GrandCrossSmallTick, GrandCrossLargeTick, MightyMjollnirInit]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
                         
@@ -114,6 +121,6 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, combat_level = 2), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Threat, ElementalForce, EpicAdventure, HolyUnity, AuraWeaponBuff, AuraWeapon,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-                [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, GrandCross, MirrorBreak, MirrorSpider] +\
+                [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, GrandCross, MightyMjollnirInit, MirrorBreak, MirrorSpider] +\
                 [BlessedHammer, BlessedHammerActive] +\
                 [Blast])
