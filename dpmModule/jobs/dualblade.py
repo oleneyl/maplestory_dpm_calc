@@ -101,6 +101,8 @@ class JobGenerator(ck.JobGenerator):
         BladeTornado = core.DamageSkill("블레이드 토네이도", 540, 600+24*vEhc.getV(2,2), 7, red = True, cooltime = 12000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         BladeTornadoSummon = core.SummonSkill("블레이드 토네이도(소환)", 0, 3000/5, 450+18*vEhc.getV(2,2), 6, 3000-1, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
         BladeTornadoSummonMirrorImaging = core.SummonSkill("블레이드 토네이도(소환)(미러이미징)", 0, 540, (450+18*vEhc.getV(2,2)) * 0.7, 6, 3000, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
+
+        HauntedEdge = core.DamageSkill("헌티드 엣지-나찰", 0, 200+8*vEhc.getV(0,0), 4*5, cooltime=14000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
     
@@ -129,8 +131,11 @@ class JobGenerator(ck.JobGenerator):
 
         SuddenRaid.onAfter(FinalCut.controller(0.2, "reduce_cooltime_p"))
 
+        PhantomBlow.onAfter(core.OptionalElement(HauntedEdge.is_available, HauntedEdge, name="헌티드 엣지 쿨타임 체크"))
+        HauntedEdge.protect_from_running()
+
         for sk in [PhantomBlow, SuddenRaid, FinalCut, FlashBang, AsuraTick, 
-            BladeStorm, BladeStormTick, KarmaFury, BladeTornado, HiddenBlade]:
+            BladeStorm, BladeStormTick, KarmaFury, BladeTornado, HiddenBlade, HauntedEdge]:
             jobutils.create_auxilary_attack(sk, 0.7, nametag = '(미러이미징)')
         
         return(PhantomBlow,
@@ -138,6 +143,6 @@ class JobGenerator(ck.JobGenerator):
                     Booster, DarkSight, FinalCutBuff, EpicAdventure, FlashBangDebuff, HiddenBladeBuff, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                     UltimateDarksight, ReadyToDie, globalSkill.soul_contract()] +\
                 [FinalCut, FlashBang, BladeTornado, SuddenRaid, KarmaFury, BladeStorm, Asura, MirrorBreak, MirrorSpider] +\
-                [SuddenRaidDOT, Venom, BladeTornadoSummon, BladeTornadoSummonMirrorImaging] +\
+                [SuddenRaidDOT, Venom, BladeTornadoSummon, BladeTornadoSummonMirrorImaging, HauntedEdge] +\
                 [] +\
                 [PhantomBlow])
