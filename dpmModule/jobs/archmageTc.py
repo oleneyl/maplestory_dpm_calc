@@ -126,6 +126,8 @@ class JobGenerator(ck.JobGenerator):
         Elquiness = core.SummonSkill("엘퀴네스", 600, 3030, 380+6*self.combat, 1, (260+5*self.combat)*1000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         IceAura = core.SummonSkill("아이스 오라", 0, 1200, 0, 1, 999999999).wrap(core.SummonSkillWrapper)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
+        JupyterThunder = core.SummonSkill("주피터 썬더", 630, 330, 300+12*vEhc.getV(0,0), 5, 330*30-1, cooltime=75000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        JupyterThunderDecrement = core.SummonSkill("주피터 썬더(빙결 감소)", 0, 330*5, 0, 0, 330*25-1, cooltime=-1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         
         #FinalAttack
         Blizzard = core.DamageSkill("블리자드", 720, 450+5*self.combat, 8, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
@@ -229,11 +231,16 @@ class JobGenerator(ck.JobGenerator):
         #Spirit of Snow
         SpiritOfSnow.onTick(FrostEffect.stackController(3))
 
+        #Jupyter Thunder
+        JupyterThunder.add_runtime_modifier(FrostEffect, applyFrostEffect) # TODO: 블리자드 파택 안터지는게 맞는지 확인할것
+        JupyterThunder.onAfter(JupyterThunderDecrement.controller(330*5))
+        JupyterThunderDecrement.onTick(FrostDecrement)
+
         return(ChainLightening,
                 [Infinity, Meditation, EpicAdventure, OverloadMana, FrostEffect,
                 globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-                [IceAgeInit, Blizzard, LighteningSpear, ThunderBrake, MirrorBreak, MirrorSpider] +\
+                [IceAgeInit, Blizzard, JupyterThunder, JupyterThunderDecrement, LighteningSpear, ThunderBrake, MirrorBreak, MirrorSpider] +\
                 [ThunderStorm, Elquiness, IceAura, IceAgeSummon, FrozenOrb, SpiritOfSnow] +\
                 [UnstableMemorize] +\
                 [ChainLightening])
