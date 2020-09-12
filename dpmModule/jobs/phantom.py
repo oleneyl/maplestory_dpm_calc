@@ -84,7 +84,7 @@ class JobGenerator(ck.JobGenerator):
         MileAiguilles = core.DamageSkill("얼티밋 드라이브", 150, 125 + self.combat, 3, modifier = core.CharacterModifier(pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         CarteNoir = core.DamageSkill("느와르 카르트", 0, 270, min(chtr.get_modifier().crit/100 + 0.1, 1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        CarteNoir_ = core.DamageSkill("느와르 카르트(저지먼트)", 0, 270, 10).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        Judgement = core.DamageSkill("느와르 카르트(저지먼트)", 0, 270, 10).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
         PrieredAria = core.BuffSkill("프레이 오브 아리아", 0, (240+7*self.combat)*1000, pdamage = 30+self.combat, armor_ignore = 30+self.combat).wrap(core.BuffSkillWrapper)
 
@@ -110,15 +110,17 @@ class JobGenerator(ck.JobGenerator):
         
         MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 690, 600+24*vEhc.getV(2,2), 3 * 7, cooltime = 30000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         MarkOfPhantomEnd = core.DamageSkill("마크 오브 팬텀(최종)", 0, 1200+48*vEhc.getV(2,2), 12).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+
+        LiftBreak = core.DamageSkill("리프트 브레이크", 990, 400+16*vEhc.getV(0,0), 7*7, cooltime=30000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         #### 그래프 빌드
         
+        FinalCut.onAfter(CarteNoir)
         FinalCut.onAfter(FinalCutBuff.controller(1))
         
         CardStack = core.StackSkillWrapper(core.BuffSkill("카드 스택", 0, 99999999), 40, name = "느와르 카르트 스택")
         
         AddCard = CardStack.stackController(1, name = "스택 1 증가")
-        Judgement = CarteNoir_
         Judgement.onAfter(CardStack.stackController(-9999, name = "스택 초기화"))
         
         FullStack = core.OptionalElement(partial(CardStack.judge,40, 1), Judgement, name = "풀스택시")
@@ -142,8 +144,13 @@ class JobGenerator(ck.JobGenerator):
         
         BlackJack.onTick(CarteNoir)
         BlackJack.onAfter(BlackJackFinal.controller(5000))
+        BlackJackFinal.onAfter(CarteNoir)
         
+        MarkOfPhantom.onAfter(core.RepeatElement(CarteNoir, 7))
         MarkOfPhantom.onAfter(MarkOfPhantomEnd)
+        MarkOfPhantomEnd.onAfter(CarteNoir)
+
+        LiftBreak.onAfter(core.RepeatElement(CarteNoir, 7))
 
         MileAiguillesInit.protect_from_running()
         
@@ -154,7 +161,7 @@ class JobGenerator(ck.JobGenerator):
                     TalentOfPhantomII, TalentOfPhantomIII, FinalCutBuff, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), BoolsEye,
                     JudgementBuff, Booster, PrieredAria, HerosOath, ReadyToDie, JokerBuff,
                     globalSkill.soul_contract()] +\
-                [FinalCut, JokerInit, MarkOfPhantom, BlackJackFinal] +\
+                [FinalCut, JokerInit, MarkOfPhantom, LiftBreak, BlackJackFinal] +\
                 [BlackJack, MirrorBreak, MirrorSpider] +\
                 [MileAiguillesInit] +\
                 [BasicAttackWrapper])
