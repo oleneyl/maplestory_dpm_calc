@@ -128,6 +128,9 @@ class JobGenerator(ck.JobGenerator):
         DeadEye = core.DamageSkill("데드아이", 450, (800+32*vEhc.getV(3,3))*DEADEYEACC, 6, cooltime = 30000, red = True, modifier = core.CharacterModifier(crit = 100, pdamage_indep = 4*11) + CONTINUAL_AIMING).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
         NautilusAssult = core.SummonSkill("노틸러스 어썰트", 690, 360, 600+24*vEhc.getV(0,0), 6, 360*7-1, cooltime = 180000, red = True, modifier = CONTINUAL_AIMING).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)#7회 2초간
         NautilusAssult_2 = core.SummonSkill("노틸러스 어썰트(일제 사격)", 0, 160, 300+12*vEhc.getV(0,0), 12, 160*36-1, cooltime = -1, modifier = CONTINUAL_AIMING).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)#36회 6초간
+        DeathTriggerInit = core.DamageSkill("데스 트리거(개시)", 360, 0, 0, cooltime=45000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DeathTrigger = core.DamageSkill("데스 트리거", 180, 575+23*vEhc.getV(0,0), 11, cooltime=-1, modifier = CONTINUAL_AIMING).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DeathTriggerEnd = core.DamageSkill("데스 트리거(후딜)", 300, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
     
@@ -142,13 +145,13 @@ class JobGenerator(ck.JobGenerator):
         
         #디그니티는 노틸러스 쿨타임에 강화됨
         CaptainDignity = core.OptionalElement(Nautilus.is_usable, CaptainDignityNormal, CaptainDignityEnhance, name = "캡틴 디그니티 강화")
-        for sk in [RapidFire, Headshot, BulletPartyTick, DeadEye]:
+        for sk in [RapidFire, Headshot, BulletPartyTick, DeadEye, DeathTrigger]:
             sk.onAfter(CaptainDignity)
 
         # 퀵 드로우
         QuickDraw.onAfter(QuickDrawStack.stackController(-1, name = "퀵 드로우 준비 해제"))
         QuickDrawProc = QuickDrawStack.stackController((8 + self.combat) * 0.01, name = "퀵 드로우 확률")
-        for sk in [RapidFire, Headshot, Nautilus, StrangeBomb, BulletPartyTick, DeadEye, NautilusAssult]:
+        for sk in [RapidFire, Headshot, Nautilus, StrangeBomb, BulletPartyTick, DeadEye, NautilusAssult, DeathTrigger]:
             sk.onAfter(QuickDrawProc)
         
         QuickDrawActivateTrigger = core.OptionalElement(partial(QuickDrawStack.judge, 1, 1), QuickDraw, name = "퀵 드로우 사용")
@@ -165,11 +168,15 @@ class JobGenerator(ck.JobGenerator):
         #불릿파티
         BulletParty.onAfter(core.RepeatElement(BulletPartyTick, 11820 // BULLET_PARTY_TICK))
 
+        #데스 트리거
+        DeathTriggerInit.onAfter(core.RepeatElement(DeathTrigger, 7))
+        DeathTriggerInit.onAfter(DeathTriggerEnd)
+
         return (RapidFire,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     SummonCrewBuff, PirateStyle, Booster, InfiniteBullet, LuckyDice, UnwierdingNectar, EpicAdventure, PirateFlag, Overdrive,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), QuickDraw, globalSkill.soul_contract()] +\
-                [BattleshipBomber, Headshot, Nautilus, DeadEye, StrangeBomb, MirrorBreak, MirrorSpider] +\
+                [BattleshipBomber, DeathTriggerInit, Headshot, Nautilus, DeadEye, StrangeBomb, MirrorBreak, MirrorSpider] +\
                 [OctaQuaterdeck, BattleshipBomber_1, BattleshipBomber_2, NautilusAssult, NautilusAssult_2, SummonCrew] +\
                 [BulletParty] +\
                 [RapidFire])

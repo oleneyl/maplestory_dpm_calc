@@ -101,7 +101,7 @@ class JobGenerator(ck.JobGenerator):
         SpecialMonkeyEscort_Canon = core.SummonSkill("스페셜 몽키 에스코트", 780, int(45000 / 97), 300+12*vEhc.getV(2,2), 4, (30+int(0.5*vEhc.getV(2,2)))*1000 - 1500, cooltime = 120000, red=True).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
         SpecialMonkeyEscort_Boom = core.SummonSkill("스페셜 몽키 에스코트(폭탄)", 0, int(45000 / 17), 450+18*vEhc.getV(2,2), 7, (30+int(0.5*vEhc.getV(2,2)))*5000 - 1500, cooltime = -1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
 
-        FullMaker = core.SummonSkill("풀 메이커", 720, 360, (700+28*vEhc.getV(0,0)) * 0.45, 3*3, 360*20-1, cooltime=60000, red=True).wrap(core.SummonSkillWrapper)
+        FullMaker = core.SummonSkill("풀 메이커", 720, 360, (700+28*vEhc.getV(0,0)) * 0.45, 3*3, 360*20-1, cooltime=60000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         ### build graph relationships
     
         MonkeyWave.onAfter(MonkeyWaveBuff)
