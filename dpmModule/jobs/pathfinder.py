@@ -4,7 +4,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import ConditionRule, DisableRule, RuleSet
+from ..execution.rules import ConcurrentRunRule, ConditionRule, DisableRule, RuleSet
 from . import globalSkill
 from .jobbranch import bowmen
 from math import ceil
@@ -311,7 +311,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
                     RelicCharge, AncientBowBooster, CurseTolerance, CurseTransition, SharpEyes,
                     RelicEvolution, EpicAdventure,
-                    AncientGuidance, AdditionalTransition, CriticalReinforce,
+                    AncientGuidance, AdditionalTransition,globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), CriticalReinforce,
                     globalSkill.soul_contract()] +\
                 [AncientAstraHolder, TripleImpact, EdgeOfResonance, 
                         ComboAssultHolder, UltimateBlast, SplitMistel, CardinalTransition] +\

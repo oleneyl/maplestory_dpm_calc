@@ -232,7 +232,7 @@ class JobGenerator(ck.JobGenerator):
         AdrenalineGenerator.onAfter(AdrenalineBoost)
         return(BasicAttack, 
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), HerosOath,
-                    Booster, SmashSwingIncr, SnowCharge, AdvancedComboAbility, ComboAbility,
+                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), Booster, SmashSwingIncr, SnowCharge, AdvancedComboAbility, ComboAbility,
                     BlessingMaha, AdrenalineBoost, AdrenalineBoostEndDummy,
                     AdrenalineGenerator, 
                     InstallMaha, InstallMahaBlizzard, Combo, AuraWeaponBuff, AuraWeapon, 

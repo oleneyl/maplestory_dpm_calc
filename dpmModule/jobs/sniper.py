@@ -127,8 +127,8 @@ class JobGenerator(ck.JobGenerator):
         
         return(Snipping,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
-                    SoulArrow, ElusionStep, SharpEyes, BoolsEye, EpicAdventure, CriticalReinforce, SplitArrowBuff,
-                        globalSkill.soul_contract()] +\
+                    SoulArrow, ElusionStep, SharpEyes, BoolsEye, EpicAdventure, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
+                    CriticalReinforce, SplitArrowBuff, globalSkill.soul_contract()] +\
                 [TrueSnipping, ChargedArrowHold, ChargedArrow] +\
                 [Evolve,Freezer, GuidedArrow, MirrorBreak, MirrorSpider] +\
                 [] +\

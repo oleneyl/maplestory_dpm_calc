@@ -218,7 +218,7 @@ class JobGenerator(ck.JobGenerator):
         return(Attack, 
                 [LuminousState, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     Booster, PodicMeditaion, DarknessSocery, DarkCrescendo, HerosOath, Memorize, OverloadMana,
-                    SoulContract] +\
+                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), SoulContract] +\
                 [LightAndDarkness] +\
                 [PunishingResonator, DoorOfTruth, MirrorBreak, MirrorSpider] +\
                 [] +\

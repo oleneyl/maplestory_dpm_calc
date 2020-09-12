@@ -168,7 +168,7 @@ class JobGenerator(ck.JobGenerator):
         return (RapidFire,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     SummonCrewBuff, PirateStyle, Booster, InfiniteBullet, LuckyDice, UnwierdingNectar, EpicAdventure, PirateFlag, Overdrive,
-                    QuickDraw, globalSkill.soul_contract()] +\
+                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), QuickDraw, globalSkill.soul_contract()] +\
                 [BattleshipBomber, Headshot, Nautilus, DeadEye, StrangeBomb, MirrorBreak, MirrorSpider] +\
                 [OctaQuaterdeck, BattleshipBomber_1, BattleshipBomber_2, NautilusAssult, NautilusAssult_2, SummonCrew] +\
                 [BulletParty] +\

@@ -117,7 +117,7 @@ class JobGenerator(ck.JobGenerator):
         return(CanonBuster,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     Booster, MonkeyWaveBuff, MonkeyFuriousBuff, MonkeyFuriousDot, OakRulet, Buckshot, MonkeyMagic,
-                    EpicAdventure, LuckyDice, Overdrive, PirateFlag,
+                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), EpicAdventure, LuckyDice, Overdrive, PirateFlag,
                     globalSkill.soul_contract()] +\
                 [MonkeyWave, MonkeyFurious, ICBM, MirrorBreak, MirrorSpider] +\
                 [OakRuletDOT, SupportMonkeyTwins, RollingCanonRainbow, BFGCannonball, ICBMDOT, SpecialMonkeyEscort_Boom, SpecialMonkeyEscort_Canon] +\
