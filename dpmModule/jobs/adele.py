@@ -15,7 +15,8 @@ class OrderWrapper(core.SummonSkillWrapper):
         super(OrderWrapper, self).__init__(skill)
         self.ether = ether
         self.condition = None
-        self.queue = []
+        self.queue = [] # (공격 시작 시간, 종료 시간)
+        self.summonCooltime = 0
         self.currentTime = 0
         self.REMAIN_TIME = 40000
 
@@ -24,7 +25,8 @@ class OrderWrapper(core.SummonSkillWrapper):
 
     def add(self):
         self.ether.vary(-100)
-        self.queue = self.queue + [self.currentTime + self.REMAIN_TIME]
+        self.queue += [(self.currentTime + self.skill.delay, self.currentTime + self.REMAIN_TIME)]
+        self.summonCooltime = 500
 
     def calculateRefund(self, timeLeft):
         if timeLeft < 16000:
@@ -37,23 +39,24 @@ class OrderWrapper(core.SummonSkillWrapper):
 
     def consume(self):
         count = len(self.queue)
-        refund = sum([self.calculateRefund(x - self.currentTime) for x in self.queue])
+        refund = sum([self.calculateRefund(end - self.currentTime) for start, end in self.queue])
         self.ether.vary(refund)
         self.queue = []
         return count
 
     def spend_time(self, time):
         self.currentTime += time
-        self.queue = [x for x in self.queue if x > self.currentTime]
+        self.queue = [(start, end) for start, end in self.queue if end > self.currentTime]
+        self.summonCooltime -= time
 
-        if self.condition():
+        if self.summonCooltime <= 0 and self.condition():
             self.add()
         
         super(OrderWrapper, self).spend_time(time)
 
     def _delayQueue(self, time): # 게더링/블로섬 도중에는 오더의 지속시간이 흐르지 않음
         self.set_disabled_and_time_left(time)
-        self.queue = [x + time for x in self.queue]
+        self.queue = [(self.currentTime + time + self.skill.delay, end + time) for start, end in self.queue]
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
 
     def delayQueue(self, time):
@@ -67,11 +70,12 @@ class OrderWrapper(core.SummonSkillWrapper):
         return (self.get_stack()-stack)*direction>=0
 
     def get_hit(self):
-        return self.get_stack() * self.skill.hit
+        attackable = sum(1 for start, end in self.queue if self.currentTime >= start) * 2
+        return attackable * self.skill.hit
 
 class StormWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, order: OrderWrapper, serverlag = 0): # TODO: 서버렉 평균 몇초인지 측정할것
-        skill = core.SummonSkill("스톰", 600, 330, 250+30*vEhc.getV(num1,num2), 2, 14000+serverlag, cooltime = 90*1000, red=True).isV(vEhc,num1,num2)
+        skill = core.SummonSkill("스톰", 600, 330, 250+10*vEhc.getV(num1,num2), 2, 14000+serverlag, cooltime = 90*1000, red=True).isV(vEhc,num1,num2)
         super(StormWrapper, self).__init__(skill)
         self.order = order
         self.consumed_order = 0
@@ -163,10 +167,10 @@ class JobGenerator(ck.JobGenerator):
         Territory = core.SummonSkill('테리토리', 420, 405, 100+300+passive_level*5, 4, 7000+4000, rem=False, cooltime=30*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper) # 27회 타격, 클라공속540ms
         TerritoryEnd = core.DamageSkill('테리토리(종료)', 0, 550+300+passive_level*5, 12, cooltime=-1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        Order = OrderWrapper(core.SummonSkill('오더', 0, 1140, 240+120+passive_level*3, 2, 99999999).setV(vEhc, 1, 2, False), Ether) # 15% 에테르 결정, 시전딜레이 없음으로 가정, 공격주기 1140ms(인피니트로부터 추정됨)
+        Order = OrderWrapper(core.SummonSkill('오더', 0, 1020, 240+120+passive_level*3, 2, 99999999).setV(vEhc, 1, 2, False), Ether) # 15% 에테르 결정, 시전딜레이 없음으로 가정, 공격주기 1020ms
 
         Gathering = core.StackDamageSkillWrapper(
-            core.DamageSkill('게더링', 600, 260+300+passive_level*3, 4, cooltime=12*1000, red=True).setV(vEhc, 5, 2, False),
+            core.DamageSkill('게더링', 630, 260+300+passive_level*3, 4, cooltime=12*1000, red=True).setV(vEhc, 5, 2, False),
             Order,
             lambda order: order.get_stack() * 0.8
         ) # 칼 불러오기. 블라섬과 연계됨, 모이는데 약 600ms 가정
@@ -245,7 +249,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 게더링-블로섬
         Blossom.onConstraint(core.ConstraintElement('오더가 있을 때', Order, partial(Order.judge, 1, 1)))
-        Blossom.onBefores([Gathering, Order.delayQueue(600+1410)]) # 게더링->블로섬 순서, _befores는 리스트의 끝부터 실행됨. 2010ms동안 오더가 멈춤.
+        Blossom.onBefores([Gathering, Order.delayQueue(690+2010)]) # 게더링->블로섬 순서, _befores는 리스트의 끝부터 실행됨. 게더링(690ms)+블로섬(2010ms)동안 오더가 멈춤.
         Blossom.onAfter(BlossomExceed)
 
         Grave.onAfter(GraveDebuff)
