@@ -7,11 +7,17 @@ from ..execution.rules import RuleSet, ConditionRule
 from . import globalSkill
 from .jobbranch import thieves
 from math import ceil
-#TODO : 5차 신스킬 적용
+'''
+이 코드는 아직 미완성입니다.
 
-# 이 코드는 dualblade.py를 카피하여 수정했습니다. 아직 미완성입니다!
+TODO : 스킬 딜레이, 딜사이클
 
-# 하이퍼 패시브 미적용
+TODO: 하이퍼 패시브 적용
+    천지인 리인포스, 보스 킬러
+    추적 귀화부 헤이스트
+    흡성와류 헤이스트
+    택1: 천지인 이그노어 가드 or 호접지몽 보스킬러
+'''
 
 def AnimaGoddessBlessWrapper(vEhc, num1, num2):
     AnimaGoddessBless = core.BuffSkill("그란디스 여신의 축복 (아니마)", 0, 40*1000, cooltime = 240*1000, pdamage = 10 + vEhc.getV(num1, num2), rem = False).wrap(core.BuffSkillWrapper)
@@ -51,8 +57,6 @@ class JobGenerator(ck.JobGenerator):
     
     '''
     def get_ruleset(self):
-        ruleset = RuleSet()
-        ruleset.add_rule(ConditionRule('써든레이드', '파이널 컷', check_final_cut_time), RuleSet.BASE)
         return ruleset
     '''
 
@@ -110,7 +114,7 @@ class JobGenerator(ck.JobGenerator):
         # 벞지 & 소환수 지속시간 둘다 적용
         Butterfly_Dream = core.BuffSkill("권술 : 호접지몽", 0, 100*1000, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
         Butterfly_Dream_Attack = core.DamageSkill("권술 : 호접지몽 (공격)", 0, 275 + 3 * self.combat, 5, cooltime = 1000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
-        Butterfly_Dream_Attack_Opt = core.OptionalElement(Scroll_Butterfly_Dream_Attack.is_usable(), Scroll_Butterfly_Dream_Attack)
+        Butterfly_Dream_Attack_Opt = core.OptionalElement(Butterfly_Dream_Attack.is_usable(), Butterfly_Dream_Attack)
         # 하이퍼 액티브
         Miracle_Tonic = core.BuffSkill("선기 : 영약 태을선단", 0, 12*1000, cooltime = 100*1000, rem = False, red = False).wrap(core.BuffSkillWrapper)
         # 몽유도원은 딜스킬이 아님 Sage_Dream_of_ShangriLa = 
@@ -151,4 +155,7 @@ class JobGenerator(ck.JobGenerator):
         Elemental_Clone_Opt = core.OptionalElement(Elemental_Clone.is_active(), Elemental_Clone_Active_Opt, Elemental_Clone_Passive_Opt)
 
 
-        return(globalSkill.maple_heros(chtr.level, name = "아니마의 용사", combat_level=self.combat))
+        return(Topa,
+        [globalSkill.maple_heros(chtr.level, name = "아니마의 용사", combat_level=self.combat)]+\
+        []+\
+        [Topa])
