@@ -18,6 +18,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "데몬슬레이어"
         self.vEnhanceNum = 15
         self.preEmptiveSkills = 1
+        self.hyperStatPrefixed = 85 # DF 8레벨 투자
         
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'mess')
 

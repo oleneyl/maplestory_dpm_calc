@@ -51,6 +51,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "키네시스"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
+        self.hyperStatPrefixed = 150 # PP 10레벨 투자
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
