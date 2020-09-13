@@ -57,8 +57,8 @@ def test_simple_scheduler():
         print(f'current time {i * 50}')
         print(obj)
 
-    # answer_list = [X, Y, Y, Y, X, Y, Y, Y, X, Y]
-    answer_list = [X, Y, Y, Y, Y, X, Y, Y, Y, Y]
+    answer_list = [X, Y, Y, Y, X, Y, Y, Y, X, Y]
+    # answer_list = [X, Y, Y, Y, Y, X, Y, Y, Y, Y]
 
     for obj, ans in zip(ref_list, answer_list):
         assert ans == obj
