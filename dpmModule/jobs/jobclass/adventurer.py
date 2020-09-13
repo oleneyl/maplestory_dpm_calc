@@ -13,12 +13,12 @@ class InfinityWrapper(core.BuffSkillWrapper):
         self.combat = combat
         
     def spend_time(self, time):
-        if self.onoff:
+        if self.is_active():
             self.passedTime += time
         super(InfinityWrapper, self).spend_time(time)
             
     def get_modifier(self):
-        if self.onoff:
+        if self.is_active():
             return core.CharacterModifier(pdamage_indep = (70 + self.combat + 3 * (self.passedTime // (self.interval*1000))) )
         else:
             return core.CharacterModifier()

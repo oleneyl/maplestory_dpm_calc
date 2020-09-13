@@ -50,7 +50,7 @@ class OrderWrapper(core.SummonSkillWrapper):
         return (self.stack-stack)*direction>=0
 
     def _useTick(self):
-        if self.onoff and self.tick <= 0:
+        if self.is_active() and self.tick <= 0:
             self.tick += self.skill.delay
             return core.ResultObject(0, self.get_modifier(), self.skill.damage, self.skill.hit * self.stack, sname = self.skill.name, spec = self.skill.spec)
         else:

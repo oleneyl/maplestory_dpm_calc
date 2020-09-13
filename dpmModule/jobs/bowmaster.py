@@ -67,7 +67,7 @@ class GuidedArrowWrapper(bowmen.GuidedArrowWrapper):
         self.armorPiercing = armorPiercing
             
     def _useTick(self):
-        if self.onoff and self.tick <= 0:
+        if self.is_active() and self.tick <= 0:
             self.tick += self.skill.delay
 
             modifier = self.get_modifier()

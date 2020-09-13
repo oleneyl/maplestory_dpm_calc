@@ -14,16 +14,17 @@ class PrayWrapper(core.BuffSkillWrapper):
         super(PrayWrapper, self).__init__(core.BuffSkill("프레이", 360, 1000 * (30 + vEhc.getV(num1,num2) // 2), cooltime = 180 * 1000, red = True).isV(vEhc, num1, num2))
         self.enable_referring_runtime_context()
         self.stat = None
+        self.modifierInvariantFlag = False
 
     def _use(self, skill_modifier, runtime_context_modifier):
         self.stat = runtime_context_modifier.stat_main * (1 + 0.01 * runtime_context_modifier.pstat_main) + runtime_context_modifier.stat_main_fixed
         return super(PrayWrapper, self)._use(skill_modifier)
 
     def get_modifier(self):
-      if self.onoff:
-          return core.CharacterModifier(pdamage_indep = 5 + min(self.stat // 2500, 45))
-      else:
-          return self.disabledModifier
+        if self.is_active():
+            return core.CharacterModifier(pdamage_indep = 5 + min(self.stat // 2500, 45))
+        else:
+            return self.disabledModifier
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):

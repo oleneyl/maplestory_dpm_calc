@@ -65,7 +65,7 @@ class MaelstromWrapper(core.SummonSkillWrapper):
         return result
 
     def _useTick(self):
-        if self.onoff and self.tick <= 0:
+        if self.is_active() and self.tick <= 0:
             self.tick += self.tick_list[self.currentTick]
             self.currentTick += 1
             return core.ResultObject(0, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)

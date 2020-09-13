@@ -48,7 +48,6 @@ class SoulOfCrystalWrapper(core.BuffSkillWrapper):
 
     def turnOff(self):
         self.timeLeft = 0
-        self.onoff = False
         return self._disabledResultobjectCache
 
     def turnOffController(self):
@@ -71,7 +70,7 @@ class RiyoWrapper(core.SummonSkillWrapper):
         return super(RiyoWrapper, self)._use(skill_modifier)
     
     def _useTick(self):
-        if self.onoff and self.tick <= 0:
+        if self.is_active() and self.tick <= 0:
             if self.count < 10:
                 damage = 160
             if self.count < 20:
@@ -104,7 +103,7 @@ class GramHolderWrapper(core.SummonSkillWrapper):
         self.gloryWing = skill
     
     def _useTick(self):
-        if self.onoff and self.tick <= 0:
+        if self.is_active() and self.tick <= 0:
             modifier = self.get_modifier()
             if self.gloryWing.is_active() or self.crystalCharge.judge(self.chargeBefore + 3, 1):
                 modifier = modifier + core.CharacterModifier(pdamage_indep = 100)
