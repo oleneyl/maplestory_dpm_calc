@@ -13,7 +13,7 @@ class OverdriveWrapper(core.BuffSkillWrapper):
     def get_modifier(self) -> core.CharacterModifier:
         if self.onoff:
             return self.skill.get_modifier()
-        elif not self.available:
+        elif not self.is_available():
             return self.penaltyModifier
         else:
             return self.disabledModifier

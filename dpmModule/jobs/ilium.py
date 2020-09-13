@@ -243,9 +243,9 @@ class JobGenerator(ck.JobGenerator):
         Reaction_Domination.onAfter(Reaction_Domination_Link)
         Reaction_Spectrum.onAfter(Reaction_Spectrum_Link)
                 
-        Reaction_Domination_Trigger = core.OptionalElement(lambda:Reaction_Domination.available, Reaction_Domination, name = "리액션:도미네이션")
-        Reaction_Destruction_Trigger = core.OptionalElement(lambda:Reaction_Destruction.available, Reaction_Destruction, name = "리액션:디스트럭션")
-        Reaction_Spectrum_Trigger = core.OptionalElement(lambda:Reaction_Spectrum.available, Reaction_Spectrum, name = "리액션:스펙트럼")
+        Reaction_Domination_Trigger = core.OptionalElement(lambda:Reaction_Domination.is_available(), Reaction_Domination, name = "리액션:도미네이션")
+        Reaction_Destruction_Trigger = core.OptionalElement(lambda:Reaction_Destruction.is_available(), Reaction_Destruction, name = "리액션:디스트럭션")
+        Reaction_Spectrum_Trigger = core.OptionalElement(lambda:Reaction_Spectrum.is_available(), Reaction_Spectrum, name = "리액션:스펙트럼")
         
         Craft_Orb.onAfter(Reaction_Domination_Trigger)
         Craft_Javelin.onAfter(Reaction_Destruction_Trigger)
