@@ -1703,23 +1703,21 @@ class Simulator(object):
         self.run_task_recursive(task)
 
     def run_task_recursive(self, task):
-        stack = task._before + []
-        while len(stack) != 0:
-            self.run_task_recursive(stack.pop())
+        for t in reversed(task._before):
+            self.run_task_recursive(t)
         
         runtime_context_modifier = self.scheduler.get_buff_modifier() + self.get_default_modifier()
         result = task.do(runtime_context_modifier=runtime_context_modifier + self.character.get_modifier())
+        result.setTime(self.scheduler.get_current_time())
         
         if result.damage > 0:
             result.mdf += runtime_context_modifier
-
-        result.setTime(self.scheduler.get_current_time())
+        
         self.analytics.analyze(self.character, result)
-        
-        stk = task._justAfter + []
-        while len(stk) != 0:
-            self.run_task_recursive(stk.pop())
-        
+
+        for t in task._justAfter:
+            self.run_task_recursive(t)
+
         if result.delay > 0:
             self.scheduler.spend_time(result.delay)
             while True:
@@ -1729,9 +1727,8 @@ class Simulator(object):
                 else:
                     break
         
-        stack = result.cascade + task._after
-        while len(stack) != 0:
-            self.run_task_recursive(stack.pop())
+        for t in reversed(result.cascade + task._after):
+            self.run_task_recursive(t)
 
 class Analytics():
     def __init__(self, printFlag = False):
