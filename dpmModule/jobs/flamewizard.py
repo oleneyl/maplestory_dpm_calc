@@ -95,6 +95,11 @@ class JobGenerator(ck.JobGenerator):
         
         InfinityFlameCircleTick = core.DamageSkill("인피니티 플레임 서클", 180, 500+20*vEhc.getV(3,3), 7, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #1틱
         InfinityFlameCircleInit = core.DamageSkill("인피니티 플레임 서클(개시)", 360, 0, 0, cooltime = 15*6*1000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+
+        # 84타
+        SalamanderMischeif = core.SummonSkill("샐리맨더 미스칩", 750, 710, 150+6*vEhc.getV(0,0), 7, 60000, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        SalamanderMischeifStack = core.StackSkillWrapper(core.BuffSkill("샐리맨더 미스칩(불씨)", 0, 99999999), 15+vEhc.getV(0,0))
+        SalamanderMischeifBuff = core.BuffSkill("샐리맨더 미스칩(버프)", 0, 30000, cooltime=-1, att=15+2*(15+vEhc.getV(0,0))).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
         ######   Wrappers    ######
     
@@ -116,12 +121,16 @@ class JobGenerator(ck.JobGenerator):
         StackCheck4 = core.OptionalElement(partial(SavageFlameStack.judge, 4, 1), SavageFlame_4, StackCheck3, name = "스택 확인")
         SavageFlame.onAfter(StackCheck4)
         SavageFlame.onAfter(SavageFlameStack.stackController(-15))
+
+        SalamanderMischeif.onTick(SalamanderMischeifStack.stackController(1))
+        SalamanderMischeif.add_runtime_modifier(SalamanderMischeifStack, lambda sk: core.CharacterModifier(pdamage_indep=sk.stack))
+        SalamanderMischeif.onJustAfter(SalamanderMischeifBuff.controller(60000))
         
         return (OrbitalFlame,
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                     cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level), WordOfFire, FiresOfCreation, BurningRegion, GloryOfGuardians, OverloadMana, Flame,
+                     cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level), WordOfFire, FiresOfCreation, BurningRegion, GloryOfGuardians, OverloadMana, Flame, SalamanderMischeifBuff,
                     globalSkill.soul_contract()] +\
-                [CygnusPalanks, BlazingOrbital, DragonSlaveInit, SavageFlame, InfinityFlameCircleInit, 
+                [SalamanderMischeif, CygnusPalanks, BlazingOrbital, DragonSlaveInit, SavageFlame, InfinityFlameCircleInit, 
                     InfernoRize, MirrorBreak, MirrorSpider] +\
                 [IgnitionDOT] +\
                 [] +\
