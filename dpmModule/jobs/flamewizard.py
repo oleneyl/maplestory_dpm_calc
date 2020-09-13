@@ -122,6 +122,7 @@ class JobGenerator(ck.JobGenerator):
         SavageFlame.onAfter(StackCheck4)
         SavageFlame.onAfter(SavageFlameStack.stackController(-15))
 
+        SalamanderMischeif.onJustAfter(SalamanderMischeifStack.stackController(-45))
         SalamanderMischeif.onTick(SalamanderMischeifStack.stackController(1))
         SalamanderMischeif.add_runtime_modifier(SalamanderMischeifStack, lambda sk: core.CharacterModifier(pdamage_indep=sk.stack))
         SalamanderMischeif.onJustAfter(SalamanderMischeifBuff.controller(60000))
