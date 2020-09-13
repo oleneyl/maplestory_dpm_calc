@@ -30,6 +30,39 @@ class MagicParticleWrapper(core.DamageSkillWrapper):
     def get_hit(self):
         return self.stack
 
+class SpiralOfManaWrapper(core.SummonSkillWrapper):
+    def __init__(self, vEhc, num1, num2):
+        self.penaltyTime = 0
+        skill = core.SummonSkill(
+            "스파이럴 오브 마나", 270, 420, 235+vEhc.getV(num1,num2), 6, 7000, cooltime=5000-50*vEhc.getV(num1,num2), red=True
+        ).setV(vEhc, 0, 2, False).isV(vEhc, num1, num2)
+        super(SpiralOfManaWrapper, self).__init__(skill)
+
+    def spend_time(self, time):
+        self.penaltyTime -= time
+        super(SpiralOfManaWrapper, self).spend_time(time)
+
+    def _use(self, skill_modifier):
+        result = super(SpiralOfManaWrapper, self)._use(skill_modifier)
+        self.tick = 780 # TODO: SummonSkill에 공격 시작 시간 입력 가능하게 할 것
+        self.penaltyTime = 0
+        return result
+
+    def _setPenalty(self):
+        if self.is_active():
+            self.penaltyTime = 1000
+        return self._result_object_cache
+
+    def setPenalty(self):
+        task = core.Task(self, self._setPenalty)
+        return core.TaskHolder(task, name="스오마 타수 감소")
+
+    def get_hit(self): # 서오마 사용후 1초간 3타, 미사용시 6타
+        if self.penaltyTime > 0:
+            return self.skill.hit - 3
+        else:
+            return self.skill.hit
+
 class MirSkillWrapper(core.SummonSkillWrapper):
     def __init__(self, skill):
         super(MirSkillWrapper, self).__init__(skill)
@@ -82,10 +115,12 @@ class JobGenerator(ck.JobGenerator):
         MagicMastery = core.InformedCharacterModifier("매직 마스터리",att = 30 + passive_level, crit_damage = 20 + passive_level//2)
         DragonFury = core.InformedCharacterModifier("드래곤 퓨리",patt = 35 + passive_level)
         HighDragonPotential = core.InformedCharacterModifier("하이 드래곤 포텐셜",boss_pdamage = 20+passive_level)
+
+        SpiralOfManaPassive = core.InformedCharacterModifier("스파이럴 오브 마나(패시브)", att=5+vEhc.getV(0,0))
         
         return [InheritWill, LinkedMagic,
             HighWisdom, SpellMastery, ElementalReset, CriticalMagic, MagicAmplification, DragonPotential,
-            MagicMastery, DragonFury, HighDragonPotential]
+            MagicMastery, DragonFury, HighDragonPotential, SpiralOfManaPassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -173,11 +208,15 @@ class JobGenerator(ck.JobGenerator):
         ImperialBreath = core.SummonSkill("임페리얼 브레스", 0, 240, 600+24*vEhc.getV(5,5), 7, 4000, cooltime=-1).isV(vEhc,5,5).wrap(MirSkillWrapper)
 
         ZodiacRayInit = core.DamageSkill("조디악 레이(개시)", 780, 0, 0, cooltime = 180000, red = True).isV(vEhc,4,2).wrap(core.DamageSkillWrapper) # 딜레이 확인 필요
-        ZodiacRay = core.SummonSkill("조디악 레이", 0, 180, 400+16*vEhc.getV(4,2), 6, 180*73, modifier = MDF(armor_ignore = 100), cooltime = -1).isV(vEhc,4,2).wrap(core.SummonSkillWrapper)
-        #14+vlevel//10초간 지속, 남은 시간동안 마법진 해방 딜 180ms마다. : 444타 가정( = 73타)
+        ZodiacRay = core.SummonSkill("조디악 레이", 0, 180, 400+16*vEhc.getV(4,2), 6, 180*74-1, modifier = MDF(armor_ignore = 100), cooltime = -1).isV(vEhc,4,2).wrap(core.SummonSkillWrapper)
+        #14+vlevel//10초간 지속, 남은 시간동안 마법진 해방 딜 180ms마다. : 444타 가정( = 74타)
+
+        SpiralOfMana = SpiralOfManaWrapper(vEhc, 0, 0)
         
         ##### build graph #####
-        CircleOfMana1.onAfter(CircleOfMana2)
+        CircleOfMana1.onAfter(SpiralOfMana.setPenalty())
+        CircleOfMana1.onAfter(core.OptionalElement(SpiralOfMana.is_not_active, SpiralOfMana, CircleOfMana2))
+        SpiralOfMana.protect_from_running()
         
         #미르 제한조건.
         MirConstraint = core.ConstraintElement("미르(사용중)", Mir, Mir.is_not_active)
@@ -248,7 +287,7 @@ class JobGenerator(ck.JobGenerator):
                     Mir, OverloadMana, Booster, OnixBless, HerosOath, ElementalBlastBuff,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
                 [ZodiacRayInit, MagicParticle] +\
-                [SummonOnixDragon, ZodiacRay, DragonBreak, DragonBreakBack, ElementalBlast, ImperialBreath,
+                [SummonOnixDragon, SpiralOfMana, ZodiacRay, DragonBreak, DragonBreakBack, ElementalBlast, ImperialBreath,
                     DragonSwift, SwiftBack, DragonDive, DiveOfEarth, DiveBack, DragonBreath, BreathOfEarth, BreathBack, MirrorBreak, MirrorSpider] +\
                 [] +\
                 [CircleOfMana1])
