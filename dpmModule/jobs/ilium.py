@@ -232,6 +232,10 @@ class JobGenerator(ck.JobGenerator):
         SoulOfCrystal_Reaction_Domination = core.DamageSkill("리액션:도미네이션(소오크)", 0, 550 * 0.01 * (50 + vEhc.getV(1,0)), 2*2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         SoulOfCrystal_Reaction_Destruction = core.DamageSkill("리액션:디스트럭션(소오크)", 0, 550 * 0.01 * (50 + vEhc.getV(1,0)), 4*2*2, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         SoulOfCrystal_Reaction_Spectrum = core.DamageSkill("리액션:스펙트럼(소오크)", 0, 1000+40*vEhc.getV(2,1), 5*2, modifier = core.CharacterModifier(boss_pdamage = 20)).wrap(core.DamageSkillWrapper)
+
+        CrystalGate = core.BuffSkill("크리스탈 게이트", 1080, (130+vEhc.getV(0,0))*1000, cooltime=180*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        CrystalGateBuff = core.BuffSkill("크리스탈 게이트(버프)", 0, 25000, att=5+2*vEhc.getV(0,0)).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        CrystalGateAttack = core.DamageSkill("크리스탈 게이트(폭격)", 0, 450+18*vEhc.getV(0,0), 5, cooltime=1500).wrap(core.DamageSkillWrapper)
         
         #스킬간 연결
 
@@ -266,6 +270,14 @@ class JobGenerator(ck.JobGenerator):
         CrystalSkill_Deus.onAfter(Machina.controller(30000, type_="set_disabled_and_time_left"))
         
         MagicCircuitFullDrive.onAfter(MagicCircuitFullDriveStorm)
+
+        CrystalGate.onAfter(CrystalGateBuff)
+        CrystalGateBuff.onConstraint(core.ConstraintElement("크리스탈 게이트 ON", CrystalGate, CrystalGate.is_active))
+        UseCrystalGateAttack = core.OptionalElement(lambda: CrystalGate.is_active() and CrystalGateAttack.is_available(), CrystalGateAttack, name="폭격 조건 체크")
+        for sk in [Craft_Javelin, Craft_Javelin_AfterOrb, Craft_Orb, Craft_Longinus,
+                    GloryWing_Craft_Javelin, GloryWing_MortalWingbit, CrystalSkill_MortalSwing, CrystalIgnition]:
+            sk.onAfter(UseCrystalGateAttack)
+        CrystalGateAttack.protect_from_running()
         
         #자벨린 이후 바로 오브를 시전합니다.
         Craft_Javelin.onAfter(Craft_Orb)
@@ -309,10 +321,10 @@ class JobGenerator(ck.JobGenerator):
                 [SoulOfCrystalPassive, globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, FastCharge, WraithOfGod, MagicCircuitFullDrive, FloraGoddessBless, SoulOfCrystal,
                     Craft_Javelin_EnhanceBuff, CrystalCharge, GloryWingUse,
-                    OverloadMana, BlessMark, CurseMark,
+                    OverloadMana, BlessMark, CurseMark, CrystalGate, CrystalGateBuff,
                     globalSkill.soul_contract()] +\
                 [CrystalSkill_MortalSwing, GloryWing_MortalWingbit, CrystalIgnitionInit, MirrorBreak, MirrorSpider] +\
                 [Riyo, Machina, CrystalSkill_Deus, CrystalSkill_Deus_Satelite,
-                    GramHolder, MagicCircuitFullDriveStorm] +\
+                    GramHolder, MagicCircuitFullDriveStorm, CrystalGateAttack] +\
                 [Reaction_Domination, Reaction_Destruction, Reaction_Spectrum] +\
                 [BasicAttackWrapper])
