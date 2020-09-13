@@ -143,7 +143,7 @@ class JobGenerator(ck.JobGenerator):
         Bahamutt.onTick(SacredMark.stackController(25, name="표식(25%)", dtype="set"))
         AngelOfLibra.onTick(SacredMark.stackController(50, name="표식(50%)", dtype="set"))
 
-        for sk in [HolyArrow, ShiningRay, Genesis, BigBang, AngelRay, PeaceMaker, PeaceMakerFinal]:
+        for sk in [HolyArrow, ShiningRay, Genesis, BigBang, AngelRay, PeaceMaker, PeaceMakerFinal, DivinePunishmentTick]:
             sk.onJustAfter(SacredMark.stackController(0, name="표식(소모)", dtype="set"))
             sk.add_runtime_modifier(SacredMark, lambda skill: core.CharacterModifier(pdamage_indep = skill.stack))
         
