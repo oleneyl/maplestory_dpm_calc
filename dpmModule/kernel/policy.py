@@ -1,7 +1,8 @@
 import random
 from collections import defaultdict
-from .abstract import AbstractScenarioGraph, AbstractScheduler
+from .abstract import AbstractScenarioGraph
 from .core import CharacterModifier
+from .core import ResultObject
 from .core import BuffSkillWrapper, DamageSkillWrapper, SummonSkillWrapper
 
 
@@ -110,13 +111,28 @@ class StorageLinkedGraph(NameIndexedGraph):
         }
 
 
-class AdvancedGraphScheduler(AbstractScheduler):
+class AdvancedGraphScheduler:
     def __init__(self, graph, fetching_policy, rules):
-        super(AdvancedGraphScheduler, self).__init__(graph)
-        self.fetching_policy = fetching_policy(graph)
-        self.rules = rules
         self._rule_map = defaultdict(list)
-    
+
+        self.graph = graph
+        self.rules = rules
+        self.total_time_left = None
+        self.total_time_initial = None
+        self.fetching_policy = fetching_policy(graph)
+
+    def get_current_time(self):
+        return self.total_time_initial - self.total_time_left
+
+    def is_simulation_end(self):
+        return (self.total_time_left < 0)
+
+    def spend_time(self, time):
+        '''This function might be overrided, with super().spend_time(time) calling.
+        '''
+        self.total_time_left -= time
+        self.graph.spend_time(time)
+
     def dequeue(self):
         for avail in self.fetching_policy.fetch_targets():
             failed = False
@@ -135,6 +151,9 @@ class AdvancedGraphScheduler(AbstractScheduler):
                 if wrp.need_count():
                     return tick
         return None
+
+    def apply_result(self, result : ResultObject):
+        self.spend_time(result.delay)
 
     def initialize(self, time):
         self.total_time_left = time

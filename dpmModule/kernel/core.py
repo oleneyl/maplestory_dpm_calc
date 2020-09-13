@@ -1719,7 +1719,7 @@ class Simulator(object):
             self.run_task_recursive(t)
 
         if result.delay > 0:
-            self.scheduler.spend_time(result.delay)
+            self.scheduler.apply_result(result)
             while True:
                 tick = self.scheduler.get_delayed_task()
                 if tick != None:
