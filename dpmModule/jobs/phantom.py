@@ -128,7 +128,7 @@ class JobGenerator(ck.JobGenerator):
         MileAiguilles.onAfter(CarteNoir)
         MileAiguilles.onAfter(MileAiguillesInit.controller(500, 'set_enabled_and_time_left'))
         
-        BasicAttack = core.OptionalElement(lambda: MileAiguillesInit.is_active(), MileAiguilles, MileAiguillesInit, name = "선딜 반영")
+        BasicAttack = core.OptionalElement(MileAiguillesInit.is_active, MileAiguilles, MileAiguillesInit, name = "선딜 반영")
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
         # TempestOfCardInit.onAfter(core.RepeatElement(TempestOfCard, 56))
