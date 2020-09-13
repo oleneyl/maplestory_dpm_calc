@@ -68,7 +68,6 @@ class WillOfSwordSummonWrapper(core.BuffSkillWrapper):
             return 150
 
     def _off(self):
-        self.onoff = False
         self.timeLeft = 0
         return self._disabledResultobjectCache
 

@@ -30,7 +30,7 @@ class MultipleOptionWrapper(core.SummonSkillWrapper):
         super(MultipleOptionWrapper, self).__init__(skill)
 
     def _useTick(self):
-        if self.onoff and self.tick <= 0:
+        if self.is_active() and self.tick <= 0:
             if self.cycle < 3:
                 damage = 350+10*self.vEhc.getV(2,1)
                 hit = 8
