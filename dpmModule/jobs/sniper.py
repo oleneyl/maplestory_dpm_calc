@@ -101,9 +101,9 @@ class JobGenerator(ck.JobGenerator):
         SplitArrowBuff = core.BuffSkill("스플릿 애로우", 810, 60 * 1000, 120 * 1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         #TODO : 스플릿애로우 계산
 
-        RepeatingCartrige = core.BuffSkill("리피팅 크로스보우 카트리지", 510, 60000, cooltime=120*1000, red=True).wrap(core.BuffSkillWrapper)
+        RepeatingCartrige = core.BuffSkill("리피팅 크로스보우 카트리지", 510, 60000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         CartrigeStack = core.StackSkillWrapper(core.BuffSkill("카트리지", 0, 99999999), 7)
-        FullBurstShot = core.DamageSkill("풀버스트 샷", 810, 300+12*vEhc.getV(0,0), (9+1)*4, cooltime=-1, modifier=PASSIVE_MODIFIER).wrap(core.DamageSkillWrapper)
+        FullBurstShot = core.DamageSkill("풀버스트 샷", 810, 300+12*vEhc.getV(0,0), (9+1)*4, cooltime=-1, modifier=PASSIVE_MODIFIER).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         FinalAttack = core.DamageSkill("파이널 어택", 0, 150, 0.4, modifier = PASSIVE_MODIFIER).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
         
