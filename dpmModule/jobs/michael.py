@@ -103,12 +103,19 @@ class JobGenerator(ck.JobGenerator):
     
         SwordOfSoullight = core.BuffSkill("소드 오브 소울 라이트", 810, 30000, cooltime = 180*1000, red = True, patt = 15 + vEhc.getV(1,1)//2, crit = 100, armor_ignore = 100).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         SoullightSlash = core.DamageSkill("소울 라이트 슬래시", 630, 400+16*vEhc.getV(1,1), 12).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+
+        LightOfCourage = core.BuffSkill("라이트 오브 커리지", 750, 25000, cooltime=90*1000, red=True, pdamage=10+vEhc.getV(0,0)//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        LightOfCourageSummon = core.SummonSkill("라이트 오브 커리지(빛의 검)", 0, 2400, 325+13*vEhc.getV(0,0), 5, 25000, cooltime=-1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        LightOfCourageAttack = core.DamageSkill("라이트 오브 커리지(용기의 빛)", 0, 175+7*vEhc.getV(0,0), 2, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        LightOfCourageFinal = core.DamageSkill("라이트 오브 커리지(용기의 빛)(종료)", 0, 375+15*vEhc.getV(0,0), 10*6, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ##### Build Graph
         
         # 기본 공격
         BasicAttack = core.OptionalElement(SwordOfSoullight.is_active, SoullightSlash, SoulAssult)
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
+
+        FinalAttack.onAfter(core.OptionalElement(LightOfCourage.is_active, LightOfCourageAttack)) # 용기의 빛과 파이널 어택 발동시키는 스킬 목록이 같다고 가정함
         
         SoullightSlash.onAfter(FinalAttack)
         SoulAssult.onAfter(FinalAttack)
@@ -128,7 +135,10 @@ class JobGenerator(ck.JobGenerator):
         ShiningCross.onAfter(ShiningCrossInstall)
         ShiningCross.onAfter(FinalAttack)
         ShiningCrossInstall.onTick(SoulAttack.controller(5000,"set_enabled_and_time_left"))
-        
+
+        # 라이트 오브 커리지
+        LightOfCourage.onAfter(LightOfCourageSummon)
+        LightOfCourage.onAfter(LightOfCourageFinal.controller(25000))
 
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
@@ -139,7 +149,7 @@ class JobGenerator(ck.JobGenerator):
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     GuardOfLight, LoyalGuardBuff, SoulAttack, Booster, Invigorate, SacredCube, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
-                    DeadlyChargeBuff, QueenOfTomorrow, AuraWeaponBuff, AuraWeapon, RoIias, SwordOfSoullight,
+                    DeadlyChargeBuff, QueenOfTomorrow, AuraWeaponBuff, AuraWeapon, RoIias, SwordOfSoullight, LightOfCourage, LightOfCourageSummon, LightOfCourageFinal,
                     globalSkill.soul_contract()] +\
                 [CygnusPalanks, LoyalGuard_5, ShiningCross, DeadlyCharge, ClauSolis, MirrorBreak, MirrorSpider] +\
                 [ShiningCrossInstall, ClauSolisSummon] +\
