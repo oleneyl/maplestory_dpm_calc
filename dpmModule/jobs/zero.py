@@ -223,7 +223,7 @@ class JobGenerator(ck.JobGenerator):
         
         #베타
         ShadowFlashBeta = core.DamageSkill("쉐도우 플래시(베타)", 510, 600+24*vEhc.getV(2,2), 5, cooltime = 40*1000, modifier = extra_dmg(8, False), red = True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        ShadowFlashBetaEnd = core.DamageSkill("쉐도우 플래시(베타)(종료)", 660, 750+30*vEhc.getV(2,2), 12 * 2, modifier = extra_dmg(8, False)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ShadowFlashBetaEnd = core.DamageSkill("쉐도우 플래시(베타)(종료)", 660, 750+30*vEhc.getV(2,2), 12 * 2, modifier = extra_dmg(15, False)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         #초월자 륀느의 기원
         RhinneBless = core.BuffSkill("초월자 륀느의 기원", 480, (30+vEhc.getV(0,0)//2)*1000, cooltime = 240000, att = 10+3*vEhc.getV(0,0)).wrap(core.BuffSkillWrapper)
