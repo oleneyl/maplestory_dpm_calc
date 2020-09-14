@@ -61,7 +61,9 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         ArmorSplit = core.InformedCharacterModifier("아머 스플릿", armor_ignore = 50)
-        return [ArmorSplit]
+        # 4카5앱 임시 구현 (보공 +30%, 방무 -10%)
+        LuckyHat_Temp = core.InformedCharacterModifier("카오스 벨룸의 헬름 (임시)", boss_pdamage = 30) - core.ExtendedCharacterModifier(armor_ignore = 10)
+        return [ArmorSplit, LuckyHat_Temp]
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(crit = 15, pdamage = 80, armor_ignore = 20, crit_damage = 25)
