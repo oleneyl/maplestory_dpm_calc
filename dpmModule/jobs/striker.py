@@ -10,7 +10,7 @@ from .jobclass import cygnus
 from . import jobutils
 from math import ceil
 
-#TODO : 해신강링 딜사이클에 추가
+#TODO : 해신강림 딜사이클에 추가
 
 class LightningWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
@@ -145,14 +145,14 @@ class JobGenerator(ck.JobGenerator):
                         SpearLightningAttack, SpearLightningAttack_Lightning, SpearLightningAttack_Final, SpearLightningAttack_Final_Lightning]:
             jobutils.create_auxilary_attack(skill, CHOOKROI, "(축뢰)")
 
-        for skill in [Destroy, Thunder, DestroyConcat, ThunderConcat, NoiShinChanGeuk,
+        for skill in [Thunder, ThunderConcat, NoiShinChanGeuk,
                         SpearLightningAttack, SpearLightningAttack_Lightning, SpearLightningAttack_Final, SpearLightningAttack_Final_Lightning]:
             skill.onAfter(LightningStack.stackController(1))
 
         for skill in [ShinNoiHapLAttack, CygnusPalanks, NoiShinChanGeukAttack]:
             skill.onTick(LightningStack.stackController(1))
 
-        GioaTan.onAfter(LightningStack.stackController(-2))
+        GioaTan.onAfter(core.OptionalElement(SkyOpen.is_not_active, LightningStack.stackController(-2), name="천지개벽 체크"))
         
         ShinNoiHapLAttack.onTick(ShinNoiHapLAttack_ChookRoi)
         NoiShinChanGeukAttack.onTick(NoiShinChanGeukAttack_ChookRoi)
