@@ -52,6 +52,8 @@ class JobGenerator(ck.JobGenerator):
         DragonsEye = core.InformedCharacterModifier("점정", att = 10 + passive_level, pdamage_indep = 10 + passive_level, crit = 10 + passive_level, crit_damage = 10 + passive_level, armor_ignore = 10 + passive_level)
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 0, 0)
 
+        #Bravado = core.InformedCharacterModifier("자신감", armor_ignore = 10)
+
         return [FiendSeal, RitualFanMastery, ThirdEye, FortuneFitness, Asura, AdvancedRitualFanMastery, Enlightenment, DragonsEye, ReadyToDiePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
@@ -75,7 +77,7 @@ class JobGenerator(ck.JobGenerator):
         # 1차
         #부채 타격 가정
         YeoUiSeon = core.DamageSkill("여의선 : 인", 540, 525 + 5*passive_level, 5, modifier = BASIC_HYPER + core.CharacterModifier(pdamage_indep = 10)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
-        MaBong = core.DamageSkill("마봉 호로부", 360, 1000 + 10 * passive_level, 6, cooltime = -1, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Mabong = core.DamageSkill("마봉 호로부", 360, 1000 + 10 * passive_level, 6, cooltime = -1, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
 
         # 2차
         Topa = core.DamageSkill("토파류 : 지", 540, 385 + 5*passive_level, 4, modifier = BASIC_HYPER).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
@@ -163,14 +165,14 @@ class JobGenerator(ck.JobGenerator):
         Summon_Sanryung.onAfter(Summon_Sanryung_Hit1)
         Summon_Sanryung_Hit2_Opt = core.OptionalElement(lambda : Summon_Sanryung.is_active() and Summon_Sanryung_Hit2.is_available(), Summon_Sanryung_Hit2)
 
-        NanSin = core.BuffSkill("선기 : 강림 괴력난신", 900, 30*1000, cooltime= 200*1000, pdamage = vEhc.getV(0, 0)*2+20).wrap(core.BuffSkillWrapper)
+        Nansin = core.BuffSkill("선기 : 강림 괴력난신", 900, 30*1000, cooltime= 200*1000, pdamage = vEhc.getV(0, 0)*2+20).wrap(core.BuffSkillWrapper)
         # 지속시간 중 공격을 12회 적중시킬 때마다 발동
-        NanSin_Attack = core.DamageSkill("선기 : 강림 괴력난신 (신들의 일격)", 0, vEhc.getV(0, 0)*34 + 850, 8, cooltime = 1500).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        NanSin_Final = core.DamageSkill("선기 : 강림 괴력난신 (신들의 강림)", 0, vEhc.getV(0, 0)*40+1000, 15*6, cooltime = -1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        Nansin_Attack = core.DamageSkill("선기 : 강림 괴력난신 (신들의 일격)", 0, vEhc.getV(0, 0)*34 + 850, 8, cooltime = 1500).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        Nansin_Final = core.DamageSkill("선기 : 강림 괴력난신 (신들의 강림)", 0, vEhc.getV(0, 0)*40+1000, 15*6, cooltime = -1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         
-        NanSin_Attack_Opt = core.OptionalElement(lambda : NanSin_Attack.is_available() and NanSin.is_active(), NanSin_Attack)
+        Nansin_Attack_Opt = core.OptionalElement(lambda : Nansin_Attack.is_available() and Nansin.is_active(), Nansin_Attack)
         # 버프 종료 직전에 막타 발동
-        NanSin.onAfter(NanSin_Final.controller(30*1000-1))
+        Nansin.onAfter(Nansin_Final.controller(30*1000-1))
 
         '''
         TODO:
@@ -192,9 +194,14 @@ class JobGenerator(ck.JobGenerator):
         BasicCombo.onAfter(Topa)
 
         # 괴력난신 지속시간 동안 천/지/인 속성 스킬 및 허/실 스킬의 데미지 20% 증가
-        for sk in [YeoUiSeon, Topa, Topa_Clone, Pacho, Pacho_Clone, EarthQuake, EarthQuake_Clone, Flames, Flames_Clone, GeumGoBong, GeumGoBong_2]:
-            sk.add_runtime_modifier(NanSin, lambda : core.CharacterModifier(pdamage = 20))
-
+        BASIC_SKILLS = [YeoUiSeon, Topa, Topa_Clone, Pacho, Pacho_Clone, EarthQuake, EarthQuake_Clone, Flames, Flames_Clone, GeumGoBong, GeumGoBong_2]
+        for sk in BASIC_SKILLS:
+            sk.add_runtime_modifier(Nansin, lambda : core.CharacterModifier(pdamage = 20))
+        
+        # 빈칸에는 천지인 이외의 스킬들 넣어야함
+        for base in BASIC_SKILLS + [Mabong]:
+            for opt in [Talisman_Clone_Attack_Opt, Butterfly_Dream_Attack_Opt, Elemental_Clone_Opt]:
+                base.onAfter(opt)
 
         return(BasicCombo,
             [globalSkill.maple_heros(chtr.level, name = "아니마의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
