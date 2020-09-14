@@ -10,18 +10,10 @@ from math import ceil
 '''
 이 코드는 아직 미완성입니다.
 
-TODO : 스킬 딜레이, 딜사이클
+하이퍼 패시브 적용: 천지인 리인포스 & 보스 킬러, 추적 귀화부 헤이스트, 흡성와류 헤이스트, 호접지몽 보스킬러
 
-TODO: 하이퍼 패시브 적용
-    천지인 리인포스, 보스 킬러
-    추적 귀화부 헤이스트
-    흡성와류 헤이스트
-    호접지몽 보스킬러
-
+TODO: 딜사이클 및 게이지 설계
 TODO: 작성 완료 후 다른 직업들과 비슷한 스타일로 순서 재정리
-
-TODO: 하이퍼 & 5차는 클라기준 공속이므로 확인필요
-
 TODO: 환영 분신부, 권술 : 호접지몽은 벞지, 소환수 동시적용
 '''
 
@@ -195,6 +187,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 괴력난신 지속시간 동안 천/지/인 속성 스킬 및 허/실 스킬의 데미지 20% 증가
         BASIC_SKILLS = [YeoUiSeon, Topa, Topa_Clone, Pacho, Pacho_Clone, EarthQuake, EarthQuake_Clone, Flames, Flames_Clone, GeumGoBong, GeumGoBong_2]
+        
         for sk in BASIC_SKILLS:
             sk.add_runtime_modifier(Nansin, lambda : core.CharacterModifier(pdamage = 20))
         
