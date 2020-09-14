@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import MutualRule, ReservationRule, RuleSet, ConcurrentRunRule
 from . import globalSkill
 from . import jobutils
 from .jobbranch import pirates
@@ -32,6 +33,13 @@ class JobGenerator(ck.JobGenerator):
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 40) # 뇌전 스택으로 평균 35~40%의 방무 적용
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(ReservationRule('소울 컨트랙트', '창뇌연격(시전)'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('창뇌연격(시전)', '소울 컨트랙트'), RuleSet.BASE)
+        ruleset.add_rule(MutualRule('천지개벽', '창뇌연격(시전)'), RuleSet.BASE)
+        return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -79,7 +87,8 @@ class JobGenerator(ck.JobGenerator):
         벽섬 : 1020ms
         태섬 : 900ms
         
-        모든 스킬은 쿨타임마다 사용
+        소울 컨트랙트를 창뇌연격에 맞춰 사용
+        천지개벽과 창뇌연격이 겹쳐지지 않게 사용
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         CHOOKROI = 0.7 + 0.01*passive_level
