@@ -154,18 +154,18 @@ class JobGenerator(ck.JobGenerator):
 
         # 환영 분신부를 대체하는 스킬 (알고리즘 구현 필요)
         # 환영 분신부 지속중에만 사용가능, 발동 중에는 환영 분신부의 지속시간이 감소하지 않음
-        Clone_Rampage = core.BuffSkill("선기 : 극대 분신난무", 900, 30*1000, cooltime = 200*1000).wrap(core.BuffSkillWrapper)
+        Clone_Rampage = core.BuffSkill("선기 : 극대 분신난무", 690, 30*1000, cooltime = 200*1000).wrap(core.BuffSkillWrapper)
         Clone_Rampage_Attack = core.DamageSkill("선기 : 극대 분신난무 (공격)", 0, vEhc.getV(0, 0) * 16 + 400, 2 * 12 * TALISMAN_PROBABLITY, cooltime = 12*1000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         # TODO: 연계 딜사이클 만들것
-        Summon_Sanryung = core.BuffSkill("권술 : 산령소환", 900, (vEhc.getV(0, 0)/2 +45)*1000, cooltime = 200*1000).wrap(core.BuffSkillWrapper)
+        Summon_Sanryung = core.BuffSkill("권술 : 산령소환", 690, (vEhc.getV(0, 0)/2 +45)*1000, cooltime = 200*1000).wrap(core.BuffSkillWrapper)
         Summon_Sanryung_Hit1 = core.DamageSkill("권술 : 산령소환 (발동)", 0, vEhc.getV(0, 0) * 36 + 900, 8).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         Summon_Sanryung_Hit2 = core.DamageSkill("권술 : 산령소환 (연계성공)", 0, vEhc.getV(0, 0)*14 + 350, 4, cooltime = 3000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         Summon_Sanryung.onAfter(Summon_Sanryung_Hit1)
         Summon_Sanryung_Hit2_Opt = core.OptionalElement(lambda : Summon_Sanryung.is_active() and Summon_Sanryung_Hit2.is_available(), Summon_Sanryung_Hit2)
 
-        Nansin = core.BuffSkill("선기 : 강림 괴력난신", 900, 30*1000, cooltime= 200*1000, pdamage = vEhc.getV(0, 0)*2+20).wrap(core.BuffSkillWrapper)
+        Nansin = core.BuffSkill("선기 : 강림 괴력난신", 690, 30*1000, cooltime= 200*1000, pdamage = vEhc.getV(0, 0)*2+20).wrap(core.BuffSkillWrapper)
         # 지속시간 중 공격을 12회 적중시킬 때마다 발동
         Nansin_Attack = core.DamageSkill("선기 : 강림 괴력난신 (신들의 일격)", 0, vEhc.getV(0, 0)*34 + 850, 8, cooltime = 1500).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         Nansin_Final = core.DamageSkill("선기 : 강림 괴력난신 (신들의 강림)", 0, vEhc.getV(0, 0)*40+1000, 15*6, cooltime = -1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
@@ -182,7 +182,7 @@ class JobGenerator(ck.JobGenerator):
         Elemental_Clone_Passive = core.DamageSkill("선기 : 천지인 환영 (패시브)", 0, 625 + 25*vEhc.getV(0, 0), 6, cooltime = 5000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         Elemental_Clone_Passive_Opt = core.OptionalElement(Elemental_Clone_Passive.is_usable(), Elemental_Clone_Passive)
 
-        Elemental_Clone = core.BuffSkill("선기 : 천지인 환영", 720, 30*1000, cooltime = 100*1000).wrap(core.BuffSkillWrapper)
+        Elemental_Clone = core.BuffSkill("선기 : 천지인 환영", 540, 30*1000, cooltime = 100*1000).wrap(core.BuffSkillWrapper)
         Elemental_Clone_Active = core.DamageSkill("선기 : 천지인 환영 (액티브)", 0, 625 + 25*vEhc.getV(0, 0), 6*2, cooltime = 2000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         Elemental_Clone_Active_Opt = core.OptionalElement(Elemental_Clone_Active.is_available(), Elemental_Clone_Active)
 
