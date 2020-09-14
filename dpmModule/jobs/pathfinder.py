@@ -4,7 +4,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import ConcurrentRunRule, ConditionRule, DisableRule, RuleSet
+from ..execution.rules import ConditionRule, DisableRule, RuleSet
 from . import globalSkill
 from .jobbranch import bowmen
 from math import ceil
@@ -139,7 +139,7 @@ class JobGenerator(ck.JobGenerator):
         
         # Damage skills
         # 카디널 포스
-        CardinalDischarge = core.DamageSkill("카디널 디스차지", 270, (4 + 1)*2, 300+5*passive_level, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        CardinalDischarge = core.DamageSkill("카디널 디스차지", 210, (4 + 1)*2, 300+5*passive_level, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         AdditionalDischarge = core.DamageSkill("에디셔널 디스차지", 0, 100 + 50 + passive_level, 3*3*(0.4+0.1)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         AdditionalDischargeEvolution = core.DamageSkill("에디셔널 디스차지(렐릭 에볼루션)", 0, 100 + 50 + passive_level, 3*(0.4+0.1)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
@@ -156,7 +156,8 @@ class JobGenerator(ck.JobGenerator):
         SplitMistelBonus = core.DamageSkill("스플릿 미스텔(보너스)", 0, 100+200+4*passive_level, 4 * 2,
                     modifier = ANCIENT_ARCHERY).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
 
-        TripleImpact = core.DamageSkill("트리플 임팩트", 420, 400 + 200+5*passive_level, 5*3, cooltime = 10*1000, red=True,
+        TripleImpactJump = core.DamageSkill("트리플 임팩트(점프)", 420, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
+        TripleImpact = core.DamageSkill("트리플 임팩트", 0, 400 + 200+5*passive_level, 5*3, cooltime = 10*1000, red=True,
                     modifier = ANCIENT_ARCHERY).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
                 
         # 5스택 가정, 다른 스킬 사용 중에 시전가능
@@ -227,7 +228,8 @@ class JobGenerator(ck.JobGenerator):
         ComboAssultDischarge.onAfter(ComboAssultDischargeArrow)
         ComboAssultTransition.onAfter(ComboAssultTransitionArrow)
 
-        TripleImpact.onAfter(TripleImpact.controller(-540, "reduce_cooltime", "쿨타임 지연 540ms"))
+        TripleImpact.onBefore(TripleImpactJump)
+        TripleImpact.onConstraint(core.ConstraintElement("레조넌스 동기화", EdgeOfResonance, EdgeOfResonance.is_usable))
         
         AncientAstraDischarge.onAfter(AncientAstraDischargeArrow)
         
