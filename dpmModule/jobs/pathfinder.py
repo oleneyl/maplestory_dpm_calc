@@ -13,7 +13,7 @@ from math import ceil
 class CardinalStateWrapper(core.BuffSkillWrapper):
     def __init__(self, ancient_force_skills):
         '''
-        DISCHARGE / BLAST / TRANSITION
+        DISCHARGE / BLAST / TRANSITION / NONE
         '''
         skill = core.BuffSkill("카디널 차지", 0, 99999999)
         super(CardinalStateWrapper, self).__init__(skill)
@@ -27,11 +27,11 @@ class CardinalStateWrapper(core.BuffSkillWrapper):
         return False
 
     def _change_state(self, state):
-        assert(state in ["DISCHARGE", "BLAST", "TRANSITION"])
-        if self.state != state:
-            self.state = state
+        assert(state in ["DISCHARGE", "BLAST", "TRANSITION", "NONE"])
+        if self.state != state and state != "NONE" and self.state != "NONE":
             for skill in self.ancient_force_skills:
                 skill.reduce_cooltime(1000)
+        self.state = state
         return self._result_object_cache
         
     def change_state(self, state):
@@ -299,6 +299,11 @@ class JobGenerator(ck.JobGenerator):
         
         ComboAssultHolder.onAfter(ComboAssultOptional)
         AncientAstraHolder.onAfter(AncientAstraOptional)
+
+        ComboAssultHolder.onAfter(CardinalState.change_state("NONE"))
+        AncientAstraHolder.onAfter(CardinalState.change_state("NONE"))
+        ObsidionBarrierBlast.onAfter(CardinalState.change_state("NONE"))
+        RelicUnboundDischarge.onAfter(CardinalState.change_state("NONE"))
         
         # 커스 트랜지션
         ComboAssultDischarge.onAfter(CurseTransition)
