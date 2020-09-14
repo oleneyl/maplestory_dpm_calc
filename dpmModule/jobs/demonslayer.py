@@ -36,6 +36,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule('데몬 슬래시(1타)', '데몬 슬래시-리메인타임'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('서버러스', '데몬 어웨이크닝'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('데빌 크라이', '데몬 어웨이크닝'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('데몬 베인(개시)', '데몬 어웨이크닝'), RuleSet.BASE)
         return ruleset
     
     def get_modifier_optimization_hint(self):
@@ -68,6 +69,8 @@ class JobGenerator(ck.JobGenerator):
         '''
         코강 순서:
         슬래시-임팩트-서버-익스플로전-메타-데빌크라이
+
+        데몬 베인은 어웨이크닝과 따로 사용
 
         ##### 하이퍼 #####
         # 데몬 슬래시 - 엑스트라 포스, 리인포스, 리메인타임 리인포스
@@ -117,6 +120,13 @@ class JobGenerator(ck.JobGenerator):
         SpiritOfRageEnd = core.DamageSkill("요르문간드(종료)", 0, 900+36*vEhc.getV(3,3), 15, cooltime = -1).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
         Orthros = core.SummonSkill("오르트로스(네메아)", 510, 2000, 400+16*vEhc.getV(1,1), 12, 40000, cooltime = 120*1000, red=True, modifier = core.CharacterModifier(crit = 100, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         Orthros_ = core.SummonSkill("오르트로스(게리온)", 0, 3000, 900+36*vEhc.getV(1,1), 10, 40000, cooltime = -1, modifier = core.CharacterModifier(crit = 100, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
+
+        DemonBaneInit = core.DamageSkill("데몬 베인(개시)", 240, 0, 0, cooltime=240*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DemonBaneTick = core.DamageSkill("데몬 베인(1)", 3360/16, 325+13*vEhc.getV(0,0), 6, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 3360ms 16회
+        DemonBane2Pre = core.DamageSkill("데몬 베인(2)(선딜)", 600, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DemonBane2Tick = core.DamageSkill("데몬 베인(2)", 2400/21, 650+26*vEhc.getV(0,0), 7, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 2400ms 21회
+        DemonBane2After = core.DamageSkill("데몬 베인(2)(후딜)", 240, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        
         ######   Skill Wrapper   ######
         DemonSlashAW1.onAfter(DemonSlashAW2)
         DemonSlashAW2.onAfter(DemonSlashAW3)
@@ -133,6 +143,11 @@ class JobGenerator(ck.JobGenerator):
         
         SpiritOfRage.onAfter(SpiritOfRageEnd.controller((10+int(0.2*vEhc.getV(3,3)))*1000))
         Orthros.onAfter(Orthros_)
+
+        DemonBaneInit.onAfter(core.RepeatElement(DemonBaneTick, 16))
+        DemonBaneInit.onAfter(DemonBane2Pre)
+        DemonBaneInit.onAfter(core.RepeatElement(DemonBane2Tick, 21))
+        DemonBaneInit.onAfter(DemonBane2After)
         
         Metamorphosis.onAfter(MetamorphosisSummon)
         MetamorphosisSummon.onTick(MetamorphosisSummon_BB)
@@ -149,7 +164,7 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         # 블블 추가타 적용
-        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DevilCry, AuraWeapon]:
+        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DemonBaneTick, DemonBane2Tick, DevilCry, AuraWeapon]:
             jobutils.create_auxilary_attack(sk, 0.9, "(블루 블러드)")
 
         return(BasicAttackWrapper,
@@ -157,5 +172,5 @@ class JobGenerator(ck.JobGenerator):
                     Booster, DemonSlashRemainTime, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
                     *demon.AnotherWorldWrapper(vEhc, 0, 0), globalSkill.soul_contract()] +\
                 [Cerberus, DevilCry, DemonSlash1, SpiritOfRageEnd] +\
-                [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_, MirrorBreak, MirrorSpider] +\
+                [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_, DemonBaneInit, MirrorBreak, MirrorSpider] +\
                 [BasicAttackWrapper])
