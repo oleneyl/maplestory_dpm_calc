@@ -21,6 +21,8 @@ TODO: 하이퍼 패시브 적용
 TODO: 작성 완료 후 다른 직업들과 비슷한 스타일로 순서 재정리
 
 TODO: 하이퍼 & 5차는 클라기준 공속이므로 확인필요
+
+TODO: 환영 분신부, 권술 : 호접지몽은 벞지, 소환수 동시적용
 '''
 
 def AnimaGoddessBlessWrapper(vEhc, num1, num2):
@@ -67,17 +69,17 @@ class JobGenerator(ck.JobGenerator):
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        SUMMON_REMAIN = 1 + chtr.summonRemain + 0.1
+        SUMMON_REMAIN = 1 #+ chtr.get_base_modifier().summon_rem + 0.1
         BASIC_HYPER = core.CharacterModifier(pdamage = 10, boss_pdamage = 15)
         
         # 1차
         #부채 타격 가정
-        YeoUiSeon = core.DamageSkill("여의선 : 인", 540, 525 + 5*passive_level, 5, modifier = core.CharacterModifier(pdamage_indep = 10)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        YeoUiSeon = core.DamageSkill("여의선 : 인", 540, 525 + 5*passive_level, 5, modifier = BASIC_HYPER + core.CharacterModifier(pdamage_indep = 10)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         MaBong = core.DamageSkill("마봉 호로부", 360, 1000 + 10 * passive_level, 6, cooltime = -1, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
 
         # 2차
-        Topa = core.DamageSkill("토파류 : 지", 540, 385 + 5*passive_level, 4).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
-        Topa_Clone = core.DamageSkill("토파류 : 허/실", 0, 385 + 5*passive_level, 4, cooltime = -1).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Topa = core.DamageSkill("토파류 : 지", 540, 385 + 5*passive_level, 4, modifier = BASIC_HYPER).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Topa_Clone = core.DamageSkill("토파류 : 허/실", 0, 385 + 5*passive_level, 4, cooltime = -1, modifier = BASIC_HYPER).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Topa.onAfter(Topa_Clone)
 
         # 스킬 설명에 확률이 명시되어 있지 않음.
@@ -94,15 +96,15 @@ class JobGenerator(ck.JobGenerator):
 
         # 3차
 
-        Pacho = core.DamageSkill("파초풍 : 천", 510, 265 + 2*passive_level, 5).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
-        Pacho_Clone = core.DamageSkill("파초풍 : 허/실", 0, 265 + 2*passive_level, 5, cooltime = -1).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Pacho = core.DamageSkill("파초풍 : 천", 510, 265 + 2*passive_level, 5, modifier = BASIC_HYPER).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Pacho_Clone = core.DamageSkill("파초풍 : 허/실", 0, 265 + 2*passive_level, 5, modifier = BASIC_HYPER, cooltime = -1).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Pacho.onAfter(Pacho_Clone)
 
-        EarthQuake = core.DamageSkill("지진쇄 : 지", 510, 390 + 5*passive_level, 6, cooltime = 6000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
-        EarthQuake_Clone = core.DamageSkill("지진쇄 : 허/실", 0, 390 + 5*passive_level, 6, cooltime = -1).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        EarthQuake = core.DamageSkill("지진쇄 : 지", 510, 390 + 5*passive_level, 6, modifier = BASIC_HYPER, cooltime = 6000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        EarthQuake_Clone = core.DamageSkill("지진쇄 : 허/실", 0, 390 + 5*passive_level, 6, modifier = BASIC_HYPER, cooltime = -1).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         EarthQuake.onAfter(EarthQuake_Clone)
 
-        Talisman_Seeker = core.SummonSkill("추적 귀화부", 480, 1800, 390 + 5*passive_level, 5, 40*1000*SUMMON_REMAIN).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
+        Talisman_Seeker = core.SummonSkill("추적 귀화부", 480, 1800 * 0.75, 390 + 5*passive_level, 5, 40*1000*SUMMON_REMAIN).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
 
         Misaeng = core.DamageSkill("권술 : 미생강변", 540, 850 + (6+4)*self.combat, 8, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
         Misaeng_Debuff = core.BuffSkill("권술 : 미생강변 (디버프)", 0, 60*1000, armor_ignore = 20).wrap(core.BuffSkillWrapper)
@@ -111,12 +113,12 @@ class JobGenerator(ck.JobGenerator):
         Misaeng_Debuff.onAfter(Misaeng)
 
         # 4차
-        Flames = core.DamageSkill("멸화염 : 천", 420, 340 + self.combat, 6, cooltime = 8000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
-        Flames_Clone = core.DamageSkill("멸화염 : 허/실", 420, 340 + self.combat, 6).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Flames = core.DamageSkill("멸화염 : 천", 420, 340 + self.combat, 6, modifier = BASIC_HYPER, cooltime = 8000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Flames_Clone = core.DamageSkill("멸화염 : 허/실", 420, 340 + self.combat, 6, modifier = BASIC_HYPER, cooltime = -1).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Flames.onAfter(Flames_Clone)
 
-        GeumGoBong = core.DamageSkill("금고봉 : 인 (1타)", 450, 260 + 3*self.combat, 10, cooltime = 11000, modifier = core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
-        GeumGoBong_2 = core.DamageSkill("금고봉 : 인 (2타)", 0, 420 + self.combat, 8, cooltime = -1, modifier = core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        GeumGoBong = core.DamageSkill("금고봉 : 인 (1타)", 450, 260 + 3*self.combat, 10, cooltime = 11000, modifier = BASIC_HYPER + core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        GeumGoBong_2 = core.DamageSkill("금고봉 : 인 (2타)", 0, 420 + self.combat, 8, cooltime = -1, modifier = BASIC_HYPER + core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         GeumGoBong.onAfter(GeumGoBong_2)
 
         # 추정치 딜레이 (점프부터 이펙트 완전소멸까지 프레임 분석)
@@ -124,12 +126,11 @@ class JobGenerator(ck.JobGenerator):
         Thousand_Ton_Stone_DOT = core.DotSkill("둔갑 천근석 (출혈)", 0, 1000, 270 + self.combat, 1, 10000, cooltime = -1).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
         Thousand_Ton_Stone.onAfter(Thousand_Ton_Stone_DOT)
 
-        # TODO: 공격 주기 확인
-        Waryu = core.SummonSkill("권술 : 흡성와류", 750, None, 240 + 4*self.combat, 6, 40000 * SUMMON_REMAIN).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
-
+        Waryu = core.SummonSkill("권술 : 흡성와류", 750, 1000 * 0.8, 240 + 4*self.combat, 6, 40000).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
+        
         # TODO: 벞지 & 소환수 지속시간 둘다 적용
         Butterfly_Dream = core.BuffSkill("권술 : 호접지몽", 450, 100*1000, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
-        Butterfly_Dream_Attack = core.DamageSkill("권술 : 호접지몽 (공격)", 0, 275 + 3 * self.combat, 5, cooltime = 1000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Butterfly_Dream_Attack = core.DamageSkill("권술 : 호접지몽 (공격)", 0, 275 + 3 * self.combat, 5, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 1000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Butterfly_Dream_Attack_Opt = core.OptionalElement(Butterfly_Dream_Attack.is_usable(), Butterfly_Dream_Attack)
 
         '''
@@ -143,6 +144,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 5차 공용 (베놈 버스트 생략)
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 0, 0)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         # 그란디스 여신의 축복 (아니마)
         # 아니마 신직업 등장시 공용코드화 할것
@@ -184,12 +186,20 @@ class JobGenerator(ck.JobGenerator):
 
         Elemental_Clone_Opt = core.OptionalElement(Elemental_Clone.is_active(), Elemental_Clone_Active_Opt, Elemental_Clone_Passive_Opt)
 
+        # 딜사이클
+        BasicCombo = core.DamageSkill("기본 공격", 0,0,0).wrap(core.DamageSkillWrapper)
+        # 깡토파류
+        BasicCombo.onAfter(Topa)
+
         # 괴력난신 지속시간 동안 천/지/인 속성 스킬 및 허/실 스킬의 데미지 20% 증가
         for sk in [YeoUiSeon, Topa, Topa_Clone, Pacho, Pacho_Clone, EarthQuake, EarthQuake_Clone, Flames, Flames_Clone, GeumGoBong, GeumGoBong_2]:
             sk.add_runtime_modifier(NanSin, lambda : core.CharacterModifier(pdamage = 20))
 
 
-        return(Topa,
-        [globalSkill.maple_heros(chtr.level, name = "아니마의 용사", combat_level=self.combat)]+\
-        []+\
-        [Topa])
+        return(BasicCombo,
+            [globalSkill.maple_heros(chtr.level, name = "아니마의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                Booster,
+                globalSkill.soul_contract()] +\
+            [MirrorBreak, MirrorSpider] +\
+            [] +\
+            [BasicCombo])
