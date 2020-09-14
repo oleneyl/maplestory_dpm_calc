@@ -56,14 +56,14 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
         ResolutionTime = core.InformedCharacterModifier("리졸브 타임",pdamage_indep = 25, stat_main = 50)
+        # 4카5앱 임시 구현 (보공 +30%, 방무 -10%)
+        LuckyHat_Temp = core.InformedCharacterModifier("카오스 벨룸의 헬름 (임시)", boss_pdamage = 30) - core.ExtendedCharacterModifier(armor_ignore = 10)
 
-        return [Mastery, ResolutionTime]
+        return [Mastery, ResolutionTime, LuckyHat_Temp]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         ArmorSplit = core.InformedCharacterModifier("아머 스플릿", armor_ignore = 50)
-        # 4카5앱 임시 구현 (보공 +30%, 방무 -10%)
-        LuckyHat_Temp = core.InformedCharacterModifier("카오스 벨룸의 헬름 (임시)", boss_pdamage = 30) - core.ExtendedCharacterModifier(armor_ignore = 10)
-        return [ArmorSplit, LuckyHat_Temp]
+        return [ArmorSplit]
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(crit = 15, pdamage = 80, armor_ignore = 20, crit_damage = 25)
