@@ -39,14 +39,19 @@ class ChunJiInWrapper(core.BuffSkillWrapper):
         self.element_skills = element_skills
     
     def _add_element(self, el):
-        self.ChunJiIn[el] = True
+        if not self.ChunJiIn[el]:
+            self.ChunJiIn[el] = True
+            if self._count_elements() == 3:
+                # TODO: 두루마리 도력 +200
+                # TODO: 권술 : 산령소환 발동
+                self._reset_elements()
     
     def _count_elements(self):
         return (int(self.ChunJiIn["Chun"]) + int(self.ChunJiIn["Ji"]) + int(self.ChunJiIn["In"]))
     
     def _reset_elements(self):
-        for el in self.ChunJiIn.items():
-            el = False
+        for el in self.ChunJiIn.keys():
+            self.ChunJiIn[el] = False
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -97,11 +102,11 @@ class JobGenerator(ck.JobGenerator):
         
         # 1차
         #부채 타격 가정
-        YeoUiSeon = core.DamageSkill("여의선 : 인", 540, 525 + 5*passive_level, 5, modifier = BASIC_HYPER + core.CharacterModifier(pdamage_indep = 10)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        YeoUiSeon = core.DamageSkill("여의선 : 인", 540 + 30, 525 + 5*passive_level, 5, modifier = BASIC_HYPER + core.CharacterModifier(pdamage_indep = 10)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Mabong = core.DamageSkill("마봉 호로부", 360, 1000 + 10 * passive_level, 6, cooltime = -1, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
 
         # 2차
-        Topa = core.DamageSkill("토파류 : 지", 540, 385 + 5*passive_level, 4, modifier = BASIC_HYPER).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Topa = core.DamageSkill("토파류 : 지", 540 + 30, 385 + 5*passive_level, 4, modifier = BASIC_HYPER).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Topa_Clone = core.DamageSkill("토파류 : 허/실", 0, 385 + 5*passive_level, 4, cooltime = -1, modifier = BASIC_HYPER).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Topa.onAfter(Topa_Clone)
         
@@ -116,7 +121,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 3차
 
-        Pacho = core.DamageSkill("파초풍 : 천", 510, 265 + 2*passive_level, 5, modifier = BASIC_HYPER).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Pacho = core.DamageSkill("파초풍 : 천", 510 + 60, 265 + 2*passive_level, 5, modifier = BASIC_HYPER).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Pacho_Clone = core.DamageSkill("파초풍 : 허/실", 0, 265 + 2*passive_level, 5, modifier = BASIC_HYPER, cooltime = -1).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Pacho.onAfter(Pacho_Clone)
 
