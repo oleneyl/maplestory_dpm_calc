@@ -83,7 +83,7 @@ class JobGenerator(ck.JobGenerator):
         #Summon Skills
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 5, 5)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0) # TODO: 윔 발생여부 확인할것
-        HowlingGail = core.SummonSkill("하울링 게일", 630, 150, 250 + 10*vEhc.getV(1, 1), 3, 150*56-1, cooltime = 20 * 1000).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper) #56타
+        HowlingGail = core.SummonSkill("하울링 게일", 630, 150, 250 + 10*vEhc.getV(1, 1), 3, 150*58-1, cooltime = 20 * 1000).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper) #58타
         WindWall = core.SummonSkill("윈드 월", 720, 2000, (550 + vEhc.getV(2, 2)*22) / 2, 5 * 3 , 45 * 1000, cooltime = 90 * 1000, red=True).isV(vEhc, 2, 2).wrap(core.SummonSkillWrapper)
         VortexSphere = core.SummonSkill("볼텍스 스피어", 720, 180, 400+16*vEhc.getV(0,0), 6, 180*17-1, cooltime=35000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) # 17타
         
