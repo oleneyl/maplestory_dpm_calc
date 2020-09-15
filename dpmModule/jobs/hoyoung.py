@@ -14,7 +14,6 @@ from math import ceil
 
 TODO: 딜사이클 및 게이지 설계
 TODO: 작성 완료 후 다른 직업들과 비슷한 스타일로 순서 재정리
-TODO: 환영 분신부, 권술 : 호접지몽은 벞지, 소환수 동시적용
 '''
 
 def AnimaGoddessBlessWrapper(vEhc, num1, num2):
@@ -75,7 +74,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5+0.5*ceil(passive_level/2))    #오더스 기본적용!
-        SpiritAffinity = core.BuffSkill("정령친화", 0, 999999).wrap(core.BuffSkillWrapper) # 더미
+        SpiritAffinity = core.InformedCharacterModifier("정령친화", summon_rem = 10) # 더미
         return [WeaponConstant, Mastery, SpiritAffinity]
     
     '''
@@ -86,8 +85,10 @@ class JobGenerator(ck.JobGenerator):
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        SUMMON_REMAIN = 1 #+ chtr.get_base_modifier().summon_rem + 0.1
         BASIC_HYPER = core.CharacterModifier(pdamage = 10, boss_pdamage = 15)
+
+        # 소환수 지속시간과 버프 지속시간을 동시에 받는 스킬들 (해당 스킬들에는 rem = False 적용할것)
+        SUMMON_AND_BUFF = 1 + 0.01 * (chtr.get_base_modifier().buff_rem + chtr.get_base_modifier().summon_rem)
         
         # 1차
         #부채 타격 가정
@@ -118,7 +119,7 @@ class JobGenerator(ck.JobGenerator):
         EarthQuake_Clone = core.DamageSkill("지진쇄 : 허/실", 0, 390 + 5*passive_level, 6, modifier = BASIC_HYPER, cooltime = -1).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         EarthQuake.onAfter(EarthQuake_Clone)
 
-        Talisman_Seeker = core.SummonSkill("추적 귀화부", 480, 1800 * 0.75, 390 + 5*passive_level, 5, 40*1000*SUMMON_REMAIN).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
+        Talisman_Seeker = core.SummonSkill("추적 귀화부", 480, 1800 * 0.75, 390 + 5*passive_level, 5, 40*1000*SUMMON_AND_BUFF, rem = False).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
 
         Misaeng = core.DamageSkill("권술 : 미생강변", 540, 850 + (6+4)*self.combat, 8, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
         Misaeng_Debuff = core.BuffSkill("권술 : 미생강변 (디버프)", 0, 60*1000, armor_ignore = 20).wrap(core.BuffSkillWrapper)
@@ -143,7 +144,7 @@ class JobGenerator(ck.JobGenerator):
         Waryu = core.SummonSkill("권술 : 흡성와류", 750, 1000 * 0.8, 240 + 4*self.combat, 6, 40000).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
         
         # TODO: 벞지 & 소환수 지속시간 둘다 적용
-        Butterfly_Dream = core.BuffSkill("권술 : 호접지몽", 450, 100*1000, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
+        Butterfly_Dream = core.BuffSkill("권술 : 호접지몽", 450, 100*1000 * SUMMON_AND_BUFF, pdamage_indep = 10, rem = False).wrap(core.BuffSkillWrapper)
         Butterfly_Dream_Attack = core.DamageSkill("권술 : 호접지몽 (공격)", 0, 275 + 3 * self.combat, 5, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 1000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Butterfly_Dream_Attack_Opt = core.OptionalElement(Butterfly_Dream_Attack.is_usable(), Butterfly_Dream_Attack)
 
