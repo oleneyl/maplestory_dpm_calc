@@ -127,14 +127,10 @@ class JobGenerator(ck.JobGenerator):
         Butterfly_Dream_Attack = core.DamageSkill("권술 : 호접지몽 (공격)", 0, 275 + 3 * self.combat, 5, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 1000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Butterfly_Dream_Attack_Opt = core.OptionalElement(Butterfly_Dream_Attack.is_usable(), Butterfly_Dream_Attack)
 
-        '''
-        하이퍼 액티브
-        몽유도원은 딜스킬이 아님
-        TODO: 태을선인의 딜사이클 포함여부 확인
-        '''
+        # 하이퍼 액티브
 
         Miracle_Tonic = core.BuffSkill("선기 : 영약 태을선단", 540, 12*1000, cooltime = 100*1000, rem = False, red = False).wrap(core.BuffSkillWrapper)
-        
+        CloneBinding = core.DamageSkill("선기 : 분신 둔갑 태을선인", 720, 800, 8, cooltime = 200000, red = False).wrap(core.DamageSkillWrapper)
 
         # 5차 공용 (베놈 버스트 생략)
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 0, 0)
