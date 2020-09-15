@@ -20,6 +20,29 @@ TODO: 환영 분신부, 권술 : 호접지몽은 벞지, 소환수 동시적용
 def AnimaGoddessBlessWrapper(vEhc, num1, num2):
     AnimaGoddessBless = core.BuffSkill("그란디스 여신의 축복 (아니마)", 0, 40*1000, cooltime = 240*1000, pdamage = 10 + vEhc.getV(num1, num2), rem = False).wrap(core.BuffSkillWrapper)
     return AnimaGoddessBless
+'''
+부적 도력은 최대 100까지 충전할 수 있다.
+- 천/지/인 속성 도술 적중 시 부적 도력 충전
+- 각 속성 스킬 적중 시 속성 연계 단계 및 부적 도력 충전량 증가 (1단계: 10, 2단계: 15, 3단계: 20)
+- 속성 연계 3단계 달성 시 연계 단계 초기화
+'''
+class ChunJiInWrapper(core.BuffSkillWrapper):
+    def __init__(self, element_skills):
+        skill = core.BuffSkill("천지인", 0, 99999999)
+        super(ChunJiInWrapper, self).__init__(skill)
+        
+        self.ChunJiIn = {
+            "Chun": False,
+            "Ji": False,
+            "In": False
+        }
+        self.element_skills = element_skills
+    
+    def _add_element(self, el):
+        self.ChunJiIn[el] = True
+    
+    def _is_triple(self):
+        return (self.ChunJiIn["Chun"] and self.ChunJiIn["Ji"] and self.ChunJiIn["In"])
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
