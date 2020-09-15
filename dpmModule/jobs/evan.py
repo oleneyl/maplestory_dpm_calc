@@ -10,7 +10,7 @@ from .jobbranch import magicians
 
 class MagicParticleWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc, upgrade_index, passive_level):
-        skill = core.DamageSkill("마법 잔해", 0, 0, 0, cooltime = 10000).setV(vEhc, upgrade_index, 2, True)
+        skill = core.DamageSkill("마법 잔해", 0, 110, 1, cooltime = 10000).setV(vEhc, upgrade_index, 2, True)
         super(MagicParticleWrapper, self).__init__(skill)
         self.stack = 0
         self.passive_level = passive_level
@@ -25,16 +25,16 @@ class MagicParticleWrapper(core.DamageSkillWrapper):
         return result
 
     def get_damage(self):
-        return 110 + 2*self.passive_level + (100 + self.passive_level) * (self.stack // 5)
+        return self.skill.damage + 2*self.passive_level + (100 + self.passive_level) * (self.stack // 5)
 
     def get_hit(self):
-        return self.stack
+        return self.skill.hit * self.stack
 
 class SpiralOfManaWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2):
         self.penaltyTime = 0
         skill = core.SummonSkill(
-            "스파이럴 오브 마나", 270, 420, 235+vEhc.getV(num1,num2), 6, 7000, cooltime=5000-50*vEhc.getV(num1,num2), red=True
+            "스파이럴 오브 마나", 360, 420, 235+vEhc.getV(num1,num2), 6, 7000, cooltime=5000-50*vEhc.getV(num1,num2), red=True
         ).setV(vEhc, 0, 2, False).isV(vEhc, num1, num2)
         super(SpiralOfManaWrapper, self).__init__(skill)
 
@@ -185,9 +185,9 @@ class JobGenerator(ck.JobGenerator):
         BreathOfEarth = core.SummonSkill("브레스 오브 어스", 0, 450, 280+self.combat, 5, 3510, cooltime=-1).setV(vEhc, 1, 2, False).wrap(MirSkillWrapper)
         
         ### 돌아와!
-        SwiftBack = core.BuffSkill("스위프트-돌아와!", 660, 60000, cooltime=-1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
-        DiveBack = core.BuffSkill("다이브-돌아와!", 660, 60000, cooltime=-1, rem=True).wrap(core.BuffSkillWrapper)
-        BreathBack = core.SummonSkill("브레스-돌아와!", 660, 450, 150+self.combat, 1, (30+self.combat // 2)*1000, cooltime=-1).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
+        SwiftBack = core.BuffSkill("스위프트-돌아와!", 30, 60000, cooltime=-1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
+        DiveBack = core.BuffSkill("다이브-돌아와!", 30, 60000, cooltime=-1, rem=True).wrap(core.BuffSkillWrapper)
+        BreathBack = core.SummonSkill("브레스-돌아와!", 30, 450, 150+self.combat, 1, (30+self.combat // 2)*1000, cooltime=-1).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         
         # 하이퍼
         SummonOnixDragon = core.SummonSkill("서먼 오닉스 드래곤", 900, 3030, 550, 2, 40000, cooltime = 80000).wrap(core.SummonSkillWrapper)
@@ -204,11 +204,11 @@ class JobGenerator(ck.JobGenerator):
         ElementalBlastBuff = core.BuffSkill("엘리멘탈 블래스트(버프)", 0, 10000, pdamage_indep = 20, cooltime=-1).isV(vEhc,2,3).wrap(core.BuffSkillWrapper)
 
         DragonBreak = core.SummonSkill("드래곤 브레이크", 0, 360, 450+18*vEhc.getV(5,5), 7, 2500, cooltime = 20000, red=True).isV(vEhc,5,5).wrap(MirSkillWrapper)
-        DragonBreakBack = core.SummonSkill("드래곤 브레이크-돌아와!", 660, 510, 150+6*vEhc.getV(5,5), 3, 5000, cooltime=-1).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
+        DragonBreakBack = core.SummonSkill("드래곤 브레이크-돌아와!", 30, 510, 150+6*vEhc.getV(5,5), 3, 5000, cooltime=-1).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
         ImperialBreath = core.SummonSkill("임페리얼 브레스", 0, 240, 600+24*vEhc.getV(5,5), 7, 4000, cooltime=-1).isV(vEhc,5,5).wrap(MirSkillWrapper)
 
         ZodiacRayInit = core.DamageSkill("조디악 레이(개시)", 780, 0, 0, cooltime = 180000, red = True).isV(vEhc,4,2).wrap(core.DamageSkillWrapper) # 딜레이 확인 필요
-        ZodiacRay = core.SummonSkill("조디악 레이", 0, 180, 400+16*vEhc.getV(4,2), 6, 180*74-1, modifier = MDF(armor_ignore = 100), cooltime = -1).isV(vEhc,4,2).wrap(core.SummonSkillWrapper)
+        ZodiacRay = core.SummonSkill("조디악 레이", 0, 180, 400+16*vEhc.getV(4,2), 6, 180*74-1, modifier = MDF(armor_ignore = 100) - MDF(pdamage_indep=10), cooltime = -1).isV(vEhc,4,2).wrap(core.SummonSkillWrapper)
         #14+vlevel//10초간 지속, 남은 시간동안 마법진 해방 딜 180ms마다. : 444타 가정( = 74타)
 
         SpiralOfMana = SpiralOfManaWrapper(vEhc, 0, 0)
