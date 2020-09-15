@@ -13,7 +13,8 @@ from math import ceil
 하이퍼 패시브 적용: 천지인 리인포스 & 보스 킬러, 추적 귀화부 헤이스트, 흡성와류 헤이스트, 호접지몽 보스킬러
 
 TODO: 딜사이클 및 게이지 설계
-TODO: 작성 완료 후 다른 직업들과 비슷한 스타일로 순서 재정리
+TODO: 작성 완료 후 코드 최적화 및 다른 직업들과 비슷한 스타일로 순서 재정리
+TODO: item 및 kernel에 호영 관련 정보 등록
 '''
 
 def AnimaGoddessBlessWrapper(vEhc, num1, num2):
@@ -40,8 +41,12 @@ class ChunJiInWrapper(core.BuffSkillWrapper):
     def _add_element(self, el):
         self.ChunJiIn[el] = True
     
-    def _is_triple(self):
-        return (self.ChunJiIn["Chun"] and self.ChunJiIn["Ji"] and self.ChunJiIn["In"])
+    def _count_elements(self):
+        return (int(self.ChunJiIn["Chun"]) + int(self.ChunJiIn["Ji"]) + int(self.ChunJiIn["In"]))
+    
+    def _reset_elements(self):
+        for el in self.ChunJiIn.items():
+            el = False
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -129,7 +134,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 4차
         Flames = core.DamageSkill("멸화염 : 천", 420, 340 + self.combat, 6, modifier = BASIC_HYPER, cooltime = 8000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
-        Flames_Clone = core.DamageSkill("멸화염 : 허/실", 420, 340 + self.combat, 6, modifier = BASIC_HYPER, cooltime = -1).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Flames_Clone = core.DamageSkill("멸화염 : 허/실", 0, 340 + self.combat, 6, modifier = BASIC_HYPER, cooltime = -1).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Flames.onAfter(Flames_Clone)
 
         GeumGoBong = core.DamageSkill("금고봉 : 인 (1타)", 450, 260 + 3*self.combat, 10, cooltime = 11000, modifier = BASIC_HYPER + core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
@@ -164,7 +169,7 @@ class JobGenerator(ck.JobGenerator):
         # 환영 분신부를 대체하는 스킬 (알고리즘 구현 필요)
         # 환영 분신부 지속중에만 사용가능, 발동 중에는 환영 분신부의 지속시간이 감소하지 않음
         Clone_Rampage = core.BuffSkill("선기 : 극대 분신난무", 690, 30*1000, cooltime = 200*1000).wrap(core.BuffSkillWrapper)
-        Clone_Rampage_Attack = core.DamageSkill("선기 : 극대 분신난무 (공격)", 0, vEhc.getV(0, 0) * 16 + 400, 2 * 12 * TALISMAN_PROBABLITY, cooltime = 12*1000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        Clone_Rampage_Attack = core.DamageSkill("선기 : 극대 분신난무 (공격)", 0, vEhc.getV(0, 0) * 16 + 400, 2 * 12, cooltime = 12*1000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         # TODO: 연계 딜사이클 만들것
         Summon_Sanryung = core.BuffSkill("권술 : 산령소환", 690, (vEhc.getV(0, 0)/2 +45)*1000, cooltime = 200*1000).wrap(core.BuffSkillWrapper)
