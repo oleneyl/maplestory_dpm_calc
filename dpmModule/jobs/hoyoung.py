@@ -98,13 +98,10 @@ class JobGenerator(ck.JobGenerator):
         Topa = core.DamageSkill("토파류 : 지", 540, 385 + 5*passive_level, 4, modifier = BASIC_HYPER).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Topa_Clone = core.DamageSkill("토파류 : 허/실", 0, 385 + 5*passive_level, 4, cooltime = -1, modifier = BASIC_HYPER).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Topa.onAfter(Topa_Clone)
-
-        # 스킬 설명에 확률이 명시되어 있지 않음.
-        TALISMAN_PROBABLITY = 1
         
         # 벞지 & 소환수 지속시간 둘다 적용
         Talisman_Clone = core.BuffSkill("환영 분신부", 690, 200*1000).wrap(core.BuffSkillWrapper)
-        Talisman_Clone_Attack = core.DamageSkill("환영 분신부 (공격)", 0, 460 + 5*passive_level, 2 * 3 * TALISMAN_PROBABLITY, cooltime = 1500).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Talisman_Clone_Attack = core.DamageSkill("환영 분신부 (공격)", 0, 460 + 5*passive_level, 2 * 3, cooltime = 1500).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         # 다른 공격스킬에 onAfter로 연결
         Talisman_Clone_Attack_Opt = core.OptionalElement(lambda : Talisman_Clone.is_active() and Talisman_Clone_Attack.is_usable(), Talisman_Clone_Attack)
 
