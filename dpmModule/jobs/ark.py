@@ -93,6 +93,10 @@ class SpectorWrapper(core.BuffSkillWrapper):
         self.cooldown = 0
         self.lockdown = 0
         super(SpectorWrapper, self).__init__(skill)
+        self.onoff = False
+
+    def is_active(self):
+        return self.onoff
 
     def spend_time(self, time):
         """

@@ -13,12 +13,12 @@ class InfinityWrapper(core.BuffSkillWrapper):
         self.combat = combat
         
     def spend_time(self, time):
-        if self.onoff:
+        if self.is_active():
             self.passedTime += time
         super(InfinityWrapper, self).spend_time(time)
             
     def get_modifier(self):
-        if self.onoff:
+        if self.is_active():
             return core.CharacterModifier(pdamage_indep = (70 + self.combat + 3 * (self.passedTime // (self.interval*1000))) )
         else:
             return core.CharacterModifier()
@@ -43,7 +43,7 @@ class UnstableMemorizeWrapper(core.DamageSkillWrapper):
         TODO: 위험한 방식이기 때문에, side-effect에 위험하지 않은 방식으로 변경해야 합니다.
         """
         cooltimeLeft = skill.cooltimeLeft
-        available = skill.available
+        available = skill.is_available()
         result = skill._use(skill_modifier)
         skill.cooltimeLeft = cooltimeLeft
         skill.available = available

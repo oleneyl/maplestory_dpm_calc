@@ -13,7 +13,7 @@ class NovaGoddessBlessWrapper(core.BuffSkillWrapper):
         self.morph_gauge = morph_gauge
 
     def get_modifier(self):
-        if self.onoff:
+        if self.is_active():
             if self.morph_gauge == None:
                 return self.skill.get_modifier()
             else:

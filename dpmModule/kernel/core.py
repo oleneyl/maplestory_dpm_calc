@@ -1156,7 +1156,6 @@ class AbstractSkillWrapper(GraphElement):
             super(AbstractSkillWrapper, self).__init__(name)
         self.set_flag(self.Flag_Skill)
         self.skill = skill
-        self.available = True   # indicate whether this wrapper is usable.
         self.cooltimeLeft = 0   # indicate how much tiume left for use again this wrapper.
         self.timeLeft = 0       # indicate how much time left for continuing this wrapper.
         self.constraint = []
@@ -1310,13 +1309,13 @@ class AbstractSkillWrapper(GraphElement):
             for cnst in self.constraint:
                 if not cnst.check():
                     return False
-        return self.available
+        return self.is_available()
 
     def is_available(self) -> bool:
         '''이 ``GraphElement`` 가 실행가능한지 여부를 반환합니다.
         이 과정에서 ``constraint`` 들은 검사되지 않습니다.
         '''
-        return self.available
+        return self.cooltimeLeft <= 0
     
     def is_not_usable(self) -> bool:
         '''이 ``GraphElement`` 가 실행 불가능한지 여부를 반환합니다.
@@ -1331,10 +1330,10 @@ class AbstractSkillWrapper(GraphElement):
         '''이 ``GraphElement`` 가 실행되고 있는지에 대한 여부를 반환합니다.
         지속 시간이 있는 객체에 대해서만 사용합니다.
         '''  
-        return self.onoff
+        return self.timeLeft > 0
 
     def is_not_active(self):
-        return (not self.onoff)
+        return not self.is_active()
         
     def is_cooltime_left(self, time, direction):
         '''남은 쿨타임이 ``time`` 과 비교할 때의 대소를 반환합니다.
@@ -1403,7 +1402,6 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         self._disabledResultobjectCache = ResultObject(0, CharacterModifier(), 0, 0, sname = skill.name, spec = 'graph control')
         super(BuffSkillWrapper, self).__init__(skill, name = name)
         self.set_flag(self.Flag_BuffSkill)
-        self.onoff = False
         self.disabledModifier = CharacterModifier()
         self.modifierInvariantFlag = True
         self.uniqueFlag = True
@@ -1413,37 +1411,24 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         '''This function must be carefull.. You must sure about this skill's cooltime calculation i.e. -1
         '''
         self.timeLeft = time
-        if not self.onoff:
-            self.cooltimeLeft = self.skill.cooltime
-            self.onoff = True
+        self.cooltimeLeft = self.skill.cooltime
         
-        if self.cooltimeLeft > 0:
-            self.available = False
         mdf = self.get_modifier()
         return ResultObject(0, mdf, 0, 0, sname = self.skill.name, spec = self.skill.spec, kwargs = {"remain" : time})
         
     def set_disabled_and_time_left(self, time):
         self.timeLeft = 0
         self.cooltimeLeft = time
-        self.available = False
-        self.onoff = False
         if time == -1: self.cooltimeLeft = NOTWANTTOEXECUTE
         return self._disabledResultobjectCache
         
     def spend_time(self, time : int) -> None :  #TODO : can make this process more faster.. maybe
         self.timeLeft -= time
         self.cooltimeLeft -= time
-        if self.timeLeft < 0:
-            self.onoff = False
-        if self.cooltimeLeft < 0:
-            self.available = True
     
     def _use(self, skill_modifier) -> ResultObject:
         self.timeLeft = self.skill.remain * (1 + 0.01*skill_modifier.buff_rem * self.skill.rem)
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
-        self.onoff = True
-        if self.cooltimeLeft > 0:
-            self.available = False
         delay = self.get_delay()
         #mdf = self.get_modifier()
         return ResultObject(delay, CharacterModifier(), 0, 0, sname = self.skill.name, spec = self.skill.spec, kwargs = {"remain" : self.skill.remain * (1+0.01*skill_modifier.buff_rem*self.skill.rem)})
@@ -1452,7 +1437,7 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         return self.skill.delay
 
     def get_modifier(self) -> CharacterModifier:
-        if self.onoff:
+        if self.is_active():
             return self.skill.get_modifier()
         else:
             return self.disabledModifier
@@ -1510,18 +1495,13 @@ class DamageSkillWrapper(AbstractSkillWrapper):
     def set_disabled_and_time_left(self, time):
         self.cooltimeLeft = time
         if time == -1: self.cooltimeLeft = NOTWANTTOEXECUTE
-        self.available = False
         return ResultObject(0, CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
         
     def spend_time(self, time : int) -> None:
         self.cooltimeLeft -= time
-        if self.cooltimeLeft < 0:
-            self.available = True
         
     def _use(self, skill_modifier):
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
-        if self.cooltimeLeft > 0:
-            self.available = False
         return ResultObject(self.get_delay(), self.get_modifier(), self.get_damage(), self.get_hit(), sname = self.skill.name, spec = self.skill.spec)
         #return delay, mdf, dmg, self.cascade
 
@@ -1563,7 +1543,6 @@ class SummonSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill : SummonSkill, modifier = CharacterModifier(), name = None):
         super(SummonSkillWrapper, self).__init__(skill, name = name)
         self.tick = 0
-        self.onoff = False
         self.modifier = modifier
         self._runtime_modifier_list = []
         self.disabledModifier = CharacterModifier()
@@ -1581,8 +1560,6 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         return li
         
     def set_disabled_and_time_left(self, time):
-        self.onoff = False
-        self.available = False
         self.cooltimeLeft = time
         self.timeLeft = -1
         self.tick = 0
@@ -1590,7 +1567,7 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         return ResultObject(0, CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
         
     def need_count(self):
-        if self.onoff and (self.tick < 0):
+        if self.is_active() and (self.tick < 0):
             return True
         else:
             return False
@@ -1599,23 +1576,16 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self.timeLeft -= time
         self.cooltimeLeft -= time
         self.tick -= time
-        if self.timeLeft < 0:
-            self.onoff = False
-        if self.cooltimeLeft < 0:
-            self.available = True
     
     #_use only alloted for start.
     def _use(self, skill_modifier):
         self.tick = 0
-        self.onoff = True
         self.timeLeft = self.skill.remain * (1+0.01*skill_modifier.summon_rem*self.skill.rem)
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
-        if self.cooltimeLeft > 0:
-            self.available = False
         return ResultObject(self.get_summon_delay(), self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
     
     def _useTick(self):
-        if self.onoff and self.tick <= 0:
+        if self.is_active() and self.tick <= 0:
             self.tick += self.get_delay()
             return ResultObject(0, self.get_modifier(), self.get_damage(), self.get_hit(), sname = self.skill.name, spec = self.skill.spec)
         else:

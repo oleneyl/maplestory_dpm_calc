@@ -25,9 +25,8 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
         super(ArmorPiercingWrapper, self).__init__(skill)
 
     def check(self):
-        if self.available:
+        if self.is_available():
             self.cooltimeLeft = self.calculate_cooltime(self.skill_modifier)
-            self.available = False
             return self.piercingModifier
 
         if self.cooltimeLeft > 1000:
@@ -68,7 +67,7 @@ class GuidedArrowWrapper(bowmen.GuidedArrowWrapper):
         self.armorPiercing = armorPiercing
             
     def _useTick(self):
-        if self.onoff and self.tick <= 0:
+        if self.is_active() and self.tick <= 0:
             self.tick += self.skill.delay
 
             modifier = self.get_modifier()

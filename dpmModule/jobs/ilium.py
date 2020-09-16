@@ -48,7 +48,6 @@ class SoulOfCrystalWrapper(core.BuffSkillWrapper):
 
     def turnOff(self):
         self.timeLeft = 0
-        self.onoff = False
         return self._disabledResultobjectCache
 
     def turnOffController(self):
@@ -71,7 +70,7 @@ class RiyoWrapper(core.SummonSkillWrapper):
         return super(RiyoWrapper, self)._use(skill_modifier)
     
     def _useTick(self):
-        if self.onoff and self.tick <= 0:
+        if self.is_active() and self.tick <= 0:
             if self.count < 10:
                 damage = 160
             if self.count < 20:
@@ -104,7 +103,7 @@ class GramHolderWrapper(core.SummonSkillWrapper):
         self.gloryWing = skill
     
     def _useTick(self):
-        if self.onoff and self.tick <= 0:
+        if self.is_active() and self.tick <= 0:
             modifier = self.get_modifier()
             if self.gloryWing.is_active() or self.crystalCharge.judge(self.chargeBefore + 3, 1):
                 modifier = modifier + core.CharacterModifier(pdamage_indep = 100)
@@ -247,9 +246,9 @@ class JobGenerator(ck.JobGenerator):
         Reaction_Domination.onAfter(Reaction_Domination_Link)
         Reaction_Spectrum.onAfter(Reaction_Spectrum_Link)
                 
-        Reaction_Domination_Trigger = core.OptionalElement(lambda:Reaction_Domination.available, Reaction_Domination, name = "리액션:도미네이션")
-        Reaction_Destruction_Trigger = core.OptionalElement(lambda:Reaction_Destruction.available, Reaction_Destruction, name = "리액션:디스트럭션")
-        Reaction_Spectrum_Trigger = core.OptionalElement(lambda:Reaction_Spectrum.available, Reaction_Spectrum, name = "리액션:스펙트럼")
+        Reaction_Domination_Trigger = core.OptionalElement(lambda:Reaction_Domination.is_available(), Reaction_Domination, name = "리액션:도미네이션")
+        Reaction_Destruction_Trigger = core.OptionalElement(lambda:Reaction_Destruction.is_available(), Reaction_Destruction, name = "리액션:디스트럭션")
+        Reaction_Spectrum_Trigger = core.OptionalElement(lambda:Reaction_Spectrum.is_available(), Reaction_Spectrum, name = "리액션:스펙트럼")
         
         Craft_Orb.onAfter(Reaction_Domination_Trigger)
         Craft_Javelin.onAfter(Reaction_Destruction_Trigger)

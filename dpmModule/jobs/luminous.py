@@ -89,7 +89,7 @@ class PunishingResonatorWrapper(core.SummonSkillWrapper):
         self.getState = stateGetter
     
     def _useTick(self):
-        if self.onoff and self.tick <= 0:
+        if self.is_active() and self.tick <= 0:
             self.tick += self.skill.delay
 
             damage, hit = self.skillList[self.getState()]

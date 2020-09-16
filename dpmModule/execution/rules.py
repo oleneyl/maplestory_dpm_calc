@@ -21,7 +21,7 @@ class UniquenessRule(AbstractRule):
 
     def check(self, caller, reference_graph, context = None):
         if caller.uniqueFlag:
-            return not caller.onoff
+            return not caller.is_active()
         else:
             return True
 

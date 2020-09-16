@@ -81,7 +81,6 @@ class MirSkillWrapper(core.SummonSkillWrapper):
 
     def _end(self):
         self.timeLeft = 0
-        self.onoff = False
         self.attacking = False
         return self._result_object_cache
 

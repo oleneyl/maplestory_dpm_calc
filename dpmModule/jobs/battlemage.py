@@ -16,7 +16,7 @@ class GrimReaperWrapper(core.SummonSkillWrapper):
         self.masterOfDeath = masterOfDeath
 
     def _useTick(self):
-        if self.onoff and self.tick <= 0 and self.masterOfDeath.is_not_active():
+        if self.is_active() and self.tick <= 0 and self.masterOfDeath.is_not_active():
             self.timeLeft += 2000
         return super(GrimReaperWrapper, self)._useTick()
 

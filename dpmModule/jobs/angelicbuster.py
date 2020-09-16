@@ -35,7 +35,7 @@ class TrinityBuffWrapper(core.StackSkillWrapper):
 
     def spend_time(self, time):
         super().spend_time(time)
-        if self.onoff == False:
+        if self.is_not_active():
             self.set_stack(0)
 
 class JobGenerator(ck.JobGenerator):
