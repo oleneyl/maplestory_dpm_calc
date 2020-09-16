@@ -22,10 +22,9 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "팬텀"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
-        self._combat = 0
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         HighDexterity = core.InformedCharacterModifier("하이 덱스터리티",stat_sub = 40)
         LuckMonopoly = core.InformedCharacterModifier("럭 모노폴리",stat_main = 60)
         LuckOfPhantomtheif = core.InformedCharacterModifier("럭오브팬텀시프",stat_main = 60)
@@ -40,7 +39,7 @@ class JobGenerator(ck.JobGenerator):
                                 ReadyToDiePassive]
                                 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 +0.5*ceil(passive_level / 2))
         
@@ -51,7 +50,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ReservationRule("소울 컨트랙트", "마크 오브 팬텀"), RuleSet.BASE)
         return ruleset
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         하이퍼 : 
         템오카 - 리인포스 / 쿨리듀스
@@ -66,40 +65,41 @@ class JobGenerator(ck.JobGenerator):
         펫버프 : 프레이 오브 아리아, 메용, 크오체
         템페스트 오브 카드 사용하지 않음
         '''
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         STEALSKILL = core.CharacterModifier(pdamage_indep = 100*((1.2 / 1.3)-1))
         #Buff skills
         TalentOfPhantomII = core.BuffSkill("분노(탤팬2)", 0, 180000, rem = True, att = 30).wrap(core.BuffSkillWrapper)
         # 힐+마오팬보다 분노가 허수아비딜은 잘나옴
         # TalentOfPhantomII = core.BuffSkill("힐(탤팬2)", 450, 2*1000, cooltime=10*1000, pdamage_indep=10).wrap(core.BuffSkillWrapper)
         TalentOfPhantomIII = core.BuffSkill("크로스 오버 체인(탤팬3)", 0, 180000, rem = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
-        FinalCut = core.DamageSkill("탤런트 오브 팬텀시프 IV(파이널 컷)", 450, 2000 + 20 * self._combat, 1, modifier = STEALSKILL, cooltime = 90000, red=True).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
-        FinalCutBuff = core.BuffSkill("파이널 컷(버프, 탤팬4)", 0, 60000, cooltime = -1, rem = True, pdamage_indep = 40 + self._combat).wrap(core.BuffSkillWrapper)
+        FinalCut = core.DamageSkill("탤런트 오브 팬텀시프 IV(파이널 컷)", 450, 2000 + 20 * self.combat, 1, modifier = STEALSKILL, cooltime = 90000, red=True).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
+        FinalCutBuff = core.BuffSkill("파이널 컷(버프, 탤팬4)", 0, 60000, cooltime = -1, rem = True, pdamage_indep = 40 + self.combat).wrap(core.BuffSkillWrapper)
         BoolsEye = core.BuffSkill("불스아이(탤팬5)", 960, 30 * 1000, cooltime = 180 * 1000, crit = 20, crit_damage = 10, armor_ignore = 20, pdamage = 20).wrap(core.BuffSkillWrapper)
     
         JudgementBuff = core.BuffSkill("저지먼트(버프)", 0, 999999999, crit = 0).wrap(core.BuffSkillWrapper)    #확률성 크리티컬
         
         Booster = core.BuffSkill("부스터", 0, 240 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
         
-        MileAiguillesInit = core.BuffSkill("얼티밋 드라이브(개시)", 240, 240).wrap(core.BuffSkillWrapper)
-        MileAiguilles = core.DamageSkill("얼티밋 드라이브", 150, 125 + self._combat, 3, modifier = core.CharacterModifier(pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        MileAiguillesInit = core.BuffSkill("얼티밋 드라이브(개시)", 240, 250).wrap(core.BuffSkillWrapper)
+        MileAiguilles = core.DamageSkill("얼티밋 드라이브", 150, 125 + self.combat, 3, modifier = core.CharacterModifier(pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         CarteNoir = core.DamageSkill("느와르 카르트", 0, 270, min(chtr.get_modifier().crit/100 + 0.1, 1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         CarteNoir_ = core.DamageSkill("느와르 카르트(저지먼트)", 0, 270, 10).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
-        PrieredAria = core.BuffSkill("프레이 오브 아리아", 0, (240+7*self._combat)*1000, pdamage = 30+self._combat, armor_ignore = 30+self._combat).wrap(core.BuffSkillWrapper)
+        PrieredAria = core.BuffSkill("프레이 오브 아리아", 0, (240+7*self.combat)*1000, pdamage = 30+self.combat, armor_ignore = 30+self.combat).wrap(core.BuffSkillWrapper)
 
         # 템오카 안쓰는게 더 높게 나옴
         # TempestOfCardInit = core.DamageSkill("템페스트 오브 카드(시전)", 0, 0, 0, cooltime = 18000*0.8 + 180*56, red = True).wrap(core.DamageSkillWrapper, name = "템오카 시전")
-        # TempestOfCard = core.DamageSkill("템페스트 오브 카드", 180, 200+2*self._combat, 3, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        # TempestOfCard = core.DamageSkill("템페스트 오브 카드", 180, 200+2*self.combat, 3, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
     
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 3, 3)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         # 트와일라이트 미적용 상태
-        # Twilight = core.BuffSkill("트와일라이트", 120, 15000, cooltime = 15000, armor_ignore = 20 + self._combat//2).wrap(core.BuffSkillWrapper)
-        # TwilightHit = core.DamageSkill("트와일라이트(공격)", 540, 450+3*self._combat, 3, cooltime = -1).wrap(core.DamageSkillWrapper)
+        # Twilight = core.BuffSkill("트와일라이트", 120, 15000, cooltime = 15000, armor_ignore = 20 + self.combat//2).wrap(core.BuffSkillWrapper)
+        # TwilightHit = core.DamageSkill("트와일라이트(공격)", 540, 450+3*self.combat, 3, cooltime = -1).wrap(core.DamageSkillWrapper)
 
         JokerInit = core.DamageSkill("조커(시전)", 540, 0, 0, cooltime = 150000, red = True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         JokerDamage = core.DamageSkill("조커", 460, 240+9*vEhc.getV(4,4), 30).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)  #14회 반복, 총 420타이므로 30타로 적용
@@ -150,11 +150,11 @@ class JobGenerator(ck.JobGenerator):
         #이들 정보교환 부분을 굳이 Task exchange로 표현할 필요가 있을까?
         
         return(BasicAttackWrapper,
-                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(),
-                    TalentOfPhantomII, TalentOfPhantomIII, FinalCutBuff, BoolsEye,
+                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                    TalentOfPhantomII, TalentOfPhantomIII, FinalCutBuff, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), BoolsEye,
                     JudgementBuff, Booster, PrieredAria, HerosOath, ReadyToDie, JokerBuff,
                     globalSkill.soul_contract()] +\
                 [FinalCut, JokerInit, MarkOfPhantom, BlackJackFinal] +\
-                [BlackJack] +\
+                [BlackJack, MirrorBreak, MirrorSpider] +\
                 [MileAiguillesInit] +\
                 [BasicAttackWrapper])

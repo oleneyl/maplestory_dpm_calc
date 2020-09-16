@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, InactiveRule, ConditionRule
 from . import globalSkill
 from .jobbranch import warriors
+from .jobclass import nova
 from math import ceil
 
 ######   Passive Skill   ######
@@ -21,14 +22,17 @@ class MorphGaugeWrapper(core.StackSkillWrapper):
         else:
             return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self._id, spec = 'graph control')
 
-    def get_modifier(self): # 아이언 윌 - 모프 게이지 단계당 데미지 3% 증가
+    def get_morph_level(self):
         if self.final_figuration.is_active() or self.stack >= 700: # 3단계
-            return core.CharacterModifier(pdamage = 9)
+            return 3
         if self.stack >= 300: # 2단계
-            return core.CharacterModifier(pdamage = 6)
+            return 2
         if self.stack >= 100: # 1단계
-            return core.CharacterModifier(pdamage = 3)
-        return core.CharacterModifier()
+            return 1
+        return 0
+
+    def get_modifier(self): # 아이언 윌 - 모프 게이지 단계당 데미지 3% 증가
+        return core.CharacterModifier(pdamage = 3 * self.get_morph_level())
 
 class GigaSlasherWrapper(core.DamageSkillWrapper):
     def __init__(self, skill, final_figuration):
@@ -64,7 +68,6 @@ class WillOfSwordSummonWrapper(core.BuffSkillWrapper):
             return 150
 
     def _off(self):
-        self.onoff = False
         self.timeLeft = 0
         return self._disabledResultobjectCache
 
@@ -153,7 +156,6 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "카이저"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
-        self._combat = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -163,7 +165,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         InnerBlaze = core.InformedCharacterModifier("이너 블레이즈",stat_main = 20)
         AdvancedInnerBlaze = core.InformedCharacterModifier("어드밴스드 이너 블레이즈",stat_main = 30)
@@ -176,7 +178,7 @@ class JobGenerator(ck.JobGenerator):
                 AdvancedWillOfSwordPassive, UnflinchingCourage, AdvancedSwordMastery]
                 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level / 2))
@@ -185,7 +187,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, ReshuffleSwitchAttack]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         모프 수급량
         어윌소 12*5
@@ -202,7 +204,7 @@ class JobGenerator(ck.JobGenerator):
         기가 슬래셔-윙비트-소드 스트라이크-윌 오브 소드-인퍼널 브레스-페트리파이드-프로미넌스
         '''
 
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         # Buff skills
         RegainStrenth = core.BuffSkill("리게인 스트렝스", 0, 240000, rem = True, pdamage_indep = 15).wrap(core.BuffSkillWrapper)
         BlazeUp = core.BuffSkill("블레이즈 업", 0, 240000, att = 20, rem = True).wrap(core.BuffSkillWrapper)
@@ -214,13 +216,13 @@ class JobGenerator(ck.JobGenerator):
         Wingbit_1 = WingbitWrapper(core.SummonSkill("윙비트", 0, 330, 200, 1, 15900, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, True), FinalFiguration) #48타
         Wingbit_2 = WingbitWrapper(core.SummonSkill("윙비트(2)", 0, 330, 200, 1, 15900, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, True), FinalFiguration) #48타
         
-        GigaSlasher = GigaSlasherWrapper(core.DamageSkill("기가 슬래셔", 540, 330 + 2*self._combat, 9+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False), FinalFiguration)
+        GigaSlasher = GigaSlasherWrapper(core.DamageSkill("기가 슬래셔", 540, 330 + 2*self.combat, 9+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False), FinalFiguration)
     
         AdvancedWillOfSword_Summon = WillOfSwordSummonWrapper(core.BuffSkill("어드밴스드 윌 오브 소드(소환)", 0, 9999999, cooltime = 10000, red=True), FinalFiguration)
         AdvancedWillOfSword = WillOfSwordWrapper(core.DamageSkill("어드밴스드 윌 오브 소드", 0, 400+3*passive_level, 4*5).setV(vEhc, 3, 2, True), FinalFiguration)
 
-        InfernalBreath = core.DamageSkill("인퍼널 브레스", 780, 300 + 4*self._combat, 8, cooltime = (20-self._combat)*1000, red=True).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
-        InfernalBreath_Tile = core.SummonSkill("인퍼널 브레스(바닥)", 0, 1200, 200 + 3*self._combat, 2, 20000, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
+        InfernalBreath = core.DamageSkill("인퍼널 브레스", 780, 300 + 4*self.combat, 8, cooltime = (20-self.combat)*1000, red=True).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
+        InfernalBreath_Tile = core.SummonSkill("인퍼널 브레스(바닥)", 0, 1200, 200 + 3*self.combat, 2, 20000, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
 
         Petrified = core.SummonSkill("페트리파이드", 450, 3030, 400, 1, 60000).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
     
@@ -231,6 +233,8 @@ class JobGenerator(ck.JobGenerator):
 
         # 5차
         Phanteon = core.DamageSkill("판테온", 420, 2000+80*vEhc.getV(4,4), 10, cooltime = 1200*1000, red=True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
+        NovaGoddessBless = nova.NovaGoddessBlessWrapper(vEhc, 0, 0, MorphGauge)
 
         GuardianOfNova_1 = core.SummonSkill("가디언 오브 노바(1)", 600, 45000/46, 450+15*vEhc.getV(2,2), 4, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = 120000, red=True).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 46*4타
         GuardianOfNova_2 = core.SummonSkill("가디언 오브 노바(2)", 0, 45000/34, 250+10*vEhc.getV(2,2), 6, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 34*6타
@@ -310,10 +314,10 @@ class JobGenerator(ck.JobGenerator):
         DrakeSlasher.protect_from_running()
     
         return(BasicAttack,
-                [globalSkill.maple_heros(chtr.level, name = "노바의 용사", combat_level=self._combat), globalSkill.useful_sharp_eyes(), MorphGauge,
-                    RegainStrenth, BlazeUp, FinalFiguration, MajestyOfKaiser, FinalTrance, AuraWeaponBuff, AuraWeapon,
+                [globalSkill.maple_heros(chtr.level, name = "노바의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), MorphGauge,
+                    RegainStrenth, BlazeUp, FinalFiguration, MajestyOfKaiser, FinalTrance, AuraWeaponBuff, AuraWeapon, NovaGoddessBless,
                     SoulContract] +\
                 [AdvancedWillOfSword_Summon, WillOfSwordStrike, AdvancedWillOfSword] +\
                 [Wingbit_1, Wingbit_2, GuardianOfNova_1, GuardianOfNova_2, GuardianOfNova_3] +\
-                [DrakeSlasher, InfernalBreath, InfernalBreath_Tile, Petrified, Prominence, Phanteon] +\
+                [DrakeSlasher, InfernalBreath, InfernalBreath_Tile, Petrified, Prominence, Phanteon, MirrorBreak, MirrorSpider] +\
                 [BasicAttack])

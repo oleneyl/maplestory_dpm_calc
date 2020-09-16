@@ -24,13 +24,12 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "호영"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'buff_rem', 'mess')
         self.preEmptiveSkills = 1
-        self._combat = 0
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 40)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         FiendSeal = core.InformedCharacterModifier("괴이봉인", patt = 10, pdamage_indep = 10)
         RitualFanMastery = core.InformedCharacterModifier("부채 숙련", att = 25)
         ThirdEye = core.InformedCharacterModifier("심안", crit = 30, crit_damage = 10)
@@ -44,7 +43,7 @@ class JobGenerator(ck.JobGenerator):
         return [FiendSeal, RitualFanMastery, ThirdEye, FortuneFitness, Asura, AdvancedRitualFanMastery, Enlightenment, DragonsEye, ReadyToDiePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5+0.5*ceil(passive_level/2))    #오더스 기본적용!
         SpiritAffinity = core.BuffSkill("정령친화", 0, 999999).wrap(core.BuffSkillWrapper) # 더미
@@ -57,9 +56,9 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
     '''
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
 
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         SUMMON_REMAIN = 1 + chtr.summonRemain + 0.1
         
         # 1차
@@ -92,25 +91,25 @@ class JobGenerator(ck.JobGenerator):
 
         Talisman_Seeking_Ghost_Flame = core.SummonSkill("추적 귀화부", 0, 1800, 390 + 5*passive_level, 5, 40*1000*SUMMON_REMAIN).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
 
-        Scroll_Degeneration = core.DamageSkill("권술 : 미생강변", 0, 850 + (6+4)*self._combat, 8, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
+        Scroll_Degeneration = core.DamageSkill("권술 : 미생강변", 0, 850 + (6+4)*self.combat, 8, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
         Scroll_Degeneration_Debuff = core.BuffSkill("권술 : 미생강변 (디버프)", 0, 60*1000, armor_ignore = 20).wrap(core.BuffSkillWrapper)
 
         # 4차
-        Heaven_Consuming_Flames = core.DamageSkill("멸화염 : 천", 0, 340 + self._combat, 6, cooltime = 8000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
-        Consuming_Flames_CT = core.DamageSkill("멸화염 : 허/실", 0, 340 + self._combat, 6).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Heaven_Consuming_Flames = core.DamageSkill("멸화염 : 천", 0, 340 + self.combat, 6, cooltime = 8000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Consuming_Flames_CT = core.DamageSkill("멸화염 : 허/실", 0, 340 + self.combat, 6).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
 
-        Humanity_Gold_Banded_Cudgel_1 = core.DamageSkill("금고봉 : 인 (1타)", 0, 260 + 3*self._combat, 10, cooltime = 11000, modifier = core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
-        Humanity_Gold_Banded_Cudgel_2 = core.DamageSkill("금고봉 : 인 (2타)", 0, 420 + self._combat, 8, modifier = core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Humanity_Gold_Banded_Cudgel_1 = core.DamageSkill("금고봉 : 인 (1타)", 0, 260 + 3*self.combat, 10, cooltime = 11000, modifier = core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Humanity_Gold_Banded_Cudgel_2 = core.DamageSkill("금고봉 : 인 (2타)", 0, 420 + self.combat, 8, modifier = core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         
-        Thousand_Ton_Stone = core.DamageSkill("둔갑 천근석", 0, 275 + 3*self._combat, 6, cooltime = 500).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
-        Thousand_Ton_Stone_DOT = core.DotSkill("둔갑 천근석 (출혈)", 0, 1000, 270 + self._combat, 1, 10000, cooltime = -1).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
+        Thousand_Ton_Stone = core.DamageSkill("둔갑 천근석", 0, 275 + 3*self.combat, 6, cooltime = 500).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Thousand_Ton_Stone_DOT = core.DotSkill("둔갑 천근석 (출혈)", 0, 1000, 270 + self.combat, 1, 10000, cooltime = -1).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
         Thousand_Ton_Stone.onAfter(Thousand_Ton_Stone_DOT)
 
-        Scroll_Star_Vortex = core.SummonSkill("권술 : 흡성와류", 0, 0, 240 + 4*self._combat, 6, 40000 * SUMMON_REMAIN).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
+        Scroll_Star_Vortex = core.SummonSkill("권술 : 흡성와류", 0, 0, 240 + 4*self.combat, 6, 40000 * SUMMON_REMAIN).setV(vEhc, 0, 0, False).wrap(core.SummonSkillWrapper)
 
         # 벞지 & 소환수 지속시간 둘다 적용
         Scroll_Butterfly_Dream = core.BuffSkill("권술 : 호접지몽", 0, 100*1000, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
-        Scroll_Butterfly_Dream_Attack = core.DamageSkill("권술 : 호접지몽 (공격)", 0, 275 + 3 * self._combat, 5, cooltime = 1000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        Scroll_Butterfly_Dream_Attack = core.DamageSkill("권술 : 호접지몽 (공격)", 0, 275 + 3 * self.combat, 5, cooltime = 1000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Scroll_Butterfly_Dream_Attack_Opt = core.OptionalElement(Scroll_Butterfly_Dream_Attack.is_usable(), Scroll_Butterfly_Dream_Attack)
         # 하이퍼 액티브
         Sage_TaiYus_Miracle_Tonic = core.BuffSkill("선기 : 영약 태을선단", 0, 12*1000, cooltime = 100*1000, rem = False, red = False).wrap(core.BuffSkillWrapper)
@@ -152,4 +151,4 @@ class JobGenerator(ck.JobGenerator):
         Sage_Elemental_Clone_Attack_Opt = core.OptionalElement(Sage_Elemental_Clone_Attack.is_active(), Sage_Elemental_Clone_Attack_Active_Opt, Sage_Elemental_Clone_Attack_Passive_Opt)
 
 
-        return(globalSkill.maple_heros(chtr.level, name = "아니마의 용사", combat_level=self._combat))
+        return(globalSkill.maple_heros(chtr.level, name = "아니마의 용사", combat_level=self.combat))

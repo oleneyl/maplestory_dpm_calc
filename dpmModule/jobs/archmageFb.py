@@ -17,7 +17,6 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 13
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
         self.preEmptiveSkills = 2
-        self._combat = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -26,7 +25,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤", stat_main = 40)
         SpellMastery = core.InformedCharacterModifier("스펠 마스터리", att = 10)
@@ -45,7 +44,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5*ceil(self._combat/2))
+        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5*ceil(self.combat/2))
         ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", pdamage_indep = 20)
         ArcaneAim = core.InformedCharacterModifier("아케인 (실시간)", pdamage = 40)
         PerventDrain = core.InformedCharacterModifier("퍼번트 드레인", pdamage_indep = 25)
@@ -53,7 +52,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, ExtremeMagic, PerventDrain, ArcaneAim, ElementalResetActive]
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         포이즌 노바 4히트
         
@@ -72,41 +71,42 @@ class JobGenerator(ck.JobGenerator):
         Meditation = core.BuffSkill("메디테이션", 0, 240000, att = 30, rem = True, red = True).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 5)
-        Infinity = adventurer.InfinityWrapper(self._combat)
+        Infinity = adventurer.InfinityWrapper(self.combat)
         
         # Damage Skills
-        Paralyze = core.DamageSkill("페럴라이즈", 600, 220 + 3*self._combat, 7+1, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        Paralyze = core.DamageSkill("페럴라이즈", 600, 220 + 3*self.combat, 7+1, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
         TeleportMastery = core.DamageSkill("텔레포트 마스터리", 0, 272, 1, cooltime=-1).setV(vEhc, 9, 3, True).wrap(core.DamageSkillWrapper)
         
         ERUPTION_RATE = [0, 0, 20, 45, 80, 125]
-        FlameHeize = core.DamageSkill("플레임 헤이즈", 1080, 202 + 3*self._combat, 15, cooltime = 10 * 1000, red=True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
-        MistEruption = core.DamageSkill("미스트 이럽션", 720, 46 + self._combat, 60, cooltime = 4 * 1000, red=False, modifier = core.CharacterModifier(armor_ignore = 40 + self._combat, pdamage_indep = ERUPTION_RATE[5]) + core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        FlameHeize = core.DamageSkill("플레임 헤이즈", 1080, 202 + 3*self.combat, 15, cooltime = 10 * 1000, red=True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
+        MistEruption = core.DamageSkill("미스트 이럽션", 720, 46 + self.combat, 60, cooltime = 4 * 1000, red=False, modifier = core.CharacterModifier(armor_ignore = 40 + self.combat, pdamage_indep = ERUPTION_RATE[5]) + core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         DotPunisher = core.DamageSkill("도트 퍼니셔", 690, (400+vEhc.getV(0,0)*15), 5 * (1 + (DOT_PUNISHER_HIT - 1) * 0.65), cooltime = 25 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)#=775*(1+0.75*19)*5
         PoisonNova = core.DamageSkill("포이즌 노바", 570, 250 + 10*vEhc.getV(2,1), 12, cooltime = 25*1000, red = True).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
         PoisonNovaErupt = core.DamageSkill("포이즌 노바(폭발)", 0, 225 + 9*vEhc.getV(2,1), 12 * (3 + 0.50)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
     
-        Meteor = core.DamageSkill("메테오", 690, 225+self._combat*3, 12, cooltime = 45 * 1000, red=True).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
+        Meteor = core.DamageSkill("메테오", 690, 225+self.combat*3, 12, cooltime = 45 * 1000, red=True).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
         MegidoFlame = core.DamageSkill("메기도 플레임", 690, 420, 15, cooltime = 50 * 1000).setV(vEhc, 8, 2, True).wrap(core.DamageSkillWrapper)
         
         # Summoning Skills
-        Ifritt = core.SummonSkill("이프리트", 600, 3030, 90+2*self._combat, 3, (260+5*self._combat)*1000).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
+        Ifritt = core.SummonSkill("이프리트", 600, 3030, 90+2*self.combat, 3, (260+5*self.combat)*1000).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
         FireAura = core.SummonSkill("파이어 오라", 0, 3000, 400, 2, 999999999).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
         FuryOfIfritt = core.SummonSkill("퓨리 오브 이프리트", 480, 6000/25, 200+8*vEhc.getV(3,2), 6, 6*1000-1, cooltime = 75000, red = True).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         # Final Attack
-        METEOR_PROP = 0.6+0.02*self._combat
-        MeteorPassive = core.DamageSkill("메테오(패시브)", 0, 220+4*self._combat, METEOR_PROP).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
+        METEOR_PROP = 0.6+0.02*self.combat
+        MeteorPassive = core.DamageSkill("메테오(패시브)", 0, 220+4*self.combat, METEOR_PROP).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
         Ignite = core.DamageSkill("이그나이트", 0, 40, 3 * 3 * 0.5).setV(vEhc, 3, 4, False).wrap(core.DamageSkillWrapper)
         IgniteMeteor = core.DamageSkill("이그나이트(메테오)", 0, 40, 3 * 3 * 0.5 * METEOR_PROP).setV(vEhc, 3, 4, False).wrap(core.DamageSkillWrapper) # 메테오의 발동 확률 고려
         #Ignite : Need Wrapper
         
         # DoT Skills
-        ParalyzeDOT = core.DotSkill("패럴라이즈(도트)", 0, 1000, 240 + self._combat * 4, 1, 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
-        MistDOT = core.DotSkill("포이즌 미스트(도트)", 0, 1000, 300 + self._combat * 1, 1, 12000, cooltime = -1).wrap(core.SummonSkillWrapper)
-        IfrittDot = core.DotSkill("이프리트(도트)", 0, 1000, 140 + self._combat * 3, 1, 4000, cooltime = -1).wrap(core.SummonSkillWrapper)
-        HeizeFlameDOT = core.DotSkill("플레임 헤이즈(도트)", 0, 1000, 200 + self._combat * 3, 1, 20000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        ParalyzeDOT = core.DotSkill("패럴라이즈(도트)", 0, 1000, 240 + self.combat * 4, 1, 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        MistDOT = core.DotSkill("포이즌 미스트(도트)", 0, 1000, 300 + self.combat * 1, 1, 12000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        IfrittDot = core.DotSkill("이프리트(도트)", 0, 1000, 140 + self.combat * 3, 1, 4000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        HeizeFlameDOT = core.DotSkill("플레임 헤이즈(도트)", 0, 1000, 200 + self.combat * 3, 1, 20000, cooltime = -1).wrap(core.SummonSkillWrapper)
         TeleportMasteryDOT = core.DotSkill("텔레포트 마스터리(도트)", 0, 1000, 49, 1, 8000, cooltime = -1).wrap(core.SummonSkillWrapper)
         PoisonBreathDOT = core.DotSkill("포이즌 브레스(도트)", 0, 1000, 60, 1, 20000, cooltime = -1).wrap(core.SummonSkillWrapper)
         MegidoFlameDOT = core.DotSkill("메기도 플레임(도트)", 0, 1000, 700, 1, 60000, cooltime = -1).wrap(core.SummonSkillWrapper)
@@ -173,9 +173,9 @@ class JobGenerator(ck.JobGenerator):
 
         return (Paralyze, 
                 [Infinity, Meditation, EpicAdventure, OverloadMana.ensure(vEhc,1,5),
-                globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                globalSkill.soul_contract()] +\
-                [DotPunisher.ensure(vEhc,0,0), Meteor, MegidoFlame, FlameHeize, MistEruption, PoisonNova.ensure(vEhc,2,1)] +\
+                globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
+                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
+                [DotPunisher.ensure(vEhc,0,0), Meteor, MegidoFlame, FlameHeize, MistEruption, PoisonNova.ensure(vEhc,2,1), MirrorBreak, MirrorSpider] +\
                 [Ifritt, FireAura, FuryOfIfritt.ensure(vEhc,3,2),
                     SlimeVirus, ParalyzeDOT, MistDOT, PoisonBreathDOT, IfrittDot, HeizeFlameDOT, TeleportMasteryDOT, MegidoFlameDOT, DotPunisherDOT.ensure(vEhc,0,0), PoisonNovaDOT.ensure(vEhc,2,1)] +\
                 [UnstableMemorize] +\

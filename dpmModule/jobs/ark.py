@@ -7,6 +7,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, MutualRule, ConcurrentRunRule
 from . import globalSkill
 from .jobbranch import pirates
+from .jobclass import flora
 from . import jobutils
 from math import ceil, floor
 
@@ -92,6 +93,10 @@ class SpectorWrapper(core.BuffSkillWrapper):
         self.cooldown = 0
         self.lockdown = 0
         super(SpectorWrapper, self).__init__(skill)
+        self.onoff = False
+
+    def is_active(self):
+        return self.onoff
 
     def spend_time(self, time):
         """
@@ -140,7 +145,6 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "아크"
         self.vEnhanceNum = 12
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'mess')
-        self._combat = 0
         self.preEmptiveSkills = 2
 
     def get_modifier_optimization_hint(self):
@@ -155,7 +159,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         # 매직 서킷: 앱솔 기준 15.4
         WEAPON_ATT = jobutils.get_weapon_att("너클")
         
@@ -175,11 +179,11 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5*ceil((chtr.get_base_modifier().passive_level + self._combat)/2))
+        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5*ceil((chtr.get_base_modifier().passive_level + self.combat)/2))
         
         return [WeaponConstant, Mastery]        
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         연계 시 플레인 차지드라이브 540 → 240ms, 끝나지 않는 흉몽 540 → 180ms
 
@@ -197,7 +201,7 @@ class JobGenerator(ck.JobGenerator):
         - 스칼렛/상처 - 거스트/굶주림 - 어비스/혼돈 - 충동/본능
         
         '''
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         LINK_DELAY = 30
         BattleArtsHyper = core.CharacterModifier(pdamage=20, boss_pdamage=20, armor_ignore=20)  # 하이퍼 - 배틀아츠 modifier
         SpellBullet = core.CharacterModifier(pdamage=20)
@@ -228,10 +232,10 @@ class JobGenerator(ck.JobGenerator):
         GustSpell = core.DamageSkill('거스트 스펠', 0, 230 + passive_level, 4, modifier=SpellBullet).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         GustBuff = core.BuffSkill("거스트 버프", 0, 60*1000, cooltime = -1).wrap(core.BuffSkillWrapper) # dpm에 영향을 주지 않아 미사용        
         
-        AbyssChargeDrive_Link = core.DamageSkill("어비스 차지드라이브(연계)", 630, 340 + 3*self._combat, 4, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        AbyssChargeDrive_After = core.DamageSkill("어비스 차지드라이브(후속타)", 0, 410 + 3*self._combat, 6, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        AbyssSpell = core.SummonSkill("어비스 스펠", 0, 300*0.75, 70 + 2*self._combat, 2, 3000, cooltime = -1, modifier=SpellBullet).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
-        AbyssBuff = core.BuffSkill("어비스 버프", 0, 60*1000, cooltime = -1, rem=True, pdamage = 20 + floor(self._combat/2), boss_pdamage = 30 + self._combat, armor_ignore = 20 + floor(self._combat/2)).wrap(core.BuffSkillWrapper)
+        AbyssChargeDrive_Link = core.DamageSkill("어비스 차지드라이브(연계)", 630, 340 + 3*self.combat, 4, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        AbyssChargeDrive_After = core.DamageSkill("어비스 차지드라이브(후속타)", 0, 410 + 3*self.combat, 6, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        AbyssSpell = core.SummonSkill("어비스 스펠", 0, 300*0.75, 70 + 2*self.combat, 2, 3000, cooltime = -1, modifier=SpellBullet).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
+        AbyssBuff = core.BuffSkill("어비스 버프", 0, 60*1000, cooltime = -1, rem=True, pdamage = 20 + floor(self.combat/2), boss_pdamage = 30 + self.combat, armor_ignore = 20 + floor(self.combat/2)).wrap(core.BuffSkillWrapper)
 
         
         ##### 스펙터 상태일 때 #####
@@ -251,12 +255,12 @@ class JobGenerator(ck.JobGenerator):
         CrawlingFear = core.DamageSkill("기어 다니는 공포", 30 + 630, 1390 + 3*passive_level, 12, cooltime = 60*1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         CrawlingFear_Link = core.DamageSkill("기어 다니는 공포(연계)", 30 + 360, 1390 + 3*passive_level, 12, cooltime = 60*1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
 
-        UncontrollableChaos = core.DamageSkill("걷잡을 수 없는 혼돈", 810, 440 + 3*self._combat, 12, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) #어비스 차지 드라이브 변형
-        UncontrollableChaos_Link = core.DamageSkill("걷잡을 수 없는 혼돈(연계)", 720, 440 + 3*self._combat, 12, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        UncontrollableChaos = core.DamageSkill("걷잡을 수 없는 혼돈", 810, 440 + 3*self.combat, 12, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) #어비스 차지 드라이브 변형
+        UncontrollableChaos_Link = core.DamageSkill("걷잡을 수 없는 혼돈(연계)", 720, 440 + 3*self.combat, 12, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
 
-        RaptRestriction = core.DamageSkill("황홀한 구속", 690, 600 + 10*self._combat, 6, cooltime = 180 * 1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        RaptRestrictionSummon = core.SummonSkill("황홀한 구속(소환)", 0, 450, 400 + 10*self._combat, 3, 9000, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)  #임의주기 300ms, DPM 미사용.
-        RaptRestrictionEnd = core.DamageSkill("황홀한 구속(종결)", 0, 1000 + 10*self._combat, 8, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        RaptRestriction = core.DamageSkill("황홀한 구속", 690, 600 + 10*self.combat, 6, cooltime = 180 * 1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        RaptRestrictionSummon = core.SummonSkill("황홀한 구속(소환)", 0, 450, 400 + 10*self.combat, 3, 9000, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)  #임의주기 300ms, DPM 미사용.
+        RaptRestrictionEnd = core.DamageSkill("황홀한 구속(종결)", 0, 1000 + 10*self.combat, 8, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
         Impulse_Connected = MultipleDamageSkillWrapper(core.DamageSkill("충동/본능 연결", 0, 0, 0, cooltime = 6000, red=True, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False), 2, 1500)
 
@@ -278,6 +282,8 @@ class JobGenerator(ck.JobGenerator):
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("너클")
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
+        FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, WEAPON_ATT)
     
         MagicCircuitFullDrive = core.BuffSkill("매직 서킷 풀드라이브", 720, (30+vEhc.getV(4,3))*1000, pdamage = (20 + vEhc.getV(4,3)), cooltime = 200*1000, red=True).isV(vEhc,4,3).wrap(core.BuffSkillWrapper)
         MagicCircuitFullDriveStorm = core.DamageSkill("매직 서킷 풀드라이브(마력 폭풍)", 0, 500+20*vEhc.getV(4,3), 3, cooltime=4000).wrap(core.DamageSkillWrapper)
@@ -432,13 +438,13 @@ class JobGenerator(ck.JobGenerator):
                     ChargeSpellAmplification, WraithOfGod,
                     LuckyDice, Overdrive,
                     MagicCircuitFullDrive, MemoryOfSourceBuff, EndlessPainBuff,
-                    InfinitySpell,
-                    globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.soul_contract()
+                    InfinitySpell, FloraGoddessBless,
+                    globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract()
                     ] +\
                 [EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, 
                     CrawlingFear_Link, MemoryOfSource, EndlessPain, RaptRestriction, ReturningHate, Impulse_Connected,
                     UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, 
-                    AbyssSpell, RaptRestrictionSummon, RaptRestrictionEnd, DeviousNightmare, DeviousDream,
+                    AbyssSpell, RaptRestrictionSummon, RaptRestrictionEnd, DeviousNightmare, DeviousDream, MirrorBreak, MirrorSpider
                     ] +\
                 [MagicCircuitFullDriveStorm] +\
                 [PlainAttack])

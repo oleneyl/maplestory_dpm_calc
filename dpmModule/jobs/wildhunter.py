@@ -61,10 +61,9 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "와일드헌터"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'crit')
         self.preEmptiveSkills = 0
-        self._combat = 0
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         Jaguer = core.InformedCharacterModifier("재규어",crit=5, buff_rem=10)
         NaturesWrath = core.InformedCharacterModifier("네이처스 래쓰",crit=25)
@@ -84,7 +83,7 @@ class JobGenerator(ck.JobGenerator):
                             WildInstinct, ExtentMagazine, AdvancedFinalAttackPassive, JaugerStormPassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 35)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5*ceil(passive_level/2))
@@ -93,7 +92,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, SummonJaguer]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         재규어 스톰 3히트
 
@@ -105,7 +104,7 @@ class JobGenerator(ck.JobGenerator):
         코강 순서:
         발칸 - (서먼/어나더) - 파택 - 클로우컷 - 헌팅유닛- 램피지애즈원/플래시레인 - 소닉붐 - 재규어소울 - 크로스 로드 - 드릴 컨테이너
         '''
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         # Jaguar Skills
         JAGUAR_STORM_HIT = 3
@@ -132,14 +131,14 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)
         Hauling = core.BuffSkill("하울링", 0, 300*1000, rem = True, patt = 10).wrap(core.BuffSkillWrapper)
         BeastForm = core.BuffSkill("비스트 폼", 0, 300*1000, rem = True, patt=20+5).wrap(core.BuffSkillWrapper)
-        SharpEyes = core.BuffSkill("샤프 아이즈", 1080, (300+3*self._combat) * 1000, crit = 20 + ceil(self._combat/2), crit_damage = 15 + ceil(self._combat/2), rem = True).wrap(core.BuffSkillWrapper)
+        SharpEyes = core.BuffSkill("샤프 아이즈", 1080, (300+3*self.combat) * 1000, crit = 20 + ceil(self.combat/2), crit_damage = 15 + ceil(self.combat/2), rem = True).wrap(core.BuffSkillWrapper)
 
         #Summon skills
         HuntingUnit = core.SummonSkill("어시스턴트 헌팅 유닛", 660, 31000/90, 150, 1.5, 31000, rem=True).setV(vEhc, 4, 3, False).wrap(core.SummonSkillWrapper)
-        DrillContainer = core.SummonSkill("드릴 컨테이너", 660, 270, 430+4*self._combat, 1, 15000, cooltime = 30000, red=True, rem=True).setV(vEhc, 9, 2, False).wrap(core.SummonSkillWrapper)
+        DrillContainer = core.SummonSkill("드릴 컨테이너", 660, 270, 430+4*self.combat, 1, 15000, cooltime = 30000, red=True, rem=True).setV(vEhc, 9, 2, False).wrap(core.SummonSkillWrapper)
         
         #Damage skills
-        WildBalkan = core.DamageSkill("와일드 발칸", 120, 370 + 2*self._combat, 1, modifier = core.CharacterModifier(boss_pdamage=10+20, pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        WildBalkan = core.DamageSkill("와일드 발칸", 120, 370 + 2*self.combat, 1, modifier = core.CharacterModifier(boss_pdamage=10+20, pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         FinalAttack70 = core.DamageSkill("파이널 어택(70)", 0, 210 + 2*passive_level, 0.01*(70+passive_level)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         FinalAttack100 = core.DamageSkill("파이널 어택(100)", 0, 210 + 2*passive_level, 1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
@@ -153,6 +152,7 @@ class JobGenerator(ck.JobGenerator):
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3)
         CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 1, 1, 20)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
     
         JaguerStorm = core.BuffSkill("재규어 스톰", 840, 40*1000, cooltime = (150-vEhc.getV(0,0))*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
@@ -190,10 +190,11 @@ class JobGenerator(ck.JobGenerator):
         Jaguar.onTick(JaguarSelector)
 
         return(WildBalkan,
-                [globalSkill.maple_heros(chtr.level, combat_level=self._combat),
-                    CriticalReinforce, SoulArrow, Booster, Hauling, BeastForm, SharpEyes, SilentRampage, JaguerStorm, WillOfLiberty, Jaguar,
+                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_combat_orders(),
+                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), CriticalReinforce, SoulArrow,
+                    Booster, Hauling, BeastForm, SharpEyes, SilentRampage, JaguerStorm, WillOfLiberty, Jaguar,
                     globalSkill.soul_contract()] +\
                 [RampageAsOne, JaguarSoul, SonicBoom, Crossroad, ClawCut, Normal] +\
-                [HuntingUnit, DrillContainer, GuidedArrow, RegistanceLineInfantry, WildGrenade, JaguarMaximum] +\
+                [HuntingUnit, DrillContainer, GuidedArrow, RegistanceLineInfantry, WildGrenade, JaguarMaximum, MirrorBreak, MirrorSpider] +\
                 [AnotherBite] +\
                 [WildBalkan])

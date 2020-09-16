@@ -338,6 +338,14 @@ class WeaponFactoryClass():
         item.set_potential(potential)
         item.set_additional_potential(additional_potential)
         return item
+
+    def getZeroSubweapon(self, _type, potential = ExMDF(), additional_potential = ExMDF(), bonusElse = ExMDF()):
+        assert(_type == '제로무기')
+        item = Item(name = "제로보조", main_option = self.modifier, level = self.level)
+        item.add_main_option(bonusElse)
+        item.set_potential(potential)
+        item.set_additional_potential(additional_potential)
+        return item
     
     def getMap(self, _type):
         return self.valueMap[self.typeMap[_type]]

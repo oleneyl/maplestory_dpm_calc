@@ -45,10 +45,9 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 15
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'mess')
         self.preEmptiveSkills = 2
-        self._combat = 0
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 60)
         SpiritLink_3 = core.InformedCharacterModifier("정령 결속 3",att = 20, pdamage = 20)
 
@@ -63,7 +62,7 @@ class JobGenerator(ck.JobGenerator):
                 SpiritLink_4, AdvancedNuckleMastery, WeaknessFinding, LoadedDicePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5 * 2 * (passive_level // 3))   
         Weakness = core.InformedCharacterModifier("약화",pdamage = 20) #디버프지만 상시발동가정    
@@ -76,7 +75,7 @@ class JobGenerator(ck.JobGenerator):
         #ruleset.add_rule(ReservationRule("소울 컨트랙트", "정령 집속"), RuleSet.BASE)
         return ruleset
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         ----정보---
         하이퍼 : 귀참 3개, 폭류권 리인포스, 여우령 소환확률 +10%
@@ -95,7 +94,7 @@ class JobGenerator(ck.JobGenerator):
         귀참: 벽캔은 사용하지 않음
         분혼 격참: 이동형 보스로 가정
         '''
-        passive_level = chtr.get_base_modifier().passive_level + self._combat
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         SOULENHANCEREM = 100
         DOUBLEBODYMULTIPLIER = (100/120) * (0.5 * 1 + 0.5 * 0.2)
 
@@ -106,9 +105,9 @@ class JobGenerator(ck.JobGenerator):
         FoxSoul_Normal = core.DamageSkill("여우령", 0, 200 + 5 * passive_level, 3 * (25 + 10 + passive_level // 2) * 0.01).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         FoxSoul_DoubleBody = core.DamageSkill("여우령(분혼 격참)", 0, (200 + 5 * passive_level) * DOUBLEBODYMULTIPLIER, 3 * (25 + 10 + passive_level // 2) * 0.01).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        SoulAttack = core.DamageSkill("귀참", 630 + 5 * self._combat, 265, 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DoubleBodyAttack = core.DamageSkill("분혼 격참(공격)", 0, 2000 + 40*self._combat, 1).wrap(core.DamageSkillWrapper)
-        DoubleBody = core.BuffSkill("분혼 격참", 810, 10000, cooltime = (180-6*self._combat) * 1000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
+        SoulAttack = core.DamageSkill("귀참", 630 + 5 * self.combat, 265, 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DoubleBodyAttack = core.DamageSkill("분혼 격참(공격)", 0, 2000 + 40*self.combat, 1).wrap(core.DamageSkillWrapper)
+        DoubleBody = core.BuffSkill("분혼 격참", 810, 10000, cooltime = (180-6*self.combat) * 1000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
 
         #하이퍼스킬
         #정결극 유지율 100%
@@ -129,6 +128,7 @@ class JobGenerator(ck.JobGenerator):
 
         WEAPON_ATT = jobutils.get_weapon_att("너클")
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         SoulConcentrate = core.BuffSkill("정령 집속", 900, (30+vEhc.getV(2,1))*1000, cooltime = 120*1000, red=True, pdamage_indep = (5+vEhc.getV(2,1)//2)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
         SoulConcentrateSummon = core.SummonSkill("정령 집속(무작위)", 0, 2000, 1742, 1, (30+vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
@@ -190,11 +190,11 @@ class JobGenerator(ck.JobGenerator):
         SpiritFrenzy.onConstraint(SpiritFrenzyConstraint)
 
         return(BasicAttackWrapper, 
-                [globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     EnhanceSpiritLink, LuckyDice, HerosOath,
-                    Overdrive, SoulConcentrate, DoubleBody, SoulTrapStack,
+                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), Overdrive, SoulConcentrate, DoubleBody, SoulTrapStack,
                     globalSkill.soul_contract()] +\
                 [BladeImp, BladeImpBuff, SoulTrap] +\
                 [EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init, EnhanceSpiritLinkSummon_J, SoulConcentrateSummon] +\
-                [RealSoulAttack, DoubleBodyRegistance, SpiritFrenzy] +\
+                [RealSoulAttack, DoubleBodyRegistance, SpiritFrenzy, MirrorBreak, MirrorSpider] +\
                 [BasicAttackWrapper])
