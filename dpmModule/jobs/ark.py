@@ -154,7 +154,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         ruleset.add_rule(ConcurrentRunRule('근원의 기억', '차지 스펠 앰플리피케이션'), RuleSet.BASE)
         ruleset.add_rule(MutualRule('인피니티 스펠', '근원의 기억'), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule('매직 서킷 풀드라이브', '인피니티 스펠'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('매직 서킷 풀드라이브(버프)', '인피니티 스펠'), RuleSet.BASE)
 
         return ruleset
 
@@ -237,6 +237,9 @@ class JobGenerator(ck.JobGenerator):
         AbyssSpell = core.SummonSkill("어비스 스펠", 0, 300*0.75, 70 + 2*self.combat, 2, 3000, cooltime = -1, modifier=SpellBullet).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
         AbyssBuff = core.BuffSkill("어비스 버프", 0, 60*1000, cooltime = -1, rem=True, pdamage = 20 + floor(self.combat/2), boss_pdamage = 30 + self.combat, armor_ignore = 20 + floor(self.combat/2)).wrap(core.BuffSkillWrapper)
 
+        HUMAN_SKILLS_MCF = [EndlessNightmare_Link, PlainChargeDrive, PlainChargeDrive_Link, ScarletChargeDrive, ScarletChargeDrive_Link, UnstoppableImpulse_Link,
+            GustChargeDrive_Link, AbyssChargeDrive_Link]
+
         
         ##### 스펙터 상태일 때 #####
         UpcomingDeath = core.DamageSkill("다가오는 죽음", 0, 450 + 3*passive_level, 2).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
@@ -264,6 +267,9 @@ class JobGenerator(ck.JobGenerator):
         
         Impulse_Connected = MultipleDamageSkillWrapper(core.DamageSkill("충동/본능 연결", 0, 0, 0, cooltime = 6000, red=True, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False), 2, 1500)
 
+        SPECTER_SKILLS_MCF = [EndlessBadDream, EndlessBadDream_Link, UncurableHurt_Link, TenaciousInstinct_Link, UnfulfilledHunger, UnfulfilledHunger_Link,
+            CrawlingFear, CrawlingFear_Link, UncontrollableChaos, UncontrollableChaos_Link, RaptRestriction]
+
         # 하이퍼
         ChargeSpellAmplification = core.BuffSkill("차지 스펠 앰플리피케이션", 720, 60000, att = 30, crit = 20, pdamage = 20, armor_ignore = 20, boss_pdamage = 30, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         
@@ -285,8 +291,8 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, WEAPON_ATT)
     
-        MagicCircuitFullDrive = core.BuffSkill("매직 서킷 풀드라이브", 720, (30+vEhc.getV(4,3))*1000, pdamage = (20 + vEhc.getV(4,3)), cooltime = 200*1000, red=True).isV(vEhc,4,3).wrap(core.BuffSkillWrapper)
-        MagicCircuitFullDriveStorm = core.DamageSkill("매직 서킷 풀드라이브(마력 폭풍)", 0, 500+20*vEhc.getV(4,3), 3, cooltime=4000).wrap(core.DamageSkillWrapper)
+        #MagicCircuitFullDrive = core.BuffSkill("매직 서킷 풀드라이브", 720, (30+vEhc.getV(4,3))*1000, pdamage = (20 + vEhc.getV(4,3)), cooltime = 200*1000, red=True).isV(vEhc,4,3).wrap(core.BuffSkillWrapper)
+        #MagicCircuitFullDriveStorm = core.DamageSkill("매직 서킷 풀드라이브(마력 폭풍)", 0, 500+20*vEhc.getV(4,3), 3, cooltime=4000).wrap(core.DamageSkillWrapper)
                 
         MemoryOfSource = core.DamageSkill("근원의 기억", 0, 0, 0, cooltime = 200 * 1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         MemoryOfSourceTick = core.DamageSkill("근원의 기억(틱)", 250, 400 + 16 * vEhc.getV(1,1), 6).wrap(core.DamageSkillWrapper)    # 43타
@@ -349,7 +355,10 @@ class JobGenerator(ck.JobGenerator):
         EndlessPain.onAfter(EndlessPainBuff)
         EndlessPain.onAfter(EndlessPainRepeat)
         
-        MagicCircuitFullDriveStorm.onConstraint(core.ConstraintElement('매서풀 발동조건', MagicCircuitFullDrive, MagicCircuitFullDrive.is_active)) # TODO: flora.py에 있는 빌더 사용해야 함. 트리거하는 스킬 모두 등록해야함 (매우많음)
+        magic_curcuit_full_drive_builder = flora.MagicCircuitFullDriveBuilder(vEhc, 4, 3)
+        for sk in (HUMAN_SKILLS_MCF + SPECTER_SKILLS_MCF + [EndlessPainTick, EndlessPainEnd, EndlessPainEnd_Link, MemoryOfSourceTick]):
+            magic_curcuit_full_drive_builder.add_trigger(sk)
+        MagicCircuitFullDrive, MagicCircuitFullDriveStorm = magic_curcuit_full_drive_builder.get_skill()
 
         # 스펙터 상태 파이널어택류 연계
         for skill in [EndlessBadDream, EndlessBadDream_Link, DeviousDream,
