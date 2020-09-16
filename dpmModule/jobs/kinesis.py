@@ -53,7 +53,7 @@ class LawOfGravityDebuffWrapper(core.SummonSkillWrapper):
         return super(LawOfGravityDebuffWrapper, self)._use(skill_modifier)
     
     def _useTick(self):
-        if self.onoff and self.tick <= 0: # TODO: afterTick() 같은 콜백 만들거나 / useTick의 if-else 없애거나 / if 내의 로직을 메소드로 뺴거나 / tickPassed 변수 만들거나 택1
+        if self.is_active() and self.tick <= 0: # TODO: afterTick() 같은 콜백 만들거나 / useTick의 if-else 없애거나 / if 내의 로직을 메소드로 뺴거나 / tickPassed 변수 만들거나 택1
             self.tick += self.get_delay()
             result = core.ResultObject(0, self.get_modifier(), self.get_damage(), self.get_hit(), sname = self.skill.name, spec = self.skill.spec)
             self.mobPulled += 6

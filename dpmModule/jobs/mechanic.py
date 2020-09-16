@@ -55,7 +55,7 @@ class MechCarrierWrapper(core.SummonSkillWrapper):
         return super(MechCarrierWrapper, self)._use(skill_modifier)
     
     def _useTick(self):
-        if self.onoff and self.tick <= 0: # TODO: afterTick() 같은 콜백 만들자....
+        if self.is_active() and self.tick <= 0: # TODO: afterTick() 같은 콜백 만들자....
             self.tick += self.get_delay()
             hit = self.get_hit()
             self.interceptor = min(self.interceptor + 1, 16)
