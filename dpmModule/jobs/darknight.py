@@ -94,6 +94,8 @@ class JobGenerator(ck.JobGenerator):
         PierceCyclone = core.DamageSkill("피어스 사이클론(더미)", 90, 0, 0, cooltime = 180*1000, red = True).wrap(core.DamageSkillWrapper)
         PierceCycloneTick = core.DamageSkill("피어스 사이클론", 360, 400+16*vEhc.getV(3,3), 12, modifier = core.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #25타
         PierceCycloneEnd = core.DamageSkill("피어스 사이클론(종료)", 900, 1500+60*vEhc.getV(3,3), 15, modifier = core.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        DarknessAura = core.SummonSkill("다크니스 오라", 450, 1530, 400+16*vEhc.getV(0,0), 5, 40000, cooltime=180*1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        DarknessAuraFinal = core.DamageSkill("다크니스 오라(폭발)", 450, 650+25*vEhc.getV(0,0), 13*(1+15//3), cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 생명력 3마다 폭발 1회 추가, 생명력 최대 15
         
         ######   Skill Wrapper   ######
     
@@ -121,6 +123,8 @@ class JobGenerator(ck.JobGenerator):
         PierceCyclone_.onAfter(PierceCycloneEnd)
         PierceCyclone.onAfter(PierceCyclone_)
 
+        DarknessAura.onAfter(DarknessAuraFinal.controller(40000))
+
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 1)
         for sk in [GoungnilDescent, GoungnilDescentNoCooltime, DarkImpail, PierceCycloneEnd]:
@@ -129,8 +133,8 @@ class JobGenerator(ck.JobGenerator):
         
         return(BasicAttackWrapped, 
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    Booster, CrossoverChain, Sacrifice, Reincarnation,EpicAdventure, DarkThurst, AuraWeaponBuff, AuraWeapon,
+                    Booster, CrossoverChain, Sacrifice, Reincarnation, EpicAdventure, DarkThurst, AuraWeaponBuff, AuraWeapon,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-                [BiholderShock, GoungnilDescent, DarkSpear, PierceCyclone, MirrorBreak, MirrorSpider] +\
+                [DarknessAura, DarknessAuraFinal, BiholderShock, GoungnilDescent, DarkSpear, PierceCyclone, MirrorBreak, MirrorSpider] +\
                 [BiholderDominant, BiholderImpact] +\
                 [BasicAttackWrapped])
