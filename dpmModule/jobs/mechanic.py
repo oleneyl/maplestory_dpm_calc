@@ -168,6 +168,7 @@ class JobGenerator(ck.JobGenerator):
         BusterCallPenalty = core.BuffSkill("메탈아머 전탄발사(페널티)", 0, 2000, cooltime = -1).wrap(core.BuffSkillWrapper)
 
         MechCarrier = MechCarrierWrapper(vEhc, 0, 0, ROBOT_MASTERY)
+        MechCarrierBuff = core.BuffSkill("메카 캐리어(버프)", 0, MechCarrier.skill.remain, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
         
         MassiveFire.onAfter(MassiveFire2)
         #### 호밍 미사일 정의 ####
@@ -179,6 +180,7 @@ class JobGenerator(ck.JobGenerator):
         HommingMissleHolder = core.SummonSkill("호밍 미사일(더미)", 0, 660, 0, 0, 99999 * 100000).wrap(core.SummonSkillWrapper)
         
         MultipleOption.onAfter(MultipleOptionBuff)
+        MechCarrier.onAfter(MechCarrierBuff)
         
         IsBuster_B = core.OptionalElement(BusterCallBuff.is_active, HommingMissle_B_Bu, HommingMissle_B)
         IsBuster = core.OptionalElement(BusterCallBuff.is_active, HommingMissle_Bu, HommingMissle_)
@@ -204,7 +206,7 @@ class JobGenerator(ck.JobGenerator):
         
         return(MassiveFire,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, RoboFactoryBuff, MultipleOptionBuff, BomberTime, Overdrive,
+                    Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, RoboFactoryBuff, MultipleOptionBuff, MechCarrierBuff, BomberTime, Overdrive,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
                 [MicroMissle, MechCarrier, BusterCallInit] +\
                 [HommingMissleHolder, RegistanceLineInfantry, SupportWaver, Robolauncher, RoboFactory, DistortionField, MultipleOption, MirrorBreak, MirrorSpider] +\
