@@ -43,10 +43,8 @@ class UnstableMemorizeWrapper(core.DamageSkillWrapper):
         TODO: 위험한 방식이기 때문에, side-effect에 위험하지 않은 방식으로 변경해야 합니다.
         """
         cooltimeLeft = skill.cooltimeLeft
-        available = skill.is_available()
         result = skill._use(skill_modifier)
         skill.cooltimeLeft = cooltimeLeft
-        skill.available = available
         return result
 
     def add_skill(self, skill: core.AbstractSkillWrapper, weight: int):

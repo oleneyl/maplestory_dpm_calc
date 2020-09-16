@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.policy import TypebaseFetchingPolicy
 from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
@@ -10,30 +9,6 @@ from .jobbranch import pirates
 from .jobclass import flora
 from . import jobutils
 from math import ceil, floor
-
-class ReturningHateWrapper(core.DamageSkillWrapper):
-    def __init__(self, skill):
-        self.stack = 0
-        self._max = 12
-        super(ReturningHateWrapper, self).__init__(skill)
-        self.modifierInvariantFlag = False
-        
-    def _use(self, skill_modifier):
-        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
-        if self.cooltimeLeft > 0:
-            self.available = False
-        
-        mdf = self.skill.get_modifier()
-        stack = self.stack
-        self.stack = 0
-        return core.ResultObject(0, mdf.copy(), 320, sname = self._id, spec = 'deal', hit = 6 * stack)
-        
-    def _addStack(self, d):
-        self.stack = min(self.stack + d, self._max)
-        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
-    
-    def addStack(self, d):
-        return core.TaskHolder(core.Task(self, partial(self._addStack, d)), name = '돌아오는 증오 추가')
 
 # TODO: core쪽으로 옮길 것, .wrap()과 함께 사용 가능하게 할 것
 class MultipleDamageSkillWrapper(core.DamageSkillWrapper):
@@ -46,21 +21,21 @@ class MultipleDamageSkillWrapper(core.DamageSkillWrapper):
         
     def _use(self, skill_modifier):
         self.count += 1
-        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         self.timer = self._timeLimit
         if self.count >= self._max:
             self.count = 0
-            self.available = False 
-        return core.ResultObject(self.skill.delay, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
+        return super(MultipleDamageSkillWrapper, self)._use(skill_modifier)
 
     def spend_time(self, time):
-        self.cooltimeLeft -= time
         self.timer -= time
-        if self.cooltimeLeft < 0:
-            self.available = True
-        elif self.timer < 0:
+        if self.timer <= 0:
             self.count = 0
-            self.available = False 
+        super(MultipleDamageSkillWrapper, self).spend_time(time)
+
+    def is_available(self) -> bool:
+        if self.count > 0:
+            return True
+        return super(MultipleDamageSkillWrapper, self).is_available()
         
 
 class DeviousWrapper(core.DamageSkillWrapper):
@@ -240,7 +215,12 @@ class JobGenerator(ck.JobGenerator):
         
         ##### 스펙터 상태일 때 #####
         UpcomingDeath = core.DamageSkill("다가오는 죽음", 0, 450 + 3*passive_level, 2).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        ReturningHate = ReturningHateWrapper(core.DamageSkill("돌아오는 증오", 0, 320 + 3*passive_level, 6, cooltime=12000, red=True).setV(vEhc, 0, 2, True))
+        ReturningHateStack = core.StackSkillWrapper(core.BuffSkill("돌아오는 증오(스택)", 0, 99999999), 12)
+        ReturningHate = core.StackDamageSkillWrapper(
+            core.DamageSkill("돌아오는 증오", 0, 320 + 3*passive_level, 6, cooltime=12000, red=True).setV(vEhc, 0, 2, True),
+            ReturningHateStack,
+            lambda sk: sk.stack
+        )
 
         EndlessBadDream = core.DamageSkill("끝나지 않는 흉몽", 540, 445 + 3*passive_level, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
         EndlessBadDream_Link = core.DamageSkill("끝나지 않는 흉몽(연계)", 180+LINK_DELAY, 445 + 3*passive_level, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
@@ -309,7 +289,8 @@ class JobGenerator(ck.JobGenerator):
   
         # 보스 1:1 시 공격 1회 당 다가오는 죽음 1개 생성, 인피니티 스펠 상태 시 강화레벨에 따라 총 3 ~ 4개 생성
         UpcomingDeath_Connected = core.OptionalElement(InfinitySpell.is_active, core.RepeatElement(UpcomingDeath, 3 + vEhc.getV(0,0) // 25), UpcomingDeath)
-        UpcomingDeath.onAfter(ReturningHate.addStack(0.2))
+        UpcomingDeath.onAfter(ReturningHateStack.stackController(0.2))
+        ReturningHate.onJustAfter(ReturningHateStack.stackController(-15))
         
 
         # 기본 연결 설정(레프)

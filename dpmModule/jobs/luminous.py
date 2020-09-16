@@ -111,7 +111,6 @@ class LightAndDarknessWrapper(core.DamageSkillWrapper):
         self.stack -= 1
         if self.stack <= 0:
             self.cooltimeLeft = 0
-            self.available = True
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = '빛과 어둠의 세례 스택 증가', spec = 'graph control')
 
 class LiberationOrbActiveWrapper(core.DamageSkillWrapper):
