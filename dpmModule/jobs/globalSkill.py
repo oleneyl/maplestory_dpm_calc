@@ -47,7 +47,7 @@ def useful_advanced_bless(slevel = 1):
 
 def SpiderInMirrorBuilder(enhancer, skill_importance, enhance_importance):
     MirrorBreak = core.DamageSkill(
-        "스파이더 인 미러(공간 붕괴)", 720, 750+30*enhancer.getV(skill_importance, enhance_importance), 12, cooltime = 250*1000, red = True
+        "스파이더 인 미러(공간 붕괴)", 720, 450+18*enhancer.getV(skill_importance, enhance_importance), 15, cooltime = 250*1000, red = True
     ).wrap(core.DamageSkillWrapper)
     # 5번 연속 공격 후 종료, 재돌입 대기시간 3초
     MirrorSpider = core.SummonSkill(
