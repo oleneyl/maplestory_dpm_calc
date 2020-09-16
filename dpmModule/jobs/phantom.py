@@ -108,8 +108,8 @@ class JobGenerator(ck.JobGenerator):
         BlackJack = core.SummonSkill("블랙잭", 570, 250, 400+16*vEhc.getV(1,1), 1, 5000-1, cooltime = 15000, red=True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         BlackJackFinal = core.DamageSkill("블랙잭(최종)", 0, 600+24*vEhc.getV(1,1), 12, cooltime = -1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         
-        MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 690, 600+24*vEhc.getV(2,2), 3 * 7, cooltime = 30000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        MarkOfPhantomEnd = core.DamageSkill("마크 오브 팬텀(최종)", 0, 1200+48*vEhc.getV(2,2), 12).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 690, 300+12*vEhc.getV(2,2), 6 * 7, cooltime = 30000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        MarkOfPhantomEnd = core.DamageSkill("마크 오브 팬텀(최종)", 0, 485+19*vEhc.getV(2,2), 15 * 2).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         #### 그래프 빌드
         
