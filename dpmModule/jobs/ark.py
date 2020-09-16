@@ -278,6 +278,12 @@ class JobGenerator(ck.JobGenerator):
         DeviousNightmare = core.DamageSkill("새어 나오는 악몽", 0, 500 + 20*vEhc.getV(2,2), 9, cooltime = 10 * 1000, red=True).isV(vEhc,2,2).wrap(DeviousWrapper)
         DeviousDream = core.DamageSkill("새어 나오는 흉몽", 0, 600 + 24*vEhc.getV(2,2), 9, cooltime = 10 * 1000, red=True).wrap(DeviousWrapper)
 
+        ForeverHungryBeastInit = core.DamageSkill("영원히 굶주리는 짐승(개시)", 540, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        ForeverHungryBeastTrigger = core.DamageSkill("영원히 굶주리는 짐승(등장)", 0, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        ForeverHungryBeast = core.DamageSkill("영원히 굶주리는 짐승", 0, 1050+42*vEhc.getV(0,0), 5, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 18회 반복
+
+        ### Skill Wrapper ###
+
         SpectorState = SpectorWrapper(MemoryOfSourceBuff, EndlessPainBuff)
         
         # 기본 연결 설정(스펙터)
@@ -336,7 +342,7 @@ class JobGenerator(ck.JobGenerator):
         for skill in [EndlessBadDream, EndlessBadDream_Link, DeviousDream,
             UnfulfilledHunger, UncontrollableChaos, 
             UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, TenaciousInstinct_Link,
-            CrawlingFear_Link, EndlessPainTick, EndlessPainEnd, EndlessPainEnd_Link]:
+            CrawlingFear_Link, EndlessPainTick, EndlessPainEnd, EndlessPainEnd_Link, ForeverHungryBeast]:
             skill.onAfter(UpcomingDeath_Connected)
         MagicCircuitFullDriveStorm.onAfter(core.OptionalElement(SpectorState.is_active, UpcomingDeath_Connected))
         
@@ -357,6 +363,10 @@ class JobGenerator(ck.JobGenerator):
                             ([CrawlingFear_Link, CrawlingFear], "공포")]:
             for skill in skills:
                 skill.onAfter(DeviousDream.reduceCooltime(1000, _id))
+
+        # 5차 - 영원히 굶주리는 짐승
+        ForeverHungryBeastInit.onAfter(ForeverHungryBeastTrigger.controller(9000)) # 9초 후 등장 TODO: 기본 9600+1740ms에 스펙터 스킬 적중시마다 시간 줄어들도록 할것
+        ForeverHungryBeastTrigger.onAfter(core.RepeatElement(ForeverHungryBeast, 18))\
         
         # 기본 공격 : 540ms 중립스킬
         PlainAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
