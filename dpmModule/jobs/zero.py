@@ -205,11 +205,10 @@ class JobGenerator(ck.JobGenerator):
         
         LimitBreakAttack = core.DamageSkill("리미트 브레이크", 0, 400+15*vEhc.getV(0,0), 5, modifier = extra_dmg(15, False)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         # 리미트 브레이크 중에는 디바인 포스 사용 (공격력 20 증가)
-        # 리미트 브레이크 막타뎀을 임시로 최종뎀으로 처리, (1+0.36)*(1+0.2)-1 = 0.36*1.2 + 0.2
         LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = 30+vEhc.getV(0,0)//5, att = 20, cooltime = 240*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         LimitBreakCDR = core.SummonSkill("리미트 브레이크(재사용 대기시간 감소)", 0, 1000, 0, 0, (30+vEhc.getV(0,0)//2)*1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         
-        LimitBreakFinal = core.DamageSkill("리미트 브레이크 (막타)", 0, 600 + 24*vEhc.getV(0,0), 72, cooltime = -1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        LimitBreakFinal = core.DamageSkill("리미트 브레이크 (막타)", 0, 650 + 26*vEhc.getV(0,0), 72, cooltime = -1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         # 베타로 사용함.
         TwinBladeOfTime = core.DamageSkill("조인트 어택", 0, 0, 0, cooltime = 120*1000, red=True, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         TwinBladeOfTime_1 = core.DamageSkill("조인트 어택(1)", 3540, 875+35*vEhc.getV(1,1), 8, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
