@@ -102,7 +102,7 @@ class JobGenerator(ck.JobGenerator):
         
         # 1차
         #부채 타격 가정
-        YeoUiSeon = core.DamageSkill("여의선 : 인", 540 + 30, 525 + 5*passive_level, 5, modifier = BASIC_HYPER + core.CharacterModifier(pdamage_indep = 10)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        YeoUiSeon = core.DamageSkill("여의선 : 인", 540 + 30, 560 + 5*passive_level, 5, modifier = BASIC_HYPER + core.CharacterModifier(pdamage_indep = 5)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Mabong = core.DamageSkill("마봉 호로부", 360, 1000 + 10 * passive_level, 6, cooltime = -1, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
 
         # 2차
@@ -142,8 +142,8 @@ class JobGenerator(ck.JobGenerator):
         Flames_Clone = core.DamageSkill("멸화염 : 허/실", 0, 340 + self.combat, 6, modifier = BASIC_HYPER, cooltime = -1).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         Flames.onAfter(Flames_Clone)
 
-        GeumGoBong = core.DamageSkill("금고봉 : 인 (1타)", 450, 260 + 3*self.combat, 10, cooltime = 11000, modifier = BASIC_HYPER + core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
-        GeumGoBong_2 = core.DamageSkill("금고봉 : 인 (2타)", 0, 420 + self.combat, 8, cooltime = -1, modifier = BASIC_HYPER + core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        GeumGoBong = core.DamageSkill("금고봉 : 인 (1타)", 330, 260 + 3*self.combat, 10, cooltime = 11000, modifier = BASIC_HYPER + core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
+        GeumGoBong_2 = core.DamageSkill("금고봉 : 인 (2타)", 300, 420 + self.combat, 8, cooltime = -1, modifier = BASIC_HYPER + core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
         GeumGoBong.onAfter(GeumGoBong_2)
 
         # 추정치 딜레이 (점프부터 이펙트 완전소멸까지 프레임 분석)
