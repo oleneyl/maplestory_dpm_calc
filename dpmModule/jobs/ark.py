@@ -432,7 +432,7 @@ class JobGenerator(ck.JobGenerator):
                     InfinitySpell, FloraGoddessBless,
                     globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract()
                     ] +\
-                [EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, 
+                [ForeverHungryBeastInit, ForeverHungryBeastTrigger, EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, 
                     CrawlingFear_Link, MemoryOfSource, EndlessPain, RaptRestriction, ReturningHate, Impulse_Connected,
                     UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, 
                     AbyssSpell, RaptRestrictionSummon, RaptRestrictionEnd, DeviousNightmare, DeviousDream, MirrorBreak, MirrorSpider
