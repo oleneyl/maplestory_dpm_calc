@@ -117,6 +117,8 @@ class JobGenerator(ck.JobGenerator):
         BiholderShock.onAfter(Sacrifice.controller(300,'reduce_cooltime'))
         BiholderImpact.onTick(Sacrifice.controller(300,'reduce_cooltime'))
         
+        PierceCycloneTick.onAfter(FinalAttack)
+        PierceCycloneEnd.onAfter(core.RepeatElement(FinalAttack, 5))
         PierceCyclone_ = core.RepeatElement(PierceCycloneTick, 25)
         PierceCyclone_.onAfter(PierceCycloneEnd)
         PierceCyclone.onAfter(PierceCyclone_)
