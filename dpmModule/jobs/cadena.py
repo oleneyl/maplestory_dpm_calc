@@ -337,7 +337,7 @@ class JobGenerator(ck.JobGenerator):
             MaleStromCombo.onConstraint(c)
         
         # 체인아츠 - 퓨리 연동
-        # TODO: 퓨리, 프로페셔널 추가타 발동에 터프허슬/테이크다운 추가
+        # TODO: 퓨리, 프로페셔널 추가타 발동에 터프허슬 추가
         for s in [ChainArts_Stroke_1, ChainArts_Stroke_2, ChainArts_Stroke_1_Cancel, ChainArts_Stroke_2_Cancel,
                                 SummonCuttingSimiter, SummonScratchingClaw, SummonShootingShotgun, SummonSlachingKnife, ChainArts_Chais, SummonThrowingWingdaggerEnd,
                                 ChainArts_Takedown_Init, ChainArts_Takedown_Attack, ChainArts_Takedown_Wave, ChainArts_Takedown_Final, ChainArts_Crush,

@@ -8,7 +8,7 @@ from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
 
-# TODO: 4카 5앱 적용, 리미트 막타 추가
+# TODO: 4카 5앱 적용
 # 제로는 패시브 레벨 +1 어빌 미적용
 '''
 어시스트 매커니즘 정리

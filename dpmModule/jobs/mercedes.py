@@ -10,8 +10,6 @@ from .jobclass import heroes
 from .jobbranch import bowmen
 from math import ceil
 
-#TODO : 5차 신스킬 적용
-
 class ElementalGhostWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, num1, num2):
         skill = core.BuffSkill("엘리멘탈 고스트", 720, (40+vEhc.getV(num1,num2))*1000, cooltime=150*1000, red=True)

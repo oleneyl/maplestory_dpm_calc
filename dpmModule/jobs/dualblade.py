@@ -8,7 +8,6 @@ from . import globalSkill
 from .jobbranch import thieves
 from . import jobutils
 from math import ceil
-#TODO : 5차 신스킬 적용
 
 # TODO: 왜 레투다는 5차값이 1,1인데 레투다 패시브는 2,2일까?
 

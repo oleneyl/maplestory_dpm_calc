@@ -8,7 +8,6 @@ from ..execution.rules import ConditionRule, DisableRule, RuleSet
 from . import globalSkill
 from .jobbranch import bowmen
 from math import ceil
-#TODO : 5차 신스킬 적용
 
 class CardinalStateWrapper(core.BuffSkillWrapper):
     def __init__(self, ancient_force_skills):

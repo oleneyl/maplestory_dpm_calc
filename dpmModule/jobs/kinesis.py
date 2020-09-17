@@ -99,8 +99,6 @@ class JobGenerator(ck.JobGenerator):
         SupremeConcentration = core.InformedCharacterModifier("정신집중-유지", buff_rem = 20+passive_level)
         Transport = core.InformedCharacterModifier("전달",armor_ignore = 25 + passive_level)
         Mastery = core.InformedCharacterModifier("숙달",crit_damage = 10 + passive_level)
-        #TODO
-        #Elemental Reset --> elemental ignorance +10% --> first we will apply this term as simple pdamage_indep
         
         return [SuperSensitive, PsychicForce1Passive, Inertia1,
                             PsychicForce2Passive, PureForce, Inertia2, ESPMastery,

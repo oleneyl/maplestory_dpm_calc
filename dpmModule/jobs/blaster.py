@@ -8,7 +8,6 @@ from . import globalSkill
 from .jobbranch import warriors
 from .jobclass import resistance
 from math import ceil
-#TODO : 5차 신스킬 적용
 
 class RevolvingCannonMasteryWrapper(core.DamageSkillWrapper):
     """

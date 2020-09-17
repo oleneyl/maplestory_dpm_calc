@@ -7,8 +7,6 @@ from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
 
-#TODO : 5차 신스킬 적용
-
 #TODO: 비홀더스 리벤지 메인 효과 추가
 
 class JobGenerator(ck.JobGenerator):

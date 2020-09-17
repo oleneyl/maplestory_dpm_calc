@@ -13,9 +13,6 @@ from .jobbranch import pirates
 from . import jobutils
 import math
 
-# TODO: 워머신 타이탄 추가 (로봇 마스터리 적용)
-# TODO: [메탈아머 전탄발사] : 호밍 미사일 리로드 지속시간이 4초에서 2초로 감소되고 지속시간이 좀 더 정확하게 적용됩니다.
-
 ######   Passive Skill   ######
 
 class MultipleOptionWrapper(core.SummonSkillWrapper):
