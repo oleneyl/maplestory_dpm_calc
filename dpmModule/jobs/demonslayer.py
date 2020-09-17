@@ -40,7 +40,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
     
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(crit = 50, armor_ignore = 50, pdamage = 120)
+        return core.CharacterModifier(crit = 50, armor_ignore = 50, pdamage = 50)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
