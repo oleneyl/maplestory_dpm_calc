@@ -123,7 +123,7 @@ class JobGenerator(ck.JobGenerator):
         Orthros_ = core.SummonSkill("오르트로스(게리온)", 0, 3000, 900+36*vEhc.getV(1,1), 10, 40000, cooltime = -1, modifier = core.CharacterModifier(crit = 100, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
 
         DemonBaneInit = core.DamageSkill("데몬 베인(개시)", 240, 0, 0, cooltime=240*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        DemonBaneTick = core.DamageSkill("데몬 베인(1)", 3360/16, 325+13*vEhc.getV(0,0), 6, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 3360ms 16회
+        DemonBaneTick = core.DamageSkill("데몬 베인(1)", 3760/16, 325+13*vEhc.getV(0,0), 6, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 3760ms 16회
         DemonBane2Pre = core.DamageSkill("데몬 베인(2)(선딜)", 600, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         DemonBane2Tick = core.DamageSkill("데몬 베인(2)", 2400/21, 650+26*vEhc.getV(0,0), 7, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 2400ms 21회
         DemonBane2After = core.DamageSkill("데몬 베인(2)(후딜)", 240, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
