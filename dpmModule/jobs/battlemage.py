@@ -145,7 +145,7 @@ class JobGenerator(ck.JobGenerator):
         BlackMagicAlter = core.SummonSkill("블랙 매직 알터", 690, 1220, 800+32*vEhc.getV(0,0), 4, 40*1000, cooltime = 50*1000, modifier = OVERLOAD_MANA).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) # 2개 충전할때 마다 사용
         GrimReaper = GrimReaperWrapper(vEhc, 2, 2, MasterOfDeath)
         AbyssyalLightning = core.BuffSkill("어비셜 라이트닝", 720, 35000, cooltime=200*1000, red=True).wrap(core.BuffSkillWrapper)
-        AbyssyalDarkLightning = core.DamageSkill("어비셜 라이트닝(칠흑의 번개)", 0, 1100, 5*3, modifier=core.CharacterModifier(crit=100, armor_ignore=20, pdamage_indep=-30)).wrap(core.DamageSkillWrapper)
+        AbyssyalDarkLightning = core.DamageSkill("어비셜 라이트닝(칠흑의 번개)", 0, 1100, 5*3, modifier=core.CharacterModifier(crit=100, armor_ignore=20, pdamage_indep=-20)).wrap(core.DamageSkillWrapper)
         
         #Build Graph
         """
