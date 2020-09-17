@@ -106,10 +106,10 @@ class JobGenerator(ck.JobGenerator):
         JokerBuff = core.BuffSkill("조커(버프)", 1230, 30000, cooltime = -1, pdamage_indep = (1 + (vEhc.getV(4,4) - 1) // 5) * 2 / 5).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         
         BlackJack = core.SummonSkill("블랙잭", 570, 250, 400+16*vEhc.getV(1,1), 1, 5000-1, cooltime = 15000, red=True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
-        BlackJackFinal = core.DamageSkill("블랙잭(최종)", 0, 1200+48*vEhc.getV(1,1), 6, cooltime = -1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        
-        MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 690, 600+24*vEhc.getV(2,2), 3 * 7, cooltime = 30000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        MarkOfPhantomEnd = core.DamageSkill("마크 오브 팬텀(최종)", 0, 1200+48*vEhc.getV(2,2), 12).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        BlackJackFinal = core.DamageSkill("블랙잭(최종)", 0, 600+24*vEhc.getV(1,1), 12, cooltime = -1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+
+        MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 690, 300+12*vEhc.getV(2,2), 6 * 7, cooltime = 30000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        MarkOfPhantomEnd = core.DamageSkill("마크 오브 팬텀(최종)", 0, 485+19*vEhc.getV(2,2), 15 * 2).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
 
         LiftBreak = core.DamageSkill("리프트 브레이크", 990, 400+16*vEhc.getV(0,0), 7*7, cooltime=30000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         

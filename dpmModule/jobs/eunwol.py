@@ -135,7 +135,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 귀문진: 정령을 한번에 2마리 소환함
         SoulTrap = core.SummonSkill("귀문진", 990, 1280, 0, 3 * 2, 40000, cooltime = (120-vEhc.getV(3,2))*1000, red=True).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
-        SoulTrap_D = core.DamageSkill("귀문진 공격", 0, 600+24*vEhc.getV(3,2), 3 * 2, cooltime = -1).isV(vEhc,3,2).wrap(core.DamageSkillWrapper)
+        SoulTrap_D = core.DamageSkill("귀문진 공격", 0, 300+12*vEhc.getV(3,2), 6 * 2, cooltime = -1).isV(vEhc,3,2).wrap(core.DamageSkillWrapper)
 
         RealSoulAttack = core.DamageSkill("진 귀참", 540, 540+6*vEhc.getV(1,3), 12 + 1, cooltime=6000, red=True, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20) + core.CharacterModifier(armor_ignore=50)).setV(vEhc, 0, 2, False).isV(vEhc,1,3).wrap(core.DamageSkillWrapper)
 

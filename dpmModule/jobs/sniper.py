@@ -43,9 +43,11 @@ class JobGenerator(ck.JobGenerator):
         MarkmanShip = core.InformedCharacterModifier("마크맨쉽",armor_ignore = 25, pdamage = 15)
 
         CrossBowExpert = core.InformedCharacterModifier("크로스보우 엑스퍼트",att= 30+passive_level, crit_damage = 8)
+
+        ElusionStep = core.InformedCharacterModifier("일루젼 스탭", stat_main = 40 + passive_level)
         
         return [CriticalShot, PhisicalTraining, MarkmanShip, 
-                CrossBowExpert]
+                CrossBowExpert, ElusionStep]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -74,7 +76,6 @@ class JobGenerator(ck.JobGenerator):
         
         #Buff skills
         SoulArrow = core.BuffSkill("소울 애로우", 0, 300 * 1000, att = 30, rem = True).wrap(core.BuffSkillWrapper)
-        ElusionStep = core.BuffSkill("일루젼 스탭", 0, (300+self.combat*8) * 1000, stat_main = 40 + self.combat, rem = True).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill("샤프 아이즈", 660, (300+10*self.combat) * 1000, crit = 20 + ceil(self.combat/2), crit_damage = 15 + ceil(self.combat/2), rem = True).wrap(core.BuffSkillWrapper)
         #크리티컬 리인포스 - >재정의 필요함..
         
@@ -140,7 +141,7 @@ class JobGenerator(ck.JobGenerator):
         
         return(BasicAttack,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
-                    SoulArrow, ElusionStep, SharpEyes, BoolsEye, EpicAdventure, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
+                    SoulArrow, SharpEyes, BoolsEye, EpicAdventure, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                     CriticalReinforce, RepeatingCartrige, SplitArrowBuff, globalSkill.soul_contract()] +\
                 [TrueSnipping, ChargedArrowHold, ChargedArrow] +\
                 [Evolve,Freezer, GuidedArrow, MirrorBreak, MirrorSpider] +\

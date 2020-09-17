@@ -97,10 +97,10 @@ class JobGenerator(ck.JobGenerator):
         BladeStormTick = core.DamageSkill("블레이드 스톰(틱)", 210, 350+10*vEhc.getV(0,0), 5, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  #10000/210 타
         BladeStormEnd = core.DamageSkill("블레이드 스톰(종료)", 120, 0, 0).wrap(core.DamageSkillWrapper)
         
-        KarmaFury = core.DamageSkill("카르마 퓨리", 750, 750+30*vEhc.getV(1,1), 7 * 3, red = True, cooltime = 10000, modifier = core.CharacterModifier(armor_ignore = 30)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        KarmaFury = core.DamageSkill("카르마 퓨리", 750, 400+16*vEhc.getV(1,1), 7 * 5, red = True, cooltime = 10000, modifier = core.CharacterModifier(armor_ignore = 30)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         BladeTornado = core.DamageSkill("블레이드 토네이도", 540, 600+24*vEhc.getV(2,2), 7, red = True, cooltime = 12000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        BladeTornadoSummon = core.SummonSkill("블레이드 토네이도(소환)", 0, 3000/5, 450+18*vEhc.getV(2,2), 6, 3000-1, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
-        BladeTornadoSummonMirrorImaging = core.SummonSkill("블레이드 토네이도(소환)(미러이미징)", 0, 540, (450+18*vEhc.getV(2,2)) * 0.7, 6, 3000, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
+        BladeTornadoSummon = core.SummonSkill("블레이드 토네이도(소환)", 0, 3000/5, 400+16*vEhc.getV(2,2), 6, 3000-1, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
+        BladeTornadoSummonMirrorImaging = core.SummonSkill("블레이드 토네이도(소환)(미러이미징)", 0, 540, (400+16*vEhc.getV(2,2)) * 0.7, 6, 3000, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
 
         HauntedEdge = core.DamageSkill("헌티드 엣지-나찰", 0, 200+8*vEhc.getV(0,0), 4*5, cooltime=14000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         

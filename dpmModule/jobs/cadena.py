@@ -198,7 +198,7 @@ class JobGenerator(ck.JobGenerator):
         ChainArts_Stroke_2_Cancel = core.DamageSkill("체인아츠:스트로크(2타)(캔슬)", CANCEL_TIME, 400, 5, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         ChainArts_Chais = core.DamageSkill("체인아츠:체이스", 150, 100, 1).wrap(core.DamageSkillWrapper)
-        ChainArts_Crush = core.DamageSkill("체인아츠:크러시", 990, 950, 8, cooltime = 30000).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper) # 미사용
+        ChainArts_Crush = core.DamageSkill("체인아츠:크러시", 750, 510, 15, cooltime = 30000).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper) # 미사용
 
         #ChainArts_ToughHustleInit = core.DamageSkill("체인아츠:터프허슬", 0, 0, 0, cooltime = 50000).setV(vEhc, 0, 2, False) #지속형		
         #ChainArts_ToughHustle = core.DamageSkill("체인아츠:터프허슬", 5000000, 600 + 7 * self.combat, 2).setV(vEhc, 0, 2, False) #지속형, 6초, 미사용
@@ -206,7 +206,7 @@ class JobGenerator(ck.JobGenerator):
         ChainArts_Takedown_Init = core.DamageSkill("체인아츠:테이크다운", 4080, 300+3*self.combat, 2, cooltime = (150-30)*1000, red=True).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         ChainArts_Takedown_Attack = core.DamageSkill("체인아츠:테이크다운(연속 공격)", 2970, 990+15*self.combat, 15, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         ChainArts_Takedown_Wave = core.DamageSkill("체인아츠:테이크다운(파동)", 0, 600+5*self.combat, 4).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper) # 8회 반복
-        ChainArts_Takedown_Final = core.DamageSkill("체인아츠:테이크다운(최종)", 0, 5000, 1, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        ChainArts_Takedown_Final = core.DamageSkill("체인아츠:테이크다운(최종)", 0, 500, 10, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         ChainArts_Takedown_Bind = core.BuffSkill("체인아츠:테이크다운(바인드)", 0, 10000, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         #논체인아츠 스킬

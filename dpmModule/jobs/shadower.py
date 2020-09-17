@@ -93,11 +93,11 @@ class JobGenerator(ck.JobGenerator):
         MesoStack = core.StackSkillWrapper(core.BuffSkill("픽파킷", 0, 9999999), 20)
         MesoExplosion = core.StackDamageSkillWrapper(core.DamageSkill("메소 익스플로전", 0, 120, 2).setV(vEhc, 2, 3, False), MesoStack, lambda skill: skill.stack)
         
-        BailOfShadow = core.SummonSkill("베일 오브 섀도우", 1080 + 120, 12000 / 14, 800, 1, 12*1000, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper) # 다크 사이트 딜레이 합산
+        BailOfShadow = core.SummonSkill("베일 오브 섀도우", 900 + 120, 12000 / 14, 800, 1, 12*1000, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper) # 다크 사이트 딜레이 합산
 
         DarkFlare = core.SummonSkill("다크 플레어", 600, 60000 / 62, 360, 1, 60*1000, cooltime = 60000, red=True).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)
     
-        Smoke = core.BuffSkill("연막탄", 1080 + 120, 30000, cooltime = (150-2*self.combat)*1000, crit_damage = 20+ceil(self.combat/3), red=True).wrap(core.BuffSkillWrapper) # 다크 사이트 딜레이 합산
+        Smoke = core.BuffSkill("연막탄", 900 + 120, 30000, cooltime = (150-2*self.combat)*1000, crit_damage = 20+ceil(self.combat/3), red=True).wrap(core.BuffSkillWrapper) # 다크 사이트 딜레이 합산
         Venom = core.DotSkill("페이탈 베놈", 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 89999 * 1000).wrap(core.SummonSkillWrapper)
         
         AdvancedDarkSight = core.BuffSkill("어드밴스드 다크 사이트", 0, 10000, cooltime = -1, pdamage_indep = 5).wrap(core.BuffSkillWrapper)

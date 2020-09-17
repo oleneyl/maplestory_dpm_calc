@@ -127,7 +127,7 @@ class JobGenerator(ck.JobGenerator):
         # Hyper
         Stimulate = core.BuffSkill("스티뮬레이트", 930, 120 * 1000, cooltime = 240 * 1000, pdamage = 20).wrap(core.BuffSkillWrapper)# 에너지 주기적으로 800씩 증가, 미완충시 풀완충.
         StimulateSummon = core.SummonSkill("스티뮬레이트(게이지 증가 더미)", 0, (5 + serverlag) * 1000, 0, 0, 120 * 1000, cooltime = -1).wrap(core.SummonSkillWrapper)
-        UnityOfPower = core.DamageSkill("유니티 오브 파워", 1080, 650, 5, cooltime = 10000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #완충시에만 사용 가능, 에너지 1500 소모.
+        UnityOfPower = core.DamageSkill("유니티 오브 파워", 690, 650, 5, cooltime = 10000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #완충시에만 사용 가능, 에너지 1500 소모.
         UnityOfPowerBuff = core.BuffSkill("유니티 오브 파워(디버프)", 0, 90 * 1000, cooltime = -1, crit_damage = 40).wrap(core.BuffSkillWrapper)   #4스택 가정.
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 

@@ -155,7 +155,7 @@ class JobGenerator(ck.JobGenerator):
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
-        RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3, ROBOT_MASTERY) # 메카닉은 인팬트리에 로봇 마스터리 최종뎀이 적용됨
+        RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3)
         
         MultipleOption = MultipleOptionWrapper(vEhc, ROBOT_MASTERY)
         MultipleOptionBuff = core.BuffSkill("멀티플 옵션(버프)", 0, MultipleOption.skill.remain, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)

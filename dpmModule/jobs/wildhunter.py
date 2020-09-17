@@ -120,16 +120,16 @@ class JobGenerator(ck.JobGenerator):
         Jaguar = JaguarWrapper()
         Normal = core.DamageSkill("재규어 평타", 0, 140+chtr.level, 1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         ClawCut = core.DamageSkill("클로우 컷", 0, 200+chtr.level, 4, cooltime = 5000*0.9, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        Crossroad = core.DamageSkill("크로스 로드", 0, 450+2*chtr.level, 1, cooltime = 6000*0.9, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
+        Crossroad = core.DamageSkill("크로스 로드", 0, 225+chtr.level, 2, cooltime = 6000*0.9, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
         SonicBoom = core.DamageSkill("소닉 붐", 0, 220+chtr.level, 6, cooltime = 6000*0.9, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        JaguarSoul = core.DamageSkill("재규어 소울", 0, 1000+20*chtr.level, 1, cooltime = 210000, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        JaguarSoul = core.DamageSkill("재규어 소울", 0, 270+chtr.level, 12, cooltime = 210000, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         RampageAsOne = core.DamageSkill("램피지 애즈 원", 0, 500+1*chtr.level, 9, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
     
         Normal_JG = core.DamageSkill("재규어 평타(재규어 스톰)", 0, (140+chtr.level)*(62+vEhc.getV(0,0))*0.01, 1 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         ClawCut_JG = core.DamageSkill("클로우 컷(재규어 스톰)", 0, (200+chtr.level)*(62+vEhc.getV(0,0))*0.01, 4 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        Crossroad_JG = core.DamageSkill("크로스 로드(재규어 스톰)", 0, (450+2*chtr.level)*(62+vEhc.getV(0,0))*0.01, 1 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
+        Crossroad_JG = core.DamageSkill("크로스 로드(재규어 스톰)", 0, (225+chtr.level)*(62+vEhc.getV(0,0))*0.01, 2 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
         SonicBoom_JG = core.DamageSkill("소닉 붐(재규어 스톰)", 0, (220+chtr.level)*(62+vEhc.getV(0,0))*0.01, 6 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        JaguarSoul_JG = core.DamageSkill("재규어 소울(재규어 스톰)", 0, (1000+20*chtr.level)*(62+vEhc.getV(0,0))*0.01, 1 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        JaguarSoul_JG = core.DamageSkill("재규어 소울(재규어 스톰)", 0, (270+chtr.level)*(62+vEhc.getV(0,0))*0.01, 12 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         RampageAsOne_JG = core.DamageSkill("램피지 애즈 원(재규어 스톰)", 0, (500+1*chtr.level)*(62+vEhc.getV(0,0))*0.01, 9 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
     
 
@@ -154,7 +154,7 @@ class JobGenerator(ck.JobGenerator):
 
         #Hyper
         WillOfLiberty = core.BuffSkill("윌 오브 리버티", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        SilentRampage = core.BuffSkill("사일런트 램피지", 1020, 40*1000, pdamage=40, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
+        SilentRampage = core.BuffSkill("사일런트 램피지", 840, 40*1000, pdamage=40, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         
         #5th
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
@@ -164,8 +164,8 @@ class JobGenerator(ck.JobGenerator):
     
         JaguerStorm = core.BuffSkill("재규어 스톰", 840, 40*1000, cooltime = (150-vEhc.getV(0,0))*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
-        JaguarMaximum = core.DamageSkill("재규어 맥시멈", 2160, 1000+40*vEhc.getV(5,5), 36, cooltime = 150*1000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
-        JaguarMaximumFinal = core.DamageSkill("재규어 맥시멈(마무리)", 630, 1800+72*vEhc.getV(5,5), 15, cooltime=-1, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
+        JaguarMaximum = core.DamageSkill("재규어 맥시멈", 2160, 350+13*vEhc.getV(5,5), 12*9, cooltime = 150*1000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
+        JaguarMaximumFinal = core.DamageSkill("재규어 맥시멈(마무리)", 630, 450+18*vEhc.getV(5,5), 15*4, cooltime=-1, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
         RidingOff = core.DamageSkill("하차 딜레이", 1800, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper) # 재규어 맥시멈 강제 탑승 해제 딜레이
 
         WildGrenade = core.SummonSkill("와일드 그레네이드", 0, 4500, 600+24*vEhc.getV(2,2), 5, 9999*10000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)

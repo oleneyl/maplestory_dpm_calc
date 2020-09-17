@@ -104,10 +104,12 @@ class JobGenerator(ck.JobGenerator):
         MarkmanShip = core.InformedCharacterModifier("마크맨쉽",armor_ignore = 25, patt = 25)
 
         BowExpert = core.InformedCharacterModifier("보우 엑스퍼트",att=60 + passive_level, crit_damage = 8)
-        AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)",att = 20 + ceil(self.combat / 2)) #오더스 적용필요
+        AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)",att = 20 + ceil(passive_level / 2)) #오더스 적용필요
+
+        ElusionStep = core.InformedCharacterModifier("일루젼 스탭", stat_main = 80 + 2*passive_level)
         
         return [CriticalShot, PhisicalTraining,MarkmanShip, 
-                            BowExpert, AdvancedFinalAttackPassive]
+                            BowExpert, AdvancedFinalAttackPassive, ElusionStep]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -138,7 +140,6 @@ class JobGenerator(ck.JobGenerator):
         SoulArrow = core.BuffSkill("소울 애로우", 0, 300 * 1000, att = 30).wrap(core.BuffSkillWrapper) # 펫버프
         AdvancedQuibber = core.BuffSkill("어드밴스드 퀴버", 0, 30 * 1000, crit_damage = 8).wrap(core.BuffSkillWrapper)   #쿨타임 무시 가능, 딜레이 없앰
         SharpEyes = core.BuffSkill("샤프 아이즈", 690, 300 * 1000, crit = 20 + 5 + ceil(self.combat / 2), crit_damage = 15 + ceil(self.combat / 2), armor_ignore = 5).wrap(core.BuffSkillWrapper)
-        ElusionStep = core.BuffSkill("일루젼 스탭", 0, (300 + 8 * self.combat) * 1000, rem = True, stat_main = 80 + self.combat).wrap(core.BuffSkillWrapper) # 펫버프
         Preparation = core.BuffSkill("프리퍼레이션", 900, 30 * 1000, cooltime = 90 * 1000, att = 50, boss_pdamage = 20).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
@@ -166,7 +167,7 @@ class JobGenerator(ck.JobGenerator):
         
         #잔영의시 미적용
         QuibberFullBurstBuff = core.BuffSkill("퀴버 풀버스트(버프)", 0, 30 * 1000, cooltime = 120 * 1000, red = True, patt=(5+int(vEhc.getV(2,2)*0.5)), crit_damage=8).wrap(core.BuffSkillWrapper) # 독화살 크뎀을 이쪽에 합침
-        QuibberFullBurst = core.SummonSkill("퀴버 풀버스트", 780, 2 * 1000 / 6, 750 + 30 * vEhc.getV(2,2), 3, 30 * 1000, cooltime = -1, modifier=MortalBlow).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
+        QuibberFullBurst = core.SummonSkill("퀴버 풀버스트", 780, 2 * 1000 / 6, 250 + 10 * vEhc.getV(2,2), 9, 30 * 1000, cooltime = -1, modifier=MortalBlow).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
         QuibberFullBurstDOT = core.DotSkill("독화살", 0, 1000, 220, 3, 30*1000, cooltime = -1).wrap(core.SummonSkillWrapper) # 3회 중첩
     
         ImageArrow = core.SummonSkill("잔영의 시", 720, 240, 400+16*vEhc.getV(1,1), 3, 3000, cooltime=30000, red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # 13 * 3타
@@ -208,7 +209,7 @@ class JobGenerator(ck.JobGenerator):
         ### Exports ###
         return(ArrowOfStorm,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_combat_orders(),
-                    SoulArrow, AdvancedQuibber, SharpEyes, ElusionStep, EpicAdventure, ArmorPiercing, Preparation,
+                    SoulArrow, AdvancedQuibber, SharpEyes, EpicAdventure, ArmorPiercing, Preparation,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), ArrowRainBuff, CriticalReinforce, QuibberFullBurstBuff,
                     QuibberFullBurstDOT, GrittyGustDOT, ImageArrowPassive,
                     globalSkill.soul_contract()] +\
