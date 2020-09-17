@@ -21,6 +21,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         ruleset.add_rule(ConcurrentRunRule('얼티밋 다크 사이트', '스프레드 스로우'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('메이플월드 여신의 축복', '스프레드 스로우'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('레디 투 다이', '소울 컨트랙트'), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
@@ -56,7 +57,7 @@ class JobGenerator(ck.JobGenerator):
         스프 3줄 히트
         
         얼닼사는 스프 사용중에만 사용
-        
+        레투다를 2번에 한번씩 스프에 맞춰 사용
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         #Buff skills
@@ -128,7 +129,7 @@ class JobGenerator(ck.JobGenerator):
             [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     ShadowPartner, SpiritJavelin, PurgeArea, BleedingToxin, EpicAdventure, 
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), UltimateDarksight, ReadyToDie, SpreadThrowInit,
-                    ThrowBlastingStack, ThrowBlasting, ThrowBlastingPassive, ThrowBlastingActive,
+                    ThrowBlasting, ThrowBlastingPassive, ThrowBlastingActive,
                     globalSkill.soul_contract()] + \
                 [ArcaneOfDarklordFinal] + \
                 [Pungma, ArcaneOfDarklord, MirrorBreak, MirrorSpider, BleedingToxinDot, FatalVenom] +\

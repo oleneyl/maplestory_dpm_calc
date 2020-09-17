@@ -107,7 +107,7 @@ class JobGenerator(ck.JobGenerator):
         '''
         에인션트 아스트라 사용하지 않음
         콤보 어썰트는 커스 트랜지션의 지속시간이 2초 이하 남았을때 사용
-        블래 210ms 디차 270ms (http://m.inven.co.kr/board/maple/2304/17507)
+        블래 210ms 디차 240ms
         렐릭 언바운드 디스차지로 사용
         
         하이퍼
