@@ -202,7 +202,7 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(5,5)))*1000, red=True).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
-        UltimateBlast = core.DamageSkill("얼티밋 블래스트", 1350, 2000+100*vEhc.getV(2,2), 15, cooltime = 120*1000, red=True, 
+        UltimateBlast = core.DamageSkill("얼티밋 블래스트", 1350, 400+20*vEhc.getV(2,2), 15*5, cooltime = 120*1000, red=True, 
                 modifier = core.CharacterModifier(armor_ignore = 100) + ANCIENT_ARCHERY).isV(vEhc, 2,2).wrap(core.DamageSkillWrapper)
             
         RavenTempest = core.SummonSkill("레이븐 템페스트", 540, 250, 400+20*vEhc.getV(0,0), 5, 25*1000, cooltime = 120*1000, red=True, modifier = ANCIENT_ARCHERY).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)

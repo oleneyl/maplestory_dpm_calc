@@ -23,9 +23,9 @@ from math import ceil
 
 #ComboAttack
 class ComboAttackWrapper(core.StackSkillWrapper):
-    def __init__(self, skill, desfortBuff, vEhc, combat):
+    def __init__(self, skill, deathfault_buff, vEhc, combat):
         super(ComboAttackWrapper, self).__init__(skill, 10)
-        self.desfortBuff = desfortBuff
+        self.deathfault_buff = deathfault_buff
         self.vEhc = vEhc
         self.combat = combat
         self.stack = 10  #Better point!
@@ -53,7 +53,7 @@ class ComboAttackWrapper(core.StackSkillWrapper):
     def get_modifier(self):
         multiplier = (1 + self.instinct * 0.01 * (5 + 0.5*self.vEhc.getV(1,1)))
         return core.CharacterModifier(pdamage = 2 * self.stack * multiplier, 
-                                            pdamage_indep = self.tick * (self.stack + self.desfortBuff.is_active() * 6) * multiplier,
+                                            pdamage_indep = self.tick * (self.stack + self.deathfault_buff.is_active() * 6) * multiplier,
                                             att = 2 * self.stack * multiplier)
 
 ######   Passive Skill   ######
@@ -140,8 +140,8 @@ class JobGenerator(ck.JobGenerator):
 
         SwordOfBurningSoul = core.SummonSkill("소드 오브 버닝 소울", 810, 1000, (315+12*vEhc.getV(0,0)), 6, (60+vEhc.getV(0,0)//2) * 1000, cooltime = 120 * 1000, red=True, modifier = core.CharacterModifier(crit = 50)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
         
-        ComboDesfort = core.DamageSkill("콤보 데스폴트", 1260, 800 + 32*vEhc.getV(2,3), 7, cooltime = 20 * 1000, red=True).isV(vEhc, 2, 3).wrap(core.DamageSkillWrapper)
-        ComboDesfortBuff = core.BuffSkill("콤보 데스폴트(버프)", 0, 5 * 1000, rem = False, cooltime = -1).isV(vEhc, 2, 3).wrap(core.BuffSkillWrapper)
+        ComboDeathFault = core.DamageSkill("콤보 데스폴트", 1260, 400 + 16*vEhc.getV(2,3), 14, cooltime = 20 * 1000, red=True).isV(vEhc, 2, 3).wrap(core.DamageSkillWrapper)
+        ComboDeathFaultBuff = core.BuffSkill("콤보 데스폴트(버프)", 0, 5 * 1000, rem = False, cooltime = -1).isV(vEhc, 2, 3).wrap(core.BuffSkillWrapper)
         
         ComboInstinct = core.BuffSkill("콤보 인스팅트", 360, 30 * 1000, cooltime = 240 * 1000, rem = False, red = True).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper)
         ComboInstinctFringe = core.DamageSkill("콤보 인스팅트 균열", 0, 200 + 8*vEhc.getV(1,1), 18).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
@@ -152,7 +152,7 @@ class JobGenerator(ck.JobGenerator):
         SwordIllusionFinal = core.DamageSkill("소드 일루전(최종)", 0, 250+10*vEhc.getV(0,0), 5, cooltime=-1).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
-        ComboAttack = ComboAttackWrapper(core.BuffSkill("콤보어택", 0, 999999 * 1000), ComboDesfortBuff, vEhc, passive_level)
+        ComboAttack = ComboAttackWrapper(core.BuffSkill("콤보어택", 0, 999999 * 1000), ComboDeathFaultBuff, vEhc, passive_level)
         IncreaseCombo = ComboAttack.stackController(1)
         
         #Final attack type
@@ -169,9 +169,9 @@ class JobGenerator(ck.JobGenerator):
         Insizing.onBefore(ComboAttack.stackController(-1))
         Insizing.onAfters([InsizingBuff, InsizingDot, AdvancedFinalAttack])
     
-        ComboDesfort.onBefores([ComboDesfortBuff, ComboAttack.stackController(-6)]) # TODO: 데스폴트 데미지에 콤보 카운터 어떻게 적용되는지 확인 필요
-        ComboDesfort.onAfter(AdvancedFinalAttack)
-        ComboDesfort.onConstraint(core.ConstraintElement("콤보 6개 이상", ComboAttack, partial(ComboAttack.judge, 6, 1)))
+        ComboDeathFault.onBefores([ComboDeathFaultBuff, ComboAttack.stackController(-6)]) # TODO: 데스폴트 데미지에 콤보 카운터 어떻게 적용되는지 확인 필요
+        ComboDeathFault.onAfter(AdvancedFinalAttack)
+        ComboDeathFault.onConstraint(core.ConstraintElement("콤보 6개 이상", ComboAttack, partial(ComboAttack.judge, 6, 1)))
 
         SwordIllusionInit.onAfter(core.RepeatElement(SwordIllusion, 12))
         SwordIllusionInit.onAfter(core.RepeatElement(SwordIllusionFinal, 5))
@@ -185,16 +185,16 @@ class JobGenerator(ck.JobGenerator):
         
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
-        for sk in [RaisingBlowInrageFinalizer, ComboDesfort, Panic, Insizing, RisingRage]:
+        for sk in [RaisingBlowInrageFinalizer, ComboDeathFault, Panic, Insizing, RisingRage]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         return(RaisingBlowInrage,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), ComboAttack, Fury, EpicAdventure, Valhalla, 
-                    InsizingBuff, InsizingDot, AuraWeaponBuff, AuraWeapon, ComboDesfortBuff, 
+                    InsizingBuff, InsizingDot, AuraWeaponBuff, AuraWeapon, ComboDeathFaultBuff, 
                     ComboInstinct, ComboInstinctOff, PanicBuff,
                     globalSkill.soul_contract()] +\
-                [Panic, Insizing, ComboDesfort, SwordIllusionInit, RisingRage] +\
+                [Panic, Insizing, ComboDeathFault, SwordIllusionInit, RisingRage] +\
                 [SwordOfBurningSoul, MirrorBreak, MirrorSpider] +\
                 [RaisingBlowInrage])

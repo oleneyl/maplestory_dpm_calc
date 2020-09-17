@@ -94,20 +94,21 @@ class JobGenerator(ck.JobGenerator):
 
         TeleportMastery = core.DamageSkill("텔레포트 마스터리", 0, 272, 1, cooltime=-1).setV(vEhc, 9, 3, True).wrap(core.DamageSkillWrapper)
         
-        FlameHeize = core.DamageSkill("플레임 헤이즈", 1080, 504 + 8*self.combat, 6, cooltime = 10 * 1000, red=True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
-        MistEruption = core.DamageSkill("미스트 이럽션", 720, 416.25 +12.25*self.combat, 15, cooltime = 4 * 1000, red=True, modifier = core.CharacterModifier(armor_ignore = 40 + self.combat) + core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ERUPTION_RATE = [0, 0, 20, 45, 80, 125]
+        FlameHeize = core.DamageSkill("플레임 헤이즈", 1080, 202 + 3*self.combat, 15, cooltime = 10 * 1000, red=True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
+        MistEruption = core.DamageSkill("미스트 이럽션", 720, 45 + self.combat, 15*4, cooltime = 4 * 1000, red=True, modifier = core.CharacterModifier(armor_ignore = 40 + self.combat, pdamage_indep = ERUPTION_RATE[5]) + core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        DotPunisher = core.DamageSkill("도트 퍼니셔", 690, (400+vEhc.getV(0,0)*15), 5 * (1 + (DOT_PUNISHER_HIT - 1) * 0.75), cooltime = 25 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)#=775*(1+0.75*19)*5
-        PoisonNova = core.DamageSkill("포이즌 노바", 570, 500 + 20*vEhc.getV(2,1), 6, cooltime = 25*1000, red = True).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
-        PoisonNovaErupt = core.DamageSkill("포이즌 노바(폭발)", 0, 450 + 18*vEhc.getV(2,1), 6 * (3 + 0.50)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
+        DotPunisher = core.DamageSkill("도트 퍼니셔", 690, (400+vEhc.getV(0,0)*15), 5 * (1 + (DOT_PUNISHER_HIT - 1) * 0.65), cooltime = 25 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)#=775*(1+0.75*19)*5
+        PoisonNova = core.DamageSkill("포이즌 노바", 570, 250 + 10*vEhc.getV(2,1), 12, cooltime = 25*1000, red = True).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
+        PoisonNovaErupt = core.DamageSkill("포이즌 노바(폭발)", 0, 225 + 9*vEhc.getV(2,1), 12 * (3 + 0.50)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
         PoisonChain = core.DamageSkill("포이즌 체인", 600, 300+12*vEhc.getV(0,0), 4, cooltime=30*1000, red=True).wrap(core.DamageSkillWrapper)
         PoisonChainToxic = PoisonChainToxicWrapper(vEhc, 0, 0)
     
-        Meteor = core.DamageSkill("메테오", 720, 470+self.combat*5, 8, cooltime = 45 * 1000, red=True).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
-        MegidoFlame = core.DamageSkill("메기도 플레임", 690, 700, 9, cooltime = 50 * 1000).setV(vEhc, 8, 2, True).wrap(core.DamageSkillWrapper)
+        Meteor = core.DamageSkill("메테오", 690, 315+self.combat*3, 12, cooltime = 45 * 1000, red=True).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
+        MegidoFlame = core.DamageSkill("메기도 플레임", 690, 420, 15, cooltime = 50 * 1000).setV(vEhc, 8, 2, True).wrap(core.DamageSkillWrapper)
         
         # Summoning Skills
-        Ifritt = core.SummonSkill("이프리트", 600, 3030, 450+6*self.combat, 1, (260+5*self.combat)*1000).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
+        Ifritt = core.SummonSkill("이프리트", 600, 3030, 150+2*self.combat, 3, (260+5*self.combat)*1000).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
         FireAura = core.SummonSkill("파이어 오라", 0, 3000, 400, 2, 999999999).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
         FuryOfIfritt = core.SummonSkill("퓨리 오브 이프리트", 480, 6000/25, 200+8*vEhc.getV(3,2), 6, 6*1000-1, cooltime = 75000, red = True).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
@@ -134,7 +135,7 @@ class JobGenerator(ck.JobGenerator):
         EnergyBolt = core.DamageSkill("에너지 볼트", 630, 309, 1).wrap(core.DamageSkillWrapper)
         FlameOrb = core.DamageSkill("플레임 오브", 630, 301, 2).wrap(core.DamageSkillWrapper)
         PoisonBreath = core.DamageSkill("포이즌 브레스", 600, 180, 1).wrap(core.DamageSkillWrapper)
-        Explosion = core.DamageSkill("익스플로젼", 540, 405, 2).wrap(core.DamageSkillWrapper)
+        Explosion = core.DamageSkill("익스플로젼", 300+540, 405, 2).wrap(core.DamageSkillWrapper) # prepare 300 + action 540
         PoisonMist = core.DamageSkill("포이즌 미스트", 1140, 270, 1).wrap(core.DamageSkillWrapper)
         SlimeVirus = core.DotSkill("슬라임 바이러스", 1680, 1000, 160, 1, 10000, cooltime=-1).wrap(core.SummonSkillWrapper)
         
@@ -166,7 +167,7 @@ class JobGenerator(ck.JobGenerator):
         Explosion.onAfter(MeteorPassive)
         PoisonMist.onAfter(MeteorPassive)
         Paralyze.onAfter(MeteorPassive)
-        MistEruption.onAfter(MeteorPassive)
+        MistEruption.onAfter(core.RepeatElement(MeteorPassive, 4))
         FlameHeize.onAfter(MeteorPassive)
         DotPunisher.onAfter(core.RepeatElement(MeteorPassive, DOT_PUNISHER_HIT))
         PoisonNova.onAfter(MeteorPassive)

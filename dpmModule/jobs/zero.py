@@ -121,8 +121,9 @@ class JobGenerator(ck.JobGenerator):
         '''
         미사용 스킬
 
-        ShadowStrike = core.DamageSkill("쉐도우 스트라이크", ?, 195, 8)
-        ShadowStrikeAura = core.DamageSkill("쉐도우 스트라이크", 0, 310, 1)
+        TODO: 쉐스 검기 항상 알파스펙인지 확인할 것
+        ShadowStrike = core.DamageSkill("쉐도우 스트라이크", 510, 195, 8).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        ShadowStrikeAura = core.DamageSkill("쉐도우 스트라이크(오라)", 0, 310, 1).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         '''
         FlashAssault = core.DamageSkill("플래시 어썰터", 270, 165, 8).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         FlashAssaultTAG = core.DamageSkill("플래시 어썰터(태그)", 0, 165, 8).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
@@ -205,11 +206,10 @@ class JobGenerator(ck.JobGenerator):
         
         LimitBreakAttack = core.DamageSkill("리미트 브레이크", 0, 400+15*vEhc.getV(0,0), 5, modifier = extra_dmg(15, False)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         # 리미트 브레이크 중에는 디바인 포스 사용 (공격력 20 증가)
-        # 리미트 브레이크 막타뎀을 임시로 최종뎀으로 처리, (1+0.36)*(1+0.2)-1 = 0.36*1.2 + 0.2
-        LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = (30+vEhc.getV(0,0)//5) *1.2 + 20, att = 20, cooltime = 240*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = 30+vEhc.getV(0,0)//5, att = 20, cooltime = 240*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         LimitBreakCDR = core.SummonSkill("리미트 브레이크(재사용 대기시간 감소)", 0, 1000, 0, 0, (30+vEhc.getV(0,0)//2)*1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         
-        #LimitBreakFinal = core.DamageSkill("리미트 브레이크 (막타)", 0, '''지속시간 동안 가한 데미지의 20% / 15''', 15)
+        LimitBreakFinal = core.DamageSkill("리미트 브레이크 (막타)", 0, 650 + 26*vEhc.getV(0,0), 12*6, cooltime = -1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         # 베타로 사용함.
         TwinBladeOfTime = core.DamageSkill("조인트 어택", 0, 0, 0, cooltime = 120*1000, red=True, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         TwinBladeOfTime_1 = core.DamageSkill("조인트 어택(1)", 3540, 875+35*vEhc.getV(1,1), 8, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
@@ -299,6 +299,10 @@ class JobGenerator(ck.JobGenerator):
         LimitBreak.onBefore(SetBeta)
         LimitBreak.onAfter(LimitBreakAttack)
         LimitBreak.onAfter(LimitBreakCDR)
+        # 버프 종료 직전에 캔슬 TODO: 리밋브 최종뎀 종료 전에 발동되는 것이 반드시 보장되어야 함 (콜백)
+        LimitBreak.onAfter(LimitBreakFinal.controller((30+vEhc.getV(0,0)//2)*1000-1))
+        LimitBreakFinal.add_runtime_modifier(BetaState, lambda beta: extra_dmg(15, False) if beta.is_active() else core.CharacterModifier())
+
         for sk in [TimeDistortion, SoulContract]:
             # 재사용 대기시간 초기화의 효과를 받지 않는 스킬을 제외한 스킬의 재사용 대기시간이 (기본 200%에 5레벨마다 10%씩) 더 빠르게 감소
             LimitBreakCDR.onTick(sk.controller(2000 + 20 * vEhc.getV(0, 0), 'reduce_cooltime'))
@@ -340,7 +344,7 @@ class JobGenerator(ck.JobGenerator):
         return(ComboHolder,
                 [globalSkill.maple_heros(chtr.level, name = "륀느의 가호", combat_level = 0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, RhinneBless,
-                    DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, CriticalBind,
+                    DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, LimitBreakFinal, CriticalBind,
                     SoulContract]+\
                 [TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta, MirrorBreak, MirrorSpider]+\
                 [AdvancedStormBreakSummon, AdvancedStormBreakElectric, AdvancedEarthBreakElectric, WindCutterSummon, ThrowingWeapon]+\

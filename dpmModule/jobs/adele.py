@@ -156,7 +156,7 @@ class JobGenerator(ck.JobGenerator):
 
         Resonance = core.DamageSkill("레조넌스", 690, (120+125+265+passive_level*3) * (1.15**6), 6, cooltime=10*1000, red=True).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 900ms, 스택 유지를 위해 10초마다 사용함
 
-        ResonanceStack = core.BuffSkill('레조넌스(스택)', 0, 30*1000, cooltime=-1, pdamage_indep=15, armor_ignore=15).wrap(core.BuffSkillWrapper) # 최종뎀 5, 방무 5, 최대3회. 상시 중첩으로 가정
+        ResonanceStack = core.BuffSkill('레조넌스(스택)', 0, 30*1000, cooltime=-1, pdamage_indep=10, armor_ignore=10).wrap(core.BuffSkillWrapper) # 최종뎀 5, 방무 5, 최대2회. 상시 중첩으로 가정
 
         Creation = core.StackDamageSkillWrapper(
             core.DamageSkill('크리에이션', 0, 200+240+270+passive_level*3, 1, cooltime = 1500, red=True).setV(vEhc, 5, 2, False),
@@ -219,7 +219,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 에테르
         Ether.set_stack(400)
-        RESTORE_MULTIPLIER = 1 + (40 + vEhc.getV(1,1) // 2) / 100
+        RESTORE_MULTIPLIER = 1 + (50 + vEhc.getV(1,1)) / 100
         EtherTick.onTick(core.OptionalElement(
             Restore.is_active,
             Ether.stackController(5*RESTORE_MULTIPLIER),
@@ -227,8 +227,8 @@ class JobGenerator(ck.JobGenerator):
         ))
         Divide.onAfter(core.OptionalElement(
             Restore.is_active,
-            Ether.stackController(10*RESTORE_MULTIPLIER),
-            Ether.stackController(10)
+            Ether.stackController(12*RESTORE_MULTIPLIER),
+            Ether.stackController(12)
         ))
         Resonance.onAfter(core.OptionalElement( # 레조넌스-엑스트라 힐링
             Restore.is_active,

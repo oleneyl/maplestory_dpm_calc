@@ -93,7 +93,7 @@ class JobGenerator(ck.JobGenerator):
         BiholderImpact = core.SummonSkill("비홀더 임팩트", 0, 270, 100+vEhc.getV(0,2), 6, 2880, cooltime = 20000, red = True, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).isV(vEhc,0,2).wrap(core.SummonSkillWrapper)#onTick으로 0.3초씩
         PierceCyclone = core.DamageSkill("피어스 사이클론(더미)", 90, 0, 0, cooltime = 180*1000, red = True).wrap(core.DamageSkillWrapper)
         PierceCycloneTick = core.DamageSkill("피어스 사이클론", 360, 400+16*vEhc.getV(3,3), 12, modifier = core.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #25타
-        PierceCycloneEnd = core.DamageSkill("피어스 사이클론(종료)", 900, 1500+60*vEhc.getV(3,3), 15, modifier = core.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        PierceCycloneEnd = core.DamageSkill("피어스 사이클론(종료)", 900, 300+12*vEhc.getV(3,3), 15*5, modifier = core.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
         DarknessAura = core.SummonSkill("다크니스 오라", 450, 1530, 400+16*vEhc.getV(0,0), 5, 40000, cooltime=180*1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         DarknessAuraFinal = core.DamageSkill("다크니스 오라(폭발)", 450, 650+25*vEhc.getV(0,0), 13*(1+15//3), cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 생명력 3마다 폭발 1회 추가, 생명력 최대 15
         
@@ -119,6 +119,8 @@ class JobGenerator(ck.JobGenerator):
         BiholderShock.onAfter(Sacrifice.controller(300,'reduce_cooltime'))
         BiholderImpact.onTick(Sacrifice.controller(300,'reduce_cooltime'))
         
+        PierceCycloneTick.onAfter(FinalAttack)
+        PierceCycloneEnd.onAfter(core.RepeatElement(FinalAttack, 5))
         PierceCyclone_ = core.RepeatElement(PierceCycloneTick, 25)
         PierceCyclone_.onAfter(PierceCycloneEnd)
         PierceCyclone.onAfter(PierceCyclone_)

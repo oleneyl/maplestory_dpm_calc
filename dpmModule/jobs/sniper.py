@@ -43,9 +43,11 @@ class JobGenerator(ck.JobGenerator):
         MarkmanShip = core.InformedCharacterModifier("마크맨쉽",armor_ignore = 25, pdamage = 15)
 
         CrossBowExpert = core.InformedCharacterModifier("크로스보우 엑스퍼트",att= 30+passive_level, crit_damage = 8)
+
+        ElusionStep = core.InformedCharacterModifier("일루젼 스탭", stat_main = 40 + passive_level)
         
         return [CriticalShot, PhisicalTraining, MarkmanShip, 
-                CrossBowExpert]
+                CrossBowExpert, ElusionStep]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -74,7 +76,6 @@ class JobGenerator(ck.JobGenerator):
         
         #Buff skills
         SoulArrow = core.BuffSkill("소울 애로우", 0, 300 * 1000, att = 30, rem = True).wrap(core.BuffSkillWrapper)
-        ElusionStep = core.BuffSkill("일루젼 스탭", 0, (300+self.combat*8) * 1000, stat_main = 40 + self.combat, rem = True).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill("샤프 아이즈", 660, (300+10*self.combat) * 1000, crit = 20 + ceil(self.combat/2), crit_damage = 15 + ceil(self.combat/2), rem = True).wrap(core.BuffSkillWrapper)
         #크리티컬 리인포스 - >재정의 필요함..
         
@@ -102,7 +103,7 @@ class JobGenerator(ck.JobGenerator):
         #TODO : 스플릿애로우 계산
 
         RepeatingCartrige = core.BuffSkill("리피팅 크로스보우 카트리지", 510, 60000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        CartrigeStack = core.StackSkillWrapper(core.BuffSkill("카트리지", 0, 99999999), 7)
+        CartrigeStack = core.StackSkillWrapper(core.BuffSkill("카트리지", 0, 99999999), 8)
         FullBurstShot = core.DamageSkill("풀버스트 샷", 810, 300+12*vEhc.getV(0,0), (9+1)*4, cooltime=-1, modifier=PASSIVE_MODIFIER).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         FinalAttack = core.DamageSkill("파이널 어택", 0, 150, 0.4, modifier = PASSIVE_MODIFIER).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
@@ -132,7 +133,7 @@ class JobGenerator(ck.JobGenerator):
         
         ChargedArrowHold.set_disabled_and_time_left(5000) # 최초 차징 시간
 
-        RepeatingCartrige.onAfter(CartrigeStack.stackController(7))
+        RepeatingCartrige.onAfter(CartrigeStack.stackController(8))
         FullBurstShot.onAfter(CartrigeStack.stackController(-1))
 
         BasicAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
@@ -140,7 +141,7 @@ class JobGenerator(ck.JobGenerator):
         
         return(BasicAttack,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
-                    SoulArrow, ElusionStep, SharpEyes, BoolsEye, EpicAdventure, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
+                    SoulArrow, SharpEyes, BoolsEye, EpicAdventure, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                     CriticalReinforce, RepeatingCartrige, SplitArrowBuff, globalSkill.soul_contract()] +\
                 [TrueSnipping, ChargedArrowHold, ChargedArrow] +\
                 [Evolve,Freezer, GuidedArrow, MirrorBreak, MirrorSpider] +\

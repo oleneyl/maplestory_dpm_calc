@@ -81,18 +81,19 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
 
-        DS_MODIFIER = core.CharacterModifier(pdamage = 370) - core.CharacterModifier(pdamage_indep = 10)
-        AW_MODIFIER = core.CharacterModifier(pdamage = 150+50, armor_ignore = 50) - core.CharacterModifier(pdamage_indep = 10)
+        # 뒤의 최종뎀 -10%는 리메인타임 패널티 / 최종뎀 43% = 최종강화 30% + 리인포스 10%
+        DS_MODIFIER = core.CharacterModifier(pdamage = 30 + 30, pdamage_indep = 43) - core.CharacterModifier(pdamage_indep = 10)
+        AW_MODIFIER = DS_MODIFIER + core.CharacterModifier(armor_ignore = 50, boss_pdamage = 50)
 
         DemonSlashRemainTime = core.BuffSkill("데몬 슬래시-리메인타임", 0, 4000, cooltime = -1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
         
         # 1타만 사용시 딜레이가 2타로 이어질때보다 김.
-        DemonSlash1 = core.DamageSkill("데몬 슬래시(1타)", 390, 110, 2, modifier = DS_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlash1 = core.DamageSkill("데몬 슬래시(1타)", 390, 110+80, 2, modifier = DS_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        DemonSlashAW1 = core.DamageSkill("데몬 슬래시 강화(1타)", 270, 600, 3, modifier = AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAW2 = core.DamageSkill("데몬 슬래시 강화(2타)", 270, 600, 3, modifier = AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAW3 = core.DamageSkill("데몬 슬래시 강화(3타)", 360, 700, 3, modifier = AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAW4 = core.DamageSkill("데몬 슬래시 강화(4타)", 360, 800, 3, modifier = AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW1 = core.DamageSkill("데몬 슬래시 강화(1타)", 270, 600+80, 3, modifier = AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW2 = core.DamageSkill("데몬 슬래시 강화(2타)", 270, 600+80, 3, modifier = AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW3 = core.DamageSkill("데몬 슬래시 강화(3타)", 360, 700+80, 3, modifier = AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW4 = core.DamageSkill("데몬 슬래시 강화(4타)", 360, 800+80, 3, modifier = AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         DemonImpact = core.DamageSkill("데몬 임팩트", 660, 460 + 4 * self.combat, (6+1), modifier = core.CharacterModifier(crit = 100, armor_ignore = 30 + ceil(self.combat / 3), boss_pdamage = 40 + self.combat, pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
@@ -122,7 +123,7 @@ class JobGenerator(ck.JobGenerator):
         Orthros_ = core.SummonSkill("오르트로스(게리온)", 0, 3000, 900+36*vEhc.getV(1,1), 10, 40000, cooltime = -1, modifier = core.CharacterModifier(crit = 100, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
 
         DemonBaneInit = core.DamageSkill("데몬 베인(개시)", 240, 0, 0, cooltime=240*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        DemonBaneTick = core.DamageSkill("데몬 베인(1)", 3360/16, 325+13*vEhc.getV(0,0), 6, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 3360ms 16회
+        DemonBaneTick = core.DamageSkill("데몬 베인(1)", 3760/16, 325+13*vEhc.getV(0,0), 6, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 3760ms 16회
         DemonBane2Pre = core.DamageSkill("데몬 베인(2)(선딜)", 600, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         DemonBane2Tick = core.DamageSkill("데몬 베인(2)", 2400/21, 650+26*vEhc.getV(0,0), 7, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 2400ms 21회
         DemonBane2After = core.DamageSkill("데몬 베인(2)(후딜)", 240, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)

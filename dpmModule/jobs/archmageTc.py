@@ -100,8 +100,8 @@ class JobGenerator(ck.JobGenerator):
         FrozenOrb = core.SummonSkill("프로즌 오브", 690, 210, 220+4*self.combat, 1, 4000, cooltime = 5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
     
         LighteningSpear = core.DamageSkill("라이트닝 스피어", 0, 0, 1, cooltime = 75 * 1000).wrap(core.DamageSkillWrapper)
-        LighteningSpearSingle = core.DamageSkill("라이트닝 스피어(키다운)", 267, 200, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 총 8010ms
-        LighteningSpearFinalizer = core.DamageSkill("라이트닝 스피어(막타)", 1080, 1500, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        LighteningSpearSingle = core.DamageSkill("라이트닝 스피어(키다운)", 267, 105, 15).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 총 8010ms
+        LighteningSpearFinalizer = core.DamageSkill("라이트닝 스피어(막타)", 1080, 350, 15).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
         IceAgeInit = core.DamageSkill("아이스 에이지(개시)", 660, 500 + vEhc.getV(2,3)*20, 10, cooltime = 60 * 1000, red = True).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
         IceAgeSummon = core.SummonSkill("아이스 에이지(장판)", 0, 810, 125 + vEhc.getV(2,3)*5, 3*ICE_AGE_SUMMON_HIT, 15 * 1000, cooltime = -1).isV(vEhc,2,3).wrap(core.SummonSkillWrapper)
@@ -123,14 +123,14 @@ class JobGenerator(ck.JobGenerator):
         
         #Summoning skill
         ThunderStorm = core.SummonSkill("썬더 스톰", 900, 1770, 430, 1, 90000, cooltime = 30000).setV(vEhc, 5, 3, False).wrap(core.SummonSkillWrapper)
-        Elquiness = core.SummonSkill("엘퀴네스", 600, 3030, 380+6*self.combat, 1, (260+5*self.combat)*1000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        Elquiness = core.SummonSkill("엘퀴네스", 600, 3030, 127+2*self.combat, 3, (260+5*self.combat)*1000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         IceAura = core.SummonSkill("아이스 오라", 0, 1200, 0, 1, 999999999).wrap(core.SummonSkillWrapper)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         JupyterThunder = core.SummonSkill("주피터 썬더", 630, 330, 300+12*vEhc.getV(0,0), 5, 330*30-1, cooltime=75000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         JupyterThunderDecrement = core.SummonSkill("주피터 썬더(빙결 감소)", 0, 330*5, 0, 0, 330*25-1, cooltime=-1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         
         #FinalAttack
-        Blizzard = core.DamageSkill("블리자드", 720, 450+5*self.combat, 8, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
+        Blizzard = core.DamageSkill("블리자드", 690, 301+3*self.combat, 12, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         BlizzardPassive = core.DamageSkill("블리자드 패시브", 0, (220+4*self.combat) * (0.6+0.01*self.combat), 1).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         
         #special skills

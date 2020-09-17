@@ -249,8 +249,8 @@ class JobGenerator(ck.JobGenerator):
         
         EndlessPain = core.DamageSkill("끝없는 고통", 360, 0, 0, cooltime = 3030 + 60 * 1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   # onTick==> 다가오는 죽음
         EndlessPainTick = core.DamageSkill("끝없는 고통(틱)", 180, 300, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #15타
-        EndlessPainEnd = core.DamageSkill("끝없는 고통(종결)", 1200, 500*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 딜레이 : 1200ms 또는 1050ms(이후 연계 시). 일단 1200으로.
-        EndlessPainEnd_Link = core.DamageSkill("끝없는 고통(종결,연계)", 1050, 500*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        EndlessPainEnd = core.DamageSkill("끝없는 고통(종결)", 1200, 100*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 딜레이 : 1200ms 또는 1050ms(이후 연계 시). 일단 1200으로.
+        EndlessPainEnd_Link = core.DamageSkill("끝없는 고통(종결,연계)", 1050, 100*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         EndlessPainBuff = core.BuffSkill("끝없는 고통(버프)", 0, 3 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper) # 정신력 소모되지 않음
         
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60*1000, pdamage = 10, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
@@ -280,7 +280,7 @@ class JobGenerator(ck.JobGenerator):
 
         ForeverHungryBeastInit = core.DamageSkill("영원히 굶주리는 짐승(개시)", 540, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ForeverHungryBeastTrigger = core.DamageSkill("영원히 굶주리는 짐승(등장)", 0, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        ForeverHungryBeast = core.DamageSkill("영원히 굶주리는 짐승", 0, 1050+42*vEhc.getV(0,0), 5, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 18회 반복
+        ForeverHungryBeast = core.DamageSkill("영원히 굶주리는 짐승", 0, 400+16*vEhc.getV(0,0), 12, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 20회 반복
 
         ### Skill Wrapper ###
 
@@ -330,7 +330,7 @@ class JobGenerator(ck.JobGenerator):
         RaptRestriction.onAfter(RaptRestrictionEnd.controller(9000))
         
         EndlessPainRepeat = core.RepeatElement(EndlessPainTick, 15) # TODO: 사용 직후 게이지 1틱 감소
-        EndlessPainRepeat.onAfter(EndlessPainEnd_Link)
+        EndlessPainRepeat.onAfter(core.RepeatElement(EndlessPainEnd_Link, 5))
         EndlessPain.onConstraint(core.ConstraintElement("게이지 150 이상", SpectorState, partial(SpectorState.judge, 150, 1)))
         EndlessPain.onAfter(SpectorState.onoffController(True))
         EndlessPain.onAfter(EndlessPainBuff)
@@ -366,7 +366,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 5차 - 영원히 굶주리는 짐승
         ForeverHungryBeastInit.onAfter(ForeverHungryBeastTrigger.controller(9000)) # 9초 후 등장 TODO: 기본 9600+1740ms에 스펙터 스킬 적중시마다 시간 줄어들도록 할것
-        ForeverHungryBeastTrigger.onAfter(core.RepeatElement(ForeverHungryBeast, 18))\
+        ForeverHungryBeastTrigger.onAfter(core.RepeatElement(ForeverHungryBeast, 20))\
         
         # 기본 공격 : 540ms 중립스킬
         PlainAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
