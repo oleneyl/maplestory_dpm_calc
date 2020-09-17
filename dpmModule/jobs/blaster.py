@@ -140,8 +140,8 @@ class JobGenerator(ck.JobGenerator):
         BunkerBuster = core.BuffSkill("벙커 버스터", 720, 45000, cooltime = 120000, red = True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
         BunkerBusterAttack = core.DamageSkill("벙커 버스터(공격)", 0, 180 + 7 * vEhc.getV(0,0), 8, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         
-        BalkanPunch = core.DamageSkill("발칸 펀치", 1140, 1000 + 40 * vEhc.getV(4,4), 6, cooltime = 60 * 1000, red = True).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
-        BalkanPunchTick = core.DamageSkill("발칸 펀치(틱)", 150, 450 + 18 * vEhc.getV(4,4), 5).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper) # 46회 반복
+        BalkanPunch = core.DamageSkill("발칸 펀치", 1140, 500 + 20 * vEhc.getV(4,4), 12, cooltime = 60 * 1000, red = True).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        BalkanPunchTick = core.DamageSkill("발칸 펀치(틱)", 120, 425 + 17 * vEhc.getV(4,4), 8).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper) # 24회 반복
         BalkanPunchEnd = core.DamageSkill("발칸 펀치(후딜)", 360, 0, 0).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
         
         BurningBreaker = core.DamageSkill("버닝 브레이커(준비)", 2010, 0, 0, cooltime = 100*1000, red = True).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
@@ -150,7 +150,7 @@ class JobGenerator(ck.JobGenerator):
 
         AfterImageShockInit = core.BuffSkill("애프터이미지 쇼크", 0, 180*1000, cooltime=240*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         AfterImageShockStack = core.StackSkillWrapper(core.BuffSkill("애프터이미지 쇼크(스택)", 0, 99999999), 99)
-        AfterImageShockActive = core.DamageSkill("애프터이미지 쇼크(액티브)", 0, 450+18*vEhc.getV(0,0), 5, cooltime=200).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        AfterImageShockActive = core.DamageSkill("애프터이미지 쇼크(액티브)", 0, 450+18*vEhc.getV(0,0), 5, cooltime=100).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         AfterImageShockPassive = core.DamageSkill("애프터이미지 쇼크(패시브)", 0, 500+20*vEhc.getV(0,0), 3, cooltime=6000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         #스킬 기본 연계 연결
@@ -164,7 +164,7 @@ class JobGenerator(ck.JobGenerator):
         HammerSmash.onAfters([HammerSmashWave, HammerSmashDebuff])
 
         #발칸 펀치
-        BalkanPunchRepeat = core.RepeatElement(BalkanPunchTick, 46)
+        BalkanPunchRepeat = core.RepeatElement(BalkanPunchTick, 24)
         BalkanPunch.onAfter(BalkanPunchRepeat)
         BalkanPunchRepeat.onAfter(BalkanPunchEnd)
         
