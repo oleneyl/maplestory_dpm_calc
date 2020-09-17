@@ -117,7 +117,7 @@ class LiberationOrbActiveWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc, num1, num2):
         self.light = 0
         self.dark = 0
-        skill = core.DamageSkill("리버레이션 오브(액티브)", 0, 500 + 21 * vEhc.getV(num1,num2), 10, cooltime = 1000, modifier = core.CharacterModifier(crit = 100)).isV(vEhc,num1,num2)
+        skill = core.DamageSkill("리버레이션 오브(액티브)", 0, 400 + 17 * vEhc.getV(num1,num2), 10, cooltime = 1000, modifier = core.CharacterModifier(crit = 100)).isV(vEhc,num1,num2)
         super(LiberationOrbActiveWrapper, self).__init__(skill)
 
     def _setStack(self, light, dark):
@@ -215,8 +215,9 @@ class JobGenerator(ck.JobGenerator):
         LiberationOrbPassive = core.DamageSkill("리버레이션 오브(패시브)", 0, 375+15*vEhc.getV(0,0), 4, cooltime=6000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # TODO: 여러번 타격 가능한지 확인할것
         LiberationOrbStackLight = core.StackSkillWrapper(core.BuffSkill("리버레이션 오브(스택)(빛)", 0, 99999999), 4)
         LiberationOrbStackDark = core.StackSkillWrapper(core.BuffSkill("리버레이션 오브(스택)(어둠)", 0, 99999999), 4)
-        LiberationOrb = core.BuffSkill("리버레이션 오브", 690, 20000, cooltime=180*1000, red=True).wrap(core.BuffSkillWrapper)
+        LiberationOrb = core.BuffSkill("리버레이션 오브", 690, 45000, cooltime=180*1000, red=True).wrap(core.BuffSkillWrapper)
         LiberationOrbActive = LiberationOrbActiveWrapper(vEhc,0,0)
+        LiberationOrbActiveStack = core.StackSkillWrapper(core.BuffSkill("리버레이션 오브(액티브)(스택)", 0, 99999999), 20)
 
         # Skill Wrapper - Basic Attack
         LightReflection.onAfter(LuminousState.modifyStack(390))
@@ -243,6 +244,7 @@ class JobGenerator(ck.JobGenerator):
 
         # Skill Wrapper - Liberation Orb
         LiberationOrb.onAfter(LiberationOrbActive.setStack(LiberationOrbStackLight, LiberationOrbStackDark))
+        LiberationOrb.onAfter(LiberationOrbActiveStack.stackController(20))
         LiberationOrb.onAfter(LiberationOrbStackLight.stackController(-4))
         LiberationOrb.onAfter(LiberationOrbStackDark.stackController(-4))
         LiberationOrb.onConstraint(core.ConstraintElement("리버레이션 오브 마력 제한",
@@ -250,11 +252,13 @@ class JobGenerator(ck.JobGenerator):
 
         LiberationOrbPassive.onAfter(core.OptionalElement(LuminousState.isLight, LiberationOrbStackLight.stackController(1)))
         LiberationOrbPassive.onAfter(core.OptionalElement(LuminousState.isDark, LiberationOrbStackDark.stackController(1)))
+        LiberationOrbActive.onAfter(LiberationOrbActiveStack.stackController(-1))
         
         UseLiberationOrbPassive = core.OptionalElement(
-            lambda: LiberationOrb.is_not_active() and LiberationOrbPassive.is_available(), LiberationOrbPassive, name="리버레이션 오브(패시브) 조건")
+            lambda: LiberationOrbActiveStack.judge(0, -1) and LiberationOrbPassive.is_available(), LiberationOrbPassive, name="리버레이션 오브(패시브) 조건")
         UseLiberationOrbActive = core.OptionalElement(
-            lambda: LiberationOrb.is_active() and LiberationOrbActive.is_available(), LiberationOrbActive, name="리버레이션 오브(액티브) 조건")
+            lambda: LiberationOrb.is_active() and LiberationOrbActiveStack.judge(1, 1) and LiberationOrbActive.is_available(),
+            LiberationOrbActive, name="리버레이션 오브(액티브) 조건")
         for sk in [LightReflection, Apocalypse, AbsoluteKill, AbsoluteKillCooltimed]:
             sk.onAfter(UseLiberationOrbPassive)
             sk.onAfter(UseLiberationOrbActive)
