@@ -94,7 +94,7 @@ class JobGenerator(ck.JobGenerator):
         ArcaneOfDarklord = core.SummonSkill("다크로드의 비전서", 360, 1020, 350+14*vEhc.getV(2,2), 7 + 5, 11990, cooltime = 60*1000, red=True, modifier=core.CharacterModifier(boss_pdamage=30)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 132타
         ArcaneOfDarklordFinal = core.DamageSkill("다크로드의 비전서(막타)", 0, 900+36*vEhc.getV(2,2), 10, cooltime = -1, modifier=core.CharacterModifier(boss_pdamage=30)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         ThrowBlasting = core.DamageSkill("스로우 블래스팅(폭발 부적)", 0, 475+19*vEhc.getV(0,0), 5*1.7, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        ThrowBlastingStack = core.StackSkillWrapper(core.BuffSkill("스로우 블래스팅(부적 스택)", 0, 99999999), 47)
+        ThrowBlastingStack = core.StackSkillWrapper(core.BuffSkill("스로우 블래스팅(부적 스택)", 0, 99999999), 45)
         ThrowBlastingActive = core.BuffSkill("스로우 블래스팅(액티브)", 660, 60000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ThrowBlastingPassive = core.DamageSkill("스로우 블래스팅(패시브)", 0, 0, 0, cooltime=10000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
@@ -112,7 +112,7 @@ class JobGenerator(ck.JobGenerator):
         BleedingToxin.onAfter(BleedingToxinDot)
 
         # 스로우 블래스팅
-        ThrowBlastingActive.onAfter(ThrowBlastingStack.stackController(47))
+        ThrowBlastingActive.onAfter(ThrowBlastingStack.stackController(45))
         ThrowBlasting.onAfter(ThrowBlastingStack.stackController(-1))
         ThrowBlastingPassive.onAfter(ThrowBlasting)
         ThrowBlastingPassive.protect_from_running()
@@ -122,11 +122,7 @@ class JobGenerator(ck.JobGenerator):
         QuarupleThrow.onAfter(core.OptionalElement(lambda: ThrowBlastingStack.judge(0, -1) and ThrowBlastingPassive.is_available(), ThrowBlastingPassive))
         QuarupleThrow.onAfter(core.OptionalElement(
             lambda: ThrowBlastingStack.judge(1, 1),
-            core.OptionalElement(
-                lambda: ThrowBlastingStack.judge(3, 1),
-                core.RepeatElement(ThrowBlasting, 3),
-                core.RepeatElement(ThrowBlasting, 2)
-            )
+            core.RepeatElement(ThrowBlasting, 3)
         ))
         QuarupleThrow.onAfter(MarkOfNightlord)
 
