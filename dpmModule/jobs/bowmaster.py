@@ -77,7 +77,6 @@ class GuidedArrowWrapper(bowmen.GuidedArrowWrapper):
         else:
             return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
 
-#TODO : 5차 신스킬 적용
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()

@@ -8,8 +8,6 @@ from ..execution.rules import RuleSet, MutualRule, ConcurrentRunRule, Reservatio
 from . import globalSkill
 from .jobbranch import bowmen
 from math import ceil
-#TODO : 5차 신스킬 적용    
-
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):

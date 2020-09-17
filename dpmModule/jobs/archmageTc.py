@@ -9,8 +9,6 @@ from .jobclass import adventurer
 from .jobbranch import magicians
 from math import ceil
 
-#TODO : 5차 신스킬 적용
-
 class FrostEffectWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
         super(FrostEffectWrapper, self).__init__(skill, 5)

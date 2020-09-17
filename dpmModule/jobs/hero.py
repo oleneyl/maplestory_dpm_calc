@@ -8,7 +8,6 @@ from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
 
-#TODO : 5차 신스킬 적용
 '''히어로 스킬 정리
 - 콤보 어택 :: 스택당 공격력 2, 최종뎀10% -> 오더 11% +2%(하이퍼) 보공+2%
 - 분노(공30)

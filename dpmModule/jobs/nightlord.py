@@ -7,11 +7,6 @@ from ..execution.rules import ConditionRule, RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobbranch import thieves
 from math import ceil
-#TODO : 5차 신스킬 적용
-
-######   Passive Skill   ######
-
-
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):

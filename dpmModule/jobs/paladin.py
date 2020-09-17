@@ -8,11 +8,7 @@ from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
 
-#TODO : 5차 신스킬 적용
 # 4차 스킬은 컴뱃오더스 적용 기준으로 작성해야 함.
-# 생츄어리 필요한지 확인바람 (딜레이 750)
-
-######   Passive Skill   ######
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
