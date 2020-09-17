@@ -103,7 +103,7 @@ class JobGenerator(ck.JobGenerator):
         #TODO : 스플릿애로우 계산
 
         RepeatingCartrige = core.BuffSkill("리피팅 크로스보우 카트리지", 510, 60000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        CartrigeStack = core.StackSkillWrapper(core.BuffSkill("카트리지", 0, 99999999), 7)
+        CartrigeStack = core.StackSkillWrapper(core.BuffSkill("카트리지", 0, 99999999), 8)
         FullBurstShot = core.DamageSkill("풀버스트 샷", 810, 300+12*vEhc.getV(0,0), (9+1)*4, cooltime=-1, modifier=PASSIVE_MODIFIER).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         FinalAttack = core.DamageSkill("파이널 어택", 0, 150, 0.4, modifier = PASSIVE_MODIFIER).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
@@ -133,7 +133,7 @@ class JobGenerator(ck.JobGenerator):
         
         ChargedArrowHold.set_disabled_and_time_left(5000) # 최초 차징 시간
 
-        RepeatingCartrige.onAfter(CartrigeStack.stackController(7))
+        RepeatingCartrige.onAfter(CartrigeStack.stackController(8))
         FullBurstShot.onAfter(CartrigeStack.stackController(-1))
 
         BasicAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
