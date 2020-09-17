@@ -179,7 +179,6 @@ class JobGenerator(ck.JobGenerator):
         ThunderStorm.add_runtime_modifier(FrostEffect, applyFrostEffect)
         
         #Elquiness
-        Elquiness.onTick(BlizzardPassive) # TODO: onTick 실행순서 바뀌면 순서 조정해야 함
         Elquiness.onTick(FrostIncrement)
         
         #Frozen Orb
