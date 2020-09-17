@@ -207,7 +207,6 @@ class JobGenerator(ck.JobGenerator):
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
         # 5th
-        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         DoorOfTruth = core.SummonSkill("진리의 문", 870, 3030, 375 + 15 * vEhc.getV(4,4), 10, (25 + vEhc.getV(4,4) // 2) * 1000, cooltime = -1).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)   #이퀄시 사용 가능해짐.
         PunishingResonator = PunishingResonatorWrapper(vEhc, 2, 1, LuminousState.getState)
@@ -265,13 +264,17 @@ class JobGenerator(ck.JobGenerator):
         
         LiberationOrbPassive.protect_from_running()
         LiberationOrbActive.protect_from_running()
-        
-        SoulContract = globalSkill.soul_contract()
+
+        # Overload Mana
+        overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 2)
+        for sk in [LightReflection, Apocalypse, DoorOfTruth, PunishingResonator, AbsoluteKill, AbsoluteKillCooltimed, LightAndDarkness]:
+            overload_mana_builder.add_skill(sk)
+        OverloadMana = overload_mana_builder.get_buff()
 
         return(Attack, 
                 [LuminousState, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     Booster, PodicMeditaion, DarknessSocery, DarkCrescendo, HerosOath, Memorize, OverloadMana, LiberationOrb,
-                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), SoulContract] +\
+                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
                 [LightAndDarkness, LiberationOrbActive, LiberationOrbPassive] +\
                 [PunishingResonator, DoorOfTruth, MirrorBreak, MirrorSpider] +\
                 [] +\

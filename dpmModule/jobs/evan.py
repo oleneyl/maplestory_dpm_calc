@@ -195,7 +195,6 @@ class JobGenerator(ck.JobGenerator):
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
         # 5차
-        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         # 각 타마다 최종뎀 스택이 적용됨. 1타(0%)-2타(5%)-3타(10%)-4타(15%) = 평균 7.5%
@@ -207,7 +206,7 @@ class JobGenerator(ck.JobGenerator):
         ImperialBreath = core.SummonSkill("임페리얼 브레스", 0, 240, 600+24*vEhc.getV(5,5), 7, 4000, cooltime=-1).isV(vEhc,5,5).wrap(MirSkillWrapper)
 
         ZodiacRayInit = core.DamageSkill("조디악 레이(개시)", 780, 0, 0, cooltime = 180000, red = True).isV(vEhc,4,2).wrap(core.DamageSkillWrapper) # 딜레이 확인 필요
-        ZodiacRay = core.SummonSkill("조디악 레이", 0, 180, 400+16*vEhc.getV(4,2), 6, 180*74-1, modifier = MDF(armor_ignore = 100) - MDF(pdamage_indep=10), cooltime = -1).isV(vEhc,4,2).wrap(core.SummonSkillWrapper)
+        ZodiacRay = core.SummonSkill("조디악 레이", 0, 180, 400+16*vEhc.getV(4,2), 6, 180*74-1, modifier = MDF(armor_ignore = 100), cooltime = -1).isV(vEhc,4,2).wrap(core.SummonSkillWrapper)
         #14+vlevel//10초간 지속, 남은 시간동안 마법진 해방 딜 180ms마다. : 444타 가정( = 74타)
 
         SpiralOfMana = SpiralOfManaWrapper(vEhc, 0, 0)
@@ -280,6 +279,14 @@ class JobGenerator(ck.JobGenerator):
         #파이널 어택
         for i in [CircleOfMana2, CircleOfEarth, CircleOfWind, CircleOfThunder, DarkFog]:
             i.onAfter(DragonSparking)
+
+        #오버로드 마나
+        overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 2)
+        for sk in [CircleOfMana1, CircleOfMana2, CircleOfEarth, CircleOfThunder, CircleOfWind, DarkFog, ElementalBlast, SpiralOfMana,
+                    DragonSwift, SwiftOfWind, SwiftOfThunder, DragonDive, DiveOfEarth, DragonBreath, BreathOfWind, BreathOfEarth,
+                    DragonBreath, ImperialBreath]:
+            overload_mana_builder.add_skill(sk)
+        OverloadMana = overload_mana_builder.get_buff()
             
         return(CircleOfMana1,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),

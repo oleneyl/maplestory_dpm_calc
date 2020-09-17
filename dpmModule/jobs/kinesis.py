@@ -164,7 +164,6 @@ class JobGenerator(ck.JobGenerator):
         PsychicOverSummon = core.SummonSkill("싸이킥 오버(소환)", 0, 750, 0, 0, 30000, cooltime = -1).wrap(core.SummonSkillWrapper)
         
         #5차
-        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 1)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         AnotherGoddessBuff, AnotherVoid = demon.AnotherWorldWrapper(vEhc, 0, 0)
         AnotherHeal = core.DamageSkill("회복의 축복", 0, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
@@ -252,6 +251,14 @@ class JobGenerator(ck.JobGenerator):
 
         LawOfGravity.onConstraint(core.ConstraintElement("5포인트", PsychicPoint, partial(PsychicPoint.judge,5,1)))
         LawOfGravity.onBefore(PsychicPoint.stackController(-5))
+
+        # Overload Mana
+        overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 1)
+        for sk in [PsychicTornado, PsychicTornadoFinal_1, PsychicTornadoFinal_2, UltimateMovingMatter, UltimateMovingMatterFinal,
+                    PsychicGrab2, UltimatePsychic, Ultimate_Material, PsychicDrain, PsychicGroundDamage, PsycoBreakDamage,
+                    EverPsychic, EverPsychicFinal, UltimatePsychicBullet, UltimatePsychicBulletBlackhole, UltimateTrain]:
+            overload_mana_builder.add_skill(sk)
+        OverloadMana = overload_mana_builder.get_buff()
         
         return(PsychicGrab2,
                 [globalSkill.maple_heros(chtr.level, name = "이계의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),

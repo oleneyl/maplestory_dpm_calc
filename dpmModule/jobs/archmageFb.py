@@ -86,7 +86,6 @@ class JobGenerator(ck.JobGenerator):
         # Buff Skills
         Meditation = core.BuffSkill("메디테이션", 0, 240000, att = 30, rem = True, red = True).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 5)
         Infinity = adventurer.InfinityWrapper(self.combat)
         
         # Damage Skills
@@ -190,6 +189,14 @@ class JobGenerator(ck.JobGenerator):
         PoisonNova.onAfter(PoisonNovaErupt)
         MistEruption.onAfter(FlameHeize.controller(1, 'reduce_cooltime_p'))
         PoisonChain.onAfter(PoisonChainToxic)
+
+        # Overload Mana
+        overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 5)
+        for sk in [Paralyze, TeleportMastery, MistEruption, FlameHeize, PoisonMist,
+                    Meteor, MegidoFlame, DotPunisher, PoisonNova, PoisonNovaErupt, PoisonChain, PoisonChainToxic,
+                    EnergyBolt, FlameOrb, PoisonBreath, Explosion]:
+            overload_mana_builder.add_skill(sk)
+        OverloadMana = overload_mana_builder.get_buff()
 
         return (Paralyze, 
                 [Infinity, Meditation, EpicAdventure, OverloadMana.ensure(vEhc,1,5),
