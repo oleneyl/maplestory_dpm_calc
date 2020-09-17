@@ -69,7 +69,7 @@ class JobGenerator(ck.JobGenerator):
         코강 순서
         체라-라스피-블자-오브-엘퀴-썬더스톰
         
-        썬브 8히트
+        썬브 2히트
         아이스 에이지 장판 2히트
         
         하이퍼 : 
@@ -83,14 +83,13 @@ class JobGenerator(ck.JobGenerator):
         그 외의 극딜기는 쿨마다 사용
         프로즌 오브 쿨마다 사용, 19타
         '''
-        THUNDER_BREAK_HIT = 8
+        THUNDER_BREAK_HIT = 2
         ICE_AGE_SUMMON_HIT = 2
 
         ######   Skill   ######
         #Buff skills
         Meditation = core.BuffSkill("메디테이션", 0, 240*1000, att = 30, rem = True, red = True).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         
         #Damage Skills
         ChainLightening = core.DamageSkill("체인 라이트닝", 600, 185 + 3*self.combat, 10+1, modifier = core.CharacterModifier(crit = 25+ceil(self.combat/2), pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
@@ -233,6 +232,14 @@ class JobGenerator(ck.JobGenerator):
         JupyterThunder.add_runtime_modifier(FrostEffect, applyFrostEffect) # TODO: 블리자드 파택 안터지는게 맞는지 확인할것
         JupyterThunder.onAfter(JupyterThunderDecrement.controller(330*5))
         JupyterThunderDecrement.onTick(FrostDecrement)
+
+        #Overload Mana
+        overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 5)
+        for sk in [ChainLightening, FrozenOrb, Blizzard, LighteningSpearSingle, LighteningSpearFinalizer, IceAgeInit,
+                    ThunderBrake1, ThunderBrake2, ThunderBrake3, ThunderBrake4, ThunderBrake5, ThunderBrake6, ThunderBrake7, ThunderBrake8,
+                    JupyterThunder, EnergyBolt, ColdBeam, ThunderBolt, IceStrike, GlacialChain]:
+            overload_mana_builder.add_skill(sk)
+        OverloadMana = overload_mana_builder.get_buff()
 
         return(ChainLightening,
                 [Infinity, Meditation, EpicAdventure, OverloadMana, FrostEffect,

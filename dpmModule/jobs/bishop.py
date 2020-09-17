@@ -94,7 +94,6 @@ class JobGenerator(ck.JobGenerator):
         Heal = core.BuffSkill("힐", 600, 2000, cooltime=4000, pdamage_indep=10, red=True).wrap(core.BuffSkillWrapper)
         Infinity = adventurer.InfinityWrapper(self.combat)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 4)
         
         Pray = PrayWrapper(vEhc, 2, 2)
         
@@ -158,7 +157,15 @@ class JobGenerator(ck.JobGenerator):
         AngelOfLibra.onAfter(Bahamutt.controller(1))
         Bahamutt.onConstraint(core.ConstraintElement("리브라와 동시사용 불가", AngelOfLibra, AngelOfLibra.is_not_active))
 
+        # Divine Punishment
         DivinePunishmentInit.onAfter(core.RepeatElement(DivinePunishmentTick, 33))
+
+        # Overload Mana
+        overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 4)
+        for sk in [AngelRay, Genesis, BigBang, HeavensDoor, AngelOfLibra, PeaceMaker, PeaceMakerFinal, DivinePunishmentTick,
+                    EnergyBolt, HolyArrow, ShiningRay]:
+            overload_mana_builder.add_skill(sk)
+        OverloadMana = overload_mana_builder.get_buff()
         
         return(AngelRay, 
                 [Booster, SacredMark, Infinity, PeaceMakerFinalBuff, Pray, EpicAdventure, OverloadMana,

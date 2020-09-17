@@ -67,7 +67,6 @@ class JobGenerator(ck.JobGenerator):
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         Flame = core.BuffSkill("플레임", 0, 8000, att = 40 + passive_level).wrap(core.BuffSkillWrapper) # 벞지 적용 안되는 스킬
         
-        OverloadMana = OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         #Damage Skills
         InfernoRize = core.DamageSkill("인페르노라이즈", 570, 350+3*self.combat, 10, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage_indep = 90 + self.combat), red = True).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
@@ -126,6 +125,13 @@ class JobGenerator(ck.JobGenerator):
         SalamanderMischeif.onTick(SalamanderMischeifStack.stackController(1))
         SalamanderMischeif.add_runtime_modifier(SalamanderMischeifStack, lambda sk: core.CharacterModifier(pdamage_indep=sk.stack))
         SalamanderMischeif.onJustAfter(SalamanderMischeifBuff.controller(60000))
+
+        # Overload Mana
+        overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 2)
+        for sk in [OrbitalFlame, InfernoRize, DragonSlaveTick, DragonSlaveEnd, InfinityFlameCircleTick, SavageFlame_2, SavageFlame_3, SavageFlame_4,
+                    SalamanderMischeif, CygnusPalanks]:
+            overload_mana_builder.add_skill(sk)
+        OverloadMana = overload_mana_builder.get_buff()
         
         return (OrbitalFlame,
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
