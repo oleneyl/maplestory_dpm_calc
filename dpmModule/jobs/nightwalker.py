@@ -151,11 +151,11 @@ class JobGenerator(ck.JobGenerator):
         RapidThrowInit = core.DamageSkill("래피드 스로우(개시)", 120, 0, 0, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         # 22회 반복
-        RapidThrow = core.DamageSkill("래피드 스로우", 180, 475+19*vEhc.getV(0,0), 3, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrow_Sv = core.DamageSkill("래피드 스로우(서번트)", 0, (475+19*vEhc.getV(0,0))*0.7, 3, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrow_I50 = core.DamageSkill("래피드 스로우(일루젼 50%)", 0, (475+19*vEhc.getV(0,0))*0.5, 3, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrow_I30 = core.DamageSkill("래피드 스로우(일루젼 30%)", 0, (475+19*vEhc.getV(0,0))*0.3, 3, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrow_V = core.DamageSkill("래피드 스로우(5차)", 0, (475+19*vEhc.getV(0,0)) * 0.01 * (25+vEhc.getV(0,0)), 3, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrow = core.DamageSkill("래피드 스로우", 180, 425+17*vEhc.getV(0,0), 4, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrow_Sv = core.DamageSkill("래피드 스로우(서번트)", 0, (425+17*vEhc.getV(0,0))*0.7, 4, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrow_I50 = core.DamageSkill("래피드 스로우(일루젼 50%)", 0, (425+17*vEhc.getV(0,0))*0.5, 4, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrow_I30 = core.DamageSkill("래피드 스로우(일루젼 30%)", 0, (425+17*vEhc.getV(0,0))*0.3, 4, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrow_V = core.DamageSkill("래피드 스로우(5차)", 0, (425+17*vEhc.getV(0,0)) * 0.01 * (25+vEhc.getV(0,0)), 4, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         RapidThrowFinal = core.DamageSkill("래피드 스로우(막타)", 480, 850+34*vEhc.getV(0,0), 13, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         RapidThrowFinal_Sv = core.DamageSkill("래피드 스로우(막타)(서번트)", 0, (850+34*vEhc.getV(0,0))*0.7, 13, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
