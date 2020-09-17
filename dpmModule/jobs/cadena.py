@@ -234,7 +234,7 @@ class JobGenerator(ck.JobGenerator):
         VenomBurst_Poison = core.BuffSkill("베놈 버스트(중독)", 0, 99999999, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage, cooltime = -1).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 3)
-        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0) # TODO: 퓨리, 프로페셔널 에이전트 트리거 여부 확인
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         NovaGoddessBless = nova.NovaGoddessBlessWrapper(vEhc, 0, 0)
         
         ChainArts_Fury = core.BuffSkill("체인아츠:퓨리", 420, (35+vEhc.getV(0,0))*1000, cooltime = (180-vEhc.getV(0,0))*1000, red = True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
