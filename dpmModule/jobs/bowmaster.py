@@ -157,7 +157,7 @@ class JobGenerator(ck.JobGenerator):
         GrittyGustDOT = core.DotSkill("윈드 오브 프레이(도트)", 0, 1000, 200, 1, 10*1000, cooltime = -1).wrap(core.SummonSkillWrapper)
         
         ArrowRainBuff = core.BuffSkill("애로우 레인(버프)", 810, (40+vEhc.getV(0,0))*1000, cooltime = 120 * 1000, red = True, pdamage = 15+(vEhc.getV(0,0)//2)).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        ArrowRain = core.SummonSkill("애로우 레인", 0, 1440, 400+vEhc.getV(0,0)*16, 12, (40+vEhc.getV(0,0))*1000, cooltime = -1, modifier=MortalBlow).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) # 5초마다 3.5회 공격, 대략 1440ms당 1회
+        ArrowRain = core.SummonSkill("애로우 레인", 0, 1440, 600+vEhc.getV(0,0)*24, 8, (40+vEhc.getV(0,0))*1000, cooltime = -1, modifier=MortalBlow).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) # 5초마다 3.5회 공격, 대략 1440ms당 1회
         
         #Summon Skills
         Pheonix = core.SummonSkill("피닉스", 0, 2670, 390, 1, 220 * 1000).setV(vEhc, 5, 3, True).wrap(core.SummonSkillWrapper) # 이볼브가 끝나면 자동으로 소환되므로 딜레이 0
