@@ -113,7 +113,7 @@ class JobGenerator(ck.JobGenerator):
         PsychicShield = core.BuffSkill("사이킥 실드", 0, 180000).wrap(core.BuffSkillWrapper)
 
         Ultimate_Material = core.DamageSkill("얼티메이트-메테리얼", 630, 700 + 3*self.combat, 10, modifier = ULTIMATE_AWAKENING).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)#   7
-        PsychicDrain = core.SummonSkill("싸이킥 드레인", 540, 500, 150, 1, 15000, cooltime = 7000, rem = False).setV(vEhc, 4, 5, False).wrap(core.SummonSkillWrapper) # 1칸+
+        PsychicDrain = core.SummonSkill("싸이킥 드레인", 540, 500, 150, 1, 15000, cooltime = 5000, rem = False).setV(vEhc, 4, 5, False).wrap(core.SummonSkillWrapper) # 1칸+
         
         PsychicForce3 = core.DamageSkill("싸이킥 포스3", 270, 0, 0).wrap(core.DamageSkillWrapper)
         PsychicForce3Dot = core.DotSkill("싸이킥 포스3(도트)", 0, 1000, 403.125, 1, 30000, cooltime = -1).wrap(core.SummonSkillWrapper) # ~20초 평균 퍼뎀

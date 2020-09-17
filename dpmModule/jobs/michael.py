@@ -83,7 +83,7 @@ class JobGenerator(ck.JobGenerator):
         
         SoulAssult = core.DamageSkill("소울 어썰트", 600, 210+3*self.combat, 11+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   #암흑 20%
         
-        FinalAttack = core.DamageSkill("파이널 어택", 0, 95+passive_level, 4*0.01*(75+passive_level)).setV(vEhc, 3, 4, False).wrap(core.DamageSkillWrapper)
+        FinalAttack = core.DamageSkill("파이널 어택", 0, 95+passive_level, 4*0.01*(75+passive_level)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
         ShiningCross = core.DamageSkill("샤이닝 크로스", 600, 440+3*self.combat, 4+1, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #암흑 30% 10초
         ShiningCrossInstall = core.SummonSkill("샤이닝 크로스-인스톨", 0, 1200, 75, 4+1, 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #100% 암흑 5초
