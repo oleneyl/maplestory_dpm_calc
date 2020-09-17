@@ -98,7 +98,7 @@ def getU4000CharacterTemplate(_type):
         "subweapon": Default.get_subweapon_covering_exception(_type, elist = [0,0,0,9], star=weaponStar, potential = ExMDF(), additional_potential = subAPtnl, factory_hook=RootAbyss.Factory),
         "emblem": Default.getEmblem(potential = ExMDF(), additional_potential = emblemAPtnl),
         "medal": Else.get_medal(7),
-        "heart": Else.get_heart(30),
+        "heart": Else.get_heart(8),
         "title": Else.KingOfRootAbyss.copy(),
         "pet": Else.get_pet(0),
     })
