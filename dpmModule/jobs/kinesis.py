@@ -52,11 +52,11 @@ class LawOfGravityDebuffWrapper(core.SummonSkillWrapper):
         self.mobPulled = 0
         return super(LawOfGravityDebuffWrapper, self)._use(skill_modifier)
     
-    def _useTick(self):
+    def _useTick(self): # 데미지 계산 -> 끌어당김 판정 -> 다음 틱 계산
         if self.is_active() and self.tick <= 0: # TODO: afterTick() 같은 콜백 만들거나 / useTick의 if-else 없애거나 / if 내의 로직을 메소드로 뺴거나 / tickPassed 변수 만들거나 택1
-            self.tick += self.get_delay()
             result = core.ResultObject(0, self.get_modifier(), self.get_damage(), self.get_hit(), sname = self.skill.name, spec = self.skill.spec)
             self.mobPulled += 6
+            self.tick += self.get_delay()
             return result
         else:
             return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
@@ -66,7 +66,7 @@ class LawOfGravityDebuffWrapper(core.SummonSkillWrapper):
         return modifier + core.CharacterModifier(pdamage_indep = min(self.mobPulled * 3, 40)) # TODO: 2 아니면 3인데 실험 필요함
 
     def get_delay(self):
-        return max(self.skill.delay - self.mobPulled * 300, 1200)
+        return max(self.skill.delay - self.mobPulled * 120, 1200)
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -193,7 +193,7 @@ class JobGenerator(ck.JobGenerator):
 
         ### 회복의 축복
         AnotherVoid.onTick(AnotherHeal.controller(4000))
-        AnotherHeal.onAfter(PsychicPoint.stackController(40*0.01*(vEhc.getV(0,0)//2)))
+        AnotherHeal.onAfter(PsychicPoint.stackController(40*0.01*(15+vEhc.getV(0,0)//2)))
         
         ### Tandem skill connection
         PsychicForce3.onAfter(PsychicForce3Dot)
