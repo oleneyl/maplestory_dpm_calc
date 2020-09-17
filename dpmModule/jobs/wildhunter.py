@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial, reduce
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobclass import resistance
 from .jobbranch import bowmen
@@ -61,6 +62,11 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "와일드헌터"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'crit')
         self.preEmptiveSkills = 0
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '재규어 스톰'), RuleSet.BASE)
+        return ruleset
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -100,6 +106,8 @@ class JobGenerator(ck.JobGenerator):
         비스트 폼-리인포스
         서먼 재규어-리인포스, 쿨타임 리듀스
         와일드 발칸-리인포스, 보스 킬러
+
+        소울 컨트랙트를 크리티컬 리인포스+재규어 스톰+와일드 발칸 Type X에 맞춰 사용
         
         코강 순서:
         발칸 - (서먼/어나더) - 파택 - 클로우컷 - 헌팅유닛- 램피지애즈원/플래시레인 - 소닉붐 - 재규어소울 - 크로스 로드 - 드릴 컨테이너
@@ -162,15 +170,24 @@ class JobGenerator(ck.JobGenerator):
 
         WildGrenade = core.SummonSkill("와일드 그레네이드", 0, 4500, 600+24*vEhc.getV(2,2), 5, 9999*10000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
 
+        WildBalkanTypeXInit = core.DamageSkill("와일드 발칸 Type X(개시)", 540, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        WildBalkanTypeXTick = core.DamageSkill("와일드 발칸 Type X", 120, 475+19*vEhc.getV(0,0), 4, cooltime=-1, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 67회 반복
+        WildBalkanTypeXEnd = core.DamageSkill("와일드 발칸 Type X(후딜)", 540, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+
         #Build Graph
         FinalAttack = core.OptionalElement(SilentRampage.is_active, FinalAttack100, FinalAttack70)
         
-        WildBalkan.onAfter(FinalAttack)
-        WildBalkan.onAfter(AnotherBite)
+        for sk in [WildBalkan, WildBalkanTypeXTick]:
+            sk.onAfter(FinalAttack)
+            sk.onAfter(AnotherBite)
         
         JaguarMaximum.onAfter(JaguarMaximumFinal)
         JaguarMaximumFinal.onAfter(AnotherBite.add_debuff(3))
         JaguarMaximumFinal.onAfter(RidingOff)
+
+        WildBalkanTypeXKeydown = core.RepeatElement(WildBalkanTypeXTick, 67)
+        WildBalkanTypeXInit.onAfter(WildBalkanTypeXKeydown)
+        WildBalkanTypeXInit.onAfter(WildBalkanTypeXEnd)
 
         #Jaguar
         JaguarSelector = None
@@ -195,6 +212,6 @@ class JobGenerator(ck.JobGenerator):
                     Booster, Hauling, BeastForm, SharpEyes, SilentRampage, JaguerStorm, WillOfLiberty, Jaguar,
                     globalSkill.soul_contract()] +\
                 [RampageAsOne, JaguarSoul, SonicBoom, Crossroad, ClawCut, Normal] +\
-                [HuntingUnit, DrillContainer, GuidedArrow, RegistanceLineInfantry, WildGrenade, JaguarMaximum, MirrorBreak, MirrorSpider] +\
+                [HuntingUnit, DrillContainer, GuidedArrow, RegistanceLineInfantry, WildGrenade, JaguarMaximum, WildBalkanTypeXInit, MirrorBreak, MirrorSpider] +\
                 [AnotherBite] +\
                 [WildBalkan])

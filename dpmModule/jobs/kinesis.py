@@ -43,6 +43,31 @@ class KinesisStackWrapper(core.StackSkillWrapper):
         else:
             return self.judge(stack, 1)
 
+class LawOfGravityDebuffWrapper(core.SummonSkillWrapper):
+    def __init__(self, skill):
+        super(LawOfGravityDebuffWrapper, self).__init__(skill)
+        self.mobPulled = 0
+
+    def _use(self, skill_modifier):
+        self.mobPulled = 0
+        return super(LawOfGravityDebuffWrapper, self)._use(skill_modifier)
+    
+    def _useTick(self):
+        if self.is_active() and self.tick <= 0: # TODO: afterTick() 같은 콜백 만들거나 / useTick의 if-else 없애거나 / if 내의 로직을 메소드로 뺴거나 / tickPassed 변수 만들거나 택1
+            self.tick += self.get_delay()
+            result = core.ResultObject(0, self.get_modifier(), self.get_damage(), self.get_hit(), sname = self.skill.name, spec = self.skill.spec)
+            self.mobPulled += 6
+            return result
+        else:
+            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+
+    def get_modifier(self):
+        modifier = super(LawOfGravityDebuffWrapper, self).get_modifier()
+        return modifier + core.CharacterModifier(pdamage_indep = min(self.mobPulled * 3, 40)) # TODO: 2 아니면 3인데 실험 필요함
+
+    def get_delay(self):
+        return max(self.skill.delay - self.mobPulled * 300, 1200)
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -51,6 +76,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "키네시스"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
+        self.hyperStatPrefixed = 150 # PP 10레벨 투자
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -155,13 +181,18 @@ class JobGenerator(ck.JobGenerator):
         UltimatePsychicBullet = core.DamageSkill("얼티메이트-싸이킥 불릿", 630, 550 + 22*vEhc.getV(3,3), 6, modifier = ULTIMATE_AWAKENING).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)# -2, 딜레이 420ms + 그랩 210ms
         UltimatePsychicBulletBlackhole = core.SummonSkill("얼티메이트-싸이킥 불릿(블랙홀)", 0, 500, 500+20*vEhc.getV(3,3), 3, 500*4, cooltime = -1, modifier = ULTIMATE_AWAKENING).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)# +1
         
-        PsychicPoint = KinesisStackWrapper(core.BuffSkill("싸이킥 포인트", 0, 999999999), 30 + 10, PsychicOver.is_active) # Issue 43 ; maximum point may 40
+        LawOfGravity = core.DamageSkill("로 오브 그래비티", 720, 400+16*vEhc.getV(0,0), 6, cooltime=60000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        LawOfGravityDebuff = core.SummonSkill("로 오브 그래비티(디버프)", 0, 3600, 500+20*vEhc.getV(0,0), 8, 22000, cooltime=-1).isV(vEhc,0,0).wrap(LawOfGravityDebuffWrapper)
+        LawOfGravityFinal = core.DamageSkill("로 오브 그래비티(폭발)", 0, 600+24*vEhc.getV(0,0), 15, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        
+        PsychicPoint = KinesisStackWrapper(core.BuffSkill("싸이킥 포인트", 0, 999999999), 30 + 10, PsychicOver.is_active)
         
         ### Build Graph ###
 
         ### Telekinesis
-        for sk in [PsychicGrab2, PsychicGroundDamage, PsycoBreakDamage, EverPsychicFinal, PsychicTornadoFinal_1, PsychicTornadoFinal_2]:
+        for sk in [PsychicGrab2, PsychicGroundDamage, PsycoBreakDamage, EverPsychicFinal, PsychicTornadoFinal_1, PsychicTornadoFinal_2, LawOfGravity, LawOfGravityFinal]:
             sk.onAfter(TeleKinesis)
+        LawOfGravityDebuff.onTick(TeleKinesis)
 
         ### 회복의 축복
         AnotherVoid.onTick(AnotherHeal.controller(4000))
@@ -178,8 +209,9 @@ class JobGenerator(ck.JobGenerator):
         PsychicTornado.onAfter(PsychicTornadoFinal_2.controller(20*1000))
         UltimateMovingMatter.onAfter(UltimateMovingMatterFinal)
         UltimatePsychicBullet.onAfter(UltimatePsychicBulletBlackhole)
-        
-        
+        LawOfGravity.onAfter(LawOfGravityDebuff)
+        LawOfGravity.onAfter(LawOfGravityFinal.controller(22000))
+                
         ### Psychic point
         Ultimate_Material.onConstraint(core.ConstraintElement("7포인트", PsychicPoint, partial(PsychicPoint.judge_ultimate,7)))
         Ultimate_Material.onConstraint(core.ConstraintElement("트레인 깔려있으면", UltimateTrain, partial(UltimateTrain.is_time_left, 0, 1))) # 0 -> 2000으로 조절하면 트레인 비중 높은 딜사이클이 됨
@@ -199,7 +231,7 @@ class JobGenerator(ck.JobGenerator):
         
         PsychicGrab2.onBefore(PsychicPoint.stackController(2))
 
-        EverPsychic.onBefore(PsychicPoint.stackController(30 + 10)) # Issue 43, pp maximum may 40 in most case. TODO:hyper point modification
+        EverPsychic.onBefore(PsychicPoint.stackController(30 + 10))
 
         PsychicOverSummon.onTick(PsychicPoint.stackController(1))
         
@@ -219,14 +251,17 @@ class JobGenerator(ck.JobGenerator):
 
         UltimateTrain.onConstraint(core.ConstraintElement("15포인트", PsychicPoint, partial(PsychicPoint.judge_ultimate,15)))
         UltimateTrain.onBefore(PsychicPoint.stackController(-15))
+
+        LawOfGravity.onConstraint(core.ConstraintElement("5포인트", PsychicPoint, partial(PsychicPoint.judge,5,1)))
+        LawOfGravity.onBefore(PsychicPoint.stackController(-5))
         
         return(PsychicGrab2,
                 [globalSkill.maple_heros(chtr.level, name = "이계의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     Booster, PsychicShield, PsychicGround, 
                     PsycoBreak, UltimatePsychicBuff, PsychicCharging, 
-                    AnotherGoddessBuff, AnotherVoid, AnotherHeal, PsychicOver, OverloadMana, PsychicPoint,
+                    AnotherGoddessBuff, AnotherVoid, AnotherHeal, PsychicOver, OverloadMana, PsychicPoint, LawOfGravityDebuff,
                     globalSkill.soul_contract()] +\
                 [EverPsychic, Ultimate_Material] +\
                 [PsychicDrain, PsychicForce3, PsychicForce3Dot, UltimateBPM, PsychicOverSummon, PsychicTornado, UltimateMovingMatter, PsychicTornadoFinal_1, PsychicTornadoFinal_2] +\
-                [UltimateTrain, MirrorBreak, MirrorSpider] +\
+                [UltimateTrain, LawOfGravity, LawOfGravityFinal, MirrorBreak, MirrorSpider] +\
                 [PsychicGrab2])

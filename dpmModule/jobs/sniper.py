@@ -31,6 +31,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '크리티컬 리인포스'), RuleSet.BASE)
         ruleset.add_rule(ReservationRule('크리티컬 리인포스', '스플릿 애로우'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('스플릿 애로우', '소울 컨트랙트'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('리피팅 크로스보우 카트리지', '소울 컨트랙트'), RuleSet.BASE)
 
         return ruleset
 
@@ -99,6 +100,10 @@ class JobGenerator(ck.JobGenerator):
         SplitArrow = core.DamageSkill("스플릿 애로우(공격)", 0, 600 + vEhc.getV(0,0) * 24, 5+1, modifier = PASSIVE_MODIFIER).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         SplitArrowBuff = core.BuffSkill("스플릿 애로우", 810, 60 * 1000, 120 * 1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         #TODO : 스플릿애로우 계산
+
+        RepeatingCartrige = core.BuffSkill("리피팅 크로스보우 카트리지", 510, 60000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        CartrigeStack = core.StackSkillWrapper(core.BuffSkill("카트리지", 0, 99999999), 7)
+        FullBurstShot = core.DamageSkill("풀버스트 샷", 810, 300+12*vEhc.getV(0,0), (9+1)*4, cooltime=-1, modifier=PASSIVE_MODIFIER).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         FinalAttack = core.DamageSkill("파이널 어택", 0, 150, 0.4, modifier = PASSIVE_MODIFIER).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
         
@@ -112,24 +117,32 @@ class JobGenerator(ck.JobGenerator):
     
         SplitArrowOption = core.OptionalElement(SplitArrowBuff.is_active, SplitArrow, name = "스플릿 애로우 여부 확인")
         Snipping.onAfter(SplitArrowOption)
+        FullBurstShot.onAfter(core.RepeatElement(SplitArrowOption, 4))
     
         TrueSnippingDeal = core.RepeatElement(TrueSnippingTick, 7)
         TrueSnipping.onBefore(ChargedArrowHold.controller(10000, name = "차징 유예"))
         TrueSnipping.onAfter(TrueSnippingDeal)
         
-        ChargedArrowHold.onTick(Snipping) # 완충시 스나이핑 즉시 발사됨
-        ChargedArrowHold.onTick(ChargedArrow)
+        # TODO: 차지드 캔슬 구현할것 / 딜레이 중간에 끊는게 구현되기 전까지 어려움
+        ChargedArrowHold.onTick(core.OptionalElement(partial(CartrigeStack.judge, 0, -1), ChargedArrow)) # 풀버스트샷 도중에는 차지드 동시발사가 안됨
 
         for sk in [Snipping, TrueSnippingTick, ChargedArrow]:
             sk.onAfter(FinalAttack)
+        FullBurstShot.onAfter(core.RepeatElement(FinalAttack, 4))
         
         ChargedArrowHold.set_disabled_and_time_left(5000) # 최초 차징 시간
+
+        RepeatingCartrige.onAfter(CartrigeStack.stackController(7))
+        FullBurstShot.onAfter(CartrigeStack.stackController(-1))
+
+        BasicAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
+        BasicAttack.onAfter(core.OptionalElement(partial(CartrigeStack.judge, 1, 1), FullBurstShot, Snipping))
         
-        return(Snipping,
+        return(BasicAttack,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
                     SoulArrow, ElusionStep, SharpEyes, BoolsEye, EpicAdventure, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
-                    CriticalReinforce, SplitArrowBuff, globalSkill.soul_contract()] +\
+                    CriticalReinforce, RepeatingCartrige, SplitArrowBuff, globalSkill.soul_contract()] +\
                 [TrueSnipping, ChargedArrowHold, ChargedArrow] +\
                 [Evolve,Freezer, GuidedArrow, MirrorBreak, MirrorSpider] +\
                 [] +\
-                [Snipping])
+                [BasicAttack])

@@ -136,6 +136,8 @@ class JobGenerator(ck.JobGenerator):
         ElementalGhostSpirit = core.DamageSkill("엘리멘탈 고스트(정령의 기운)", 0, 450+15*vEhc.getV(0,0), 8, cooltime=10*1000).wrap(core.DamageSkillWrapper)
         IrkilaBreathInit = core.DamageSkill("이르칼라의 숨결", 900, 0, 0, cooltime = 150 * 1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         IrkilaBreathTick = core.DamageSkill("이르칼라의 숨결(틱)", 150, 400+16*vEhc.getV(1,1), 8).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        RoyalKnights = core.BuffSkill("로얄 나이츠", 1260, 30000, cooltime=150*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        RoyalKnightsAttack = core.DamageSkill("로얄 나이츠(공격)", 0, 325+13*vEhc.getV(0,0), 4*4, cooltime=1410).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
@@ -192,22 +194,27 @@ class JobGenerator(ck.JobGenerator):
         # Sylphidia.onConstraint(core.ConstraintElement("엘고와 따로 사용", ElementalGhost, lambda: ElementalGhost.is_not_active() and ElementalGhost.is_not_usable()))
 
         #Final Attack, Elemental Ghost
-        UseElementalGhostSpirit = core.OptionalElement(lambda: ElementalGhost.is_active() and ElementalGhostSpirit.is_available(), ElementalGhostSpirit, name="정령의 기운 조건")
+        UseElementalGhostSpirit = core.OptionalElement(
+            lambda: ElementalGhost.is_active() and ElementalGhostSpirit.is_available(), ElementalGhostSpirit, name="정령의 기운 조건")
+        UseRoyalNightsAttack = core.OptionalElement(
+            lambda: RoyalKnights.is_active() and RoyalKnightsAttack.is_available(), RoyalKnightsAttack, name="로얄 나이츠 조건")
 
         for wrp in [UnicornSpike, RegendrySpear, LightningEdge, LeapTornado, GustDive,
                     AdvanceStrikeDualShot, AdvanceStrikeDualShot_Link, WrathOfEllil]:
             ElementalGhost.addSkill(wrp, is_fast=False)
             wrp.onAfter(AdvancedFinalAttackSlow)
             wrp.onAfter(UseElementalGhostSpirit)
+            wrp.onAfter(UseRoyalNightsAttack)
         ElementalGhost.addSkill(AdvancedFinalAttackSlow, is_fast=False) # 파택에 잔상 적용하는것과 잔상 공격에 파택 따로 적용하는것 결과적으로 동일함
             
         for wrp in [IshtarRing, IrkilaBreathTick]:
             ElementalGhost.addSkill(wrp, is_fast=True)
             wrp.onAfter(AdvancedFinalAttackFast)
             wrp.onAfter(UseElementalGhostSpirit)
+            wrp.onAfter(UseRoyalNightsAttack)
         ElementalGhost.addSkill(AdvancedFinalAttackFast, is_fast=True)
 
-        for sk in [UnicornSpike, RegendrySpear, WrathOfEllil, ElementalGhostSpirit]:
+        for sk in [UnicornSpike, RegendrySpear, WrathOfEllil, ElementalGhostSpirit, RoyalKnightsAttack]:
             sk.protect_from_running()
 
         for sk in [UnicornSpikeBuff, RegendrySpearBuff, LightningEdgeBuff]:
@@ -215,9 +222,10 @@ class JobGenerator(ck.JobGenerator):
     
         return(BasicAttack,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), 
-                    Booster, ElvishBlessing, AncientSpirit, HerosOath, Sylphidia.ignore(), CriticalReinforce, UnicornSpikeBuff, RegendrySpearBuff, LightningEdgeBuff, ElementalGhost,
+                    Booster, ElvishBlessing, AncientSpirit, HerosOath, Sylphidia.ignore(), RoyalKnights,
+                    CriticalReinforce, UnicornSpikeBuff, RegendrySpearBuff, LightningEdgeBuff, ElementalGhost,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-                [ElementalGhostSpirit, UnicornSpike, RegendrySpear, WrathOfEllil, IrkilaBreathInit] +\
+                [RoyalKnightsAttack, ElementalGhostSpirit,UnicornSpike, RegendrySpear, WrathOfEllil, IrkilaBreathInit] +\
                 [ElementalKnights, ElementalKnights_1, ElementalKnights_2, GuidedArrow, MirrorBreak, MirrorSpider] +\
                 [] +\
                 [BasicAttack])

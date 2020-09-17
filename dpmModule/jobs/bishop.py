@@ -2,7 +2,7 @@ from ..kernel import core
 from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, SynchronizeRule, InactiveRule, DisableRule
+from ..execution.rules import ConcurrentRunRule, RuleSet, SynchronizeRule, InactiveRule, DisableRule
 from . import globalSkill
 from functools import partial
 from .jobclass import adventurer
@@ -107,6 +107,9 @@ class JobGenerator(ck.JobGenerator):
         PeaceMaker = core.DamageSkill("피스메이커", 0, 350 + 14*vEhc.getV(0,0), 4, cooltime = -1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         PeaceMakerFinal = core.DamageSkill("피스메이커(폭발)", 0, 500 + 20*vEhc.getV(0,0), 8, cooltime = -1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         PeaceMakerFinalBuff = core.BuffSkill("피스메이커(버프)", 0, (8 + SERVERLAG)*1000, pdamage = (5 + vEhc.getV(0,0) // 5) + (12 - PEACEMAKER_HIT), cooltime = -1).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+
+        DivinePunishmentInit = core.DamageSkill("디바인 퍼니시먼트(개시)", 240, 0, 0, cooltime=85000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DivinePunishmentTick = core.DamageSkill("디바인 퍼니시먼트(키다운)", 240, 150+6*vEhc.getV(0,0), 5+5, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
     
         #Summoning skill
         Bahamutt = core.SummonSkill("바하뮤트", 600, 3030, 500+6*self.combat, 1, 90 * 1000, cooltime = 120 * 1000, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #최종뎀25%스택
@@ -141,7 +144,7 @@ class JobGenerator(ck.JobGenerator):
         Bahamutt.onTick(SacredMark.stackController(25, name="표식(25%)", dtype="set"))
         AngelOfLibra.onTick(SacredMark.stackController(50, name="표식(50%)", dtype="set"))
 
-        for sk in [HolyArrow, ShiningRay, Genesis, BigBang, AngelRay, PeaceMaker, PeaceMakerFinal]:
+        for sk in [HolyArrow, ShiningRay, Genesis, BigBang, AngelRay, PeaceMaker, PeaceMakerFinal, DivinePunishmentTick]:
             sk.onJustAfter(SacredMark.stackController(0, name="표식(소모)", dtype="set"))
             sk.add_runtime_modifier(SacredMark, lambda skill: core.CharacterModifier(pdamage_indep = skill.stack))
         
@@ -154,12 +157,14 @@ class JobGenerator(ck.JobGenerator):
         # Libra - Bahamutt exclusive
         AngelOfLibra.onAfter(Bahamutt.controller(1))
         Bahamutt.onConstraint(core.ConstraintElement("리브라와 동시사용 불가", AngelOfLibra, AngelOfLibra.is_not_active))
+
+        DivinePunishmentInit.onAfter(core.RepeatElement(DivinePunishmentTick, 33))
         
         return(AngelRay, 
                 [Booster, SacredMark, Infinity, PeaceMakerFinalBuff, Pray, EpicAdventure, OverloadMana,
                 globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(), AdvancedBless, Heal,
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
                 [PeaceMakerInit] +\
-                [AngelOfLibra, Bahamutt, HeavensDoor, MirrorBreak, MirrorSpider] +\
+                [AngelOfLibra, Bahamutt, HeavensDoor, DivinePunishmentInit, MirrorBreak, MirrorSpider] +\
                 [UnstableMemorize] +\
                 [AngelRay])

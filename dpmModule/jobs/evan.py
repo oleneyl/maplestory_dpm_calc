@@ -10,7 +10,7 @@ from .jobbranch import magicians
 
 class MagicParticleWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc, upgrade_index, passive_level):
-        skill = core.DamageSkill("마법 잔해", 0, 0, 0, cooltime = 10000).setV(vEhc, upgrade_index, 2, True)
+        skill = core.DamageSkill("마법 잔해", 0, 110, 1, cooltime = 10000).setV(vEhc, upgrade_index, 2, True)
         super(MagicParticleWrapper, self).__init__(skill)
         self.stack = 0
         self.passive_level = passive_level
@@ -25,10 +25,43 @@ class MagicParticleWrapper(core.DamageSkillWrapper):
         return result
 
     def get_damage(self):
-        return 110 + 2*self.passive_level + (100 + self.passive_level) * (self.stack // 5)
+        return self.skill.damage + 2*self.passive_level + (100 + self.passive_level) * (self.stack // 5)
 
     def get_hit(self):
-        return self.stack
+        return self.skill.hit * self.stack
+
+class SpiralOfManaWrapper(core.SummonSkillWrapper):
+    def __init__(self, vEhc, num1, num2):
+        self.penaltyTime = 0
+        skill = core.SummonSkill(
+            "스파이럴 오브 마나", 360, 420, 235+vEhc.getV(num1,num2), 6, 7000, cooltime=5000-50*vEhc.getV(num1,num2), red=True
+        ).setV(vEhc, 0, 2, False).isV(vEhc, num1, num2)
+        super(SpiralOfManaWrapper, self).__init__(skill)
+
+    def spend_time(self, time):
+        self.penaltyTime -= time
+        super(SpiralOfManaWrapper, self).spend_time(time)
+
+    def _use(self, skill_modifier):
+        result = super(SpiralOfManaWrapper, self)._use(skill_modifier)
+        self.tick = 780 # TODO: SummonSkill에 공격 시작 시간 입력 가능하게 할 것
+        self.penaltyTime = 0
+        return result
+
+    def _setPenalty(self):
+        if self.is_active():
+            self.penaltyTime = 1000
+        return self._result_object_cache
+
+    def setPenalty(self):
+        task = core.Task(self, self._setPenalty)
+        return core.TaskHolder(task, name="스오마 타수 감소")
+
+    def get_hit(self): # 서오마 사용후 1초간 3타, 미사용시 6타
+        if self.penaltyTime > 0:
+            return self.skill.hit - 3
+        else:
+            return self.skill.hit
 
 class MirSkillWrapper(core.SummonSkillWrapper):
     def __init__(self, skill):
@@ -81,10 +114,12 @@ class JobGenerator(ck.JobGenerator):
         MagicMastery = core.InformedCharacterModifier("매직 마스터리",att = 30 + passive_level, crit_damage = 20 + passive_level//2)
         DragonFury = core.InformedCharacterModifier("드래곤 퓨리",patt = 35 + passive_level)
         HighDragonPotential = core.InformedCharacterModifier("하이 드래곤 포텐셜",boss_pdamage = 20+passive_level)
+
+        SpiralOfManaPassive = core.InformedCharacterModifier("스파이럴 오브 마나(패시브)", att=5+vEhc.getV(0,0))
         
         return [InheritWill, LinkedMagic,
             HighWisdom, SpellMastery, ElementalReset, CriticalMagic, MagicAmplification, DragonPotential,
-            MagicMastery, DragonFury, HighDragonPotential]
+            MagicMastery, DragonFury, HighDragonPotential, SpiralOfManaPassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -105,7 +140,7 @@ class JobGenerator(ck.JobGenerator):
         하이퍼 : 
         드스 / 드다 / 드브 쿨리듀스
         드다 - 어스 인핸스
-        썬더 보너스 어택
+        드브 - 윈드 보너스 찬스
         
         모든 융합스킬은 5차를 제외하고 전부 캔슬
         
@@ -142,16 +177,16 @@ class JobGenerator(ck.JobGenerator):
 
         ## 융합 스킬
         SwiftOfWind = core.SummonSkill("스위프트 오브 윈드", 0, 360, 215 + self.combat, 2*3, 3360, cooltime=-1, modifier=MDF(pdamage_indep=-35)).setV(vEhc, 3, 2, False).wrap(MirSkillWrapper)
-        SwiftOfThunder = core.SummonSkill("스위프트 오브 썬더", 0, 2280/SWIFT_OF_THUNDER_HIT, 450 + self.combat, 6+1, 2280, cooltime=-1).setV(vEhc, 4, 2, False).wrap(MirSkillWrapper)
+        SwiftOfThunder = core.SummonSkill("스위프트 오브 썬더", 0, 2280/SWIFT_OF_THUNDER_HIT, 450 + self.combat, 6, 2280, cooltime=-1).setV(vEhc, 4, 2, False).wrap(MirSkillWrapper)
         # DiveOfThunder - 안씀
         DiveOfEarth = core.SummonSkill("다이브 오브 어스", 0, 2310/DIVE_OF_EARTH_HIT, 190+self.combat+420+2*self.combat, 6, 2310, cooltime=-1, modifier = MDF(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(MirSkillWrapper)
-        BreathOfWind = core.SummonSkill("브레스 오브 윈드", 0, 450, 215+self.combat+BREATH_OF_WIND_BONUS*(65+self.combat), 5, 3510, cooltime=-1).setV(vEhc, 3, 2, False).wrap(MirSkillWrapper)
+        BreathOfWind = core.SummonSkill("브레스 오브 윈드", 0, 450, 215+self.combat+BREATH_OF_WIND_BONUS*(65+self.combat+85), 5, 3510, cooltime=-1).setV(vEhc, 3, 2, False).wrap(MirSkillWrapper)
         BreathOfEarth = core.SummonSkill("브레스 오브 어스", 0, 450, 280+self.combat, 5, 3510, cooltime=-1).setV(vEhc, 1, 2, False).wrap(MirSkillWrapper)
         
         ### 돌아와!
-        SwiftBack = core.BuffSkill("스위프트-돌아와!", 660, 60000, cooltime=-1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
-        DiveBack = core.BuffSkill("다이브-돌아와!", 660, 60000, cooltime=-1, rem=True).wrap(core.BuffSkillWrapper)
-        BreathBack = core.SummonSkill("브레스-돌아와!", 660, 450, 150+self.combat, 1, (30+self.combat // 2)*1000, cooltime=-1).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
+        SwiftBack = core.BuffSkill("스위프트-돌아와!", 30, 60000, cooltime=-1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
+        DiveBack = core.BuffSkill("다이브-돌아와!", 30, 60000, cooltime=-1, rem=True).wrap(core.BuffSkillWrapper)
+        BreathBack = core.SummonSkill("브레스-돌아와!", 30, 450, 150+self.combat, 1, (30+self.combat // 2)*1000, cooltime=-1).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         
         # 하이퍼
         SummonOnixDragon = core.SummonSkill("서먼 오닉스 드래곤", 900, 3030, 550, 2, 40000, cooltime = 80000).wrap(core.SummonSkillWrapper)
@@ -168,15 +203,19 @@ class JobGenerator(ck.JobGenerator):
         ElementalBlastBuff = core.BuffSkill("엘리멘탈 블래스트(버프)", 0, 10000, pdamage_indep = 20, cooltime=-1).isV(vEhc,2,3).wrap(core.BuffSkillWrapper)
 
         DragonBreak = core.SummonSkill("드래곤 브레이크", 0, 360, 450+18*vEhc.getV(5,5), 7, 2500, cooltime = 20000, red=True).isV(vEhc,5,5).wrap(MirSkillWrapper)
-        DragonBreakBack = core.SummonSkill("드래곤 브레이크-돌아와!", 660, 510, 150+6*vEhc.getV(5,5), 3, 5000, cooltime=-1).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
+        DragonBreakBack = core.SummonSkill("드래곤 브레이크-돌아와!", 30, 510, 150+6*vEhc.getV(5,5), 3, 5000, cooltime=-1).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
         ImperialBreath = core.SummonSkill("임페리얼 브레스", 0, 240, 600+24*vEhc.getV(5,5), 7, 4000, cooltime=-1).isV(vEhc,5,5).wrap(MirSkillWrapper)
 
         ZodiacRayInit = core.DamageSkill("조디악 레이(개시)", 780, 0, 0, cooltime = 180000, red = True).isV(vEhc,4,2).wrap(core.DamageSkillWrapper) # 딜레이 확인 필요
-        ZodiacRay = core.SummonSkill("조디악 레이", 0, 180, 400+16*vEhc.getV(4,2), 6, 180*73, modifier = MDF(armor_ignore = 100), cooltime = -1).isV(vEhc,4,2).wrap(core.SummonSkillWrapper)
-        #14+vlevel//10초간 지속, 남은 시간동안 마법진 해방 딜 180ms마다. : 444타 가정( = 73타)
+        ZodiacRay = core.SummonSkill("조디악 레이", 0, 180, 400+16*vEhc.getV(4,2), 6, 180*74-1, modifier = MDF(armor_ignore = 100) - MDF(pdamage_indep=10), cooltime = -1).isV(vEhc,4,2).wrap(core.SummonSkillWrapper)
+        #14+vlevel//10초간 지속, 남은 시간동안 마법진 해방 딜 180ms마다. : 444타 가정( = 74타)
+
+        SpiralOfMana = SpiralOfManaWrapper(vEhc, 0, 0)
         
         ##### build graph #####
-        CircleOfMana1.onAfter(CircleOfMana2)
+        CircleOfMana1.onAfter(SpiralOfMana.setPenalty())
+        CircleOfMana1.onAfter(core.OptionalElement(SpiralOfMana.is_not_active, SpiralOfMana, CircleOfMana2))
+        SpiralOfMana.protect_from_running()
         
         #미르 제한조건.
         MirConstraint = core.ConstraintElement("미르(사용중)", Mir, Mir.is_not_active)
@@ -247,7 +286,7 @@ class JobGenerator(ck.JobGenerator):
                     Mir, OverloadMana, Booster, OnixBless, HerosOath, ElementalBlastBuff,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
                 [ZodiacRayInit, MagicParticle] +\
-                [SummonOnixDragon, ZodiacRay, DragonBreak, DragonBreakBack, ElementalBlast, ImperialBreath,
+                [SummonOnixDragon, SpiralOfMana, ZodiacRay, DragonBreak, DragonBreakBack, ElementalBlast, ImperialBreath,
                     DragonSwift, SwiftBack, DragonDive, DiveOfEarth, DiveBack, DragonBreath, BreathOfEarth, BreathBack, MirrorBreak, MirrorSpider] +\
                 [] +\
                 [CircleOfMana1])

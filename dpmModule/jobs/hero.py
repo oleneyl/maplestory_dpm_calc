@@ -147,8 +147,13 @@ class JobGenerator(ck.JobGenerator):
         ComboInstinctFringe = core.DamageSkill("콤보 인스팅트 균열", 0, 200 + 8*vEhc.getV(1,1), 18).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
         ComboInstinctOff = core.BuffSkill("콤보 인스팅트 종료", 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper)
 
+        SwordIllusionInit = core.DamageSkill("소드 일루전(시전)", 660, 0, 0, cooltime=30000, red=True).wrap(core.DamageSkillWrapper)
+        SwordIllusion = core.DamageSkill("소드 일루전", 0, 125+5*vEhc.getV(0,0), 4, cooltime=-1).wrap(core.DamageSkillWrapper)
+        SwordIllusionFinal = core.DamageSkill("소드 일루전(최종)", 0, 250+10*vEhc.getV(0,0), 5, cooltime=-1).wrap(core.DamageSkillWrapper)
+
         ######   Skill Wrapper   ######
         ComboAttack = ComboAttackWrapper(core.BuffSkill("콤보어택", 0, 999999 * 1000), ComboDesfortBuff, vEhc, passive_level)
+        IncreaseCombo = ComboAttack.stackController(1)
         
         #Final attack type
         ComboInstinct.onAfter(ComboInstinctOff.controller(30 * 1000))
@@ -157,9 +162,9 @@ class JobGenerator(ck.JobGenerator):
         InstinctFringeUse = core.OptionalElement(ComboInstinct.is_active, ComboInstinctFringe, name = "콤보 인스팅트 여부")
     
         #레이징 블로우
-        RaisingBlowInrage.onAfters([InstinctFringeUse, RaisingBlowInrageFinalizer, AdvancedFinalAttack, ComboAttack.stackController(1)])
+        RaisingBlowInrage.onAfters([InstinctFringeUse, RaisingBlowInrageFinalizer, AdvancedFinalAttack, IncreaseCombo])
 
-        RisingRage.onAfters([AdvancedFinalAttack, ComboAttack.stackController(1)])
+        RisingRage.onAfters([AdvancedFinalAttack, IncreaseCombo])
     
         Insizing.onBefore(ComboAttack.stackController(-1))
         Insizing.onAfters([InsizingBuff, InsizingDot, AdvancedFinalAttack])
@@ -167,6 +172,13 @@ class JobGenerator(ck.JobGenerator):
         ComboDesfort.onBefores([ComboDesfortBuff, ComboAttack.stackController(-6)]) # TODO: 데스폴트 데미지에 콤보 카운터 어떻게 적용되는지 확인 필요
         ComboDesfort.onAfter(AdvancedFinalAttack)
         ComboDesfort.onConstraint(core.ConstraintElement("콤보 6개 이상", ComboAttack, partial(ComboAttack.judge, 6, 1)))
+
+        SwordIllusionInit.onAfter(core.RepeatElement(SwordIllusion, 12))
+        SwordIllusionInit.onAfter(core.RepeatElement(SwordIllusionFinal, 5))
+        SwordIllusion.onAfter(AdvancedFinalAttack)
+        SwordIllusion.onAfter(IncreaseCombo)
+        SwordIllusionFinal.onAfter(AdvancedFinalAttack)
+        SwordIllusionFinal.onAfter(IncreaseCombo)
 
         Panic.onBefore(ComboAttack.stackController(-2))
         Panic.onAfters([PanicBuff, AdvancedFinalAttack])
@@ -183,6 +195,6 @@ class JobGenerator(ck.JobGenerator):
                     InsizingBuff, InsizingDot, AuraWeaponBuff, AuraWeapon, ComboDesfortBuff, 
                     ComboInstinct, ComboInstinctOff, PanicBuff,
                     globalSkill.soul_contract()] +\
-                [Panic, Insizing, ComboDesfort, RisingRage] +\
+                [Panic, Insizing, ComboDesfort, SwordIllusionInit, RisingRage] +\
                 [SwordOfBurningSoul, MirrorBreak, MirrorSpider] +\
                 [RaisingBlowInrage])

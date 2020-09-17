@@ -223,12 +223,16 @@ class JobGenerator(ck.JobGenerator):
         
         #베타
         ShadowFlashBeta = core.DamageSkill("쉐도우 플래시(베타)", 510, 600+24*vEhc.getV(2,2), 5, cooltime = 40*1000, modifier = extra_dmg(8, False), red = True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        ShadowFlashBetaEnd = core.DamageSkill("쉐도우 플래시(베타)(종료)", 660, 750+30*vEhc.getV(2,2), 12 * 2, modifier = extra_dmg(8, False)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ShadowFlashBetaEnd = core.DamageSkill("쉐도우 플래시(베타)(종료)", 660, 750+30*vEhc.getV(2,2), 12 * 2, modifier = extra_dmg(15, False)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         #초월자 륀느의 기원
         RhinneBless = core.BuffSkill("초월자 륀느의 기원", 480, (30+vEhc.getV(0,0)//2)*1000, cooltime = 240000, att = 10+3*vEhc.getV(0,0)).wrap(core.BuffSkillWrapper)
         RhinneBlessAttack_hit = core.DamageSkill("초월자 륀느의 기원 (타격)", 0, 125+5*vEhc.getV(0, 0), 5, cooltime = -1).wrap(core.DamageSkillWrapper)
         RhinneBlessAttack = core.OptionalElement(RhinneBless.is_active, RhinneBlessAttack_hit)
+
+        #에고 웨폰
+        EgoWeaponAlpha = core.DamageSkill("에고 웨폰(알파)", 0, 175+7*vEhc.getV(0,0), 6*9, cooltime=15000, red=True).wrap(core.DamageSkillWrapper)
+        EgoWeaponBeta = core.DamageSkill("에고 웨폰(베타)", 0, 175+7*vEhc.getV(0,0), 9*2*3, cooltime=15000, red=True, modifier = extra_dmg(4, False)).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
         ### 스킬 연결 ###
@@ -319,6 +323,19 @@ class JobGenerator(ck.JobGenerator):
 
         RhinneBless.onAfter(TimeDistortion.controller(1.0, 'reduce_cooltime_p'))
         RhinneBless.onAfter(SoulContract.controller(1.0, 'reduce_cooltime_p'))
+
+        # 에고 웨폰
+        UseEgoWeaponAlpha = core.OptionalElement(EgoWeaponAlpha.is_available, EgoWeaponAlpha)
+        EgoWeaponAlpha.protect_from_running()
+        for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter, AdvancedRollingCurve, AdvancedRollingAssulter,
+            WindCutter, WindStrike, AdvancedStormBreak, ShadowFlashAlpha, ShadowFlashAlphaEnd]:
+            sk.onAfter(UseEgoWeaponAlpha)
+            
+        UseEgoWeaponBeta = core.OptionalElement(EgoWeaponBeta.is_available, EgoWeaponBeta)
+        EgoWeaponBeta.protect_from_running()
+        for sk in [UpperSlash, AdvancedPowerStomp, FrontSlash, TurningDrive, AdvancedWheelWind, GigaCrash,
+                    JumpingCrash, AdvancedEarthBreak, ShadowFlashBeta, ShadowFlashBetaEnd]:
+            sk.onAfter(UseEgoWeaponBeta)
         
         return(ComboHolder,
                 [globalSkill.maple_heros(chtr.level, name = "륀느의 가호", combat_level = 0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
@@ -327,5 +344,5 @@ class JobGenerator(ck.JobGenerator):
                     SoulContract]+\
                 [TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta, MirrorBreak, MirrorSpider]+\
                 [AdvancedStormBreakSummon, AdvancedStormBreakElectric, AdvancedEarthBreakElectric, WindCutterSummon, ThrowingWeapon]+\
-                []+\
+                [EgoWeaponAlpha, EgoWeaponBeta]+\
                 [ComboHolder])

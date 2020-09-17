@@ -88,24 +88,47 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         #조건부 파이널어택으로 설정함.
-        SpreadThrowTick = core.DamageSkill("스프레드 스로우(틱)", 0, 378*0.85, 5*3, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        SpreadThrowTick = core.DamageSkill("쿼드러플 스로우(스프레드)", 0, 378*0.85, 5*3, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         SpreadThrowInit = core.BuffSkill("스프레드 스로우", 540, (30+vEhc.getV(0,0))*1000, cooltime = (240-vEhc.getV(0,0))*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         Pungma = core.SummonSkill("풍마수리검", 360, 100, 250+vEhc.getV(4,4)*10, 5*1.7, 1450, cooltime = 25*1000, red=True).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #10타 가정
         ArcaneOfDarklord = core.SummonSkill("다크로드의 비전서", 360, 1020, 350+14*vEhc.getV(2,2), 7 + 5, 11990, cooltime = 60*1000, red=True, modifier=core.CharacterModifier(boss_pdamage=30)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 132타
         ArcaneOfDarklordFinal = core.DamageSkill("다크로드의 비전서(막타)", 0, 900+36*vEhc.getV(2,2), 10, cooltime = -1, modifier=core.CharacterModifier(boss_pdamage=30)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ThrowBlasting = core.DamageSkill("스로우 블래스팅(폭발 부적)", 0, 475+19*vEhc.getV(0,0), 5*1.7, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        ThrowBlastingStack = core.StackSkillWrapper(core.BuffSkill("스로우 블래스팅(부적 스택)", 0, 99999999), 47)
+        ThrowBlastingActive = core.BuffSkill("스로우 블래스팅(액티브)", 660, 60000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        ThrowBlastingPassive = core.DamageSkill("스로우 블래스팅(패시브)", 0, 0, 0, cooltime=10000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
 
-        #조건부 파이널어택으로 설정함.
-        SpreadThrow = core.OptionalElement(SpreadThrowInit.is_active, SpreadThrowTick)
+        # 마크 오브 나이트로드
         SpreadThrowTick.onAfter(core.RepeatElement(MarkOfNightlord, 15))
         Pungma.onTick(MarkOfNightlordPungma)
+        ThrowBlasting.onAfter(MarkOfNightlord)
         
+        # 다크로드의 비전서
         ArcaneOfDarklord.onAfter(ArcaneOfDarklordFinal.controller(8000))
         
+        # 블리딩 톡신
         BleedingToxin.onAfter(BleedingToxinDot)
+
+        # 스로우 블래스팅
+        ThrowBlastingActive.onAfter(ThrowBlastingStack.stackController(47))
+        ThrowBlasting.onAfter(ThrowBlastingStack.stackController(-1))
+        ThrowBlastingPassive.onAfter(ThrowBlasting)
+        ThrowBlastingPassive.protect_from_running()
         
-        QuarupleThrow.onAfters([MarkOfNightlord, SpreadThrow])
+        # 쿼드러플 관련 - 스프레드, 스로우 블래스팅
+        QuarupleThrow.onAfter(core.OptionalElement(SpreadThrowInit.is_active, SpreadThrowTick))
+        QuarupleThrow.onAfter(core.OptionalElement(lambda: ThrowBlastingStack.judge(0, -1) and ThrowBlastingPassive.is_available(), ThrowBlastingPassive))
+        QuarupleThrow.onAfter(core.OptionalElement(
+            lambda: ThrowBlastingStack.judge(1, 1),
+            core.OptionalElement(
+                lambda: ThrowBlastingStack.judge(3, 1),
+                core.RepeatElement(ThrowBlasting, 3),
+                core.RepeatElement(ThrowBlasting, 2)
+            )
+        ))
+        QuarupleThrow.onAfter(MarkOfNightlord)
 
         for sk in [QuarupleThrow, Pungma, SpreadThrowTick]:
             sk.onAfter(FatalVenom)
@@ -114,6 +137,7 @@ class JobGenerator(ck.JobGenerator):
             [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     ShadowPartner, SpiritJavelin, PurgeArea, BleedingToxin, EpicAdventure, 
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), UltimateDarksight, ReadyToDie, SpreadThrowInit,
+                    ThrowBlastingStack, ThrowBlasting, ThrowBlastingPassive, ThrowBlastingActive,
                     globalSkill.soul_contract()] + \
                 [ArcaneOfDarklordFinal] + \
                 [Pungma, ArcaneOfDarklord, MirrorBreak, MirrorSpider, BleedingToxinDot, FatalVenom] +\
