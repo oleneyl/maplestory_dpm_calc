@@ -74,6 +74,7 @@ class JobGenerator(ck.JobGenerator):
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         DEADEYEACC = 3
+        DEADEYEAIM = 3480
         BULLET_PARTY_TICK = 150
         CONTINUAL_AIMING = core.CharacterModifier(pdamage_indep = 25 + 2*self.combat)
         
@@ -83,7 +84,7 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
         InfiniteBullet = core.BuffSkill("인피닛 불릿", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
         LuckyDice = core.BuffSkill("로디드 다이스", 990, 180*1000, pdamage = 20+10/6+10/6*(5/6+1/11)*(10*(5+passive_level)*0.01)).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
-        QuickDraw = core.BuffSkill("퀵 드로우", 60, core.infinite_time(), cooltime = -1, pdamage_indep = 25 + self.combat).wrap(core.BuffSkillWrapper) # 임의 딜레이
+        QuickDraw = core.BuffSkill("퀵 드로우", 0, core.infinite_time(), cooltime = -1, pdamage_indep = 25 + self.combat).wrap(core.BuffSkillWrapper) # 래피드/불파 도중 사용가능
         QuickDrawStack = core.StackSkillWrapper(core.BuffSkill("퀵 드로우(준비)", 0, 99999999), 1)
 
         # Summon Skills
@@ -126,7 +127,7 @@ class JobGenerator(ck.JobGenerator):
         
         BulletParty = core.DamageSkill("불릿 파티", 0, 0, 0, cooltime = 75000, red = True).wrap(core.DamageSkillWrapper)
         BulletPartyTick = core.DamageSkill("불릿 파티(틱)", BULLET_PARTY_TICK, 230+9*vEhc.getV(5,5), 5, modifier = CONTINUAL_AIMING).isV(vEhc,5,5).wrap(core.DamageSkillWrapper) #12초간 지속 -> 50회 시전
-        DeadEye = core.DamageSkill("데드아이", 450, (320+13*vEhc.getV(3,3))*DEADEYEACC, 15, cooltime = 30000, red = True, modifier = core.CharacterModifier(crit = 100, pdamage_indep = 4*11) + CONTINUAL_AIMING).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        DeadEye = core.DamageSkill("데드아이", 450, (320+13*vEhc.getV(3,3))*DEADEYEACC, 15, cooltime = 30000+DEADEYEAIM, red = True, modifier = core.CharacterModifier(crit = 100, pdamage_indep = 4*11) + CONTINUAL_AIMING).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) # TODO: 조준시간은 쿨감 안받아야함
         NautilusAssult = core.SummonSkill("노틸러스 어썰트", 690, 360, 600+24*vEhc.getV(0,0), 6, 360*7-1, cooltime = 180000, red = True, modifier = CONTINUAL_AIMING).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)#7회 2초간
         NautilusAssult_2 = core.SummonSkill("노틸러스 어썰트(일제 사격)", 0, 160, 300+12*vEhc.getV(0,0), 12, 160*36-1, cooltime = -1, modifier = CONTINUAL_AIMING).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)#36회 6초간
         DeathTriggerInit = core.DamageSkill("데스 트리거(개시)", 360, 0, 0, cooltime=45000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
