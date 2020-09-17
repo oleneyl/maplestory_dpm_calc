@@ -121,8 +121,9 @@ class JobGenerator(ck.JobGenerator):
         '''
         미사용 스킬
 
-        ShadowStrike = core.DamageSkill("쉐도우 스트라이크", ?, 195, 8)
-        ShadowStrikeAura = core.DamageSkill("쉐도우 스트라이크", 0, 310, 1)
+        TODO: 쉐스 검기 항상 알파스펙인지 확인할 것
+        ShadowStrike = core.DamageSkill("쉐도우 스트라이크", 510, 195, 8).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        ShadowStrikeAura = core.DamageSkill("쉐도우 스트라이크(오라)", 0, 310, 1).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         '''
         FlashAssault = core.DamageSkill("플래시 어썰터", 270, 165, 8).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         FlashAssaultTAG = core.DamageSkill("플래시 어썰터(태그)", 0, 165, 8).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
