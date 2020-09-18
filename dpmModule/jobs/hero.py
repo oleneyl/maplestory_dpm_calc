@@ -74,7 +74,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리",pdamage_indep = 10) #두손검 사용
+        WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리(두손도끼)", pdamage_indep = 10, pdamage = 5) # 두손도끼
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         
         ChanceAttack = core.InformedCharacterModifier("찬스 어택(패시브)",crit = 20)
@@ -94,6 +94,8 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
+        두손도끼
+
         코강 순서:
         레블 - 파택 - 업라이징 - 샤우트 - 인사이징 - 패닉
 
