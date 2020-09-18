@@ -15,17 +15,17 @@ class ElementalGhostWrapper(core.BuffSkillWrapper):
         skill = core.BuffSkill("엘리멘탈 고스트", 720, (40+vEhc.getV(num1,num2))*1000, cooltime=150*1000, red=True)
         super(ElementalGhostWrapper, self).__init__(skill)
         self.ratio = (30 + vEhc.getV(num1, num2)) * 0.01
-        self.prob = 0.9 + 0.7 + 0.5
+        self.prob_slow = 0.9 * (1 + 0.7 * (1 + 0.5))
+        self.prob_fast = 0.45 * (1 + 0.35 * (1 + 0.25))
 
-    def addSkill(self, skill_wrapper, is_fast):
-        p = self.prob
-        if is_fast:
-            p /= 2
+    def addSkill(self, skill_wrapper, is_fast, is_final_attack):
+        p = self.prob_fast if is_fast else self.prob_slow
+        ratio = 1 if is_final_attack else self.ratio
         
         original_skill = skill_wrapper.skill
         copial_skill = core.DamageSkill(name = DynamicVariableOperation.reveal_argument(original_skill.name) + f"(엘고)",
             delay = DynamicVariableOperation.wrap_argument(0),
-            damage = original_skill.damage * DynamicVariableOperation.wrap_argument(self.ratio),
+            damage = original_skill.damage * DynamicVariableOperation.wrap_argument(ratio),
             hit = original_skill.hit * p,
             modifier=original_skill._static_skill_modifier).wrap(core.DamageSkillWrapper)
         
@@ -108,7 +108,7 @@ class JobGenerator(ck.JobGenerator):
         IshtarRing = core.DamageSkill("이슈타르의 링", 120, 220 + self.combat, 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         # 연계 스킬들 - 연계시 딜레이로 작성
-        UnicornSpike = core.DamageSkill("유니콘 스파이크", 450, 315+100 + 2*self.combat, 5, modifier = core.CharacterModifier(crit=100), cooltime = 10 * 1000, red=True).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        UnicornSpike = core.DamageSkill("유니콘 스파이크", 450, 315+100 + 2*self.combat, 5, modifier = core.CharacterModifier(crit=100), cooltime = 10 * 1000, red=True).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         UnicornSpikeBuff = core.BuffSkill("유니콘 스파이크(버프)", 0, 30 * 1000, pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper)  #직접시전 금지
         RegendrySpear = core.DamageSkill("레전드리 스피어", 690, 700 + 10*self.combat, 3, cooltime = 5 * 1000, red=True, modifier = core.CharacterModifier(crit=100)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         RegendrySpearBuff = core.BuffSkill("레전드리 스피어(버프)", 0, (30+self.combat) * 1000, armor_ignore = 30+20+self.combat, cooltime = -1).wrap(core.BuffSkillWrapper) #직접시전 금지
@@ -199,18 +199,18 @@ class JobGenerator(ck.JobGenerator):
 
         for wrp in [UnicornSpike, RegendrySpear, LightningEdge, LeapTornado, GustDive,
                     AdvanceStrikeDualShot, AdvanceStrikeDualShot_Link, WrathOfEllil]:
-            ElementalGhost.addSkill(wrp, is_fast=False)
+            ElementalGhost.addSkill(wrp, is_fast=False, is_final_attack=False)
             wrp.onAfter(AdvancedFinalAttackSlow)
             wrp.onAfter(UseElementalGhostSpirit)
             wrp.onAfter(UseRoyalNightsAttack)
-        ElementalGhost.addSkill(AdvancedFinalAttackSlow, is_fast=False) # 파택에 잔상 적용하는것과 잔상 공격에 파택 따로 적용하는것 결과적으로 동일함
+        ElementalGhost.addSkill(AdvancedFinalAttackSlow, is_fast=False, is_final_attack=True) # 잔상->파택을 파택->잔상으로 처리, 대신 최종뎀 감소는 적용하지 않게 함
             
         for wrp in [IshtarRing, IrkilaBreathTick]:
-            ElementalGhost.addSkill(wrp, is_fast=True)
+            ElementalGhost.addSkill(wrp, is_fast=True, is_final_attack=False)
             wrp.onAfter(AdvancedFinalAttackFast)
             wrp.onAfter(UseElementalGhostSpirit)
             wrp.onAfter(UseRoyalNightsAttack)
-        ElementalGhost.addSkill(AdvancedFinalAttackFast, is_fast=True)
+        ElementalGhost.addSkill(AdvancedFinalAttackFast, is_fast=True, is_final_attack=True)
 
         for sk in [UnicornSpike, RegendrySpear, WrathOfEllil, ElementalGhostSpirit, RoyalKnightsAttack]:
             sk.protect_from_running()
