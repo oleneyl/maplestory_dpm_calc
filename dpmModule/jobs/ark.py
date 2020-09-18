@@ -161,6 +161,7 @@ class JobGenerator(ck.JobGenerator):
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         연계 시 플레인 차지드라이브 540 → 240ms, 끝나지 않는 흉몽 540 → 180ms
+        각각 +30ms 적용해 270ms, 210ms로 적용됨
 
         스펠 불릿 수동 사용
         
