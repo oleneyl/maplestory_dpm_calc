@@ -124,7 +124,7 @@ class JobGenerator(ck.JobGenerator):
         코강 순서:
         BPM 메테리얼 그랩 드레인 트레인 텔레키네시스
         
-        싸이킥 샷 히트율 80%, 타수2배 적용.
+        메테리얼 사용
         불릿 사용하지 않음.
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
