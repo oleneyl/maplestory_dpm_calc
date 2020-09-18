@@ -144,7 +144,7 @@ class JobGenerator(ck.JobGenerator):
         AdditionalDischarge = core.DamageSkill("에디셔널 디스차지", 0, 100 + 50 + passive_level, 3*3*(0.4+0.1)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         AdditionalDischargeEvolution = core.DamageSkill("에디셔널 디스차지(렐릭 에볼루션)", 0, 100 + 50 + passive_level, 3*(0.4+0.1)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
-        CardinalBlast = core.DamageSkill("카디널 블래스트", 240, 400+5*passive_level, 4 + 1, modifier = core.CharacterModifier(pdamage = 20, pdamage_indep = 61.051)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 210~270ms 랜덤 (1.2.338 기준 측정)
+        CardinalBlast = core.DamageSkill("카디널 블래스트", 240, 400+5*passive_level, 4 + 1, modifier = core.CharacterModifier(pdamage = 20, pdamage_indep = 50)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 210~270ms 랜덤 (1.2.338 기준 측정), 최종뎀 단리적용
         AdditionalBlast = core.DamageSkill("에디셔널 블래스트", 0, 150 + 50 + passive_level, 2*3*(0.4+0.1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         AdditionalBlastEvolution = core.DamageSkill("에디셔널 블래스트(렐릭 에볼루션)", 0, 150 + 50 + passive_level, 3*(0.4+0.1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
