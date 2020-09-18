@@ -140,7 +140,7 @@ class JobGenerator(ck.JobGenerator):
         
         # Damage skills
         # 카디널 포스
-        CardinalDischarge = core.DamageSkill("카디널 디스차지", 210, (4 + 1)*2, 300+5*passive_level, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        CardinalDischarge = core.DamageSkill("카디널 디스차지", 210, 300+5*passive_level, (4 + 1)*2, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         AdditionalDischarge = core.DamageSkill("에디셔널 디스차지", 0, 100 + 50 + passive_level, 3*3*(0.4+0.1)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         AdditionalDischargeEvolution = core.DamageSkill("에디셔널 디스차지(렐릭 에볼루션)", 0, 100 + 50 + passive_level, 3*(0.4+0.1)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
@@ -317,9 +317,6 @@ class JobGenerator(ck.JobGenerator):
         
         #레이븐 설정
         RavenTempest.onAfter(Raven.controller(25000))
-        
-        # 아스트라는 디스차지로 사용
-        AncientAstraHolder.onBefore(CardinalDischarge)
         
         ### Exports ###
         return(CardinalBlast,
