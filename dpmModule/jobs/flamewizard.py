@@ -120,6 +120,7 @@ class JobGenerator(ck.JobGenerator):
         StackCheck4 = core.OptionalElement(partial(SavageFlameStack.judge, 4, 1), SavageFlame_4, StackCheck3, name = "스택 확인")
         SavageFlame.onAfter(StackCheck4)
         SavageFlame.onAfter(SavageFlameStack.stackController(-15))
+        SavageFlame.onConstraint(core.ConstraintElement("2스택 이상", SavageFlameStack, partial(SavageFlameStack.judge, 2, 1)))
 
         SalamanderMischeif.onJustAfter(SalamanderMischeifStack.stackController(-45))
         SalamanderMischeif.onTick(SalamanderMischeifStack.stackController(1))
