@@ -4,7 +4,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ConcurrentRunRule
+from ..execution.rules import ReservationRule, RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import bowmen
@@ -45,6 +45,8 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('크리티컬 리인포스', '엘리멘탈 고스트'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('이르칼라의 숨결', '엘리멘탈 고스트'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '엘리멘탈 고스트'), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule('엘비시 블레싱', '엘리멘탈 고스트'), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule('히어로즈 오쓰', '엘리멘탈 고스트'), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
@@ -86,12 +88,12 @@ class JobGenerator(ck.JobGenerator):
         코강 순서
         이슈, 스듀/파택, 엘리멘탈, 래쓰오브엔릴, 레전드리, 유니콘, 맆토/다이브
         
-        엘리멘탈 고스트, 이르칼라의 숨결, 크리티컬 리인포스, 소울 컨트랙트를 함께 사용
+        엘리멘탈 고스트, 이르칼라의 숨결, 크리티컬 리인포스, 소울 컨트랙트, 엘비시 블레싱, 히어로즈 오쓰를 함께 사용
 
         실피디아 사용하지 않음
 
         엘고 연계
-        스듀-엔릴-스듀-유니콘-스듀-스피어-맆토-거다
+        스듀-엔릴-스듀-유니콘-스듀-스피어-거다
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
@@ -114,7 +116,7 @@ class JobGenerator(ck.JobGenerator):
         RegendrySpearBuff = core.BuffSkill("레전드리 스피어(버프)", 0, (30+self.combat) * 1000, armor_ignore = 30+20+self.combat, cooltime = -1).wrap(core.BuffSkillWrapper) #직접시전 금지
         LightningEdge = core.DamageSkill("라이트닝 엣지", 630, 420 + 5*self.combat, 3).wrap(core.DamageSkillWrapper)
         LightningEdgeBuff = core.BuffSkill("라이트닝 엣지(버프)", 0, 30000, cooltime=-1).wrap(core.BuffSkillWrapper)
-        LeapTornado = core.DamageSkill("리프 토네이도", 390, 390+30+3*self.combat, 0).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        LeapTornado = core.DamageSkill("리프 토네이도", 390, 390+30+3*self.combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         GustDive = core.DamageSkill("거스트 다이브", 480, 430 + 3*self.combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
         AdvanceStrikeDualShot = core.DamageSkill("어드밴스드 스트라이크 듀얼샷", 480, 380, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
@@ -175,7 +177,7 @@ class JobGenerator(ck.JobGenerator):
 
         ElementalGhostCombo = core.DamageSkill("엘고 콤보", 0, 0, 0).wrap(core.DamageSkillWrapper)
         ElementalGhostComboList = [AdvanceStrikeDualShot_Link, WrathOfEllil, AdvanceStrikeDualShot_Link,
-                                    UnicornSpike, AdvanceStrikeDualShot_Link, RegendrySpear, LeapTornado, GustDive]
+                                    UnicornSpike, AdvanceStrikeDualShot_Link, RegendrySpear, GustDive]
         ElementalGhostCombo.onAfter(ElementalGhostComboList[0])
         for sk in ElementalGhostComboList[1:]:
             ElementalGhostCombo.onAfter(sk)
