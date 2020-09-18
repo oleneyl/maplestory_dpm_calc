@@ -163,7 +163,7 @@ class JobGenerator(ck.JobGenerator):
                 
         # 5스택 가정, 다른 스킬 사용 중에 시전가능
         EdgeOfResonance = core.DamageSkill("엣지 오브 레조넌스", 0, 800+15*self.combat, 6, cooltime = 15*1000, red=True,
-                        modifier = ANCIENT_ARCHERY + core.CharacterModifier(pdamage_indep = 61.051)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+                        modifier = ANCIENT_ARCHERY + core.CharacterModifier(pdamage_indep = 50)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         
         # 인챈트 포스
         ComboAssultHolder = core.DamageSkill("콤보 어썰트", 0, 0, 0, cooltime = 20 * 1000, red=True).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
