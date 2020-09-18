@@ -228,7 +228,8 @@ class JobGenerator(ck.JobGenerator):
         
         PsychicGrab2.onBefore(PsychicPoint.stackController(2))
 
-        EverPsychic.onBefore(PsychicPoint.stackController(30 + 10 - 2)) # 싸이킥 무브 캔슬비용 2pp
+        EverPsychic.onBefore(PsychicPoint.stackController(30 + 10))
+        EverPsychic.onAfter(PsychicPoint.stackController(-2)) # 싸이킥 무브 캔슬비용 2pp
 
         PsychicOverSummon.onTick(PsychicPoint.stackController(1))
         
