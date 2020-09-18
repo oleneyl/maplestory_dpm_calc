@@ -164,13 +164,12 @@ class JobGenerator(ck.JobGenerator):
         FistInrage.onAfter(EnergyCharge.chargeController(700))
         Nautilus.onAfter(EnergyCharge.chargeController(700))
         MirrorBreak.onAfter(EnergyCharge.chargeController(700))
-        HowlingFistCharge.onAfter(EnergyCharge.chargeController(700))
-        HowlingFistFinal.onAfter(EnergyCharge.chargeController(700*14))
-        SerpentScrewDummy.onTick(EnergyCharge.chargeController(-85))
+        SerpentScrewDummy.onTick(EnergyCharge.chargeController(-60))
         SerpentScrew.onTick(EnergyCharge.chargeController(-85*0.3))
         FistInrage_T.onAfter(EnergyCharge.chargeController(-150))
         DragonStrike.onAfter(EnergyCharge.chargeController(-180))
         UnityOfPower.onAfter(EnergyCharge.chargeController(-1500))
+        HowlingFistInit.onAfter(EnergyCharge.chargeController(-1750))
         
         # Basic Attack
         BasicAttack = core.OptionalElement(EnergyCharge.isStateOn, FistInrage_T, FistInrage, "에너지 완충")
@@ -205,6 +204,7 @@ class JobGenerator(ck.JobGenerator):
         EnergyCharge.drainCallback = lambda: [SerpentScrew.set_disabled_and_time_left(1), SerpentScrewDummy.set_disabled_and_time_left(-1)]
 
         # Howling Fist
+        HowlingFistInit.onConstraint(core.ConstraintElement("에너지 1750 이상", EnergyCharge, partial(EnergyCharge.judge, 1750, 1)))
         HowlingFistInit.onAfter(core.RepeatElement(HowlingFistCharge, 8))
         HowlingFistInit.onAfter(HowlingFistFinal)
             
