@@ -120,7 +120,7 @@ class JobGenerator(ck.JobGenerator):
         #Ignite : Need Wrapper
         
         # DoT Skills
-        ParalyzeDOT = core.DotSkill("패럴라이즈(도트)", 0, 1000, 240 + self.combat * 4, 1, 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        ParalyzeDOT = core.DotSkill("페럴라이즈(도트)", 0, 1000, 240 + self.combat * 4, 1, 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
         MistDOT = core.DotSkill("포이즌 미스트(도트)", 0, 1000, 300 + self.combat * 1, 1, 12000, cooltime = -1).wrap(core.SummonSkillWrapper)
         IfrittDot = core.DotSkill("이프리트(도트)", 0, 1000, 140 + self.combat * 3, 1, 4000, cooltime = -1).wrap(core.SummonSkillWrapper)
         HeizeFlameDOT = core.DotSkill("플레임 헤이즈(도트)", 0, 1000, 200 + self.combat * 3, 1, 20000, cooltime = -1).wrap(core.SummonSkillWrapper)
