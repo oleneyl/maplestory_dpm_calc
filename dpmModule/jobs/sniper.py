@@ -66,9 +66,8 @@ class JobGenerator(ck.JobGenerator):
         '''
         distance = 400
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-
-        WEAKNESS_FINDING = core.CharacterModifier(armor_ignore = 50 + passive_level)
-        DISTANCING_SENSE = core.CharacterModifier(pdamage_indep = 40 + passive_level)
+        WEAKNESS_FINDING = core.CharacterModifier(armor_ignore = min(ceil((20+passive_level)/2) + distance//40 * ceil((20+passive_level)/5), 30 + (20+passive_level)))
+        DISTANCING_SENSE = core.CharacterModifier(pdamage_indep = max(min((distance-200)//18*4, 30+(10+passive_level)), 0))
         LASTMAN_STANDING = core.CharacterModifier(pdamage_indep = 20 + 2*passive_level)
         PASSIVE_MODIFIER = WEAKNESS_FINDING + DISTANCING_SENSE + LASTMAN_STANDING
         
