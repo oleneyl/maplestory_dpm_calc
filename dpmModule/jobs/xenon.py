@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import thieves, pirates
 from .jobclass import resistance
+from . import jobutils
 from math import ceil
 
 class SupplyStackWrapper(core.StackSkillWrapper):
@@ -44,6 +45,9 @@ class JobGenerator(ck.JobGenerator):
         XenonMastery = core.InformedCharacterModifier("제논 마스터리", att = 20)
         XenonExpert = core.InformedCharacterModifier("제논 엑스퍼트", att = 30, crit_damage = 8)
         OffensiveMatrix = core.InformedCharacterModifier("오펜시브 매트릭스", armor_ignore = 30)
+
+        LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 3, 4)
+        ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 2, 2)
 
 
         return []
@@ -103,7 +107,32 @@ class JobGenerator(ck.JobGenerator):
     
         # V skills
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
+        LuckyDice = core.BuffSkill("럭키 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,3,4).wrap(core.BuffSkillWrapper)
+        ResistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 0, 0)
+        ReadyToDie = thieves.ReadyToDieWrapper(vEhc,4,4)
+        #오버드라이브 (앱솔 가정)
+        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
+        WEAPON_ATT = jobutils.get_weapon_att("에너지소드")
+        Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
+
+        MegaSmasher = core.DamageSkill("메가 스매셔", None, 0, 0, cooltime = 180000).wrap(core.DamageSkillWrapper)
+        MegaSmasherTick = core.DamageSkill("메가 스매셔(틱)", None, 300+10*vEhc.getV(4,4), 6).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        # TODO: 따로 구현해야 함
+        # 초과 에너지 20 충전 가능, 에너지 충전 시간 절반으로 감소, 초과 충전한 에너지 당 최종 데미지 1% 증가
+        # 비활성화 시 초과 충전된 에너지 즉시 소멸
+        OVERLOAD_TIME = 30
+        OverloadMode = core.BuffSkill("오버로드 모드", None, OVERLOAD_TIME * 1000, cooltime = 180000).wrap(core.BuffSkillWrapper)
+        # 6번 공격하는 전격 4회 발동
+        OverloadHit = core.SummonSkill("오버로드 모드(전류)", 0, None, 180 + 7 * vEhc.getV(4,4), 6*4, OVERLOAD_TIME * 1000).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         
+        # 하이퍼 적용됨
+        Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", None, None, (250 + 10 * vEhc.getV(4,4))*1.1, 5, 30000 + 10000, cooltime = 100000).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
+        #TODO: 제논이 홀로그램 필드 안에 있을 경우 이지스 시스템으로 발사되는 미사일 7개 증가
+        Hologram_Fusion_Buff = core.BuffSkill("홀로그램 그래피티 : 융합 (버프)", 0, 30000+10000, pdamage = 5+vEhc.getV(4,4)//2, rem = False).wrap(core.BuffSkillWrapper)
+        # 30회 발동
+        PhotonRay = core.BuffSkill("포톤 레이", None, 20000, cooltime = 35000).wrap(core.BuffSkillWrapper)
+        PhotonRayTick = core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4), 4).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+
         ######   Skill Wrapper   ######
 
         BasicAttackWrapper = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
@@ -112,5 +141,5 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     globalSkill.useful_wind_booster(), globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
                 [MirrorBreak, MirrorSpider] +\
-                [] +\
+                [globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat)] +\
                 [BasicAttackWrapper])
