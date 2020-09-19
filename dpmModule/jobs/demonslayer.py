@@ -165,7 +165,7 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         # 블블 추가타 적용
-        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DemonBaneTick, DemonBane2Tick, DevilCry, AuraWeapon]:
+        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DemonBaneTick, DemonBane2Tick, DevilCry, Cerberus, AuraWeapon]:
             jobutils.create_auxilary_attack(sk, 0.9, "(블루 블러드)")
 
         return(BasicAttackWrapper,
