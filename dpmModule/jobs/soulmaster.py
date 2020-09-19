@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, InactiveRule
+from ..execution.rules import ConditionRule, RuleSet, InactiveRule
 from . import globalSkill
 from .jobclass import cygnus
 from .jobbranch import warriors
@@ -20,7 +20,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(InactiveRule('엘리시온', '셀레스티얼 댄스'), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('엘리시온', '셀레스티얼 댄스', lambda sk: sk.is_not_active() and sk.is_cooltime_left(30000, 1)), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('셀레스티얼 댄스', '엘리시온'), RuleSet.BASE)
         return ruleset
 
@@ -129,7 +129,7 @@ class JobGenerator(ck.JobGenerator):
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(),
                     NimbleFinger, TrueSight, SolunaTime, SoulForge, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
-                    GloryOfGuardians, AuraWeaponBuff, AuraWeapon, globalSkill.soul_contract(), Elision, ElisionBreak, SelestialDanceInit, 
+                    GloryOfGuardians, AuraWeaponBuff, AuraWeapon, globalSkill.soul_contract(), SelestialDanceInit, Elision, ElisionBreak,
                     ] +\
                 [FlareSlash, CygnusPalanks, SolunaDivide] +\
                 [SelestialDanceSummon, SoulEclipse, MirrorBreak, MirrorSpider] +\
