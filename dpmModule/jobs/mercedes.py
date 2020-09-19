@@ -159,7 +159,7 @@ class JobGenerator(ck.JobGenerator):
         IrkilaBreathInit.onAfter(IrkilaBreath)
 
         #Cooldown
-        LinkAttack = core.DamageSkill("연계", 0, 0, 0).wrap(core.DamageSkillWrapper)
+        LinkAttack = core.GraphElement("연계")
         LinkAttack.onAfter(WrathOfEllil.controller(1000, "reduce_cooltime"))
         LinkAttack.onAfter(UnicornSpike.controller(1000, "reduce_cooltime"))
         LinkAttack.onAfter(RegendrySpear.controller(1000, "reduce_cooltime"))
@@ -213,6 +213,8 @@ class JobGenerator(ck.JobGenerator):
             wrp.onAfter(UseElementalGhostSpirit)
             wrp.onAfter(UseRoyalNightsAttack)
         ElementalGhost.addSkill(AdvancedFinalAttackFast, is_fast=True, is_final_attack=True)
+
+        GuidedArrow.onTick(UseRoyalNightsAttack)
 
         for sk in [UnicornSpike, RegendrySpear, WrathOfEllil, ElementalGhostSpirit, RoyalKnightsAttack]:
             sk.protect_from_running()
