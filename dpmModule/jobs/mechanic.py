@@ -13,9 +13,6 @@ from .jobbranch import pirates
 from . import jobutils
 import math
 
-# TODO: 워머신 타이탄 추가 (로봇 마스터리 적용)
-# TODO: [메탈아머 전탄발사] : 호밍 미사일 리로드 지속시간이 4초에서 2초로 감소되고 지속시간이 좀 더 정확하게 적용됩니다.
-
 ######   Passive Skill   ######
 
 class MultipleOptionWrapper(core.SummonSkillWrapper):
@@ -30,7 +27,7 @@ class MultipleOptionWrapper(core.SummonSkillWrapper):
         super(MultipleOptionWrapper, self).__init__(skill)
 
     def _useTick(self):
-        if self.onoff and self.tick <= 0:
+        if self.is_active() and self.tick <= 0:
             if self.cycle < 3:
                 damage = 350+10*self.vEhc.getV(2,1)
                 hit = 8
@@ -42,7 +39,32 @@ class MultipleOptionWrapper(core.SummonSkillWrapper):
             self.tick += self.skill.delay
             return core.ResultObject(0, self.get_modifier(), damage, hit, sname = self.skill.name, spec = self.skill.spec)
         else:
+            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+
+class MechCarrierWrapper(core.SummonSkillWrapper):
+    def __init__(self, vEhc, num1, num2, modifier):
+        skill = core.SummonSkill("메카 캐리어", 720, 2850, 250+10*vEhc.getV(num1,num2), 4, 70000, cooltime=200*1000, red=True, modifier=modifier).isV(vEhc,num1,num2)
+        super(MechCarrierWrapper, self).__init__(skill)
+        self.interceptor = 9
+
+    def _use(self, skill_modifier):
+        self.interceptor = 9
+        return super(MechCarrierWrapper, self)._use(skill_modifier)
+    
+    def _useTick(self):
+        if self.is_active() and self.tick <= 0: # TODO: afterTick() 같은 콜백 만들자....
+            self.tick += self.get_delay()
+            hit = self.get_hit()
+            self.interceptor = min(self.interceptor + 1, 16)
+            return core.ResultObject(0, self.get_modifier(), self.get_damage(), hit, sname = self.skill.name, spec = self.skill.spec)
+        else:
             return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)    
+
+    def get_hit(self):
+        return self.skill.hit * self.interceptor
+
+    def get_delay(self):
+        return self.skill.delay + self.interceptor * 120
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -117,7 +139,7 @@ class JobGenerator(ck.JobGenerator):
         SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*ROBOT_SUMMON_REMAIN, pdamage_indep=10+5+math.ceil(passive_level/3), pdamage = ROBOT_BUFF, cooltime = -1, armor_ignore=10).wrap(core.BuffSkillWrapper)
         SupportWaverFinal = core.DamageSkill("서포트 웨이버(폭발)", 0, 1100+passive_level*20, 1, modifier = ROBOT_MASTERY, cooltime = -1).wrap(core.DamageSkillWrapper)
         
-        RoboFactory = core.SummonSkill("로봇 팩토리", 630, 3000, 500+self.combat*5, 3, 30*1000*ROBOT_SUMMON_REMAIN, modifier = ROBOT_MASTERY, cooltime=60*1000).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
+        RoboFactory = core.SummonSkill("로봇 팩토리", 630, 3000, 500+self.combat*5, 3, 30*1000*ROBOT_SUMMON_REMAIN, cooltime=60*1000, modifier = ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
         RoboFactoryBuff = core.BuffSkill("로봇 팩토리(버프)", 0, 30*1000*ROBOT_SUMMON_REMAIN, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
         RoboFactoryFinal = core.DamageSkill("로봇 팩토리(폭발)", 0, 1000+self.combat*10, 1, modifier = ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
@@ -130,7 +152,7 @@ class JobGenerator(ck.JobGenerator):
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
-        RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3, ROBOT_MASTERY) # 메카닉은 인팬트리에 로봇 마스터리 최종뎀이 적용됨
+        RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3)
         
         MultipleOption = MultipleOptionWrapper(vEhc, ROBOT_MASTERY)
         MultipleOptionBuff = core.BuffSkill("멀티플 옵션(버프)", 0, MultipleOption.skill.remain, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
@@ -141,6 +163,9 @@ class JobGenerator(ck.JobGenerator):
         BusterCallBuff = core.BuffSkill("메탈아머 전탄발사(버프)", 0, 8670, cooltime = -1).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         BusterCallEnd = core.DamageSkill("메탈아머 전탄발사(하차)", 1800, 0, 0).wrap(core.DamageSkillWrapper)
         BusterCallPenalty = core.BuffSkill("메탈아머 전탄발사(페널티)", 0, 2000, cooltime = -1).wrap(core.BuffSkillWrapper)
+
+        MechCarrier = MechCarrierWrapper(vEhc, 0, 0, ROBOT_MASTERY)
+        MechCarrierBuff = core.BuffSkill("메카 캐리어(버프)", 0, MechCarrier.skill.remain, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
         
         MassiveFire.onAfter(MassiveFire2)
         #### 호밍 미사일 정의 ####
@@ -152,6 +177,7 @@ class JobGenerator(ck.JobGenerator):
         HommingMissleHolder = core.SummonSkill("호밍 미사일(더미)", 0, 660, 0, 0, 99999 * 100000).wrap(core.SummonSkillWrapper)
         
         MultipleOption.onAfter(MultipleOptionBuff)
+        MechCarrier.onAfter(MechCarrierBuff)
         
         IsBuster_B = core.OptionalElement(BusterCallBuff.is_active, HommingMissle_B_Bu, HommingMissle_B)
         IsBuster = core.OptionalElement(BusterCallBuff.is_active, HommingMissle_Bu, HommingMissle_)
@@ -177,9 +203,9 @@ class JobGenerator(ck.JobGenerator):
         
         return(MassiveFire,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, RoboFactoryBuff, MultipleOptionBuff, BomberTime, Overdrive,
+                    Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, RoboFactoryBuff, MultipleOptionBuff, MechCarrierBuff, BomberTime, Overdrive,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-                [MicroMissle, BusterCallInit] +\
+                [MicroMissle, MechCarrier, BusterCallInit] +\
                 [HommingMissleHolder, RegistanceLineInfantry, SupportWaver, Robolauncher, RoboFactory, DistortionField, MultipleOption, MirrorBreak, MirrorSpider] +\
                 [BusterCallBuff, BusterCallPenalty] +\
                 [MassiveFire])

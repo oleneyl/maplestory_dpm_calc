@@ -8,11 +8,7 @@ from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
 
-#TODO : 5차 신스킬 적용
 # 4차 스킬은 컴뱃오더스 적용 기준으로 작성해야 함.
-# 생츄어리 필요한지 확인바람 (딜레이 750)
-
-######   Passive Skill   ######
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -75,14 +71,18 @@ class JobGenerator(ck.JobGenerator):
         Sanctuary = core.DamageSkill("생츄어리", 750, 580, 8+2, cooltime = 14 * 0.7 * 1000, red = True, modifier = core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
 
         Blast = core.DamageSkill("블래스트", 630, 291, 9+2+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+
+        MightyMjollnirInit = core.DamageSkill("마이티 묠니르(시전)", 630, 0, 0, cooltime=15000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        MightyMjollnir = core.DamageSkill("마이티 묠니르", 0, 225+9*vEhc.getV(0,0), 6, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        MightyMjollnirWave = core.DamageSkill("마이티 묠니르(충격파)", 0, 250+10*vEhc.getV(0,0), 9, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         #Summon Skills
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         BlessedHammer = core.SummonSkill("블래스드 해머", 0, 600, 250 + vEhc.getV(1,1)*10, 2, 999999 * 10000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         BlessedHammerActive = core.SummonSkill("블레스드 해머(활성화)", 360, 600, 525+vEhc.getV(1,1)*21, 3, 30 * 1000, cooltime = 60 * 1000, red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         GrandCross = core.DamageSkill("그랜드 크로스", 900, 0, 0, cooltime = 150 * 1000, red = True).wrap(core.DamageSkillWrapper)
-        GrandCrossSmallTick = core.DamageSkill("그랜드 크로스(작은)", 200, 350 + vEhc.getV(3,3)*14, 6, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #3s, 15*6타
-        GrandCrossLargeTick = core.DamageSkill("그랜드 크로스(강화)", 146, 600 + vEhc.getV(3,3)*24, 6, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s, 41*6타
+        GrandCrossSmallTick = core.DamageSkill("그랜드 크로스(작은)", 200, 175 + vEhc.getV(3,3)*7, 12, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #3s, 15*6타
+        GrandCrossLargeTick = core.DamageSkill("그랜드 크로스(강화)", 146, 300 + vEhc.getV(3,3)*12, 12, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s, 41*6타
         GrandCrossEnd = core.DamageSkill("그랜드 크로스(종료)", 450, 0, 0).wrap(core.DamageSkillWrapper)
                 
         FinalAttack = core.DamageSkill("파이널 어택", 0, 80, 2*0.4).setV(vEhc, 4, 5, True).wrap(core.DamageSkillWrapper)
@@ -103,10 +103,13 @@ class JobGenerator(ck.JobGenerator):
                             core.RepeatElement(GrandCrossSmallTick, 15)])
 
         BlessedHammerActive.onAfter(BlessedHammer.controller(30 * 1000))
+
+        MightyMjollnirInit.onAfter(core.RepeatElement(MightyMjollnir, 4))
+        MightyMjollnir.onAfter(MightyMjollnirWave)
         
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
-        for sk in [Blast, Sanctuary, GrandCrossSmallTick, GrandCrossLargeTick]:
+        for sk in [Blast, Sanctuary, GrandCrossSmallTick, GrandCrossLargeTick, MightyMjollnirInit]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
                         
@@ -114,6 +117,6 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, combat_level = 2), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Threat, ElementalForce, EpicAdventure, HolyUnity, AuraWeaponBuff, AuraWeapon,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-                [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, GrandCross, MirrorBreak, MirrorSpider] +\
+                [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, GrandCross, MightyMjollnirInit, MirrorBreak, MirrorSpider] +\
                 [BlessedHammer, BlessedHammerActive] +\
                 [Blast])

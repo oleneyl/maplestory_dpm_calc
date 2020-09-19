@@ -8,7 +8,7 @@ from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
 
-# TODO: 4카 5앱 적용, 리미트 막타 추가
+# TODO: 4카 5앱 적용
 # 제로는 패시브 레벨 +1 어빌 미적용
 '''
 어시스트 매커니즘 정리
@@ -121,8 +121,9 @@ class JobGenerator(ck.JobGenerator):
         '''
         미사용 스킬
 
-        ShadowStrike = core.DamageSkill("쉐도우 스트라이크", ?, 195, 8)
-        ShadowStrikeAura = core.DamageSkill("쉐도우 스트라이크", 0, 310, 1)
+        TODO: 쉐스 검기 항상 알파스펙인지 확인할 것
+        ShadowStrike = core.DamageSkill("쉐도우 스트라이크", 510, 195, 8).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        ShadowStrikeAura = core.DamageSkill("쉐도우 스트라이크(오라)", 0, 310, 1).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         '''
         FlashAssault = core.DamageSkill("플래시 어썰터", 270, 165, 8).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         FlashAssaultTAG = core.DamageSkill("플래시 어썰터(태그)", 0, 165, 8).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
@@ -205,16 +206,18 @@ class JobGenerator(ck.JobGenerator):
         
         LimitBreakAttack = core.DamageSkill("리미트 브레이크", 0, 400+15*vEhc.getV(0,0), 5, modifier = extra_dmg(15, False)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         # 리미트 브레이크 중에는 디바인 포스 사용 (공격력 20 증가)
-        # 리미트 브레이크 막타뎀을 임시로 최종뎀으로 처리, (1+0.36)*(1+0.2)-1 = 0.36*1.2 + 0.2
-        LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = (30+vEhc.getV(0,0)//5) *1.2 + 20, att = 20, cooltime = 240*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = 30+vEhc.getV(0,0)//5, att = 20, cooltime = 240*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         LimitBreakCDR = core.SummonSkill("리미트 브레이크(재사용 대기시간 감소)", 0, 1000, 0, 0, (30+vEhc.getV(0,0)//2)*1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         
-        #LimitBreakFinal = core.DamageSkill("리미트 브레이크 (막타)", 0, '''지속시간 동안 가한 데미지의 20% / 15''', 15)
+        LimitBreakFinal = core.DamageSkill("리미트 브레이크 (막타)", 0, 650 + 26*vEhc.getV(0,0), 12*6, cooltime = -1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         # 베타로 사용함.
-        TwinBladeOfTime = core.DamageSkill("조인트 어택", 0, 0, 0, cooltime = 120*1000, red=True, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_1 = core.DamageSkill("조인트 어택(1)", 3540, 875+35*vEhc.getV(1,1), 8, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_2 = core.DamageSkill("조인트 어택(2)", 0, 835+33*vEhc.getV(1,1), 8, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_3 = core.DamageSkill("조인트 어택(3)", 0, 1000+40*vEhc.getV(1,1), 13, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime = core.DamageSkill("조인트 어택", 0, 0, 0, cooltime = 120*1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Alpha_1 = core.DamageSkill("조인트 어택(알파)(1)", 450, 875+35*vEhc.getV(1,1), 8).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Alpha_2 = core.DamageSkill("조인트 어택(알파)(2)", 720, 835+33*vEhc.getV(1,1), 12).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Alpha_3 = core.DamageSkill("조인트 어택(알파)(3)", 1020, 1000+40*vEhc.getV(1,1), 13).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Beta_1 = core.DamageSkill("조인트 어택(베타)(1)", 540, 875+35*vEhc.getV(1,1), 8, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Beta_2 = core.DamageSkill("조인트 어택(베타)(2)", 450, 835+33*vEhc.getV(1,1), 12, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Beta_3 = core.DamageSkill("조인트 어택(베타)(3)", 360, 1000+40*vEhc.getV(1,1), 13, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         TwinBladeOfTime_end = core.DamageSkill("조인트 어택(4)", 1050, 900+36*vEhc.getV(1,1), 15*3, modifier = (extra_dmg(12, False) + core.CharacterModifier(armor_ignore = 100))).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         
         #알파
@@ -223,12 +226,16 @@ class JobGenerator(ck.JobGenerator):
         
         #베타
         ShadowFlashBeta = core.DamageSkill("쉐도우 플래시(베타)", 510, 600+24*vEhc.getV(2,2), 5, cooltime = 40*1000, modifier = extra_dmg(8, False), red = True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        ShadowFlashBetaEnd = core.DamageSkill("쉐도우 플래시(베타)(종료)", 660, 750+30*vEhc.getV(2,2), 12 * 2, modifier = extra_dmg(8, False)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ShadowFlashBetaEnd = core.DamageSkill("쉐도우 플래시(베타)(종료)", 660, 750+30*vEhc.getV(2,2), 12 * 2, modifier = extra_dmg(15, False)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         
         #초월자 륀느의 기원
         RhinneBless = core.BuffSkill("초월자 륀느의 기원", 480, (30+vEhc.getV(0,0)//2)*1000, cooltime = 240000, att = 10+3*vEhc.getV(0,0)).wrap(core.BuffSkillWrapper)
         RhinneBlessAttack_hit = core.DamageSkill("초월자 륀느의 기원 (타격)", 0, 125+5*vEhc.getV(0, 0), 5, cooltime = -1).wrap(core.DamageSkillWrapper)
         RhinneBlessAttack = core.OptionalElement(RhinneBless.is_active, RhinneBlessAttack_hit)
+
+        #에고 웨폰
+        EgoWeaponAlpha = core.DamageSkill("에고 웨폰(알파)", 0, 175+7*vEhc.getV(0,0), 6*9, cooltime=15000, red=True).wrap(core.DamageSkillWrapper)
+        EgoWeaponBeta = core.DamageSkill("에고 웨폰(베타)", 0, 175+7*vEhc.getV(0,0), 9*2*3, cooltime=15000, red=True, modifier = extra_dmg(4, False)).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
         ### 스킬 연결 ###
@@ -288,13 +295,18 @@ class JobGenerator(ck.JobGenerator):
         
         ### 5차 스킬들 ###
         TwinBladeOfTime.onBefore(SetBeta)
-        for sk in [TwinBladeOfTime_1, TwinBladeOfTime_2, TwinBladeOfTime_3, TwinBladeOfTime_end]:
+        for sk in [TwinBladeOfTime_Beta_1, TwinBladeOfTime_Alpha_1, TwinBladeOfTime_Beta_2, TwinBladeOfTime_Alpha_2,
+                    TwinBladeOfTime_Beta_3, TwinBladeOfTime_Alpha_3, TwinBladeOfTime_end]:
             TwinBladeOfTime.onAfter(sk)
         ShadowFlashAlpha.onAfter(ShadowFlashAlphaEnd)
         ShadowFlashBeta.onAfter(ShadowFlashBetaEnd)
         LimitBreak.onBefore(SetBeta)
         LimitBreak.onAfter(LimitBreakAttack)
         LimitBreak.onAfter(LimitBreakCDR)
+        # 버프 종료 직전에 캔슬 TODO: 리밋브 최종뎀 종료 전에 발동되는 것이 반드시 보장되어야 함 (콜백)
+        LimitBreak.onAfter(LimitBreakFinal.controller((30+vEhc.getV(0,0)//2)*1000-1))
+        LimitBreakFinal.add_runtime_modifier(BetaState, lambda beta: extra_dmg(15, False) if beta.is_active() else core.CharacterModifier())
+
         for sk in [TimeDistortion, SoulContract]:
             # 재사용 대기시간 초기화의 효과를 받지 않는 스킬을 제외한 스킬의 재사용 대기시간이 (기본 200%에 5레벨마다 10%씩) 더 빠르게 감소
             LimitBreakCDR.onTick(sk.controller(2000 + 20 * vEhc.getV(0, 0), 'reduce_cooltime'))
@@ -304,7 +316,8 @@ class JobGenerator(ck.JobGenerator):
         for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
                     AdvancedRollingCurve, AdvancedRollingAssulter, WindCutter, WindStrike, AdvancedStormBreak,
                     UpperSlash, AdvancedPowerStomp, FrontSlash, TurningDrive, AdvancedWheelWind, GigaCrash,
-                    JumpingCrash, AdvancedEarthBreak, TwinBladeOfTime_end]:
+                    JumpingCrash, AdvancedEarthBreak, TwinBladeOfTime_Beta_1, TwinBladeOfTime_Alpha_1, 
+                    TwinBladeOfTime_Beta_2, TwinBladeOfTime_Alpha_2, TwinBladeOfTime_Beta_3, TwinBladeOfTime_Alpha_3, TwinBladeOfTime_end]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
         AuraWeapon.add_runtime_modifier(BetaState, lambda beta: extra_dmg(10, False) if beta.is_active() else core.CharacterModifier()) # 베타시 오라 웨폰에 대검 마스터리 적용
@@ -319,13 +332,26 @@ class JobGenerator(ck.JobGenerator):
 
         RhinneBless.onAfter(TimeDistortion.controller(1.0, 'reduce_cooltime_p'))
         RhinneBless.onAfter(SoulContract.controller(1.0, 'reduce_cooltime_p'))
+
+        # 에고 웨폰
+        UseEgoWeaponAlpha = core.OptionalElement(EgoWeaponAlpha.is_available, EgoWeaponAlpha)
+        EgoWeaponAlpha.protect_from_running()
+        for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter, AdvancedRollingCurve, AdvancedRollingAssulter,
+            WindCutter, WindStrike, AdvancedStormBreak, ShadowFlashAlpha, ShadowFlashAlphaEnd]:
+            sk.onAfter(UseEgoWeaponAlpha)
+            
+        UseEgoWeaponBeta = core.OptionalElement(EgoWeaponBeta.is_available, EgoWeaponBeta)
+        EgoWeaponBeta.protect_from_running()
+        for sk in [UpperSlash, AdvancedPowerStomp, FrontSlash, TurningDrive, AdvancedWheelWind, GigaCrash,
+                    JumpingCrash, AdvancedEarthBreak, ShadowFlashBeta, ShadowFlashBetaEnd]:
+            sk.onAfter(UseEgoWeaponBeta)
         
         return(ComboHolder,
                 [globalSkill.maple_heros(chtr.level, name = "륀느의 가호", combat_level = 0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, RhinneBless,
-                    DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, CriticalBind,
+                    DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, LimitBreakFinal, CriticalBind,
                     SoulContract]+\
                 [TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta, MirrorBreak, MirrorSpider]+\
                 [AdvancedStormBreakSummon, AdvancedStormBreakElectric, AdvancedEarthBreakElectric, WindCutterSummon, ThrowingWeapon]+\
-                []+\
+                [EgoWeaponAlpha, EgoWeaponBeta]+\
                 [ComboHolder])

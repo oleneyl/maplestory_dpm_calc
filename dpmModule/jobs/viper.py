@@ -9,7 +9,6 @@ from .jobbranch import pirates
 from .jobclass import adventurer
 from . import jobutils
 from math import ceil
-#TODO : 5차 신스킬 적용
 
 class EnergyChargeWrapper(core.StackSkillWrapper):
     def __init__(self, combat):
@@ -127,7 +126,7 @@ class JobGenerator(ck.JobGenerator):
         # Hyper
         Stimulate = core.BuffSkill("스티뮬레이트", 930, 120 * 1000, cooltime = 240 * 1000, pdamage = 20).wrap(core.BuffSkillWrapper)# 에너지 주기적으로 800씩 증가, 미완충시 풀완충.
         StimulateSummon = core.SummonSkill("스티뮬레이트(게이지 증가 더미)", 0, (5 + serverlag) * 1000, 0, 0, 120 * 1000, cooltime = -1).wrap(core.SummonSkillWrapper)
-        UnityOfPower = core.DamageSkill("유니티 오브 파워", 1080, 650, 5, cooltime = 10000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #완충시에만 사용 가능, 에너지 1500 소모.
+        UnityOfPower = core.DamageSkill("유니티 오브 파워", 690, 650, 5, cooltime = 10000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #완충시에만 사용 가능, 에너지 1500 소모.
         UnityOfPowerBuff = core.BuffSkill("유니티 오브 파워(디버프)", 0, 90 * 1000, cooltime = -1, crit_damage = 40).wrap(core.BuffSkillWrapper)   #4스택 가정.
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
@@ -138,7 +137,7 @@ class JobGenerator(ck.JobGenerator):
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("너클")
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
-        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0) # TODO: 에너지 충전 여부 확인할것
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         Transform = core.BuffSkill("트랜스 폼", 450, (50+vEhc.getV(1,1))*1000, cooltime = 180 * 1000, red=True, pdamage_indep = 20 + vEhc.getV(1,1) // 5).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         TransformEnergyOrbDummy = core.DamageSkill("에너지 오브(더미)", 0, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
@@ -148,6 +147,10 @@ class JobGenerator(ck.JobGenerator):
         SerpentScrewDummy = core.SummonSkill("서펜트 스크류(지속)", 0, 1000, 0, 0, 99999 * 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
     
         FuriousCharge = core.DamageSkill("퓨리어스 차지", 420, 600+vEhc.getV(4,4)*24, 10, cooltime = 10 * 1000, modifier = core.CharacterModifier(boss_pdamage = 30)).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
+
+        HowlingFistInit = core.DamageSkill("하울링 피스트(개시)", 240, 0, 0, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        HowlingFistCharge = core.DamageSkill("하울링 피스트(충전)", 240, 425+17*vEhc.getV(0,0), 6, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        HowlingFistFinal = core.DamageSkill("하울링 피스트(막타)", 1950, 525+21*vEhc.getV(0,0), 10*14, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
         # Energy Charge
@@ -160,11 +163,13 @@ class JobGenerator(ck.JobGenerator):
         StimulateSummon.onTick(EnergyCharge.chargeController(800, force=True))
         FistInrage.onAfter(EnergyCharge.chargeController(700))
         Nautilus.onAfter(EnergyCharge.chargeController(700))
-        SerpentScrewDummy.onTick(EnergyCharge.chargeController(-85))
+        MirrorBreak.onAfter(EnergyCharge.chargeController(700))
+        SerpentScrewDummy.onTick(EnergyCharge.chargeController(-60))
         SerpentScrew.onTick(EnergyCharge.chargeController(-85*0.3))
         FistInrage_T.onAfter(EnergyCharge.chargeController(-150))
         DragonStrike.onAfter(EnergyCharge.chargeController(-180))
         UnityOfPower.onAfter(EnergyCharge.chargeController(-1500))
+        HowlingFistInit.onAfter(EnergyCharge.chargeController(-1750))
         
         # Basic Attack
         BasicAttack = core.OptionalElement(EnergyCharge.isStateOn, FistInrage_T, FistInrage, "에너지 완충")
@@ -197,13 +202,18 @@ class JobGenerator(ck.JobGenerator):
         SerpentScrew.onConstraint(core.ConstraintElement("에너지 100 이상", EnergyCharge, partial(EnergyCharge.judge, 100, 1)))
         SerpentScrew.onAfter(SerpentScrewDummy)
         EnergyCharge.drainCallback = lambda: [SerpentScrew.set_disabled_and_time_left(1), SerpentScrewDummy.set_disabled_and_time_left(-1)]
+
+        # Howling Fist
+        HowlingFistInit.onConstraint(core.ConstraintElement("에너지 1750 이상", EnergyCharge, partial(EnergyCharge.judge, 1750, 1)))
+        HowlingFistInit.onAfter(core.RepeatElement(HowlingFistCharge, 8))
+        HowlingFistInit.onAfter(HowlingFistFinal)
             
         return (BasicAttackWrapper,
             [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                 LuckyDice, Viposition, Stimulate, EpicAdventure, PirateFlag, Overdrive, Transform,
                 UnityOfPowerBuff, DragonStrikeBuff, EnergyCharge,
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-            [UnityOfPower, Nautilus, DragonStrike, FuriousCharge, TransformEnergyOrbDummy, MirrorBreak, MirrorSpider] +\
+            [UnityOfPower, HowlingFistInit, Nautilus, DragonStrike, FuriousCharge, TransformEnergyOrbDummy, MirrorBreak, MirrorSpider] +\
             [SerpentScrew, SerpentScrewDummy, StimulateSummon] +\
             [] +\
             [BasicAttackWrapper])

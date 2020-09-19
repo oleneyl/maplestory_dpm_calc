@@ -3,6 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial, reduce
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobclass import resistance
 from .jobbranch import bowmen
@@ -61,6 +62,11 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "와일드헌터"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'crit')
         self.preEmptiveSkills = 0
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '재규어 스톰'), RuleSet.BASE)
+        return ruleset
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -100,6 +106,8 @@ class JobGenerator(ck.JobGenerator):
         비스트 폼-리인포스
         서먼 재규어-리인포스, 쿨타임 리듀스
         와일드 발칸-리인포스, 보스 킬러
+
+        소울 컨트랙트를 크리티컬 리인포스+재규어 스톰+와일드 발칸 Type X에 맞춰 사용
         
         코강 순서:
         발칸 - (서먼/어나더) - 파택 - 클로우컷 - 헌팅유닛- 램피지애즈원/플래시레인 - 소닉붐 - 재규어소울 - 크로스 로드 - 드릴 컨테이너
@@ -112,16 +120,16 @@ class JobGenerator(ck.JobGenerator):
         Jaguar = JaguarWrapper()
         Normal = core.DamageSkill("재규어 평타", 0, 140+chtr.level, 1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         ClawCut = core.DamageSkill("클로우 컷", 0, 200+chtr.level, 4, cooltime = 5000*0.9, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        Crossroad = core.DamageSkill("크로스 로드", 0, 450+2*chtr.level, 1, cooltime = 6000*0.9, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
+        Crossroad = core.DamageSkill("크로스 로드", 0, 225+chtr.level, 2, cooltime = 6000*0.9, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
         SonicBoom = core.DamageSkill("소닉 붐", 0, 220+chtr.level, 6, cooltime = 6000*0.9, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        JaguarSoul = core.DamageSkill("재규어 소울", 0, 1000+20*chtr.level, 1, cooltime = 210000, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        JaguarSoul = core.DamageSkill("재규어 소울", 0, 270+chtr.level, 12, cooltime = 210000, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         RampageAsOne = core.DamageSkill("램피지 애즈 원", 0, 500+1*chtr.level, 9, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
     
         Normal_JG = core.DamageSkill("재규어 평타(재규어 스톰)", 0, (140+chtr.level)*(62+vEhc.getV(0,0))*0.01, 1 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         ClawCut_JG = core.DamageSkill("클로우 컷(재규어 스톰)", 0, (200+chtr.level)*(62+vEhc.getV(0,0))*0.01, 4 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        Crossroad_JG = core.DamageSkill("크로스 로드(재규어 스톰)", 0, (450+2*chtr.level)*(62+vEhc.getV(0,0))*0.01, 1 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
+        Crossroad_JG = core.DamageSkill("크로스 로드(재규어 스톰)", 0, (225+chtr.level)*(62+vEhc.getV(0,0))*0.01, 2 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
         SonicBoom_JG = core.DamageSkill("소닉 붐(재규어 스톰)", 0, (220+chtr.level)*(62+vEhc.getV(0,0))*0.01, 6 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        JaguarSoul_JG = core.DamageSkill("재규어 소울(재규어 스톰)", 0, (1000+20*chtr.level)*(62+vEhc.getV(0,0))*0.01, 1 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        JaguarSoul_JG = core.DamageSkill("재규어 소울(재규어 스톰)", 0, (270+chtr.level)*(62+vEhc.getV(0,0))*0.01, 12 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         RampageAsOne_JG = core.DamageSkill("램피지 애즈 원(재규어 스톰)", 0, (500+1*chtr.level)*(62+vEhc.getV(0,0))*0.01, 9 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
     
 
@@ -146,7 +154,7 @@ class JobGenerator(ck.JobGenerator):
 
         #Hyper
         WillOfLiberty = core.BuffSkill("윌 오브 리버티", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        SilentRampage = core.BuffSkill("사일런트 램피지", 1020, 40*1000, pdamage=40, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
+        SilentRampage = core.BuffSkill("사일런트 램피지", 840, 40*1000, pdamage=40, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         
         #5th
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
@@ -156,21 +164,30 @@ class JobGenerator(ck.JobGenerator):
     
         JaguerStorm = core.BuffSkill("재규어 스톰", 840, 40*1000, cooltime = (150-vEhc.getV(0,0))*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
-        JaguarMaximum = core.DamageSkill("재규어 맥시멈", 2160, 1000+40*vEhc.getV(5,5), 36, cooltime = 150*1000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
-        JaguarMaximumFinal = core.DamageSkill("재규어 맥시멈(마무리)", 630, 1800+72*vEhc.getV(5,5), 15, cooltime=-1, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
+        JaguarMaximum = core.DamageSkill("재규어 맥시멈", 2160, 350+13*vEhc.getV(5,5), 12*9, cooltime = 150*1000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
+        JaguarMaximumFinal = core.DamageSkill("재규어 맥시멈(마무리)", 630, 450+18*vEhc.getV(5,5), 15*4, cooltime=-1, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
         RidingOff = core.DamageSkill("하차 딜레이", 1800, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper) # 재규어 맥시멈 강제 탑승 해제 딜레이
 
         WildGrenade = core.SummonSkill("와일드 그레네이드", 0, 4500, 600+24*vEhc.getV(2,2), 5, 9999*10000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
 
+        WildBalkanTypeXInit = core.DamageSkill("와일드 발칸 Type X(개시)", 540, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        WildBalkanTypeXTick = core.DamageSkill("와일드 발칸 Type X", 120, 475+19*vEhc.getV(0,0), 4, cooltime=-1, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 67회 반복
+        WildBalkanTypeXEnd = core.DamageSkill("와일드 발칸 Type X(후딜)", 540, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+
         #Build Graph
         FinalAttack = core.OptionalElement(SilentRampage.is_active, FinalAttack100, FinalAttack70)
         
-        WildBalkan.onAfter(FinalAttack)
-        WildBalkan.onAfter(AnotherBite)
+        for sk in [WildBalkan, WildBalkanTypeXTick]:
+            sk.onAfter(FinalAttack)
+            sk.onAfter(AnotherBite)
         
         JaguarMaximum.onAfter(JaguarMaximumFinal)
         JaguarMaximumFinal.onAfter(AnotherBite.add_debuff(3))
         JaguarMaximumFinal.onAfter(RidingOff)
+
+        WildBalkanTypeXKeydown = core.RepeatElement(WildBalkanTypeXTick, 67)
+        WildBalkanTypeXInit.onAfter(WildBalkanTypeXKeydown)
+        WildBalkanTypeXInit.onAfter(WildBalkanTypeXEnd)
 
         #Jaguar
         JaguarSelector = None
@@ -195,6 +212,6 @@ class JobGenerator(ck.JobGenerator):
                     Booster, Hauling, BeastForm, SharpEyes, SilentRampage, JaguerStorm, WillOfLiberty, Jaguar,
                     globalSkill.soul_contract()] +\
                 [RampageAsOne, JaguarSoul, SonicBoom, Crossroad, ClawCut, Normal] +\
-                [HuntingUnit, DrillContainer, GuidedArrow, RegistanceLineInfantry, WildGrenade, JaguarMaximum, MirrorBreak, MirrorSpider] +\
+                [HuntingUnit, DrillContainer, GuidedArrow, RegistanceLineInfantry, WildGrenade, JaguarMaximum, WildBalkanTypeXInit, MirrorBreak, MirrorSpider] +\
                 [AnotherBite] +\
                 [WildBalkan])

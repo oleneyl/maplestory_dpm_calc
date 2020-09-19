@@ -10,7 +10,7 @@ from .jobclass import nova
 from . import jobutils
 from math import ceil
 
-def getAffinityIV(duration):
+def getAffinityIV(duration): # TODO: 와헌 어나더 바이트처럼 실시간 계산
     """
     어피니티IV의 지속시간은 5000ms
     평균 리차지 주기에 따라 5000ms 사이에 n회, n+1회 공격할 확률을 각각 구한 다음
@@ -21,22 +21,6 @@ def getAffinityIV(duration):
     prob = timeDiv / duration
     ratio = (1 - prob) * (1 - 0.5 ** count) + prob * (1 - 0.5 ** (count + 1))
     return core.InformedCharacterModifier("어피니티 IV", pdamage = 30 * ratio)
-
-class TrinityBuffWrapper(core.StackSkillWrapper):
-    def __init__(self):
-        super(TrinityBuffWrapper, self).__init__(core.BuffSkill("트리니티(버프)", 0, 7000, cooltime = -1), 3)
-
-    def _use(self, skill_modifier):
-        if self.stack >= self._max:
-            return self._result_object_cache
-        
-        self.vary(1)
-        return super(TrinityBuffWrapper, self)._use(skill_modifier)
-
-    def spend_time(self, time):
-        super().spend_time(time)
-        if self.onoff == False:
-            self.set_stack(0)
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):
@@ -60,15 +44,16 @@ class JobGenerator(ck.JobGenerator):
         
         CallOfAncient = core.InformedCharacterModifier("콜 오브 에인션트", att = 40)
         AffinityIII = core.InformedCharacterModifier("어피니티 III", stat_main = 40, pdamage = 20)
-        AffinityIV = getAffinityIV(1208.46) # 트리니티 평균 주기가 바뀔 때 마다 변경해 줘야함. 1000 * time(초) / (트리니티 사용 횟수).
+        AffinityIV = getAffinityIV(1272.08) # 트리니티 평균 주기가 바뀔 때 마다 변경해 줘야함. 1000 * time(초) / (트리니티 사용 횟수).
         TrinityPassive = core.InformedCharacterModifier("트리니티(패시브)", pdamage_indep = ceil((30 + self.combat) / 3), armor_ignore = ceil((30 + self.combat) / 2))
         SoulShooterExpert = core.InformedCharacterModifier("소울슈터 엑스퍼트", att = 30 + passive_level, crit = 30 + passive_level, crit_damage = 15 + ceil(passive_level / 2))
         
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
+        TrinityFusionPassive = core.InformedCharacterModifier("트리니티 퓨전(패시브)", stat_main = 10 + vEhc.getV(0,0))
     
         return [SoulShooterMastery, InnerFire,
                             CallOfAncient, AffinityIII, AffinityIV, TrinityPassive, SoulShooterExpert,
-                            LoadedDicePassive]
+                            LoadedDicePassive, TrinityFusionPassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -104,6 +89,7 @@ class JobGenerator(ck.JobGenerator):
         '''
         
         SPOTLIGHTHIT = 3
+        TRINITY_MDF = core.CharacterModifier(pdamage = 20) + core.CharacterModifier(pdamage = 10*3, armor_ignore = 10*3) # 하이퍼 리인포스 + 3중첩
         
         #Buff skills
         Booster = core.BuffSkill("리리컬 크로스", 0, 200*1000).wrap(core.BuffSkillWrapper)
@@ -114,12 +100,11 @@ class JobGenerator(ck.JobGenerator):
         
         # -70은 스플릿 어택
         TRINITY_DAMAGE = 360 + 12 * (30 + self.combat) - 70
-        Trinity_1 = core.DamageSkill("트리니티", 360, TRINITY_DAMAGE, 2+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Trinity_2 = core.DamageSkill("트리니티(2타)", 360, TRINITY_DAMAGE, 3+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Trinity_3 = core.DamageSkill("트리니티(3타)", 360, TRINITY_DAMAGE, 4+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Trinity_Buff = TrinityBuffWrapper()
+        Trinity_1 = core.DamageSkill("트리니티", 360, TRINITY_DAMAGE, 2+1, modifier = TRINITY_MDF).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Trinity_2 = core.DamageSkill("트리니티(2타)", 360, TRINITY_DAMAGE, 3+1, modifier = TRINITY_MDF).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Trinity_3 = core.DamageSkill("트리니티(3타)", 360, TRINITY_DAMAGE, 4+1, modifier = TRINITY_MDF).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
-        FinaturaFettuccia = core.DamageSkill("피니투라 페투치아", 1020, 1900 + 70*(30 + self.combat), 1, red = True, cooltime = 40000*0.75).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        FinaturaFettuccia = core.DamageSkill("피니투라 페투치아", 1020, 400 + 7*self.combat, 10, red = True, cooltime = 40000*0.75).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         FinaturaFettucciaBuff = core.BuffSkill("피니투라 페투치아(버프)", 0, 20000, cooltime = -1, pdamage_indep=25).wrap(core.BuffSkillWrapper)
         
         SoulGaze = core.BuffSkill("소울 게이즈", 1080, (180 + 5 * self.combat) * 1000, rem = True, crit_damage = 45 + self.combat).wrap(core.BuffSkillWrapper)
@@ -148,20 +133,19 @@ class JobGenerator(ck.JobGenerator):
         MascortFamilier = core.BuffSkill("마스코트 패밀리어", 810, 30+(vEhc.getV(2,1)//5)*1000, red = True, cooltime = 120 * 1000).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
         MascortFamilierAttack = core.SummonSkill("트윙클 스타/매지컬 벌룬", 0, 2500, 1200, 5, (30+(vEhc.getV(2,1)//5))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         ShinyBubbleBreath = core.SummonSkill("샤이니 버블 브레스", 0, 210, 250+10*vEhc.getV(2,1), 7, (3 + 0.4*8)*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
+
+        # 이전 트리니티 딜레이를 150ms만큼 캔슬함. TODO: 트리니티(캔슬) 만들고 퓨전 600ms로 할것
+        TrinityFusionInit = core.DamageSkill("트리니티 퓨전(시전)", 600-150, 0, 0, cooltime=(16-vEhc.getV(0,0)//10)*1000, red=True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        TrinityFusion = core.DamageSkill("트리니티 퓨전", 0, 330+vEhc.getV(0,0), 3, cooltime=-1, modifier = TRINITY_MDF).setV(vEhc, 0, 2, True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+
         ### build graph relationships
     
         Trinity_1.onAfter(Trinity_2)
         Trinity_2.onAfter(Trinity_3)
-    
-        def get_trinity_modifier(trinity_buff):
-            return core.CharacterModifier(pdamage = 10 * trinity_buff.stack, armor_ignore = 10 * trinity_buff.stack)
+        Trinity_3.onAfter(core.OptionalElement(TrinityFusionInit.is_available, TrinityFusionInit))
+        TrinityFusionInit.protect_from_running()
 
-        Trinity_1.onJustAfter(Trinity_Buff)
-        Trinity_2.onJustAfter(Trinity_Buff)
-        Trinity_3.onJustAfter(Trinity_Buff)
-        Trinity_1.add_runtime_modifier(Trinity_Buff, get_trinity_modifier)
-        Trinity_2.add_runtime_modifier(Trinity_Buff, get_trinity_modifier)
-        Trinity_3.add_runtime_modifier(Trinity_Buff, get_trinity_modifier)
+        TrinityFusionInit.onAfter(core.RepeatElement(TrinityFusion, 9))
     
         FinaturaFettuccia.onAfter(FinaturaFettucciaBuff)
         SpotLight.onAfter(SpotLightBuff)
@@ -173,7 +157,7 @@ class JobGenerator(ck.JobGenerator):
         #극딜기 싱크로
         #SoulContract.onConstraint(core.ConstraintElement("익절트와 함께", SoulExult, SoulExult.is_active))
         
-        for sk in [Trinity_1, Trinity_2, Trinity_3, FinaturaFettuccia, EnergyBurst]:
+        for sk in [Trinity_1, Trinity_2, Trinity_3, TrinityFusion, FinaturaFettuccia, EnergyBurst]:
             sk.onAfter(SoulSeeker)
         
         SuperNova.onTick(SoulSeeker)
@@ -183,9 +167,9 @@ class JobGenerator(ck.JobGenerator):
         return (Trinity_1,
                 [Booster, SoulGaze, LuckyDice, FinalContract,
                     SoulExult, SoulContract, Overdrive,
-                    FinaturaFettucciaBuff, SpotLightBuff, Trinity_Buff, MascortFamilier, NovaGoddessBless,
+                    FinaturaFettucciaBuff, SpotLightBuff, MascortFamilier, NovaGoddessBless,
                     globalSkill.maple_heros(chtr.level, name = "노바의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster()] +\
                 [FinaturaFettuccia, EnergyBurst, MirrorBreak, MirrorSpider] +\
-                [SuperNova, MascortFamilierAttack, ShinyBubbleBreath, SpotLight] +\
+                [SuperNova, MascortFamilierAttack, ShinyBubbleBreath, SpotLight, TrinityFusionInit] +\
                 [] +\
                 [Trinity_1])

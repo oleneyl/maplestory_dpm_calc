@@ -15,8 +15,8 @@ class OrderWrapper(core.SummonSkillWrapper):
         super(OrderWrapper, self).__init__(skill)
         self.ether = ether
         self.condition = None
-        self.queue = []
-        self.stack = 0
+        self.queue = [] # (공격 시작 시간, 종료 시간)
+        self.summonCooltime = 0
         self.currentTime = 0
         self.REMAIN_TIME = 40000
 
@@ -25,36 +25,67 @@ class OrderWrapper(core.SummonSkillWrapper):
 
     def add(self):
         self.ether.vary(-100)
-        self.queue = self.queue + [self.currentTime + self.REMAIN_TIME]
+        self.queue += [(self.currentTime + self.skill.delay, self.currentTime + self.REMAIN_TIME)]
+        self.summonCooltime = 500
+
+    def calculateRefund(self, timeLeft):
+        if timeLeft < 16000:
+            return 0
+        if timeLeft < 24000:
+            return 20
+        if timeLeft < 32000:
+            return 40
+        return 60
+
+    def consume(self):
+        count = len(self.queue)
+        refund = sum([self.calculateRefund(end - self.currentTime) for start, end in self.queue])
+        self.ether.vary(refund)
+        self.queue = []
+        return count
 
     def spend_time(self, time):
         self.currentTime += time
-        self.queue = [x for x in self.queue if x > self.currentTime]
+        self.queue = [(start, end) for start, end in self.queue if end > self.currentTime]
+        self.summonCooltime -= time
 
-        if self.condition():
+        if self.summonCooltime <= 0 and self.condition():
             self.add()
         
-        self.stack = len(self.queue) * 2
         super(OrderWrapper, self).spend_time(time)
 
     def _delayQueue(self, time): # 게더링/블로섬 도중에는 오더의 지속시간이 흐르지 않음
         self.set_disabled_and_time_left(time)
-        self.queue = [x + time for x in self.queue]
+        self.queue = [(self.currentTime + time + self.skill.delay, end + time) for start, end in self.queue]
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
 
     def delayQueue(self, time):
         task = core.Task(self, partial(self._delayQueue, time))
         return core.TaskHolder(task, name = "오더 지속시간 지연")
+
+    def get_stack(self):
+        return len(self.queue) * 2
         
     def judge(self, stack, direction):
-        return (self.stack-stack)*direction>=0
+        return (self.get_stack()-stack)*direction>=0
 
-    def _useTick(self):
-        if self.onoff and self.tick <= 0:
-            self.tick += self.skill.delay
-            return core.ResultObject(0, self.get_modifier(), self.skill.damage, self.skill.hit * self.stack, sname = self.skill.name, spec = self.skill.spec)
-        else:
-            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+    def get_hit(self):
+        attackable = sum(1 for start, end in self.queue if self.currentTime >= start) * 2
+        return attackable * self.skill.hit
+
+class StormWrapper(core.SummonSkillWrapper):
+    def __init__(self, vEhc, num1, num2, order: OrderWrapper, serverlag = 0): # TODO: 서버렉 평균 몇초인지 측정할것
+        skill = core.SummonSkill("스톰", 600, 330, 250+10*vEhc.getV(num1,num2), 2, 14000+serverlag, cooltime = 90*1000, red=True).isV(vEhc,num1,num2)
+        super(StormWrapper, self).__init__(skill)
+        self.order = order
+        self.consumed_order = 0
+
+    def _use(self, skill_modifier):
+        self.consumed_order = self.order.consume()
+        return super(StormWrapper, self)._use(skill_modifier)
+
+    def get_hit(self):
+        return self.skill.hit + max(self.consumed_order - 1, 0) * 2
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -125,7 +156,7 @@ class JobGenerator(ck.JobGenerator):
 
         Resonance = core.DamageSkill("레조넌스", 690, (120+125+265+passive_level*3) * (1.15**6), 6, cooltime=10*1000, red=True).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 900ms, 스택 유지를 위해 10초마다 사용함
 
-        ResonanceStack = core.BuffSkill('레조넌스(스택)', 0, 30*1000, cooltime=-1, pdamage_indep=15, armor_ignore=15).wrap(core.BuffSkillWrapper) # 최종뎀 5, 방무 5, 최대3회. 상시 중첩으로 가정
+        ResonanceStack = core.BuffSkill('레조넌스(스택)', 0, 30*1000, cooltime=-1, pdamage_indep=10, armor_ignore=10).wrap(core.BuffSkillWrapper) # 최종뎀 5, 방무 5, 최대2회. 상시 중첩으로 가정
 
         Creation = core.StackDamageSkillWrapper(
             core.DamageSkill('크리에이션', 0, 200+240+270+passive_level*3, 1, cooltime = 1500, red=True).setV(vEhc, 5, 2, False),
@@ -136,12 +167,12 @@ class JobGenerator(ck.JobGenerator):
         Territory = core.SummonSkill('테리토리', 420, 405, 100+300+passive_level*5, 4, 7000+4000, rem=False, cooltime=30*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper) # 27회 타격, 클라공속540ms
         TerritoryEnd = core.DamageSkill('테리토리(종료)', 0, 550+300+passive_level*5, 12, cooltime=-1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        Order = OrderWrapper(core.SummonSkill('오더', 0, 1140, 240+120+passive_level*3, 2, 99999999).setV(vEhc, 1, 2, False), Ether) # 15% 에테르 결정, 시전딜레이 없음으로 가정, 공격주기 1140ms(인피니트로부터 추정됨)
+        Order = OrderWrapper(core.SummonSkill('오더', 0, 1020, 240+120+passive_level*3, 2, 99999999).setV(vEhc, 1, 2, False), Ether) # 15% 에테르 결정, 시전딜레이 없음으로 가정, 공격주기 1020ms
 
         Gathering = core.StackDamageSkillWrapper(
-            core.DamageSkill('게더링', 600, 260+300+passive_level*3, 4, cooltime=12*1000, red=True).setV(vEhc, 5, 2, False),
+            core.DamageSkill('게더링', 630, 260+300+passive_level*3, 4, cooltime=12*1000, red=True).setV(vEhc, 5, 2, False),
             Order,
-            lambda order: order.stack * 0.8
+            lambda order: order.get_stack() * 0.8
         ) # 칼 불러오기. 블라섬과 연계됨, 모이는데 약 600ms 가정
 
         Divide = core.DamageSkill('디바이드', 600, 375+self.combat*3, 6, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #트리거 스킬, 클라공속 780ms
@@ -154,7 +185,7 @@ class JobGenerator(ck.JobGenerator):
         BlossomExceed = core.StackDamageSkillWrapper(
             core.DamageSkill('블로섬(초과)', 0, 650+self.combat*6, 8, cooltime=-1, modifier=core.CharacterModifier(pdamage_indep=-25)).setV(vEhc, 3, 2, False),
             Order,
-            lambda order: max(order.stack * 0.8 - 1, 0)
+            lambda order: max(order.get_stack() * 0.8 - 1, 0)
         )
 
         Marker = core.DamageSkill('마커', 690, 1000, 3*2, cooltime=60*1000, modifier=core.CharacterModifier(pdamage_indep=300)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 최종뎀 300% 증가, 임의위치 조각 5개, 1히트, 결정 5개, 생성/파쇄 각각 공격, 클라공속 900ms
@@ -182,11 +213,13 @@ class JobGenerator(ck.JobGenerator):
         Restore = core.BuffSkill('리스토어', 720, 30*1000, pdamage=15+vEhc.getV(1,1), cooltime=180*1000, red=True).isV(vEhc,1,1).wrap(core.BuffSkillWrapper) #소드 2개 증가, 에테르획득량 40+d(x/2)%증가
         RestoreTick = core.SummonSkill('리스토어(주기공격)', 0, 2970, 900+36*vEhc.getV(1,1), 3, 30*1000, cooltime=-1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # 11회 시전
 
+        Storm = StormWrapper(vEhc, 0, 0, Order)
+
         # 딜 사이클 정의
 
         # 에테르
         Ether.set_stack(400)
-        RESTORE_MULTIPLIER = 1 + (40 + vEhc.getV(1,1) // 2) / 100
+        RESTORE_MULTIPLIER = 1 + (50 + vEhc.getV(1,1)) / 100
         EtherTick.onTick(core.OptionalElement(
             Restore.is_active,
             Ether.stackController(5*RESTORE_MULTIPLIER),
@@ -194,8 +227,8 @@ class JobGenerator(ck.JobGenerator):
         ))
         Divide.onAfter(core.OptionalElement(
             Restore.is_active,
-            Ether.stackController(10*RESTORE_MULTIPLIER),
-            Ether.stackController(10)
+            Ether.stackController(12*RESTORE_MULTIPLIER),
+            Ether.stackController(12)
         ))
         Resonance.onAfter(core.OptionalElement( # 레조넌스-엑스트라 힐링
             Restore.is_active,
@@ -216,7 +249,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 게더링-블로섬
         Blossom.onConstraint(core.ConstraintElement('오더가 있을 때', Order, partial(Order.judge, 1, 1)))
-        Blossom.onBefores([Gathering, Order.delayQueue(600+1410)]) # 게더링->블로섬 순서, _befores는 리스트의 끝부터 실행됨. 2010ms동안 오더가 멈춤.
+        Blossom.onBefores([Gathering, Order.delayQueue(690+2010)]) # 게더링->블로섬 순서, _befores는 리스트의 끝부터 실행됨. 게더링(690ms)+블로섬(2010ms)동안 오더가 멈춤.
         Blossom.onAfter(BlossomExceed)
 
         Grave.onAfter(GraveDebuff)
@@ -247,7 +280,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
                     AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive, FloraGoddessBless,
                     globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract()] +\
-                [Resonance, Grave, Blossom, Marker, Ruin, MirrorBreak, MirrorSpider] +\
+                [Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider] +\
                 [Order, Shard, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, Scool, ManaStorm] +\
                 [] +\
                 [Divide])        

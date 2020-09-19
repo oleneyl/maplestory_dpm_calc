@@ -9,8 +9,6 @@ from .jobclass import adventurer
 from .jobbranch import magicians
 from math import ceil
 
-#TODO : 5차 신스킬 적용
-
 class FrostEffectWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
         super(FrostEffectWrapper, self).__init__(skill, 5)
@@ -71,7 +69,8 @@ class JobGenerator(ck.JobGenerator):
         코강 순서
         체라-라스피-블자-오브-엘퀴-썬더스톰
         
-        썬브 8히트
+        썬브 2히트
+        아이스 에이지 장판 2히트
         
         하이퍼 : 
         텔레포트 - 애드 레인지
@@ -84,13 +83,13 @@ class JobGenerator(ck.JobGenerator):
         그 외의 극딜기는 쿨마다 사용
         프로즌 오브 쿨마다 사용, 19타
         '''
-        THUNDER_BREAK_HIT = 8
+        THUNDER_BREAK_HIT = 2
+        ICE_AGE_SUMMON_HIT = 2
 
         ######   Skill   ######
         #Buff skills
         Meditation = core.BuffSkill("메디테이션", 0, 240*1000, att = 30, rem = True, red = True).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         
         #Damage Skills
         ChainLightening = core.DamageSkill("체인 라이트닝", 600, 185 + 3*self.combat, 10+1, modifier = core.CharacterModifier(crit = 25+ceil(self.combat/2), pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
@@ -98,11 +97,11 @@ class JobGenerator(ck.JobGenerator):
         FrozenOrb = core.SummonSkill("프로즌 오브", 690, 210, 220+4*self.combat, 1, 4000, cooltime = 5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
     
         LighteningSpear = core.DamageSkill("라이트닝 스피어", 0, 0, 1, cooltime = 75 * 1000).wrap(core.DamageSkillWrapper)
-        LighteningSpearSingle = core.DamageSkill("라이트닝 스피어(키다운)", 267, 200, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 총 8010ms
-        LighteningSpearFinalizer = core.DamageSkill("라이트닝 스피어(막타)", 1080, 1500, 7).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        LighteningSpearSingle = core.DamageSkill("라이트닝 스피어(키다운)", 267, 105, 15).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 총 8010ms
+        LighteningSpearFinalizer = core.DamageSkill("라이트닝 스피어(막타)", 1080, 350, 15).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
         IceAgeInit = core.DamageSkill("아이스 에이지(개시)", 660, 500 + vEhc.getV(2,3)*20, 10, cooltime = 60 * 1000, red = True).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
-        IceAgeSummon = core.SummonSkill("아이스 에이지(장판)", 0, 810, 125 + vEhc.getV(2,3)*5, 3, 15 * 1000, cooltime = -1).isV(vEhc,2,3).wrap(core.SummonSkillWrapper)
+        IceAgeSummon = core.SummonSkill("아이스 에이지(장판)", 0, 810, 125 + vEhc.getV(2,3)*5, 3*ICE_AGE_SUMMON_HIT, 15 * 1000, cooltime = -1).isV(vEhc,2,3).wrap(core.SummonSkillWrapper)
                 
         # 중첩당 감소량 5%
         # TODO: 썬브가 이전 스킬 딜레이 캔슬하는것 구현해야 함
@@ -121,12 +120,14 @@ class JobGenerator(ck.JobGenerator):
         
         #Summoning skill
         ThunderStorm = core.SummonSkill("썬더 스톰", 900, 1770, 430, 1, 90000, cooltime = 30000).setV(vEhc, 5, 3, False).wrap(core.SummonSkillWrapper)
-        Elquiness = core.SummonSkill("엘퀴네스", 600, 3030, 380+6*self.combat, 1, (260+5*self.combat)*1000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        Elquiness = core.SummonSkill("엘퀴네스", 600, 3030, 127+2*self.combat, 3, (260+5*self.combat)*1000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         IceAura = core.SummonSkill("아이스 오라", 0, 1200, 0, 1, 999999999).wrap(core.SummonSkillWrapper)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
+        JupyterThunder = core.SummonSkill("주피터 썬더", 630, 330, 300+12*vEhc.getV(0,0), 5, 330*30-1, cooltime=75000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        JupyterThunderDecrement = core.SummonSkill("주피터 썬더(빙결 감소)", 0, 330*5, 0, 0, 330*25-1, cooltime=-1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         
         #FinalAttack
-        Blizzard = core.DamageSkill("블리자드", 720, 450+5*self.combat, 8, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
+        Blizzard = core.DamageSkill("블리자드", 690, 301+3*self.combat, 12, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         BlizzardPassive = core.DamageSkill("블리자드 패시브", 0, (220+4*self.combat) * (0.6+0.01*self.combat), 1).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         
         #special skills
@@ -212,8 +213,7 @@ class JobGenerator(ck.JobGenerator):
         IceAura.onTick(FrostIncrement)
         
         #Ice Age
-        IceAgeSummon.onTick(BlizzardPassive) # TODO: onTick 실행순서 바뀌면 순서 조정해야 함
-        IceAgeSummon.onTick(FrostIncrement)
+        IceAgeSummon.onTick(core.RepeatElement(FrostIncrement, ICE_AGE_SUMMON_HIT))
         IceAgeInit.onJustAfter(FrostIncrement)
         IceAgeInit.onAfter(BlizzardPassive)
         IceAgeInit.onAfter(IceAgeSummon)
@@ -228,11 +228,24 @@ class JobGenerator(ck.JobGenerator):
         #Spirit of Snow
         SpiritOfSnow.onTick(FrostEffect.stackController(3))
 
+        #Jupyter Thunder
+        JupyterThunder.add_runtime_modifier(FrostEffect, applyFrostEffect) # TODO: 블리자드 파택 안터지는게 맞는지 확인할것
+        JupyterThunder.onAfter(JupyterThunderDecrement.controller(330*5))
+        JupyterThunderDecrement.onTick(FrostDecrement)
+
+        #Overload Mana
+        overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 5)
+        for sk in [ChainLightening, FrozenOrb, Blizzard, LighteningSpearSingle, LighteningSpearFinalizer, IceAgeInit,
+                    ThunderBrake1, ThunderBrake2, ThunderBrake3, ThunderBrake4, ThunderBrake5, ThunderBrake6, ThunderBrake7, ThunderBrake8,
+                    JupyterThunder, EnergyBolt, ColdBeam, ThunderBolt, IceStrike, GlacialChain]:
+            overload_mana_builder.add_skill(sk)
+        OverloadMana = overload_mana_builder.get_buff()
+
         return(ChainLightening,
                 [Infinity, Meditation, EpicAdventure, OverloadMana, FrostEffect,
                 globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-                [IceAgeInit, Blizzard, LighteningSpear, ThunderBrake, MirrorBreak, MirrorSpider] +\
+                [IceAgeInit, Blizzard, JupyterThunder, JupyterThunderDecrement, LighteningSpear, ThunderBrake, MirrorBreak, MirrorSpider] +\
                 [ThunderStorm, Elquiness, IceAura, IceAgeSummon, FrozenOrb, SpiritOfSnow] +\
                 [UnstableMemorize] +\
                 [ChainLightening])

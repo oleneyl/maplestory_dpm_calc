@@ -20,7 +20,7 @@ class CriticalReinforceWrapper(core.BuffSkillWrapper):
         self.bonus = bonus
         
     def get_modifier(self):
-        if self.onoff:
+        if self.is_active():
             return core.CharacterModifier(crit_damage = self.inhancer * max(0,self.char.get_modifier().crit+self.bonus))
         else:
             return self.disabledModifier

@@ -35,12 +35,12 @@ class CygnusBlessWrapper(core.BuffSkillWrapper):
         self.passedTime = 0
 
     def spend_time(self, time):
-        if self.onoff:
+        if self.is_active():
             self.passedTime += time
         super(CygnusBlessWrapper, self).spend_time(time)
 
     def get_modifier(self):
-        if self.onoff:
+        if self.is_active():
             return core.CharacterModifier(pdamage = min(self.damage_start + self.damage_point * (self.passedTime // (self.interval * 1000)), self.damage_limit))
         else:
             return core.CharacterModifier()
