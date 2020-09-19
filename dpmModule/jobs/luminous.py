@@ -33,12 +33,9 @@ class LuminousStateController(core.BuffSkillWrapper):
             self.stack = LuminousStateController.STACK
 
     def _modify_stack(self, stack):
-        if self.state == self.EQUAL:
-            return self._result_object_cache
-        
         self.stack -= stack * 1.05 # 다크라이트 마스터리 1.05배
         
-        if self.stack <= 0:
+        if self.stack <= 0: # TODO: 이퀄때 게이지 다시 반대쪽 끝까지 밀었을때 동작 조사해야함
             self.stack = LuminousStateController.STACK
             self.currentState = self.state
             self.state = LuminousStateController.EQUAL
@@ -229,6 +226,8 @@ class JobGenerator(ck.JobGenerator):
 
         for sk in [LightReflection, Apocalypse, AbsoluteKillCooltimed]:
             jobutils.create_auxilary_attack(sk, 0.5, "(선파이어/이클립스)")
+
+        AbsoluteKillCooltimed.onConstraint(core.ConstraintElement("비이퀄때만 앱킬 쿨타임", LuminousState, LuminousState.isNotEqual))
         
         # Skill Wrapper - Memorize
         Memorize.onAfter(core.create_task("메모라이즈", LuminousState.memorize, LuminousState))
@@ -275,7 +274,7 @@ class JobGenerator(ck.JobGenerator):
                 [LuminousState, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     Booster, PodicMeditaion, DarknessSocery, DarkCrescendo, HerosOath, Memorize, OverloadMana, LiberationOrb,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-                [LightAndDarkness, LiberationOrbActive, LiberationOrbPassive] +\
+                [LightAndDarkness, LiberationOrbActive, LiberationOrbPassive, AbsoluteKillCooltimed] +\
                 [PunishingResonator, DoorOfTruth, MirrorBreak, MirrorSpider] +\
                 [] +\
                 [Attack])
