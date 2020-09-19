@@ -199,20 +199,25 @@ class JobGenerator(ck.JobGenerator):
         UseRoyalNightsAttack = core.OptionalElement(
             lambda: RoyalKnights.is_active() and RoyalKnightsAttack.is_available(), RoyalKnightsAttack, name="로얄 나이츠 조건")
 
-        for wrp in [UnicornSpike, RegendrySpear, LightningEdge, LeapTornado, GustDive,
+        for wrp in [UnicornSpike, RegendrySpear, LightningEdge, LeapTornado,
                     AdvanceStrikeDualShot, AdvanceStrikeDualShot_Link, WrathOfEllil]:
             ElementalGhost.addSkill(wrp, is_fast=False, is_final_attack=False)
             wrp.onAfter(AdvancedFinalAttackSlow)
             wrp.onAfter(UseElementalGhostSpirit)
             wrp.onAfter(UseRoyalNightsAttack)
-        ElementalGhost.addSkill(AdvancedFinalAttackSlow, is_fast=False, is_final_attack=True) # 잔상->파택을 파택->잔상으로 처리, 대신 최종뎀 감소는 적용하지 않게 함
+        
+        GustDive.onAfter(AdvancedFinalAttackSlow) # 거스트 다이브는 엘고 잔상이 안터짐
+        GustDive.onAfter(UseRoyalNightsAttack)
+
+        # Issue #446 잔상 파택이 거의 전부 씹히는 오류
+        # ElementalGhost.addSkill(AdvancedFinalAttackSlow, is_fast=False, is_final_attack=True) # 잔상->파택을 파택->잔상으로 처리, 대신 최종뎀 감소는 적용하지 않게 함
             
         for wrp in [IshtarRing, IrkilaBreathTick]:
             ElementalGhost.addSkill(wrp, is_fast=True, is_final_attack=False)
             wrp.onAfter(AdvancedFinalAttackFast)
             wrp.onAfter(UseElementalGhostSpirit)
             wrp.onAfter(UseRoyalNightsAttack)
-        ElementalGhost.addSkill(AdvancedFinalAttackFast, is_fast=True, is_final_attack=True)
+        # ElementalGhost.addSkill(AdvancedFinalAttackFast, is_fast=True, is_final_attack=True)
 
         GuidedArrow.onTick(UseRoyalNightsAttack)
 
