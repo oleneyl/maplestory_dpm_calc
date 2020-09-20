@@ -222,8 +222,11 @@ class JobGenerator(ck.JobGenerator):
         SummonSlachingKnife = core.DamageSkill("서먼 슬래싱 나이프", CANCEL_TIME, 435 + 5 * passive_level, 8, cooltime = 10000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         SummonSlachingKnife_Horror = core.BuffSkill("서먼 슬래싱 나이프(공포)", 0, 10000, armor_ignore = 30, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage, cooltime = -1).wrap(core.BuffSkillWrapper)
         
-        SummonReleasingBoom = core.DamageSkill("서먼 릴리징 봄", CANCEL_TIME, 535 + 5 * passive_level, 6, cooltime = 8000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        SummonStrikingBrick = core.DamageSkill("서먼 스트라이킹 브릭", CANCEL_TIME, 485 + 8*self.combat, 7, cooltime = 8000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        SummonReleasingBoom = core.DamageSkill("서먼 릴리징 봄", CANCEL_TIME, 0, 0, cooltime = 8000, red = True).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        SummonReleasingBoom_Explode = core.DamageSkill("서먼 릴리징 봄(폭발)", 0, 535 + 5 * passive_level, 6, cooltime = -1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        SummonStrikingBrick = core.DamageSkill("서먼 스트라이킹 브릭", 390+CANCEL_TIME-STROKE1_CANCEL_TIME, 485 + 8*self.combat, 7, cooltime = 8000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        # 강제이동 390ms, 폭발 360ms(캔슬가능), 강제이동 도중 1타 사용 가능하므로 1타 딜레이만큼 뺌.
+
         SummonBeatingNeedlebat_1 = core.DamageSkill("서먼 비팅 니들배트(1타)", 360, 450 + 10 * self.combat, 6, modifier = core.CharacterModifier(pdamage = 40 + 20, boss_pdamage = 20, pdamage_indep = 15), cooltime = 12000, red = True).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         SummonBeatingNeedlebat_2 = core.DamageSkill("서먼 비팅 니들배트(2타)", 420, 555 + 10 * self.combat, 7, modifier = core.CharacterModifier(pdamage = 40 + 20, boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         SummonBeatingNeedlebat_3 = core.DamageSkill("서먼 비팅 니들배트(3타)", CANCEL_TIME, 715 + 10 * self.combat, 8, modifier = core.CharacterModifier(pdamage = 50 + 20, boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
@@ -261,6 +264,7 @@ class JobGenerator(ck.JobGenerator):
         SummonThrowingWingdaggerSummon.onAfter(SummonThrowingWingdaggerEnd.controller(330*WINGDAGGER_HIT))
         
         SummonSlachingKnife.onAfter(SummonSlachingKnife_Horror)
+        SummonReleasingBoom.onAfter(SummonReleasingBoom_Explode.controller(1000)) # 1초 후 폭발
         
         VenomBurst.onAfter(VenomBurst_Poison)
         
@@ -278,7 +282,7 @@ class JobGenerator(ck.JobGenerator):
         
         SummonShootingShotgun.onAfter(WeaponVariety.stackController("샷건"))
         SummonSlachingKnife.onAfter(WeaponVariety.stackController("나이프"))
-        SummonReleasingBoom.onAfter(WeaponVariety.stackController("봄"))
+        SummonReleasingBoom_Explode.onAfter(WeaponVariety.stackController("봄"))
         SummonStrikingBrick.onAfter(WeaponVariety.stackController("브릭"))
 
         SummonBeatingNeedlebat_1.onAfter(WeaponVariety.stackController("배트"))
@@ -368,10 +372,10 @@ class JobGenerator(ck.JobGenerator):
                     ReadyToDie, ChainArts_Fury, NovaGoddessBless,
                     SummonSlachingKnife_Horror, SummonBeatingNeedlebat_Honmy, VenomBurst_Poison, ChainArts_Maelstorm_Slow,
                     globalSkill.soul_contract(), CheapShotIIBleed, CheapShotIIBleedBuff, CheapShotIIAdventureMageBuff] +\
-                [AD_Odnunce_Final,
-                    WingDaggerCombo, BatCombo, BommBrickCombo, ShootgunClawCombo, SimiterChaseCombo, KnifeCombo, MaleStromCombo, ChainArts_Crush, MirrorBreak, MirrorSpider] +\
+                [SummonReleasingBoom_Explode, SummonThrowingWingdaggerEnd, AD_Odnunce_Final] +\
+                [WingDaggerCombo, BatCombo, BommBrickCombo, ShootgunClawCombo, SimiterChaseCombo, KnifeCombo, MaleStromCombo, ChainArts_Crush, MirrorBreak, MirrorSpider] +\
                 [WeaponVarietyAttack, SummonThrowingWingdaggerSummon, VenomBurst, AD_Odnunce, ChainArts_Maelstorm] +\
-                [ChainArts_Fury_Damage, WeaponVarietyFinale, SummonThrowingWingdaggerEnd, SummonShootingShotgun, SummonScratchingClaw,
+                [ChainArts_Fury_Damage, WeaponVarietyFinale, SummonShootingShotgun, SummonScratchingClaw,
                         SummonCuttingSimiter, SummonSlachingKnife,
                             SummonReleasingBoom, SummonStrikingBrick,
                                 SummonBeatingNeedlebat_1, SummonThrowingWingdagger] +\
