@@ -29,15 +29,15 @@ class LuminousStateController(core.BuffSkillWrapper):
         self.remain -= time
         #이퀄이 끝나면, 다음 상태로 진입합니다.
         if self.remain < 0 and self.state == LuminousStateController.EQUAL:
-            self.state = 1 - self.currentState
+            self.state = self.currentState
             self.stack = LuminousStateController.STACK
 
     def _modify_stack(self, stack):
         self.stack -= stack * 1.05 # 다크라이트 마스터리 1.05배
         
-        if self.stack <= 0: # TODO: 이퀄때 게이지 다시 반대쪽 끝까지 밀었을때 동작 조사해야함
+        if self.stack <= 0:
             self.stack = LuminousStateController.STACK
-            self.currentState = self.state
+            self.currentState = 1 - self.currentState
             self.state = LuminousStateController.EQUAL
             self.remain = 17 * (1 + 0.01* self.buff_rem) * 1000
             self.equalCallback()
@@ -45,10 +45,10 @@ class LuminousStateController(core.BuffSkillWrapper):
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, '루미너스 스택 변경', spec = 'graph control')     
     
     def memorize(self):
-        if self.state != LuminousStateController.EQUAL:
-            self.currentState = self.state
-        self.remain = 17*1000
+        self.stack = LuminousStateController.STACK
+        self.currentState = 1 - self.currentState
         self.state = LuminousStateController.EQUAL
+        self.remain = 17*1000
         self.equalCallback()
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = '메모라이즈', spec = 'graph control')
     
