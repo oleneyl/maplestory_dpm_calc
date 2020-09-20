@@ -1,23 +1,17 @@
+from typing import List
 from ..kernel import core
-from ..kernel.core import StackSkillWrapper, VSkillModifier as V
+from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ConditionRule
+from ..execution.rules import ConditionRule, RuleSet
 from . import globalSkill
 from .jobbranch import thieves
 from math import ceil
+import random
 '''
-이 코드는 아직 미완성입니다.
-
-TODO: 딜사이클 및 게이지 설계
-TODO: 작성 완료 후 코드 최적화 및 다른 직업들과 비슷한 스타일로 순서 재정리
-TODO: item 및 kernel에 호영 관련 정보 등록
+TODO: 다른 직업들과 비슷한 스타일로 순서 재정리
 '''
-
-def AnimaGoddessBlessWrapper(vEhc, num1, num2):
-    AnimaGoddessBless = core.BuffSkill("그란디스 여신의 축복 (아니마)", 0, 40*1000, cooltime = 240*1000, pdamage = 10 + vEhc.getV(num1, num2)).wrap(core.BuffSkillWrapper)
-    return AnimaGoddessBless
 
 class ChunJiInWrapper(core.GraphElement):
     def __init__(self):
@@ -28,6 +22,13 @@ class ChunJiInWrapper(core.GraphElement):
             "지": False,
             "인": False
         }
+        self.seed = 0
+
+    def _choice(self, arr):
+        # return random.choice(arr)
+        idx = self.seed % len(arr)
+        self.seed += 1
+        return arr[idx]
     
     def _add_element(self, el):
         if not self.ChunJiIn[el]:
@@ -54,15 +55,26 @@ class ChunJiInWrapper(core.GraphElement):
         return core.TaskHolder(task, name="천지인 초기화")
     
     def _fill_element(self):
-        for el in ["천", "지", "인"]:
-            if not self.ChunJiIn[el]:
-                self.ChunJiIn[el] = True
-                break
+        fillable = [x for x in ["천", "지", "인"] if self.ChunJiIn[x] == False]
+        toFill = self._choice(fillable)
+        self.ChunJiIn[toFill] = True
         return self._result_object_cache
 
     def fill_element(self):
         task = core.Task(self, self._fill_element)
         return core.TaskHolder(task, name="속성 연계 완성")
+    
+    def _choice_reset(self, skills: List[core.DamageSkillWrapper]):
+        resetable = [x for x in skills if not x.is_available()]
+        if len(resetable) == 0:
+            resetable = skills
+        toReset = self._choice(resetable)
+        toReset.reduce_cooltime_p(1)
+        return self._result_object_cache
+
+    def choice_reset(self, skills: List[core.DamageSkillWrapper]):
+        task = core.Task(self, partial(self._choice_reset, skills))
+        return core.TaskHolder(task, name="속성 도술 쿨타임 초기화")
 
 class PausableBuffSkillWrapper(core.BuffSkillWrapper):
     def __init__(self, skill):
@@ -122,10 +134,12 @@ class JobGenerator(ck.JobGenerator):
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5+0.5*ceil(passive_level/2))
         return [WeaponConstant, Mastery]
     
-    '''
     def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(ConditionRule('권술 : 미생강변', '권술 : 흡성와류', lambda sk: sk.is_time_left(2000, 1)), RuleSet.BASE)
+        # ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '선기 : 천지인 환영'), RuleSet.BASE)
+        # ruleset.add_rule(ConcurrentRunRule('레디 투 다이', '선기 : 천지인 환영'), RuleSet.BASE)
         return ruleset
-    '''
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         """
@@ -135,7 +149,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         BASIC_HYPER = core.CharacterModifier(pdamage = 10, boss_pdamage = 15)
 
-        # 소환수 지속시간과 버프 지속시간을 동시에 받는 스킬들 (해당 스킬들에는 rem = False 적용할것)
+        # 소환수 지속시간과 버프 지속시간을 동시에 받는 스킬들 (해당 스킬들에는 rem = True 적용하지 말것)
         SUMMON_AND_BUFF = 1 + 0.01 * (chtr.get_base_modifier().buff_rem + chtr.get_base_modifier().summon_rem)
         
         # 1차
@@ -170,7 +184,7 @@ class JobGenerator(ck.JobGenerator):
 
         Talisman_Seeker = core.SummonSkill("추적 귀화부", 630, 1800 * 0.75, 390 + 5*passive_level, 5, 40*1000, rem = True).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
 
-        Misaeng = core.DamageSkill("권술 : 미생강변", 540, 850 + (6+4)*self.combat, 8, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Misaeng = core.DamageSkill("권술 : 미생강변", 540, 850 + 4*self.combat, 8, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Misaeng_Debuff = core.BuffSkill("권술 : 미생강변(디버프)", 0, 60*1000, armor_ignore = 20, cooltime=-1).wrap(core.BuffSkillWrapper)
         Misaeng.onAfter(Misaeng_Debuff)
 
@@ -209,17 +223,16 @@ class JobGenerator(ck.JobGenerator):
 
         # 그란디스 여신의 축복 (아니마)
         # 아니마 신직업 등장시 공용코드화 할것
-        AnimaGoddessBless = AnimaGoddessBlessWrapper(vEhc, 0, 0)
+        AnimaGoddessBless = core.BuffSkill("그란디스 여신의 축복 (아니마)", 0, 40*1000, cooltime = 240*1000, red=True, pdamage = 10 + vEhc.getV(0, 0)).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
 
         # 환영 분신부를 대체하는 스킬 (알고리즘 구현 필요)
         # 환영 분신부 지속중에만 사용가능, 발동 중에는 환영 분신부의 지속시간이 감소하지 않음
         Clone_Rampage = core.BuffSkill("선기 : 극대 분신난무", 900, 30*1000, cooltime = 200*1000, red=True).wrap(core.BuffSkillWrapper)
-        Clone_Rampage_Attack = core.DamageSkill("선기 : 극대 분신난무(공격)", 0, 460 + 5*passive_level + vEhc.getV(0, 0) * 16 + 400, 2 * 12, cooltime = 1500).setV(vEhc, 0, 2, True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        Clone_Rampage_Attack = core.DamageSkill("선기 : 극대 분신난무(공격)", 0, 460 + 5*passive_level + 400 + vEhc.getV(0, 0) * 16, 2 * 12, cooltime = 1500).setV(vEhc, 0, 2, True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         Clone_Rampage_Attack_Opt = core.OptionalElement(lambda : Clone_Rampage.is_active() and Clone_Rampage_Attack.is_available(), Clone_Rampage_Attack)
         Clone_Rampage_Attack.protect_from_running()
 
-        # TODO: 연계 딜사이클 만들것
         Summon_Sanryung = core.SummonSkill("권술 : 산령소환", 900, 3000, vEhc.getV(0, 0) * 36 + 900, 8, (vEhc.getV(0, 0)//2 + 45)*1000, cooltime = 200*1000, red=True).wrap(core.SummonSkillWrapper)
         Summon_Sanryung_Bonus = core.DamageSkill("권술 : 산령소환(연계성공)", 0, vEhc.getV(0, 0)*14 + 350, 4, cooltime = 3000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
@@ -235,11 +248,6 @@ class JobGenerator(ck.JobGenerator):
         Nansin_Attack_Opt = core.OptionalElement(lambda : Nansin_Attack.is_available() and Nansin_Stack.judge(12, 1), Nansin_Attack)
         Nansin_Attack.protect_from_running()
 
-        '''
-        TODO:
-            허/실 스킬을 제외한 직접 공격하는 호영의 스킬 적중 시 분신이 등장하여 현재 연계하지 않은 속성 공격을 하고 속성 연계를 완성시킨다.
-            액티브 효과 지속 중 속성 연계 3단계 달성 시 천/지/인 도술 중 한 속성 도술의 재사용 대기시간이 초기화되며 속성 선택 시 재사용 대기시간 중인 스킬이 있는 속성이 우선된다.
-        '''
         Elemental_Clone_Passive = core.DamageSkill("선기 : 천지인 환영(패시브)", 0, 625 + 25*vEhc.getV(0, 0), 6, cooltime = 5000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         Elemental_Clone_Passive_Opt = core.OptionalElement(Elemental_Clone_Passive.is_available, Elemental_Clone_Passive)
         Elemental_Clone_Passive.protect_from_running()
@@ -256,7 +264,7 @@ class JobGenerator(ck.JobGenerator):
 
         ### Skill Wrapper ###
         # 그란디스 여신의 축복(아니마)
-        def gainEnergy(energy: StackSkillWrapper, stack):
+        def gainEnergy(energy: core.StackSkillWrapper, stack):
             return core.OptionalElement(
                 AnimaGoddessBless.is_active,
                 energy.stackController(stack*0.01*(45+vEhc.getV(0,0))),
@@ -274,6 +282,8 @@ class JobGenerator(ck.JobGenerator):
             el.onAfter(core.OptionalElement(partial(ChunJiIn.is_stack, 2), gainEnergy(TalismanEnergy, 15)))
             el.onAfter(core.OptionalElement(partial(ChunJiIn.is_stack, 3), gainEnergy(TalismanEnergy, 20)))
             el.onAfter(core.OptionalElement(partial(ChunJiIn.is_stack, 3), Summon_Sanryung_Bonus_Opt))
+            el.onAfter(core.OptionalElement(partial(ChunJiIn.is_stack, 3),
+                core.OptionalElement(Elemental_Clone.is_active, ChunJiIn.choice_reset([EarthQuake, Flames, GeumGoBong]))))
             el.onAfter(core.OptionalElement(partial(ChunJiIn.is_stack, 3), ChunJiIn.reset_elements()))
 
         for sk in [Pacho, Flames]:
@@ -342,5 +352,5 @@ class JobGenerator(ck.JobGenerator):
             [Talisman_Seeker, Waryu, Summon_Sanryung, Miracle_Tonic_Charge] +\
             [Misaeng_Debuff, Talisman_Clone_Attack, Butterfly_Dream_Attack, Clone_Rampage_Attack, Elemental_Clone_Active,
                 Elemental_Clone_Passive, Nansin_Attack, Summon_Sanryung_Bonus, Nansin_Final] +\
-            [GeumGoBong, Flames, EarthQuake, Mabong, Misaeng, CloneBinding, MirrorBreak, MirrorSpider] +\
+            [GeumGoBong, EarthQuake, Flames, Mabong, Misaeng, CloneBinding, MirrorBreak, MirrorSpider] +\
             [Topa])
