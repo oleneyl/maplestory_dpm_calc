@@ -75,15 +75,16 @@ class JobGenerator(ck.JobGenerator):
         
         # Buff skills
         SupplySurplus = core.BuffSkill("서플러스 서플라이", 0, 999999999).wrap(SupplyStackWrapper)
-        InclinePower = core.BuffSkill("인클라인 파워", None, 240000, att = 30).wrap(core.BuffSkillWrapper) # 에너지 -3
-        EfficiencyPipeLine = core.BuffSkill("에피션시 파이프라인", None, 240000).wrap(core.BuffSkillWrapper)
-        Booster = core.BuffSkill("제논 부스터", None, 240000).wrap(core.BuffSkillWrapper)
-        HybridDefenses = core.BuffSkill("듀얼브리드 디펜시브", None, 240000).wrap(core.BuffSkillWrapper) # 에너지 -7
-        VirtualProjection = core.BuffSkill("버추얼 프로젝션", None, 999999999).wrap(core.BuffSkillWrapper)
+        InclinePower = core.BuffSkill("인클라인 파워", 750, 240000, att = 30).wrap(core.BuffSkillWrapper) # 에너지 -3
+        EfficiencyPipeLine = core.BuffSkill("에피션시 파이프라인", 750, 240000).wrap(core.BuffSkillWrapper)
+        Booster = core.BuffSkill("제논 부스터", 750, 240000).wrap(core.BuffSkillWrapper)
+        HybridDefenses = core.BuffSkill("듀얼브리드 디펜시브", 690, 240000).wrap(core.BuffSkillWrapper) # 에너지 -7
+        VirtualProjection = core.BuffSkill("버추얼 프로젝션", 0, 999999999).wrap(core.BuffSkillWrapper)
 
-        ExtraSupply = core.BuffSkill("엑스트라 서플라이", None, 1, cooltime = 30000).wrap(core.BuffSkillWrapper) # 에너지 +10
+        # 위컴알에 딜레이 없음
+        ExtraSupply = core.BuffSkill("엑스트라 서플라이", 0, 1, cooltime = 30000).wrap(core.BuffSkillWrapper) # 에너지 +10
 
-        OOPArtsCode = core.BuffSkill("오파츠 코드", None, (30+self.combat//2)*1000, pdamage_indep = 25 + self.combat//2, boss_pdamage = 30 + self.combat).wrap(core.BuffSkillWrapper) # 에너지 -20
+        OOPArtsCode = core.BuffSkill("오파츠 코드", 750, (30+self.combat//2)*1000, pdamage_indep = 25 + self.combat//2, boss_pdamage = 30 + self.combat).wrap(core.BuffSkillWrapper) # 에너지 -20
 
         # Damage skills
 
@@ -96,16 +97,16 @@ class JobGenerator(ck.JobGenerator):
         Triangulation = core.DamageSkill("트라이앵글 포메이션", 0, 340, 3, cooltime = -1).setV(vEhc, 0, 3, True).wrap(core.DamageSkillWrapper)
 
         # 하이퍼 뎀퍼, 방무
-        PurgeSnipe = core.DamageSkill("퍼지롭 매스커레이드 : 저격", None, 345 + 2*self.combat, 7, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat) + core.CharacterModifier(pdamage = 20, armor_ignore = 10)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        PurgeSnipe = core.DamageSkill("퍼지롭 매스커레이드 : 저격", 690, 345 + 2*self.combat, 7, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat) + core.CharacterModifier(pdamage = 20, armor_ignore = 10)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
         # 택1
         # 하이퍼 3종 적용
-        Hologram_Penetrate = core.SummonSkill("홀로그램 그래피티 : 관통", None, None, (213+3*self.combat)*1.1, 1, 20000 + 10000, cooltime = 30000 - 1000 * ceil(self.combat/3)).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
-        Hologram_ForceField = core.SummonSkill("홀로그램 그래피티 : 역장", None, None, (400+5*self.combat)*1.1, 1, 20000 + 10000, cooltime = 30000 - 1000 * ceil(self.combat/3)).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
+        Hologram_Penetrate = core.SummonSkill("홀로그램 그래피티 : 관통", 720, 30000/116, (213+3*self.combat)*1.1, 1, 20000 + 10000, cooltime = 30000 - 1000 * ceil(self.combat/3)).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
+        Hologram_ForceField = core.SummonSkill("홀로그램 그래피티 : 역장", 720, 30000/64, (400+5*self.combat)*1.1, 1, 20000 + 10000, cooltime = 30000 - 1000 * ceil(self.combat/3)).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
 
         # Hyper skills
-        AmaranthGenerator = core.BuffSkill("아마란스 제네레이터", None, 10000, cooltime = 90000, rem = False).wrap(core.BuffSkillWrapper) # 에너지 최대치, 10초간 에너지 소모 없음
-        MeltDown = core.DamageSkill("멜트다운 익스플로전", None, 900, 6, red = False, cooltime = 50000).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        AmaranthGenerator = core.BuffSkill("아마란스 제네레이터", 900, 10000, cooltime = 90000, rem = False).wrap(core.BuffSkillWrapper) # 에너지 최대치, 10초간 에너지 소모 없음
+        MeltDown = core.DamageSkill("멜트다운 익스플로전", 3150, 900, 6, red = False, cooltime = 50000).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         MeltDown_Armor = core.BuffSkill("멜트다운 익스플로전 (방무)", 0, 10000, armor_ignore = 30, rem = False).wrap(core.BuffSkillWrapper)
         MeltDown_Damage = core.BuffSkill("멜트다운 익스플로전 (데미지)", 0, 25000, pdamage = 10, rem = False).wrap(core.BuffSkillWrapper)
     
@@ -119,30 +120,32 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.get_weapon_att("에너지소드")
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
 
-        MegaSmasher = core.DamageSkill("메가 스매셔", None, 0, 0, cooltime = 180000).wrap(core.DamageSkillWrapper)
-        MegaSmasherTick = core.DamageSkill("메가 스매셔(틱)", None, 300+10*vEhc.getV(4,4), 6).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        MegaSmasher = core.BuffSkill("메가 스매셔", 0, 8000, cooltime = 180000).wrap(core.DamageSkillWrapper)
+        MegaSmasherTick = core.DamageSkill("메가 스매셔(틱)", 8000/64, 300+10*vEhc.getV(4,4), 6).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
         # TODO: 따로 구현해야 함
         # 초과 에너지 20 충전 가능, 에너지 충전 시간 절반으로 감소, 초과 충전한 에너지 당 최종 데미지 1% 증가
         # 비활성화 시 초과 충전된 에너지 즉시 소멸
         OVERLOAD_TIME = 30
-        OverloadMode = core.BuffSkill("오버로드 모드", None, OVERLOAD_TIME * 1000, cooltime = 180000).wrap(core.BuffSkillWrapper)
+        OverloadMode = core.BuffSkill("오버로드 모드", 720, OVERLOAD_TIME * 1000, cooltime = 180000).wrap(core.BuffSkillWrapper)
         # 6번 공격하는 전격 4회 발동
         OverloadHit = core.SummonSkill("오버로드 모드(전류)", 0, None, 180 + 7 * vEhc.getV(4,4), 6*4, OVERLOAD_TIME * 1000).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         
         # 하이퍼 적용됨
-        Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", None, None, (250 + 10 * vEhc.getV(4,4))*1.1, 5, 30000 + 10000, cooltime = 100000).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
+        Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", 930, (30000 + 10000)/176, (250 + 10 * vEhc.getV(4,4))*1.1, 5, 30000 + 10000, cooltime = 100000).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         #TODO: 제논이 홀로그램 필드 안에 있을 경우 이지스 시스템으로 발사되는 미사일 7개 증가
         Hologram_Fusion_Buff = core.BuffSkill("홀로그램 그래피티 : 융합 (버프)", 0, 30000+10000, pdamage = 5+vEhc.getV(4,4)//2, rem = False).wrap(core.BuffSkillWrapper)
         # 30회 발동
-        PhotonRay = core.BuffSkill("포톤 레이", None, 20000, cooltime = 35000).wrap(core.BuffSkillWrapper)
+        PhotonRay = core.BuffSkill("포톤 레이", 300, 20000, cooltime = 35000).wrap(core.BuffSkillWrapper)
         PhotonRayTick = core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4), 4).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
 
         BasicAttackWrapper = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
+        BasicAttackWrapper.onAfter(PurgeSnipe)
 
         # TODO: 쉐파 적용스킬 정확히 확인
-        for sk in [PurgeSnipe, MeltDown, MegaSmasherTick, PhotonRayTick]:
+        # 홀로그램 그래피티 융합 추가할것
+        for sk in [PurgeSnipe, MeltDown, MegaSmasherTick, PhotonRayTick, OverloadHit]:
             jobutils.create_auxilary_attack(sk, 0.7, nametag = "버추얼 프로젝션")
         
         return(BasicAttackWrapper, 
