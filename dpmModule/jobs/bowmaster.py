@@ -6,6 +6,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobbranch import bowmen
+from .jobclass import adventurer
 from math import ceil
 
 """
@@ -137,7 +138,7 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill   ######
         #Buff skills
         SoulArrow = core.BuffSkill("소울 애로우", 0, 300 * 1000, att = 30).wrap(core.BuffSkillWrapper) # 펫버프
-        AdvancedQuibber = core.BuffSkill("어드밴스드 퀴버", 0, 30 * 1000, crit_damage = 8).wrap(core.BuffSkillWrapper)   #쿨타임 무시 가능, 딜레이 없앰
+        AdvancedQuibber = core.BuffSkill("어드밴스드 퀴버", 0, 30 * 1000, crit_damage = 8).wrap(core.BuffSkillWrapper)   #쿨타임 무시 가능, 딜레이 0
         SharpEyes = core.BuffSkill("샤프 아이즈", 690, 300 * 1000, crit = 20 + 5 + ceil(self.combat / 2), crit_damage = 15 + ceil(self.combat / 2), armor_ignore = 5).wrap(core.BuffSkillWrapper)
         Preparation = core.BuffSkill("프리퍼레이션", 900, 30 * 1000, cooltime = 90 * 1000, att = 50, boss_pdamage = 20).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
@@ -159,9 +160,9 @@ class JobGenerator(ck.JobGenerator):
         ArrowRain = core.SummonSkill("애로우 레인", 0, 1440, 600+vEhc.getV(0,0)*24, 8, (40+vEhc.getV(0,0))*1000, cooltime = -1, modifier=MortalBlow).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) # 5초마다 3.5회 공격, 대략 1440ms당 1회
         
         #Summon Skills
-        Pheonix = core.SummonSkill("피닉스", 0, 2670, 390, 1, 220 * 1000).setV(vEhc, 5, 3, True).wrap(core.SummonSkillWrapper) # 이볼브가 끝나면 자동으로 소환되므로 딜레이 0
+        Pheonix = core.SummonSkill("피닉스", 0, 1710, 390, 1, 220 * 1000).setV(vEhc, 5, 3, True).wrap(core.SummonSkillWrapper) # 이볼브가 끝나면 자동으로 소환되므로 딜레이 0
         GuidedArrow = GuidedArrowWrapper(vEhc, 4, 4, ArmorPiercing)
-        Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(5,5)))*1000, red=True).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
+        Evolve = adventurer.EvolveWrapper(vEhc, 5, 5, Pheonix)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0, break_modifier=MortalBlow) # TODO: 아머 피어싱 적용
         
         #잔영의시 미적용
@@ -176,10 +177,6 @@ class JobGenerator(ck.JobGenerator):
     
         ######   Skill Wrapper   ######
         GrittyGust.onAfter(GrittyGustDOT)
-
-        #이볼브 연계 설정
-        Evolve.onAfter(Pheonix.controller(1))
-        Pheonix.onConstraint(core.ConstraintElement("이볼브 사용시 사용 금지", Evolve, Evolve.is_not_active))
             
         CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 3, 3, 22.5) #Maybe need to sync
 
@@ -213,6 +210,6 @@ class JobGenerator(ck.JobGenerator):
                     QuibberFullBurstDOT, GrittyGustDOT, ImageArrowPassive,
                     globalSkill.soul_contract()] +\
                 [] +\
-                [Evolve, ArrowFlatter, ArrowRain, Pheonix, GuidedArrow, QuibberFullBurst, ImageArrow, MirrorBreak, MirrorSpider, OpticalIllusion] +\
+                [Pheonix, Evolve, ArrowFlatter, ArrowRain, GuidedArrow, QuibberFullBurst, ImageArrow, MirrorBreak, MirrorSpider, OpticalIllusion] +\
                 [] +\
                 [ArrowOfStorm])
