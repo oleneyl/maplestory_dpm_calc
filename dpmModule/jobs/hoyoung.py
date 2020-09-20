@@ -155,6 +155,7 @@ class JobGenerator(ck.JobGenerator):
         # 1차
         ChunJiIn = ChunJiInWrapper()
         TalismanEnergy = core.StackSkillWrapper(core.BuffSkill("부적 도력", 0, 99999999), 100)
+        TalismanEnergy.set_name_style("%+d")
         #부채 타격 가정
         YeoUiSeon = core.DamageSkill("여의선 : 인", 540 + 30, 560 + 5*passive_level, 5, modifier = BASIC_HYPER + core.CharacterModifier(pdamage_indep = 5)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         Mabong = core.DamageSkill("마봉 호로부", 360+210, 1000 + 10 * passive_level, 6, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) # 흡수 360 공격 210
@@ -174,6 +175,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 3차
         ScrollEnergy = core.StackSkillWrapper(core.BuffSkill("두루마리 도력", 0, 99999999), 900)
+        ScrollEnergy.set_name_style("%+d")
         Pacho = core.DamageSkill("파초풍 : 천", 510 + 60, 265 + 2*passive_level, 5, modifier = BASIC_HYPER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         Pacho_Clone = core.DamageSkill("파초풍 : 허/실", 0, 265 + 2*passive_level, 5, modifier = BASIC_HYPER, cooltime = -1).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         Pacho.onAfter(Pacho_Clone)
@@ -267,8 +269,9 @@ class JobGenerator(ck.JobGenerator):
         def gainEnergy(energy: core.StackSkillWrapper, stack):
             return core.OptionalElement(
                 AnimaGoddessBless.is_active,
-                energy.stackController(stack*0.01*(45+vEhc.getV(0,0))),
-                energy.stackController(stack)
+                energy.stackController(stack*0.01*(100+45+vEhc.getV(0,0))),
+                energy.stackController(stack),
+                name="그여축(도력 충전량)"
             )
 
         # 천지인 연계
@@ -276,15 +279,22 @@ class JobGenerator(ck.JobGenerator):
         AddJi = ChunJiIn.add_element("지")
         AddIn = ChunJiIn.add_element("인")
         FillElement = ChunJiIn.fill_element()
+        GainScroll = gainEnergy(ScrollEnergy, 15)
+        GainTalisman1 = core.OptionalElement(partial(ChunJiIn.is_stack, 1), gainEnergy(TalismanEnergy, 10), name="1속성")
+        GainTalisman2 = core.OptionalElement(partial(ChunJiIn.is_stack, 2), gainEnergy(TalismanEnergy, 15), name="2속성")
+        GainTalisman3 = core.OptionalElement(partial(ChunJiIn.is_stack, 3), gainEnergy(TalismanEnergy, 20), name="3속성")
+        TriggerSanryung = core.OptionalElement(partial(ChunJiIn.is_stack, 3), Summon_Sanryung_Bonus_Opt)
+        ElementalCloneReset = core.OptionalElement(partial(ChunJiIn.is_stack, 3),
+                            core.OptionalElement(Elemental_Clone.is_active, ChunJiIn.choice_reset([EarthQuake, Flames, GeumGoBong])))
+        ChunJiInReset = core.OptionalElement(partial(ChunJiIn.is_stack, 3), ChunJiIn.reset_elements(), name="3속성 초기화")
         for el in [AddChun, AddJi, AddIn, FillElement]:
-            el.onAfter(gainEnergy(ScrollEnergy, 15))
-            el.onAfter(core.OptionalElement(partial(ChunJiIn.is_stack, 1), gainEnergy(TalismanEnergy, 10)))
-            el.onAfter(core.OptionalElement(partial(ChunJiIn.is_stack, 2), gainEnergy(TalismanEnergy, 15)))
-            el.onAfter(core.OptionalElement(partial(ChunJiIn.is_stack, 3), gainEnergy(TalismanEnergy, 20)))
-            el.onAfter(core.OptionalElement(partial(ChunJiIn.is_stack, 3), Summon_Sanryung_Bonus_Opt))
-            el.onAfter(core.OptionalElement(partial(ChunJiIn.is_stack, 3),
-                core.OptionalElement(Elemental_Clone.is_active, ChunJiIn.choice_reset([EarthQuake, Flames, GeumGoBong]))))
-            el.onAfter(core.OptionalElement(partial(ChunJiIn.is_stack, 3), ChunJiIn.reset_elements()))
+            el.onAfter(GainScroll)
+            el.onAfter(GainTalisman1)
+            el.onAfter(GainTalisman2)
+            el.onAfter(GainTalisman3)
+            el.onAfter(TriggerSanryung)
+            el.onAfter(ElementalCloneReset)
+            el.onAfter(ChunJiInReset)
 
         for sk in [Pacho, Flames]:
             sk.onAfter(AddChun)
