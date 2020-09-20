@@ -72,22 +72,23 @@ class JobGenerator(ck.JobGenerator):
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         TODO: 제논 구현
+        하이퍼 스킬: 홀로그램 3종, 퍼지롭 뎀증 + 방무
         '''
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         
         # Buff skills
         SupplySurplus = core.BuffSkill("서플러스 서플라이", 0, 999999999).wrap(SupplyStackWrapper)
-        InclinePower = core.BuffSkill("인클라인 파워", 750, 240000, att = 30).wrap(core.BuffSkillWrapper)
-        EfficiencyPipeLine = core.BuffSkill("에피션시 파이프라인", 750, 240000).wrap(core.BuffSkillWrapper)
-        Booster = core.BuffSkill("제논 부스터", 750, 240000).wrap(core.BuffSkillWrapper)
-        HybridDefenses = core.BuffSkill("듀얼브리드 디펜시브", 690, 240000).wrap(core.BuffSkillWrapper)
+        InclinePower = core.BuffSkill("인클라인 파워", 990, 240000, att = 30).wrap(core.BuffSkillWrapper)
+        EfficiencyPipeLine = core.BuffSkill("에피션시 파이프라인", 990, 240000).wrap(core.BuffSkillWrapper)
+        Booster = core.BuffSkill("제논 부스터", 990, 240000).wrap(core.BuffSkillWrapper)
+        HybridDefenses = core.BuffSkill("듀얼브리드 디펜시브", 900, 240000).wrap(core.BuffSkillWrapper)
         VirtualProjection = core.BuffSkill("버추얼 프로젝션", 0, 999999999).wrap(core.BuffSkillWrapper)
 
         # 위컴알에 딜레이 없음
         ExtraSupply = core.BuffSkill("엑스트라 서플라이", 0, 1, cooltime = 30000).wrap(core.BuffSkillWrapper)
 
-        OOPArtsCode = core.BuffSkill("오파츠 코드", 750, (30+self.combat//2)*1000, pdamage_indep = 25 + self.combat//2, boss_pdamage = 30 + self.combat).wrap(core.BuffSkillWrapper)
+        OOPArtsCode = core.BuffSkill("오파츠 코드", 990, (30+self.combat//2)*1000, pdamage_indep = 25 + self.combat//2, boss_pdamage = 30 + self.combat).wrap(core.BuffSkillWrapper)
 
         # Damage skills
 
@@ -100,7 +101,6 @@ class JobGenerator(ck.JobGenerator):
         # 30%확률로 중첩 쌓임, 3중첩 쌓은 후 공격시 터지면서 사라지도록
         Triangulation = core.DamageSkill("트라이앵글 포메이션", 0, 340, 3, cooltime = -1).setV(vEhc, 0, 3, True).wrap(core.DamageSkillWrapper)
 
-        # 하이퍼 뎀퍼, 방무
         PurgeSnipe = core.DamageSkill("퍼지롭 매스커레이드 : 저격", 690, 345 + 2*self.combat, 7, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat) + core.CharacterModifier(pdamage = 20, armor_ignore = 10)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
         # 택1
@@ -156,9 +156,15 @@ class JobGenerator(ck.JobGenerator):
         ExtraSupply.onAfter(SupplySurplus.stackController(10))
         OOPArtsCode.onAfter(SupplySurplus.stackController(-20))
 
+        TriangulationStack = core.StackSkillWrapper(core.BuffSkill("트라이앵글 스택", 0, 99999999), 3)
+        TriangulationTrigger = core.OptionalElement(lambda : TriangulationStack.judge(3, 1), Triangulation, TriangulationStack.stackController(1))
+        Triangulation.onAfter(TriangulationStack.stackController(0, dtype = 'set'))
+
         # TODO: 쉐파 적용스킬 정확히 확인
         # 홀로그램 그래피티 융합 추가할것
         for sk in [PurgeSnipe, MeltDown, MegaSmasherTick, PhotonRayTick, OverloadHit]:
+            sk.onAfter(TriangulationTrigger)
+
             jobutils.create_auxilary_attack(sk, 0.7, nametag = "버추얼 프로젝션")
         
         return(BasicAttackWrapper, 
