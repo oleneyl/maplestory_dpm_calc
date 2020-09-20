@@ -9,14 +9,18 @@ from .jobclass import resistance
 from . import jobutils
 from math import ceil
 
+# TODO: 오버로드 상태가 아닐 때는 최대값 20으로 제한
 class SupplyStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
-        super(SupplyStackWrapper, self).__init__(skill, 20)
+        super(SupplyStackWrapper, self).__init__(skill, 40)
         self.stack = 20
         self.modifierInvariantFlag = False
     
     def get_modifier(self): # 서플러스 서플라이: 서플러스 에너지 1개 당 모든 능력치 1%만큼 증가
-        return core.CharacterModifier(pstat_main = self.stack, pstat_sub = self.stack)
+        _modifier = core.CharacterModifier(pstat_main = self.stack, pstat_sub = self.stack)
+        if self.stack > 20:
+            _modifier += core.CharacterModifier(pdamage_indep = self.stack - 20)
+        return _modifier
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -28,7 +32,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 2
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier()
+        return core.CharacterModifier(pstat_main = 20, pstat_sub = 20)
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -68,32 +72,32 @@ class JobGenerator(ck.JobGenerator):
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         TODO: 제논 구현
-
         '''
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         
         # Buff skills
         SupplySurplus = core.BuffSkill("서플러스 서플라이", 0, 999999999).wrap(SupplyStackWrapper)
-        InclinePower = core.BuffSkill("인클라인 파워", 750, 240000, att = 30).wrap(core.BuffSkillWrapper) # 에너지 -3
+        InclinePower = core.BuffSkill("인클라인 파워", 750, 240000, att = 30).wrap(core.BuffSkillWrapper)
         EfficiencyPipeLine = core.BuffSkill("에피션시 파이프라인", 750, 240000).wrap(core.BuffSkillWrapper)
         Booster = core.BuffSkill("제논 부스터", 750, 240000).wrap(core.BuffSkillWrapper)
-        HybridDefenses = core.BuffSkill("듀얼브리드 디펜시브", 690, 240000).wrap(core.BuffSkillWrapper) # 에너지 -7
+        HybridDefenses = core.BuffSkill("듀얼브리드 디펜시브", 690, 240000).wrap(core.BuffSkillWrapper)
         VirtualProjection = core.BuffSkill("버추얼 프로젝션", 0, 999999999).wrap(core.BuffSkillWrapper)
 
         # 위컴알에 딜레이 없음
-        ExtraSupply = core.BuffSkill("엑스트라 서플라이", 0, 1, cooltime = 30000).wrap(core.BuffSkillWrapper) # 에너지 +10
+        ExtraSupply = core.BuffSkill("엑스트라 서플라이", 0, 1, cooltime = 30000).wrap(core.BuffSkillWrapper)
 
-        OOPArtsCode = core.BuffSkill("오파츠 코드", 750, (30+self.combat//2)*1000, pdamage_indep = 25 + self.combat//2, boss_pdamage = 30 + self.combat).wrap(core.BuffSkillWrapper) # 에너지 -20
+        OOPArtsCode = core.BuffSkill("오파츠 코드", 750, (30+self.combat//2)*1000, pdamage_indep = 25 + self.combat//2, boss_pdamage = 30 + self.combat).wrap(core.BuffSkillWrapper)
 
         # Damage skills
 
+        # TODO: 어떤 스킬에 발동하는지 확인
         # 로켓강화 적용됨
         PinpointRocket = core.DamageSkill("핀포인트 로켓", 0, 50+40+40+100, 4, cooltime = 2000).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
         # 이지스: 피격시에만 발동이라 허수아비 상대로는 미적용해야할듯 (인스턴스 셔크 적용됨)
         AegisSystem = core.DamageSkill("이지스 시스템", 0, 120, 3, modifier = core.CharacterModifier(pdamage = 20 + passive_level // 3), cooltime = 1500).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        # 항상 3중첩 가정?
+        # 30%확률로 중첩 쌓임, 3중첩 쌓은 후 공격시 터지면서 사라지도록
         Triangulation = core.DamageSkill("트라이앵글 포메이션", 0, 340, 3, cooltime = -1).setV(vEhc, 0, 3, True).wrap(core.DamageSkillWrapper)
 
         # 하이퍼 뎀퍼, 방무
@@ -142,6 +146,15 @@ class JobGenerator(ck.JobGenerator):
 
         BasicAttackWrapper = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(PurgeSnipe)
+
+        SupplyCharger = core.SummonSkill("서플라이 충전", 0, 4000, 0, 0, 9999999999).wrap(core.SummonSkillWrapper)
+        SupplyCharger.onTick(SupplySurplus.stackController(1))
+
+
+        InclinePower.onAfter(SupplySurplus.stackController(-3))
+        HybridDefenses.onAfter(SupplySurplus.stackController(-7))
+        ExtraSupply.onAfter(SupplySurplus.stackController(10))
+        OOPArtsCode.onAfter(SupplySurplus.stackController(-20))
 
         # TODO: 쉐파 적용스킬 정확히 확인
         # 홀로그램 그래피티 융합 추가할것
