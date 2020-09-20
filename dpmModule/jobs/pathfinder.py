@@ -4,9 +4,10 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import ConditionRule, DisableRule, RuleSet
+from ..execution.rules import ConditionRule, DisableRule, MutualRule, RuleSet
 from . import globalSkill
 from .jobbranch import bowmen
+from .jobclass import adventurer
 from math import ceil
 
 class CardinalStateWrapper(core.BuffSkillWrapper):
@@ -71,6 +72,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(DisableRule('에인션트 아스트라'), RuleSet.BASE)
         ruleset.add_rule(DisableRule('스플릿 미스텔'), RuleSet.BASE)
         ruleset.add_rule(DisableRule('카디널 트랜지션'), RuleSet.BASE)
+        ruleset.add_rule(MutualRule('이볼브', '레이븐 템페스트'), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('콤보 어썰트', '커스 트랜지션', lambda sk: sk.is_time_left(2000, -1)), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('얼티밋 블래스트', '렐릭 차지', lambda sk: sk.judge(1000, 1)), RuleSet.BASE)
         return ruleset
@@ -136,7 +138,7 @@ class JobGenerator(ck.JobGenerator):
         CurseTransition = core.BuffSkill("커스 트랜지션", 0, 15*1000, crit_damage = 20, cooltime=-1).wrap(core.BuffSkillWrapper) # 5스택 유지 가정
 
         # Summon skills
-        Raven = core.SummonSkill("레이븐", 0, 2670, 390, 4, 220*1000).setV(vEhc, 8, 3, False).wrap(core.SummonSkillWrapper) # 이볼브 종료시 자동 소환되므로 딜레이 0
+        Raven = core.SummonSkill("레이븐", 0, 1800, 390, 1, 220*1000).setV(vEhc, 8, 3, False).wrap(core.SummonSkillWrapper) # 이볼브 종료시 자동 소환되므로 딜레이 0
         
         # Damage skills
         # 카디널 포스
@@ -201,8 +203,9 @@ class JobGenerator(ck.JobGenerator):
         # 5차
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 3, 3)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 1, 1, 20)
         
-        Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(5,5)))*1000, red=True).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
+        Evolve = adventurer.EvolveWrapper(vEhc, 5, 5, Raven)
         UltimateBlast = core.DamageSkill("얼티밋 블래스트", LINK_DELAY + 1350, 400+20*vEhc.getV(2,2), 15*5, cooltime = 120*1000, red=True, 
                 modifier = core.CharacterModifier(armor_ignore = 100) + ANCIENT_ARCHERY).isV(vEhc, 2,2).wrap(core.DamageSkillWrapper)
             
@@ -214,11 +217,10 @@ class JobGenerator(ck.JobGenerator):
         # RelicUnboundBlast = core.SummonSkill("렐릭 언바운드(블래스트)", 600, 2000, 625+25*vEhc.getV(0,0), 8*4, 2000*4-1, cooltime=120*1000, red=True, modifier = ANCIENT_ARCHERY).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         ######   Skill Wrapper   ######
 
-        #이볼브 연계 설정
-        Evolve.onAfter(Raven.controller(1))
-        Raven.onConstraint(core.ConstraintElement("이볼브 사용시 사용 금지", Evolve, Evolve.is_not_active))
-
-        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 1, 1, 20)
+        #이볼브 / 레이븐 성정
+        RavenTempest.onAfter(Raven.controller(0, "set_disabled"))
+        RavenTempest.onAfter(Evolve.controller(0, "set_disabled"))
+        Raven.onConstraint(core.ConstraintElement("레이븐 템페스트시 사용 금지", RavenTempest, RavenTempest.is_not_active))
     
         RelicCharge = RelicChargeStack(AncientGuidance, chtr)
         CardinalState = CardinalStateWrapper([SplitMistel, TripleImpact, EdgeOfResonance, ComboAssultHolder, AncientAstraHolder])
@@ -244,6 +246,7 @@ class JobGenerator(ck.JobGenerator):
         CardinalTransition.onAfter(RelicCharge.stackController(20))
         
         Raven.onTick(RelicCharge.stackController(10))
+        Evolve.onTick(RelicCharge.stackController(10))
         
         SplitMistel.onAfter(RelicCharge.stackController(-50))
         SplitMistel.onConstraint(core.ConstraintElement('50 이상', RelicCharge, partial(RelicCharge.judge, 50, 1)))
@@ -314,9 +317,6 @@ class JobGenerator(ck.JobGenerator):
         
         # 기본공격 = 블래스트-디스차지
         CardinalBlast.onAfter(CardinalDischarge)
-        
-        #레이븐 설정
-        RavenTempest.onAfter(Raven.controller(25000))
         
         ### Exports ###
         return(CardinalBlast,

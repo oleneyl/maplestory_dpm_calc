@@ -7,6 +7,7 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, MutualRule, ConcurrentRunRule, ReservationRule
 from . import globalSkill
 from .jobbranch import bowmen
+from .jobclass import adventurer
 from math import ceil
 
 class JobGenerator(ck.JobGenerator):
@@ -64,17 +65,16 @@ class JobGenerator(ck.JobGenerator):
         
         스나, 피어싱, 롱레트, 프리저
         '''
-        distance = 400
+        DISTANCE = 400
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WEAKNESS_FINDING = core.CharacterModifier(armor_ignore = min(ceil((20+passive_level)/2) + distance//40 * ceil((20+passive_level)/5), 30 + (20+passive_level)))
-        DISTANCING_SENSE = core.CharacterModifier(pdamage_indep = max(min((distance-200)//18*4, 30+(10+passive_level)), 0))
+        WEAKNESS_FINDING = core.CharacterModifier(armor_ignore = min(ceil((20+passive_level)/2) + DISTANCE//40 * ceil((20+passive_level)/5), 30 + (20+passive_level)))
+        DISTANCING_SENSE = core.CharacterModifier(pdamage_indep = max(min((DISTANCE-200)//18*4, 30+(10+passive_level)), 0))
         LASTMAN_STANDING = core.CharacterModifier(pdamage_indep = 20 + 2*passive_level)
         PASSIVE_MODIFIER = WEAKNESS_FINDING + DISTANCING_SENSE + LASTMAN_STANDING
         
         #Buff skills
         SoulArrow = core.BuffSkill("소울 애로우", 0, 300 * 1000, att = 30, rem = True).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill("샤프 아이즈", 660, (300+10*self.combat) * 1000, crit = 20 + ceil(self.combat/2), crit_damage = 15 + ceil(self.combat/2), rem = True).wrap(core.BuffSkillWrapper)
-        #크리티컬 리인포스 - >재정의 필요함..
         
         BoolsEye = core.BuffSkill("불스아이", 960, 30 * 1000, cooltime = 90 * 1000, crit = 20, crit_damage = 10, armor_ignore = 20, pdamage = 20).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
@@ -89,10 +89,10 @@ class JobGenerator(ck.JobGenerator):
         ChargedArrow = core.DamageSkill("차지드 애로우", 0, 750 + vEhc.getV(1,1)*30, 10+1, cooltime = -1, modifier = PASSIVE_MODIFIER).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         ChargedArrowHold = core.SummonSkill("차지드 애로우(더미)", 0, 10000, 0, 0, 9999999, cooltime = -1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # TODO: 공격 주기에 쿨감 적용해야 함
         #Summon Skills
-        Freezer = core.SummonSkill("프리저", 900, 3030, 390, 1, 220 * 1000).setV(vEhc, 3, 3, False).wrap(core.SummonSkillWrapper)
-        GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
+        Freezer = core.SummonSkill("프리저", 0, 1710, 390 if DISTANCE <= 280 else 0, 1, 220 * 1000).setV(vEhc, 3, 3, False).wrap(core.SummonSkillWrapper) # 이볼브 종료시 자동소환되므로 딜레이 0, 사거리 280보다 멀면 공격안함
+        Evolve = adventurer.EvolveWrapper(vEhc, 5, 5, Freezer)
         
-        Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(5,5)*15, 7, 40*1000, cooltime = (int(121-0.5*vEhc.getV(5,5)))*1000, red=True).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
+        GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         SplitArrow = core.DamageSkill("스플릿 애로우(공격)", 0, 600 + vEhc.getV(0,0) * 24, 5+1, modifier = PASSIVE_MODIFIER).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
@@ -106,10 +106,6 @@ class JobGenerator(ck.JobGenerator):
         FinalAttack = core.DamageSkill("파이널 어택", 0, 150, 0.4, modifier = PASSIVE_MODIFIER).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
-        
-        #이볼브 연계 설정
-        Evolve.onAfter(Freezer.controller(1))
-        Freezer.onConstraint(core.ConstraintElement("이볼브 사용시 사용 금지", Evolve, Evolve.is_not_active))
         
         CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 3, 3, 20+20) # 샤프 아이즈 20 + 불스아이 20. 불스아이를 항상 크리인에 맞춰쓰므로 가동률 고려 X
     
@@ -141,6 +137,6 @@ class JobGenerator(ck.JobGenerator):
                     SoulArrow, SharpEyes, BoolsEye, EpicAdventure, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                     CriticalReinforce, RepeatingCartrige, SplitArrowBuff, globalSkill.soul_contract()] +\
                 [TrueSnipping, ChargedArrowHold, ChargedArrow] +\
-                [Evolve,Freezer, GuidedArrow, MirrorBreak, MirrorSpider] +\
+                [Freezer, Evolve, GuidedArrow, MirrorBreak, MirrorSpider] +\
                 [] +\
                 [BasicAttack])
