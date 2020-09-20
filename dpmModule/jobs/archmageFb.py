@@ -134,7 +134,7 @@ class JobGenerator(ck.JobGenerator):
         EnergyBolt = core.DamageSkill("에너지 볼트", 630, 309, 1).wrap(core.DamageSkillWrapper)
         FlameOrb = core.DamageSkill("플레임 오브", 630, 301, 2).wrap(core.DamageSkillWrapper)
         PoisonBreath = core.DamageSkill("포이즌 브레스", 600, 180, 1).wrap(core.DamageSkillWrapper)
-        Explosion = core.DamageSkill("익스플로젼", 300+540, 405, 2).wrap(core.DamageSkillWrapper) # prepare 300 + action 540
+        Explosion = core.DamageSkill("익스플로젼", 540+150, 405, 2).wrap(core.DamageSkillWrapper) # magic6(720) -> explosion(180). 둘 다 공속 적용되어 540+150.
         PoisonMist = core.DamageSkill("포이즌 미스트", 1140, 270, 1).wrap(core.DamageSkillWrapper)
         SlimeVirus = core.DotSkill("슬라임 바이러스", 1680, 1000, 160, 1, 10000, cooltime=-1).wrap(core.SummonSkillWrapper)
         
