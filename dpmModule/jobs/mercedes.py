@@ -217,7 +217,7 @@ class JobGenerator(ck.JobGenerator):
             wrp.onAfter(AdvancedFinalAttackFast)
             wrp.onAfter(UseElementalGhostSpirit)
             wrp.onAfter(UseRoyalNightsAttack)
-        # ElementalGhost.addSkill(AdvancedFinalAttackFast, is_fast=True, is_final_attack=True)
+        ElementalGhost.addSkill(AdvancedFinalAttackFast, is_fast=True, is_final_attack=True)
 
         GuidedArrow.onTick(UseRoyalNightsAttack)
 
