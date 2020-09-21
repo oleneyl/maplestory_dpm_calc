@@ -91,7 +91,7 @@ class JobGenerator(ck.JobGenerator):
         ArcaneOfDarklordFinal = core.DamageSkill("다크로드의 비전서(막타)", 0, 900+36*vEhc.getV(2,2), 10, cooltime = -1, modifier=core.CharacterModifier(boss_pdamage=30)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         ThrowBlasting = core.DamageSkill("스로우 블래스팅(폭발 부적)", 0, 475+19*vEhc.getV(0,0), 5*1.7, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ThrowBlastingStack = core.StackSkillWrapper(core.BuffSkill("스로우 블래스팅(부적 스택)", 0, 99999999), 45)
-        ThrowBlastingActive = core.BuffSkill("스로우 블래스팅(액티브)", 660, 60000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        ThrowBlastingActive = core.BuffSkill("스로우 블래스팅(액티브)", 720, 60000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ThrowBlastingPassive = core.DamageSkill("스로우 블래스팅(패시브)", 0, 0, 0, cooltime=10000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######

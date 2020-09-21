@@ -11,7 +11,7 @@ from math import ceil
 
 class GrimReaperWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, masterOfDeath):
-        skill = core.SummonSkill("그림 리퍼", 720, 4000, 800+32*vEhc.getV(num1,num2), 12, 30*1000, cooltime=100*1000).isV(vEhc,num1,num2)
+        skill = core.SummonSkill("그림 리퍼", 540, 4000, 800+32*vEhc.getV(num1,num2), 12, 30*1000, cooltime=100*1000).isV(vEhc,num1,num2)
         super(GrimReaperWrapper, self).__init__(skill)
         self.masterOfDeath = masterOfDeath
 
@@ -143,7 +143,7 @@ class JobGenerator(ck.JobGenerator):
         UnionAura = core.BuffSkill("유니온 오라", 810, (vEhc.getV(1,1)//3+30)*1000, cooltime = 100*1000, pdamage=20, boss_pdamage=10, att=vEhc.getV(1,1)*2).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         BlackMagicAlter = core.SummonSkill("블랙 매직 알터", 690, 1220, 800+32*vEhc.getV(0,0), 4, 40*1000, cooltime = 50*1000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) # 2개 충전할때 마다 사용
         GrimReaper = GrimReaperWrapper(vEhc, 2, 2, MasterOfDeath)
-        AbyssyalLightning = core.BuffSkill("어비셜 라이트닝", 720, 35000, cooltime=200*1000, red=True).wrap(core.BuffSkillWrapper)
+        AbyssyalLightning = core.BuffSkill("어비셜 라이트닝", 540, 35000, cooltime=200*1000, red=True).wrap(core.BuffSkillWrapper)
         AbyssyalDarkLightning = core.DamageSkill("어비셜 라이트닝(칠흑의 번개)", 0, 1100, 5*3, modifier=core.CharacterModifier(crit=100, armor_ignore=20, pdamage_indep=-20)).wrap(core.DamageSkillWrapper)
         
         #Build Graph

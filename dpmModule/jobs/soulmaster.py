@@ -87,8 +87,8 @@ class JobGenerator(ck.JobGenerator):
         ElisionStyx = core.DamageSkill("크로스 더 스틱스(엘리시온)", 30 * 1000 / 40, 580/2, 5 * 5 * 2, modifier = FallingMoon).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  #40회 반복
         
         #소울 이클립스
-        SoulEclipse = core.SummonSkill("소울 이클립스", 810, 1000, 450 + 18 * vEhc.getV(3,3), 7, 30 * 1000, cooltime = 180 * 1000, red=True).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
-        SolunaDivide = core.DamageSkill("솔루나 디바이드", 990, 1250 + 50 * vEhc.getV(3,3), 15 * 5, cooltime = -1).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        SoulEclipse = core.SummonSkill("소울 이클립스", 630, 1000, 450 + 18 * vEhc.getV(3,3), 7, 30 * 1000, cooltime = 180 * 1000, red=True).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
+        SolunaDivide = core.DamageSkill("솔루나 디바이드", 750, 1250 + 50 * vEhc.getV(3,3), 15 * 5, cooltime = -1).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
 
         FlareSlash = core.DamageSkill("플레어 슬래시", 0, 550+22*vEhc.getV(0,0), 7*2, cooltime=12000, modifier=FallingMoon).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         

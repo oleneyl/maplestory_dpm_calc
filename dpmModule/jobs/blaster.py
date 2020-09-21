@@ -147,7 +147,7 @@ class JobGenerator(ck.JobGenerator):
         BurningBreakerRush = core.DamageSkill("버닝 브레이커(돌진)", 2220, 1500 + 60*vEhc.getV(1,1), 15, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper) # 공속 적용됨, 2940ms -> 2220ms
         BurningBreakerExplode = core.DamageSkill("버닝 브레이커(폭발)", 0, 1200+48*vEhc.getV(1,1), 15 * 6, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
 
-        AfterImageShockInit = core.BuffSkill("애프터이미지 쇼크", 0, 180*1000, cooltime=240*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        AfterImageShockInit = core.BuffSkill("애프터이미지 쇼크", 780, 180*1000, cooltime=240*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         AfterImageShockStack = core.StackSkillWrapper(core.BuffSkill("애프터이미지 쇼크(스택)", 0, 99999999), 99)
         AfterImageShockActive = core.DamageSkill("애프터이미지 쇼크(액티브)", 0, 450+18*vEhc.getV(0,0), 5, cooltime=100).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         AfterImageShockPassive = core.DamageSkill("애프터이미지 쇼크(패시브)", 0, 500+20*vEhc.getV(0,0), 3, cooltime=6000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)

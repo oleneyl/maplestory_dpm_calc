@@ -111,7 +111,7 @@ class JobGenerator(ck.JobGenerator):
         DivinePunishmentTick = core.DamageSkill("디바인 퍼니시먼트(키다운)", 240, 175+7*vEhc.getV(0,0), 5+5, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
     
         #Summoning skill
-        Bahamutt = core.SummonSkill("바하뮤트", 600, 3030, 170+2*self.combat, 3, 90 * 1000, cooltime = 120 * 1000, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #최종뎀25%스택
+        Bahamutt = core.SummonSkill("바하뮤트", 0, 3030, 170+2*self.combat, 3, 90 * 1000, cooltime = 120 * 1000, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #최종뎀25%스택, 리브라 종료시 자동소환 되므로 딜레이 0
         AngelOfLibra = core.SummonSkill("엔젤 오브 리브라", 540, 4020, 500 + 20*vEhc.getV(3,1), 12, 30 * 1000, cooltime = 120 * 1000, red=True).isV(vEhc,3,1).wrap(core.SummonSkillWrapper)    #최종뎀50%스택
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 

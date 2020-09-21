@@ -213,8 +213,8 @@ class JobGenerator(ck.JobGenerator):
 
         ObsidionBarrierBlast = core.SummonSkill("옵시디언 배리어", LINK_DELAY + 60, 510, 400+12*vEhc.getV(4,4), 4, (10+vEhc.getV(4,4)//5)*1000, cooltime = 200*1000, red=True, modifier = ANCIENT_ARCHERY).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
 
-        RelicUnboundDischarge = core.SummonSkill("렐릭 언바운드(디스차지)", LINK_DELAY + 600, 360, 500+20*vEhc.getV(0,0), 3, 22000, cooltime=120*1000, red=True, modifier = ANCIENT_ARCHERY).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
-        # RelicUnboundBlast = core.SummonSkill("렐릭 언바운드(블래스트)", 600, 2000, 625+25*vEhc.getV(0,0), 8*4, 2000*4-1, cooltime=120*1000, red=True, modifier = ANCIENT_ARCHERY).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        RelicUnboundDischarge = core.SummonSkill("렐릭 언바운드(디스차지)", LINK_DELAY + 540, 360, 500+20*vEhc.getV(0,0), 3, 22000, cooltime=120*1000, red=True, modifier = ANCIENT_ARCHERY).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        # RelicUnboundBlast = core.SummonSkill("렐릭 언바운드(블래스트)", LINK_DELAY + 540, 2000, 625+25*vEhc.getV(0,0), 8*4, 2000*4-1, cooltime=120*1000, red=True, modifier = ANCIENT_ARCHERY).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         ######   Skill Wrapper   ######
 
         #이볼브 / 레이븐 성정
