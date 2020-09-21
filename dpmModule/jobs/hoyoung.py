@@ -235,11 +235,10 @@ class JobGenerator(ck.JobGenerator):
         Clone_Rampage_Attack_Opt = core.OptionalElement(lambda : Clone_Rampage.is_active() and Clone_Rampage_Attack.is_available(), Clone_Rampage_Attack)
         Clone_Rampage_Attack.protect_from_running()
 
-        Summon_Sanryung = core.SummonSkill("권술 : 산령소환", 900, 3000, vEhc.getV(0, 0) * 36 + 900, 8, (vEhc.getV(0, 0)//2 + 45)*1000, cooltime = 200*1000, red=True).wrap(core.SummonSkillWrapper)
-        Summon_Sanryung_Bonus = core.DamageSkill("권술 : 산령소환(연계성공)", 0, vEhc.getV(0, 0)*14 + 350, 4, cooltime = 3000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-
-        Summon_Sanryung_Bonus_Opt = core.OptionalElement(lambda : Summon_Sanryung.is_active() and Summon_Sanryung_Bonus.is_available(), Summon_Sanryung_Bonus)
-        Summon_Sanryung_Bonus.protect_from_running()
+        Summon_Sanryung = core.SummonSkill("권술 : 산령소환", 900, 3000, 0, 0, (vEhc.getV(0, 0)//2 + 45)*1000, cooltime = 200*1000, red=True).wrap(core.SummonSkillWrapper)
+        Summon_Sanryung_Normal = core.DamageSkill("권술 : 산령소환(일반)", 0, vEhc.getV(0, 0)*36 + 900, 8, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        Summon_Sanryung_Roar = core.DamageSkill("권술 : 산령소환(포효)", 0, vEhc.getV(0, 0)*14 + 350, 7*4, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper) # 4타씩 7회
+        Summon_Sanryung_Check = core.StackSkillWrapper(core.BuffSkill("권술 : 산령소환(포효 가능)", 0, 99999999), 1)
 
         Nansin = core.BuffSkill("선기 : 강림 괴력난신", 900, 30*1000, cooltime= 200*1000, red=True, pdamage = vEhc.getV(0, 0)*2+20).wrap(core.BuffSkillWrapper)
         Nansin_Stack = core.StackSkillWrapper(core.BuffSkill("선기 : 강림 괴력난신(스택)", 0, 99999999), 12)
@@ -283,7 +282,7 @@ class JobGenerator(ck.JobGenerator):
         GainTalisman1 = core.OptionalElement(partial(ChunJiIn.is_stack, 1), gainEnergy(TalismanEnergy, 10), name="1속성")
         GainTalisman2 = core.OptionalElement(partial(ChunJiIn.is_stack, 2), gainEnergy(TalismanEnergy, 15), name="2속성")
         GainTalisman3 = core.OptionalElement(partial(ChunJiIn.is_stack, 3), gainEnergy(TalismanEnergy, 20), name="3속성")
-        TriggerSanryung = core.OptionalElement(partial(ChunJiIn.is_stack, 3), Summon_Sanryung_Bonus_Opt)
+        TriggerSanryung = core.OptionalElement(partial(ChunJiIn.is_stack, 3), Summon_Sanryung_Check.stackController(1))
         ElementalCloneReset = core.OptionalElement(partial(ChunJiIn.is_stack, 3),
                             core.OptionalElement(Elemental_Clone.is_active, ChunJiIn.choice_reset([EarthQuake, Flames, GeumGoBong])))
         ChunJiInReset = core.OptionalElement(partial(ChunJiIn.is_stack, 3), ChunJiIn.reset_elements(), name="3속성 초기화")
@@ -337,6 +336,14 @@ class JobGenerator(ck.JobGenerator):
         AddNansinStack.onAfter(Nansin_Attack_Opt)
         Nansin_Final.onAfter(Nansin_Final_Buff)
 
+        # 산령소환
+        Summon_Sanryung.onTick(core.OptionalElement(
+            partial(Summon_Sanryung_Check.judge, 1, 1),
+            Summon_Sanryung_Roar,
+            Summon_Sanryung_Normal
+        ))
+        Summon_Sanryung_Roar.onAfter(Summon_Sanryung_Check.stackController(-1))
+
         # 천지인 환영
         Elemental_Clone_Passive.onAfter(FillElement)
         Elemental_Clone_Active.onAfter(FillElement)
@@ -365,6 +372,6 @@ class JobGenerator(ck.JobGenerator):
                 globalSkill.soul_contract()] +\
             [Talisman_Seeker, Waryu, Summon_Sanryung, Miracle_Tonic_Charge] +\
             [Misaeng_Debuff, Talisman_Clone_Attack, Butterfly_Dream_Attack, Clone_Rampage_Attack, Elemental_Clone_Active,
-                Elemental_Clone_Passive, Nansin_Attack, Summon_Sanryung_Bonus, Nansin_Final] +\
+                Elemental_Clone_Passive, Nansin_Attack, Nansin_Final] +\
             [GeumGoBong, EarthQuake, Flames, Mabong, Misaeng, CloneBinding, MirrorBreak, MirrorSpider] +\
             [Topa])
