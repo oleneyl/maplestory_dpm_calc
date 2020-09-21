@@ -119,7 +119,7 @@ class JobGenerator(ck.JobGenerator):
         '''
         #Constants
         passive_level = self.combat + chtr.get_base_modifier().passive_level
-        ROBOT_SUMMON_REMAIN = 1 + chtr.get_base_modifier().summon_rem + 0.4 + passive_level * 0.01
+        ROBOT_SUMMON_REMAIN = 1 + chtr.get_base_modifier().summon_rem / 100 + 0.4 + passive_level * 0.01
         ROBOT_MASTERY = core.CharacterModifier(pdamage_indep = 105 + passive_level * 3)
         ROBOT_BUFF = 6 + math.ceil(passive_level / 5)
 
