@@ -246,7 +246,7 @@ class JobGenerator(ck.JobGenerator):
         Nansin_Final = core.DamageSkill("선기 : 강림 괴력난신(신들의 강림)", 0, vEhc.getV(0, 0)*40+1000, 15*6, cooltime = -1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         Nansin_Final_Buff = core.BuffSkill("선기 : 강림 괴력난신(신들의 강림)(버프)", 0, 30000, cooltime=-1).wrap(core.BuffSkillWrapper)
 
-        Nansin_Attack_Opt = core.OptionalElement(lambda : Nansin_Attack.is_available() and Nansin_Stack.judge(12, 1), Nansin_Attack)
+        Nansin_Attack_Opt = core.OptionalElement(lambda: Nansin_Stack.judge(12, 1), Nansin_Attack)
         Nansin_Attack.protect_from_running()
 
         Elemental_Clone_Passive = core.DamageSkill("선기 : 천지인 환영(패시브)", 0, 625 + 25*vEhc.getV(0, 0), 6, cooltime = 5000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
@@ -332,7 +332,7 @@ class JobGenerator(ck.JobGenerator):
         Nansin.onAfter(Nansin_Final.controller(30*1000-1)) # 버프 종료 직전에 막타 발동
         Nansin.onAfter(Nansin_Stack.stackController(-12))
         Nansin_Attack.onAfter(Nansin_Stack.stackController(-12))
-        AddNansinStack = Nansin_Stack.stackController(1)
+        AddNansinStack = core.OptionalElement(Nansin.is_active, Nansin_Stack.stackController(1))
         AddNansinStack.onAfter(Nansin_Attack_Opt)
         Nansin_Final.onAfter(Nansin_Final_Buff)
 
@@ -361,6 +361,11 @@ class JobGenerator(ck.JobGenerator):
         for base in ELEMENT_SKILLS + [Mabong, Misaeng, CloneBinding]:
             for opt in [Talisman_Clone_Attack_Opt, Clone_Rampage_Attack_Opt, Butterfly_Dream_Attack_Opt, Elemental_Clone_Opt, AddNansinStack]:
                 base.onAfter(opt)
+
+        # 추가타가 괴력난신 카운트에 들어감
+        for sk, stack in [(Talisman_Clone_Attack, 3), (Clone_Rampage_Attack, 12), (Butterfly_Dream_Attack, 5), (Elemental_Clone_Active, 1), (Elemental_Clone_Passive, 1)]:
+            sk.onAfter(core.OptionalElement(Nansin.is_active, Nansin_Stack.stackController(stack)))
+            sk.onAfter(Nansin_Attack_Opt)
 
         # 파초풍-멸화염-인스킬(토파류 공중시전 불가)
         Flames.onBefore(Pacho)
