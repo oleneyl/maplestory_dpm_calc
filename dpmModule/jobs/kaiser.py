@@ -246,7 +246,7 @@ class JobGenerator(ck.JobGenerator):
         DrakeSlasher = DrakeSlasherWrapper(core.DamageSkill("드라코 슬래셔", 540, 500+5*vEhc.getV(0,0), 10+1, cooltime = (7-(vEhc.getV(0,0)//15))*1000, red=True, modifier = core.CharacterModifier(crit=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0), FinalFiguration)
         DrakeSlasher_Projectile = DrakeSlasherProjectileWrapper(core.DamageSkill("드라코 슬래셔(발사)", 0, 500+5*vEhc.getV(0,0), 6+1, cooltime = -1, modifier = core.CharacterModifier(crit=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0), FinalFiguration)
 
-        DragonBlaze = core.SummonSkill("드래곤 블레이즈", 690, 240, 250+10*vEhc.getV(0,0), 6, 20000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        DragonBlaze = core.SummonSkill("드래곤 블레이즈", 900, 240, 250+10*vEhc.getV(0,0), 6, 20000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         DragonBlazeAura = core.DamageSkill("드래곤 블레이즈(불의 기운)", 0, 375+15*vEhc.getV(0,0), 5, cooltime=3600).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         DragonBlazeFireball = core.DamageSkill("드래곤 블레이즈(화염구)", 0, 350+14*vEhc.getV(0,0), 3*6, cooltime=10000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         

@@ -107,7 +107,7 @@ class JobGenerator(ck.JobGenerator):
         MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 690, 300+12*vEhc.getV(2,2), 6 * 7, cooltime = 30000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         MarkOfPhantomEnd = core.DamageSkill("마크 오브 팬텀(최종)", 0, 485+19*vEhc.getV(2,2), 15).isV(vEhc,2,2).wrap(core.DamageSkillWrapper) # 2회 반복
 
-        LiftBreak = core.DamageSkill("리프트 브레이크", 990, 400+16*vEhc.getV(0,0), 7*7, cooltime=30000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        LiftBreak = core.DamageSkill("리프트 브레이크", 750, 400+16*vEhc.getV(0,0), 7*7, cooltime=30000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         #### 그래프 빌드
         

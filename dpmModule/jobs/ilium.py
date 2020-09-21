@@ -229,7 +229,7 @@ class JobGenerator(ck.JobGenerator):
         SoulOfCrystal_Reaction_Destruction = core.DamageSkill("리액션:디스트럭션(소오크)", 0, 550 * 0.01 * (50 + vEhc.getV(1,0)), 4*2*2, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         SoulOfCrystal_Reaction_Spectrum = core.DamageSkill("리액션:스펙트럼(소오크)", 0, 1000+40*vEhc.getV(2,1), 5*2, modifier = core.CharacterModifier(boss_pdamage = 20)).wrap(core.DamageSkillWrapper)
 
-        CrystalGate = core.BuffSkill("크리스탈 게이트", 1080, (130+vEhc.getV(0,0))*1000, cooltime=180*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        CrystalGate = core.BuffSkill("크리스탈 게이트", 420*2, (130+vEhc.getV(0,0))*1000, cooltime=180*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         CrystalGateBuff = core.BuffSkill("크리스탈 게이트(버프)", 0, 25000, att=5+2*vEhc.getV(0,0)).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         CrystalGateAttack = core.DamageSkill("크리스탈 게이트(폭격)", 0, 450+18*vEhc.getV(0,0), 5, cooltime=1500).wrap(core.DamageSkillWrapper)
         

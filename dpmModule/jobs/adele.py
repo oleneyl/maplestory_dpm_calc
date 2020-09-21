@@ -75,7 +75,7 @@ class OrderWrapper(core.SummonSkillWrapper):
 
 class StormWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, order: OrderWrapper, serverlag = 0): # TODO: 서버렉 평균 몇초인지 측정할것
-        skill = core.SummonSkill("스톰", 600, 330, 250+10*vEhc.getV(num1,num2), 2, 14000+serverlag, cooltime = 90*1000, red=True).isV(vEhc,num1,num2)
+        skill = core.SummonSkill("스톰", 780, 330, 250+10*vEhc.getV(num1,num2), 2, 14000+serverlag, cooltime = 90*1000, red=True).isV(vEhc,num1,num2)
         super(StormWrapper, self).__init__(skill)
         self.order = order
         self.consumed_order = 0
@@ -204,8 +204,7 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att("튜너"))
 
-        # TODO: 5차 스킬 딜레이 공속 적용여부 테스트
-        Ruin = core.DamageSkill('루인(시전)', 780, 0, 0, cooltime=60*1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper) # 4초에 나누어서 시전되는 것으로 가정
+        Ruin = core.DamageSkill('루인(시전)', 600, 0, 0, cooltime=60*1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper) # 4초에 나누어서 시전되는 것으로 가정
         RuinFirstTick = core.SummonSkill('루인(소환)', 0, 160, 250 + vEhc.getV(2,2)*10, 6, 2000, cooltime=-1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 12번, 2초에 나누어 사용으로 가정
         RuinSecondTick = core.SummonSkill('루인(공격)', 0, 250, 450 + vEhc.getV(2,2)*18, 9, 2000, cooltime=-1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 8번, 2초에 나누어 사용으로 가정
 

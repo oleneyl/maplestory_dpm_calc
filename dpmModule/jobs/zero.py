@@ -191,7 +191,7 @@ class JobGenerator(ck.JobGenerator):
 
         DoubleTime = core.BuffSkill("래피드 타임", 0, 9999*10000, crit = 20, pdamage = 10).wrap(core.BuffSkillWrapper)
         TimeDistortion = core.BuffSkill("타임 디스토션", 540, 30000, cooltime = 240 * 1000, pdamage = 25).wrap(core.BuffSkillWrapper)
-        TimeHolding = core.BuffSkill("타임 홀딩", 1080, 90000, cooltime = 180*1000, pdamage = 10, red = False).wrap(core.BuffSkillWrapper) #  쿨타임 초기화.(타임 리와 / 리미트 브레이크 제외)
+        TimeHolding = core.BuffSkill("타임 홀딩", 0, 90000, cooltime = 180*1000, pdamage = 10, red = False).wrap(core.BuffSkillWrapper) #  쿨타임 초기화.(타임 리와 / 리미트 브레이크 제외)
         # 인탠시브 타임 - 기본 도핑에 영메 포함되어 있음
 
         # 알파 4410ms 베타 4980ms
