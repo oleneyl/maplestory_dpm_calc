@@ -134,8 +134,8 @@ class JobGenerator(ck.JobGenerator):
         MascortFamilierAttack = core.SummonSkill("트윙클 스타/매지컬 벌룬", 0, 2500, 1200, 5, (30+(vEhc.getV(2,1)//5))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         ShinyBubbleBreath = core.SummonSkill("샤이니 버블 브레스", 0, 210, 250+10*vEhc.getV(2,1), 7, (3 + 0.4*8)*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
 
-        # 이전 트리니티 딜레이를 150ms만큼 캔슬함. TODO: 트리니티(캔슬) 만들고 퓨전 600ms로 할것
-        TrinityFusionInit = core.DamageSkill("트리니티 퓨전(시전)", 600-150, 0, 0, cooltime=(16-vEhc.getV(0,0)//10)*1000, red=True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        # 이전 트리니티 딜레이를 150ms만큼 캔슬함. TODO: 트리니티(캔슬) 만들고 퓨전 660ms로 할것
+        TrinityFusionInit = core.DamageSkill("트리니티 퓨전(시전)", 660-150, 0, 0, cooltime=(16-vEhc.getV(0,0)//10)*1000, red=True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         TrinityFusion = core.DamageSkill("트리니티 퓨전", 0, 330+vEhc.getV(0,0), 3, cooltime=-1, modifier = TRINITY_MDF).setV(vEhc, 0, 2, True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         ### build graph relationships
