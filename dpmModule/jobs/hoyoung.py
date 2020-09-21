@@ -122,7 +122,7 @@ class JobGenerator(ck.JobGenerator):
         RitualFanMastery = core.InformedCharacterModifier("부채 숙련", att = 25)
         ThirdEye = core.InformedCharacterModifier("심안", crit = 30, crit_damage = 10)
         FortuneFitness = core.InformedCharacterModifier("신체 단련", stat_main = 60)
-        Asura = core.InformedCharacterModifier("수라", att = 50, crit = 10, crit_damage = 20, boss_pdamage = 20, armor_ignore = 20)
+        Asura = core.InformedCharacterModifier("수라", att = 50, crit = 10, crit_damage = 20, boss_pdamage = 20, armor_ignore = 10)
         AdvancedRitualFanMastery = core.InformedCharacterModifier("고급 부채 숙련", att = 40 + passive_level, pdamage_indep = 35 + passive_level)
         Enlightenment = core.InformedCharacterModifier("득도", pdamage = 10 + ceil(passive_level/2))
         DragonsEye = core.InformedCharacterModifier("점정", att = 10 + passive_level, pdamage_indep = 10 + passive_level, crit = 10 + passive_level, crit_damage = 10 + passive_level, armor_ignore = 10 + passive_level)
