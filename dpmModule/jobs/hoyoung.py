@@ -1,10 +1,12 @@
+"""Advisor : 아니마님아
+"""
 from typing import List
 from ..kernel import core
 from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import ConditionRule, RuleSet
+from ..execution.rules import ConditionRule, DisableRule, RuleSet
 from . import globalSkill
 from .jobbranch import thieves
 from math import ceil
@@ -136,6 +138,7 @@ class JobGenerator(ck.JobGenerator):
     
     def get_ruleset(self):
         ruleset = RuleSet()
+        ruleset.add_rule(DisableRule('멸화염 : 천'), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('권술 : 미생강변', '권술 : 흡성와류', lambda sk: sk.is_time_left(2000, 1)), RuleSet.BASE)
         # ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '선기 : 천지인 환영'), RuleSet.BASE)
         # ruleset.add_rule(ConcurrentRunRule('레디 투 다이', '선기 : 천지인 환영'), RuleSet.BASE)
@@ -148,9 +151,6 @@ class JobGenerator(ck.JobGenerator):
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         BASIC_HYPER = core.CharacterModifier(pdamage = 10, boss_pdamage = 15)
-
-        # 소환수 지속시간과 버프 지속시간을 동시에 받는 스킬들 (해당 스킬들에는 rem = True 적용하지 말것)
-        SUMMON_AND_BUFF = 1 + 0.01 * (chtr.get_base_modifier().buff_rem + chtr.get_base_modifier().summon_rem)
         
         # 1차
         ChunJiIn = ChunJiInWrapper()
@@ -166,7 +166,7 @@ class JobGenerator(ck.JobGenerator):
         Topa.onAfter(Topa_Clone)
         
         # 벞지 & 소환수 지속시간 둘다 적용
-        Talisman_Clone = core.BuffSkill("환영 분신부", 900, 200*1000*SUMMON_AND_BUFF).wrap(PausableBuffSkillWrapper)
+        Talisman_Clone = core.BuffSkill("환영 분신부", 900, 200*1000, rem=True).wrap(PausableBuffSkillWrapper)
         Talisman_Clone_Attack = core.DamageSkill("환영 분신부(공격)", 0, 460 + 5*passive_level, 2 * 3, cooltime = 1500).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Talisman_Clone_Attack_Opt = core.OptionalElement(lambda : Talisman_Clone.is_active() and Talisman_Clone_Attack.is_available(), Talisman_Clone_Attack)
         Talisman_Clone_Attack.protect_from_running()
@@ -207,7 +207,7 @@ class JobGenerator(ck.JobGenerator):
         Waryu = core.SummonSkill("권술 : 흡성와류", 990, 1000 * 0.8, 240 + 4*self.combat, 6, 40000, rem=True).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
         
         # 벞지 & 소환수 지속시간 둘다 적용
-        Butterfly_Dream = core.BuffSkill("권술 : 호접지몽", 600, 100*1000 * SUMMON_AND_BUFF, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
+        Butterfly_Dream = core.BuffSkill("권술 : 호접지몽", 600, 100*1000, rem=True, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
         Butterfly_Dream_Attack = core.DamageSkill("권술 : 호접지몽(공격)", 0, 275 + 3 * self.combat, 5, cooltime = 1000, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Butterfly_Dream_Attack_Opt = core.OptionalElement(Butterfly_Dream_Attack.is_available, Butterfly_Dream_Attack)
         Butterfly_Dream_Attack.protect_from_running()
@@ -351,9 +351,13 @@ class JobGenerator(ck.JobGenerator):
             sk.add_runtime_modifier(Nansin_Final_Buff, lambda sk: core.CharacterModifier(pdamage = 20*sk.is_active()))
         
         # 환영 분신부, 극대 분신난무, 호접지몽, 천지인 환영, 괴력난신
-        for base in ELEMENT_SKILLS + [Mabong, CloneBinding]:
+        for base in ELEMENT_SKILLS + [Mabong, Misaeng, CloneBinding]:
             for opt in [Talisman_Clone_Attack_Opt, Clone_Rampage_Attack_Opt, Butterfly_Dream_Attack_Opt, Elemental_Clone_Opt, AddNansinStack]:
                 base.onAfter(opt)
+
+        # 파초풍-멸화염-인스킬(토파류 공중시전 불가)
+        Flames.onBefore(Pacho)
+        Flames.onAfter(core.OptionalElement(GeumGoBong.is_available, GeumGoBong, YeoUiSeon))
 
         return(Topa,
             [globalSkill.maple_heros(chtr.level, name = "아니마의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
