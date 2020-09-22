@@ -22,7 +22,7 @@ dpmModule
 About 
 ------------
   dpmModule은 메이플스토리에서 데미지와 관련된 계산(기댓값, DPM, 최적잠재 등) 을 쉽게 계산하기
-  위한 라이브러리입니다. 전체 43개 직업군중 데벤, 제논, 호영을 제외한 40개 직업군의 데미지 시뮬레이션을 지원합니다.
+  위한 라이브러리입니다. 전체 43개 직업군중 데벤, 제논을 제외한 41개 직업군의 데미지 시뮬레이션을 지원합니다.
 
 
 Document
@@ -59,7 +59,7 @@ Example
     print(gen.get_dpm(ulevel = 6000))
     
     # Result
-    406674153728.34534  #Can be different by version
+    806902750018.9082  #Can be different by version
     ```
 
   - Advanced Usage
@@ -121,6 +121,7 @@ Example
 `블래스터`
 `아란`
 `아델`
+`호영`
 
       - `template` : 사용할 캐릭터의 상태를 정의합니다. `dpmModule.jobs.characterTemplateHigh` 내의 template중 하나를 사용하면 됩니다. 스펙구간별로 적절한 template이 정의되어 있습니다.
 
@@ -168,6 +169,3 @@ Example
     ```
 
     - 자세한 사용 방법은 dpmModule의 readme를 참조하십시오.
-
-
-
