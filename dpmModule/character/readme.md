@@ -63,18 +63,24 @@ JobGenerator
 
     패시브 스킬을 정의합니다. dpmModule.kernel.core.InformedCharacterModifier를 사용합니다.
 
+    `self.combat`은 컴뱃 오더스의 레벨입니다.
+
+    `passive_level`은 패시브 스킬 레벨 증가 어빌리티와 컴뱃 오더스를 합친 수치입니다.
+
     - Example
       
       ```python
-      HighWisdom = core.InformedCharacterModifier("하이 위즈덤", stat_main = 40) # 패시브 스킬의 정보를 입력합니다.
+      passive_level = chtr.get_base_modifier().passive_level + self.combat
+        
+      HighWisdom = core.InformedCharacterModifier("하이 위즈덤", stat_main = 40)
       SpellMastery = core.InformedCharacterModifier("스펠 마스터리", att = 10)
       MagicCritical = core.InformedCharacterModifier("매직 크리티컬", crit = 30, crit_damage = 13)
       ElementAmplication = core.InformedCharacterModifier("엘리멘트 엠플리피케이션", pdamage = 50)
         
       ElementalReset = core.InformedCharacterModifier("엘리멘탈 리셋", pdamage_indep = 40)
         
-      MasterMagic = core.InformedCharacterModifier("마스터 매직", att = 30)
-      ArcaneAim = core.InformedCharacterModifier("아케인 에임", armor_ignore = 20)
+      MasterMagic = core.InformedCharacterModifier("마스터 매직", att = 30 + 3*passive_level, buff_rem = 50 5*passive_level)
+      ArcaneAim = core.InformedCharacterModifier("아케인 에임", armor_ignore = 20 + ceil(passive_level / 2))
         
       return [HighWisdom, SpellMastery, MagicCritical, ElementalReset, 
                                     MasterMagic, ElementAmplication, ArcaneAim]  # 마지막에 정의한 패시브 스킬정보를 리턴해야 합니다.
@@ -93,8 +99,9 @@ JobGenerator
       ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", pdamage_indep = 20)  # 익스트림 매직은 전투가 시작되어야 스텟에 반영됩니다.
       ArcaneAim = core.InformedCharacterModifier("아케인 (실시간)", pdamage = 40)
       PerventDrain = core.InformedCharacterModifier("퍼번트 드레인", pdamage_indep = 25)
+      ElementalResetActive = core.InformedCharacterModifier("엘리멘탈 리셋(사용)", prop_ignore = 10)
       
-      return [WeaponConstant, Mastery, ExtremeMagic, PerventDrain, ArcaneAim] # 마지막에 리턴해야 합니다.
+      return [WeaponConstant, Mastery, ExtremeMagic, PerventDrain, ArcaneAim, ElementalResetActive] # 마지막에 리턴해야 합니다.
       ```
 
   - generate(self, vEhc, chtr : AbstractCharacter, combat : bool = False):
@@ -106,43 +113,48 @@ JobGenerator
       - 스킬 오브젝트를 생성합니다.
         ```python
         core.BuffSkill("메디테이션", 0, 240000, att = 30, rem = True, red = True) # 버프스킬
-        core.SummonSkill("이프리트", 900, 3030, 450+6*combat, 1, 999999999) # 소환스킬
-        Paralyze = core.DamageSkill("패럴라이즈", 600, 250 + 3*combat, 7, modifier = core.CharacterModifier(pdamage = 10)) # 공격스킬.
+        core.SummonSkill("이프리트", 600, 3030, 150+2*self.combat, 3, (260+5*self.combat)*1000) # 소환스킬
+        core.DamageSkill("페럴라이즈", 600, 220 + 3*self.combat, 7+1, modifier = core.CharacterModifier(pdamage = 10)) # 공격스킬.
         
-        core.DamageSkill("도트 퍼니셔", 870, (400+vEhc.getV(0,0)*15), 5*(1+19*0.75), cooltime = 25 * 1000) # 5차인 경우 getV(first_priority, second_priority)로 스킬 레벨을 가져옵니다.
+        core.DamageSkill("도트 퍼니셔", 690, 400+vEhc.getV(0,0)*15, 5, cooltime = 25 * 1000, red = True) # 5차인 경우 getV(first_priority, second_priority)로 스킬 레벨을 가져옵니다.
         ```
 
-      - 4차 이하의 스킬이고 강화 코어가 존재하는 경우, 강화 수치를 적용합니다.
+      - 4차 이하 및 하이퍼 스킬이고 강화 코어가 존재하는 경우, 강화 수치를 적용합니다.
         ```python
-        Paralyze = core.DamageSkill("패럴라이즈", 600, 250 + 3*combat, 7, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 1, 2, False) #setV(vEhc, priority, increment, crit_rate) 
+        Paralyze = core.DamageSkill("페럴라이즈", 600, 220 + 3*self.combat, 7+1, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 1, 2, False) #setV(vEhc, priority, increment, crit_rate) 
+        ```
+
+      - 5차 스킬일 경우 강화 우선순위를 적용합니다.
+        ```python
+        DotPunisher = core.DamageSkill("도트 퍼니셔", 690, 400+vEhc.getV(0,0)*15, 5, cooltime = 25 * 1000, red = True).isV(vEhc,0,0) #isV(vEhc, skill_importance, enhance_importance)
         ```
         
       - 마지막으로, wrapper로 감싸서 스킬 그래프 오브젝트를 생성합니다.
         ```python
-        Paralyze = core.DamageSkill("패럴라이즈", 600, 250 + 3*combat, 7, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # wrap(core.DamageSkillWrapper) 로 오브젝트를 감싸고 리턴합니다.
+        Paralyze = core.DamageSkill("페럴라이즈", 600, 220 + 3*self.combat, 7+1, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # wrap(core.DamageSkillWrapper) 로 오브젝트를 감싸고 리턴합니다.
         ```
 
     2. 스킬 간의 연계가 있는 경우 서로 연결합니다. 스킬들을 연결하는 방법은 여러가지가 있습니다.
 
        - 패럴라이즈 이후에는 메테오 패시브, 이그나이트가 발생합니다.
          ```python
-         Paralyze.onAfters([MeteorPassive, Ignite])
+         Paralyze.onAfter(Ignite)
          ```
        
        - 카이저는 변신 여부에 따라 스킬이 다르게 시전됩니다.
          ```python
-         DrakeSlasher_Opt = core.OptionalElement(FinalFiguration.is_active, DrakeSlasher_Fig, DrakeSlasher, name = "변신시")
+         BasicAttack.onAfter(core.OptionalElement(DrakeSlasher.is_available, DrakeSlasher, GigaSlasher, name = "드라코 슬래셔 충전시"))
          ```
 
-       - 아란의 아드레날린 스킬은 콤보가 500보다 커야 사용할 수 있습니다.
+       - 아란의 아드레날린 스킬은 콤보가 1000보다 커야 사용할 수 있습니다.
          ```python
-         AdrenalineBoost.onConstraint(core.ConstraintElement('콤보가 500이상', Combo, partial(Combo.judge,1000,1) ))
+         AdrenalineBoost.onConstraint(core.ConstraintElement('콤보가 1000이상', Combo, partial(Combo.judge,1000,1) ))
          ```
 
     3. 마지막으로, 시전 가능한 스킬들을 리스트로 만들어 리턴합니다.
       - 직접적으로 시전할 수 없는 스킬들은 넣지 않습니다.
       - 소환수는 시전할 수 없어도 넣어야 합니다(그렇지 않으면 계산이 되지 않습니다)
-      - 필요한 경우, encure() 함수를 통해 조건을 만족하지 않는 경우 주어진 값을 None으로
+      - 필요한 경우, ensure() 함수를 통해 조건을 만족하지 않는 경우 주어진 값을 None으로
         만들 수 있습니다. None으로 전달된 요소들은 무시됩니다.
         
       - Example
@@ -150,12 +162,12 @@ JobGenerator
         ```python
         return (Paralyze, 
                 [Infinity, Meditation, EpicAdventure, OverloadMana.ensure(vEhc,1,5),
-                globalSkill.maple_heros(chtr.level, combat_level=self._combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                SoulContract] +\
-                [DotPunisher.ensure(vEhc,0,0), Meteor, MegidoFlame, FlameHeize, PoisonNova.ensure(vEhc,2,1)] +\
+                globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
+                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
+                [DotPunisher.ensure(vEhc,0,0), PoisonChain, Meteor, MegidoFlame, FlameHeize, MistEruption, PoisonNova.ensure(vEhc,2,1), MirrorBreak, MirrorSpider] +\
                 [Ifritt, FireAura, FuryOfIfritt.ensure(vEhc,3,2),
-                    ParalyzeDOT, MistDOT, HeizeFlameDOT, TeleportMasteryDOT, MegidoFlameDOT, DotPunisherDOT.ensure(vEhc,0,0), PoisonNovaDOT.ensure(vEhc,2,1)] +\
-                [] +\
+                    SlimeVirus, ParalyzeDOT, MistDOT, PoisonBreathDOT, IfrittDot, HeizeFlameDOT, TeleportMasteryDOT, MegidoFlameDOT, DotPunisherDOT.ensure(vEhc,0,0), PoisonNovaDOT.ensure(vEhc,2,1), PoisonChainToxic] +\
+                [UnstableMemorize] +\
                 [Paralyze])
         ```
 
