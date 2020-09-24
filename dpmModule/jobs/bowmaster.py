@@ -178,7 +178,7 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill Wrapper   ######
         GrittyGust.onAfter(GrittyGustDOT)
             
-        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 3, 3, 22.5) #Maybe need to sync
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 3, 3, 25 + ceil(self.combat/2))
 
         ArrowOfStorm.onAfter(AdvancedQuibberAttack)
         ArrowOfStorm.onAfter(AdvancedFinalAttack)
