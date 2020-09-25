@@ -203,7 +203,7 @@ class JobGenerator(ck.JobGenerator):
 
         DragonBreak = core.SummonSkill("드래곤 브레이크", 0, 360, 450+18*vEhc.getV(5,5), 7, 2500, cooltime = 20000, red=True).isV(vEhc,5,5).wrap(MirSkillWrapper)
         DragonBreakBack = core.SummonSkill("드래곤 브레이크-돌아와!", 30, 510, 150+6*vEhc.getV(5,5), 3, 5000, cooltime=-1).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
-        ImperialBreath = core.SummonSkill("임페리얼 브레스", 0, 240, 600+24*vEhc.getV(5,5), 7, 4000, cooltime=-1).isV(vEhc,5,5).wrap(MirSkillWrapper)
+        ImperialBreath = core.SummonSkill("임페리얼 브레스", 0, 240, 500+20*vEhc.getV(5,5), 7, 4000, cooltime=-1).isV(vEhc,5,5).wrap(MirSkillWrapper)
 
         ZodiacRayInit = core.DamageSkill("조디악 레이(개시)", 780, 0, 0, cooltime = 180000, red = True).isV(vEhc,4,2).wrap(core.DamageSkillWrapper) # 딜레이 확인 필요
         ZodiacRay = core.SummonSkill("조디악 레이", 0, 180, 400+16*vEhc.getV(4,2), 6, 180*74-1, modifier = MDF(armor_ignore = 100), cooltime = -1).isV(vEhc,4,2).wrap(core.SummonSkillWrapper)
