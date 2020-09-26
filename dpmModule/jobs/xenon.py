@@ -111,6 +111,11 @@ class JobGenerator(ck.JobGenerator):
         Hologram_Penetrate = core.SummonSkill("홀로그램 그래피티 : 관통", 720, 30000/116, (213+3*self.combat)*1.1, 1, 20000 + 10000, cooltime = 30000 - 1000 * ceil(self.combat/3)).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
         Hologram_ForceField = core.SummonSkill("홀로그램 그래피티 : 역장", 720, 30000/64, (400+5*self.combat)*1.1, 1, 20000 + 10000, cooltime = 30000 - 1000 * ceil(self.combat/3)).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
 
+        # TODO: 딜레이 다시 확인할 것
+        BladeDancingPrepare = core.DamageSkill("블레이드 댄싱 (준비)", 720 + 420, 0, 0).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        BladeDancing = core.DamageSkill("블레이드 댄싱", 480, 140+4*self.combat, 1).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        BladeDancingEnd = core.DamageSkill("블레이드 댄싱(종료)", 300, 0, 0).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+
         # Hyper skills
         AmaranthGenerator = core.BuffSkill("아마란스 제네레이터", 900, 10000, cooltime = 90000, rem = False).wrap(core.BuffSkillWrapper) # 에너지 최대치, 10초간 에너지 소모 없음
         MeltDown = core.DamageSkill("멜트다운 익스플로전", 3150, 900, 6, red = False, cooltime = 50000).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
@@ -127,8 +132,8 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.get_weapon_att("에너지소드")
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
 
-        MegaSmasher = core.BuffSkill("메가 스매셔", 0, 8000, cooltime = 180000).wrap(core.DamageSkillWrapper)
-        MegaSmasherTick = core.DamageSkill("메가 스매셔(틱)", 8000/64, 300+10*vEhc.getV(4,4), 6).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        MegaSmasher = core.SummonSkill("메가 스매셔", 0, 250, 0, 1, 16000, cooltime = 180000, rem = False).wrap(core.DamageSkillWrapper)
+        MegaSmasherTick = core.DamageSkill("메가 스매셔(틱)", 0, 300+10*vEhc.getV(4,4), 6).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
         # TODO: 따로 구현해야 함
         # 초과 에너지 20 충전 가능, 에너지 충전 시간 절반으로 감소, 초과 충전한 에너지 당 최종 데미지 1% 증가
         # 비활성화 시 초과 충전된 에너지 즉시 소멸
@@ -141,9 +146,9 @@ class JobGenerator(ck.JobGenerator):
         Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", 930, (30000 + 10000)/176, (250 + 10 * vEhc.getV(4,4))*1.1, 5, 30000 + 10000, cooltime = 100000).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         #TODO: 제논이 홀로그램 필드 안에 있을 경우 이지스 시스템으로 발사되는 미사일 7개 증가
         Hologram_Fusion_Buff = core.BuffSkill("홀로그램 그래피티 : 융합 (버프)", 0, 30000+10000, pdamage = 5+vEhc.getV(4,4)//2, rem = False).wrap(core.BuffSkillWrapper)
-        # 30회 발동
+        # 30회 발동, 발사 딜레이 생략
         PhotonRay = core.BuffSkill("포톤 레이", 300, 20000, cooltime = 35000).wrap(core.BuffSkillWrapper)
-        PhotonRayTick = core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4), 4).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        PhotonRayTick = core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4), 4 * 30).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
 
@@ -162,6 +167,8 @@ class JobGenerator(ck.JobGenerator):
         TriangulationStack = core.StackSkillWrapper(core.BuffSkill("트라이앵글 스택", 0, 99999999), 3)
         TriangulationTrigger = core.OptionalElement(lambda : TriangulationStack.judge(3, 1), Triangulation, TriangulationStack.stackController(1))
         Triangulation.onAfter(TriangulationStack.stackController(0, dtype = 'set'))
+
+        MegaSmasher.onTick(MegaSmasherTick)
 
         # TODO: 쉐파 적용스킬 정확히 확인
         # 홀로그램 그래피티 융합 추가할것
