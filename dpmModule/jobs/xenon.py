@@ -9,6 +9,8 @@ from .jobclass import resistance
 from . import jobutils
 from math import ceil
 
+# TODO: 하이퍼스탯으로 스탠스 10% 확보 필요 
+
 # TODO: 오버로드 상태가 아닐 때는 최대값 20으로 제한
 class SupplyStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
@@ -50,6 +52,7 @@ class JobGenerator(ck.JobGenerator):
         LinearPerspective = core.InformedCharacterModifier("리니어 퍼스펙티브", crit = 40)
         MinoritySupport = core.InformedCharacterModifier("마이너리티 서포트", stat_main = 20, stat_sub = 20)
         XenonMastery = core.InformedCharacterModifier("제논 마스터리", att = 20)
+        HybridDefensesPassive = core.InformedCharacterModifier("듀얼브리드 디펜시브(패시브)", stat_main = 10, stat_sub = 10)
         XenonExpert = core.InformedCharacterModifier("제논 엑스퍼트", att = 30 + passive_level, crit_damage = 8)
         OffensiveMatrix = core.InformedCharacterModifier("오펜시브 매트릭스", armor_ignore = 30 + passive_level)
 
@@ -57,7 +60,7 @@ class JobGenerator(ck.JobGenerator):
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 2, 2)
 
 
-        return [Multilateral, LinearPerspective, MinoritySupport, XenonMastery, XenonExpert, OffensiveMatrix,
+        return [Multilateral, LinearPerspective, MinoritySupport, XenonMastery, HybridDefensesPassive, XenonExpert, OffensiveMatrix,
         LoadedDicePassive, ReadyToDiePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
