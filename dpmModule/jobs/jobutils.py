@@ -92,3 +92,8 @@ def seed_ring(name = '리스트레인트', level = 4, val = -1):
         # 크확 100% 가정
         return core.BuffSkill("크리디펜스 링", 0, (7+2*level)*1000, cooltime = 180000, armor_ignore = 25 * level).wrap(core.BuffSkillWrapper)
     raise ValueError
+
+def reboot_passive(level = -1):
+    if level == -1:
+        raise ValueError
+    return core.InformedCharacterModifier("리부트", att = 5, pdamage = level // 2)
