@@ -95,7 +95,7 @@ class JobGenerator(ck.JobGenerator):
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
-        SplitArrow = core.DamageSkill("스플릿 애로우(공격)", 0, 600 + vEhc.getV(0,0) * 24, 5+1, modifier = PASSIVE_MODIFIER-DISTANCING_SENSE).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        SplitArrow = core.DamageSkill("스플릿 애로우(공격)", 0, 600 + vEhc.getV(0,0) * 24, 5+1, modifier = PASSIVE_MODIFIER).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         SplitArrowBuff = core.BuffSkill("스플릿 애로우", 810, 60 * 1000, 120 * 1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         #TODO : 스플릿애로우 계산
 
@@ -107,7 +107,7 @@ class JobGenerator(ck.JobGenerator):
         
         ######   Skill Wrapper   ######
         
-        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 3, 3, 20+20) # 샤프 아이즈 20 + 불스아이 20. 불스아이를 항상 크리인에 맞춰쓰므로 가동률 고려 X
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 3, 3, 20 + 20 + ceil(self.combat/2)) # 샤프 아이즈 20 + 불스아이 20. 불스아이를 항상 크리인에 맞춰쓰므로 가동률 고려 X
     
         SplitArrowOption = core.OptionalElement(SplitArrowBuff.is_active, SplitArrow, name = "스플릿 애로우 여부 확인")
         Snipping.onAfter(SplitArrowOption)
