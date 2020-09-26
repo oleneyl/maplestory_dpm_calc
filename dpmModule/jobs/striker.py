@@ -75,14 +75,11 @@ class JobGenerator(ck.JobGenerator):
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         하이퍼 : 질풍-보너스어택 + 섬멸-리인포스/이그노어 가드/보스킬러  + 벽력-보너스어택
-
-        코강 : 10개
-        섬멸, 벽력, 승천, (뇌성)
         
         연계 100% 가정
 
         천지개벽 ON: 태풍 - 섬멸
-        천지개벽 OFF: 벽력 - 섬멸 or 파도 - 섬멸
+        천지개벽 OFF: 파도 - 섬멸
         
         벽섬 : 1020ms
         태섬 : 900ms
@@ -154,7 +151,6 @@ class JobGenerator(ck.JobGenerator):
         HurricaneDestroy = core.GraphElement("태섬")
         HurricaneDestroy.onAfter(HurricaneConcat)
         HurricaneDestroy.onAfter(DestroyConcat)
-        #BasicAttack = core.OptionalElement(SkyOpen.is_active, HurricaneDestroy, ThunderDestroy)
         BasicAttack = core.OptionalElement(SkyOpen.is_active, HurricaneDestroy, WaterWaveDestroy)
         BasicAttackWrapper = core.DamageSkill('기본 공격', 0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
