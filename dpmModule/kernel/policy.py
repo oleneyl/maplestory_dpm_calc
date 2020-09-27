@@ -4,7 +4,7 @@ from .abstract import AbstractScenarioGraph
 from .core import CharacterModifier
 from .core import ResultObject
 from .core import BuffSkillWrapper, DamageSkillWrapper, SummonSkillWrapper
-
+from .core import Callback
 
 class NameIndexedGraph(AbstractScenarioGraph):
     def __init__(self, accessible_elements = []):
@@ -111,20 +111,6 @@ class StorageLinkedGraph(NameIndexedGraph):
         }
 
 
-class Callback:
-    def __init__(self, task, time):
-        self.task = task
-        self.time = time
-
-    def resolve(self):
-        return self.task.do()
-
-    def adjust_by_current_time(self, current_time):
-        return Callback(self.task, self.time + current_time)
-
-    @staticmethod
-    def from_graph_element(graph_element, time):
-        return Callback(graph_element.build_task(None), time)
 
 class CallbackQueue:
     def __init__(self):

@@ -760,6 +760,23 @@ class ResultObject():
 '''
 taskTerminater = ResultObject(0, CharacterModifier(), 0, 0, sname = 'terminator', spec = 'graph control')
 
+
+class Callback:
+    def __init__(self, task, time):
+        self.task = task
+        self.time = time
+
+    def resolve(self):
+        return self.task.do()
+
+    def adjust_by_current_time(self, current_time):
+        return Callback(self.task, self.time + current_time)
+
+    @staticmethod
+    def from_graph_element(graph_element, time):
+        return Callback(graph_element.build_task(None), time)
+
+
 class AccessibleBossState:
     NO_FLAG = 1
     LEVIATE = 2
@@ -801,6 +818,8 @@ class GraphElement():
         self._before = []   #Tasks that must be executed before this task.
         self._after = []    #Tasks that must be executed after this task.
         self._justAfter = []
+        self._registered_callback_presets = []
+
         self._result_object_cache = ResultObject(0, CharacterModifier(), 0, 0, sname = 'Graph Element', spec = 'graph control')
         self._flag = 0
         self.accessible_boss_state = AccessibleBossState.NO_FLAG
@@ -838,6 +857,8 @@ class GraphElement():
             li.append([self, el, "after"])
         for el in self._justAfter:
             li.append([self, el, "after"])
+        for _, context in self._registered_callback_presets:
+            li.append([self, context[0], "callback"])
         return li
 
     def get_explanation(self, lang = "ko"):
@@ -978,7 +999,10 @@ class GraphElement():
             return self
         else:
             return None
-        
+
+    def create_callbacks(self, **kwargs):
+        raise NotImplementedError
+
 
 class TaskHolder(GraphElement):
     '''This class only holds given task(Do not modify any property of task).
@@ -1409,6 +1433,34 @@ class AbstractSkillWrapper(GraphElement):
     def get_cooltime(self):
         return self.skill.cooltime
 
+    def onEventElapsed(self, graph_element, elapsed_time):
+        '''Invoke graph_element, after elapsed elapsed_time.
+        Delay may considered as elapsed_time.
+        '''
+        self._registered_callback_presets.append(('onEventElapsed', (graph_element, elapsed_time)))
+
+    def onEventEnd(self, graph_element):
+        '''Invoke graph_element, after event ended.
+        This only meaningful for duration-involved elements.
+        '''
+        self._registered_callback_presets.append(('onEventEnd', (graph_element,)))
+
+    def create_callbacks(self, duration=0, **kwargs):
+        '''해당 object가 _use될 때 발생시키고자 하는 콜백들을 생성합니다.
+        '''
+        callbacks = []
+        for preset_type, context in self._registered_callback_presets:
+            if preset_type == 'onEventEnd':
+                assert duration > 0, 'duration may larger than 0 to use onEventEnd callback.'
+                element = context[0]
+                callbacks.append(Callback.from_graph_element(element, duration))
+            elif preset_type == 'onEventElapsed':
+                element, elapsed_time = context
+                callbacks.append(Callback.from_graph_element(element, elapsed_time))
+        
+        return callbacks
+
+
 class BuffSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill : BuffSkill, name = None):
         self._disabledResultobjectCache = ResultObject(0, CharacterModifier(), 0, 0, sname = skill.name, spec = 'graph control')
@@ -1446,8 +1498,15 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         self.timeLeft = self.skill.remain * (1 + 0.01*skill_modifier.buff_rem * self.skill.rem)
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         delay = self.get_delay()
-        #mdf = self.get_modifier()
-        return ResultObject(delay, CharacterModifier(), 0, 0, sname = self.skill.name, spec = self.skill.spec, kwargs = {"remain" : self.skill.remain * (1+0.01*skill_modifier.buff_rem*self.skill.rem)})
+        callbacks = self.create_callbacks(duration=self.timeLeft)
+        return ResultObject(delay, 
+                            CharacterModifier(), 
+                            0, 
+                            0, 
+                            sname = self.skill.name, 
+                            spec = self.skill.spec, 
+                            kwargs = {"remain" : self.skill.remain * (1+0.01*skill_modifier.buff_rem*self.skill.rem)},
+                            callbacks=callbacks)
 
     def get_delay(self):
         return self.skill.delay
@@ -1518,8 +1577,14 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         
     def _use(self, skill_modifier):
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
-        return ResultObject(self.get_delay(), self.get_modifier(), self.get_damage(), self.get_hit(), sname = self.skill.name, spec = self.skill.spec)
-        #return delay, mdf, dmg, self.cascade
+        callbacks = self.create_callbacks()
+        return ResultObject(self.get_delay(),
+                            self.get_modifier(),
+                            self.get_damage(),
+                            self.get_hit(),
+                            sname=self.skill.name,
+                            spec=self.skill.spec,
+                            callbacks=callbacks)
 
     def get_delay(self):
         return self.skill.delay
@@ -1603,7 +1668,14 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self.tick = 0
         self.timeLeft = self.skill.remain * (1+0.01*skill_modifier.summon_rem*self.skill.rem)
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
-        return ResultObject(self.get_summon_delay(), self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+        callbacks = self.create_callbacks(duration=self.timeLeft)
+        return ResultObject(self.get_summon_delay(),
+                            self.disabledModifier,
+                            0,
+                            0,
+                            sname=self.skill.name,
+                            spec=self.skill.spec,
+                            callbacks=callbacks)
     
     def _useTick(self):
         if self.is_active() and self.tick <= 0:
