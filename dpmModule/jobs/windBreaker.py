@@ -81,7 +81,7 @@ class JobGenerator(ck.JobGenerator):
         target_pdamage = ((120 + self.combat // 2) / 100) ** (4 + additional_target) * 100 - 100 # 코강렙 20이상 가정.
         SongOfHeaven = core.DamageSkill("천공의 노래", 120, 345 + self.combat*3, 1, modifier = core.CharacterModifier(pdamage = target_pdamage + 20, boss_pdamage = 30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 0, 0)
+        CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 0, 0)
         
         Mercilesswind = core.DamageSkill("아이들 윔", 600, (500 + 20*vEhc.getV(4,4)) * 0.775, 10 * 3, cooltime = 10 * 1000, red=True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper) #도트 데미지 9초간 초당 1000%
         MercilesswindDOT = core.DotSkill("아이들 윔(도트)", 0, 1000, 500 + 20*vEhc.getV(4,4), 1, 9000, cooltime = -1).wrap(core.SummonSkillWrapper)
@@ -105,7 +105,7 @@ class JobGenerator(ck.JobGenerator):
         PinPointPierce.onAfters([PinPointPierceDebuff, TriflingWhim, StormBringer])
         MirrorBreak.onAfters([TriflingWhim, StormBringer])
         #Summon
-        CygnusPalanks.onTicks([TriflingWhim, StormBringer])
+        CygnusPhalanx.onTicks([TriflingWhim, StormBringer])
         HowlingGail.onTicks([TriflingWhim, StormBringer])
         VortexSphere.onTicks([TriflingWhim, StormBringer])
 
@@ -117,6 +117,6 @@ class JobGenerator(ck.JobGenerator):
                     PinPointPierceDebuff,
                     globalSkill.soul_contract()] +\
                 [Mercilesswind]+\
-                [GuidedArrow, HowlingGail, VortexSphere, WindWall, WindWallExceed, MercilesswindDOT, CygnusPalanks, PinPointPierce, MirrorBreak, MirrorSpider]+\
+                [GuidedArrow, HowlingGail, VortexSphere, WindWall, WindWallExceed, MercilesswindDOT, CygnusPhalanx, PinPointPierce, MirrorBreak, MirrorSpider]+\
                 []+\
                 [SongOfHeaven])
