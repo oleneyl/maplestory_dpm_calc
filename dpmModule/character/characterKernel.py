@@ -125,6 +125,7 @@ class JobGenerator():
         self.combat = 1
         self.ability_list = Ability_tool.get_ability_set(None, None, None)
         self._use_critical_reinforce = False
+        self.hyperStatPrefixed = 0
             
     def get_ruleset(self):
         return
@@ -287,7 +288,7 @@ class JobGenerator():
 
         # 하이퍼 스탯
         refMDF = get_reference_modifier(chtr)
-        hyperstat = HyperStat.get_hyper_modifier(refMDF, chtr.level, critical_reinforce = self._use_critical_reinforce)
+        hyperstat = HyperStat.get_hyper_modifier(refMDF, chtr.level, self.hyperStatPrefixed, critical_reinforce = self._use_critical_reinforce)
         log_modifier(hyperstat, "hyper stat")
         chtr.apply_modifiers([hyperstat])
         log_buffed_character(chtr)
@@ -824,17 +825,12 @@ class HyperStat():
         return (delta // 10) * (30 + (delta // 10 + 2) * 10) // 2 + (delta % 10 + 1) * (delta // 10 + 3)
     
     @staticmethod
-    def get_hyper_object(mdf, level):    
-        mdf = HyperStat.get_hyper_modifier(mdf, level)
-        return HyperStat(mdf, level)
-    
-    @staticmethod
-    def get_hyper_index(mdf, level, isIndex = True, critical_reinforce = False):
+    def get_hyper_index(mdf, level, prefixed, isIndex = True, critical_reinforce = False):
         '''get_hyper_index(mdf, level) : return enhancement index for matching enhancement type.
         '''
         hyper_size = 8
         idxList = [0 for i in range(hyper_size)]
-        point_left = HyperStat.get_point(level)
+        point_left = HyperStat.get_point(level) - prefixed
         mdfSum = ExMDF()
         while True:
             not_enough = True
@@ -874,8 +870,8 @@ class HyperStat():
             return mdfSum
     
     @staticmethod
-    def get_hyper_modifier(mdf, level, critical_reinforce = False):
-        return HyperStat.get_hyper_index(mdf, level, isIndex = False, critical_reinforce = critical_reinforce)
+    def get_hyper_modifier(mdf, level, prefixed, critical_reinforce = False):
+        return HyperStat.get_hyper_index(mdf, level, prefixed, isIndex = False, critical_reinforce = critical_reinforce)
 
 class Doping():
     dopingListAtt = {"길드의 축복" : ExMDF(att = 20),
@@ -916,10 +912,3 @@ class Personality():
     @staticmethod
     def get_personality(avg_level):
         return ExMDF(armor_ignore = (avg_level // 5) * 0.5, buff_rem = (avg_level // 10) * 1, prop_ignore = 0.5 * (avg_level // 10))
-
-
-def testonly():            
-    test = ExMDF(armor_ignore = 80, pdamage = 100, stat_main = 1000, att = 100)
-    for i in range(140, 220, 5):
-        print("level" + str(i))
-        print(HyperStat.get_hyper_index(test, i))

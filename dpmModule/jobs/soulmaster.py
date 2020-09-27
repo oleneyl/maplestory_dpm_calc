@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, InactiveRule
+from ..execution.rules import ConditionRule, RuleSet, InactiveRule
 from . import globalSkill
 from .jobclass import cygnus
 from .jobbranch import warriors
@@ -20,7 +20,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(InactiveRule('엘리시온', '셀레스티얼 댄스'), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('엘리시온', '셀레스티얼 댄스', lambda sk: sk.is_not_active() and sk.is_cooltime_left(30000, 1)), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('셀레스티얼 댄스', '엘리시온'), RuleSet.BASE)
         return ruleset
 
@@ -83,12 +83,14 @@ class JobGenerator(ck.JobGenerator):
         
         #엘리시온 38타 / 3타
         Elision = core.BuffSkill("엘리시온", 750, 30 * 1000, cooltime = 180 * 1000, red=True).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)    #시전딜레이 750ms
-        ElisionBreak = core.SummonSkill("엘리시온(균열)", 0, 10000, 2600 + 104*vEhc.getV(1,1), 12, 30000, cooltime=-1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)    #3회 발동
-        ElisionStyx = core.DamageSkill("크로스 더 스틱스(엘리시온)", 30 * 1000 / 40, 1450, 5 * 2, modifier = FallingMoon).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  #40회 반복
+        ElisionBreak = core.SummonSkill("엘리시온(균열)", 0, 10000, 520 + 21*vEhc.getV(1,1), 5 * 12, 30000, cooltime=-1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)    #3회 발동
+        ElisionStyx = core.DamageSkill("크로스 더 스틱스(엘리시온)", 30 * 1000 / 40, 580/2, 5 * 5 * 2, modifier = FallingMoon).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  #40회 반복
         
         #소울 이클립스
-        SoulEclipse = core.SummonSkill("소울 이클립스", 810, 1000, 450 + 18 * vEhc.getV(3,3), 7, 30 * 1000, cooltime = 180 * 1000, red=True).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
-        SolunaDivide = core.DamageSkill("솔루나 디바이드", 990, 1250 + 50 * vEhc.getV(3,3), 15 * 5, cooltime = -1).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        SoulEclipse = core.SummonSkill("소울 이클립스", 630, 1000, 450 + 18 * vEhc.getV(3,3), 7, 30 * 1000, cooltime = 180 * 1000, red=True).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
+        SolunaDivide = core.DamageSkill("솔루나 디바이드", 750, 1250 + 50 * vEhc.getV(3,3), 15 * 5, cooltime = -1).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+
+        FlareSlash = core.DamageSkill("플레어 슬래시", 0, 550+22*vEhc.getV(0,0), 7*2, cooltime=12000, modifier=FallingMoon).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
         
@@ -108,6 +110,16 @@ class JobGenerator(ck.JobGenerator):
         BasicAttackWrapper = core.DamageSkill('기본 공격', 0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
 
+        # 플레어 슬래시
+        SpeedingDance.onAfter(FlareSlash.controller(300, "reduce_cooltime"))
+        SelestialDanceAttack.onAfter(FlareSlash.controller(900, "reduce_cooltime"))
+        ElisionStyx.onAfter(FlareSlash.controller(1200, "reduce_cooltime"))
+
+        UseFlareSlash = core.OptionalElement(FlareSlash.is_available, FlareSlash, name="플레어 슬래시 쿨타임 체크")
+        SpeedingDance.onAfter(UseFlareSlash)
+        ElisionStyx.onAfter(UseFlareSlash)
+        FlareSlash.protect_from_running()
+
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2, modifier=FallingMoon, hit=6*2)
         for sk in [SpeedingDance, ElisionStyx]:
@@ -117,8 +129,8 @@ class JobGenerator(ck.JobGenerator):
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(),
                     NimbleFinger, TrueSight, SolunaTime, SoulForge, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
-                    GloryOfGuardians, AuraWeaponBuff, AuraWeapon, globalSkill.soul_contract(), Elision, ElisionBreak, SelestialDanceInit, 
+                    GloryOfGuardians, AuraWeaponBuff, AuraWeapon, globalSkill.soul_contract(), SelestialDanceInit, Elision, ElisionBreak,
                     ] +\
-                [CygnusPalanks, SolunaDivide] +\
+                [FlareSlash, CygnusPalanks, SolunaDivide] +\
                 [SelestialDanceSummon, SoulEclipse, MirrorBreak, MirrorSpider] +\
                 [BasicAttackWrapper])

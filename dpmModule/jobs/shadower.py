@@ -93,11 +93,11 @@ class JobGenerator(ck.JobGenerator):
         MesoStack = core.StackSkillWrapper(core.BuffSkill("픽파킷", 0, 9999999), 20)
         MesoExplosion = core.StackDamageSkillWrapper(core.DamageSkill("메소 익스플로전", 0, 120, 2).setV(vEhc, 2, 3, False), MesoStack, lambda skill: skill.stack)
         
-        BailOfShadow = core.SummonSkill("베일 오브 섀도우", 1080 + 120, 12000 / 14, 800, 1, 12*1000, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper) # 다크 사이트 딜레이 합산
+        BailOfShadow = core.SummonSkill("베일 오브 섀도우", 900 + 120, 12000 / 14, 800, 1, 12*1000, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper) # 다크 사이트 딜레이 합산
 
         DarkFlare = core.SummonSkill("다크 플레어", 600, 60000 / 62, 360, 1, 60*1000, cooltime = 60000, red=True).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)
     
-        Smoke = core.BuffSkill("연막탄", 1080 + 120, 30000, cooltime = (150-2*self.combat)*1000, crit_damage = 20+ceil(self.combat/3), red=True).wrap(core.BuffSkillWrapper) # 다크 사이트 딜레이 합산
+        Smoke = core.BuffSkill("연막탄", 900 + 120, 30000, cooltime = (150-2*self.combat)*1000, crit_damage = 20+ceil(self.combat/3), red=True).wrap(core.BuffSkillWrapper) # 다크 사이트 딜레이 합산
         Venom = core.DotSkill("페이탈 베놈", 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 89999 * 1000).wrap(core.SummonSkillWrapper)
         
         AdvancedDarkSight = core.BuffSkill("어드밴스드 다크 사이트", 0, 10000, cooltime = -1, pdamage_indep = 5).wrap(core.BuffSkillWrapper)
@@ -123,6 +123,9 @@ class JobGenerator(ck.JobGenerator):
 		# 1.2.324 패치 적용
         SonicBlow = core.DamageSkill("소닉 블로우", 900, 0, 0, cooltime = 80 * 1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         SonicBlowTick = core.DamageSkill("소닉 블로우(틱)", 107, 500+20*vEhc.getV(1,1), 7, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper, name = "소닉 블로우(사용)") # 7 * 15
+
+        ShadowFormation = core.SummonSkill("멸귀참영진", 0, 8000/12, 425+17*vEhc.getV(0,0), 8, 8000-1, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        ShadowFormationFinal = core.DamageSkill("멸귀참영진(우두머리)", 0, 625+25*vEhc.getV(0,0), 15*4, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         ### build graph relationships
         def isNotDarkSight():
@@ -161,6 +164,8 @@ class JobGenerator(ck.JobGenerator):
         Assasinate2_D.onAfter(UseEviscerate)
         Eviscerate.onAfter(MesoStack.stackController(7*2*0.4, name = "메소 생성"))
         Eviscerate.protect_from_running()
+
+        ShadowFormation.onAfter(ShadowFormationFinal.controller(8000))
         
         Assasinate = core.OptionalElement(AdvancedDarkSight.is_active, Assasinate1_D, Assasinate1, name = "닼사 여부")
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
@@ -173,7 +178,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, FlipTheCoin, ShadowerInstinct, ShadowPartner, Smoke, AdvancedDarkSight, EpicAdventure, UltimateDarksight, MesoStack,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), ReadyToDie, globalSkill.soul_contract()] +\
-                [Eviscerate, SonicBlow, BailOfShadow, DarkFlare, MirrorBreak, MirrorSpider]+\
+                [ShadowFormation, ShadowFormationFinal, Eviscerate, SonicBlow, BailOfShadow, DarkFlare, MirrorBreak, MirrorSpider]+\
                 [Venom]+\
                 []+\
                 [BasicAttackWrapper])

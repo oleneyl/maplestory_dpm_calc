@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.policy import TypebaseFetchingPolicy
 from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
@@ -10,30 +9,6 @@ from .jobbranch import pirates
 from .jobclass import flora
 from . import jobutils
 from math import ceil, floor
-
-class ReturningHateWrapper(core.DamageSkillWrapper):
-    def __init__(self, skill):
-        self.stack = 0
-        self._max = 12
-        super(ReturningHateWrapper, self).__init__(skill)
-        self.modifierInvariantFlag = False
-        
-    def _use(self, skill_modifier):
-        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
-        if self.cooltimeLeft > 0:
-            self.available = False
-        
-        mdf = self.skill.get_modifier()
-        stack = self.stack
-        self.stack = 0
-        return core.ResultObject(0, mdf.copy(), 320, sname = self._id, spec = 'deal', hit = 6 * stack)
-        
-    def _addStack(self, d):
-        self.stack = min(self.stack + d, self._max)
-        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
-    
-    def addStack(self, d):
-        return core.TaskHolder(core.Task(self, partial(self._addStack, d)), name = '돌아오는 증오 추가')
 
 # TODO: core쪽으로 옮길 것, .wrap()과 함께 사용 가능하게 할 것
 class MultipleDamageSkillWrapper(core.DamageSkillWrapper):
@@ -46,21 +21,21 @@ class MultipleDamageSkillWrapper(core.DamageSkillWrapper):
         
     def _use(self, skill_modifier):
         self.count += 1
-        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         self.timer = self._timeLimit
         if self.count >= self._max:
             self.count = 0
-            self.available = False 
-        return core.ResultObject(self.skill.delay, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
+        return super(MultipleDamageSkillWrapper, self)._use(skill_modifier)
 
     def spend_time(self, time):
-        self.cooltimeLeft -= time
         self.timer -= time
-        if self.cooltimeLeft < 0:
-            self.available = True
-        elif self.timer < 0:
+        if self.timer <= 0:
             self.count = 0
-            self.available = False 
+        super(MultipleDamageSkillWrapper, self).spend_time(time)
+
+    def is_available(self) -> bool:
+        if self.count > 0:
+            return True
+        return super(MultipleDamageSkillWrapper, self).is_available()
         
 
 class DeviousWrapper(core.DamageSkillWrapper):
@@ -186,6 +161,7 @@ class JobGenerator(ck.JobGenerator):
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         연계 시 플레인 차지드라이브 540 → 240ms, 끝나지 않는 흉몽 540 → 180ms
+        각각 +30ms 적용해 270ms, 210ms로 적용됨
 
         스펠 불릿 수동 사용
         
@@ -243,7 +219,12 @@ class JobGenerator(ck.JobGenerator):
         
         ##### 스펙터 상태일 때 #####
         UpcomingDeath = core.DamageSkill("다가오는 죽음", 0, 450 + 3*passive_level, 2).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        ReturningHate = ReturningHateWrapper(core.DamageSkill("돌아오는 증오", 0, 320 + 3*passive_level, 6, cooltime=12000, red=True).setV(vEhc, 0, 2, True))
+        ReturningHateStack = core.StackSkillWrapper(core.BuffSkill("돌아오는 증오(스택)", 0, 99999999), 12)
+        ReturningHate = core.StackDamageSkillWrapper(
+            core.DamageSkill("돌아오는 증오", 0, 320 + 3*passive_level, 6, cooltime=12000, red=True).setV(vEhc, 0, 2, True),
+            ReturningHateStack,
+            lambda sk: sk.stack
+        )
 
         EndlessBadDream = core.DamageSkill("끝나지 않는 흉몽", 540, 445 + 3*passive_level, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
         EndlessBadDream_Link = core.DamageSkill("끝나지 않는 흉몽(연계)", 180+LINK_DELAY, 445 + 3*passive_level, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
@@ -275,8 +256,8 @@ class JobGenerator(ck.JobGenerator):
         
         EndlessPain = core.DamageSkill("끝없는 고통", 360, 0, 0, cooltime = 3030 + 60 * 1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   # onTick==> 다가오는 죽음
         EndlessPainTick = core.DamageSkill("끝없는 고통(틱)", 180, 300, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #15타
-        EndlessPainEnd = core.DamageSkill("끝없는 고통(종결)", 1200, 500*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 딜레이 : 1200ms 또는 1050ms(이후 연계 시). 일단 1200으로.
-        EndlessPainEnd_Link = core.DamageSkill("끝없는 고통(종결,연계)", 1050, 500*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        EndlessPainEnd = core.DamageSkill("끝없는 고통(종결)", 1200, 100*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 딜레이 : 1200ms 또는 1050ms(이후 연계 시). 일단 1200으로.
+        EndlessPainEnd_Link = core.DamageSkill("끝없는 고통(종결,연계)", 1050, 100*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         EndlessPainBuff = core.BuffSkill("끝없는 고통(버프)", 0, 3 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper) # 정신력 소모되지 않음
         
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60*1000, pdamage = 10, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
@@ -304,6 +285,12 @@ class JobGenerator(ck.JobGenerator):
         DeviousNightmare = core.DamageSkill("새어 나오는 악몽", 0, 500 + 20*vEhc.getV(2,2), 9, cooltime = 10 * 1000, red=True).isV(vEhc,2,2).wrap(DeviousWrapper)
         DeviousDream = core.DamageSkill("새어 나오는 흉몽", 0, 600 + 24*vEhc.getV(2,2), 9, cooltime = 10 * 1000, red=True).wrap(DeviousWrapper)
 
+        ForeverHungryBeastInit = core.DamageSkill("영원히 굶주리는 짐승(개시)", 540, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        ForeverHungryBeastTrigger = core.DamageSkill("영원히 굶주리는 짐승(등장)", 0, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        ForeverHungryBeast = core.DamageSkill("영원히 굶주리는 짐승", 0, 400+16*vEhc.getV(0,0), 12, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 20회 반복
+
+        ### Skill Wrapper ###
+
         SpectorState = SpectorWrapper(MemoryOfSourceBuff, EndlessPainBuff)
         
         # 기본 연결 설정(스펙터)
@@ -315,7 +302,8 @@ class JobGenerator(ck.JobGenerator):
   
         # 보스 1:1 시 공격 1회 당 다가오는 죽음 1개 생성, 인피니티 스펠 상태 시 강화레벨에 따라 총 3 ~ 4개 생성
         UpcomingDeath_Connected = core.OptionalElement(InfinitySpell.is_active, core.RepeatElement(UpcomingDeath, 3 + vEhc.getV(0,0) // 25), UpcomingDeath)
-        UpcomingDeath.onAfter(ReturningHate.addStack(0.2))
+        UpcomingDeath.onAfter(ReturningHateStack.stackController(0.2))
+        ReturningHate.onJustAfter(ReturningHateStack.stackController(-15))
         
 
         # 기본 연결 설정(레프)
@@ -349,7 +337,7 @@ class JobGenerator(ck.JobGenerator):
         RaptRestriction.onAfter(RaptRestrictionEnd.controller(9000))
         
         EndlessPainRepeat = core.RepeatElement(EndlessPainTick, 15) # TODO: 사용 직후 게이지 1틱 감소
-        EndlessPainRepeat.onAfter(EndlessPainEnd_Link)
+        EndlessPainRepeat.onAfter(core.RepeatElement(EndlessPainEnd_Link, 5))
         EndlessPain.onConstraint(core.ConstraintElement("게이지 150 이상", SpectorState, partial(SpectorState.judge, 150, 1)))
         EndlessPain.onAfter(SpectorState.onoffController(True))
         EndlessPain.onAfter(EndlessPainBuff)
@@ -364,7 +352,7 @@ class JobGenerator(ck.JobGenerator):
         for skill in [EndlessBadDream, EndlessBadDream_Link, DeviousDream,
             UnfulfilledHunger, UncontrollableChaos, 
             UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, TenaciousInstinct_Link,
-            CrawlingFear_Link, EndlessPainTick, EndlessPainEnd, EndlessPainEnd_Link]:
+            CrawlingFear_Link, EndlessPainTick, EndlessPainEnd, EndlessPainEnd_Link, ForeverHungryBeast]:
             skill.onAfter(UpcomingDeath_Connected)
         MagicCircuitFullDriveStorm.onAfter(core.OptionalElement(SpectorState.is_active, UpcomingDeath_Connected))
         
@@ -385,6 +373,10 @@ class JobGenerator(ck.JobGenerator):
                             ([CrawlingFear_Link, CrawlingFear], "공포")]:
             for skill in skills:
                 skill.onAfter(DeviousDream.reduceCooltime(1000, _id))
+
+        # 5차 - 영원히 굶주리는 짐승
+        ForeverHungryBeastInit.onAfter(ForeverHungryBeastTrigger.controller(9000)) # 9초 후 등장 TODO: 기본 9600+1740ms에 스펙터 스킬 적중시마다 시간 줄어들도록 할것
+        ForeverHungryBeastTrigger.onAfter(core.RepeatElement(ForeverHungryBeast, 20))\
         
         # 기본 공격 : 540ms 중립스킬
         PlainAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
@@ -450,7 +442,7 @@ class JobGenerator(ck.JobGenerator):
                     InfinitySpell, FloraGoddessBless,
                     globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract()
                     ] +\
-                [EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, 
+                [ForeverHungryBeastInit, ForeverHungryBeastTrigger, EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, 
                     CrawlingFear_Link, MemoryOfSource, EndlessPain, RaptRestriction, ReturningHate, Impulse_Connected,
                     UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, 
                     AbyssSpell, RaptRestrictionSummon, RaptRestrictionEnd, DeviousNightmare, DeviousDream, MirrorBreak, MirrorSpider

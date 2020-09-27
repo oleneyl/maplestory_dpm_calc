@@ -9,10 +9,6 @@ from .jobclass import heroes
 from .jobbranch import thieves
 from math import ceil
 
-# TODO : [마크 오브 팬텀] : 괴도의 증표를 1개 모으는데 필요한 얼티밋 드라이브 적중 수가 5회에서 7회로 증가됩니다. 템페스트 오브 카드로도 괴도의 증표를 모을 수 있게 됩니다. 얼티밋 드라이브와 같은 횟수를 공격해야 괴도의 증표를 획득 할 수 있습니다.
-######   Passive Skill   ######
-
-
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -84,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
         MileAiguilles = core.DamageSkill("얼티밋 드라이브", 150, 125 + self.combat, 3, modifier = core.CharacterModifier(pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         CarteNoir = core.DamageSkill("느와르 카르트", 0, 270, min(chtr.get_modifier().crit/100 + 0.1, 1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        CarteNoir_ = core.DamageSkill("느와르 카르트(저지먼트)", 0, 270, 10).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        Judgement = core.DamageSkill("느와르 카르트(저지먼트)", 0, 270, 10).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
         PrieredAria = core.BuffSkill("프레이 오브 아리아", 0, (240+7*self.combat)*1000, pdamage = 30+self.combat, armor_ignore = 30+self.combat).wrap(core.BuffSkillWrapper)
 
@@ -106,19 +102,21 @@ class JobGenerator(ck.JobGenerator):
         JokerBuff = core.BuffSkill("조커(버프)", 1230, 30000, cooltime = -1, pdamage_indep = (1 + (vEhc.getV(4,4) - 1) // 5) * 2 / 5).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         
         BlackJack = core.SummonSkill("블랙잭", 570, 250, 400+16*vEhc.getV(1,1), 1, 5000-1, cooltime = 15000, red=True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
-        BlackJackFinal = core.DamageSkill("블랙잭(최종)", 0, 1200+48*vEhc.getV(1,1), 6, cooltime = -1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        
-        MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 690, 600+24*vEhc.getV(2,2), 3 * 7, cooltime = 30000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        MarkOfPhantomEnd = core.DamageSkill("마크 오브 팬텀(최종)", 0, 1200+48*vEhc.getV(2,2), 12).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        BlackJackFinal = core.DamageSkill("블랙잭(최종)", 0, 600+24*vEhc.getV(1,1), 12, cooltime = -1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+
+        MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 690, 300+12*vEhc.getV(2,2), 6 * 7, cooltime = 30000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        MarkOfPhantomEnd = core.DamageSkill("마크 오브 팬텀(최종)", 0, 485+19*vEhc.getV(2,2), 15).isV(vEhc,2,2).wrap(core.DamageSkillWrapper) # 2회 반복
+
+        LiftBreak = core.DamageSkill("리프트 브레이크", 750, 400+16*vEhc.getV(0,0), 7*7, cooltime=30000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         #### 그래프 빌드
         
+        FinalCut.onAfter(CarteNoir)
         FinalCut.onAfter(FinalCutBuff.controller(1))
         
         CardStack = core.StackSkillWrapper(core.BuffSkill("카드 스택", 0, 99999999), 40, name = "느와르 카르트 스택")
         
         AddCard = CardStack.stackController(1, name = "스택 1 증가")
-        Judgement = CarteNoir_
         Judgement.onAfter(CardStack.stackController(-9999, name = "스택 초기화"))
         
         FullStack = core.OptionalElement(partial(CardStack.judge,40, 1), Judgement, name = "풀스택시")
@@ -142,8 +140,13 @@ class JobGenerator(ck.JobGenerator):
         
         BlackJack.onTick(CarteNoir)
         BlackJack.onAfter(BlackJackFinal.controller(5000))
+        BlackJackFinal.onAfter(CarteNoir)
         
-        MarkOfPhantom.onAfter(MarkOfPhantomEnd)
+        MarkOfPhantom.onAfter(core.RepeatElement(CarteNoir, 7))
+        MarkOfPhantom.onAfter(core.RepeatElement(MarkOfPhantomEnd, 2))
+        MarkOfPhantomEnd.onAfter(CarteNoir)
+
+        LiftBreak.onAfter(core.RepeatElement(CarteNoir, 7))
 
         MileAiguillesInit.protect_from_running()
         
@@ -154,7 +157,7 @@ class JobGenerator(ck.JobGenerator):
                     TalentOfPhantomII, TalentOfPhantomIII, FinalCutBuff, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), BoolsEye,
                     JudgementBuff, Booster, PrieredAria, HerosOath, ReadyToDie, JokerBuff,
                     globalSkill.soul_contract()] +\
-                [FinalCut, JokerInit, MarkOfPhantom, BlackJackFinal] +\
+                [FinalCut, JokerInit, MarkOfPhantom, LiftBreak, BlackJackFinal] +\
                 [BlackJack, MirrorBreak, MirrorSpider] +\
                 [MileAiguillesInit] +\
                 [BasicAttackWrapper])

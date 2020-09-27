@@ -1213,6 +1213,11 @@ class AbstractSkillWrapper(GraphElement):
         '''
         self.constraint.append(constraint)
         
+    def set_disabled(self):
+        '''주어진 요소를 실행 불가 상태로 만듭니다.
+        '''
+        raise NotImplementedError
+        
     def set_disabled_and_time_left(self, time):
         '''주어진 요소를 실행 불가 상태로 만들고, ``time`` 이후에 실행가능하도록 합니다.
 
@@ -1262,7 +1267,10 @@ class AbstractSkillWrapper(GraphElement):
             실행될 경우, 해당 ``GraphElement`` 의 잔여 시간을 제어하는 ``TaskHolder`` 
 
         '''
-        if type_ == 'set_disabled_and_time_left':
+        if type_ == 'set_disabled':
+            _name = ("사용 종료")
+            task = Task(self, self.set_disabled)
+        elif type_ == 'set_disabled_and_time_left':
             if time == -1:
                 _name = ("사용 불가")
             else:
@@ -1416,6 +1424,10 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         mdf = self.get_modifier()
         return ResultObject(0, mdf, 0, 0, sname = self.skill.name, spec = self.skill.spec, kwargs = {"remain" : time})
         
+    def set_disabled(self):
+        self.timeLeft = 0
+        return self._disabledResultobjectCache
+        
     def set_disabled_and_time_left(self, time):
         self.timeLeft = 0
         self.cooltimeLeft = time
@@ -1558,6 +1570,11 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         for sk, _ in self._runtime_modifier_list:
             li.append([self, sk, "modifier"])
         return li
+        
+    def set_disabled(self):
+        self.timeLeft = 0
+        self.tick = 0
+        return ResultObject(0, CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
         
     def set_disabled_and_time_left(self, time):
         self.cooltimeLeft = time

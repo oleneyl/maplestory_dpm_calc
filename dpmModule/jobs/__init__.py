@@ -38,12 +38,13 @@ from . import ark
 from . import blaster
 from . import aran
 from . import adele
+from . import hoyoung
 
 __all__ = ["archmageFb", "archmageTc", "hero", "paladin", "sniper", "windbreaker", "soulmaster", 
             "flamewizard", "mercedes", "luminous", "bishop", "battlemage", "mechanic", "demonslayer", "darknight", "wildhunter",
             "shadower", "cannonshooter", "michael", "dualblade", "kaiser", "captain", "angelicbuster", "phantom", "nightlord",
             "eunwol", "viper", "nightwalker", "striker","evan", "bowmaster", "zero", "kinesis", "ilium", "pathfinder", "cadena",
-            "ark", "blaster", "aran", 'adele']
+            "ark", "blaster", "aran", "adele", "hoyoung"]
 
 jobMap = {"아크메이지불/독" : archmageFb,
         "아크메이지썬/콜" : archmageTc,
@@ -84,7 +85,8 @@ jobMap = {"아크메이지불/독" : archmageFb,
         "아크" : ark,
         "블래스터" : blaster,
         "아란" : aran,
-        '아델' : adele
+        "아델" : adele,
+        "호영" : hoyoung
 }
 
 jobList = {"archmageFb" : "아크메이지불/독",
@@ -126,7 +128,8 @@ jobList = {"archmageFb" : "아크메이지불/독",
         "ark" : "아크",
         "blaster" : "블래스터",
         "aran" : "아란",
-        "adele" : "아델"
+        "adele" : "아델",
+        "hoyoung" : "호영"
 }
 
 weaponList = {"아크메이지불/독" : "스태프",
@@ -168,14 +171,15 @@ weaponList = {"아크메이지불/독" : "스태프",
         "아크" : "너클",
         "블래스터" : "리볼버",
         "아란" : "폴암",
-        "아델" : "튜너"
+        "아델" : "튜너",
+        "호영" : "부채"
 }
 
 jobListOrder = ["archmageFb", "archmageTc", "hero", "paladin", "sniper", "windbreaker", "soulmaster", 
             "flamewizard", "mercedes", "luminous", "bishop", "battlemage", "mechanic", "demonslayer", "darknight", "wildhunter",
             "shadower", "cannonshooter", "michael", "dualblade", "kaiser", "captain", "angelicbuster", "phantom", "nightlord",
             "eunwol", "viper", "nightwalker", "striker", "evan", "bowmaster", "zero", "kinesis", "ilium", "pathfinder", "cadena", "ark",
-            "blaster", "aran", "adele"]
+            "blaster", "aran", "adele", "hoyoung"]
 
 def getKoJobName(enJob):
         if enJob in jobList:

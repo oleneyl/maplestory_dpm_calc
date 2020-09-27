@@ -74,16 +74,16 @@ class JobGenerator(ck.JobGenerator):
         SoulAttack = core.BuffSkill("소울 어택", 0, 10000, cooltime = -1, pdamage_indep = 25, crit = 20).wrap(core.BuffSkillWrapper)
         
         # Damage skills
-        LoyalGuard_1 = core.DamageSkill("로얄 가드(1)", 630, 150+chtr.level*3, 2, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        LoyalGuard_2 = core.DamageSkill("로얄 가드(2)", 630, 200+chtr.level*3, 3, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        LoyalGuard_3 = core.DamageSkill("로얄 가드(3)", 630, 250+chtr.level*3, 4, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        LoyalGuard_4 = core.DamageSkill("로얄 가드(4)", 630, 250+chtr.level*3, 5, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        LoyalGuard_5 = core.DamageSkill("로얄 가드(5)", 630, 250+chtr.level*3, 7, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        LoyalGuard_1 = core.DamageSkill("로얄 가드(1)", 630, 275+chtr.level, 4, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        LoyalGuard_2 = core.DamageSkill("로얄 가드(2)", 630, 340+chtr.level, 5, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        LoyalGuard_3 = core.DamageSkill("로얄 가드(3)", 630, 440+chtr.level, 6, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        LoyalGuard_4 = core.DamageSkill("로얄 가드(4)", 630, 480+chtr.level, 7, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        LoyalGuard_5 = core.DamageSkill("로얄 가드(5)", 630, 565+chtr.level, 9, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         LoyalGuardBuff = core.BuffSkill("로얄 가드", 0, 12000, att = 45).wrap(core.BuffSkillWrapper)  #10->15->20->30->45
         
         SoulAssult = core.DamageSkill("소울 어썰트", 600, 210+3*self.combat, 11+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   #암흑 20%
         
-        FinalAttack = core.DamageSkill("파이널 어택", 0, 95+passive_level, 4*0.01*(75+passive_level)).setV(vEhc, 3, 4, False).wrap(core.DamageSkillWrapper)
+        FinalAttack = core.DamageSkill("파이널 어택", 0, 95+passive_level, 4*0.01*(75+passive_level)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
         ShiningCross = core.DamageSkill("샤이닝 크로스", 600, 440+3*self.combat, 4+1, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #암흑 30% 10초
         ShiningCrossInstall = core.SummonSkill("샤이닝 크로스-인스톨", 0, 1200, 75, 4+1, 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #100% 암흑 5초
@@ -103,12 +103,19 @@ class JobGenerator(ck.JobGenerator):
     
         SwordOfSoullight = core.BuffSkill("소드 오브 소울 라이트", 810, 30000, cooltime = 180*1000, red = True, patt = 15 + vEhc.getV(1,1)//2, crit = 100, armor_ignore = 100).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         SoullightSlash = core.DamageSkill("소울 라이트 슬래시", 630, 400+16*vEhc.getV(1,1), 12).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+
+        LightOfCourage = core.BuffSkill("라이트 오브 커리지", 750, 25000, cooltime=90*1000, red=True, pdamage=10+vEhc.getV(0,0)//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        LightOfCourageSummon = core.SummonSkill("라이트 오브 커리지(빛의 검)", 0, 2400, 325+13*vEhc.getV(0,0), 5, 25000, cooltime=-1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        LightOfCourageAttack = core.DamageSkill("라이트 오브 커리지(용기의 빛)", 0, 175+7*vEhc.getV(0,0), 2, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        LightOfCourageFinal = core.DamageSkill("라이트 오브 커리지(용기의 빛)(종료)", 360, 375+15*vEhc.getV(0,0), 10*6, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ##### Build Graph
         
         # 기본 공격
         BasicAttack = core.OptionalElement(SwordOfSoullight.is_active, SoullightSlash, SoulAssult)
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
+
+        FinalAttack.onAfter(core.OptionalElement(LightOfCourage.is_active, LightOfCourageAttack)) # 용기의 빛과 파이널 어택 발동시키는 스킬 목록이 같다고 가정함
         
         SoullightSlash.onAfter(FinalAttack)
         SoulAssult.onAfter(FinalAttack)
@@ -128,7 +135,10 @@ class JobGenerator(ck.JobGenerator):
         ShiningCross.onAfter(ShiningCrossInstall)
         ShiningCross.onAfter(FinalAttack)
         ShiningCrossInstall.onTick(SoulAttack.controller(5000,"set_enabled_and_time_left"))
-        
+
+        # 라이트 오브 커리지
+        LightOfCourage.onAfter(LightOfCourageSummon)
+        LightOfCourage.onAfter(LightOfCourageFinal.controller(25000))
 
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
@@ -139,7 +149,7 @@ class JobGenerator(ck.JobGenerator):
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     GuardOfLight, LoyalGuardBuff, SoulAttack, Booster, Invigorate, SacredCube, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
-                    DeadlyChargeBuff, QueenOfTomorrow, AuraWeaponBuff, AuraWeapon, RoIias, SwordOfSoullight,
+                    DeadlyChargeBuff, QueenOfTomorrow, AuraWeaponBuff, AuraWeapon, RoIias, SwordOfSoullight, LightOfCourage, LightOfCourageSummon, LightOfCourageFinal,
                     globalSkill.soul_contract()] +\
                 [CygnusPalanks, LoyalGuard_5, ShiningCross, DeadlyCharge, ClauSolis, MirrorBreak, MirrorSpider] +\
                 [ShiningCrossInstall, ClauSolisSummon] +\

@@ -194,9 +194,7 @@ class JobGenerator(ck.JobGenerator):
         # 데우스 패시브 리요 뎀증은 컴뱃 미적용
         CrystalSkill_Deus = core.SummonSkill("크리스탈 스킬:데우스", 30, 4800, 500+4*self.combat, 5+1, (30+self.combat//3)*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)   #90, 7타
         CrystalSkill_Deus_Satelite = RiyoWrapper(core.SummonSkill("크리스탈 스킬:데우스(위성)", 0, 510, 240, 1+1, 30*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False))
-        
-        LonginusZone = core.DamageSkill("롱기누스 존", 690, 1500, 12, cooltime = 180*1000)    #안씀
-        
+                
         BlessMark = core.BuffSkill("블레스 마크", 0, 99999999, att = 46).wrap(core.BuffSkillWrapper)
         CurseMark = core.BuffSkill("커스 마크", 0, 99999999, armor_ignore = 20).wrap(core.BuffSkillWrapper)
         CurseMarkFinalAttack = core.DamageSkill("커스 마크(추가타)", 0, 200, 1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
@@ -206,16 +204,15 @@ class JobGenerator(ck.JobGenerator):
         
         GloryWingUse = core.BuffSkill("글로리 윙(진입)", 30, 20000, pdamage_indep = 25, pdamage = (vEhc.getV(1,0) + 5) * 2, boss_pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper) # 소오크 2개에 항상 맞춰 사용
         
-        GloryWing_MortalWingbit = core.DamageSkill("글로리 윙:모탈 윙비트", 630, 2000 + 40*self.combat, 8, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #1회
+        GloryWing_MortalWingbit = core.DamageSkill("글로리 윙:모탈 윙비트", 630, 1070 + 20*self.combat, 15, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #1회
         
         GloryWing_Craft_Javelin = core.DamageSkill("글로리 윙:자벨린", 420, 465 + 3*self.combat, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = 40)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         GloryWing_Craft_Javelin_Fragment = core.DamageSkill("글로리 윙:자벨린(매직 미사일)", 0, 250 + 5*self.combat, 3*3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         #5차 스킬들
-        OverloadMana = magicians.OverloadManaWrapper(vEhc, 0, 3)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att("건틀렛"))
-        GramHolder = GramHolderWrapper(core.SummonSkill("그람홀더", 0, 3000, 1000+25*vEhc.getV(4,3), 6, 40000, cooltime = 180000).isV(vEhc,4,3)) # 클라 딜레이 없음
+        GramHolder = GramHolderWrapper(core.SummonSkill("그람홀더", 210, 3000, 1000+25*vEhc.getV(4,3), 6, 40000, cooltime = 180000).isV(vEhc,4,3))
         
         #MagicCircuitFullDrive = core.BuffSkill("매직 서킷 풀드라이브", 720, (30+vEhc.getV(3,2))*1000, pdamage = (20 + vEhc.getV(3,2)), cooltime = 200*1000).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
         #MagicCircuitFullDriveStorm = core.SummonSkill("매직 서킷 풀드라이브(마력 폭풍)", 0, 4000, 500+20*vEhc.getV(3,2), 3, (30+vEhc.getV(3,2))*1000, cooltime = -1).wrap(core.SummonSkillWrapper)
@@ -235,6 +232,10 @@ class JobGenerator(ck.JobGenerator):
         SoulOfCrystal_Reaction_Domination = core.DamageSkill("리액션:도미네이션(소오크)", 0, 550 * 0.01 * (50 + vEhc.getV(1,0)), 2*2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         SoulOfCrystal_Reaction_Destruction = core.DamageSkill("리액션:디스트럭션(소오크)", 0, 550 * 0.01 * (50 + vEhc.getV(1,0)), 4*2*2, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         SoulOfCrystal_Reaction_Spectrum = core.DamageSkill("리액션:스펙트럼(소오크)", 0, 1000+40*vEhc.getV(2,1), 5*2, modifier = core.CharacterModifier(boss_pdamage = 20)).wrap(core.DamageSkillWrapper)
+
+        CrystalGate = core.BuffSkill("크리스탈 게이트", 420*2, (130+vEhc.getV(0,0))*1000, cooltime=180*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        CrystalGateBuff = core.BuffSkill("크리스탈 게이트(버프)", 0, 25000, att=5+2*vEhc.getV(0,0)).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        CrystalGateAttack = core.DamageSkill("크리스탈 게이트(폭격)", 0, 450+18*vEhc.getV(0,0), 5, cooltime=1500).wrap(core.DamageSkillWrapper)
         
         #스킬간 연결
 
@@ -269,6 +270,14 @@ class JobGenerator(ck.JobGenerator):
         CrystalSkill_Deus.onAfter(Machina.controller(30000, type_="set_disabled_and_time_left"))
         
         #MagicCircuitFullDrive.onAfter(MagicCircuitFullDriveStorm)
+
+        CrystalGate.onAfter(CrystalGateBuff)
+        CrystalGateBuff.onConstraint(core.ConstraintElement("크리스탈 게이트 ON", CrystalGate, CrystalGate.is_active))
+        UseCrystalGateAttack = core.OptionalElement(lambda: CrystalGate.is_active() and CrystalGateAttack.is_available(), CrystalGateAttack, name="폭격 조건 체크")
+        for sk in [Craft_Javelin, Craft_Javelin_AfterOrb, Craft_Orb, Craft_Longinus,
+                    GloryWing_Craft_Javelin, GloryWing_MortalWingbit, CrystalSkill_MortalSwing, CrystalIgnition]:
+            sk.onAfter(UseCrystalGateAttack)
+        CrystalGateAttack.protect_from_running()
         
         #자벨린 이후 바로 오브를 시전합니다.
         Craft_Javelin.onAfter(Craft_Orb)
@@ -308,14 +317,23 @@ class JobGenerator(ck.JobGenerator):
         Reaction_Destruction.protect_from_running()
         Reaction_Spectrum.protect_from_running()
 
+        # Overload Mana
+        overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 0, 3)
+        for sk in [Riyo, Machina, CrystalSkill_MortalSwing, GloryWing_MortalWingbit, CrystalSkill_Deus, CrystalSkill_Deus_Satelite,
+                    Craft_Javelin, Craft_Javelin_AfterOrb, Craft_Javelin_Fragment, Craft_Orb, Craft_Longinus, Reaction_Destruction,
+                    SoulOfCrystal_Reaction_Destruction, Reaction_Domination, SoulOfCrystal_Reaction_Domination,
+                    CrystalIgnition, Reaction_Spectrum, SoulOfCrystal_Reaction_Spectrum, GramHolder, GloryWing_Craft_Javelin]:
+            overload_mana_builder.add_skill(sk)
+        OverloadMana = overload_mana_builder.get_buff()
+
         return(BasicAttackWrapper,
                 [SoulOfCrystalPassive, globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, FastCharge, WraithOfGod, MagicCircuitFullDrive, FloraGoddessBless, SoulOfCrystal,
                     Craft_Javelin_EnhanceBuff, CrystalCharge, GloryWingUse,
-                    OverloadMana, BlessMark, CurseMark,
+                    OverloadMana, BlessMark, CurseMark, CrystalGate, CrystalGateBuff,
                     globalSkill.soul_contract()] +\
                 [CrystalSkill_MortalSwing, GloryWing_MortalWingbit, CrystalIgnitionInit, MirrorBreak, MirrorSpider] +\
                 [Riyo, Machina, CrystalSkill_Deus, CrystalSkill_Deus_Satelite,
-                    GramHolder, MagicCircuitFullDriveStorm] +\
+                    GramHolder, MagicCircuitFullDriveStorm, CrystalGateAttack] +\
                 [Reaction_Domination, Reaction_Destruction, Reaction_Spectrum] +\
                 [BasicAttackWrapper])

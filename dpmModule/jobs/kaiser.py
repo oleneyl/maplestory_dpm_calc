@@ -224,7 +224,7 @@ class JobGenerator(ck.JobGenerator):
         InfernalBreath = core.DamageSkill("인퍼널 브레스", 780, 300 + 4*self.combat, 8, cooltime = (20-self.combat)*1000, red=True).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
         InfernalBreath_Tile = core.SummonSkill("인퍼널 브레스(바닥)", 0, 1200, 200 + 3*self.combat, 2, 20000, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
 
-        Petrified = core.SummonSkill("페트리파이드", 450, 3030, 400, 1, 60000).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
+        Petrified = core.SummonSkill("페트리파이드", 450, 3030, 400, 1, 60000).setV(vEhc, 5, 3, False).wrap(core.SummonSkillWrapper)
     
         # 하이퍼
         MajestyOfKaiser = core.BuffSkill("마제스티 오브 카이저", 900, 30000, att = 30, cooltime = 90000).wrap(core.BuffSkillWrapper)
@@ -245,6 +245,10 @@ class JobGenerator(ck.JobGenerator):
         
         DrakeSlasher = DrakeSlasherWrapper(core.DamageSkill("드라코 슬래셔", 540, 500+5*vEhc.getV(0,0), 10+1, cooltime = (7-(vEhc.getV(0,0)//15))*1000, red=True, modifier = core.CharacterModifier(crit=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0), FinalFiguration)
         DrakeSlasher_Projectile = DrakeSlasherProjectileWrapper(core.DamageSkill("드라코 슬래셔(발사)", 0, 500+5*vEhc.getV(0,0), 6+1, cooltime = -1, modifier = core.CharacterModifier(crit=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0), FinalFiguration)
+
+        DragonBlaze = core.SummonSkill("드래곤 블레이즈", 900, 240, 250+10*vEhc.getV(0,0), 6, 20000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        DragonBlazeAura = core.DamageSkill("드래곤 블레이즈(불의 기운)", 0, 375+15*vEhc.getV(0,0), 5, cooltime=3600).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DragonBlazeFireball = core.DamageSkill("드래곤 블레이즈(화염구)", 0, 350+14*vEhc.getV(0,0), 3*6, cooltime=10000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
         
@@ -299,6 +303,15 @@ class JobGenerator(ck.JobGenerator):
         
         # 조상님
         GuardianOfNova_1.onAfters([GuardianOfNova_2, GuardianOfNova_3])
+
+        # 드래곤 블레이즈
+        UseDragonBlazeAura = core.OptionalElement(lambda: DragonBlaze.is_active() and DragonBlazeAura.is_available(), DragonBlazeAura)
+        UseDragonBlazeFireball = core.OptionalElement(lambda: DragonBlaze.is_not_active() and DragonBlazeFireball.is_available(), DragonBlazeFireball)
+        for sk in [GigaSlasher, DrakeSlasher, DrakeSlasher_Projectile]:
+            sk.onAfter(UseDragonBlazeAura)
+            sk.onAfter(UseDragonBlazeFireball)
+        DragonBlazeAura.protect_from_running()
+        DragonBlazeFireball.protect_from_running()
         
         # 스택량 계산
         for sk, incr in [[DrakeSlasher, 5],
@@ -319,5 +332,6 @@ class JobGenerator(ck.JobGenerator):
                     SoulContract] +\
                 [AdvancedWillOfSword_Summon, WillOfSwordStrike, AdvancedWillOfSword] +\
                 [Wingbit_1, Wingbit_2, GuardianOfNova_1, GuardianOfNova_2, GuardianOfNova_3] +\
-                [DrakeSlasher, InfernalBreath, InfernalBreath_Tile, Petrified, Prominence, Phanteon, MirrorBreak, MirrorSpider] +\
+                [DragonBlaze, DragonBlazeAura, DragonBlazeFireball, DrakeSlasher,
+                    InfernalBreath, InfernalBreath_Tile, Petrified, Prominence, Phanteon, MirrorBreak, MirrorSpider] +\
                 [BasicAttack])

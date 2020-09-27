@@ -29,29 +29,26 @@ class LuminousStateController(core.BuffSkillWrapper):
         self.remain -= time
         #이퀄이 끝나면, 다음 상태로 진입합니다.
         if self.remain < 0 and self.state == LuminousStateController.EQUAL:
-            self.state = 1 - self.currentState
+            self.state = self.currentState
             self.stack = LuminousStateController.STACK
 
     def _modify_stack(self, stack):
-        if self.state == self.EQUAL:
-            return self._result_object_cache
-        
         self.stack -= stack * 1.05 # 다크라이트 마스터리 1.05배
         
         if self.stack <= 0:
             self.stack = LuminousStateController.STACK
-            self.currentState = self.state
+            self.currentState = 1 - self.currentState
             self.state = LuminousStateController.EQUAL
-            self.remain = 17 * (1 + 0.01* self.buff_rem) * 1000  #오더스?
+            self.remain = 17 * (1 + 0.01* self.buff_rem) * 1000
             self.equalCallback()
             
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, '루미너스 스택 변경', spec = 'graph control')     
     
     def memorize(self):
-        if self.state != LuminousStateController.EQUAL:
-            self.currentState = self.state
-        self.remain = 17*1000
+        self.stack = LuminousStateController.STACK
+        self.currentState = 1 - self.currentState
         self.state = LuminousStateController.EQUAL
+        self.remain = 17*1000
         self.equalCallback()
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = '메모라이즈', spec = 'graph control')
     
@@ -99,7 +96,7 @@ class PunishingResonatorWrapper(core.SummonSkillWrapper):
 
 class LightAndDarknessWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc, num1, num2):
-        skill = core.DamageSkill("빛과 어둠의 세례", 840, 15 * vEhc.getV(1,1)+375, 13 * 7, cooltime = 45*1000, red=True, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc,num1,num2)
+        skill = core.DamageSkill("빛과 어둠의 세례", 840, 15 * vEhc.getV(num1,num2)+375, 13 * 7, cooltime = 45*1000, red=True, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc,num1,num2)
         super(LightAndDarknessWrapper, self).__init__(skill)
         self.stack = 12
 
@@ -111,8 +108,30 @@ class LightAndDarknessWrapper(core.DamageSkillWrapper):
         self.stack -= 1
         if self.stack <= 0:
             self.cooltimeLeft = 0
-            self.available = True
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = '빛과 어둠의 세례 스택 증가', spec = 'graph control')
+
+class LiberationOrbActiveWrapper(core.DamageSkillWrapper):
+    def __init__(self, vEhc, num1, num2):
+        self.light = 0
+        self.dark = 0
+        skill = core.DamageSkill("리버레이션 오브(액티브)", 0, 400 + 17 * vEhc.getV(num1,num2), 10, cooltime = 1000, modifier = core.CharacterModifier(crit = 100)).isV(vEhc,num1,num2)
+        super(LiberationOrbActiveWrapper, self).__init__(skill)
+
+    def _setStack(self, light, dark):
+        self.light = light.stack
+        self.dark = dark.stack
+        return self._result_object_cache
+
+    def setStack(self, light, dark):
+        task = core.Task(self, partial(self._setStack, light, dark))
+        return core.TaskHolder(task, name="리버레이션 오브 데미지 설정")
+
+    def get_damage(self):
+        damage = self.skill.damage
+        if self.light == self.dark:
+            damage += 25
+        damage += max(0, self.light + self.dark - 1) * 50
+        return damage
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -161,6 +180,7 @@ class JobGenerator(ck.JobGenerator):
         소울 컨트랙트는 이퀄리브리엄에 맞춰 사용
         퍼니싱 리소네이터는 이퀄리브리엄에 맞춰 사용
         메모라이즈는 이퀄이 아니고 쿨타임이 돌아 있으면 사용
+        리버레이션 오브는 쿨마다 사용
         '''
         ######   Skill   ######
         DarkAffinity = core.CharacterModifier(pdamage_indep = 5) # 어둠 마법 강화
@@ -184,11 +204,16 @@ class JobGenerator(ck.JobGenerator):
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
         # 5th
-        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         DoorOfTruth = core.SummonSkill("진리의 문", 870, 3030, 375 + 15 * vEhc.getV(4,4), 10, (25 + vEhc.getV(4,4) // 2) * 1000, cooltime = -1).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)   #이퀄시 사용 가능해짐.
         PunishingResonator = PunishingResonatorWrapper(vEhc, 2, 1, LuminousState.getState)
         LightAndDarkness = LightAndDarknessWrapper(vEhc, 0, 0)
+        LiberationOrbPassive = core.DamageSkill("리버레이션 오브(패시브)", 0, 375+15*vEhc.getV(0,0), 4, cooltime=6000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # TODO: 여러번 타격 가능한지 확인할것
+        LiberationOrbStackLight = core.StackSkillWrapper(core.BuffSkill("리버레이션 오브(스택)(빛)", 0, 99999999), 4)
+        LiberationOrbStackDark = core.StackSkillWrapper(core.BuffSkill("리버레이션 오브(스택)(어둠)", 0, 99999999), 4)
+        LiberationOrb = core.BuffSkill("리버레이션 오브", 690, 45000, cooltime=180*1000, red=True).wrap(core.BuffSkillWrapper)
+        LiberationOrbActive = LiberationOrbActiveWrapper(vEhc,0,0)
+        LiberationOrbActiveStack = core.StackSkillWrapper(core.BuffSkill("리버레이션 오브(액티브)(스택)", 0, 99999999), 20)
 
         # Skill Wrapper - Basic Attack
         LightReflection.onAfter(LuminousState.modifyStack(390))
@@ -201,6 +226,8 @@ class JobGenerator(ck.JobGenerator):
 
         for sk in [LightReflection, Apocalypse, AbsoluteKillCooltimed]:
             jobutils.create_auxilary_attack(sk, 0.5, "(선파이어/이클립스)")
+
+        AbsoluteKillCooltimed.onConstraint(core.ConstraintElement("비이퀄때만 앱킬 쿨타임", LuminousState, LuminousState.isNotEqual))
         
         # Skill Wrapper - Memorize
         Memorize.onAfter(core.create_task("메모라이즈", LuminousState.memorize, LuminousState))
@@ -212,14 +239,42 @@ class JobGenerator(ck.JobGenerator):
         # Skill Wrapper - Light and Darkness
         for absolute in [AbsoluteKillCooltimed, AbsoluteKill]:
             absolute.onAfter(core.create_task('빛과 어둠의 세례 쿨다운 스택 1 감소', LightAndDarkness.reduceStack, LightAndDarkness))
+
+        # Skill Wrapper - Liberation Orb
+        LiberationOrb.onAfter(LiberationOrbActive.setStack(LiberationOrbStackLight, LiberationOrbStackDark))
+        LiberationOrb.onAfter(LiberationOrbActiveStack.stackController(20))
+        LiberationOrb.onAfter(LiberationOrbStackLight.stackController(-4))
+        LiberationOrb.onAfter(LiberationOrbStackDark.stackController(-4))
+        LiberationOrb.onConstraint(core.ConstraintElement("리버레이션 오브 마력 제한",
+            LiberationOrbStackDark, lambda: LiberationOrbStackDark.stack + LiberationOrbStackLight.stack >= 1))
+
+        LiberationOrbPassive.onAfter(core.OptionalElement(LuminousState.isLight, LiberationOrbStackLight.stackController(1)))
+        LiberationOrbPassive.onAfter(core.OptionalElement(LuminousState.isDark, LiberationOrbStackDark.stackController(1)))
+        LiberationOrbActive.onAfter(LiberationOrbActiveStack.stackController(-1))
         
-        SoulContract = globalSkill.soul_contract()
+        UseLiberationOrbPassive = core.OptionalElement(
+            lambda: LiberationOrbActiveStack.judge(0, -1) and LiberationOrbPassive.is_available(), LiberationOrbPassive, name="리버레이션 오브(패시브) 조건")
+        UseLiberationOrbActive = core.OptionalElement(
+            lambda: LiberationOrb.is_active() and LiberationOrbActiveStack.judge(1, 1) and LiberationOrbActive.is_available(),
+            LiberationOrbActive, name="리버레이션 오브(액티브) 조건")
+        for sk in [LightReflection, Apocalypse, AbsoluteKill, AbsoluteKillCooltimed]:
+            sk.onAfter(UseLiberationOrbPassive)
+            sk.onAfter(UseLiberationOrbActive)
+        
+        LiberationOrbPassive.protect_from_running()
+        LiberationOrbActive.protect_from_running()
+
+        # Overload Mana
+        overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 2)
+        for sk in [LightReflection, Apocalypse, DoorOfTruth, PunishingResonator, AbsoluteKill, AbsoluteKillCooltimed, LightAndDarkness]:
+            overload_mana_builder.add_skill(sk)
+        OverloadMana = overload_mana_builder.get_buff()
 
         return(Attack, 
                 [LuminousState, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
-                    Booster, PodicMeditaion, DarknessSocery, DarkCrescendo, HerosOath, Memorize, OverloadMana,
-                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), SoulContract] +\
-                [LightAndDarkness] +\
+                    Booster, PodicMeditaion, DarknessSocery, DarkCrescendo, HerosOath, Memorize, OverloadMana, LiberationOrb,
+                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
+                [LightAndDarkness, LiberationOrbActive, LiberationOrbPassive, AbsoluteKillCooltimed] +\
                 [PunishingResonator, DoorOfTruth, MirrorBreak, MirrorSpider] +\
                 [] +\
                 [Attack])

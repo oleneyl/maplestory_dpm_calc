@@ -43,10 +43,8 @@ class UnstableMemorizeWrapper(core.DamageSkillWrapper):
         TODO: 위험한 방식이기 때문에, side-effect에 위험하지 않은 방식으로 변경해야 합니다.
         """
         cooltimeLeft = skill.cooltimeLeft
-        available = skill.is_available()
         result = skill._use(skill_modifier)
         skill.cooltimeLeft = cooltimeLeft
-        skill.available = available
         return result
 
     def add_skill(self, skill: core.AbstractSkillWrapper, weight: int):
@@ -90,7 +88,9 @@ def BlitzShieldWrappers(vEhc, num1, num2):
     BlitzShieldDummy.onAfter(BlitzShield)
     return BlitzShieldDummy, BlitzShield
 
-# 아직 사용하지 말것! 연계 설정 추가 필요
-def EvolveWrapper(vEhc, num1, num2):
-    Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(num1, num2)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(num1, num2)))*1000).isV(vEhc,num1, num2).wrap(core.SummonSkillWrapper)
+def EvolveWrapper(vEhc, num1, num2, bird: core.SummonSkillWrapper):
+    Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(num1, num2)*15, 7, 40*1000, cooltime = (120-vEhc.getV(num1, num2)//2)*1000, red=True).isV(vEhc, num1, num2).wrap(core.SummonSkillWrapper)
+    Evolve.onAfter(bird.controller(1))
+    Evolve.onConstraint(core.ConstraintElement(bird._id+" 있을때 사용 가능", bird, bird.is_active))
+    bird.onConstraint(core.ConstraintElement("이볼브 지속중 사용 금지", Evolve, Evolve.is_not_active))
     return Evolve

@@ -18,6 +18,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "데몬슬레이어"
         self.vEnhanceNum = 15
         self.preEmptiveSkills = 1
+        self.hyperStatPrefixed = 85 # DF 8레벨 투자
         
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'mess')
 
@@ -35,10 +36,11 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule('데몬 슬래시(1타)', '데몬 슬래시-리메인타임'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('서버러스', '데몬 어웨이크닝'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('데빌 크라이', '데몬 어웨이크닝'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('데몬 베인(개시)', '데몬 어웨이크닝'), RuleSet.BASE)
         return ruleset
     
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 50, pdamage = 120)
+        return core.CharacterModifier(crit = 50, armor_ignore = 50, pdamage = 50)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -68,6 +70,8 @@ class JobGenerator(ck.JobGenerator):
         코강 순서:
         슬래시-임팩트-서버-익스플로전-메타-데빌크라이
 
+        데몬 베인은 어웨이크닝과 따로 사용
+
         ##### 하이퍼 #####
         # 데몬 슬래시 - 엑스트라 포스, 리인포스, 리메인타임 리인포스
         # 데몬 임팩트 - 리인포스, 보너스 어택
@@ -77,18 +81,19 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
 
-        DS_MODIFIER = core.CharacterModifier(pdamage = 370) - core.CharacterModifier(pdamage_indep = 10)
-        AW_MODIFIER = core.CharacterModifier(pdamage = 150+50, armor_ignore = 50) - core.CharacterModifier(pdamage_indep = 10)
+        # 뒤의 최종뎀 -10%는 리메인타임 패널티 / 최종뎀 43% = 최종강화 30% + 리인포스 10%
+        DS_MODIFIER = core.CharacterModifier(pdamage = 30 + 30, pdamage_indep = 43) - core.CharacterModifier(pdamage_indep = 10)
+        AW_MODIFIER = DS_MODIFIER + core.CharacterModifier(armor_ignore = 50, boss_pdamage = 50)
 
         DemonSlashRemainTime = core.BuffSkill("데몬 슬래시-리메인타임", 0, 4000, cooltime = -1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
         
         # 1타만 사용시 딜레이가 2타로 이어질때보다 김.
-        DemonSlash1 = core.DamageSkill("데몬 슬래시(1타)", 390, 110, 2, modifier = DS_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlash1 = core.DamageSkill("데몬 슬래시(1타)", 390, 110+80, 2, modifier = DS_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        DemonSlashAW1 = core.DamageSkill("데몬 슬래시 강화(1타)", 270, 600, 3, modifier = AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAW2 = core.DamageSkill("데몬 슬래시 강화(2타)", 270, 600, 3, modifier = AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAW3 = core.DamageSkill("데몬 슬래시 강화(3타)", 360, 700, 3, modifier = AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DemonSlashAW4 = core.DamageSkill("데몬 슬래시 강화(4타)", 360, 800, 3, modifier = AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW1 = core.DamageSkill("데몬 슬래시 강화(1타)", 270, 600+80, 3, modifier = AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW2 = core.DamageSkill("데몬 슬래시 강화(2타)", 270, 600+80, 3, modifier = AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW3 = core.DamageSkill("데몬 슬래시 강화(3타)", 360, 700+80, 3, modifier = AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlashAW4 = core.DamageSkill("데몬 슬래시 강화(4타)", 360, 800+80, 3, modifier = AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         DemonImpact = core.DamageSkill("데몬 임팩트", 660, 460 + 4 * self.combat, (6+1), modifier = core.CharacterModifier(crit = 100, armor_ignore = 30 + ceil(self.combat / 3), boss_pdamage = 40 + self.combat, pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
@@ -107,7 +112,7 @@ class JobGenerator(ck.JobGenerator):
             
         CallMastema = core.SummonSkill("콜 마스테마", 690, 5000, 1100, 8, (30+vEhc.getV(4,4))*1000, cooltime = 150*1000, red=True).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
         #CallMastemaAnother = core.SummonSkill("콜 마스테마+", 0, ).wrap(core.BuffSkillWrapper)    #러블리 테리토리..데미지 없음.
-        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0) # TODO: 블블 적용여부 확인할것
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         DemonAwakning = core.BuffSkill("데몬 어웨이크닝", 1110, (35 + vEhc.getV(0,0))*1000, cooltime = 120 * 1000, red=True, crit = (50 + int(0.5*vEhc.getV(0,0)))).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         DemonAwakningSummon = core.SummonSkill("데몬 어웨이크닝(더미)", 0, 8000, 0, 0, (35 + vEhc.getV(0,0))*1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
@@ -116,6 +121,13 @@ class JobGenerator(ck.JobGenerator):
         SpiritOfRageEnd = core.DamageSkill("요르문간드(종료)", 0, 900+36*vEhc.getV(3,3), 15, cooltime = -1).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
         Orthros = core.SummonSkill("오르트로스(네메아)", 510, 2000, 400+16*vEhc.getV(1,1), 12, 40000, cooltime = 120*1000, red=True, modifier = core.CharacterModifier(crit = 100, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         Orthros_ = core.SummonSkill("오르트로스(게리온)", 0, 3000, 900+36*vEhc.getV(1,1), 10, 40000, cooltime = -1, modifier = core.CharacterModifier(crit = 100, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
+
+        DemonBaneInit = core.DamageSkill("데몬 베인(개시)", 240, 0, 0, cooltime=240*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DemonBaneTick = core.DamageSkill("데몬 베인(1)", 3760/16, 325+13*vEhc.getV(0,0), 6, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 3760ms 16회
+        DemonBane2Pre = core.DamageSkill("데몬 베인(2)(선딜)", 600, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DemonBane2Tick = core.DamageSkill("데몬 베인(2)", 2400/21, 650+26*vEhc.getV(0,0), 7, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 2400ms 21회
+        DemonBane2After = core.DamageSkill("데몬 베인(2)(후딜)", 240, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        
         ######   Skill Wrapper   ######
         DemonSlashAW1.onAfter(DemonSlashAW2)
         DemonSlashAW2.onAfter(DemonSlashAW3)
@@ -132,6 +144,11 @@ class JobGenerator(ck.JobGenerator):
         
         SpiritOfRage.onAfter(SpiritOfRageEnd.controller((10+int(0.2*vEhc.getV(3,3)))*1000))
         Orthros.onAfter(Orthros_)
+
+        DemonBaneInit.onAfter(core.RepeatElement(DemonBaneTick, 16))
+        DemonBaneInit.onAfter(DemonBane2Pre)
+        DemonBaneInit.onAfter(core.RepeatElement(DemonBane2Tick, 21))
+        DemonBaneInit.onAfter(DemonBane2After)
         
         Metamorphosis.onAfter(MetamorphosisSummon)
         MetamorphosisSummon.onTick(MetamorphosisSummon_BB)
@@ -143,12 +160,12 @@ class JobGenerator(ck.JobGenerator):
 
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
-        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact]:
+        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DevilCry, DemonImpact, Cerberus, DemonBaneTick, DemonBane2Tick]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         # 블블 추가타 적용
-        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DevilCry, AuraWeapon]:
+        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DemonBaneTick, DemonBane2Tick, DevilCry, Cerberus, AuraWeapon]:
             jobutils.create_auxilary_attack(sk, 0.9, "(블루 블러드)")
 
         return(BasicAttackWrapper,
@@ -156,5 +173,5 @@ class JobGenerator(ck.JobGenerator):
                     Booster, DemonSlashRemainTime, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
                     *demon.AnotherWorldWrapper(vEhc, 0, 0), globalSkill.soul_contract()] +\
                 [Cerberus, DevilCry, DemonSlash1, SpiritOfRageEnd] +\
-                [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_, MirrorBreak, MirrorSpider] +\
+                [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_, DemonBaneInit, MirrorBreak, MirrorSpider] +\
                 [BasicAttackWrapper])
