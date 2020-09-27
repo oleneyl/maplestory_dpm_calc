@@ -14,15 +14,26 @@ from math import ceil
 # TODO: 오버로드 상태가 아닐 때는 최대값 20으로 제한
 class SupplyStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
-        super(SupplyStackWrapper, self).__init__(skill, 40)
+        super(SupplyStackWrapper, self).__init__(skill, 20)
         self.stack = 20
         self.modifierInvariantFlag = False
     
-    def get_modifier(self): # 서플러스 서플라이: 서플러스 에너지 1개 당 모든 능력치 1%만큼 증가
+    def get_modifier(self):
+        '''
+        서플러스 서플라이: 서플러스 에너지 1개 당 모든 능력치 1%만큼 증가, 20 초과시 초과 에너지당 최종 데미지 1% 증가
+        '''
         _modifier = core.CharacterModifier(pstat_main = self.stack, pstat_sub = self.stack)
         if self.stack > 20:
             _modifier += core.CharacterModifier(pdamage_indep = self.stack - 20)
         return _modifier
+    
+    def beginOverloadMode(self):
+        self._max = 40
+    
+    def endOverloadMode(self):
+        if self.stack > 20:
+            self.stackController(20, dtype = 'set')
+        self._max = 20
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -100,7 +111,9 @@ class JobGenerator(ck.JobGenerator):
         PinpointRocket = core.DamageSkill("핀포인트 로켓", 0, 50+40+40+100, 4, cooltime = 2000).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
         # 이지스: 피격시에만 발동이라 허수아비 상대로는 미적용해야할듯 (인스턴스 셔크 적용됨)
-        AegisSystem = core.DamageSkill("이지스 시스템", 0, 120, 3, modifier = core.CharacterModifier(pdamage = 20 + passive_level // 3), cooltime = 1500).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        # 타수는 Skill Wrapper 쪽으로 이관 
+        AegisSystem = core.DamageSkill("이지스 시스템", 0, 120, 1, modifier = core.CharacterModifier(pdamage = 20 + passive_level // 3), cooltime = 1500).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+
         # 30%확률로 중첩 쌓임, 3중첩 쌓은 후 공격시 터지면서 사라지도록
         Triangulation = core.DamageSkill("트라이앵글 포메이션", 0, 340, 3, cooltime = -1).setV(vEhc, 0, 3, True).wrap(core.DamageSkillWrapper)
 
@@ -127,6 +140,7 @@ class JobGenerator(ck.JobGenerator):
         LuckyDice = core.BuffSkill("럭키 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,3,4).wrap(core.BuffSkillWrapper)
         ResistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 0, 0)
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc,4,4)
+
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("에너지소드")
@@ -134,9 +148,8 @@ class JobGenerator(ck.JobGenerator):
 
         MegaSmasher = core.SummonSkill("메가 스매셔", 0, 250, 0, 1, 16000, cooltime = 180000, rem = False).wrap(core.DamageSkillWrapper)
         MegaSmasherTick = core.DamageSkill("메가 스매셔(틱)", 0, 300+10*vEhc.getV(4,4), 6).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
-        # TODO: 따로 구현해야 함
-        # 초과 에너지 20 충전 가능, 에너지 충전 시간 절반으로 감소, 초과 충전한 에너지 당 최종 데미지 1% 증가
-        # 비활성화 시 초과 충전된 에너지 즉시 소멸
+        
+        # TODO: 오버로드 전류 주기 확인
         OVERLOAD_TIME = 30
         OverloadMode = core.BuffSkill("오버로드 모드", 720, OVERLOAD_TIME * 1000, cooltime = 180000).wrap(core.BuffSkillWrapper)
         # 6번 공격하는 전격 4회 발동
@@ -144,9 +157,10 @@ class JobGenerator(ck.JobGenerator):
         
         # 하이퍼 적용됨
         Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", 930, (30000 + 10000)/176, (250 + 10 * vEhc.getV(4,4))*1.1, 5, 30000 + 10000, cooltime = 100000).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
-        #TODO: 제논이 홀로그램 필드 안에 있을 경우 이지스 시스템으로 발사되는 미사일 7개 증가
         Hologram_Fusion_Buff = core.BuffSkill("홀로그램 그래피티 : 융합 (버프)", 0, 30000+10000, pdamage = 5+vEhc.getV(4,4)//2, rem = False).wrap(core.BuffSkillWrapper)
+        
         # 30회 발동, 발사 딜레이 생략
+        # TODO: 블레이드 댄싱과 연계해야 함
         PhotonRay = core.BuffSkill("포톤 레이", 300, 20000, cooltime = 35000).wrap(core.BuffSkillWrapper)
         PhotonRayTick = core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4), 4 * 30).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
@@ -158,6 +172,11 @@ class JobGenerator(ck.JobGenerator):
         SupplyCharger = core.SummonSkill("서플라이 충전", 0, 4000, 0, 0, 9999999999).wrap(core.SummonSkillWrapper)
         SupplyCharger.onTick(SupplySurplus.stackController(1))
 
+        PinpointRocketOpt = core.OptionalElement(PinpointRocket.is_active(), PinpointRocket)
+
+        # 홀로그램 융합 활성화시 10개, 아니면 3개
+        AegisSystemOpt_ = core.OptionalElement(Hologram_Fusion_Buff.is_active(), core.RepeatElement(AegisSystem, 10), core.RepeatElement(AegisSystem, 3))
+        AegisSystemOpt = core.OptionalElement(AegisSystem.is_active(), AegisSystemOpt_)
 
         InclinePower.onAfter(SupplySurplus.stackController(-3))
         HybridDefenses.onAfter(SupplySurplus.stackController(-7))
@@ -165,21 +184,29 @@ class JobGenerator(ck.JobGenerator):
         OOPArtsCode.onAfter(SupplySurplus.stackController(-20))
 
         TriangulationStack = core.StackSkillWrapper(core.BuffSkill("트라이앵글 스택", 0, 99999999), 3)
-        TriangulationTrigger = core.OptionalElement(lambda : TriangulationStack.judge(3, 1), Triangulation, TriangulationStack.stackController(1))
+        TriangulationTrigger = core.OptionalElement(lambda : TriangulationStack.judge(3, 1), Triangulation, TriangulationStack.stackController(0.3))
         Triangulation.onAfter(TriangulationStack.stackController(0, dtype = 'set'))
 
         MegaSmasher.onTick(MegaSmasherTick)
 
-        # TODO: 쉐파 적용스킬 정확히 확인
-        # 홀로그램 그래피티 융합 추가할것
-        for sk in [PurgeSnipe, MeltDown, MegaSmasherTick, PhotonRayTick, OverloadHit]:
-            sk.onAfter(TriangulationTrigger)
+        BeginOverloadMode = core.DamageSkill("오버로드 모드(시작)", 0, 0, 0).wrap(core.DamageSkillWrapper)
+        BeginOverloadMode.onAfter(SupplySurplus.beginOverloadMode())
+        EndOverloadMode = core.DamageSkill("오버로드 모드(종료)", 0, 0, 0).wrap(core.DamageSkillWrapper)
+        EndOverloadMode.onAfter(SupplySurplus.endOverloadMode())
 
+        OverloadMode.onAfter(BeginOverloadMode)
+        OverloadMode.onAfter(EndOverloadMode.controller(OVERLOAD_TIME * 1000))
+
+        # TODO: 쉐파 적용스킬 정확히 확인
+        for sk in [PurgeSnipe, MeltDown, MegaSmasherTick, PhotonRayTick, OverloadHit, BladeDancing]:
+            sk.onAfter(TriangulationTrigger)
+            sk.onAfter(PinpointRocketOpt)
+            sk.onAfter(AegisSystemOpt)
             jobutils.create_auxilary_attack(sk, 0.7, nametag = "버추얼 프로젝션")
         
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     globalSkill.useful_wind_booster(), globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-                [MirrorBreak, MirrorSpider] +\
-                [globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat)] +\
+                [MirrorBreak, MirrorSpider, ResistanceLineInfantry, LuckyDice, ReadyToDie, Overdrive, OverloadMode, Hologram_Fusion] +\
+                [EfficiencyPipeLine, Booster, VirtualProjection] +\
                 [BasicAttackWrapper])
