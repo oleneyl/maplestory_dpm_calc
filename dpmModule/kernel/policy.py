@@ -111,6 +111,41 @@ class StorageLinkedGraph(NameIndexedGraph):
         }
 
 
+class Callback:
+    def __init__(self, task, time):
+        self.task = task
+        self.time = time
+
+    def resolve(self):
+        return self.task.do()
+
+    def adjust_by_current_time(self, current_time):
+        return Callback(self.task, self.time + current_time)
+
+    @staticmethod
+    def from_graph_element(graph_element, time):
+        return Callback(graph_element.build_task(None), time)
+
+class CallbackQueue:
+    def __init__(self):
+        self._callback_queue = []
+
+    def push_callbacks(self, callbacks : list, current_time):
+        self._callback_queue += [callback.adjust_by_current_time(current_time) for callback in callbacks]
+        self._callback_queue = sorted(self._callback_queue, key=lambda x:x.time)
+
+    def impending_callback_exist(self, current_time, next_event_time):
+        return len(self._callback_queue) != 0 and self.impending_callback_time(current_time) <= next_event_time
+
+    def impending_callback_time(self, current_time):
+        return self._callback_queue[0].time - current_time
+
+    def take_out_impending_callback(self):
+        callback = self._callback_queue[0]
+        self._callback_queue = self._callback_queue[1:]
+        return callback
+
+
 class AdvancedGraphScheduler:
     def __init__(self, graph, fetching_policy, rules):
         self._rule_map = defaultdict(list)
@@ -121,6 +156,8 @@ class AdvancedGraphScheduler:
         self.total_time_initial = None
         self.fetching_policy = fetching_policy(graph)
 
+        self.callback_queue = CallbackQueue()
+
     def get_current_time(self):
         return self.total_time_initial - self.total_time_left
 
@@ -128,8 +165,6 @@ class AdvancedGraphScheduler:
         return (self.total_time_left < 0)
 
     def spend_time(self, time):
-        '''This function might be overrided, with super().spend_time(time) calling.
-        '''
         self.total_time_left -= time
         self.graph.spend_time(time)
 
@@ -152,8 +187,16 @@ class AdvancedGraphScheduler:
                     return tick
         return None
 
-    def apply_result(self, result : ResultObject):
-        self.spend_time(result.delay)
+    def apply_result(self, result : ResultObject, time_to_spend : float) -> [Callback, float]:
+        self.callback_queue.push_callbacks(result.callbacks, self.get_current_time())
+        if self.callback_queue.impending_callback_exist(self.get_current_time(), time_to_spend):
+            time_until_callback_occur = self.callback_queue.impending_callback_time(self.get_current_time())
+            self.spend_time(time_until_callback_occur)
+            time_to_spend = time_to_spend - time_until_callback_occur
+            return self.callback_queue.take_out_impending_callback(), time_to_spend
+        else:
+            self.spend_time(time_to_spend)
+            return None, 0
 
     def initialize(self, time):
         self.total_time_left = time

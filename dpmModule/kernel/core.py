@@ -709,6 +709,9 @@ class Task():
         self._before = []
         self._justAfter = []
         
+    def __repr__(self):
+        return f'''Task Object from [{self._ref._id}]'''
+
     def getRef(self):
         return self._ref
         
@@ -736,7 +739,7 @@ class ContextReferringTask(Task):
         return self._ftn(**kwargs)
 
 class ResultObject():
-    def __init__(self, delay, mdf, damage, hit, sname, spec, kwargs = {}, cascade = []):
+    def __init__(self, delay, mdf, damage, hit, sname, spec, kwargs = {}, cascade = [], callbacks = []):
         """Result object must be static; alway to be ensure it is revealed.
         """
         self.delay = DynamicVariableOperation.reveal_argument(delay)
@@ -747,6 +750,7 @@ class ResultObject():
         self.spec = DynamicVariableOperation.reveal_argument(spec)        #buff, deal, summon
         self.kwargs = DynamicVariableOperation.reveal_argument(kwargs)
         self.cascade = DynamicVariableOperation.reveal_argument(cascade)
+        self.callbacks = callbacks
         self.time = None
         
     def setTime(self, time):
@@ -1646,10 +1650,7 @@ class Simulator(object):
         self.scheduler = scheduler
         self.character = chtr
         self.analytics = analytics
-        
-        #vEnhancer를 Analytics에서 확인할 수 있도록 합니다.
-        self.analytics.set_v_enhancer(self.scheduler.graph._vEhc.copy())
-        
+                
         #Buff modifier를 시간별도 캐싱하여 연산량을 줄입니다.
         self._modifier_cache_and_time = [-1,CharacterModifier()]
 
@@ -1692,22 +1693,15 @@ class Simulator(object):
         while not self.scheduler.is_simulation_end():
             task = self.scheduler.dequeue()
             try:
-                self.run_task(task)    
+                self.run_task_recursive(task)    
             except Exception as e:
                 print(task._ref._id)
                 print("error raised")
                 print("---")
                 raise e
-        
-    def run_task(self, task):
-        self.run_task_recursive(task)
 
-    def run_task_recursive(self, task):
-        for t in reversed(task._before):
-            self.run_task_recursive(t)
-        
+    def parse_result(self, result):
         runtime_context_modifier = self.scheduler.get_buff_modifier() + self.get_default_modifier()
-        result = task.do(runtime_context_modifier=runtime_context_modifier + self.character.get_modifier())
         result.setTime(self.scheduler.get_current_time())
         
         if result.damage > 0:
@@ -1715,11 +1709,29 @@ class Simulator(object):
         
         self.analytics.analyze(self.character, result)
 
+    def run_task_recursive(self, task):
+        for t in reversed(task._before):
+            self.run_task_recursive(t)
+        
+        runtime_context_modifier = self.scheduler.get_buff_modifier() + self.get_default_modifier()
+        result = task.do(runtime_context_modifier=runtime_context_modifier + self.character.get_modifier())
+        self.parse_result(result)
+
         for t in task._justAfter:
             self.run_task_recursive(t)
 
         if result.delay > 0:
-            self.scheduler.apply_result(result)
+            time_to_spend = result.delay
+            while True:
+                callback, time_to_spend = self.scheduler.apply_result(result, time_to_spend)
+                if self.scheduler.is_simulation_end():
+                    return
+                if callback:
+                    result = callback.resolve() 
+                    self.parse_result(result)
+                else:
+                    break
+
             while True:
                 tick = self.scheduler.get_delayed_task()
                 if tick != None:
@@ -1739,10 +1751,6 @@ class Analytics():
         self.print_calculation_progress = printFlag
         self.skillList = {}
         self.chtrmdf = CharacterModifier()
-        self._vEhc = None
-        
-    def set_v_enhancer(self, vEhc):
-        self._vEhc = vEhc
         
     def set_total_runtime(self, time):
         self.totalTime = time
