@@ -11,14 +11,21 @@ from math import ceil
 
 # TODO: 하이퍼스탯으로 스탠스 10% 확보 필요 
 
-# TODO: 오버로드 상태가 아닐 때는 최대값 20으로 제한
 class SupplyStackWrapper(core.StackSkillWrapper):
-    def __init__(self, skill, overload_mode, amaranth_generator):
-        super(SupplyStackWrapper, self).__init__(skill, 40)
+    def __init__(self, skill, amaranth_generator):
+        super(SupplyStackWrapper, self).__init__(skill, 20)
         self.stack = 20
         self.modifierInvariantFlag = False
-        self.overload_mode = overload_mode
+        self.set_name_style("서플라이 변화 : %d")
         self.amaranth_generator = amaranth_generator
+    
+    # 아마란스 활성화시 에너지 소모 없음 
+    def vary(self, d):
+        delta = d
+        if self.amaranth_generator.is_active():
+            delta = max(0, delta)
+        result = super().vary(delta)
+        return result
     
     def get_modifier(self):
         '''
@@ -29,12 +36,20 @@ class SupplyStackWrapper(core.StackSkillWrapper):
             _modifier += core.CharacterModifier(pdamage_indep = self.stack - 20)
         return _modifier
     
+    def charge(self):
+        delta = (self._max - self.stack)
+        result = super().vary(delta)
+        return result
+    
+    def chargeController(self):
+        task = core.Task(self, self.charge)
+        return core.TaskHolder(task, name = "서플라이 차지")
+
     def beginOverloadMode(self):
         self._max = 40
     
     def endOverloadMode(self):
-        if self.stack > 20:
-            self.stackController(20, dtype = 'set')
+        self.stackController(min(20, self.stack), dtype = 'set')
         self._max = 20
 
 class JobGenerator(ck.JobGenerator):
@@ -166,7 +181,7 @@ class JobGenerator(ck.JobGenerator):
         PhotonRayTick = core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4), 4 * 30).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
-        SupplySurplus = SupplyStackWrapper(core.BuffSkill("서플러스 서플라이", 0, 999999999), OverloadMode, AmaranthGenerator)
+        SupplySurplus = SupplyStackWrapper(core.BuffSkill("서플러스 서플라이", 0, 999999999), AmaranthGenerator)
 
         BasicAttackWrapper = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(PurgeSnipe)
@@ -184,7 +199,7 @@ class JobGenerator(ck.JobGenerator):
         HybridDefenses.onAfter(SupplySurplus.stackController(-7))
         ExtraSupply.onAfter(SupplySurplus.stackController(10))
         OOPArtsCode.onAfter(SupplySurplus.stackController(-20))
-        AmaranthGenerator.onAfter(SupplySurplus.stackController(40, dtype = 'set'))
+        AmaranthGenerator.onAfter(SupplySurplus.chargeController())
 
         TriangulationStack = core.StackSkillWrapper(core.BuffSkill("트라이앵글 스택", 0, 99999999), 3)
         TriangulationTrigger = core.OptionalElement(lambda : TriangulationStack.judge(3, 1), Triangulation, TriangulationStack.stackController(0.3))
