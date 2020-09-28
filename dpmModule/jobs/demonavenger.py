@@ -29,7 +29,6 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         #TODO: 블러드 컨트랙트, 컨버전 스타포스
 
-        #와일드레이지 : 데미지10%, 링크에 반영되므로 미고려.
         #주스탯 미반영, 추가바람.
         AbyssalRage = core.InformedCharacterModifier("어비셜 레이지", att=40)
         AdvancedDesperadoMastery = core.InformedCharacterModifier("어드밴스드 데스페라도 마스터리",att = 50 + passive_level, crit_damage = 8)
@@ -47,12 +46,6 @@ class JobGenerator(ck.JobGenerator):
         #최대 HP 대비 소모된 HP 3%(24레벨가지는 4%)당 최종 데미지 1% 증가
         FrenzyPassive = core.InformedCharacterModifier("데몬 프렌지 (최종 데미지)", pdamage_indep = (100 - HP_RATE) // (4 - (vEhc.getV(0, 0) // 25)))
 
-        RUIN_USE = False
-        if RUIN_USE:
-            # 극한 HP = 800(600+200), 루인 HP = 560
-            RuinForceShield = core.InformedCharacterModifier("루인 포스실드", stat_main = -240, stat_sub = -2, pdamage_indep = 10)
-
-
         return [AbyssalRage, AdvancedDesperadoMastery, OverwhelmingPower, DefenseExpertise, DemonicSharpness, MapleHeroesDemon, InnerStrength, DiabolicRecovery, FrenzyPassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
@@ -65,23 +58,18 @@ class JobGenerator(ck.JobGenerator):
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         코강 순서: 익시드 엑스큐션, 실드 체이싱 -> 문라이트 슬래시(사용하지 않음)
-        '''
-        '''
-
+        
         하이퍼: 익시드 3종, 실드 체이싱 리인포스, 엑스트라 타겟 적용
-        TODO:
-        오라 웨폰 - 작성 필요
 
-        데몬 프렌지 - DPM 기준을 어떻게 할것인지?
+        데몬 프렌지 - 1초당 11타
         블러드 피스트 - 작성 필요
-        디멘션 소드 - 작성 필요
         '''
         #V코어 값은 전면 재작성 필요
         
-        # TODO: OptionalElement로 변경해야 함
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         # 익시드 0~3스택: 딜레이 900, 900, 840, 780
+        # 릴리즈 사용 직후 익시드 사용시 3번만에 강화모드 진입
         Execution_0 = core.DamageSkill("익시드: 엑스큐션 (0스택)", 660, 540+8*self.combat, 4, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         Execution_1 = core.DamageSkill("익시드: 엑스큐션 (1스택)", 660, 540+8*self.combat, 4, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         Execution_2 = core.DamageSkill("익시드: 엑스큐션 (2스택)", 630, 540+8*self.combat, 4, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
@@ -103,17 +91,19 @@ class JobGenerator(ck.JobGenerator):
         #일정 주기로 마족의 피가 바닥에 뿌려져 5초 동안 최대 10명의 적을 일정주기 마다 300+8n%로 2번 공격
         # 초당 22타 가정
         FrenzyStack = 1
-        FrenzyPerSecond = 11
-        FrenzyDOT = core.SummonSkill("프렌지 장판", 0, 1000/FrenzyPerSecond, 300 + 8 * vEhc.getV(0, 0), FrenzyStack, 999999).wrap(core.SummonSkillWrapper)
+        FrenzyDOT = core.SummonSkill("프렌지 장판", 0, 1000/11, 300 + 8 * vEhc.getV(0, 0), FrenzyStack, 999999).wrap(core.SummonSkillWrapper)
 
         # 블피 (즉시 시전)
-        DemonicBlast = core.DamageSkill("블러드 피스트", 0, 500 + 20*vEhc.getV(0,0), 7, cooltime = 10000, modifier = CharacterModifier(crit = 100, armor_ignore = 100)).wrap(core.DamageSkillWrapper)
+        DemonicBlast = core.DamageSkill("블러드 피스트", 0, 500 + 20*vEhc.getV(0,0), 7, cooltime = 10000, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).wrap(core.DamageSkillWrapper)
         
         #평딜이냐 극딜이냐... 소스코드는 서버렉 미적용
         # 참고자료: https://blog.naver.com/oe135/221372243858
-        #DimensionSword = core.SummonSkill("디멘션 소드(평딜)", 480, 3000, 1250+14*vEhc.getV(0,0), 8, 40*1000, cooltime = 120*1000, modifier=core.CharacterModifier(armor_ignore=100)).wrap(core.SummonSkillWrapper)
-        DimensionSwordReuse = core.SummonSkill("디멘션 소드 (극딜)", 480, 210, 300+vEhc.getV(0,0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).wrap(core.SummonSkillWrapper)
+        DimensionSword = core.SummonSkill("디멘션 소드(평딜)", 660, 3000, 1250+14*vEhc.getV(0,0), 8, 40*1000, cooltime = 120*1000, modifier=core.CharacterModifier(armor_ignore=100)).wrap(core.SummonSkillWrapper)
+        DimensionSwordReuse = core.SummonSkill("디멘션 소드 (극딜)", 660, 210, 300+vEhc.getV(0,0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).wrap(core.SummonSkillWrapper)
         
+        # TODO: 분노의 가시 재발동 대기시간 감소
+        Revenant = core.BuffSkill("레버넌트", 1530, (30 + vEhc.getV(0,0)//5)*1000, cooltime = 300000, rem = False).wrap(core.BuffSkillWrapper)
+        RevenantHit = core.DamageSkill("레버넌트(분노의 가시)", 0, 300 + vEhc.getV(0,0) * 12, 9, cooltime = 4000, modifier = core.CharacterModifier(armor_ignore = 30)).wrap(core.DamageSkillWrapper)
 
         #BatSwarm = core.SummonSkill("배츠 스웜", 0, 0, 200, 1, 0)
 
@@ -121,17 +111,16 @@ class JobGenerator(ck.JobGenerator):
 
         #Buff skills
 
-        ForbiddenContract = core.BuffSkill("포비든 컨트랙트", 0, 30*1000, cooltime = 75*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
+        ForbiddenContract = core.BuffSkill("포비든 컨트랙트", 1020, 30*1000, cooltime = 75*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         DemonicFortitude = core.BuffSkill("데모닉 포티튜드", 0, 60*1000, cooltime=120*1000, pdamage=10).wrap(core.BuffSkillWrapper)
 
+        # 딜레이: ?
         ReleaseOverload = core.BuffSkill("릴리즈 오버로드", 0, 60*1000, pdamage_indep= 25).wrap(core.BuffSkillWrapper)
         
         # 데몬 5차 공용
         CallMastema, MastemaClaw = demon.CallMastemaWrapper(vEhc, 0, 0)
         AnotherGoddessBuff, AnotherVoid = demon.AnotherWorldWrapper(vEhc, 0, 0)
 
-        
-        
         ######   Skill Wrapper   ######
         '''딜 사이클 정리
         https://blog.naver.com/oe135/221538210455
@@ -140,12 +129,16 @@ class JobGenerator(ck.JobGenerator):
         
         ArmorBreakBuff.onAfter(ArmorBreak)
         ExecutionExceed.onAfter(EnhancedExceed)
+        
 
         ReleaseOverload.onAfter(Execution_0)
 
         ExceedOpt = core.OptionalElement(Exceed.judge(5, 1), ExecutionExceed, Execution)
 
         BasicAttack = core.OptionalElement(ReleaseOverload.is_active, ExecutionExceed, ReleaseOverload)
+
+        RevenantHitOpt = core.OptionalElement(lambda : Revenant.is_active() and RevenantHit.is_available(), RevenantHit)
+        ExecutionExceed.onAfter(RevenantHitOpt)
 
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
