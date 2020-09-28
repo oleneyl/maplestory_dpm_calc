@@ -73,7 +73,7 @@ class JobGenerator(ck.JobGenerator):
         #Full speed, No Combat Orders
         OrbitalFlame = core.DamageSkill("오비탈 플레임 IV", 210, 215 + self.combat, 3 * 2 * (210 / flamewizardDefaultSpeed), modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         # BlazingExtinction = core.SummonSkill("블레이징 익스팅션", 1020, 2500, 310+2*self.combat, 3+1, 10000, cooltime=5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
-        CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 2, 1)
+        CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 2, 1)
         BlazingOrbital = core.DamageSkill("블레이징 오비탈 플레임", 180, 330+13*vEhc.getV(0,0), 6 * blazingOrbitalHit, cooltime = 5000, red = True, modifier = core.CharacterModifier(armor_ignore = 50)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)    #4타 가정
         
         DragonSlaveTick = core.DamageSkill("드래곤 슬레이브", 280, 500, 6).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)#x7
@@ -130,7 +130,7 @@ class JobGenerator(ck.JobGenerator):
         # Overload Mana
         overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 2)
         for sk in [OrbitalFlame, InfernoRize, DragonSlaveTick, DragonSlaveEnd, InfinityFlameCircleTick, SavageFlame_2, SavageFlame_3, SavageFlame_4,
-                    SalamanderMischeif, CygnusPalanks]:
+                    SalamanderMischeif, CygnusPhalanx]:
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
         
@@ -138,7 +138,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                      cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level), WordOfFire, FiresOfCreation, BurningRegion, GloryOfGuardians, OverloadMana, Flame, SalamanderMischeifBuff,
                     globalSkill.soul_contract()] +\
-                [SalamanderMischeif, CygnusPalanks, BlazingOrbital, DragonSlaveInit, SavageFlame, InfinityFlameCircleInit, 
+                [SalamanderMischeif, CygnusPhalanx, BlazingOrbital, DragonSlaveInit, SavageFlame, InfinityFlameCircleInit, 
                     InfernoRize, MirrorBreak, MirrorSpider] +\
                 [IgnitionDOT] +\
                 [] +\
