@@ -6,7 +6,7 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import warriors
 from .jobclass import demon
-
+from math import ceil
 ### 데몬어벤져 직업 코드 (작성중)
 # TODO: 스킬별 딜레이 추가, 5차 강화값 적용, 딜사이클
 ######   Passive Skill   ######
@@ -14,7 +14,6 @@ from .jobclass import demon
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.jobtype = "str"
         self.jobname = "데몬어벤져"
         self.vEnhanceNum = 12
@@ -27,19 +26,19 @@ class JobGenerator(ck.JobGenerator):
         return core.CharacterModifier(armor_ignore = 20)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         #TODO: 블러드 컨트랙트, 컨버전 스타포스
 
         #와일드레이지 : 데미지10%, 링크에 반영되므로 미고려.
         #주스탯 미반영, 추가바람.
         AbyssalRage = core.InformedCharacterModifier("어비셜 레이지", att=40)
-        AdvancedDesperadoMastery = core.InformedCharacterModifier("어드밴스드 데스페라도 마스터리",att = 50, crit_damage = 8)
-        OverwhelmingPower = core.InformedCharacterModifier("오버휄밍 파워", pdamage=30)
-        DefenseExpertise = core.InformedCharacterModifier("디펜스 엑스퍼타이즈", armor_ignore = 30)
+        AdvancedDesperadoMastery = core.InformedCharacterModifier("어드밴스드 데스페라도 마스터리",att = 50 + passive_level, crit_damage = 8)
+        OverwhelmingPower = core.InformedCharacterModifier("오버휄밍 파워", pdamage=30 + passive_level)
+        DefenseExpertise = core.InformedCharacterModifier("디펜스 엑스퍼타이즈", armor_ignore = 30 + passive_level)
         DemonicSharpness = core.InformedCharacterModifier("데모닉 샤프니스", crit=20)
 
         # 메용: 체력+15%로 수정
-        MapleHeroesDemon = core.InformedCharacterModifier("메이플 용사(데몬어벤져)", pstat_main = 15)
+        MapleHeroesDemon = core.InformedCharacterModifier("메이플 용사(데몬어벤져)", pstat_main = 15 + self.combat / 2)
         # 최종데미지 (릴리즈 오버로드, 데몬 프렌지)
         InnerStrength = core.InformedCharacterModifier("이너 스트렝스", stat_main = 600)
         DiabolicRecovery = core.InformedCharacterModifier("디아볼릭 리커버리", pstat_main=25)
@@ -57,12 +56,13 @@ class JobGenerator(ck.JobGenerator):
         return [AbyssalRage, AdvancedDesperadoMastery, OverwhelmingPower, DefenseExpertise, DemonicSharpness, MapleHeroesDemon, InnerStrength, DiabolicRecovery, FrenzyPassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 30)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level/2))
         
         return [WeaponConstant, Mastery]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         코강 순서: 익시드 엑스큐션, 실드 체이싱 -> 문라이트 슬래시(사용하지 않음)
         '''
@@ -79,26 +79,26 @@ class JobGenerator(ck.JobGenerator):
         #V코어 값은 전면 재작성 필요
         
         # TODO: OptionalElement로 변경해야 함
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         # 익시드 0~3스택: 딜레이 900, 900, 840, 780
-        Execution_0 = core.DamageSkill("익시드: 엑스큐션 (0스택)", 660, 540, 4, modifier = core.CharacterModifier(armor_ignore = 30, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        Execution_1 = core.DamageSkill("익시드: 엑스큐션 (1스택)", 660, 540, 4, modifier = core.CharacterModifier(armor_ignore = 30, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        Execution_2 = core.DamageSkill("익시드: 엑스큐션 (2스택)", 630, 540, 4, modifier = core.CharacterModifier(armor_ignore = 30, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        Execution_3 = core.DamageSkill("익시드: 엑스큐션 (3스택)", 570, 540, 4, modifier = core.CharacterModifier(armor_ignore = 30, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Execution_0 = core.DamageSkill("익시드: 엑스큐션 (0스택)", 660, 540+8*self.combat, 4, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Execution_1 = core.DamageSkill("익시드: 엑스큐션 (1스택)", 660, 540+8*self.combat, 4, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Execution_2 = core.DamageSkill("익시드: 엑스큐션 (2스택)", 630, 540+8*self.combat, 4, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Execution_3 = core.DamageSkill("익시드: 엑스큐션 (3스택)", 570, 540+8*self.combat, 4, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         # 익시드 5스택 이상
-        ExecutionExceed = core.DamageSkill("익시드: 엑스큐션 (강화)", 540, 540, 6, modifier = core.CharacterModifier(armor_ignore = 30, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ExecutionExceed = core.DamageSkill("익시드: 엑스큐션 (강화)", 540, 540+8*self.combat, 6, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
-        # 방어력 2배 무시가 30퍼를 한번 더 계산하는건지, 아니면 60퍼로 적용되는건지 알아볼 필요가 있음.
         # 최대 10회 공격
-        ShieldChasing = core.DamageSkill("실드 체이싱", 540, 500, 2*2*(8+2), cooltime = 6000, modifier = core.CharacterModifier(armor_ignore = 30, pdamage=20), red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
+        ShieldChasing = core.DamageSkill("실드 체이싱", 540, 500 + 10 * self.combat, 2*2*(8+2), cooltime = 6000, modifier = core.CharacterModifier(armor_ignore = 30, pdamage=20+20), red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
 
-        ArmorBreak = core.DamageSkill("아머 브레이크", 0, 350, 4, cooltime = 30 * 1000).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        ArmorBreakBuff = core.BuffSkill("아머 브레이크(디버프)", 720, 30*1000, armor_ignore = 30).wrap(core.BuffSkillWrapper)
+        ArmorBreak = core.DamageSkill("아머 브레이크", 0, 350 + 5 * self.combat, 4, cooltime = (30+self.combat)*1000).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        ArmorBreakBuff = core.BuffSkill("아머 브레이크(디버프)", 720, (30+self.combat)*1000, armor_ignore = 30 + self.combat).wrap(core.BuffSkillWrapper)
 
         #ThousandSword = core.Damageskill("사우전드 소드", 0, 500, 8, cooltime = 8*1000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
 
         # 보너스 찬스 70% -> 80%
-        EnhancedExceed = core.DamageSkill("인핸스드 익시드", 0, 200, 2*0.8, cooltime = -1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        EnhancedExceed = core.DamageSkill("인핸스드 익시드", 0, 200+4*passive_level, 2*(0.8+0.04*passive_level), cooltime = -1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
 
         #일정 주기로 마족의 피가 바닥에 뿌려져 5초 동안 최대 10명의 적을 일정주기 마다 300+8n%로 2번 공격
         # 초당 22타 가정
@@ -154,7 +154,7 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
         
         return(BasicAttackWrapper,
-               [globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(),
+               [globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
                     globalSkill.soul_contract()] +\
                 [Execution, Cerberus, DevilCry, SpiritOfRageEnd] +\

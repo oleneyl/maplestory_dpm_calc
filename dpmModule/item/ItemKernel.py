@@ -8,60 +8,30 @@ class Item():
     - parameters
     
       .name : Item's name. Need not be unique.
-      .stat_main : Main stat
-      .stat_sub : Sub stat
-      .att : AD(or MA) valule
-      .patt : Ad(or MA) %
-      .pdamage : Damage increment %
-      .armor_ignore : Armor ignorant %
+      .level : Item's required level.
+      .main_option : Main Option.(ExtendedCharacterModifier)
       
       .potential : Potential Value.(ExtendedCharacterModifier)
       .add_potential : Additional Potential Value. (ExtendedCharacterModifier)
     '''
-    def __init__(self, name = 'DEFAULT', level = 150, stat_main = 0, stat_sub = 0, att = 0, patt = 0, pdamage = 0, armor_ignore = 0, pstat_main = 0, pstat_sub = 0, potential = ExMDF(), additional_potential = ExMDF()):
+    def __init__(self, name, level, main_option: ExMDF, potential = ExMDF(), additional_potential = ExMDF()):
         #Prototypical option
         self.name = name
         #Main options
-        self.stat_main = stat_main
-        self.stat_sub = stat_sub
-        self.att = att
-        self.patt = patt
-        self.pdamage = pdamage
-        self.armor_ignore = armor_ignore
-        
-        self.pstat_main = pstat_main
-        self.pstat_sub = pstat_sub
-        
-        self.potential = potential
-        self.additional_potential = additional_potential
+        self.main_option = main_option.copy()
+        self.potential = potential.copy()
+        self.additional_potential = additional_potential.copy()
         
         self.level = level
 
     def get_modifier(self):
-        myModifier = ExMDF(stat_main = self.stat_main, stat_sub = self.stat_sub, att = self.att, patt = self.patt, pdamage = self.pdamage, armor_ignore = self.armor_ignore)
-        return myModifier + self.potential + self.additional_potential
+        return self.main_option + self.potential + self.additional_potential
         
     def add_main_option(self, mf : ExMDF):
-        self.stat_main += mf.stat_main
-        self.stat_sub += mf.stat_sub
-        self.att += mf.att
-        self.patt += mf.patt
-        self.pdamage += mf.pdamage
-        self.armor_ignore += mf.armor_ignore
-        
-        self.pstat_main += mf.pstat_main
-        self.pstat_sub += mf.pstat_sub
+        self.main_option += mf
     
     def set_main_option(self, mf : ExMDF):
-        self.stat_main = mf.stat_main
-        self.stat_sub = mf.stat_sub
-        self.att = mf.att
-        self.patt = mf.patt
-        self.pdamage = mf.pdamage
-        self.armor_ignore = mf.armor_ignore
-        
-        self.pstat_main = mf.pstat_main
-        self.pstat_sub = mf.pstat_sub
+        self.main_option = mf.copy()
         
     def set_potential(self, mdf : ExMDF):
         self.potential = mdf.copy()
@@ -70,39 +40,23 @@ class Item():
         self.additional_potential = mdf.copy()
         
     def copy(self):
-        return Item(name = self.name, level = self.level, stat_main = self.stat_main, \
-        stat_sub = self.stat_sub, att = self.att, patt = self.patt, pdamage = self.pdamage,\
-        armor_ignore = self.armor_ignore, pstat_main = self.pstat_main, pstat_sub = self.pstat_sub, \
-        potential = self.potential, \
-        additional_potential = self.additional_potential)
+        return Item(name = self.name, level = self.level, main_option = self.main_option, potential = self.potential, additional_potential = self.additional_potential)
         
     def as_dict(self):
         potential_dict = self.potential.as_dict()
-        potential_dict["cooltime_reduce"] = self.potential.skill_modifier.cooltime_reduce
         additional_potential_dict = self.additional_potential.as_dict()
-        additional_potential_dict["cooltime_reduce"] = self.additional_potential.skill_modifier.cooltime_reduce
-        return {"main" : {"stat_main" : self.stat_main, "stat_sub" : self.stat_sub, "att" : self.att, "armor_ignore" : self.armor_ignore, "pstat_main" : self.pstat_main, "pstat_sub" : self.pstat_sub},
+        return {"main" : self.main_option.as_dict(),
                 "potential" : potential_dict,
                 "additional_potential" : additional_potential_dict}
         
     def log(self):
         txt = "name : %s, level : %d\n"%(self.name, self.level)
-        txt += "stat_main : %.1f, stat_sub %.1f\n"%(self.stat_main, self.stat_sub)
-        txt += "pstat_main : %.1f, pstat_sub %.1f\n"%(self.pstat_main, self.pstat_sub)
-        txt += "att : %.1f, patt %.1f\n"%(self.att, self.patt)
-        txt += "pdamage : %.1f, armor_ignore %.1f\n"%(self.pdamage, self.armor_ignore)
+        txt += "==main option==\n"
+        txt += self.main_option.log()
         txt += "==potential==\n"
-        txt += "pstat_main : %.1f, pstat_sub %.1f\n"%(self.potential.pstat_main, self.potential.pstat_sub)
-        txt += "att : %.1f, patt %.1f\n"%(self.potential.att, self.potential.patt)
-        txt += "pdamage : %.1f, armor_ignore %.1f\n"%(self.potential.pdamage, self.potential.armor_ignore)
-        txt += "crit : %.1f, crit_damage %.1f\n"%(self.potential.crit, self.potential.crit_damage)
-        txt += "cooltime_reduce : %.1f\n"%(self.potential.skill_modifier.cooltime_reduce)
+        txt += self.potential.log()
         txt += "==additional_potential==\n"
-        txt += "pstat_main : %.1f, pstat_sub %.1f\n"%(self.additional_potential.pstat_main, self.additional_potential.pstat_sub)
-        txt += "att : %.1f, patt %.1f\n"%(self.additional_potential.att, self.additional_potential.patt)
-        txt += "pdamage : %.1f, armor_ignore %.1f\n"%(self.additional_potential.pdamage, self.additional_potential.armor_ignore)
-        txt += "crit : %.1f, crit_damage %.1f\n"%(self.additional_potential.crit, self.additional_potential.crit_damage)
-        txt += "cooltime_reduce : %.1f\n"%(self.additional_potential.skill_modifier.cooltime_reduce)
+        txt += self.additional_potential.log()
         return txt
 
 class EnhancerFactory():
@@ -289,7 +243,7 @@ class EnhancerFactory():
         else:
             raise TypeError("Level Must be 130, 140, 150, 160, 200")
             
-        att = weapon.att
+        att = weapon.main_option.att
         att_init = att
         
         for i in range(1,star + 1):
@@ -326,14 +280,14 @@ class WeaponFactoryClass():
                         "두손둔기", "창","튜너", "폴암", "데스페라도", "리볼버", "제로무기",
                         "완드", "스태프", "샤이닝로드", "ESP리미터", "건틀렛",
                         "활", "석궁", "듀얼보우건",
-                        "단검", "아대", "블레이드", "케인", "에너지소드", "체인", 
+                        "단검", "아대", "블레이드", "케인", "에너지소드", "체인", "부채",
                         "건", "너클", "핸드캐논", "소울슈터"]
 
     typeMap = {"아대" : 0,
                     "건" : 1, 
                     "소울슈터" : 2, "에너지소드" : 2, "너클" : 2, "리볼버":2,
                     "폴암" : 3,
-                    "단검":4, "체인":4, "활":4, "듀얼보우건":4, 
+                    "단검":4, "체인":4, "활":4, "듀얼보우건":4, "부채":4,
                     "한손검":5, "한손둔기":5, "한손도끼":5, "케인":5, "석궁":5,
                     "데스페라도":6, "두손검":6, "두손둔기":6, "두손도끼":6, "창":6, "튜너":6,
                     "핸드캐논":7,
@@ -354,8 +308,8 @@ class WeaponFactoryClass():
         if _type == '블레이드':
             _type = '단검'
         _att, _bonus = self.getMap(_type)
-        item = Item(name = _type, att = _att, level = self.level)
-        item.add_main_option(self.modifier)
+        item = Item(name = _type, main_option = self.modifier, level = self.level)
+        item.add_main_option(ExMDF(att = _att))
         item.add_main_option(EnhancerFactory.get_weapon_scroll_enhancement(self.level, elist))
         item.add_main_option(ExMDF(att = _bonus[-1*bonusAttIndex]))
         item.add_main_option(EnhancerFactory.get_weapon_starforce_enhancement(item, self.level, star))
@@ -376,10 +330,18 @@ class WeaponFactoryClass():
             raise TypeError("Invalid blade, (Arcane, Absolab, RootAbyss) is allowed.")
 
         _att, _bonus = self.getMap(_type)
-        item = Item(name = "블레이드", att = _att, level = self.level)
-        item.add_main_option(get_blade_modifier())
+        item = Item(name = "블레이드", main_option = get_blade_modifier(), level = self.level)
+        item.add_main_option(ExMDF(att = _att))
         item.add_main_option(EnhancerFactory.get_weapon_scroll_enhancement(self.level, elist))
         item.add_main_option(EnhancerFactory.get_weapon_starforce_enhancement(item, self.level, star))
+        item.add_main_option(bonusElse)
+        item.set_potential(potential)
+        item.set_additional_potential(additional_potential)
+        return item
+
+    def getZeroSubweapon(self, _type, potential = ExMDF(), additional_potential = ExMDF(), bonusElse = ExMDF()):
+        assert(_type == '제로무기')
+        item = Item(name = "제로보조", main_option = self.modifier, level = self.level)
         item.add_main_option(bonusElse)
         item.set_potential(potential)
         item.set_additional_potential(additional_potential)

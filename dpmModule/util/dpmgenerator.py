@@ -26,7 +26,7 @@ class IndividualDPMGenerator():
     def set_runtime(self, time):
         self.runtime = time
 
-    def get_dpm(self, ulevel = 6000, level=None, weaponstat = [4,9], printFlag = False, restricted = True, default_modifier=core.CharacterModifier()):
+    def get_dpm(self, ulevel = 6000, level=None, weaponstat = [4,9], printFlag = False, statistics = False, restricted = True, default_modifier=core.CharacterModifier()):
         #TODO target을 동적으로 생성할 수 있도록.
         target = self.template(maplejobs.weaponList[self.job])
         if level is not None:
@@ -47,7 +47,8 @@ class IndividualDPMGenerator():
         control = core.Simulator(sche, target, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
         control.set_default_modifier(default_modifier)
         control.start_simulation(self.runtime)
-        control.analytics.statistics()
+        if statistics:
+            control.analytics.statistics()
         return control.getDPM(restricted=restricted)
 
     def get_detailed_dpm(self, ulevel = 6000, weaponstat = [4,9]):

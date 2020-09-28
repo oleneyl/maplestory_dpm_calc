@@ -1,10 +1,11 @@
 from . import ItemKernel as it
+ExMDF = it.ExMDF
 
-Head = it.Item(name="여제 모자", stat_main = 25, stat_sub = 25, att = 1, armor_ignore = 10, level = 140)
-Glove = it.Item(name="여제 장갑", stat_main = 16, stat_sub = 16, att = 5, level = 140)
-Shoes = it.Item(name="여제 신발", stat_main = 15, stat_sub = 15, att = 1, level = 140)
-Cloak = it.Item(name="여제 망토", stat_main = 7, stat_sub = 7, att = 1, level = 140)
-Shoulder = it.Item(name="여제 견장", stat_main = 11, stat_sub = 11, att = 7, level = 140)
+Head = it.Item(name="여제 모자", level = 140, main_option = ExMDF(stat_main = 25, stat_sub = 25, att = 1, armor_ignore = 10))
+Glove = it.Item(name="여제 장갑", level = 140, main_option = ExMDF(stat_main = 16, stat_sub = 16, att = 5))
+Shoes = it.Item(name="여제 신발", level = 140, main_option = ExMDF(stat_main = 15, stat_sub = 15, att = 1))
+Cloak = it.Item(name="여제 망토", level = 140, main_option = ExMDF(stat_main = 7, stat_sub = 7, att = 1))
+Shoulder = it.Item(name="여제 견장", level = 140, main_option = ExMDF(stat_main = 11, stat_sub = 11, att = 7))
 
 _valueMap = [[69, [0,9,13,17,23,29]],
                 [100,[0,12,18,25,32,41]],

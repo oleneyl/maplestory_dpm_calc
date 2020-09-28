@@ -20,12 +20,12 @@ class CriticalReinforceWrapper(core.BuffSkillWrapper):
         self.bonus = bonus
         
     def get_modifier(self):
-        if self.onoff:
+        if self.is_active():
             return core.CharacterModifier(crit_damage = self.inhancer * max(0,self.char.get_modifier().crit+self.bonus))
         else:
             return self.disabledModifier
 
 class GuidedArrowWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2):
-        skill = core.SummonSkill("가이디드 애로우", 720, 510, 400+16*vEhc.getV(num1, num2), 1, 510 * 90, cooltime = 60 * 1000).isV(vEhc,num1, num2)
+        skill = core.SummonSkill("가이디드 애로우", 720, 510, 400+16*vEhc.getV(num1, num2), 1, 510 * 90, cooltime = 60 * 1000, red=True).isV(vEhc,num1, num2)
         super(GuidedArrowWrapper, self).__init__(skill)

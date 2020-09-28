@@ -1,10 +1,10 @@
-from ..kernel.core import ExtendedCharacterModifier, InformedCharacterModifier, SkillModifier
-from ..item import ItemKernel as ik
-from ..item.ItemKernel import Item
+from ..kernel.core import ExtendedCharacterModifier, InformedCharacterModifier
 from ..status.ability import Ability_tool, Ability_grade
 from ..kernel.graph import GlobalOperation, initialize_global_properties, _unsafe_access_global_storage
 from ..kernel import policy
 from functools import reduce
+from math import ceil
+from typing import List
 
 ExMDF = ExtendedCharacterModifier
 '''Clas AbstractCharacter : Basic template for build specific User. User is such object that contains
@@ -86,7 +86,7 @@ class AbstractCharacter():
             item = item_dict[key]
             if item == None:
                 raise TypeError(key + " item is missing")
-            self.itemlist[key] = item_dict[key]            
+            self.itemlist[key] = item_dict[key]
             self.add_item_modifier(item_dict[key])
 
 
@@ -97,7 +97,7 @@ class JobGenerator():
     
     - Functions that you must re - implement
     
-    .generate(chtr : ck.AbstractCharacter, combat : bool = False , vlevel : int = 0, vEnhance : list = [0,0,0]) : 
+    .generate(chtr : ck.AbstractCharacter, vlevel : int = 0, vEnhance : list = [0,0,0]) : 
         This function generate given chtr's graph and returns schedule.
         
     - Values that you must re-  implement
@@ -109,23 +109,23 @@ class JobGenerator():
     
     from . import globalSkill
     self.preEmptiveSkills = 2
-    globalSkill.maple_heros(chtr.level), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster()
+    globalSkill.maple_heros(chtr.level, combat_level=combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster()
     globalSkill.soul_contract()
     
     미하일까지..
     '''
     def __init__(self, vEhc = None):
-        self.buffrem = False
+        self.buffrem = (0, 0)
         self.vEnhanceNum = 10
         self.vSkillNum = 3 + 3
         self.preEmptiveSkills = 0
         self.jobname = None
         self.jobtype = "str" #재상속 하도록 명시할 필요가 있음.
         self._passive_skill_list = [] #각 생성기가 자동으로 그래프 생성 시점에서 연산합니다.
-        self.constructedSchedule = None
-        self.combat = False
+        self.combat = 1
         self.ability_list = Ability_tool.get_ability_set(None, None, None)
         self._use_critical_reinforce = False
+        self.hyperStatPrefixed = 0
             
     def get_ruleset(self):
         return
@@ -147,13 +147,10 @@ class JobGenerator():
         '''
         return ExMDF()
     
-    def apply_specific_schedule(self, graph):
-        return
-    
-    def build(self, vEhc, chtr, combat = False, storage_handler=None):
+    def build(self, vEhc, chtr, storage_handler=None):
         initialize_global_properties()
 
-        base_element, all_elements = self.generate(vEhc, chtr, combat = combat)
+        base_element, all_elements = self.generate(vEhc, chtr)
 
         GlobalOperation.assign_storage()
         GlobalOperation.attach_namespace()
@@ -170,22 +167,25 @@ class JobGenerator():
         
         return graph
     
-    def generate(self, vEhc, chtr : AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : AbstractCharacter):
         raise NotImplementedError
     
-    def build_passive_skill_list(self, vEhc, chtr : AbstractCharacter):
+    def build_passive_skill_list(self, vEhc, chtr : AbstractCharacter) -> None:
         self._passive_skill_list = self.get_passive_skill_list(vEhc, chtr)
+        self._passive_skill_list += [InformedCharacterModifier("여제의 축복", att = 30)]
+        if self.jobname != "제로":
+            self._passive_skill_list += [InformedCharacterModifier("연합의 의지", att = 5, stat_main = 5, stat_sub = 5)]
         return
 
-    def get_passive_skill_list(self, vEhc, chtr : AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : AbstractCharacter) -> List[InformedCharacterModifier]:
         raise NotImplementedError("You must fill get_passive_skill_list function.")
     
-    def build_not_implied_skill_list(self, vEhc, chtr : AbstractCharacter):
+    def build_not_implied_skill_list(self, vEhc, chtr : AbstractCharacter) -> None:
         notImpliedBuffList = self.get_not_implied_skill_list(vEhc, chtr)
         self._passive_skill_list += notImpliedBuffList
         return
     
-    def get_not_implied_skill_list(self, vEhc, chtr : AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : AbstractCharacter) -> List[InformedCharacterModifier]:
         raise NotImplementedError('You must fill get_not_implied_skill_list function.')
     
     def get_passive_skill_modifier(self):
@@ -207,7 +207,7 @@ class JobGenerator():
         
         return graph
         
-    def package(self, chtr, v_builder, combat : bool = False, 
+    def package(self, chtr, v_builder,
                     vlevel : int = 0,
                     ulevel : int = 4000,
                     weaponstat = [3,6],
@@ -218,7 +218,6 @@ class JobGenerator():
         '''Packaging function
         '''
         vEhc = v_builder.build_enhancer(chtr, self)
-        self.combat = combat
         chtr = chtr
         
         self.build_passive_skill_list(vEhc, chtr)
@@ -233,7 +232,7 @@ class JobGenerator():
         personality = Personality.get_personality(100)
         chtr.apply_modifiers([personality])
                 
-        graph = self.build(vEhc, chtr, combat = combat, storage_handler=storage_handler)
+        graph = self.build(vEhc, chtr, storage_handler=storage_handler)
 
         def log_modifier(modifier, name):
             if log:
@@ -261,9 +260,9 @@ class JobGenerator():
         # 무기 소울
         refMDF = get_reference_modifier(chtr)
         if refMDF.crit < 88:
-            weapon_soul_modifier = ExMDF(crit = 12)
+            weapon_soul_modifier = ExMDF(crit = 12, att = 20)
         else:
-            weapon_soul_modifier = ExMDF(patt = 3)
+            weapon_soul_modifier = ExMDF(patt = 3, att = 20)
         log_modifier(weapon_soul_modifier, "weapon soul")
         chtr.apply_modifiers([weapon_soul_modifier])
         log_buffed_character(chtr)
@@ -289,7 +288,7 @@ class JobGenerator():
 
         # 하이퍼 스탯
         refMDF = get_reference_modifier(chtr)
-        hyperstat = HyperStat.get_hyper_modifier(refMDF, chtr.level, critical_reinforce = self._use_critical_reinforce)
+        hyperstat = HyperStat.get_hyper_modifier(refMDF, chtr.level, self.hyperStatPrefixed, critical_reinforce = self._use_critical_reinforce)
         log_modifier(hyperstat, "hyper stat")
         chtr.apply_modifiers([hyperstat])
         log_buffed_character(chtr)
@@ -303,14 +302,18 @@ class JobGenerator():
 
         # 무기류 잠재능력
         refMDF = get_reference_modifier(chtr)
-        weaponli = WeaponPotential.get_weapon_pontential(refMDF, weaponstat[0], weaponstat[1])
-        for index, wp in enumerate(weaponli):
+        weapon_potential = WeaponPotential.get_weapon_pontential(refMDF, weaponstat[0], weaponstat[1])
+        for index, wp in enumerate(weapon_potential["weapon"]):
             log_modifier(wp, "weapon " + str(index + 1))
-        chtr.set_weapon_potential(weaponli)
+        for index, wp in enumerate(weapon_potential["subweapon"]):
+            log_modifier(wp, "subweapon " + str(index + 1))
+        for index, wp in enumerate(weapon_potential["emblem"]):
+            log_modifier(wp, "emblem " + str(index + 1))
+        chtr.set_weapon_potential(weapon_potential)
         log_buffed_character(chtr)
         
         #그래프를 다시 빌드합니다.
-        graph = self.build(vEhc, chtr, combat = combat, storage_handler=storage_handler)
+        graph = self.build(vEhc, chtr, storage_handler=storage_handler)
         graph.set_v_enhancer(vEhc)
 
         log_character(chtr)
@@ -324,53 +327,57 @@ class ItemedCharacter(AbstractCharacter):
         super(ItemedCharacter, self).__init__(level)
         
         #6 items for armor
-        self.itemlist["head"] = Item()
-        self.itemlist["glove"] = Item()
-        self.itemlist["top"] = Item()
-        self.itemlist["bottom"] =Item()
-        self.itemlist["shoes"] = Item()
-        self.itemlist["cloak"] = Item()
+        self.itemlist["head"] = None
+        self.itemlist["glove"] = None
+        self.itemlist["top"] = None
+        self.itemlist["bottom"] =None
+        self.itemlist["shoes"] = None
+        self.itemlist["cloak"] = None
 
         #13 items for accessory
         
-        self.itemlist["eye"] = Item()
-        self.itemlist["face"] = Item()
-        self.itemlist["ear"] = Item()
-        self.itemlist["belt"] = Item()
-        self.itemlist["ring1"] = Item()
-        self.itemlist["ring2"] = Item()
-        self.itemlist["ring3"] = Item()
-        self.itemlist["ring4"] = Item()
-        self.itemlist["shoulder"] = Item()
-        self.itemlist["pendant1"] = Item()
-        self.itemlist["pendant2"] = Item()
-        self.itemlist["pocket"] = Item()
-        self.itemlist["badge"] = Item()
+        self.itemlist["eye"] = None
+        self.itemlist["face"] = None
+        self.itemlist["ear"] = None
+        self.itemlist["belt"] = None
+        self.itemlist["ring1"] = None
+        self.itemlist["ring2"] = None
+        self.itemlist["ring3"] = None
+        self.itemlist["ring4"] = None
+        self.itemlist["shoulder"] = None
+        self.itemlist["pendant1"] = None
+        self.itemlist["pendant2"] = None
+        self.itemlist["pocket"] = None
+        self.itemlist["badge"] = None
         
         # 3 items for weapon
         
-        self.itemlist["weapon"] = Item()
-        self.itemlist["subweapon"] = Item()
-        self.itemlist["emblem"] = Item()
+        self.itemlist["weapon"] = None
+        self.itemlist["subweapon"] = None
+        self.itemlist["emblem"] = None
         
         #2 items for else
         
-        self.itemlist["medal"] = Item()
-        self.itemlist["heart"] = Item()
-        self.itemlist["title"] = Item()
-        self.itemlist["pet"] = Item()
+        self.itemlist["medal"] = None
+        self.itemlist["heart"] = None
+        self.itemlist["title"] = None
+        self.itemlist["pet"] = None
         
-    def set_weapon_potential(self, li):
-        if len(li) > 9: 
-            raise TypeError("무기 잠재능력은 최대 9개입니다.")
-        itemOrder = ["weapon", "subweapon", "emblem"]    
-        
-        for i in range(3):
+    def set_weapon_potential(self, weapon_potential):
+        for item_id in ["weapon", "subweapon", "emblem"]:
+            potentials = weapon_potential[item_id]
             ptnl = ExMDF()
-            for j in range((len(li) - i - 1) // 3):
-                ptnl  = ptnl + li[i+j*3]
-                
-            self.itemlist[itemOrder[i]].set_potential(ptnl)
+
+            if len(potentials) > 3: 
+                raise TypeError("무기류 잠재능력은 아이템당 최대 3개입니다.")
+
+            for i in range(len(potentials)):
+                ptnl = ptnl + potentials[i]
+
+            item = self.itemlist[item_id]
+            self.remove_item_modifier(item)
+            item.set_potential(ptnl)
+            self.add_item_modifier(item)
 
     def print_items(self):
         for item in self.itemlist:
@@ -389,7 +396,6 @@ class Union():
     #기본적으로 보공과 방무를 연결합니다. 6칸씩 버림.(12칸)
 
     initial_state = [6,6,1,1,0,0,0]
-    initial_state_with_buff_rem = [6,5,1,0,0,0,6]
 
     def __init__(self, mdf, buff_rem, slots, ulevel):
         self.mdf = mdf
@@ -406,22 +412,21 @@ class Union():
     @staticmethod
     def get_apt_slot(ulevel, maplem = True):
         '''get_apt_slot(ulevel, maplem = True) : Return Apt union slot.
-        유니온 캐릭터는 2000레벨부터 300레벨당 200짜리가 1개씩 증가합니다. 기본적으로 하나를 가집니다.
-        점령 가능한 개수는 아래와 같습니다.
+        유니온 캐릭터는 기본적으로 200레벨 하나를 가지며, 유니온 레벨을 맞추기 위한 최소한의 200레벨 캐릭터를 가집니다.
         '''
-        numOf200 = min((ulevel - 2000) // 300 + 1, Union.peoples[ulevel//500])
-        _else = (ulevel - numOf200 * 200) // 140
-        return numOf200 * 4 + min(_else, Union.peoples[ulevel//500] - numOf200) * 3 + (maplem * 3)
+        limit = Union.peoples[ulevel//500]
+        numOf200 = min(max(ceil((ulevel - 5600) / 60), 1), limit)
+        return numOf200 * 4 + (limit - numOf200) * 3 + (maplem * 3)
     
     #TODO :: -1을 리턴하지 않도록,
     @staticmethod
-    def get_union_object(mdf, ulevel, buffrem = False, asIndex = False, slot = None):
+    def get_union_object(mdf, ulevel, buffrem, asIndex = False, slot = None):
         mdf, buffrem = Union.get_union(mdf, ulevel, buffrem = buffrem, asIndex = asIndex, slot = slot)
         return Union(mdf, buffrem, -1, ulevel)
         
     @staticmethod
-    def get_union(mdf, ulevel, buffrem = False, asIndex = False, slot = None, critical_reinforce = False):
-        '''get_union(mdf, ulevel, buffrem = False, asIndex = False) : return optimized ExMDF value.
+    def get_union(mdf, ulevel, buffrem, asIndex = False, slot = None, critical_reinforce = False):
+        '''get_union(mdf, ulevel, buffrem, asIndex = False) : return optimized ExMDF value.
         return value : (ExMDF, buffremain) tuple.
         '''
         if slot is None:
@@ -429,14 +434,15 @@ class Union():
         else:
             slots = slot
         maxvalue = Union.maxSlot[min((ulevel-2000) // 1000, 4)]
+
+        buffrem_min, buffrem_max = buffrem
         
-        if buffrem:
-            state = [i for i in Union.initial_state_with_buff_rem]
-            while state[6] < maxvalue and slots > 0:
-                state[6] += 1
-                slots -= 1
-        else:
-            state = [i for i in Union.initial_state]
+        state = [i for i in Union.initial_state]
+        slots -= sum(state)
+        
+        while state[6] < buffrem_min and slots > 0:
+            state[6] += 1
+            slots -= 1
         
         while slots > 0:
             idx = -1
@@ -462,8 +468,14 @@ class Union():
                             eff = _eff                
                     print("Current state : %s\nslots : %d\n" % (str(state), slots))
                     raise ArithmeticError("Something gonna wrong")
+            if idx in [0, 1] and state[6] < min(buffrem_max, maxvalue): # 보공, 방무, 크확, 크뎀 점령이 끝났으면 벞지를 추가 수급
+                idx = 6
             state[idx] += 1
             slots -= 1
+
+            if state[6] >= 6 and state[0] >= 6: # 벞지가 6칸 이상이면 벞지-방무를 이어서 내부 점령 1칸을 절약함
+                state[0] -= 1
+                slots += 1
         
         if asIndex:
             return state
@@ -730,6 +742,25 @@ class WeaponPotential():
                             [ExMDF(patt = 6), ExMDF(armor_ignore = 20)]],
                         [[ExMDF(patt = 12), ExMDF(armor_ignore = 40)], 
                             [ExMDF(patt = 9), ExMDF(armor_ignore = 30)]]]
+
+    @staticmethod
+    def get_single_potential(refMdf, tier, number, sto):
+        retli = []
+        enhancement = ExMDF()
+        for i in range(number):
+            is_first = 0 if i == 0 else 1
+            cand = ExMDF()
+            ehc = 0
+            for mdfCandidate in sto[tier][is_first]:
+                if i >= 2 and retli[0].boss_pdamage > 0 and retli[1].boss_pdamage > 0 and mdfCandidate.boss_pdamage > 0:
+                    continue
+                _ehc = (refMdf + enhancement + mdfCandidate).get_damage_factor()
+                if _ehc > ehc:
+                    cand = mdfCandidate
+                    ehc = _ehc
+            retli.append(cand.copy())
+            enhancement = enhancement + cand
+        return retli, enhancement
                                 
     @staticmethod
     def get_weapon_pontential(mdf, tier, number):
@@ -746,26 +777,27 @@ class WeaponPotential():
             raise TypeError("Tier must be 2, 3 or 4.")
             
         target = mdf.copy()
-        enhancement = ExMDF()
-        retli = []
-        for i in range(number):
-            if i < 3: j = 0
-            else: j = 1
-            
-            if i%3==0: sto = WeaponPotential.storageEmblem
-            else: sto = WeaponPotential.storageWeapon
-            
-            cand = ExMDF()
-            ehc = 0
-            for mdfCandidate in sto[tier][j]:
-                _ehc = (target + enhancement + mdfCandidate).get_damage_factor()
-                if _ehc > ehc:
-                    cand = mdfCandidate
-                    ehc = _ehc
-            retli.append(cand.copy())
-            enhancement = enhancement + cand
+        result = {
+            "weapon": [],
+            "subweapon": [],
+            "emblem": [],
+        }
+        emblem_count = number // 3
+        subweapon_count = (number - emblem_count) // 2
+        weapon_count = number - subweapon_count - emblem_count
+
+        potential_list, potential_sum = WeaponPotential.get_single_potential(target, tier, emblem_count, WeaponPotential.storageEmblem)
+        result["emblem"] = potential_list
+        target += potential_sum
+
+        potential_list, potential_sum = WeaponPotential.get_single_potential(target, tier, subweapon_count, WeaponPotential.storageWeapon)
+        result["subweapon"] = potential_list
+        target += potential_sum
+
+        potential_list, potential_sum = WeaponPotential.get_single_potential(target, tier, weapon_count, WeaponPotential.storageWeapon)
+        result["weapon"] = potential_list
         
-        return retli
+        return result
 
 class HyperStat():
     requirement = [1,2,4,8,10,15,20,25,30,35,50,65,80,95,110,9999]
@@ -793,17 +825,12 @@ class HyperStat():
         return (delta // 10) * (30 + (delta // 10 + 2) * 10) // 2 + (delta % 10 + 1) * (delta // 10 + 3)
     
     @staticmethod
-    def get_hyper_object(mdf, level):    
-        mdf = HyperStat.get_hyper_modifier(mdf, level)
-        return HyperStat(mdf, level)
-    
-    @staticmethod
-    def get_hyper_index(mdf, level, isIndex = True, critical_reinforce = False):
+    def get_hyper_index(mdf, level, prefixed, isIndex = True, critical_reinforce = False):
         '''get_hyper_index(mdf, level) : return enhancement index for matching enhancement type.
         '''
         hyper_size = 8
         idxList = [0 for i in range(hyper_size)]
-        point_left = HyperStat.get_point(level)
+        point_left = HyperStat.get_point(level) - prefixed
         mdfSum = ExMDF()
         while True:
             not_enough = True
@@ -843,14 +870,15 @@ class HyperStat():
             return mdfSum
     
     @staticmethod
-    def get_hyper_modifier(mdf, level, critical_reinforce = False):
-        return HyperStat.get_hyper_index(mdf, level, isIndex = False, critical_reinforce = critical_reinforce)
+    def get_hyper_modifier(mdf, level, prefixed, critical_reinforce = False):
+        return HyperStat.get_hyper_index(mdf, level, prefixed, isIndex = False, critical_reinforce = critical_reinforce)
 
 class Doping():
     dopingListAtt = {"길드의 축복" : ExMDF(att = 20),
                     "우뿌" : ExMDF(att = 30),
                     "익스레드/블루" : ExMDF(att = 30),
-                    "MVP 버프" : ExMDF(att = 30)}
+                    "MVP 버프" : ExMDF(att = 30),
+                    "영웅의 메아리" : ExMDF(patt = 4)}
 
     dopingListStat = {"향상된 10단계 물약" : ExMDF(stat_main = 30)}
     
@@ -884,10 +912,3 @@ class Personality():
     @staticmethod
     def get_personality(avg_level):
         return ExMDF(armor_ignore = (avg_level // 5) * 0.5, buff_rem = (avg_level // 10) * 1, prop_ignore = 0.5 * (avg_level // 10))
-
-
-def testonly():            
-    test = ExMDF(armor_ignore = 80, pdamage = 100, stat_main = 1000, att = 100)
-    for i in range(140, 220, 5):
-        print("level" + str(i))
-        print(HyperStat.get_hyper_index(test, i))
