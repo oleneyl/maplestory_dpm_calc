@@ -136,8 +136,8 @@ class JobGenerator(ck.JobGenerator):
         
         # 택1
         # 하이퍼 3종 적용
-        Hologram_Penetrate = core.SummonSkill("홀로그램 그래피티 : 관통", 720, 30000/116, (213+3*self.combat)*1.1, 1, 20000 + 10000, cooltime = 30000 - 1000 * ceil(self.combat/3)).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
-        Hologram_ForceField = core.SummonSkill("홀로그램 그래피티 : 역장", 720, 30000/64, (400+5*self.combat)*1.1, 1, 20000 + 10000, cooltime = 30000 - 1000 * ceil(self.combat/3)).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
+        Hologram_Penetrate = core.SummonSkill("홀로그램 그래피티 : 관통", 720, 30000/116, 213+3*self.combat, 1, 20000 + 10000, cooltime = 30000 - 1000 * ceil(self.combat/3), modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
+        Hologram_ForceField = core.SummonSkill("홀로그램 그래피티 : 역장", 720, 30000/64, 400+5*self.combat, 1, 20000 + 10000, cooltime = 30000 - 1000 * ceil(self.combat/3), modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
 
         # TODO: 딜레이 다시 확인할 것
         BladeDancingPrepare = core.DamageSkill("블레이드 댄싱 (준비)", 720 + 420, 0, 0).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
@@ -172,7 +172,7 @@ class JobGenerator(ck.JobGenerator):
         OverloadHit_copy = core.SummonSkill("오버로드 모드(전류)(버추얼 프로젝션)", 0, (3600+10800)/2, (180 + 7 * vEhc.getV(4,4))*0.7, 6*4, OVERLOAD_TIME * 1000 - 5100, cooltime = -1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         
         # 하이퍼 적용됨
-        Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", 930, (30000 + 10000)/176, (250 + 10 * vEhc.getV(4,4))*1.1, 5, 30000 + 10000, cooltime = 100000).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
+        Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", 930, (30000 + 10000)/176, 250 + 10 * vEhc.getV(4,4), 5, 30000 + 10000, cooltime = 100000, modifier = core.CharacterModifier(pdamage = 10)).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         Hologram_Fusion_Buff = core.BuffSkill("홀로그램 그래피티 : 융합 (버프)", 0, 30000+10000, pdamage = 5+vEhc.getV(4,4)//2, rem = False).wrap(core.BuffSkillWrapper)
         
         # 30회 발동, 발사 딜레이 생략
