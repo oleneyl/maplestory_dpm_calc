@@ -7,11 +7,7 @@ from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobbranch import thieves
 from . import jobutils
-#TODO : 5차 신스킬 적용
-
-######   Passive Skill   ######
-
-
+from math import ceil
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -65,9 +61,8 @@ class JobGenerator(ck.JobGenerator):
         BleedingToxin = core.BuffSkill("블리딩 톡신", 780, 90*1000, cooltime = 200 * 1000, att = 60).wrap(core.BuffSkillWrapper)
         BleedingToxinDot = core.DotSkill("블리딩 톡신(도트)", 1000, 90*1000).wrap(core.SummonSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-
         
-        QuarupleThrow =core.DamageSkill("쿼드러플 스로우", 600, 378, 5, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)    #쉐도우 파트너 적용
+        QuarupleThrow = core.DamageSkill("쿼드러플 스로우", 600, 378, 5, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)    #쉐도우 파트너 적용
         
         MarkOfNightlord = core.DamageSkill("마크 오브 나이트로드", 0, (60 + chtr.level), 0.375*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         MarkOfNightlordPungma = core.DamageSkill("마크 오브 나이트로드(풍마)", 0, (60 + chtr.level), 0.375*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 툴팁대로면 19.355%가 맞으나, 쿼드러플과 동일한 37.5%로 적용되는 중
@@ -90,8 +85,7 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill Wrapper   ######
 
         #조건부 파이널어택으로 설정함.
-        for sk in [QuarupleThrow]:
-            jobutils.create_auxilary_attack(sk, 0.7, nametag= '쉐도우파트너')
+        jobutils.create_auxilary_attack(QuarupleThrow, 0.7, nametag= '쉐도우파트너')
         
         Pungma.onAfter(Pungma_SP)
 
