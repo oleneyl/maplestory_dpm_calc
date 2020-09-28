@@ -122,11 +122,10 @@ class JobGenerator(ck.JobGenerator):
 
         # Damage skills
 
-        # TODO: 어떤 스킬에 발동하는지 확인
         # 로켓강화 적용됨
         PinpointRocket = core.DamageSkill("핀포인트 로켓", 0, 50+40+40+100, 4, cooltime = 2000).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
-        # 이지스: 피격시에만 발동이라 허수아비 상대로는 미적용해야할듯 (인스턴스 셔크 적용됨)
+        # 이지스: 현재 미적용
         # 타수는 Skill Wrapper 쪽으로 이관 
         AegisSystem = core.DamageSkill("이지스 시스템", 0, 120, 1, modifier = core.CharacterModifier(pdamage = 20 + passive_level // 3), cooltime = 1500).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
@@ -170,6 +169,7 @@ class JobGenerator(ck.JobGenerator):
         # 첫 공격은 항상 5100ms 후에 시작
         # 공격 주기는 3600ms~10800ms 중 랜덤 by Monolith
         OverloadHit = core.SummonSkill("오버로드 모드(전류)", 0, (3600+10800)/2, 180 + 7 * vEhc.getV(4,4), 6*4, OVERLOAD_TIME * 1000 - 5100, cooltime = -1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
+        OverloadHit_copy = core.SummonSkill("오버로드 모드(전류)(버추얼 프로젝션)", 0, (3600+10800)/2, (180 + 7 * vEhc.getV(4,4))*0.7, 6*4, OVERLOAD_TIME * 1000 - 5100, cooltime = -1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         
         # 하이퍼 적용됨
         Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", 930, (30000 + 10000)/176, (250 + 10 * vEhc.getV(4,4))*1.1, 5, 30000 + 10000, cooltime = 100000).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
@@ -216,12 +216,15 @@ class JobGenerator(ck.JobGenerator):
         OverloadMode.onAfter(EndOverloadMode.controller(OVERLOAD_TIME * 1000))
 
         OverloadMode.onAfter(OverloadHit.controller(5100))
+        OverloadMode.onAfter(OverloadHit_copy.controller(5100))
 
-        # TODO: 쉐파 적용스킬 정확히 확인
         for sk in [PurgeSnipe, MeltDown, MegaSmasherTick, PhotonRayTick, OverloadHit, BladeDancing]:
             sk.onAfter(TriangulationTrigger)
             sk.onAfter(PinpointRocketOpt)
             jobutils.create_auxilary_attack(sk, 0.7, nametag = "버추얼 프로젝션")
+        
+        for sk in [Hologram_Penetrate, Hologram_ForceField, Hologram_Fusion]:
+            sk.onTick(PinpointRocketOpt)
         
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
