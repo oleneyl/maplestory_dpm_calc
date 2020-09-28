@@ -201,7 +201,6 @@ class JobGenerator(ck.JobGenerator):
         for sk in [PurgeSnipe, MeltDown, MegaSmasherTick, PhotonRayTick, OverloadHit, BladeDancing]:
             sk.onAfter(TriangulationTrigger)
             sk.onAfter(PinpointRocketOpt)
-            sk.onAfter(AegisSystemOpt)
             jobutils.create_auxilary_attack(sk, 0.7, nametag = "버추얼 프로젝션")
         
         return(BasicAttackWrapper, 
