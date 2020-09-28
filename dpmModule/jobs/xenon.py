@@ -13,10 +13,12 @@ from math import ceil
 
 # TODO: 오버로드 상태가 아닐 때는 최대값 20으로 제한
 class SupplyStackWrapper(core.StackSkillWrapper):
-    def __init__(self, skill):
-        super(SupplyStackWrapper, self).__init__(skill, 20)
+    def __init__(self, skill, overload_mode, amaranth_generator):
+        super(SupplyStackWrapper, self).__init__(skill, 40)
         self.stack = 20
         self.modifierInvariantFlag = False
+        self.overload_mode = overload_mode
+        self.amaranth_generator = amaranth_generator
     
     def get_modifier(self):
         '''
@@ -92,7 +94,6 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         
         # Buff skills
-        SupplySurplus = core.BuffSkill("서플러스 서플라이", 0, 999999999).wrap(SupplyStackWrapper)
         InclinePower = core.BuffSkill("인클라인 파워", 990, 240000, att = 30).wrap(core.BuffSkillWrapper)
         EfficiencyPipeLine = core.BuffSkill("에피션시 파이프라인", 990, 240000).wrap(core.BuffSkillWrapper)
         Booster = core.BuffSkill("제논 부스터", 990, 240000).wrap(core.BuffSkillWrapper)
@@ -145,15 +146,15 @@ class JobGenerator(ck.JobGenerator):
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("에너지소드")
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
-
+        
         MegaSmasher = core.SummonSkill("메가 스매셔", 0, 250, 0, 1, 16000, cooltime = 180000, rem = False).wrap(core.DamageSkillWrapper)
         MegaSmasherTick = core.DamageSkill("메가 스매셔(틱)", 0, 300+10*vEhc.getV(4,4), 6).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
         
-        # TODO: 오버로드 전류 주기 확인
         OVERLOAD_TIME = 30
         OverloadMode = core.BuffSkill("오버로드 모드", 720, OVERLOAD_TIME * 1000, cooltime = 180000).wrap(core.BuffSkillWrapper)
-        # 6번 공격하는 전격 4회 발동
-        OverloadHit = core.SummonSkill("오버로드 모드(전류)", 0, None, 180 + 7 * vEhc.getV(4,4), 6*4, OVERLOAD_TIME * 1000).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
+        # 첫 공격은 항상 5100ms 후에 시작
+        # 공격 주기는 3600ms~10800ms 중 랜덤 by Monolith
+        OverloadHit = core.SummonSkill("오버로드 모드(전류)", 0, (3600+10800)/2, 180 + 7 * vEhc.getV(4,4), 6*4, OVERLOAD_TIME * 1000 - 5100, cooltime = -1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         
         # 하이퍼 적용됨
         Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", 930, (30000 + 10000)/176, (250 + 10 * vEhc.getV(4,4))*1.1, 5, 30000 + 10000, cooltime = 100000).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
@@ -165,6 +166,7 @@ class JobGenerator(ck.JobGenerator):
         PhotonRayTick = core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4), 4 * 30).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
+        SupplySurplus = SupplyStackWrapper(core.BuffSkill("서플러스 서플라이", 0, 999999999), OverloadMode, AmaranthGenerator)
 
         BasicAttackWrapper = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(PurgeSnipe)
@@ -182,6 +184,7 @@ class JobGenerator(ck.JobGenerator):
         HybridDefenses.onAfter(SupplySurplus.stackController(-7))
         ExtraSupply.onAfter(SupplySurplus.stackController(10))
         OOPArtsCode.onAfter(SupplySurplus.stackController(-20))
+        AmaranthGenerator.onAfter(SupplySurplus.stackController(40, dtype = 'set'))
 
         TriangulationStack = core.StackSkillWrapper(core.BuffSkill("트라이앵글 스택", 0, 99999999), 3)
         TriangulationTrigger = core.OptionalElement(lambda : TriangulationStack.judge(3, 1), Triangulation, TriangulationStack.stackController(0.3))
@@ -196,6 +199,8 @@ class JobGenerator(ck.JobGenerator):
 
         OverloadMode.onAfter(BeginOverloadMode)
         OverloadMode.onAfter(EndOverloadMode.controller(OVERLOAD_TIME * 1000))
+
+        OverloadMode.onAfter(OverloadHit.controller(5100))
 
         # TODO: 쉐파 적용스킬 정확히 확인
         for sk in [PurgeSnipe, MeltDown, MegaSmasherTick, PhotonRayTick, OverloadHit, BladeDancing]:
