@@ -178,7 +178,7 @@ class JobGenerator(ck.JobGenerator):
         # 30회 발동, 발사 딜레이 생략
         # TODO: 블레이드 댄싱과 연계해야 함
         PhotonRay = core.BuffSkill("포톤 레이", 300, 20000, cooltime = 35000).wrap(core.BuffSkillWrapper)
-        PhotonRayTick = core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4), 4 * 30).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        PhotonRayHit = core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4), 4 * 30).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
         SupplySurplus = SupplyStackWrapper(core.BuffSkill("서플러스 서플라이", 0, 999999999), AmaranthGenerator)
@@ -218,7 +218,10 @@ class JobGenerator(ck.JobGenerator):
         OverloadMode.onAfter(OverloadHit.controller(5100))
         OverloadMode.onAfter(OverloadHit_copy.controller(5100))
 
-        for sk in [PurgeSnipe, MeltDown, MegaSmasherTick, PhotonRayTick, OverloadHit, BladeDancing]:
+        # 퍼지롭 15회 사용 후 포톤레이 발동, 최적화 필요
+        PhotonRay.onAfter(PhotonRayHit.controller(690*15))
+
+        for sk in [PurgeSnipe, MeltDown, MegaSmasherTick, OverloadHit, BladeDancing]:
             sk.onAfter(TriangulationTrigger)
             sk.onAfter(PinpointRocketOpt)
             jobutils.create_auxilary_attack(sk, 0.7, nametag = "버추얼 프로젝션")
