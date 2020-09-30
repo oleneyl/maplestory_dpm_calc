@@ -74,7 +74,7 @@ class JobGenerator(ck.JobGenerator):
         #Damage Skills
         SpeedingDance = core.DamageSkill("댄스오브 문/스피딩 선셋", (360+270)/2, 400+4*self.combat, 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + FallingMoon).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
+        CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         SelestialDanceInit = core.BuffSkill("셀레스티얼 댄스", 570, (40+vEhc.getV(0,0))*1000, cooltime = 150 * 1000, red = True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
@@ -131,6 +131,6 @@ class JobGenerator(ck.JobGenerator):
                     NimbleFinger, TrueSight, SolunaTime, SoulForge, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                     GloryOfGuardians, AuraWeaponBuff, AuraWeapon, globalSkill.soul_contract(), SelestialDanceInit, Elision, ElisionBreak,
                     ] +\
-                [FlareSlash, CygnusPalanks, SolunaDivide] +\
+                [FlareSlash, CygnusPhalanx, SolunaDivide] +\
                 [SelestialDanceSummon, SoulEclipse, MirrorBreak, MirrorSpider] +\
                 [BasicAttackWrapper])
