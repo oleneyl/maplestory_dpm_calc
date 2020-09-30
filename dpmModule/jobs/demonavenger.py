@@ -40,13 +40,12 @@ class JobGenerator(ck.JobGenerator):
         MapleHeroesDemon = core.InformedCharacterModifier("메이플 용사(데몬어벤져)", pstat_main = 15 + self.combat / 2)
         # 최종데미지 (릴리즈 오버로드, 데몬 프렌지)
         InnerStrength = core.InformedCharacterModifier("이너 스트렝스", stat_main = 600)
-        DiabolicRecovery = core.InformedCharacterModifier("디아볼릭 리커버리", pstat_main=25)
 
         HP_RATE = 100
         #최대 HP 대비 소모된 HP 3%(24레벨가지는 4%)당 최종 데미지 1% 증가
         FrenzyPassive = core.InformedCharacterModifier("데몬 프렌지 (최종 데미지)", pdamage_indep = (100 - HP_RATE) // (4 - (vEhc.getV(0, 0) // 25)))
 
-        return [AbyssalRage, AdvancedDesperadoMastery, OverwhelmingPower, DefenseExpertise, DemonicSharpness, MapleHeroesDemon, InnerStrength, DiabolicRecovery, FrenzyPassive]
+        return [AbyssalRage, AdvancedDesperadoMastery, OverwhelmingPower, DefenseExpertise, DemonicSharpness, MapleHeroesDemon, InnerStrength, FrenzyPassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -71,14 +70,14 @@ class JobGenerator(ck.JobGenerator):
         # 익시드 0~3스택: 딜레이 900, 900, 840, 780
         # 릴리즈 사용 직후 익시드 사용시 3번만에 강화모드 진입
         Execution_0 = core.DamageSkill("익시드: 엑스큐션 (0스택)", 660, 540+8*self.combat, 4, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        Execution_1 = core.DamageSkill("익시드: 엑스큐션 (1스택)", 660, 540+8*self.combat, 4, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        Execution_2 = core.DamageSkill("익시드: 엑스큐션 (2스택)", 630, 540+8*self.combat, 4, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Execution_1 = core.DamageSkill("익시드: 엑스큐션 (1스택)", 630, 540+8*self.combat, 4, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Execution_2 = core.DamageSkill("익시드: 엑스큐션 (2스택)", 600, 540+8*self.combat, 4, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         Execution_3 = core.DamageSkill("익시드: 엑스큐션 (3스택)", 570, 540+8*self.combat, 4, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         # 익시드 5스택 이상
         ExecutionExceed = core.DamageSkill("익시드: 엑스큐션 (강화)", 540, 540+8*self.combat, 6, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         # 최대 10회 공격
-        ShieldChasing = core.DamageSkill("실드 체이싱", 540, 500 + 10 * self.combat, 2*2*(8+2), cooltime = 6000, modifier = core.CharacterModifier(armor_ignore = 30, pdamage=20+20), red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
+        ShieldChasing = core.DamageSkill("실드 체이싱", 540, 500 + 10 * self.combat, 2*2*(8+2), cooltime = 6000, modifier = core.CharacterModifier(armor_ignore = 30 + passive_level, pdamage=20+20), red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
 
         ArmorBreak = core.DamageSkill("아머 브레이크", 0, 350 + 5 * self.combat, 4, cooltime = (30+self.combat)*1000).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         ArmorBreakBuff = core.BuffSkill("아머 브레이크(디버프)", 720, (30+self.combat)*1000, armor_ignore = 30 + self.combat).wrap(core.BuffSkillWrapper)
@@ -88,10 +87,9 @@ class JobGenerator(ck.JobGenerator):
         # 보너스 찬스 70% -> 80%
         EnhancedExceed = core.DamageSkill("인핸스드 익시드", 0, 200+4*passive_level, 2*(0.8+0.04*passive_level), cooltime = -1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
 
-        #일정 주기로 마족의 피가 바닥에 뿌려져 5초 동안 최대 10명의 적을 일정주기 마다 300+8n%로 2번 공격
-        # 초당 22타 가정
-        FrenzyStack = 1
-        FrenzyDOT = core.SummonSkill("프렌지 장판", 0, 1000/11, 300 + 8 * vEhc.getV(0, 0), FrenzyStack, 999999).wrap(core.SummonSkillWrapper)
+        # 초당 10.8타 가정
+        # http://www.inven.co.kr/board/maple/2304/23974
+        FrenzyDOT = core.SummonSkill("프렌지 장판", 0, 1000/10.8, 300 + 8 * vEhc.getV(0, 0), 1, 99999999).wrap(core.SummonSkillWrapper)
 
         # 블피 (즉시 시전)
         DemonicBlast = core.DamageSkill("블러드 피스트", 0, 500 + 20*vEhc.getV(0,0), 7, cooltime = 10000, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).wrap(core.DamageSkillWrapper)
@@ -110,6 +108,9 @@ class JobGenerator(ck.JobGenerator):
         #BloodImprison = core.DamageSkill("블러디 임프리즌", 0, 800, 3, cooltime = 120*1000)
 
         #Buff skills
+        Booster = core.BuffSkill("데몬 부스터", 990, 180*1000).wrap(core.BuffSkillWrapper)
+        DiabolicRecovery = core.BuffSkill("디아볼릭 리커버리", 990, 180*1000).wrap(core.BuffSkillWrapper)
+        WardEvil = core.BuffSkill("리프랙트 이블", 990, 180*1000).wrap(core.BuffSkillWrapper)
 
         ForbiddenContract = core.BuffSkill("포비든 컨트랙트", 1020, 30*1000, cooltime = 75*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         DemonicFortitude = core.BuffSkill("데모닉 포티튜드", 0, 60*1000, cooltime=120*1000, pdamage=10).wrap(core.BuffSkillWrapper)
@@ -128,17 +129,21 @@ class JobGenerator(ck.JobGenerator):
         '''
         
         ArmorBreakBuff.onAfter(ArmorBreak)
-        ExecutionExceed.onAfter(EnhancedExceed)
         
-
-        ReleaseOverload.onAfter(Execution_0)
-
-        ExceedOpt = core.OptionalElement(Exceed.judge(5, 1), ExecutionExceed, Execution)
 
         BasicAttack = core.OptionalElement(ReleaseOverload.is_active, ExecutionExceed, ReleaseOverload)
 
         RevenantHitOpt = core.OptionalElement(lambda : Revenant.is_active() and RevenantHit.is_available(), RevenantHit)
         ExecutionExceed.onAfter(RevenantHitOpt)
+
+        for sk in [Execution_0, Execution_1, Execution_2, Execution_3, ExecutionExceed]:
+            sk.onAfter(EnhancedExceed)
+            sk.onAfter(RevenantHitOpt)
+
+        Execution_1.onAfter(Execution_2)
+        ReleaseOverload.onBefore(Execution_1)
+
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
@@ -146,10 +151,10 @@ class JobGenerator(ck.JobGenerator):
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
         
-        return(BasicAttackWrapper,
+        return(BasicAttack,
                [globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    Booster, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
+                    Booster, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
                     globalSkill.soul_contract()] +\
-                [Execution, Cerberus, DevilCry, SpiritOfRageEnd] +\
-                [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_] +\
-                [BasicAttackWrapper])
+                [DimensionSword, CallMastema, MastemaClaw, AnotherGoddessBuff, AnotherVoid] +\
+                [MirrorBreak, MirrorSpider, FrenzyDOT] +\
+                [BasicAttack])
