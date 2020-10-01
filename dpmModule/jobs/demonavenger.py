@@ -4,6 +4,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
+from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
 from .jobbranch import warriors
 from .jobclass import demon
 from math import ceil
@@ -21,6 +22,19 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 3
         
         self.ability_list = Ability_tool.get_ability_set('reuse', 'crit', 'boss_pdamage')
+    
+    def get_ruleset(self):
+        '''딜 사이클 정리
+        어웨이크닝 ON
+        데몬 슬래시 + 데빌 크라이(이블 토쳐 유지)
+        어웨이크닝 OFF
+        데몬 임팩트 + 서버러스 + 데몬 슬래시 1타(리메인타임)
+
+        나머지는 알아서 시전
+        '''
+        ruleset = RuleSet()
+        ruleset.add_rule(InactiveRule('디멘션 소드(평딜)', '데모닉 포티튜드'), RuleSet.BASE)
+        return ruleset
     
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 20)
