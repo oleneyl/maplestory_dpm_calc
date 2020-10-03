@@ -456,6 +456,32 @@ class InformedCharacterModifier(ExtendedCharacterModifier):
         ret_dict['name'] = self.name
         return ret_dict
 
+    @staticmethod
+    def from_extended_modifier(name, extended_modifier):
+        return InformedCharacterModifier(name, 
+                        buff_rem = extended_modifier.buff_rem,
+                        summon_rem = extended_modifier.summon_rem,
+                        cooltime_reduce = extended_modifier.cooltime_reduce,
+                        pcooltime_reduce = extended_modifier.pcooltime_reduce,
+                        reuse_chance = extended_modifier.reuse_chance,
+                        prop_ignore = extended_modifier.prop_ignore,
+                        additional_target = extended_modifier.additional_target,
+                        passive_level = extended_modifier.passive_level,
+                        crit = extended_modifier.crit,
+                        crit_damage = extended_modifier.crit_damage,
+                        pdamage = extended_modifier.pdamage,
+                        pdamage_indep = extended_modifier.pdamage_indep,
+                        stat_main = extended_modifier.stat_main,
+                        stat_sub = extended_modifier.stat_sub,
+                        pstat_main = extended_modifier.pstat_main,
+                        pstat_sub = extended_modifier.pstat_sub,
+                        boss_pdamage = extended_modifier.boss_pdamage,
+                        armor_ignore = extended_modifier.armor_ignore,
+                        patt = extended_modifier.patt,
+                        att = extended_modifier.att,
+                        stat_main_fixed = extended_modifier.stat_main_fixed,
+                        stat_sub_fixed = extended_modifier.stat_sub_fixed)
+
 class VSkillModifier():
     @staticmethod
     def get_reinforcement(incr, lv, crit = False):
