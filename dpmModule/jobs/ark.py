@@ -61,7 +61,7 @@ class DeviousWrapper(core.DamageSkillWrapper):
 class SpecterWrapper(core.BuffSkillWrapper):
     def __init__(self, memoryBuff, endlessBuff):
         skill = core.BuffSkill("스펙터 상태", 0, 9999999, att = 30, cooltime = -1)
-        self.gauge = 900
+        self.gauge = 800
         self.memoryBuff = memoryBuff
         self.endlessBuff = endlessBuff
         self.schedule = None
@@ -163,8 +163,8 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        # ruleset.add_rule(ConcurrentRunRule('근원의 기억', '차지 스펠 앰플리피케이션'), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule('근원의 기억', '인피니티 스펠', lambda x:x.is_cooltime_left(10750, -1)), RuleSet.BASE)
+
+        ruleset.add_rule(ConditionRule('근원의 기억', '인피니티 스펠', lambda x:x.is_cooltime_left(10080, -1)), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('인피니티 스펠', '근원의 기억(버프)'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('매직 서킷 풀드라이브(버프)', '인피니티 스펠'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule("그란디스 여신의 축복(레프)","매직 서킷 풀드라이브(버프)"), RuleSet.BASE)
@@ -312,9 +312,9 @@ class JobGenerator(ck.JobGenerator):
         MirrorSpider, MirrorBreak = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, WEAPON_ATT)
     
-        MemoryOfSource = core.DamageSkill("근원의 기억", 0, 0, 0, cooltime = 200 * 1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        MemoryOfSourceTick = core.DamageSkill("근원의 기억(틱)", 250, 400 + 16 * vEhc.getV(1,1), 6).wrap(core.DamageSkillWrapper)    # 43타
-        MemoryOfSourceEnd = core.DamageSkill("근원의 기억(종결)", 0, 1200 + 48 * vEhc.getV(1,1), 12 * 6).wrap(core.DamageSkillWrapper)
+        MemoryOfSource = core.DamageSkill("근원의 기억", 990, 0, 0, cooltime = 200 * 1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        MemoryOfSourceTick = core.DamageSkill("근원의 기억(틱)", 210, 400 + 16 * vEhc.getV(1,1), 6).wrap(core.DamageSkillWrapper)    # 43타
+        MemoryOfSourceEnd = core.DamageSkill("근원의 기억(종결)", 60, 1200 + 48 * vEhc.getV(1,1), 12 * 6).wrap(core.DamageSkillWrapper)
         MemoryOfSourceBuff = core.BuffSkill("근원의 기억(버프)", 0, 30 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper) # 정신력 소모되지 않음
                 
         InfinitySpell = core.BuffSkill("인피니티 스펠", 720, (40 + 2*vEhc.getV(0,0)) * 1000, cooltime = 240 * 1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
@@ -352,6 +352,9 @@ class JobGenerator(ck.JobGenerator):
         for skill in [ScarletSpell, GustSpell, AbyssSpell]:
             skill.onAfter(core.OptionalElement(InfinitySpell.is_active, core.RepeatElement(PlainSpell, 4)))
 
+        for spell in [PlainSpell, ScarletSpell, GustSpell, AbyssSpell]:
+            spell.add_runtime_modifier(InfinitySpell, lambda sk: core.CharacterModifier(pdamage = 20*sk.is_active()))
+
         PlainChargeDrive.onAfter(PlainSpell_Connected)
         PlainChargeDrive_Link.onAfter(PlainSpell_Connected)
         
@@ -370,11 +373,17 @@ class JobGenerator(ck.JobGenerator):
         
         Impulse_Connected.onAfter(core.OptionalElement(SpecterState.is_active, TenaciousInstinct_Link, UnstoppableImpulse_Link))
 
-        # 차지 스펠 앰플리피케이션으로 인한 스케쥴링 꼬임 방지
+        # 인피니티 스펠 지속 중일 때 악몽과 충동의 사용을 제한함
+        EndlessNightmare_Link.onConstraint(core.ConstraintElement("악몽 사용제한", InfinitySpell, 
+            lambda: InfinitySpell.is_not_active() or DeviousNightmare.is_available()))
+        Impulse_Connected.onConstraint(core.ConstraintElement("충동 사용제한", InfinitySpell, 
+            lambda: InfinitySpell.is_not_active() or SpecterState.is_active()))
+
+        # 차지 스펠 앰플리피케이션으로 인한 변신 스케쥴 꼬임 방지
         def SpellBuffsArePrepared(): 
             return ChargeSpellAmplification.is_not_active() or (ScarletBuff2.is_active() and AbyssBuff2.is_active())
 
-        RaptRestriction.onConstraint(core.ConstraintElement("차스앰 스펠 확인", ChargeSpellAmplification, SpellBuffsArePrepared))
+        RaptRestriction.onConstraint(core.ConstraintElement("차지앰플 확인", ChargeSpellAmplification, SpellBuffsArePrepared))
         RaptRestriction.onConstraint(core.ConstraintElement("게이지 150 이상", SpecterState, partial(SpecterState.judge, 150, 1)))
         RaptRestriction.onAfter(SpecterState.onoffController(True))
         RaptRestriction.onAfter(RaptRestrictionSummon)
@@ -382,7 +391,7 @@ class JobGenerator(ck.JobGenerator):
 
         EndlessPainRepeat = core.RepeatElement(EndlessPainTick, 15)
         EndlessPainRepeat.onAfter(core.RepeatElement(EndlessPainEnd_Link, 5))
-        EndlessPain.onConstraint(core.ConstraintElement("차스앰 스펠 확인", ChargeSpellAmplification, SpellBuffsArePrepared))
+        EndlessPain.onConstraint(core.ConstraintElement("차지앰플 확인", ChargeSpellAmplification, SpellBuffsArePrepared))
         EndlessPain.onConstraint(core.ConstraintElement("게이지 150 이상", SpecterState, partial(SpecterState.judge, 150, 1)))
         EndlessPain.onAfter(SpecterState.onoffController(True))
         EndlessPain.onAfter(EndlessPainBuff)
@@ -424,7 +433,7 @@ class JobGenerator(ck.JobGenerator):
                 skill.onAfter(DeviousDream.reduceCooltime(1000, _id))
 
         # 5차 - 영원히 굶주리는 짐승
-        ForeverHungryBeastInit.onConstraint(core.ConstraintElement("차스앰 스펠 확인", ChargeSpellAmplification, SpellBuffsArePrepared))
+        ForeverHungryBeastInit.onConstraint(core.ConstraintElement("차지앰플 확인", ChargeSpellAmplification, SpellBuffsArePrepared))
         ForeverHungryBeastInit.onConstraint(core.ConstraintElement("게이지 250 이상", SpecterState, partial(SpecterState.judge, 250, 1)))
         ForeverHungryBeastInit.onAfter(SpecterState.onoffController(True))
         ForeverHungryBeastInit.onAfter(ForeverHungryBeastTrigger.controller(6000)) # 6초 후 등장 TODO: 기본 9600+1740ms에 스펙터 스킬 적중시마다 시간 줄어들도록 할것
@@ -444,8 +453,8 @@ class JobGenerator(ck.JobGenerator):
                 EndlessBadDream_Link, UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, TenaciousInstinct_Link]:
             skill.onConstraint(core.ConstraintElement("스펙터 모드", SpecterState, SpecterState.is_active))
 
-        CrawlingFear.onConstraint(core.ConstraintElement("차스앰 스펠 확인", ChargeSpellAmplification, SpellBuffsArePrepared))
-        CrawlingFear_Link.onConstraint(core.ConstraintElement("차스앰 스펠 확인", ChargeSpellAmplification, SpellBuffsArePrepared))
+        CrawlingFear.onConstraint(core.ConstraintElement("차지앰플 확인", ChargeSpellAmplification, SpellBuffsArePrepared))
+        CrawlingFear_Link.onConstraint(core.ConstraintElement("차지앰플 확인", ChargeSpellAmplification, SpellBuffsArePrepared))
         CrawlingFear.onConstraint(core.ConstraintElement("게이지 150 이상", SpecterState, partial(SpecterState.judge, 150, 1)))
         CrawlingFear_Link.onConstraint(core.ConstraintElement("게이지 150 이상", SpecterState, partial(SpecterState.judge, 150, 1)))
         CrawlingFear.onAfter(SpecterState.onoffController(True))
@@ -453,7 +462,7 @@ class JobGenerator(ck.JobGenerator):
         CrawlingFear.onJustAfter(AdditionalConsumption)
         CrawlingFear_Link.onJustAfter(AdditionalConsumption)
         
-        MemoryOfSource.onConstraint(core.ConstraintElement("차스앰 스펠 확인", ChargeSpellAmplification, SpellBuffsArePrepared))
+        MemoryOfSource.onConstraint(core.ConstraintElement("차지앰플 확인", ChargeSpellAmplification, SpellBuffsArePrepared))
         MemoryOfSourceRepeat = core.RepeatElement(MemoryOfSourceTick, 43)
         MemoryOfSourceRepeat.onAfter(MemoryOfSourceEnd)
         MemoryOfSource.onAfter(SpecterState.onoffController(True))
@@ -483,7 +492,7 @@ class JobGenerator(ck.JobGenerator):
                 if gauge <= 200:
                     return False
                 elif gauge <= 400:
-                    if SpecterState.is_active() and stopwatch >= 4680:  # 스펙터 연계 최장시간 4680ms
+                    if SpecterState.is_active() and stopwatch >= 4680:
                         return False
                 else:
                     if SpecterState.is_active() and stopwatch >= 10590:
@@ -491,10 +500,10 @@ class JobGenerator(ck.JobGenerator):
                 return True
             # 인피니티 스펠 지속 중이 아닐 때 게이지 회복을 우선
             else:   
-                if gauge > 900:
+                if gauge > 800:
                     return True
-                elif gauge > 800:
-                    if SpecterState.is_not_active() and stopwatch >= 10350: # 레프 연계 최장시간 10350ms
+                elif gauge > 700:
+                    if SpecterState.is_not_active() and stopwatch >= 10350:
                         return True
                 else:
                     if SpecterState.is_not_active() and stopwatch >= 17850:
@@ -509,16 +518,6 @@ class JobGenerator(ck.JobGenerator):
         DeviousNightmare.protect_from_running()
         DeviousDream.protect_from_running()
 
-        # 인피니티 스펠 지속 중일 때 악몽과 충동의 사용을 제한함
-        EndlessNightmare_Link.onConstraint(core.ConstraintElement("악몽 사용제한", InfinitySpell, 
-            lambda: InfinitySpell.is_not_active() or DeviousNightmare.is_available()))
-        Impulse_Connected.onConstraint(core.ConstraintElement("충동 사용제한", InfinitySpell, 
-            lambda: InfinitySpell.is_not_active() or SpecterState.is_active()))
-
-        # 스펠 불릿 5칸 채울 시(인피니티 스펠) 효과
-        for spell in [PlainSpell, ScarletSpell, GustSpell, AbyssSpell]:
-            spell.add_runtime_modifier(InfinitySpell, lambda sk: core.CharacterModifier(pdamage = 20*sk.is_active()))
-        
         return(PlainAttack, 
                 [globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     ContactCaravan, Booster, LuckyDice, ScarletBuff, AbyssBuff, SpecterState, ScarletBuff2, AbyssBuff2,
