@@ -14,8 +14,12 @@ from operator import itemgetter
 import time
 import json
 import argparse
-import pandas as pd
-# pandas, openpxl, Jinja2 모듈을 설치해야함
+try:
+    import pandas as pd
+    import openpyxl
+except ImportError:
+    print("pandas, openpxl, jinja2 모듈을 설치해야 합니다.")
+    exit()
 
 def get_args():
     parser = argparse.ArgumentParser('DPM Sheet argument')
