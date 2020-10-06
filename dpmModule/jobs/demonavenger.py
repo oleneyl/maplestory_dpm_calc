@@ -91,7 +91,7 @@ class JobGenerator(ck.JobGenerator):
         ExecutionExceed = core.DamageSkill("익시드: 엑스큐션 (강화)", 540, 540+8*self.combat, 6, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         # 최대 10회 공격
-        ShieldChasing = core.DamageSkill("실드 체이싱", 540, 500 + 10 * self.combat, 2*2*(8+2), cooltime = 6000, modifier = core.CharacterModifier(armor_ignore = 30 + passive_level, pdamage=20+20), red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
+        ShieldChasing = core.DamageSkill("실드 체이싱", 540, 500 + 10 * self.combat, 2*2*(8+2), cooltime = 6000, modifier = core.CharacterModifier(armor_ignore = 30 + passive_level, pdamage=20+20), red = True).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
 
         ArmorBreak = core.DamageSkill("아머 브레이크", 0, 350 + 5 * self.combat, 4, cooltime = (30+self.combat)*1000).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         ArmorBreakBuff = core.BuffSkill("아머 브레이크(디버프)", 720, (30+self.combat)*1000, armor_ignore = 30 + self.combat).wrap(core.BuffSkillWrapper)
@@ -103,19 +103,19 @@ class JobGenerator(ck.JobGenerator):
 
         # 초당 10.8타 가정
         # http://www.inven.co.kr/board/maple/2304/23974
-        FrenzyDOT = core.SummonSkill("프렌지 장판", 0, 1000/10.8, 300 + 8 * vEhc.getV(0, 0), 1, 99999999).wrap(core.SummonSkillWrapper)
+        FrenzyDOT = core.SummonSkill("프렌지 장판", 0, 1000/10.8, 300 + 8 * vEhc.getV(0, 0), 1, 99999999).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         # 블피 (즉시 시전)
-        DemonicBlast = core.DamageSkill("블러드 피스트", 0, 500 + 20*vEhc.getV(0,0), 7, cooltime = 10000, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).wrap(core.DamageSkillWrapper)
+        DemonicBlast = core.DamageSkill("블러드 피스트", 0, 500 + 20*vEhc.getV(0,0), 7, cooltime = 10000, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         
         #평딜이냐 극딜이냐... 소스코드는 서버렉 미적용
         # 참고자료: https://blog.naver.com/oe135/221372243858
-        DimensionSword = core.SummonSkill("디멘션 소드(평딜)", 660, 3000, 1250+14*vEhc.getV(0,0), 8, 40*1000, cooltime = 120*1000, modifier=core.CharacterModifier(armor_ignore=100)).wrap(core.SummonSkillWrapper)
-        DimensionSwordReuse = core.SummonSkill("디멘션 소드 (극딜)", 660, 210, 300+vEhc.getV(0,0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).wrap(core.SummonSkillWrapper)
+        DimensionSword = core.SummonSkill("디멘션 소드(평딜)", 660, 3000, 1250+14*vEhc.getV(0,0), 8, 40*1000, cooltime = 120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        DimensionSwordReuse = core.SummonSkill("디멘션 소드 (극딜)", 660, 210, 300+vEhc.getV(0,0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
         
-        # TODO: 분노의 가시 재발동 대기시간 감소
-        Revenant = core.BuffSkill("레버넌트", 1530, (30 + vEhc.getV(0,0)//5)*1000, cooltime = 300000, rem = False).wrap(core.BuffSkillWrapper)
-        RevenantHit = core.DamageSkill("레버넌트(분노의 가시)", 0, 300 + vEhc.getV(0,0) * 12, 9, cooltime = 4000, modifier = core.CharacterModifier(armor_ignore = 30)).wrap(core.DamageSkillWrapper)
+        # TODO: 분노의 가시 재발동 대기시간 감소 구현
+        Revenant = core.BuffSkill("레버넌트", 1530, (30 + vEhc.getV(0,0)//5)*1000, cooltime = 300000, rem = False).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
+        RevenantHit = core.DamageSkill("레버넌트(분노의 가시)", 0, 300 + vEhc.getV(0,0) * 12, 9, cooltime = 4000, modifier = core.CharacterModifier(armor_ignore = 30)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         #BatSwarm = core.SummonSkill("배츠 스웜", 0, 0, 200, 1, 0)
 
@@ -130,7 +130,7 @@ class JobGenerator(ck.JobGenerator):
         DemonicFortitude = core.BuffSkill("데모닉 포티튜드", 0, 60*1000, cooltime=120*1000, pdamage=10).wrap(core.BuffSkillWrapper)
 
         # 딜레이: ?
-        ReleaseOverload = core.BuffSkill("릴리즈 오버로드", 0, 60*1000, pdamage_indep= 25).wrap(core.BuffSkillWrapper)
+        ReleaseOverload = core.BuffSkill("릴리즈 오버로드", 0, 60*1000, pdamage_indep= 25, rem = True).wrap(core.BuffSkillWrapper)
         
         # 데몬 5차 공용
         CallMastema, MastemaClaw = demon.CallMastemaWrapper(vEhc, 0, 0)
@@ -145,10 +145,12 @@ class JobGenerator(ck.JobGenerator):
         ArmorBreakBuff.onAfter(ArmorBreak)
         
 
-        BasicAttack = core.OptionalElement(ReleaseOverload.is_active, ExecutionExceed, ReleaseOverload)
+        BasicAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
+        BasicAttack.onAfter(core.OptionalElement(ReleaseOverload.is_active, ExecutionExceed, ReleaseOverload))
 
-        RevenantHitOpt = core.OptionalElement(lambda : Revenant.is_active() and RevenantHit.is_available(), RevenantHit)
+        RevenantHitOpt = core.OptionalElement(lambda : Revenant.is_active() and RevenantHit.is_available(), RevenantHit, name = "레버넌트 타격 여부 확인")
         ExecutionExceed.onAfter(RevenantHitOpt)
+        RevenantHit.protect_from_running()
 
         for sk in [Execution_0, Execution_1, Execution_2, Execution_3, ExecutionExceed]:
             sk.onAfter(EnhancedExceed)
@@ -167,8 +169,8 @@ class JobGenerator(ck.JobGenerator):
         
         return(BasicAttack,
                [globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    Booster, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
+                    Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
                     globalSkill.soul_contract()] +\
-                [DimensionSword, CallMastema, MastemaClaw, AnotherGoddessBuff, AnotherVoid] +\
-                [MirrorBreak, MirrorSpider, FrenzyDOT] +\
+                [ShieldChasing, DimensionSword, CallMastema, MastemaClaw, AnotherGoddessBuff, AnotherVoid] +\
+                [MirrorBreak, MirrorSpider, FrenzyDOT, Revenant, RevenantHit] +\
                 [BasicAttack])
