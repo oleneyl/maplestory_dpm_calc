@@ -103,7 +103,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 초당 10.8타 가정
         # http://www.inven.co.kr/board/maple/2304/23974
-        FrenzyDOT = core.SummonSkill("프렌지 장판", 0, 1000/10.8, 300 + 8 * vEhc.getV(0, 0), 1, 99999999).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        FrenzyDOT = core.SummonSkill("프렌지 장판", 0, 1000/10.8, 300 + 8 * vEhc.getV(0, 0), 2, 99999999).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         # 블피 (즉시 시전)
         DemonicBlast = core.DamageSkill("블러드 피스트", 0, 500 + 20*vEhc.getV(0,0), 7, cooltime = 10000, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
@@ -169,8 +169,8 @@ class JobGenerator(ck.JobGenerator):
         
         return(BasicAttack,
                [globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
+                    FrenzyDOT, Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, DimensionSword, AuraWeaponBuff, AuraWeapon,
                     globalSkill.soul_contract()] +\
-                [ShieldChasing, DimensionSword, CallMastema, MastemaClaw, AnotherGoddessBuff, AnotherVoid] +\
-                [MirrorBreak, MirrorSpider, FrenzyDOT, Revenant, RevenantHit] +\
+                [ShieldChasing, CallMastema, MastemaClaw, AnotherGoddessBuff, AnotherVoid] +\
+                [MirrorBreak, MirrorSpider, Revenant, RevenantHit, DemonicBlast] +\
                 [BasicAttack])
