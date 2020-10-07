@@ -39,6 +39,7 @@ from . import blaster
 from . import aran
 from . import adele
 from . import hoyoung
+from . import demonavenger
 
 __all__ = ["archmageFb", "archmageTc", "hero", "paladin", "sniper", "windbreaker", "soulmaster", 
             "flamewizard", "mercedes", "luminous", "bishop", "battlemage", "mechanic", "demonslayer", "darknight", "wildhunter",
@@ -86,7 +87,8 @@ jobMap = {"아크메이지불/독" : archmageFb,
         "블래스터" : blaster,
         "아란" : aran,
         "아델" : adele,
-        "호영" : hoyoung
+        "호영" : hoyoung,
+        "데몬어벤져" : demonavenger
 }
 
 jobList = {"archmageFb" : "아크메이지불/독",
@@ -129,7 +131,8 @@ jobList = {"archmageFb" : "아크메이지불/독",
         "blaster" : "블래스터",
         "aran" : "아란",
         "adele" : "아델",
-        "hoyoung" : "호영"
+        "hoyoung" : "호영",
+        "demonavenger" : "데몬어벤져"
 }
 
 weaponList = {"아크메이지불/독" : "스태프",
@@ -172,14 +175,15 @@ weaponList = {"아크메이지불/독" : "스태프",
         "블래스터" : "리볼버",
         "아란" : "폴암",
         "아델" : "튜너",
-        "호영" : "부채"
+        "호영" : "부채",
+        "데몬어벤져" : "데스페라도"
 }
 
 jobListOrder = ["archmageFb", "archmageTc", "hero", "paladin", "sniper", "windbreaker", "soulmaster", 
             "flamewizard", "mercedes", "luminous", "bishop", "battlemage", "mechanic", "demonslayer", "darknight", "wildhunter",
             "shadower", "cannonshooter", "michael", "dualblade", "kaiser", "captain", "angelicbuster", "phantom", "nightlord",
             "eunwol", "viper", "nightwalker", "striker", "evan", "bowmaster", "zero", "kinesis", "ilium", "pathfinder", "cadena", "ark",
-            "blaster", "aran", "adele", "hoyoung"]
+            "blaster", "aran", "adele", "hoyoung", "demonavenger"]
 
 def getKoJobName(enJob):
         if enJob in jobList:
