@@ -11,7 +11,7 @@ def create_auxilary_attack(skill_wrapper, ratio, nametag = '복사'):
         hit = original_skill.hit,
         modifier=original_skill._static_skill_modifier).wrap(core.DamageSkillWrapper)
     
-    skill_wrapper.onAfter(copial_skill)
+    skill_wrapper.onJustAfter(copial_skill)
 
 # 스펙 측정시마다 수동으로 변경 필요
 def get_weapon_att(WEAPON_NAME, spec = 6000):
