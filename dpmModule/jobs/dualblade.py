@@ -134,7 +134,7 @@ class JobGenerator(ck.JobGenerator):
 
         for sk in [PhantomBlow, SuddenRaid, FinalCut, FlashBang, AsuraTick, 
             BladeStorm, BladeStormTick, KarmaFury, BladeTornado, HiddenBlade, HauntedEdge]:
-            jobutils.create_auxilary_attack(sk, 0.7, nametag = '(미러이미징)')
+            jobutils.create_auxilary_attack(sk, 0.7, nametag='(미러이미징)')
         
         return(PhantomBlow,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

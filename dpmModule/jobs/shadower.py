@@ -172,7 +172,7 @@ class JobGenerator(ck.JobGenerator):
         BasicAttackWrapper.onAfter(Assasinate)
 
         for sk in [Assasinate1, Assasinate2, Assasinate1_D, Assasinate2_D, Eviscerate, SonicBlowTick]:
-            jobutils.create_auxilary_attack(sk, 0.7, nametag = '(쉐도우파트너)')
+            jobutils.create_auxilary_attack(sk, 0.7, nametag='(쉐도우파트너)')
         
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
