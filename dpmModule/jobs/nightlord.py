@@ -104,7 +104,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 쉐도우 파트너
         for sk in [QuarupleThrow, ThrowBlasting, PungmaHit]:
-            jobutils.create_auxilary_attack(sk, 0.7, nametag= '(쉐도우파트너)')
+            jobutils.create_auxilary_attack(sk, 0.7, nametag='(쉐도우파트너)')
 
         # 마크 오브 나이트로드
         SpreadThrowTick.onAfter(core.RepeatElement(MarkOfNightlord, 15))

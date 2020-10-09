@@ -2,8 +2,16 @@ from ..kernel import core
 from ..kernel.graph import DynamicVariableOperation
 from ..item import RootAbyss, Absolab, Arcane
 
-# DamageSkill Duplicator
-def create_auxilary_attack(skill_wrapper, ratio, nametag = '복사'):
+
+def create_auxilary_attack(skill_wrapper, ratio = 1, nametag='(복사)'):
+    '''
+    create_auxilary_attack: DamageSkill Duplicator
+    Easy Shadow Partner Function
+    - parameters
+      .skill_wrapper : target DamageSkillWrapper
+      .ratio : copy skill's damage ratio
+      .nametag : skill copier's name
+    '''
     original_skill = skill_wrapper.skill
     copial_skill = core.DamageSkill(name = DynamicVariableOperation.reveal_argument(original_skill.name) + nametag,
         delay = DynamicVariableOperation.wrap_argument(0),
@@ -13,7 +21,7 @@ def create_auxilary_attack(skill_wrapper, ratio, nametag = '복사'):
     
     skill_wrapper.onAfter(copial_skill)
 
-# 스펙 측정시마다 수동으로 변경 필요
+# TODO: 스펙 측정시마다 수동으로 변경 필요
 def get_weapon_att(WEAPON_NAME, spec = 6000):
     if spec < 5000:
         #파프
