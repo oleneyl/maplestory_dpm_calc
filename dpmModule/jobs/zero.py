@@ -59,6 +59,7 @@ class JobGenerator(ck.JobGenerator):
         # 유니온 6000 기준
         # 4카5앱 임시 구현 (보공 +30%, 방무 -10%)
         LuckyHat_Temp = core.InformedCharacterModifier("카오스 벨룸의 헬름 (임시)", boss_pdamage = 30) - core.ExtendedCharacterModifier(armor_ignore = 10, stat_main = 21, stat_sub = 21, pstat_main = 5, pstat_sub = 5, att = 3)
+        LuckyHat_Temp = core.InformedCharacterModifier.from_extended_modifier("카오스 벨룸의 헬름 (임시)", LuckyHat_Temp)
 
         return [Mastery, ResolutionTime, LuckyHat_Temp]
 
