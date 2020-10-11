@@ -363,6 +363,7 @@ class JobGenerator(ck.JobGenerator):
         ScarletChargeDrive.onAfter(ScarletSpell)
         ScarletChargeDrive_Link.onAfter(ScarletSpell)      
         ScarletChargeDrive.onAfter(ScarletChargeDrive_After)
+        ScarletChargeDrive_Link.onAfter(ScarletChargeDrive_After)
 
         GustChargeDrive_Link.onAfter(GustSpell)
         
