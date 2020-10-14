@@ -78,7 +78,7 @@ class JobGenerator(ck.JobGenerator):
         
         FlashBang = core.DamageSkill("플래시 뱅", 390, 250, 1, cooltime = 60000, red=True).wrap(core.DamageSkillWrapper)  #임의 딜레이.
         FlashBangDebuff = core.BuffSkill("플래시 뱅(디버프)", 0, 50000/2, cooltime = -1, pdamage = 10 * 0.9).wrap(core.BuffSkillWrapper)
-        Venom = core.DotSkill("페이탈 베놈", 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 8000, cooltime = -1).wrap(core.SummonSkillWrapper) # 3회 중첩
+        Venom = core.DotSkill("페이탈 베놈", 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 99999999).wrap(core.SummonSkillWrapper) # 3회 중첩
 
         HiddenBladeBuff = core.BuffSkill("히든 블레이드(버프)", 0, 60000, cooltime = 90000, pdamage = 10).wrap(core.BuffSkillWrapper)
         HiddenBlade = core.DamageSkill("히든 블레이드", 0, 140, 1).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
@@ -112,9 +112,6 @@ class JobGenerator(ck.JobGenerator):
         FlashBang.onAfter(FlashBangDebuff)
         for sk in [FinalCut, PhantomBlow, SuddenRaid, FlashBang, AsuraTick, BladeStorm, BladeStormTick, BladeTornado, KarmaFury]:
             sk.onAfter(HiddenBladeOpt)
-            
-        for sk in [PhantomBlow, AsuraTick, BladeStormTick]:
-            sk.onAfter(Venom)
         
         AsuraRepeat = core.RepeatElement(AsuraTick, 28)
         Asura.onAfter(AsuraRepeat)
