@@ -153,7 +153,7 @@ class JobGenerator(ck.JobGenerator):
         ArrowOfStorm = ArrowOfStormWrapper(core.DamageSkill("폭풍의 시", 120, (350+self.combat*3)*0.75, 1+1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 10) + MortalBlow).setV(vEhc, 0, 2, True), ArmorPiercing)
         ArrowFlatter = core.SummonSkill("애로우 플래터", 600, 210, 85+90+self.combat*3, 1, 30 * 1000, modifier = core.CharacterModifier(pdamage = 30)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper) # 딜레이 모름
         
-        GrittyGust = core.DamageSkill("윈드 오브 프레이", 720, 500, 8, cooltime = 15 * 1000, modifier=MortalBlow).setV(vEhc, 6, 2, True).wrap(core.DamageSkillWrapper)
+        GrittyGust = core.DamageSkill("윈드 오브 프레이", 720, 335, 12, cooltime = 15 * 1000, modifier=MortalBlow).setV(vEhc, 6, 2, True).wrap(core.DamageSkillWrapper)
         GrittyGustDOT = core.DotSkill("윈드 오브 프레이(도트)", 0, 1000, 200, 1, 10*1000, cooltime = -1).wrap(core.SummonSkillWrapper)
         
         ArrowRainBuff = core.BuffSkill("애로우 레인(버프)", 810, (40+vEhc.getV(0,0))*1000, cooltime = 120 * 1000, red = True, pdamage = 15+(vEhc.getV(0,0)//2)).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
