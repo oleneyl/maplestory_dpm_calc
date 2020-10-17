@@ -1,6 +1,6 @@
 from ..kernel import core
 from ..kernel.graph import DynamicVariableOperation
-from ..item import RootAbyss, Absolab, Arcane
+from ..item import RootAbyss, Absolab, Arcane, Genesis
 
 
 def create_auxilary_attack(skill_wrapper, ratio = 1, nametag='(복사)'):
@@ -29,9 +29,11 @@ def get_weapon_att(WEAPON_NAME, spec = 6000):
     elif spec < 7000:
         #앱솔
         return Absolab.WeaponFactory.getWeapon(WEAPON_NAME, star = 0, elist = [0,0,0,0] ).main_option.att
-    else:
+    elif spec < 8500:
         #아케인
         return Arcane.WeaponFactory.getWeapon(WEAPON_NAME, star = 0, elist = [0,0,0,0] ).main_option.att
+    else:
+        return Genesis.WeaponFactory.getWeapon(WEAPON_NAME, star = 0, elist = [0,0,0,0] ).main_option.att
 
 def debug_skill(skill_wrapper):
     skill_wrapper.onJustAfter(core.BuffSkill(skill_wrapper._id+"(디버그)", 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper))
