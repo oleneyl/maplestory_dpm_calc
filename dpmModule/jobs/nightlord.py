@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import ConditionRule, RuleSet, ConcurrentRunRule
+from ..execution.rules import ConditionRule, RuleSet, ConcurrentRunRule, InactiveRule
 from . import globalSkill
 from .jobbranch import thieves
 from . import jobutils
@@ -23,6 +23,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('얼티밋 다크 사이트', '스프레드 스로우'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('메이플월드 여신의 축복', '스프레드 스로우'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('레디 투 다이', '소울 컨트랙트'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('써든레이드', '스프레드 스로우'), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
@@ -141,15 +142,7 @@ class JobGenerator(ck.JobGenerator):
         for sk in [QuarupleThrow, SuddenRaid, Pungma, SpreadThrowTick]:
             sk.onAfter(FatalVenom)
         
-        BasicAttack = core.DamageSkill("기본 공격", 0,0,0).wrap(core.DamageSkillWrapper)
-
-        def is_suddenraid():
-            return ((not SpreadThrowInit.is_active()) and SuddenRaid.is_available())
-        
-        SuddenRaid.protect_from_running()
-        BasicAttack.onAfter(core.OptionalElement(is_suddenraid, SuddenRaid, QuarupleThrow, name = "써든레이드 사용가능 여부"))
-
-        return (BasicAttack, 
+        return (QuarupleThrow, 
             [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     ShadowPartner, SpiritJavelin, PurgeArea, BleedingToxin, EpicAdventure, 
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), UltimateDarksight, ReadyToDie, SpreadThrowInit,
@@ -158,4 +151,4 @@ class JobGenerator(ck.JobGenerator):
                 [ArcaneOfDarklordFinal] + \
                 [SuddenRaid, SuddenRaidDOT, Pungma, PungmaHit, ArcaneOfDarklord, MirrorBreak, MirrorSpider, BleedingToxinDot, FatalVenom] +\
                 [] + \
-                [BasicAttack])
+                [QuarupleThrow])
