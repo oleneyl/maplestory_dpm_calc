@@ -3,7 +3,7 @@ from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import ConditionRule, RuleSet, ConcurrentRunRule
+from ..execution.rules import ConditionRule, RuleSet, ConcurrentRunRule, InactiveRule
 from . import globalSkill
 from .jobbranch import thieves
 from . import jobutils
@@ -23,6 +23,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('얼티밋 다크 사이트', '스프레드 스로우'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('메이플월드 여신의 축복', '스프레드 스로우'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('레디 투 다이', '소울 컨트랙트'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('써든레이드', '스프레드 스로우'), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
@@ -70,6 +71,9 @@ class JobGenerator(ck.JobGenerator):
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
         QuarupleThrow = core.DamageSkill("쿼드러플 스로우", 600, 378 + 4 * self.combat, 5, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)    #쉐도우 파트너 적용
+
+        SuddenRaid = core.DamageSkill("써든레이드", 690, 494+5*self.combat, 7, cooltime = (30-2*(self.combat//2))*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 0, 1000, 210 + 4 * self.combat, 1, 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
         
         MARK_PROP = (60+2*passive_level)/(160+2*passive_level)
         MarkOfNightlord = core.DamageSkill("마크 오브 나이트로드", 0, (60+3*passive_level+chtr.level), MARK_PROP*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
@@ -99,11 +103,14 @@ class JobGenerator(ck.JobGenerator):
 
         ######   Skill Wrapper   ######
 
+        # 써든레이드
+        SuddenRaid.onAfter(SuddenRaidDOT)
+
         # 풍마수리검
         Pungma.onTick(PungmaHit)
 
         # 쉐도우 파트너
-        for sk in [QuarupleThrow, ThrowBlasting, PungmaHit]:
+        for sk in [QuarupleThrow, SuddenRaid, ThrowBlasting, PungmaHit]:
             jobutils.create_auxilary_attack(sk, 0.7, nametag='(쉐도우파트너)')
 
         # 마크 오브 나이트로드
@@ -132,9 +139,9 @@ class JobGenerator(ck.JobGenerator):
         ))
         QuarupleThrow.onAfter(MarkOfNightlord)
 
-        for sk in [QuarupleThrow, Pungma, SpreadThrowTick]:
+        for sk in [QuarupleThrow, SuddenRaid, Pungma, SpreadThrowTick]:
             sk.onAfter(FatalVenom)
-
+        
         return (QuarupleThrow, 
             [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     ShadowPartner, SpiritJavelin, PurgeArea, BleedingToxin, EpicAdventure, 
@@ -142,5 +149,6 @@ class JobGenerator(ck.JobGenerator):
                     ThrowBlasting, ThrowBlastingPassive, ThrowBlastingActive,
                     globalSkill.soul_contract()] + \
                 [ArcaneOfDarklordFinal] + \
-                [Pungma, PungmaHit, ArcaneOfDarklord, MirrorBreak, MirrorSpider, BleedingToxinDot, FatalVenom] +\
-                [] + [QuarupleThrow])
+                [SuddenRaid, SuddenRaidDOT, Pungma, PungmaHit, ArcaneOfDarklord, MirrorBreak, MirrorSpider, BleedingToxinDot, FatalVenom] +\
+                [] + \
+                [QuarupleThrow])
