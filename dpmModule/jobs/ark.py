@@ -233,8 +233,8 @@ class JobGenerator(ck.JobGenerator):
         UnfulfilledHunger = core.DamageSkill("채워지지 않는 굶주림", 750, 510 + 3*passive_level, 7, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #거스트 차지 드라이브 변형
         UnfulfilledHunger_Link = core.DamageSkill("채워지지 않는 굶주림(연계)", 660, 510 + 3*passive_level, 7, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
-        CrawlingFear = core.DamageSkill("기어 다니는 공포", 30 + 630, 1390 + 3*passive_level, 12, cooltime = 60*1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        CrawlingFear_Link = core.DamageSkill("기어 다니는 공포(연계)", 30 + 360, 1390 + 3*passive_level, 12, cooltime = 60*1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        CrawlingFear = core.DamageSkill("기어 다니는 공포", 30 + 630, 1290 + 3*passive_level, 15, cooltime = 60*1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        CrawlingFear_Link = core.DamageSkill("기어 다니는 공포(연계)", 30 + 360, 1290 + 3*passive_level, 15, cooltime = 60*1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
 
         UncontrollableChaos = core.DamageSkill("걷잡을 수 없는 혼돈", 810, 440 + 3*self.combat, 12, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) #어비스 차지 드라이브 변형
         UncontrollableChaos_Link = core.DamageSkill("걷잡을 수 없는 혼돈(연계)", 720, 440 + 3*self.combat, 12, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)

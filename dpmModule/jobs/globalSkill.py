@@ -70,5 +70,5 @@ def genesis_aeonian_rise():
 
 # 파괴의 얄다바오트
 def genesis_tanadian_ruin():
-    TandadianRuin = core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime = 120000, pdamage_indep = 15, rem = False, red = False).wrap(core.BuffSkillWrapper)
+    TandadianRuin = core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime = 90000, pdamage_indep = 15, rem = False, red = False).wrap(core.BuffSkillWrapper)
     return TandadianRuin

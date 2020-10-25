@@ -115,7 +115,7 @@ class JobGenerator(ck.JobGenerator):
         
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
+        CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,1,3).wrap(core.BuffSkillWrapper)
 
         #오버드라이브 (앱솔 가정)
@@ -157,13 +157,13 @@ class JobGenerator(ck.JobGenerator):
         
         for skill in [Destroy, Thunder, WaterWave, DestroyConcat, ThunderConcat, WaterWaveConcat, HurricaneConcat, GioaTan, NoiShinChanGeuk,
                         SpearLightningAttack, SpearLightningAttack_Lightning, SpearLightningAttack_Final, SpearLightningAttack_Final_Lightning]:
-            jobutils.create_auxilary_attack(skill, CHOOKROI, "(축뢰)")
+            jobutils.create_auxilary_attack(skill, CHOOKROI, nametag='(축뢰)')
 
         for skill in [Thunder, ThunderConcat, WaterWave, WaterWaveConcat, NoiShinChanGeuk,
                         SpearLightningAttack, SpearLightningAttack_Lightning, SpearLightningAttack_Final, SpearLightningAttack_Final_Lightning]:
             skill.onAfter(LightningStack.stackController(1))
 
-        for skill in [ShinNoiHapLAttack, CygnusPalanks, NoiShinChanGeukAttack]:
+        for skill in [ShinNoiHapLAttack, CygnusPhalanx, NoiShinChanGeukAttack]:
             skill.onTick(LightningStack.stackController(1))
 
         GioaTan.onAfter(core.OptionalElement(SkyOpen.is_not_active, LightningStack.stackController(-2), name="천지개벽 체크"))
@@ -185,7 +185,7 @@ class JobGenerator(ck.JobGenerator):
                     LightningStack, Booster, ChookRoi, WindBooster, LuckyDice,
                     HurricaneBuff, GloryOfGuardians, SkyOpen, Overdrive, ShinNoiHapL, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                     globalSkill.soul_contract()] +\
-                [GioaTan, CygnusPalanks, NoiShinChanGeuk, SpearLightningAttackInit, MirrorBreak, MirrorSpider] +\
+                [GioaTan, CygnusPhalanx, NoiShinChanGeuk, SpearLightningAttackInit, MirrorBreak, MirrorSpider] +\
                 [ShinNoiHapLAttack, NoiShinChanGeukAttack] +\
                 [] +\
                 [BasicAttackWrapper])
