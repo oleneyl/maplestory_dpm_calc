@@ -118,7 +118,7 @@ class JobGenerator(ck.JobGenerator):
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 2)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
-        Eviscerate = core.DamageSkill("절개", 570, 1900+76*vEhc.getV(0,0), 7, modifier = core.CharacterModifier(crit=100, armor_ignore=100), cooltime = 14000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 720ms - 150ms(암살 2타연계)
+        Eviscerate = core.DamageSkill("절개", 570, 475+19*vEhc.getV(0,0), 7*4, modifier = core.CharacterModifier(crit=100, armor_ignore=100), cooltime = 14000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 720ms - 150ms(암살 2타연계)
 		
 		# 1.2.324 패치 적용
         SonicBlow = core.DamageSkill("소닉 블로우", 900, 0, 0, cooltime = 80 * 1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
