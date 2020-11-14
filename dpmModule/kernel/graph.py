@@ -639,3 +639,18 @@ class AbstractGraphBuilder():
         GlobalOperation.attach_namespace()
         GlobalOperation.save_storage()
         GlobalOperation.convert_to_static()
+
+def generate_graph_safely(graph_generator):
+    initialize_global_properties()
+
+    base_element, all_elements = graph_generator()
+
+    GlobalOperation.assign_storage()
+    GlobalOperation.attach_namespace()
+    GlobalOperation.save_storage()
+    
+    GlobalOperation.convert_to_static()
+
+    collection = GlobalOperation.export_collection()
+    
+    return base_element, all_elements, collection

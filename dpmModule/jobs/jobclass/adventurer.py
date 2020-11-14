@@ -1,34 +1,78 @@
 from ...kernel import core
 from ...kernel.core import VSkillModifier as V
 from ...character import characterKernel as ck
+from functools import partial
 # 모험가 및 모험가 직업 공용 5차스킬 통합코드
 
-#TODO: 얼닼사
-
-# 모험가 법사
-# 3% 증가로 알고있는데... 확인필요
-
 class InfinityWrapper(core.BuffSkillWrapper):
-    def __init__(self, serverlag = 3):
-        skill = core.BuffSkill("인피니티", 600, 40000, cooltime = 180 * 1000, rem = True, red = True)
+    def __init__(self, combat, interval = 7):
+        skill = core.BuffSkill("인피니티", 600, (40+combat)*1000, cooltime = 180 * 1000, rem = True, red = True)
         super(InfinityWrapper, self).__init__(skill)
         self.passedTime = 0
-        self.serverlag = serverlag
+        self.interval = interval
+        self.combat = combat
         
     def spend_time(self, time):
-        if self.onoff:
+        if self.is_active():
             self.passedTime += time
         super(InfinityWrapper, self).spend_time(time)
             
     def get_modifier(self):
-        if self.onoff:
-            return core.CharacterModifier(pdamage_indep = (70 + 3 * (self.passedTime // ((4+self.serverlag)*1000))) )
+        if self.is_active():
+            return core.CharacterModifier(pdamage_indep = (70 + self.combat + 3 * (self.passedTime // (self.interval*1000))) )
         else:
             return core.CharacterModifier()
         
-    def _use(self, rem = 0, red = 0):
+    def _use(self, skill_modifier):
         self.passedTime = 0
-        return super(InfinityWrapper, self)._use(rem = rem, red = red)
+        return super(InfinityWrapper, self)._use(skill_modifier)
+
+class UnstableMemorizeWrapper(core.DamageSkillWrapper):
+    def __init__(self, vEhc: core.BasicVEnhancer, num1: int, num2: int, skill_modifier: core.SkillModifier):
+        skill = core.DamageSkill("언스테이블 메모라이즈", 870, 0, 0, cooltime = (15 - vEhc.getV(num1, num2) // 5) * 1000, red=True).isV(vEhc, num1, num2)
+        super(UnstableMemorizeWrapper, self).__init__(skill)
+        self.skill_modifier = skill_modifier
+        self.weight_total = 0
+        self.weights = {}
+        self.stacks = {}
+        self.skills = {}
+
+    def _indirect_use(self, skill: core.AbstractSkillWrapper, skill_modifier: core.SkillModifier):
+        """
+        스킬의 쿨타임, 사용가능 여부가 변하지 않도록 바꿔치기 합니다.
+        TODO: 위험한 방식이기 때문에, side-effect에 위험하지 않은 방식으로 변경해야 합니다.
+        """
+        cooltimeLeft = skill.cooltimeLeft
+        result = skill._use(skill_modifier)
+        skill.cooltimeLeft = cooltimeLeft
+        return result
+
+    def add_skill(self, skill: core.AbstractSkillWrapper, weight: int):
+        self.weight_total += weight
+        self.weights[skill._id] = weight
+        self.stacks[skill._id] = 0
+        self.skills[skill._id] = skill
+
+    def _use(self, skill_modifier):
+        result = super(UnstableMemorizeWrapper, self)._use(skill_modifier)
+
+        for k in self.stacks:
+            self.stacks[k] += self.weights[k]
+        
+        nextId = sorted(self.stacks.items(), key = lambda x: x[1], reverse = True)[0][0]
+        self.stacks[nextId] -= self.weight_total
+
+        skill = self.skills[nextId]
+        task = core.Task(skill, partial(self._indirect_use, skill, self.skill_modifier))
+        skill.sync(task, self.skill_modifier)
+        
+        result.cascade = [task]
+
+        return result
+
+def UnstableMemorizePassiveWrapper(vEhc, num1, num2):
+    UnstableMemorizePassive = core.InformedCharacterModifier("언스테이블 메모라이즈(패시브)", stat_main = vEhc.getV(num1, num2))
+    return UnstableMemorizePassive
 
 # 이하 모든 코드 테스트 필요
 
@@ -44,14 +88,9 @@ def BlitzShieldWrappers(vEhc, num1, num2):
     BlitzShieldDummy.onAfter(BlitzShield)
     return BlitzShieldDummy, BlitzShield
 
-# 아직 사용하지 말것! 연계 설정 추가 필요
-def EvolveWrapper(vEhc, num1, num2):
-    Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(num1, num2)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(num1, num2)))*1000).isV(vEhc,num1, num2).wrap(core.SummonSkillWrapper)
+def EvolveWrapper(vEhc, num1, num2, bird: core.SummonSkillWrapper):
+    Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(num1, num2)*15, 7, 40*1000, cooltime = (120-vEhc.getV(num1, num2)//2)*1000, red=True).isV(vEhc, num1, num2).wrap(core.SummonSkillWrapper)
+    Evolve.onAfter(bird.controller(1))
+    Evolve.onConstraint(core.ConstraintElement(bird._id+" 있을때 사용 가능", bird, bird.is_active))
+    bird.onConstraint(core.ConstraintElement("이볼브 지속중 사용 금지", Evolve, Evolve.is_not_active))
     return Evolve
-
-'''
-얼티밋 다크 사이트
-MP 850 소비, 30초 동안 다크 사이트 중 공격 및 스킬 사용 시 은신이 해제되지 않음
-다크 사이트 중 공격 시 최종 데미지 15%[기본 10%에서 5레벨마다 1% 증가한다.] 증가, 어드밴스드 다크 사이트의 최종 데미지 증가와 합적용
-재사용 대기시간 195초[(220-스킬 레벨)초]
-'''

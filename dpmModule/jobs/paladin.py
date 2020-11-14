@@ -6,17 +6,13 @@ from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobbranch import warriors
+from math import ceil
 
-#TODO : 5차 신스킬 적용
 # 4차 스킬은 컴뱃오더스 적용 기준으로 작성해야 함.
-# 생츄어리 필요한지 확인바람 (딜레이 750)
-
-######   Passive Skill   ######
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = False
         self.vEnhanceNum = 10
         self.jobtype = "str"
         self.jobname = "팔라딘"
@@ -28,24 +24,26 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('그랜드 크로스', '홀리 유니티'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         ShieldMastery = core.InformedCharacterModifier("실드 마스터리",att = 10)
         
-        PaladinExpert = core.InformedCharacterModifier("팔라딘 엑스퍼트(두손둔기)",crit_damage = 15+5, pdamage_indep = 42, crit = 42, armor_ignore = 37.9)
-        
+        PaladinExpert = core.InformedCharacterModifier("팔라딘 엑스퍼트(두손둔기)",crit_damage = 5 + (32+passive_level) // 3, pdamage_indep = 42+passive_level, crit = 42+passive_level, armor_ignore = 15+ceil((32+passive_level)/2)) + core.ExtendedCharacterModifier(crit_damage= 5, armor_ignore = 10)
+        PaladinExpert = core.InformedCharacterModifier.from_extended_modifier("팔라딘 엑스퍼트(두손둔기)", PaladinExpert)
         return [PhisicalTraining, ShieldMastery, PaladinExpert]
 
-    def get_not_implied_skill_list(self):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+        passive_level = chtr.get_base_modifier().passive_level
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -4.5)    #오더스 기본적용!
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -4.5+ 0.5*ceil(passive_level/2))    #오더스 기본적용!
         
         ElementalCharge = core.InformedCharacterModifier("엘리멘탈 차지",pdamage = 25, att = 60)  #조건부 적용 여부는 추후검토.
         ParashockGuard = core.InformedCharacterModifier("파라쇼크 가드",att = 20)
         
         return [WeaponConstant, Mastery, ElementalCharge, ParashockGuard]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter, combat : bool = False):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         두손둔기
 
@@ -55,7 +53,7 @@ class JobGenerator(ck.JobGenerator):
 
         블래스트-리인포스, 보너스 어택 / 생츄어리-보너스 어택, 쿨타임 리듀스 / 위협-인핸스
         '''
-
+        buff_rem = chtr.get_base_modifier().buff_rem
         
         #Buff skills
         Threat = core.BuffSkill("위협", 1440, 80 * 1000, armor_ignore = 30 + 20).wrap(core.BuffSkillWrapper) # 기본 1080, 75% 확률 반영 딜레이
@@ -67,19 +65,24 @@ class JobGenerator(ck.JobGenerator):
         HolyUnity = core.BuffSkill("홀리 유니티", 600, (40 + vEhc.getV(0,0)) * 1000, cooltime = 120 * 1000, red = True, pdamage_indep = int(35 + 0.5*vEhc.getV(0,0))).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
     
         #Damage Skills
-        LighteningCharge = core.DamageSkill("라이트닝 차지", 630, 462, 3+2, cooltime = 60 * 1000 * (1 + chtr.buff_rem * 0.01)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) # 엘리멘탈 차지의 벞지 적용 고려함
-        LighteningChargeDOT = core.DotSkill("라이트닝 차지(도트)", 115, 6000).wrap(core.SummonSkillWrapper)
-        DivineCharge = core.DamageSkill("디바인 차지", 630, 462, 3+2, cooltime = 60 * 1000 * (1 + chtr.buff_rem * 0.01)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        LighteningCharge = core.DamageSkill("라이트닝 차지", 630, 462, 3+2, cooltime = 60 * 1000 * (1 + buff_rem * 0.01)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) # 엘리멘탈 차지의 벞지 적용 고려함
+        LighteningChargeDOT = core.DotSkill("라이트닝 차지(도트)", 0, 1000, 115, 1, 6000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        DivineCharge = core.DamageSkill("디바인 차지", 630, 462, 3+2, cooltime = 60 * 1000 * (1 + buff_rem * 0.01)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         Sanctuary = core.DamageSkill("생츄어리", 750, 580, 8+2, cooltime = 14 * 0.7 * 1000, red = True, modifier = core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
 
         Blast = core.DamageSkill("블래스트", 630, 291, 9+2+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+
+        MightyMjollnirInit = core.DamageSkill("마이티 묠니르(시전)", 630, 0, 0, cooltime=15000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        MightyMjollnir = core.DamageSkill("마이티 묠니르", 0, 225+9*vEhc.getV(0,0), 6, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        MightyMjollnirWave = core.DamageSkill("마이티 묠니르(충격파)", 0, 250+10*vEhc.getV(0,0), 9, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         #Summon Skills
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         BlessedHammer = core.SummonSkill("블래스드 해머", 0, 600, 250 + vEhc.getV(1,1)*10, 2, 999999 * 10000).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         BlessedHammerActive = core.SummonSkill("블레스드 해머(활성화)", 360, 600, 525+vEhc.getV(1,1)*21, 3, 30 * 1000, cooltime = 60 * 1000, red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)
         GrandCross = core.DamageSkill("그랜드 크로스", 900, 0, 0, cooltime = 150 * 1000, red = True).wrap(core.DamageSkillWrapper)
-        GrandCrossSmallTick = core.DamageSkill("그랜드 크로스(작은)", 200, 350 + vEhc.getV(3,3)*14, 6, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #3s, 15*6타
-        GrandCrossLargeTick = core.DamageSkill("그랜드 크로스(강화)", 146, 600 + vEhc.getV(3,3)*24, 6, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s, 41*6타
+        GrandCrossSmallTick = core.DamageSkill("그랜드 크로스(작은)", 200, 175 + vEhc.getV(3,3)*7, 12, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #3s, 15*6타
+        GrandCrossLargeTick = core.DamageSkill("그랜드 크로스(강화)", 146, 300 + vEhc.getV(3,3)*12, 12, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #6s, 41*6타
         GrandCrossEnd = core.DamageSkill("그랜드 크로스(종료)", 450, 0, 0).wrap(core.DamageSkillWrapper)
                 
         FinalAttack = core.DamageSkill("파이널 어택", 0, 80, 2*0.4).setV(vEhc, 4, 5, True).wrap(core.DamageSkillWrapper)
@@ -100,18 +103,20 @@ class JobGenerator(ck.JobGenerator):
                             core.RepeatElement(GrandCrossSmallTick, 15)])
 
         BlessedHammerActive.onAfter(BlessedHammer.controller(30 * 1000))
+
+        MightyMjollnirInit.onAfter(core.RepeatElement(MightyMjollnir, 4))
+        MightyMjollnir.onAfter(MightyMjollnirWave)
         
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
-        for sk in [Blast, Sanctuary, GrandCrossSmallTick, GrandCrossLargeTick]:
+        for sk in [Blast, Sanctuary, GrandCrossSmallTick, GrandCrossLargeTick, MightyMjollnirInit]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff, AuraWeaponCooltimeDummy = auraweapon_builder.get_buff()
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
                         
         return(Blast,
                 [globalSkill.maple_heros(chtr.level, combat_level = 2), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                    Threat, ElementalForce, EpicAdventure, HolyUnity, AuraWeaponBuff,
-                    globalSkill.soul_contract()] +\
-                [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, GrandCross] +\
+                    Threat, ElementalForce, EpicAdventure, HolyUnity, AuraWeaponBuff, AuraWeapon,
+                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
+                [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, GrandCross, MightyMjollnirInit, MirrorBreak, MirrorSpider] +\
                 [BlessedHammer, BlessedHammerActive] +\
-                [AuraWeaponCooltimeDummy] +\
                 [Blast])

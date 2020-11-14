@@ -1,10 +1,11 @@
 from . import ItemKernel as it
+ExMDF = it.ExMDF
 
 ## Armors ##
 #No upgrade
-Top = it.Item(name="이글아이 아머", stat_main = 30, stat_sub = 30, att = 2, armor_ignore = 5, level = 150)
-Bottom = it.Item(name="트릭스터 팬츠", stat_main = 30, stat_sub = 30, att = 2, armor_ignore = 5, level = 150)
-Head = it.Item(name="하이네스 햇", stat_main = 40, stat_sub = 40, att = 2, armor_ignore = 10, level = 150)
+Top = it.Item(name="이글아이 아머", level = 150, main_option = ExMDF(stat_main = 30, stat_sub = 30, att = 2, armor_ignore = 5))
+Bottom = it.Item(name="트릭스터 팬츠", level = 150, main_option = ExMDF(stat_main = 30, stat_sub = 30, att = 2, armor_ignore = 5))
+Head = it.Item(name="하이네스 햇", level = 150, main_option = ExMDF(stat_main = 40, stat_sub = 40, att = 2, armor_ignore = 10))
 
 _valueMap = [[86, [0,11,16,21,28,36]],
                 [125,[0,15,22,31,40,52]],
@@ -19,12 +20,12 @@ _valueMap = [[86, [0,11,16,21,28,36]],
                 [81,[0,13,18,25,33,42]],
                 [169,[0,9,20,32,47,64]]]#Need blade & Zero weapon
 
-WeaponFactory = it.WeaponFactoryClass(150, _valueMap, modifier = it.CharacterModifier(stat_main = 40, stat_sub = 40, pdamage = 30, armor_ignore = 10))
+WeaponFactory = it.WeaponFactoryClass(150, _valueMap, modifier = it.ExMDF(stat_main = 40, stat_sub = 40, boss_pdamage = 30, armor_ignore = 10))
 
 
 class Factory():
     @staticmethod
-    def getArmorSetDict(star, enhance, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
+    def getArmorSetDict(star, enhance, potential = it.ExMDF(), additional_potential = it.ExMDF(), bonus = it.ExMDF(), hammer = True):
         if not hammer: 
             upgrades = [11,7,7]
         else:
@@ -52,21 +53,26 @@ class Factory():
         return package
     
     @staticmethod
-    def getWeapon(_type, star, elist, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonusAttIndex = 0, bonusElse = it.CharacterModifier()):
+    def getWeapon(_type, star, elist, potential = it.ExMDF(), additional_potential = it.ExMDF(), bonusAttIndex = 0, bonusElse = it.ExMDF()):
         
         return WeaponFactory.getWeapon(_type, star = star, elist = elist, potential = potential, additional_potential = additional_potential, bonusAttIndex = bonusAttIndex, bonusElse = bonusElse)
 
     @staticmethod
-    def getBlade(_type, star, elist, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonusElse = it.CharacterModifier()):
+    def getBlade(_type, star, elist, potential = it.ExMDF(), additional_potential = it.ExMDF(), bonusElse = it.ExMDF()):
 
         return WeaponFactory.getBlade(_type, star = star, elist = elist, potential = potential, additional_potential = additional_potential, bonusElse = bonusElse)
+    
+    @staticmethod
+    def getZeroSubweapon(_type, potential = it.ExMDF(), additional_potential = it.ExMDF(), bonusElse = it.ExMDF()):
+
+        return WeaponFactory.getZeroSubweapon(_type, potential = potential, additional_potential = additional_potential, bonusElse = bonusElse)
 
     @staticmethod
     def getSetOption(rank):
-        li = [it.CharacterModifier(), 
-                it.CharacterModifier(stat_main=20, stat_sub=20), 
-                it.CharacterModifier(att=50),
-                it.CharacterModifier(boss_pdamage=30)]
+        li = [it.ExMDF(), 
+                it.ExMDF(stat_main=20, stat_sub=20), 
+                it.ExMDF(att=50),
+                it.ExMDF(boss_pdamage=30)]
         
         retval = li[0]
         for i in range(rank):

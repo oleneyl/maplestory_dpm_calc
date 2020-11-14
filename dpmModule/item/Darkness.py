@@ -1,10 +1,11 @@
 from . import ItemKernel as it
+ExMDF = it.ExMDF
 
-Face = it.Item(name="루즈 컨트롤 머신 마크", stat_main = 10, stat_sub = 10, att = 10, level = 160)#160 // 5
-Eye = it.Item(name="마력이 깃든 안대", stat_main = 15, stat_sub = 15, att = 3, level = 160)#160 // 3
-Belt = it.Item(name="몽환의 벨트", stat_main = 50, stat_sub = 50, att = 6, level = 200)#200 // 3
-Pendant = it.Item(name="고통의 근원", stat_main = 10, stat_sub = 10, att = 5, level = 160)#160 // 5
-Pocket = it.Item(name="저주받은 #의 마도서", stat_main = 20, stat_sub = 10, att = 10, level = 160)#160
+Face = it.Item(name="루즈 컨트롤 머신 마크", level = 160, main_option = ExMDF(stat_main = 10, stat_sub = 10, att = 10))#160 // 5
+Eye = it.Item(name="마력이 깃든 안대", level = 160, main_option = ExMDF(stat_main = 15, stat_sub = 15, att = 3))#160 // 3
+Belt = it.Item(name="몽환의 벨트", level = 200, main_option = ExMDF(stat_main = 50, stat_sub = 50, att = 6))#200 // 3
+Pendant = it.Item(name="고통의 근원", level = 160, main_option = ExMDF(stat_main = 10, stat_sub = 10, att = 5))#160 // 5
+Pocket = it.Item(name="저주받은 #의 마도서", level = 160, main_option = ExMDF(stat_main = 20, stat_sub = 10, att = 10))#160
 #Heart = it.Item(stat_main = 50, stat_sub = 50, att = 77, boss_pdamage = 30, armor_ignore = 30)
 #Badge = it.Item(stat_main = 15, stat_sub = 15, att = 10)
 #Ring = it.Item(stat_main = 5, stat_sub = 5, att = 4)
@@ -16,9 +17,9 @@ class Factory():
     
     @staticmethod
     def getAccesoryDict(star, enhancer, 
-                            potential = it.CharacterModifier(), 
-                            additional_potential = it.CharacterModifier(), 
-                            bonus = it.CharacterModifier(), 
+                            potential = it.ExMDF(), 
+                            additional_potential = it.ExMDF(), 
+                            bonus = it.ExMDF(), 
                             hammer = True):
         #Always use 30% enhance scroll. if False, do not apply.
         if not hammer:
@@ -46,7 +47,7 @@ class Factory():
                 item.set_potential(potential)
                 item.set_additional_potential(additional_potential)
             
-                scroll_enhance = it.CharacterModifier()
+                scroll_enhance = it.ExMDF()
                 for i in range(enhance):
                     scroll_enhance += enhancer
                 
@@ -61,11 +62,11 @@ class Factory():
 
     @staticmethod
     def getSetOption(rank):
-        li = [it.CharacterModifier(), 
-                it.CharacterModifier(stat_main = 10, stat_sub = 10, att = 10, boss_pdamage = 10), 
-                it.CharacterModifier(stat_main = 10, stat_sub = 10, att = 10, armor_ignore = 10),
-                it.CharacterModifier(stat_main = 15, stat_sub = 15, att = 15, crit_damage = 5),
-                it.CharacterModifier(stat_main = 15, stat_sub = 15, att = 15, boss_pdamage = 10)]
+        li = [it.ExMDF(), 
+                it.ExMDF(stat_main = 10, stat_sub = 10, att = 10, boss_pdamage = 10), 
+                it.ExMDF(stat_main = 10, stat_sub = 10, att = 10, armor_ignore = 10),
+                it.ExMDF(stat_main = 15, stat_sub = 15, att = 15, crit_damage = 5),
+                it.ExMDF(stat_main = 15, stat_sub = 15, att = 15, boss_pdamage = 10)]
         
         retval = li[0]
         for i in range(rank):

@@ -1,9 +1,10 @@
 import random
 from collections import defaultdict
-from .abstract import AbstractScenarioGraph, AbstractScheduler
+from .abstract import AbstractScenarioGraph
 from .core import CharacterModifier
+from .core import ResultObject
 from .core import BuffSkillWrapper, DamageSkillWrapper, SummonSkillWrapper
-
+from .core import Callback
 
 class NameIndexedGraph(AbstractScenarioGraph):
     def __init__(self, accessible_elements = []):
@@ -47,16 +48,12 @@ class StorageLinkedGraph(NameIndexedGraph):
         self._tick_task_map = {}
     
     def build(self, chtr):
-        rem = chtr.buff_rem
-        red = chtr.cooltimeReduce
-        
-        self._rem = rem
-        self._red = red
+        skill_modifier = chtr.get_skill_modifier()
 
         for name, wrp in self._element_map.items():
-            self._task_map[name] = wrp.build_task(rem = rem, red = red)
+            self._task_map[name] = wrp.build_task(skill_modifier)
             if hasattr(wrp, 'build_periodic_task'):
-                self._tick_task_map[name] = wrp.build_periodic_task()
+                self._tick_task_map[name] = wrp.build_periodic_task(skill_modifier)
 
     def spend_time(self, t):
         for _, wrp in self._element_map.items():
@@ -114,13 +111,49 @@ class StorageLinkedGraph(NameIndexedGraph):
         }
 
 
-class AdvancedGraphScheduler(AbstractScheduler):
+
+class CallbackQueue:
+    def __init__(self):
+        self._callback_queue = []
+
+    def push_callbacks(self, callbacks : list, current_time):
+        self._callback_queue += [callback.adjust_by_current_time(current_time) for callback in callbacks]
+        self._callback_queue = sorted(self._callback_queue, key=lambda x:x.time)
+
+    def impending_callback_exist(self, current_time, next_event_time):
+        return len(self._callback_queue) != 0 and self.impending_callback_time(current_time) <= next_event_time
+
+    def impending_callback_time(self, current_time):
+        return self._callback_queue[0].time - current_time
+
+    def take_out_impending_callback(self):
+        callback = self._callback_queue[0]
+        self._callback_queue = self._callback_queue[1:]
+        return callback
+
+
+class AdvancedGraphScheduler:
     def __init__(self, graph, fetching_policy, rules):
-        super(AdvancedGraphScheduler, self).__init__(graph)
-        self.fetching_policy = fetching_policy(graph)
-        self.rules = rules
         self._rule_map = defaultdict(list)
-    
+
+        self.graph = graph
+        self.rules = rules
+        self.total_time_left = None
+        self.total_time_initial = None
+        self.fetching_policy = fetching_policy(graph)
+
+        self.callback_queue = CallbackQueue()
+
+    def get_current_time(self):
+        return self.total_time_initial - self.total_time_left
+
+    def is_simulation_end(self):
+        return (self.total_time_left < 0)
+
+    def spend_time(self, time):
+        self.total_time_left -= time
+        self.graph.spend_time(time)
+
     def dequeue(self):
         for avail in self.fetching_policy.fetch_targets():
             failed = False
@@ -139,6 +172,17 @@ class AdvancedGraphScheduler(AbstractScheduler):
                 if wrp.need_count():
                     return tick
         return None
+
+    def apply_result(self, result : ResultObject, time_to_spend : float) -> [Callback, float]:
+        self.callback_queue.push_callbacks(result.callbacks, self.get_current_time())
+        if self.callback_queue.impending_callback_exist(self.get_current_time(), time_to_spend):
+            time_until_callback_occur = self.callback_queue.impending_callback_time(self.get_current_time())
+            self.spend_time(time_until_callback_occur)
+            time_to_spend = time_to_spend - time_until_callback_occur
+            return self.callback_queue.take_out_impending_callback(), time_to_spend
+        else:
+            self.spend_time(time_to_spend)
+            return None, 0
 
     def initialize(self, time):
         self.total_time_left = time

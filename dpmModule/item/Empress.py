@@ -1,10 +1,11 @@
 from . import ItemKernel as it
+ExMDF = it.ExMDF
 
-Head = it.Item(name="여제 모자", stat_main = 25, stat_sub = 25, att = 1, armor_ignore = 10, level = 140)
-Glove = it.Item(name="여제 장갑", stat_main = 16, stat_sub = 16, att = 5, level = 140)
-Shoes = it.Item(name="여제 신발", stat_main = 15, stat_sub = 15, att = 1, level = 140)
-Cloak = it.Item(name="여제 망토", stat_main = 7, stat_sub = 7, att = 1, level = 140)
-Shoulder = it.Item(name="여제 견장", stat_main = 11, stat_sub = 11, att = 7, level = 140)
+Head = it.Item(name="여제 모자", level = 140, main_option = ExMDF(stat_main = 25, stat_sub = 25, att = 1, armor_ignore = 10))
+Glove = it.Item(name="여제 장갑", level = 140, main_option = ExMDF(stat_main = 16, stat_sub = 16, att = 5))
+Shoes = it.Item(name="여제 신발", level = 140, main_option = ExMDF(stat_main = 15, stat_sub = 15, att = 1))
+Cloak = it.Item(name="여제 망토", level = 140, main_option = ExMDF(stat_main = 7, stat_sub = 7, att = 1))
+Shoulder = it.Item(name="여제 견장", level = 140, main_option = ExMDF(stat_main = 11, stat_sub = 11, att = 7))
 
 _valueMap = [[69, [0,9,13,17,23,29]],
                 [100,[0,12,18,25,32,41]],
@@ -19,11 +20,11 @@ _valueMap = [[69, [0,9,13,17,23,29]],
                 [None,[0,13,18,25,33,42]],
                 [None,[0,13,18,25,33,42]]]#Need blade & Zero weapon
 
-WeaponFactory = it.WeaponFactoryClass(140, _valueMap, modifier = it.CharacterModifier(stat_main = 35, stat_sub = 20))
+WeaponFactory = it.WeaponFactoryClass(140, _valueMap, modifier = it.ExMDF(stat_main = 35, stat_sub = 20))
 
 class Factory():
     @staticmethod
-    def getArmorSetDict(star, enhance, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonus = it.CharacterModifier(), hammer = True):
+    def getArmorSetDict(star, enhance, potential = it.ExMDF(), additional_potential = it.ExMDF(), bonus = it.ExMDF(), hammer = True):
         assert(enhance in [100, 70, 30])
         #TODO : Simplyfy this dirty codes.
         if not hammer: 
@@ -56,18 +57,18 @@ class Factory():
         return package
         
     @staticmethod
-    def getWeapon(_type, star, elist, potential = it.CharacterModifier(), additional_potential = it.CharacterModifier(), bonusAttIndex = 0, bonusElse = it.CharacterModifier()):
+    def getWeapon(_type, star, elist, potential = it.ExMDF(), additional_potential = it.ExMDF(), bonusAttIndex = 0, bonusElse = it.ExMDF()):
         return WeaponFactory.getWeapon(_type, star = star, elist = elist, potential = potential, additional_potential = additional_potential, bonusAttIndex = bonusAttIndex, bonusElse = bonusElse )
         
     @staticmethod
     def getSetOption(rank):
-        li = [it.CharacterModifier(), 
-                it.CharacterModifier(), 
-                it.CharacterModifier(),
-                it.CharacterModifier(att = 15),
-                it.CharacterModifier(stat_main = 20, stat_sub = 20),
-                it.CharacterModifier(att = 30),
-                it.CharacterModifier(att = 10)]
+        li = [it.ExMDF(), 
+                it.ExMDF(), 
+                it.ExMDF(),
+                it.ExMDF(att = 15),
+                it.ExMDF(stat_main = 20, stat_sub = 20),
+                it.ExMDF(att = 30),
+                it.ExMDF(att = 10)]
         
         retval = li[0]
         for i in range(rank):
