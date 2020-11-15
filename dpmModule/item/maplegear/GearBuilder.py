@@ -128,8 +128,11 @@ class GearBuilder:
     def apply_star(self, amazing_scroll: bool = False, bonus: bool = False) -> bool:
         if self.gear.star >= self.gear.max_star:
             return False
-        if amazing_scroll and self.gear.get_prop_value(GearPropType.req_level) > 150:
-            return False
+        if amazing_scroll:
+            if self.gear.get_prop_value(GearPropType.req_level) > 150:
+                return False
+            if self.gear.star >= 15:
+                return False
 
         self.gear.star += 1
         star = self.gear.star
