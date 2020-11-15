@@ -25,7 +25,7 @@ class GearPropType(IntEnum):
     matt_rate = 101,
     crit = 106,
     cooltime_reduce = 131,
-    crit_pdamage = 141,
+    crit_damage = 141,
 
     tuc = 201,
     set_item_id = 202,
