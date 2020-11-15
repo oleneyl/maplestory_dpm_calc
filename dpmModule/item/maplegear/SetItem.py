@@ -56,37 +56,19 @@ class SetItem:
 def eval_set_item_effect(equipped_gears: List[Gear]) -> PropMap:
     gear: Gear
     set_items: Dict[int, SetItem] = {}
-    joker_ids: List[int] = []
     active_joker_id: int = 0
     set_item_effect: defaultdict[GearPropType, int] = defaultdict(int)
     # setup setItems
     for gear in equipped_gears:
         set_item_id = gear.get_prop_value(GearPropType.set_item_id)
-        if gear.get_prop_value(GearPropType.joker_to_set_item):
-            joker_ids.append(gear.item_id)
+        if gear.get_boolean_value(GearPropType.joker_to_set_item):
+            if gear.item_id < active_joker_id:
+                active_joker_id = gear.item_id
         if set_item_id == 0:
             continue
         if set_item_id not in set_items:
             set_items[set_item_id] = SetItem.create_from_id(set_item_id)
         set_items[set_item_id].item_ids[gear.item_id] = True
-    # find active joker item
-    joker_ids = sorted(joker_ids)
-    for joker_id in joker_ids:
-        if active_joker_id > 0:
-            break
-        for set_item in set_items.values():
-            if active_joker_id > 0:
-                break
-            if not set_item.joker_possible:
-                continue
-            if set_item.item_count < 3:
-                continue
-            for item_id in set_item.item_ids:
-                if set_item.item_ids[item_id]:
-                    continue
-                if Gear.get_gear_type(item_id) == Gear.get_gear_type(joker_id):
-                    active_joker_id = joker_id
-                    break
     # apply joker item to setItems
     if active_joker_id > 0:
         for set_item in set_items.values():
@@ -107,15 +89,10 @@ def eval_set_item_effect(equipped_gears: List[Gear]) -> PropMap:
             if index <= count:
                 for prop_type in set_item.effects[index]:
                     if prop_type == GearPropType.armor_ignore:
-                        set_item_effect[prop_type] = 1 - (1 - set_item_effect[prop_type] / 100) * \
-                                                  (1 - set_item.effects[index][prop_type])
+                        set_item_effect[prop_type] = 100 - (1 - set_item_effect[prop_type] / 100) * \
+                                                  (1 - set_item.effects[index][prop_type] / 100) * 100
                     else:
                         set_item_effect[prop_type] += set_item.effects[index][prop_type]
             else:
                 break
     return set_item_effect
-
-
-
-
-
