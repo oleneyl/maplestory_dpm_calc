@@ -196,9 +196,7 @@ class JobGenerator(ck.JobGenerator):
 
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 4, 4)
         magic_curcuit_full_drive_builder = flora.MagicCircuitFullDriveBuilder(vEhc, 3, 3)
-        for sk in [Divide, Resonance]:
-            auraweapon_builder.add_aura_weapon(sk)
-            magic_curcuit_full_drive_builder.add_trigger(sk)
+        
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
         MagicCircuitFullDrive, ManaStorm = magic_curcuit_full_drive_builder.get_skill()
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
@@ -213,6 +211,10 @@ class JobGenerator(ck.JobGenerator):
         RestoreTick = core.SummonSkill('리스토어(주기공격)', 0, 2970, 900+36*vEhc.getV(1,1), 3, 30*1000, cooltime=-1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # 11회 시전
 
         Storm = StormWrapper(vEhc, 0, 0, Order)
+
+        for sk in [Divide, Resonance, Shard, ShardActive, Order, Marker, Restore, Ruin, Storm]:
+            auraweapon_builder.add_aura_weapon(sk)
+            magic_curcuit_full_drive_builder.add_trigger(sk)
 
         # 딜 사이클 정의
 
