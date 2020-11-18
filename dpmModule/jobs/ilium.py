@@ -213,10 +213,7 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att("건틀렛"))
         GramHolder = GramHolderWrapper(core.SummonSkill("그람홀더", 210, 3000, 1000+25*vEhc.getV(4,3), 6, 40000, cooltime = 180000).isV(vEhc,4,3))
-        
-        MagicCircuitFullDrive = core.BuffSkill("매직 서킷 풀드라이브", 720, (30+vEhc.getV(3,2))*1000, pdamage = (20 + vEhc.getV(3,2)), cooltime = 200*1000).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
-        MagicCircuitFullDriveStorm = core.SummonSkill("매직 서킷 풀드라이브(마력 폭풍)", 0, 4000, 500+20*vEhc.getV(3,2), 3, (30+vEhc.getV(3,2))*1000, cooltime = -1).wrap(core.SummonSkillWrapper)
-        
+
         CrystalIgnitionInit = core.DamageSkill("크리스탈 이그니션(시전)", 720, 0, 0, cooltime = 180*1000).wrap(core.DamageSkillWrapper)
         CrystalIgnition = core.DamageSkill("크리스탈 이그니션", 150, 750 + 30*vEhc.getV(2,1), 4, modifier = core.CharacterModifier(boss_pdamage = 20)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
         CrystalIgnitionEnd = core.DamageSkill("크리스탈 이그니션(종료)", 630, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
@@ -265,7 +262,10 @@ class JobGenerator(ck.JobGenerator):
         CrystalSkill_Deus.onAfter(Riyo.controller(30000, type_="set_disabled_and_time_left"))
         CrystalSkill_Deus.onAfter(Machina.controller(30000, type_="set_disabled_and_time_left"))
         
-        MagicCircuitFullDrive.onAfter(MagicCircuitFullDriveStorm)
+        magic_curcuit_full_drive_builder = flora.MagicCircuitFullDriveBuilder(vEhc, 3, 2)
+        for sk in [Craft_Orb, Craft_Javelin, Craft_Javelin_AfterOrb, Craft_Longinus, CrystalSkill_MortalSwing, GloryWing_MortalWingbit, GloryWing_Craft_Javelin, CrystalIgnition]:
+            magic_curcuit_full_drive_builder.add_trigger(sk)
+        MagicCircuitFullDrive, MagicCircuitFullDriveStorm = magic_curcuit_full_drive_builder.get_skill()
 
         CrystalGate.onAfter(CrystalGateBuff)
         CrystalGateBuff.onConstraint(core.ConstraintElement("크리스탈 게이트 ON", CrystalGate, CrystalGate.is_active))
