@@ -263,7 +263,7 @@ class JobGenerator(ck.JobGenerator):
         CrystalSkill_Deus.onAfter(Machina.controller(30000, type_="set_disabled_and_time_left"))
         
         magic_curcuit_full_drive_builder = flora.MagicCircuitFullDriveBuilder(vEhc, 3, 2)
-        for sk in [Craft_Orb, Craft_Javelin, Craft_Javelin_AfterOrb, Craft_Longinus, CrystalSkill_MortalSwing, GloryWing_MortalWingbit, GloryWing_Craft_Javelin, CrystalIgnition]:
+        for sk in [Craft_Orb, Craft_Javelin, Craft_Javelin_AfterOrb, Craft_Longinus, CrystalSkill_MortalSwing, GloryWing_MortalWingbit, GloryWing_Craft_Javelin, CrystalIgnition, MirrorSpider]:
             magic_curcuit_full_drive_builder.add_trigger(sk)
         MagicCircuitFullDrive, MagicCircuitFullDriveStorm = magic_curcuit_full_drive_builder.get_skill()
 
