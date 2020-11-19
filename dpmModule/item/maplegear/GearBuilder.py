@@ -169,7 +169,7 @@ class GearBuilder:
             for prop_type in (GearPropType.STR, GearPropType.DEX, GearPropType.INT, GearPropType.LUK):
                 if prop_type in stat_set:
                     self.gear.star_stat[prop_type] += stat_data[star]
-                elif star > 15 and self.gear.scroll_stat[prop_type] < 0:
+                elif star > 15 and self.gear.base_stat[prop_type] + self.gear.scroll_stat[prop_type] > 0:
                     self.gear.star_stat[prop_type] += stat_data[star]
 
             if is_weapon:
