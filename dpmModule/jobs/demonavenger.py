@@ -113,9 +113,9 @@ class JobGenerator(ck.JobGenerator):
         DimensionSword = core.SummonSkill("디멘션 소드(평딜)", 660, 3000, 1250+14*vEhc.getV(0,0), 8, 40*1000, cooltime = 120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
         DimensionSwordReuse = core.SummonSkill("디멘션 소드 (극딜)", 660, 210, 300+vEhc.getV(0,0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
         
-        # TODO: 분노의 가시 재발동 대기시간 감소 구현
+        REVENANT_CDR = True
         Revenant = core.BuffSkill("레버넌트", 1530, (30 + vEhc.getV(0,0)//5)*1000, cooltime = 300000, rem = False).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
-        RevenantHit = core.DamageSkill("레버넌트(분노의 가시)", 0, 300 + vEhc.getV(0,0) * 12, 9, cooltime = 4000, modifier = core.CharacterModifier(armor_ignore = 30)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        RevenantHit = core.DamageSkill("레버넌트(분노의 가시)", 0, 300 + vEhc.getV(0,0) * 12, 9, cooltime = (500 if REVENANT_CDR else 4000), modifier = core.CharacterModifier(armor_ignore = 30)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         #BatSwarm = core.SummonSkill("배츠 스웜", 0, 0, 200, 1, 0)
 
