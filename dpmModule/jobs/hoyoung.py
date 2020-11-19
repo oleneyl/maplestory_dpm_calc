@@ -167,7 +167,7 @@ class JobGenerator(ck.JobGenerator):
         
         # 벞지 & 소환수 지속시간 둘다 적용
         Talisman_Clone = core.BuffSkill("환영 분신부", 900, 200*1000, rem=True).wrap(PausableBuffSkillWrapper)
-        Talisman_Clone_Attack = core.DamageSkill("환영 분신부(공격)", 0, 60 + 120 + 220 + 5*passive_level, 4 * 3, cooltime = 1500).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Talisman_Clone_Attack = core.DamageSkill("환영 분신부(공격)", 0, 60 + 60 + 110 + 2*passive_level, 4 * 3, cooltime = 1500).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Talisman_Clone_Attack_Opt = core.OptionalElement(lambda : Talisman_Clone.is_active() and Talisman_Clone_Attack.is_available(), Talisman_Clone_Attack)
         Talisman_Clone_Attack.protect_from_running()
 
@@ -230,7 +230,7 @@ class JobGenerator(ck.JobGenerator):
         # 환영 분신부를 대체하는 스킬 (알고리즘 구현 필요)
         # 환영 분신부 지속중에만 사용가능, 발동 중에는 환영 분신부의 지속시간이 감소하지 않음
         Clone_Rampage = core.BuffSkill("선기 : 극대 분신난무", 900, 30*1000, cooltime = 200*1000, red=True).wrap(core.BuffSkillWrapper)
-        Clone_Rampage_Attack = core.DamageSkill("선기 : 극대 분신난무(공격)", 0, 60 + 120 + 220 + 5*passive_level + 200 + vEhc.getV(0, 0) * 8, 4 * 12, cooltime = 1500).setV(vEhc, 0, 2, True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        Clone_Rampage_Attack = core.DamageSkill("선기 : 극대 분신난무(공격)", 0, 60 + 60 + 110 + 2*passive_level + 200 + vEhc.getV(0, 0) * 8, 4 * 12, cooltime = 1500).setV(vEhc, 0, 2, True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         Clone_Rampage_Attack_Opt = core.OptionalElement(lambda : Clone_Rampage.is_active() and Clone_Rampage_Attack.is_available(), Clone_Rampage_Attack)
         Clone_Rampage_Attack.protect_from_running()
