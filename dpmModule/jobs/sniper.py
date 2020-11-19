@@ -92,7 +92,7 @@ class JobGenerator(ck.JobGenerator):
         Freezer = core.SummonSkill("프리저", 0, 1710, 390 if DISTANCE <= 280 else 0, 1, 220 * 1000).setV(vEhc, 3, 3, False).wrap(core.SummonSkillWrapper) # 이볼브 종료시 자동소환되므로 딜레이 0, 사거리 280보다 멀면 공격안함
         Evolve = adventurer.EvolveWrapper(vEhc, 5, 5, Freezer)
         
-        GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
+        GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4, modifier=PASSIVE_MODIFIER)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         SplitArrow = core.DamageSkill("스플릿 애로우(공격)", 0, 600 + vEhc.getV(0,0) * 24, 5+1, modifier = PASSIVE_MODIFIER).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
