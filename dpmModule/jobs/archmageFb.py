@@ -82,11 +82,11 @@ class JobGenerator(ck.JobGenerator):
         
         '''
         DOT_PUNISHER_HIT = 22 # TODO: 현재 도트 개수를 참조해 타수 결정
+        POISON_NOVA_HIT = 4
 
         # Buff Skills
         Meditation = core.BuffSkill("메디테이션", 0, 240000, att = 30, rem = True, red = True).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 5)
         Infinity = adventurer.InfinityWrapper(self.combat)
         
         # Damage Skills
@@ -98,9 +98,11 @@ class JobGenerator(ck.JobGenerator):
         FlameHeize = core.DamageSkill("플레임 헤이즈", 1080, 202 + 3*self.combat, 15, cooltime = 10 * 1000, red=True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         MistEruption = core.DamageSkill("미스트 이럽션", 720, 45 + self.combat, 15*4, cooltime = 4 * 1000, red=True, modifier = core.CharacterModifier(armor_ignore = 40 + self.combat, pdamage_indep = ERUPTION_RATE[5]) + core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        DotPunisher = core.DamageSkill("도트 퍼니셔", 690, (400+vEhc.getV(0,0)*15), 5 * (1 + (DOT_PUNISHER_HIT - 1) * 0.65), cooltime = 25 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)#=775*(1+0.75*19)*5
+        DotPunisher = core.DamageSkill("도트 퍼니셔", 690, 400+vEhc.getV(0,0)*15, 5, cooltime = 25 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DotPunisherExceed = core.DamageSkill("도트 퍼니셔(초과)", 0, 400+vEhc.getV(0,0)*15, 5*(DOT_PUNISHER_HIT-1), modifier = core.CharacterModifier(pdamage_indep=-35)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         PoisonNova = core.DamageSkill("포이즌 노바", 570, 250 + 10*vEhc.getV(2,1), 12, cooltime = 25*1000, red = True).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
-        PoisonNovaErupt = core.DamageSkill("포이즌 노바(폭발)", 0, 225 + 9*vEhc.getV(2,1), 12 * (3 + 0.50)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
+        PoisonNovaErupt = core.DamageSkill("포이즌 노바(폭발)", 0, 225 + 9*vEhc.getV(2,1), 12 * 3).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
+        PoisonNovaEruptExceed = core.DamageSkill("포이즌 노바(폭발)(초과)", 0, 225 + 9*vEhc.getV(2,1), 12 * (POISON_NOVA_HIT - 3), modifier = core.CharacterModifier(pdamage_indep=-50)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
         PoisonChain = core.DamageSkill("포이즌 체인", 600, 300+12*vEhc.getV(0,0), 4, cooltime=30*1000, red=True).wrap(core.DamageSkillWrapper)
         PoisonChainToxic = PoisonChainToxicWrapper(vEhc, 0, 0)
     
@@ -109,8 +111,8 @@ class JobGenerator(ck.JobGenerator):
         
         # Summoning Skills
         Ifritt = core.SummonSkill("이프리트", 600, 3030, 150+2*self.combat, 3, (260+5*self.combat)*1000).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
-        FireAura = core.SummonSkill("파이어 오라", 0, 3000, 400, 2, 999999999).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
-        FuryOfIfritt = core.SummonSkill("퓨리 오브 이프리트", 480, 6000/25, 200+8*vEhc.getV(3,2), 6, 6*1000-1, cooltime = 75000, red = True).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
+        FireAura = core.SummonSkill("파이어 오라", 0, 3000, 400, 2, 999999999, modifier = core.CharacterModifier(pdamage = -50)).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
+        FuryOfIfritt = core.SummonSkill("퓨리 오브 이프리트", 360, 6000/25, 200+8*vEhc.getV(3,2), 6, 6*1000-1, cooltime = 75000, red = True).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         # Final Attack
@@ -121,7 +123,7 @@ class JobGenerator(ck.JobGenerator):
         #Ignite : Need Wrapper
         
         # DoT Skills
-        ParalyzeDOT = core.DotSkill("패럴라이즈(도트)", 0, 1000, 240 + self.combat * 4, 1, 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        ParalyzeDOT = core.DotSkill("페럴라이즈(도트)", 0, 1000, 240 + self.combat * 4, 1, 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
         MistDOT = core.DotSkill("포이즌 미스트(도트)", 0, 1000, 300 + self.combat * 1, 1, 12000, cooltime = -1).wrap(core.SummonSkillWrapper)
         IfrittDot = core.DotSkill("이프리트(도트)", 0, 1000, 140 + self.combat * 3, 1, 4000, cooltime = -1).wrap(core.SummonSkillWrapper)
         HeizeFlameDOT = core.DotSkill("플레임 헤이즈(도트)", 0, 1000, 200 + self.combat * 3, 1, 20000, cooltime = -1).wrap(core.SummonSkillWrapper)
@@ -135,7 +137,7 @@ class JobGenerator(ck.JobGenerator):
         EnergyBolt = core.DamageSkill("에너지 볼트", 630, 309, 1).wrap(core.DamageSkillWrapper)
         FlameOrb = core.DamageSkill("플레임 오브", 630, 301, 2).wrap(core.DamageSkillWrapper)
         PoisonBreath = core.DamageSkill("포이즌 브레스", 600, 180, 1).wrap(core.DamageSkillWrapper)
-        Explosion = core.DamageSkill("익스플로젼", 300+540, 405, 2).wrap(core.DamageSkillWrapper) # prepare 300 + action 540
+        Explosion = core.DamageSkill("익스플로젼", 540+150, 405, 2).wrap(core.DamageSkillWrapper) # magic6(720) -> explosion(180). 둘 다 공속 적용되어 540+150.
         PoisonMist = core.DamageSkill("포이즌 미스트", 1140, 270, 1).wrap(core.DamageSkillWrapper)
         SlimeVirus = core.DotSkill("슬라임 바이러스", 1680, 1000, 160, 1, 10000, cooltime=-1).wrap(core.SummonSkillWrapper)
         
@@ -187,9 +189,19 @@ class JobGenerator(ck.JobGenerator):
 
         # Skill Link
         DotPunisher.onBefore(TeleportMastery)
+        DotPunisher.onJustAfter(DotPunisherExceed)
         PoisonNova.onAfter(PoisonNovaErupt)
+        PoisonNovaErupt.onJustAfter(PoisonNovaEruptExceed)
         MistEruption.onAfter(FlameHeize.controller(1, 'reduce_cooltime_p'))
         PoisonChain.onAfter(PoisonChainToxic)
+
+        # Overload Mana
+        overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 5)
+        for sk in [Paralyze, TeleportMastery, MistEruption, FlameHeize, PoisonMist,
+                    Meteor, MegidoFlame, DotPunisher, DotPunisherExceed, PoisonNova, PoisonNovaErupt, PoisonNovaEruptExceed, PoisonChain, PoisonChainToxic,
+                    EnergyBolt, FlameOrb, PoisonBreath, Explosion]:
+            overload_mana_builder.add_skill(sk)
+        OverloadMana = overload_mana_builder.get_buff()
 
         return (Paralyze, 
                 [Infinity, Meditation, EpicAdventure, OverloadMana.ensure(vEhc,1,5),

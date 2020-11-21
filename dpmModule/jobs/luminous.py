@@ -29,18 +29,15 @@ class LuminousStateController(core.BuffSkillWrapper):
         self.remain -= time
         #이퀄이 끝나면, 다음 상태로 진입합니다.
         if self.remain < 0 and self.state == LuminousStateController.EQUAL:
-            self.state = 1 - self.currentState
+            self.state = self.currentState
             self.stack = LuminousStateController.STACK
 
     def _modify_stack(self, stack):
-        if self.state == self.EQUAL:
-            return self._result_object_cache
-        
         self.stack -= stack * 1.05 # 다크라이트 마스터리 1.05배
         
         if self.stack <= 0:
             self.stack = LuminousStateController.STACK
-            self.currentState = self.state
+            self.currentState = 1 - self.currentState
             self.state = LuminousStateController.EQUAL
             self.remain = 17 * (1 + 0.01* self.buff_rem) * 1000
             self.equalCallback()
@@ -48,10 +45,10 @@ class LuminousStateController(core.BuffSkillWrapper):
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, '루미너스 스택 변경', spec = 'graph control')     
     
     def memorize(self):
-        if self.state != LuminousStateController.EQUAL:
-            self.currentState = self.state
-        self.remain = 17*1000
+        self.stack = LuminousStateController.STACK
+        self.currentState = 1 - self.currentState
         self.state = LuminousStateController.EQUAL
+        self.remain = 17*1000
         self.equalCallback()
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = '메모라이즈', spec = 'graph control')
     
@@ -207,7 +204,6 @@ class JobGenerator(ck.JobGenerator):
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
         # 5th
-        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 2)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         DoorOfTruth = core.SummonSkill("진리의 문", 870, 3030, 375 + 15 * vEhc.getV(4,4), 10, (25 + vEhc.getV(4,4) // 2) * 1000, cooltime = -1).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)   #이퀄시 사용 가능해짐.
         PunishingResonator = PunishingResonatorWrapper(vEhc, 2, 1, LuminousState.getState)
@@ -230,6 +226,8 @@ class JobGenerator(ck.JobGenerator):
 
         for sk in [LightReflection, Apocalypse, AbsoluteKillCooltimed]:
             jobutils.create_auxilary_attack(sk, 0.5, "(선파이어/이클립스)")
+
+        AbsoluteKillCooltimed.onConstraint(core.ConstraintElement("비이퀄때만 앱킬 쿨타임", LuminousState, LuminousState.isNotEqual))
         
         # Skill Wrapper - Memorize
         Memorize.onAfter(core.create_task("메모라이즈", LuminousState.memorize, LuminousState))
@@ -265,14 +263,18 @@ class JobGenerator(ck.JobGenerator):
         
         LiberationOrbPassive.protect_from_running()
         LiberationOrbActive.protect_from_running()
-        
-        SoulContract = globalSkill.soul_contract()
+
+        # Overload Mana
+        overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 2)
+        for sk in [LightReflection, Apocalypse, DoorOfTruth, PunishingResonator, AbsoluteKill, AbsoluteKillCooltimed, LightAndDarkness]:
+            overload_mana_builder.add_skill(sk)
+        OverloadMana = overload_mana_builder.get_buff()
 
         return(Attack, 
                 [LuminousState, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     Booster, PodicMeditaion, DarknessSocery, DarkCrescendo, HerosOath, Memorize, OverloadMana, LiberationOrb,
-                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), SoulContract] +\
-                [LightAndDarkness, LiberationOrbActive, LiberationOrbPassive] +\
+                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
+                [LightAndDarkness, LiberationOrbActive, LiberationOrbPassive, AbsoluteKillCooltimed] +\
                 [PunishingResonator, DoorOfTruth, MirrorBreak, MirrorSpider] +\
                 [] +\
                 [Attack])

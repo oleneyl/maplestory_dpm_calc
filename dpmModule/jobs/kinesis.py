@@ -52,11 +52,11 @@ class LawOfGravityDebuffWrapper(core.SummonSkillWrapper):
         self.mobPulled = 0
         return super(LawOfGravityDebuffWrapper, self)._use(skill_modifier)
     
-    def _useTick(self):
+    def _useTick(self): # 데미지 계산 -> 끌어당김 판정 -> 다음 틱 계산
         if self.is_active() and self.tick <= 0: # TODO: afterTick() 같은 콜백 만들거나 / useTick의 if-else 없애거나 / if 내의 로직을 메소드로 뺴거나 / tickPassed 변수 만들거나 택1
-            self.tick += self.get_delay()
             result = core.ResultObject(0, self.get_modifier(), self.get_damage(), self.get_hit(), sname = self.skill.name, spec = self.skill.spec)
             self.mobPulled += 6
+            self.tick += self.get_delay()
             return result
         else:
             return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
@@ -66,7 +66,7 @@ class LawOfGravityDebuffWrapper(core.SummonSkillWrapper):
         return modifier + core.CharacterModifier(pdamage_indep = min(self.mobPulled * 3, 40)) # TODO: 2 아니면 3인데 실험 필요함
 
     def get_delay(self):
-        return max(self.skill.delay - self.mobPulled * 300, 1200)
+        return max(self.skill.delay - self.mobPulled * 120, 1200)
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -99,8 +99,6 @@ class JobGenerator(ck.JobGenerator):
         SupremeConcentration = core.InformedCharacterModifier("정신집중-유지", buff_rem = 20+passive_level)
         Transport = core.InformedCharacterModifier("전달",armor_ignore = 25 + passive_level)
         Mastery = core.InformedCharacterModifier("숙달",crit_damage = 10 + passive_level)
-        #TODO
-        #Elemental Reset --> elemental ignorance +10% --> first we will apply this term as simple pdamage_indep
         
         return [SuperSensitive, PsychicForce1Passive, Inertia1,
                             PsychicForce2Passive, PureForce, Inertia2, ESPMastery,
@@ -126,7 +124,7 @@ class JobGenerator(ck.JobGenerator):
         코강 순서:
         BPM 메테리얼 그랩 드레인 트레인 텔레키네시스
         
-        싸이킥 샷 히트율 80%, 타수2배 적용.
+        메테리얼 사용
         불릿 사용하지 않음.
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -166,7 +164,6 @@ class JobGenerator(ck.JobGenerator):
         PsychicOverSummon = core.SummonSkill("싸이킥 오버(소환)", 0, 750, 0, 0, 30000, cooltime = -1).wrap(core.SummonSkillWrapper)
         
         #5차
-        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 1)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         AnotherGoddessBuff, AnotherVoid = demon.AnotherWorldWrapper(vEhc, 0, 0)
         AnotherHeal = core.DamageSkill("회복의 축복", 0, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
@@ -196,7 +193,7 @@ class JobGenerator(ck.JobGenerator):
 
         ### 회복의 축복
         AnotherVoid.onTick(AnotherHeal.controller(4000))
-        AnotherHeal.onAfter(PsychicPoint.stackController(40*0.01*(vEhc.getV(0,0)//2)))
+        AnotherHeal.onAfter(PsychicPoint.stackController(40*0.01*(15+vEhc.getV(0,0)//2)))
         
         ### Tandem skill connection
         PsychicForce3.onAfter(PsychicForce3Dot)
@@ -232,6 +229,7 @@ class JobGenerator(ck.JobGenerator):
         PsychicGrab2.onBefore(PsychicPoint.stackController(2))
 
         EverPsychic.onBefore(PsychicPoint.stackController(30 + 10))
+        EverPsychic.onAfter(PsychicPoint.stackController(-2)) # 싸이킥 무브 캔슬비용 2pp
 
         PsychicOverSummon.onTick(PsychicPoint.stackController(1))
         
@@ -254,6 +252,14 @@ class JobGenerator(ck.JobGenerator):
 
         LawOfGravity.onConstraint(core.ConstraintElement("5포인트", PsychicPoint, partial(PsychicPoint.judge,5,1)))
         LawOfGravity.onBefore(PsychicPoint.stackController(-5))
+
+        # Overload Mana
+        overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 1)
+        for sk in [PsychicTornado, PsychicTornadoFinal_1, PsychicTornadoFinal_2, UltimateMovingMatter, UltimateMovingMatterFinal,
+                    PsychicGrab2, UltimatePsychic, Ultimate_Material, PsychicDrain, PsychicGroundDamage, PsycoBreakDamage,
+                    EverPsychic, EverPsychicFinal, UltimatePsychicBullet, UltimatePsychicBulletBlackhole, UltimateTrain]:
+            overload_mana_builder.add_skill(sk)
+        OverloadMana = overload_mana_builder.get_buff()
         
         return(PsychicGrab2,
                 [globalSkill.maple_heros(chtr.level, name = "이계의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),

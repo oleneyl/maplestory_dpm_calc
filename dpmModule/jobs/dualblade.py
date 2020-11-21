@@ -8,7 +8,6 @@ from . import globalSkill
 from .jobbranch import thieves
 from . import jobutils
 from math import ceil
-#TODO : 5차 신스킬 적용
 
 # TODO: 왜 레투다는 5차값이 1,1인데 레투다 패시브는 2,2일까?
 
@@ -59,7 +58,6 @@ class JobGenerator(ck.JobGenerator):
         
         아수라 41타
         블레이드 토네이도 5타
-        카르마 퓨리 사용
         
         코어 16개 유효 : 팬블 / 아수라 / 퓨리 -- 써든레이드 / 어센션 / 히든블레이드
         '''
@@ -70,7 +68,7 @@ class JobGenerator(ck.JobGenerator):
         DarkSight = core.BuffSkill("다크 사이트", 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper)#, pdamage_indep = 20 + 10 + int(0.2*vEhc.getV(3,3))).wrap(core.BuffSkillWrapper)
         
         PhantomBlow = core.DamageSkill("팬텀 블로우", 540, 315 + 3 * self.combat, 6+1, modifier = core.CharacterModifier(armor_ignore = 44, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        SuddenRaid = core.DamageSkill("써든레이드", 690, 1150 + 15 * self.combat, 3, cooltime = (30-2*self.combat//2)*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)    #파컷의 남은 쿨타임 20% 감소
+        SuddenRaid = core.DamageSkill("써든레이드", 690, 494+5*self.combat, 7, cooltime = (30-2*(self.combat//2))*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)    #파컷의 남은 쿨타임 20% 감소
         SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 0, 1000, 210 + 4 * self.combat, 1, 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
         
         FinalCut = core.DamageSkill("파이널 컷", 450, 2000 + 20 * self.combat, 1, cooltime = 90000, red=True).wrap(core.DamageSkillWrapper)
@@ -136,7 +134,7 @@ class JobGenerator(ck.JobGenerator):
 
         for sk in [PhantomBlow, SuddenRaid, FinalCut, FlashBang, AsuraTick, 
             BladeStorm, BladeStormTick, KarmaFury, BladeTornado, HiddenBlade, HauntedEdge]:
-            jobutils.create_auxilary_attack(sk, 0.7, nametag = '(미러이미징)')
+            jobutils.create_auxilary_attack(sk, 0.7, nametag='(미러이미징)')
         
         return(PhantomBlow,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

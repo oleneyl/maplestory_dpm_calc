@@ -8,7 +8,6 @@ from . import globalSkill
 from .jobbranch import warriors
 from .jobclass import resistance
 from math import ceil
-#TODO : 5차 신스킬 적용
 
 class RevolvingCannonMasteryWrapper(core.DamageSkillWrapper):
     """
@@ -51,7 +50,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule('발칸 펀치', '벙커 버스터'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('발칸 펀치', '맥시마이즈 캐논'), RuleSet.BASE)
 
-        ruleset.add_rule(SynchronizeRule('버닝 브레이커(준비)', '해머 스매시(디버프)', 4500, 1), RuleSet.BASE)
+        ruleset.add_rule(SynchronizeRule('버닝 브레이커(준비)', '해머 스매시(디버프)', 3420, 1), RuleSet.BASE)
         ruleset.add_rule(SynchronizeRule('발칸 펀치', '해머 스매시(디버프)', 8000, 1), RuleSet.BASE)
         
         return ruleset
@@ -144,11 +143,11 @@ class JobGenerator(ck.JobGenerator):
         BalkanPunchTick = core.DamageSkill("발칸 펀치(틱)", 120, 425 + 17 * vEhc.getV(4,4), 8).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper) # 24회 반복
         BalkanPunchEnd = core.DamageSkill("발칸 펀치(후딜)", 360, 0, 0).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
         
-        BurningBreaker = core.DamageSkill("버닝 브레이커(준비)", 2010, 0, 0, cooltime = 100*1000, red = True).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        BurningBreaker = core.DamageSkill("버닝 브레이커(준비)", 120+210*5, 0, 0, cooltime = 100*1000, red = True).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper) # 리볼빙*3 매크로 사용, 1->2 120ms, 2~ 210ms 총 1170ms
         BurningBreakerRush = core.DamageSkill("버닝 브레이커(돌진)", 2220, 1500 + 60*vEhc.getV(1,1), 15, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper) # 공속 적용됨, 2940ms -> 2220ms
         BurningBreakerExplode = core.DamageSkill("버닝 브레이커(폭발)", 0, 1200+48*vEhc.getV(1,1), 15 * 6, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
 
-        AfterImageShockInit = core.BuffSkill("애프터이미지 쇼크", 0, 180*1000, cooltime=240*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        AfterImageShockInit = core.BuffSkill("애프터이미지 쇼크", 780, 180*1000, cooltime=240*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         AfterImageShockStack = core.StackSkillWrapper(core.BuffSkill("애프터이미지 쇼크(스택)", 0, 99999999), 99)
         AfterImageShockActive = core.DamageSkill("애프터이미지 쇼크(액티브)", 0, 450+18*vEhc.getV(0,0), 5, cooltime=100).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         AfterImageShockPassive = core.DamageSkill("애프터이미지 쇼크(패시브)", 0, 500+20*vEhc.getV(0,0), 3, cooltime=6000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)

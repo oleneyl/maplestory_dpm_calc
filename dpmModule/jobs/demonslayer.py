@@ -40,7 +40,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
     
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(crit = 50, armor_ignore = 50, pdamage = 120)
+        return core.CharacterModifier(crit = 50, armor_ignore = 50, pdamage = 50)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -165,8 +165,8 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         # 블블 추가타 적용
-        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DemonBaneTick, DemonBane2Tick, DevilCry, AuraWeapon]:
-            jobutils.create_auxilary_attack(sk, 0.9, "(블루 블러드)")
+        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DemonBaneTick, DemonBane2Tick, DevilCry, Cerberus, AuraWeapon]:
+            jobutils.create_auxilary_attack(sk, 0.9, nametag='(블루 블러드)')
 
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

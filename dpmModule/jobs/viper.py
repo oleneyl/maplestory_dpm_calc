@@ -9,7 +9,6 @@ from .jobbranch import pirates
 from .jobclass import adventurer
 from . import jobutils
 from math import ceil
-#TODO : 5차 신스킬 적용
 
 class EnergyChargeWrapper(core.StackSkillWrapper):
     def __init__(self, combat):
@@ -138,7 +137,7 @@ class JobGenerator(ck.JobGenerator):
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("너클")
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
-        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0) # TODO: 에너지 충전 여부 확인할것
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         Transform = core.BuffSkill("트랜스 폼", 450, (50+vEhc.getV(1,1))*1000, cooltime = 180 * 1000, red=True, pdamage_indep = 20 + vEhc.getV(1,1) // 5).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         TransformEnergyOrbDummy = core.DamageSkill("에너지 오브(더미)", 0, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
@@ -165,13 +164,12 @@ class JobGenerator(ck.JobGenerator):
         FistInrage.onAfter(EnergyCharge.chargeController(700))
         Nautilus.onAfter(EnergyCharge.chargeController(700))
         MirrorBreak.onAfter(EnergyCharge.chargeController(700))
-        HowlingFistCharge.onAfter(EnergyCharge.chargeController(700))
-        HowlingFistFinal.onAfter(EnergyCharge.chargeController(700*14))
-        SerpentScrewDummy.onTick(EnergyCharge.chargeController(-85))
+        SerpentScrewDummy.onTick(EnergyCharge.chargeController(-60))
         SerpentScrew.onTick(EnergyCharge.chargeController(-85*0.3))
         FistInrage_T.onAfter(EnergyCharge.chargeController(-150))
         DragonStrike.onAfter(EnergyCharge.chargeController(-180))
         UnityOfPower.onAfter(EnergyCharge.chargeController(-1500))
+        HowlingFistInit.onAfter(EnergyCharge.chargeController(-1750))
         
         # Basic Attack
         BasicAttack = core.OptionalElement(EnergyCharge.isStateOn, FistInrage_T, FistInrage, "에너지 완충")
@@ -206,6 +204,7 @@ class JobGenerator(ck.JobGenerator):
         EnergyCharge.drainCallback = lambda: [SerpentScrew.set_disabled_and_time_left(1), SerpentScrewDummy.set_disabled_and_time_left(-1)]
 
         # Howling Fist
+        HowlingFistInit.onConstraint(core.ConstraintElement("에너지 1750 이상", EnergyCharge, partial(EnergyCharge.judge, 1750, 1)))
         HowlingFistInit.onAfter(core.RepeatElement(HowlingFistCharge, 8))
         HowlingFistInit.onAfter(HowlingFistFinal)
             

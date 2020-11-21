@@ -8,11 +8,7 @@ from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
 
-#TODO : 5차 신스킬 적용
 # 4차 스킬은 컴뱃오더스 적용 기준으로 작성해야 함.
-# 생츄어리 필요한지 확인바람 (딜레이 750)
-
-######   Passive Skill   ######
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -34,7 +30,7 @@ class JobGenerator(ck.JobGenerator):
         ShieldMastery = core.InformedCharacterModifier("실드 마스터리",att = 10)
         
         PaladinExpert = core.InformedCharacterModifier("팔라딘 엑스퍼트(두손둔기)",crit_damage = 5 + (32+passive_level) // 3, pdamage_indep = 42+passive_level, crit = 42+passive_level, armor_ignore = 15+ceil((32+passive_level)/2)) + core.ExtendedCharacterModifier(crit_damage= 5, armor_ignore = 10)
-        
+        PaladinExpert = core.InformedCharacterModifier.from_extended_modifier("팔라딘 엑스퍼트(두손둔기)", PaladinExpert)
         return [PhisicalTraining, ShieldMastery, PaladinExpert]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):

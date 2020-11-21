@@ -95,7 +95,7 @@ class JobGenerator(ck.JobGenerator):
         QueenOfTomorrow = core.BuffSkill("퀸 오브 투모로우", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
         # 5th
-        CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 3, 3)
+        CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 3, 3)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         RoIias = core.BuffSkill("로 아이아스", 840, (75+3*vEhc.getV(0,0))*1000, cooltime = 300*1000, red = True, pdamage_indep = 5 + (35+3*(vEhc.getV(0,0)//4))//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ClauSolis = core.DamageSkill("클라우 솔라스", 690, 700+28*vEhc.getV(4,4), 7, cooltime = 12000, red = True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)    #로얄가드 버프지속시간 6초 증가. 100% 암흑 5초
@@ -107,7 +107,7 @@ class JobGenerator(ck.JobGenerator):
         LightOfCourage = core.BuffSkill("라이트 오브 커리지", 750, 25000, cooltime=90*1000, red=True, pdamage=10+vEhc.getV(0,0)//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         LightOfCourageSummon = core.SummonSkill("라이트 오브 커리지(빛의 검)", 0, 2400, 325+13*vEhc.getV(0,0), 5, 25000, cooltime=-1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         LightOfCourageAttack = core.DamageSkill("라이트 오브 커리지(용기의 빛)", 0, 175+7*vEhc.getV(0,0), 2, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        LightOfCourageFinal = core.DamageSkill("라이트 오브 커리지(용기의 빛)(종료)", 0, 375+15*vEhc.getV(0,0), 10*6, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        LightOfCourageFinal = core.DamageSkill("라이트 오브 커리지(용기의 빛)(종료)", 360, 375+15*vEhc.getV(0,0), 10*6, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ##### Build Graph
         
         # 기본 공격
@@ -151,6 +151,6 @@ class JobGenerator(ck.JobGenerator):
                     GuardOfLight, LoyalGuardBuff, SoulAttack, Booster, Invigorate, SacredCube, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                     DeadlyChargeBuff, QueenOfTomorrow, AuraWeaponBuff, AuraWeapon, RoIias, SwordOfSoullight, LightOfCourage, LightOfCourageSummon, LightOfCourageFinal,
                     globalSkill.soul_contract()] +\
-                [CygnusPalanks, LoyalGuard_5, ShiningCross, DeadlyCharge, ClauSolis, MirrorBreak, MirrorSpider] +\
+                [CygnusPhalanx, LoyalGuard_5, ShiningCross, DeadlyCharge, ClauSolis, MirrorBreak, MirrorSpider] +\
                 [ShiningCrossInstall, ClauSolisSummon] +\
                 [BasicAttackWrapper])

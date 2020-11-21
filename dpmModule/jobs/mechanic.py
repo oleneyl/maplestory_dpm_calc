@@ -13,9 +13,6 @@ from .jobbranch import pirates
 from . import jobutils
 import math
 
-# TODO: 워머신 타이탄 추가 (로봇 마스터리 적용)
-# TODO: [메탈아머 전탄발사] : 호밍 미사일 리로드 지속시간이 4초에서 2초로 감소되고 지속시간이 좀 더 정확하게 적용됩니다.
-
 ######   Passive Skill   ######
 
 class MultipleOptionWrapper(core.SummonSkillWrapper):
@@ -114,10 +111,15 @@ class JobGenerator(ck.JobGenerator):
         '''
         코강 순서:
         매시브-호밍-디스토션-마그네틱필드-RM7-RM1
+
+        하이퍼:
+        매시브 파이어-리인포스, 보너스 어택
+        마그네틱 필드-퍼시스트, 쿨타임 리듀스
+        서포트 웨이버-파티 리인포스
         '''
         #Constants
         passive_level = self.combat + chtr.get_base_modifier().passive_level
-        ROBOT_SUMMON_REMAIN = 1 + chtr.get_base_modifier().summon_rem + 0.4 + passive_level * 0.01
+        ROBOT_SUMMON_REMAIN = 1 + chtr.get_base_modifier().summon_rem / 100 + 0.4 + passive_level * 0.01
         ROBOT_MASTERY = core.CharacterModifier(pdamage_indep = 105 + passive_level * 3)
         ROBOT_BUFF = 6 + math.ceil(passive_level / 5)
 
@@ -133,16 +135,20 @@ class JobGenerator(ck.JobGenerator):
         
         #로봇들 :: 로봇당 총뎀6%, 어빌리티 적용 시 7%
         
-        Robolauncher = core.SummonSkill("로봇 런처(:RM7)", 630, 1000, 250+135+passive_level*4, 1, 60*1000*ROBOT_SUMMON_REMAIN, modifier = ROBOT_MASTERY).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
-        RobolauncherFinal = core.DamageSkill("로봇 런처(:RM7)(폭발)", 0, 400+135+passive_level*4, 1, modifier = ROBOT_MASTERY, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        RobolauncherBuff = core.BuffSkill("로봇 런처(:RM7)(버프)", 0, 60*1000*ROBOT_SUMMON_REMAIN, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
-        #MagneticField = core.SummonSkill("마그네틱 필드", ?, ?, 200, 60*1000, cooltime = 180*1000) 자폭 550% V.getEhc(2, vEnhance[0])
+        Robolauncher = core.SummonSkill("로봇 런처:RM7", 630, 1000, 250+135+passive_level*4, 1, 60*1000*ROBOT_SUMMON_REMAIN, modifier = ROBOT_MASTERY).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        RobolauncherFinal = core.DamageSkill("로봇 런처:RM7(폭발)", 0, 400+135+passive_level*4, 1, modifier = ROBOT_MASTERY, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        RobolauncherBuff = core.BuffSkill("로봇 런처:RM7(버프)", 0, 60*1000*ROBOT_SUMMON_REMAIN, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
+
+        #마그네틱 필드는 로봇 마스터리, 하이퍼를 제외한 소환수 지속시간 영향을 받지 않음. 설치 완료 후부터 쿨타임이 돔.
+        MagneticFieldInstall = core.DamageSkill("마그네틱 필드(설치)", 630, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
+        MagneticField = core.SummonSkill("마그네틱 필드", 0, 990, 200, 1, 60*1000*(0.4+passive_level*0.01)+10, cooltime = 160*0.75*1000, red=True, modifier = ROBOT_MASTERY).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
+        MagneticFieldBuff = core.BuffSkill("마그네틱 필드(버프)", 0, 60*1000*(0.4+passive_level*0.01)+10, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
         
         SupportWaver = core.SummonSkill("서포트 웨이버", 630, 80000*ROBOT_SUMMON_REMAIN, 0, 0, 80*1000*ROBOT_SUMMON_REMAIN).wrap(core.SummonSkillWrapper)
         SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*ROBOT_SUMMON_REMAIN, pdamage_indep=10+5+math.ceil(passive_level/3), pdamage = ROBOT_BUFF, cooltime = -1, armor_ignore=10).wrap(core.BuffSkillWrapper)
         SupportWaverFinal = core.DamageSkill("서포트 웨이버(폭발)", 0, 1100+passive_level*20, 1, modifier = ROBOT_MASTERY, cooltime = -1).wrap(core.DamageSkillWrapper)
         
-        RoboFactory = core.SummonSkill("로봇 팩토리", 630, 3000, 500+self.combat*5, 3, 30*1000*ROBOT_SUMMON_REMAIN, cooltime=60*1000).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
+        RoboFactory = core.SummonSkill("로봇 팩토리", 630, 3000, 500+self.combat*5, 3, 30*1000*ROBOT_SUMMON_REMAIN, cooltime=60*1000, red=True, modifier = ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
         RoboFactoryBuff = core.BuffSkill("로봇 팩토리(버프)", 0, 30*1000*ROBOT_SUMMON_REMAIN, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
         RoboFactoryFinal = core.DamageSkill("로봇 팩토리(폭발)", 0, 1000+self.combat*10, 1, modifier = ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
@@ -196,19 +202,22 @@ class JobGenerator(ck.JobGenerator):
         BusterCallInit.onAfter(BusterCall)
         
         Robolauncher.onAfter(RobolauncherFinal.controller(60*1000*ROBOT_SUMMON_REMAIN))
-        Robolauncher.onAfter(RobolauncherBuff.controller(1))
+        Robolauncher.onAfter(RobolauncherBuff)
+
+        MagneticField.onBefore(core.RepeatElement(MagneticFieldInstall, 3))
+        MagneticField.onAfter(MagneticFieldBuff)
         
         SupportWaver.onAfter(SupportWaverFinal.controller(80*1000*ROBOT_SUMMON_REMAIN))
-        SupportWaver.onAfter(SupportWaverBuff.controller(1))
+        SupportWaver.onAfter(SupportWaverBuff)
         
         RoboFactory.onAfter(RoboFactoryFinal.controller(30*1000*ROBOT_SUMMON_REMAIN))
-        RoboFactory.onAfter(RoboFactoryBuff.controller(1))
+        RoboFactory.onAfter(RoboFactoryBuff)
         
         return(MassiveFire,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, RoboFactoryBuff, MultipleOptionBuff, MechCarrierBuff, BomberTime, Overdrive,
+                    Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, MagneticFieldBuff, RoboFactoryBuff, MultipleOptionBuff, MechCarrierBuff, BomberTime, Overdrive,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
                 [MicroMissle, MechCarrier, BusterCallInit] +\
-                [HommingMissleHolder, RegistanceLineInfantry, SupportWaver, Robolauncher, RoboFactory, DistortionField, MultipleOption, MirrorBreak, MirrorSpider] +\
+                [HommingMissleHolder, RegistanceLineInfantry, SupportWaver, MagneticField, Robolauncher, RoboFactory, DistortionField, MultipleOption, MirrorBreak, MirrorSpider] +\
                 [BusterCallBuff, BusterCallPenalty] +\
                 [MassiveFire])

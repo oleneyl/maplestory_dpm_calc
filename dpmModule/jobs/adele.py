@@ -75,7 +75,7 @@ class OrderWrapper(core.SummonSkillWrapper):
 
 class StormWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, order: OrderWrapper, serverlag = 0): # TODO: 서버렉 평균 몇초인지 측정할것
-        skill = core.SummonSkill("스톰", 600, 330, 250+10*vEhc.getV(num1,num2), 2, 14000+serverlag, cooltime = 90*1000, red=True).isV(vEhc,num1,num2)
+        skill = core.SummonSkill("스톰", 780, 330, 250+10*vEhc.getV(num1,num2), 2, 14000+serverlag, cooltime = 90*1000, red=True).isV(vEhc,num1,num2)
         super(StormWrapper, self).__init__(skill)
         self.order = order
         self.consumed_order = 0
@@ -188,7 +188,7 @@ class JobGenerator(ck.JobGenerator):
             lambda order: max(order.get_stack() * 0.8 - 1, 0)
         )
 
-        Marker = core.DamageSkill('마커', 690, 1000, 3*2, cooltime=60*1000, modifier=core.CharacterModifier(pdamage_indep=300)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 최종뎀 300% 증가, 임의위치 조각 5개, 1히트, 결정 5개, 생성/파쇄 각각 공격, 클라공속 900ms
+        Marker = core.DamageSkill('마커', 690, 500, 6*2, cooltime=60*1000, modifier=core.CharacterModifier(pdamage_indep=300)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 최종뎀 300% 증가, 임의위치 조각 5개, 1히트, 결정 5개, 생성/파쇄 각각 공격, 클라공속 900ms
         Scool = core.DamageSkill('스콜', 690, 1000, 12, cooltime=180*1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) #바인드. 클라공속 900ms
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60*1000, pdamage = 10, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
 
@@ -204,8 +204,7 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att("튜너"))
 
-        # TODO: 5차 스킬 딜레이 공속 적용여부 테스트
-        Ruin = core.DamageSkill('루인(시전)', 780, 0, 0, cooltime=60*1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper) # 4초에 나누어서 시전되는 것으로 가정
+        Ruin = core.DamageSkill('루인(시전)', 600, 0, 0, cooltime=60*1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper) # 4초에 나누어서 시전되는 것으로 가정
         RuinFirstTick = core.SummonSkill('루인(소환)', 0, 160, 250 + vEhc.getV(2,2)*10, 6, 2000, cooltime=-1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 12번, 2초에 나누어 사용으로 가정
         RuinSecondTick = core.SummonSkill('루인(공격)', 0, 250, 450 + vEhc.getV(2,2)*18, 9, 2000, cooltime=-1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 8번, 2초에 나누어 사용으로 가정
 

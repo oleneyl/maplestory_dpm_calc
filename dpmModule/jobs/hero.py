@@ -8,7 +8,6 @@ from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
 
-#TODO : 5차 신스킬 적용
 '''히어로 스킬 정리
 - 콤보 어택 :: 스택당 공격력 2, 최종뎀10% -> 오더 11% +2%(하이퍼) 보공+2%
 - 분노(공30)
@@ -75,7 +74,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리",pdamage_indep = 10) #두손검 사용
+        WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리(두손도끼)", pdamage_indep = 10, pdamage = 5) # 두손도끼
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         
         ChanceAttack = core.InformedCharacterModifier("찬스 어택(패시브)",crit = 20)
@@ -95,6 +94,8 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
+        두손도끼
+
         코강 순서:
         레블 - 파택 - 업라이징 - 샤우트 - 인사이징 - 패닉
 

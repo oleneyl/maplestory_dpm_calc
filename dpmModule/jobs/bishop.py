@@ -94,7 +94,6 @@ class JobGenerator(ck.JobGenerator):
         Heal = core.BuffSkill("힐", 600, 2000, cooltime=4000, pdamage_indep=10, red=True).wrap(core.BuffSkillWrapper)
         Infinity = adventurer.InfinityWrapper(self.combat)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        OverloadMana = magicians.OverloadManaWrapper(vEhc, 1, 4)
         
         Pray = PrayWrapper(vEhc, 2, 2)
         
@@ -105,14 +104,14 @@ class JobGenerator(ck.JobGenerator):
 
         PeaceMakerInit = core.DamageSkill("피스메이커(시전)", 750, 0, 0, cooltime = 10 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         PeaceMaker = core.DamageSkill("피스메이커", 0, 350 + 14*vEhc.getV(0,0), 4, cooltime = -1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        PeaceMakerFinal = core.DamageSkill("피스메이커(폭발)", 0, 500 + 20*vEhc.getV(0,0), 8, cooltime = -1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        PeaceMakerFinal = core.DamageSkill("피스메이커(폭발)", 0, 350 + 14*vEhc.getV(0,0), 12, cooltime = -1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         PeaceMakerFinalBuff = core.BuffSkill("피스메이커(버프)", 0, (8 + SERVERLAG)*1000, pdamage = (5 + vEhc.getV(0,0) // 5) + (12 - PEACEMAKER_HIT), cooltime = -1).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
 
         DivinePunishmentInit = core.DamageSkill("디바인 퍼니시먼트(개시)", 240, 0, 0, cooltime=85000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         DivinePunishmentTick = core.DamageSkill("디바인 퍼니시먼트(키다운)", 240, 175+7*vEhc.getV(0,0), 5+5, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
     
         #Summoning skill
-        Bahamutt = core.SummonSkill("바하뮤트", 600, 3030, 170+2*self.combat, 3, 90 * 1000, cooltime = 120 * 1000, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #최종뎀25%스택
+        Bahamutt = core.SummonSkill("바하뮤트", 0, 3030, 170+2*self.combat, 3, 90 * 1000, cooltime = 120 * 1000, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #최종뎀25%스택, 리브라 종료시 자동소환 되므로 딜레이 0
         AngelOfLibra = core.SummonSkill("엔젤 오브 리브라", 540, 4020, 500 + 20*vEhc.getV(3,1), 12, 30 * 1000, cooltime = 120 * 1000, red=True).isV(vEhc,3,1).wrap(core.SummonSkillWrapper)    #최종뎀50%스택
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
@@ -158,7 +157,15 @@ class JobGenerator(ck.JobGenerator):
         AngelOfLibra.onAfter(Bahamutt.controller(1))
         Bahamutt.onConstraint(core.ConstraintElement("리브라와 동시사용 불가", AngelOfLibra, AngelOfLibra.is_not_active))
 
+        # Divine Punishment
         DivinePunishmentInit.onAfter(core.RepeatElement(DivinePunishmentTick, 33))
+
+        # Overload Mana
+        overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 4)
+        for sk in [AngelRay, Genesis, BigBang, HeavensDoor, AngelOfLibra, PeaceMaker, PeaceMakerFinal, DivinePunishmentTick,
+                    EnergyBolt, HolyArrow, ShiningRay]:
+            overload_mana_builder.add_skill(sk)
+        OverloadMana = overload_mana_builder.get_buff()
         
         return(AngelRay, 
                 [Booster, SacredMark, Infinity, PeaceMakerFinalBuff, Pray, EpicAdventure, OverloadMana,

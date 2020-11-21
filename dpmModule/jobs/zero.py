@@ -8,7 +8,7 @@ from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
 
-# TODO: 4카 5앱 적용, 리미트 막타 추가
+# TODO: 4카 5앱 적용
 # 제로는 패시브 레벨 +1 어빌 미적용
 '''
 어시스트 매커니즘 정리
@@ -56,8 +56,12 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
         ResolutionTime = core.InformedCharacterModifier("리졸브 타임",pdamage_indep = 25, stat_main = 50)
+        # 유니온 6000 기준
+        # 4카5앱 임시 구현 (보공 +30%, 방무 -10%)
+        LuckyHat_Temp = core.InformedCharacterModifier("카오스 벨룸의 헬름 (임시)", boss_pdamage = 30) - core.ExtendedCharacterModifier(armor_ignore = 10, stat_main = 21, stat_sub = 21, pstat_main = 5, pstat_sub = 5, att = 3)
+        LuckyHat_Temp = core.InformedCharacterModifier.from_extended_modifier("카오스 벨룸의 헬름 (임시)", LuckyHat_Temp)
 
-        return [Mastery, ResolutionTime]
+        return [Mastery, ResolutionTime, LuckyHat_Temp]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         ArmorSplit = core.InformedCharacterModifier("아머 스플릿", armor_ignore = 50)
@@ -191,7 +195,7 @@ class JobGenerator(ck.JobGenerator):
 
         DoubleTime = core.BuffSkill("래피드 타임", 0, 9999*10000, crit = 20, pdamage = 10).wrap(core.BuffSkillWrapper)
         TimeDistortion = core.BuffSkill("타임 디스토션", 540, 30000, cooltime = 240 * 1000, pdamage = 25).wrap(core.BuffSkillWrapper)
-        TimeHolding = core.BuffSkill("타임 홀딩", 1080, 90000, cooltime = 180*1000, pdamage = 10, red = False).wrap(core.BuffSkillWrapper) #  쿨타임 초기화.(타임 리와 / 리미트 브레이크 제외)
+        TimeHolding = core.BuffSkill("타임 홀딩", 0, 90000, cooltime = 180*1000, pdamage = 10, red = False).wrap(core.BuffSkillWrapper) #  쿨타임 초기화.(타임 리와 / 리미트 브레이크 제외)
         # 인탠시브 타임 - 기본 도핑에 영메 포함되어 있음
 
         # 알파 4410ms 베타 4980ms
@@ -211,10 +215,13 @@ class JobGenerator(ck.JobGenerator):
         
         LimitBreakFinal = core.DamageSkill("리미트 브레이크 (막타)", 0, 650 + 26*vEhc.getV(0,0), 12*6, cooltime = -1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         # 베타로 사용함.
-        TwinBladeOfTime = core.DamageSkill("조인트 어택", 0, 0, 0, cooltime = 120*1000, red=True, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_1 = core.DamageSkill("조인트 어택(1)", 3540, 875+35*vEhc.getV(1,1), 8, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_2 = core.DamageSkill("조인트 어택(2)", 0, 835+33*vEhc.getV(1,1), 8, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_3 = core.DamageSkill("조인트 어택(3)", 0, 1000+40*vEhc.getV(1,1), 13, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime = core.DamageSkill("조인트 어택", 0, 0, 0, cooltime = 120*1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Alpha_1 = core.DamageSkill("조인트 어택(알파)(1)", 450, 875+35*vEhc.getV(1,1), 8).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Alpha_2 = core.DamageSkill("조인트 어택(알파)(2)", 720, 835+33*vEhc.getV(1,1), 12).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Alpha_3 = core.DamageSkill("조인트 어택(알파)(3)", 1020, 1000+40*vEhc.getV(1,1), 13).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Beta_1 = core.DamageSkill("조인트 어택(베타)(1)", 540, 875+35*vEhc.getV(1,1), 8, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Beta_2 = core.DamageSkill("조인트 어택(베타)(2)", 450, 835+33*vEhc.getV(1,1), 12, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Beta_3 = core.DamageSkill("조인트 어택(베타)(3)", 360, 1000+40*vEhc.getV(1,1), 13, modifier = extra_dmg(12, False)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         TwinBladeOfTime_end = core.DamageSkill("조인트 어택(4)", 1050, 900+36*vEhc.getV(1,1), 15*3, modifier = (extra_dmg(12, False) + core.CharacterModifier(armor_ignore = 100))).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         
         #알파
@@ -292,7 +299,8 @@ class JobGenerator(ck.JobGenerator):
         
         ### 5차 스킬들 ###
         TwinBladeOfTime.onBefore(SetBeta)
-        for sk in [TwinBladeOfTime_1, TwinBladeOfTime_2, TwinBladeOfTime_3, TwinBladeOfTime_end]:
+        for sk in [TwinBladeOfTime_Beta_1, TwinBladeOfTime_Alpha_1, TwinBladeOfTime_Beta_2, TwinBladeOfTime_Alpha_2,
+                    TwinBladeOfTime_Beta_3, TwinBladeOfTime_Alpha_3, TwinBladeOfTime_end]:
             TwinBladeOfTime.onAfter(sk)
         ShadowFlashAlpha.onAfter(ShadowFlashAlphaEnd)
         ShadowFlashBeta.onAfter(ShadowFlashBetaEnd)
@@ -312,7 +320,8 @@ class JobGenerator(ck.JobGenerator):
         for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
                     AdvancedRollingCurve, AdvancedRollingAssulter, WindCutter, WindStrike, AdvancedStormBreak,
                     UpperSlash, AdvancedPowerStomp, FrontSlash, TurningDrive, AdvancedWheelWind, GigaCrash,
-                    JumpingCrash, AdvancedEarthBreak, TwinBladeOfTime_end]:
+                    JumpingCrash, AdvancedEarthBreak, TwinBladeOfTime_Beta_1, TwinBladeOfTime_Alpha_1, 
+                    TwinBladeOfTime_Beta_2, TwinBladeOfTime_Alpha_2, TwinBladeOfTime_Beta_3, TwinBladeOfTime_Alpha_3, TwinBladeOfTime_end]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
         AuraWeapon.add_runtime_modifier(BetaState, lambda beta: extra_dmg(10, False) if beta.is_active() else core.CharacterModifier()) # 베타시 오라 웨폰에 대검 마스터리 적용

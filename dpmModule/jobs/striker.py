@@ -76,16 +76,14 @@ class JobGenerator(ck.JobGenerator):
         '''
         하이퍼 : 질풍-보너스어택 + 섬멸-리인포스/이그노어 가드/보스킬러  + 벽력-보너스어택
         
-        코강 : 10개
-        섬멸, 벽력, 승천, (뇌성)
-        
         연계 100% 가정
 
         천지개벽 ON: 태풍 - 섬멸
-        천지개벽 OFF: 벽력 - 섬멸
+        천지개벽 OFF: 파도 - 섬멸
         
         벽섬 : 1020ms
         태섬 : 900ms
+        파섬 : 750ms
         
         소울 컨트랙트를 창뇌연격에 맞춰 사용
         천지개벽과 창뇌연격이 겹쳐지지 않게 사용
@@ -106,8 +104,10 @@ class JobGenerator(ck.JobGenerator):
         
         Destroy = core.DamageSkill("섬멸", 480, 350 + 4*self.combat, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Thunder = core.DamageSkill("벽력", 540, 320 + 4*self.combat, 5 + 1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        WaterWave = core.DamageSkill("파도", 270, 255, 2).setV(vEhc, 1, 5, False).wrap(core.DamageSkillWrapper)
         DestroyConcat = core.DamageSkill("섬멸(연계)", 480, 350 + 4*self.combat, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + LINK_MASTERY).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         ThunderConcat = core.DamageSkill("벽력(연계)", 540, 320 + 4*self.combat, 5 + 1, modifier = LINK_MASTERY).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #연계최종뎀 20%
+        WaterWaveConcat = core.DamageSkill("파도(연계)", 270, 255, 2, modifier = LINK_MASTERY).setV(vEhc, 1, 5, False).wrap(core.DamageSkillWrapper)
 
         # 하이퍼
         # 딜레이 추가 필요
@@ -115,7 +115,7 @@ class JobGenerator(ck.JobGenerator):
         
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        CygnusPalanks = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
+        CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,1,3).wrap(core.BuffSkillWrapper)
 
         #오버드라이브 (앱솔 가정)
@@ -140,25 +140,30 @@ class JobGenerator(ck.JobGenerator):
         SpearLightningAttack_Final_Lightning = core.DamageSkill("창뇌연격(막타)(번개)", 0, 725+29*vEhc.getV(0,0), 6, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         #섬멸 연계
+        '''
         ThunderDestroy = core.GraphElement("벽섬")
         ThunderDestroy.onAfter(ThunderConcat)
         ThunderDestroy.onAfter(DestroyConcat)
+        '''
+        WaterWaveDestroy = core.GraphElement("파섬")
+        WaterWaveDestroy.onAfter(WaterWaveConcat)
+        WaterWaveDestroy.onAfter(DestroyConcat)
         HurricaneDestroy = core.GraphElement("태섬")
         HurricaneDestroy.onAfter(HurricaneConcat)
         HurricaneDestroy.onAfter(DestroyConcat)
-        BasicAttack = core.OptionalElement(SkyOpen.is_active, HurricaneDestroy, ThunderDestroy)
+        BasicAttack = core.OptionalElement(SkyOpen.is_active, HurricaneDestroy, WaterWaveDestroy)
         BasicAttackWrapper = core.DamageSkill('기본 공격', 0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
         
-        for skill in [Destroy, Thunder, DestroyConcat, ThunderConcat, HurricaneConcat, GioaTan, NoiShinChanGeuk,
+        for skill in [Destroy, Thunder, WaterWave, DestroyConcat, ThunderConcat, WaterWaveConcat, HurricaneConcat, GioaTan, NoiShinChanGeuk,
                         SpearLightningAttack, SpearLightningAttack_Lightning, SpearLightningAttack_Final, SpearLightningAttack_Final_Lightning]:
-            jobutils.create_auxilary_attack(skill, CHOOKROI, "(축뢰)")
+            jobutils.create_auxilary_attack(skill, CHOOKROI, nametag='(축뢰)')
 
-        for skill in [Thunder, ThunderConcat, NoiShinChanGeuk,
+        for skill in [Thunder, ThunderConcat, WaterWave, WaterWaveConcat, NoiShinChanGeuk,
                         SpearLightningAttack, SpearLightningAttack_Lightning, SpearLightningAttack_Final, SpearLightningAttack_Final_Lightning]:
             skill.onAfter(LightningStack.stackController(1))
 
-        for skill in [ShinNoiHapLAttack, CygnusPalanks, NoiShinChanGeukAttack]:
+        for skill in [ShinNoiHapLAttack, CygnusPhalanx, NoiShinChanGeukAttack]:
             skill.onTick(LightningStack.stackController(1))
 
         GioaTan.onAfter(core.OptionalElement(SkyOpen.is_not_active, LightningStack.stackController(-2), name="천지개벽 체크"))
@@ -180,7 +185,7 @@ class JobGenerator(ck.JobGenerator):
                     LightningStack, Booster, ChookRoi, WindBooster, LuckyDice,
                     HurricaneBuff, GloryOfGuardians, SkyOpen, Overdrive, ShinNoiHapL, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                     globalSkill.soul_contract()] +\
-                [GioaTan, CygnusPalanks, NoiShinChanGeuk, SpearLightningAttackInit, MirrorBreak, MirrorSpider] +\
+                [GioaTan, CygnusPhalanx, NoiShinChanGeuk, SpearLightningAttackInit, MirrorBreak, MirrorSpider] +\
                 [ShinNoiHapLAttack, NoiShinChanGeukAttack] +\
                 [] +\
                 [BasicAttackWrapper])

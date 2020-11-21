@@ -9,10 +9,6 @@ from .jobclass import heroes
 from .jobbranch import thieves
 from math import ceil
 
-# TODO : [마크 오브 팬텀] : 괴도의 증표를 1개 모으는데 필요한 얼티밋 드라이브 적중 수가 5회에서 7회로 증가됩니다. 템페스트 오브 카드로도 괴도의 증표를 모을 수 있게 됩니다. 얼티밋 드라이브와 같은 횟수를 공격해야 괴도의 증표를 획득 할 수 있습니다.
-######   Passive Skill   ######
-
-
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -111,7 +107,7 @@ class JobGenerator(ck.JobGenerator):
         MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 690, 300+12*vEhc.getV(2,2), 6 * 7, cooltime = 30000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         MarkOfPhantomEnd = core.DamageSkill("마크 오브 팬텀(최종)", 0, 485+19*vEhc.getV(2,2), 15).isV(vEhc,2,2).wrap(core.DamageSkillWrapper) # 2회 반복
 
-        LiftBreak = core.DamageSkill("리프트 브레이크", 990, 400+16*vEhc.getV(0,0), 7*7, cooltime=30000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        LiftBreak = core.DamageSkill("리프트 브레이크", 750, 400+16*vEhc.getV(0,0), 7*7, cooltime=30000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         #### 그래프 빌드
         

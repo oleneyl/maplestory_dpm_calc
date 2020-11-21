@@ -456,6 +456,32 @@ class InformedCharacterModifier(ExtendedCharacterModifier):
         ret_dict['name'] = self.name
         return ret_dict
 
+    @staticmethod
+    def from_extended_modifier(name, extended_modifier):
+        return InformedCharacterModifier(name, 
+                        buff_rem = extended_modifier.buff_rem,
+                        summon_rem = extended_modifier.summon_rem,
+                        cooltime_reduce = extended_modifier.cooltime_reduce,
+                        pcooltime_reduce = extended_modifier.pcooltime_reduce,
+                        reuse_chance = extended_modifier.reuse_chance,
+                        prop_ignore = extended_modifier.prop_ignore,
+                        additional_target = extended_modifier.additional_target,
+                        passive_level = extended_modifier.passive_level,
+                        crit = extended_modifier.crit,
+                        crit_damage = extended_modifier.crit_damage,
+                        pdamage = extended_modifier.pdamage,
+                        pdamage_indep = extended_modifier.pdamage_indep,
+                        stat_main = extended_modifier.stat_main,
+                        stat_sub = extended_modifier.stat_sub,
+                        pstat_main = extended_modifier.pstat_main,
+                        pstat_sub = extended_modifier.pstat_sub,
+                        boss_pdamage = extended_modifier.boss_pdamage,
+                        armor_ignore = extended_modifier.armor_ignore,
+                        patt = extended_modifier.patt,
+                        att = extended_modifier.att,
+                        stat_main_fixed = extended_modifier.stat_main_fixed,
+                        stat_sub_fixed = extended_modifier.stat_sub_fixed)
+
 class VSkillModifier():
     @staticmethod
     def get_reinforcement(incr, lv, crit = False):
@@ -709,6 +735,9 @@ class Task():
         self._before = []
         self._justAfter = []
         
+    def __repr__(self):
+        return f'''Task Object from [{self._ref._id}]'''
+
     def getRef(self):
         return self._ref
         
@@ -736,7 +765,7 @@ class ContextReferringTask(Task):
         return self._ftn(**kwargs)
 
 class ResultObject():
-    def __init__(self, delay, mdf, damage, hit, sname, spec, kwargs = {}, cascade = []):
+    def __init__(self, delay, mdf, damage, hit, sname, spec, kwargs = {}, cascade = [], callbacks = []):
         """Result object must be static; alway to be ensure it is revealed.
         """
         self.delay = DynamicVariableOperation.reveal_argument(delay)
@@ -747,6 +776,7 @@ class ResultObject():
         self.spec = DynamicVariableOperation.reveal_argument(spec)        #buff, deal, summon
         self.kwargs = DynamicVariableOperation.reveal_argument(kwargs)
         self.cascade = DynamicVariableOperation.reveal_argument(cascade)
+        self.callbacks = callbacks
         self.time = None
         
     def setTime(self, time):
@@ -755,6 +785,23 @@ class ResultObject():
 '''Default Values. Forbidden to editting.
 '''
 taskTerminater = ResultObject(0, CharacterModifier(), 0, 0, sname = 'terminator', spec = 'graph control')
+
+
+class Callback:
+    def __init__(self, task, time):
+        self.task = task
+        self.time = time
+
+    def resolve(self):
+        return self.task.do()
+
+    def adjust_by_current_time(self, current_time):
+        return Callback(self.task, self.time + current_time)
+
+    @staticmethod
+    def from_graph_element(graph_element, time):
+        return Callback(graph_element.build_task(None), time)
+
 
 class AccessibleBossState:
     NO_FLAG = 1
@@ -797,6 +844,8 @@ class GraphElement():
         self._before = []   #Tasks that must be executed before this task.
         self._after = []    #Tasks that must be executed after this task.
         self._justAfter = []
+        self._registered_callback_presets = []
+
         self._result_object_cache = ResultObject(0, CharacterModifier(), 0, 0, sname = 'Graph Element', spec = 'graph control')
         self._flag = 0
         self.accessible_boss_state = AccessibleBossState.NO_FLAG
@@ -834,6 +883,8 @@ class GraphElement():
             li.append([self, el, "after"])
         for el in self._justAfter:
             li.append([self, el, "after"])
+        for _, context in self._registered_callback_presets:
+            li.append([self, context[0], "callback"])
         return li
 
     def get_explanation(self, lang = "ko"):
@@ -974,7 +1025,10 @@ class GraphElement():
             return self
         else:
             return None
-        
+
+    def create_callbacks(self, **kwargs):
+        raise NotImplementedError
+
 
 class TaskHolder(GraphElement):
     '''This class only holds given task(Do not modify any property of task).
@@ -1213,6 +1267,11 @@ class AbstractSkillWrapper(GraphElement):
         '''
         self.constraint.append(constraint)
         
+    def set_disabled(self):
+        '''주어진 요소를 실행 불가 상태로 만듭니다.
+        '''
+        raise NotImplementedError
+        
     def set_disabled_and_time_left(self, time):
         '''주어진 요소를 실행 불가 상태로 만들고, ``time`` 이후에 실행가능하도록 합니다.
 
@@ -1262,7 +1321,10 @@ class AbstractSkillWrapper(GraphElement):
             실행될 경우, 해당 ``GraphElement`` 의 잔여 시간을 제어하는 ``TaskHolder`` 
 
         '''
-        if type_ == 'set_disabled_and_time_left':
+        if type_ == 'set_disabled':
+            _name = ("사용 종료")
+            task = Task(self, self.set_disabled)
+        elif type_ == 'set_disabled_and_time_left':
             if time == -1:
                 _name = ("사용 불가")
             else:
@@ -1397,6 +1459,34 @@ class AbstractSkillWrapper(GraphElement):
     def get_cooltime(self):
         return self.skill.cooltime
 
+    def onEventElapsed(self, graph_element, elapsed_time):
+        '''Invoke graph_element, after elapsed elapsed_time.
+        Delay may considered as elapsed_time.
+        '''
+        self._registered_callback_presets.append(('onEventElapsed', (graph_element, elapsed_time)))
+
+    def onEventEnd(self, graph_element):
+        '''Invoke graph_element, after event ended.
+        This only meaningful for duration-involved elements.
+        '''
+        self._registered_callback_presets.append(('onEventEnd', (graph_element,)))
+
+    def create_callbacks(self, duration=0, **kwargs):
+        '''해당 object가 _use될 때 발생시키고자 하는 콜백들을 생성합니다.
+        '''
+        callbacks = []
+        for preset_type, context in self._registered_callback_presets:
+            if preset_type == 'onEventEnd':
+                assert duration > 0, 'duration may larger than 0 to use onEventEnd callback.'
+                element = context[0]
+                callbacks.append(Callback.from_graph_element(element, duration))
+            elif preset_type == 'onEventElapsed':
+                element, elapsed_time = context
+                callbacks.append(Callback.from_graph_element(element, elapsed_time))
+        
+        return callbacks
+
+
 class BuffSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill : BuffSkill, name = None):
         self._disabledResultobjectCache = ResultObject(0, CharacterModifier(), 0, 0, sname = skill.name, spec = 'graph control')
@@ -1416,6 +1506,10 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         mdf = self.get_modifier()
         return ResultObject(0, mdf, 0, 0, sname = self.skill.name, spec = self.skill.spec, kwargs = {"remain" : time})
         
+    def set_disabled(self):
+        self.timeLeft = 0
+        return self._disabledResultobjectCache
+        
     def set_disabled_and_time_left(self, time):
         self.timeLeft = 0
         self.cooltimeLeft = time
@@ -1430,8 +1524,15 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         self.timeLeft = self.skill.remain * (1 + 0.01*skill_modifier.buff_rem * self.skill.rem)
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         delay = self.get_delay()
-        #mdf = self.get_modifier()
-        return ResultObject(delay, CharacterModifier(), 0, 0, sname = self.skill.name, spec = self.skill.spec, kwargs = {"remain" : self.skill.remain * (1+0.01*skill_modifier.buff_rem*self.skill.rem)})
+        callbacks = self.create_callbacks(duration=self.timeLeft)
+        return ResultObject(delay, 
+                            CharacterModifier(), 
+                            0, 
+                            0, 
+                            sname = self.skill.name, 
+                            spec = self.skill.spec, 
+                            kwargs = {"remain" : self.skill.remain * (1+0.01*skill_modifier.buff_rem*self.skill.rem)},
+                            callbacks=callbacks)
 
     def get_delay(self):
         return self.skill.delay
@@ -1502,8 +1603,14 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         
     def _use(self, skill_modifier):
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
-        return ResultObject(self.get_delay(), self.get_modifier(), self.get_damage(), self.get_hit(), sname = self.skill.name, spec = self.skill.spec)
-        #return delay, mdf, dmg, self.cascade
+        callbacks = self.create_callbacks()
+        return ResultObject(self.get_delay(),
+                            self.get_modifier(),
+                            self.get_damage(),
+                            self.get_hit(),
+                            sname=self.skill.name,
+                            spec=self.skill.spec,
+                            callbacks=callbacks)
 
     def get_delay(self):
         return self.skill.delay
@@ -1559,6 +1666,11 @@ class SummonSkillWrapper(AbstractSkillWrapper):
             li.append([self, sk, "modifier"])
         return li
         
+    def set_disabled(self):
+        self.timeLeft = 0
+        self.tick = 0
+        return ResultObject(0, CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
+        
     def set_disabled_and_time_left(self, time):
         self.cooltimeLeft = time
         self.timeLeft = -1
@@ -1582,7 +1694,14 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self.tick = 0
         self.timeLeft = self.skill.remain * (1+0.01*skill_modifier.summon_rem*self.skill.rem)
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
-        return ResultObject(self.get_summon_delay(), self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+        callbacks = self.create_callbacks(duration=self.timeLeft)
+        return ResultObject(self.get_summon_delay(),
+                            self.disabledModifier,
+                            0,
+                            0,
+                            sname=self.skill.name,
+                            spec=self.skill.spec,
+                            callbacks=callbacks)
     
     def _useTick(self):
         if self.is_active() and self.tick <= 0:
@@ -1629,10 +1748,7 @@ class Simulator(object):
         self.scheduler = scheduler
         self.character = chtr
         self.analytics = analytics
-        
-        #vEnhancer를 Analytics에서 확인할 수 있도록 합니다.
-        self.analytics.set_v_enhancer(self.scheduler.graph._vEhc.copy())
-        
+                
         #Buff modifier를 시간별도 캐싱하여 연산량을 줄입니다.
         self._modifier_cache_and_time = [-1,CharacterModifier()]
 
@@ -1675,36 +1791,45 @@ class Simulator(object):
         while not self.scheduler.is_simulation_end():
             task = self.scheduler.dequeue()
             try:
-                self.run_task(task)    
+                self.run_task_recursive(task)    
             except Exception as e:
                 print(task._ref._id)
                 print("error raised")
                 print("---")
                 raise e
-        
-    def run_task(self, task):
-        self.run_task_recursive(task)
 
-    def run_task_recursive(self, task):
-        stack = task._before + []
-        while len(stack) != 0:
-            self.run_task_recursive(stack.pop())
-        
+    def parse_result(self, result):
         runtime_context_modifier = self.scheduler.get_buff_modifier() + self.get_default_modifier()
-        result = task.do(runtime_context_modifier=runtime_context_modifier + self.character.get_modifier())
+        result.setTime(self.scheduler.get_current_time())
         
         if result.damage > 0:
             result.mdf += runtime_context_modifier
-
-        result.setTime(self.scheduler.get_current_time())
+        
         self.analytics.analyze(self.character, result)
+
+    def run_task_recursive(self, task):
+        for t in reversed(task._before):
+            self.run_task_recursive(t)
         
-        stk = task._justAfter + []
-        while len(stk) != 0:
-            self.run_task_recursive(stk.pop())
-        
+        runtime_context_modifier = self.scheduler.get_buff_modifier() + self.get_default_modifier()
+        result = task.do(runtime_context_modifier=runtime_context_modifier + self.character.get_modifier())
+        self.parse_result(result)
+
+        for t in task._justAfter:
+            self.run_task_recursive(t)
+
         if result.delay > 0:
-            self.scheduler.spend_time(result.delay)
+            time_to_spend = result.delay
+            while True:
+                callback, time_to_spend = self.scheduler.apply_result(result, time_to_spend)
+                if self.scheduler.is_simulation_end():
+                    return
+                if callback:
+                    result = callback.resolve() 
+                    self.parse_result(result)
+                else:
+                    break
+
             while True:
                 tick = self.scheduler.get_delayed_task()
                 if tick != None:
@@ -1712,9 +1837,8 @@ class Simulator(object):
                 else:
                     break
         
-        stack = result.cascade + task._after
-        while len(stack) != 0:
-            self.run_task_recursive(stack.pop())
+        for t in reversed(result.cascade + task._after):
+            self.run_task_recursive(t)
 
 class Analytics():
     def __init__(self, printFlag = False):
@@ -1725,10 +1849,6 @@ class Analytics():
         self.print_calculation_progress = printFlag
         self.skillList = {}
         self.chtrmdf = CharacterModifier()
-        self._vEhc = None
-        
-    def set_v_enhancer(self, vEhc):
-        self._vEhc = vEhc
         
     def set_total_runtime(self, time):
         self.totalTime = time

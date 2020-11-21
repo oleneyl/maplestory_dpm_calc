@@ -88,7 +88,9 @@ def BlitzShieldWrappers(vEhc, num1, num2):
     BlitzShieldDummy.onAfter(BlitzShield)
     return BlitzShieldDummy, BlitzShield
 
-# 아직 사용하지 말것! 연계 설정 추가 필요
-def EvolveWrapper(vEhc, num1, num2):
-    Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(num1, num2)*15, 7, 40*1000, cooltime = (121-int(0.5*vEhc.getV(num1, num2)))*1000).isV(vEhc,num1, num2).wrap(core.SummonSkillWrapper)
+def EvolveWrapper(vEhc, num1, num2, bird: core.SummonSkillWrapper):
+    Evolve = core.SummonSkill("이볼브", 600, 3330, 450+vEhc.getV(num1, num2)*15, 7, 40*1000, cooltime = (120-vEhc.getV(num1, num2)//2)*1000, red=True).isV(vEhc, num1, num2).wrap(core.SummonSkillWrapper)
+    Evolve.onAfter(bird.controller(1))
+    Evolve.onConstraint(core.ConstraintElement(bird._id+" 있을때 사용 가능", bird, bird.is_active))
+    bird.onConstraint(core.ConstraintElement("이볼브 지속중 사용 금지", Evolve, Evolve.is_not_active))
     return Evolve

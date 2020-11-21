@@ -7,7 +7,6 @@ from . import globalSkill
 from .jobbranch import bowmen
 from .jobclass import cygnus
 from math import ceil
-#TODO : 5차 신스킬 적용
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -46,7 +45,11 @@ class JobGenerator(ck.JobGenerator):
         코강 순서:
         천노-윔-브링어
 
-        하울링게일 56회, 볼텍스 스피어 17회 타격
+        하이퍼:
+        트라이플링 윔-리인포스, 인핸스, 더블찬스
+        천공의 노래-리인포스, 보스 킬러
+
+        하울링게일 58회, 볼텍스 스피어 17회 타격
         
         트라이플링 윔 평균치로 계산
         
@@ -63,7 +66,10 @@ class JobGenerator(ck.JobGenerator):
         
         StormBringerDummy = core.BuffSkill("스톰 브링어(버프)", 0, 200 * 1000).wrap(core.BuffSkillWrapper)  #딜레이 계산 필요
         # 하이퍼: 데미지 증가, 확률 10% 증가, 타수 증가
-        TriflingWhim = core.DamageSkill("트라이플링 윔", 0, (290 + passive_level*3) * 0.8 + (390 + passive_level*3) * 0.2, 2 * (0.5 + 0.1), modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        whim_proc = (50 + 10 + passive_level//2) * 0.01
+        advanced_proc = (20 + passive_level//3) * 0.01
+        TriflingWhim = core.DamageSkill("트라이플링 윔", 0,
+            (290 + passive_level*3) * (1 - advanced_proc) + (390 + passive_level*3) * advanced_proc, 2 * whim_proc, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         StormBringer = core.DamageSkill("스톰 브링어", 0, 500, 0.3).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
     
         # 핀포인트 피어스
@@ -72,10 +78,10 @@ class JobGenerator(ck.JobGenerator):
 
         #Damage Skills
         # 하이퍼: 데미지 증가, 보스 데미지 증가
-        target_pdamage = ((120 + self.combat // 2) / 100) ** (4 + additional_target) * 100 - 100 # 코강렙 20이상 가정. 툴팁은 u(x/2)로 되어있으나 실제 동작은 d(x/2)로 버림처리됨.
+        target_pdamage = ((120 + self.combat // 2) / 100) ** (4 + additional_target) * 100 - 100 # 코강렙 20이상 가정.
         SongOfHeaven = core.DamageSkill("천공의 노래", 120, 345 + self.combat*3, 1, modifier = core.CharacterModifier(pdamage = target_pdamage + 20, boss_pdamage = 30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        CygnusPalanks = core.SummonSkill("시그너스 팔랑크스", 600, 120 * 5, 450 + 18*vEhc.getV(0,0), 5, 120 * (40 + vEhc.getV(0,0)), cooltime = 30 * 1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 0, 0)
         
         Mercilesswind = core.DamageSkill("아이들 윔", 600, (500 + 20*vEhc.getV(4,4)) * 0.775, 10 * 3, cooltime = 10 * 1000, red=True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper) #도트 데미지 9초간 초당 1000%
         MercilesswindDOT = core.DotSkill("아이들 윔(도트)", 0, 1000, 500 + 20*vEhc.getV(4,4), 1, 9000, cooltime = -1).wrap(core.SummonSkillWrapper)
@@ -84,18 +90,22 @@ class JobGenerator(ck.JobGenerator):
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 5, 5)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0) # TODO: 윔 발생여부 확인할것
         HowlingGail = core.SummonSkill("하울링 게일", 630, 150, 250 + 10*vEhc.getV(1, 1), 3, 150*58-1, cooltime = 20 * 1000).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper) #58타
-        WindWall = core.SummonSkill("윈드 월", 720, 2000, (550 + vEhc.getV(2, 2)*22) / 2, 5 * 3 , 45 * 1000, cooltime = 90 * 1000, red=True).isV(vEhc, 2, 2).wrap(core.SummonSkillWrapper)
+        WindWall = core.SummonSkill("윈드 월", 720, 2000, 550 + vEhc.getV(2, 2)*22, 5, 45 * 1000, cooltime = 90 * 1000, red=True).isV(vEhc, 2, 2).wrap(core.SummonSkillWrapper)
+        WindWallExceed = core.SummonSkill("윈드 월(초과)", 720, 2000, (550 + vEhc.getV(2, 2)*22) / 2, 5 * 2 , 45 * 1000, cooltime=-1).isV(vEhc, 2, 2).wrap(core.SummonSkillWrapper)
         VortexSphere = core.SummonSkill("볼텍스 스피어", 720, 180, 400+16*vEhc.getV(0,0), 6, 180*17-1, cooltime=35000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) # 17타
         
         ######   Skill Wrapper   #####
         
-        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 3, 3, 55) #Maybe need to sync
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 3, 3, 10 + 25+passive_level//2 + 20+ceil(self.combat/2)) # 실프스 에이드 + 알바트로스 맥시멈 + 샤프 아이즈
+
+        WindWall.onAfter(WindWallExceed)
     
         #Damage
         SongOfHeaven.onAfters([TriflingWhim, StormBringer])
         PinPointPierce.onAfters([PinPointPierceDebuff, TriflingWhim, StormBringer])
+        MirrorBreak.onAfters([TriflingWhim, StormBringer])
         #Summon
-        CygnusPalanks.onTicks([core.RepeatElement(TriflingWhim, 5), core.RepeatElement(StormBringer, 5)])
+        CygnusPhalanx.onTicks([TriflingWhim, StormBringer])
         HowlingGail.onTicks([TriflingWhim, StormBringer])
         VortexSphere.onTicks([TriflingWhim, StormBringer])
 
@@ -107,6 +117,6 @@ class JobGenerator(ck.JobGenerator):
                     PinPointPierceDebuff,
                     globalSkill.soul_contract()] +\
                 [Mercilesswind]+\
-                [GuidedArrow, HowlingGail, VortexSphere, WindWall, MercilesswindDOT, CygnusPalanks, PinPointPierce, MirrorBreak, MirrorSpider]+\
+                [GuidedArrow, HowlingGail, VortexSphere, WindWall, WindWallExceed, MercilesswindDOT, CygnusPhalanx, PinPointPierce, MirrorBreak, MirrorSpider]+\
                 []+\
                 [SongOfHeaven])
