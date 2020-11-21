@@ -26,6 +26,6 @@ class CriticalReinforceWrapper(core.BuffSkillWrapper):
             return self.disabledModifier
 
 class GuidedArrowWrapper(core.SummonSkillWrapper):
-    def __init__(self, vEhc, num1, num2):
-        skill = core.SummonSkill("가이디드 애로우", 720, 510, 400+16*vEhc.getV(num1, num2), 1, 510 * 90, cooltime = 60 * 1000, red=True).isV(vEhc,num1, num2)
+    def __init__(self, vEhc, num1, num2, modifier = core.CharacterModifier()):
+        skill = core.SummonSkill("가이디드 애로우", 720, 510, 400+16*vEhc.getV(num1, num2), 1, 510 * 90, cooltime = 60 * 1000, red=True, modifier=modifier).isV(vEhc,num1, num2)
         super(GuidedArrowWrapper, self).__init__(skill)
