@@ -9,6 +9,9 @@ from .jobclass import resistance
 from . import jobutils
 from math import ceil
 
+'''
+Advisor: Monolith
+'''
 # TODO: 하이퍼스탯으로 스탠스 10% 확보 필요 
 
 class SupplyStackWrapper(core.StackSkillWrapper):
@@ -67,7 +70,7 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         '''
-        효율성을 위해 합쳐진 코드 사용
+        효율성을 위해 합쳐진 코드 사용 (합계 40%)
         Multilateral1 = core.InformedCharacterModifier("멀티래터럴 I", pdamage = 3)
         Multilateral2 = core.InformedCharacterModifier("멀티래터럴 II", pdamage = 5)
         Multilateral3 = core.InformedCharacterModifier("멀티래터럴 III", pdamage = 7)
@@ -75,7 +78,7 @@ class JobGenerator(ck.JobGenerator):
         Multilateral5 = core.InformedCharacterModifier("멀티래터럴 V", pdamage = 10)
         Multilateral6 = core.InformedCharacterModifier("멀티래터럴 VI", pdamage = 5)
         '''
-        Multilateral = core.InformedCharacterModifier("멀티래터럴", pdamage = 3+5+7+10+10+5)
+        Multilateral = core.InformedCharacterModifier("멀티래터럴", pdamage = 40)
 
         LinearPerspective = core.InformedCharacterModifier("리니어 퍼스펙티브", crit = 40)
         MinoritySupport = core.InformedCharacterModifier("마이너리티 서포트", stat_main = 20, stat_sub = 20)
@@ -86,7 +89,6 @@ class JobGenerator(ck.JobGenerator):
 
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 3, 4)
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 2, 2)
-
 
         return [Multilateral, LinearPerspective, MinoritySupport, XenonMastery, HybridDefensesPassive, XenonExpert, OffensiveMatrix,
         LoadedDicePassive, ReadyToDiePassive]
@@ -102,17 +104,18 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
-        TODO: 제논 구현
+        TODO: 딜사이클 최적화, return문 정리
         하이퍼 스킬: 홀로그램 3종, 퍼지롭 뎀증 + 방무
         '''
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         
         # Buff skills
-        InclinePower = core.BuffSkill("인클라인 파워", 990, 240000, att = 30).wrap(core.BuffSkillWrapper)
-        EfficiencyPipeLine = core.BuffSkill("에피션시 파이프라인", 990, 240000).wrap(core.BuffSkillWrapper)
-        Booster = core.BuffSkill("제논 부스터", 990, 240000).wrap(core.BuffSkillWrapper)
-        HybridDefenses = core.BuffSkill("듀얼브리드 디펜시브", 900, 240000).wrap(core.BuffSkillWrapper)
+        # 펫버프: 인클라인, 에피션시, 부스터
+        InclinePower = core.BuffSkill("인클라인 파워", 0, 240000, att = 30, rem = True).wrap(core.BuffSkillWrapper)
+        EfficiencyPipeLine = core.BuffSkill("에피션시 파이프라인", 0, 240000, rem = True).wrap(core.BuffSkillWrapper)
+        Booster = core.BuffSkill("제논 부스터", 0, 240000, rem = True).wrap(core.BuffSkillWrapper)
+        HybridDefenses = core.BuffSkill("듀얼브리드 디펜시브", 0, 999999999).wrap(core.BuffSkillWrapper)
         VirtualProjection = core.BuffSkill("버추얼 프로젝션", 0, 999999999).wrap(core.BuffSkillWrapper)
 
         # 위컴알에 딜레이 없음
@@ -134,15 +137,16 @@ class JobGenerator(ck.JobGenerator):
 
         PurgeSnipe = core.DamageSkill("퍼지롭 매스커레이드 : 저격", 690, 345 + 2*self.combat, 7, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat) + core.CharacterModifier(pdamage = 20, armor_ignore = 10)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
-        # 택1
+        # 관통 기준
         # 하이퍼 3종 적용
         Hologram_Penetrate = core.SummonSkill("홀로그램 그래피티 : 관통", 720, 30000/116, 213+3*self.combat, 1, 20000 + 10000, cooltime = 30000 - 1000 * ceil(self.combat/3), modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
         Hologram_ForceField = core.SummonSkill("홀로그램 그래피티 : 역장", 720, 30000/64, 400+5*self.combat, 1, 20000 + 10000, cooltime = 30000 - 1000 * ceil(self.combat/3), modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
 
-        # TODO: 딜레이 다시 확인할 것
+        '''
         BladeDancingPrepare = core.DamageSkill("블레이드 댄싱 (준비)", 720 + 420, 0, 0).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         BladeDancing = core.DamageSkill("블레이드 댄싱", 480, 140+4*self.combat, 1).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         BladeDancingEnd = core.DamageSkill("블레이드 댄싱(종료)", 300, 0, 0).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        '''
 
         # Hyper skills
         AmaranthGenerator = core.BuffSkill("아마란스 제네레이터", 900, 10000, cooltime = 90000, rem = False).wrap(core.BuffSkillWrapper) # 에너지 최대치, 10초간 에너지 소모 없음
@@ -167,7 +171,7 @@ class JobGenerator(ck.JobGenerator):
         OVERLOAD_TIME = 30
         OverloadMode = core.BuffSkill("오버로드 모드", 720, OVERLOAD_TIME * 1000, cooltime = 180000).wrap(core.BuffSkillWrapper)
         # 첫 공격은 항상 5100ms 후에 시작
-        # 공격 주기는 3600ms~10800ms 중 랜덤 by Monolith
+        # 공격 주기는 3600ms~10800ms 중 랜덤
         OverloadHit = core.SummonSkill("오버로드 모드(전류)", 0, (3600+10800)/2, 180 + 7 * vEhc.getV(4,4), 6*4, OVERLOAD_TIME * 1000 - 5100, cooltime = -1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         OverloadHit_copy = core.SummonSkill("오버로드 모드(전류)(버추얼 프로젝션)", 0, (3600+10800)/2, (180 + 7 * vEhc.getV(4,4))*0.7, 6*4, OVERLOAD_TIME * 1000 - 5100, cooltime = -1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         
@@ -175,16 +179,12 @@ class JobGenerator(ck.JobGenerator):
         Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", 930, (30000 + 10000)/176, 250 + 10 * vEhc.getV(4,4), 5, 30000 + 10000, cooltime = 100000, modifier = core.CharacterModifier(pdamage = 10)).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         Hologram_Fusion_Buff = core.BuffSkill("홀로그램 그래피티 : 융합 (버프)", 0, 30000+10000, pdamage = 5+vEhc.getV(4,4)//2, rem = False).wrap(core.BuffSkillWrapper)
         
-        # 30회 발동, 발사 딜레이 생략
-        # TODO: 블레이드 댄싱과 연계해야 함
+        # 30회 발동, 발사 딜레이 생략, 퍼지롭으로 충전
         PhotonRay = core.BuffSkill("포톤 레이", 300, 20000, cooltime = 35000).wrap(core.BuffSkillWrapper)
         PhotonRayHit = core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4), 4 * 30).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
         SupplySurplus = SupplyStackWrapper(core.BuffSkill("서플러스 서플라이", 0, 999999999), AmaranthGenerator)
-
-        BasicAttackWrapper = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
-        BasicAttackWrapper.onAfter(PurgeSnipe)
 
         SupplyCharger = core.SummonSkill("서플라이 충전", 0, 4000, 0, 0, 9999999999).wrap(core.SummonSkillWrapper)
         SupplyCharger.onTick(SupplySurplus.stackController(1))
@@ -221,17 +221,24 @@ class JobGenerator(ck.JobGenerator):
         # 퍼지롭 15회 사용 후 포톤레이 발동, 최적화 필요
         PhotonRay.onAfter(PhotonRayHit.controller(690*15))
 
-        for sk in [PurgeSnipe, MeltDown, MegaSmasherTick, OverloadHit, BladeDancing]:
+        for sk in [PurgeSnipe, MeltDown, MegaSmasherTick, OverloadHit]:
             sk.onAfter(TriangulationTrigger)
             sk.onAfter(PinpointRocketOpt)
             jobutils.create_auxilary_attack(sk, 0.7, nametag = "버추얼 프로젝션")
         
+        MeltDown.onAfter(MeltDown_Armor)
+        MeltDown.onAfter(MeltDown_Damage)
+        
         for sk in [Hologram_Penetrate, Hologram_ForceField, Hologram_Fusion]:
             sk.onTick(PinpointRocketOpt)
         
-        return(BasicAttackWrapper, 
+        PinpointRocket.protect_from_running()
+        
+        return(PurgeSnipe, 
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    globalSkill.useful_wind_booster(), globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-                [MirrorBreak, MirrorSpider, ResistanceLineInfantry, LuckyDice, ReadyToDie, Overdrive, OverloadMode, Hologram_Fusion] +\
-                [EfficiencyPipeLine, Booster, VirtualProjection] +\
-                [BasicAttackWrapper])
+                    globalSkill.useful_wind_booster(), globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract(),
+                    SupplySurplus, SupplyCharger, InclinePower, EfficiencyPipeLine, Booster, HybridDefenses, VirtualProjection, ExtraSupply] +\
+                [Hologram_Penetrate, AmaranthGenerator, MirrorBreak, MirrorSpider, MegaSmasher, MegaSmasherTick, ResistanceLineInfantry, LuckyDice, ReadyToDie, Overdrive,
+                OverloadMode, Hologram_Fusion, Hologram_Fusion_Buff, OverloadHit, OverloadHit_copy, PhotonRay, PhotonRayHit] +\
+                [PinpointRocket, Triangulation, OOPArtsCode] +\
+                [PurgeSnipe])
