@@ -53,8 +53,10 @@ class JobGenerator(ck.JobGenerator):
 
         SpiritLink_4 = core.InformedCharacterModifier("정령 결속 4",armor_ignore = 30 + passive_level, boss_pdamage = 30 + passive_level, pdamage_indep = 15 + passive_level // 3)
         AdvancedNuckleMastery = core.InformedCharacterModifier("고급 너클 숙련",crit_damage = 20 + 2 * ceil(passive_level/3), pdamage_indep = 10 + ceil(passive_level/3))
-        WeaknessFinding = core.InformedCharacterModifier("약점 간파",crit = 25 + ceil(passive_level/2))
-        #체력 (50 + passive_level)%이하인 적에게 크리율 (75+2*passive_level)%, 크뎀 (20+passive_level//3)% 증가??
+
+        # 약점 간파: 체력 (50 + passive_level)% 이하일 때 발동
+        WEAKNESS = False
+        WeaknessFinding = core.InformedCharacterModifier("약점 간파",crit = 25 + ceil(passive_level/2), crit_damage = (20+passive_level//3) * WEAKNESS)
 
         LoadedDicePassive = core.InformedCharacterModifier("로디드 다이스(패시브)", att = vEhc.getV(4,4) + 10)
 
