@@ -279,7 +279,7 @@ class JobGenerator:
     def package(self, chtr: ItemedCharacter, v_builder: AbstractVBuilder,
                 vlevel: int = 0,
                 ulevel: int = 4000,
-                weaponstat: List[int, int] =[3, 6],
+                weaponstat: List[int] =[3, 6],
                 log: bool = False,
                 vEnhanceGenerateFlag: bool = None,
                 ability_grade: Ability_grade = Ability_grade(4, 1),
