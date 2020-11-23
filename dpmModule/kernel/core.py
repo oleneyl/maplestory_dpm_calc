@@ -362,7 +362,7 @@ class SkillModifier:
         return SkillModifier(buff_rem=self.buff_rem, summon_rem=self.summon_rem, cooltime_reduce=self.cooltime_reduce,
                              pcooltime_reduce=self.pcooltime_reduce, reuse_chance=self.reuse_chance)
 
-    def __add__(self, arg: SkillModifier) -> 'SkillModifier':
+    def __add__(self, arg: 'SkillModifier') -> 'SkillModifier':
         return SkillModifier(
             buff_rem=self.buff_rem + arg.buff_rem,
             summon_rem=self.summon_rem + arg.summon_rem,
@@ -847,7 +847,7 @@ class Task:
         return self._ref
 
     def do(self, **kwargs) -> 'ResultObject':
-        return self._ftn(**kwargs)
+        return self._ftn()
 
     def onAfter(self, afters: 'List[Task]') -> None:
         self._after += afters
@@ -873,7 +873,7 @@ class ContextReferringTask(Task):
 
 class ResultObject:
     def __init__(self, delay: int, mdf: CharacterModifier, damage: int, hit: int, sname: str, spec: str,
-                 kwargs={}, cascade=[], callbacks: List[Callback] = []) -> None:
+                 kwargs={}, cascade=[], callbacks: 'List[Callback]' = []) -> None:
         """Result object must be static; alway to be ensure it is revealed.
         """
         self.delay: int = DynamicVariableOperation.reveal_argument(delay)
@@ -1735,16 +1735,16 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         return li
 
     def set_disabled_and_time_left(self, time: float) -> ResultObject:
-        self.cooltimeLeft = time
+        self.cooltime_left = time
         if time == -1:
-            self.cooltimeLeft = NOTWANTTOEXECUTE
+            self.cooltime_left = NOTWANTTOEXECUTE
         return ResultObject(0, CharacterModifier(), 0, 0, sname=self.skill.name, spec='graph control')
 
     def spend_time(self, time: float) -> None:
-        self.cooltimeLeft -= time
+        self.cooltime_left -= time
 
     def _use(self, skill_modifier: SkillModifier) -> ResultObject:
-        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
+        self.cooltime_left = self.calculate_cooltime(skill_modifier)
         callbacks = self.create_callbacks()
         return ResultObject(self.get_delay(),
                             self.get_modifier(),
