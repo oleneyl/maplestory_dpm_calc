@@ -87,6 +87,8 @@ class JobGenerator(ck.JobGenerator):
         BoolsEye = core.BuffSkill("불스아이(탤팬H)", 960, 30 * 1000, cooltime = 180 * 1000, crit = 20, crit_damage = 10, armor_ignore = 20, pdamage = 20).wrap(core.BuffSkillWrapper)
         Preparation = core.BuffSkill("프리퍼레이션(탤팬H)", 900, 30 * 1000, cooltime = 120 * 1000, att = 50, boss_pdamage = 20).wrap(core.BuffSkillWrapper)
 
+        ##### Phantom skills #####
+
         #Buff skills
     
         JudgementBuff = core.BuffSkill("저지먼트(버프)", 0, 999999999, crit = 0).wrap(core.BuffSkillWrapper)    #확률성 크리티컬
@@ -168,6 +170,16 @@ class JobGenerator(ck.JobGenerator):
         MileAiguillesInit.protect_from_running()
         
         #이들 정보교환 부분을 굳이 Task exchange로 표현할 필요가 있을까?
+
+        CardinalBlast.onAfter(CarteNoir)
+        CardinalDischarge.onAfter(CarteNoir)
+
+        CardinalBlast.onAfter(CardinalDischarge)
+        
+        '''
+        얼드: BasicAttackWrapper
+        블디: CardinalBlast
+        '''
         
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
