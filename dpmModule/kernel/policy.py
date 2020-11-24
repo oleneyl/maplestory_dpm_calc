@@ -1,10 +1,10 @@
 from collections import defaultdict
-from typing import Callable, Dict, Iterator, List, Optional, Tuple, Any
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 from .abstract import AbstractScenarioGraph, AbstractVEnhancer
-from .core import CharacterModifier
-from .core import Callback, GraphElement, Task, ResultObject
 from .core import AbstractSkillWrapper, BuffSkillWrapper, DamageSkillWrapper, SummonSkillWrapper
+from .core import Callback, GraphElement, Task, ResultObject
+from .core import CharacterModifier
 from .graph import AbstractStorage
 
 
@@ -238,7 +238,7 @@ class FetchingPolicy:
         self.target = graph.get_all()
         return self
 
-    def fetch_targets(self) -> Iterator[GraphElement]:
+    def fetch_targets(self) -> Iterable[GraphElement]:
         return filter(lambda x: x.is_usable(), self.get_sorted())
 
     def get_sorted(self) -> List[GraphElement]:
