@@ -34,26 +34,25 @@ class SupplyStackWrapper(core.StackSkillWrapper):
         '''
         서플러스 서플라이: 서플러스 에너지 1개 당 모든 능력치 1%만큼 증가, 20 초과시 초과 에너지당 최종 데미지 1% 증가
         '''
-        _modifier = core.CharacterModifier(pstat_main = self.stack, pstat_sub = self.stack)
-        if self.stack > 20:
-            _modifier += core.CharacterModifier(pdamage_indep = self.stack - 20)
-        return _modifier
-    
-    def charge(self):
-        delta = (self._max - self.stack)
-        result = super().vary(delta)
-        return result
+        return core.CharacterModifier(pstat_main = self.stack, pstat_sub = self.stack, pdamage_indep = max(0, self.stack - 20))
     
     def chargeController(self):
-        task = core.Task(self, self.charge)
-        return core.TaskHolder(task, name = "서플라이 차지")
-
-    def beginOverloadMode(self):
+        return core.TaskHolder(core.Task(self, partial(self.vary, self._max - self.stack)), name = "서플라이 차지")
+    
+    def begin_overload(self):
         self._max = 40
+        return self._result_object_cache
+    
+    def beginOverloadMode(self):
+        return core.TaskHolder(core.Task(self, self.begin_overload), name="오버로드 모드 시작")
+
+    def end_overload(self):
+        self.stack = min(20, self.stack)
+        self._max = 20
+        return self._result_object_cache
     
     def endOverloadMode(self):
-        self.stackController(min(20, self.stack), dtype = 'set')
-        self._max = 20
+        return core.TaskHolder(core.Task(self, self.end_overload), name="오버로드 모드 종료")
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -165,10 +164,10 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.get_weapon_att("에너지소드")
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         
-        MegaSmasher = core.SummonSkill("메가 스매셔", 0, 250, 0, 1, 16000, cooltime = 180000, rem = False).wrap(core.DamageSkillWrapper)
+        MegaSmasher = core.SummonSkill("메가 스매셔", 0, 250, 0, 1, 16000, cooltime = 180000, rem = False).wrap(core.SummonSkillWrapper)
         MegaSmasherTick = core.DamageSkill("메가 스매셔(틱)", 0, 300+10*vEhc.getV(4,4), 6).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
         
-        OVERLOAD_TIME = 30
+        OVERLOAD_TIME = 50
         OverloadMode = core.BuffSkill("오버로드 모드", 720, OVERLOAD_TIME * 1000, cooltime = 180000).wrap(core.BuffSkillWrapper)
         # 첫 공격은 항상 5100ms 후에 시작
         # 공격 주기는 3600ms~10800ms 중 랜덤
@@ -199,7 +198,9 @@ class JobGenerator(ck.JobGenerator):
         HybridDefenses.onAfter(SupplySurplus.stackController(-7))
         ExtraSupply.onAfter(SupplySurplus.stackController(10))
         OOPArtsCode.onAfter(SupplySurplus.stackController(-20))
-        AmaranthGenerator.onAfter(SupplySurplus.chargeController())
+
+        chargeController = SupplySurplus.chargeController()
+        AmaranthGenerator.onAfter(chargeController)
 
         TriangulationStack = core.StackSkillWrapper(core.BuffSkill("트라이앵글 스택", 0, 99999999), 3)
         TriangulationTrigger = core.OptionalElement(lambda : TriangulationStack.judge(3, 1), Triangulation, TriangulationStack.stackController(0.3))
@@ -208,9 +209,9 @@ class JobGenerator(ck.JobGenerator):
         MegaSmasher.onTick(MegaSmasherTick)
 
         BeginOverloadMode = core.DamageSkill("오버로드 모드(시작)", 0, 0, 0).wrap(core.DamageSkillWrapper)
-        BeginOverloadMode.onAfter(SupplySurplus.beginOverloadMode())
+        BeginOverloadMode.onAfter(SupplySurplus.beginOverloadMode)
         EndOverloadMode = core.DamageSkill("오버로드 모드(종료)", 0, 0, 0).wrap(core.DamageSkillWrapper)
-        EndOverloadMode.onAfter(SupplySurplus.endOverloadMode())
+        EndOverloadMode.onAfter(SupplySurplus.endOverloadMode)
 
         OverloadMode.onAfter(BeginOverloadMode)
         OverloadMode.onAfter(EndOverloadMode.controller(OVERLOAD_TIME * 1000))
