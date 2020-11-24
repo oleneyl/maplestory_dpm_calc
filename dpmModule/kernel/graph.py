@@ -1,6 +1,6 @@
 import json
 from collections import Counter
-from typing import Any, Dict, List, Iterator, Optional, TextIO
+from typing import Any, Dict, Iterable, List, Optional, TextIO
 
 '''
 global properties
@@ -23,15 +23,15 @@ def _unsafe_access_global_storage() -> 'GlobalCollection':
 
 
 class NamespaceObject:
-    def __init__(self, namespace=None) -> None:
-        self.namespace = namespace
-        self.inheritted_namespace = None
-        self.assigned_namespace = None
+    def __init__(self, namespace: Optional[str] = None) -> None:
+        self.namespace: Optional[str] = namespace
+        self.inheritted_namespace: Optional[str] = None
+        self.assigned_namespace: Optional[str] = None
 
-    def inherit_namespace(self, namespace) -> None:
+    def inherit_namespace(self, namespace: Optional[str]) -> None:
         self.inheritted_namespace = namespace
 
-    def get_my_namespace(self, namespace_from_parent, index: int) -> str:
+    def get_my_namespace(self, namespace_from_parent: Optional[str], index: int) -> str:
         if self.namespace:
             true_namespace = self.namespace
         else:
@@ -171,7 +171,7 @@ class DynamicVariableTracker:
 
 
 class AbstractDiGraphElement(NamespaceObject):
-    def __init__(self, namespace=None) -> None:
+    def __init__(self, namespace: Optional[str] = None) -> None:
         super(AbstractDiGraphElement, self).__init__(namespace=namespace)
         self._next_instance_list = []
         self._prev_instance_list = []
@@ -201,7 +201,7 @@ class AbstractDiGraphElement(NamespaceObject):
         Use this method to func(instance, param, index) -> action, return recursive param
         """
 
-        def output_func(self, instance, param, index):
+        def output_func(self, instance: 'AbstractDiGraphElement', param, index):
             rec_param = func(self, instance, param, index)
             for idx, inst in enumerate(instance.get_next_instances()):
                 output_func(self, inst, rec_param, idx)
@@ -210,7 +210,7 @@ class AbstractDiGraphElement(NamespaceObject):
 
 
 class AbstractDynamicVariableInstance(AbstractDiGraphElement):
-    def __init__(self, namespace=None) -> None:
+    def __init__(self, namespace: Optional[str] = None) -> None:
         super(AbstractDynamicVariableInstance, self).__init__(namespace=namespace)
         self.storage: Optional[AbstractStorage] = None
         self._already_finalized: bool = False
@@ -236,11 +236,11 @@ class AbstractDynamicVariableInstance(AbstractDiGraphElement):
         are you doing. Please be aware what you are trying to do.
         ''')
 
-    def build_namespace(self, namespace, index: int) -> str:
+    def build_namespace(self, namespace: Optional[str], index: int) -> str:
         my_namespace = self.get_my_namespace(namespace, index)
         return my_namespace
 
-    def get_next_nodes(self) -> List:
+    def get_next_nodes(self):
         raise NotImplementedError('''
         Please implement ABstractDynamicVariableInstance.get_next_nodes()
         You may trying to use Abstract Instance without recoginizing what
@@ -262,7 +262,7 @@ class AbstractDynamicVariableInstance(AbstractDiGraphElement):
             map(lambda x: x.reset_finalized_variable(), self.get_next_nodes())
 
     @AbstractDiGraphElement.recurrent_run
-    def attach_namespace(self, inst: 'AbstractDynamicVariableInstance', namespace, index: int) -> str:
+    def attach_namespace(self, inst: 'AbstractDynamicVariableInstance', namespace: Optional[str], index: int) -> str:
         my_namespace = inst.build_namespace(namespace, index)
         return my_namespace
 
@@ -285,13 +285,13 @@ class AbstractDynamicVariableInstance(AbstractDiGraphElement):
             Original Error : {e}''')
         return storage
 
-    def attach_namespace_head(self, namespace) -> None:
+    def attach_namespace_head(self, namespace: Optional[str]) -> None:
         self.attach_namespace(self, namespace, 0)
 
-    def save_storage_head(self, storage) -> None:
+    def save_storage_head(self, storage: 'AbstractStorage') -> None:
         self.save_storage(self, storage, 0)
 
-    def assign_storage_head(self, storage) -> None:
+    def assign_storage_head(self, storage: 'AbstractStorage') -> None:
         self.assign_storage(self, storage, 0)
 
 
@@ -323,12 +323,12 @@ class DynamicConversionTool:
 
 
 class DynamicObject:
-    def __init__(self, namespace=None) -> None:
+    def __init__(self, namespace: Optional[str] = None) -> None:
         self._variable_precursor_keyword = []
-        self.namespace = namespace
+        self.namespace: Optional[str] = namespace
         GlobalOperation.notify_dynamic_object_added(self)
 
-    def add_precursor_keyword(self, keyword_list) -> None:
+    def add_precursor_keyword(self, keyword_list: List) -> None:
         filtered_keywords = []
         # Force tracked keywords as Dynamic Variable
         for kwd in keyword_list:
@@ -357,7 +357,7 @@ class EvaluativeGraphElement(DynamicObject):
         def parse_variable(self, tracked_result) -> None:
             self._track_target.add_precursor_keyword(tracked_result)
 
-    def __init__(self, namespace=None) -> None:
+    def __init__(self, namespace: Optional[str] = None) -> None:
         super(EvaluativeGraphElement, self).__init__(namespace=namespace)
 
     def dynamic_range(self, options={}) -> GraphElementTracker:
@@ -369,16 +369,16 @@ class AbstractStorage:
         self._allow_fetch: bool = allow_fetch
         self.override: bool = override
 
-    def has_namespace(self, namespace: str) -> bool:
+    def has_namespace(self, namespace: Optional[str]) -> bool:
         raise NotImplementedError('''has_namespace function call
         will return whether value exist in given namespace.
         ''')
 
-    def get_namespace(self, namespace: str):
+    def get_namespace(self, namespace: Optional[str]):
         raise NotImplementedError('''get_namespace function call 
         will return value in given namespace.''')
 
-    def set_namespace(self, namespace: str, value, touch_end: bool = False):
+    def set_namespace(self, namespace: Optional[str], value, touch_end: bool = False):
         raise NotImplementedError('''set_namespace function call
         will set given DynamicVariable into given namespace.
 
@@ -406,22 +406,22 @@ class ConfigurationStorage(AbstractStorage):
         super(ConfigurationStorage, self).__init__(allow_fetch=allow_fetch, override=override)
         self._origin = dict_obj
 
-    def has_namespace(self, namespace) -> bool:
+    def has_namespace(self, namespace: str) -> bool:
         if self._allow_fetch:
             if namespace in self._origin:
                 return True
         return False
 
-    def get_namespace(self, namespace):
+    def get_namespace(self, namespace: str):
         return self._origin[namespace]
 
-    def set_namespace(self, namespace, value, touch_end: bool = False) -> None:
+    def set_namespace(self, namespace: str, value, touch_end: bool = False) -> None:
         if namespace in self._origin and not self.override:
             return
         else:
             self._origin[namespace] = value
 
-    def export(self, only_endpoint=True):
+    def export(self, only_endpoint: bool = True):
         if not only_endpoint:
             return self._origin
         else:
@@ -450,10 +450,10 @@ class DeepConfigurationStorage(AbstractStorage):
         self.space_generator: type(Dict) = dict
         self._origin = self.space_generator()
 
-    def parse_namespace_to_address(self, namespace):
+    def parse_namespace_to_address(self, namespace: str):
         return namespace.split('/')
 
-    def get_variable_by_address(self, address):
+    def get_variable_by_address(self, address: Iterable[str]):
         position = self._origin
         for kwd in address:
             try:
@@ -462,7 +462,7 @@ class DeepConfigurationStorage(AbstractStorage):
                 raise KeyError(f'Given address {"/".join(address)} not exist in storage')
         return position[DeepConfigurationStorage.DATA_KEYWORD]
 
-    def save_variable_by_address(self, address, variable) -> bool:
+    def save_variable_by_address(self, address: Iterable[str], variable) -> bool:
         position = self._origin
         for kwd in address:
             if kwd not in position:
@@ -474,7 +474,7 @@ class DeepConfigurationStorage(AbstractStorage):
         position[DeepConfigurationStorage.DATA_KEYWORD] = variable
         return True
 
-    def has_namespace(self, namespace):
+    def has_namespace(self, namespace: str):
         address = self.parse_namespace_to_address(namespace)
         position = self._origin
         for kwd in address:
@@ -484,15 +484,15 @@ class DeepConfigurationStorage(AbstractStorage):
                 position = position[kwd]
         return DeepConfigurationStorage.DATA_KEYWORD in position
 
-    def get_namespace(self, namespace):
+    def get_namespace(self, namespace: str):
         address = self.parse_namespace_to_address(namespace)
         return self.get_variable_by_address(address)
 
-    def set_namespace(self, namespace, value, touch_end: bool = False) -> None:
+    def set_namespace(self, namespace: str, value, touch_end: bool = False) -> None:
         address = self.parse_namespace_to_address(namespace)
         self.save_variable_by_address(address, value)
 
-    def export(self, only_endpoint=True):
+    def export(self, only_endpoint: bool = True):
         def recurrent_copy(copial_target, copy_point, parent, parent_key) -> None:
             for kwd in copial_target:
                 if kwd == DeepConfigurationStorage.DATA_KEYWORD:
@@ -508,13 +508,13 @@ class DeepConfigurationStorage(AbstractStorage):
 
 
 class DynamicVariableFromConfigurationStorage(AbstractDynamicVariableInstance):
-    def __init__(self, fetch_origin, fetch_name) -> None:
+    def __init__(self, fetch_origin, fetch_name: str) -> None:
         super().__init__()
         self._fetch_origin = fetch_origin
-        self._fetch_name = fetch_name
+        self._fetch_name: str = fetch_name
 
         # Get last namespace as name to synchronize
-        self.name = self._fetch_name.split('/')[-1]
+        self.name: Optional[str] = self._fetch_name.split('/')[-1]
         if type(self.name) == int:
             self.name = None
 
@@ -535,9 +535,9 @@ class DynamicVariableFromConfigurationStorage(AbstractDynamicVariableInstance):
 
 
 class DynamicVariableOperation(AbstractDynamicVariableInstance):
-    def __init__(self, args, eval_func, repr_func, inheritted_namespace=None) -> None:
+    def __init__(self, args, eval_func, repr_func, inheritted_namespace: Optional[str] = None) -> None:
         super(DynamicVariableOperation, self).__init__()
-        self.inheritted_namespace = inheritted_namespace
+        self.inheritted_namespace: Optional[str] = inheritted_namespace
         self._args = args
         for arg in args:
             self.add_next_instance(arg)
@@ -577,11 +577,11 @@ class DynamicVariableOperation(AbstractDynamicVariableInstance):
             return arg
 
     @classmethod
-    def wrap_arguments(cls, args: Iterator[Any]):
+    def wrap_arguments(cls, args: Iterable[Any]):
         return [cls.wrap_argument(a) for a in args]
 
     @staticmethod
-    def create_ops(eval_func, repr_str, name=None):
+    def create_ops(eval_func, repr_str, name: Optional[str] = None):
         def ops(*args) -> DynamicVariableOperation:
             wrapped_args = DynamicVariableOperation.wrap_arguments(args)
             return DynamicVariableOperation(wrapped_args, eval_func, repr_str, name)
