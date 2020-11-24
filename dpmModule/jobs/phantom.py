@@ -67,17 +67,17 @@ class JobGenerator(ck.JobGenerator):
         STEALSKILL = core.CharacterModifier(pdamage_indep = 100*((1.2 / 1.3)-1))
 
         # 1차
-        CardinalDischarge = core.DamageSkill("카디널 디스차지(탤팬1)", 210, 90, 4).setV(vEhc, 0, 7, True).wrap(core.DamageSkillWrapper)
+        CardinalDischarge = core.DamageSkill("카디널 디스차지(탤팬1)", 210, 90, 4, modifier = STEALSKILL).setV(vEhc, 0, 7, True).wrap(core.DamageSkillWrapper)
 
         # 2차
         # 힐+마오팬보다 분노가 허수아비딜은 잘나옴
         Fury = core.BuffSkill("분노(탤팬2)", 0, 180000, rem = True, att = 30).wrap(core.BuffSkillWrapper)
         Heal = core.BuffSkill("힐(탤팬2)", 450, 2*1000, cooltime=10*1000, pdamage_indep=10).wrap(core.BuffSkillWrapper)
-        CardinalBlast = core.DamageSkill("카디널 블래스트(탤팬2)", 240, 200, 4).setV(vEhc, 1, 5, False).wrap(core.DamageSkillWrapper) # 210~270ms 랜덤 (1.2.338 기준 측정), 최종뎀 단리적용
+        CardinalBlast = core.DamageSkill("카디널 블래스트(탤팬2)", 240, 200, 4, modifier = STEALSKILL).setV(vEhc, 1, 5, False).wrap(core.DamageSkillWrapper) # 210~270ms 랜덤 (1.2.338 기준 측정), 최종뎀 단리적용
 
         # 3차
         CrossoverChain = core.BuffSkill("크로스 오버 체인(탤팬3)", 0, 180000, rem = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
-        ArrowFlatter = core.SummonSkill("애로우 플래터(탤팬3)", 600, 210, 85, 1, 30 * 1000).setV(vEhc, 4, 3, False).wrap(core.SummonSkillWrapper) # 딜레이 모름
+        ArrowFlatter = core.SummonSkill("애로우 플래터(탤팬3)", 600, 210, 85, 1, 30 * 1000, modifier = STEALSKILL).setV(vEhc, 4, 3, False).wrap(core.SummonSkillWrapper) # 딜레이 모름
         
         # 4차
         FinalCut = core.DamageSkill("파이널 컷(탤팬4)", 450, 2000 + 20 * self.combat, 1, modifier = STEALSKILL, cooltime = 90000, red=True).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
