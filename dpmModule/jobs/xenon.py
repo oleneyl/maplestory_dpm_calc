@@ -132,7 +132,7 @@ class JobGenerator(ck.JobGenerator):
         AegisSystem = core.DamageSkill("이지스 시스템", 0, 120, 1, modifier = core.CharacterModifier(pdamage = 20 + passive_level // 3), cooltime = 1500).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         # 30%확률로 중첩 쌓임, 3중첩 쌓은 후 공격시 터지면서 사라지도록
-        Triangulation = core.DamageSkill("트라이앵글 포메이션", 0, 340, 3, cooltime = -1).setV(vEhc, 0, 3, True).wrap(core.DamageSkillWrapper)
+        Triangulation = core.DamageSkill("트라이앵글 포메이션", 0, 340, 3).setV(vEhc, 0, 3, True).wrap(core.DamageSkillWrapper)
 
         PurgeSnipe = core.DamageSkill("퍼지롭 매스커레이드 : 저격", 690, 345 + 2*self.combat, 7, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat) + core.CharacterModifier(pdamage = 20, armor_ignore = 10)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
@@ -188,11 +188,11 @@ class JobGenerator(ck.JobGenerator):
         SupplyCharger = core.SummonSkill("서플라이 충전", 0, 4000, 0, 0, 9999999999).wrap(core.SummonSkillWrapper)
         SupplyCharger.onTick(SupplySurplus.stackController(1))
 
-        PinpointRocketOpt = core.OptionalElement(PinpointRocket.is_active(), PinpointRocket)
+        PinpointRocketOpt = core.OptionalElement(PinpointRocket.is_active, PinpointRocket)
 
         # 홀로그램 융합 활성화시 10개, 아니면 3개
-        AegisSystemOpt_ = core.OptionalElement(Hologram_Fusion_Buff.is_active(), core.RepeatElement(AegisSystem, 10), core.RepeatElement(AegisSystem, 3))
-        AegisSystemOpt = core.OptionalElement(AegisSystem.is_active(), AegisSystemOpt_)
+        AegisSystemOpt_ = core.OptionalElement(Hologram_Fusion_Buff.is_active, core.RepeatElement(AegisSystem, 10), core.RepeatElement(AegisSystem, 3))
+        AegisSystemOpt = core.OptionalElement(AegisSystem.is_active, AegisSystemOpt_)
 
         InclinePower.onAfter(SupplySurplus.stackController(-3))
         HybridDefenses.onAfter(SupplySurplus.stackController(-7))
@@ -210,7 +210,7 @@ class JobGenerator(ck.JobGenerator):
 
         BeginOverloadMode = SupplySurplus.beginOverloadMode()
         EndOverloadMode = SupplySurplus.endOverloadMode()
-        EndOverloadModeHolder = core.DamageSkill("오버로드 모드 종료 (홀더)", 0, 0, 0).wrap(core.DamageSkillWrapper)
+        EndOverloadModeHolder = core.DamageSkill("오버로드 모드 종료 (홀더)", 0, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
         EndOverloadModeHolder.onAfter(EndOverloadMode)
 
         OverloadMode.onAfter(BeginOverloadMode)
@@ -225,7 +225,7 @@ class JobGenerator(ck.JobGenerator):
         for sk in [PurgeSnipe, MeltDown, MegaSmasherTick, OverloadHit]:
             sk.onAfter(TriangulationTrigger)
             sk.onAfter(PinpointRocketOpt)
-            jobutils.create_auxilary_attack(sk, 0.7, nametag = "버추얼 프로젝션")
+            jobutils.create_auxilary_attack(sk, 0.7, nametag = "(버추얼 프로젝션)")
         
         MeltDown.onAfter(MeltDown_Armor)
         MeltDown.onAfter(MeltDown_Damage)
@@ -233,7 +233,8 @@ class JobGenerator(ck.JobGenerator):
         for sk in [Hologram_Penetrate, Hologram_ForceField, Hologram_Fusion]:
             sk.onTick(PinpointRocketOpt)
         
-        PinpointRocket.protect_from_running()
+        for sk in [PinpointRocket, Triangulation, MegaSmasherTick, MeltDown_Armor, MeltDown_Damage, Hologram_Fusion_Buff, PhotonRayHit]:
+            sk.protect_from_running()
         
         return(PurgeSnipe, 
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
