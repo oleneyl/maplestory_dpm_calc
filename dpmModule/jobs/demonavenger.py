@@ -13,10 +13,8 @@ from math import ceil
 
 '''
 Advisor:
-연어먹던곰, 과천공대
+연어먹던곰, 키카이, 능이조아
 '''
-
-######   Passive Skill   ######
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -76,15 +74,31 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
-        코강 순서: 익시드 엑스큐션, 실드 체이싱 -> 문라이트 슬래시(사용하지 않음)
-        
         하이퍼: 익시드 3종, 실드 체이싱 리인포스, 엑스트라 타겟 적용
 
-        데몬 프렌지 - 1초당 10.8타
-        블러드 피스트 - 작성 필요
+        데몬 프렌지 - 중첩당 10.8타/s
+
+        HP 100%
+        
+        디멘션 소드 - 재시전 X
         '''
         
         passive_level = chtr.get_base_modifier().passive_level + self.combat
+
+        ######   Skill   ######
+
+        ### Buff skills ###
+        Booster = core.BuffSkill("데몬 부스터", 990, 180*1000).wrap(core.BuffSkillWrapper)
+        DiabolicRecovery = core.BuffSkill("디아볼릭 리커버리", 990, 180*1000).wrap(core.BuffSkillWrapper)
+        WardEvil = core.BuffSkill("리프랙트 이블", 990, 180*1000).wrap(core.BuffSkillWrapper)
+
+        ForbiddenContract = core.BuffSkill("포비든 컨트랙트", 1020, 30*1000, cooltime = 75*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
+        DemonicFortitude = core.BuffSkill("데모닉 포티튜드", 0, 60*1000, cooltime=120*1000, pdamage=10).wrap(core.BuffSkillWrapper)
+
+        # 위컴알에서 딜레이 확인 불가
+        ReleaseOverload = core.BuffSkill("릴리즈 오버로드", 0, 60*1000, pdamage_indep= 25, rem = True).wrap(core.BuffSkillWrapper)
+
+        ### Damage skills ###
 
         # 익시드 0~3스택: 클라기준 딜레이 900, 900, 840, 780
         # 릴리즈 사용 직후 익시드 사용시 3번만에 강화모드 진입
@@ -106,6 +120,12 @@ class JobGenerator(ck.JobGenerator):
         # 보너스 찬스 70% -> 80%
         EnhancedExceed = core.DamageSkill("인핸스드 익시드", 0, 200+4*passive_level, 2*(0.8+0.04*passive_level), cooltime = -1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
 
+        #BatSwarm = core.SummonSkill("배츠 스웜", 0, 0, 200, 1, 0)
+
+        #BloodImprison = core.DamageSkill("블러디 임프리즌", 0, 800, 3, cooltime = 120*1000)
+
+        ### V skills ###
+
         # 초당 10.8타 가정
         # http://www.inven.co.kr/board/maple/2304/23974
         FRENZY_STACK = 2    # 중첩 수
@@ -124,21 +144,6 @@ class JobGenerator(ck.JobGenerator):
         REVENANT_COOLTIME = 1080
         Revenant = core.BuffSkill("레버넌트", 1530, (30 + vEhc.getV(0,0)//5)*1000, cooltime = 300000, rem = False).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
         RevenantHit = core.DamageSkill("레버넌트(분노의 가시)", 0, 300 + vEhc.getV(0,0) * 12, 9, cooltime = REVENANT_COOLTIME, modifier = core.CharacterModifier(armor_ignore = 30), red = False).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-
-        #BatSwarm = core.SummonSkill("배츠 스웜", 0, 0, 200, 1, 0)
-
-        #BloodImprison = core.DamageSkill("블러디 임프리즌", 0, 800, 3, cooltime = 120*1000)
-
-        #Buff skills
-        Booster = core.BuffSkill("데몬 부스터", 990, 180*1000).wrap(core.BuffSkillWrapper)
-        DiabolicRecovery = core.BuffSkill("디아볼릭 리커버리", 990, 180*1000).wrap(core.BuffSkillWrapper)
-        WardEvil = core.BuffSkill("리프랙트 이블", 990, 180*1000).wrap(core.BuffSkillWrapper)
-
-        ForbiddenContract = core.BuffSkill("포비든 컨트랙트", 1020, 30*1000, cooltime = 75*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        DemonicFortitude = core.BuffSkill("데모닉 포티튜드", 0, 60*1000, cooltime=120*1000, pdamage=10).wrap(core.BuffSkillWrapper)
-
-        # 위컴알에서 딜레이 확인 불가
-        ReleaseOverload = core.BuffSkill("릴리즈 오버로드", 0, 60*1000, pdamage_indep= 25, rem = True).wrap(core.BuffSkillWrapper)
         
         # 데몬 5차 공용
         CallMastema, MastemaClaw = demon.CallMastemaWrapper(vEhc, 0, 0)
