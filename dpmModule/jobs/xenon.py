@@ -37,7 +37,7 @@ class SupplyStackWrapper(core.StackSkillWrapper):
         return core.CharacterModifier(pstat_main = self.stack, pstat_sub = self.stack, pdamage_indep = max(0, self.stack - 20))
     
     def chargeController(self):
-        return core.TaskHolder(core.Task(self, partial(self.vary, self._max - self.stack)), name = "서플라이 차지")
+        return core.TaskHolder(core.Task(self, partial(self.set_stack, self._max - self.stack)), name = "서플라이 차지")
     
     def begin_overload(self):
         self._max = 40
@@ -208,13 +208,13 @@ class JobGenerator(ck.JobGenerator):
 
         MegaSmasher.onTick(MegaSmasherTick)
 
-        BeginOverloadMode = core.DamageSkill("오버로드 모드(시작)", 0, 0, 0).wrap(core.DamageSkillWrapper)
-        BeginOverloadMode.onAfter(SupplySurplus.beginOverloadMode)
-        EndOverloadMode = core.DamageSkill("오버로드 모드(종료)", 0, 0, 0).wrap(core.DamageSkillWrapper)
-        EndOverloadMode.onAfter(SupplySurplus.endOverloadMode)
+        BeginOverloadMode = SupplySurplus.beginOverloadMode()
+        EndOverloadMode = SupplySurplus.endOverloadMode()
+        EndOverloadModeHolder = core.DamageSkill("오버로드 모드 종료 (홀더)", 0, 0, 0).wrap(core.DamageSkillWrapper)
+        EndOverloadModeHolder.onAfter(EndOverloadMode)
 
         OverloadMode.onAfter(BeginOverloadMode)
-        OverloadMode.onAfter(EndOverloadMode.controller(OVERLOAD_TIME * 1000))
+        OverloadMode.onAfter(EndOverloadModeHolder.controller(OVERLOAD_TIME * 1000))
 
         OverloadMode.onAfter(OverloadHit.controller(5100))
         OverloadMode.onAfter(OverloadHit_copy.controller(5100))
