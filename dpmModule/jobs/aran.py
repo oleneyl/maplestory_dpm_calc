@@ -125,7 +125,7 @@ class JobGenerator(ck.JobGenerator):
         AdrenalineBeyonderWave = core.DamageSkill("비욘더(파동)", 0, 400, 5).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         BoostEndHuntersTargetingHolder = core.DamageSkill("부스트 엔드-헌터즈 타겟팅(홀더)", BOOST_END_HUNTERS_TARGETING_DELAY, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
-        BoostEndHuntersTargeting = core.DamageSkill("부스트 엔드-헌터즈 타겟팅", 0, 1500 + 15 * self.combat + (20 + passive_level), 15, cooltime=-1).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        BoostEndHuntersTargeting = core.DamageSkill("부스트 엔드-헌터즈 타겟팅", 0, 1070 + 10 * self.combat + (20 + passive_level), 15, cooltime=-1).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
 
         AdrenalineGenerator = core.BuffSkill("아드레날린 제네레이터", ADRENALINE_GENERATOR_DELAY, 0, cooltime=240*1000).wrap(core.BuffSkillWrapper)
         MahaRegion = core.SummonSkill("마하의 영역", 600, 1000, 500, 3, 10*1000, cooltime=150*1000).wrap(core.SummonSkillWrapper) # 게더링캐쳐 캔슬 : 1680 -> 600
@@ -159,7 +159,7 @@ class JobGenerator(ck.JobGenerator):
         Combo.set_name_style("콤보 %d만큼 증가")
 
         # 헌터즈 타게팅
-        BoostEndHuntersTargetingHolder.onAfter(core.RepeatElement(BoostEndHuntersTargeting, 5))
+        BoostEndHuntersTargetingHolder.onAfter(core.RepeatElement(BoostEndHuntersTargeting, 7))
 
         # 인스톨 마하
         InstallMaha.onAfter(InstallMahaBlizzard)

@@ -212,7 +212,7 @@ class JobGenerator(ck.JobGenerator):
         #5차 스킬들
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att("건틀렛"))
-        GramHolder = GramHolderWrapper(core.SummonSkill("그람홀더", 210, 3000, 1000+25*vEhc.getV(4,3), 6, 40000, cooltime = 180000).isV(vEhc,4,3))
+        GramHolder = GramHolderWrapper(core.SummonSkill("그람홀더", 210, 3000, 500+20*vEhc.getV(4,3), 12, 40000, cooltime = 180000).isV(vEhc,4,3))
 
         CrystalIgnitionInit = core.DamageSkill("크리스탈 이그니션(시전)", 720, 0, 0, cooltime = 180*1000).wrap(core.DamageSkillWrapper)
         CrystalIgnition = core.DamageSkill("크리스탈 이그니션", 150, 750 + 30*vEhc.getV(2,1), 4, modifier = core.CharacterModifier(boss_pdamage = 20)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
