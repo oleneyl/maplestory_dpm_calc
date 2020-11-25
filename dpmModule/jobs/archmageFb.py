@@ -111,7 +111,7 @@ class JobGenerator(ck.JobGenerator):
         
         # Summoning Skills
         Ifritt = core.SummonSkill("이프리트", 600, 3030, 150+2*self.combat, 3, (260+5*self.combat)*1000).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
-        FireAura = core.SummonSkill("파이어 오라", 0, 3000, 400, 2, 999999999).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
+        FireAura = core.SummonSkill("파이어 오라", 0, 3000, 400, 2, 999999999, modifier = core.CharacterModifier(pdamage = -50)).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
         FuryOfIfritt = core.SummonSkill("퓨리 오브 이프리트", 360, 6000/25, 200+8*vEhc.getV(3,2), 6, 6*1000-1, cooltime = 75000, red = True).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         

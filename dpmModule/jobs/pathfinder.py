@@ -203,7 +203,7 @@ class JobGenerator(ck.JobGenerator):
         # 5차
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 3, 3)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
-        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 1, 1, 20)
+        CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 1, 1, 20+ceil(self.combat/2))
         
         Evolve = adventurer.EvolveWrapper(vEhc, 5, 5, Raven)
         UltimateBlast = core.DamageSkill("얼티밋 블래스트", LINK_DELAY + 1350, 400+20*vEhc.getV(2,2), 15*5, cooltime = 120*1000, red=True, 

@@ -1,10 +1,18 @@
 from ..kernel import core
 from ..kernel.graph import DynamicVariableOperation
-from ..item import RootAbyss, Absolab, Arcane
+from ..item import RootAbyss, Absolab, Arcane, Genesis
 import math
 
-# DamageSkill Duplicator
-def create_auxilary_attack(skill_wrapper, ratio, nametag = '복사'):
+
+def create_auxilary_attack(skill_wrapper, ratio = 1, nametag='(복사)'):
+    '''
+    create_auxilary_attack: DamageSkill Duplicator
+    Easy Shadow Partner Function
+    - parameters
+      .skill_wrapper : target DamageSkillWrapper
+      .ratio : copy skill's damage ratio
+      .nametag : skill copier's name
+    '''
     original_skill = skill_wrapper.skill
     copial_skill = core.DamageSkill(name = DynamicVariableOperation.reveal_argument(original_skill.name) + nametag,
         delay = DynamicVariableOperation.wrap_argument(0),
@@ -12,9 +20,9 @@ def create_auxilary_attack(skill_wrapper, ratio, nametag = '복사'):
         hit = original_skill.hit,
         modifier=original_skill._static_skill_modifier).wrap(core.DamageSkillWrapper)
     
-    skill_wrapper.onAfter(copial_skill)
+    skill_wrapper.onJustAfter(copial_skill)
 
-# 스펙 측정시마다 수동으로 변경 필요
+# TODO: 스펙 측정시마다 수동으로 변경 필요
 def get_weapon_att(WEAPON_NAME, spec = 6000):
     if spec < 5000:
         #파프
@@ -22,21 +30,22 @@ def get_weapon_att(WEAPON_NAME, spec = 6000):
     elif spec < 7000:
         #앱솔
         return Absolab.WeaponFactory.getWeapon(WEAPON_NAME, star = 0, elist = [0,0,0,0] ).main_option.att
-    else:
+    elif spec < 8500:
         #아케인
         return Arcane.WeaponFactory.getWeapon(WEAPON_NAME, star = 0, elist = [0,0,0,0] ).main_option.att
+    else:
+        return Genesis.WeaponFactory.getWeapon(WEAPON_NAME, star = 0, elist = [0,0,0,0] ).main_option.att
 
 def debug_skill(skill_wrapper):
     skill_wrapper.onJustAfter(core.BuffSkill(skill_wrapper._id+"(디버그)", 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper))
 
-def cdr_hat(sec = 0, red = True):
-    '''Return InformedCharacterModifier for CDR Hat
-    - arguments
-      int sec: seconds
-      bool red: reduce pstat    
-    '''
-
-    '''
+'''
+Return InformedCharacterModifier for CDR Hat
+- arguments
+int sec: seconds
+bool red: reduce pstat
+'''
+'''
     윗잠: 1초 = 9%, 2초 = 12%
     아랫잠: 1초 = 7%
     0초: 없음 / 없음
@@ -49,7 +58,9 @@ def cdr_hat(sec = 0, red = True):
     7초: 2초 3줄 / 1초 1줄
     8초: 2초 3줄 / 1초 2줄
     9초: 2초 3줄 / 1초 3줄
-    '''
+'''
+
+def cdr_hat(sec = 0, red = True):
     pstat = [0, 9, 12, 21, 30, 37, 40, 43, 50, 57]
     return core.InformedCharacterModifier("재사용 대기시간 감소 (" + str(sec) + "초)", cooltime_reduce = sec * 1000, pstat_main = -1 * int(red) * pstat[sec])
 
