@@ -54,7 +54,7 @@ def SpiderInMirrorBuilder(enhancer, skill_importance, enhance_importance, break_
         "스파이더 인 미러(거울 속의 거미)", 0, 3000, 175+7*enhancer.getV(skill_importance, enhance_importance), 8*5, 15*1000, cooltime = -1, modifier=spider_modifier
     ).wrap(core.SummonSkillWrapper)
     MirrorBreak.onAfter(MirrorSpider.controller(3000))
-    return MirrorSpider, MirrorBreak
+    return MirrorBreak, MirrorSpider
 
 # 모험가, 영웅, 레지스탕스가 사용
 def MapleHeroes2Wrapper(vEhc, num1, num2, level, combat_level):
@@ -70,5 +70,5 @@ def genesis_aeonian_rise():
 
 # 파괴의 얄다바오트
 def genesis_tanadian_ruin():
-    TandadianRuin = core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime = 120000, pdamage_indep = 15, rem = False, red = False).wrap(core.BuffSkillWrapper)
+    TandadianRuin = core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime = 90000, pdamage_indep = 15, rem = False, red = False).wrap(core.BuffSkillWrapper)
     return TandadianRuin

@@ -166,7 +166,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 블블 추가타 적용
         for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DemonBaneTick, DemonBane2Tick, DevilCry, Cerberus, AuraWeapon]:
-            jobutils.create_auxilary_attack(sk, 0.9, "(블루 블러드)")
+            jobutils.create_auxilary_attack(sk, 0.9, nametag='(블루 블러드)')
 
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

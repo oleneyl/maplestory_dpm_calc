@@ -124,7 +124,7 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         NovaGoddessBless = nova.NovaGoddessBlessWrapper(vEhc, 0, 0)
     
-        EnergyBurst = core.DamageSkill("에너지 버스트", 900, (600+20*vEhc.getV(4,4)) * 3, 12, red = True, cooltime = 120 * 1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
+        EnergyBurst = core.DamageSkill("에너지 버스트", 900, (450+18*vEhc.getV(4,4)) * 3, 15, red = True, cooltime = 120 * 1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         
         SpotLight = core.SummonSkill("스포트라이트", 990, 800, 400+16*vEhc.getV(0,0), 3 * SPOTLIGHTHIT, 30000, cooltime = 120 * 1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         SpotLightBuff = core.BuffSkill("스포트라이트(버프)", 0, 30000, cooltime = -1, crit = (10+int(0.2*vEhc.getV(0,0)))*SPOTLIGHTHIT,

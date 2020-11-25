@@ -157,7 +157,7 @@ class JobGenerator(ck.JobGenerator):
         
         for skill in [Destroy, Thunder, WaterWave, DestroyConcat, ThunderConcat, WaterWaveConcat, HurricaneConcat, GioaTan, NoiShinChanGeuk,
                         SpearLightningAttack, SpearLightningAttack_Lightning, SpearLightningAttack_Final, SpearLightningAttack_Final_Lightning]:
-            jobutils.create_auxilary_attack(skill, CHOOKROI, "(축뢰)")
+            jobutils.create_auxilary_attack(skill, CHOOKROI, nametag='(축뢰)')
 
         for skill in [Thunder, ThunderConcat, WaterWave, WaterWaveConcat, NoiShinChanGeuk,
                         SpearLightningAttack, SpearLightningAttack_Lightning, SpearLightningAttack_Final, SpearLightningAttack_Final_Lightning]:
