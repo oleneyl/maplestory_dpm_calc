@@ -207,7 +207,7 @@ class JobGenerator(ck.JobGenerator):
 
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 4, 4)
         magic_curcuit_full_drive_builder = flora.MagicCircuitFullDriveBuilder(vEhc, 3, 3)
-        for sk in [Divide, Resonance, Ruin, Marker, Grave, Scool]:
+        for sk in [Divide, Resonance, Ruin, Marker, Grave, Scool, Order, RestoreTick, Storm]:
             auraweapon_builder.add_aura_weapon(sk)
             magic_curcuit_full_drive_builder.add_trigger(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()

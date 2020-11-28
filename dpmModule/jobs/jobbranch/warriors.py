@@ -15,7 +15,10 @@ class AuraWeaponBuilder():
         self.AuraWeaponOptional = core.OptionalElement(lambda : (self.AuraWeapon.is_available() and self.AuraWeaponBuff.is_active()), self.AuraWeapon)
 
     def add_aura_weapon(self, origin_skill):
-        origin_skill.onAfter(self.AuraWeaponOptional)
+        if getattr(origin_skill, 'is_periodic', False):
+            origin_skill.onTick(self.AuraWeaponOptional)
+        else:
+            origin_skill.onAfter(self.AuraWeaponOptional)
 
     def get_buff(self):
         return self.AuraWeaponBuff, self.AuraWeapon
