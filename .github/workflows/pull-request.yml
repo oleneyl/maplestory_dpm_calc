@@ -20,7 +20,7 @@ jobs:
     - name: Full test
       id: full-test
       run: |
-        python full_test.py
+        python full_test.py --ulevel 8000 --thread 2
         echo "::set-output name=result::$(cat dpm_output.txt)"
     - uses: actions/github-script@v3
       with:
