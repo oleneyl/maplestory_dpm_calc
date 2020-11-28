@@ -31,11 +31,14 @@ def test(args):
 
 def write_results(results):
     dpm_output = open('dpm_output.txt','w', encoding= 'utf-8')
+    dpm_output.write("| 직업 |")
+    for ulevel, _ in groupby(results, key=itemgetter(1)):
+        dpm_output.write(f" {ulevel} |")
+    dpm_output.write("\n")
     for jobname, result in groupby(results, key=itemgetter(0)):
-        dpm_output.write(jobname)
+        dpm_output.write(f"| {jobname} |")
         for dpm in map(itemgetter(2), result):
-            dpm_output.write(" ")
-            dpm_output.write(str(dpm))
+            dpm_output.write(f" {dpm:,.0f} |")
         dpm_output.write("\n")
     dpm_output.close()
 
@@ -46,6 +49,6 @@ if __name__ == '__main__':
     tasks = product(jobMap.keys(), ulevels, [args.time])
     pool = ProcessPoolExecutor(max_workers=args.thread)
     results = pool.map(test, tasks)
-    write_results(results)
+    write_results(list(results))
     end = time.time()
     print(f"총 소요시간: {end - start:.3f}초")
