@@ -19,7 +19,6 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Full test
       id: full-test
-      result-encoding: string
       run: |
         python full_test.py --ulevel 8000 --thread 2
         echo "::set-output name=result::$(cat dpm_output.txt)"
@@ -31,5 +30,5 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: ${{steps.full-test.outputs.result}}
+            body: '${{steps.full-test.outputs.result}}'
           })
