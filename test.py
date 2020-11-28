@@ -1,6 +1,6 @@
 import sys, os
 
-from  dpmModule.character.characterTemplate import get_template_generator
+from dpmModule.character.characterTemplate import get_template_generator
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
 from dpmModule.util.configurations import export_configuration
 from dpmModule.kernel import graph
@@ -24,6 +24,7 @@ def get_args():
     parser.add_argument('--time', type=int, default=1800)
     parser.add_argument('--log', action='store_true')
     parser.add_argument('--stat', action='store_true')
+    parser.add_argument('--cdr', type=int, default=0)
     parser.add_argument('--task',default='dpm')
 
     return parser.parse_args()
@@ -53,6 +54,7 @@ def dpm(args):
         parser.set_runtime(args.time*1000)
         try:
             dpm = parser.get_dpm(ulevel = args.ulevel,
+            cdr = args.cdr,
             level = args.level,
             weaponstat = weaponstat,
             printFlag=args.log,
