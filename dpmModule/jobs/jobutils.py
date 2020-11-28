@@ -45,42 +45,6 @@ def reboot_passive(level = -1):
         raise ValueError
     return core.InformedCharacterModifier("리부트", att = 5, pdamage = level // 2)
 
-'''
-윗잠: 1초 = 9%, 2초 = 12%
-아랫잠: 1초 = 7%
-0초: 없음 / 없음
-1초: 1초 1줄 / 없음
-2초: 2초 1줄 / 없음
-3초: 2초 1줄, 1초 1줄 / 없음
-4초: 2초 1줄, 1초 2줄 / 없음
-5초: 2초 1줄, 1초 2줄 / 1초 1줄 (리부트: 2초 2줄, 1초 1줄)
-6초: 2초 2줄, 1초 1줄 / 1초 1줄 (리부트: 2초 3줄)
-7초: 2초 3줄 / 1초 1줄
-8초: 2초 3줄 / 1초 2줄
-9초: 2초 3줄 / 1초 3줄
-'''
-def cdr_hat(sec: int = 0, stat_red = True, is_reboot = False):
-    '''
-    Return InformedCharacterModifier for CDR Hat
-    - arguments
-      int sec: seconds
-      bool stat_red: True if reduce pstat
-      bool is_reboot: True if Reboot environment
-    '''
-    pstat = [0, 9, 12, 21, 30, 37, 40, 43, 50, 57]
-    pstatr = [0, 9, 12, 21, 30, 33, 36]
-    
-    # 리부트: 최대 6초
-    if is_reboot:
-        if sec > 6:
-            raise ValueError
-        return core.InformedCharacterModifier("재사용 대기시간 감소 (" + str(sec) + "초)", cooltime_reduce = sec * 1000, pstat_main = -1 * stat_red * pstatr[sec])
-    
-    # 본섭: 최대 9초
-    if sec > 9:
-        raise ValueError
-    return core.InformedCharacterModifier("재사용 대기시간 감소 (" + str(sec) + "초)", cooltime_reduce = sec * 1000, pstat_main = -1 * stat_red * pstat[sec])
-
 # TODO: 약칭을 사용 가능하도록 수정필요
 # 헬스컷, 마나컷, 리밋 등 효율이 낮거나 스위프트, 오버패스 등 딜 기여가 없는 링은 제외
 
