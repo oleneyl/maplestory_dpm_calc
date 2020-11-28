@@ -119,7 +119,7 @@ class JobGenerator(ck.JobGenerator):
         MoonStrike = core.DamageSkill("문 스트라이크", 330, 120, 6).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         MoonStrikeTAG = core.DamageSkill("문 스트라이크(태그)", 0, 120, 6).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         
-        PierceStrike = core.DamageSkill("피어스 쓰러스트", 360, 170, 6).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        PierceStrike = core.DamageSkill("피어스 쓰러스트", 510, 170, 6).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
         PierceStrikeTAG = core.DamageSkill("피어스 쓰러스트(태그)", 0, 170, 6).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
         
         '''
@@ -280,15 +280,14 @@ class JobGenerator(ck.JobGenerator):
         BetaState.controller(1) # 베타로 시작
         
         ### 어파스 생성
-        # 윈커(0ms) - 윈스(420ms) - 스톰(900ms) - 문스(1590ms) - 피어싱(1920ms) - 문스(2280ms) - 피어싱(2610ms) - 2970ms -> 태그 쿨타임 대기 +130ms
-        # 기가(0ms) -       점핑(630ms) -     어스(1290ms) -    어스 후딜 도중 문스 사용, 어퍼 씹힘 -   어파스(2850ms)
-        TagCooltimeWait = core.DamageSkill("태그 쿨타임 대기(알파)", 130, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
+        # 윈커(0ms) - 윈스(420ms) - 스톰(900ms) - 문스(1590ms) - 피어싱(1920ms) - 문스(2430ms) - 피어싱(2760ms) - 3270ms
+        # 기가(0ms) -       점핑(690ms) -   어스(1260ms) - 어퍼 씹힘 -   어파스(2340ms)   어퍼, 어파스 씹힘  - 2970ms
         AlphaCombo = [SetAlpha, WindCutter, GigaCrashTAG, WindStrike, JumpingCrashTAG, AdvancedStormBreak, AdvancedEarthBreakTAG,
-                        MoonStrike, PierceStrike, MoonStrike, PierceStrike, AdvancedPowerStompTAG, TagCooltimeWait]
-        # 터닝(0ms) - 휠윈(360ms) - 프런트(1260ms) - 스로잉(1710ms) - 어퍼(2190ms) - 어파스(2580ms) - 3150ms -> 태그 쿨타임 대기 0ms
-        # 롤커(0ms) -         롤어(960ms) -  플래시 씹힘 -    스핀(1920ms) -  문스 씹힘 -  피어싱(2640ms)
+                        MoonStrike, PierceStrike, MoonStrike, PierceStrike, AdvancedPowerStompTAG]
+        # 터닝(0ms) - 휠윈(360ms) - 프런트(1260ms) - 스로잉(1710ms) - 어퍼(2190ms) - 어파스(2580ms) - 3150ms
+        # 롤커(0ms) -        롤어(1020ms) - 플래시 씹힘 - 스핀(1710ms) - 문스(2190ms)  -  2640ms
         BetaCombo = [SetBeta, TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind, AdvancedRollingAssulterTAG,
-                        FrontSlash, ThrowingWeapon, AdvancedSpinCutterTAG, UpperSlash, AdvancedPowerStomp, PierceStrikeTAG]
+                        FrontSlash, ThrowingWeapon, AdvancedSpinCutterTAG, UpperSlash, MoonStrikeTAG, AdvancedPowerStomp]
         ComboHolder = core.DamageSkill("어파스", 0,0,0).wrap(core.DamageSkillWrapper)
         for sk in AlphaCombo + BetaCombo:
             ComboHolder.onAfter(sk)
