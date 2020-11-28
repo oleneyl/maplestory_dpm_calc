@@ -1,30 +1,23 @@
-import sys
-import os
-
 from dpmModule.character.characterTemplate import get_template_generator
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
 from dpmModule.util.configurations import export_configuration
-from dpmModule.kernel import graph
 from dpmModule.jobs import jobMap
-from dpmModule.kernel import core
 from concurrent.futures import ProcessPoolExecutor
-from itertools import product, groupby
+from itertools import product
 from operator import itemgetter
 
-import time
-import json
 import argparse
 try:
     import pandas as pd
     import openpyxl
 except ImportError:
-    print("pandas, openpxl, jinja2 모듈을 설치해야 합니다.")
+    print("pandas, openpyxl, jinja2 모듈을 설치해야 합니다.")
     exit()
 
 def get_args():
     parser = argparse.ArgumentParser('DPM Sheet argument')
     parser.add_argument('--ulevel', type=int, default=8000)
-    parser.add_argument('--time', type=int, default=240)
+    parser.add_argument('--time', type=int, default=1800)
     parser.add_argument('--thread', type=int, default=4)
 
     return parser.parse_args()
