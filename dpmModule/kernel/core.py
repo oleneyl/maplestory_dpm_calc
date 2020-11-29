@@ -146,7 +146,7 @@ class CharacterModifier:
                                          stat_main_fixed=self.stat_main_fixed,
                                          stat_sub_fixed=self.stat_sub_fixed)
 
-    def get_damage_factor(self, armor: int = 300) -> float:
+    def get_damage_factor(self, armor: float = 300) -> float:
         """Caution : Use this function only if you summed up every modifiers.
         """
         real_crit = min(100, self.crit)
@@ -157,7 +157,7 @@ class CharacterModifier:
         return stat * adap * factor * ignorance * 0.01
 
     # TODO: Parameter armor is not used.
-    def get_status_factor(self, armor: int = 300) -> float:
+    def get_status_factor(self, armor: float = 300) -> float:
         """Caution : Use this function only if you summed up every modifiers.
         """
         stat = (4 * self.stat_main * (1 + 0.01 * self.pstat_main) + self.stat_sub * (1 + 0.01 * self.pstat_sub)) + (4 * self.stat_main_fixed + self.stat_sub_fixed)
@@ -165,7 +165,7 @@ class CharacterModifier:
         factor = (1 + 0.01 * self.pdamage) * (1 + 0.01 * self.pdamage_indep)
         return stat * adap * factor * 0.01
 
-    def calculate_damage(self, damage: int, hit: int, spec: str, armor: int = 300) -> Tuple[float, float]:
+    def calculate_damage(self, damage: float, hit: float, spec: str, armor: float = 300) -> Tuple[float, float]:
         """Return : (damage, loss) tuple
         숙련도는 90~100으로 가정함(5% deviation)
         """
@@ -227,8 +227,7 @@ class CharacterModifier:
         max_damage_factor = factor_aggregated * expert_max
         min_damage_factor = factor_aggregated * expert_min
 
-        real_damage = hit * (max_crit_factor + min_crit_factor) / 2 * (
-                    max_damage_factor + min_damage_factor) / 2  # W/O restriction
+        real_damage = hit * (max_crit_factor + min_crit_factor) / 2 * (max_damage_factor + min_damage_factor) / 2  # W/O restriction
         res_damage = hit * restricted_damage(min_damage_factor, max_damage_factor, min_crit_factor, max_crit_factor, MAX_DAMAGE_RESTRICTION)  # W/ restriction
 
         return (res_damage, real_damage - res_damage)
@@ -576,26 +575,26 @@ class AbstractSkill(EvaluativeGraphElement):
     - get_info : return it's status as JSON.
     """
 
-    def __init__(self, name: str, delay: int, cooltime: int = 0, rem: bool = False, red: bool = True) -> None:
+    def __init__(self, name: str, delay: float, cooltime: float = 0, rem: bool = False, red: bool = True) -> None:
         super(AbstractSkill, self).__init__(namespace=name)
         self.spec: str = "graph control"
         with self.dynamic_range():
             self.rem: bool = rem
             self.red: bool = red
             self.name: str = name
-            self.delay: int = delay
-            self.cooltime: int = cooltime
+            self.delay: float = delay
+            self.cooltime: float = cooltime
             self.explanation: Optional[str] = None
 
             if self.cooltime == -1:
                 self.cooltime = NOTWANTTOEXECUTE
 
-    def _change_time_into_string(self, float_or_Infinite: float, divider: int = 1, lang: str = "ko") -> str:
+    def _change_time_into_string(self, float_or_infinite: float, divider: int = 1, lang: str = "ko") -> str:
         lang_to_inf_dict = {"ko": "무한/자동발동불가", "en": "Infinite"}
-        if abs(float_or_Infinite - NOTWANTTOEXECUTE / divider) < 10000 / divider:
+        if abs(float_or_infinite - NOTWANTTOEXECUTE / divider) < 10000 / divider:
             return lang_to_inf_dict[lang]
         else:
-            return "%.1f" % float_or_Infinite
+            return "%.1f" % float_or_infinite
 
     def _parse_list_info_into_string(self, li: List[Tuple[str, str]]) -> str:
         return "\n".join([":".join([i[0], "".join([str(j) for j in i[1:]])]) for i in li if len(str(i[1])) > 0])
@@ -635,7 +634,7 @@ class AbstractSkill(EvaluativeGraphElement):
         else:
             return wrapper(self, name=name)
 
-    def isV(self, enhancer: 'BasicVEnhancer', use_index, upgrade_index) -> 'AbstractSkill':
+    def isV(self, enhancer: 'BasicVEnhancer', use_index: int, upgrade_index: int) -> 'AbstractSkill':
         """Speed hack
         """
         enhancer.add_v_skill(self, use_index, upgrade_index)
@@ -661,14 +660,14 @@ class BuffSkill(AbstractSkill):
 
     """
 
-    def __init__(self, name: str, delay: int, remain: int, cooltime: int = 0, crit: float = 0, crit_damage: float = 0,
-                 pdamage: float = 0, stat_main: int = 0, stat_sub: int = 0, pstat_main: int = 0, pstat_sub: int = 0,
-                 boss_pdamage: float = 0, pdamage_indep: float = 0, armor_ignore: float = 0, patt: int = 0, att: int = 0,
+    def __init__(self, name: str, delay: float, remain: float, cooltime: float = 0, crit: float = 0, crit_damage: float = 0,
+                 pdamage: float = 0, stat_main: float = 0, stat_sub: float = 0, pstat_main: float = 0, pstat_sub: float = 0,
+                 boss_pdamage: float = 0, pdamage_indep: float = 0, armor_ignore: float = 0, patt: float = 0, att: float = 0,
                  stat_main_fixed: int = 0, stat_sub_fixed: int = 0, rem: bool = False, red: bool = False) -> None:
         super(BuffSkill, self).__init__(name, delay, cooltime=cooltime, rem=rem, red=red)
         with self.dynamic_range():
             self.spec: str = "buff"
-            self.remain: int = remain
+            self.remain: float = remain
             # Build StaticModifier from given arguments
             self.static_character_modifier: CharacterModifier = \
                 CharacterModifier(crit=crit, crit_damage=crit_damage, pdamage=pdamage, pdamage_indep=pdamage_indep,
@@ -711,13 +710,13 @@ class DamageSkill(AbstractSkill):
       .get_modifier() : returns CharacterModifier for Character.
     """
 
-    def __init__(self, name: str, delay: int, damage: int, hit: int, cooltime: int = 0,
+    def __init__(self, name: str, delay: float, damage: float, hit: float, cooltime: float = 0,
                  modifier: CharacterModifier = CharacterModifier(), red: bool = False) -> None:
         super(DamageSkill, self).__init__(name, delay, cooltime=cooltime, rem=False, red=red)
         with self.dynamic_range():
             self.spec: str = "damage"
-            self.damage: int = damage
-            self.hit: int = hit
+            self.damage: float = damage
+            self.hit: float = hit
             self._static_skill_modifier: CharacterModifier = modifier  # Issue : Will we need this option really?
 
     def _get_explanation_internal(self, detail: bool = False, lang: str = "ko", expl_level: int = 2) -> str:
@@ -754,15 +753,15 @@ class DamageSkill(AbstractSkill):
 
 # TODO: optimize this factor more constructively
 class SummonSkill(AbstractSkill):
-    def __init__(self, name: str, summondelay: int, delay: int, damage: int, hit: int, remain: int, cooltime: int = 0,
+    def __init__(self, name: str, summondelay: float, delay: float, damage: float, hit: float, remain: float, cooltime: float = 0,
                  modifier: CharacterModifier = CharacterModifier(), rem: bool = False, red: bool = False) -> None:
         super(SummonSkill, self).__init__(name, delay, cooltime=cooltime, rem=rem, red=red)
         with self.dynamic_range():
             self.spec: str = "summon"
-            self.summondelay: int = summondelay
-            self.damage: int = damage
-            self.hit: int = hit
-            self.remain: int = remain
+            self.summondelay: float = summondelay
+            self.damage: float = damage
+            self.hit: float = hit
+            self.remain: float = remain
             self._static_skill_modifier: CharacterModifier = modifier
 
     def _get_explanation_internal(self, detail: bool = False, lang: str = "ko", expl_level: int = 2) -> str:
@@ -803,8 +802,8 @@ class SummonSkill(AbstractSkill):
 
 
 class DotSkill(SummonSkill):
-    def __init__(self, name: str, summondelay: int, delay: int, damage: int, hit: int,
-                 remain: int, cooltime: int = 0, red: bool = False) -> None:
+    def __init__(self, name: str, summondelay: float, delay: float, damage: float, hit: float,
+                 remain: float, cooltime: float = 0, red: bool = False) -> None:
         super(DotSkill, self).__init__(name, summondelay, delay, damage, hit, remain, cooltime=cooltime, red=red)
         self.spec: str = "dot"
 
@@ -872,13 +871,13 @@ class ContextReferringTask(Task):
 
 
 class ResultObject:
-    def __init__(self, delay: int, mdf: CharacterModifier, damage: int, hit: int, sname: str, spec: str,
+    def __init__(self, delay: float, mdf: CharacterModifier, damage: float, hit: float, sname: str, spec: str,
                  kwargs={}, cascade=[], callbacks: 'List[Callback]' = []) -> None:
         """Result object must be static; alway to be ensure it is revealed.
         """
-        self.delay: int = DynamicVariableOperation.reveal_argument(delay)
-        self.damage: int = DynamicVariableOperation.reveal_argument(damage)
-        self.hit: int = DynamicVariableOperation.reveal_argument(hit)
+        self.delay: float = DynamicVariableOperation.reveal_argument(delay)
+        self.damage: float = DynamicVariableOperation.reveal_argument(damage)
+        self.hit: float = DynamicVariableOperation.reveal_argument(hit)
         self.mdf: CharacterModifier = DynamicVariableOperation.reveal_argument(mdf)
         self.sname: str = DynamicVariableOperation.reveal_argument(sname)
         self.spec: str = DynamicVariableOperation.reveal_argument(spec)  # buff, deal, summon
@@ -1022,7 +1021,7 @@ class GraphElement:
         elif lang == "en":
             return "Type:graph Element"
 
-    def _use(self, **kwargs) -> ResultObject:
+    def _use(self) -> ResultObject:
         """
         해당 그래프 요소를 작동시키고자 할 때 수행해야 하는 작업을 정의합니다.
 
@@ -1149,7 +1148,7 @@ class GraphElement:
 
 
 class TaskHolder(GraphElement):
-    """This class only holds given el(Does not modify any property of el).
+    """This class only holds given task(Does not modify any property of task).
     주어진 Task를 수행하는 ``GraphElement`` 입니다. 단순히 ``Task`` 를 감싸기 위한 용도로 사용합니다.
     """
 
@@ -1163,7 +1162,7 @@ class TaskHolder(GraphElement):
         if lang == "ko":
             return "%s" % self._id
         elif lang == "en":
-            return "type:el holder\nname:%s" % self._id
+            return "type:task holder\nname:%s" % self._id
 
     def build_task(self, skill_modifier: SkillModifier, **kwargs) -> Task:
         task = self._taskholder.copy()
@@ -1316,7 +1315,7 @@ class ConstraintElement(GraphElement):
     def check(self) -> bool:
         return self._ftn()
 
-    def build_task(self, **kwargs) -> None:
+    def build_task(self) -> None:
         raise NotImplementedError("ConstraintElement must not builded.")
 
     def get_link(self) -> List[Tuple[GraphElement, GraphElement, str]]:
@@ -1340,8 +1339,8 @@ class AbstractSkillWrapper(GraphElement):
             super(AbstractSkillWrapper, self).__init__(name)
         self.set_flag(self.Flag_Skill)
         self.skill: AbstractSkill = skill
-        self.cooltime_left: int = 0  # indicate how much time left to use this wrapper again.
-        self.time_left: int = 0  # indicate how much time left for continuing this wrapper.
+        self.cooltimeLeft: float = 0  # indicate how much time left to use this wrapper again.
+        self.timeLeft: float = 0  # indicate how much time left for continuing this wrapper.
         self.constraint: List[ConstraintElement] = []
         self._result_object_cache: ResultObject = ResultObject(0, CharacterModifier(), 0, 0, sname=self.skill.name, spec='graph control')
         if DynamicVariableOperation.reveal_argument(self.skill.cooltime) == NOTWANTTOEXECUTE:
@@ -1420,7 +1419,7 @@ class AbstractSkillWrapper(GraphElement):
         ----------
         time : float(ms)
         """
-        self.cooltime_left -= time
+        self.cooltimeLeft -= time
         return self._result_object_cache
 
     def reduce_cooltime_p(self, p: float) -> ResultObject:
@@ -1431,7 +1430,7 @@ class AbstractSkillWrapper(GraphElement):
         p : float
             0에서 1 사이의 값이어야 합니다. 1일 경우 모든 쿨타임이 제거됩니다. 0일 경우 아무 일도 일어나지 않습니다.
         """
-        self.cooltime_left -= self.cooltime_left * p
+        self.cooltimeLeft -= self.cooltimeLeft * p
         return self._result_object_cache
 
     def controller(self, time: float, type_: str = 'set_disabled_and_time_left', name: str = None) -> TaskHolder:
@@ -1509,7 +1508,7 @@ class AbstractSkillWrapper(GraphElement):
         """이 ``GraphElement`` 가 실행가능한지 여부를 반환합니다.
         이 과정에서 ``constraint`` 들은 검사되지 않습니다.
         """
-        return self.cooltime_left <= 0
+        return self.cooltimeLeft <= 0
 
     def is_not_usable(self) -> bool:
         """이 ``GraphElement`` 가 실행 불가능한지 여부를 반환합니다.
@@ -1524,7 +1523,7 @@ class AbstractSkillWrapper(GraphElement):
         """이 ``GraphElement`` 가 실행되고 있는지에 대한 여부를 반환합니다.
         지속 시간이 있는 객체에 대해서만 사용합니다.
         """
-        return self.time_left > 0
+        return self.timeLeft > 0
 
     def is_not_active(self) -> bool:
         return not self.is_active()
@@ -1541,7 +1540,7 @@ class AbstractSkillWrapper(GraphElement):
             direction > 0 이면 ``time`` 보다 남은 ``cooltime`` 이 길 경우 True입니다.
             direction < 0 이면 ``time`` 보다 남은 ``cooltime`` 이 짧을 경우 True입니다.
         """
-        if (self.cooltime_left - time) * direction > 0:
+        if (self.cooltimeLeft - time) * direction > 0:
             return True
         else:
             return False
@@ -1558,7 +1557,7 @@ class AbstractSkillWrapper(GraphElement):
             direction > 0 이면 ``time`` 보다 남은 지속시간이 길 경우 True입니다.
             direction < 0 이면 ``time`` 보다 남은 지속시간이 짧을 경우 True입니다.
         """
-        if (self.time_left - time) * direction > 0:
+        if (self.timeLeft - time) * direction > 0:
             return True
         else:
             return False
@@ -1592,7 +1591,7 @@ class AbstractSkillWrapper(GraphElement):
 
         return max(cdr_applied, min(cd, 5000))  # 5초까지 감소, 단 이미 스킬쿨이 5초 아래였을 경우 그대로 사용
 
-    def get_cooltime(self) -> int:
+    def get_cooltime(self) -> float:
         return self.skill.cooltime
 
     def onEventElapsed(self, graph_element: GraphElement, elapsed_time: float) -> None:
@@ -1625,43 +1624,43 @@ class AbstractSkillWrapper(GraphElement):
 
 class BuffSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill: BuffSkill, name: str = None) -> None:
-        self._disabled_result_object_cache: ResultObject = ResultObject(0, CharacterModifier(), 0, 0, sname=skill.name, spec='graph control')
+        self._disabledResultobjectCache: ResultObject = ResultObject(0, CharacterModifier(), 0, 0, sname=skill.name, spec='graph control')
         super(BuffSkillWrapper, self).__init__(skill, name=name)
         self.set_flag(self.Flag_BuffSkill)
-        self.disabled_modifier: CharacterModifier = CharacterModifier()
-        self.modifier_invariant_flag: bool = True
-        self.unique_flag: bool = True
+        self.disabledModifier: CharacterModifier = CharacterModifier()
+        self.modifierInvariantFlag: bool = True
+        self.uniqueFlag: bool = True
         self.accessible_boss_state: int = AccessibleBossState.ALWAYS
 
     def set_enabled_and_time_left(self, time: float):
         """This function must be used carefully.. You must be sure about this skill's cooltime calculation i.e. -1
         """
-        self.time_left = time
-        self.cooltime_left = self.skill.cooltime
+        self.timeLeft = time
+        self.cooltimeLeft = self.skill.cooltime
 
         mdf = self.get_modifier()
         return ResultObject(0, mdf, 0, 0, sname=self.skill.name, spec=self.skill.spec, kwargs={"remain": time})
 
     def set_disabled(self) -> ResultObject:
-        self.time_left = 0
-        return self._disabled_result_object_cache
+        self.timeLeft = 0
+        return self._disabledResultobjectCache
 
     def set_disabled_and_time_left(self, time: float) -> ResultObject:
-        self.time_left = 0
-        self.cooltime_left = time
+        self.timeLeft = 0
+        self.cooltimeLeft = time
         if time == -1:
-            self.cooltime_left = NOTWANTTOEXECUTE
-        return self._disabled_result_object_cache
+            self.cooltimeLeft = NOTWANTTOEXECUTE
+        return self._disabledResultobjectCache
 
     def spend_time(self, time: float) -> None:  # TODO : can make this process more faster.. maybe
-        self.time_left -= time
-        self.cooltime_left -= time
+        self.timeLeft -= time
+        self.cooltimeLeft -= time
 
     def _use(self, skill_modifier: SkillModifier) -> ResultObject:
-        self.time_left = self.skill.remain * (1 + 0.01 * skill_modifier.buff_rem * self.skill.rem)
-        self.cooltime_left = self.calculate_cooltime(skill_modifier)
+        self.timeLeft = self.skill.remain * (1 + 0.01 * skill_modifier.buff_rem * self.skill.rem)
+        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         delay = self.get_delay()
-        callbacks = self.create_callbacks(duration=self.time_left)
+        callbacks = self.create_callbacks(duration=self.timeLeft)
         return ResultObject(delay,
                             CharacterModifier(),
                             0,
@@ -1671,14 +1670,14 @@ class BuffSkillWrapper(AbstractSkillWrapper):
                             kwargs={"remain": self.skill.remain * (1 + 0.01 * skill_modifier.buff_rem * self.skill.rem)},
                             callbacks=callbacks)
 
-    def get_delay(self) -> int:
+    def get_delay(self) -> float:
         return self.skill.delay
 
     def get_modifier(self) -> CharacterModifier:
         if self.is_active():
             return self.skill.get_modifier()
         else:
-            return self.disabled_modifier
+            return self.disabledModifier
 
     def get_modifier_forced(self) -> CharacterModifier:
         return self.skill.get_modifier()
@@ -1690,9 +1689,9 @@ class StackSkillWrapper(BuffSkillWrapper):
         self.stack: int = 0
         self._max: int = max_
         self._style: Optional[int] = None
-        self.modifier_invariant_flag: bool = False
+        self.modifierInvariantFlag: bool = False
 
-    def set_name_style(self, style) -> None:
+    def set_name_style(self, style: int) -> None:
         self._style = style
 
     def vary(self, d: int) -> ResultObject:
@@ -1735,16 +1734,16 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         return li
 
     def set_disabled_and_time_left(self, time: float) -> ResultObject:
-        self.cooltime_left = time
+        self.cooltimeLeft = time
         if time == -1:
-            self.cooltime_left = NOTWANTTOEXECUTE
+            self.cooltimeLeft = NOTWANTTOEXECUTE
         return ResultObject(0, CharacterModifier(), 0, 0, sname=self.skill.name, spec='graph control')
 
     def spend_time(self, time: float) -> None:
-        self.cooltime_left -= time
+        self.cooltimeLeft -= time
 
     def _use(self, skill_modifier: SkillModifier) -> ResultObject:
-        self.cooltime_left = self.calculate_cooltime(skill_modifier)
+        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         callbacks = self.create_callbacks()
         return ResultObject(self.get_delay(),
                             self.get_modifier(),
@@ -1754,13 +1753,13 @@ class DamageSkillWrapper(AbstractSkillWrapper):
                             spec=self.skill.spec,
                             callbacks=callbacks)
 
-    def get_delay(self) -> int:
+    def get_delay(self) -> float:
         return self.skill.delay
 
-    def get_damage(self) -> int:
+    def get_damage(self) -> float:
         return self.skill.damage
 
-    def get_hit(self) -> int:
+    def get_hit(self) -> float:
         return self.skill.hit
 
     def get_modifier(self) -> CharacterModifier:
@@ -1780,13 +1779,13 @@ class StackDamageSkillWrapper(DamageSkillWrapper):
         self.stack_skill: AbstractSkillWrapper = stack_skill
         self.fn = fn
 
-    def get_damage(self) -> int:
+    def get_damage(self) -> float:
         stack = self.fn(self.stack_skill)
         if stack <= 0:
             return 0
         return self.skill.damage
 
-    def get_hit(self) -> int:
+    def get_hit(self) -> float:
         stack = self.fn(self.stack_skill)
         return self.skill.hit * stack
 
@@ -1797,31 +1796,31 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self.tick: int = 0
         self.modifier: CharacterModifier = modifier
         self._runtime_modifier_list: List[Tuple[AbstractSkillWrapper, function]] = []
-        self.disabled_modifier: CharacterModifier = CharacterModifier()
-        self._on_tick: List[GraphElement] = []
-        self.unique_flag: bool = True
+        self.disabledModifier: CharacterModifier = CharacterModifier()
+        self._onTick: List[GraphElement] = []
+        self.uniqueFlag: bool = True
         self.accessible_boss_state: int = AccessibleBossState.NO_FLAG
         self.is_periodic: bool = True
 
     def get_link(self) -> List[Tuple[GraphElement, GraphElement, str]]:
         li = super(SummonSkillWrapper, self).get_link()
-        for el in self._on_tick:
+        for el in self._onTick:
             li.append((self, el, "tick"))
         for sk, _ in self._runtime_modifier_list:
             li.append((self, sk, "modifier"))
         return li
 
     def set_disabled(self) -> ResultObject:
-        self.time_left = 0
+        self.timeLeft = 0
         self.tick = 0
         return ResultObject(0, CharacterModifier(), 0, 0, sname=self.skill.name, spec='graph control')
 
     def set_disabled_and_time_left(self, time: float) -> ResultObject:
-        self.cooltime_left = time
-        self.time_left = -1
+        self.cooltimeLeft = time
+        self.timeLeft = -1
         self.tick = 0
         if time == -1:
-            self.cooltime_left = NOTWANTTOEXECUTE
+            self.cooltimeLeft = NOTWANTTOEXECUTE
         return ResultObject(0, CharacterModifier(), 0, 0, sname=self.skill.name, spec='graph control')
 
     def need_count(self) -> bool:
@@ -1831,52 +1830,52 @@ class SummonSkillWrapper(AbstractSkillWrapper):
             return False
 
     def spend_time(self, time: float) -> None:
-        self.time_left -= time
-        self.cooltime_left -= time
+        self.timeLeft -= time
+        self.cooltimeLeft -= time
         self.tick -= time
 
     # _use only alloted for start.
     def _use(self, skill_modifier: SkillModifier) -> ResultObject:
         self.tick = 0
-        self.time_left = self.skill.remain * (1 + 0.01 * skill_modifier.summon_rem * self.skill.rem)
-        self.cooltime_left = self.calculate_cooltime(skill_modifier)
-        callbacks = self.create_callbacks(duration=self.time_left)
+        self.timeLeft = self.skill.remain * (1 + 0.01 * skill_modifier.summon_rem * self.skill.rem)
+        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
+        callbacks = self.create_callbacks(duration=self.timeLeft)
         return ResultObject(self.get_summon_delay(),
-                            self.disabled_modifier,
+                            self.disabledModifier,
                             0,
                             0,
                             sname=self.skill.name,
                             spec=self.skill.spec,
                             callbacks=callbacks)
 
-    def _use_tick(self) -> ResultObject:
+    def _useTick(self) -> ResultObject:
         if self.is_active() and self.tick <= 0:
             self.tick += self.get_delay()
             return ResultObject(0, self.get_modifier(), self.get_damage(), self.get_hit(), sname=self.skill.name, spec=self.skill.spec)
         else:
-            return ResultObject(0, self.disabled_modifier, 0, 0, sname=self.skill.name, spec=self.skill.spec)
+            return ResultObject(0, self.disabledModifier, 0, 0, sname=self.skill.name, spec=self.skill.spec)
 
     def build_periodic_task(self, skill_modifier: SkillModifier) -> Task:
-        task = Task(self, self._use_tick)
-        task.onAfter([el.build_task(skill_modifier) for el in self._on_tick])
+        task = Task(self, self._useTick)
+        task.onAfter([el.build_task(skill_modifier) for el in self._onTick])
         return task
 
     def onTick(self, el: GraphElement) -> None:
-        self._on_tick.append(el)
+        self._onTick.append(el)
 
     def onTicks(self, ellist: List[GraphElement]) -> None:
-        self._on_tick += ellist
+        self._onTick += ellist
 
-    def get_summon_delay(self) -> int:
+    def get_summon_delay(self) -> float:
         return self.skill.summondelay
 
-    def get_delay(self) -> int:
+    def get_delay(self) -> float:
         return self.skill.delay
 
-    def get_damage(self) -> int:
+    def get_damage(self) -> float:
         return self.skill.damage
 
-    def get_hit(self) -> int:
+    def get_hit(self) -> float:
         return self.skill.hit
 
     def get_modifier(self) -> CharacterModifier:
@@ -1893,12 +1892,12 @@ class Simulator(object):
     __slots__ = 'scheduler', 'character', 'analytics', '_modifier_cache_and_time', '_default_modifier'
 
     def __init__(self, scheduler: 'AdvancedGraphScheduler', chtr: 'AbstractCharacter', analytics: 'Analytics'):
-        self.scheduler: AdvancedGraphScheduler = scheduler
-        self.character: AbstractCharacter = chtr
-        self.analytics: Analytics = analytics
+        self.scheduler: 'AdvancedGraphScheduler' = scheduler
+        self.character: 'AbstractCharacter' = chtr
+        self.analytics: 'Analytics' = analytics
 
         # TODO: Not used attribute.
-        # Buff modifier를 시간별도 캐싱하여 연산량을 줄입니다.
+        # Buff modifier를 시간별로 캐싱하여 연산량을 줄입니다.
         self._modifier_cache_and_time: List[Union[int, CharacterModifier]] = [-1, CharacterModifier()]
 
         self._default_modifier: CharacterModifier = CharacterModifier()
@@ -1932,7 +1931,7 @@ class Simulator(object):
     def getTotalDamage(self) -> float:
         return self.analytics.total_damage
 
-    def start_simulation(self, time: int) -> None:
+    def start_simulation(self, time: float) -> None:
         self._modifier_cache_and_time = [-1, CharacterModifier()]
         self.scheduler.initialize(time)
         self.analytics.set_total_runtime(time)
@@ -1993,23 +1992,23 @@ class Simulator(object):
 
 class Analytics:
     def __init__(self, printFlag: bool = False) -> None:
-        self.total_time: float = 0
+        self.totalTime: float = 0
         self.total_damage: float = 0
         self.total_damage_without_restriction: float = 0
-        self.log_list: List[Dict[str, Any]] = []
+        self.logList: List[Dict[str, Any]] = []
         self.meta_save = {}  # TODO: Not used attribute.
         self.print_calculation_progress: bool = printFlag
-        self.skill_list: Dict[str, Dict] = {}
+        self.skillList: Dict[str, Dict] = {}
         self.chtrmdf: CharacterModifier = CharacterModifier()
 
     def set_total_runtime(self, time: float) -> None:
-        self.total_time = time
+        self.totalTime = time
 
     def analyze(self, chtr: 'AbstractCharacter', result: ResultObject) -> None:
         self.add_damage_from_result_with_log(chtr.get_modifier(), result)
 
     def get_skill_info(self) -> Dict[str, Any]:
-        return {"dict": self.skill_list, "li": list(self.skill_list.keys())}
+        return {"dict": self.skillList, "li": list(self.skillList.keys())}
 
     def get_metadata(self, mod: CharacterModifier) -> Dict[str, float]:
         meta = {"stat_main": mod.stat_main,
@@ -2030,14 +2029,14 @@ class Analytics:
         return meta
 
     def statistics(self) -> None:
-        print("Total damage %.1f in %d second" % (self.total_damage, self.total_time / 1000))
+        print("Total damage %.1f in %d second" % (self.total_damage, self.totalTime / 1000))
         print(f"Loss {self.total_damage_without_restriction - self.total_damage:.1f}")
 
-        def getSkillNames(log_list) -> List[str]:
-            return sorted(set(map(lambda log: log["result"].sname, log_list)))
+        def getSkillNames(logList) -> List[str]:
+            return sorted(set(map(lambda log: log["result"].sname, logList)))
 
         print("\n===Buff Skills===")
-        buffList = list(filter(lambda log: log["result"].spec == "buff", self.log_list))
+        buffList = list(filter(lambda log: log["result"].spec == "buff", self.logList))
         names = getSkillNames(buffList)
         for name in names:
             skillLog = list(filter(lambda log: log["result"].sname == name, buffList))
@@ -2048,7 +2047,7 @@ class Analytics:
         shareDict = defaultdict(int)
 
         print("\n===Damage Skills===")
-        damageList = list(filter(lambda log: log["result"].spec == "damage", self.log_list))
+        damageList = list(filter(lambda log: log["result"].spec == "damage", self.logList))
         names = getSkillNames(damageList)
         for name in names:
             skillLog = list(filter(lambda log: log["result"].sname == name, damageList))
@@ -2090,7 +2089,7 @@ class Analytics:
 
     def skill_share(self) -> Dict[str, int]:
         damageDict = {}
-        for log in self.log_list:
+        for log in self.logList:
             if log["deal"] > 0:
                 if log["result"].sname not in damageDict:
                     damageDict[log["result"].sname] = 0
@@ -2100,7 +2099,7 @@ class Analytics:
 
     def get_results(self) -> List[Dict[str, Any]]:
         retli = []
-        for log in self.log_list:
+        for log in self.logList:
             retli.append({"time": log["time"],
                           "sname": log["result"].sname,
                           "deal": log["deal"],
@@ -2140,11 +2139,11 @@ class Analytics:
                 result.time, result.sname, deal, free_deal - deal, result.delay, result.spec))
             print(f'{result.mdf}')
         if deal > 0:
-            self.log_list.append({"result": result, "time": result.time, "deal": deal, "loss": free_deal - deal})
+            self.logList.append({"result": result, "time": result.time, "deal": deal, "loss": free_deal - deal})
         else:
-            self.log_list.append({"result": result, "time": result.time, "deal": 0, "loss": 0})
-        if result.sname not in self.skill_list:
-            self.skill_list[result.sname] = {}
+            self.logList.append({"result": result, "time": result.time, "deal": 0, "loss": 0})
+        if result.sname not in self.skillList:
+            self.skillList[result.sname] = {}
 
     def deduce_increment_of_temporal_modifier(self, continue_time_length: int, temporal_modifier: CharacterModifier,
                                               search_time_scan_rate: int = 1000) -> Dict[str, float]:
@@ -2152,13 +2151,13 @@ class Analytics:
             hoping_rate = hoping_rate_init
             time_index = 0
             while True:
-                if time_index >= len(self.log_list):
-                    time_index = len(self.log_list) - 1
+                if time_index >= len(self.logList):
+                    time_index = len(self.logList) - 1
                     break
-                if self.log_list[time_index]["time"] < time:
+                if self.logList[time_index]["time"] < time:
                     time_index += hoping_rate
                 else:
-                    if self.log_list[time_index - 1]["time"] <= time:
+                    if self.logList[time_index - 1]["time"] <= time:
                         break
                     else:
                         hoping_rate = max(1, hoping_rate // 2)
@@ -2169,21 +2168,21 @@ class Analytics:
 
             return time_index
 
-        def get_damage_sum_in_time_interval(time_start: int, time_length: int) -> int:
+        def get_damage_sum_in_time_interval(time_start: float, time_length: float) -> float:
             damage_sum = 0
             time_log_index = max(0, search_time_index(time_start))
             # print("start_time_index", time_log_index, time_start)
 
-            while time_start <= self.log_list[time_log_index]["time"] <= time_start + time_length:
-                damage_sum += self.log_list[time_log_index]["deal"]
+            while time_start <= self.logList[time_log_index]["time"] <= time_start + time_length:
+                damage_sum += self.logList[time_log_index]["deal"]
                 time_log_index += 1
-                if time_log_index >= len(self.log_list):
+                if time_log_index >= len(self.logList):
                     break
 
             for t in range(time_log_index, time_log_index + 20):
-                if t < len(self.log_list):
-                    if time_start + time_length >= self.log_list[t]["time"] >= time_start:
-                        damage_sum += self.log_list[time_log_index]["deal"]
+                if t < len(self.logList):
+                    if time_start + time_length >= self.logList[t]["time"] >= time_start:
+                        damage_sum += self.logList[time_log_index]["deal"]
 
             # print("end_time_index", time_log_index)
 
@@ -2194,13 +2193,12 @@ class Analytics:
 
         # scanning algorithm
         maximal_time_loc = 0
-        damage_log_queue = [get_damage_sum_in_time_interval(i * search_time_scan_rate, search_time_scan_rate) for i in
-                            range(continue_time_length // search_time_scan_rate)]
+        damage_log_queue = [get_damage_sum_in_time_interval(i * search_time_scan_rate, search_time_scan_rate) for i in range(continue_time_length // search_time_scan_rate)]
         maximal_damage = sum(damage_log_queue)
 
         scanning_end_time = (continue_time_length // search_time_scan_rate) * search_time_scan_rate
 
-        while scanning_end_time < self.total_time:
+        while scanning_end_time < self.totalTime:
             damage_log_queue.pop(0)
             damage_log_queue.append(get_damage_sum_in_time_interval(scanning_end_time, search_time_scan_rate))
             if sum(damage_log_queue) > maximal_damage:
@@ -2211,7 +2209,7 @@ class Analytics:
         # Now we know when damage is maximized. We now apply our modifier into this.
 
         total_damage = 0
-        for log in self.log_list:
+        for log in self.logList:
             result = log["result"]
             if result.damage > 0:
                 mdf = self.chtrmdf + result.mdf
@@ -2220,8 +2218,7 @@ class Analytics:
                 deal, loss = mdf.calculate_damage(result.damage, result.hit, result.spec)
                 total_damage += deal
 
-        simple_increment = ((self.chtrmdf + temporal_modifier).get_damage_factor() / (
-            self.chtrmdf.get_damage_factor()) - 1) * (continue_time_length / self.total_time)
+        simple_increment = ((self.chtrmdf + temporal_modifier).get_damage_factor() / (self.chtrmdf.get_damage_factor()) - 1) * (continue_time_length / self.totalTime)
 
         return {"damage": (total_damage - self.total_damage) * (60000 / self.total_time),
                 "increment": (total_damage / self.total_damage) - 1, "simple_increment": simple_increment}
@@ -2232,14 +2229,14 @@ class BasicVEnhancer(AbstractVEnhancer):
         #### value list ####
         self.enhance_list: List[int] = []
         self.v_skill_list: List[int] = []
-        self.core_float = None  # TODO: Not used attribute.
+        self.core_number = None  # TODO: Not used attribute.
 
         #### analytics list ####
         self.enhancer_priority: List[List[AbstractSkill]] = []  # 5차의 강화스킬 순서
         self.v_skill_priority: List[Dict[str, Any]] = []  # 5차의 사용스킬 순서
 
     def get_priority(self) -> Dict[str, List[Dict[str, Any]]]:
-        v_skill_list_sorted: List[List[Dict[str, Any]]] = [[] for i in range(20)]  # 20 is magic float
+        v_skill_list_sorted: List[List[Dict[str, Any]]] = [[] for i in range(20)]  # 20 is magic number
         for vskill in self.v_skill_priority:
             v_skill_list_sorted[vskill["useIdx"]].append(vskill)
 
@@ -2276,8 +2273,7 @@ class BasicVEnhancer(AbstractVEnhancer):
         return retval
 
     def __repr__(self) -> str:
-        return "VEnhancer :: dpmModule.jobs.template\nVEnhance : %s\nVSkill : %s" % (
-        str(self.enhance_list), str(self.v_skill_list))
+        return "VEnhancer :: dpmModule.jobs.template\nVEnhance : %s\nVSkill : %s" % (str(self.enhance_list), str(self.v_skill_list))
 
 
 class DirectVBuilder(AbstractVBuilder):

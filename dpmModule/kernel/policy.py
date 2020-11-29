@@ -202,7 +202,7 @@ class AdvancedGraphScheduler:
         # For faster calculation, we will pre- calculate invariant buff skills.
         for __, (buffwrp, _) in self.graph.get_element_and_task().items():
             if isinstance(buffwrp, BuffSkillWrapper):
-                if buffwrp.skill.cooltime == 0 and buffwrp.modifier_invariant_flag:
+                if buffwrp.skill.cooltime == 0 and buffwrp.modifierInvariantFlag:
                     # print(buffwrp.skill.name)  #캐싱되는 버프를 확인하기 위해 이 주석부분을 활성화 합니다.
                     self._buffMdfPreCalc = self._buffMdfPreCalc + buffwrp.get_modifier_forced()
                     st = False

@@ -24,7 +24,7 @@ class UniquenessRule(AbstractRule):
                reference_graph.filter_elements(lambda x: isinstance(x, SummonSkillWrapper))
 
     def check(self, caller: AbstractSkillWrapper, reference_graph: NameIndexedGraph, context=None) -> bool:
-        if caller.unique_flag:
+        if caller.uniqueFlag:
             return not caller.is_active()
         else:
             return True
@@ -55,7 +55,7 @@ class ReservationRule(AbstractRule):
 
 
 class SynchronizeRule(AbstractRule):
-    def __init__(self, target_element: str, timer_element: str, time, direction=1):
+    def __init__(self, target_element: str, timer_element: str, time: float, direction: int = 1):
         self._target_element = target_element
         self._timer_element = timer_element
         self.time: float = time
