@@ -173,13 +173,6 @@ class JobGenerator:
     .jobtype : str, int, dex, luk. 사용하는 스탯의 종류를 명시해야 합니다. You must specify which type of stat this job uses.
     .vEnhanceNum : 5차 강화 스킬의 총 개수입니다.
     .vSkillNum : 5차 스킬의 총 개수입니다.
-
-    from . import globalSkill
-    self.preEmptiveSkills = 2
-    globalSkill.maple_heros(chtr.level, combat_level=combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster()
-    globalSkill.soul_contract()
-
-    미하일까지..
     """
 
     # TODO: vEhc is not used.
@@ -279,7 +272,7 @@ class JobGenerator:
     def package(self, chtr: ItemedCharacter, v_builder: AbstractVBuilder,
                 vlevel: int = 0,
                 ulevel: int = 4000,
-                weaponstat: List[int] =[3, 6],
+                weaponstat: List[int] = [3, 6],
                 log: bool = False,
                 vEnhanceGenerateFlag: bool = None,
                 ability_grade: Ability_grade = Ability_grade(4, 1),
