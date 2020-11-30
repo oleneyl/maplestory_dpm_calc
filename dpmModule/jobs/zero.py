@@ -286,9 +286,9 @@ class JobGenerator(ck.JobGenerator):
                         MoonStrikeLink, PierceStrike, MoonStrikeLink, PierceStrike, AdvancedPowerStompTAG]
 
         # 문스(0ms) - 피어스(330ms) - 쉐스(690ms) - 문스(1020ms) - 피어스(1350ms) - 쉐스(1710ms) - 문스(2040ms) - 피어스(2370ms) - 쉐스(2730ms) - 문스(3060ms) - 3450ms
-        # 어퍼(60ms) - 어파스(330ms) -      어퍼(900ms) -          어파스(1350ms) -            어퍼(1920ms)    - 어파스(2370ms)               - 2940ms -   3360ms
+        # 어퍼(60ms) - 어파스(330ms) -      어퍼(900ms) -          어파스(1350ms) -            어퍼(1920ms)    - 어파스(2370ms)               - 2940ms -   3330ms
         # 2940ms: 어파스 딜레이 종료
-        # 3360ms: 어파스 딜레이가 끝났어도 충격파 발생해야 태그 가능
+        # 3330ms: 어파스 딜레이가 끝났어도 충격파 발생해야 태그 가능 (2370 + 960)
         AlphaCombo = [SetAlpha, MoonStrikeLink, UpperSlashTAG, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike,
                         MoonStrikeLink, UpperSlashTAG, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike,
                         MoonStrikeLink, UpperSlashTAG, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike,
