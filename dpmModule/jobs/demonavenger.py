@@ -29,15 +29,9 @@ class JobGenerator(ck.JobGenerator):
     
     def get_ruleset(self):
         '''딜 사이클 정리
-        어웨이크닝 ON
-        데몬 슬래시 + 데빌 크라이(이블 토쳐 유지)
-        어웨이크닝 OFF
-        데몬 임팩트 + 서버러스 + 데몬 슬래시 1타(리메인타임)
-
-        나머지는 알아서 시전
         '''
         ruleset = RuleSet()
-        ruleset.add_rule(InactiveRule('디멘션 소드 (평딜)', '데모닉 포티튜드'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('디멘션 소드 (평딜)', '데모닉 포티튜드'), RuleSet.BASE)
         return ruleset
     
     def get_modifier_optimization_hint(self):
@@ -85,6 +79,8 @@ class JobGenerator(ck.JobGenerator):
         
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
+        FRENZY_STACK = 2    # 중첩 수
+
         ######   Skill   ######
 
         ### Buff skills ###
@@ -128,7 +124,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 초당 10.8타 가정
         # http://www.inven.co.kr/board/maple/2304/23974
-        FRENZY_STACK = 2    # 중첩 수
+
         FrenzyDOT = core.SummonSkill("프렌지 장판", 0, 1000/10.8, 300 + 8 * vEhc.getV(0, 0), FRENZY_STACK, 99999999).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         # 블피 (즉시 시전)
@@ -137,7 +133,7 @@ class JobGenerator(ck.JobGenerator):
         # 평딜 기준
         # 참고자료: https://blog.naver.com/oe135/221372243858
         DimensionSword = core.SummonSkill("디멘션 소드 (평딜)", 660, 3000, 1250+14*vEhc.getV(0,0), 8, 40*1000, cooltime = 120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
-        #DimensionSwordReuse = core.SummonSkill("디멘션 소드 (극딜)", 660, 210, 300+vEhc.getV(0,0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        DimensionSwordReuse = core.SummonSkill("디멘션 소드 (극딜)", 660, 210, 300+vEhc.getV(0,0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
         
         # 기본 4000ms
         # 엑큐 2번당 발동하도록 조정
@@ -160,11 +156,10 @@ class JobGenerator(ck.JobGenerator):
 
         BasicAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
         BasicAttack.onAfter(core.OptionalElement(ReleaseOverload.is_active, ExecutionExceed, ReleaseOverload))
-        Execution_1.onAfter(Execution_2)
-        ReleaseOverload.onBefore(Execution_1)
+        ReleaseOverload.onAfter(Execution_1)
+        ReleaseOverload.onAfter(Execution_2)
 
         RevenantHitOpt = core.OptionalElement(lambda : Revenant.is_active() and RevenantHit.is_available(), RevenantHit, name = "레버넌트 타격 여부 확인")
-        ExecutionExceed.onAfter(RevenantHitOpt)
         RevenantHit.protect_from_running()
 
         for sk in [Execution_0, Execution_1, Execution_2, Execution_3, ExecutionExceed]:
