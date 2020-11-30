@@ -25,7 +25,6 @@ class AbstractCharacter:
         # Initialize Items
         self.level: int = level
         self.base_modifier: ExMDF = ExMDF(stat_main=18 + level * 5, stat_sub=4, crit=5)
-        self.itemlist: Dict[str, Optional[Item]] = {}
 
         self.about: str = ""
         self.add_summary("레벨 %d" % level)
@@ -73,31 +72,11 @@ class AbstractCharacter:
     def get_static_modifier(self) -> CharacterModifier:
         return self.base_modifier.degenerate()
 
-    def remove_item_modifier(self, item: Item) -> None:
-        mdf = item.get_modifier()
-        self.base_modifier = self.base_modifier - mdf
-
-    def add_item_modifier(self, item: Item) -> None:
-        mdf = item.get_modifier()
-        self.base_modifier = self.base_modifier + mdf
-
-    def set_items(self, item_dict: Dict[str, Item]) -> None:
-        keys = ["head", "glove", "top", "bottom", "shoes", "cloak",
-                "eye", "face", "ear", "belt", "ring1", "ring2", "ring3", "ring4",
-                "shoulder", "pendant1", "pendant2", "pocket", "badge",
-                "weapon", "subweapon", "emblem", "medal", "heart", "title", "pet"]
-
-        for key in keys:
-            item = item_dict[key]
-            if item is None:
-                raise TypeError(key + " item is missing")
-            self.itemlist[key] = item_dict[key]
-            self.add_item_modifier(item_dict[key])
-
 
 class ItemedCharacter(AbstractCharacter):
     def __init__(self, level=230) -> None:
         super(ItemedCharacter, self).__init__(level)
+        self.itemlist: Dict[str, Optional[Item]] = {}
 
         # 6 items for armor
         self.itemlist["head"] = None
@@ -135,6 +114,27 @@ class ItemedCharacter(AbstractCharacter):
         self.itemlist["heart"] = None
         self.itemlist["title"] = None
         self.itemlist["pet"] = None
+
+    def remove_item_modifier(self, item: Item) -> None:
+        mdf = item.get_modifier()
+        self.base_modifier = self.base_modifier - mdf
+
+    def add_item_modifier(self, item: Item) -> None:
+        mdf = item.get_modifier()
+        self.base_modifier = self.base_modifier + mdf
+
+    def set_items(self, item_dict: Dict[str, Item]) -> None:
+        keys = ["head", "glove", "top", "bottom", "shoes", "cloak",
+                "eye", "face", "ear", "belt", "ring1", "ring2", "ring3", "ring4",
+                "shoulder", "pendant1", "pendant2", "pocket", "badge",
+                "weapon", "subweapon", "emblem", "medal", "heart", "title", "pet"]
+
+        for key in keys:
+            item = item_dict[key]
+            if item is None:
+                raise TypeError(key + " item is missing")
+            self.itemlist[key] = item_dict[key]
+            self.add_item_modifier(item_dict[key])
 
     def set_weapon_potential(self, weapon_potential: Dict[str, List[ExMDF]]) -> None:
         for item_id in ["weapon", "subweapon", "emblem"]:
