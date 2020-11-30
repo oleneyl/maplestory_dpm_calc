@@ -142,7 +142,7 @@ class JobGenerator(ck.JobGenerator):
         RevenantHit = core.DamageSkill("레버넌트(분노의 가시)", 0, 300 + vEhc.getV(0,0) * 12, 9, cooltime = REVENANT_COOLTIME, modifier = core.CharacterModifier(armor_ignore = 30), red = False).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         
         # 데몬 5차 공용
-        CallMastema, MastemaClaw = demon.CallMastemaWrapper(vEhc, 0, 0)
+        CallMastema= demon.CallMastemaWrapper(vEhc, 0, 0)
         AnotherGoddessBuff, AnotherVoid = demon.AnotherWorldWrapper(vEhc, 0, 0)
 
         ######   Skill Wrapper   ######
@@ -177,7 +177,7 @@ class JobGenerator(ck.JobGenerator):
         return(BasicAttack,
                [globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     FrenzyDOT, Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
-                    globalSkill.soul_contract(), Revenant, RevenantHit, CallMastema, MastemaClaw, AnotherGoddessBuff, AnotherVoid] +\
+                    globalSkill.soul_contract(), Revenant, RevenantHit, CallMastema, AnotherGoddessBuff, AnotherVoid] +\
                 [ShieldChasing] +\
                 [MirrorBreak, MirrorSpider, DimensionSword, DemonicBlast] +\
                 [BasicAttack])

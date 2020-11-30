@@ -110,8 +110,7 @@ class JobGenerator(ck.JobGenerator):
         Cerberus = core.DamageSkill("서버러스", 690, 450, 6, cooltime = 5000, modifier = core.CharacterModifier(boss_pdamage = 50, armor_ignore = 50)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)#포스50 추가흡수
         DemonFortitude = core.BuffSkill("데몬 포티튜드", 0, 60000, cooltime = 120000).wrap(core.BuffSkillWrapper)
             
-        CallMastema, MastemaClaw = demon.CallMastemaWrapper(vEhc, 4, 4)
-        #CallMastemaAnother = core.SummonSkill("콜 마스테마+", 0, ).wrap(core.BuffSkillWrapper)    #러블리 테리토리..데미지 없음.
+        CallMastema = demon.CallMastemaWrapper(vEhc, 4, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         DemonAwakning = core.BuffSkill("데몬 어웨이크닝", 1110, (35 + vEhc.getV(0,0))*1000, cooltime = 120 * 1000, red=True, crit = (50 + int(0.5*vEhc.getV(0,0)))).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
@@ -173,5 +172,5 @@ class JobGenerator(ck.JobGenerator):
                     Booster, DemonSlashRemainTime, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
                     *demon.AnotherWorldWrapper(vEhc, 0, 0), globalSkill.soul_contract()] +\
                 [Cerberus, DevilCry, DemonSlash1, SpiritOfRageEnd] +\
-                [MetamorphosisSummon, CallMastema, MastemaClaw, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_, DemonBaneInit, MirrorBreak, MirrorSpider] +\
+                [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_, DemonBaneInit, MirrorBreak, MirrorSpider] +\
                 [BasicAttackWrapper])
