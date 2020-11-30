@@ -193,6 +193,9 @@ class JobGenerator(ck.JobGenerator):
         DarkGenesis.onAfter(ReduceDeath)
         ReaperScythe.onAfter(ReduceDeath)
         DarkLightning.onAfter(ReduceDeath)
+        BlackMagicAlter.onTick(ReduceDeath)
+        GrimReaper.onTick(ReduceDeath)
+        AbyssyalDarkLightning.onAfter(ReduceDeath)
         Death.add_runtime_modifier(MasterOfDeath, lambda sk: core.CharacterModifier(pdamage_indep = 50 * sk.is_active()))
         
         # 배틀킹 바

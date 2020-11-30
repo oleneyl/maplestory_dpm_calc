@@ -16,7 +16,7 @@ class ShadowBatStackWrapper(core.StackSkillWrapper):
         self.stack = 0
         self.batQueue = []
         self.currentTime = 0
-        super(ShadowBatStackWrapper, self).__init__(skill, 5)
+        super(ShadowBatStackWrapper, self).__init__(skill, self.MAX_BAT)
         
     def _add_throw(self):
         '''
@@ -41,7 +41,7 @@ class ShadowBatStackWrapper(core.StackSkillWrapper):
         self.currentTime += time
         batQueue = [x for x in self.batQueue if x + self.BAT_SUMMON_DELAY > self.currentTime]
         summonedBat = len(self.batQueue) - len(batQueue)
-        self.stack = min(self.stack + summonedBat, 5)
+        self.stack = min(self.stack + summonedBat, self.MAX_BAT)
         self.batQueue = batQueue
         super(ShadowBatStackWrapper, self).spend_time(time)
 
