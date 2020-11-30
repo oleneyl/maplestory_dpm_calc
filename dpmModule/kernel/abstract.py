@@ -11,14 +11,21 @@ user who wants to inspect whole feature of package.
 *******************************
 """
 
-from typing import Any, Dict, List, Tuple, Union
+from __future__ import annotations
+from typing import Any, Dict, List, Tuple, Union, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .core import GraphElement, AbstractSkill, CharacterModifier
+    from ..character.characterKernel import AbstractCharacter, JobGenerator
+
+    Link = Tuple[GraphElement, GraphElement, str]
 
 
 class AbstractScenarioGraph:
     def build_graph(self, *args) -> None:
         raise NotImplementedError("You must Implement build_graph function to create specific graph.")
 
-    def get_single_network_information(self, graphel: 'Union[GraphElement, List[GraphElement]]',
+    def get_single_network_information(self, graphel: Union[GraphElement, List[GraphElement]],
                                        is_list: bool = False) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
         """Function get_single_network_information (param graphel : GraphElement)
         Return Network information about given graphel, as d3 - parsable dictionary element.
@@ -33,8 +40,8 @@ class AbstractScenarioGraph:
         if not is_list:
             nodes, links = self.get_network(graphel)
         else:
-            nodes: 'List[GraphElement]' = [i for i in graphel if i is not None]
-            links: 'List[Tuple[GraphElement, GraphElement, str]]' = []
+            nodes: List[GraphElement] = [i for i in graphel if i is not None]
+            links: List[Link] = []
             for el in graphel:
                 if el is not None:
                     _nds, _lns = self._get_network_recursive(el, nodes, links)
@@ -78,15 +85,15 @@ class AbstractScenarioGraph:
 
         return nodeIndex, linkIndex
 
-    def get_network(self, ancestor: 'GraphElement') -> 'Tuple[List[GraphElement], List[Tuple[GraphElement, GraphElement, str]]]':
+    def get_network(self, ancestor: GraphElement) -> Tuple[List[GraphElement], List[Link]]:
         nodes, links = self._get_network_recursive(ancestor, [ancestor], [])
         nodes.insert(0, ancestor)
         return nodes, links
 
-    def _get_network_recursive(self, ancestor: 'GraphElement', nodes: 'List[GraphElement]', links: 'List[Tuple[GraphElement, GraphElement, str]]')\
-            -> 'Tuple[List[GraphElement], List[Tuple[GraphElement, GraphElement, str]]]':
+    def _get_network_recursive(self, ancestor: GraphElement, nodes: List[GraphElement], links: List[Link])\
+            -> Tuple[List[GraphElement], List[Link]]:
         try:
-            _nodes = []
+            _nodes: List[GraphElement] = []
             _links = ancestor.get_link()
             _linksCandidate = ancestor.get_link()
         except AttributeError:
@@ -118,7 +125,7 @@ class AbstractVEnhancer:
         when enhancing.
         ''')
 
-    def get_reinforcement_with_register(self, index: int, incr, crit: bool, target: 'AbstractSkill') -> 'CharacterModifier':
+    def get_reinforcement_with_register(self, index: int, incr, crit: bool, target: AbstractSkill) -> CharacterModifier:
         raise NotImplementedError('''get_reinforcement_with_register must return CharacterModifier, with registering given skill
         as given priority, with appropriate Modifier.
         ''')
@@ -135,7 +142,7 @@ class AbstractVBuilder:
     def __init__(self) -> None:
         pass
 
-    def build_enhancer(self, character: 'AbstractCharacter', generator: 'JobGenerator') -> AbstractVEnhancer:
+    def build_enhancer(self, character: AbstractCharacter, generator: JobGenerator) -> AbstractVEnhancer:
         raise NotImplementedError('''AbstractVBuilder.build_enhancer must return VEnhancer as as result,
         with properly handling given character and generator.
         ''')

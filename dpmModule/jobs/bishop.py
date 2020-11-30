@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
 from ..execution.rules import ConcurrentRunRule, RuleSet, SynchronizeRule, InactiveRule, DisableRule

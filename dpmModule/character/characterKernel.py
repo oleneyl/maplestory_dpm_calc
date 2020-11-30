@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import List, Dict, Any, Optional, Tuple, Union as UnionType
 from math import ceil
 from functools import reduce
@@ -421,7 +423,7 @@ class Union:
 
     # TODO :: -1을 리턴하지 않도록,
     @staticmethod
-    def get_union_object(mdf: ExMDF, ulevel: int, buffrem: Tuple[int, int], asIndex: bool = False, slot=None) -> 'Union':
+    def get_union_object(mdf: ExMDF, ulevel: int, buffrem: Tuple[int, int], asIndex: bool = False, slot=None) -> Union:
         mdf, buffrem = Union.get_union(mdf, ulevel, buffrem=buffrem, asIndex=asIndex, slot=slot)
         return Union(mdf, buffrem, -1, ulevel)
 
