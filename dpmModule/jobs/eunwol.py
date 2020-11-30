@@ -53,10 +53,8 @@ class JobGenerator(ck.JobGenerator):
 
         SpiritLink_4 = core.InformedCharacterModifier("정령 결속 4",armor_ignore = 30 + passive_level, boss_pdamage = 30 + passive_level, pdamage_indep = 15 + passive_level // 3)
         AdvancedNuckleMastery = core.InformedCharacterModifier("고급 너클 숙련",crit_damage = 20 + 2 * ceil(passive_level/3), pdamage_indep = 10 + ceil(passive_level/3))
-
-        # 약점 간파: 체력 (50 + passive_level)% 이하일 때 발동
-        WEAKNESS = False
-        WeaknessFinding = core.InformedCharacterModifier("약점 간파",crit = 25 + ceil(passive_level/2), crit_damage = (20+passive_level//3) * WEAKNESS)
+        
+        WeaknessFinding = core.InformedCharacterModifier("약점 간파",crit = 25 + ceil(passive_level/2))
 
         LoadedDicePassive = core.InformedCharacterModifier("로디드 다이스(패시브)", att = vEhc.getV(4,4) + 10)
 
@@ -67,8 +65,14 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5 * 2 * (passive_level // 3))   
-        Weakness = core.InformedCharacterModifier("약화",pdamage = 20) #디버프지만 상시발동가정    
-        return [WeaponConstant, Mastery, Weakness]
+        Weakness = core.InformedCharacterModifier("약화",pdamage = 20) #디버프지만 상시발동가정
+
+        # 약점 간파: 체력 (50 + passive_level)% 이하일 때 발동
+        WEAKNESS_BONUS = False
+
+        WeaknessFinding_Bonus = core.InformedCharacterModifier("약점 간파(보너스)", crit_damage = (20+passive_level//3) * WEAKNESS_BONUS)
+        
+        return [WeaponConstant, Mastery, Weakness, WeaknessFinding_Bonus]
         
     def get_ruleset(self):
         ruleset = RuleSet()
