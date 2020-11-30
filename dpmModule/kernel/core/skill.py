@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Type, TypeVar
 
 from ..graph import EvaluativeGraphElement
 from .constant import NOTWANTTOEXECUTE
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from ..abstract import AbstractVEnhancer
     from .skill_wrapper import AbstractSkillWrapper
     from .vmatrix import BasicVEnhancer
-
+    T = TypeVar('T', bound=AbstractSkillWrapper)
 
 class AbstractSkill(EvaluativeGraphElement):
     """Skill must have information about it's name, it's using - delay, skill using cooltime.
@@ -75,13 +75,13 @@ class AbstractSkill(EvaluativeGraphElement):
                    "expl": self.get_explanation(expl_level=expl_level)}
         return my_json
 
-    def wrap(self, wrapper: AbstractSkillWrapper, name: str = None) -> AbstractSkillWrapper:
+    def wrap(self, wrapper: Type[T], name: str = None) -> T:
         if name is None:
             return wrapper(self)
         else:
             return wrapper(self, name=name)
 
-    def isV(self, enhancer: BasicVEnhancer, use_index: int, upgrade_index: int) -> self:
+    def isV(self, enhancer: BasicVEnhancer, use_index: int, upgrade_index: int):
         """Speed hack
         """
         enhancer.add_v_skill(self, use_index, upgrade_index)
