@@ -326,7 +326,7 @@ class JobGenerator(ck.JobGenerator):
         
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 3)
-        for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
+        for sk in [MoonStrike, MoonStrikeLink, PierceStrike, PierceStrikeLink, ShadowStrike, FlashAssault, AdvancedSpinCutter,
                     AdvancedRollingCurve, AdvancedRollingAssulter, WindCutter, WindStrike, AdvancedStormBreak,
                     UpperSlash, AdvancedPowerStomp, FrontSlash, TurningDrive, AdvancedWheelWind, GigaCrash,
                     JumpingCrash, AdvancedEarthBreak, TwinBladeOfTime_Beta_1, TwinBladeOfTime_Alpha_1, 
@@ -337,7 +337,7 @@ class JobGenerator(ck.JobGenerator):
 
         
         # 초월자 륀느의 기원
-        for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
+        for sk in [MoonStrike, MoonStrikeLink, PierceStrike, PierceStrikeLink, ShadowStrike, FlashAssault, AdvancedSpinCutter,
                     AdvancedRollingCurve, AdvancedRollingAssulter, WindCutter, WindStrike, AdvancedStormBreak,
                     UpperSlash, AdvancedPowerStomp, FrontSlash, TurningDrive, AdvancedWheelWind, GigaCrash,
                     JumpingCrash, AdvancedEarthBreak]:
@@ -349,7 +349,7 @@ class JobGenerator(ck.JobGenerator):
         # 에고 웨폰
         UseEgoWeaponAlpha = core.OptionalElement(EgoWeaponAlpha.is_available, EgoWeaponAlpha)
         EgoWeaponAlpha.protect_from_running()
-        for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter, AdvancedRollingCurve, AdvancedRollingAssulter,
+        for sk in [MoonStrike, MoonStrikeLink, PierceStrike, PierceStrikeLink, ShadowStrike, FlashAssault, AdvancedSpinCutter, AdvancedRollingCurve, AdvancedRollingAssulter,
             WindCutter, WindStrike, AdvancedStormBreak, ShadowFlashAlpha, ShadowFlashAlphaEnd]:
             sk.onAfter(UseEgoWeaponAlpha)
             
