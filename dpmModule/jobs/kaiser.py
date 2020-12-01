@@ -7,6 +7,7 @@ from . import globalSkill
 from .jobbranch import warriors
 from .jobclass import nova
 from math import ceil
+from typing import Any, Dict
 
 ######   Passive Skill   ######
 class MorphGaugeWrapper(core.StackSkillWrapper):
@@ -163,7 +164,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConditionRule('어드밴스드 윌 오브 소드', '윌 오브 소드: 스트라이크', lambda sk: sk.is_cooltime_left(10000, 1)), RuleSet.BASE)
         return ruleset
         
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         InnerBlaze = core.InformedCharacterModifier("이너 블레이즈",stat_main = 20)
@@ -176,7 +177,7 @@ class JobGenerator(ck.JobGenerator):
         return [InnerBlaze, AdvancedInnerBlaze, Catalyze, 
                 AdvancedWillOfSwordPassive, UnflinchingCourage, AdvancedSwordMastery]
                 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
@@ -186,7 +187,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, ReshuffleSwitchAttack]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         모프 수급량
         어윌소 12*5

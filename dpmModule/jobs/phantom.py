@@ -7,6 +7,7 @@ from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import thieves
 from math import ceil
+from typing import Any, Dict
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -18,7 +19,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         HighDexterity = core.InformedCharacterModifier("하이 덱스터리티",stat_sub = 40)
         LuckMonopoly = core.InformedCharacterModifier("럭 모노폴리",stat_main = 60)
@@ -31,7 +32,7 @@ class JobGenerator(ck.JobGenerator):
 
         return [HighDexterity, LuckMonopoly, LuckOfPhantomtheif, MoonLight, AcuteSence, CainExpert, ReadyToDiePassive]
                                 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 +0.5*ceil(passive_level / 2))
@@ -43,7 +44,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ReservationRule("소울 컨트랙트", "마크 오브 팬텀"), RuleSet.BASE)
         return ruleset
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         하이퍼 : 
         템오카 - 리인포스 / 쿨리듀스

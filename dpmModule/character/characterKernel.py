@@ -211,10 +211,10 @@ class JobGenerator:
         """
         return CharacterModifier()
 
-    def build(self, vEhc: AbstractVEnhancer, chtr: AbstractCharacter, storage_handler=None) -> policy.StorageLinkedGraph:
+    def build(self, vEhc: AbstractVEnhancer, chtr: AbstractCharacter, options: Dict[str, Any], storage_handler=None) -> policy.StorageLinkedGraph:
         initialize_global_properties()
 
-        base_element, all_elements = self.generate(vEhc, chtr)
+        base_element, all_elements = self.generate(vEhc, chtr, options)
 
         GlobalOperation.assign_storage()
         GlobalOperation.attach_namespace()
@@ -230,23 +230,23 @@ class JobGenerator:
 
         return graph
 
-    def generate(self, vEhc: AbstractVEnhancer, chtr: AbstractCharacter) -> Tuple[DamageSkill, List[AbstractSkill]]:
+    def generate(self, vEhc: AbstractVEnhancer, chtr: AbstractCharacter, options: Dict[str, Any]) -> Tuple[DamageSkill, List[AbstractSkill]]:
         raise NotImplementedError
 
-    def build_passive_skill_list(self, vEhc, chtr: AbstractCharacter) -> None:
-        self._passive_skill_list = self.get_passive_skill_list(vEhc, chtr)
+    def build_passive_skill_list(self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]) -> None:
+        self._passive_skill_list = self.get_passive_skill_list(vEhc, chtr, options)
         self._passive_skill_list += [InformedCharacterModifier("여제의 축복", att=30)]
         if self.jobname != "제로":
             self._passive_skill_list += [InformedCharacterModifier("연합의 의지", att=5, stat_main=5, stat_sub=5)]
 
-    def get_passive_skill_list(self, vEhc, chtr: AbstractCharacter) -> List[InformedCharacterModifier]:
+    def get_passive_skill_list(self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]) -> List[InformedCharacterModifier]:
         raise NotImplementedError("You must fill get_passive_skill_list function.")
 
-    def build_not_implied_skill_list(self, vEhc, chtr: AbstractCharacter) -> None:
-        notImpliedBuffList = self.get_not_implied_skill_list(vEhc, chtr)
+    def build_not_implied_skill_list(self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]) -> None:
+        notImpliedBuffList = self.get_not_implied_skill_list(vEhc, chtr, options)
         self._passive_skill_list += notImpliedBuffList
 
-    def get_not_implied_skill_list(self, vEhc, chtr: AbstractCharacter) -> List[InformedCharacterModifier]:
+    def get_not_implied_skill_list(self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]) -> List[InformedCharacterModifier]:
         raise NotImplementedError('You must fill get_not_implied_skill_list function.')
 
     def get_passive_skill_modifier(self) -> ExMDF:
@@ -255,37 +255,32 @@ class JobGenerator:
             passive_modifier += _mdf
         return passive_modifier
 
-    # TODO: useFullCore, vEnhanceGenerateFlag are not used.
-    def package_bare(self, chtr: AbstractCharacter, v_builder: AbstractVBuilder,
-                     useFullCore=False, vEnhanceGenerateFlag=None) -> policy.StorageLinkedGraph:
+    def package_bare(self, chtr: AbstractCharacter, v_builder: AbstractVBuilder, options: Dict[str, Any]) -> policy.StorageLinkedGraph:
         vEhc = v_builder.build_enhancer(chtr, self)
 
         # Since given character specification already imply both option; ignore these two.
 
-        self.build_not_implied_skill_list(vEhc, chtr)
+        self.build_not_implied_skill_list(vEhc, chtr, options)
         chtr.apply_modifiers([self.get_passive_skill_modifier()])
 
-        graph = self.build(vEhc, chtr)
+        graph = self.build(vEhc, chtr, options)
         graph.set_v_enhancer(vEhc)
 
         return graph
 
-    # TODO: vlevel, vEnhanceGenerateFlag are not used.
-    def package(self, chtr: ItemedCharacter, v_builder: AbstractVBuilder,
-                vlevel: int = 0,
-                ulevel: int = 4000,
-                weaponstat: List[int] = [3, 6],
+    def package(self, chtr: ItemedCharacter, v_builder: AbstractVBuilder, options: Dict[str, Any],
+                ulevel: int,
+                weaponstat: List[int],
+                ability_grade: Ability_grade,
                 log: bool = False,
-                vEnhanceGenerateFlag: bool = None,
-                ability_grade: Ability_grade = Ability_grade(4, 1),
                 storage_handler=None) -> policy.StorageLinkedGraph:
         """Packaging function
         """
         vEhc = v_builder.build_enhancer(chtr, self)
         chtr = chtr
 
-        self.build_passive_skill_list(vEhc, chtr)
-        self.build_not_implied_skill_list(vEhc, chtr)
+        self.build_passive_skill_list(vEhc, chtr, options)
+        self.build_not_implied_skill_list(vEhc, chtr, options)
 
         # 어빌리티 적용
         adjusted_ability = Ability_tool.adjusted_ability(ability_grade, self.ability_list[0], self.ability_list[1], self.ability_list[2])
@@ -296,7 +291,7 @@ class JobGenerator:
         personality = Personality.get_personality(100)
         chtr.apply_modifiers([personality])
 
-        graph = self.build(vEhc, chtr, storage_handler=storage_handler)
+        graph = self.build(vEhc, chtr, options, storage_handler=storage_handler)
 
         def log_modifier(modifier, name) -> None:
             if log:
@@ -378,7 +373,7 @@ class JobGenerator:
         log_buffed_character(chtr)
 
         # 그래프를 다시 빌드합니다.
-        graph = self.build(vEhc, chtr, storage_handler=storage_handler)
+        graph = self.build(vEhc, chtr, options, storage_handler=storage_handler)
         graph.set_v_enhancer(vEhc)
 
         log_character(chtr)

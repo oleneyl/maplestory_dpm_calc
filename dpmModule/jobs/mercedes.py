@@ -8,6 +8,7 @@ from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import bowmen
 from math import ceil
+from typing import Any, Dict
 
 class ElementalGhostWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, num1, num2):
@@ -48,7 +49,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ReservationRule('히어로즈 오쓰', '엘리멘탈 고스트'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         PotentialPower = core.InformedCharacterModifier("포텐셜 파워",pdamage = 20)
@@ -66,7 +67,7 @@ class JobGenerator(ck.JobGenerator):
         return [PotentialPower, SharpAiming, SpiritInfusion, 
                 PhisicalTraining, IgnisRoar, DualbowgunExpert, DefenceBreak, AdvancedFinalAttack]
         
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5+0.5*ceil(passive_level/2))        
@@ -78,7 +79,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 60, pdamage = 30)
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         하이퍼
         이슈타르의 링-리인포스, 이그노어 가드, 보스 킬러

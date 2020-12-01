@@ -7,6 +7,7 @@ from . import globalSkill, jobutils
 from .jobclass import heroes
 from .jobbranch import magicians
 from math import ceil
+from typing import Any, Dict
 
 class LuminousStateController(core.BuffSkillWrapper):
     DARK = 0
@@ -148,7 +149,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConditionRule('퍼니싱 리소네이터', '루미너스 상태', lambda state: state.isEqual()), RuleSet.BASE)
         return ruleset
                 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         PowerOfLight = core.InformedCharacterModifier("파워 오브 라이트",stat_main = 20)
@@ -161,7 +162,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [PowerOfLight, SpellMastery, HighWisdom, LifeTidal, MagicMastery, MorningStarfall, DarknessSocery]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter): 
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]): 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
@@ -172,7 +173,7 @@ class JobGenerator(ck.JobGenerator):
 
         return [WeaponConstant, Mastery, BlessOfDarkness, DarknessSoceryActive]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         아포 22회 / 라리플 25회가 이퀄리브리엄 진입까지 요구됨
         

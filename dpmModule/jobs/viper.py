@@ -8,6 +8,7 @@ from .jobbranch import pirates
 from .jobclass import adventurer
 from . import jobutils
 from math import ceil
+from typing import Any, Dict
 
 class EnergyChargeWrapper(core.StackSkillWrapper):
     def __init__(self, combat):
@@ -64,7 +65,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConditionRule('유니티 오브 파워', '유니티 오브 파워(디버프)', lambda sk: sk.is_time_left(1000, -1)), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         CriticalRoar = core.InformedCharacterModifier("크리티컬 로어",crit = 20, crit_damage = 5)
         MentalClearity = core.InformedCharacterModifier("멘탈 클리어리티",att = 30)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
@@ -75,7 +76,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [CriticalRoar, MentalClearity, PhisicalTraining, CriticalRage, StimulatePassive, LoadedDicePassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
@@ -87,7 +88,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, CriticalRage, GuardCrush]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         울트라 차지 : 공격시 350충전, 보스공격시 2배 충전. 최대스택 10000.
 

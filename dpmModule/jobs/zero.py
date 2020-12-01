@@ -6,6 +6,7 @@ from ..execution.rules import RuleSet, MutualRule
 from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
+from typing import Any, Dict
 
 # TODO: 4카 5앱 적용
 # 제로는 패시브 레벨 +1 어빌 미적용
@@ -52,7 +53,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(MutualRule('타임 홀딩', '타임 디스토션'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
         ResolutionTime = core.InformedCharacterModifier("리졸브 타임",pdamage_indep = 25, stat_main = 50)
         # 유니온 6000 기준
@@ -62,14 +63,14 @@ class JobGenerator(ck.JobGenerator):
 
         return [Mastery, ResolutionTime, LuckyHat_Temp]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         ArmorSplit = core.InformedCharacterModifier("아머 스플릿", armor_ignore = 50)
         return [ArmorSplit]
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(crit = 15, pdamage = 80, armor_ignore = 20, crit_damage = 25)
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         마스터리 별개로 적용 : 알파 : 1.34, 베타 : 1.49
         
