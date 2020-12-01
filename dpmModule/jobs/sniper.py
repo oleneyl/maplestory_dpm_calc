@@ -65,7 +65,7 @@ class JobGenerator(ck.JobGenerator):
         
         스나, 피어싱, 롱레트, 프리저
         '''
-        DISTANCE = 400
+        DISTANCE = options.get("distance", 400)
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WEAKNESS_FINDING = core.CharacterModifier(armor_ignore = min(ceil((20+passive_level)/2) + DISTANCE//40 * ceil((20+passive_level)/5), 30 + (20+passive_level)))
         DISTANCING_SENSE = core.CharacterModifier(pdamage_indep = max(min((DISTANCE-200)//18*4, 30+(10+passive_level)), 0))

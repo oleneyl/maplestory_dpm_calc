@@ -95,6 +95,7 @@ class JobGenerator(ck.JobGenerator):
         엘고 연계
         스듀-엔릴-스듀-유니콘-스듀-스피어-거다
         '''
+        DEALCYCLE = options.get('dealcycle', 'combo')
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         # Buff skill
@@ -184,11 +185,16 @@ class JobGenerator(ck.JobGenerator):
             ElementalGhostCombo.onAfter(LinkAttack)
 
         BasicAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
-        BasicAttack.onAfter(
-            core.OptionalElement(ElementalGhost.is_active, ElementalGhostCombo,
-                core.OptionalElement(UnicornSpikeBuff.is_not_active, DebuffCombo, IshtarRing)
+        if DEALCYCLE == "combo":
+            BasicAttack.onAfter(
+                core.OptionalElement(ElementalGhost.is_active, ElementalGhostCombo,
+                    core.OptionalElement(UnicornSpikeBuff.is_not_active, DebuffCombo, IshtarRing)
+                )
             )
-        )
+        elif DEALCYCLE == "ishtar":
+            BasicAttack.onAfter(core.OptionalElement(UnicornSpikeBuff.is_not_active, DebuffCombo, IshtarRing))
+        else:
+            raise ValueError(DEALCYCLE)
 
         # TODO: 실피디아 사용시 연계 딜레이와 디버프 콤보 조사하고, 딜 증가하는지 확인할 것
         # Sylphidia.onConstraint(core.ConstraintElement("엘고와 따로 사용", ElementalGhost, lambda: ElementalGhost.is_not_active() and ElementalGhost.is_not_usable()))

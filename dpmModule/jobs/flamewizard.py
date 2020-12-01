@@ -58,7 +58,8 @@ class JobGenerator(ck.JobGenerator):
         오비탈 1350타 / 분
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        flamewizardDefaultSpeed = 60000 / ((1350) / 6)  #266
+        orbital_per_min = options.get("orbital_per_min", 1350)
+        flamewizardDefaultSpeed = 60000 / (orbital_per_min / 6)  #266
         blazingOrbitalHit = 4
         
         #Buff skills

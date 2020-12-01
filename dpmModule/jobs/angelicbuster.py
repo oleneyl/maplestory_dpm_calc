@@ -88,7 +88,7 @@ class JobGenerator(ck.JobGenerator):
         
         '''
         
-        SPOTLIGHTHIT = 3
+        SPOTLIGHTHIT = options.get('spotlight', 3)
         TRINITY_MDF = core.CharacterModifier(pdamage = 20) + core.CharacterModifier(pdamage = 10*3, armor_ignore = 10*3) # 하이퍼 리인포스 + 3중첩
         
         #Buff skills

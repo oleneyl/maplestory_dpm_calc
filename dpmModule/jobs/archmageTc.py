@@ -83,7 +83,7 @@ class JobGenerator(ck.JobGenerator):
         그 외의 극딜기는 쿨마다 사용
         프로즌 오브 쿨마다 사용, 19타
         '''
-        THUNDER_BREAK_HIT = 2
+        THUNDER_BREAK_HIT = options.get("thunder_break_hit", 2)
         ICE_AGE_SUMMON_HIT = 2
 
         ######   Skill   ######

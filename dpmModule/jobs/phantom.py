@@ -59,7 +59,7 @@ class JobGenerator(ck.JobGenerator):
         펫버프 : 프레이 오브 아리아, 메용, 크오체
         템페스트 오브 카드 사용하지 않음
         '''
-        passive_level = chtr.get_base_modifier().passive_level + self.combat
+        DEALCYCLE = options.get('dealcycle', 'ultimate_drive')
 
         ##### Steal skills #####
 
@@ -145,9 +145,8 @@ class JobGenerator(ck.JobGenerator):
         MileAiguilles.onAfter(CarteNoir)
         MileAiguilles.onAfter(MileAiguillesInit.controller(500, 'set_enabled_and_time_left'))
         
-        BasicAttack = core.OptionalElement(MileAiguillesInit.is_active, MileAiguilles, MileAiguillesInit, name = "선딜 반영")
-        BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
-        BasicAttackWrapper.onAfter(BasicAttack)
+        MileAiguillesHolder = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
+        MileAiguillesHolder.onAfter(core.OptionalElement(MileAiguillesInit.is_active, MileAiguilles, MileAiguillesInit, name = "선딜 반영"))
         # TempestOfCardInit.onAfter(core.RepeatElement(TempestOfCard, 56))
         # TempestOfCard.onAfter(CarteNoir)
         
@@ -168,8 +167,6 @@ class JobGenerator(ck.JobGenerator):
         LiftBreak.onAfter(core.RepeatElement(CarteNoir, 7))
 
         MileAiguillesInit.protect_from_running()
-        
-        #이들 정보교환 부분을 굳이 Task exchange로 표현할 필요가 있을까?
 
         CardinalBlast.onAfter(CarteNoir)
         CardinalDischarge.onAfter(CarteNoir)
@@ -177,16 +174,26 @@ class JobGenerator(ck.JobGenerator):
         CardinalBlast.onAfter(CardinalDischarge)
         
         '''
-        얼드: BasicAttackWrapper
+        얼드: MileAiguillesHolder
         블디: CardinalBlast
         '''
+
+        if DEALCYCLE == "ultimate_drive":
+            BasicAttack = MileAiguillesHolder
+            Talent2 = Fury
+        elif DEALCYCLE == "blast_discharge":
+            BasicAttack = CardinalBlast
+            Talent2 = None
+        else:
+            raise ValueError(DEALCYCLE)
+
         
-        return(BasicAttackWrapper,
+        return(BasicAttack,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    Fury, CrossoverChain, FinalCutBuff, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), BoolsEye,
+                    Talent2, CrossoverChain, FinalCutBuff, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), BoolsEye,
                     JudgementBuff, Booster, PrieredAria, HerosOath, ReadyToDie, JokerBuff,
                     globalSkill.soul_contract()] +\
                 [FinalCut, JokerInit, MarkOfPhantom, LiftBreak, BlackJackFinal] +\
                 [BlackJack, MirrorBreak, MirrorSpider] +\
                 [MileAiguillesInit] +\
-                [BasicAttackWrapper])
+                [BasicAttack])
