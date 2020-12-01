@@ -35,7 +35,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
     
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 20)
+        return core.CharacterModifier(armor_ignore = 30)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -116,7 +116,8 @@ class JobGenerator(ck.JobGenerator):
         # 보너스 찬스 70% -> 80%
         EnhancedExceed = core.DamageSkill("인핸스드 익시드", 0, 200+4*passive_level, 2*(0.8+0.04*passive_level), cooltime = -1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
 
-        #BatSwarm = core.SummonSkill("배츠 스웜", 0, 0, 200, 1, 0)
+        # 허수아비 상대 24타
+        BatSwarm = core.SummonSkill("배츠 스웜", 840, 330, 200, 1, 24 * 330).setV(vEhc, 3, 5, True).wrap(core.SummonSkillWrapper)
 
         #BloodImprison = core.DamageSkill("블러디 임프리즌", 0, 800, 3, cooltime = 120*1000)
 
@@ -178,6 +179,6 @@ class JobGenerator(ck.JobGenerator):
                [globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     FrenzyDOT, Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
                     globalSkill.soul_contract(), Revenant, RevenantHit, CallMastema, AnotherGoddessBuff, AnotherVoid] +\
-                [ShieldChasing] +\
-                [MirrorBreak, MirrorSpider, DimensionSword, DemonicBlast] +\
+                [ShieldChasing, ArmorBreakBuff] +\
+                [BatSwarm, MirrorBreak, MirrorSpider, DimensionSword, DemonicBlast] +\
                 [BasicAttack])
