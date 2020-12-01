@@ -337,7 +337,7 @@ class JobGenerator:
         log_buffed_character(chtr)
 
         # 유니온 공격대원
-        unionCard = Card.get_card(self.jobtype, ulevel, True)
+        unionCard = Card.get_card(self.jobname, self.jobtype, ulevel, chtr.level, True)
         log_modifier(unionCard, "union card")
         chtr.apply_modifiers([unionCard])
         log_buffed_character(chtr)
@@ -627,6 +627,7 @@ class Card:
     1/2/3/4/5
     크리율 : 2
 
+    TODO: 소환수 지속시간 증가 추가
     4/6/8/10/12
     소환수 : 1
 
@@ -665,6 +666,48 @@ class Card:
              [ExMDF(stat_main_fixed=i, stat_sub_fixed=i) for i in [5, 10, 20, 40, 50]],
              [ExMDF(pcooltime_reduce=i) for i in [2, 3, 4, 5, 6]],
              [ExMDF(buff_rem=i) for i in [5, 10, 15, 20, 25]]]
+    unoinCardList = {"아크메이지불/독" : "mp_rate",
+        "아크메이지썬/콜" : "int",
+        "일리움" : "int",
+        "히어로" : "str",
+        "팔라딘" : "str",
+        "신궁" : "crit",
+        "윈드브레이커" : "dex",
+        "소울마스터" : "hp",
+        "바이퍼" : "str",
+        "플레임위자드" : "int",
+        "메르세데스" : "pcooltime_reduce",
+        "루미너스" : "int",
+        "비숍" : "int",
+        "배틀메이지" : "int",
+        "메카닉" : "buff_rem",
+        "데몬슬레이어" : None,
+        "다크나이트" : "hp_rate",
+        "와일드헌터" : "pdamage",
+        "섀도어" : "luk",
+        "캐논슈터" : "str",
+        "미하일" : "hp",
+        "듀얼블레이드" : "luk",
+        "카이저" : "str",
+        "캡틴" : "summon_rem",
+        "엔젤릭버스터" : "dex",
+        "팬텀" : None,
+        "나이트로드" : "crit",
+        "은월" : "crit_damage",
+        "나이트워커" : "luk",
+        "스트라이커" : "str",
+        "에반" : None,
+        "보우마스터" : "dex",
+        "제로" : None,
+        "키네시스" : "int",
+        "패스파인더" : "dex",
+        "카데나" : "luk",
+        "아크" : "str",
+        "블래스터" : "armor_ignore",
+        "아란" : None,
+        "아델" : "str",
+        "호영" : "luk"
+    }
 
     priority = {
         "str": {
@@ -699,10 +742,11 @@ class Card:
 
     # TODO define Character Cards
     @staticmethod
-    def get_card(jobtype: str, ulevel: int, maplem: bool = True) -> ExMDF:
+    def get_card(jobname: str, jobtype: str, ulevel: int, mylevel: int = 240, maplem: bool = True) -> ExMDF:
         """get_card : 캐릭터카드 효과를 리턴합니다.
         리턴 형태 : Modifier
         """
+
         if jobtype not in ["str", "dex", "int", "luk"]:
             raise TypeError("jobtype must str, dex, int or luk, get:" + str(jobtype))
         retmdf = ExMDF()
@@ -727,6 +771,24 @@ class Card:
 
         if maplem:
             retmdf += Card.CList[3][2]
+        
+        if mylevel >= 250:
+            # 250레벨 이상일 경우 본캐 캐릭터카드를 SSS로 교체
+            main_card = Card.unoinCardList[jobname]
+            if main_card in ["str", "dex", "int", "luk"]:
+                retmdf += Card.CList[0][4] - Card.CList[0][3]
+            if main_card == "crit":
+                retmdf += Card.CList[2][4] - Card.CList[2][3]
+            if main_card == "crit_damage":
+                retmdf += Card.CList[4][4] - Card.CList[4][3]
+            if main_card == "armor_ignore":
+                retmdf += Card.CList[6][4] - Card.CList[6][3]
+            if main_card == "pdamage":
+                retmdf += Card.CList[7][4] - Card.CList[7][3]
+            if main_card == "pcooltime_reduce":
+                retmdf += Card.CList[9][4] - Card.CList[9][3]
+            if main_card == "buff_rem":
+                retmdf += Card.CList[10][4] - Card.CList[10][3]
         return retmdf
 
 
