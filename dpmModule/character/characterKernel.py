@@ -358,7 +358,7 @@ class JobGenerator:
 
         # 유니온 점령
         refMDF = get_reference_modifier(chtr)
-        union = Union.get_union(refMDF, ulevel, buffrem=self.buffrem, critical_reinforce=self._use_critical_reinforce)
+        union = Union.get_union(refMDF, chtr.level, ulevel, buffrem=self.buffrem, critical_reinforce=self._use_critical_reinforce)
         log_modifier(union, "union")
         chtr.apply_modifiers([union])
         log_buffed_character(chtr)
@@ -421,14 +421,14 @@ class Union:
 
     # TODO :: -1을 리턴하지 않도록,
     @staticmethod
-    def get_union_object(mdf: ExMDF, ulevel: int, buffrem: Tuple[int, int], asIndex: bool = False, slot=None) -> 'Union':
-        mdf, buffrem = Union.get_union(mdf, ulevel, buffrem=buffrem, asIndex=asIndex, slot=slot)
+    def get_union_object(mdf: ExMDF, mylevel: int, ulevel: int, buffrem: Tuple[int, int], asIndex: bool = False, slot=None) -> 'Union':
+        mdf, buffrem = Union.get_union(mdf, mylevel, ulevel, buffrem=buffrem, asIndex=asIndex, slot=slot)
         return Union(mdf, buffrem, -1, ulevel)
 
     @staticmethod
-    def get_union(mdf: ExMDF, ulevel: int, buffrem: Tuple[int, int], asIndex: bool = False,
+    def get_union(mdf: ExMDF, mylevel: int, ulevel: int, buffrem: Tuple[int, int], asIndex: bool = False,
                   slot=None, critical_reinforce: bool = False) -> UnionType[ExMDF, List[int]]:
-        """get_union(mdf, ulevel, buffrem, asIndex=False, slot=None, critical_reinforce=False) : return optimized ExMDF value.
+        """get_union(mdf, mylevel, ulevel, buffrem, asIndex=False, slot=None, critical_reinforce=False) : return optimized ExMDF value.
         return value : (ExMDF, buffremain) tuple.
         """
         if slot is None:
@@ -436,6 +436,8 @@ class Union:
         else:
             slots = slot
         maxvalue = Union.maxSlot[min((ulevel - 2000) // 1000, 4)]
+        if mylevel >= 250:
+            maxvalue += 1
 
         buffrem_min, buffrem_max = buffrem
 

@@ -42,7 +42,7 @@ def get_optimal_hyper_from_bare(spec, level):
     newHyper = HyperStat.get_hyper_object(ref, level)
     return newHyper
 
-def get_optimal_hyper_union(spec, job, otherspec, hyper, union):
+def get_optimal_hyper_union(spec, level, job, otherspec, hyper, union):
     '''최적화된 하이퍼 / 유니온 값을 계산해서 리턴합니다.
     입력값 : CharacterModifier들
     출력값 : [hyper, union]
@@ -56,7 +56,7 @@ def get_optimal_hyper_union(spec, job, otherspec, hyper, union):
     newHyper = HyperStat.get_hyper_object(ref, hyper.level)
     ref += newHyper.mdf
     
-    newUnion = Union.get_union_object(ref, -1, buffrem = buffremFlag, slot = union.slots)
+    newUnion = Union.get_union_object(ref, level, -1, buffrem = buffremFlag, slot = union.slots)
     
     return {"hyper" : newHyper, "union" : newUnion }
 
