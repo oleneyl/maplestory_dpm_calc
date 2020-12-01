@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 from typing import Any, Dict, List, Optional, Tuple
 
-from .constant import MAX_DAMAGE_RESTRICTION, ARMOR_RATE
+from .constant import FINAL_DAMAGE_RATIO, MAX_DAMAGE_RESTRICTION, ARMOR_RATE
 from ..graph import DynamicVariableInstance, DynamicVariableOperation
 
 
@@ -216,8 +216,8 @@ class CharacterModifier:
         max_crit_factor = (1 + 0.0001 * max(0, real_crit) * (self.crit_damage + 50))
         min_crit_factor = (1 + 0.0001 * max(0, real_crit) * (self.crit_damage + 20))
 
-        max_damage_factor = factor_aggregated * expert_max
-        min_damage_factor = factor_aggregated * expert_min
+        max_damage_factor = factor_aggregated * expert_max * FINAL_DAMAGE_RATIO
+        min_damage_factor = factor_aggregated * expert_min * FINAL_DAMAGE_RATIO
 
         real_damage = hit * (max_crit_factor + min_crit_factor) / 2 * (max_damage_factor + min_damage_factor) / 2  # W/O restriction
         res_damage = hit * restricted_damage(min_damage_factor, max_damage_factor, min_crit_factor, max_crit_factor, MAX_DAMAGE_RESTRICTION)  # W/ restriction
