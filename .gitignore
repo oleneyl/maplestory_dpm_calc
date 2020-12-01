@@ -7,6 +7,6 @@ build/
 *.opendb
 *.json
 *.sqlite
-dpm_output.txt
+*.txt
 docs/_build/
 *result.xlsx
