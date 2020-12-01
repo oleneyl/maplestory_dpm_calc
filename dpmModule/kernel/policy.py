@@ -1,11 +1,18 @@
+from __future__ import annotations
+
 from collections import defaultdict
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
+from typing import (TYPE_CHECKING, Any, Callable, Dict, Iterable, List,
+                    Optional, Tuple)
 
 from .abstract import AbstractScenarioGraph, AbstractVEnhancer
-from .core import AbstractSkillWrapper, BuffSkillWrapper, DamageSkillWrapper, SummonSkillWrapper
-from .core import Callback, GraphElement, Task, ResultObject
-from .core import CharacterModifier
-from .graph import AbstractStorage
+from .core import (BuffSkillWrapper, CharacterModifier, DamageSkillWrapper,
+                   SummonSkillWrapper)
+
+if TYPE_CHECKING:
+    from ..character.characterKernel import AbstractCharacter
+    from .core import (AbstractSkillWrapper, Callback, GraphElement,
+                       ResultObject, Task)
+    from .graph import AbstractStorage
 
 
 class NameIndexedGraph(AbstractScenarioGraph):
@@ -43,20 +50,22 @@ class NameIndexedGraph(AbstractScenarioGraph):
 
 class StorageLinkedGraph(NameIndexedGraph):
     def __init__(self, base_element: GraphElement, storage: AbstractStorage, accessible_elements: List[GraphElement] = []) -> None:
-        super(StorageLinkedGraph, self).__init__(accessible_elements=accessible_elements)
+        super(StorageLinkedGraph, self).__init__(
+            accessible_elements=accessible_elements)
         self.base_element: GraphElement = base_element
         self.storage: AbstractStorage = storage
         self._task_map: Dict[str, Task] = {}
         self._tick_task_map: Dict[str, Task] = {}
         self._vEhc: AbstractVEnhancer = AbstractVEnhancer()
 
-    def build(self, chtr: 'AbstractCharacter') -> None:
+    def build(self, chtr: AbstractCharacter) -> None:
         skill_modifier = chtr.get_skill_modifier()
 
         for name, wrp in self._element_map.items():
             self._task_map[name] = wrp.build_task(skill_modifier)
             if hasattr(wrp, 'build_periodic_task'):
-                self._tick_task_map[name] = wrp.build_periodic_task(skill_modifier)
+                self._tick_task_map[name] = wrp.build_periodic_task(
+                    skill_modifier)
 
     def spend_time(self, t: float) -> None:
         for _, wrp in self._element_map.items():
@@ -75,7 +84,8 @@ class StorageLinkedGraph(NameIndexedGraph):
         return self.storage
 
     def export_task(self, common_args={}, tick_args={}) -> None:
-        self._task_map = {k: self._element_map[k].build_task(**common_args) for k in self._element_map}
+        self._task_map = {k: self._element_map[k].build_task(
+            **common_args) for k in self._element_map}
         self._tick_task_map = {k: self._element_map[k].build_periodic_task(**tick_args)
                                for k in self._element_map if hasattr(self._element_map[k], 'is_periodic') and getattr(self._element_map[k], 'is_periodic')}
 
@@ -122,8 +132,10 @@ class CallbackQueue:
         self._callback_queue = []
 
     def push_callbacks(self, callbacks: List[Callback], current_time: float) -> None:
-        self._callback_queue += [callback.adjust_by_current_time(current_time) for callback in callbacks]
-        self._callback_queue = sorted(self._callback_queue, key=lambda x: x.time)
+        self._callback_queue += [callback.adjust_by_current_time(
+            current_time) for callback in callbacks]
+        self._callback_queue = sorted(
+            self._callback_queue, key=lambda x: x.time)
 
     def impending_callback_exist(self, current_time: float, next_event_time: float) -> bool:
         return len(self._callback_queue) != 0 and self.impending_callback_time(current_time) <= next_event_time
@@ -138,7 +150,7 @@ class CallbackQueue:
 
 
 class AdvancedGraphScheduler:
-    def __init__(self, graph: StorageLinkedGraph, fetching_policy: 'FetchingPolicy', rules) -> None:
+    def __init__(self, graph: StorageLinkedGraph, fetching_policy: FetchingPolicy, rules) -> None:
         self._rule_map = defaultdict(list)
 
         self.graph: StorageLinkedGraph = graph
@@ -148,7 +160,7 @@ class AdvancedGraphScheduler:
         self.fetching_policy: FetchingPolicy = fetching_policy(graph)
 
         self._buffMdfPreCalc: CharacterModifier = CharacterModifier()
-        self._buffMdfCalcZip: List[List[BuffSkillWrapper, bool]] = []
+        self._buffMdfCalcZip: List[Tuple[BuffSkillWrapper, bool]] = []
 
         self.callback_queue: CallbackQueue = CallbackQueue()
 
@@ -182,9 +194,11 @@ class AdvancedGraphScheduler:
         return None
 
     def apply_result(self, result: ResultObject, time_to_spend: float) -> Tuple[Optional[Callback], float]:
-        self.callback_queue.push_callbacks(result.callbacks, self.get_current_time())
+        self.callback_queue.push_callbacks(
+            result.callbacks, self.get_current_time())
         if self.callback_queue.impending_callback_exist(self.get_current_time(), time_to_spend):
-            time_until_callback_occur = self.callback_queue.impending_callback_time(self.get_current_time())
+            time_until_callback_occur = self.callback_queue.impending_callback_time(
+                self.get_current_time())
             self.spend_time(time_until_callback_occur)
             time_to_spend -= time_until_callback_occur
             return self.callback_queue.take_out_impending_callback(), time_to_spend
@@ -208,7 +222,7 @@ class AdvancedGraphScheduler:
                     st = False
                 else:
                     st = True
-                self._buffMdfCalcZip.append([buffwrp, st])
+                self._buffMdfCalcZip.append((buffwrp, st))
 
         for rule in self.rules:
             for wrp in rule.get_related_elements(self.graph):
@@ -234,7 +248,7 @@ class FetchingPolicy:
     def __init__(self, *args, **kwargs) -> None:
         pass
 
-    def __call__(self, graph: NameIndexedGraph) -> 'FetchingPolicy':
+    def __call__(self, graph: NameIndexedGraph) -> FetchingPolicy:
         self.target = graph.get_all()
         return self
 
@@ -254,11 +268,12 @@ class TypebaseFetchingPolicy(FetchingPolicy):
         super(TypebaseFetchingPolicy, self).__init__()
         self.priority_list = priority_list
 
-    def __call__(self, graph: StorageLinkedGraph) -> 'TypebaseFetchingPolicy':
+    def __call__(self, graph: StorageLinkedGraph) -> TypebaseFetchingPolicy:
         super(TypebaseFetchingPolicy, self).__call__(graph)
         self.sorted = []
         for clstype in self.priority_list:
-            self.sorted += (list(filter(lambda x: isinstance(x, clstype), self.target)))
+            self.sorted += (list(filter(lambda x: isinstance(x,
+                                                             clstype), self.target)))
         if graph.base_element in self.sorted:
             self.sorted.pop(self.sorted.index(graph.base_element))
         self.sorted.append(graph.base_element)
