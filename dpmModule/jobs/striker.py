@@ -100,6 +100,7 @@ class JobGenerator(ck.JobGenerator):
     
         LightningStack = LightningWrapper(core.BuffSkill("엘리멘탈 : 라이트닝", 0, 99999999))
 
+        Hurricane = core.DamageSkill("태풍", 420, 390+3*passive_level, 5+1).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
         HurricaneConcat = core.DamageSkill("태풍(연계)", 420, 390+3*passive_level, 5+1, modifier = LINK_MASTERY).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
         
         Destroy = core.DamageSkill("섬멸", 480, 350 + 4*self.combat, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
@@ -108,6 +109,7 @@ class JobGenerator(ck.JobGenerator):
         DestroyConcat = core.DamageSkill("섬멸(연계)", 480, 350 + 4*self.combat, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + LINK_MASTERY).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         ThunderConcat = core.DamageSkill("벽력(연계)", 540, 320 + 4*self.combat, 5 + 1, modifier = LINK_MASTERY).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #연계최종뎀 20%
         WaterWaveConcat = core.DamageSkill("파도(연계)", 270, 255, 2, modifier = LINK_MASTERY).setV(vEhc, 1, 5, False).wrap(core.DamageSkillWrapper)
+        WaterWaveConcatCancel = core.DamageSkill("파도(연계)(캔슬)", 60+60, 255, 2, modifier = LINK_MASTERY).setV(vEhc, 1, 5, False).wrap(core.DamageSkillWrapper)
 
         # 하이퍼
         # 딜레이 추가 필요
@@ -139,23 +141,30 @@ class JobGenerator(ck.JobGenerator):
         SpearLightningAttack_Final = core.DamageSkill("창뇌연격(막타)", 450, 600+24*vEhc.getV(0,0), 7, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         SpearLightningAttack_Final_Lightning = core.DamageSkill("창뇌연격(막타)(번개)", 0, 725+29*vEhc.getV(0,0), 6, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
-        #섬멸 연계
-        '''
-        ThunderDestroy = core.GraphElement("벽섬")
-        ThunderDestroy.onAfter(ThunderConcat)
-        ThunderDestroy.onAfter(DestroyConcat)
-        '''
+        #섬멸 연계 (default)
         WaterWaveDestroy = core.GraphElement("파섬")
         WaterWaveDestroy.onAfter(WaterWaveConcat)
         WaterWaveDestroy.onAfter(DestroyConcat)
         HurricaneDestroy = core.GraphElement("태섬")
         HurricaneDestroy.onAfter(HurricaneConcat)
         HurricaneDestroy.onAfter(DestroyConcat)
+
+        #섬멸 연계 (optional)
+        ThunderDestroy = core.GraphElement("벽섬")
+        ThunderDestroy.onAfter(ThunderConcat)
+        ThunderDestroy.onAfter(DestroyConcat)
+        WaterWaveCancelDestroy = core.GraphElement("파파섬")
+        WaterWaveCancelDestroy.onAfter(WaterWaveConcatCancel)
+        WaterWaveCancelDestroy.onAfter(Destroy)
+        WaterWaveCancelHurricane = core.GraphElement("파파태")
+        WaterWaveCancelHurricane.onAfter(WaterWaveConcatCancel)
+        WaterWaveCancelHurricane.onAfter(Hurricane)
+        
         BasicAttack = core.OptionalElement(SkyOpen.is_active, HurricaneDestroy, WaterWaveDestroy)
         BasicAttackWrapper = core.DamageSkill('기본 공격', 0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
         
-        for skill in [Destroy, Thunder, WaterWave, DestroyConcat, ThunderConcat, WaterWaveConcat, HurricaneConcat, GioaTan, NoiShinChanGeuk,
+        for skill in [Destroy, Thunder, WaterWave, DestroyConcat, ThunderConcat, WaterWaveConcat, WaterWaveConcatCancel, Hurricane, HurricaneConcat, GioaTan, NoiShinChanGeuk,
                         SpearLightningAttack, SpearLightningAttack_Lightning, SpearLightningAttack_Final, SpearLightningAttack_Final_Lightning]:
             jobutils.create_auxilary_attack(skill, CHOOKROI, nametag='(축뢰)')
 
