@@ -57,7 +57,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobtype = "int"
         self.jobname = "배틀메이지"
         self.vEnhanceNum = 10
-        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'reuse')
+        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit_rate', 'reuse')
         self.preEmptiveSkills = 2
 
     def get_ruleset(self):
@@ -75,17 +75,17 @@ class JobGenerator(ck.JobGenerator):
         HighWisdom =  core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
         BattleMastery = core.InformedCharacterModifier("배틀 마스터리",pdamage_indep = 15, crit_damage = 20)
         DarkAuraPassive = core.InformedCharacterModifier("다크 오라(패시브)", patt=15)
-        
+
         StaffExpert = core.InformedCharacterModifier("스태프 엑스퍼트",att = 30 + passive_level, crit_damage = 20 + ceil(passive_level / 2))
         SpellBoost = core.InformedCharacterModifier("스펠 부스트", patt = 25 + passive_level // 2, pdamage = 10 + ceil(passive_level / 3), armor_ignore = 30 + passive_level)
-        
+
         return [ArtOfStaff, StaffMastery, HighWisdom, BattleMastery, DarkAuraPassive, StaffExpert, SpellBoost]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수")
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5 * ceil(passive_level / 2))
-        
+
         DebuffAura = core.InformedCharacterModifier("디버프 오라", armor_ignore = 20, pdamage_indep = 10, prop_ignore = 10)
         BattleRage = core.InformedCharacterModifier("배틀 레이지",pdamage = 40 + self.combat, crit_damage = 8 + self.combat // 6, crit=20 + ceil(self.combat / 3))
         return [WeaponConstant, Mastery, DebuffAura, BattleRage]
@@ -102,12 +102,12 @@ class JobGenerator(ck.JobGenerator):
         다크 오라-보스 킬러
         디버프 오라-엘리멘탈 리셋
         쉘터-쿨타임 리듀스, 퍼시스트
-        
-        코강 순서 : 
+
+        코강 순서 :
         닼라-피블-데스-킹바-닼제네-배틀스퍼트
-        
+
         좌우텔 분당 83회
-        
+
         마스터 오브 데스는 리퍼와 같이 사용함
         알터는 쿨마다 사용함
         메여축, 어비셜 라이트닝은 유니온 오라와 같이 사용함
@@ -120,11 +120,11 @@ class JobGenerator(ck.JobGenerator):
         #Damage Skills
         DarkLightning = core.DamageSkill("다크 라이트닝", 0, 225, 4, modifier = core.CharacterModifier(pdamage = 60 + self.combat)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #캔슬
         DarkLightningMark = core.DamageSkill("다크 라이트닝(징표)", 0, 350, 4, modifier = core.CharacterModifier(boss_pdamage=20, pdamage = 60 + self.combat)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        
+
         #좌우텔 분당 83회 기준.
         FinishBlow = core.DamageSkill("피니쉬 블로우", 720, 330 + 3 * self.combat, 6, modifier = core.CharacterModifier(crit=25 + ceil(self.combat / 2), armor_ignore=2 * ceil((30 + self.combat)/3))).setV(vEhc, 1, 2, False).wrap(BlowSkillWrapper)
         ReaperScythe = core.DamageSkill("사신의 낫", 720, 300, 12, modifier = core.CharacterModifier(crit=50, armor_ignore=50)).setV(vEhc, 1, 2, False).wrap(BlowSkillWrapper)
-        
+
         DarkGenesis = core.DamageSkill("다크 제네시스", 690, 520 + 10 * self.combat, 8, cooltime = 14*1000, red=True).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
         DarkGenesisFinalAttack = core.DamageSkill("다크 제네시스(추가타)", 0, 220 + 4 * self.combat, 1).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
 
@@ -144,7 +144,7 @@ class JobGenerator(ck.JobGenerator):
         GrimReaper = GrimReaperWrapper(vEhc, 2, 2, MasterOfDeath)
         AbyssyalLightning = core.BuffSkill("어비셜 라이트닝", 540, 35000, cooltime=200*1000, red=True).wrap(core.BuffSkillWrapper)
         AbyssyalDarkLightning = core.DamageSkill("어비셜 라이트닝(칠흑의 번개)", 0, 1100, 5*3, modifier=core.CharacterModifier(crit=100, armor_ignore=20, pdamage_indep=-20)).wrap(core.DamageSkillWrapper)
-        
+
         #Build Graph
         """
         스킬간 발동관계 참고 링크
@@ -173,7 +173,7 @@ class JobGenerator(ck.JobGenerator):
         DarkGenesis.onJustAfter(UseMark)
         DarkGenesis.onAfter(UseDarkLightning)
         DarkGenesisFinalAttack.onJustAfter(UseMark)
-        
+
         # 피니시 블로우
         FinishBlow.registerMOD(MasterOfDeath) # 마스터 오브 데스 스킬 등록
         FinishBlow.onJustAfter(UseMark)
@@ -185,7 +185,7 @@ class JobGenerator(ck.JobGenerator):
         ReaperScythe.onAfter(FinalAttack)
         BasicAttack = core.DamageSkill('기본공격', 0, 0, 0).wrap(core.DamageSkillWrapper)
         BasicAttack.onAfter(core.OptionalElement(UnionAura.is_active, ReaperScythe, FinishBlow, name = "유니온오라 여부"))
-        
+
         # 마스터 오브 데스
         ReduceDeath = core.OptionalElement(MasterOfDeath.is_active, Death.controller(500, 'reduce_cooltime'), name="마스터 오브 데스 ON")
         DarkGenesisFinalAttack.onAfter(ReduceDeath)
@@ -196,7 +196,7 @@ class JobGenerator(ck.JobGenerator):
         GrimReaper.onTick(ReduceDeath)
         AbyssyalDarkLightning.onAfter(ReduceDeath)
         Death.add_runtime_modifier(MasterOfDeath, lambda sk: core.CharacterModifier(pdamage_indep = 50 * sk.is_active()))
-        
+
         # 배틀킹 바
         BattlekingBar.onJustAfter(UseMark)
         BattlekingBar.onAfter(FinalAttack)
@@ -204,7 +204,7 @@ class JobGenerator(ck.JobGenerator):
         BattlekingBar2.onJustAfter(UseMark)
         BattlekingBar2.onAfter(UseDarkLightning)
         BattlekingBar2.onAfter(FinalAttack)
-        
+
         # 블랙 매직 알터
         BlackMagicAlter.onTick(FinalAttack) # TODO: onTick 실행순서 바꿀 시 AddMark -> FinalAttack 순으로 터지는 것을 유지해야 함
         BlackMagicAlter.onTick(AddMark)

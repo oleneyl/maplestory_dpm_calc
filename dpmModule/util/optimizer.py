@@ -17,15 +17,15 @@ parameter : by POST(To many parameters)
 }
 "spec_sub"
 {
-    "pdamage", "boss_pdamage", "pdamage_indep", "armor_ignore", "crit", "crit_damage", 
+    "pdamage", "boss_pdamage", "final_damage", "armor_ignore", "crit_rate", "crit_damage", 
 }
 "hyper"
 {
-    "boss_pdamage", "pdamage", "armor_ignore", "crit", "crit_damage", "level"
+    "boss_pdamage", "pdamage", "armor_ignore", "crit_rate", "crit_damage", "level"
 }
 "union"
 {
-    "boss_pdamage", "armor_ignore", "crit", "crit_damage", "buffrem", total_slot"
+    "boss_pdamage", "armor_ignore", "crit_rate", "crit_damage", "buffrem", total_slot"
 }
 
 연산 후 리턴하는 결과물
@@ -50,14 +50,14 @@ def get_optimal_hyper_union(spec, job, otherspec, hyper, union):
     ref = spec.copy()
     ref = ref - hyper.mdf
     ref = ref - union.mdf
-    
+
     buffremFlag = (union.buff_rem > 0)
-    
+
     newHyper = HyperStat.get_hyper_object(ref, hyper.level)
     ref += newHyper.mdf
-    
+
     newUnion = Union.get_union_object(ref, -1, buffrem = buffremFlag, slot = union.slots)
-    
+
     return {"hyper" : newHyper, "union" : newUnion }
 
 
@@ -66,7 +66,7 @@ def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False,
     입력값 : CharacterModifier, job, otherspec
     출력값 : float(DPM)
     '''
-    
+
     if koJobFlag:
         koJob = job
     else:
@@ -78,7 +78,7 @@ def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False,
             raise TypeError("Unsupported job type: " + str(job))
     else:
         raise TypeError("Unsupported job type(en): " + str(job))
-        
+
     template = ichar()
     if otherspec is not None:
         if "buffrem" in otherspec:
@@ -86,8 +86,8 @@ def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False,
         if "summonrem" in otherspec:
             template.summonRemain = otherspec["summonrem"]
         if "cooltimereduce" in otherspec:
-            template.cooltimeReduce = otherspec["cooltimereduce"]    
-    
+            template.cooltimeReduce = otherspec["cooltimereduce"]
+
     template.apply_modifiers([spec])
 
     graph = gen.package_bare(template, useFullCore = False, v_builder = v_builder)
@@ -96,12 +96,12 @@ def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False,
             core.BuffSkillWrapper,
             core.SummonSkillWrapper,
             core.DamageSkillWrapper
-        ]), 
+        ]),
         [rules.UniquenessRule()] + gen.get_predefined_rules(rules.RuleSet.BASE)) #가져온 그래프를 토대로 스케줄러를 생성합니다.
     analytics = core.Analytics(printFlag=False)  #데이터를 분석할 분석기를 생성합니다.
     control = core.Simulator(sche, template, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
     control.start_simulation(180*1000)
-    
+
     if weaponAtt is None:
         weaponAtt = Absolab.WeaponFactory.getWeapon(maplejobs.weaponList[koJob], star = 17, elist = [0,0,0,9] ).att
 
@@ -109,22 +109,22 @@ def get_instant_dpm(spec, job, otherspec, useFullCore = True, koJobFlag = False,
         seed_ring_specs = [
             {"name" : "리스크테이커", "effect" : [ [12000 + 6000*i, MDF(patt = 20 + 10*i)] for i in range(4) ]},
             {"name" : "리스트레인트", "effect" : [ [9000 + 2000*i, MDF(patt = 25 + 25*i)] for i in range(4) ]},
-            {"name" : "웨폰퍼프", "effect" : [ [9000 + 2000*i, MDF(stat_main = weaponAtt * (i+1))] for i in range(4) ]}, 
+            {"name" : "웨폰퍼프", "effect" : [ [9000 + 2000*i, MDF(stat_main = weaponAtt * (i+1))] for i in range(4) ]},
             {"name" : "크리데미지", "effect" : [ [9000 + 2000*i, MDF(crit_damage = 7+ 7*i)] for i in range(4) ]}
         ]
-        
+
         return_ring_dpms = []
-        
+
         for spec in seed_ring_specs:
             enhancement = []
-            
+
             enhancement = [control.analytics.deduce_increment_of_temporal_modifier(effect[0], effect[1])
                                 for effect in spec["effect"] ]
             return_ring_dpms.append({"name" : spec["name"], "effect" : enhancement})
-    
+
     return_json_object = {"dpm" : control.getDPM(), "loss" : control.get_unrestricted_DPM() - control.getDPM(), "share" : analytics.skill_share()}
-    
+
     if seed_rings:
         return_json_object["seedring"] = return_ring_dpms
-    
+
     return return_json_object

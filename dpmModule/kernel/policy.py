@@ -240,7 +240,7 @@ class AdvancedGraphScheduler:
         for buffwrp, st in self._buffMdfCalcZip:
             if st:
                 mdf += buffwrp.get_modifier()
-                # print(buffwrp.skill.name, buffwrp.is_active(), buffwrp.get_modifier().pdamage_indep)
+                # print(buffwrp.skill.name, buffwrp.is_active(), buffwrp.get_modifier().final_damage)
         return mdf
 
 

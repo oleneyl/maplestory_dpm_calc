@@ -324,7 +324,7 @@ class JobGenerator:
 
         # 무기 소울
         refMDF = get_reference_modifier(chtr)
-        if refMDF.crit < 88:
+        if refMDF.crit_rate < 88:
             weapon_soul_modifier = ExMDF(crit=12, att=20)
         else:
             weapon_soul_modifier = ExMDF(patt=3, att=20)
@@ -493,7 +493,7 @@ class Union:
     def _get_union_increment_from_state(mdf: ExMDF, state: List[int], critical_reinforce: bool = False):
         mdfCopy = mdf + Union._get_union_from_state(state)
         if critical_reinforce:
-            mdfCopy += ExMDF(crit_damage=max(0, mdfCopy.crit) * 0.125)
+            mdfCopy += ExMDF(crit_damage=max(0, mdfCopy.crit_rate) * 0.125)
         return mdfCopy.get_damage_factor()
 
     @staticmethod
@@ -600,9 +600,9 @@ class LinkSkill:
         if (refMDF + get_mdf(links)).armor_ignore < 85:
             links = append_link(links, LinkSkill.Hoyoung)
 
-        if (refMDF + get_mdf(links)).crit < 90:
+        if (refMDF + get_mdf(links)).crit_rate < 90:
             links = append_link(links, LinkSkill.Phantom)
-        if (refMDF + get_mdf(links)).crit < 90:
+        if (refMDF + get_mdf(links)).crit_rate < 90:
             links = append_link(links, LinkSkill.AdventureArcher)
 
         link_priority = [LinkSkill.DemonSlayer, LinkSkill.AdventureMage, LinkSkill.Cadena,
@@ -849,7 +849,7 @@ class HyperStat:
             for i in range(hyper_size):
                 enhanced_mdf = HyperStat.enhancement[i][idxList[i]] + mdf + mdfSum
                 if critical_reinforce:
-                    enhanced_mdf += ExMDF(crit_damage=max(0, enhanced_mdf.crit) * 0.125)
+                    enhanced_mdf += ExMDF(crit_damage=max(0, enhanced_mdf.crit_rate) * 0.125)
                 _ehc = (enhanced_mdf.get_damage_factor() - fix_enhance) / HyperStat.requirement[idxList[i]]
                 if _ehc >= ehc and HyperStat.requirement[idxList[i]] < point_left:
                     ehc = _ehc

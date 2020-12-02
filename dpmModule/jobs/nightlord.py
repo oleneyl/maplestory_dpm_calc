@@ -14,7 +14,7 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 11
         self.jobtype = "luk"
         self.jobname = "나이트로드"
-        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
+        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit_rate', 'buff_rem')
         self.preEmptiveSkills = 1
 
     def get_ruleset(self):
@@ -31,32 +31,32 @@ class JobGenerator(ck.JobGenerator):
         NimbleBody = core.InformedCharacterModifier("님블 바디",stat_main = 20)
         CriticalThrow = core.InformedCharacterModifier("크리티컬 스로우", crit=50, crit_damage = 5)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
-        
+
         Adrenalin = core.InformedCharacterModifier("아드레날린",crit_damage=10)
         JavelinMastery = core.InformedCharacterModifier("자벨린 마스터리",pdamage_indep = 25)    #20%확률로 100%크리. 현재 비활성,
         PurgeAreaPassive = core.InformedCharacterModifier("퍼지 에어리어(패시브)",boss_pdamage = 10 + ceil(self.combat / 3))
         DarkSerenity = core.InformedCharacterModifier("다크 세레니티",att = 40+passive_level, armor_ignore = 30+passive_level)
-        
+
         JavelineExpert = core.InformedCharacterModifier("자벨린 엑스퍼트",att = 30 + passive_level, crit_damage = 15 + passive_level//3)
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 1, 1)
-        
-        return [NimbleBody, CriticalThrow, PhisicalTraining, 
+
+        return [NimbleBody, CriticalThrow, PhisicalTraining,
                 Adrenalin, JavelinMastery, PurgeAreaPassive, DarkSerenity, JavelineExpert, ReadyToDiePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 75)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5+0.5*(passive_level / 2))    #오더스 기본적용!        
-        
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5+0.5*(passive_level / 2))    #오더스 기본적용!
+
         return [WeaponConstant, Mastery]
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         쿼드-마크-쇼다운
-        
+
         스프 3줄 히트
-        
+
         얼닼사는 스프 사용중에만 사용
         레투다를 2번에 한번씩 스프에 맞춰 사용
         '''
@@ -68,31 +68,31 @@ class JobGenerator(ck.JobGenerator):
         BleedingToxin = core.BuffSkill("블리딩 톡신", 780, 80*1000, cooltime = 180 * 1000, att = 60).wrap(core.BuffSkillWrapper)
         BleedingToxinDot = core.DotSkill("블리딩 톡신(도트)", 0, 1000, 1000, 1, 90*1000, cooltime = -1).wrap(core.SummonSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        
+
         QuarupleThrow = core.DamageSkill("쿼드러플 스로우", 600, 378 + 4 * self.combat, 5, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)    #쉐도우 파트너 적용
 
         SuddenRaid = core.DamageSkill("써든레이드", 690, 494+5*self.combat, 7, cooltime = (30-2*(self.combat//2))*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 0, 1000, 210 + 4 * self.combat, 1, 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
-        
+
         MARK_PROP = (60+2*passive_level)/(160+2*passive_level)
         MarkOfNightlord = core.DamageSkill("마크 오브 나이트로드", 0, (60+3*passive_level+chtr.level), MARK_PROP*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         MarkOfNightlordPungma = core.DamageSkill("마크 오브 나이트로드(풍마)", 0, (60+3*passive_level+chtr.level), MARK_PROP*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 툴팁대로면 19.355%가 맞으나, 쿼드러플과 동일한 37.5%로 적용되는 중
 
         FatalVenom = core.DotSkill("페이탈 베놈", 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 8000, cooltime = -1).wrap(core.SummonSkillWrapper)
-    
+
         #_VenomBurst = core.DamageSkill("베놈 버스트", ??) ## 패시브 50%확률로 10초간 160+6*vlevel dot. 사용시 도트뎀 모두 피해 + (500+20*vlevel) * 5. 어차피 안쓰는 스킬이므로 작성X
-        
+
         UltimateDarksight = thieves.UltimateDarkSightWrapper(vEhc, 3, 3)
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 1, 1)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
-        
+
         #조건부 파이널어택으로 설정함.
         SpreadThrowTick = core.DamageSkill("쿼드러플 스로우(스프레드)", 0, (378 + 4 * self.combat)*0.85, 5*3, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         SpreadThrowInit = core.BuffSkill("스프레드 스로우", 540, (20+vEhc.getV(0,0))*1000, cooltime = 180*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        
+
         Pungma = core.SummonSkill("풍마수리검", 360, 100, 0, 1, 1450, cooltime = 25*1000, red=True).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)  #10타 가정
         PungmaHit = core.DamageSkill("풍마수리검(타격)", 0, 250+vEhc.getV(4,4)*10, 5, cooltime = -1).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
-        
+
         ArcaneOfDarklord = core.SummonSkill("다크로드의 비전서", 360, 1020, 350+14*vEhc.getV(2,2), 7 + 5, 11990, cooltime = 60*1000, red=True, modifier=core.CharacterModifier(boss_pdamage=30)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 132타
         ArcaneOfDarklordFinal = core.DamageSkill("다크로드의 비전서(막타)", 0, 900+36*vEhc.getV(2,2), 10, cooltime = -1, modifier=core.CharacterModifier(boss_pdamage=30)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         ThrowBlasting = core.DamageSkill("스로우 블래스팅(폭발 부적)", 0, 475+19*vEhc.getV(0,0), 5, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
@@ -116,10 +116,10 @@ class JobGenerator(ck.JobGenerator):
         SpreadThrowTick.onAfter(core.RepeatElement(MarkOfNightlord, 15))
         Pungma.onTick(MarkOfNightlordPungma)
         ThrowBlasting.onAfter(MarkOfNightlord)
-        
+
         # 다크로드의 비전서
         ArcaneOfDarklord.onAfter(ArcaneOfDarklordFinal.controller(8000))
-        
+
         # 블리딩 톡신
         BleedingToxin.onAfter(BleedingToxinDot)
 
@@ -128,7 +128,7 @@ class JobGenerator(ck.JobGenerator):
         ThrowBlasting.onAfter(ThrowBlastingStack.stackController(-1))
         ThrowBlastingPassive.onAfter(ThrowBlasting)
         ThrowBlastingPassive.protect_from_running()
-        
+
         # 쿼드러플 관련 - 스프레드, 스로우 블래스팅
         QuarupleThrow.onAfter(core.OptionalElement(SpreadThrowInit.is_active, SpreadThrowTick))
         QuarupleThrow.onAfter(core.OptionalElement(lambda: ThrowBlastingStack.judge(0, -1) and ThrowBlastingPassive.is_available(), ThrowBlastingPassive))
@@ -140,10 +140,10 @@ class JobGenerator(ck.JobGenerator):
 
         for sk in [QuarupleThrow, SuddenRaid, Pungma, SpreadThrowTick]:
             sk.onAfter(FatalVenom)
-        
-        return (QuarupleThrow, 
+
+        return (QuarupleThrow,
             [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    ShadowPartner, SpiritJavelin, PurgeArea, BleedingToxin, EpicAdventure, 
+                    ShadowPartner, SpiritJavelin, PurgeArea, BleedingToxin, EpicAdventure,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), UltimateDarksight, ReadyToDie, SpreadThrowInit,
                     ThrowBlasting, ThrowBlastingPassive, ThrowBlastingActive,
                     globalSkill.soul_contract()] + \

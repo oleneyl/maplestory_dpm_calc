@@ -17,7 +17,7 @@ class EnergyChargeWrapper(core.StackSkillWrapper):
         self.charged = False
         self.combat = combat
         self.drainCallback = None
-    
+
     def charge(self, val, force):
         if (force or not self.charged) and val > 0:
             self.stack = min(self.stack + val, 10000)
@@ -53,7 +53,7 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 10
         self.jobtype = "str"
         self.jobname = "바이퍼"
-        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
+        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit_rate', 'buff_rem')
         self.preEmptiveSkills = 1
 
     def get_ruleset(self):
@@ -72,7 +72,7 @@ class JobGenerator(ck.JobGenerator):
         StimulatePassive = core.InformedCharacterModifier("스티뮬레이트(패시브)",boss_pdamage = 20)
 
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 2, 3)
-        
+
         return [CriticalRoar, MentalClearity, PhisicalTraining, CriticalRage, StimulatePassive, LoadedDicePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
@@ -84,9 +84,9 @@ class JobGenerator(ck.JobGenerator):
         CriticalRage = core.InformedCharacterModifier("크리티컬 레이지(보스)",crit = 20)    #보스상대 추가+20% 크리율
         GuardCrush = core.InformedCharacterModifier("가드 크러시",armor_ignore = 40 + 2*passive_level) #40% 확률로 방무 100% 무시.
         # CounterAttack = core.InformedCharacterModifier("카운터 어택",pdamage = 25 + 2*passive_level) # TODO: 적용 여부 결정해야함
-        
+
         return [WeaponConstant, Mastery, CriticalRage, GuardCrush]
-        
+
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         울트라 차지 : 공격시 350충전, 보스공격시 2배 충전. 최대스택 10000.
@@ -112,13 +112,13 @@ class JobGenerator(ck.JobGenerator):
         LuckyDice = core.BuffSkill("로디드 다이스", 990, 180 * 1000, pdamage = 20+10*DICE_PROC+10*DICE_PROC*((1-DICE_PROC)+DICE_WEIGHT/(DICE_POOL*2-DICE_WEIGHT))*(10*(5+passive_level)*0.01)).isV(vEhc, 2, 2).wrap(core.BuffSkillWrapper)
         Viposition = core.BuffSkill("바이퍼지션", 0, (180+4*self.combat) * 1000, patt = 30+self.combat).wrap(core.BuffSkillWrapper)
 
-        # Damage Skill    
+        # Damage Skill
         FistInrage = core.DamageSkill("피스트 인레이지", 690, 320 + 4*self.combat, 8 + 1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         FistInrage_T = core.DamageSkill("피스트 인레이지(변신)", 690, 320+4*self.combat, 8 + 1 + 2, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        
+
         DragonStrike = core.DamageSkill("드래곤 스트라이크", 690, 300 + 4*self.combat, 12, cooltime = 15 * 1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         DragonStrikeBuff = core.BuffSkill("드래곤 스트라이크(디버프)", 0, 15 * 1000, cooltime = -1, pdamage_indep = 20 + self.combat//2).wrap(core.BuffSkillWrapper)
-        
+
         Nautilus = core.DamageSkill("노틸러스", 690, 440+4*self.combat, 7, cooltime = 60 * 1000, red=True).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         NautilusFinalAttack = core.DamageSkill("노틸러스(파이널 어택)", 0, 165+2*self.combat, 2).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
 
@@ -131,20 +131,20 @@ class JobGenerator(ck.JobGenerator):
 
         # 5th
         PirateFlag = adventurer.PirateFlagWrapper(vEhc, 3, 2, chtr.level)
-        
+
         #오버드라이브 (앱솔 가정)
         #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
         WEAPON_ATT = jobutils.get_weapon_att("너클")
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
-        
+
         Transform = core.BuffSkill("트랜스 폼", 450, (50+vEhc.getV(1,1))*1000, cooltime = 180 * 1000, red=True, pdamage_indep = 20 + vEhc.getV(1,1) // 5).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         TransformEnergyOrbDummy = core.DamageSkill("에너지 오브(더미)", 0, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
         TransformEnergyOrb = core.DamageSkill("에너지 오브", 780, 450 +vEhc.getV(1,1)*18, 3 * TRANSFORM_HIT, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
 
         SerpentScrew = core.SummonSkill("서펜트 스크류", 600, 260, 360 + vEhc.getV(0,0)*14, 3, 99999 * 10000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         SerpentScrewDummy = core.SummonSkill("서펜트 스크류(지속)", 0, 1000, 0, 0, 99999 * 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
-    
+
         FuriousCharge = core.DamageSkill("퓨리어스 차지", 420, 600+vEhc.getV(4,4)*24, 10, cooltime = 10 * 1000, modifier = core.CharacterModifier(boss_pdamage = 30)).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
 
         HowlingFistInit = core.DamageSkill("하울링 피스트(개시)", 240, 0, 0, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
@@ -169,7 +169,7 @@ class JobGenerator(ck.JobGenerator):
         DragonStrike.onAfter(EnergyCharge.chargeController(-180))
         UnityOfPower.onAfter(EnergyCharge.chargeController(-1500))
         HowlingFistInit.onAfter(EnergyCharge.chargeController(-1750))
-        
+
         # Basic Attack
         BasicAttack = core.OptionalElement(EnergyCharge.isStateOn, FistInrage_T, FistInrage, "에너지 완충")
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
@@ -178,7 +178,7 @@ class JobGenerator(ck.JobGenerator):
         # Dragon Strike
         DragonStrike.onConstraint(EnergyConstraint)
         DragonStrike.onAfter(DragonStrikeBuff)
-    
+
         # Final Attack
         FinalAttack = core.OptionalElement(lambda: not Nautilus.is_available(), NautilusFinalAttack, name="노틸러스 쿨타임")
         FistInrage.onAfter(FinalAttack)
@@ -187,16 +187,16 @@ class JobGenerator(ck.JobGenerator):
 
         # Stimulate
         Stimulate.onAfter(StimulateSummon)
-    
+
         # Unity Of Power
         UnityOfPower.onConstraint(EnergyConstraint)
         UnityOfPower.onAfter(UnityOfPowerBuff)
-        
+
         # Transform
         Transform.onAfter(TransformEnergyOrbDummy.controller(1))
         TransformEnergyOrbDummy.onConstraint(core.ConstraintElement("트랜스폼 상태에서만 사용가능", Transform, Transform.is_active))
         TransformEnergyOrbDummy.onAfter(core.RepeatElement(TransformEnergyOrb, 2 + vEhc.getV(1, 1) // 30))
-        
+
         # Serpent Screw
         SerpentScrew.onConstraint(core.ConstraintElement("에너지 100 이상", EnergyCharge, partial(EnergyCharge.judge, 100, 1)))
         SerpentScrew.onAfter(SerpentScrewDummy)
@@ -206,7 +206,7 @@ class JobGenerator(ck.JobGenerator):
         HowlingFistInit.onConstraint(core.ConstraintElement("에너지 1750 이상", EnergyCharge, partial(EnergyCharge.judge, 1750, 1)))
         HowlingFistInit.onAfter(core.RepeatElement(HowlingFistCharge, 8))
         HowlingFistInit.onAfter(HowlingFistFinal)
-            
+
         return (BasicAttackWrapper,
             [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                 LuckyDice, Viposition, Stimulate, EpicAdventure, PirateFlag, Overdrive, Transform,

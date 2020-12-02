@@ -23,9 +23,9 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 12
         # 쓸샾, 쓸뻥, 쓸오더(아직 미구현)
         self.preEmptiveSkills = 3
-        
-        self.ability_list = Ability_tool.get_ability_set('reuse', 'crit', 'boss_pdamage')
-    
+
+        self.ability_list = Ability_tool.get_ability_set('reuse', 'crit_rate', 'boss_pdamage')
+
     def get_ruleset(self):
         '''딜 사이클 정리
         어웨이크닝 ON
@@ -38,7 +38,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         ruleset.add_rule(InactiveRule('디멘션 소드 (평딜)', '데모닉 포티튜드'), RuleSet.BASE)
         return ruleset
-    
+
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 20)
 
@@ -68,9 +68,9 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level/2))
-        
+
         return [WeaponConstant, Mastery]
-        
+
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         하이퍼: 익시드 3종, 실드 체이싱 리인포스, 엑스트라 타겟 적용
@@ -78,10 +78,10 @@ class JobGenerator(ck.JobGenerator):
         데몬 프렌지 - 중첩당 10.8타/s
 
         HP 100%
-        
+
         디멘션 소드 - 재시전 X
         '''
-        
+
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         ######   Skill   ######
@@ -132,18 +132,18 @@ class JobGenerator(ck.JobGenerator):
 
         # 블피 (즉시 시전)
         DemonicBlast = core.DamageSkill("블러드 피스트", 0, 500 + 20*vEhc.getV(0,0), 7, cooltime = 10000, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        
+
         # 평딜 기준
         # 참고자료: https://blog.naver.com/oe135/221372243858
         DimensionSword = core.SummonSkill("디멘션 소드 (평딜)", 660, 3000, 1250+14*vEhc.getV(0,0), 8, 40*1000, cooltime = 120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
         #DimensionSwordReuse = core.SummonSkill("디멘션 소드 (극딜)", 660, 210, 300+vEhc.getV(0,0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
-        
+
         # 기본 4000ms
         # 엑큐 2번당 발동하도록 조정
         REVENANT_COOLTIME = 1080
         Revenant = core.BuffSkill("레버넌트", 1530, (30 + vEhc.getV(0,0)//5)*1000, cooltime = 300000, rem = False).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
         RevenantHit = core.DamageSkill("레버넌트(분노의 가시)", 0, 300 + vEhc.getV(0,0) * 12, 9, cooltime = REVENANT_COOLTIME, modifier = core.CharacterModifier(armor_ignore = 30), red = False).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        
+
         # 데몬 5차 공용
         CallMastema, MastemaClaw = demon.CallMastemaWrapper(vEhc, 0, 0)
         AnotherGoddessBuff, AnotherVoid = demon.AnotherWorldWrapper(vEhc, 0, 0)
@@ -153,7 +153,7 @@ class JobGenerator(ck.JobGenerator):
         https://blog.naver.com/oe135/221538210455
         매 3분마다 버프류 스킬 사용하여 극딜
         '''
-        
+
         # TODO: 아머 브레이크 효율 확인필요
         ArmorBreakBuff.onAfter(ArmorBreak)
 
@@ -177,7 +177,7 @@ class JobGenerator(ck.JobGenerator):
         for sk in [Execution_0, Execution_1, Execution_2, Execution_3, ExecutionExceed, ShieldChasing, ArmorBreak, DemonicBlast]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
-        
+
         return(BasicAttack,
                [globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     FrenzyDOT, Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,

@@ -151,10 +151,10 @@ class Analytics:
                 "pdamage": mod.pdamage + mod.boss_pdamage,
                 "boss_pdamage": mod.boss_pdamage,
                 "armor_ignore": mod.armor_ignore,
-                "pdamage_indep": mod.pdamage_indep,
+                "final_damage": mod.final_damage,
                 "effective_status": mod.get_status_factor(),
                 "crit_damage": mod.crit_damage,
-                "crit": mod.crit
+                "crit_rate": mod.crit_rate
                 }
 
         return meta

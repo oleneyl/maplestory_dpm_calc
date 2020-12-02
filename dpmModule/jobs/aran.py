@@ -22,12 +22,12 @@ class JobGenerator(ck.JobGenerator):
         self.jobtype = "str"
         self.jobname = "아란"
         self.vEnhanceNum = 13
-        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
+        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit_rate', 'buff_rem')
         self.preEmptiveSkills = 2
-    
+
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 20)
-        
+
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         RetrievedMemory = core.InformedCharacterModifier("되찾은 기억", patt=5)
@@ -36,16 +36,16 @@ class JobGenerator(ck.JobGenerator):
         AdvancedComboAbilityPassive = core.InformedCharacterModifier("어드밴스드 콤보 어빌리티", att=10, crit=20, crit_damage=10)
         CleavingAttack = core.InformedCharacterModifier("클리빙 어택", armor_ignore=40, pdamage=10)
         Might = core.InformedCharacterModifier("마이트", att=40)
-        HighMastery = core.InformedCharacterModifier("하이 마스터리", att=30, crit_damage=8) 
+        HighMastery = core.InformedCharacterModifier("하이 마스터리", att=30, crit_damage=8)
         AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)", att=30 + passive_level)
 
-        return [RetrievedMemory, SnowChargePassive, PhisicalTraining, 
+        return [RetrievedMemory, SnowChargePassive, PhisicalTraining,
             AdvancedComboAbilityPassive, CleavingAttack, Might, HighMastery, AdvancedFinalAttackPassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 49)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level / 2))        
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level / 2))
         return [WeaponConstant, Mastery]
 
     def get_ruleset(self):
@@ -59,7 +59,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule('쓸만한 컴뱃 오더스', '아드레날린 부스트'), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('소울 컨트랙트', '아드레날린 부스트', check_soul_contract_time), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('부스트 엔드-헌터즈 타겟팅(홀더)', '아드레날린 부스트', lambda x:x.is_time_left(10*1000, -1)), RuleSet.BASE)
-        
+
         return ruleset
 
 
@@ -88,7 +88,7 @@ class JobGenerator(ck.JobGenerator):
         BEYONDER_ADRENALINE_PDAMAGE = get_beyonder_pdamage(11)
         PENRIL_PDAMAGE = get_beyonder_pdamage(10)
         PENRIL_ADRENALINE_PDAMAGE = get_beyonder_pdamage(15)
-        
+
         SmashSwing = core.DamageSkill("스매시 스윙", 360, 800 + 50 * passive_level, 2).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         SmashSwingIncr = core.BuffSkill("스매시 스윙(최종데미지)", 0, 5000+3000, pdamage_indep=15 + passive_level, pdamage=20, cooltime=-1).wrap(core.BuffSkillWrapper)
         SmashSwingIllusion = core.DamageSkill("스매시 스윙(잔상)", 0, 280, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
@@ -103,7 +103,7 @@ class JobGenerator(ck.JobGenerator):
         FinalAttackHolder = core.DamageSkill("파이널어택(홀더)", 0, 0, 0).wrap(core.DamageSkillWrapper)
 
         AdvancedComboAbility = core.BuffSkill("어드밴스드 콤보 어빌리티", 0, 9999*9999, att=2*10, crit=3*10).wrap(core.BuffSkillWrapper)
-        ComboAbility = core.BuffSkill("콤보 어빌리티", 0, 9999*9999, att=2*10).wrap(core.BuffSkillWrapper) 
+        ComboAbility = core.BuffSkill("콤보 어빌리티", 0, 9999*9999, att=2*10).wrap(core.BuffSkillWrapper)
 
         BlessingMaha = core.BuffSkill("블레싱 마하", 0, 200*1000, att=30).wrap(core.BuffSkillWrapper)   #펫버프
 
@@ -139,12 +139,12 @@ class JobGenerator(ck.JobGenerator):
         BrandishMahaAdrenaline = core.DamageSkill('브랜디쉬 마하(아드레날린)', 600, 600+vEhc.getV(2,2)*24+(20 + passive_level)+100+150, 15, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=20)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
 
         GatheringCatcher = core.DamageSkill('게더링 캐쳐(캔슬)', 0, 170+(20 + passive_level), 2).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-        
+
         PenrilCrashHit = 6 + vEhc.getV(3,3) // 30 + 1
         PenrilCrash = core.DamageSkill('펜릴 크래시', 420, 100+500+vEhc.getV(3,3)*5, PenrilCrashHit, modifier=core.CharacterModifier(crit=100, armor_ignore=60,pdamage=PENRIL_PDAMAGE)).setV(vEhc, 2, 2, False).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
-        AdrenalinePenrilCrash = core.DamageSkill('펜릴 크래시(아드레날린)', 420, 150+100+500+vEhc.getV(3,3)*5, PenrilCrashHit + 2, modifier=core.CharacterModifier(crit=100, armor_ignore=60,pdamage=PENRIL_ADRENALINE_PDAMAGE)).setV(vEhc, 2, 2, False).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)       
+        AdrenalinePenrilCrash = core.DamageSkill('펜릴 크래시(아드레날린)', 420, 150+100+500+vEhc.getV(3,3)*5, PenrilCrashHit + 2, modifier=core.CharacterModifier(crit=100, armor_ignore=60,pdamage=PENRIL_ADRENALINE_PDAMAGE)).setV(vEhc, 2, 2, False).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
         PenrilCrashIceburg = core.DamageSkill('펜릴 크래시(빙산)', 0, 500+vEhc.getV(3,3)*5, 6).setV(vEhc, 2, 2, False).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
-        
+
         # TODO: 타수가 늘어나는 파이널 어택으로 동작하지만, 스택을 늘리는 스킬 목록이 밝혀지지 않아 일단 총 423타가 나오게 평균으로 해둠
         BlizzardTempest = core.DamageSkill('블리자드 템페스트', 750, 800+32*vEhc.getV(0,0), 8, cooltime=180*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         BlizzardTempestAura = core.SummonSkill('블리자드 템페스트(저주)', 0, 425, 475+19*vEhc.getV(0,0), 9, 20000, cooltime=-1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
@@ -163,7 +163,7 @@ class JobGenerator(ck.JobGenerator):
         # 인스톨 마하
         InstallMaha.onAfter(InstallMahaBlizzard)
         InstallMaha.onAfter(Combo.stackController(100))
-        
+
         # 브랜디쉬 마하
         BrandishMaha.onAfter(core.RepeatElement(core.OptionalElement(AdrenalineBoost.is_active, BrandishMahaAdrenaline, BrandishMahaNormal), 2))
         BrandishMaha.onAfter(core.OptionalElement(InstallMaha.is_active, BrandishMaha.controller(0.5, 'reduce_cooltime_p')))
@@ -177,9 +177,9 @@ class JobGenerator(ck.JobGenerator):
                 PenrilCrash, AdrenalinePenrilCrash, BrandishMahaNormal, BrandishMahaAdrenaline, BoostEndHuntersTargeting]:
             sk.onAfter(Combo.stackController(DynamicVariableOperation.reveal_argument(sk.skill.hit)))
             auraweapon_builder.add_aura_weapon(sk)
-        
+
         MahaRegion.onTick(Combo.stackController(DynamicVariableOperation.reveal_argument(MahaRegion.skill.hit)))
-            
+
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         # 파이널 어택
@@ -207,15 +207,15 @@ class JobGenerator(ck.JobGenerator):
         AdrenalineBeyonderFirst.onAfter(AdrenalineBeyonderSecond)
         AdrenalineBeyonderSecond.onAfter(AdrenalineBeyonderThird)
         AdrenalineBeyonderThird.onAfter(AdrenalinePenrilCrash)
-        
+
         AdrenalineBeyonderFirst.onAfter(AdrenalineBeyonderWave)
         AdrenalineBeyonderSecond.onAfter(AdrenalineBeyonderWave)
         AdrenalineBeyonderThird.onAfter(AdrenalineBeyonderWave)
-        
+
         AdrenalinePenrilCrash.onAfter(PenrilCrashIceburg)
 
         BasicAttack.onAfter(core.OptionalElement(AdrenalineBoost.is_active, AdrenalineFinalBlow, FinalBlow))
-        
+
         # 스매시 스윙
         SmashSwing.onAfter(SmashSwingIncr)
         SmashSwing.onAfter(SmashSwingIllusion)
@@ -225,8 +225,8 @@ class JobGenerator(ck.JobGenerator):
 
         SmashSwingHolder = core.DamageSkill("스매시 스윙", 0,0,0).wrap(core.DamageSkillWrapper)
         SmashSwingHolder.onAfter(core.OptionalElement(AdrenalineBoost.is_active, AdrenalineSmashSwing, SmashSwing))
-        SmashSwingHolder.onConstraint(core.ConstraintElement('스매시 스윙이 없을때', SmashSwingIncr, SmashSwingIncr.is_not_active))      
-        
+        SmashSwingHolder.onConstraint(core.ConstraintElement('스매시 스윙이 없을때', SmashSwingIncr, SmashSwingIncr.is_not_active))
+
         # 게캐 캔슬
         BrandishMaha.onAfter(GatheringCatcher)
         MahaRegion.onAfter(GatheringCatcher)
@@ -242,11 +242,11 @@ class JobGenerator(ck.JobGenerator):
         AdrenalineBoostEndDummy.onAfter(Combo.stackController(500, dtype='set'))
         AdrenalineGenerator.onConstraint(core.ConstraintElement('아드레날린부스트가 불가능할때', AdrenalineBoost, AdrenalineBoost.is_not_active))
         AdrenalineGenerator.onAfter(AdrenalineBoost)
-        return(BasicAttack, 
+        return(BasicAttack,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), HerosOath,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), Booster, SmashSwingIncr, SnowCharge, AdvancedComboAbility, ComboAbility,
                     BlessingMaha, AdrenalineBoost, AdrenalineBoostEndDummy,
-                    AdrenalineGenerator, 
+                    AdrenalineGenerator,
                     InstallMaha, InstallMahaBlizzard, Combo, AuraWeaponBuff, AuraWeapon, BlizzardTempestAura,
                     globalSkill.soul_contract()] +\
                 [SmashSwingHolder, BrandishMaha, BoostEndHuntersTargetingHolder, BlizzardTempest, MirrorBreak, MirrorSpider] +\

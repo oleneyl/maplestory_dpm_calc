@@ -8,15 +8,15 @@ from ..graph import DynamicVariableInstance, DynamicVariableOperation
 
 
 class CharacterModifier:
-    __slots__ = 'crit', 'crit_damage', 'pdamage', 'pdamage_indep', 'stat_main', 'stat_sub', 'pstat_main', 'pstat_sub', 'boss_pdamage', 'armor_ignore', 'patt', 'att', 'stat_main_fixed', 'stat_sub_fixed'
+    __slots__ = 'crit_rate', 'crit_damage', 'pdamage', 'final_damage', 'stat_main', 'stat_sub', 'pstat_main', 'pstat_sub', 'boss_pdamage', 'armor_ignore', 'patt', 'att', 'stat_main_fixed', 'stat_sub_fixed'
     '''CharacterModifier : Holds information about character modifiing factors ex ) pdamage, stat, att%, etc.AbstractSkill
     - parameters
       
-      .crit : Additional critical value
+      .crit_rate : Additional critical value
       .crit_damage : Critical damage increment %
       
       .pdamage : Damage increment %
-      .pdamage_indep : Total Damage Increment %.
+      .final_damage : Total Damage Increment %.
       
       .stat_main : Main stat increment
       .stat_sub : Sub stat increment
@@ -38,11 +38,11 @@ class CharacterModifier:
                  stat_main: float = 0, stat_sub: float = 0, pstat_main: float = 0, pstat_sub: float = 0,
                  boss_pdamage: float = 0, armor_ignore: float = 0, patt: float = 0, att: float = 0,
                  stat_main_fixed: float = 0, stat_sub_fixed: float = 0) -> None:
-        self.crit: float = crit
+        self.crit_rate: float = crit
         self.crit_damage: float = crit_damage
 
         self.pdamage: float = pdamage
-        self.pdamage_indep: float = pdamage_indep
+        self.final_damage: float = pdamage_indep
 
         self.stat_main: float = stat_main
         self.stat_sub: float = stat_sub
@@ -60,10 +60,10 @@ class CharacterModifier:
         self.stat_sub_fixed: float = stat_sub_fixed
 
     def __iadd__(self, arg: CharacterModifier) -> CharacterModifier:
-        self.crit += arg.crit
+        self.crit_rate += arg.crit_rate
         self.crit_damage += arg.crit_damage
         self.pdamage += arg.pdamage
-        self.pdamage_indep += arg.pdamage_indep + (self.pdamage_indep * arg.pdamage_indep) * 0.01
+        self.final_damage += arg.final_damage + (self.final_damage * arg.final_damage) * 0.01
         self.stat_main += arg.stat_main
         self.stat_sub += arg.stat_sub
         self.pstat_main += arg.pstat_main
@@ -77,10 +77,10 @@ class CharacterModifier:
         return self
 
     def __add__(self, arg: CharacterModifier) -> CharacterModifier:
-        return CharacterModifier(crit=(self.crit + arg.crit),
+        return CharacterModifier(crit=(self.crit_rate + arg.crit_rate),
                                  crit_damage=(self.crit_damage + arg.crit_damage),
                                  pdamage=(self.pdamage + arg.pdamage),
-                                 pdamage_indep=self.pdamage_indep + arg.pdamage_indep + (self.pdamage_indep * arg.pdamage_indep) * 0.01,
+                                 pdamage_indep=self.final_damage + arg.final_damage + (self.final_damage * arg.final_damage) * 0.01,
                                  stat_main=(self.stat_main + arg.stat_main),
                                  stat_sub=(self.stat_sub + arg.stat_sub),
                                  pstat_main=(self.pstat_main + arg.pstat_main),
@@ -92,10 +92,10 @@ class CharacterModifier:
                                  stat_sub_fixed=(self.stat_sub_fixed + arg.stat_sub_fixed))
 
     def __sub__(self, arg: CharacterModifier) -> CharacterModifier:
-        return CharacterModifier(crit=(self.crit - arg.crit),
+        return CharacterModifier(crit=(self.crit_rate - arg.crit_rate),
                                  crit_damage=(self.crit_damage - arg.crit_damage),
                                  pdamage=(self.pdamage - arg.pdamage),
-                                 pdamage_indep=(100 + self.pdamage_indep) / (100 + arg.pdamage_indep) * 100 - 100,
+                                 pdamage_indep=(100 + self.final_damage) / (100 + arg.final_damage) * 100 - 100,
                                  stat_main=(self.stat_main - arg.stat_main),
                                  stat_sub=(self.stat_sub - arg.stat_sub),
                                  pstat_main=(self.pstat_main - arg.pstat_main),
@@ -107,10 +107,10 @@ class CharacterModifier:
                                  stat_sub_fixed=(self.stat_sub_fixed - arg.stat_sub_fixed))
 
     def copy(self) -> CharacterModifier:
-        return CharacterModifier(crit=self.crit,
+        return CharacterModifier(crit=self.crit_rate,
                                  crit_damage=self.crit_damage,
                                  pdamage=self.pdamage,
-                                 pdamage_indep=self.pdamage_indep,
+                                 pdamage_indep=self.final_damage,
                                  stat_main=self.stat_main,
                                  stat_sub=self.stat_sub,
                                  pstat_main=self.pstat_main,
@@ -123,10 +123,10 @@ class CharacterModifier:
                                  stat_sub_fixed=self.stat_sub_fixed)
 
     def extend(self) -> ExtendedCharacterModifier:
-        return ExtendedCharacterModifier(crit=self.crit,
+        return ExtendedCharacterModifier(crit=self.crit_rate,
                                          crit_damage=self.crit_damage,
                                          pdamage=self.pdamage,
-                                         pdamage_indep=self.pdamage_indep,
+                                         pdamage_indep=self.final_damage,
                                          stat_main=self.stat_main,
                                          stat_sub=self.stat_sub,
                                          pstat_main=self.pstat_main,
@@ -141,10 +141,10 @@ class CharacterModifier:
     def get_damage_factor(self, armor: float = 300) -> float:
         """Caution : Use this function only if you summed up every modifiers.
         """
-        real_crit = min(100, self.crit)
+        real_crit = min(100, self.crit_rate)
         stat = (4 * self.stat_main * (1 + 0.01 * self.pstat_main) + self.stat_sub * (1 + 0.01 * self.pstat_sub)) + (4 * self.stat_main_fixed + self.stat_sub_fixed)
         adap = self.att * (1 + 0.01 * self.patt)
-        factor = (1 + 0.0001 * max(0, real_crit) * (self.crit_damage + 35)) * (1 + 0.01 * (max(self.pdamage + self.boss_pdamage, 0))) * (1 + 0.01 * self.pdamage_indep)
+        factor = (1 + 0.0001 * max(0, real_crit) * (self.crit_damage + 35)) * (1 + 0.01 * (max(self.pdamage + self.boss_pdamage, 0))) * (1 + 0.01 * self.final_damage)
         ignorance = max((100 - armor * (1 - 0.01 * self.armor_ignore)) * 0.01, 0)
         return stat * adap * factor * ignorance * 0.01
 
@@ -154,7 +154,7 @@ class CharacterModifier:
         """
         stat = (4 * self.stat_main * (1 + 0.01 * self.pstat_main) + self.stat_sub * (1 + 0.01 * self.pstat_sub)) + (4 * self.stat_main_fixed + self.stat_sub_fixed)
         adap = self.att * (1 + 0.01 * self.patt)
-        factor = (1 + 0.01 * self.pdamage) * (1 + 0.01 * self.pdamage_indep)
+        factor = (1 + 0.01 * self.pdamage) * (1 + 0.01 * self.final_damage)
         return stat * adap * factor * 0.01
 
     def calculate_damage(self, damage: float, hit: float, spec: str, armor: float = 300) -> Tuple[float, float]:
@@ -197,10 +197,10 @@ class CharacterModifier:
                     return M
 
         # Optimized
-        real_crit = min(100, self.crit)
+        real_crit = min(100, self.crit_rate)
         stat = (4 * self.stat_main * (1 + 0.01 * self.pstat_main) + self.stat_sub * (1 + 0.01 * self.pstat_sub)) + (4 * self.stat_main_fixed + self.stat_sub_fixed)
         adap = self.att * (1 + 0.01 * self.patt)
-        factor_crit_removed = (1 + 0.01 * (max(self.pdamage + self.boss_pdamage, 0))) * (1 + 0.01 * self.pdamage_indep)
+        factor_crit_removed = (1 + 0.01 * (max(self.pdamage + self.boss_pdamage, 0))) * (1 + 0.01 * self.final_damage)
         ignorance = max((100 - armor * (1 - 0.01 * self.armor_ignore)) * 0.01, 0)
         expert_max = 100 / 95
         expert_min = 90 / 95
@@ -225,8 +225,8 @@ class CharacterModifier:
         return (res_damage, real_damage - res_damage)
 
     def log(self) -> str:
-        txt = "crit rate : %.1f, crit damage : %.1f\n" % (self.crit, self.crit_damage)
-        txt += "pdamage : %.1f, pdamage_indep : %.1f\n" % (self.pdamage, self.pdamage_indep)
+        txt = "crit_rate rate : %.1f, crit_rate damage : %.1f\n" % (self.crit_rate, self.crit_damage)
+        txt += "pdamage : %.1f, final_damage : %.1f\n" % (self.pdamage, self.final_damage)
         txt += "stat_main : %.1f, stat_sub : %.1f\n" % (self.stat_main, self.stat_sub)
         txt += "pstat_main : %.1f, pstat_sub : %.1f\n" % (self.pstat_main, self.pstat_sub)
         txt += "stat_main_fixed : %.1f, stat_sub_fixed : %.1f\n" % (self.stat_main_fixed, self.stat_sub_fixed)
@@ -239,7 +239,7 @@ class CharacterModifier:
         return self.log()
 
     def abstract_log_list(self, lang: str = "ko") -> List[Tuple[str, float, Optional[str]]]:
-        crit_rate_formal = (math.floor(self.crit * 10)) / 10
+        crit_rate_formal = (math.floor(self.crit_rate * 10)) / 10
         if crit_rate_formal < 0:
             crit_rate_formal = "미발동"
         el: List[Tuple[str, float, Optional[str]]]
@@ -252,12 +252,12 @@ class CharacterModifier:
                   ("보스 공격력", math.floor(self.boss_pdamage * 10) / 10, "%"),
                   ("주스텟퍼", math.floor(self.pstat_main * 10) / 10, "%"),
                   ("부스텟퍼", math.floor(self.pstat_sub * 10) / 10, "%"),
-                  ("최종뎀", math.floor(self.pdamage_indep * 10) / 10, "%"),
+                  ("최종뎀", math.floor(self.final_damage * 10) / 10, "%"),
                   ("공격력", math.floor(self.att * 10) / 10),
                   ("공퍼", math.floor(self.patt * 10) / 10, "%"),
                   ("방무", math.floor(self.armor_ignore * 10) / 10, "%")]
         elif lang == "en":
-            el = [("crit rate", self.crit),
+            el = [("crit rate", self.crit_rate),
                   ("crit damage", self.crit_damage),
                   ("main stat", self.stat_main),
                   ("sub stat", self.stat_sub),
@@ -265,7 +265,7 @@ class CharacterModifier:
                   ("boss damageP", self.boss_pdamage),
                   ("main statP", self.pstat_main),
                   ("sub statP", self.pstat_sub),
-                  ("final damageP", self.pdamage_indep),
+                  ("final damageP", self.final_damage),
                   ("AD/MD", self.att),
                   ("AD/MD P", self.patt),
                   ("armor ignorance", self.armor_ignore)]
@@ -278,10 +278,10 @@ class CharacterModifier:
         return retel
 
     def as_dict(self) -> Dict[str, float]:
-        return {"crit": self.crit,
+        return {"crit_rate": self.crit_rate,
                 "crit_damage": self.crit_damage,
                 "pdamage": self.pdamage,
-                "pdamage_indep": self.pdamage_indep,
+                "final_damage": self.final_damage,
                 "stat_main": self.stat_main,
                 "stat_sub": self.stat_sub,
                 "pstat_main": self.pstat_main,
@@ -296,10 +296,10 @@ class CharacterModifier:
     # TODO: Not used method.
     def _dynamic_variable_hint(self, character_modifier: CharacterModifier) -> Optional[DynamicCharacterModifier]:
         if not isinstance(character_modifier, DynamicCharacterModifier):
-            return DynamicCharacterModifier(crit=character_modifier.crit,
+            return DynamicCharacterModifier(crit=character_modifier.crit_rate,
                                             crit_damage=character_modifier.crit_damage,
                                             pdamage=character_modifier.pdamage,
-                                            pdamage_indep=character_modifier.pdamage_indep,
+                                            pdamage_indep=character_modifier.final_damage,
                                             stat_main=character_modifier.stat_main,
                                             stat_sub=character_modifier.stat_sub,
                                             pstat_main=character_modifier.pstat_main,
@@ -324,10 +324,10 @@ class DynamicCharacterModifier(DynamicVariableInstance, CharacterModifier):
         CharacterModifier.__init__(self, **parsed_kwargs)
 
     def evaluate_override(self) -> CharacterModifier:
-        return CharacterModifier(crit=self.crit.evaluate(),
+        return CharacterModifier(crit=self.crit_rate.evaluate(),
                                  crit_damage=self.crit_damage.evaluate(),
                                  pdamage=self.pdamage.evaluate(),
-                                 pdamage_indep=self.pdamage_indep.evaluate(),
+                                 pdamage_indep=self.final_damage.evaluate(),
                                  stat_main=self.stat_main.evaluate(),
                                  stat_sub=self.stat_sub.evaluate(),
                                  pstat_main=self.pstat_main.evaluate(),
@@ -393,10 +393,10 @@ class ExtendedCharacterModifier(CharacterModifier):
             prop_ignore=self.prop_ignore,
             additional_target=self.additional_target,
             passive_level=self.passive_level,
-            crit=self.crit,
+            crit=self.crit_rate,
             crit_damage=self.crit_damage,
             pdamage=self.pdamage,
-            pdamage_indep=self.pdamage_indep,
+            pdamage_indep=self.final_damage,
             stat_main=self.stat_main,
             stat_sub=self.stat_sub,
             pstat_main=self.pstat_main,
@@ -439,10 +439,10 @@ class ExtendedCharacterModifier(CharacterModifier):
         self.prop_ignore += arg.prop_ignore
         self.additional_target += arg.additional_target
         self.passive_level += arg.passive_level
-        self.crit += arg.crit
+        self.crit_rate += arg.crit_rate
         self.crit_damage += arg.crit_damage
         self.pdamage += arg.pdamage
-        self.pdamage_indep += arg.pdamage_indep + (self.pdamage_indep * arg.pdamage_indep) * 0.01
+        self.final_damage += arg.final_damage + (self.final_damage * arg.final_damage) * 0.01
         self.stat_main += arg.stat_main
         self.stat_sub += arg.stat_sub
         self.pstat_main += arg.pstat_main
@@ -465,10 +465,10 @@ class ExtendedCharacterModifier(CharacterModifier):
             prop_ignore=(self.prop_ignore + arg.prop_ignore),
             additional_target=(self.additional_target + arg.additional_target),
             passive_level=(self.passive_level + arg.passive_level),
-            crit=(self.crit + arg.crit),
+            crit=(self.crit_rate + arg.crit_rate),
             crit_damage=(self.crit_damage + arg.crit_damage),
             pdamage=(self.pdamage + arg.pdamage),
-            pdamage_indep=(self.pdamage_indep + arg.pdamage_indep + (self.pdamage_indep * arg.pdamage_indep) * 0.01),
+            pdamage_indep=(self.final_damage + arg.final_damage + (self.final_damage * arg.final_damage) * 0.01),
             stat_main=(self.stat_main + arg.stat_main),
             stat_sub=(self.stat_sub + arg.stat_sub),
             pstat_main=(self.pstat_main + arg.pstat_main),
@@ -490,10 +490,10 @@ class ExtendedCharacterModifier(CharacterModifier):
             prop_ignore=(self.prop_ignore - arg.prop_ignore),
             additional_target=(self.additional_target - arg.additional_target),
             passive_level=(self.passive_level - arg.passive_level),
-            crit=(self.crit - arg.crit),
+            crit=(self.crit_rate - arg.crit_rate),
             crit_damage=(self.crit_damage - arg.crit_damage),
             pdamage=(self.pdamage - arg.pdamage),
-            pdamage_indep=(100 + self.pdamage_indep) / (100 + arg.pdamage_indep) * 100 - 100,
+            pdamage_indep=(100 + self.final_damage) / (100 + arg.final_damage) * 100 - 100,
             stat_main=(self.stat_main - arg.stat_main),
             stat_sub=(self.stat_sub - arg.stat_sub),
             pstat_main=(self.pstat_main - arg.pstat_main),
@@ -529,10 +529,10 @@ class InformedCharacterModifier(ExtendedCharacterModifier):
                                          prop_ignore=extended_modifier.prop_ignore,
                                          additional_target=extended_modifier.additional_target,
                                          passive_level=extended_modifier.passive_level,
-                                         crit=extended_modifier.crit,
+                                         crit=extended_modifier.crit_rate,
                                          crit_damage=extended_modifier.crit_damage,
                                          pdamage=extended_modifier.pdamage,
-                                         pdamage_indep=extended_modifier.pdamage_indep,
+                                         pdamage_indep=extended_modifier.final_damage,
                                          stat_main=extended_modifier.stat_main,
                                          stat_sub=extended_modifier.stat_sub,
                                          pstat_main=extended_modifier.pstat_main,

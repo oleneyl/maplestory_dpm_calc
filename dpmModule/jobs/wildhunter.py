@@ -37,7 +37,7 @@ class JaguerStack(core.DamageSkillWrapper):
         self.debuffQueue = [x for x in self.debuffQueue if x[0] + self.DEBUF_PERSISTENCE_TIME > self.currentTime]
         self.stack = self.calculate_stack()
         super(JaguerStack, self).spend_time(time)
-    
+
     def get_hit(self):
         return self.stack
 
@@ -59,14 +59,14 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 11
         self.jobtype = "dex"
         self.jobname = "와일드헌터"
-        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'crit')
+        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'crit_rate')
         self.preEmptiveSkills = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '재규어 스톰'), RuleSet.BASE)
         return ruleset
-        
+
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
@@ -82,9 +82,9 @@ class JobGenerator(ck.JobGenerator):
         ExtentMagazine = core.InformedCharacterModifier("익스텐드 매거진", pdamage_indep=20 + passive_level // 3, stat_main=60 + 2*passive_level, stat_sub=60 + 2*passive_level)
         AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)", att = 20 + ceil(passive_level/2))
         JaugerStormPassive = core.InformedCharacterModifier("재규어 스톰(패시브)", att = 5+2*vEhc.getV(0,0))
-    
+
         return [Jaguer, NaturesWrath, AutomaticShootingDevice,
-                            CrossbowMastery, PhisicalTraining, Flurry, JaugerLink, CrossbowExpert, 
+                            CrossbowMastery, PhisicalTraining, Flurry, JaugerLink, CrossbowExpert,
                             WildInstinct, ExtentMagazine, AdvancedFinalAttackPassive, JaugerStormPassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
@@ -92,11 +92,11 @@ class JobGenerator(ck.JobGenerator):
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 35)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5*ceil(passive_level/2))
-        
+
         SummonJaguer = core.InformedCharacterModifier("서먼 재규어", crit_damage = 8)
-        
+
         return [WeaponConstant, Mastery, SummonJaguer]
-        
+
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         재규어 스톰 3히트
@@ -107,7 +107,7 @@ class JobGenerator(ck.JobGenerator):
         와일드 발칸-리인포스, 보스 킬러
 
         소울 컨트랙트를 크리티컬 리인포스+재규어 스톰+와일드 발칸 Type X에 맞춰 사용
-        
+
         코강 순서:
         발칸 - (서먼/어나더) - 파택 - 클로우컷 - 헌팅유닛- 램피지애즈원/플래시레인 - 소닉붐 - 재규어소울 - 크로스 로드 - 드릴 컨테이너
         '''
@@ -115,7 +115,7 @@ class JobGenerator(ck.JobGenerator):
 
         # Jaguar Skills
         JAGUAR_STORM_HIT = 3
-        
+
         Jaguar = JaguarWrapper()
         Normal = core.DamageSkill("재규어 평타", 0, 140+chtr.level, 1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         ClawCut = core.DamageSkill("클로우 컷", 0, 200+chtr.level, 4, cooltime = 5000*0.9, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
@@ -123,14 +123,14 @@ class JobGenerator(ck.JobGenerator):
         SonicBoom = core.DamageSkill("소닉 붐", 0, 220+chtr.level, 6, cooltime = 6000*0.9, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         JaguarSoul = core.DamageSkill("재규어 소울", 0, 270+chtr.level, 12, cooltime = 210000, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         RampageAsOne = core.DamageSkill("램피지 애즈 원", 0, 500+1*chtr.level, 9, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
-    
+
         Normal_JG = core.DamageSkill("재규어 평타(재규어 스톰)", 0, (140+chtr.level)*(62+vEhc.getV(0,0))*0.01, 1 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         ClawCut_JG = core.DamageSkill("클로우 컷(재규어 스톰)", 0, (200+chtr.level)*(62+vEhc.getV(0,0))*0.01, 4 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         Crossroad_JG = core.DamageSkill("크로스 로드(재규어 스톰)", 0, (225+chtr.level)*(62+vEhc.getV(0,0))*0.01, 2 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
         SonicBoom_JG = core.DamageSkill("소닉 붐(재규어 스톰)", 0, (220+chtr.level)*(62+vEhc.getV(0,0))*0.01, 6 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         JaguarSoul_JG = core.DamageSkill("재규어 소울(재규어 스톰)", 0, (270+chtr.level)*(62+vEhc.getV(0,0))*0.01, 12 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         RampageAsOne_JG = core.DamageSkill("램피지 애즈 원(재규어 스톰)", 0, (500+1*chtr.level)*(62+vEhc.getV(0,0))*0.01, 9 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
-    
+
 
         ######   Skill   ######
         #Buff skills
@@ -143,7 +143,7 @@ class JobGenerator(ck.JobGenerator):
         #Summon skills
         HuntingUnit = core.SummonSkill("어시스턴트 헌팅 유닛", 660, 31000/90, 150, 1.5, 31000, rem=True).setV(vEhc, 4, 3, False).wrap(core.SummonSkillWrapper)
         DrillContainer = core.SummonSkill("드릴 컨테이너", 660, 270, 430+4*self.combat, 1, 15000, cooltime = 30000, red=True, rem=True).setV(vEhc, 9, 2, False).wrap(core.SummonSkillWrapper)
-        
+
         #Damage skills
         WildBalkan = core.DamageSkill("와일드 발칸", 120, 370 + 2*self.combat, 1, modifier = core.CharacterModifier(boss_pdamage=10+20, pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
@@ -154,15 +154,15 @@ class JobGenerator(ck.JobGenerator):
         #Hyper
         WillOfLiberty = core.BuffSkill("윌 오브 리버티", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         SilentRampage = core.BuffSkill("사일런트 램피지", 840, 40*1000, pdamage=40, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
-        
+
         #5th
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3)
         CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 1, 1, 20 + ceil(self.combat/2))
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
-    
+
         JaguerStorm = core.BuffSkill("재규어 스톰", 840, 40*1000, cooltime = (150-vEhc.getV(0,0))*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        
+
         JaguarMaximum = core.DamageSkill("재규어 맥시멈", 2160, 350+13*vEhc.getV(5,5), 12*9, cooltime = 150*1000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
         JaguarMaximumFinal = core.DamageSkill("재규어 맥시멈(마무리)", 630, 450+18*vEhc.getV(5,5), 15*4, cooltime=-1, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
         RidingOff = core.DamageSkill("하차 딜레이", 1800, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper) # 재규어 맥시멈 강제 탑승 해제 딜레이
@@ -175,11 +175,11 @@ class JobGenerator(ck.JobGenerator):
 
         #Build Graph
         FinalAttack = core.OptionalElement(SilentRampage.is_active, FinalAttack100, FinalAttack70)
-        
+
         for sk in [WildBalkan, WildBalkanTypeXTick]:
             sk.onAfter(FinalAttack)
             sk.onAfter(AnotherBite)
-        
+
         JaguarMaximum.onAfter(JaguarMaximumFinal)
         JaguarMaximumFinal.onAfter(AnotherBite.add_debuff(3))
         JaguarMaximumFinal.onAfter(RidingOff)

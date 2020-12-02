@@ -27,7 +27,7 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 10
         self.jobtype = "str"
         self.jobname = "스트라이커"
-        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
+        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit_rate', 'buff_rem')
         self.preEmptiveSkills = 1
 
     def get_modifier_optimization_hint(self):
@@ -48,17 +48,17 @@ class JobGenerator(ck.JobGenerator):
 
         NoieBack = core.InformedCharacterModifier("뇌백",att = 20)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 60)
-        
+
         Gekgap = core.InformedCharacterModifier("극갑",pdamage = 5)
         NoiGe = core.InformedCharacterModifier("뇌제",att = 30)
         NuckleExpert = core.InformedCharacterModifier("너클 엑스퍼트",att = 30 + passive_level, crit_damage = 20 + passive_level // 2)
         NoiShin = core.InformedCharacterModifier("뇌신",crit = 30, crit_damage = 25)
-        
+
         SkyOpenPassive = core.InformedCharacterModifier("천지개벽(패시브)",pdamage_indep = 20)
-        
+
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 3)
 
-        
+
         return [ElementalHarmony, ElementalExpert,
             NoieBack, PhisicalTraining, Gekgap, NoiGe, NuckleExpert, NoiShin,
             SkyOpenPassive, LoadedDicePassive]
@@ -68,22 +68,22 @@ class JobGenerator(ck.JobGenerator):
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level/2))
-        
+
         return [WeaponConstant, Mastery]
-        
+
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         하이퍼 : 질풍-보너스어택 + 섬멸-리인포스/이그노어 가드/보스킬러  + 벽력-보너스어택
-        
+
         연계 100% 가정
 
         천지개벽 ON: 태풍 - 섬멸
         천지개벽 OFF: 파도 - 섬멸
-        
+
         벽섬 : 1020ms
         태섬 : 900ms
         파섬 : 750ms
-        
+
         소울 컨트랙트를 창뇌연격에 맞춰 사용
         천지개벽과 창뇌연격이 겹쳐지지 않게 사용
         '''
@@ -96,12 +96,12 @@ class JobGenerator(ck.JobGenerator):
         ChookRoi = core.BuffSkill("축뢰", 690, (180+5*self.combat)*1000, rem = True).wrap(core.BuffSkillWrapper)
         WindBooster = core.BuffSkill("윈드 부스터", 0, (300+5*passive_level)*1000, rem = True).wrap(core.BuffSkillWrapper)
         HurricaneBuff = core.BuffSkill("태풍(버프)", 0, (90+passive_level)*1000, rem = True, pdamage = 35).wrap(core.BuffSkillWrapper) # TODO: 뇌전 스택에 연동해야함
-    
+
         LightningStack = LightningWrapper(core.BuffSkill("엘리멘탈 : 라이트닝", 0, 99999999))
 
         Hurricane = core.DamageSkill("태풍", 420, 390+3*passive_level, 5+1).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
         HurricaneConcat = core.DamageSkill("태풍(연계)", 420, 390+3*passive_level, 5+1, modifier = LINK_MASTERY).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
-        
+
         Destroy = core.DamageSkill("섬멸", 480, 350 + 4*self.combat, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Thunder = core.DamageSkill("벽력", 540, 320 + 4*self.combat, 5 + 1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         WaterWave = core.DamageSkill("파도", 270, 255, 2).setV(vEhc, 1, 5, False).wrap(core.DamageSkillWrapper)
@@ -113,9 +113,9 @@ class JobGenerator(ck.JobGenerator):
         # 하이퍼
         # 딜레이 추가 필요
         SkyOpen = core.BuffSkill("천지개벽", 0, 30*1000, cooltime = 120*1000).wrap(core.BuffSkillWrapper)
-        
+
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        
+
         CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,1,3).wrap(core.BuffSkillWrapper)
 
@@ -158,11 +158,11 @@ class JobGenerator(ck.JobGenerator):
         WaterWaveCancelHurricane = core.GraphElement("파파태")
         WaterWaveCancelHurricane.onAfter(WaterWaveConcatCancel)
         WaterWaveCancelHurricane.onAfter(Hurricane)
-        
+
         BasicAttack = core.OptionalElement(SkyOpen.is_active, HurricaneDestroy, WaterWaveDestroy)
         BasicAttackWrapper = core.DamageSkill('기본 공격', 0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
-        
+
         for skill in [Destroy, Thunder, WaterWave, DestroyConcat, ThunderConcat, WaterWaveConcat, WaterWaveConcatCancel, Hurricane, HurricaneConcat, GioaTan, NoiShinChanGeuk,
                         SpearLightningAttack, SpearLightningAttack_Lightning, SpearLightningAttack_Final, SpearLightningAttack_Final_Lightning]:
             jobutils.create_auxilary_attack(skill, CHOOKROI, nametag='(축뢰)')
@@ -175,10 +175,10 @@ class JobGenerator(ck.JobGenerator):
             skill.onTick(LightningStack.stackController(1))
 
         GioaTan.onAfter(core.OptionalElement(SkyOpen.is_not_active, LightningStack.stackController(-2), name="천지개벽 체크"))
-        
+
         ShinNoiHapLAttack.onTick(ShinNoiHapLAttack_ChookRoi)
         NoiShinChanGeukAttack.onTick(NoiShinChanGeukAttack_ChookRoi)
-        
+
         ShinNoiHapL.onAfter(ShinNoiHapLAttack)
         #GioaTan.onAfter(DestroyConcat) # TODO: 교아탄을 BasicAttack에 포함해서 돌릴것
         NoiShinChanGeuk.onAfter(NoiShinChanGeukAttack)

@@ -18,11 +18,11 @@ class LuminousStateController(core.BuffSkillWrapper):
         self.state = self.LIGHT
         self.currentState = self.LIGHT
         self.stack = self.STACK
-        
+
         self.remain = 0
         self.buff_rem = buff_rem
         self.equalCallback = lambda:None
-        
+
     def spend_time(self, time : int) -> None:
         super(LuminousStateController, self).spend_time(time)
         self.remain -= time
@@ -33,16 +33,16 @@ class LuminousStateController(core.BuffSkillWrapper):
 
     def _modify_stack(self, stack):
         self.stack -= stack * 1.05 # 다크라이트 마스터리 1.05배
-        
+
         if self.stack <= 0:
             self.stack = LuminousStateController.STACK
             self.currentState = 1 - self.currentState
             self.state = LuminousStateController.EQUAL
             self.remain = 17 * (1 + 0.01* self.buff_rem) * 1000
             self.equalCallback()
-            
-        return core.ResultObject(0, core.CharacterModifier(), 0, 0, '루미너스 스택 변경', spec = 'graph control')     
-    
+
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, '루미너스 스택 변경', spec = 'graph control')
+
     def memorize(self):
         self.stack = LuminousStateController.STACK
         self.currentState = 1 - self.currentState
@@ -50,7 +50,7 @@ class LuminousStateController(core.BuffSkillWrapper):
         self.remain = 17*1000
         self.equalCallback()
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = '메모라이즈', spec = 'graph control')
-    
+
     def modifyStack(self, stack):
         return core.create_task('스택 변경', partial(self._modify_stack, stack), self)
 
@@ -62,10 +62,10 @@ class LuminousStateController(core.BuffSkillWrapper):
 
     def isDark(self):
         return (self.state == LuminousStateController.DARK)
-    
+
     def isEqual(self):
         return (self.state == LuminousStateController.EQUAL)
-    
+
     def isNotEqual(self):
         return (self.state != LuminousStateController.EQUAL)
 
@@ -83,7 +83,7 @@ class PunishingResonatorWrapper(core.SummonSkillWrapper):
         ]
         self.vlevel = vEhc.getV(3,2)
         self.getState = stateGetter
-    
+
     def _useTick(self):
         if self.is_active() and self.tick <= 0:
             self.tick += self.skill.delay
@@ -139,7 +139,7 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 13
         self.jobtype = "int"
         self.jobname = "루미너스"
-        self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
+        self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit_rate', 'boss_pdamage')
         self.preEmptiveSkills = 2
 
     def get_ruleset(self):
@@ -147,7 +147,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConditionRule('소울 컨트랙트', '루미너스 상태', lambda state: state.isEqual() and state.isEqualLeft(20000)), RuleSet.BASE) # TODO: 소울 컨트랙트의 벞지 적용된 지속시간을 가져와야 함
         ruleset.add_rule(ConditionRule('퍼니싱 리소네이터', '루미너스 상태', lambda state: state.isEqual()), RuleSet.BASE)
         return ruleset
-                
+
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
@@ -158,24 +158,24 @@ class JobGenerator(ck.JobGenerator):
         MagicMastery = core.InformedCharacterModifier("매직 마스터리",att = 30 + passive_level, crit_damage = 15 + passive_level // 3, crit = 15 + passive_level // 3)
         DarknessSocery = core.InformedCharacterModifier("다크니스 소서리", pdamage_indep = 40 + self.combat, armor_ignore = 40 + self.combat)
         MorningStarfall = core.InformedCharacterModifier("모닝 스타폴(패시브)",pdamage_indep = 30 + self.combat)
-        
+
         return [PowerOfLight, SpellMastery, HighWisdom, LifeTidal, MagicMastery, MorningStarfall, DarknessSocery]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter): 
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5 + 0.5 * ceil(passive_level / 2))
-        
+
         BlessOfDarkness =  core.InformedCharacterModifier("블레스 오브 다크니스",att = 30)   #15 -> 24 -> 30
         DarknessSoceryActive = core.InformedCharacterModifier("다크니스 소서리(사용)", prop_ignore = 10)
 
         return [WeaponConstant, Mastery, BlessOfDarkness, DarknessSoceryActive]
-        
+
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
         아포 22회 / 라리플 25회가 이퀄리브리엄 진입까지 요구됨
-        
+
         소울 컨트랙트는 이퀄리브리엄에 맞춰 사용
         퍼니싱 리소네이터는 이퀄리브리엄에 맞춰 사용
         메모라이즈는 이퀄이 아니고 쿨타임이 돌아 있으면 사용
@@ -189,7 +189,7 @@ class JobGenerator(ck.JobGenerator):
         PodicMeditaion = core.BuffSkill("포딕 메디테이션", 0, 1800000, att = 40).wrap(core.BuffSkillWrapper) # 펫버프
         DarkCrescendo = core.BuffSkill("다크 크레센도", 0, (180 + 4*self.combat) * 1000, pdamage = 28, rem = True).wrap(core.BuffSkillWrapper) # 펫버프. 스택 제대로 계산 필요함.
         DarknessSocery = core.BuffSkill("다크니스 소서리(버프)", 270, (180 + 5*self.combat) * 1000, rem = True).wrap(core.BuffSkillWrapper)
-    
+
         LuminousState = LuminousStateController(core.BuffSkill("루미너스 상태", 0, 99999999), chtr.get_base_modifier().buff_rem)
 
         #Damage Skills
@@ -217,7 +217,7 @@ class JobGenerator(ck.JobGenerator):
         # Skill Wrapper - Basic Attack
         LightReflection.onAfter(LuminousState.modifyStack(390))
         Apocalypse.onAfter(LuminousState.modifyStack(410 + 40)) # 아포칼립스-리차지 +40
-        
+
         Attack = core.DamageSkill('기본 공격', 0, 0, 0).wrap(core.DamageSkillWrapper)
         IsLight = core.OptionalElement(LuminousState.isLight, LightReflection, Apocalypse, name = '빛이면 라리플 사용')
         IsEqual = core.OptionalElement(LuminousState.isEqual, AbsoluteKill, IsLight, name = '이퀄리브리엄이면 앱킬 사용')
@@ -227,14 +227,14 @@ class JobGenerator(ck.JobGenerator):
             jobutils.create_auxilary_attack(sk, 0.5, "(선파이어/이클립스)")
 
         AbsoluteKillCooltimed.onConstraint(core.ConstraintElement("비이퀄때만 앱킬 쿨타임", LuminousState, LuminousState.isNotEqual))
-        
+
         # Skill Wrapper - Memorize
         Memorize.onAfter(core.create_task("메모라이즈", LuminousState.memorize, LuminousState))
         Memorize.onConstraint(core.ConstraintElement('이퀄일때는 사용하지 않음', LuminousState, LuminousState.isNotEqual))
 
         # Skill Wrapper - Door of Truth
         LuminousState.equalCallback = partial(DoorOfTruth.set_disabled_and_time_left, 1)
-        
+
         # Skill Wrapper - Light and Darkness
         for absolute in [AbsoluteKillCooltimed, AbsoluteKill]:
             absolute.onAfter(core.create_task('빛과 어둠의 세례 쿨다운 스택 1 감소', LightAndDarkness.reduceStack, LightAndDarkness))
@@ -250,7 +250,7 @@ class JobGenerator(ck.JobGenerator):
         LiberationOrbPassive.onAfter(core.OptionalElement(LuminousState.isLight, LiberationOrbStackLight.stackController(1)))
         LiberationOrbPassive.onAfter(core.OptionalElement(LuminousState.isDark, LiberationOrbStackDark.stackController(1)))
         LiberationOrbActive.onAfter(LiberationOrbActiveStack.stackController(-1))
-        
+
         UseLiberationOrbPassive = core.OptionalElement(
             lambda: LiberationOrbActiveStack.judge(0, -1) and LiberationOrbPassive.is_available(), LiberationOrbPassive, name="리버레이션 오브(패시브) 조건")
         UseLiberationOrbActive = core.OptionalElement(
@@ -259,7 +259,7 @@ class JobGenerator(ck.JobGenerator):
         for sk in [LightReflection, Apocalypse, AbsoluteKill, AbsoluteKillCooltimed]:
             sk.onAfter(UseLiberationOrbPassive)
             sk.onAfter(UseLiberationOrbActive)
-        
+
         LiberationOrbPassive.protect_from_running()
         LiberationOrbActive.protect_from_running()
 
@@ -269,7 +269,7 @@ class JobGenerator(ck.JobGenerator):
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
 
-        return(Attack, 
+        return(Attack,
                 [LuminousState, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     Booster, PodicMeditaion, DarknessSocery, DarkCrescendo, HerosOath, Memorize, OverloadMana, LiberationOrb,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\

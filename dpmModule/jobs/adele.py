@@ -50,7 +50,7 @@ class OrderWrapper(core.SummonSkillWrapper):
 
         if self.summonCooltime <= 0 and self.condition():
             self.add()
-        
+
         super(OrderWrapper, self).spend_time(time)
 
     def _delayQueue(self, time): # 게더링/블로섬 도중에는 오더의 지속시간이 흐르지 않음
@@ -64,7 +64,7 @@ class OrderWrapper(core.SummonSkillWrapper):
 
     def get_stack(self):
         return len(self.queue) * 2
-        
+
     def judge(self, stack, direction):
         return (self.get_stack()-stack)*direction>=0
 
@@ -92,7 +92,7 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 10
         self.jobtype = "str"
         self.jobname = "아델"
-        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
+        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit_rate', 'buff_rem')
         self.preEmptiveSkills = 1
 
     def get_ruleset(self):
@@ -103,7 +103,7 @@ class JobGenerator(ck.JobGenerator):
         # 매직 서킷: 앱솔 기준 15.4
         WEAPON_ATT = jobutils.get_weapon_att("튜너")
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        
+
         MagicCircuit = core.InformedCharacterModifier("매직 서킷", att=WEAPON_ATT * 0.15)  #무기 공격력의 15%, 최대치 가정.
         Pace = core.InformedCharacterModifier("패이스", crit_damage=10, patt=10)
         Rudiment = core.InformedCharacterModifier("루디먼트", att=30)
@@ -280,8 +280,8 @@ class JobGenerator(ck.JobGenerator):
                 [Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider] +\
                 [Order, Shard, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, Scool, ManaStorm] +\
                 [] +\
-                [Divide])        
+                [Divide])
 
 
-        
+
 
