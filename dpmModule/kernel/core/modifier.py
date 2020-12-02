@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 from typing import Any, Dict, List, Optional, Tuple
 
-from .constant import MAX_DAMAGE_RESTRICTION
+from .constant import FINAL_DAMAGE_RATIO, MAX_DAMAGE_RESTRICTION, ARMOR_RATE
 from ..graph import DynamicVariableInstance, DynamicVariableOperation
 
 
@@ -138,7 +138,7 @@ class CharacterModifier:
                                          stat_main_fixed=self.stat_main_fixed,
                                          stat_sub_fixed=self.stat_sub_fixed)
 
-    def get_damage_factor(self, armor: float = 300) -> float:
+    def get_damage_factor(self, armor: float = ARMOR_RATE) -> float:
         """Caution : Use this function only if you summed up every modifiers.
         """
         real_crit = min(100, self.crit)
@@ -149,7 +149,7 @@ class CharacterModifier:
         return stat * adap * factor * ignorance * 0.01
 
     # TODO: Parameter armor is not used.
-    def get_status_factor(self, armor: float = 300) -> float:
+    def get_status_factor(self, armor: float = ARMOR_RATE) -> float:
         """Caution : Use this function only if you summed up every modifiers.
         """
         stat = (4 * self.stat_main * (1 + 0.01 * self.pstat_main) + self.stat_sub * (1 + 0.01 * self.pstat_sub)) + (4 * self.stat_main_fixed + self.stat_sub_fixed)
@@ -157,7 +157,7 @@ class CharacterModifier:
         factor = (1 + 0.01 * self.pdamage) * (1 + 0.01 * self.pdamage_indep)
         return stat * adap * factor * 0.01
 
-    def calculate_damage(self, damage: float, hit: float, spec: str, armor: float = 300) -> Tuple[float, float]:
+    def calculate_damage(self, damage: float, hit: float, spec: str, armor: float = ARMOR_RATE) -> Tuple[float, float]:
         """Return : (damage, loss) tuple
         숙련도는 90~100으로 가정함(5% deviation)
         """
@@ -216,8 +216,8 @@ class CharacterModifier:
         max_crit_factor = (1 + 0.0001 * max(0, real_crit) * (self.crit_damage + 50))
         min_crit_factor = (1 + 0.0001 * max(0, real_crit) * (self.crit_damage + 20))
 
-        max_damage_factor = factor_aggregated * expert_max
-        min_damage_factor = factor_aggregated * expert_min
+        max_damage_factor = factor_aggregated * expert_max * FINAL_DAMAGE_RATIO
+        min_damage_factor = factor_aggregated * expert_min * FINAL_DAMAGE_RATIO
 
         real_damage = hit * (max_crit_factor + min_crit_factor) / 2 * (max_damage_factor + min_damage_factor) / 2  # W/O restriction
         res_damage = hit * restricted_damage(min_damage_factor, max_damage_factor, min_crit_factor, max_crit_factor, MAX_DAMAGE_RESTRICTION)  # W/ restriction

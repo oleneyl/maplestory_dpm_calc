@@ -18,7 +18,7 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
     아머 피어싱 - 적 방어율만큼 최종뎀 추가, 방무+50%. 쿨타임 9초, 공격마다 1초씩 감소, 최소 재발동 대기시간 1초
     '''
     def __init__(self, combat, chtr):
-        self.piercingModifier = core.CharacterModifier(pdamage_indep = 300 * (1 + combat * 0.05), armor_ignore = 50 * (1 + combat * 0.02))
+        self.piercingModifier = core.CharacterModifier(pdamage_indep = core.constant.ARMOR_RATE * (1 + combat * 0.05), armor_ignore = 50 * (1 + combat * 0.02))
         self.emptyModifier = core.CharacterModifier()
         self.skill_modifier = chtr.get_skill_modifier()
         skill = core.BuffSkill("아머 피어싱", 0, 0, 9000, red=True)

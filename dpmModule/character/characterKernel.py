@@ -5,7 +5,7 @@ from math import ceil
 from functools import reduce
 
 from ..kernel.abstract import AbstractVBuilder, AbstractVEnhancer
-from ..kernel.core import CharacterModifier, ExtendedCharacterModifier, InformedCharacterModifier, SkillModifier, AbstractSkill, DamageSkill
+from ..kernel.core import CharacterModifier, ExtendedCharacterModifier, InformedCharacterModifier, SkillModifier, AbstractSkill, DamageSkill, APPLY_PROP
 from ..kernel.graph import GlobalOperation, initialize_global_properties, _unsafe_access_global_storage
 from ..kernel import policy
 from ..execution.rules import RuleSet
@@ -43,6 +43,8 @@ class AbstractCharacter:
         self.about += "\n" + txt
 
     def get_property_ignorance_modifier(self) -> ExMDF:
+        if not APPLY_PROP:
+            return ExMDF()
         return ExMDF(pdamage_indep=self.base_modifier.prop_ignore) + ExMDF(pdamage_indep=-50)
 
     def apply_modifiers(self, li: List[CharacterModifier]) -> None:
