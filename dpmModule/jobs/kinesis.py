@@ -10,6 +10,8 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import magicians
 from .jobclass import demon
+from typing import Any, Dict
+
 
 class KinesisStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill, _max, psychicoverjudge, name = None):
@@ -77,7 +79,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 2
         self.hyperStatPrefixed = 150 # PP 10레벨 투자
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         SuperSensitive = core.InformedCharacterModifier("초감각",crit = 10)
         PsychicForce1Passive = core.InformedCharacterModifier("사이킥 포스1(패시브)",att = 10)
@@ -104,7 +106,7 @@ class JobGenerator(ck.JobGenerator):
                             MindEnhance, Accurate, PsychicChargingPassive, PsychicForce3Passive,
                              ESPBattleOrder, Transcendence, SupremeConcentration, Transport, Mastery]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat     
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + passive_level)
@@ -113,7 +115,7 @@ class JobGenerator(ck.JobGenerator):
         
         
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         하이퍼
         싸이킥 그랩 - 보스포인트/리인포스

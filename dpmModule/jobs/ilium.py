@@ -7,6 +7,8 @@ from . import globalSkill
 from .jobbranch import magicians
 from .jobclass import flora
 from . import jobutils
+from typing import Any, Dict
+
 
 class IliumStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill, _max, fastChargeJudge, stopJudge, name = None):
@@ -139,7 +141,7 @@ class JobGenerator(ck.JobGenerator):
         # ruleset.add_rule(ConditionRule("글로리 윙(진입)", "크리스탈 이그니션(시전)", lambda x:x.is_cooltime_left(20000, 1) or x.is_cooltime_left(10000, -1)), RuleSet.BASE)
         return ruleset
         
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         # 앱솔 무기 마력 241
         WEAPON_ATT = jobutils.get_weapon_att("건틀렛")
         MagicCircuit = core.InformedCharacterModifier("매직 서킷", att = WEAPON_ATT*0.2)
@@ -155,13 +157,13 @@ class JobGenerator(ck.JobGenerator):
         return [MagicCircuit, MagicGuntletMastery, BlessMarkPassive,
             LefMastery, DestinyPioneer, ContinualResearch, CrystalSecret ]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5)
         
         return [WeaponConstant, Mastery]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         하이퍼 : 자벨린- 보스킬러, 리인포스, 보너스 어택
         

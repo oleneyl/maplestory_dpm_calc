@@ -6,6 +6,7 @@ from . import globalSkill
 from .jobclass import cygnus
 from .jobbranch import warriors
 from math import ceil
+from typing import Any, Dict
 # 미하일 영메 적용여부에 대해 고민해볼 필요 있음
 
 
@@ -21,7 +22,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(crit = 20)
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",patt = 10)
@@ -39,7 +40,7 @@ class JobGenerator(ck.JobGenerator):
                             InvigoratePassive, Intension, ShiningCharge, CombatMastery, AdvancedSowrdMastery,
                             AdvancedFinalAttackPassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         PARTYPEOPLE = 1        
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
@@ -50,7 +51,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, SoulLink, SoulRage]
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         파티원 1명
         

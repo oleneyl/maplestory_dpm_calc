@@ -8,6 +8,7 @@ from .jobbranch import pirates
 from .jobclass import nova
 from . import jobutils
 from math import ceil
+from typing import Any, Dict
 
 def getAffinityIV(duration): # TODO: 와헌 어나더 바이트처럼 실시간 계산
     """
@@ -36,7 +37,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '스포트라이트'), RuleSet.BASE)
         return ruleset
     
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         SoulShooterMastery = core.InformedCharacterModifier("소울슈터 마스터리", att = 20)
         InnerFire = core.InformedCharacterModifier("이너 파이어", stat_main = 40)
@@ -54,14 +55,14 @@ class JobGenerator(ck.JobGenerator):
                             CallOfAncient, AffinityIII, AffinityIV, TrinityPassive, SoulShooterExpert,
                             LoadedDicePassive, TrinityFusionPassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5 * ceil(passive_level / 2))
         
         return [WeaponConstant, Mastery]        
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         어피니티IV 가동률 94.18%
         트리니티 버프 지속시간 갱신불가 적용
@@ -87,7 +88,7 @@ class JobGenerator(ck.JobGenerator):
         
         '''
         
-        SPOTLIGHTHIT = 3
+        SPOTLIGHTHIT = options.get('spotlight', 3)
         TRINITY_MDF = core.CharacterModifier(pdamage = 20) + core.CharacterModifier(pdamage = 10*3, armor_ignore = 10*3) # 하이퍼 리인포스 + 3중첩
         
         #Buff skills

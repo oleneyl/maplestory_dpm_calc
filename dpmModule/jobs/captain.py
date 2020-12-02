@@ -7,6 +7,7 @@ from .jobbranch import pirates
 from .jobclass import adventurer
 from . import jobutils
 from math import ceil
+from typing import Any, Dict
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -17,7 +18,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'buff_rem', 'crit')
         self.preEmptiveSkills = 1
     
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         
         CriticalRoar = core.InformedCharacterModifier("크리티컬 로어",crit = 20, crit_damage = 5)
@@ -35,7 +36,7 @@ class JobGenerator(ck.JobGenerator):
         return [CriticalRoar, PhisicalTraining, HalopointBullet, ContinualAimingPassive,
             FullMetaJacket, CaptainDignityPassive, CrueCommandership, UnwierdingNectar, LoadedDicePassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 50)
@@ -43,7 +44,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         ----정보---
         크루 커멘더쉽 : 최종뎀 15%

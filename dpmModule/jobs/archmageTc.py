@@ -7,6 +7,7 @@ from . import globalSkill
 from .jobclass import adventurer
 from .jobbranch import magicians
 from math import ceil
+from typing import Any, Dict
 
 class FrostEffectWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
@@ -36,7 +37,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule('언스테이블 메모라이즈', '인피니티'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         ######   Passive Skill   ######
         
@@ -54,7 +55,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [HighWisdom, SpellMastery, MagicCritical, ElementalReset, MasterMagic, ElementAmplication, ArcaneAim, UnstableMemorizePassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5*ceil(self.combat/2))
         ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", pdamage_indep = 20)
@@ -63,7 +64,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, ExtremeMagic, ArcaneAim, ElementalResetActive]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         코강 순서
         체라-라스피-블자-오브-엘퀴-썬더스톰
@@ -82,7 +83,7 @@ class JobGenerator(ck.JobGenerator):
         그 외의 극딜기는 쿨마다 사용
         프로즌 오브 쿨마다 사용, 19타
         '''
-        THUNDER_BREAK_HIT = 2
+        THUNDER_BREAK_HIT = options.get("thunder_break_hit", 2)
         ICE_AGE_SUMMON_HIT = 2
 
         ######   Skill   ######

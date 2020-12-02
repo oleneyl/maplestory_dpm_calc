@@ -6,6 +6,7 @@ from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
+from typing import Any, Dict
 
 # 4차 스킬은 컴뱃오더스 적용 기준으로 작성해야 함.
 
@@ -23,7 +24,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('그랜드 크로스', '홀리 유니티'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         ShieldMastery = core.InformedCharacterModifier("실드 마스터리",att = 10)
@@ -32,7 +33,7 @@ class JobGenerator(ck.JobGenerator):
         PaladinExpert = core.InformedCharacterModifier.from_extended_modifier("팔라딘 엑스퍼트(두손둔기)", PaladinExpert)
         return [PhisicalTraining, ShieldMastery, PaladinExpert]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -4.5+ 0.5*ceil(passive_level/2))    #오더스 기본적용!
@@ -42,7 +43,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, ElementalCharge, ParashockGuard]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         두손둔기
 

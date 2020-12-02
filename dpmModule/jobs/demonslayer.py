@@ -8,6 +8,7 @@ from .jobbranch import warriors
 from .jobclass import demon
 from . import jobutils
 from math import ceil
+from typing import Any, Dict
 
 # TODO: 블블 100% 가정하는 중. 포스 사용을 반영해서 블블 지속시간 시뮬레이션(엄청 어려울듯)
 class JobGenerator(ck.JobGenerator):
@@ -41,7 +42,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(crit = 50, armor_ignore = 50, pdamage = 50)
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         
         #데몬스퓨리 : 보공15%, 링크에 반영되므로 미고려.
@@ -55,7 +56,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [DeathCurse, Outrage, PhisicalTraining, Concentration, AdvancedWeaponMastery, DarkBindPassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5 * (passive_level / 2))        
@@ -64,7 +65,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, EvilTorture]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         코강 순서:
         슬래시-임팩트-서버-익스플로전-메타-데빌크라이

@@ -8,6 +8,7 @@ from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import bowmen
 from math import ceil
+from typing import Any, Dict
 
 class ElementalGhostWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, num1, num2):
@@ -48,7 +49,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ReservationRule('히어로즈 오쓰', '엘리멘탈 고스트'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         PotentialPower = core.InformedCharacterModifier("포텐셜 파워",pdamage = 20)
@@ -66,7 +67,7 @@ class JobGenerator(ck.JobGenerator):
         return [PotentialPower, SharpAiming, SpiritInfusion, 
                 PhisicalTraining, IgnisRoar, DualbowgunExpert, DefenceBreak, AdvancedFinalAttack]
         
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5+0.5*ceil(passive_level/2))        
@@ -78,7 +79,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 60, pdamage = 30)
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         하이퍼
         이슈타르의 링-리인포스, 이그노어 가드, 보스 킬러
@@ -94,6 +95,7 @@ class JobGenerator(ck.JobGenerator):
         엘고 연계
         스듀-엔릴-스듀-유니콘-스듀-스피어-거다
         '''
+        DEALCYCLE = options.get('dealcycle', 'combo')
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         # Buff skill
@@ -183,11 +185,16 @@ class JobGenerator(ck.JobGenerator):
             ElementalGhostCombo.onAfter(LinkAttack)
 
         BasicAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
-        BasicAttack.onAfter(
-            core.OptionalElement(ElementalGhost.is_active, ElementalGhostCombo,
-                core.OptionalElement(UnicornSpikeBuff.is_not_active, DebuffCombo, IshtarRing)
+        if DEALCYCLE == "combo":
+            BasicAttack.onAfter(
+                core.OptionalElement(ElementalGhost.is_active, ElementalGhostCombo,
+                    core.OptionalElement(UnicornSpikeBuff.is_not_active, DebuffCombo, IshtarRing)
+                )
             )
-        )
+        elif DEALCYCLE == "ishtar":
+            BasicAttack.onAfter(core.OptionalElement(UnicornSpikeBuff.is_not_active, DebuffCombo, IshtarRing))
+        else:
+            raise ValueError(DEALCYCLE)
 
         # TODO: 실피디아 사용시 연계 딜레이와 디버프 콤보 조사하고, 딜 증가하는지 확인할 것
         # Sylphidia.onConstraint(core.ConstraintElement("엘고와 따로 사용", ElementalGhost, lambda: ElementalGhost.is_not_active() and ElementalGhost.is_not_usable()))

@@ -8,6 +8,7 @@ from .jobclass import heroes
 from .jobbranch import warriors
 from ..execution.rules import RuleSet, InactiveRule, ConditionRule
 from math import ceil
+from typing import Any, Dict
 
 # Advisor : 아지르캐리(크로아)
 
@@ -28,7 +29,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 20)
         
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         RetrievedMemory = core.InformedCharacterModifier("되찾은 기억", patt=5)
         SnowChargePassive = core.InformedCharacterModifier("스노우 차지(패시브)", pdamage=10)
@@ -42,7 +43,7 @@ class JobGenerator(ck.JobGenerator):
         return [RetrievedMemory, SnowChargePassive, PhisicalTraining, 
             AdvancedComboAbilityPassive, CleavingAttack, Might, HighMastery, AdvancedFinalAttackPassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 49)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level / 2))        
@@ -63,7 +64,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         하이퍼 : 비욘더(3종)
         스윙 - 리메인타임 리인포스

@@ -9,6 +9,7 @@ from .jobbranch import pirates
 from .jobclass import cygnus
 from . import jobutils
 from math import ceil
+from typing import Any, Dict
 
 #TODO : 해신강림 딜사이클에 추가
 
@@ -40,7 +41,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(MutualRule('천지개벽', '창뇌연격(시전)'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",stat_main = chtr.level // 2)
@@ -63,7 +64,7 @@ class JobGenerator(ck.JobGenerator):
             NoieBack, PhisicalTraining, Gekgap, NoiGe, NuckleExpert, NoiShin,
             SkyOpenPassive, LoadedDicePassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
@@ -71,7 +72,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         하이퍼 : 질풍-보너스어택 + 섬멸-리인포스/이그노어 가드/보스킬러  + 벽력-보너스어택
         
