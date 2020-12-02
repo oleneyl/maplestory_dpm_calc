@@ -12,17 +12,16 @@ if TYPE_CHECKING:
 
 class BasicVEnhancer(AbstractVEnhancer):
     def __init__(self) -> None:
-        #### value list ####
+        # value list
         self.enhance_list: List[int] = []
         self.v_skill_list: List[int] = []
         self.core_number = None  # TODO: Not used attribute.
-
-        #### analytics list ####
+        # analytics list
         self.enhancer_priority: List[List[AbstractSkill]] = []  # 5차의 강화스킬 순서
         self.v_skill_priority: List[Dict[str, Any]] = []  # 5차의 사용스킬 순서
 
     def get_priority(self) -> Dict[str, List[Dict[str, Any]]]:
-        v_skill_list_sorted: List[List[Dict[str, Any]]] = [[] for i in range(20)]  # 20 is magic number
+        v_skill_list_sorted = [[] for i in range(20)]  # 20 is magic number
         for vskill in self.v_skill_priority:
             v_skill_list_sorted[vskill["useIdx"]].append(vskill)
 
@@ -36,7 +35,7 @@ class BasicVEnhancer(AbstractVEnhancer):
     def set_vlevel_direct(self, li: List[int]) -> None:
         self.v_skill_list = li
 
-    def get_reinforcement_with_register(self, index: int, incr, crit: bool, target: AbstractSkill) -> CharacterModifier:
+    def get_reinforcement_with_register(self, index: int, incr: int, crit: bool, target: AbstractSkill) -> CharacterModifier:
         self.enhancer_priority[index].append(target)
 
         if index >= len(self.enhance_list):
@@ -79,7 +78,7 @@ class AlwaysMaximumVBuilder(AbstractVBuilder):
         super().__init__()
 
     # TODO: character, generator are not used.
-    def build_enhancer(self, character, generator) -> BasicVEnhancer:
+    def build_enhancer(self, character: AbstractCharacter, generator: JobGenerator) -> BasicVEnhancer:
         enhancer = BasicVEnhancer()
         enhancer.set_state_direct([60 for i in range(15)])
         enhancer.set_vlevel_direct([30 for i in range(15)])

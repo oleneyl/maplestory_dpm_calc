@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Type, TypeVar
+from typing import TYPE_CHECKING, Dict, List, Literal, Optional, Tuple, Type, TypeVar
 
 from ..graph import EvaluativeGraphElement
 from .constant import NOTWANTTOEXECUTE
@@ -37,7 +37,7 @@ class AbstractSkill(EvaluativeGraphElement):
             if self.cooltime == -1:
                 self.cooltime = NOTWANTTOEXECUTE
 
-    def _change_time_into_string(self, float_or_infinite: float, divider: int = 1, lang: str = "ko") -> str:
+    def _change_time_into_string(self, float_or_infinite: float, divider: int = 1, lang: Literal["ko", "en"] = "ko") -> str:
         lang_to_inf_dict = {"ko": "무한/자동발동불가", "en": "Infinite"}
         if abs(float_or_infinite - NOTWANTTOEXECUTE / divider) < 10000 / divider:
             return lang_to_inf_dict[lang]
@@ -50,7 +50,7 @@ class AbstractSkill(EvaluativeGraphElement):
     def set_explanation(self, strs: str) -> None:
         self.explanation = strs
 
-    def get_explanation(self, lang: str = "ko", expl_level: int = 2) -> str:
+    def get_explanation(self, lang: Literal["ko", "en"] = "ko", expl_level: Literal[0, 1, 2] = 2) -> str:
         """level 0 / 1 / 2
         """
         if self.explanation is not None:
@@ -58,17 +58,15 @@ class AbstractSkill(EvaluativeGraphElement):
         else:
             return self._get_explanation_internal(lang=lang, expl_level=expl_level)
 
-    def _get_explanation_internal(self, detail: bool = False, lang: str = "ko", expl_level: int = 2) -> str:
+    def _get_explanation_internal(self, detail: bool = False, lang: Literal["ko", "en"] = "ko", expl_level: Literal[0, 1, 2] = 2) -> str:
         if lang == "en":
             li = [("skill name", self.name), ("type", "AbstractSkill(Not implemented)")]
         elif lang == "ko":
             li = [("스킬 이름", self.name), ("분류", "템플릿(상속되지 않음)")]
-        else:
-            li = []
 
         return self._parse_list_info_into_string(li)
 
-    def get_info(self, expl_level: int = 2) -> Dict[str, str]:
+    def get_info(self, expl_level: Literal[0, 1, 2] = 2) -> Dict[str, str]:
         my_json = {"name": self.name, "delay": self._change_time_into_string(self.delay),
                    "cooltime": self._change_time_into_string(self.cooltime),
                    "expl": self.get_explanation(expl_level=expl_level)}
@@ -115,13 +113,13 @@ class BuffSkill(AbstractSkill):
             self.spec: str = "buff"
             self.remain: float = remain
             # Build StaticModifier from given arguments
-            self.static_character_modifier: CharacterModifier = CharacterModifier(
+            self.static_character_modifier = CharacterModifier(
                 crit=crit, crit_damage=crit_damage, pdamage=pdamage, pdamage_indep=pdamage_indep,
                 stat_main=stat_main, stat_sub=stat_sub, pstat_main=pstat_main, pstat_sub=pstat_sub,
                 boss_pdamage=boss_pdamage, armor_ignore=armor_ignore, patt=patt, att=att,
                 stat_main_fixed=stat_main_fixed, stat_sub_fixed=stat_sub_fixed)
 
-    def _get_explanation_internal(self, detail: bool = False, lang: str = "ko", expl_level: int = 2) -> str:
+    def _get_explanation_internal(self, detail: bool = False, lang: Literal["ko", "en"] = "ko", expl_level: Literal[0, 1, 2] = 2) -> str:
         if lang == "ko":
             li = [("스킬 이름", self.name),
                   ("분류", "버프"),
@@ -135,8 +133,6 @@ class BuffSkill(AbstractSkill):
                 li = [li[3], li[7]]
         elif lang == "en":
             li = []
-        else:
-            raise TypeError('lang must be ko or en, lang: ' + str(lang))
 
         return self._parse_list_info_into_string(li)
 
@@ -165,7 +161,7 @@ class DamageSkill(AbstractSkill):
             # Issue : Will we need this option really?
             self._static_skill_modifier: CharacterModifier = modifier
 
-    def _get_explanation_internal(self, detail: bool = False, lang: str = "ko", expl_level: int = 2) -> str:
+    def _get_explanation_internal(self, detail: bool = False, lang: Literal["ko", "en"] = "ko", expl_level: Literal[0, 1, 2] = 2) -> str:
         if lang == "ko":
             li = [("스킬 이름", self.name),
                   ("분류", "공격기"),
@@ -180,8 +176,6 @@ class DamageSkill(AbstractSkill):
                 li = li[3:5] + [li[8]]
         elif lang == 'en':
             li = []
-        else:
-            raise TypeError('lang must be ko or en, lang: ' + str(lang))
 
         return self._parse_list_info_into_string(li)
 
@@ -193,8 +187,7 @@ class DamageSkill(AbstractSkill):
         return self._static_skill_modifier
 
     def copy(self) -> DamageSkill:
-        return DamageSkill(self.name, self.delay, self.damage, self.hit, cooltime=self.cooltime,
-                           modifier=self._static_skill_modifier, red=self.red)
+        return DamageSkill(self.name, self.delay, self.damage, self.hit, cooltime=self.cooltime, modifier=self._static_skill_modifier, red=self.red)
 
 
 # TODO: optimize this factor more constructively
@@ -210,7 +203,7 @@ class SummonSkill(AbstractSkill):
             self.remain: float = remain
             self._static_skill_modifier: CharacterModifier = modifier
 
-    def _get_explanation_internal(self, detail: bool = False, lang: str = "ko", expl_level: int = 2) -> str:
+    def _get_explanation_internal(self, detail: bool = False, lang: Literal["ko", "en"] = "ko", expl_level: Literal[0, 1, 2] = 2) -> str:
         if lang == "ko":
             li = [("스킬 이름", self.name),
                   ("분류", "소환기"),
@@ -227,8 +220,6 @@ class SummonSkill(AbstractSkill):
                 li = li[3:7] + [li[10]]
         elif lang == "en":
             li = []
-        else:
-            raise TypeError('lang must be ko or en, lang: ' + str(lang))
 
         return self._parse_list_info_into_string(li)
 
@@ -252,7 +243,7 @@ class DotSkill(SummonSkill):
         super(DotSkill, self).__init__(name, summondelay, delay, damage, hit, remain, cooltime=cooltime, red=red)
         self.spec: str = "dot"
 
-    def _get_explanation_internal(self, detail: bool = False, lang: str = "ko", expl_level: int = 2) -> str:
+    def _get_explanation_internal(self, detail: bool = False, lang: Literal["ko", "en"] = "ko", expl_level: Literal[0, 1, 2] = 2) -> str:
         if lang == "ko":
             li = [("스킬 이름", self.name),
                   ("분류", "도트뎀"),
@@ -269,7 +260,5 @@ class DotSkill(SummonSkill):
                 li = li[3:7] + [li[10]]
         elif lang == "en":
             li = []
-        else:
-            raise TypeError('lang must be ko or en: ' + str(lang))
 
         return self._parse_list_info_into_string(li)

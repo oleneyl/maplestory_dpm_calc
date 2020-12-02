@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Dict, List, Union
+from typing import TYPE_CHECKING, Any, Dict, List
 
 from .modifier import CharacterModifier
 
@@ -23,9 +23,9 @@ class Simulator(object):
 
         # TODO: Not used attribute.
         # Buff modifier를 시간별로 캐싱하여 연산량을 줄입니다.
-        self._modifier_cache_and_time: List[Union[int, CharacterModifier]] = [-1, CharacterModifier()]
+        self._modifier_cache_and_time: List[int, CharacterModifier] = [-1, CharacterModifier()]
 
-        self._default_modifier: CharacterModifier = CharacterModifier()
+        self._default_modifier = CharacterModifier()
 
     def set_default_modifier(self, modifier: CharacterModifier) -> None:
         self._default_modifier = modifier
@@ -87,8 +87,7 @@ class Simulator(object):
             self.run_task_recursive(t)
 
         runtime_context_modifier = self.scheduler.get_buff_modifier() + self.get_default_modifier()
-        result = task.do(
-            runtime_context_modifier=runtime_context_modifier + self.character.get_modifier())
+        result = task.do(runtime_context_modifier=runtime_context_modifier + self.character.get_modifier())
         self.parse_result(result)
 
         for t in task._justAfter:
@@ -127,7 +126,7 @@ class Analytics:
         self.meta_save = {}  # TODO: Not used attribute.
         self.print_calculation_progress: bool = printFlag
         self.skillList: Dict[str, Dict] = {}
-        self.chtrmdf: CharacterModifier = CharacterModifier()
+        self.chtrmdf = CharacterModifier()
 
     def set_total_runtime(self, time: float) -> None:
         self.totalTime = time

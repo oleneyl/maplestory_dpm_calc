@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, Final, List, Optional
 
 from ..graph import DynamicVariableOperation
 from .modifier import CharacterModifier
@@ -32,4 +32,4 @@ class ResultObject:
 
 '''Default Values. Forbidden to editting.
 '''
-taskTerminater: ResultObject = ResultObject(0, CharacterModifier(), 0, 0, sname='terminator', spec='graph control')
+taskTerminater: Final = ResultObject(0, CharacterModifier(), 0, 0, sname='terminator', spec='graph control')
