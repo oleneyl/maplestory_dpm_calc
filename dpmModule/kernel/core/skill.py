@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from .vmatrix import BasicVEnhancer
     T = TypeVar('T', bound=AbstractSkillWrapper)
 
+
 class AbstractSkill(EvaluativeGraphElement):
     """Skill must have information about it's name, it's using - delay, skill using cooltime.
     Basic functions
@@ -59,11 +60,9 @@ class AbstractSkill(EvaluativeGraphElement):
 
     def _get_explanation_internal(self, detail: bool = False, lang: str = "ko", expl_level: int = 2) -> str:
         if lang == "en":
-            li = [("skill name", self.name),
-                  ("type", "AbstractSkill(Not implemented)")]
+            li = [("skill name", self.name), ("type", "AbstractSkill(Not implemented)")]
         elif lang == "ko":
-            li = [("스킬 이름", self.name),
-                  ("분류", "템플릿(상속되지 않음)")]
+            li = [("스킬 이름", self.name), ("분류", "템플릿(상속되지 않음)")]
         else:
             li = []
 
@@ -111,31 +110,27 @@ class BuffSkill(AbstractSkill):
                  pdamage: float = 0, stat_main: float = 0, stat_sub: float = 0, pstat_main: float = 0, pstat_sub: float = 0,
                  boss_pdamage: float = 0, pdamage_indep: float = 0, armor_ignore: float = 0, patt: float = 0, att: float = 0,
                  stat_main_fixed: int = 0, stat_sub_fixed: int = 0, rem: bool = False, red: bool = False) -> None:
-        super(BuffSkill, self).__init__(
-            name, delay, cooltime=cooltime, rem=rem, red=red)
+        super(BuffSkill, self).__init__(name, delay, cooltime=cooltime, rem=rem, red=red)
         with self.dynamic_range():
             self.spec: str = "buff"
             self.remain: float = remain
             # Build StaticModifier from given arguments
-            self.static_character_modifier: CharacterModifier = \
-                CharacterModifier(crit=crit, crit_damage=crit_damage, pdamage=pdamage, pdamage_indep=pdamage_indep,
-                                  stat_main=stat_main, stat_sub=stat_sub, pstat_main=pstat_main, pstat_sub=pstat_sub,
-                                  boss_pdamage=boss_pdamage, armor_ignore=armor_ignore, patt=patt, att=att,
-                                  stat_main_fixed=stat_main_fixed, stat_sub_fixed=stat_sub_fixed)
+            self.static_character_modifier: CharacterModifier = CharacterModifier(
+                crit=crit, crit_damage=crit_damage, pdamage=pdamage, pdamage_indep=pdamage_indep,
+                stat_main=stat_main, stat_sub=stat_sub, pstat_main=pstat_main, pstat_sub=pstat_sub,
+                boss_pdamage=boss_pdamage, armor_ignore=armor_ignore, patt=patt, att=att,
+                stat_main_fixed=stat_main_fixed, stat_sub_fixed=stat_sub_fixed)
 
     def _get_explanation_internal(self, detail: bool = False, lang: str = "ko", expl_level: int = 2) -> str:
         if lang == "ko":
             li = [("스킬 이름", self.name),
                   ("분류", "버프"),
                   ("딜레이", "%.1f" % self.delay, "ms"),
-                  ("지속 시간", self._change_time_into_string(
-                      self.remain / 1000, divider=1000), "s"),
-                  ("쿨타임", self._change_time_into_string(
-                      self.cooltime / 1000, divider=1000), "s"),
+                  ("지속 시간", self._change_time_into_string(self.remain / 1000, divider=1000), "s"),
+                  ("쿨타임", self._change_time_into_string(self.cooltime / 1000, divider=1000), "s"),
                   ("쿨타임 감소 가능 여부", self.red),
                   ("지속시간 증가 여부", self.rem),
-                  ("효과", ", ".join([(str(i[0]) + "+" + "".join([str(j) for j in i[1:]])) for i in
-                                    self.static_character_modifier.abstract_log_list()]).replace("+미발동", " 미발동"))]
+                  ("효과", ", ".join([(str(i[0]) + "+" + "".join([str(j) for j in i[1:]])) for i in self.static_character_modifier.abstract_log_list()]).replace("+미발동", " 미발동"))]
             if expl_level < 2:
                 li = [li[3], li[7]]
         elif lang == "en":
@@ -162,8 +157,7 @@ class DamageSkill(AbstractSkill):
 
     def __init__(self, name: str, delay: float, damage: float, hit: float, cooltime: float = 0,
                  modifier: CharacterModifier = CharacterModifier(), red: bool = False) -> None:
-        super(DamageSkill, self).__init__(
-            name, delay, cooltime=cooltime, rem=False, red=red)
+        super(DamageSkill, self).__init__(name, delay, cooltime=cooltime, rem=False, red=red)
         with self.dynamic_range():
             self.spec: str = "damage"
             self.damage: float = damage
@@ -178,8 +172,7 @@ class DamageSkill(AbstractSkill):
                   ("딜레이", "%.1f" % self.delay, "ms"),
                   ("퍼뎀", "%.1f" % self.damage, "%"),
                   ("타격수", self.hit),
-                  ("쿨타임", self._change_time_into_string(
-                      self.cooltime / 1000, divider=1000), "s"),
+                  ("쿨타임", self._change_time_into_string(self.cooltime / 1000, divider=1000), "s"),
                   ("쿨타임 감소 가능 여부", self.red),
                   ("지속시간 증가 여부", self.rem),
                   ("추가효과", ", ".join([(str(i[0]) + "+" + "".join([str(j) for j in i[1:]])) for i in self._static_skill_modifier.abstract_log_list()]).replace("+미발동%", " 미발동"))]
@@ -193,8 +186,7 @@ class DamageSkill(AbstractSkill):
         return self._parse_list_info_into_string(li)
 
     def setV(self, v_enhancer: AbstractVEnhancer, index: int, incr: int, crit: bool = False) -> DamageSkill:
-        self._static_skill_modifier = self._static_skill_modifier + \
-            v_enhancer.get_reinforcement_with_register(index, incr, crit, self)
+        self._static_skill_modifier = self._static_skill_modifier + v_enhancer.get_reinforcement_with_register(index, incr, crit, self)
         return self
 
     def get_modifier(self) -> CharacterModifier:
@@ -209,8 +201,7 @@ class DamageSkill(AbstractSkill):
 class SummonSkill(AbstractSkill):
     def __init__(self, name: str, summondelay: float, delay: float, damage: float, hit: float, remain: float, cooltime: float = 0,
                  modifier: CharacterModifier = CharacterModifier(), rem: bool = False, red: bool = False) -> None:
-        super(SummonSkill, self).__init__(
-            name, delay, cooltime=cooltime, rem=rem, red=red)
+        super(SummonSkill, self).__init__(name, delay, cooltime=cooltime, rem=rem, red=red)
         with self.dynamic_range():
             self.spec: str = "summon"
             self.summondelay: float = summondelay
@@ -227,14 +218,11 @@ class SummonSkill(AbstractSkill):
                   ("타격주기", "%.1f" % self.delay, "ms"),
                   ("퍼뎀", "%.1f" % self.damage, "%"),
                   ("타격수", self.hit),
-                  ("지속 시간", self._change_time_into_string(
-                      self.remain / 1000, divider=1000), "s"),
-                  ("쿨타임", self._change_time_into_string(
-                      self.cooltime / 1000, divider=1000), "s"),
+                  ("지속 시간", self._change_time_into_string(self.remain / 1000, divider=1000), "s"),
+                  ("쿨타임", self._change_time_into_string(self.cooltime / 1000, divider=1000), "s"),
                   ("쿨타임 감소 가능 여부", self.red),
                   ("지속시간 증가 여부", self.rem),
-                  ("추가효과", ", ".join([(str(i[0]) + "+" + "".join([str(j) for j in i[1:]])) for i in
-                                      self._static_skill_modifier.abstract_log_list()]).replace("+미발동%", " 미발동"))]
+                  ("추가효과", ", ".join([(str(i[0]) + "+" + "".join([str(j) for j in i[1:]])) for i in self._static_skill_modifier.abstract_log_list()]).replace("+미발동%", " 미발동"))]
             if expl_level < 2:
                 li = li[3:7] + [li[10]]
         elif lang == "en":
@@ -251,8 +239,7 @@ class SummonSkill(AbstractSkill):
         return my_json
 
     def setV(self, v_enhancer: AbstractVEnhancer, index: int, incr: int, crit: bool = False) -> SummonSkill:
-        self._static_skill_modifier = self._static_skill_modifier + \
-            v_enhancer.get_reinforcement_with_register(index, incr, crit, self)
+        self._static_skill_modifier = self._static_skill_modifier + v_enhancer.get_reinforcement_with_register(index, incr, crit, self)
         return self
 
     def get_modifier(self) -> CharacterModifier:
@@ -262,8 +249,7 @@ class SummonSkill(AbstractSkill):
 class DotSkill(SummonSkill):
     def __init__(self, name: str, summondelay: float, delay: float, damage: float, hit: float,
                  remain: float, cooltime: float = 0, red: bool = False) -> None:
-        super(DotSkill, self).__init__(name, summondelay, delay,
-                                       damage, hit, remain, cooltime=cooltime, red=red)
+        super(DotSkill, self).__init__(name, summondelay, delay, damage, hit, remain, cooltime=cooltime, red=red)
         self.spec: str = "dot"
 
     def _get_explanation_internal(self, detail: bool = False, lang: str = "ko", expl_level: int = 2) -> str:
@@ -274,14 +260,11 @@ class DotSkill(SummonSkill):
                   ("타격주기", "%.1f" % self.delay, "ms"),
                   ("퍼뎀", "%.1f" % self.damage, "%"),
                   ("타격수", self.hit),
-                  ("지속 시간", self._change_time_into_string(
-                      self.remain / 1000, divider=1000), "s"),
-                  ("쿨타임", self._change_time_into_string(
-                      self.cooltime / 1000, divider=1000), "s"),
+                  ("지속 시간", self._change_time_into_string(self.remain / 1000, divider=1000), "s"),
+                  ("쿨타임", self._change_time_into_string(self.cooltime / 1000, divider=1000), "s"),
                   ("쿨타임 감소 가능 여부", self.red),
                   ("지속시간 증가 여부", self.rem),
-                  ("추가효과", ", ".join([(str(i[0]) + "+" + "".join([str(j) for j in i[1:]])) for i in
-                                      self._static_skill_modifier.abstract_log_list()]).replace("+미발동%", " 미발동"))]
+                  ("추가효과", ", ".join([(str(i[0]) + "+" + "".join([str(j) for j in i[1:]])) for i in self._static_skill_modifier.abstract_log_list()]).replace("+미발동%", " 미발동"))]
             if expl_level < 2:
                 li = li[3:7] + [li[10]]
         elif lang == "en":

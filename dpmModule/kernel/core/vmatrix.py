@@ -22,14 +22,12 @@ class BasicVEnhancer(AbstractVEnhancer):
         self.v_skill_priority: List[Dict[str, Any]] = []  # 5차의 사용스킬 순서
 
     def get_priority(self) -> Dict[str, List[Dict[str, Any]]]:
-        v_skill_list_sorted: List[List[Dict[str, Any]]] = [
-            [] for i in range(20)]  # 20 is magic number
+        v_skill_list_sorted: List[List[Dict[str, Any]]] = [[] for i in range(20)]  # 20 is magic number
         for vskill in self.v_skill_priority:
             v_skill_list_sorted[vskill["useIdx"]].append(vskill)
 
-        return {
-            "enhance": [{"name": skills[0].name.split('(')[0]} for skills in self.enhancer_priority if len(skills) > 0],
-            "vskill": [{"name": skills[0]["target"].name.split('(')[0]} for skills in v_skill_list_sorted if len(skills) > 0]}
+        return {"enhance": [{"name": skills[0].name.split('(')[0]} for skills in self.enhancer_priority if len(skills) > 0],
+                "vskill": [{"name": skills[0]["target"].name.split('(')[0]} for skills in v_skill_list_sorted if len(skills) > 0]}
 
     def set_state_direct(self, li: List[int]) -> None:
         self.enhance_list = li
@@ -51,8 +49,7 @@ class BasicVEnhancer(AbstractVEnhancer):
             return self.v_skill_list[upgrade_index]
 
     def add_v_skill(self, target: AbstractSkill, use_index: int, upgrade_index: int) -> None:
-        self.v_skill_priority.append(
-            {"target": target, "useIdx": use_index, "upgIdx": upgrade_index})
+        self.v_skill_priority.append({"target": target, "useIdx": use_index, "upgIdx": upgrade_index})
 
     def copy(self) -> BasicVEnhancer:
         retval = BasicVEnhancer()
@@ -101,8 +98,7 @@ class NjbStyleVBuilder(AbstractVBuilder):
         return self.set_state_from_level_and_skill_cores(level, cores, self.skill_core_level, self.each_enhanced_amount)
 
     # TODO: each_enhanced_amount is not used.
-    def set_state_from_level_and_skill_cores(self, level: int, skill_cores: int, skill_core_level: int,
-                                             each_enhanced_amount) -> BasicVEnhancer:
+    def set_state_from_level_and_skill_cores(self, level: int, skill_cores: int, skill_core_level: int, each_enhanced_amount) -> BasicVEnhancer:
         total_core_slots = 6 + (level - 200) // 5
         available_core_slots = max(total_core_slots - skill_cores, 0)
         level_bonus = level - 200
@@ -124,10 +120,8 @@ class NjbStyleVBuilder(AbstractVBuilder):
             enhancement_left = 3  # 하나의 코어는 3개의 스킬을 강화합니다.
             while target_upgrade_skill_index < len(enhance_state_will_be_setted) and enhancement_left > 0:
                 if enhance_state_will_be_setted[target_upgrade_skill_index] < 60:
-                    maximum_upgrade_level_available = 60 - \
-                        enhance_state_will_be_setted[target_upgrade_skill_index]
-                    actual_chance_for_upgrade = min(
-                        chance_for_upgrade, maximum_upgrade_level_available)
+                    maximum_upgrade_level_available = 60 - enhance_state_will_be_setted[target_upgrade_skill_index]
+                    actual_chance_for_upgrade = min(chance_for_upgrade, maximum_upgrade_level_available)
                     enhance_state_will_be_setted[target_upgrade_skill_index] += actual_chance_for_upgrade
                     enhancement_left -= 1
 
@@ -137,6 +131,5 @@ class NjbStyleVBuilder(AbstractVBuilder):
 
         enhancer = BasicVEnhancer()
         enhancer.set_state_direct(enhance_state_will_be_setted)
-        enhancer.set_vlevel_direct(
-            [(i < skill_cores) * skill_core_level for i in range(10)])
+        enhancer.set_vlevel_direct([(i < skill_cores) * skill_core_level for i in range(10)])
         return enhancer

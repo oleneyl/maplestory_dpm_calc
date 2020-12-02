@@ -4,5 +4,6 @@ ARMOR_RATE = 300
 APPLY_PROP = True
 FINAL_DAMAGE_RATIO = 1
 
+
 def infinite_time() -> int:
     return NOTWANTTOEXECUTE

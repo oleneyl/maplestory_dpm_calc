@@ -23,8 +23,7 @@ class Simulator(object):
 
         # TODO: Not used attribute.
         # Buff modifier를 시간별로 캐싱하여 연산량을 줄입니다.
-        self._modifier_cache_and_time: List[Union[int,
-                                                  CharacterModifier]] = [-1, CharacterModifier()]
+        self._modifier_cache_and_time: List[Union[int, CharacterModifier]] = [-1, CharacterModifier()]
 
         self._default_modifier: CharacterModifier = CharacterModifier()
 
@@ -75,8 +74,7 @@ class Simulator(object):
                 raise e
 
     def parse_result(self, result: ResultObject) -> None:
-        runtime_context_modifier = self.scheduler.get_buff_modifier() + \
-            self.get_default_modifier()
+        runtime_context_modifier = self.scheduler.get_buff_modifier() + self.get_default_modifier()
         result.setTime(self.scheduler.get_current_time())
 
         if result.damage > 0:
@@ -88,8 +86,7 @@ class Simulator(object):
         for t in reversed(task._before):
             self.run_task_recursive(t)
 
-        runtime_context_modifier = self.scheduler.get_buff_modifier() + \
-            self.get_default_modifier()
+        runtime_context_modifier = self.scheduler.get_buff_modifier() + self.get_default_modifier()
         result = task.do(
             runtime_context_modifier=runtime_context_modifier + self.character.get_modifier())
         self.parse_result(result)
@@ -160,21 +157,17 @@ class Analytics:
         return meta
 
     def statistics(self) -> None:
-        print("Total damage %.1f in %d second" %
-              (self.total_damage, self.totalTime / 1000))
-        print(
-            f"Loss {self.total_damage_without_restriction - self.total_damage:.1f}")
+        print("Total damage %.1f in %d second" % (self.total_damage, self.totalTime / 1000))
+        print(f"Loss {self.total_damage_without_restriction - self.total_damage:.1f}")
 
         def getSkillNames(logList) -> List[str]:
             return sorted(set(map(lambda log: log["result"].sname, logList)))
 
         print("\n===Buff Skills===")
-        buffList = list(
-            filter(lambda log: log["result"].spec == "buff", self.logList))
+        buffList = list(filter(lambda log: log["result"].spec == "buff", self.logList))
         names = getSkillNames(buffList)
         for name in names:
-            skillLog = list(
-                filter(lambda log: log["result"].sname == name, buffList))
+            skillLog = list(filter(lambda log: log["result"].sname == name, buffList))
             use = len(skillLog)
             delay = sum(map(lambda log: log["result"].delay, skillLog))
             print(f"{name} Used {use} Delay {delay}")
@@ -182,12 +175,10 @@ class Analytics:
         shareDict = defaultdict(int)
 
         print("\n===Damage Skills===")
-        damageList = list(
-            filter(lambda log: log["result"].spec == "damage", self.logList))
+        damageList = list(filter(lambda log: log["result"].spec == "damage", self.logList))
         names = getSkillNames(damageList)
         for name in names:
-            skillLog = list(
-                filter(lambda log: log["result"].sname == name, damageList))
+            skillLog = list(filter(lambda log: log["result"].sname == name, damageList))
             use = len(skillLog)
             hit = sum(map(lambda log: log["result"].hit, skillLog))
             damage = sum(map(lambda log: log["deal"], skillLog))
@@ -200,12 +191,10 @@ class Analytics:
             print(f"Share {share:.4f}%")
 
         print("\n===Summon/DoT Skills===")
-        summonList = list(filter(lambda log: log["result"].spec in [
-                          "summon", "dot"], self.logList))
+        summonList = list(filter(lambda log: log["result"].spec in ["summon", "dot"], self.logList))
         names = getSkillNames(summonList)
         for name in names:
-            skillLog = list(
-                filter(lambda log: log["result"].sname == name, summonList))
+            skillLog = list(filter(lambda log: log["result"].sname == name, summonList))
             summon = len(list(filter(lambda log: log["deal"] == 0, skillLog)))
             use = len(skillLog) - summon
             hit = sum(map(lambda log: log["result"].hit, skillLog))
@@ -250,8 +239,7 @@ class Analytics:
         if result.damage > 0:
             mdf = charmdf + result.mdf
 
-            deal, loss = mdf.calculate_damage(
-                result.damage, result.hit, result.spec)
+            deal, loss = mdf.calculate_damage(result.damage, result.hit, result.spec)
             free_deal = deal + loss
 
             # free_deal = mdf.get_damage_factor() * result.damage * 0.01
@@ -270,11 +258,9 @@ class Analytics:
                 result.time, result.sname, deal, free_deal - deal, result.delay, result.spec))
             print(f'{result.mdf}')
         if deal > 0:
-            self.logList.append(
-                {"result": result, "time": result.time, "deal": deal, "loss": free_deal - deal})
+            self.logList.append({"result": result, "time": result.time, "deal": deal, "loss": free_deal - deal})
         else:
-            self.logList.append(
-                {"result": result, "time": result.time, "deal": 0, "loss": 0})
+            self.logList.append({"result": result, "time": result.time, "deal": 0, "loss": 0})
         if result.sname not in self.skillList:
             self.skillList[result.sname] = {}
 
@@ -326,17 +312,14 @@ class Analytics:
 
         # scanning algorithm
         maximal_time_loc = 0
-        damage_log_queue = [get_damage_sum_in_time_interval(
-            i * search_time_scan_rate, search_time_scan_rate) for i in range(continue_time_length // search_time_scan_rate)]
+        damage_log_queue = [get_damage_sum_in_time_interval(i * search_time_scan_rate, search_time_scan_rate) for i in range(continue_time_length // search_time_scan_rate)]
         maximal_damage = sum(damage_log_queue)
 
-        scanning_end_time = (continue_time_length //
-                             search_time_scan_rate) * search_time_scan_rate
+        scanning_end_time = (continue_time_length // search_time_scan_rate) * search_time_scan_rate
 
         while scanning_end_time < self.totalTime:
             damage_log_queue.pop(0)
-            damage_log_queue.append(get_damage_sum_in_time_interval(
-                scanning_end_time, search_time_scan_rate))
+            damage_log_queue.append(get_damage_sum_in_time_interval(scanning_end_time, search_time_scan_rate))
             if sum(damage_log_queue) > maximal_damage:
                 maximal_time_loc = scanning_end_time - continue_time_length
                 maximal_damage = sum(damage_log_queue)
@@ -351,12 +334,12 @@ class Analytics:
                 mdf = self.chtrmdf + result.mdf
                 if maximal_time_loc <= log["time"] < maximal_time_loc + continue_time_length:
                     mdf += temporal_modifier
-                deal, loss = mdf.calculate_damage(
-                    result.damage, result.hit, result.spec)
+                deal, loss = mdf.calculate_damage(result.damage, result.hit, result.spec)
                 total_damage += deal
 
-        simple_increment = ((self.chtrmdf + temporal_modifier).get_damage_factor() / (
-            self.chtrmdf.get_damage_factor()) - 1) * (continue_time_length / self.totalTime)
+        simple_increment = ((self.chtrmdf + temporal_modifier).get_damage_factor() /
+                            (self.chtrmdf.get_damage_factor()) - 1) * (continue_time_length / self.totalTime)
 
         return {"damage": (total_damage - self.total_damage) * (60000 / self.totalTime),
-                "increment": (total_damage / self.total_damage) - 1, "simple_increment": simple_increment}
+                "increment": (total_damage / self.total_damage) - 1,
+                "simple_increment": simple_increment}

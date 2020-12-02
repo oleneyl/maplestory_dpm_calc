@@ -6,8 +6,7 @@ from typing import TYPE_CHECKING, Callable, List, Optional, Tuple
 from ..graph import DynamicVariableOperation
 from .callback import Callback
 from .constant import NOTWANTTOEXECUTE
-from .graph_element import (ConstraintElement, ContextReferringTask,
-                            GraphElement, Task, TaskHolder)
+from .graph_element import ConstraintElement, ContextReferringTask, GraphElement, Task, TaskHolder
 from .modifier import CharacterModifier
 from .result_object import ResultObject
 
@@ -38,8 +37,7 @@ class AbstractSkillWrapper(GraphElement):
         # indicate how much time left for continuing this wrapper.
         self.timeLeft: float = 0
         self.constraint: List[ConstraintElement] = []
-        self._result_object_cache: ResultObject = ResultObject(
-            0, CharacterModifier(), 0, 0, sname=self.skill.name, spec='graph control')
+        self._result_object_cache: ResultObject = ResultObject(0, CharacterModifier(), 0, 0, sname=self.skill.name, spec='graph control')
         if DynamicVariableOperation.reveal_argument(self.skill.cooltime) == NOTWANTTOEXECUTE:
             self.set_disabled_and_time_left(-1)
 
@@ -281,8 +279,7 @@ class AbstractSkillWrapper(GraphElement):
 
         if cd - cooltime_reduce <= 10000:
             cooltime_cap = min(10000, cd)
-            cdr_left = (cooltime_reduce - (cd - cooltime_cap)) / \
-                1000  # 10초 이하에서 쿨감되는 수치 계산
+            cdr_left = (cooltime_reduce - (cd - cooltime_cap)) / 1000  # 10초 이하에서 쿨감되는 수치 계산
             cdr_applied = cooltime_cap * (1 - cdr_left * 0.05)  # 1초당 5%씩 감소
         else:
             cdr_applied = cd - cooltime_reduce
@@ -297,15 +294,13 @@ class AbstractSkillWrapper(GraphElement):
         """Invoke graph_element, after elapsed elapsed_time.
         Delay may considered as elapsed_time.
         """
-        self._registered_callback_presets.append(
-            ('onEventElapsed', (graph_element, elapsed_time)))
+        self._registered_callback_presets.append(('onEventElapsed', (graph_element, elapsed_time)))
 
     def onEventEnd(self, graph_element: GraphElement) -> None:
         """Invoke graph_element, after event ended.
         This only meaningful for duration-involved elements.
         """
-        self._registered_callback_presets.append(
-            ('onEventEnd', (graph_element, 0)))
+        self._registered_callback_presets.append(('onEventEnd', (graph_element, 0)))
 
     def create_callbacks(self, duration=0, **kwargs) -> List[Callback]:
         """해당 object가 _use될 때 발생시키고자 하는 콜백들을 생성합니다.
@@ -315,20 +310,17 @@ class AbstractSkillWrapper(GraphElement):
             if preset_type == 'onEventEnd':
                 assert duration > 0, 'duration may larger than 0 to use onEventEnd callback.'
                 element = context[0]
-                callbacks.append(
-                    Callback.from_graph_element(element, duration))
+                callbacks.append(Callback.from_graph_element(element, duration))
             elif preset_type == 'onEventElapsed':
                 element, elapsed_time = context
-                callbacks.append(
-                    Callback.from_graph_element(element, elapsed_time))
+                callbacks.append(Callback.from_graph_element(element, elapsed_time))
 
         return callbacks
 
 
 class BuffSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill: BuffSkill, name: str = None) -> None:
-        self._disabledResultobjectCache: ResultObject = ResultObject(
-            0, CharacterModifier(), 0, 0, sname=skill.name, spec='graph control')
+        self._disabledResultobjectCache: ResultObject = ResultObject(0, CharacterModifier(), 0, 0, sname=skill.name, spec='graph control')
         super(BuffSkillWrapper, self).__init__(skill, name=name)
         self.set_flag(self.Flag_BuffSkill)
         self.disabledModifier: CharacterModifier = CharacterModifier()
@@ -366,15 +358,8 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         delay = self.get_delay()
         callbacks = self.create_callbacks(duration=self.timeLeft)
-        return ResultObject(delay,
-                            CharacterModifier(),
-                            0,
-                            0,
-                            sname=self.skill.name,
-                            spec=self.skill.spec,
-                            kwargs={"remain": self.skill.remain *
-                                    (1 + 0.01 * skill_modifier.buff_rem * self.skill.rem)},
-                            callbacks=callbacks)
+        return ResultObject(delay, CharacterModifier(), 0, 0, sname=self.skill.name, spec=self.skill.spec,
+                            kwargs={"remain": self.skill.remain * (1 + 0.01 * skill_modifier.buff_rem * self.skill.rem)}, callbacks=callbacks)
 
     def get_delay(self) -> float:
         return self.skill.delay
@@ -451,13 +436,8 @@ class DamageSkillWrapper(AbstractSkillWrapper):
     def _use(self, skill_modifier: SkillModifier) -> ResultObject:
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         callbacks = self.create_callbacks()
-        return ResultObject(self.get_delay(),
-                            self.get_modifier(),
-                            self.get_damage(),
-                            self.get_hit(),
-                            sname=self.skill.name,
-                            spec=self.skill.spec,
-                            callbacks=callbacks)
+        return ResultObject(self.get_delay(), self.get_modifier(), self.get_damage(), self.get_hit(),
+                            sname=self.skill.name, spec=self.skill.spec, callbacks=callbacks)
 
     def get_delay(self) -> float:
         return self.skill.delay
@@ -481,8 +461,7 @@ class DamageSkillWrapper(AbstractSkillWrapper):
 class StackDamageSkillWrapper(DamageSkillWrapper):
     def __init__(self, skill: DamageSkill, stack_skill: AbstractSkillWrapper, fn,
                  modifier: CharacterModifier = CharacterModifier(), name: str = None) -> None:
-        super(StackDamageSkillWrapper, self).__init__(
-            skill, modifier=modifier, name=name)
+        super(StackDamageSkillWrapper, self).__init__(skill, modifier=modifier, name=name)
         self.stack_skill: AbstractSkillWrapper = stack_skill
         self.fn = fn
 
@@ -502,8 +481,7 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         super(SummonSkillWrapper, self).__init__(skill, name=name)
         self.tick: int = 0
         self.modifier: CharacterModifier = modifier
-        self._runtime_modifier_list: List[Tuple[AbstractSkillWrapper, Callable[[
-            AbstractSkillWrapper], CharacterModifier]]] = []
+        self._runtime_modifier_list: List[Tuple[AbstractSkillWrapper, Callable[[AbstractSkillWrapper], CharacterModifier]]] = []
         self.disabledModifier: CharacterModifier = CharacterModifier()
         self._onTick: List[GraphElement] = []
         self.uniqueFlag: bool = True
@@ -548,13 +526,8 @@ class SummonSkillWrapper(AbstractSkillWrapper):
             (1 + 0.01 * skill_modifier.summon_rem * self.skill.rem)
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         callbacks = self.create_callbacks(duration=self.timeLeft)
-        return ResultObject(self.get_summon_delay(),
-                            self.disabledModifier,
-                            0,
-                            0,
-                            sname=self.skill.name,
-                            spec=self.skill.spec,
-                            callbacks=callbacks)
+        return ResultObject(self.get_summon_delay(), self.disabledModifier, 0, 0,
+                            sname=self.skill.name, spec=self.skill.spec, callbacks=callbacks)
 
     def _useTick(self) -> ResultObject:
         if self.is_active() and self.tick <= 0:
