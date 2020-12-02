@@ -230,7 +230,7 @@ class GraphElement:
                           for el in self._justAfter])
 
     def onJustAfter(self, el: GraphElement) -> None:
-        self._justAfter += [el] + self._justAfter
+        self._justAfter = [el] + self._justAfter
 
     def onJustAfters(self, ellist: List[GraphElement]) -> None:
         self._justAfter += ellist
