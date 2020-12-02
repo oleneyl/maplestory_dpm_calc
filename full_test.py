@@ -21,7 +21,7 @@ def get_args():
 
 
 def test(args):
-    jobname, ulevel, runtime = args
+    jobname, ulevel, runtime, cdr = args
     start = time.time()
     print(f"{jobname} {ulevel} 계산중")
 
@@ -29,7 +29,7 @@ def test(args):
     parser = IndividualDPMGenerator(jobname, template)
     parser.set_runtime(runtime * 1000)
     dpm = parser.get_dpm(ulevel=ulevel,
-                         cdr=args.cdr,
+                         cdr=cdr,
                          weaponstat=[4,9])
 
     end = time.time()
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     args = get_args()
     start = time.time()
     ulevels = args.ulevel
-    tasks = product(jobMap.keys(), ulevels, [args.time])
+    tasks = product(jobMap.keys(), ulevels, [args.time], [args.cdr])
     pool = ProcessPoolExecutor(max_workers=args.thread)
     results = pool.map(test, tasks)
     write_results(results)
