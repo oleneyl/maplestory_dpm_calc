@@ -1,3 +1,6 @@
+from typing import Tuple, Optional
+
+from . import JobType
 from ..kernel import core
 from ..kernel.graph import DynamicVariableOperation
 from ..item import RootAbyss, Absolab, Arcane, Genesis
@@ -19,7 +22,7 @@ def create_auxilary_attack(skill_wrapper, ratio = 1, nametag='(복사)'):
         damage = original_skill.damage * DynamicVariableOperation.wrap_argument(ratio),
         hit = original_skill.hit,
         modifier=original_skill._static_skill_modifier).wrap(core.DamageSkillWrapper)
-    
+
     skill_wrapper.onJustAfter(copial_skill)
 
 # TODO: 스펙 측정시마다 수동으로 변경 필요
@@ -79,3 +82,35 @@ def crit_damage_ring(level: int = 4):
 def crit_defense_ring(level: int = 4):
     # 크확 100% 가정
     return core.BuffSkill("크리디펜스 링", 0, (7+2*level)*1000, cooltime = 180000, armor_ignore = 25 * level).wrap(core.BuffSkillWrapper)
+
+
+# JobType 관련
+
+def get_stat_type(jobType: JobType) -> Tuple[str, str, Optional[str]]:
+    lookup: int = jobType.value // 100 % 10
+    if lookup == 1:  # 전사
+        if jobType == JobType.demonavenger:
+            return "hp", "str", None
+        return "str", "dex", None
+    if lookup == 2:  # 마법사
+        return "int", "luk", None
+    if lookup == 3:  # 궁수
+        return "dex", "str", None
+    if lookup == 4:  # 도적
+        if jobType in (JobType.shadower, JobType.dualblade, JobType.cadena):
+            return "luk", "dex", "str"
+        return "luk", "dex", None
+    if lookup == 5:  # 해적
+        if jobType in (JobType.viper, JobType.cannoneer, JobType.striker, JobType.eunwol, JobType.ark):
+            return "str", "dex", None
+        elif jobType in (JobType.captain, JobType.mechanic, JobType.angelicbuster):
+            return "dex", "str", None
+    if lookup == 6:  # 제논
+        return "luk", "str", "dex"
+    if lookup == 7:  # 숫자 부족해서 뒤로 밀린 애들
+        if jobType == JobType.luminous:
+            return "int", "luk", None
+        if jobType == JobType.blaster:
+            return "str", "dex", None
+    raise TypeError('Not implemented jobType: ', jobType.name, ", ", jobType.value)
+

@@ -39,13 +39,13 @@ from . import blaster
 from . import aran
 from . import adele
 from . import hoyoung
-from . import jobtype
+from .jobtype import JobType
 
-__all__ = ["archmageFb", "archmageTc", "hero", "paladin", "sniper", "windbreaker", "soulmaster", "flamewizard",
-           "mercedes", "luminous", "bishop", "battlemage", "mechanic", "demonslayer", "darknight", "wildhunter",
-           "shadower", "cannonshooter", "michael", "dualblade", "kaiser", "captain", "angelicbuster", "phantom",
-           "nightlord", "eunwol", "viper", "nightwalker", "striker", "evan", "bowmaster", "zero", "kinesis", "ilium",
-           "pathfinder", "cadena", "ark", "blaster", "aran", "adele", "hoyoung"]
+__all__ = ["JobType", "archmageFb", "archmageTc", "hero", "paladin", "sniper", "windbreaker", "soulmaster",
+           "flamewizard", "mercedes", "luminous", "bishop", "battlemage", "mechanic", "demonslayer", "darknight",
+           "wildhunter", "shadower", "cannonshooter", "michael", "dualblade", "kaiser", "captain", "angelicbuster",
+           "phantom", "nightlord", "eunwol", "viper", "nightwalker", "striker", "evan", "bowmaster", "zero", "kinesis",
+           "ilium", "pathfinder", "cadena", "ark", "blaster", "aran", "adele", "hoyoung"]
 
 jobMap = {"아크메이지불/독": archmageFb,
           "아크메이지썬/콜": archmageTc,

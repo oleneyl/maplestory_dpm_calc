@@ -5,6 +5,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from .constant import MAX_DAMAGE_RESTRICTION
 from ..graph import DynamicVariableInstance, DynamicVariableOperation
+from dpmModule.jobs import JobType
+from dpmModule.jobs.jobutils import get_stat_type
 
 
 class CharacterModifier:
@@ -137,6 +139,21 @@ class CharacterModifier:
                                          att=self.att,
                                          stat_main_fixed=self.stat_main_fixed,
                                          stat_sub_fixed=self.stat_sub_fixed)
+
+    def get_stat_factor(self, jobType: JobType, level: int = 230) -> float:
+        main_type, sub_type, sub_type2 = get_stat_type(jobType)
+        main_stat = self[main_type] * (1 + 0.01 * self[main_type + "_rate"]) + self[main_type + "_fixed"]
+        sub_stat = self[sub_type] * (1 + 0.01 * self[sub_type + "_rate"]) + self[sub_type + "_fixed"]
+        sub_stat2 = 0
+        if sub_type2 is not None:
+            sub_stat2 = self[sub_type2] * (1 + 0.01 * self[sub_type2 + "_rate"]) + self[sub_type2 + "_fixed"]
+
+        if jobType == JobType.xenon:
+            return 4 * (main_stat + sub_stat + sub_stat2)
+        if jobType == JobType.demonavenger:
+            pure_hp = 545 + 90 * level
+            return 4 * (pure_hp / 14 + (main_stat - pure_hp) / 17.5) + sub_stat
+        return 4 * main_stat + sub_stat + sub_stat2
 
     def get_damage_factor(self, armor: float = 300) -> float:
         """Caution : Use this function only if you summed up every modifiers.
