@@ -84,7 +84,7 @@ class JobGenerator(ck.JobGenerator):
         CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 0, 0)
         
         Mercilesswind = core.DamageSkill("아이들 윔", 600, (500 + 20*vEhc.getV(4,4)) * 0.775, 10 * 3, cooltime = 10 * 1000, red=True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper) #도트 데미지 9초간 초당 1000%
-        MercilesswindDOT = core.DotSkill("아이들 윔(도트)", 0, 1000, 500 + 20*vEhc.getV(4,4), 1, 9000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        MercilesswindDOT = core.DotSkill("아이들 윔(도트)", 0, 1000, 500 + 20*vEhc.getV(4,4), 1, 9000, cooltime = -1).wrap(core.DotSkillWrapper)
     
         #Summon Skills
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 5, 5)

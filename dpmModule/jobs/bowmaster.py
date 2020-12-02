@@ -154,7 +154,7 @@ class JobGenerator(ck.JobGenerator):
         ArrowFlatter = core.SummonSkill("애로우 플래터", 600, 210, 85+90+self.combat*3, 1, 30 * 1000, modifier = core.CharacterModifier(pdamage = 30)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper) # 딜레이 모름
         
         GrittyGust = core.DamageSkill("윈드 오브 프레이", 720, 335, 12, cooltime = 15 * 1000, modifier=MortalBlow).setV(vEhc, 6, 2, True).wrap(core.DamageSkillWrapper)
-        GrittyGustDOT = core.DotSkill("윈드 오브 프레이(도트)", 0, 1000, 200, 1, 10*1000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        GrittyGustDOT = core.DotSkill("윈드 오브 프레이(도트)", 0, 1000, 200, 1, 10*1000, cooltime = -1).wrap(core.DotSkillWrapper)
         
         ArrowRainBuff = core.BuffSkill("애로우 레인(버프)", 810, (40+vEhc.getV(0,0))*1000, cooltime = 120 * 1000, red = True, pdamage = 15+(vEhc.getV(0,0)//2)).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ArrowRain = core.SummonSkill("애로우 레인", 0, 1440, 600+vEhc.getV(0,0)*24, 8, (40+vEhc.getV(0,0))*1000, cooltime = -1, modifier=MortalBlow).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) # 5초마다 3.5회 공격, 대략 1440ms당 1회
@@ -168,7 +168,7 @@ class JobGenerator(ck.JobGenerator):
         #잔영의시 미적용
         QuibberFullBurstBuff = core.BuffSkill("퀴버 풀버스트(버프)", 0, 30 * 1000, cooltime = 120 * 1000, red = True, patt=(5+int(vEhc.getV(2,2)*0.5)), crit_damage=8).wrap(core.BuffSkillWrapper) # 독화살 크뎀을 이쪽에 합침
         QuibberFullBurst = core.SummonSkill("퀴버 풀버스트", 780, 2 * 1000 / 6, 250 + 10 * vEhc.getV(2,2), 9, 30 * 1000, cooltime = -1, modifier=MortalBlow).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
-        QuibberFullBurstDOT = core.DotSkill("독화살", 0, 1000, 220, 3, 30*1000, cooltime = -1).wrap(core.SummonSkillWrapper) # 3회 중첩
+        QuibberFullBurstDOT = core.DotSkill("독화살", 0, 1000, 220, 3, 30*1000, cooltime = -1).wrap(core.DotSkillWrapper) # 3회 중첩
     
         ImageArrow = core.SummonSkill("잔영의 시", 720, 240, 400+16*vEhc.getV(1,1), 3, 3000, cooltime=30000, red = True).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # 13 * 3타
         ImageArrowPassive = core.SummonSkill("잔영의 시(패시브)", 0, 2580, 400+16*vEhc.getV(1,1), 3.5*3, 9999999).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # 3~4 * 3타, 잔시 쿨동안 11회 사용

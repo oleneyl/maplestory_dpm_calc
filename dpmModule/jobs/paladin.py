@@ -66,7 +66,7 @@ class JobGenerator(ck.JobGenerator):
     
         #Damage Skills
         LighteningCharge = core.DamageSkill("라이트닝 차지", 630, 462, 3+2, cooltime = 60 * 1000 * (1 + buff_rem * 0.01)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) # 엘리멘탈 차지의 벞지 적용 고려함
-        LighteningChargeDOT = core.DotSkill("라이트닝 차지(도트)", 0, 1000, 115, 1, 6000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        LighteningChargeDOT = core.DotSkill("라이트닝 차지(도트)", 0, 1000, 115, 1, 6000, cooltime = -1).wrap(core.DotSkillWrapper)
         DivineCharge = core.DamageSkill("디바인 차지", 630, 462, 3+2, cooltime = 60 * 1000 * (1 + buff_rem * 0.01)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         Sanctuary = core.DamageSkill("생츄어리", 750, 580, 8+2, cooltime = 14 * 0.7 * 1000, red = True, modifier = core.CharacterModifier(boss_pdamage = 30)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
 

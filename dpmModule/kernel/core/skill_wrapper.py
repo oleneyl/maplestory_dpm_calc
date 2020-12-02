@@ -13,7 +13,7 @@ from .result_object import ResultObject
 
 if TYPE_CHECKING:
     from .modifier import SkillModifier
-    from .skill import AbstractSkill, BuffSkill, DamageSkill, SummonSkill
+    from .skill import AbstractSkill, BuffSkill, DamageSkill, SummonSkill, DotSkill
 
 
 class AbstractSkillWrapper(GraphElement):
@@ -594,3 +594,22 @@ class SummonSkillWrapper(AbstractSkillWrapper):
 
     def add_runtime_modifier(self, skill: AbstractSkillWrapper, fn: Callable[[AbstractSkillWrapper], CharacterModifier]) -> None:
         self._runtime_modifier_list.append((skill, fn))
+
+class DotSkillWrapper(SummonSkillWrapper):
+    def __init__(self, skill: DotSkill, modifier: CharacterModifier = CharacterModifier(), name: str = None) -> None:
+        super(DotSkillWrapper, self).__init__(skill, modifier, name=name)
+
+    # _use only alloted for start.
+    def _use(self, skill_modifier: SkillModifier) -> ResultObject:
+        self.tick = max(self.tick, 0)
+        self.timeLeft = self.skill.remain * \
+            (1 + 0.01 * skill_modifier.summon_rem * self.skill.rem)
+        self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
+        callbacks = self.create_callbacks(duration=self.timeLeft)
+        return ResultObject(self.get_summon_delay(),
+                            self.disabledModifier,
+                            0,
+                            0,
+                            sname=self.skill.name,
+                            spec=self.skill.spec,
+                            callbacks=callbacks)
