@@ -8,8 +8,6 @@ from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
 
-# TODO: 4카 5앱 적용
-# 제로는 패시브 레벨 +1 어빌 미적용
 '''
 어시스트 매커니즘 정리
 
@@ -36,7 +34,20 @@ class CriticalBindWrapper(core.BuffSkillWrapper):
             return False
         return super(CriticalBindWrapper, self).is_usable()
 
+# BuffSkillWrapper로 선언시 get_modifier가 작동하지 않아 StackSkillWrapper로 임시조치
+class DevineAuraWrapper(core.StackSkillWrapper):
+    def __init__(self, skill, limit_break, time_distortion):
+        super(DevineAuraWrapper, self).__init__(skill, 0)
+        self.limit_break = limit_break
+        self.time_distortion = time_distortion
+    
+    def get_modifier(self):
+        if self.limit_break.is_active() or self.time_distortion.is_active():
+            return core.CharacterModifier(att = 20)
+        return self.disabledModifier
+
 class JobGenerator(ck.JobGenerator):
+    # 제로는 쓸컴뱃 미적용, 패시브 레벨 +1 어빌 사용 불가능
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.vSkillNum = 5
@@ -56,8 +67,8 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
         ResolutionTime = core.InformedCharacterModifier("리졸브 타임",pdamage_indep = 25, stat_main = 50)
-        # 유니온 6000 기준
-        # 4카5앱 임시 구현 (보공 +30%, 방무 -10%)
+        # 4카5앱 임시 구현
+        # 유니온 6000 기준 (17성 카벨모 vs 17성 카루타 모자)
         LuckyHat_Temp = core.InformedCharacterModifier("카오스 벨룸의 헬름 (임시)", boss_pdamage = 30) - core.ExtendedCharacterModifier(armor_ignore = 10, stat_main = 21, stat_sub = 21, pstat_main = 5, pstat_sub = 5, att = 3)
         LuckyHat_Temp = core.InformedCharacterModifier.from_extended_modifier("카오스 벨룸의 헬름 (임시)", LuckyHat_Temp)
 
@@ -93,6 +104,9 @@ class JobGenerator(ck.JobGenerator):
         어파스 기준
         '''
         #### 마스터리 ####
+        # 베타 마스터리의 공격력 +4는 무기 기본 공격력 차이
+        # 제네시스 무기의 경우 +5로 변경 필요
+
         AlphaMDF = core.CharacterModifier(pdamage_indep = 34, crit = 40, att = 40, armor_ignore = 30, crit_damage = 50)
         BetaMDF = core.CharacterModifier(pdamage_indep = 49, crit = 15, boss_pdamage = 30, att = 80 + 4)
         
@@ -209,8 +223,7 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0) # TODO: 베타 타겟당 데미지 증가 적용여부 확인할것
         
         LimitBreakAttack = core.DamageSkill("리미트 브레이크", 0, 400+15*vEhc.getV(0,0), 5, modifier = extra_dmg(15, False)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        # 리미트 브레이크 중에는 디바인 포스 사용 (공격력 20 증가)
-        LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = 30+vEhc.getV(0,0)//5, att = 20, cooltime = 240*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = 30+vEhc.getV(0,0)//5, cooltime = 240*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         LimitBreakCDR = core.SummonSkill("리미트 브레이크(재사용 대기시간 감소)", 0, 1000, 0, 0, (30+vEhc.getV(0,0)//2)*1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         
         LimitBreakFinal = core.DamageSkill("리미트 브레이크 (막타)", 0, 650 + 26*vEhc.getV(0,0), 12*6, cooltime = -1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
@@ -242,6 +255,10 @@ class JobGenerator(ck.JobGenerator):
         EgoWeaponBeta = core.DamageSkill("에고 웨폰(베타)", 0, 175+7*vEhc.getV(0,0), 9*2*3, cooltime=15000, red=True, modifier = extra_dmg(4, False)).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
+
+        # 디바인 오라
+        DevineAura = DevineAuraWrapper(core.BuffSkill("디바인 스위프트/포스", 0, 99999999), LimitBreak, TimeDistortion)
+
         ### 스킬 연결 ###
         ### 알파 ###
         AdvancedSpinCutter.onAfter(AdvancedSpinCutterAura)
@@ -352,7 +369,7 @@ class JobGenerator(ck.JobGenerator):
         
         return(ComboHolder,
                 [globalSkill.maple_heros(chtr.level, name = "륀느의 가호", combat_level = 0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                    AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, RhinneBless,
+                    DevineAura, AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, RhinneBless,
                     DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, LimitBreakFinal, CriticalBind,
                     SoulContract]+\
                 [TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta, MirrorBreak, MirrorSpider]+\
