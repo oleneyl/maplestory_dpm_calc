@@ -168,7 +168,7 @@ class JobGenerator(ck.JobGenerator):
         
         THROWINGHIT = 5
         FrontSlash = core.DamageSkill("프론트 슬래시", 450, 205, 6, modifier = extra_dmg(6, True)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        ThrowingWeapon = core.SummonSkill("어드밴스드 스로잉 웨폰", 360, 300, 550 + 5*self.combat, 2, THROWINGHIT*300, cooltime=-1, modifier = extra_dmg(6, True)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+        ThrowingWeapon = core.SummonSkill("어드밴스드 스로잉 웨폰", 480, 300, 550 + 5*self.combat, 2, THROWINGHIT*300, cooltime=-1, modifier = extra_dmg(6, True)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
         
         TurningDrive = core.DamageSkill("터닝 드라이브", 360, 260, 6, modifier = extra_dmg(6, True)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedWheelWind = core.DamageSkill("어드밴스드 휠 윈드", 900, 200+2*self.combat, 2*7, modifier = extra_dmg(6, True)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)     #   0.1초당 1타, 최대 7초, 7타로 적용
@@ -176,7 +176,7 @@ class JobGenerator(ck.JobGenerator):
         GigaCrash = core.DamageSkill("기가 크래시", 540, 250, 6, modifier = extra_dmg(6, True)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         GigaCrashTAG = core.DamageSkill("기가 크래시(태그)", 0, 250, 6, modifier = extra_dmg(6, True)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         
-        JumpingCrash = core.DamageSkill("점핑 크래시", 300, 225, 6, modifier = extra_dmg(6, True)).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
+        JumpingCrash = core.DamageSkill("점핑 크래시", 300+210, 225, 6, modifier = extra_dmg(6, True)).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
         JumpingCrashTAG = core.DamageSkill("점핑 크래시(태그)", 0, 225, 6, modifier = extra_dmg(6, True)).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
         JumpingCrashWave = core.DamageSkill("점핑 크래시(충격파)", 0, 225, 3, modifier = extra_dmg(6, True)).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
         
