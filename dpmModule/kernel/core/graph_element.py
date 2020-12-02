@@ -239,25 +239,14 @@ class GraphElement:
         return None
 
     # TODO: Not used method.
-    def ensure_condition(self, cond: Callable[[], bool]) -> Optional[GraphElement]:
-        if cond():
-            return self
-        else:
-            return None
-
-    def ensure(self, ehc: AbstractVEnhancer, index_1: int, index_2: int) -> Optional[GraphElement]:
-        """주어진 ``ehc`` 의 코어 강화가 존재하지 않는다면, ``None`` 을 반환하여 실행되지 못하도록 막습니다.
+    def ensure(self, cond: Callable[[], bool]) -> Optional[GraphElement]:
+        """주어진 ``cond`` 의 값이 거짓이라면, ``None`` 을 반환하여 실행되지 못하도록 막습니다.
 
         Parameters
         ----------
-        ehc: AbstractVEnhancer
-        index_1 : int
-            ``ehc`` 가 첫번째 인자로 받게 될 index
-        index_2 : int
-            ``ehc`` 가 두번째 인자로 받게 될 index
-
+        cond: Callable[[], bool]
         """
-        if ehc.getV(index_1, index_2) > 0:
+        if cond():
             return self
         else:
             return None
