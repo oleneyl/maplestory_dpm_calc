@@ -39,9 +39,8 @@ from . import blaster
 from . import aran
 from . import adele
 from . import hoyoung
-from .jobtype import JobType
 
-__all__ = ["JobType", "archmageFb", "archmageTc", "hero", "paladin", "sniper", "windbreaker", "soulmaster",
+__all__ = ["archmageFb", "archmageTc", "hero", "paladin", "sniper", "windbreaker", "soulmaster",
            "flamewizard", "mercedes", "luminous", "bishop", "battlemage", "mechanic", "demonslayer", "darknight",
            "wildhunter", "shadower", "cannonshooter", "michael", "dualblade", "kaiser", "captain", "angelicbuster",
            "phantom", "nightlord", "eunwol", "viper", "nightwalker", "striker", "evan", "bowmaster", "zero", "kinesis",

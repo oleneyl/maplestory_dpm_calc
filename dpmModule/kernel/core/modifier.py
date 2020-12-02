@@ -5,12 +5,10 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from .constant import MAX_DAMAGE_RESTRICTION
 from ..graph import DynamicVariableInstance, DynamicVariableOperation
-from dpmModule.jobs import JobType
-from dpmModule.jobs.jobutils import get_stat_type
 
 
 class CharacterModifier:
-    __slots__ = 'crit_rate', 'crit_damage', 'pdamage', 'final_damage', 'stat_main', 'stat_sub', 'pstat_main', 'pstat_sub', 'boss_pdamage', 'armor_ignore', 'patt', 'att', 'stat_main_fixed', 'stat_sub_fixed'
+    __slots__ = 'str', 'dex', 'int', 'luk', 'mhp', 'str_rate', 'dex_rate', 'int_rate', 'luk_rate', 'mhp_rate', 'str_fixed', 'dex_fixed', 'int_fixed', 'luk_fixed', 'mhp_fixed', 'crit_rate', 'crit_damage', 'pdamage', 'final_damage', 'stat_main', 'stat_sub', 'pstat_main', 'pstat_sub', 'boss_pdamage', 'armor_ignore', 'patt', 'att', 'stat_main_fixed', 'stat_sub_fixed'
     '''CharacterModifier : Holds information about character modifiing factors ex ) pdamage, stat, att%, etc.AbstractSkill
     - parameters
       
@@ -36,32 +34,54 @@ class CharacterModifier:
     
     '''
 
-    def __init__(self, crit_rate: float = 0, crit_damage: float = 0, pdamage: float = 0, final_damage: float = 0,
+    def __init__(self,str: float = 0, dex: float = 0, int: float = 0, luk: float = 0, mhp: float = 0, str_rate: float = 0, dex_rate: float = 0, int_rate: float = 0, luk_rate: float = 0, mhp_rate: float = 0, str_fixed: float = 0, dex_fixed: float = 0, int_fixed: float = 0, luk_fixed: float = 0, mhp_fixed: float= 0, crit_rate: float = 0, crit_damage: float = 0, pdamage: float = 0, final_damage: float = 0,
                  stat_main: float = 0, stat_sub: float = 0, pstat_main: float = 0, pstat_sub: float = 0,
                  boss_pdamage: float = 0, armor_ignore: float = 0, patt: float = 0, att: float = 0,
                  stat_main_fixed: float = 0, stat_sub_fixed: float = 0) -> None:
-        self.crit_rate: float = crit_rate
-        self.crit_damage: float = crit_damage
-
-        self.pdamage: float = pdamage
-        self.final_damage: float = final_damage
-
-        self.stat_main: float = stat_main
-        self.stat_sub: float = stat_sub
-
-        self.pstat_sub: float = pstat_sub
-        self.pstat_main: float = pstat_main
-
-        self.boss_pdamage: float = boss_pdamage
-        self.armor_ignore: float = armor_ignore
+        self.str: float = str
+        self.dex: float = dex
+        self.int: float = int
+        self.luk: float = luk
+        self.mhp: float = mhp
+        self.str_rate: float = str_rate
+        self.dex_rate: float = dex_rate
+        self.int_rate: float = int_rate
+        self.luk_rate: float = luk_rate
+        self.mhp_rate: float = mhp_rate
+        self.str_fixed: float = str_fixed
+        self.dex_fixed: float = dex_fixed
+        self.int_fixed: float = int_fixed
+        self.luk_fixed: float = luk_fixed
+        self.mhp_fixed: float = mhp_fixed
 
         self.att: float = att
-        self.patt: float = patt
+        self.att_rate: float = patt
+        self.matt: float = matt
+        self.matt_rate: float = matt_rate
 
-        self.stat_main_fixed: float = stat_main_fixed
-        self.stat_sub_fixed: float = stat_sub_fixed
+        self.crit_rate: float = crit_rate
+        self.crit_damage: float = crit_damage
+        self.pdamage: float = pdamage
+        self.boss_pdamage: float = boss_pdamage
+        self.armor_ignore: float = armor_ignore
+        self.final_damage: float = final_damage
 
     def __iadd__(self, arg: CharacterModifier) -> CharacterModifier:
+        self.str += arg.str
+        self.dex += arg.dex
+        self.int += arg.int
+        self.luk += arg.luk
+        self.mhp += arg.mhp
+        self.str_rate += arg.str_rate
+        self.dex_rate += arg.dex_rate
+        self.int_rate += arg.int_rate
+        self.luk_rate += arg.luk_rate
+        self.mhp_rate += arg.mhp_rate
+        self.str_fixed += arg.str_fixed
+        self.dex_fixed += arg.dex_fixed
+        self.int_fixed += arg.int_fixed
+        self.luk_fixed += arg.luk_fixed
+        self.mhp_fixed += arg.mhp_fixed
         self.crit_rate += arg.crit_rate
         self.crit_damage += arg.crit_damage
         self.pdamage += arg.pdamage
@@ -79,7 +99,21 @@ class CharacterModifier:
         return self
 
     def __add__(self, arg: CharacterModifier) -> CharacterModifier:
-        return CharacterModifier(crit_rate=(self.crit_rate + arg.crit_rate),
+        return CharacterModifier(str=(self.str + arg.str),
+                                 dex=(self.dex + arg.dex),
+                                 int=(self.int + arg.int),
+                                 luk=(self.luk + arg.luk),
+                                 mhp=(self.mhp + arg.mhp),
+                                 str_rate=(self.str_rate + arg.str_rate),
+                                 dex_rate=(self.dex_rate + arg.dex_rate),
+                                 int_rate=(self.int_rate + arg.int_rate),
+                                 luk_rate=(self.luk_rate + arg.luk_rate),
+                                 mhp_rate=(self.mhp_rate + arg.mhp_rate),
+                                 str_fixed=(self.str_fixed + arg.str_fixed),
+                                 dex_fixed=(self.dex_fixed + arg.dex_fixed),
+                                 int_fixed=(self.int_fixed + arg.int_fixed),
+                                 luk_fixed=(self.luk_fixed + arg.luk_fixed),
+                                 mhp_fixed=(self.mhp_fixed + arg.mhp_fixed),crit_rate=(self.crit_rate + arg.crit_rate),
                                  crit_damage=(self.crit_damage + arg.crit_damage),
                                  pdamage=(self.pdamage + arg.pdamage),
                                  final_damage=self.final_damage + arg.final_damage + (self.final_damage * arg.final_damage) * 0.01,
@@ -94,7 +128,21 @@ class CharacterModifier:
                                  stat_sub_fixed=(self.stat_sub_fixed + arg.stat_sub_fixed))
 
     def __sub__(self, arg: CharacterModifier) -> CharacterModifier:
-        return CharacterModifier(crit_rate=(self.crit_rate - arg.crit_rate),
+        return CharacterModifier(str=(self.str - arg.str),
+                                 dex=(self.dex - arg.dex),
+                                 int=(self.int - arg.int),
+                                 luk=(self.luk - arg.luk),
+                                 mhp=(self.mhp - arg.mhp),
+                                 str_rate=(self.str_rate - arg.str_rate),
+                                 dex_rate=(self.dex_rate - arg.dex_rate),
+                                 int_rate=(self.int_rate - arg.int_rate),
+                                 luk_rate=(self.luk_rate - arg.luk_rate),
+                                 mhp_rate=(self.mhp_rate - arg.mhp_rate),
+                                 str_fixed=(self.str_fixed - arg.str_fixed),
+                                 dex_fixed=(self.dex_fixed - arg.dex_fixed),
+                                 int_fixed=(self.int_fixed - arg.int_fixed),
+                                 luk_fixed=(self.luk_fixed - arg.luk_fixed),
+                                 mhp_fixed=(self.mhp_fixed - arg.mhp_fixed),crit_rate=(self.crit_rate - arg.crit_rate),
                                  crit_damage=(self.crit_damage - arg.crit_damage),
                                  pdamage=(self.pdamage - arg.pdamage),
                                  final_damage=(100 + self.final_damage) / (100 + arg.final_damage) * 100 - 100,
@@ -109,7 +157,21 @@ class CharacterModifier:
                                  stat_sub_fixed=(self.stat_sub_fixed - arg.stat_sub_fixed))
 
     def copy(self) -> CharacterModifier:
-        return CharacterModifier(crit_rate=self.crit_rate,
+        return CharacterModifier(str=self.str,
+        dex=self.dex,
+        int=self.int,
+        luk=self.luk,
+        mhp=self.mhp,
+        str_rate=self.str_rate,
+        dex_rate=self.dex_rate,
+        int_rate=self.int_rate,
+        luk_rate=self.luk_rate,
+        mhp_rate=self.mhp_rate,
+        str_fixed=self.str_fixed,
+        dex_fixed=self.dex_fixed,
+        int_fixed=self.int_fixed,
+        luk_fixed=self.luk_fixed,
+        mhp_fixed=self.mhp_fixed,crit_rate=self.crit_rate,
                                  crit_damage=self.crit_damage,
                                  pdamage=self.pdamage,
                                  final_damage=self.final_damage,
@@ -125,7 +187,21 @@ class CharacterModifier:
                                  stat_sub_fixed=self.stat_sub_fixed)
 
     def extend(self) -> ExtendedCharacterModifier:
-        return ExtendedCharacterModifier(crit_rate=self.crit_rate,
+        return ExtendedCharacterModifier(str=self.str,
+        dex=self.dex,
+        int=self.int,
+        luk=self.luk,
+        mhp=self.mhp,
+        str_rate=self.str_rate,
+        dex_rate=self.dex_rate,
+        int_rate=self.int_rate,
+        luk_rate=self.luk_rate,
+        mhp_rate=self.mhp_rate,
+        str_fixed=self.str_fixed,
+        dex_fixed=self.dex_fixed,
+        int_fixed=self.int_fixed,
+        luk_fixed=self.luk_fixed,
+        mhp_fixed=self.mhp_fixed,crit_rate=self.crit_rate,
                                          crit_damage=self.crit_damage,
                                          pdamage=self.pdamage,
                                          final_damage=self.final_damage,
@@ -139,21 +215,6 @@ class CharacterModifier:
                                          att=self.att,
                                          stat_main_fixed=self.stat_main_fixed,
                                          stat_sub_fixed=self.stat_sub_fixed)
-
-    def get_stat_factor(self, jobType: JobType, level: int = 230) -> float:
-        main_type, sub_type, sub_type2 = get_stat_type(jobType)
-        main_stat = self[main_type] * (1 + 0.01 * self[main_type + "_rate"]) + self[main_type + "_fixed"]
-        sub_stat = self[sub_type] * (1 + 0.01 * self[sub_type + "_rate"]) + self[sub_type + "_fixed"]
-        sub_stat2 = 0
-        if sub_type2 is not None:
-            sub_stat2 = self[sub_type2] * (1 + 0.01 * self[sub_type2 + "_rate"]) + self[sub_type2 + "_fixed"]
-
-        if jobType == JobType.xenon:
-            return 4 * (main_stat + sub_stat + sub_stat2)
-        if jobType == JobType.demonavenger:
-            pure_hp = 545 + 90 * level
-            return 4 * (pure_hp / 14 + (main_stat - pure_hp) / 17.5) + sub_stat
-        return 4 * main_stat + sub_stat + sub_stat2
 
     def get_damage_factor(self, armor: float = 300) -> float:
         """Caution : Use this function only if you summed up every modifiers.
@@ -313,7 +374,21 @@ class CharacterModifier:
     # TODO: Not used method.
     def _dynamic_variable_hint(self, character_modifier: CharacterModifier) -> Optional[DynamicCharacterModifier]:
         if not isinstance(character_modifier, DynamicCharacterModifier):
-            return DynamicCharacterModifier(crit_rate=character_modifier.crit_rate,
+            return DynamicCharacterModifier(str=character_modifier.str,
+        dex=character_modifier.dex,
+        int=character_modifier.int,
+        luk=character_modifier.luk,
+        mhp=character_modifier.mhp,
+        str_rate=character_modifier.str_rate,
+        dex_rate=character_modifier.dex_rate,
+        int_rate=character_modifier.int_rate,
+        luk_rate=character_modifier.luk_rate,
+        mhp_rate=character_modifier.mhp_rate,
+        str_fixed=character_modifier.str_fixed,
+        dex_fixed=character_modifier.dex_fixed,
+        int_fixed=character_modifier.int_fixed,
+        luk_fixed=character_modifier.luk_fixed,
+        mhp_fixed=character_modifier.mhp_fixed,crit_rate=character_modifier.crit_rate,
                                             crit_damage=character_modifier.crit_damage,
                                             pdamage=character_modifier.pdamage,
                                             final_damage=character_modifier.final_damage,
@@ -401,7 +476,21 @@ class ExtendedCharacterModifier(CharacterModifier):
         return txt
 
     def copy(self) -> ExtendedCharacterModifier:
-        return ExtendedCharacterModifier(
+        return ExtendedCharacterModifier(str=self.str,
+        dex=self.dex,
+        int=self.int,
+        luk=self.luk,
+        mhp=self.mhp,
+        str_rate=self.str_rate,
+        dex_rate=self.dex_rate,
+        int_rate=self.int_rate,
+        luk_rate=self.luk_rate,
+        mhp_rate=self.mhp_rate,
+        str_fixed=self.str_fixed,
+        dex_fixed=self.dex_fixed,
+        int_fixed=self.int_fixed,
+        luk_fixed=self.luk_fixed,
+        mhp_fixed=self.mhp_fixed,
             buff_rem=self.buff_rem,
             summon_rem=self.summon_rem,
             cooltime_reduce=self.cooltime_reduce,
@@ -448,6 +537,21 @@ class ExtendedCharacterModifier(CharacterModifier):
         }
 
     def __iadd__(self, arg: ExtendedCharacterModifier) -> ExtendedCharacterModifier:
+        self.str += arg.str
+        self.dex += arg.dex
+        self.int += arg.int
+        self.luk += arg.luk
+        self.mhp += arg.mhp
+        self.str_rate += arg.str_rate
+        self.dex_rate += arg.dex_rate
+        self.int_rate += arg.int_rate
+        self.luk_rate += arg.luk_rate
+        self.mhp_rate += arg.mhp_rate
+        self.str_fixed += arg.str_fixed
+        self.dex_fixed += arg.dex_fixed
+        self.int_fixed += arg.int_fixed
+        self.luk_fixed += arg.luk_fixed
+        self.mhp_fixed += arg.mhp_fixed
         self.buff_rem += arg.buff_rem
         self.summon_rem += arg.summon_rem
         self.cooltime_reduce += arg.cooltime_reduce
@@ -473,7 +577,21 @@ class ExtendedCharacterModifier(CharacterModifier):
         return self
 
     def __add__(self, arg: ExtendedCharacterModifier) -> ExtendedCharacterModifier:
-        return ExtendedCharacterModifier(
+        return ExtendedCharacterModifier(str=(self.str + arg.str),
+                                 dex=(self.dex + arg.dex),
+                                 int=(self.int + arg.int),
+                                 luk=(self.luk + arg.luk),
+                                 mhp=(self.mhp + arg.mhp),
+                                 str_rate=(self.str_rate + arg.str_rate),
+                                 dex_rate=(self.dex_rate + arg.dex_rate),
+                                 int_rate=(self.int_rate + arg.int_rate),
+                                 luk_rate=(self.luk_rate + arg.luk_rate),
+                                 mhp_rate=(self.mhp_rate + arg.mhp_rate),
+                                 str_fixed=(self.str_fixed + arg.str_fixed),
+                                 dex_fixed=(self.dex_fixed + arg.dex_fixed),
+                                 int_fixed=(self.int_fixed + arg.int_fixed),
+                                 luk_fixed=(self.luk_fixed + arg.luk_fixed),
+                                 mhp_fixed=(self.mhp_fixed + arg.mhp_fixed),
             buff_rem=(self.buff_rem + arg.buff_rem),
             summon_rem=(self.summon_rem + arg.summon_rem),
             cooltime_reduce=(self.cooltime_reduce + arg.cooltime_reduce),
@@ -498,7 +616,21 @@ class ExtendedCharacterModifier(CharacterModifier):
             stat_sub_fixed=(self.stat_sub_fixed + arg.stat_sub_fixed))
 
     def __sub__(self, arg: ExtendedCharacterModifier) -> ExtendedCharacterModifier:
-        return ExtendedCharacterModifier(
+        return ExtendedCharacterModifier(str=(self.str - arg.str),
+                                 dex=(self.dex - arg.dex),
+                                 int=(self.int - arg.int),
+                                 luk=(self.luk - arg.luk),
+                                 mhp=(self.mhp - arg.mhp),
+                                 str_rate=(self.str_rate - arg.str_rate),
+                                 dex_rate=(self.dex_rate - arg.dex_rate),
+                                 int_rate=(self.int_rate - arg.int_rate),
+                                 luk_rate=(self.luk_rate - arg.luk_rate),
+                                 mhp_rate=(self.mhp_rate - arg.mhp_rate),
+                                 str_fixed=(self.str_fixed - arg.str_fixed),
+                                 dex_fixed=(self.dex_fixed - arg.dex_fixed),
+                                 int_fixed=(self.int_fixed - arg.int_fixed),
+                                 luk_fixed=(self.luk_fixed - arg.luk_fixed),
+                                 mhp_fixed=(self.mhp_fixed - arg.mhp_fixed),
             buff_rem=(self.buff_rem - arg.buff_rem),
             summon_rem=(self.summon_rem - arg.summon_rem),
             cooltime_reduce=(self.cooltime_reduce - arg.cooltime_reduce),
@@ -537,7 +669,21 @@ class InformedCharacterModifier(ExtendedCharacterModifier):
 
     @staticmethod
     def from_extended_modifier(name: str, extended_modifier: ExtendedCharacterModifier) -> InformedCharacterModifier:
-        return InformedCharacterModifier(name,
+        return InformedCharacterModifier(name,str=extended_modifier.str,
+        dex=extended_modifier.dex,
+        int=extended_modifier.int,
+        luk=extended_modifier.luk,
+        mhp=extended_modifier.mhp,
+        str_rate=extended_modifier.str_rate,
+        dex_rate=extended_modifier.dex_rate,
+        int_rate=extended_modifier.int_rate,
+        luk_rate=extended_modifier.luk_rate,
+        mhp_rate=extended_modifier.mhp_rate,
+        str_fixed=extended_modifier.str_fixed,
+        dex_fixed=extended_modifier.dex_fixed,
+        int_fixed=extended_modifier.int_fixed,
+        luk_fixed=extended_modifier.luk_fixed,
+        mhp_fixed=extended_modifier.mhp_fixed,
                                          buff_rem=extended_modifier.buff_rem,
                                          summon_rem=extended_modifier.summon_rem,
                                          cooltime_reduce=extended_modifier.cooltime_reduce,
