@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -7,6 +6,7 @@ from . import globalSkill
 from .jobclass import cygnus
 from .jobbranch import thieves
 from math import ceil
+from typing import Any, Dict
 
 class ShadowBatStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
@@ -16,7 +16,7 @@ class ShadowBatStackWrapper(core.StackSkillWrapper):
         self.stack = 0
         self.batQueue = []
         self.currentTime = 0
-        super(ShadowBatStackWrapper, self).__init__(skill, 5)
+        super(ShadowBatStackWrapper, self).__init__(skill, self.MAX_BAT)
         
     def _add_throw(self):
         '''
@@ -41,7 +41,7 @@ class ShadowBatStackWrapper(core.StackSkillWrapper):
         self.currentTime += time
         batQueue = [x for x in self.batQueue if x + self.BAT_SUMMON_DELAY > self.currentTime]
         summonedBat = len(self.batQueue) - len(batQueue)
-        self.stack = min(self.stack + summonedBat, 5)
+        self.stack = min(self.stack + summonedBat, self.MAX_BAT)
         self.batQueue = batQueue
         super(ShadowBatStackWrapper, self).spend_time(time)
 
@@ -55,7 +55,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
         
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",stat_main = chtr.level // 2)
@@ -75,7 +75,7 @@ class JobGenerator(ck.JobGenerator):
             Adrenalin, ThrowingExpert, DarknessBlessing,
             ReadyToDiePassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 75)
@@ -83,7 +83,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery]
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         하이퍼 스킬 : 
         퀸터플 스로우-리인포스, 보스킬러 / 사이펀 바이탈리티-리인포스 / 다크니스 오멘 2개

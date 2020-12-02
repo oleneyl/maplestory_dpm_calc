@@ -21,7 +21,10 @@ class MagicCircuitFullDriveBuilder():
         self.ManaStorm.protect_from_running()
         
     def add_trigger(self, trigger_skill):
-        trigger_skill.onAfter(self.UseManaStorm)
+        if getattr(trigger_skill, 'is_periodic', False):
+            trigger_skill.onTick(self.UseManaStorm)
+        else:
+            trigger_skill.onAfter(self.UseManaStorm)
 
     def get_skill(self):
         return self.MagicCircuitFullDriveBuff, self.ManaStorm

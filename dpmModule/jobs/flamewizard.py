@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -7,6 +6,8 @@ from ..execution.rules import RuleSet, ConditionRule
 from . import globalSkill
 from .jobclass import cygnus
 from .jobbranch import magicians
+from typing import Any, Dict
+
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -27,7 +28,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConditionRule('소울 컨트랙트', '인피니티 플레임 서클(개시)', check_ifc_time), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         ######   Skill   ######
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트", patt = 10)
@@ -41,7 +42,7 @@ class JobGenerator(ck.JobGenerator):
 
         return [ElementalExpert, ElementalHarmony, SpellControl, LiberatedMagic, BurningFocus, BriliantEnlightenment, PureMagic]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5 + 0.5*passive_level)
@@ -49,7 +50,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, SpiritOfFlameActive]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         오비탈 - 익스팅션 - 드래곤 슬레이브 - 이그니션 - 인페르노라이즈
         디스차지 여우 사용
@@ -57,7 +58,8 @@ class JobGenerator(ck.JobGenerator):
         오비탈 1350타 / 분
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        flamewizardDefaultSpeed = 60000 / ((1350) / 6)  #266
+        orbital_per_min = options.get("orbital_per_min", 1350)
+        flamewizardDefaultSpeed = 60000 / (orbital_per_min / 6)  #266
         blazingOrbitalHit = 4
         
         #Buff skills

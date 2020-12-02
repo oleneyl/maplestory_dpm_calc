@@ -1,20 +1,10 @@
-import sys, os
-
-from  dpmModule.character.characterTemplate import get_template_generator
+from dpmModule.character.characterTemplate import get_template_generator
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
 from dpmModule.util.configurations import export_configuration
-from dpmModule.kernel import graph
-from dpmModule.jobs import jobMap
-from dpmModule.kernel import core
 
 import time, json
 
 import argparse
-
-jobname = "나이트로드"
-ulevel = 6000
-weaponstat = [4,9]
-level = 230
 
 def get_args():
     parser = argparse.ArgumentParser('DPM Test argument')
@@ -24,6 +14,7 @@ def get_args():
     parser.add_argument('--time', type=int, default=1800)
     parser.add_argument('--log', action='store_true')
     parser.add_argument('--stat', action='store_true')
+    parser.add_argument('--cdr', type=int, default=0)
     parser.add_argument('--task',default='dpm')
 
     return parser.parse_args()
@@ -42,28 +33,20 @@ def conf(args):
         json.dump( export_configuration(job_real), f, ensure_ascii = False, indent = 4)
 
 def dpm(args):
-    if args.job == 'all':
-        jobs = jobMap.keys()
-    else:
-        jobs = [args.job]
-
-    for jobname in jobs:
-        template = get_template_generator('high_standard')().get_template(args.ulevel)
-        parser = IndividualDPMGenerator(jobname, template)
-        parser.set_runtime(args.time*1000)
-        try:
-            dpm = parser.get_dpm(ulevel = args.ulevel,
-            level = args.level,
-            weaponstat = weaponstat,
-            printFlag=args.log,
-            statistics=args.stat or args.log)
-        except:
-            raise
-        finally:
-            print(jobname, dpm)
-
-    #with open('conf.json', 'w', encoding='utf8') as f:
-    #    graph._unsafe_access_global_storage()._storage.write(f)
+    template = get_template_generator('high_standard')().get_template(args.ulevel)
+    parser = IndividualDPMGenerator(args.job, template)
+    parser.set_runtime(args.time*1000)
+    try:
+        dpm = parser.get_dpm(ulevel = args.ulevel,
+        cdr = args.cdr,
+        level = args.level,
+        weaponstat = [4,9],
+        printFlag=args.log,
+        statistics=args.stat or args.log)
+    except:
+        raise
+    finally:
+        print(args.job, dpm)
 
 if __name__ == '__main__':
     test()

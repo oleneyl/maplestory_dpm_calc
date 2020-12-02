@@ -2,7 +2,6 @@
 """
 
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -12,6 +11,7 @@ from .jobclass import resistance
 from .jobbranch import pirates
 from . import jobutils
 import math
+from typing import Any, Dict
 
 ######   Passive Skill   ######
 
@@ -78,7 +78,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 10, pdamage = 28+20)
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         
         HiddenPiece = core.InformedCharacterModifier("히든 피스",pdamage = 10)
         MechanicMastery = core.InformedCharacterModifier("메카닉 마스터리",att = 20, crit = 10, crit_damage = 5)
@@ -92,7 +92,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [HiddenPiece, MechanicMastery, PhisicalTraining, LoadedDicePassive, MetalArmorExtreme, OverTunning, PureGoldSet]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 50)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5)
 
@@ -107,7 +107,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ReservationRule('소울 컨트랙트', '봄버 타임'), RuleSet.BASE)
         return ruleset
     
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         코강 순서:
         매시브-호밍-디스토션-마그네틱필드-RM7-RM1

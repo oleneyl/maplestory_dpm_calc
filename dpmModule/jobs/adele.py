@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -9,6 +8,7 @@ from .jobbranch import warriors
 from .jobclass import flora
 from . import jobutils
 from math import ceil
+from typing import Any, Dict
 
 class OrderWrapper(core.SummonSkillWrapper):
     def __init__(self, skill, ether: core.StackSkillWrapper):
@@ -100,7 +100,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         # 매직 서킷: 앱솔 기준 15.4
         WEAPON_ATT = jobutils.get_weapon_att("튜너")
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -117,7 +117,7 @@ class JobGenerator(ck.JobGenerator):
 
         return [MagicCircuit, Pace, Rudiment, Mastery, Train, Accent, Expert, Demolition, Attain]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5 * ceil(passive_level / 2))
@@ -125,7 +125,7 @@ class JobGenerator(ck.JobGenerator):
         return [WeaponConstant, Mastery]
 
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''하이퍼스킬
         트리거-리인포스
         노빌리티-실드 리인포스
@@ -177,8 +177,7 @@ class JobGenerator(ck.JobGenerator):
 
         Divide = core.DamageSkill('디바이드', 600, 375+self.combat*3, 6, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #트리거 스킬, 클라공속 780ms
 
-        # TODO: 쿨마다 사용하는게 나을 수 있음
-        Grave = core.DamageSkill('그레이브', 630, 800+self.combat*20, 10, cooltime=90000, red=True).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) #한 번만 사용, 클라공속 840ms
+        Grave = core.DamageSkill('그레이브', 630, 800+self.combat*20, 10, cooltime=90000, red=True).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 840ms
         GraveDebuff = core.BuffSkill('그레이브(디버프)', 0, 999999999, pdamage=20, armor_ignore=10, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         Blossom = core.DamageSkill('블로섬', 420, 650+self.combat*6, 8, cooltime=20*1000*0.75, red=True).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 50%결정. 클라공속 420ms, 공속 안받음
@@ -193,14 +192,6 @@ class JobGenerator(ck.JobGenerator):
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60*1000, pdamage = 10, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
 
         # 5차
-
-        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 4, 4)
-        magic_curcuit_full_drive_builder = flora.MagicCircuitFullDriveBuilder(vEhc, 3, 3)
-        for sk in [Divide, Resonance]:
-            auraweapon_builder.add_aura_weapon(sk)
-            magic_curcuit_full_drive_builder.add_trigger(sk)
-        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
-        MagicCircuitFullDrive, ManaStorm = magic_curcuit_full_drive_builder.get_skill()
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att("튜너"))
 
@@ -213,6 +204,14 @@ class JobGenerator(ck.JobGenerator):
         RestoreTick = core.SummonSkill('리스토어(주기공격)', 0, 2970, 900+36*vEhc.getV(1,1), 3, 30*1000, cooltime=-1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # 11회 시전
 
         Storm = StormWrapper(vEhc, 0, 0, Order)
+
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 4, 4)
+        magic_curcuit_full_drive_builder = flora.MagicCircuitFullDriveBuilder(vEhc, 3, 3)
+        for sk in [Divide, Resonance, Ruin, Marker, Grave, Scool, Order, RestoreTick, Storm]:
+            auraweapon_builder.add_aura_weapon(sk)
+            magic_curcuit_full_drive_builder.add_trigger(sk)
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
+        MagicCircuitFullDrive, ManaStorm = magic_curcuit_full_drive_builder.get_skill()
 
         # 딜 사이클 정의
 

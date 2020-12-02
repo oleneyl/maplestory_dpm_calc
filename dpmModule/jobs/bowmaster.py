@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -8,6 +7,7 @@ from . import globalSkill
 from .jobbranch import bowmen
 from .jobclass import adventurer
 from math import ceil
+from typing import Any, Dict
 
 """
 Advisor : 저격장(레드)
@@ -19,7 +19,7 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
     아머 피어싱 - 적 방어율만큼 최종뎀 추가, 방무+50%. 쿨타임 9초, 공격마다 1초씩 감소, 최소 재발동 대기시간 1초
     '''
     def __init__(self, combat, chtr):
-        self.piercingModifier = core.CharacterModifier(pdamage_indep = 300 * (1 + combat * 0.05), armor_ignore = 50 * (1 + combat * 0.02))
+        self.piercingModifier = core.CharacterModifier(pdamage_indep = core.constant.ARMOR_RATE * (1 + combat * 0.05), armor_ignore = 50 * (1 + combat * 0.02))
         self.emptyModifier = core.CharacterModifier()
         self.skill_modifier = chtr.get_skill_modifier()
         skill = core.BuffSkill("아머 피어싱", 0, 0, 9000, red=True)
@@ -96,7 +96,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule("소울 컨트랙트", "퀴버 풀버스트"), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit = 40)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
@@ -111,7 +111,7 @@ class JobGenerator(ck.JobGenerator):
         return [CriticalShot, PhisicalTraining,MarkmanShip, 
                             BowExpert, AdvancedFinalAttackPassive, ElusionStep]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5 *ceil(passive_level / 2))
@@ -120,7 +120,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, ExtremeArchery]
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         잔영의 시 : 액티브 13*3타, 패시브 3.5*3타. 패시브는 쿨타임동안 10~11회 사용
         애로우 레인 : 1줄기, 떨어질 때 마다 3.5회 타격

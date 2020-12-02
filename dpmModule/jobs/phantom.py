@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -8,6 +7,7 @@ from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import thieves
 from math import ceil
+from typing import Any, Dict
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -19,7 +19,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         HighDexterity = core.InformedCharacterModifier("하이 덱스터리티",stat_sub = 40)
         LuckMonopoly = core.InformedCharacterModifier("럭 모노폴리",stat_main = 60)
@@ -30,11 +30,9 @@ class JobGenerator(ck.JobGenerator):
     
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 3, 3)
 
-        return [
-                            HighDexterity, LuckMonopoly, LuckOfPhantomtheif, MoonLight, AcuteSence, CainExpert,
-                                ReadyToDiePassive]
+        return [HighDexterity, LuckMonopoly, LuckOfPhantomtheif, MoonLight, AcuteSence, CainExpert, ReadyToDiePassive]
                                 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 +0.5*ceil(passive_level / 2))
@@ -46,7 +44,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ReservationRule("소울 컨트랙트", "마크 오브 팬텀"), RuleSet.BASE)
         return ruleset
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         하이퍼 : 
         템오카 - 리인포스 / 쿨리듀스
@@ -61,16 +59,37 @@ class JobGenerator(ck.JobGenerator):
         펫버프 : 프레이 오브 아리아, 메용, 크오체
         템페스트 오브 카드 사용하지 않음
         '''
-        passive_level = chtr.get_base_modifier().passive_level + self.combat
+        DEALCYCLE = options.get('dealcycle', 'ultimate_drive')
+
+        ##### Steal skills #####
+
+        # 훔친 스킬은 공격력에 패널티가 있습니다.
         STEALSKILL = core.CharacterModifier(pdamage_indep = 100*((1.2 / 1.3)-1))
-        #Buff skills
-        TalentOfPhantomII = core.BuffSkill("분노(탤팬2)", 0, 180000, rem = True, att = 30).wrap(core.BuffSkillWrapper)
+
+        # 1차
+        CardinalDischarge = core.DamageSkill("카디널 디스차지(탤팬1)", 210, 90, 4, modifier = STEALSKILL).setV(vEhc, 0, 7, True).wrap(core.DamageSkillWrapper)
+
+        # 2차
         # 힐+마오팬보다 분노가 허수아비딜은 잘나옴
-        # TalentOfPhantomII = core.BuffSkill("힐(탤팬2)", 450, 2*1000, cooltime=10*1000, pdamage_indep=10).wrap(core.BuffSkillWrapper)
-        TalentOfPhantomIII = core.BuffSkill("크로스 오버 체인(탤팬3)", 0, 180000, rem = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
-        FinalCut = core.DamageSkill("탤런트 오브 팬텀시프 IV(파이널 컷)", 450, 2000 + 20 * self.combat, 1, modifier = STEALSKILL, cooltime = 90000, red=True).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
-        FinalCutBuff = core.BuffSkill("파이널 컷(버프, 탤팬4)", 0, 60000, cooltime = -1, rem = True, pdamage_indep = 40 + self.combat).wrap(core.BuffSkillWrapper)
-        BoolsEye = core.BuffSkill("불스아이(탤팬5)", 960, 30 * 1000, cooltime = 180 * 1000, crit = 20, crit_damage = 10, armor_ignore = 20, pdamage = 20).wrap(core.BuffSkillWrapper)
+        Fury = core.BuffSkill("분노(탤팬2)", 0, 180000, rem = True, att = 30).wrap(core.BuffSkillWrapper)
+        Heal = core.BuffSkill("힐(탤팬2)", 450, 2*1000, cooltime=10*1000, pdamage_indep=10).wrap(core.BuffSkillWrapper)
+        CardinalBlast = core.DamageSkill("카디널 블래스트(탤팬2)", 240, 200, 4, modifier = STEALSKILL).setV(vEhc, 1, 5, False).wrap(core.DamageSkillWrapper) # 210~270ms 랜덤 (1.2.338 기준 측정), 최종뎀 단리적용
+
+        # 3차
+        CrossoverChain = core.BuffSkill("크로스 오버 체인(탤팬3)", 0, 180000, rem = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
+        ArrowFlatter = core.SummonSkill("애로우 플래터(탤팬3)", 600, 210, 85, 1, 30 * 1000, modifier = STEALSKILL).setV(vEhc, 4, 3, False).wrap(core.SummonSkillWrapper) # 딜레이 모름
+        
+        # 4차
+        FinalCut = core.DamageSkill("파이널 컷(탤팬4)", 450, 2000 + 20 * self.combat, 1, modifier = STEALSKILL, cooltime = 90000, red=True).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
+        FinalCutBuff = core.BuffSkill("파이널 컷(탤팬4)(버프)", 0, 60000, cooltime = -1, rem = True, pdamage_indep = 40 + self.combat).wrap(core.BuffSkillWrapper)
+        
+        # 하이퍼
+        BoolsEye = core.BuffSkill("불스아이(탤팬H)", 960, 30 * 1000, cooltime = 180 * 1000, crit = 20, crit_damage = 10, armor_ignore = 20, pdamage = 20).wrap(core.BuffSkillWrapper)
+        Preparation = core.BuffSkill("프리퍼레이션(탤팬H)", 900, 30 * 1000, cooltime = 120 * 1000, att = 50, boss_pdamage = 20).wrap(core.BuffSkillWrapper)
+
+        ##### Phantom skills #####
+
+        #Buff skills
     
         JudgementBuff = core.BuffSkill("저지먼트(버프)", 0, 999999999, crit = 0).wrap(core.BuffSkillWrapper)    #확률성 크리티컬
         
@@ -126,9 +145,8 @@ class JobGenerator(ck.JobGenerator):
         MileAiguilles.onAfter(CarteNoir)
         MileAiguilles.onAfter(MileAiguillesInit.controller(500, 'set_enabled_and_time_left'))
         
-        BasicAttack = core.OptionalElement(MileAiguillesInit.is_active, MileAiguilles, MileAiguillesInit, name = "선딜 반영")
-        BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
-        BasicAttackWrapper.onAfter(BasicAttack)
+        MileAiguillesHolder = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
+        MileAiguillesHolder.onAfter(core.OptionalElement(MileAiguillesInit.is_active, MileAiguilles, MileAiguillesInit, name = "선딜 반영"))
         # TempestOfCardInit.onAfter(core.RepeatElement(TempestOfCard, 56))
         # TempestOfCard.onAfter(CarteNoir)
         
@@ -149,15 +167,33 @@ class JobGenerator(ck.JobGenerator):
         LiftBreak.onAfter(core.RepeatElement(CarteNoir, 7))
 
         MileAiguillesInit.protect_from_running()
+
+        CardinalBlast.onAfter(CarteNoir)
+        CardinalDischarge.onAfter(CarteNoir)
+
+        CardinalBlast.onAfter(CardinalDischarge)
         
-        #이들 정보교환 부분을 굳이 Task exchange로 표현할 필요가 있을까?
+        '''
+        얼드: MileAiguillesHolder
+        블디: CardinalBlast
+        '''
+
+        if DEALCYCLE == "ultimate_drive":
+            BasicAttack = MileAiguillesHolder
+            Talent2 = Fury
+        elif DEALCYCLE == "blast_discharge":
+            BasicAttack = CardinalBlast
+            Talent2 = None
+        else:
+            raise ValueError(DEALCYCLE)
+
         
-        return(BasicAttackWrapper,
+        return(BasicAttack,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    TalentOfPhantomII, TalentOfPhantomIII, FinalCutBuff, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), BoolsEye,
+                    Talent2, CrossoverChain, FinalCutBuff, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), BoolsEye,
                     JudgementBuff, Booster, PrieredAria, HerosOath, ReadyToDie, JokerBuff,
                     globalSkill.soul_contract()] +\
                 [FinalCut, JokerInit, MarkOfPhantom, LiftBreak, BlackJackFinal] +\
                 [BlackJack, MirrorBreak, MirrorSpider] +\
                 [MileAiguillesInit] +\
-                [BasicAttackWrapper])
+                [BasicAttack])

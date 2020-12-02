@@ -1,11 +1,9 @@
-import os, sys
-import json
-import threading
+from dpmModule.status.ability import Ability_grade
+from dpmModule.character.characterKernel import ItemedCharacter, JobGenerator
 
 from ..kernel import core
 
 from ..character.characterTemplate import get_template_generator
-import dpmModule.character.characterKernel
 
 import dpmModule.jobs as maplejobs
 
@@ -15,7 +13,6 @@ from dpmModule.execution import rules
 class IndividualDPMGenerator():
     '''IndividualDPMGenerator는 단일 직업의 dpm을 연산합니다. 연산을 위해 인자로 job 과 template 를 받습니다.
     '''
-    inputViewList = [[6,9,15,21],[6,9,15,21],[10,15,17,22]]
     
     def __init__(self, job, template):
         self.job = job
@@ -26,14 +23,14 @@ class IndividualDPMGenerator():
     def set_runtime(self, time):
         self.runtime = time
 
-    def get_dpm(self, ulevel = 6000, level=None, weaponstat = [4,9], printFlag = False, statistics = False, restricted = True, default_modifier=core.CharacterModifier()):
+    def get_dpm(self, ulevel = 6000, level=None, weaponstat = [4,9], cdr = 0, options = {}, printFlag = False, statistics = False, restricted = True, default_modifier=core.CharacterModifier()):
         #TODO target을 동적으로 생성할 수 있도록.
-        target = self.template(maplejobs.weaponList[self.job])
+        target: ItemedCharacter = self.template(maplejobs.weaponList[self.job], cdr)
         if level is not None:
             target.unsafe_change_level(level)
-        gen = (self.supplier).JobGenerator()
+        gen: JobGenerator = self.supplier.JobGenerator()
         v_builder = core.AlwaysMaximumVBuilder()
-        graph = gen.package(target, v_builder, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
+        graph = gen.package(target, v_builder, options = options, ulevel = ulevel, weaponstat = weaponstat, ability_grade = Ability_grade(4, 1))
         sche = policy.AdvancedGraphScheduler(graph,
             policy.TypebaseFetchingPolicy(priority_list = [
                 core.BuffSkillWrapper,
@@ -59,7 +56,7 @@ class IndividualDPMGenerator():
         
         #코어강화량 설정
         v_builder = core.AlwaysMaximumVBuilder()
-        graph = gen.package(target, v_builder, ulevel = ulevel, weaponstat = weaponstat, vEnhanceGenerateFlag = "njb_style")
+        graph = gen.package(target, v_builder, ulevel = ulevel, weaponstat = weaponstat, ability_grade = Ability_grade(4, 1))
         sche = policy.AdvancedGraphScheduler(graph,
             policy.TypebaseFetchingPolicy(priority_list = [
                 core.BuffSkillWrapper,
