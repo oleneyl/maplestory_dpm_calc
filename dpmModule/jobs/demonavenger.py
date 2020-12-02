@@ -51,7 +51,7 @@ class JobGenerator(ck.JobGenerator):
         AdvancedDesperadoMastery = core.InformedCharacterModifier("어드밴스드 데스페라도 마스터리",att = 50 + passive_level, crit_damage = 8)
         OverwhelmingPower = core.InformedCharacterModifier("오버휄밍 파워", pdamage=30 + passive_level)
         DefenseExpertise = core.InformedCharacterModifier("디펜스 엑스퍼타이즈", armor_ignore = 30 + passive_level)
-        DemonicSharpness = core.InformedCharacterModifier("데모닉 샤프니스", crit=20)
+        DemonicSharpness = core.InformedCharacterModifier("데모닉 샤프니스", crit_rate=20)
 
         # 메용: 체력+15%로 수정
         MapleHeroesDemon = core.InformedCharacterModifier("메이플 용사(데몬어벤져)", pstat_main = 15 + self.combat / 2)
@@ -60,14 +60,14 @@ class JobGenerator(ck.JobGenerator):
 
         HP_RATE = 100
         #최대 HP 대비 소모된 HP 3%(24레벨가지는 4%)당 최종 데미지 1% 증가
-        FrenzyPassive = core.InformedCharacterModifier("데몬 프렌지 (최종 데미지)", pdamage_indep = (100 - HP_RATE) // (4 - (vEhc.getV(0, 0) // 25)))
+        FrenzyPassive = core.InformedCharacterModifier("데몬 프렌지 (최종 데미지)", final_damage = (100 - HP_RATE) // (4 - (vEhc.getV(0, 0) // 25)))
 
         return [AbyssalRage, AdvancedDesperadoMastery, OverwhelmingPower, DefenseExpertise, DemonicSharpness, MapleHeroesDemon, InnerStrength, FrenzyPassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 30)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level/2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수", final_damage = 30)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -5 + 0.5*ceil(passive_level/2))
 
         return [WeaponConstant, Mastery]
 
@@ -95,7 +95,7 @@ class JobGenerator(ck.JobGenerator):
         DemonicFortitude = core.BuffSkill("데모닉 포티튜드", 0, 60*1000, cooltime=120*1000, pdamage=10).wrap(core.BuffSkillWrapper)
 
         # 위컴알에서 딜레이 확인 불가
-        ReleaseOverload = core.BuffSkill("릴리즈 오버로드", 0, 60*1000, pdamage_indep= 25, rem = True).wrap(core.BuffSkillWrapper)
+        ReleaseOverload = core.BuffSkill("릴리즈 오버로드", 0, 60*1000, final_damage= 25, rem = True).wrap(core.BuffSkillWrapper)
 
         ### Damage skills ###
 
@@ -131,7 +131,7 @@ class JobGenerator(ck.JobGenerator):
         FrenzyDOT = core.SummonSkill("프렌지 장판", 0, 1000/10.8, 300 + 8 * vEhc.getV(0, 0), FRENZY_STACK, 99999999).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         # 블피 (즉시 시전)
-        DemonicBlast = core.DamageSkill("블러드 피스트", 0, 500 + 20*vEhc.getV(0,0), 7, cooltime = 10000, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        DemonicBlast = core.DamageSkill("블러드 피스트", 0, 500 + 20*vEhc.getV(0,0), 7, cooltime = 10000, modifier = core.CharacterModifier(crit_rate = 100, armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         # 평딜 기준
         # 참고자료: https://blog.naver.com/oe135/221372243858

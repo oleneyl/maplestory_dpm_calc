@@ -35,7 +35,7 @@ class Ability_tool:
     attack = Ability_option([ExMDF(), ExMDF(att = 3), ExMDF(att = 12), ExMDF(att = 21), ExMDF(att = 30)])
     buff_rem = Ability_option([ ExMDF(), ExMDF(buff_rem = 13), ExMDF(buff_rem = 25), ExMDF(buff_rem = 37), ExMDF(buff_rem = 50) ])
     boss_pdamage = Ability_option([ ExMDF(boss_pdamage = i*5) for i in range(5)])
-    crit_rate = Ability_option([ExMDF(), ExMDF(), ExMDF(crit = 10), ExMDF(crit=20), ExMDF(crit=30)])
+    crit_rate = Ability_option([ExMDF(), ExMDF(), ExMDF(crit_rate = 10), ExMDF(crit_rate=20), ExMDF(crit_rate=30)])
     additional_target = Ability_option([ExMDF(), ExMDF(), ExMDF(), ExMDF(), ExMDF(additional_target = 1)])
     reuse = Ability_option([ExMDF(), ExMDF(), ExMDF(), ExMDF(reuse_chance=10), ExMDF(reuse_chance=20)])
     mess = Ability_option([ExMDF(), ExMDF(pdamage = 3), ExMDF(pdamage = 5), ExMDF(pdamage = 8), ExMDF(pdamage = 10)]) # 상태이상 항상 유지된다고 가정함

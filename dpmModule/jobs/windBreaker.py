@@ -25,14 +25,14 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝", stat_main = 30, stat_sub = 30)
 
         WindBlessingPassive = core.InformedCharacterModifier("윈드 블레싱(패시브)", pstat_main = 15+passive_level//3, patt = 10 + ceil(passive_level/3))
-        BowExpert = core.InformedCharacterModifier("보우 엑스퍼트", att = 30 + passive_level, crit_damage = 20+passive_level//2, pdamage_indep = 25 + passive_level//3, boss_pdamage = 40 + passive_level)
+        BowExpert = core.InformedCharacterModifier("보우 엑스퍼트", att = 30 + passive_level, crit_damage = 20+passive_level//2, final_damage = 25 + passive_level//3, boss_pdamage = 40 + passive_level)
         return [ElementalExpert, ElementalHarmony, WhisperOfWind, PhisicalTraining, BowExpert, WindBlessingPassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5*ceil(passive_level / 2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 30)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -7.5 + 0.5*ceil(passive_level / 2))
 
         return [WeaponConstant, Mastery]
 
@@ -58,9 +58,9 @@ class JobGenerator(ck.JobGenerator):
         passive_level = base_modifier.passive_level + self.combat
         #Buff skills
         Storm = core.BuffSkill("엘리멘트(스톰)", 0, 200 * 1000, pdamage = 10, rem = True).wrap(core.BuffSkillWrapper) #딜레이 모름
-        SylphsAid = core.BuffSkill("실프스 에이드", 0, 200 * 1000, att = 20, crit = 10, rem = True).wrap(core.BuffSkillWrapper) #딜레이 모름
-        Albatross = core.BuffSkill("알바트로스 맥시멈", 0, 200 * 1000, att = 50 + passive_level, pdamage = 25+2*(passive_level//3), armor_ignore = 15+passive_level//3, crit = 25+passive_level//2, rem = True).wrap(core.BuffSkillWrapper)  #900 -> 690
-        SharpEyes = core.BuffSkill("샤프 아이즈", 660, (300+10*self.combat) * 1000, crit = 20 + ceil(self.combat/2), crit_damage = 15 + ceil(self.combat/2), rem = True).wrap(core.BuffSkillWrapper)
+        SylphsAid = core.BuffSkill("실프스 에이드", 0, 200 * 1000, att = 20, crit_rate = 10, rem = True).wrap(core.BuffSkillWrapper) #딜레이 모름
+        Albatross = core.BuffSkill("알바트로스 맥시멈", 0, 200 * 1000, att = 50 + passive_level, pdamage = 25+2*(passive_level//3), armor_ignore = 15+passive_level//3, crit_rate = 25+passive_level//2, rem = True).wrap(core.BuffSkillWrapper)  #900 -> 690
+        SharpEyes = core.BuffSkill("샤프 아이즈", 660, (300+10*self.combat) * 1000, crit_rate = 20 + ceil(self.combat/2), crit_damage = 15 + ceil(self.combat/2), rem = True).wrap(core.BuffSkillWrapper)
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60 * 1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
         StormBringerDummy = core.BuffSkill("스톰 브링어(버프)", 0, 200 * 1000).wrap(core.BuffSkillWrapper)  #딜레이 계산 필요

@@ -52,15 +52,15 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         PotentialPower = core.InformedCharacterModifier("포텐셜 파워",pdamage = 20)
-        SharpAiming = core.InformedCharacterModifier("샤프 에이밍",crit = 40)
+        SharpAiming = core.InformedCharacterModifier("샤프 에이밍",crit_rate = 40)
 
-        SpiritInfusion = core.InformedCharacterModifier("스피릿 인퓨전",pdamage = 30, crit=15)
+        SpiritInfusion = core.InformedCharacterModifier("스피릿 인퓨전",pdamage = 30, crit_rate=15)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
 
-        IgnisRoar = core.InformedCharacterModifier("이그니스 로어",pdamage_indep = 15, att = 40)
+        IgnisRoar = core.InformedCharacterModifier("이그니스 로어",final_damage = 15, att = 40)
 
         DualbowgunExpert = core.InformedCharacterModifier("듀얼보우건 엑스퍼트",att = 30+passive_level, crit_damage= 10+ceil(passive_level/3))
-        DefenceBreak = core.InformedCharacterModifier("디펜스 브레이크",armor_ignore= 25+passive_level, pdamage_indep= 20+passive_level, boss_pdamage = 20+3*(passive_level//4), crit_damage = 20+3*(passive_level//4))
+        DefenceBreak = core.InformedCharacterModifier("디펜스 브레이크",armor_ignore= 25+passive_level, final_damage= 20+passive_level, boss_pdamage = 20+3*(passive_level//4), crit_damage = 20+3*(passive_level//4))
         AdvancedFinalAttack = core.InformedCharacterModifier("어드밴스드 파이널 어택",att = 20 + ceil(passive_level / 2))
 
         return [PotentialPower, SharpAiming, SpiritInfusion,
@@ -68,10 +68,10 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5+0.5*ceil(passive_level/2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 30)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -7.5+0.5*ceil(passive_level/2))
 
-        IgnisRoarStack = core.InformedCharacterModifier("이그니스 로어(스택)",pdamage_indep = 2*10)
+        IgnisRoarStack = core.InformedCharacterModifier("이그니스 로어(스택)",final_damage = 2*10)
 
         return [WeaponConstant, Mastery, IgnisRoarStack]
 
@@ -109,9 +109,9 @@ class JobGenerator(ck.JobGenerator):
         IshtarRing = core.DamageSkill("이슈타르의 링", 120, 220 + self.combat, 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         # 연계 스킬들 - 연계시 딜레이로 작성
-        UnicornSpike = core.DamageSkill("유니콘 스파이크", 450, 315+100 + 2*self.combat, 5, modifier = core.CharacterModifier(crit=100), cooltime = 10 * 1000, red=True).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        UnicornSpike = core.DamageSkill("유니콘 스파이크", 450, 315+100 + 2*self.combat, 5, modifier = core.CharacterModifier(crit_rate=100), cooltime = 10 * 1000, red=True).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         UnicornSpikeBuff = core.BuffSkill("유니콘 스파이크(버프)", 0, 30 * 1000, pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper)  #직접시전 금지
-        RegendrySpear = core.DamageSkill("레전드리 스피어", 690, 700 + 10*self.combat, 3, cooltime = 5 * 1000, red=True, modifier = core.CharacterModifier(crit=100)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        RegendrySpear = core.DamageSkill("레전드리 스피어", 690, 700 + 10*self.combat, 3, cooltime = 5 * 1000, red=True, modifier = core.CharacterModifier(crit_rate=100)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         RegendrySpearBuff = core.BuffSkill("레전드리 스피어(버프)", 0, (30+self.combat) * 1000, armor_ignore = 30+20+self.combat, cooltime = -1).wrap(core.BuffSkillWrapper) #직접시전 금지
         LightningEdge = core.DamageSkill("라이트닝 엣지", 630, 420 + 5*self.combat, 3).wrap(core.DamageSkillWrapper)
         LightningEdgeBuff = core.BuffSkill("라이트닝 엣지(버프)", 0, 30000, cooltime=-1).wrap(core.BuffSkillWrapper)

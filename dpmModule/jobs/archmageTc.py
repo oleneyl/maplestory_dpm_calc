@@ -42,10 +42,10 @@ class JobGenerator(ck.JobGenerator):
 
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤", stat_main = 40)
         SpellMastery = core.InformedCharacterModifier("스펠 마스터리", att = 10)
-        MagicCritical = core.InformedCharacterModifier("매직 크리티컬", crit = 30, crit_damage = 13)
+        MagicCritical = core.InformedCharacterModifier("매직 크리티컬", crit_rate = 30, crit_damage = 13)
         ElementAmplication = core.InformedCharacterModifier("엘리멘트 엠플리피케이션", pdamage = 50)
 
-        ElementalReset = core.InformedCharacterModifier("엘리멘탈 리셋", pdamage_indep = 50)
+        ElementalReset = core.InformedCharacterModifier("엘리멘탈 리셋", final_damage = 50)
 
         MasterMagic = core.InformedCharacterModifier("마스터 매직", att = 30 + 3*passive_level, buff_rem = 50 + 5*passive_level)
         ArcaneAim = core.InformedCharacterModifier("아케인 에임", armor_ignore = 20 + ceil(passive_level / 2))
@@ -55,9 +55,9 @@ class JobGenerator(ck.JobGenerator):
         return [HighWisdom, SpellMastery, MagicCritical, ElementalReset, MasterMagic, ElementAmplication, ArcaneAim, UnstableMemorizePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5*ceil(self.combat/2))
-        ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", pdamage_indep = 20)
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 20)
+        Mastery = core.InformedCharacterModifier("숙련도", final_damage = -2.5 + 0.5*ceil(self.combat/2))
+        ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", final_damage = 20)
         ArcaneAim = core.InformedCharacterModifier("아케인 에임(실시간)", pdamage = 40)
         ElementalResetActive = core.InformedCharacterModifier("엘리멘탈 리셋(사용)", prop_ignore = 10)
 
@@ -91,7 +91,7 @@ class JobGenerator(ck.JobGenerator):
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
         #Damage Skills
-        ChainLightening = core.DamageSkill("체인 라이트닝", 600, 185 + 3*self.combat, 10+1, modifier = core.CharacterModifier(crit = 25+ceil(self.combat/2), pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ChainLightening = core.DamageSkill("체인 라이트닝", 600, 185 + 3*self.combat, 10+1, modifier = core.CharacterModifier(crit_rate = 25+ceil(self.combat/2), pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         FrozenOrb = core.SummonSkill("프로즌 오브", 690, 210, 220+4*self.combat, 1, 4000, cooltime = 5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
 

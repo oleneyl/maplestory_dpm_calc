@@ -21,14 +21,14 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         BuildupCanon = core.InformedCharacterModifier("빌드업 캐논",att = 20)
-        CriticalFire = core.InformedCharacterModifier("크리티컬 파이어",crit=20, crit_damage=5)
+        CriticalFire = core.InformedCharacterModifier("크리티컬 파이어",crit_rate=20, crit_damage=5)
         PirateTraining = core.InformedCharacterModifier("파이렛 트레이닝",stat_main=30, stat_sub=30)
 
-        MonkeyWavePassive = core.InformedCharacterModifier("몽키 웨이브(패시브)",crit=20)
-        OakRuletPassive = core.InformedCharacterModifier("오크통 룰렛(패시브)",pdamage_indep = 10)
+        MonkeyWavePassive = core.InformedCharacterModifier("몽키 웨이브(패시브)",crit_rate=20)
+        OakRuletPassive = core.InformedCharacterModifier("오크통 룰렛(패시브)",final_damage = 10)
         ReinforceCanon = core.InformedCharacterModifier("리인포스 캐논",att = 40)
         PirateSpirit = core.InformedCharacterModifier("파이렛 스피릿",boss_pdamage=40 + self.combat)
-        OverburningCanon = core.InformedCharacterModifier("오버버닝 캐논",pdamage_indep=30 + passive_level, armor_ignore=20 + passive_level // 2)
+        OverburningCanon = core.InformedCharacterModifier("오버버닝 캐논",final_damage=30 + passive_level, armor_ignore=20 + passive_level // 2)
 
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 3, 4)
 
@@ -38,8 +38,8 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 50)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5*ceil(passive_level / 2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 50)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -7.5 + 0.5*ceil(passive_level / 2))
         return [WeaponConstant, Mastery]
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
@@ -70,7 +70,7 @@ class JobGenerator(ck.JobGenerator):
         OakRuletDOT = core.DotSkill("오크통 룰렛(도트)", 0, 1000, 50, 1, 5000, cooltime = -1).wrap(core.SummonSkillWrapper)
         MonkeyMagic = core.BuffSkill("하이퍼 몽키 스펠", 0, 180000, rem = True, stat_main=60 + passive_level, stat_sub=60 + passive_level).wrap(core.BuffSkillWrapper)
 
-        CanonBuster = core.DamageSkill("캐논 버스터", 690, (750 + 5 * self.combat)*0.45, 3*(4+1), modifier = core.CharacterModifier(crit=15 + ceil(self.combat / 2), armor_ignore=20 + self.combat // 2, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        CanonBuster = core.DamageSkill("캐논 버스터", 690, (750 + 5 * self.combat)*0.45, 3*(4+1), modifier = core.CharacterModifier(crit_rate=15 + ceil(self.combat / 2), armor_ignore=20 + self.combat // 2, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         #서포트 몽키 트윈스 공격주기 확인
         SupportMonkeyTwins = core.SummonSkill("서포트 몽키 트윈스", 720, 60000/195*3, 3*(295 + 8 * self.combat)*0.6, 2, 60000 + 2000 * self.combat, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)

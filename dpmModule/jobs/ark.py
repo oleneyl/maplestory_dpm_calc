@@ -158,7 +158,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 2
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(crit=20)
+        return core.CharacterModifier(crit_rate=20)
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -181,10 +181,10 @@ class JobGenerator(ck.JobGenerator):
         MisticArtsMastery = core.InformedCharacterModifier("미스틱 아츠 마스터리", att = 20)
         NuckleMastery = core.InformedCharacterModifier("너클 마스터리", att = 20)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝", stat_main = 60)
-        FusionProgress = core.InformedCharacterModifier("융합 진행", pdamage_indep = 10, crit = 20)
+        FusionProgress = core.InformedCharacterModifier("융합 진행", final_damage = 10, crit_rate = 20)
         NuckleExpret = core.InformedCharacterModifier("너클 엑스퍼트", att = 30 + passive_level, crit_damage= 30 + passive_level)
-        FusionComplete = core.InformedCharacterModifier("융합 완성", att = 40 + passive_level, crit = 10 + ceil(passive_level/3), armor_ignore = 30 + passive_level, boss_pdamage = 30 + passive_level)
-        BattleRage = core.InformedCharacterModifier("전투 광란", pdamage_indep = 20 + passive_level)
+        FusionComplete = core.InformedCharacterModifier("융합 완성", att = 40 + passive_level, crit_rate = 10 + ceil(passive_level/3), armor_ignore = 30 + passive_level, boss_pdamage = 30 + passive_level)
+        BattleRage = core.InformedCharacterModifier("전투 광란", final_damage = 20 + passive_level)
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 3, 4)
 
         return [MagicCircuit, MisticArtsMastery,
@@ -192,8 +192,8 @@ class JobGenerator(ck.JobGenerator):
                                     FusionProgress, NuckleExpret, FusionComplete, BattleRage, LoadedDicePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5*ceil((chtr.get_base_modifier().passive_level + self.combat)/2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수", final_damage = 70)
+        Mastery = core.InformedCharacterModifier("숙련도", final_damage = -5 + 0.5*ceil((chtr.get_base_modifier().passive_level + self.combat)/2))
 
         return [WeaponConstant, Mastery]
 
@@ -238,7 +238,7 @@ class JobGenerator(ck.JobGenerator):
         ScarletChargeDrive_Link = core.DamageSkill("스칼렛 차지드라이브(연계)", 510, 350 + 3*passive_level, 3, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         ScarletChargeDrive_After = core.DamageSkill("스칼렛 차지드라이브(후속타)", 0, 350 + 3*passive_level, 3, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         ScarletSpell = core.DamageSkill("스칼렛 스펠", 0, 220 + passive_level, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        ScarletBuff = core.BuffSkill("스칼렛 버프", 0, 60 * 1000, cooltime = -1, rem=True, att = 30, crit = 20).wrap(core.BuffSkillWrapper)
+        ScarletBuff = core.BuffSkill("스칼렛 버프", 0, 60 * 1000, cooltime = -1, rem=True, att = 30, crit_rate = 20).wrap(core.BuffSkillWrapper)
 
         UnstoppableImpulse_Link = core.DamageSkill("멈출 수 없는 충동(연계)", 540, 435 + 3*passive_level, 5, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
 
@@ -290,7 +290,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 하이퍼
         ChargeSpellAmplification = core.BuffSkill("차지 스펠 앰플리피케이션", 720, 60000, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
-        ScarletBuff2 = AmplifiedSpellBuffWrapper(core.BuffSkill("증폭된 스칼렛 버프", 0, 60000, cooltime = -1, att = 30, crit = 20), lambda: ChargeSpellAmplification.timeLeft)
+        ScarletBuff2 = AmplifiedSpellBuffWrapper(core.BuffSkill("증폭된 스칼렛 버프", 0, 60000, cooltime = -1, att = 30, crit_rate = 20), lambda: ChargeSpellAmplification.timeLeft)
         AbyssBuff2 = AmplifiedSpellBuffWrapper(core.BuffSkill("증폭된 어비스 버프", 0, 60000, cooltime = -1, pdamage = 20 + self.combat//2, boss_pdamage = 30 + self.combat, armor_ignore = 20 + self.combat//2), lambda: ChargeSpellAmplification.timeLeft)
 
         EndlessPain = core.DamageSkill("끝없는 고통", 360, 0, 0, cooltime = 3030 + 60 * 1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   # onTick==> 다가오는 죽음

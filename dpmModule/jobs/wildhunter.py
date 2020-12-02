@@ -70,16 +70,16 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        Jaguer = core.InformedCharacterModifier("재규어",crit=5, buff_rem=10)
-        NaturesWrath = core.InformedCharacterModifier("네이처스 래쓰",crit=25)
+        Jaguer = core.InformedCharacterModifier("재규어",crit_rate=5, buff_rem=10)
+        NaturesWrath = core.InformedCharacterModifier("네이처스 래쓰",crit_rate=25)
         AutomaticShootingDevice = core.InformedCharacterModifier("오토매팅 슈팅 디바이스",att=20)
         CrossbowMastery = core.InformedCharacterModifier("크로스보우 마스터리",pdamage = 10)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         Flurry = core.InformedCharacterModifier("플러리", stat_main = 40)
-        JaugerLink = core.InformedCharacterModifier("재규어 링크",crit = 18, crit_damage = 12, att = 10)
+        JaugerLink = core.InformedCharacterModifier("재규어 링크",crit_rate = 18, crit_damage = 12, att = 10)
         CrossbowExpert = core.InformedCharacterModifier("크로스보우 엑스퍼트",att=30 + passive_level, crit_damage = 20 + passive_level//2)
         WildInstinct = core.InformedCharacterModifier("와일드 인스팅트",armor_ignore = 30 + 3*passive_level)
-        ExtentMagazine = core.InformedCharacterModifier("익스텐드 매거진", pdamage_indep=20 + passive_level // 3, stat_main=60 + 2*passive_level, stat_sub=60 + 2*passive_level)
+        ExtentMagazine = core.InformedCharacterModifier("익스텐드 매거진", final_damage=20 + passive_level // 3, stat_main=60 + 2*passive_level, stat_sub=60 + 2*passive_level)
         AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)", att = 20 + ceil(passive_level/2))
         JaugerStormPassive = core.InformedCharacterModifier("재규어 스톰(패시브)", att = 5+2*vEhc.getV(0,0))
 
@@ -90,8 +90,8 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 35)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5*ceil(passive_level/2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 35)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -7.5 + 0.5*ceil(passive_level/2))
 
         SummonJaguer = core.InformedCharacterModifier("서먼 재규어", crit_damage = 8)
 
@@ -138,7 +138,7 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)
         Hauling = core.BuffSkill("하울링", 0, 300*1000, rem = True, patt = 10).wrap(core.BuffSkillWrapper)
         BeastForm = core.BuffSkill("비스트 폼", 0, 300*1000, rem = True, patt=20+5).wrap(core.BuffSkillWrapper)
-        SharpEyes = core.BuffSkill("샤프 아이즈", 1080, (300+3*self.combat) * 1000, crit = 20 + ceil(self.combat/2), crit_damage = 15 + ceil(self.combat/2), rem = True).wrap(core.BuffSkillWrapper)
+        SharpEyes = core.BuffSkill("샤프 아이즈", 1080, (300+3*self.combat) * 1000, crit_rate = 20 + ceil(self.combat/2), crit_damage = 15 + ceil(self.combat/2), rem = True).wrap(core.BuffSkillWrapper)
 
         #Summon skills
         HuntingUnit = core.SummonSkill("어시스턴트 헌팅 유닛", 660, 31000/90, 150, 1.5, 31000, rem=True).setV(vEhc, 4, 3, False).wrap(core.SummonSkillWrapper)
@@ -163,8 +163,8 @@ class JobGenerator(ck.JobGenerator):
 
         JaguerStorm = core.BuffSkill("재규어 스톰", 840, 40*1000, cooltime = (150-vEhc.getV(0,0))*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
 
-        JaguarMaximum = core.DamageSkill("재규어 맥시멈", 2160, 350+13*vEhc.getV(5,5), 12*9, cooltime = 150*1000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
-        JaguarMaximumFinal = core.DamageSkill("재규어 맥시멈(마무리)", 630, 450+18*vEhc.getV(5,5), 15*4, cooltime=-1, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
+        JaguarMaximum = core.DamageSkill("재규어 맥시멈", 2160, 350+13*vEhc.getV(5,5), 12*9, cooltime = 150*1000, red=True, modifier=core.CharacterModifier(crit_rate=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
+        JaguarMaximumFinal = core.DamageSkill("재규어 맥시멈(마무리)", 630, 450+18*vEhc.getV(5,5), 15*4, cooltime=-1, modifier=core.CharacterModifier(crit_rate=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
         RidingOff = core.DamageSkill("하차 딜레이", 1800, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper) # 재규어 맥시멈 강제 탑승 해제 딜레이
 
         WildGrenade = core.SummonSkill("와일드 그레네이드", 0, 4500, 600+24*vEhc.getV(2,2), 5, 9999*10000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)

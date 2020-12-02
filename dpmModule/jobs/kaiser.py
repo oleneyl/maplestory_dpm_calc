@@ -168,10 +168,10 @@ class JobGenerator(ck.JobGenerator):
 
         InnerBlaze = core.InformedCharacterModifier("이너 블레이즈",stat_main = 20)
         AdvancedInnerBlaze = core.InformedCharacterModifier("어드밴스드 이너 블레이즈",stat_main = 30)
-        Catalyze = core.InformedCharacterModifier("카탈라이즈", patt=30, crit=20, pdamage_indep=20)
+        Catalyze = core.InformedCharacterModifier("카탈라이즈", patt=30, crit_rate=20, final_damage=20)
         AdvancedWillOfSwordPassive = core.InformedCharacterModifier("어드밴스드 윌 오브 소드(패시브)",att = 20 + 2*ceil(passive_level/3))
         UnflinchingCourage = core.InformedCharacterModifier("언플린칭 커리지",armor_ignore = 40 + passive_level)
-        AdvancedSwordMastery = core.InformedCharacterModifier("어드밴스드 소드 마스터리", att = 30 + passive_level, crit_damage = 15 + passive_level//3, crit=20 + passive_level//2)
+        AdvancedSwordMastery = core.InformedCharacterModifier("어드밴스드 소드 마스터리", att = 30 + passive_level, crit_damage = 15 + passive_level//3, crit_rate=20 + passive_level//2)
 
         return [InnerBlaze, AdvancedInnerBlaze, Catalyze,
                 AdvancedWillOfSwordPassive, UnflinchingCourage, AdvancedSwordMastery]
@@ -179,10 +179,10 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level / 2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 34)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -5 + 0.5*ceil(passive_level / 2))
 
-        ReshuffleSwitchAttack = core.InformedCharacterModifier("리셔플스위치:공격",att = 45, crit = 20, boss_pdamage = 18)
+        ReshuffleSwitchAttack = core.InformedCharacterModifier("리셔플스위치:공격",att = 45, crit_rate = 20, boss_pdamage = 18)
 
         return [WeaponConstant, Mastery, ReshuffleSwitchAttack]
 
@@ -205,11 +205,11 @@ class JobGenerator(ck.JobGenerator):
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         # Buff skills
-        RegainStrenth = core.BuffSkill("리게인 스트렝스", 0, 240000, rem = True, pdamage_indep = 15).wrap(core.BuffSkillWrapper)
+        RegainStrenth = core.BuffSkill("리게인 스트렝스", 0, 240000, rem = True, final_damage = 15).wrap(core.BuffSkillWrapper)
         BlazeUp = core.BuffSkill("블레이즈 업", 0, 240000, att = 20, rem = True).wrap(core.BuffSkillWrapper)
         SoulContract = globalSkill.soul_contract()
 
-        FinalFiguration = core.BuffSkill("파이널 피규레이션", 0, 60000, pdamage_indep = 15, boss_pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
+        FinalFiguration = core.BuffSkill("파이널 피규레이션", 0, 60000, final_damage = 15, boss_pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
         MorphGauge = MorphGaugeWrapper(core.BuffSkill("모프 게이지", 0, 9999999), FinalFiguration)
 
         Wingbit_1 = WingbitWrapper(core.SummonSkill("윙비트", 0, 330, 200, 1, 15900, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, True), FinalFiguration) #48타
@@ -242,8 +242,8 @@ class JobGenerator(ck.JobGenerator):
         WillOfSwordStrike = WillOfSwordStrikeWrapper(core.DamageSkill("윌 오브 소드: 스트라이크", 150, 500+20*vEhc.getV(3,3), 4*5, cooltime = 30000, red=True).isV(vEhc,3,3), FinalFiguration)
         WillOfSwordStrike_Explode = WillOfSwordStrikeExplodeWrapper(core.DamageSkill("윌 오브 소드: 스트라이크(폭발)", 0, 1000+40*vEhc.getV(3,3), 6*5).isV(vEhc,3,3), FinalFiguration)
 
-        DrakeSlasher = DrakeSlasherWrapper(core.DamageSkill("드라코 슬래셔", 540, 500+5*vEhc.getV(0,0), 10+1, cooltime = (7-(vEhc.getV(0,0)//15))*1000, red=True, modifier = core.CharacterModifier(crit=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0), FinalFiguration)
-        DrakeSlasher_Projectile = DrakeSlasherProjectileWrapper(core.DamageSkill("드라코 슬래셔(발사)", 0, 500+5*vEhc.getV(0,0), 6+1, cooltime = -1, modifier = core.CharacterModifier(crit=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0), FinalFiguration)
+        DrakeSlasher = DrakeSlasherWrapper(core.DamageSkill("드라코 슬래셔", 540, 500+5*vEhc.getV(0,0), 10+1, cooltime = (7-(vEhc.getV(0,0)//15))*1000, red=True, modifier = core.CharacterModifier(crit_rate=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0), FinalFiguration)
+        DrakeSlasher_Projectile = DrakeSlasherProjectileWrapper(core.DamageSkill("드라코 슬래셔(발사)", 0, 500+5*vEhc.getV(0,0), 6+1, cooltime = -1, modifier = core.CharacterModifier(crit_rate=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0), FinalFiguration)
 
         DragonBlaze = core.SummonSkill("드래곤 블레이즈", 900, 240, 250+10*vEhc.getV(0,0), 6, 20000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         DragonBlazeAura = core.DamageSkill("드래곤 블레이즈(불의 기운)", 0, 375+15*vEhc.getV(0,0), 5, cooltime=3600).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)

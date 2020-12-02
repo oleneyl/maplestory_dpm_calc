@@ -44,8 +44,8 @@ class JobGenerator(ck.JobGenerator):
         CallOfAncient = core.InformedCharacterModifier("콜 오브 에인션트", att = 40)
         AffinityIII = core.InformedCharacterModifier("어피니티 III", stat_main = 40, pdamage = 20)
         AffinityIV = getAffinityIV(1272.08) # 트리니티 평균 주기가 바뀔 때 마다 변경해 줘야함. 1000 * time(초) / (트리니티 사용 횟수).
-        TrinityPassive = core.InformedCharacterModifier("트리니티(패시브)", pdamage_indep = ceil((30 + self.combat) / 3), armor_ignore = ceil((30 + self.combat) / 2))
-        SoulShooterExpert = core.InformedCharacterModifier("소울슈터 엑스퍼트", att = 30 + passive_level, crit = 30 + passive_level, crit_damage = 15 + ceil(passive_level / 2))
+        TrinityPassive = core.InformedCharacterModifier("트리니티(패시브)", final_damage = ceil((30 + self.combat) / 3), armor_ignore = ceil((30 + self.combat) / 2))
+        SoulShooterExpert = core.InformedCharacterModifier("소울슈터 엑스퍼트", att = 30 + passive_level, crit_rate = 30 + passive_level, crit_damage = 15 + ceil(passive_level / 2))
 
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
         TrinityFusionPassive = core.InformedCharacterModifier("트리니티 퓨전(패시브)", stat_main = 10 + vEhc.getV(0,0))
@@ -56,8 +56,8 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5 * ceil(passive_level / 2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수", final_damage = 70)
+        Mastery = core.InformedCharacterModifier("숙련도", final_damage = -2.5 + 0.5 * ceil(passive_level / 2))
 
         return [WeaponConstant, Mastery]
 
@@ -104,14 +104,14 @@ class JobGenerator(ck.JobGenerator):
         Trinity_3 = core.DamageSkill("트리니티(3타)", 360, TRINITY_DAMAGE, 4+1, modifier = TRINITY_MDF).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         FinaturaFettuccia = core.DamageSkill("피니투라 페투치아", 1020, 400 + 7*self.combat, 10, red = True, cooltime = 40000*0.75).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        FinaturaFettucciaBuff = core.BuffSkill("피니투라 페투치아(버프)", 0, 20000, cooltime = -1, pdamage_indep=25).wrap(core.BuffSkillWrapper)
+        FinaturaFettucciaBuff = core.BuffSkill("피니투라 페투치아(버프)", 0, 20000, cooltime = -1, final_damage=25).wrap(core.BuffSkillWrapper)
 
         SoulGaze = core.BuffSkill("소울 게이즈", 1080, (180 + 5 * self.combat) * 1000, rem = True, crit_damage = 45 + self.combat).wrap(core.BuffSkillWrapper)
 
         #하이퍼
         SoulExult = core.BuffSkill("소울 익절트", 1020, 30000, armor_ignore = 30, boss_pdamage = 20, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         SuperNova = core.SummonSkill("슈퍼 노바", 600, 840, 600, 3, 12000, cooltime = 60 * 1000).setV(vEhc, 2, 2, True).wrap(core.SummonSkillWrapper)  #840ms 타격(14타)
-        FinalContract = core.BuffSkill("파이널 컨트랙트", 0, 30000, cooltime = 120 * 1000, att = 50, crit = 30).wrap(core.BuffSkillWrapper)
+        FinalContract = core.BuffSkill("파이널 컨트랙트", 0, 30000, cooltime = 120 * 1000, att = 50, crit_rate = 30).wrap(core.BuffSkillWrapper)
 
         #로디드 데미지 고정.
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
@@ -126,8 +126,8 @@ class JobGenerator(ck.JobGenerator):
         EnergyBurst = core.DamageSkill("에너지 버스트", 900, (450+18*vEhc.getV(4,4)) * 3, 15, red = True, cooltime = 120 * 1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
 
         SpotLight = core.SummonSkill("스포트라이트", 990, 800, 400+16*vEhc.getV(0,0), 3 * SPOTLIGHTHIT, 30000, cooltime = 120 * 1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
-        SpotLightBuff = core.BuffSkill("스포트라이트(버프)", 0, 30000, cooltime = -1, crit = (10+int(0.2*vEhc.getV(0,0)))*SPOTLIGHTHIT,
-                                                                                pdamage_indep = (3+(vEhc.getV(0,0)//10))*SPOTLIGHTHIT).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        SpotLightBuff = core.BuffSkill("스포트라이트(버프)", 0, 30000, cooltime = -1, crit_rate = (10+int(0.2*vEhc.getV(0,0)))*SPOTLIGHTHIT,
+                                                                                final_damage = (3+(vEhc.getV(0,0)//10))*SPOTLIGHTHIT).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
 
         MascortFamilier = core.BuffSkill("마스코트 패밀리어", 810, 30+(vEhc.getV(2,1)//5)*1000, red = True, cooltime = 120 * 1000).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
         MascortFamilierAttack = core.SummonSkill("트윙클 스타/매지컬 벌룬", 0, 2500, 1200, 5, (30+(vEhc.getV(2,1)//5))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)

@@ -32,7 +32,7 @@ class WeaponVarietyStackWrapper(core.StackSkillWrapper): # TODO: 굳이 관리�
         multiplier = 11
         if self.prof_agent.is_active():
             multiplier *= 2
-        return core.CharacterModifier(pdamage_indep = len(self.stackLog) * multiplier)
+        return core.CharacterModifier(final_damage = len(self.stackLog) * multiplier)
 
     def _changed(self, weapon):
         return self.currentWeapon != weapon
@@ -123,24 +123,24 @@ class JobGenerator(ck.JobGenerator):
         CollectingForLeap = core.InformedCharacterModifier("콜렉팅 포리프", stat_main = 50)
 
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝", stat_main = 30, stat_sub = 30)
-        QuickserviceMind = core.InformedCharacterModifier("퀵서비스 마인드", att = 10, crit_damage = 5, crit = 10)
+        QuickserviceMind = core.InformedCharacterModifier("퀵서비스 마인드", att = 10, crit_damage = 5, crit_rate = 10)
 
         BasicDetection = core.InformedCharacterModifier("베이직 디텍션", armor_ignore = 20)
 
-        WeaponMastery = core.InformedCharacterModifier("웨폰 엑스퍼트", att = 30 + passive_level, crit = 30 + passive_level, crit_damage = 15 + ceil(passive_level / 2))
-        QuickserviceMind_II = core.InformedCharacterModifier("퀵서비스 마인드 II", att = 30, crit_damage = 5, crit = 10)
+        WeaponMastery = core.InformedCharacterModifier("웨폰 엑스퍼트", att = 30 + passive_level, crit_rate = 30 + passive_level, crit_damage = 15 + ceil(passive_level / 2))
+        QuickserviceMind_II = core.InformedCharacterModifier("퀵서비스 마인드 II", att = 30, crit_damage = 5, crit_rate = 10)
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 2, 3)
 
         return [CollectingForLeap, PhisicalTraining,
                                     QuickserviceMind, BasicDetection, WeaponMastery, QuickserviceMind_II, ReadyToDiePassive]
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 30, crit_damage = 40, pdamage = 20, crit = 6)
+        return core.CharacterModifier(armor_ignore = 30, crit_damage = 40, pdamage = 20, crit_rate = 6)
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5 * ceil(passive_level / 2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 30)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -5 + 0.5 * ceil(passive_level / 2))
 
         return [WeaponConstant, Mastery]
 
@@ -172,14 +172,14 @@ class JobGenerator(ck.JobGenerator):
         WINGDAGGER_HIT = 3
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        CheapShotII = core.CharacterModifier(crit = 2, crit_damage = 10 + ceil(passive_level / 4)) # 위크포인트 컨버징 어택
+        CheapShotII = core.CharacterModifier(crit_rate = 2, crit_damage = 10 + ceil(passive_level / 4)) # 위크포인트 컨버징 어택
         CheapShotIIBleed = core.DotSkill("위크포인트 컨버징 어택(출혈)", 0, 1000, 110 + 2 * passive_level, 1, 99999999).wrap(core.SummonSkillWrapper)
-        CheapShotIIBleedBuff = core.BuffSkill("위크포인트 컨버징 어택(출혈)(디버프)", 0, 99999999, crit = CheapShotII.crit_rate, crit_damage = CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
-        CheapShotIIAdventureMageBuff = core.BuffSkill("위크포인트 컨버징 어택(모법링크)", 0, 99999999, crit = CheapShotII.crit_rate, crit_damage = CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
+        CheapShotIIBleedBuff = core.BuffSkill("위크포인트 컨버징 어택(출혈)(디버프)", 0, 99999999, crit_rate = CheapShotII.crit_rate, crit_damage = CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
+        CheapShotIIAdventureMageBuff = core.BuffSkill("위크포인트 컨버징 어택(모법링크)", 0, 99999999, crit_rate = CheapShotII.crit_rate, crit_damage = CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
 
         #버프
         Booster = core.BuffSkill("부스터", 0, 200000).wrap(core.BuffSkillWrapper)
-        SpecialPotion = core.BuffSkill("상인단 특제 비약", 570, 60*1000, pdamage = 10, crit = 10, cooltime = 120*1000).wrap(core.BuffSkillWrapper) # 카데나만 딜레이있음
+        SpecialPotion = core.BuffSkill("상인단 특제 비약", 570, 60*1000, pdamage = 10, crit_rate = 10, cooltime = 120*1000).wrap(core.BuffSkillWrapper) # 카데나만 딜레이있음
 
         ProfessionalAgent = core.BuffSkill("프로페셔널 에이전트", 570, 30000, cooltime = 200000).wrap(core.BuffSkillWrapper)
         ProfessionalAgentAdditionalDamage = core.DamageSkill("프로페셔널 에이전트(공격)", 0, 255, 2).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
@@ -206,34 +206,34 @@ class JobGenerator(ck.JobGenerator):
         ChainArts_Takedown_Attack = core.DamageSkill("체인아츠:테이크다운(연속 공격)", 2970, 990+15*self.combat, 15, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         ChainArts_Takedown_Wave = core.DamageSkill("체인아츠:테이크다운(파동)", 0, 600+5*self.combat, 4).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper) # 8회 반복
         ChainArts_Takedown_Final = core.DamageSkill("체인아츠:테이크다운(최종)", 0, 500, 10, modifier = core.CharacterModifier(armor_ignore = 80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        ChainArts_Takedown_Bind = core.BuffSkill("체인아츠:테이크다운(바인드)", 0, 10000, crit = CheapShotII.crit_rate, crit_damage = CheapShotII.crit_damage, cooltime = -1).wrap(core.BuffSkillWrapper)
+        ChainArts_Takedown_Bind = core.BuffSkill("체인아츠:테이크다운(바인드)", 0, 10000, crit_rate = CheapShotII.crit_rate, crit_damage = CheapShotII.crit_damage, cooltime = -1).wrap(core.BuffSkillWrapper)
 
         #논체인아츠 스킬
 
-        SummonCuttingSimiter = core.DamageSkill("서먼 커팅 시미터", CANCEL_TIME, 425 + 5 * passive_level, 5, cooltime = 4000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        SummonCuttingSimiter = core.DamageSkill("서먼 커팅 시미터", CANCEL_TIME, 425 + 5 * passive_level, 5, cooltime = 4000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, final_damage = 15)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         SummonScratchingClaw = core.DamageSkill("서먼 스크래칭 클로", CANCEL_TIME, 455 + 5 * passive_level, 4, cooltime = 3000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
 
         SummonThrowingWingdagger = core.DamageSkill("서먼 스로잉 윙대거", 780, 0, 0, cooltime = 10000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).wrap(core.DamageSkillWrapper)
-        SummonThrowingWingdaggerSummon = core.SummonSkill("서먼 스로잉 윙대거(소환)", 0, 330, 425 + 5 * passive_level, 1, 330*WINGDAGGER_HIT, cooltime= -1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15 / WINGDAGGER_HIT)).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
+        SummonThrowingWingdaggerSummon = core.SummonSkill("서먼 스로잉 윙대거(소환)", 0, 330, 425 + 5 * passive_level, 1, 330*WINGDAGGER_HIT, cooltime= -1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, final_damage = 15 / WINGDAGGER_HIT)).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
         SummonThrowingWingdaggerEnd = core.DamageSkill("서먼 스로잉 윙대거(폭발)", 0, 670 + 5 * passive_level, 3, cooltime = -1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
 
-        SummonShootingShotgun = core.DamageSkill("서먼 슈팅 샷건", CANCEL_TIME, 510 + 5 * passive_level, 7, cooltime = 5000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        SummonSlachingKnife = core.DamageSkill("서먼 슬래싱 나이프", CANCEL_TIME, 435 + 5 * passive_level, 8, cooltime = 10000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        SummonSlachingKnife_Horror = core.BuffSkill("서먼 슬래싱 나이프(공포)", 0, 10000, armor_ignore = 30, crit = CheapShotII.crit_rate, crit_damage = CheapShotII.crit_damage, cooltime = -1).wrap(core.BuffSkillWrapper)
+        SummonShootingShotgun = core.DamageSkill("서먼 슈팅 샷건", CANCEL_TIME, 510 + 5 * passive_level, 7, cooltime = 5000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, final_damage = 15)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        SummonSlachingKnife = core.DamageSkill("서먼 슬래싱 나이프", CANCEL_TIME, 435 + 5 * passive_level, 8, cooltime = 10000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, final_damage = 15)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        SummonSlachingKnife_Horror = core.BuffSkill("서먼 슬래싱 나이프(공포)", 0, 10000, armor_ignore = 30, crit_rate = CheapShotII.crit_rate, crit_damage = CheapShotII.crit_damage, cooltime = -1).wrap(core.BuffSkillWrapper)
 
         SummonReleasingBoom = core.DamageSkill("서먼 릴리징 봄", CANCEL_TIME, 0, 0, cooltime = 8000, red = True).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         SummonReleasingBoom_Explode = core.DamageSkill("서먼 릴리징 봄(폭발)", 0, 535 + 5 * passive_level, 6, cooltime = -1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        SummonStrikingBrick = core.DamageSkill("서먼 스트라이킹 브릭", 390+CANCEL_TIME-STROKE1_CANCEL_TIME, 485 + 8*self.combat, 7, cooltime = 8000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, pdamage_indep = 15)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        SummonStrikingBrick = core.DamageSkill("서먼 스트라이킹 브릭", 390+CANCEL_TIME-STROKE1_CANCEL_TIME, 485 + 8*self.combat, 7, cooltime = 8000, red = True, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20, final_damage = 15)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         # 강제이동 390ms, 폭발 360ms(캔슬가능), 강제이동 도중 1타 사용 가능하므로 1타 딜레이만큼 뺌.
 
-        SummonBeatingNeedlebat_1 = core.DamageSkill("서먼 비팅 니들배트(1타)", 360, 450 + 10 * self.combat, 6, modifier = core.CharacterModifier(pdamage = 40 + 20, boss_pdamage = 20, pdamage_indep = 15), cooltime = 12000, red = True).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SummonBeatingNeedlebat_1 = core.DamageSkill("서먼 비팅 니들배트(1타)", 360, 450 + 10 * self.combat, 6, modifier = core.CharacterModifier(pdamage = 40 + 20, boss_pdamage = 20, final_damage = 15), cooltime = 12000, red = True).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         SummonBeatingNeedlebat_2 = core.DamageSkill("서먼 비팅 니들배트(2타)", 420, 555 + 10 * self.combat, 7, modifier = core.CharacterModifier(pdamage = 40 + 20, boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         SummonBeatingNeedlebat_3 = core.DamageSkill("서먼 비팅 니들배트(3타)", CANCEL_TIME, 715 + 10 * self.combat, 8, modifier = core.CharacterModifier(pdamage = 50 + 20, boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        SummonBeatingNeedlebat_Honmy = core.BuffSkill("서먼 비팅 니들배트(혼미)", 0, 15000, crit = CheapShotII.crit_rate, crit_damage = CheapShotII.crit_damage, cooltime = -1).wrap(core.BuffSkillWrapper)
+        SummonBeatingNeedlebat_Honmy = core.BuffSkill("서먼 비팅 니들배트(혼미)", 0, 15000, crit_rate = CheapShotII.crit_rate, crit_damage = CheapShotII.crit_damage, cooltime = -1).wrap(core.BuffSkillWrapper)
 
         # 5차
         VenomBurst = core.DotSkill("베놈 버스트", 0, 1000, 160+6*vEhc.getV(4,4), 1, 99999999).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
-        VenomBurst_Poison = core.BuffSkill("베놈 버스트(중독)", 0, 99999999, crit = CheapShotII.crit_rate, crit_damage = CheapShotII.crit_damage, cooltime = -1).isV(vEhc, 4, 4).wrap(core.BuffSkillWrapper)
+        VenomBurst_Poison = core.BuffSkill("베놈 버스트(중독)", 0, 99999999, crit_rate = CheapShotII.crit_rate, crit_damage = CheapShotII.crit_damage, cooltime = -1).isV(vEhc, 4, 4).wrap(core.BuffSkillWrapper)
 
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 3)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
@@ -246,7 +246,7 @@ class JobGenerator(ck.JobGenerator):
         AD_Odnunce_Final = core.DamageSkill("A.D 오드넌스(막타)", 0, 750+30*vEhc.getV(1,1), 8, cooltime = -1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
 
         ChainArts_Maelstorm = MaelstromWrapper(vEhc, 8)
-        ChainArts_Maelstorm_Slow = core.BuffSkill("체인아츠:메일스트롬(중독)", 0, 4000 + 6000, crit = CheapShotII.crit_rate, crit_damage = CheapShotII.crit_damage, cooltime = -1).isV(vEhc, 3, 2).wrap(core.BuffSkillWrapper)
+        ChainArts_Maelstorm_Slow = core.BuffSkill("체인아츠:메일스트롬(중독)", 0, 4000 + 6000, crit_rate = CheapShotII.crit_rate, crit_damage = CheapShotII.crit_damage, cooltime = -1).isV(vEhc, 3, 2).wrap(core.BuffSkillWrapper)
 
         WeaponVarietyFinale = WeaponVarietyFinaleWrapper(vEhc, 0, 0)
         WeaponVarietyFinaleTrigger = core.StackSkillWrapper(core.BuffSkill("웨폰 버라이어티 피날레(웨버횟수)", 0, 99999999), 4)

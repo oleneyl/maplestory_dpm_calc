@@ -51,7 +51,7 @@ class ComboAttackWrapper(core.StackSkillWrapper):
     def get_modifier(self):
         multiplier = (1 + self.instinct * 0.01 * (5 + 0.5*self.vEhc.getV(1,1)))
         return core.CharacterModifier(pdamage = 2 * self.stack * multiplier,
-                                            pdamage_indep = self.tick * (self.stack + self.deathfault_buff.is_active() * 6) * multiplier,
+                                            final_damage = self.tick * (self.stack + self.deathfault_buff.is_active() * 6) * multiplier,
                                             att = 2 * self.stack * multiplier)
 
 ######   Passive Skill   ######
@@ -73,10 +73,10 @@ class JobGenerator(ck.JobGenerator):
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리(두손도끼)", pdamage_indep = 10, pdamage = 5) # 두손도끼
+        WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리(두손도끼)", final_damage = 10, pdamage = 5) # 두손도끼
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
 
-        ChanceAttack = core.InformedCharacterModifier("찬스 어택(패시브)",crit = 20)
+        ChanceAttack = core.InformedCharacterModifier("찬스 어택(패시브)",crit_rate = 20)
 
         CombatMastery = core.InformedCharacterModifier("컴뱃 마스터리",armor_ignore = 50 + passive_level)
         AdvancedFinalAttack = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)",att = 30 + passive_level)
@@ -85,9 +85,9 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 44)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5 * (passive_level // 2))
-        Enrage = core.InformedCharacterModifier("인레이지",pdamage_indep = 25 + self.combat // 2, crit_damage = 20 + self.combat // 3)
+        WeaponConstant = core.InformedCharacterModifier("무기상수", final_damage = 44)
+        Mastery = core.InformedCharacterModifier("숙련도", final_damage = -5 + 0.5 * (passive_level // 2))
+        Enrage = core.InformedCharacterModifier("인레이지",final_damage = 25 + self.combat // 2, crit_damage = 20 + self.combat // 3)
 
         return [WeaponConstant, Mastery, Enrage]
 
@@ -120,11 +120,11 @@ class JobGenerator(ck.JobGenerator):
 
         #Damage Skills
         Panic = core.DamageSkill("패닉", 720, 1150, 1, cooltime = 40000).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-        PanicBuff = core.BuffSkill("패닉(디버프)", 0, 40000, cooltime = -1, pdamage_indep = 25, rem = False).wrap(core.BuffSkillWrapper)
+        PanicBuff = core.BuffSkill("패닉(디버프)", 0, 40000, cooltime = -1, final_damage = 25, rem = False).wrap(core.BuffSkillWrapper)
 
         RaisingBlow = core.DamageSkill("레이징 블로우", 600, 200 + 3*self.combat, 8, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         RaisingBlowInrage = core.DamageSkill("레이징 블로우(인레이지)", 600, 215+3*self.combat, 6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함.
-        RaisingBlowInrageFinalizer = core.DamageSkill("레이징 블로우(인레이지)(최종타)", 0, 215+3*self.combat, 2, modifier = core.CharacterModifier(pdamage = 20, crit = 100)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함. 둘을 연결해야 함.
+        RaisingBlowInrageFinalizer = core.DamageSkill("레이징 블로우(인레이지)(최종타)", 0, 215+3*self.combat, 2, modifier = core.CharacterModifier(pdamage = 20, crit_rate = 100)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함. 둘을 연결해야 함.
 
         Insizing = core.DamageSkill("인사이징", 660, 576 + 7 * self.combat, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         InsizingBuff = core.BuffSkill("인사이징(버프)", 0, (30 + self.combat // 2) * 1000, cooltime = -1, pdamage = 25 + ceil(self.combat / 2)).wrap(core.BuffSkillWrapper)
@@ -134,11 +134,11 @@ class JobGenerator(ck.JobGenerator):
 
         RisingRage = core.DamageSkill("레이지 업라이징", 750, 500, 8, cooltime = 10*1000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        Valhalla = core.BuffSkill("발할라", 900, 30 * 1000, cooltime = 150 * 1000, crit = 30, att = 50).wrap(core.BuffSkillWrapper)
+        Valhalla = core.BuffSkill("발할라", 900, 30 * 1000, cooltime = 150 * 1000, crit_rate = 30, att = 50).wrap(core.BuffSkillWrapper)
 
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
-        SwordOfBurningSoul = core.SummonSkill("소드 오브 버닝 소울", 810, 1000, (315+12*vEhc.getV(0,0)), 6, (60+vEhc.getV(0,0)//2) * 1000, cooltime = 120 * 1000, red=True, modifier = core.CharacterModifier(crit = 50)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        SwordOfBurningSoul = core.SummonSkill("소드 오브 버닝 소울", 810, 1000, (315+12*vEhc.getV(0,0)), 6, (60+vEhc.getV(0,0)//2) * 1000, cooltime = 120 * 1000, red=True, modifier = core.CharacterModifier(crit_rate = 50)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         ComboDeathFault = core.DamageSkill("콤보 데스폴트", 1260, 400 + 16*vEhc.getV(2,3), 14, cooltime = 20 * 1000, red=True).isV(vEhc, 2, 3).wrap(core.DamageSkillWrapper)
         ComboDeathFaultBuff = core.BuffSkill("콤보 데스폴트(버프)", 0, 5 * 1000, rem = False, cooltime = -1).isV(vEhc, 2, 3).wrap(core.BuffSkillWrapper)

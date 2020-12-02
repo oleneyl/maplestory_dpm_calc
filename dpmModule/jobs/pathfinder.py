@@ -81,11 +81,11 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit = 40)
+        CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit_rate = 40)
         AncientBowMastery = core.InformedCharacterModifier("에인션트 보우 마스터리", att = 30)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
 
-        EssenceOfArcher = core.InformedCharacterModifier("에센스 오브 아처", crit = 10, pdamage = 10, armor_ignore = 30)
+        EssenceOfArcher = core.InformedCharacterModifier("에센스 오브 아처", crit_rate = 10, pdamage = 10, armor_ignore = 30)
 
         AdditionalTransitionPassive = core.InformedCharacterModifier("에디셔널 트랜지션(패시브)", patt = 20 + passive_level)
 
@@ -98,8 +98,8 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5*ceil(passive_level /2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 30)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -7.5 + 0.5*ceil(passive_level /2))
 
         return [WeaponConstant, Mastery]
 
@@ -124,15 +124,15 @@ class JobGenerator(ck.JobGenerator):
         미스텔 미사용(데미지 감소함)
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        ANCIENT_ARCHERY = core.CharacterModifier(pdamage_indep=10, boss_pdamage=50+20, armor_ignore=20)
+        ANCIENT_ARCHERY = core.CharacterModifier(final_damage=10, boss_pdamage=50+20, armor_ignore=20)
         LINK_DELAY = 30
 
         ######   Skill   ######
         # Buff skills
         AncientBowBooster = core.BuffSkill("에인션트 보우 부스터", 0, 300*1000, rem=True).wrap(core.BuffSkillWrapper)
         CurseTolerance = core.BuffSkill("커스 톨러런스", 0, 300*1000, rem=True).wrap(core.BuffSkillWrapper)
-        SharpEyes = core.BuffSkill("샤프 아이즈", 0, (300+10*self.combat)*1000, crit = 20+ceil(self.combat/2), crit_damage = 15+ceil(self.combat/2), rem=True).wrap(core.BuffSkillWrapper)
-        AncientGuidance = core.BuffSkill("에인션트 가이던스(버프)", 0, 30000, pdamage_indep = 15, cooltime = -1, rem = False).wrap(core.BuffSkillWrapper)
+        SharpEyes = core.BuffSkill("샤프 아이즈", 0, (300+10*self.combat)*1000, crit_rate = 20+ceil(self.combat/2), crit_damage = 15+ceil(self.combat/2), rem=True).wrap(core.BuffSkillWrapper)
+        AncientGuidance = core.BuffSkill("에인션트 가이던스(버프)", 0, 30000, final_damage = 15, cooltime = -1, rem = False).wrap(core.BuffSkillWrapper)
         CurseTransition = core.BuffSkill("커스 트랜지션", 0, 15*1000, crit_damage = 20, cooltime=-1).wrap(core.BuffSkillWrapper) # 5스택 유지 가정
 
         # Summon skills
@@ -144,7 +144,7 @@ class JobGenerator(ck.JobGenerator):
         AdditionalDischarge = core.DamageSkill("에디셔널 디스차지", 0, 100 + 50 + passive_level, 3*3*(0.4+0.1)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         AdditionalDischargeEvolution = core.DamageSkill("에디셔널 디스차지(렐릭 에볼루션)", 0, 100 + 50 + passive_level, 3*(0.4+0.1)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
-        CardinalBlast = core.DamageSkill("카디널 블래스트", 240, 400+5*passive_level, 4 + 1, modifier = core.CharacterModifier(pdamage = 20, pdamage_indep = 50)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 210~270ms 랜덤 (1.2.338 기준 측정), 최종뎀 단리적용
+        CardinalBlast = core.DamageSkill("카디널 블래스트", 240, 400+5*passive_level, 4 + 1, modifier = core.CharacterModifier(pdamage = 20, final_damage = 50)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 210~270ms 랜덤 (1.2.338 기준 측정), 최종뎀 단리적용
         AdditionalBlast = core.DamageSkill("에디셔널 블래스트", 0, 150 + 50 + passive_level, 2*3*(0.4+0.1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         AdditionalBlastEvolution = core.DamageSkill("에디셔널 블래스트(렐릭 에볼루션)", 0, 150 + 50 + passive_level, 3*(0.4+0.1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
 
@@ -163,7 +163,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 5스택 가정, 다른 스킬 사용 중에 시전가능
         EdgeOfResonance = core.DamageSkill("엣지 오브 레조넌스", 0, 800+15*self.combat, 6, cooltime = 15*1000, red=True,
-                        modifier = ANCIENT_ARCHERY + core.CharacterModifier(pdamage_indep = 50)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+                        modifier = ANCIENT_ARCHERY + core.CharacterModifier(final_damage = 50)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
 
         # 인챈트 포스
         ComboAssultHolder = core.DamageSkill("콤보 어썰트", 0, 0, 0, cooltime = 20 * 1000, red=True).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
@@ -274,7 +274,7 @@ class JobGenerator(ck.JobGenerator):
 
         UltimateBlast.onConstraint(core.ConstraintElement('200 이상', RelicCharge, partial(RelicCharge.judge, 200, 1)))
         UltimateBlast.onAfter(RelicCharge.stackController(-1000))
-        UltimateBlast.add_runtime_modifier(RelicCharge, lambda charge: core.CharacterModifier(pdamage_indep = (charge.stack // 250) * 25))
+        UltimateBlast.add_runtime_modifier(RelicCharge, lambda charge: core.CharacterModifier(final_damage = (charge.stack // 250) * 25))
 
         RelicUnboundDischarge.onConstraint(core.ConstraintElement('350 이상', RelicCharge, partial(RelicCharge.judge, 350, 1)))
         RelicUnboundDischarge.onAfter(RelicCharge.stackController(-350))

@@ -33,7 +33,7 @@ class SoulTrapStackWrapper(core.StackSkillWrapper):
         super(SoulTrapStackWrapper, self).spend_time(time)
 
     def get_modifier(self):
-        return core.CharacterModifier(crit = 8 * self.stack, crit_damage = 1*self.stack)
+        return core.CharacterModifier(crit_rate = 8 * self.stack, crit_damage = 1*self.stack)
 
 
 class JobGenerator(ck.JobGenerator):
@@ -50,29 +50,29 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 60)
         SpiritLink_3 = core.InformedCharacterModifier("정령 결속 3",att = 20, pdamage = 20)
 
-        SpiritLink_4 = core.InformedCharacterModifier("정령 결속 4",armor_ignore = 30 + passive_level, boss_pdamage = 30 + passive_level, pdamage_indep = 15 + passive_level // 3)
-        AdvancedNuckleMastery = core.InformedCharacterModifier("고급 너클 숙련",crit_damage = 20 + 2 * ceil(passive_level/3), pdamage_indep = 10 + ceil(passive_level/3))
-        
-        WeaknessFinding = core.InformedCharacterModifier("약점 간파",crit = 25 + ceil(passive_level/2))
+        SpiritLink_4 = core.InformedCharacterModifier("정령 결속 4",armor_ignore = 30 + passive_level, boss_pdamage = 30 + passive_level, final_damage = 15 + passive_level // 3)
+        AdvancedNuckleMastery = core.InformedCharacterModifier("고급 너클 숙련",crit_damage = 20 + 2 * ceil(passive_level/3), final_damage = 10 + ceil(passive_level/3))
+
+        WeaknessFinding = core.InformedCharacterModifier("약점 간파",crit_rate = 25 + ceil(passive_level/2))
 
         LoadedDicePassive = core.InformedCharacterModifier("로디드 다이스(패시브)", att = vEhc.getV(4,4) + 10)
 
-        return [PhisicalTraining, SpiritLink_3, 
+        return [PhisicalTraining, SpiritLink_3,
                 SpiritLink_4, AdvancedNuckleMastery, WeaknessFinding, LoadedDicePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5 * 2 * (passive_level // 3))   
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 70)
+        Mastery = core.InformedCharacterModifier("숙련도", final_damage = -5 + 0.5 * 2 * (passive_level // 3))
         Weakness = core.InformedCharacterModifier("약화",pdamage = 20) #디버프지만 상시발동가정
 
         # 약점 간파: 체력 (50 + passive_level)% 이하일 때 발동
         WEAKNESS_BONUS = False
 
         WeaknessFinding_Bonus = core.InformedCharacterModifier("약점 간파(보너스)", crit_damage = (20+passive_level//3) * WEAKNESS_BONUS)
-        
+
         return [WeaponConstant, Mastery, Weakness, WeaknessFinding_Bonus]
-        
+
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(InactiveRule("파쇄철조-회", "파쇄철조-반"), RuleSet.BASE)
@@ -111,7 +111,7 @@ class JobGenerator(ck.JobGenerator):
 
         SoulAttack = core.DamageSkill("귀참", 630 + 5 * self.combat, 265, 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DoubleBodyAttack = core.DamageSkill("분혼 격참(공격)", 0, 2000 + 40*self.combat, 1).wrap(core.DamageSkillWrapper)
-        DoubleBody = core.BuffSkill("분혼 격참", 810, 10000, cooltime = (180-6*self.combat) * 1000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
+        DoubleBody = core.BuffSkill("분혼 격참", 810, 10000, cooltime = (180-6*self.combat) * 1000, red = True, final_damage = 20).wrap(core.BuffSkillWrapper)
         DoubleBodyRegistance = core.BuffSkill("분혼 격참(저항)", 0, 90000, cooltime = -1).wrap(core.BuffSkillWrapper)
 
         #하이퍼스킬
@@ -123,7 +123,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 랑과 무조건 함께 사용 (최종뎀 700%)
         SpiritFrenzy = core.DamageSkill("소혼 장막(시전)", 0, 0, 0, cooltime=10*1000 + 10080).wrap(core.DamageSkillWrapper)
-        SpiritFrenzy_Tick = core.DamageSkill("소혼 장막", 180, 45, 5, cooltime = -1, modifier=core.CharacterModifier(pdamage_indep = 700)).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
+        SpiritFrenzy_Tick = core.DamageSkill("소혼 장막", 180, 45, 5, cooltime = -1, modifier=core.CharacterModifier(final_damage = 700)).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
 
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
@@ -134,8 +134,8 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.get_weapon_att("너클")
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
-        
-        SoulConcentrate = core.BuffSkill("정령 집속", 900, (30+vEhc.getV(2,1))*1000, cooltime = 120*1000, red=True, pdamage_indep = (5+vEhc.getV(2,1)//2)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
+
+        SoulConcentrate = core.BuffSkill("정령 집속", 900, (30+vEhc.getV(2,1))*1000, cooltime = 120*1000, red=True, final_damage = (5+vEhc.getV(2,1)//2)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
         SoulConcentrateSummon = core.SummonSkill("정령 집속(무작위)", 0, 2000, 1742, 1, (30+vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
 
         # 귀문진: 정령을 한번에 2마리 소환함
@@ -150,7 +150,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 파쇄철조 (디버프용)
         BladeImp = core.DamageSkill("파쇄철조-회", 360, 160, 4).wrap(core.DamageSkillWrapper)
-        BladeImpBuff = core.BuffSkill("파쇄철조-반", 0, 15 * 1000, cooltime=-1, pdamage_indep=10).wrap(core.BuffSkillWrapper)
+        BladeImpBuff = core.BuffSkill("파쇄철조-반", 0, 15 * 1000, cooltime=-1, final_damage=10).wrap(core.BuffSkillWrapper)
 
         ######   Skill Wrapper   ######
 
@@ -163,7 +163,7 @@ class JobGenerator(ck.JobGenerator):
         def double_body_single_target(doubleBody):
             if doubleBody.is_active():
                 # 분혼 도중 1타겟 스킬 데미지 감소, (100/120) * (0.5*1 + 0.5*0.2)
-                return core.CharacterModifier(pdamage_indep=-40) - core.CharacterModifier(pdamage_indep=20)
+                return core.CharacterModifier(final_damage=-40) - core.CharacterModifier(final_damage=20)
             return core.CharacterModifier()
 
         #정결극 위계
@@ -210,7 +210,7 @@ class JobGenerator(ck.JobGenerator):
         SpiritFrenzyConstraint = core.ConstraintElement("소혼 장막(제한)", EnhanceSpiritLinkSummon_J, EnhanceSpiritLinkSummon_J.is_active)
         SpiritFrenzy.onConstraint(SpiritFrenzyConstraint)
 
-        return(BasicAttackWrapper, 
+        return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     EnhanceSpiritLink, LuckyDice, HerosOath,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), Overdrive, SoulConcentrate, DoubleBody, SoulTrapStack,

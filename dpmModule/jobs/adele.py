@@ -109,17 +109,17 @@ class JobGenerator(ck.JobGenerator):
         Rudiment = core.InformedCharacterModifier("루디먼트", att=30)
         Mastery = core.InformedCharacterModifier("마스터리", att=30)
         Train = core.InformedCharacterModifier("트레인", stat_main=60)
-        Accent = core.InformedCharacterModifier("어센트", att=30, pdamage_indep=15, crit=20)
+        Accent = core.InformedCharacterModifier("어센트", att=30, final_damage=15, crit_rate=20)
         Expert = core.InformedCharacterModifier("엑스퍼트", att=30)
-        Demolition = core.InformedCharacterModifier("데몰리션", pdamage_indep=30+passive_level, armor_ignore=20+passive_level)
-        Attain = core.InformedCharacterModifier("어테인", att=30+passive_level, boss_pdamage=10+ceil(passive_level/2), crit=20+passive_level)
+        Demolition = core.InformedCharacterModifier("데몰리션", final_damage=30+passive_level, armor_ignore=20+passive_level)
+        Attain = core.InformedCharacterModifier("어테인", att=30+passive_level, boss_pdamage=10+ceil(passive_level/2), crit_rate=20+passive_level)
 
         return [MagicCircuit, Pace, Rudiment, Mastery, Train, Accent, Expert, Demolition, Attain]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5 * ceil(passive_level / 2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 34)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -5 + 0.5 * ceil(passive_level / 2))
 
         return [WeaponConstant, Mastery]
 
@@ -155,7 +155,7 @@ class JobGenerator(ck.JobGenerator):
 
         Resonance = core.DamageSkill("레조넌스", 690, (120+125+265+passive_level*3) * (1.15**6), 6, cooltime=10*1000, red=True).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 900ms, 스택 유지를 위해 10초마다 사용함
 
-        ResonanceStack = core.BuffSkill('레조넌스(스택)', 0, 30*1000, cooltime=-1, pdamage_indep=10, armor_ignore=10).wrap(core.BuffSkillWrapper) # 최종뎀 5, 방무 5, 최대2회. 상시 중첩으로 가정
+        ResonanceStack = core.BuffSkill('레조넌스(스택)', 0, 30*1000, cooltime=-1, final_damage=10, armor_ignore=10).wrap(core.BuffSkillWrapper) # 최종뎀 5, 방무 5, 최대2회. 상시 중첩으로 가정
 
         Creation = core.StackDamageSkillWrapper(
             core.DamageSkill('크리에이션', 0, 200+240+270+passive_level*3, 1, cooltime = 1500, red=True).setV(vEhc, 5, 2, False),
@@ -181,12 +181,12 @@ class JobGenerator(ck.JobGenerator):
 
         Blossom = core.DamageSkill('블로섬', 420, 650+self.combat*6, 8, cooltime=20*1000*0.75, red=True).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 50%결정. 클라공속 420ms, 공속 안받음
         BlossomExceed = core.StackDamageSkillWrapper(
-            core.DamageSkill('블로섬(초과)', 0, 650+self.combat*6, 8, cooltime=-1, modifier=core.CharacterModifier(pdamage_indep=-25)).setV(vEhc, 3, 2, False),
+            core.DamageSkill('블로섬(초과)', 0, 650+self.combat*6, 8, cooltime=-1, modifier=core.CharacterModifier(final_damage=-25)).setV(vEhc, 3, 2, False),
             Order,
             lambda order: max(order.get_stack() * 0.8 - 1, 0)
         )
 
-        Marker = core.DamageSkill('마커', 690, 500, 6*2, cooltime=60*1000, modifier=core.CharacterModifier(pdamage_indep=300)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 최종뎀 300% 증가, 임의위치 조각 5개, 1히트, 결정 5개, 생성/파쇄 각각 공격, 클라공속 900ms
+        Marker = core.DamageSkill('마커', 690, 500, 6*2, cooltime=60*1000, modifier=core.CharacterModifier(final_damage=300)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 최종뎀 300% 증가, 임의위치 조각 5개, 1히트, 결정 5개, 생성/파쇄 각각 공격, 클라공속 900ms
         Scool = core.DamageSkill('스콜', 690, 1000, 12, cooltime=180*1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) #바인드. 클라공속 900ms
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60*1000, pdamage = 10, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
 

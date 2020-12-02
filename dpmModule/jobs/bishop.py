@@ -21,7 +21,7 @@ class PrayWrapper(core.BuffSkillWrapper):
 
     def get_modifier(self):
         if self.is_active():
-            return core.CharacterModifier(pdamage_indep = 5 + min(self.stat // 2500, 45))
+            return core.CharacterModifier(final_damage = 5 + min(self.stat // 2500, 45))
         else:
             return self.disabledModifier
 
@@ -49,8 +49,8 @@ class JobGenerator(ck.JobGenerator):
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
         SpellMastery = core.InformedCharacterModifier("스펠 마스터리",att = 10)
 
-        MagicCritical = core.InformedCharacterModifier("매직 크리티컬",crit = 30, crit_damage = 13)
-        HolyFocus = core.InformedCharacterModifier("홀리 포커스",crit = 40)
+        MagicCritical = core.InformedCharacterModifier("매직 크리티컬",crit_rate = 30, crit_damage = 13)
+        HolyFocus = core.InformedCharacterModifier("홀리 포커스",crit_rate = 40)
 
         MasterMagic = core.InformedCharacterModifier("마스터 매직",att = 30 + passive_level * 3, buff_rem = 50 + passive_level * 5)
         ArcaneAim = core.InformedCharacterModifier("아케인 에임", armor_ignore = 20)
@@ -64,12 +64,12 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5)
-        BlessingEnsemble = core.InformedCharacterModifier("블레싱 앙상블",pdamage_indep = 3)
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 20)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -2.5)
+        BlessingEnsemble = core.InformedCharacterModifier("블레싱 앙상블",final_damage = 3)
 
         ArcaneAim = core.InformedCharacterModifier("아케인 에임",pdamage = 40 + ceil(passive_level / 2))
-        VengenceOfAngelOn = core.InformedCharacterModifier("벤전스 오브 엔젤(on)", att = 50, pdamage_indep = 30, armor_ignore = 20, pdamage=-40, prop_ignore=10)
+        VengenceOfAngelOn = core.InformedCharacterModifier("벤전스 오브 엔젤(on)", att = 50, final_damage = 30, armor_ignore = 20, pdamage=-40, prop_ignore=10)
         AngelRayArmorIgnore = core.InformedCharacterModifier("엔젤레이(방깎)", armor_ignore = (10 + ceil(self.combat / 3)) * 4)
         return [WeaponConstant, Mastery, ArcaneAim, VengenceOfAngelOn, BlessingEnsemble, AngelRayArmorIgnore]
 
@@ -90,7 +90,7 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 240000, rem = True).wrap(core.BuffSkillWrapper)
         AdvancedBless = core.BuffSkill("어드밴스드 블레스", 0, 240000, att = 30 + self.combat*1 + 20, boss_pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
-        Heal = core.BuffSkill("힐", 600, 2000, cooltime=4000, pdamage_indep=10, red=True).wrap(core.BuffSkillWrapper)
+        Heal = core.BuffSkill("힐", 600, 2000, cooltime=4000, final_damage=10, red=True).wrap(core.BuffSkillWrapper)
         Infinity = adventurer.InfinityWrapper(self.combat)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
@@ -144,7 +144,7 @@ class JobGenerator(ck.JobGenerator):
 
         for sk in [HolyArrow, ShiningRay, Genesis, BigBang, AngelRay, PeaceMaker, PeaceMakerFinal, DivinePunishmentTick]:
             sk.onJustAfter(SacredMark.stackController(0, name="표식(소모)", dtype="set"))
-            sk.add_runtime_modifier(SacredMark, lambda skill: core.CharacterModifier(pdamage_indep = skill.stack))
+            sk.add_runtime_modifier(SacredMark, lambda skill: core.CharacterModifier(final_damage = skill.stack))
 
         # Peace Maker
         PeaceMakerRepeat = core.RepeatElement(PeaceMaker, PEACEMAKER_HIT)

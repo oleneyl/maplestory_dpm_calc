@@ -18,7 +18,7 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
     아머 피어싱 - 적 방어율만큼 최종뎀 추가, 방무+50%. 쿨타임 9초, 공격마다 1초씩 감소, 최소 재발동 대기시간 1초
     '''
     def __init__(self, combat, chtr):
-        self.piercingModifier = core.CharacterModifier(pdamage_indep = 300 * (1 + combat * 0.05), armor_ignore = 50 * (1 + combat * 0.02))
+        self.piercingModifier = core.CharacterModifier(final_damage = 300 * (1 + combat * 0.05), armor_ignore = 50 * (1 + combat * 0.02))
         self.emptyModifier = core.CharacterModifier()
         self.skill_modifier = chtr.get_skill_modifier()
         skill = core.BuffSkill("아머 피어싱", 0, 0, 9000, red=True)
@@ -97,7 +97,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit = 40)
+        CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit_rate = 40)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
 
         MarkmanShip = core.InformedCharacterModifier("마크맨쉽",armor_ignore = 25, patt = 25)
@@ -112,10 +112,10 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5 *ceil(passive_level / 2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 30)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -7.5 + 0.5 *ceil(passive_level / 2))
 
-        ExtremeArchery = core.InformedCharacterModifier("익스트림 아처리",att = 40, pdamage_indep = 30)
+        ExtremeArchery = core.InformedCharacterModifier("익스트림 아처리",att = 40, final_damage = 30)
 
         return [WeaponConstant, Mastery, ExtremeArchery]
 
@@ -138,7 +138,7 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         SoulArrow = core.BuffSkill("소울 애로우", 0, 300 * 1000, att = 30).wrap(core.BuffSkillWrapper) # 펫버프
         AdvancedQuibber = core.BuffSkill("어드밴스드 퀴버", 0, 30 * 1000, crit_damage = 8).wrap(core.BuffSkillWrapper)   #쿨타임 무시 가능, 딜레이 0
-        SharpEyes = core.BuffSkill("샤프 아이즈", 690, 300 * 1000, crit = 20 + 5 + ceil(self.combat / 2), crit_damage = 15 + ceil(self.combat / 2), armor_ignore = 5).wrap(core.BuffSkillWrapper)
+        SharpEyes = core.BuffSkill("샤프 아이즈", 690, 300 * 1000, crit_rate = 20 + 5 + ceil(self.combat / 2), crit_damage = 15 + ceil(self.combat / 2), armor_ignore = 5).wrap(core.BuffSkillWrapper)
         Preparation = core.BuffSkill("프리퍼레이션", 900, 30 * 1000, cooltime = 90 * 1000, att = 50, boss_pdamage = 20).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 

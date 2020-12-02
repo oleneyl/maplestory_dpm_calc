@@ -11,18 +11,18 @@ class InfinityWrapper(core.BuffSkillWrapper):
         self.passedTime = 0
         self.interval = interval
         self.combat = combat
-        
+
     def spend_time(self, time):
         if self.is_active():
             self.passedTime += time
         super(InfinityWrapper, self).spend_time(time)
-            
+
     def get_modifier(self):
         if self.is_active():
-            return core.CharacterModifier(pdamage_indep = (70 + self.combat + 3 * (self.passedTime // (self.interval*1000))) )
+            return core.CharacterModifier(final_damage = (70 + self.combat + 3 * (self.passedTime // (self.interval*1000))) )
         else:
             return core.CharacterModifier()
-        
+
     def _use(self, skill_modifier):
         self.passedTime = 0
         return super(InfinityWrapper, self)._use(skill_modifier)
@@ -58,14 +58,14 @@ class UnstableMemorizeWrapper(core.DamageSkillWrapper):
 
         for k in self.stacks:
             self.stacks[k] += self.weights[k]
-        
+
         nextId = sorted(self.stacks.items(), key = lambda x: x[1], reverse = True)[0][0]
         self.stacks[nextId] -= self.weight_total
 
         skill = self.skills[nextId]
         task = core.Task(skill, partial(self._indirect_use, skill, self.skill_modifier))
         skill.sync(task, self.skill_modifier)
-        
+
         result.cascade = [task]
 
         return result

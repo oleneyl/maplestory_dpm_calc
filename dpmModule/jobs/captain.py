@@ -20,15 +20,15 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        CriticalRoar = core.InformedCharacterModifier("크리티컬 로어",crit = 20, crit_damage = 5)
+        CriticalRoar = core.InformedCharacterModifier("크리티컬 로어",crit_rate = 20, crit_damage = 5)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         HalopointBullet = core.InformedCharacterModifier("할로포인트 불릿",att = 60)
-        FullMetaJacket = core.InformedCharacterModifier("풀 메탈 재킷",pdamage_indep = 20, crit = 30, armor_ignore = 20)
+        FullMetaJacket = core.InformedCharacterModifier("풀 메탈 재킷",final_damage = 20, crit_rate = 30, armor_ignore = 20)
         ContinualAimingPassive = core.InformedCharacterModifier("컨티뉴얼 에이밍(패시브)",crit_damage = 20 + self.combat)
         CaptainDignityPassive = core.InformedCharacterModifier("캡틴 디그니티(패시브)",att = 30 + passive_level)
         CrueCommandership = core.InformedCharacterModifier("크루 커맨더쉽",crit_damage = 25 + passive_level)
 
-        UnwierdingNectar = core.InformedCharacterModifier("언위어링 넥타", crit=10)
+        UnwierdingNectar = core.InformedCharacterModifier("언위어링 넥타", crit_rate=10)
 
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
 
@@ -38,8 +38,8 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 50)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5*ceil(passive_level/2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 50)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -7.5 + 0.5*ceil(passive_level/2))
 
         return [WeaponConstant, Mastery]
 
@@ -75,7 +75,7 @@ class JobGenerator(ck.JobGenerator):
         DEADEYEACC = 3
         DEADEYEAIM = 3480
         BULLET_PARTY_TICK = 150
-        CONTINUAL_AIMING = core.CharacterModifier(pdamage_indep = 25 + 2*self.combat)
+        CONTINUAL_AIMING = core.CharacterModifier(final_damage = 25 + 2*self.combat)
 
         ######   Skill   ######
         # Buff skills
@@ -83,13 +83,13 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
         InfiniteBullet = core.BuffSkill("인피닛 불릿", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
         LuckyDice = core.BuffSkill("로디드 다이스", 990, 180*1000, pdamage = 20+10/6+10/6*(5/6+1/11)*(10*(5+passive_level)*0.01)).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
-        QuickDraw = core.BuffSkill("퀵 드로우", 0, core.infinite_time(), cooltime = -1, pdamage_indep = 25 + self.combat).wrap(core.BuffSkillWrapper) # 래피드/불파 도중 사용가능
+        QuickDraw = core.BuffSkill("퀵 드로우", 0, core.infinite_time(), cooltime = -1, final_damage = 25 + self.combat).wrap(core.BuffSkillWrapper) # 래피드/불파 도중 사용가능
         QuickDrawStack = core.StackSkillWrapper(core.BuffSkill("퀵 드로우(준비)", 0, 99999999), 1)
 
         # Summon Skills
         OctaQuaterdeck = core.SummonSkill("옥타 쿼터덱", 630, 60000/110, 300, 1, 30000, rem = True, cooltime = 10000).setV(vEhc, 5, 2, True).wrap(core.SummonSkillWrapper)
-        SummonCrew = core.SummonSkill("서먼 크루", 900, 60000/17, 465, 2, 120000, modifier=core.CharacterModifier(pdamage_indep = 15 + passive_level), rem = True).setV(vEhc, 6, 2, True).wrap(core.SummonSkillWrapper)   #분당 17타, 평균 퍼뎀 465
-        SummonCrewBuff = core.BuffSkill("서먼 크루(버프)", 0, 120000, cooltime = -1, crit = (15+passive_level)/2, crit_damage = 5/2, att = 45 + 3*passive_level).wrap(core.BuffSkillWrapper)
+        SummonCrew = core.SummonSkill("서먼 크루", 900, 60000/17, 465, 2, 120000, modifier=core.CharacterModifier(final_damage = 15 + passive_level), rem = True).setV(vEhc, 6, 2, True).wrap(core.SummonSkillWrapper)   #분당 17타, 평균 퍼뎀 465
+        SummonCrewBuff = core.BuffSkill("서먼 크루(버프)", 0, 120000, cooltime = -1, crit_rate = (15+passive_level)/2, crit_damage = 5/2, att = 45 + 3*passive_level).wrap(core.BuffSkillWrapper)
 
         '''
         돈틀레스 : 330 보통 13/22 타수3 600
@@ -106,7 +106,7 @@ class JobGenerator(ck.JobGenerator):
 
         # Damage Skills
         RapidFire = core.DamageSkill("래피드 파이어", 150, 325 + 3*self.combat, 1, modifier = core.CharacterModifier(pdamage = 30, boss_pdamage = 20) + CONTINUAL_AIMING).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Headshot = core.DamageSkill("헤드 샷", 450, 525+5*self.combat, 12+1, cooltime = 5000, red=True, modifier = core.CharacterModifier(crit = 100, armor_ignore = 60, pdamage = 20) + CONTINUAL_AIMING).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
+        Headshot = core.DamageSkill("헤드 샷", 450, 525+5*self.combat, 12+1, cooltime = 5000, red=True, modifier = core.CharacterModifier(crit_rate = 100, armor_ignore = 60, pdamage = 20) + CONTINUAL_AIMING).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
 
         Nautilus = core.DamageSkill("노틸러스", 690, 440+130+(4+3)*self.combat, 7, red = True, cooltime = 30000, modifier = CONTINUAL_AIMING).setV(vEhc, 8, 2, True).wrap(core.DamageSkillWrapper)
         CaptainDignityNormal = core.DamageSkill("캡틴 디그니티", 0, 275 + 3*passive_level, 1, modifier = CONTINUAL_AIMING).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
@@ -126,7 +126,7 @@ class JobGenerator(ck.JobGenerator):
 
         BulletParty = core.DamageSkill("불릿 파티", 0, 0, 0, cooltime = 75000, red = True).wrap(core.DamageSkillWrapper)
         BulletPartyTick = core.DamageSkill("불릿 파티(틱)", BULLET_PARTY_TICK, 230+9*vEhc.getV(5,5), 5, modifier = CONTINUAL_AIMING).isV(vEhc,5,5).wrap(core.DamageSkillWrapper) #12초간 지속 -> 50회 시전
-        DeadEye = core.DamageSkill("데드아이", 450, (320+13*vEhc.getV(3,3))*DEADEYEACC, 15, cooltime = 30000+DEADEYEAIM, red = True, modifier = core.CharacterModifier(crit = 100, pdamage_indep = 4*11) + CONTINUAL_AIMING).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) # TODO: 조준시간은 쿨감 안받아야함
+        DeadEye = core.DamageSkill("데드아이", 450, (320+13*vEhc.getV(3,3))*DEADEYEACC, 15, cooltime = 30000+DEADEYEAIM, red = True, modifier = core.CharacterModifier(crit_rate = 100, final_damage = 4*11) + CONTINUAL_AIMING).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) # TODO: 조준시간은 쿨감 안받아야함
         NautilusAssult = core.SummonSkill("노틸러스 어썰트", 690, 360, 600+24*vEhc.getV(0,0), 6, 360*7-1, cooltime = 180000, red = True, modifier = CONTINUAL_AIMING).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)#7회 2초간
         NautilusAssult_2 = core.SummonSkill("노틸러스 어썰트(일제 사격)", 0, 160, 300+12*vEhc.getV(0,0), 12, 160*36-1, cooltime = -1, modifier = CONTINUAL_AIMING).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)#36회 6초간
         DeathTriggerInit = core.DamageSkill("데스 트리거(개시)", 360, 0, 0, cooltime=45000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)

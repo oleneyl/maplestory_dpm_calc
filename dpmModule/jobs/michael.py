@@ -19,7 +19,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 1
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(crit = 20)
+        return core.CharacterModifier(crit_rate = 20)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -27,12 +27,12 @@ class JobGenerator(ck.JobGenerator):
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",patt = 10)
 
         PhisicalTraiging = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
-        SwordMastery = core.InformedCharacterModifier("소드 마스터리",pdamage_indep = 15)
+        SwordMastery = core.InformedCharacterModifier("소드 마스터리",final_damage = 15)
         InvigoratePassive = core.InformedCharacterModifier("격려(패시브)",att = 20)
-        Intension = core.InformedCharacterModifier("인텐션",stat_main = 60, crit = 20, pdamage_indep = 10)
+        Intension = core.InformedCharacterModifier("인텐션",stat_main = 60, crit_rate = 20, final_damage = 10)
         ShiningCharge = core.InformedCharacterModifier("샤이닝 차지(패시브)",pdamage = 60)
         CombatMastery = core.InformedCharacterModifier("컴뱃 마스터리",armor_ignore = 40+2*passive_level)
-        AdvancedSowrdMastery = core.InformedCharacterModifier("어드밴스드 소드 마스터리",att = 30+passive_level, crit = 15+passive_level//3, crit_damage = 10)
+        AdvancedSowrdMastery = core.InformedCharacterModifier("어드밴스드 소드 마스터리",att = 30+passive_level, crit_rate = 15+passive_level//3, crit_damage = 10)
         AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)",att = 30+passive_level)
 
         return [ElementalExpert, PhisicalTraiging, SwordMastery,
@@ -42,11 +42,11 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         PARTYPEOPLE = 1
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level/2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 20)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -5 + 0.5*ceil(passive_level/2))
 
         SoulLink = core.InformedCharacterModifier("소울 링크",pdamage = 5*PARTYPEOPLE)
-        SoulRage = core.InformedCharacterModifier("소울 레이지", pdamage_indep = 30+self.combat, crit_damage = 8)
+        SoulRage = core.InformedCharacterModifier("소울 레이지", final_damage = 30+self.combat, crit_damage = 8)
 
         return [WeaponConstant, Mastery, SoulLink, SoulRage]
 
@@ -70,7 +70,7 @@ class JobGenerator(ck.JobGenerator):
         GuardOfLight = core.BuffSkill("빛의 수호", 900, 30000, rem = True, red = True, cooltime = 180000, pdamage = 20).wrap(core.BuffSkillWrapper)
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
         Invigorate = core.BuffSkill("격려", 0, 180000, rem = True, att = 30).wrap(core.BuffSkillWrapper)
-        SoulAttack = core.BuffSkill("소울 어택", 0, 10000, cooltime = -1, pdamage_indep = 25, crit = 20).wrap(core.BuffSkillWrapper)
+        SoulAttack = core.BuffSkill("소울 어택", 0, 10000, cooltime = -1, final_damage = 25, crit_rate = 20).wrap(core.BuffSkillWrapper)
 
         # Damage skills
         LoyalGuard_1 = core.DamageSkill("로얄 가드(1)", 630, 275+chtr.level, 4, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
@@ -96,11 +96,11 @@ class JobGenerator(ck.JobGenerator):
         # 5th
         CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 3, 3)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
-        RoIias = core.BuffSkill("로 아이아스", 840, (75+3*vEhc.getV(0,0))*1000, cooltime = 300*1000, red = True, pdamage_indep = 5 + (35+3*(vEhc.getV(0,0)//4))//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        RoIias = core.BuffSkill("로 아이아스", 840, (75+3*vEhc.getV(0,0))*1000, cooltime = 300*1000, red = True, final_damage = 5 + (35+3*(vEhc.getV(0,0)//4))//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ClauSolis = core.DamageSkill("클라우 솔라스", 690, 700+28*vEhc.getV(4,4), 7, cooltime = 12000, red = True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)    #로얄가드 버프지속시간 6초 증가. 100% 암흑 5초
         ClauSolisSummon = core.SummonSkill("클라우 솔라스(소환)", 0, 5000, 350+14*vEhc.getV(4,4), 7, 7000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #100% 암흑 5초
 
-        SwordOfSoullight = core.BuffSkill("소드 오브 소울 라이트", 810, 30000, cooltime = 180*1000, red = True, patt = 15 + vEhc.getV(1,1)//2, crit = 100, armor_ignore = 100).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
+        SwordOfSoullight = core.BuffSkill("소드 오브 소울 라이트", 810, 30000, cooltime = 180*1000, red = True, patt = 15 + vEhc.getV(1,1)//2, crit_rate = 100, armor_ignore = 100).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         SoullightSlash = core.DamageSkill("소울 라이트 슬래시", 630, 400+16*vEhc.getV(1,1), 12).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
 
         LightOfCourage = core.BuffSkill("라이트 오브 커리지", 750, 25000, cooltime=90*1000, red=True, pdamage=10+vEhc.getV(0,0)//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)

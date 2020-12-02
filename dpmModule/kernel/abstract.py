@@ -125,7 +125,7 @@ class AbstractVEnhancer:
         when enhancing.
         ''')
 
-    def get_reinforcement_with_register(self, index: int, incr, crit: bool, target: AbstractSkill) -> CharacterModifier:
+    def get_reinforcement_with_register(self, index: int, incr, crit_rate: bool, target: AbstractSkill) -> CharacterModifier:
         raise NotImplementedError('''get_reinforcement_with_register must return CharacterModifier, with registering given skill
         as given priority, with appropriate Modifier.
         ''')

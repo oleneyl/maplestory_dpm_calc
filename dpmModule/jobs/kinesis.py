@@ -62,7 +62,7 @@ class LawOfGravityDebuffWrapper(core.SummonSkillWrapper):
 
     def get_modifier(self):
         modifier = super(LawOfGravityDebuffWrapper, self).get_modifier()
-        return modifier + core.CharacterModifier(pdamage_indep = min(self.mobPulled * 3, 40)) # TODO: 2 아니면 3인데 실험 필요함
+        return modifier + core.CharacterModifier(final_damage = min(self.mobPulled * 3, 40)) # TODO: 2 아니면 3인데 실험 필요함
 
     def get_delay(self):
         return max(self.skill.delay - self.mobPulled * 120, 1200)
@@ -79,22 +79,22 @@ class JobGenerator(ck.JobGenerator):
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        SuperSensitive = core.InformedCharacterModifier("초감각",crit = 10)
+        SuperSensitive = core.InformedCharacterModifier("초감각",crit_rate = 10)
         PsychicForce1Passive = core.InformedCharacterModifier("사이킥 포스1(패시브)",att = 10)
         Inertia1 = core.InformedCharacterModifier("내재 1",att = 10)
 
         PsychicForce2Passive = core.InformedCharacterModifier("사이킥 포스 2(패시브)",att = 10)
         PureForce = core.InformedCharacterModifier("순수한 힘",pdamage = 20)
         Inertia2 = core.InformedCharacterModifier("내재 2",att = 10)
-        ESPMastery = core.InformedCharacterModifier("ESP 마스터리",crit = 10, stat_main = 40)
+        ESPMastery = core.InformedCharacterModifier("ESP 마스터리",crit_rate = 10, stat_main = 40)
 
         MindEnhance = core.InformedCharacterModifier("정신 강화",patt = 10)
-        Accurate = core.InformedCharacterModifier("정밀",crit = 20, crit_damage = 20)
+        Accurate = core.InformedCharacterModifier("정밀",crit_rate = 20, crit_damage = 20)
         PsychicChargingPassive = core.InformedCharacterModifier("사이킥 차징(패시브)",boss_pdamage = 30 + self.combat)
         PsychicForce3Passive = core.InformedCharacterModifier("사이킥 포스 3(패시브)",att = 10)
 
         ESPBattleOrder = core.InformedCharacterModifier("ESP 배틀오더",att = 50 + 2*passive_level, pdamage = 20 + passive_level)
-        Transcendence = core.InformedCharacterModifier("각성",pdamage_indep = 25 + passive_level)
+        Transcendence = core.InformedCharacterModifier("각성",final_damage = 25 + passive_level)
         SupremeConcentration = core.InformedCharacterModifier("정신집중-유지", buff_rem = 20+passive_level)
         Transport = core.InformedCharacterModifier("전달",armor_ignore = 25 + passive_level)
         Mastery = core.InformedCharacterModifier("숙달",crit_damage = 10 + passive_level)
@@ -106,9 +106,9 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + passive_level)
-        PsychicForce3Passive = core.InformedCharacterModifier("사이킥 포스 3(패시브)", pdamage_indep = 20)
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 20)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -5 + passive_level)
+        PsychicForce3Passive = core.InformedCharacterModifier("사이킥 포스 3(패시브)", final_damage = 20)
         return [WeaponConstant, Mastery, PsychicForce3Passive]
 
 
@@ -140,9 +140,9 @@ class JobGenerator(ck.JobGenerator):
 
         PsychicForce3 = core.DamageSkill("싸이킥 포스3", 270, 0, 0).wrap(core.DamageSkillWrapper)
         PsychicForce3Dot = core.DotSkill("싸이킥 포스3(도트)", 0, 1000, 403.125, 1, 30000, cooltime = -1).wrap(core.SummonSkillWrapper) # ~20초 평균 퍼뎀
-        PsychicGround = core.BuffSkill("싸이킥 그라운드2", 270, 30000 + 15000, rem = False, armor_ignore = 10 + 6*1, pdamage_indep = 10 + 3*1).wrap(core.BuffSkillWrapper)
+        PsychicGround = core.BuffSkill("싸이킥 그라운드2", 270, 30000 + 15000, rem = False, armor_ignore = 10 + 6*1, final_damage = 10 + 3*1).wrap(core.BuffSkillWrapper)
         PsychicGroundDamage = core.DamageSkill("싸이킥 그라운드2(공격)", 0, 500+10*self.combat, 1).wrap(core.DamageSkillWrapper) # +1
-        PsycoBreak = core.BuffSkill("싸이코 브레이크", 720, 30000, pdamage_indep = 5 * 2, rem = False).wrap(core.BuffSkillWrapper) #+1
+        PsycoBreak = core.BuffSkill("싸이코 브레이크", 720, 30000, final_damage = 5 * 2, rem = False).wrap(core.BuffSkillWrapper) #+1
         PsycoBreakDamage = core.DamageSkill("싸이코 브레이크(공격)", 0, 1000 +7*self.combat, 4).wrap(core.DamageSkillWrapper)
 
         TeleKinesis = core.DamageSkill("텔레키네시스", 0, 350, 0.7).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
@@ -157,7 +157,7 @@ class JobGenerator(ck.JobGenerator):
 
         #하이퍼
         EverPsychic = core.DamageSkill("에버 싸이킥", 870, 400, 16, cooltime = 120000).wrap(core.DamageSkillWrapper) # 캔슬 통해 딜레 870ms
-        EverPsychicFinal = core.DamageSkill("에버 싸이킥(최종)", 0, 1500, 1,  modifier = core.CharacterModifier(armor_ignore = 50, crit = 100)).wrap(core.DamageSkillWrapper)
+        EverPsychicFinal = core.DamageSkill("에버 싸이킥(최종)", 0, 1500, 1,  modifier = core.CharacterModifier(armor_ignore = 50, crit_rate = 100)).wrap(core.DamageSkillWrapper)
         #Psycometry = core.DamageSkill()
         PsychicOver = core.BuffSkill("싸이킥 오버", 0, 30000, cooltime = 210000).wrap(core.BuffSkillWrapper) # 소모량 절반 / 포인트 지속증가(초당 1)
         PsychicOverSummon = core.SummonSkill("싸이킥 오버(소환)", 0, 750, 0, 0, 30000, cooltime = -1).wrap(core.SummonSkillWrapper)

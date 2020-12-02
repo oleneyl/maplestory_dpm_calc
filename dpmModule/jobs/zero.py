@@ -20,7 +20,7 @@ https://github.com/Monolith11/memo/wiki/Zero-Skill-Mechanics
 
 class CriticalBindWrapper(core.BuffSkillWrapper):
     def __init__(self, alphaState: core.BuffSkillWrapper, betaState: core.BuffSkillWrapper):
-        skill = core.BuffSkill("크리티컬 바인드", 0, 4000, cooltime=35000, crit=30, crit_damage=20)
+        skill = core.BuffSkill("크리티컬 바인드", 0, 4000, cooltime=35000, crit_rate=30, crit_damage=20)
         super(CriticalBindWrapper, self).__init__(skill)
         self.alphaState = alphaState
         self.betaState = betaState
@@ -53,8 +53,8 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
-        ResolutionTime = core.InformedCharacterModifier("리졸브 타임",pdamage_indep = 25, stat_main = 50)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -5)
+        ResolutionTime = core.InformedCharacterModifier("리졸브 타임",final_damage = 25, stat_main = 50)
         # 유니온 6000 기준
         # 4카5앱 임시 구현 (보공 +30%, 방무 -10%)
         LuckyHat_Temp = core.InformedCharacterModifier("카오스 벨룸의 헬름 (임시)", boss_pdamage = 30) - core.ExtendedCharacterModifier(armor_ignore = 10, stat_main = 21, stat_sub = 21, pstat_main = 5, pstat_sub = 5, att = 3)
@@ -67,7 +67,7 @@ class JobGenerator(ck.JobGenerator):
         return [ArmorSplit]
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(crit = 15, pdamage = 80, armor_ignore = 20, crit_damage = 25)
+        return core.CharacterModifier(crit_rate = 15, pdamage = 80, armor_ignore = 20, crit_damage = 25)
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter):
         '''
@@ -92,19 +92,19 @@ class JobGenerator(ck.JobGenerator):
         어파스 기준
         '''
         #### 마스터리 ####
-        AlphaMDF = core.CharacterModifier(pdamage_indep = 34, crit = 40, att = 40, armor_ignore = 30, crit_damage = 50)
-        BetaMDF = core.CharacterModifier(pdamage_indep = 49, crit = 15, boss_pdamage = 30, att = 80 + 4)
+        AlphaMDF = core.CharacterModifier(final_damage = 34, crit_rate = 40, att = 40, armor_ignore = 30, crit_damage = 50)
+        BetaMDF = core.CharacterModifier(final_damage = 49, crit_rate = 15, boss_pdamage = 30, att = 80 + 4)
 
         AlphaState = core.BuffSkill("상태-알파", 0, 9999 * 10000, cooltime = -1,
-                                    pdamage_indep = AlphaMDF.final_damage,
-                                    crit = AlphaMDF.crit_rate,
+                                    final_damage = AlphaMDF.final_damage,
+                                    crit_rate = AlphaMDF.crit_rate,
                                     boss_pdamage = AlphaMDF.boss_pdamage,
                                     att = AlphaMDF.att,
                                     armor_ignore = AlphaMDF.armor_ignore,
                                     crit_damage = AlphaMDF.crit_damage).wrap(core.BuffSkillWrapper)
         BetaState = core.BuffSkill("상태-베타", 0, 9999 * 10000, cooltime = -1,
-                                   pdamage_indep = BetaMDF.final_damage,
-                                   crit = BetaMDF.crit_rate,
+                                   final_damage = BetaMDF.final_damage,
+                                   crit_rate = BetaMDF.crit_rate,
                                    boss_pdamage = BetaMDF.boss_pdamage,
                                    att = BetaMDF.att,
                                    armor_ignore = BetaMDF.armor_ignore,
@@ -190,7 +190,7 @@ class JobGenerator(ck.JobGenerator):
 
         #### 초월자 스킬 ####
 
-        DoubleTime = core.BuffSkill("래피드 타임", 0, 9999*10000, crit = 20, pdamage = 10).wrap(core.BuffSkillWrapper)
+        DoubleTime = core.BuffSkill("래피드 타임", 0, 9999*10000, crit_rate = 20, pdamage = 10).wrap(core.BuffSkillWrapper)
         TimeDistortion = core.BuffSkill("타임 디스토션", 540, 30000, cooltime = 240 * 1000, pdamage = 25).wrap(core.BuffSkillWrapper)
         TimeHolding = core.BuffSkill("타임 홀딩", 0, 90000, cooltime = 180*1000, pdamage = 10, red = False).wrap(core.BuffSkillWrapper) #  쿨타임 초기화.(타임 리와 / 리미트 브레이크 제외)
         # 인탠시브 타임 - 기본 도핑에 영메 포함되어 있음
@@ -207,7 +207,7 @@ class JobGenerator(ck.JobGenerator):
 
         LimitBreakAttack = core.DamageSkill("리미트 브레이크", 0, 400+15*vEhc.getV(0,0), 5, modifier = extra_dmg(15, False)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         # 리미트 브레이크 중에는 디바인 포스 사용 (공격력 20 증가)
-        LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, pdamage_indep = 30+vEhc.getV(0,0)//5, att = 20, cooltime = 240*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0,0)//2)*1000, final_damage = 30+vEhc.getV(0,0)//5, att = 20, cooltime = 240*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         LimitBreakCDR = core.SummonSkill("리미트 브레이크(재사용 대기시간 감소)", 0, 1000, 0, 0, (30+vEhc.getV(0,0)//2)*1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
 
         LimitBreakFinal = core.DamageSkill("리미트 브레이크 (막타)", 0, 650 + 26*vEhc.getV(0,0), 12*6, cooltime = -1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)

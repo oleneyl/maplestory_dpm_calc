@@ -31,11 +31,11 @@ def maple_heros(level, name = "메이플 용사", combat_level = 0):
 def useful_combat_orders():
     UsefulCombatOrders = core.BuffSkill("쓸만한 컴뱃 오더스", 1500, usefulSkillRemain(), rem = False).wrap(core.BuffSkillWrapper)
     return UsefulCombatOrders
-    
+
 def useful_sharp_eyes(slevel = 1):
-    UsefulSharpEyes = core.BuffSkill("쓸만한 샤프 아이즈", 900, usefulSkillRemain(slevel), rem = False, crit = 10, crit_damage = 8, stat_main = passiveStat(slevel), stat_sub = passiveStat(slevel)).wrap(core.BuffSkillWrapper)
+    UsefulSharpEyes = core.BuffSkill("쓸만한 샤프 아이즈", 900, usefulSkillRemain(slevel), rem = False, crit_rate = 10, crit_damage = 8, stat_main = passiveStat(slevel), stat_sub = passiveStat(slevel)).wrap(core.BuffSkillWrapper)
     return UsefulSharpEyes
-    
+
 def useful_wind_booster(slevel = 1):
     UsefulWindBooster = core.BuffSkill("쓸만한 윈드 부스터", 900, usefulSkillRemain(slevel), rem = False, stat_main = passiveStat(slevel), stat_sub = passiveStat(slevel)).wrap(core.BuffSkillWrapper)
     return UsefulWindBooster
@@ -70,5 +70,5 @@ def genesis_aeonian_rise():
 
 # 파괴의 얄다바오트
 def genesis_tanadian_ruin():
-    TandadianRuin = core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime = 90000, pdamage_indep = 15, rem = False, red = False).wrap(core.BuffSkillWrapper)
+    TandadianRuin = core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime = 90000, final_damage = 15, rem = False, red = False).wrap(core.BuffSkillWrapper)
     return TandadianRuin

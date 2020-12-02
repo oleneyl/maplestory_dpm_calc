@@ -33,7 +33,7 @@ class JobGenerator(ck.JobGenerator):
         RetrievedMemory = core.InformedCharacterModifier("되찾은 기억", patt=5)
         SnowChargePassive = core.InformedCharacterModifier("스노우 차지(패시브)", pdamage=10)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
-        AdvancedComboAbilityPassive = core.InformedCharacterModifier("어드밴스드 콤보 어빌리티", att=10, crit=20, crit_damage=10)
+        AdvancedComboAbilityPassive = core.InformedCharacterModifier("어드밴스드 콤보 어빌리티", att=10, crit_rate=20, crit_damage=10)
         CleavingAttack = core.InformedCharacterModifier("클리빙 어택", armor_ignore=40, pdamage=10)
         Might = core.InformedCharacterModifier("마이트", att=40)
         HighMastery = core.InformedCharacterModifier("하이 마스터리", att=30, crit_damage=8)
@@ -44,8 +44,8 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 49)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level / 2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 49)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -5 + 0.5*ceil(passive_level / 2))
         return [WeaponConstant, Mastery]
 
     def get_ruleset(self):
@@ -90,7 +90,7 @@ class JobGenerator(ck.JobGenerator):
         PENRIL_ADRENALINE_PDAMAGE = get_beyonder_pdamage(15)
 
         SmashSwing = core.DamageSkill("스매시 스윙", 360, 800 + 50 * passive_level, 2).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        SmashSwingIncr = core.BuffSkill("스매시 스윙(최종데미지)", 0, 5000+3000, pdamage_indep=15 + passive_level, pdamage=20, cooltime=-1).wrap(core.BuffSkillWrapper)
+        SmashSwingIncr = core.BuffSkill("스매시 스윙(최종데미지)", 0, 5000+3000, final_damage=15 + passive_level, pdamage=20, cooltime=-1).wrap(core.BuffSkillWrapper)
         SmashSwingIllusion = core.DamageSkill("스매시 스윙(잔상)", 0, 280, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
         FinalBlow = core.DamageSkill("파이널 블로우", 420, 285 + 100 + (60 + 2 * passive_level) + (20 + passive_level), 5, modifier=core.CharacterModifier(armor_ignore=15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
@@ -102,14 +102,14 @@ class JobGenerator(ck.JobGenerator):
         FinalAttackAdrenaline = core.DamageSkill("파이널 어택(아드레날린)", 0, 85+passive_level+100+150, (3+2)*0.01*(60+passive_level)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         FinalAttackHolder = core.DamageSkill("파이널어택(홀더)", 0, 0, 0).wrap(core.DamageSkillWrapper)
 
-        AdvancedComboAbility = core.BuffSkill("어드밴스드 콤보 어빌리티", 0, 9999*9999, att=2*10, crit=3*10).wrap(core.BuffSkillWrapper)
+        AdvancedComboAbility = core.BuffSkill("어드밴스드 콤보 어빌리티", 0, 9999*9999, att=2*10, crit_rate=3*10).wrap(core.BuffSkillWrapper)
         ComboAbility = core.BuffSkill("콤보 어빌리티", 0, 9999*9999, att=2*10).wrap(core.BuffSkillWrapper)
 
         BlessingMaha = core.BuffSkill("블레싱 마하", 0, 200*1000, att=30).wrap(core.BuffSkillWrapper)   #펫버프
 
-        BeyonderFirst = core.DamageSkill("비욘더(1타)", 420, 385 + 10 * ceil(self.combat / 3), 6, modifier=core.CharacterModifier(pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        BeyonderSecond = core.DamageSkill("비욘더(2타)", 360, 400 + 10 * ceil(self.combat / 3), 6, modifier=core.CharacterModifier(pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        BeyonderThird = core.DamageSkill("비욘더(3타)", 420, 415 + 10 * ceil(self.combat / 3), 6, modifier=core.CharacterModifier(pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        BeyonderFirst = core.DamageSkill("비욘더(1타)", 420, 385 + 10 * ceil(self.combat / 3), 6, modifier=core.CharacterModifier(pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit_rate=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        BeyonderSecond = core.DamageSkill("비욘더(2타)", 360, 400 + 10 * ceil(self.combat / 3), 6, modifier=core.CharacterModifier(pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit_rate=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        BeyonderThird = core.DamageSkill("비욘더(3타)", 420, 415 + 10 * ceil(self.combat / 3), 6, modifier=core.CharacterModifier(pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit_rate=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         AdrenalineBoost = core.BuffSkill("아드레날린 부스트", 0, ADRENALINE_BOOST_REMAIN).wrap(core.BuffSkillWrapper)
         AdrenalineBoostEndDummy = core.BuffSkill("아드레날린 부스트(종료 더미)", 0, 0, cooltime=-1).wrap(core.BuffSkillWrapper)
@@ -118,9 +118,9 @@ class JobGenerator(ck.JobGenerator):
         AdrenalineFinalBlow = core.DamageSkill("파이널 블로우(아드레날린)", 420, 285 + 100 + (60 + 2 * passive_level) + (20 + passive_level) + 150, 7, modifier=core.CharacterModifier(armor_ignore=15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         FinalBlowWaveAdrenaline = core.DamageSkill("파이널 블로우(파동)", 0, 350, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
-        AdrenalineBeyonderFirst = core.DamageSkill("비욘더(1타)(아드레날린)", 420, 535 + 10 * ceil(self.combat / 3), 8, modifier=core.CharacterModifier(pdamage=BEYONDER_ADRENALINE_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdrenalineBeyonderSecond = core.DamageSkill("비욘더(2타)(아드레날린)", 360, 550 + 10 * ceil(self.combat / 3), 8, modifier=core.CharacterModifier(pdamage=BEYONDER_ADRENALINE_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdrenalineBeyonderThird = core.DamageSkill("비욘더(3타)(아드레날린)", 420, 565 + 10 * ceil(self.combat / 3), 8, modifier=core.CharacterModifier(pdamage=BEYONDER_ADRENALINE_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdrenalineBeyonderFirst = core.DamageSkill("비욘더(1타)(아드레날린)", 420, 535 + 10 * ceil(self.combat / 3), 8, modifier=core.CharacterModifier(pdamage=BEYONDER_ADRENALINE_PDAMAGE, armor_ignore=44, crit_rate=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdrenalineBeyonderSecond = core.DamageSkill("비욘더(2타)(아드레날린)", 360, 550 + 10 * ceil(self.combat / 3), 8, modifier=core.CharacterModifier(pdamage=BEYONDER_ADRENALINE_PDAMAGE, armor_ignore=44, crit_rate=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdrenalineBeyonderThird = core.DamageSkill("비욘더(3타)(아드레날린)", 420, 565 + 10 * ceil(self.combat / 3), 8, modifier=core.CharacterModifier(pdamage=BEYONDER_ADRENALINE_PDAMAGE, armor_ignore=44, crit_rate=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         AdrenalineBeyonderWave = core.DamageSkill("비욘더(파동)", 0, 400, 5).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         BoostEndHuntersTargetingHolder = core.DamageSkill("부스트 엔드-헌터즈 타겟팅(홀더)", BOOST_END_HUNTERS_TARGETING_DELAY, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
@@ -141,8 +141,8 @@ class JobGenerator(ck.JobGenerator):
         GatheringCatcher = core.DamageSkill('게더링 캐쳐(캔슬)', 0, 170+(20 + passive_level), 2).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
 
         PenrilCrashHit = 6 + vEhc.getV(3,3) // 30 + 1
-        PenrilCrash = core.DamageSkill('펜릴 크래시', 420, 100+500+vEhc.getV(3,3)*5, PenrilCrashHit, modifier=core.CharacterModifier(crit=100, armor_ignore=60,pdamage=PENRIL_PDAMAGE)).setV(vEhc, 2, 2, False).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
-        AdrenalinePenrilCrash = core.DamageSkill('펜릴 크래시(아드레날린)', 420, 150+100+500+vEhc.getV(3,3)*5, PenrilCrashHit + 2, modifier=core.CharacterModifier(crit=100, armor_ignore=60,pdamage=PENRIL_ADRENALINE_PDAMAGE)).setV(vEhc, 2, 2, False).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
+        PenrilCrash = core.DamageSkill('펜릴 크래시', 420, 100+500+vEhc.getV(3,3)*5, PenrilCrashHit, modifier=core.CharacterModifier(crit_rate=100, armor_ignore=60,pdamage=PENRIL_PDAMAGE)).setV(vEhc, 2, 2, False).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
+        AdrenalinePenrilCrash = core.DamageSkill('펜릴 크래시(아드레날린)', 420, 150+100+500+vEhc.getV(3,3)*5, PenrilCrashHit + 2, modifier=core.CharacterModifier(crit_rate=100, armor_ignore=60,pdamage=PENRIL_ADRENALINE_PDAMAGE)).setV(vEhc, 2, 2, False).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
         PenrilCrashIceburg = core.DamageSkill('펜릴 크래시(빙산)', 0, 500+vEhc.getV(3,3)*5, 6).setV(vEhc, 2, 2, False).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
 
         # TODO: 타수가 늘어나는 파이널 어택으로 동작하지만, 스택을 늘리는 스킬 목록이 밝혀지지 않아 일단 총 423타가 나오게 평균으로 해둠

@@ -35,7 +35,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit = 40)
+        CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit_rate = 40)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
 
         MarkmanShip = core.InformedCharacterModifier("마크맨쉽",armor_ignore = 25, pdamage = 15)
@@ -49,8 +49,8 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 35)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5*ceil(passive_level/2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 35)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -7.5 + 0.5*ceil(passive_level/2))
 
         MortalBlow = core.InformedCharacterModifier("모탈 블로우",pdamage = 2)
         ExtremeArchery = core.InformedCharacterModifier("익스트림 아처리:석궁",crit_damage = 20)
@@ -67,21 +67,21 @@ class JobGenerator(ck.JobGenerator):
         DISTANCE = 400
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WEAKNESS_FINDING = core.CharacterModifier(armor_ignore = min(ceil((20+passive_level)/2) + DISTANCE//40 * ceil((20+passive_level)/5), 30 + (20+passive_level)))
-        DISTANCING_SENSE = core.CharacterModifier(pdamage_indep = max(min((DISTANCE-200)//18*4, 30+(10+passive_level)), 0))
-        LASTMAN_STANDING = core.CharacterModifier(pdamage_indep = 20 + 2*passive_level)
+        DISTANCING_SENSE = core.CharacterModifier(final_damage = max(min((DISTANCE-200)//18*4, 30+(10+passive_level)), 0))
+        LASTMAN_STANDING = core.CharacterModifier(final_damage = 20 + 2*passive_level)
         PASSIVE_MODIFIER = WEAKNESS_FINDING + DISTANCING_SENSE + LASTMAN_STANDING
 
         #Buff skills
         SoulArrow = core.BuffSkill("소울 애로우", 0, 300 * 1000, att = 30, rem = True).wrap(core.BuffSkillWrapper)
-        SharpEyes = core.BuffSkill("샤프 아이즈", 660, (300+10*self.combat) * 1000, crit = 20 + ceil(self.combat/2), crit_damage = 15 + ceil(self.combat/2), rem = True).wrap(core.BuffSkillWrapper)
+        SharpEyes = core.BuffSkill("샤프 아이즈", 660, (300+10*self.combat) * 1000, crit_rate = 20 + ceil(self.combat/2), crit_damage = 15 + ceil(self.combat/2), rem = True).wrap(core.BuffSkillWrapper)
 
-        BoolsEye = core.BuffSkill("불스아이", 960, 30 * 1000, cooltime = 90 * 1000, crit = 20, crit_damage = 10, armor_ignore = 20, pdamage = 20).wrap(core.BuffSkillWrapper)
+        BoolsEye = core.BuffSkill("불스아이", 960, 30 * 1000, cooltime = 90 * 1000, crit_rate = 20, crit_damage = 10, armor_ignore = 20, pdamage = 20).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
         #Damage Skills
         # 롱레인지 트루샷: 나무위키피셜 DPM 떨어지므로 보류
 
-        Snipping = core.DamageSkill("스나이핑", 630, 465+self.combat*5, 9 + 1, modifier = core.CharacterModifier(crit = 100, armor_ignore = 20 + self.combat * 1, pdamage = 20, boss_pdamage = 10) + PASSIVE_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Snipping = core.DamageSkill("스나이핑", 630, 465+self.combat*5, 9 + 1, modifier = core.CharacterModifier(crit_rate = 100, armor_ignore = 20 + self.combat * 1, pdamage = 20, boss_pdamage = 10) + PASSIVE_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         TrueSnippingTick = core.DamageSkill("트루 스나이핑(타격)", 690, 950+vEhc.getV(2,2)*30, 14+1, modifier = core.CharacterModifier(pdamage = 100, armor_ignore = 100) + PASSIVE_MODIFIER).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         TrueSnipping = core.DamageSkill("트루 스나이핑", 120, 0, 0, cooltime = 180 * 1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
 

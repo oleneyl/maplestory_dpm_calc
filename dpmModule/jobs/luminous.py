@@ -74,7 +74,7 @@ class LuminousStateController(core.BuffSkillWrapper):
 
 class PunishingResonatorWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, stateGetter):
-        skill = core.SummonSkill("퍼니싱 리소네이터", 990, 6000/28, 0, 0, 6000-1, cooltime = 30 * 1000, red=True, modifier = core.CharacterModifier(crit = 15)).isV(vEhc,num1,num2)
+        skill = core.SummonSkill("퍼니싱 리소네이터", 990, 6000/28, 0, 0, 6000-1, cooltime = 30 * 1000, red=True, modifier = core.CharacterModifier(crit_rate = 15)).isV(vEhc,num1,num2)
         super(PunishingResonatorWrapper, self).__init__(skill)
         self.skillList = [
             (250 + vEhc.getV(3,2)*10, 5),
@@ -95,7 +95,7 @@ class PunishingResonatorWrapper(core.SummonSkillWrapper):
 
 class LightAndDarknessWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc, num1, num2):
-        skill = core.DamageSkill("빛과 어둠의 세례", 840, 15 * vEhc.getV(num1,num2)+375, 13 * 7, cooltime = 45*1000, red=True, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc,num1,num2)
+        skill = core.DamageSkill("빛과 어둠의 세례", 840, 15 * vEhc.getV(num1,num2)+375, 13 * 7, cooltime = 45*1000, red=True, modifier = core.CharacterModifier(armor_ignore = 100, crit_rate = 100)).isV(vEhc,num1,num2)
         super(LightAndDarknessWrapper, self).__init__(skill)
         self.stack = 12
 
@@ -113,7 +113,7 @@ class LiberationOrbActiveWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc, num1, num2):
         self.light = 0
         self.dark = 0
-        skill = core.DamageSkill("리버레이션 오브(액티브)", 0, 400 + 17 * vEhc.getV(num1,num2), 10, cooltime = 1000, modifier = core.CharacterModifier(crit = 100)).isV(vEhc,num1,num2)
+        skill = core.DamageSkill("리버레이션 오브(액티브)", 0, 400 + 17 * vEhc.getV(num1,num2), 10, cooltime = 1000, modifier = core.CharacterModifier(crit_rate = 100)).isV(vEhc,num1,num2)
         super(LiberationOrbActiveWrapper, self).__init__(skill)
 
     def _setStack(self, light, dark):
@@ -154,18 +154,18 @@ class JobGenerator(ck.JobGenerator):
         PowerOfLight = core.InformedCharacterModifier("파워 오브 라이트",stat_main = 20)
         SpellMastery = core.InformedCharacterModifier("스펠 마스터리",att = 10)
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
-        LifeTidal = core.InformedCharacterModifier("라이프 타이달",crit = 30) #OR pdamage = 20
-        MagicMastery = core.InformedCharacterModifier("매직 마스터리",att = 30 + passive_level, crit_damage = 15 + passive_level // 3, crit = 15 + passive_level // 3)
-        DarknessSocery = core.InformedCharacterModifier("다크니스 소서리", pdamage_indep = 40 + self.combat, armor_ignore = 40 + self.combat)
-        MorningStarfall = core.InformedCharacterModifier("모닝 스타폴(패시브)",pdamage_indep = 30 + self.combat)
+        LifeTidal = core.InformedCharacterModifier("라이프 타이달",crit_rate = 30) #OR pdamage = 20
+        MagicMastery = core.InformedCharacterModifier("매직 마스터리",att = 30 + passive_level, crit_damage = 15 + passive_level // 3, crit_rate = 15 + passive_level // 3)
+        DarknessSocery = core.InformedCharacterModifier("다크니스 소서리", final_damage = 40 + self.combat, armor_ignore = 40 + self.combat)
+        MorningStarfall = core.InformedCharacterModifier("모닝 스타폴(패시브)",final_damage = 30 + self.combat)
 
         return [PowerOfLight, SpellMastery, HighWisdom, LifeTidal, MagicMastery, MorningStarfall, DarknessSocery]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5 + 0.5 * ceil(passive_level / 2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 20)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -2.5 + 0.5 * ceil(passive_level / 2))
 
         BlessOfDarkness =  core.InformedCharacterModifier("블레스 오브 다크니스",att = 30)   #15 -> 24 -> 30
         DarknessSoceryActive = core.InformedCharacterModifier("다크니스 소서리(사용)", prop_ignore = 10)
@@ -182,7 +182,7 @@ class JobGenerator(ck.JobGenerator):
         리버레이션 오브는 쿨마다 사용
         '''
         ######   Skill   ######
-        DarkAffinity = core.CharacterModifier(pdamage_indep = 5) # 어둠 마법 강화
+        DarkAffinity = core.CharacterModifier(final_damage = 5) # 어둠 마법 강화
 
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
@@ -195,8 +195,8 @@ class JobGenerator(ck.JobGenerator):
         #Damage Skills
         LightReflection = core.DamageSkill("라이트 리플렉션", 690, 400+5*self.combat, 4, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         Apocalypse = core.DamageSkill("아포칼립스", 720, 340+4*self.combat, 7, modifier = core.CharacterModifier(pdamage = 20) + DarkAffinity).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AbsoluteKill = core.DamageSkill("앱솔루트 킬", 630, 385+3*self.combat, 7*2, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(이퀄X)', 630, 385+3*self.combat, 7, cooltime = 12000, red=True, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) # 안쓰는게 dpm이 더 높음
+        AbsoluteKill = core.DamageSkill("앱솔루트 킬", 630, 385+3*self.combat, 7*2, modifier = core.CharacterModifier(pdamage = 20, crit_rate = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(이퀄X)', 630, 385+3*self.combat, 7, cooltime = 12000, red=True, modifier = core.CharacterModifier(pdamage = 20, crit_rate = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) # 안쓰는게 dpm이 더 높음
 
         # Hyper
         Memorize = core.BuffSkill("메모라이즈", 900, 10, cooltime = 150 * 1000).wrap(core.BuffSkillWrapper)

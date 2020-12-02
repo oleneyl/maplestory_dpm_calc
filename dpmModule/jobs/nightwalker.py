@@ -61,7 +61,7 @@ class JobGenerator(ck.JobGenerator):
         ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니",patt = 10)
 
         ThrowingMastery = core.InformedCharacterModifier("스로잉 마스터리",pdamage = 30)
-        CriticalThrowing = core.InformedCharacterModifier("크리티컬 스로잉",crit = 35, crit_damage = 10)
+        CriticalThrowing = core.InformedCharacterModifier("크리티컬 스로잉",crit_rate = 35, crit_damage = 10)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 60)
         Adrenalin = core.InformedCharacterModifier("아드레날린",crit_damage = 10)
 
@@ -77,8 +77,8 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 75)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5+0.5*ceil(passive_level/2))    #오더스 기본적용!
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 75)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -7.5+0.5*ceil(passive_level/2))    #오더스 기본적용!
 
         return [WeaponConstant, Mastery]
 
@@ -112,23 +112,23 @@ class JobGenerator(ck.JobGenerator):
         ShadowBat = core.DamageSkill("쉐도우 배트", 0, 150 + 120 + 150 + 200 + 4*passive_level, 1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
 
         #점샷기준(400ms)
-        QuintupleThrow = core.DamageSkill("퀸터플 스로우", (400 * JUMPRATE + 630 * (1-JUMPRATE)), 340+self.combat, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal = core.DamageSkill("퀸터플 스로우(막타)", 0, 475+self.combat, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow = core.DamageSkill("퀸터플 스로우", (400 * JUMPRATE + 630 * (1-JUMPRATE)), 340+self.combat, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, final_damage = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal = core.DamageSkill("퀸터플 스로우(막타)", 0, 475+self.combat, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, final_damage = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
-        QuintupleThrow_Sv = core.DamageSkill("퀸터플 스로우(서번트)", 0, (340+self.combat)*0.7, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal_Sv = core.DamageSkill("퀸터플 스로우(서번트)(막타)", 0, (475+self.combat)*0.7, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow_Sv = core.DamageSkill("퀸터플 스로우(서번트)", 0, (340+self.combat)*0.7, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, final_damage = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal_Sv = core.DamageSkill("퀸터플 스로우(서번트)(막타)", 0, (475+self.combat)*0.7, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, final_damage = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
-        QuintupleThrow_I50 = core.DamageSkill("퀸터플 스로우(일루젼 50%)", 0, (340+self.combat)*0.5, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal_I50 = core.DamageSkill("퀸터플 스로우(일루젼 50%)(막타)", 0, (475+self.combat)*0.5, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrow_I30 = core.DamageSkill("퀸터플 스로우(일루젼 30%)", 0, (340+self.combat)*0.3, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal_I30 = core.DamageSkill("퀸터플 스로우(일루젼 30%)(막타)", 0, (475+self.combat)*0.3, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow_I50 = core.DamageSkill("퀸터플 스로우(일루젼 50%)", 0, (340+self.combat)*0.5, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, final_damage = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal_I50 = core.DamageSkill("퀸터플 스로우(일루젼 50%)(막타)", 0, (475+self.combat)*0.5, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, final_damage = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow_I30 = core.DamageSkill("퀸터플 스로우(일루젼 30%)", 0, (340+self.combat)*0.3, 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, final_damage = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal_I30 = core.DamageSkill("퀸터플 스로우(일루젼 30%)(막타)", 0, (475+self.combat)*0.3, 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, final_damage = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
-        QuintupleThrow_V = core.DamageSkill("퀸터플 스로우(5차)", 0, (340+self.combat) * 0.01 * (25+vEhc.getV(0,0)), 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal_V = core.DamageSkill("퀸터플 스로우(5차)(막타)", 0, (475+self.combat) * 0.01 * (25+vEhc.getV(0,0)), 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow_V = core.DamageSkill("퀸터플 스로우(5차)", 0, (340+self.combat) * 0.01 * (25+vEhc.getV(0,0)), 4, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, final_damage = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal_V = core.DamageSkill("퀸터플 스로우(5차)(막타)", 0, (475+self.combat) * 0.01 * (25+vEhc.getV(0,0)), 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, final_damage = (JUMPRATE*15))).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         #하이퍼스킬
         ShadowElusion = core.BuffSkill("쉐도우 일루전", 690, 30000, cooltime = 180000).wrap(core.BuffSkillWrapper)
-        Dominion = core.BuffSkill("도미니언", 1890, 30000, crit = 100, pdamage_indep = 20, cooltime = 180000).wrap(core.BuffSkillWrapper)
+        Dominion = core.BuffSkill("도미니언", 1890, 30000, crit_rate = 100, final_damage = 20, cooltime = 180000).wrap(core.BuffSkillWrapper)
         DominionAttack = core.DamageSkill("도미니언(공격)", 0, 1000, 10).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
@@ -144,22 +144,22 @@ class JobGenerator(ck.JobGenerator):
         ShadowServentExtend = core.BuffSkill("쉐도우 서번트 익스텐드", 570, (30+vEhc.getV(1,1)//2)*1000, red = True, cooltime = 60000).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
 
         ShadowBite = core.DamageSkill("쉐도우 바이트", 630, 600+24*vEhc.getV(2,2), 14, red = True, cooltime = 20000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        ShadowBiteBuff = core.BuffSkill("쉐도우 바이트(버프)", 0, (15+vEhc.getV(2,2)//10)*1000, pdamage_indep = (8+vEhc.getV(2,2)//4), cooltime = -1).isV(vEhc,2,2).wrap(core.BuffSkillWrapper)
+        ShadowBiteBuff = core.BuffSkill("쉐도우 바이트(버프)", 0, (15+vEhc.getV(2,2)//10)*1000, final_damage = (8+vEhc.getV(2,2)//4), cooltime = -1).isV(vEhc,2,2).wrap(core.BuffSkillWrapper)
 
         RapidThrowInit = core.DamageSkill("래피드 스로우(개시)", 120, 0, 0, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         # 22회 반복
-        RapidThrow = core.DamageSkill("래피드 스로우", 180, 425+17*vEhc.getV(0,0), 4, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrow_Sv = core.DamageSkill("래피드 스로우(서번트)", 0, (425+17*vEhc.getV(0,0))*0.7, 4, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrow_I50 = core.DamageSkill("래피드 스로우(일루젼 50%)", 0, (425+17*vEhc.getV(0,0))*0.5, 4, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrow_I30 = core.DamageSkill("래피드 스로우(일루젼 30%)", 0, (425+17*vEhc.getV(0,0))*0.3, 4, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrow_V = core.DamageSkill("래피드 스로우(5차)", 0, (425+17*vEhc.getV(0,0)) * 0.01 * (25+vEhc.getV(0,0)), 4, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrow = core.DamageSkill("래피드 스로우", 180, 425+17*vEhc.getV(0,0), 4, cooltime=-1, modifier = core.CharacterModifier(final_damage = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrow_Sv = core.DamageSkill("래피드 스로우(서번트)", 0, (425+17*vEhc.getV(0,0))*0.7, 4, cooltime=-1, modifier = core.CharacterModifier(final_damage = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrow_I50 = core.DamageSkill("래피드 스로우(일루젼 50%)", 0, (425+17*vEhc.getV(0,0))*0.5, 4, cooltime=-1, modifier = core.CharacterModifier(final_damage = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrow_I30 = core.DamageSkill("래피드 스로우(일루젼 30%)", 0, (425+17*vEhc.getV(0,0))*0.3, 4, cooltime=-1, modifier = core.CharacterModifier(final_damage = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrow_V = core.DamageSkill("래피드 스로우(5차)", 0, (425+17*vEhc.getV(0,0)) * 0.01 * (25+vEhc.getV(0,0)), 4, cooltime=-1, modifier = core.CharacterModifier(final_damage = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
-        RapidThrowFinal = core.DamageSkill("래피드 스로우(막타)", 480, 850+34*vEhc.getV(0,0), 13, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrowFinal_Sv = core.DamageSkill("래피드 스로우(막타)(서번트)", 0, (850+34*vEhc.getV(0,0))*0.7, 13, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrowFinal_I50 = core.DamageSkill("래피드 스로우(막타)(일루젼 50%)", 0, (850+34*vEhc.getV(0,0))*0.5, 13, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrowFinal_I30 = core.DamageSkill("래피드 스로우(막타)(일루젼 30%)", 0, (850+34*vEhc.getV(0,0))*0.3, 13, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrowFinal_V = core.DamageSkill("래피드 스로우(막타)(5차)", 0, (850+34*vEhc.getV(0,0)) * 0.01 * (25+vEhc.getV(0,0)), 13, cooltime=-1, modifier = core.CharacterModifier(pdamage_indep = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrowFinal = core.DamageSkill("래피드 스로우(막타)", 480, 850+34*vEhc.getV(0,0), 13, cooltime=-1, modifier = core.CharacterModifier(final_damage = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrowFinal_Sv = core.DamageSkill("래피드 스로우(막타)(서번트)", 0, (850+34*vEhc.getV(0,0))*0.7, 13, cooltime=-1, modifier = core.CharacterModifier(final_damage = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrowFinal_I50 = core.DamageSkill("래피드 스로우(막타)(일루젼 50%)", 0, (850+34*vEhc.getV(0,0))*0.5, 13, cooltime=-1, modifier = core.CharacterModifier(final_damage = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrowFinal_I30 = core.DamageSkill("래피드 스로우(막타)(일루젼 30%)", 0, (850+34*vEhc.getV(0,0))*0.3, 13, cooltime=-1, modifier = core.CharacterModifier(final_damage = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrowFinal_V = core.DamageSkill("래피드 스로우(막타)(5차)", 0, (850+34*vEhc.getV(0,0)) * 0.01 * (25+vEhc.getV(0,0)), 13, cooltime=-1, modifier = core.CharacterModifier(final_damage = 15)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ######   Skill Wrapper   ######
 
         ElementalDarkness.onAfter(ElementalDarknessDOT)

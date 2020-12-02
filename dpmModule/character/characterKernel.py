@@ -26,7 +26,7 @@ class AbstractCharacter:
     def __init__(self, level: int = 230) -> None:
         # Initialize Items
         self.level: int = level
-        self.base_modifier: ExMDF = ExMDF(stat_main=18 + level * 5, stat_sub=4, crit=5)
+        self.base_modifier: ExMDF = ExMDF(stat_main=18 + level * 5, stat_sub=4, crit_rate=5)
 
         self.about: str = ""
         self.add_summary("레벨 %d" % level)
@@ -43,7 +43,7 @@ class AbstractCharacter:
         self.about += "\n" + txt
 
     def get_property_ignorance_modifier(self) -> ExMDF:
-        return ExMDF(pdamage_indep=self.base_modifier.prop_ignore) + ExMDF(pdamage_indep=-50)
+        return ExMDF(final_damage=self.base_modifier.prop_ignore) + ExMDF(final_damage=-50)
 
     def apply_modifiers(self, li: List[CharacterModifier]) -> None:
         """Be careful! This function PERMANENTLY change character's property.
@@ -325,7 +325,7 @@ class JobGenerator:
         # 무기 소울
         refMDF = get_reference_modifier(chtr)
         if refMDF.crit_rate < 88:
-            weapon_soul_modifier = ExMDF(crit=12, att=20)
+            weapon_soul_modifier = ExMDF(crit_rate=12, att=20)
         else:
             weapon_soul_modifier = ExMDF(patt=3, att=20)
         log_modifier(weapon_soul_modifier, "weapon soul")
@@ -500,7 +500,7 @@ class Union:
     def _get_union_from_state(state: List[int]) -> ExMDF:
         return (ExMDF(att=state[0]) + ExMDF(stat_main=5 * state[1]) +
                 ExMDF(boss_pdamage=state[2]) + ExMDF(armor_ignore=state[3]) +
-                ExMDF(crit=state[4]) + ExMDF(crit_damage=state[5] * 0.5) + ExMDF(buff_rem=state[6]))
+                ExMDF(crit_rate=state[4]) + ExMDF(crit_damage=state[5] * 0.5) + ExMDF(buff_rem=state[6]))
 
 
 class LinkSkill:
@@ -518,8 +518,8 @@ class LinkSkill:
     Zenon = InformedCharacterModifier("링크(제논)", pstat_main=10, pstat_sub=10)
     AdventurePirate = InformedCharacterModifier("링크(모해)", stat_main=70, stat_sub=70)
     Cygnus = InformedCharacterModifier("링크(시그너스)", att=25)
-    Phantom = InformedCharacterModifier("링크(팬텀)", crit=15)
-    AdventureArcher = InformedCharacterModifier("링크(모궁)", crit=10)
+    Phantom = InformedCharacterModifier("링크(팬텀)", crit_rate=15)
+    AdventureArcher = InformedCharacterModifier("링크(모궁)", crit_rate=10)
     Kinesis = InformedCharacterModifier("링크(키네시스)", crit_damage=4)
     Angelicbuster = InformedCharacterModifier("링크(엔젤릭버스터)")  # Skill
     Michael = InformedCharacterModifier("링크(미하일)")  # Util skill
@@ -658,7 +658,7 @@ class Card:
     # 주스텟 / 부스텟 / 크리 / 공마 / 크뎀 / 보공 / 방무 / 총뎀 / 제논 / 쿨감 / 벞지
     CList = [[ExMDF(stat_main_fixed=i) for i in [10, 20, 40, 80, 100]],
              [ExMDF(stat_sub_fixed=i) for i in [10, 20, 40, 80, 100]],
-             [ExMDF(crit=i) for i in [1, 2, 3, 4, 5]],
+             [ExMDF(crit_rate=i) for i in [1, 2, 3, 4, 5]],
              [ExMDF(att=i) for i in [5, 10, 15, 20, None]],
              [ExMDF(crit_damage=i) for i in [1, 2, 3, 5, 6]],
              [ExMDF(armor_ignore=i) for i in [1, 2, 3, 5, 6]],
@@ -809,7 +809,7 @@ class HyperStat:
     requirement = [1, 2, 4, 8, 10, 15, 20, 25, 30, 35, 50, 65, 80, 95, 110, 9999]
     enhancement = [[ExMDF(stat_main_fixed=30) for i in range(16)],
                    [ExMDF(stat_sub_fixed=30) for i in range(16)],
-                   [ExMDF(crit=1) for i in range(5)] + [ExMDF(crit=2) for i in range(11)],
+                   [ExMDF(crit_rate=1) for i in range(5)] + [ExMDF(crit_rate=2) for i in range(11)],
                    [ExMDF(crit_damage=1) for i in range(16)],
                    [ExMDF(armor_ignore=3 * (i + 1)) - ExMDF(armor_ignore=3 * i) for i in range(16)],
                    [ExMDF(pdamage=3) for i in range(16)],

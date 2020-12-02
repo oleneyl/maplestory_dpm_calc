@@ -44,10 +44,10 @@ class JobGenerator(ck.JobGenerator):
 
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤", stat_main = 40)
         SpellMastery = core.InformedCharacterModifier("스펠 마스터리", att = 10)
-        MagicCritical = core.InformedCharacterModifier("매직 크리티컬", crit = 30, crit_damage = 13)
+        MagicCritical = core.InformedCharacterModifier("매직 크리티컬", crit_rate = 30, crit_damage = 13)
         ElementAmplication = core.InformedCharacterModifier("엘리멘트 엠플리피케이션", pdamage = 50)
 
-        ElementalReset = core.InformedCharacterModifier("엘리멘탈 리셋", pdamage_indep = 40)
+        ElementalReset = core.InformedCharacterModifier("엘리멘탈 리셋", final_damage = 40)
 
         MasterMagic = core.InformedCharacterModifier("마스터 매직", att = 30 + 3*passive_level, buff_rem = 50 + 5*passive_level)
         ArcaneAim = core.InformedCharacterModifier("아케인 에임", armor_ignore = 20 + ceil(passive_level / 2))
@@ -58,11 +58,11 @@ class JobGenerator(ck.JobGenerator):
                                     MasterMagic, ElementAmplication, ArcaneAim, UnstableMemorizePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5*ceil(self.combat/2))
-        ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", pdamage_indep = 20)
+        WeaponConstant = core.InformedCharacterModifier("무기상수", final_damage = 20)
+        Mastery = core.InformedCharacterModifier("숙련도", final_damage = -2.5 + 0.5*ceil(self.combat/2))
+        ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", final_damage = 20)
         ArcaneAim = core.InformedCharacterModifier("아케인 (실시간)", pdamage = 40)
-        PerventDrain = core.InformedCharacterModifier("퍼번트 드레인", pdamage_indep = 25)
+        PerventDrain = core.InformedCharacterModifier("퍼번트 드레인", final_damage = 25)
         ElementalResetActive = core.InformedCharacterModifier("엘리멘탈 리셋(사용)", prop_ignore = 10)
 
         return [WeaponConstant, Mastery, ExtremeMagic, PerventDrain, ArcaneAim, ElementalResetActive]
@@ -95,13 +95,13 @@ class JobGenerator(ck.JobGenerator):
 
         ERUPTION_RATE = [0, 0, 20, 45, 80, 125]
         FlameHeize = core.DamageSkill("플레임 헤이즈", 1080, 202 + 3*self.combat, 15, cooltime = 10 * 1000, red=True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
-        MistEruption = core.DamageSkill("미스트 이럽션", 720, 45 + self.combat, 15*4, cooltime = 4 * 1000, red=True, modifier = core.CharacterModifier(armor_ignore = 40 + self.combat, pdamage_indep = ERUPTION_RATE[5]) + core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        MistEruption = core.DamageSkill("미스트 이럽션", 720, 45 + self.combat, 15*4, cooltime = 4 * 1000, red=True, modifier = core.CharacterModifier(armor_ignore = 40 + self.combat, final_damage = ERUPTION_RATE[5]) + core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         DotPunisher = core.DamageSkill("도트 퍼니셔", 690, 400+vEhc.getV(0,0)*15, 5, cooltime = 25 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        DotPunisherExceed = core.DamageSkill("도트 퍼니셔(초과)", 0, 400+vEhc.getV(0,0)*15, 5*(DOT_PUNISHER_HIT-1), modifier = core.CharacterModifier(pdamage_indep=-35)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DotPunisherExceed = core.DamageSkill("도트 퍼니셔(초과)", 0, 400+vEhc.getV(0,0)*15, 5*(DOT_PUNISHER_HIT-1), modifier = core.CharacterModifier(final_damage=-35)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         PoisonNova = core.DamageSkill("포이즌 노바", 570, 250 + 10*vEhc.getV(2,1), 12, cooltime = 25*1000, red = True).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
         PoisonNovaErupt = core.DamageSkill("포이즌 노바(폭발)", 0, 225 + 9*vEhc.getV(2,1), 12 * 3).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
-        PoisonNovaEruptExceed = core.DamageSkill("포이즌 노바(폭발)(초과)", 0, 225 + 9*vEhc.getV(2,1), 12 * (POISON_NOVA_HIT - 3), modifier = core.CharacterModifier(pdamage_indep=-50)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
+        PoisonNovaEruptExceed = core.DamageSkill("포이즌 노바(폭발)(초과)", 0, 225 + 9*vEhc.getV(2,1), 12 * (POISON_NOVA_HIT - 3), modifier = core.CharacterModifier(final_damage=-50)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
         PoisonChain = core.DamageSkill("포이즌 체인", 600, 300+12*vEhc.getV(0,0), 4, cooltime=30*1000, red=True).wrap(core.DamageSkillWrapper)
         PoisonChainToxic = PoisonChainToxicWrapper(vEhc, 0, 0)
 

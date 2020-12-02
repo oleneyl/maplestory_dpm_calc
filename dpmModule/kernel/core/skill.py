@@ -107,9 +107,9 @@ class BuffSkill(AbstractSkill):
 
     """
 
-    def __init__(self, name: str, delay: float, remain: float, cooltime: float = 0, crit: float = 0, crit_damage: float = 0,
+    def __init__(self, name: str, delay: float, remain: float, cooltime: float = 0, crit_rate: float = 0, crit_damage: float = 0,
                  pdamage: float = 0, stat_main: float = 0, stat_sub: float = 0, pstat_main: float = 0, pstat_sub: float = 0,
-                 boss_pdamage: float = 0, pdamage_indep: float = 0, armor_ignore: float = 0, patt: float = 0, att: float = 0,
+                 boss_pdamage: float = 0, final_damage: float = 0, armor_ignore: float = 0, patt: float = 0, att: float = 0,
                  stat_main_fixed: int = 0, stat_sub_fixed: int = 0, rem: bool = False, red: bool = False) -> None:
         super(BuffSkill, self).__init__(
             name, delay, cooltime=cooltime, rem=rem, red=red)
@@ -118,7 +118,7 @@ class BuffSkill(AbstractSkill):
             self.remain: float = remain
             # Build StaticModifier from given arguments
             self.static_character_modifier: CharacterModifier = \
-                CharacterModifier(crit=crit, crit_damage=crit_damage, pdamage=pdamage, pdamage_indep=pdamage_indep,
+                CharacterModifier(crit_rate=crit_rate, crit_damage=crit_damage, pdamage=pdamage, final_damage=final_damage,
                                   stat_main=stat_main, stat_sub=stat_sub, pstat_main=pstat_main, pstat_sub=pstat_sub,
                                   boss_pdamage=boss_pdamage, armor_ignore=armor_ignore, patt=patt, att=att,
                                   stat_main_fixed=stat_main_fixed, stat_sub_fixed=stat_sub_fixed)

@@ -33,7 +33,7 @@ class SupplyStackWrapper(core.StackSkillWrapper):
         '''
         서플러스 서플라이: 서플러스 에너지 1개 당 모든 능력치 1%만큼 증가, 20 초과시 초과 에너지당 최종 데미지 1% 증가
         '''
-        return core.CharacterModifier(pstat_main = self.stack, pstat_sub = self.stack, pdamage_indep = max(0, self.stack - 20))
+        return core.CharacterModifier(pstat_main = self.stack, pstat_sub = self.stack, final_damage = max(0, self.stack - 20))
 
     def chargeController(self):
         return core.TaskHolder(core.Task(self, partial(self.set_stack, self._max - self.stack)), name = "서플라이 차지")
@@ -78,7 +78,7 @@ class JobGenerator(ck.JobGenerator):
         '''
         Multilateral = core.InformedCharacterModifier("멀티래터럴", pdamage = 40)
 
-        LinearPerspective = core.InformedCharacterModifier("리니어 퍼스펙티브", crit = 40)
+        LinearPerspective = core.InformedCharacterModifier("리니어 퍼스펙티브", crit_rate = 40)
         MinoritySupport = core.InformedCharacterModifier("마이너리티 서포트", stat_main = 20, stat_sub = 20)
         XenonMastery = core.InformedCharacterModifier("제논 마스터리", att = 20)
         HybridDefensesPassive = core.InformedCharacterModifier("듀얼브리드 디펜시브(패시브)", stat_main = 10, stat_sub = 10)
@@ -94,9 +94,9 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 50)
-        JobConstant = core.InformedCharacterModifier("직업상수", pdamage_indep = -12.5)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5 * ceil(passive_level / 2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수", final_damage = 50)
+        JobConstant = core.InformedCharacterModifier("직업상수", final_damage = -12.5)
+        Mastery = core.InformedCharacterModifier("숙련도", final_damage = -5 + 0.5 * ceil(passive_level / 2))
 
         return [WeaponConstant, JobConstant, Mastery]
 
@@ -119,7 +119,7 @@ class JobGenerator(ck.JobGenerator):
         # 위컴알에 딜레이 없음
         ExtraSupply = core.BuffSkill("엑스트라 서플라이", 0, 1, cooltime = 30000).wrap(core.BuffSkillWrapper)
 
-        OOPArtsCode = core.BuffSkill("오파츠 코드", 990, (30+self.combat//2)*1000, pdamage_indep = 25 + self.combat//2, boss_pdamage = 30 + self.combat).wrap(core.BuffSkillWrapper)
+        OOPArtsCode = core.BuffSkill("오파츠 코드", 990, (30+self.combat//2)*1000, final_damage = 25 + self.combat//2, boss_pdamage = 30 + self.combat).wrap(core.BuffSkillWrapper)
 
         # Damage skills
 

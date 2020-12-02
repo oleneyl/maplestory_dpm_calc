@@ -68,10 +68,10 @@ JobGenerator
       ```python
       HighWisdom = core.InformedCharacterModifier("하이 위즈덤", stat_main = 40) # 패시브 스킬의 정보를 입력합니다.
       SpellMastery = core.InformedCharacterModifier("스펠 마스터리", att = 10)
-      MagicCritical = core.InformedCharacterModifier("매직 크리티컬", crit = 30, crit_damage = 13)
+      MagicCritical = core.InformedCharacterModifier("매직 크리티컬", crit_rate = 30, crit_damage = 13)
       ElementAmplication = core.InformedCharacterModifier("엘리멘트 엠플리피케이션", pdamage = 50)
         
-      ElementalReset = core.InformedCharacterModifier("엘리멘탈 리셋", pdamage_indep = 40)
+      ElementalReset = core.InformedCharacterModifier("엘리멘탈 리셋", final_damage = 40)
         
       MasterMagic = core.InformedCharacterModifier("마스터 매직", att = 30)
       ArcaneAim = core.InformedCharacterModifier("아케인 에임", armor_ignore = 20)
@@ -88,11 +88,11 @@ JobGenerator
        
       ```python
       def get_not_implied_skill_list(self):
-      WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)  # 무기상수
-      Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5)  # 숙련도
-      ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", pdamage_indep = 20)  # 익스트림 매직은 전투가 시작되어야 스텟에 반영됩니다.
+      WeaponConstant = core.InformedCharacterModifier("무기상수", final_damage = 20)  # 무기상수
+      Mastery = core.InformedCharacterModifier("숙련도", final_damage = -2.5)  # 숙련도
+      ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", final_damage = 20)  # 익스트림 매직은 전투가 시작되어야 스텟에 반영됩니다.
       ArcaneAim = core.InformedCharacterModifier("아케인 (실시간)", pdamage = 40)
-      PerventDrain = core.InformedCharacterModifier("퍼번트 드레인", pdamage_indep = 25)
+      PerventDrain = core.InformedCharacterModifier("퍼번트 드레인", final_damage = 25)
       
       return [WeaponConstant, Mastery, ExtremeMagic, PerventDrain, ArcaneAim] # 마지막에 리턴해야 합니다.
       ```

@@ -52,9 +52,9 @@ class JobGenerator(ck.JobGenerator):
         Gekgap = core.InformedCharacterModifier("극갑",pdamage = 5)
         NoiGe = core.InformedCharacterModifier("뇌제",att = 30)
         NuckleExpert = core.InformedCharacterModifier("너클 엑스퍼트",att = 30 + passive_level, crit_damage = 20 + passive_level // 2)
-        NoiShin = core.InformedCharacterModifier("뇌신",crit = 30, crit_damage = 25)
+        NoiShin = core.InformedCharacterModifier("뇌신",crit_rate = 30, crit_damage = 25)
 
-        SkyOpenPassive = core.InformedCharacterModifier("천지개벽(패시브)",pdamage_indep = 20)
+        SkyOpenPassive = core.InformedCharacterModifier("천지개벽(패시브)",final_damage = 20)
 
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 3)
 
@@ -66,8 +66,8 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level/2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 70)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -5 + 0.5*ceil(passive_level/2))
 
         return [WeaponConstant, Mastery]
 
@@ -89,7 +89,7 @@ class JobGenerator(ck.JobGenerator):
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         CHOOKROI = 0.7 + 0.01*passive_level
-        LINK_MASTERY = core.CharacterModifier(pdamage_indep = 20)
+        LINK_MASTERY = core.CharacterModifier(final_damage = 20)
         #Buff skills
 
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
@@ -125,7 +125,7 @@ class JobGenerator(ck.JobGenerator):
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
-        ShinNoiHapL = core.BuffSkill("신뇌합일", 540, (30+vEhc.getV(3,2)//2) * 1000, red = True, cooltime = (120-vEhc.getV(3,2)//2)*1000, pdamage_indep=5+vEhc.getV(3,2)//6).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
+        ShinNoiHapL = core.BuffSkill("신뇌합일", 540, (30+vEhc.getV(3,2)//2) * 1000, red = True, cooltime = (120-vEhc.getV(3,2)//2)*1000, final_damage=5+vEhc.getV(3,2)//6).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
         ShinNoiHapLAttack = core.SummonSkill("신뇌합일(공격)", 0, 3000, 16*vEhc.getV(3,2) + 400, 7, (30+vEhc.getV(3,2)//2) * 1000, cooltime = -1).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
         ShinNoiHapLAttack_ChookRoi = core.DamageSkill('신뇌합일(축뢰)', 0, (16*vEhc.getV(3,2) + 400) * CHOOKROI, 7 ).wrap(core.DamageSkillWrapper)
         GioaTan = core.DamageSkill("교아탄", 480, 1000+40*vEhc.getV(2,1), 7, cooltime = 8000, red = True, modifier = LINK_MASTERY).isV(vEhc,2,1).wrap(core.DamageSkillWrapper) #  교아탄-벽력 콤보 사용함

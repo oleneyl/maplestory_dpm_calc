@@ -65,10 +65,10 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        CriticalRoar = core.InformedCharacterModifier("크리티컬 로어",crit = 20, crit_damage = 5)
+        CriticalRoar = core.InformedCharacterModifier("크리티컬 로어",crit_rate = 20, crit_damage = 5)
         MentalClearity = core.InformedCharacterModifier("멘탈 클리어리티",att = 30)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
-        CriticalRage = core.InformedCharacterModifier("크리티컬 레이지",crit = 15, crit_damage = 10)    #보스상대 추가+20% 크리율
+        CriticalRage = core.InformedCharacterModifier("크리티컬 레이지",crit_rate = 15, crit_damage = 10)    #보스상대 추가+20% 크리율
         StimulatePassive = core.InformedCharacterModifier("스티뮬레이트(패시브)",boss_pdamage = 20)
 
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 2, 3)
@@ -78,10 +78,10 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(self.combat/2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 70)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -5 + 0.5*ceil(self.combat/2))
 
-        CriticalRage = core.InformedCharacterModifier("크리티컬 레이지(보스)",crit = 20)    #보스상대 추가+20% 크리율
+        CriticalRage = core.InformedCharacterModifier("크리티컬 레이지(보스)",crit_rate = 20)    #보스상대 추가+20% 크리율
         GuardCrush = core.InformedCharacterModifier("가드 크러시",armor_ignore = 40 + 2*passive_level) #40% 확률로 방무 100% 무시.
         # CounterAttack = core.InformedCharacterModifier("카운터 어택",pdamage = 25 + 2*passive_level) # TODO: 적용 여부 결정해야함
 
@@ -117,7 +117,7 @@ class JobGenerator(ck.JobGenerator):
         FistInrage_T = core.DamageSkill("피스트 인레이지(변신)", 690, 320+4*self.combat, 8 + 1 + 2, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         DragonStrike = core.DamageSkill("드래곤 스트라이크", 690, 300 + 4*self.combat, 12, cooltime = 15 * 1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        DragonStrikeBuff = core.BuffSkill("드래곤 스트라이크(디버프)", 0, 15 * 1000, cooltime = -1, pdamage_indep = 20 + self.combat//2).wrap(core.BuffSkillWrapper)
+        DragonStrikeBuff = core.BuffSkill("드래곤 스트라이크(디버프)", 0, 15 * 1000, cooltime = -1, final_damage = 20 + self.combat//2).wrap(core.BuffSkillWrapper)
 
         Nautilus = core.DamageSkill("노틸러스", 690, 440+4*self.combat, 7, cooltime = 60 * 1000, red=True).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         NautilusFinalAttack = core.DamageSkill("노틸러스(파이널 어택)", 0, 165+2*self.combat, 2).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
@@ -138,9 +138,9 @@ class JobGenerator(ck.JobGenerator):
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
-        Transform = core.BuffSkill("트랜스 폼", 450, (50+vEhc.getV(1,1))*1000, cooltime = 180 * 1000, red=True, pdamage_indep = 20 + vEhc.getV(1,1) // 5).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
+        Transform = core.BuffSkill("트랜스 폼", 450, (50+vEhc.getV(1,1))*1000, cooltime = 180 * 1000, red=True, final_damage = 20 + vEhc.getV(1,1) // 5).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         TransformEnergyOrbDummy = core.DamageSkill("에너지 오브(더미)", 0, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
-        TransformEnergyOrb = core.DamageSkill("에너지 오브", 780, 450 +vEhc.getV(1,1)*18, 3 * TRANSFORM_HIT, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        TransformEnergyOrb = core.DamageSkill("에너지 오브", 780, 450 +vEhc.getV(1,1)*18, 3 * TRANSFORM_HIT, modifier = core.CharacterModifier(crit_rate = 50, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
 
         SerpentScrew = core.SummonSkill("서펜트 스크류", 600, 260, 360 + vEhc.getV(0,0)*14, 3, 99999 * 10000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         SerpentScrewDummy = core.SummonSkill("서펜트 스크류(지속)", 0, 1000, 0, 0, 99999 * 10000, cooltime = -1).wrap(core.SummonSkillWrapper)

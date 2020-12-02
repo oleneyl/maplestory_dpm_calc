@@ -8,7 +8,7 @@ from functools import partial
 
 # 직업별 스크립트 완전히 파악되면 통합 필요
 def ReadyToDieWrapper(vEhc, num1, num2):
-    ReadyToDie = core.BuffSkill("레디 투 다이", 600 * 2, 15*1000, cooltime = (90-int(0.5*vEhc.getV(num1, num2)))*1000, red = True, pdamage_indep = 30+int(0.2*vEhc.getV(num1, num2))).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
+    ReadyToDie = core.BuffSkill("레디 투 다이", 600 * 2, 15*1000, cooltime = (90-int(0.5*vEhc.getV(num1, num2)))*1000, red = True, final_damage = 30+int(0.2*vEhc.getV(num1, num2))).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
     return ReadyToDie
 
 def ReadyToDiePassiveWrapper(vEhc, num1, num2):
@@ -18,8 +18,8 @@ def ReadyToDiePassiveWrapper(vEhc, num1, num2):
 # 3개 직업의 코드가 통일이 안되어 있으므로 아직 쓰면 안됨
 # aDS = 어드밴스드 다크사이트 최종뎀값
 def UltimateDarkSightWrapper(vEhc, num1, num2, aDS = 0):
-    UltimateDarkSight = core.BuffSkill("얼티밋 다크 사이트", 750, 30000, 
+    UltimateDarkSight = core.BuffSkill("얼티밋 다크 사이트", 750, 30000,
                     cooltime = (220-vEhc.getV(num1, num2))*1000,
                     red = True,
-                    pdamage_indep= 10 + vEhc.getV(num1, num2)//5 + aDS).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
+                    final_damage= 10 + vEhc.getV(num1, num2)//5 + aDS).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
     return UltimateDarkSight

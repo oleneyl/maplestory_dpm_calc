@@ -29,11 +29,11 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         NimbleBody = core.InformedCharacterModifier("님블 바디",stat_main = 20)
-        CriticalThrow = core.InformedCharacterModifier("크리티컬 스로우", crit=50, crit_damage = 5)
+        CriticalThrow = core.InformedCharacterModifier("크리티컬 스로우", crit_rate=50, crit_damage = 5)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
 
         Adrenalin = core.InformedCharacterModifier("아드레날린",crit_damage=10)
-        JavelinMastery = core.InformedCharacterModifier("자벨린 마스터리",pdamage_indep = 25)    #20%확률로 100%크리. 현재 비활성,
+        JavelinMastery = core.InformedCharacterModifier("자벨린 마스터리",final_damage = 25)    #20%확률로 100%크리. 현재 비활성,
         PurgeAreaPassive = core.InformedCharacterModifier("퍼지 에어리어(패시브)",boss_pdamage = 10 + ceil(self.combat / 3))
         DarkSerenity = core.InformedCharacterModifier("다크 세레니티",att = 40+passive_level, armor_ignore = 30+passive_level)
 
@@ -46,8 +46,8 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 75)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5+0.5*(passive_level / 2))    #오더스 기본적용!
+        WeaponConstant = core.InformedCharacterModifier("무기상수", final_damage = 75)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -7.5+0.5*(passive_level / 2))    #오더스 기본적용!
 
         return [WeaponConstant, Mastery]
 

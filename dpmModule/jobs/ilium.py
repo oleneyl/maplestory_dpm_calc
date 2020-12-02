@@ -105,7 +105,7 @@ class GramHolderWrapper(core.SummonSkillWrapper):
         if self.is_active() and self.tick <= 0:
             modifier = self.get_modifier()
             if self.gloryWing.is_active() or self.crystalCharge.judge(self.chargeBefore + 3, 1):
-                modifier = modifier + core.CharacterModifier(pdamage_indep = 100)
+                modifier = modifier + core.CharacterModifier(final_damage = 100)
             self.chargeBefore = self.crystalCharge.stack
             self.tick += self.skill.delay
             return core.ResultObject(0, modifier, self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
@@ -144,20 +144,20 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.get_weapon_att("건틀렛")
         MagicCircuit = core.InformedCharacterModifier("매직 서킷", att = WEAPON_ATT*0.2)
 
-        MagicGuntletMastery = core.InformedCharacterModifier("매직 건틀렛 마스터리", crit = 20)
+        MagicGuntletMastery = core.InformedCharacterModifier("매직 건틀렛 마스터리", crit_rate = 20)
         BlessMarkPassive = core.InformedCharacterModifier("블레스 마크(패시브)", pdamage = 10)
         LefMastery = core.InformedCharacterModifier("레프 마스터리", pdamage = 10)
 
         DestinyPioneer = core.InformedCharacterModifier("운명 개척", stat_main = 40, patt = 10)
-        ContinualResearch = core.InformedCharacterModifier("끊임없는 연구", att = 50, crit = 20, crit_damage = 30)
-        CrystalSecret = core.InformedCharacterModifier("크리스탈의 비밀", boss_pdamage = 30, pdamage_indep = 35, armor_ignore = 25)
+        ContinualResearch = core.InformedCharacterModifier("끊임없는 연구", att = 50, crit_rate = 20, crit_damage = 30)
+        CrystalSecret = core.InformedCharacterModifier("크리스탈의 비밀", boss_pdamage = 30, final_damage = 35, armor_ignore = 25)
 
         return [MagicCircuit, MagicGuntletMastery, BlessMarkPassive,
             LefMastery, DestinyPioneer, ContinualResearch, CrystalSecret ]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5)
+        WeaponConstant = core.InformedCharacterModifier("무기상수", final_damage = 20)
+        Mastery = core.InformedCharacterModifier("숙련도", final_damage = -5)
 
         return [WeaponConstant, Mastery]
 
@@ -201,11 +201,11 @@ class JobGenerator(ck.JobGenerator):
         #글로리 윙
         GloryWingStackSkill = core.BuffSkill("글로리 윙(스택)", 0, 9999999)
 
-        GloryWingUse = core.BuffSkill("글로리 윙(진입)", 30, 20000, pdamage_indep = 25, pdamage = (vEhc.getV(1,0) + 5) * 2, boss_pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper) # 소오크 2개에 항상 맞춰 사용
+        GloryWingUse = core.BuffSkill("글로리 윙(진입)", 30, 20000, final_damage = 25, pdamage = (vEhc.getV(1,0) + 5) * 2, boss_pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper) # 소오크 2개에 항상 맞춰 사용
 
         GloryWing_MortalWingbit = core.DamageSkill("글로리 윙:모탈 윙비트", 630, 1070 + 20*self.combat, 15, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #1회
 
-        GloryWing_Craft_Javelin = core.DamageSkill("글로리 윙:자벨린", 420, 465 + 3*self.combat, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = 40)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        GloryWing_Craft_Javelin = core.DamageSkill("글로리 윙:자벨린", 420, 465 + 3*self.combat, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, final_damage = 40)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         GloryWing_Craft_Javelin_Fragment = core.DamageSkill("글로리 윙:자벨린(매직 미사일)", 0, 250 + 5*self.combat, 3*3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         #5차 스킬들

@@ -33,17 +33,17 @@ class JobGenerator(ck.JobGenerator):
         ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니", stat_main = chtr.level // 2)
 
         SpellControl = core.InformedCharacterModifier("주문 연마",att = 10)
-        LiberatedMagic = core.InformedCharacterModifier("해방된 마력",pdamage_indep = 30)
-        BurningFocus = core.InformedCharacterModifier("약점 분석",crit = 30, crit_damage = 15)
+        LiberatedMagic = core.InformedCharacterModifier("해방된 마력",final_damage = 30)
+        BurningFocus = core.InformedCharacterModifier("약점 분석",crit_rate = 30, crit_damage = 15)
         BriliantEnlightenment = core.InformedCharacterModifier("번뜩이는 깨달음",stat_main = 60)
-        PureMagic = core.InformedCharacterModifier("마법의 진리", att = 20 + passive_level, pdamage_indep = 50 + 3*passive_level)
+        PureMagic = core.InformedCharacterModifier("마법의 진리", att = 20 + passive_level, final_damage = 50 + 3*passive_level)
 
         return [ElementalExpert, ElementalHarmony, SpellControl, LiberatedMagic, BurningFocus, BriliantEnlightenment, PureMagic]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5 + 0.5*passive_level)
+        WeaponConstant = core.InformedCharacterModifier("무기상수",final_damage = 20)
+        Mastery = core.InformedCharacterModifier("숙련도",final_damage = -2.5 + 0.5*passive_level)
         SpiritOfFlameActive = core.InformedCharacterModifier("스피릿 오브 플레임(이그니션)", prop_ignore = 10)
 
         return [WeaponConstant, Mastery, SpiritOfFlameActive]
@@ -67,7 +67,7 @@ class JobGenerator(ck.JobGenerator):
         Flame = core.BuffSkill("플레임", 0, 8000, att = 40 + passive_level).wrap(core.BuffSkillWrapper) # 벞지 적용 안되는 스킬
 
         #Damage Skills
-        InfernoRize = core.DamageSkill("인페르노라이즈", 570, 350+3*self.combat, 10, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage_indep = 90 + self.combat), red = True).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        InfernoRize = core.DamageSkill("인페르노라이즈", 570, 350+3*self.combat, 10, cooltime = 30*1000, modifier = core.CharacterModifier(final_damage = 90 + self.combat), red = True).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
         #Full speed, No Combat Orders
         OrbitalFlame = core.DamageSkill("오비탈 플레임 IV", 210, 215 + self.combat, 3 * 2 * (210 / flamewizardDefaultSpeed), modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
@@ -91,7 +91,7 @@ class JobGenerator(ck.JobGenerator):
         SavageFlame_3= core.DamageSkill("플레임 디스차지(3스택)", 840, 250 + 10*vEhc.getV(4,4), 8*(8+2)).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         SavageFlame_4 = core.DamageSkill("플레임 디스차지(4스택)", 840, 250 + 10*vEhc.getV(4,4), 8*(8+2+2)).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
 
-        InfinityFlameCircleTick = core.DamageSkill("인피니티 플레임 서클", 180, 500+20*vEhc.getV(3,3), 7, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #1틱
+        InfinityFlameCircleTick = core.DamageSkill("인피니티 플레임 서클", 180, 500+20*vEhc.getV(3,3), 7, modifier = core.CharacterModifier(crit_rate = 50, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #1틱
         InfinityFlameCircleInit = core.DamageSkill("인피니티 플레임 서클(개시)", 360, 0, 0, cooltime = 15*6*1000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
 
         # 84타
@@ -123,7 +123,7 @@ class JobGenerator(ck.JobGenerator):
 
         SalamanderMischeif.onJustAfter(SalamanderMischeifStack.stackController(-45))
         SalamanderMischeif.onTick(SalamanderMischeifStack.stackController(1))
-        SalamanderMischeif.add_runtime_modifier(SalamanderMischeifStack, lambda sk: core.CharacterModifier(pdamage_indep=sk.stack))
+        SalamanderMischeif.add_runtime_modifier(SalamanderMischeifStack, lambda sk: core.CharacterModifier(final_damage=sk.stack))
         SalamanderMischeif.onJustAfter(SalamanderMischeifBuff.controller(60000))
 
         # Overload Mana
