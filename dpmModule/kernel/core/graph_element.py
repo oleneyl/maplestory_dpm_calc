@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from .modifier import SkillModifier
 
 GraphElementFlag = Literal[1, 2, 4, 8, 16, 32, 64, 128]
+Lang = Literal['ko', 'en']
 
 
 class Task:
@@ -56,14 +57,14 @@ class ContextReferringTask(Task):
 class GraphElement:
     """Manage time dependent feature of each execution
     """
-    Flag_Skill: GraphElementFlag = 1
-    Flag_BaseSkill: GraphElementFlag = 2
-    Flag_BuffSkill: GraphElementFlag = 4
-    Flag_DamageSkill: GraphElementFlag = 8
-    Flag_SummonSkill: GraphElementFlag = 16
-    Flag_Optional: GraphElementFlag = 32
-    Flag_Repeat: GraphElementFlag = 64
-    Flag_Constraint: GraphElementFlag = 128
+    Flag_Skill = 1
+    Flag_BaseSkill = 2
+    Flag_BuffSkill = 4
+    Flag_DamageSkill = 8
+    Flag_SummonSkill = 16
+    Flag_Optional = 32
+    Flag_Repeat = 64
+    Flag_Constraint = 128
 
     def __init__(self, _id: Union[str, AbstractDynamicVariableInstance]) -> None:
         """
@@ -118,7 +119,7 @@ class GraphElement:
             li.append((self, context[0], "callback"))
         return li
 
-    def get_explanation(self, lang: Literal["ko", "en"] = "ko") -> str:
+    def get_explanation(self, lang: Lang = "ko") -> str:
         """
         해당 그래프 요소에 대한 설명을 받아옵니다.
 
@@ -275,7 +276,7 @@ class TaskHolder(GraphElement):
         super(TaskHolder, self).__init__(name)
         self._taskholder: Task = task
 
-    def get_explanation(self, lang: Literal["ko", "en"] = "ko") -> str:
+    def get_explanation(self, lang: Lang = "ko") -> str:
         if lang == "ko":
             return "%s" % self._id
         elif lang == "en":
@@ -339,7 +340,7 @@ class OptionalElement(GraphElement):
         self.fail: GraphElement = fail
         self.set_flag(self.Flag_Optional)
 
-    def get_explanation(self, lang: Literal["ko", "en"] = "ko") -> str:
+    def get_explanation(self, lang: Lang = "ko") -> str:
         if lang == "ko":
             return "종류:조건적 실행\n%s" % self._id
         elif lang == "en":
@@ -384,7 +385,7 @@ class RepeatElement(GraphElement):
         self.set_flag(self.Flag_Repeat)
         self._result_object_cache = ResultObject(0, CharacterModifier(), 0, 0, sname='Repeat Element', spec='graph control')
 
-    def get_explanation(self, lang: Literal["ko", "en"] = "ko") -> str:
+    def get_explanation(self, lang: Lang = "ko") -> str:
         if lang == "ko":
             return "종류:반복\n이름:%s\n반복대상:%s\n반복 횟수:%d" % (self._id, self._repeat_target._id, self.itr)
         elif lang == "en":
@@ -423,7 +424,7 @@ class ConstraintElement(GraphElement):
         self._ftn: Callable[[], bool] = cnst
         self.set_flag(self.Flag_Constraint)
 
-    def get_explanation(self, lang: Literal["ko", "en"] = "ko") -> str:
+    def get_explanation(self, lang: Lang = "ko") -> str:
         if lang == "ko":
             return "종류:제한\n이름:%s" % self._id
         elif lang == "en":
