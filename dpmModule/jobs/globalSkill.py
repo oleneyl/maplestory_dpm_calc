@@ -1,3 +1,4 @@
+from dpmModule.character.characterKernel import AbstractCharacter
 from ..kernel import core
 import math
 
@@ -45,14 +46,28 @@ def useful_advanced_bless(slevel = 1):
     UsefulAdvancedBless = core.BuffSkill("쓸만한 어드밴스드 블레스", 600, usefulSkillRemain(slevel), rem = False, att = 20).wrap(core.BuffSkillWrapper)
     return UsefulAdvancedBless
 
-def SpiderInMirrorBuilder(enhancer, skill_importance, enhance_importance, break_modifier=core.CharacterModifier(), spider_modifier=core.CharacterModifier()):
-    MirrorBreak = core.DamageSkill(
-        "스파이더 인 미러(공간 붕괴)", 720, 450+18*enhancer.getV(skill_importance, enhance_importance), 15, cooltime = 250*1000, red = True, modifier=break_modifier
-    ).wrap(core.DamageSkillWrapper)
+class MirrorBreakWrapper(core.DamageSkillWrapper):
+    def __init__(self, vEhc, num1, num2, modifier) -> None:
+        super(MirrorBreakWrapper, self).__init__(
+            core.DamageSkill("스파이더 인 미러(공간 붕괴)", 720, 450+18*vEhc.getV(num1, num2), 15, cooltime = 250*1000, red = True, modifier=modifier)
+        )
+
+    def ensure(self, chtr: AbstractCharacter) -> bool:
+        return chtr.level >= 235
+
+class MirrorSpiderWrapper(core.SummonSkillWrapper):
     # 5번 연속 공격 후 종료, 재돌입 대기시간 3초
-    MirrorSpider = core.SummonSkill(
-        "스파이더 인 미러(거울 속의 거미)", 0, 3000, 175+7*enhancer.getV(skill_importance, enhance_importance), 8*5, 15*1000, cooltime = -1, modifier=spider_modifier
-    ).wrap(core.SummonSkillWrapper)
+    def __init__(self, vEhc, num1, num2, modifier) -> None:
+        super(MirrorSpiderWrapper, self).__init__(
+            core.SummonSkill("스파이더 인 미러(거울 속의 거미)", 0, 3000, 175+7*vEhc.getV(num1, num2), 8*5, 15*1000, cooltime = -1, modifier=modifier)
+        )
+
+    def ensure(self, chtr: AbstractCharacter) -> bool:
+        return chtr.level >= 235
+
+def SpiderInMirrorBuilder(enhancer, skill_importance, enhance_importance, break_modifier=core.CharacterModifier(), spider_modifier=core.CharacterModifier()):
+    MirrorBreak = MirrorBreakWrapper(enhancer, skill_importance, enhance_importance, break_modifier)
+    MirrorSpider = MirrorSpiderWrapper(enhancer, skill_importance, enhance_importance, spider_modifier)
     MirrorBreak.onAfter(MirrorSpider.controller(3000))
     return MirrorBreak, MirrorSpider
 

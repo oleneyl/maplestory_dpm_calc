@@ -235,7 +235,7 @@ class JobGenerator(ck.JobGenerator):
     
         return(BasicAttack,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), 
-                    Booster, ElvishBlessing, AncientSpirit, HerosOath, Sylphidia.ignore(), RoyalKnights,
+                    Booster, ElvishBlessing, AncientSpirit, HerosOath, RoyalKnights,
                     CriticalReinforce, UnicornSpikeBuff, RegendrySpearBuff, LightningEdgeBuff, ElementalGhost,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
                 [RoyalKnightsAttack, ElementalGhostSpirit,UnicornSpike, RegendrySpear, WrathOfEllil, IrkilaBreathInit] +\
