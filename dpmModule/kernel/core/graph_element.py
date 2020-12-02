@@ -7,7 +7,7 @@ from .modifier import CharacterModifier
 from .result_object import ResultObject
 
 if TYPE_CHECKING:
-    from ..abstract import AbstractVEnhancer
+    from ..abstract import AbstractCharacter
     from .callback import Callback
     from .modifier import SkillModifier
 
@@ -235,32 +235,14 @@ class GraphElement:
     def onJustAfters(self, ellist: List[GraphElement]) -> None:
         self._justAfter += ellist
 
-    def ignore(self) -> None:
-        return None
-
-    # TODO: Not used method.
-    def ensure_condition(self, cond: Callable[[], bool]) -> Optional[GraphElement]:
-        if cond():
-            return self
-        else:
-            return None
-
-    def ensure(self, ehc: AbstractVEnhancer, index_1: int, index_2: int) -> Optional[GraphElement]:
-        """주어진 ``ehc`` 의 코어 강화가 존재하지 않는다면, ``None`` 을 반환하여 실행되지 못하도록 막습니다.
+    def ensure(self, chtr: AbstractCharacter) -> bool:
+        """주어진 ``chtr``를 참조해 스킬의 사용 가능 여부를 판정합니다.
 
         Parameters
         ----------
-        ehc: AbstractVEnhancer
-        index_1 : int
-            ``ehc`` 가 첫번째 인자로 받게 될 index
-        index_2 : int
-            ``ehc`` 가 두번째 인자로 받게 될 index
-
+        chtr: AbstractCharacter
         """
-        if ehc.getV(index_1, index_2) > 0:
-            return self
-        else:
-            return None
+        return True
 
     def create_callbacks(self, **kwargs) -> List[Callback]:
         raise NotImplementedError
