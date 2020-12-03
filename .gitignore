@@ -9,4 +9,4 @@ build/
 *.sqlite
 *.txt
 docs/_build/
-*result.xlsx
+*.xlsx
