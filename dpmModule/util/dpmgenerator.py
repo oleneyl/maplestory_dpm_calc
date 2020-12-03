@@ -48,15 +48,15 @@ class IndividualDPMGenerator():
             control.analytics.statistics()
         return control.getDPM(restricted=restricted)
 
-    def get_detailed_dpm(self, ulevel = 6000, weaponstat = [4,9]):
+    def get_detailed_dpm(self, ulevel = 6000, weaponstat = [4,9], cdr = 0, options = {}):
         #TODO target을 동적으로 생성할 수 있도록.
         
-        target = self.template(maplejobs.weaponList[self.job])
-        gen = (self.supplier).JobGenerator()
+        target: ItemedCharacter = self.template(maplejobs.weaponList[self.job], cdr)
+        gen:  JobGenerator = (self.supplier).JobGenerator()
         
         #코어강화량 설정
         v_builder = core.AlwaysMaximumVBuilder()
-        graph = gen.package(target, v_builder, ulevel = ulevel, weaponstat = weaponstat, ability_grade = Ability_grade(4, 1))
+        graph = gen.package(target, v_builder, options = options, ulevel = ulevel, weaponstat = weaponstat, ability_grade = Ability_grade(4, 1))
         sche = policy.AdvancedGraphScheduler(graph,
             policy.TypebaseFetchingPolicy(priority_list = [
                 core.BuffSkillWrapper,
