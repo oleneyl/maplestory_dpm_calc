@@ -30,7 +30,7 @@ Utility functions for calculate DPM easier.
       
       - 연산 시간을 설정합니다. 단위 : ms
 
-    - get_dpm(self, ulevel = 6000, weaponstat = [4,9], level = 230, printFlag = False)
+    - get_dpm(self, ulevel = 6000, weaponstat = [4,9], level = 240, printFlag = False)
       
       - dpm을 계산합니다. 
 
