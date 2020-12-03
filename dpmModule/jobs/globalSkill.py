@@ -78,12 +78,26 @@ def MapleHeroes2Wrapper(vEhc, num1, num2, level, combat_level):
         pdamage = 5 + vEhc.getV(num1, num2) // 2, cooltime = 180*1000, red = True).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
     return MapleHeroes2
 
-# 창조의 아이온 (즉시 재시전)
-def genesis_aeonian_rise():
-    AeonianRise = core.DamageSkill("창조의 아이온", 0, 1500, 7, cooltime = 180000).wrap(core.DamageSkillWrapper)
-    return AeonianRise
+class TandadianRuinWrapper(core.BuffSkillWrapper):
+    def __init__(self) -> None:
+        super(TandadianRuinWrapper, self).__init__(
+            core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime = 90000, pdamage_indep = 15, rem = False, red = False)
+        )
 
-# 파괴의 얄다바오트
-def genesis_tanadian_ruin():
-    TandadianRuin = core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime = 90000, pdamage_indep = 15, rem = False, red = False).wrap(core.BuffSkillWrapper)
-    return TandadianRuin
+    def ensure(self, chtr: AbstractCharacter) -> bool:
+        return False
+
+class AeonianRiseWrapper(core.DamageSkillWrapper):
+    def __init__(self) -> None:
+        super(AeonianRiseWrapper, self).__init__(
+            core.DamageSkill("창조의 아이온", 0, 1500, 7, cooltime = 180000, red = False)
+        )
+
+    def ensure(self, chtr: AbstractCharacter) -> bool:
+        return False
+
+def GenesisSkillBuilder(chtr: AbstractCharacter):
+    TandadianRuin = TandadianRuinWrapper(chtr)
+    AeonianRise = AeonianRiseWrapper(chtr)
+
+    return TandadianRuin, AeonianRise
