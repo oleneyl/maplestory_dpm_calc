@@ -6,6 +6,7 @@ import time, json
 
 import argparse
 
+
 def get_args():
     parser = argparse.ArgumentParser('DPM Test argument')
     parser.add_argument('--job', type=str, help='Target job name to test dpm')
