@@ -1,6 +1,6 @@
-from dpmModule.character.characterTemplate import get_template_generator
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
 from dpmModule.util.configurations import export_configuration
+from dpmModule.character.characterTemplate import get_template_generator
 
 import time, json
 
