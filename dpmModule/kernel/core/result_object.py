@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, Final, List, Optional
 
 from ..graph import DynamicVariableOperation
 from .modifier import CharacterModifier
@@ -18,15 +18,11 @@ class ResultObject:
         self.delay: float = DynamicVariableOperation.reveal_argument(delay)
         self.damage: float = DynamicVariableOperation.reveal_argument(damage)
         self.hit: float = DynamicVariableOperation.reveal_argument(hit)
-        self.mdf: CharacterModifier = DynamicVariableOperation.reveal_argument(
-            mdf)
+        self.mdf: CharacterModifier = DynamicVariableOperation.reveal_argument(mdf)
         self.sname: str = DynamicVariableOperation.reveal_argument(sname)
-        self.spec: str = DynamicVariableOperation.reveal_argument(
-            spec)  # buff, deal, summon
-        self.kwargs: Dict[Any, Any] = DynamicVariableOperation.reveal_argument(
-            kwargs)
-        self.cascade: List[Task] = DynamicVariableOperation.reveal_argument(
-            cascade)
+        self.spec: str = DynamicVariableOperation.reveal_argument(spec)  # buff, deal, summon
+        self.kwargs: Dict[Any, Any] = DynamicVariableOperation.reveal_argument(kwargs)
+        self.cascade: List[Task] = DynamicVariableOperation.reveal_argument(cascade)
         self.callbacks: List[Callback] = callbacks
         self.time: Optional[float] = None
 
@@ -36,5 +32,4 @@ class ResultObject:
 
 '''Default Values. Forbidden to editting.
 '''
-taskTerminater: ResultObject = ResultObject(
-    0, CharacterModifier(), 0, 0, sname='terminator', spec='graph control')
+taskTerminater: Final = ResultObject(0, CharacterModifier(), 0, 0, sname='terminator', spec='graph control')

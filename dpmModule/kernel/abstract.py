@@ -12,6 +12,7 @@ user who wants to inspect whole feature of package.
 """
 
 from __future__ import annotations
+
 from typing import Any, Dict, List, Tuple, Union, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -90,8 +91,7 @@ class AbstractScenarioGraph:
         nodes.insert(0, ancestor)
         return nodes, links
 
-    def _get_network_recursive(self, ancestor: GraphElement, nodes: List[GraphElement], links: List[Link])\
-            -> Tuple[List[GraphElement], List[Link]]:
+    def _get_network_recursive(self, ancestor: GraphElement, nodes: List[GraphElement], links: List[Link]) -> Tuple[List[GraphElement], List[Link]]:
         try:
             _nodes: List[GraphElement] = []
             _links = ancestor.get_link()

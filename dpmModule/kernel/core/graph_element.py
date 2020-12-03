@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Callable, List, Literal, Optional, Tuple, Union
 
 from ..graph import AbstractDynamicVariableInstance
 from .modifier import CharacterModifier
@@ -11,11 +11,14 @@ if TYPE_CHECKING:
     from .callback import Callback
     from .modifier import SkillModifier
 
+GraphElementFlag = Literal[1, 2, 4, 8, 16, 32, 64, 128]
+Lang = Literal['ko', 'en']
+
 
 class Task:
-    def __init__(self, ref, ftn) -> None:
+    def __init__(self, ref: GraphElement, ftn: Callable[[Any], ResultObject]) -> None:
         self._ref: GraphElement = ref
-        self._ftn: Callable[[Optional[Any]], ResultObject] = ftn
+        self._ftn: Callable[[Any], ResultObject] = ftn
         self._after: List[Task] = []
         self._before: List[Task] = []
         self._justAfter: List[Task] = []
@@ -54,15 +57,14 @@ class ContextReferringTask(Task):
 class GraphElement:
     """Manage time dependent feature of each execution
     """
-
-    Flag_Skill: int = 1
-    Flag_BaseSkill: int = 2
-    Flag_BuffSkill: int = 4
-    Flag_DamageSkill: int = 8
-    Flag_SummonSkill: int = 16
-    Flag_Optional: int = 32
-    Flag_Repeat: int = 64
-    Flag_Constraint: int = 128
+    Flag_Skill = 1
+    Flag_BaseSkill = 2
+    Flag_BuffSkill = 4
+    Flag_DamageSkill = 8
+    Flag_SummonSkill = 16
+    Flag_Optional = 32
+    Flag_Repeat = 64
+    Flag_Constraint = 128
 
     def __init__(self, _id: Union[str, AbstractDynamicVariableInstance]) -> None:
         """
@@ -82,22 +84,20 @@ class GraphElement:
         # Tasks that must be executed after this el.
         self._after: List[GraphElement] = []
         self._justAfter: List[GraphElement] = []
-        self._registered_callback_presets: List[Tuple[str, Tuple[GraphElement, float]]] = [
-        ]
+        self._registered_callback_presets: List[Tuple[str, Tuple[GraphElement, float]]] = []
 
-        self._result_object_cache: ResultObject = ResultObject(
-            0, CharacterModifier(), 0, 0, sname='Graph Element', spec='graph control')
+        self._result_object_cache = ResultObject(0, CharacterModifier(), 0, 0, sname='Graph Element', spec='graph control')
         self._flag: int = 0
 
-    def set_flag(self, flag: int) -> None:
+    def set_flag(self, flag: GraphElementFlag) -> None:
         self._flag |= flag
 
     # TODO: Not used method.
-    def toggle_flag(self, flag: int) -> None:
+    def toggle_flag(self, flag: GraphElementFlag) -> None:
         self._flag ^= flag
 
     # TODO: Not used method.
-    def remove_flag(self, flag: int) -> None:
+    def remove_flag(self, flag: GraphElementFlag) -> None:
         self._flag &= ~flag
 
     def get_link(self) -> List[Tuple[GraphElement, GraphElement, str]]:
@@ -119,7 +119,7 @@ class GraphElement:
             li.append((self, context[0], "callback"))
         return li
 
-    def get_explanation(self, lang: str = "ko") -> str:
+    def get_explanation(self, lang: Lang = "ko") -> str:
         """
         해당 그래프 요소에 대한 설명을 받아옵니다.
 
@@ -146,7 +146,7 @@ class GraphElement:
         이 함수는 상속 과정에서 반드시 재정의되어야 합니다.
 
         Returns
-        ------
+        -------
         ResultObject
             해당 그래프 요소가 작동하고 난 후의 결과물
         """
@@ -196,7 +196,7 @@ class GraphElement:
         self._after = [el] + self._after
 
     def onAfters(self, ellist: List[GraphElement]) -> None:
-        self._after = self._after + ellist
+        self._after += ellist
 
     def onBefore(self, el: GraphElement) -> None:
         """
@@ -210,7 +210,7 @@ class GraphElement:
         el : GraphElement
             이전에 실행되어야 할 ``GraphElement``
         """
-        self._before = self._before + [el]
+        self._before += [el]
 
     def onBefores(self, ellist: List[GraphElement]) -> None:
         self._before += ellist
@@ -226,8 +226,7 @@ class GraphElement:
         """
         task.onBefore([el.build_task(skill_modifier) for el in self._before])
         task.onAfter([el.build_task(skill_modifier) for el in self._after])
-        task.onJustAfter([el.build_task(skill_modifier)
-                          for el in self._justAfter])
+        task.onJustAfter([el.build_task(skill_modifier) for el in self._justAfter])
 
     def onJustAfter(self, el: GraphElement) -> None:
         self._justAfter = [el] + self._justAfter
@@ -259,7 +258,7 @@ class TaskHolder(GraphElement):
         super(TaskHolder, self).__init__(name)
         self._taskholder: Task = task
 
-    def get_explanation(self, lang: str = "ko") -> str:
+    def get_explanation(self, lang: Lang = "ko") -> str:
         if lang == "ko":
             return "%s" % self._id
         elif lang == "en":
@@ -276,7 +275,7 @@ class TaskHolder(GraphElement):
         return li
 
 
-def create_task(task_name: str, task_function, task_ref) -> TaskHolder:
+def create_task(task_name: str, task_function: Callable[[Any], ResultObject], task_ref: GraphElement) -> TaskHolder:
     return TaskHolder(Task(task_ref, task_function), task_name)
 
 
@@ -285,17 +284,14 @@ class OptionalTask(Task):
         super(OptionalTask, self).__init__(ref, None)
         self._discriminator: Callable[[], bool] = discriminator
         self._result: Task = task
+        self._failtask: Task = failtask  # TODO: Not used attribute.
         self._name: str = name
-        self._failtask = failtask  # TODO: Not used attribute.
-        self._result_object_cache: ResultObject = ResultObject(0, CharacterModifier(
-        ), 0, 0, sname=self._name, spec='graph control', cascade=[self._result])
+        self._result_object_cache = ResultObject(0, CharacterModifier(), 0, 0, sname=self._name, spec='graph control', cascade=[self._result])
         self._fail: ResultObject
         if failtask is None:
-            self._fail = ResultObject(0, CharacterModifier(
-            ), 0, 0, sname=self._name + " fail", spec='graph control')
+            self._fail = ResultObject(0, CharacterModifier(), 0, 0, sname=self._name + " fail", spec='graph control')
         else:
-            self._fail = ResultObject(0, CharacterModifier(
-            ), 0, 0, sname=self._name, spec='graph control', cascade=[failtask])
+            self._fail = ResultObject(0, CharacterModifier(), 0, 0, sname=self._name, spec='graph control', cascade=[failtask])
 
     def do(self, **kwargs) -> ResultObject:
         if self._discriminator():
@@ -326,7 +322,7 @@ class OptionalElement(GraphElement):
         self.fail: GraphElement = fail
         self.set_flag(self.Flag_Optional)
 
-    def get_explanation(self, lang: str = "ko") -> str:
+    def get_explanation(self, lang: Lang = "ko") -> str:
         if lang == "ko":
             return "종류:조건적 실행\n%s" % self._id
         elif lang == "en":
@@ -337,8 +333,7 @@ class OptionalElement(GraphElement):
             fail = None
         else:
             fail = self.fail.build_task(skill_modifier)
-        task = OptionalTask(self, self.disc, self.after.build_task(
-            skill_modifier), failtask=fail, name=self._id)
+        task = OptionalTask(self, self.disc, self.after.build_task(skill_modifier), failtask=fail, name=self._id)
         self.sync(task, skill_modifier)
         return task
 
@@ -370,10 +365,9 @@ class RepeatElement(GraphElement):
         for i in range(itr):
             self.onAfter(target)
         self.set_flag(self.Flag_Repeat)
-        self._result_object_cache: ResultObject = ResultObject(
-            0, CharacterModifier(), 0, 0, sname='Repeat Element', spec='graph control')
+        self._result_object_cache = ResultObject(0, CharacterModifier(), 0, 0, sname='Repeat Element', spec='graph control')
 
-    def get_explanation(self, lang: str = "ko") -> str:
+    def get_explanation(self, lang: Lang = "ko") -> str:
         if lang == "ko":
             return "종류:반복\n이름:%s\n반복대상:%s\n반복 횟수:%d" % (self._id, self._repeat_target._id, self.itr)
         elif lang == "en":
@@ -412,7 +406,7 @@ class ConstraintElement(GraphElement):
         self._ftn: Callable[[], bool] = cnst
         self.set_flag(self.Flag_Constraint)
 
-    def get_explanation(self, lang: str = "ko") -> str:
+    def get_explanation(self, lang: Lang = "ko") -> str:
         if lang == "ko":
             return "종류:제한\n이름:%s" % self._id
         elif lang == "en":

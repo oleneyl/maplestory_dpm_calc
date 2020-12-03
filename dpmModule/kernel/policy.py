@@ -1,17 +1,14 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import (TYPE_CHECKING, Any, Callable, Dict, Iterable, List,
-                    Optional, Tuple)
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Optional, Tuple, Type
 
 from .abstract import AbstractScenarioGraph, AbstractVEnhancer
-from .core import (BuffSkillWrapper, CharacterModifier, DamageSkillWrapper,
-                   SummonSkillWrapper)
+from .core import BuffSkillWrapper, CharacterModifier, DamageSkillWrapper, SummonSkillWrapper
 
 if TYPE_CHECKING:
     from ..character.characterKernel import AbstractCharacter
-    from .core import (AbstractSkillWrapper, Callback, GraphElement,
-                       ResultObject, Task)
+    from .core import AbstractSkillWrapper, Callback, GraphElement, ResultObject, Task
     from .graph import AbstractStorage
 
 
@@ -50,8 +47,7 @@ class NameIndexedGraph(AbstractScenarioGraph):
 
 class StorageLinkedGraph(NameIndexedGraph):
     def __init__(self, base_element: GraphElement, storage: AbstractStorage, accessible_elements: List[GraphElement] = []) -> None:
-        super(StorageLinkedGraph, self).__init__(
-            accessible_elements=accessible_elements)
+        super(StorageLinkedGraph, self).__init__(accessible_elements=accessible_elements)
         self.base_element: GraphElement = base_element
         self.storage: AbstractStorage = storage
         self._task_map: Dict[str, Task] = {}
@@ -64,8 +60,7 @@ class StorageLinkedGraph(NameIndexedGraph):
         for name, wrp in self._element_map.items():
             self._task_map[name] = wrp.build_task(skill_modifier)
             if hasattr(wrp, 'build_periodic_task'):
-                self._tick_task_map[name] = wrp.build_periodic_task(
-                    skill_modifier)
+                self._tick_task_map[name] = wrp.build_periodic_task(skill_modifier)
 
     def spend_time(self, t: float) -> None:
         for _, wrp in self._element_map.items():
@@ -74,7 +69,7 @@ class StorageLinkedGraph(NameIndexedGraph):
     def get_tick_task(self) -> Dict[str, Tuple[Task, Task]]:
         return {n: (self._element_map[n], self._tick_task_map[n]) for n in self._tick_task_map}
 
-    def get_element_and_task(self) -> Dict[str, List[GraphElement, ]]:
+    def get_element_and_task(self) -> Dict[str, List[GraphElement, Task]]:
         ret_dict = {}
         for name in self._element_map:
             ret_dict[name] = [self._element_map[name], self._task_map[name]]
@@ -84,8 +79,7 @@ class StorageLinkedGraph(NameIndexedGraph):
         return self.storage
 
     def export_task(self, common_args={}, tick_args={}) -> None:
-        self._task_map = {k: self._element_map[k].build_task(
-            **common_args) for k in self._element_map}
+        self._task_map = {k: self._element_map[k].build_task(**common_args) for k in self._element_map}
         self._tick_task_map = {k: self._element_map[k].build_periodic_task(**tick_args)
                                for k in self._element_map if hasattr(self._element_map[k], 'is_periodic') and getattr(self._element_map[k], 'is_periodic')}
 
@@ -106,11 +100,9 @@ class StorageLinkedGraph(NameIndexedGraph):
         if information_type == 'merged':
             return self.get_single_network_information(self.get_all(), is_list=True)
         elif information_type == "damage":
-            return self.get_single_network_information(
-                self.filter_elements(lambda x: isinstance(x, DamageSkillWrapper)), is_list=True)
+            return self.get_single_network_information(self.filter_elements(lambda x: isinstance(x, DamageSkillWrapper)), is_list=True)
         elif information_type == "summon":
-            return self.get_single_network_information(
-                self.filter_elements(lambda x: isinstance(x, SummonSkillWrapper)), is_list=True)
+            return self.get_single_network_information(self.filter_elements(lambda x: isinstance(x, SummonSkillWrapper)), is_list=True)
         elif information_type == "spend":
             return self.get_single_network_information([], is_list=True)
         elif information_type == "buff":
@@ -132,10 +124,8 @@ class CallbackQueue:
         self._callback_queue = []
 
     def push_callbacks(self, callbacks: List[Callback], current_time: float) -> None:
-        self._callback_queue += [callback.adjust_by_current_time(
-            current_time) for callback in callbacks]
-        self._callback_queue = sorted(
-            self._callback_queue, key=lambda x: x.time)
+        self._callback_queue += [callback.adjust_by_current_time(current_time) for callback in callbacks]
+        self._callback_queue = sorted(self._callback_queue, key=lambda x: x.time)
 
     def impending_callback_exist(self, current_time: float, next_event_time: float) -> bool:
         return len(self._callback_queue) != 0 and self.impending_callback_time(current_time) <= next_event_time
@@ -194,11 +184,9 @@ class AdvancedGraphScheduler:
         return None
 
     def apply_result(self, result: ResultObject, time_to_spend: float) -> Tuple[Optional[Callback], float]:
-        self.callback_queue.push_callbacks(
-            result.callbacks, self.get_current_time())
+        self.callback_queue.push_callbacks(result.callbacks, self.get_current_time())
         if self.callback_queue.impending_callback_exist(self.get_current_time(), time_to_spend):
-            time_until_callback_occur = self.callback_queue.impending_callback_time(
-                self.get_current_time())
+            time_until_callback_occur = self.callback_queue.impending_callback_time(self.get_current_time())
             self.spend_time(time_until_callback_occur)
             time_to_spend -= time_until_callback_occur
             return self.callback_queue.take_out_impending_callback(), time_to_spend
@@ -264,16 +252,15 @@ class FetchingPolicy:
 
 
 class TypebaseFetchingPolicy(FetchingPolicy):
-    def __init__(self, priority_list=[0, 1, 2, 3]) -> None:
+    def __init__(self, priority_list: List[Type] = [0, 1, 2, 3]) -> None:
         super(TypebaseFetchingPolicy, self).__init__()
-        self.priority_list = priority_list
+        self.priority_list: List[Type] = priority_list
 
     def __call__(self, graph: StorageLinkedGraph) -> TypebaseFetchingPolicy:
         super(TypebaseFetchingPolicy, self).__call__(graph)
         self.sorted = []
         for clstype in self.priority_list:
-            self.sorted += (list(filter(lambda x: isinstance(x,
-                                                             clstype), self.target)))
+            self.sorted += (list(filter(lambda x: isinstance(x, clstype), self.target)))
         if graph.base_element in self.sorted:
             self.sorted.pop(self.sorted.index(graph.base_element))
         self.sorted.append(graph.base_element)

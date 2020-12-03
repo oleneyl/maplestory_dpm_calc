@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Type, TypeVar
+from typing import TYPE_CHECKING, Dict, List, Literal, Optional, Tuple, Type, TypeVar
 
 from ..graph import EvaluativeGraphElement
 from .constant import NOTWANTTOEXECUTE
@@ -11,6 +11,10 @@ if TYPE_CHECKING:
     from .skill_wrapper import AbstractSkillWrapper
     from .vmatrix import BasicVEnhancer
     T = TypeVar('T', bound=AbstractSkillWrapper)
+
+Lang = Literal['ko', 'en']
+ExplLevel = Literal[0, 1, 2]
+
 
 class AbstractSkill(EvaluativeGraphElement):
     """Skill must have information about it's name, it's using - delay, skill using cooltime.
@@ -36,7 +40,7 @@ class AbstractSkill(EvaluativeGraphElement):
             if self.cooltime == -1:
                 self.cooltime = NOTWANTTOEXECUTE
 
-    def _change_time_into_string(self, float_or_infinite: float, divider: int = 1, lang: str = "ko") -> str:
+    def _change_time_into_string(self, float_or_infinite: float, divider: int = 1, lang: Lang = "ko") -> str:
         lang_to_inf_dict = {"ko": "무한/자동발동불가", "en": "Infinite"}
         if abs(float_or_infinite - NOTWANTTOEXECUTE / divider) < 10000 / divider:
             return lang_to_inf_dict[lang]
@@ -49,7 +53,7 @@ class AbstractSkill(EvaluativeGraphElement):
     def set_explanation(self, strs: str) -> None:
         self.explanation = strs
 
-    def get_explanation(self, lang: str = "ko", expl_level: int = 2) -> str:
+    def get_explanation(self, lang: Lang = "ko", expl_level: ExplLevel = 2) -> str:
         """level 0 / 1 / 2
         """
         if self.explanation is not None:
@@ -57,19 +61,15 @@ class AbstractSkill(EvaluativeGraphElement):
         else:
             return self._get_explanation_internal(lang=lang, expl_level=expl_level)
 
-    def _get_explanation_internal(self, detail: bool = False, lang: str = "ko", expl_level: int = 2) -> str:
+    def _get_explanation_internal(self, detail: bool = False, lang: Lang = "ko", expl_level: ExplLevel = 2) -> str:
         if lang == "en":
-            li = [("skill name", self.name),
-                  ("type", "AbstractSkill(Not implemented)")]
+            li = [("skill name", self.name), ("type", "AbstractSkill(Not implemented)")]
         elif lang == "ko":
-            li = [("스킬 이름", self.name),
-                  ("분류", "템플릿(상속되지 않음)")]
-        else:
-            li = []
+            li = [("스킬 이름", self.name), ("분류", "템플릿(상속되지 않음)")]
 
         return self._parse_list_info_into_string(li)
 
-    def get_info(self, expl_level: int = 2) -> Dict[str, str]:
+    def get_info(self, expl_level: ExplLevel = 2) -> Dict[str, str]:
         my_json = {"name": self.name, "delay": self._change_time_into_string(self.delay),
                    "cooltime": self._change_time_into_string(self.cooltime),
                    "expl": self.get_explanation(expl_level=expl_level)}
@@ -111,37 +111,31 @@ class BuffSkill(AbstractSkill):
                  pdamage: float = 0, stat_main: float = 0, stat_sub: float = 0, pstat_main: float = 0, pstat_sub: float = 0,
                  boss_pdamage: float = 0, pdamage_indep: float = 0, armor_ignore: float = 0, patt: float = 0, att: float = 0,
                  stat_main_fixed: int = 0, stat_sub_fixed: int = 0, rem: bool = False, red: bool = False) -> None:
-        super(BuffSkill, self).__init__(
-            name, delay, cooltime=cooltime, rem=rem, red=red)
+        super(BuffSkill, self).__init__(name, delay, cooltime=cooltime, rem=rem, red=red)
         with self.dynamic_range():
             self.spec: str = "buff"
             self.remain: float = remain
             # Build StaticModifier from given arguments
-            self.static_character_modifier: CharacterModifier = \
-                CharacterModifier(crit=crit, crit_damage=crit_damage, pdamage=pdamage, pdamage_indep=pdamage_indep,
-                                  stat_main=stat_main, stat_sub=stat_sub, pstat_main=pstat_main, pstat_sub=pstat_sub,
-                                  boss_pdamage=boss_pdamage, armor_ignore=armor_ignore, patt=patt, att=att,
-                                  stat_main_fixed=stat_main_fixed, stat_sub_fixed=stat_sub_fixed)
+            self.static_character_modifier = CharacterModifier(
+                crit=crit, crit_damage=crit_damage, pdamage=pdamage, pdamage_indep=pdamage_indep,
+                stat_main=stat_main, stat_sub=stat_sub, pstat_main=pstat_main, pstat_sub=pstat_sub,
+                boss_pdamage=boss_pdamage, armor_ignore=armor_ignore, patt=patt, att=att,
+                stat_main_fixed=stat_main_fixed, stat_sub_fixed=stat_sub_fixed)
 
-    def _get_explanation_internal(self, detail: bool = False, lang: str = "ko", expl_level: int = 2) -> str:
+    def _get_explanation_internal(self, detail: bool = False, lang: Lang = "ko", expl_level: ExplLevel = 2) -> str:
         if lang == "ko":
             li = [("스킬 이름", self.name),
                   ("분류", "버프"),
                   ("딜레이", "%.1f" % self.delay, "ms"),
-                  ("지속 시간", self._change_time_into_string(
-                      self.remain / 1000, divider=1000), "s"),
-                  ("쿨타임", self._change_time_into_string(
-                      self.cooltime / 1000, divider=1000), "s"),
+                  ("지속 시간", self._change_time_into_string(self.remain / 1000, divider=1000), "s"),
+                  ("쿨타임", self._change_time_into_string(self.cooltime / 1000, divider=1000), "s"),
                   ("쿨타임 감소 가능 여부", self.red),
                   ("지속시간 증가 여부", self.rem),
-                  ("효과", ", ".join([(str(i[0]) + "+" + "".join([str(j) for j in i[1:]])) for i in
-                                    self.static_character_modifier.abstract_log_list()]).replace("+미발동", " 미발동"))]
+                  ("효과", ", ".join([(str(i[0]) + "+" + "".join([str(j) for j in i[1:]])) for i in self.static_character_modifier.abstract_log_list()]).replace("+미발동", " 미발동"))]
             if expl_level < 2:
                 li = [li[3], li[7]]
         elif lang == "en":
             li = []
-        else:
-            raise TypeError('lang must be ko or en, lang: ' + str(lang))
 
         return self._parse_list_info_into_string(li)
 
@@ -162,8 +156,7 @@ class DamageSkill(AbstractSkill):
 
     def __init__(self, name: str, delay: float, damage: float, hit: float, cooltime: float = 0,
                  modifier: CharacterModifier = CharacterModifier(), red: bool = False) -> None:
-        super(DamageSkill, self).__init__(
-            name, delay, cooltime=cooltime, rem=False, red=red)
+        super(DamageSkill, self).__init__(name, delay, cooltime=cooltime, rem=False, red=red)
         with self.dynamic_range():
             self.spec: str = "damage"
             self.damage: float = damage
@@ -171,15 +164,14 @@ class DamageSkill(AbstractSkill):
             # Issue : Will we need this option really?
             self._static_skill_modifier: CharacterModifier = modifier
 
-    def _get_explanation_internal(self, detail: bool = False, lang: str = "ko", expl_level: int = 2) -> str:
+    def _get_explanation_internal(self, detail: bool = False, lang: Lang = "ko", expl_level: ExplLevel = 2) -> str:
         if lang == "ko":
             li = [("스킬 이름", self.name),
                   ("분류", "공격기"),
                   ("딜레이", "%.1f" % self.delay, "ms"),
                   ("퍼뎀", "%.1f" % self.damage, "%"),
                   ("타격수", self.hit),
-                  ("쿨타임", self._change_time_into_string(
-                      self.cooltime / 1000, divider=1000), "s"),
+                  ("쿨타임", self._change_time_into_string(self.cooltime / 1000, divider=1000), "s"),
                   ("쿨타임 감소 가능 여부", self.red),
                   ("지속시간 증가 여부", self.rem),
                   ("추가효과", ", ".join([(str(i[0]) + "+" + "".join([str(j) for j in i[1:]])) for i in self._static_skill_modifier.abstract_log_list()]).replace("+미발동%", " 미발동"))]
@@ -187,30 +179,25 @@ class DamageSkill(AbstractSkill):
                 li = li[3:5] + [li[8]]
         elif lang == 'en':
             li = []
-        else:
-            raise TypeError('lang must be ko or en, lang: ' + str(lang))
 
         return self._parse_list_info_into_string(li)
 
     def setV(self, v_enhancer: AbstractVEnhancer, index: int, incr: int, crit: bool = False) -> DamageSkill:
-        self._static_skill_modifier = self._static_skill_modifier + \
-            v_enhancer.get_reinforcement_with_register(index, incr, crit, self)
+        self._static_skill_modifier = self._static_skill_modifier + v_enhancer.get_reinforcement_with_register(index, incr, crit, self)
         return self
 
     def get_modifier(self) -> CharacterModifier:
         return self._static_skill_modifier
 
     def copy(self) -> DamageSkill:
-        return DamageSkill(self.name, self.delay, self.damage, self.hit, cooltime=self.cooltime,
-                           modifier=self._static_skill_modifier, red=self.red)
+        return DamageSkill(self.name, self.delay, self.damage, self.hit, cooltime=self.cooltime, modifier=self._static_skill_modifier, red=self.red)
 
 
 # TODO: optimize this factor more constructively
 class SummonSkill(AbstractSkill):
     def __init__(self, name: str, summondelay: float, delay: float, damage: float, hit: float, remain: float, cooltime: float = 0,
                  modifier: CharacterModifier = CharacterModifier(), rem: bool = False, red: bool = False) -> None:
-        super(SummonSkill, self).__init__(
-            name, delay, cooltime=cooltime, rem=rem, red=red)
+        super(SummonSkill, self).__init__(name, delay, cooltime=cooltime, rem=rem, red=red)
         with self.dynamic_range():
             self.spec: str = "summon"
             self.summondelay: float = summondelay
@@ -219,7 +206,7 @@ class SummonSkill(AbstractSkill):
             self.remain: float = remain
             self._static_skill_modifier: CharacterModifier = modifier
 
-    def _get_explanation_internal(self, detail: bool = False, lang: str = "ko", expl_level: int = 2) -> str:
+    def _get_explanation_internal(self, detail: bool = False, lang: Lang = "ko", expl_level: ExplLevel = 2) -> str:
         if lang == "ko":
             li = [("스킬 이름", self.name),
                   ("분류", "소환기"),
@@ -227,20 +214,15 @@ class SummonSkill(AbstractSkill):
                   ("타격주기", "%.1f" % self.delay, "ms"),
                   ("퍼뎀", "%.1f" % self.damage, "%"),
                   ("타격수", self.hit),
-                  ("지속 시간", self._change_time_into_string(
-                      self.remain / 1000, divider=1000), "s"),
-                  ("쿨타임", self._change_time_into_string(
-                      self.cooltime / 1000, divider=1000), "s"),
+                  ("지속 시간", self._change_time_into_string(self.remain / 1000, divider=1000), "s"),
+                  ("쿨타임", self._change_time_into_string(self.cooltime / 1000, divider=1000), "s"),
                   ("쿨타임 감소 가능 여부", self.red),
                   ("지속시간 증가 여부", self.rem),
-                  ("추가효과", ", ".join([(str(i[0]) + "+" + "".join([str(j) for j in i[1:]])) for i in
-                                      self._static_skill_modifier.abstract_log_list()]).replace("+미발동%", " 미발동"))]
+                  ("추가효과", ", ".join([(str(i[0]) + "+" + "".join([str(j) for j in i[1:]])) for i in self._static_skill_modifier.abstract_log_list()]).replace("+미발동%", " 미발동"))]
             if expl_level < 2:
                 li = li[3:7] + [li[10]]
         elif lang == "en":
             li = []
-        else:
-            raise TypeError('lang must be ko or en, lang: ' + str(lang))
 
         return self._parse_list_info_into_string(li)
 
@@ -251,8 +233,7 @@ class SummonSkill(AbstractSkill):
         return my_json
 
     def setV(self, v_enhancer: AbstractVEnhancer, index: int, incr: int, crit: bool = False) -> SummonSkill:
-        self._static_skill_modifier = self._static_skill_modifier + \
-            v_enhancer.get_reinforcement_with_register(index, incr, crit, self)
+        self._static_skill_modifier = self._static_skill_modifier + v_enhancer.get_reinforcement_with_register(index, incr, crit, self)
         return self
 
     def get_modifier(self) -> CharacterModifier:
@@ -262,11 +243,10 @@ class SummonSkill(AbstractSkill):
 class DotSkill(SummonSkill):
     def __init__(self, name: str, summondelay: float, delay: float, damage: float, hit: float,
                  remain: float, cooltime: float = 0, red: bool = False) -> None:
-        super(DotSkill, self).__init__(name, summondelay, delay,
-                                       damage, hit, remain, cooltime=cooltime, red=red)
+        super(DotSkill, self).__init__(name, summondelay, delay, damage, hit, remain, cooltime=cooltime, red=red)
         self.spec: str = "dot"
 
-    def _get_explanation_internal(self, detail: bool = False, lang: str = "ko", expl_level: int = 2) -> str:
+    def _get_explanation_internal(self, detail: bool = False, lang: Lang = "ko", expl_level: ExplLevel = 2) -> str:
         if lang == "ko":
             li = [("스킬 이름", self.name),
                   ("분류", "도트뎀"),
@@ -274,19 +254,14 @@ class DotSkill(SummonSkill):
                   ("타격주기", "%.1f" % self.delay, "ms"),
                   ("퍼뎀", "%.1f" % self.damage, "%"),
                   ("타격수", self.hit),
-                  ("지속 시간", self._change_time_into_string(
-                      self.remain / 1000, divider=1000), "s"),
-                  ("쿨타임", self._change_time_into_string(
-                      self.cooltime / 1000, divider=1000), "s"),
+                  ("지속 시간", self._change_time_into_string(self.remain / 1000, divider=1000), "s"),
+                  ("쿨타임", self._change_time_into_string(self.cooltime / 1000, divider=1000), "s"),
                   ("쿨타임 감소 가능 여부", self.red),
                   ("지속시간 증가 여부", self.rem),
-                  ("추가효과", ", ".join([(str(i[0]) + "+" + "".join([str(j) for j in i[1:]])) for i in
-                                      self._static_skill_modifier.abstract_log_list()]).replace("+미발동%", " 미발동"))]
+                  ("추가효과", ", ".join([(str(i[0]) + "+" + "".join([str(j) for j in i[1:]])) for i in self._static_skill_modifier.abstract_log_list()]).replace("+미발동%", " 미발동"))]
             if expl_level < 2:
                 li = li[3:7] + [li[10]]
         elif lang == "en":
             li = []
-        else:
-            raise TypeError('lang must be ko or en: ' + str(lang))
 
         return self._parse_list_info_into_string(li)
