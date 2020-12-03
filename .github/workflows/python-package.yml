@@ -30,6 +30,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - id: files
       uses: jitterbit/get-changed-files@v1
+      continue-on-error: true
     - name: Lint with flake8
       run: |
         # Detect files changed my current commit
