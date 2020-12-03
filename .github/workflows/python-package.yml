@@ -31,7 +31,7 @@ jobs:
     - name: Lint with flake8
       run: |
         # Detect files changed my current commit
-        CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ GITHUB_SHA }})
+        CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r $GITHUB_SHA)
         echo "1234321234321"
         echo $CHANGED_FILES
         echo $GITHUB_SHA
