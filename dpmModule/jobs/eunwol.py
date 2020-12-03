@@ -69,8 +69,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 약점 간파: 체력 (50 + passive_level)% 이하일 때 발동
 
-        MOB_HP_RATE = options.get("hp_rate", 100)
-        WEAKNESS_BONUS = MOB_HP_RATE <= 50 + passive_level
+        MOB_HP_RATE = options.get("hp_rate", False)
 
         WeaknessFinding_Bonus = core.InformedCharacterModifier("약점 간파(보너스)", crit_damage = (20+passive_level//3) * WEAKNESS_BONUS)
         
