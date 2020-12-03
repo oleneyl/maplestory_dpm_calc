@@ -32,7 +32,7 @@ jobs:
       run: |
         # Detect files changed my current commit
         echo $GITHUB_SHA
-        CHANGED_FILES=$(git diff --name-only "$GITHUB_BASE_REF..$GITHUB_SHA")
+        CHANGED_FILES=$(git diff --name-only "$GITHUB_SHA")
         echo "1234321234321"
         echo $CHANGED_FILES
         git log | head -n 50
