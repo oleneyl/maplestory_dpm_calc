@@ -177,11 +177,7 @@ weaponList = {"아크메이지불/독" : "스태프",
         "호영" : "부채"
 }
 
-jobListOrder = ["archmageFb", "archmageTc", "hero", "paladin", "sniper", "windbreaker", "soulmaster", 
-            "flamewizard", "mercedes", "luminous", "bishop", "battlemage", "mechanic", "demonslayer", "darknight", "wildhunter",
-            "shadower", "cannonshooter", "michael", "dualblade", "kaiser", "captain", "angelicbuster", "phantom", "nightlord",
-            "eunwol", "viper", "nightwalker", "striker", "evan", "bowmaster", "zero", "kinesis", "ilium", "pathfinder", "cadena", "ark",
-            "blaster", "aran", "adele", "hoyoung"]
+jobListOrder = __all__.copy()
 
 def getKoJobName(enJob):
         if enJob in jobList:
