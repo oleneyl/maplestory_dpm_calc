@@ -32,12 +32,12 @@ jobs:
       run: |
         # Detect files changed my current commit
         echo $GITHUB_SHA
-        CHANGED_FILES=$(git diff --name-only "$GITHUB_SHA")
+        CHANGED_FILES=$(git diff --name-only "$GITHUB_SHA..317dc73d658948eb48f6d271e01d738d087b119a")
         echo "1234321234321"
         echo $CHANGED_FILES
         git log | head -n 50
         git diff --name-only "$GITHUB_SHA"
-        
+        git diff --name-only "$GITHUB_SHA..317dc73d658948eb48f6d271e01d738d087b119a"
         # stop the build if there are Python syntax errors or undefined names
         flake8 $CHANGED_FILES --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
