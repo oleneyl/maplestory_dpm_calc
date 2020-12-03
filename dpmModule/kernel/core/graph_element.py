@@ -21,7 +21,7 @@ class Task:
         self._justAfter: List[Task] = []
 
     def __repr__(self) -> str:
-        return f'''Task Object from [{self._ref._id}]'''
+        return f"""Task Object from [{self._ref._id}]"""
 
     def getRef(self) -> GraphElement:
         return self._ref
@@ -52,8 +52,8 @@ class ContextReferringTask(Task):
 
 
 class GraphElement:
-    """Manage time dependent feature of each execution
-    """
+    """Manage time dependent feature of each execution"""
+
     Flag_Skill = 1
     Flag_BaseSkill = 2
     Flag_BuffSkill = 4
@@ -81,9 +81,13 @@ class GraphElement:
         # Tasks that must be executed after this el.
         self._after: List[GraphElement] = []
         self._justAfter: List[GraphElement] = []
-        self._registered_callback_presets: List[Tuple[str, Tuple[GraphElement, float]]] = []
+        self._registered_callback_presets: List[
+            Tuple[str, Tuple[GraphElement, float]]
+        ] = []
 
-        self._result_object_cache = ResultObject(0, CharacterModifier(), 0, 0, sname='Graph Element', spec='graph control')
+        self._result_object_cache = ResultObject(
+            0, CharacterModifier(), 0, 0, sname="Graph Element", spec="graph control"
+        )
         self._flag: int = 0
 
     def set_flag(self, flag: int) -> None:
@@ -272,23 +276,55 @@ class TaskHolder(GraphElement):
         return li
 
 
-def create_task(task_name: str, task_function: Callable[[Any], ResultObject], task_ref: GraphElement) -> TaskHolder:
+def create_task(
+    task_name: str, task_function: Callable[[Any], ResultObject], task_ref: GraphElement
+) -> TaskHolder:
     return TaskHolder(Task(task_ref, task_function), task_name)
 
 
 class OptionalTask(Task):
-    def __init__(self, ref, discriminator: Callable[[], bool], task: Task, failtask: Task = None, name: str = 'optionalTask') -> None:
+    def __init__(
+        self,
+        ref,
+        discriminator: Callable[[], bool],
+        task: Task,
+        failtask: Task = None,
+        name: str = "optionalTask",
+    ) -> None:
         super(OptionalTask, self).__init__(ref, None)
         self._discriminator: Callable[[], bool] = discriminator
         self._result: Task = task
         self._failtask: Task = failtask  # TODO: Not used attribute.
         self._name: str = name
-        self._result_object_cache = ResultObject(0, CharacterModifier(), 0, 0, sname=self._name, spec='graph control', cascade=[self._result])
+        self._result_object_cache = ResultObject(
+            0,
+            CharacterModifier(),
+            0,
+            0,
+            sname=self._name,
+            spec="graph control",
+            cascade=[self._result],
+        )
         self._fail: ResultObject
         if failtask is None:
-            self._fail = ResultObject(0, CharacterModifier(), 0, 0, sname=self._name + " fail", spec='graph control')
+            self._fail = ResultObject(
+                0,
+                CharacterModifier(),
+                0,
+                0,
+                sname=self._name + " fail",
+                spec="graph control",
+            )
         else:
-            self._fail = ResultObject(0, CharacterModifier(), 0, 0, sname=self._name, spec='graph control', cascade=[failtask])
+            self._fail = ResultObject(
+                0,
+                CharacterModifier(),
+                0,
+                0,
+                sname=self._name,
+                spec="graph control",
+                cascade=[failtask],
+            )
 
     def do(self, **kwargs) -> ResultObject:
         if self._discriminator():
@@ -312,7 +348,13 @@ class OptionalElement(GraphElement):
         ``GraphElement`` 의 이름입니다. Unique할 필요는 없습니다.
     """
 
-    def __init__(self, disc: Callable[[], bool], after: GraphElement, fail: GraphElement = None, name: str = "Optional Element") -> None:
+    def __init__(
+        self,
+        disc: Callable[[], bool],
+        after: GraphElement,
+        fail: GraphElement = None,
+        name: str = "Optional Element",
+    ) -> None:
         super(OptionalElement, self).__init__(name)
         self.disc: Callable[[], bool] = disc
         self.after: GraphElement = after
@@ -330,7 +372,13 @@ class OptionalElement(GraphElement):
             fail = None
         else:
             fail = self.fail.build_task(skill_modifier)
-        task = OptionalTask(self, self.disc, self.after.build_task(skill_modifier), failtask=fail, name=self._id)
+        task = OptionalTask(
+            self,
+            self.disc,
+            self.after.build_task(skill_modifier),
+            failtask=fail,
+            name=self._id,
+        )
         self.sync(task, skill_modifier)
         return task
 
@@ -362,13 +410,23 @@ class RepeatElement(GraphElement):
         for i in range(itr):
             self.onAfter(target)
         self.set_flag(self.Flag_Repeat)
-        self._result_object_cache = ResultObject(0, CharacterModifier(), 0, 0, sname='Repeat Element', spec='graph control')
+        self._result_object_cache = ResultObject(
+            0, CharacterModifier(), 0, 0, sname="Repeat Element", spec="graph control"
+        )
 
     def get_explanation(self, lang: str = "ko") -> str:
         if lang == "ko":
-            return "종류:반복\n이름:%s\n반복대상:%s\n반복 횟수:%d" % (self._id, self._repeat_target._id, self.itr)
+            return "종류:반복\n이름:%s\n반복대상:%s\n반복 횟수:%d" % (
+                self._id,
+                self._repeat_target._id,
+                self.itr,
+            )
         elif lang == "en":
-            return "type:Repeat Element\nname:%s\ntarget:%s\niterations:%d" % (self._id, self._repeat_target._id, self.itr)
+            return "type:Repeat Element\nname:%s\ntarget:%s\niterations:%d" % (
+                self._id,
+                self._repeat_target._id,
+                self.itr,
+            )
 
     def _use(self) -> ResultObject:
         return self._result_object_cache
