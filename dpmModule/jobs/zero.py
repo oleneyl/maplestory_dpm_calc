@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -7,6 +6,7 @@ from ..execution.rules import RuleSet, MutualRule
 from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
+from typing import Any, Dict
 
 # TODO: 4카 5앱 적용
 # 제로는 패시브 레벨 +1 어빌 미적용
@@ -53,7 +53,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(MutualRule('타임 홀딩', '타임 디스토션'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5)
         ResolutionTime = core.InformedCharacterModifier("리졸브 타임",pdamage_indep = 25, stat_main = 50)
         # 유니온 6000 기준
@@ -63,14 +63,14 @@ class JobGenerator(ck.JobGenerator):
 
         return [Mastery, ResolutionTime, LuckyHat_Temp]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         ArmorSplit = core.InformedCharacterModifier("아머 스플릿", armor_ignore = 50)
         return [ArmorSplit]
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(crit = 15, pdamage = 80, armor_ignore = 20, crit_damage = 25)
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         마스터리 별개로 적용 : 알파 : 1.34, 베타 : 1.49
         
@@ -92,6 +92,8 @@ class JobGenerator(ck.JobGenerator):
         
         어파스 기준
         '''
+        DEALCYCLE = options.get('dealcycle', 'alpha_new')
+
         #### 마스터리 ####
         AlphaMDF = core.CharacterModifier(pdamage_indep = 34, crit = 40, att = 40, armor_ignore = 30, crit_damage = 50)
         BetaMDF = core.CharacterModifier(pdamage_indep = 49, crit = 15, boss_pdamage = 30, att = 80 + 4)
@@ -155,7 +157,7 @@ class JobGenerator(ck.JobGenerator):
         AdvancedStormBreakElectric = core.SummonSkill("어드밴스드 스톰 브레이크(전기)", 0, 1000, 230+2*self.combat, 1, (3+ ceil(self.combat /10))*1000, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
 
         # 도트스킬은 크뎀 미적용이므로 AlphaSkill 추가할 필요없음.
-        DivineLeer = core.DotSkill("디바인 리어", 0, 1000, 200, 1, 99999999).wrap(core.SummonSkillWrapper)
+        DivineLeer = core.DotSkill("디바인 리어", 0, 1000, 200, 1, 99999999).wrap(core.DotSkillWrapper)
 
         #### 베타 ####
 
@@ -169,7 +171,7 @@ class JobGenerator(ck.JobGenerator):
         
         THROWINGHIT = 5
         FrontSlash = core.DamageSkill("프론트 슬래시", 450, 205, 6, modifier = extra_dmg(6, True)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        ThrowingWeapon = core.SummonSkill("어드밴스드 스로잉 웨폰", 360, 300, 550 + 5*self.combat, 2, THROWINGHIT*300, cooltime=-1, modifier = extra_dmg(6, True)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+        ThrowingWeapon = core.SummonSkill("어드밴스드 스로잉 웨폰", 480, 300, 550 + 5*self.combat, 2, THROWINGHIT*300, cooltime=-1, modifier = extra_dmg(6, True)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
         
         TurningDrive = core.DamageSkill("터닝 드라이브", 360, 260, 6, modifier = extra_dmg(6, True)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedWheelWind = core.DamageSkill("어드밴스드 휠 윈드", 900, 200+2*self.combat, 2*7, modifier = extra_dmg(6, True)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)     #   0.1초당 1타, 최대 7초, 7타로 적용
@@ -177,7 +179,7 @@ class JobGenerator(ck.JobGenerator):
         GigaCrash = core.DamageSkill("기가 크래시", 540, 250, 6, modifier = extra_dmg(6, True)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         GigaCrashTAG = core.DamageSkill("기가 크래시(태그)", 0, 250, 6, modifier = extra_dmg(6, True)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         
-        JumpingCrash = core.DamageSkill("점핑 크래시", 300, 225, 6, modifier = extra_dmg(6, True)).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
+        JumpingCrash = core.DamageSkill("점핑 크래시", 300+210, 225, 6, modifier = extra_dmg(6, True)).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
         JumpingCrashTAG = core.DamageSkill("점핑 크래시(태그)", 0, 225, 6, modifier = extra_dmg(6, True)).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
         JumpingCrashWave = core.DamageSkill("점핑 크래시(충격파)", 0, 225, 3, modifier = extra_dmg(6, True)).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
         
@@ -279,20 +281,23 @@ class JobGenerator(ck.JobGenerator):
 
         BetaState.controller(1) # 베타로 시작
         
-        ### 어파스 생성
-        # 윈커(0ms) - 윈스(420ms) - 스톰(900ms) - 문스(1590ms) - 피어싱(1920ms) - 문스(2430ms) - 피어싱(2760ms) - 3270ms
-        # 기가(60ms) -       점핑(690ms) -   어스(1260ms) - 어퍼 씹힘 -   어파스(2340ms)   어퍼, 어파스 씹힘  - 2970ms
-        AlphaComboLegacy = [SetAlpha, WindCutter, GigaCrashTAG, WindStrike, JumpingCrashTAG, AdvancedStormBreak, AdvancedEarthBreakTAG,
-                        MoonStrikeLink, PierceStrike, MoonStrikeLink, PierceStrike, AdvancedPowerStompTAG]
-
-        # 문스(0ms) - 피어스(330ms) - 쉐스(690ms) - 문스(1020ms) - 피어스(1350ms) - 쉐스(1710ms) - 문스(2040ms) - 피어스(2370ms) - 쉐스(2730ms) - 문스(3060ms) - 3450ms
-        # 어퍼(60ms) - 어파스(330ms) -      어퍼(900ms) -          어파스(1350ms) -            어퍼(1920ms)    - 어파스(2370ms)               - 2940ms -   3330ms
-        # 2940ms: 어파스 딜레이 종료
-        # 3330ms: 어파스 딜레이가 끝났어도 충격파 발생해야 태그 가능 (2370 + 960)
-        AlphaCombo = [SetAlpha, MoonStrikeLink, UpperSlashTAG, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike,
-                        MoonStrikeLink, UpperSlashTAG, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike,
-                        MoonStrikeLink, UpperSlashTAG, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike,
-                        MoonStrike]
+        ### 딜사이클 생성
+        if DEALCYCLE == "alpha_new":
+            # 문스(0ms) - 피어스(330ms) - 쉐스(690ms) - 문스(1020ms) - 피어스(1350ms) - 쉐스(1710ms) - 문스(2040ms) - 피어스(2370ms) - 쉐스(2730ms) - 문스(3060ms) - 3450ms
+            # 어퍼(60ms) - 어파스(330ms) -      어퍼(900ms) -          어파스(1350ms) -            어퍼(1920ms)    - 어파스(2370ms)               - 2940ms -   3330ms
+            # 2940ms: 어파스 딜레이 종료
+            # 3330ms: 어파스 딜레이가 끝났어도 충격파 발생해야 태그 가능 (2370 + 960)
+            AlphaCombo = [SetAlpha, MoonStrikeLink, UpperSlashTAG, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike,
+                            MoonStrikeLink, UpperSlashTAG, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike,
+                            MoonStrikeLink, UpperSlashTAG, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike,
+                            MoonStrike]
+        elif DEALCYCLE == "alpha_legacy":
+            # 윈커(0ms) - 윈스(420ms) - 스톰(900ms) - 문스(1590ms) - 피어싱(1920ms) - 문스(2430ms) - 피어싱(2760ms) - 3270ms
+            # 기가(60ms) -       점핑(690ms) -   어스(1260ms) - 어퍼 씹힘 -   어파스(2340ms)   어퍼, 어파스 씹힘  - 2970ms
+            AlphaCombo = [SetAlpha, WindCutter, GigaCrashTAG, WindStrike, JumpingCrashTAG, AdvancedStormBreak, AdvancedEarthBreakTAG,
+                            MoonStrikeLink, PierceStrike, MoonStrikeLink, PierceStrike, AdvancedPowerStompTAG]
+        else:
+            raise ValueError(DEALCYCLE)
         
         # 터닝(0ms) - 휠윈(360ms) - 프런트(1260ms) - 스로잉(1710ms) - 어퍼(2190ms) - 어파스(2580ms) - 3150ms
         # 롤커(60ms) -        롤어(1020ms) - 플래시 씹힘 - 스핀(1710ms) - 문스(2190ms)  -  2640ms
@@ -326,7 +331,7 @@ class JobGenerator(ck.JobGenerator):
         
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 3)
-        for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
+        for sk in [MoonStrike, MoonStrikeLink, PierceStrike, PierceStrikeLink, ShadowStrike, FlashAssault, AdvancedSpinCutter,
                     AdvancedRollingCurve, AdvancedRollingAssulter, WindCutter, WindStrike, AdvancedStormBreak,
                     UpperSlash, AdvancedPowerStomp, FrontSlash, TurningDrive, AdvancedWheelWind, GigaCrash,
                     JumpingCrash, AdvancedEarthBreak, TwinBladeOfTime_Beta_1, TwinBladeOfTime_Alpha_1, 
@@ -337,7 +342,7 @@ class JobGenerator(ck.JobGenerator):
 
         
         # 초월자 륀느의 기원
-        for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter,
+        for sk in [MoonStrike, MoonStrikeLink, PierceStrike, PierceStrikeLink, ShadowStrike, FlashAssault, AdvancedSpinCutter,
                     AdvancedRollingCurve, AdvancedRollingAssulter, WindCutter, WindStrike, AdvancedStormBreak,
                     UpperSlash, AdvancedPowerStomp, FrontSlash, TurningDrive, AdvancedWheelWind, GigaCrash,
                     JumpingCrash, AdvancedEarthBreak]:
@@ -349,7 +354,7 @@ class JobGenerator(ck.JobGenerator):
         # 에고 웨폰
         UseEgoWeaponAlpha = core.OptionalElement(EgoWeaponAlpha.is_available, EgoWeaponAlpha)
         EgoWeaponAlpha.protect_from_running()
-        for sk in [MoonStrike, PierceStrike, FlashAssault, AdvancedSpinCutter, AdvancedRollingCurve, AdvancedRollingAssulter,
+        for sk in [MoonStrike, MoonStrikeLink, PierceStrike, PierceStrikeLink, ShadowStrike, FlashAssault, AdvancedSpinCutter, AdvancedRollingCurve, AdvancedRollingAssulter,
             WindCutter, WindStrike, AdvancedStormBreak, ShadowFlashAlpha, ShadowFlashAlphaEnd]:
             sk.onAfter(UseEgoWeaponAlpha)
             

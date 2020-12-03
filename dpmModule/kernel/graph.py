@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import json
 from collections import Counter
-from typing import Any, Dict, Iterable, List, Optional, TextIO
+from typing import Any, Iterable, List, Optional, TextIO
 
 '''
 global properties
@@ -17,7 +19,7 @@ def initialize_global_properties() -> None:
     unsafe_global_collection_do_not_access_direct = GlobalCollection()
 
 
-def _unsafe_access_global_storage() -> 'GlobalCollection':
+def _unsafe_access_global_storage() -> GlobalCollection:
     global unsafe_global_collection_do_not_access_direct
     return unsafe_global_collection_do_not_access_direct
 
@@ -70,21 +72,21 @@ class GlobalOperation:
         _unsafe_access_global_storage().revert_to_dynamic()
 
     @classmethod
-    def notify_dynamic_object_added(cls, obj: 'DynamicObject') -> None:
+    def notify_dynamic_object_added(cls, obj: DynamicObject) -> None:
         _unsafe_access_global_storage().add_dynamic_object(obj)
 
     @classmethod
-    def export_collection(cls) -> 'GlobalCollection':
+    def export_collection(cls) -> GlobalCollection:
         collection = _unsafe_access_global_storage()
         initialize_global_properties()
         return collection
 
     @classmethod
-    def set_storage(cls, storage: 'AbstractStorage') -> None:
+    def set_storage(cls, storage: AbstractStorage) -> None:
         _unsafe_access_global_storage().set_storage(storage)
 
     @classmethod
-    def export_storage_without_complex_option(cls) -> 'GlobalCollection':
+    def export_storage_without_complex_option(cls) -> GlobalCollection:
         GlobalOperation.assign_storage()
         GlobalOperation.attach_namespace()
         GlobalOperation.save_storage()
@@ -96,19 +98,19 @@ class GlobalCollection:
     historical_track_prefix: str = '_temporal_save_'
 
     def __init__(self) -> None:
-        self._found_dynamic_object: 'List[DynamicObject]' = []
-        self._storage: 'AbstractStorage' = DeepConfigurationStorage({})
+        self._found_dynamic_object: List[DynamicObject] = []
+        self._storage: AbstractStorage = DeepConfigurationStorage({})
 
-    def get_storage(self) -> 'AbstractStorage':
+    def get_storage(self) -> AbstractStorage:
         return self._storage
 
-    def get_dynamic_objects(self) -> 'List[DynamicObject]':
+    def get_dynamic_objects(self) -> List[DynamicObject]:
         return self._found_dynamic_object
 
-    def set_storage(self, storage: 'AbstractStorage'):
+    def set_storage(self, storage: AbstractStorage):
         self._storage = storage
 
-    def add_dynamic_object(self, obj: 'DynamicObject') -> None:
+    def add_dynamic_object(self, obj: DynamicObject) -> None:
         self._found_dynamic_object.append(obj)
 
     def assign_storage(self) -> None:
@@ -201,7 +203,7 @@ class AbstractDiGraphElement(NamespaceObject):
         Use this method to func(instance, param, index) -> action, return recursive param
         """
 
-        def output_func(self, instance: 'AbstractDiGraphElement', param, index):
+        def output_func(self, instance: AbstractDiGraphElement, param, index):
             rec_param = func(self, instance, param, index)
             for idx, inst in enumerate(instance.get_next_instances()):
                 output_func(self, inst, rec_param, idx)
@@ -247,12 +249,12 @@ class AbstractDynamicVariableInstance(AbstractDiGraphElement):
         are you doing. Please be aware what you are trying to do.
         ''')
 
-    def finalize(self, storage: 'AbstractStorage') -> None:
+    def finalize(self, storage: AbstractStorage) -> None:
         if self._already_finalized:
             return
         else:
             if hasattr(self, '_finalizing_action'):
-                self._finalizing_action(storage)
+                self._finalizing_action(storage) # pylint: disable=no-member
             self._already_finalized = True
             map(lambda x: x.finalize(), self.get_next_nodes())
 
@@ -262,17 +264,17 @@ class AbstractDynamicVariableInstance(AbstractDiGraphElement):
             map(lambda x: x.reset_finalized_variable(), self.get_next_nodes())
 
     @AbstractDiGraphElement.recurrent_run
-    def attach_namespace(self, inst: 'AbstractDynamicVariableInstance', namespace: Optional[str], index: int) -> str:
+    def attach_namespace(self, inst: AbstractDynamicVariableInstance, namespace: Optional[str], index: int) -> str:
         my_namespace = inst.build_namespace(namespace, index)
         return my_namespace
 
     @AbstractDiGraphElement.recurrent_run
-    def assign_storage(self, inst: 'AbstractDynamicVariableInstance', storage: 'AbstractStorage', index: int) -> 'AbstractStorage':
+    def assign_storage(self, inst: AbstractDynamicVariableInstance, storage: AbstractStorage, index: int) -> AbstractStorage:
         inst.storage = storage
         return storage
 
     @AbstractDiGraphElement.recurrent_run
-    def save_storage(self, inst: 'AbstractDynamicVariableInstance', storage: 'AbstractStorage', index: int) -> 'AbstractStorage':
+    def save_storage(self, inst: AbstractDynamicVariableInstance, storage: AbstractStorage, index: int) -> AbstractStorage:
         touch_end = len(inst.get_next_instances()) == 0
         try:
             storage.set_namespace(inst.get_assigned_namespace(), inst.evaluate(),
@@ -288,10 +290,10 @@ class AbstractDynamicVariableInstance(AbstractDiGraphElement):
     def attach_namespace_head(self, namespace: Optional[str]) -> None:
         self.attach_namespace(self, namespace, 0)
 
-    def save_storage_head(self, storage: 'AbstractStorage') -> None:
+    def save_storage_head(self, storage: AbstractStorage) -> None:
         self.save_storage(self, storage, 0)
 
-    def assign_storage_head(self, storage: 'AbstractStorage') -> None:
+    def assign_storage_head(self, storage: AbstractStorage) -> None:
         self.assign_storage(self, storage, 0)
 
 
@@ -360,7 +362,7 @@ class EvaluativeGraphElement(DynamicObject):
     def __init__(self, namespace: Optional[str] = None) -> None:
         super(EvaluativeGraphElement, self).__init__(namespace=namespace)
 
-    def dynamic_range(self, options={}) -> GraphElementTracker:
+    def dynamic_range(self, options={}) -> EvaluativeGraphElement.GraphElementTracker:
         return EvaluativeGraphElement.GraphElementTracker(self, options=options)
 
 
@@ -447,7 +449,7 @@ class DeepConfigurationStorage(AbstractStorage):
 
     def __init__(self, key_value_map, allow_fetch: bool = True, override: bool = True) -> None:
         super(DeepConfigurationStorage, self).__init__(allow_fetch=allow_fetch, override=override)
-        self.space_generator: type(Dict) = dict
+        self.space_generator = dict
         self._origin = self.space_generator()
 
     def parse_namespace_to_address(self, namespace: str):
@@ -589,7 +591,7 @@ class DynamicVariableOperation(AbstractDynamicVariableInstance):
         return ops
 
     @staticmethod
-    def add(*args) -> 'DynamicVariableOperation':
+    def add(*args) -> DynamicVariableOperation:
         def add_func(*ops_args):
             li = [var.evaluate() for var in ops_args]
             sum_value = li[0]
@@ -603,7 +605,7 @@ class DynamicVariableOperation(AbstractDynamicVariableInstance):
         return DynamicVariableOperation.create_ops(add_func, add_repr, 'add')(*args)
 
     @staticmethod
-    def mult(a, b) -> 'DynamicVariableOperation':
+    def mult(a, b) -> DynamicVariableOperation:
         def add_func(_a, _b):
             return _a.evaluate() * _b.evaluate()
 
@@ -613,7 +615,7 @@ class DynamicVariableOperation(AbstractDynamicVariableInstance):
         return DynamicVariableOperation.create_ops(add_func, add_repr, 'mult')(a, b)
 
     @staticmethod
-    def floor(a, b) -> 'DynamicVariableOperation':
+    def floor(a, b) -> DynamicVariableOperation:
         def add_func(_a, _b):
             return int(_a.evaluate() / _b.evaluate())
 

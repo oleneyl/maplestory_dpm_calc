@@ -1,6 +1,5 @@
 from dpmModule.jobs.globalSkill import useful_combat_orders
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -9,6 +8,7 @@ from . import globalSkill
 from .jobbranch import bowmen
 from .jobclass import adventurer
 from math import ceil
+from typing import Any, Dict
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -34,7 +34,7 @@ class JobGenerator(ck.JobGenerator):
 
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         CriticalShot = core.InformedCharacterModifier("크리티컬 샷",crit = 40)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
@@ -48,7 +48,7 @@ class JobGenerator(ck.JobGenerator):
         return [CriticalShot, PhisicalTraining, MarkmanShip, 
                 CrossBowExpert, ElusionStep]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 35)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5*ceil(passive_level/2))
@@ -59,13 +59,13 @@ class JobGenerator(ck.JobGenerator):
         return [WeaponConstant, Mastery, MortalBlow, ExtremeArchery]
         
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         거리 400
         
         스나, 피어싱, 롱레트, 프리저
         '''
-        DISTANCE = 400
+        DISTANCE = options.get("distance", 400)
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WEAKNESS_FINDING = core.CharacterModifier(armor_ignore = min(ceil((20+passive_level)/2) + DISTANCE//40 * ceil((20+passive_level)/5), 30 + (20+passive_level)))
         DISTANCING_SENSE = core.CharacterModifier(pdamage_indep = max(min((DISTANCE-200)//18*4, 30+(10+passive_level)), 0))

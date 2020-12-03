@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -9,6 +8,7 @@ from .jobbranch import warriors
 from .jobclass import flora
 from . import jobutils
 from math import ceil
+from typing import Any, Dict
 
 class OrderWrapper(core.SummonSkillWrapper):
     def __init__(self, skill, ether: core.StackSkillWrapper):
@@ -100,7 +100,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         # 매직 서킷: 앱솔 기준 15.4
         WEAPON_ATT = jobutils.get_weapon_att("튜너")
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -117,7 +117,7 @@ class JobGenerator(ck.JobGenerator):
 
         return [MagicCircuit, Pace, Rudiment, Mastery, Train, Accent, Expert, Demolition, Attain]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5 * ceil(passive_level / 2))
@@ -125,7 +125,7 @@ class JobGenerator(ck.JobGenerator):
         return [WeaponConstant, Mastery]
 
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''하이퍼스킬
         트리거-리인포스
         노빌리티-실드 리인포스

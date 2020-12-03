@@ -1,6 +1,5 @@
 from ..kernel.graph import DynamicVariableOperation
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -8,6 +7,7 @@ from . import globalSkill
 from .jobbranch import thieves
 from .jobclass import nova
 from math import ceil
+from typing import Any, Dict
 
 ######   Passive Skill   ######
 
@@ -119,7 +119,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'mess') # 임시로 보공 첫줄 사용, 재사용 구현시 변경
         self.preEmptiveSkills = 1
         
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         CollectingForLeap = core.InformedCharacterModifier("콜렉팅 포리프", stat_main = 50)
         
@@ -138,14 +138,14 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 30, crit_damage = 40, pdamage = 20, crit = 6)
                               
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5 * ceil(passive_level / 2))
         
         return [WeaponConstant, Mastery]		                      
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         논체인아츠-리인포스, 보스킬러
         체인아츠스트로크-넥스트어택 리인포스, 리인포스
@@ -174,7 +174,7 @@ class JobGenerator(ck.JobGenerator):
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         CheapShotII = core.CharacterModifier(crit = 2, crit_damage = 10 + ceil(passive_level / 4)) # 위크포인트 컨버징 어택
-        CheapShotIIBleed = core.DotSkill("위크포인트 컨버징 어택(출혈)", 0, 1000, 110 + 2 * passive_level, 1, 99999999).wrap(core.SummonSkillWrapper)
+        CheapShotIIBleed = core.DotSkill("위크포인트 컨버징 어택(출혈)", 0, 1000, 110 + 2 * passive_level, 1, 99999999).wrap(core.DotSkillWrapper)
         CheapShotIIBleedBuff = core.BuffSkill("위크포인트 컨버징 어택(출혈)(디버프)", 0, 99999999, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
         CheapShotIIAdventureMageBuff = core.BuffSkill("위크포인트 컨버징 어택(모법링크)", 0, 99999999, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
 
@@ -233,7 +233,7 @@ class JobGenerator(ck.JobGenerator):
         SummonBeatingNeedlebat_Honmy = core.BuffSkill("서먼 비팅 니들배트(혼미)", 0, 15000, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         # 5차
-        VenomBurst = core.DotSkill("베놈 버스트", 0, 1000, 160+6*vEhc.getV(4,4), 1, 99999999).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
+        VenomBurst = core.DotSkill("베놈 버스트", 0, 1000, 160+6*vEhc.getV(4,4), 1, 99999999).isV(vEhc,4,4).wrap(core.DotSkillWrapper)
         VenomBurst_Poison = core.BuffSkill("베놈 버스트(중독)", 0, 99999999, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage, cooltime = -1).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 3)
