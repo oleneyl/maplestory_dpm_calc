@@ -34,9 +34,12 @@ jobs:
       run: |
         # Detect files changed my current commit
         echo $GITHUB_SHA
+        REGEX="*.py"
         for changed_file in ${{ steps.files.outputs.all }}; do
           echo "Do something with this ${changed_file}."        
-          if [[ ${changed_file} =~ "*.py" ]]; then flake8 ${changed_file} --count --select=E9,F63,F7,F82 --show-source --statistics
+          if [[ $changed_file =~ $REGEX ]];
+          then
+            flake8 ${changed_file} --count --select=E9,F63,F7,F82 --show-source --statistics
         done
         # stop the build if there are Python syntax errors or undefined names
         flake8 ${{ steps.files.outputs.all }} --count --select=E9,F63,F7,F82 --show-source --statistics
