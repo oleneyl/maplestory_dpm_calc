@@ -34,8 +34,10 @@ jobs:
       run: |
         # Detect files changed my current commit
         echo $GITHUB_SHA
-        CHNAGED_FILES="${{ steps.files.outputs.all }}"
-        flake9 ${{ steps.files.outputs.all }}
+        for changed_file in ${{ steps.files.outputs.all }}; do
+          echo "Do something with this ${changed_file}."        
+          if [[ ${changed_file} =~ "*.py" ]]; then flake8 ${changed_file} --count --select=E9,F63,F7,F82 --show-source --statistics
+        done
         # stop the build if there are Python syntax errors or undefined names
         flake8 ${{ steps.files.outputs.all }} --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
