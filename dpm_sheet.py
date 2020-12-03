@@ -57,8 +57,8 @@ def get_presets():
         ("아란", "", {}, 0),
         ("에반", "다오어 3히트, 다오어-브레스-브오어", {}, 0),
         ("루미너스", "", {}, 0),
-        ("메르세데스", "실피디아 미사용, 엘고때 연계사이클", {"dealcycle": "combo"}, 0),
-        ("메르세데스", "실피디아 미사용, 엘고때 이슈타르", {"dealcycle": "ishtar"}, 1),
+        ("메르세데스", "엘고때 연계사이클", {"dealcycle": "combo"}, 0),
+        ("메르세데스", "엘고때 이슈타르", {"dealcycle": "ishtar"}, 1),
         ("팬텀", "블디, 블디/크오체/파컷/불스아이, 체력 100%", {"dealcycle": "blast_discharge"}, 0),
         ("팬텀", "얼드, 분노/크오체/파컷/불스아이, 체력 100%", {"dealcycle": "ultimate_drive"}, 1),
         ("은월", "분혼 격참 이동형 보스 판정, 약점 간파 미적용", {"hp_rate": False}, 0),
@@ -134,8 +134,8 @@ if __name__ == "__main__":
     worksheet.set_column("B:B", 5)
     worksheet.set_column("C:C", 45)
     worksheet.set_column("D:D", 18, num_format)
-    worksheet.set_column("E:E", 8, percent_format)
-    worksheet.set_column("F:F", 8, percent_format)
+    worksheet.set_column("E:E", 10, percent_format)
+    worksheet.set_column("F:F", 10, percent_format)
     worksheet.set_column("G:G", None, None, {"hidden": True})
 
     worksheet.conditional_format(
