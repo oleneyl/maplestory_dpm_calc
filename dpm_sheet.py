@@ -4,6 +4,7 @@ from concurrent.futures import ProcessPoolExecutor
 from itertools import product
 
 import argparse
+
 try:
     import pandas as pd
     import xlsxwriter
@@ -13,10 +14,10 @@ except ImportError:
 
 
 def get_args():
-    parser = argparse.ArgumentParser('DPM Sheet argument')
-    parser.add_argument('--ulevel', type=int, default=8000)
-    parser.add_argument('--time', type=int, default=1800)
-    parser.add_argument('--thread', type=int, default=4)
+    parser = argparse.ArgumentParser("DPM Sheet argument")
+    parser.add_argument("--ulevel", type=int, default=8000)
+    parser.add_argument("--time", type=int, default=1800)
+    parser.add_argument("--thread", type=int, default=4)
 
     return parser.parse_args()
 
@@ -46,8 +47,8 @@ def get_presets():
         ("플레임위자드", "블비탈 4히트, 오비탈 분당 1150타", {"orbital_per_min": 1150}, 1),
         ("윈드브레이커", "하울링게일 58히트, 볼텍스 스피어 17히트", {}, 0),
         ("나이트워커", "점샷 400ms", {}, 0),
-        ("스트라이커", "파섬", {"dealcycle" : "waterwave"}, 0),
-        ("스트라이커", "벽섬", {"dealcycle" : "thunder"}, 1),
+        ("스트라이커", "파섬", {"dealcycle": "waterwave"}, 0),
+        ("스트라이커", "벽섬", {"dealcycle": "thunder"}, 1),
         ("블래스터", "매그팡 510ms", {}, 0),
         ("데몬슬레이어", "블블 100%", {}, 0),
         ("배틀메이지", "좌우텔 분당 83회, 디버프 오라만, 명계문 미사용", {}, 0),
@@ -60,8 +61,8 @@ def get_presets():
         ("메르세데스", "실피디아 미사용, 엘고때 이슈타르", {"dealcycle": "ishtar"}, 1),
         ("팬텀", "블디, 블디/크오체/파컷/불스아이, 체력 100%", {"dealcycle": "blast_discharge"}, 0),
         ("팬텀", "얼드, 분노/크오체/파컷/불스아이, 체력 100%", {"dealcycle": "ultimate_drive"}, 1),
-        ("은월", "분혼 격참 이동형 보스 판정, 약점 간파 미적용", {"hp_rate" : False}, 0),
-        ("은월", "분혼 격참 이동형 보스 판정, 약점 간파 적용", {"hp_rate" : True}, 1),
+        ("은월", "분혼 격참 이동형 보스 판정, 약점 간파 미적용", {"hp_rate": False}, 0),
+        ("은월", "분혼 격참 이동형 보스 판정, 약점 간파 적용", {"hp_rate": True}, 1),
         ("카이저", "", {}, 0),
         ("카데나", "1타캔슬 150ms, 캔슬 180ms, 윙대거 3틱", {}, 0),
         ("엔젤릭버스터", "스포트라이트 3중첩, 어피니티IV 가동률 94.18%", {"spotlight": 3}, 0),
@@ -77,34 +78,38 @@ def get_presets():
 
 
 def test(args):
-    preset, ulevel, runtime = args
+    preset, ulevel, cdr, runtime = args
     jobname, description, options, alt = preset
 
-    template = get_template_generator('high_standard')().get_template(ulevel)
+    template = get_template_generator("high_standard")().get_template(ulevel)
     parser = IndividualDPMGenerator(jobname, template)
     parser.set_runtime(runtime * 1000)
-    dpm0 = parser.get_dpm(ulevel=ulevel, options=options)
-    dpm2 = parser.get_dpm(ulevel=ulevel, cdr=2, options=options)
-    dpm4 = parser.get_dpm(ulevel=ulevel, cdr=4, options=options)
+    result = parser.get_detailed_dpm(ulevel=ulevel, cdr=cdr, options=options)
+    dpm = result["dpm"]
+    loss = result["loss"]
 
-    return jobname, description, dpm0, dpm2, dpm4, alt
+    return jobname, cdr, description, dpm, loss, alt
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = get_args()
     ulevel = args.ulevel
-    tasks = product(get_presets(), [ulevel], [args.time])
+    tasks = product(get_presets(), [ulevel], [0, 2, 4], [args.time])
     pool = ProcessPoolExecutor(max_workers=args.thread)
     results = pool.map(test, tasks)
 
-    df = pd.DataFrame.from_records(results, index="직업",
-        exclude=["직업"], columns=["직업", "비고", "0", "2", "4", "alt"])
-    df["dpm"] = df[["0", "2", "4"]].max(axis=1)
-    df["쿨감"] = df[["0", "2", "4"]].idxmax(axis=1).astype('int')
+    df = pd.DataFrame.from_records(
+        results,
+        columns=["직업", "쿨감", "비고", "dpm", "loss", "alt"],
+    )
+    # df.to_pickle("cache.pkl")
+    # df: pd.DataFrame = pd.read_pickle("cache.pkl")
     df = df.sort_values(by="dpm", axis=0, ascending=False)
+    df = df.drop_duplicates(subset=["직업", "비고"]).copy()
 
     median = df["dpm"].median()
     df["배율"] = df["dpm"] / median
+    df["맥뎀누수율"] = df["loss"] / df["dpm"]
 
     non_alts = df[df["alt"] == 0].copy()
     non_alts["격차"] = non_alts["배율"] - non_alts["배율"].shift(-1)
@@ -112,37 +117,35 @@ if __name__ == '__main__':
 
     df = non_alts.append(alts)
     df = df.sort_values(by="dpm", axis=0, ascending=False)
-    df = df[["쿨감", "비고", "0", "2", "4", "dpm", "배율", "격차", "alt"]]
+    df = df[["직업", "쿨감", "비고", "dpm", "배율", "맥뎀누수율", "alt"]]
 
     writer = pd.ExcelWriter("./result.xlsx", engine="xlsxwriter")
-    df.to_excel(writer, sheet_name="Sheet1")
+    df.to_excel(writer, sheet_name="dpm", index=False)
     workbook: xlsxwriter.Workbook = writer.book
-    worksheet: xlsxwriter.workbook.Worksheet = writer.sheets["Sheet1"]
+    worksheet: xlsxwriter.workbook.Worksheet = writer.sheets["dpm"]
 
     center_format = workbook.add_format({"align": "center"})
-    num_format = workbook.add_format(
-        {"num_format": "#,##0", "align": "center"})
-    percent_format = workbook.add_format(
-        {"num_format": "0.00%", "align": "center"})
-    signed_percent_format = workbook.add_format(
-        {"num_format": "+0.00%", "align": "center"})
-    alt_format = workbook.add_format({"bg_color": "#FFEB9C"})
+    num_format = workbook.add_format({"num_format": "#,##0", "align": "center"})
+    percent_format = workbook.add_format({"num_format": "0.00%", "align": "center"})
+    alt_format = workbook.add_format({"font_color": "#808080"})
 
     worksheet.set_column("A:I", None, center_format)
     worksheet.set_column("A:A", 15)
     worksheet.set_column("B:B", 5)
     worksheet.set_column("C:C", 45)
-    worksheet.set_column("D:G", 18, num_format)
-    worksheet.set_column("H:H", 8, percent_format)
-    worksheet.set_column("I:I", 8, signed_percent_format)
-    worksheet.set_column("J:J", None, None, {"hidden": True})
+    worksheet.set_column("D:D", 18, num_format)
+    worksheet.set_column("E:E", 8, percent_format)
+    worksheet.set_column("F:F", 8, percent_format)
+    worksheet.set_column("G:G", None, None, {"hidden": True})
 
     worksheet.conditional_format(
-        "H2:H55", {"type": "data_bar", "bar_solid": True, "bar_color": "#63C384"})
+        "E2:E55", {"type": "data_bar", "bar_solid": True, "bar_color": "#63C384"}
+    )
     worksheet.conditional_format(
-        "I2:I55", {"type": "data_bar", "bar_solid": True, "bar_color": "#63C384"})
+        "F2:F55", {"type": "data_bar", "bar_solid": True, "bar_color": "#FF555A"}
+    )
     worksheet.conditional_format(
-        "A2:G55", {"type": "formula", "criteria": "$J2>0", "format": alt_format}
+        "A2:D55", {"type": "formula", "criteria": "$G2>0", "format": alt_format}
     )
 
     writer.close()
