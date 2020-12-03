@@ -6,6 +6,9 @@ from dpmModule.kernel.policy import AbstractRule, NameIndexedGraph
 
 
 class ConditionRule(AbstractRule):
+    '''
+    두 GraphElement A,B와 check_function에 대해, check_function(B)가 True를 리턴하면 A를 사용합니다.
+    '''
     def __init__(self, state_element, checking_element, check_function) -> None:
         self._state_element_name = state_element
         self._checking_element_name = checking_element
@@ -19,6 +22,9 @@ class ConditionRule(AbstractRule):
 
 
 class UniquenessRule(AbstractRule):
+    '''
+    주어진 Element가 on 상태가 아니면 사용을 금지합니다.
+    '''
     def get_related_elements(self, reference_graph: NameIndexedGraph) -> List[GraphElement]:
         return reference_graph.filter_elements(lambda x: isinstance(x, BuffSkillWrapper)) + \
                reference_graph.filter_elements(lambda x: isinstance(x, SummonSkillWrapper))
@@ -31,6 +37,9 @@ class UniquenessRule(AbstractRule):
 
 
 class ConcurrentRunRule(AbstractRule):
+    '''
+    두 GraphElement A,B에 대해, A가 B를 사용중일 때만 사용하도록 강제합니다.
+    '''
     def __init__(self, state_element: str, checking_element: str):
         self._state_element_name: str = state_element
         self._checking_element_name: str = checking_element
@@ -43,6 +52,9 @@ class ConcurrentRunRule(AbstractRule):
 
 
 class ReservationRule(AbstractRule):
+    '''
+    두 GraphElement A,B에 대해, A가 B가 사용가능할 때만 사용하도록 강제합니다.
+    '''
     def __init__(self, state_element: str, checking_element: str):
         self._state_element_name: str = state_element
         self._checking_element_name: str = checking_element
@@ -55,6 +67,9 @@ class ReservationRule(AbstractRule):
 
 
 class SynchronizeRule(AbstractRule):
+    '''
+    B가 켜져있다면, B(버프 또는 소환수) 의 남은 시간이 time(ms) 이상(direction=1) / 이하(direction=-1) 일 때 A를 사용할 수 있습니다. B가 꺼져있다면, A를 사용할 수 있습니다.
+    '''
     def __init__(self, target_element: str, timer_element: str, time: float, direction: int = 1):
         self._target_element = target_element
         self._timer_element = timer_element
@@ -74,6 +89,9 @@ class SynchronizeRule(AbstractRule):
 
 
 class MutualRule(AbstractRule):
+    '''
+    A를 B가 사용 가능할 때는 사용하지 않도록 합니다.
+    '''
     def __init__(self, target_element: str, state_element: str):
         self._target_element_name: str = target_element
         self._state_element_name: str = state_element
@@ -88,6 +106,9 @@ class MutualRule(AbstractRule):
 
 
 class InactiveRule(AbstractRule):
+    '''
+    A를 B가 사용되고 있을 때는 사용하지 않도록 합니다.
+    '''
     def __init__(self, target_element: str, state_element: str):
         self._target_element_name: str = target_element
         self._state_element_name: str = state_element
@@ -100,6 +121,9 @@ class InactiveRule(AbstractRule):
 
 
 class DisableRule(AbstractRule):
+    '''
+    주어진 GraphElement를 사용하지 못하도록 합니다.
+    '''
     def __init__(self, target_element: str):
         self.target_element = target_element
 
