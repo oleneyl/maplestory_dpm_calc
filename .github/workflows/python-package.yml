@@ -34,6 +34,7 @@ jobs:
         echo $GITHUB_SHA
         git log | head -n 100
         git status
+        git diff --name-only HEAD~1
         git diff --name-only "$GITHUB_SHA"
         git diff --name-only "$GITHUB_SHA..317dc73"
         CHANGED_FILES=$(git diff --name-only "$GITHUB_SHA..317dc73")
