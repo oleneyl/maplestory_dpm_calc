@@ -34,7 +34,7 @@ jobs:
       run: |
         # Detect files changed my current commit
         echo $GITHUB_SHA
-        REGEX="*.py"
+        REGEX=".*\.py$"
         for changed_file in ${{ steps.files.outputs.all }}; do        
           if [[ $changed_file =~ $REGEX ]];
           then
