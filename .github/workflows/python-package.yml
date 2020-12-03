@@ -35,7 +35,8 @@ jobs:
         CHANGED_FILES=$(git diff --name-only "$GITHUB_BASE_REF..$GITHUB_SHA")
         echo "1234321234321"
         echo $CHANGED_FILES
-        git diff --name-only "$GITHUB_BASE_REF..$GITHUB_SHA"
+        git log | head -n 50
+        git diff --name-only "$GITHUB_SHA"
         
         # stop the build if there are Python syntax errors or undefined names
         flake8 $CHANGED_FILES --count --select=E9,F63,F7,F82 --show-source --statistics
