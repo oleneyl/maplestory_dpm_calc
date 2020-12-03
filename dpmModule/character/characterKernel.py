@@ -217,7 +217,7 @@ class JobGenerator:
         initialize_global_properties()
 
         base_element, all_elements = self.generate(vEhc, chtr, options)
-        ensured_elements = [el for el in all_elements if el.ensure(chtr)]
+        ensured_elements = [el for el in all_elements if el and el.ensure(chtr)]
 
         GlobalOperation.assign_storage()
         GlobalOperation.attach_namespace()
