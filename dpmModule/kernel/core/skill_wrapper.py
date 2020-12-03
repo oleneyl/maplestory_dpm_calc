@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import TYPE_CHECKING, Callable, List, Literal, Optional, Tuple
+from typing import TYPE_CHECKING, Callable, List, Optional, Tuple
 
 from ..graph import DynamicVariableOperation
 from .callback import Callback
@@ -60,7 +60,7 @@ class AbstractSkillWrapper(GraphElement):
         constraint = ConstraintElement('사용 금지', self, lambda: False)
         self.onConstraint(constraint)
 
-    def get_explanation(self, lang: Literal["ko", "en"] = "ko") -> str:
+    def get_explanation(self, lang: str = "ko") -> str:
         return self.skill.get_explanation(lang=lang)
 
     def get_link(self) -> List[Tuple[GraphElement, GraphElement, str]]:
@@ -128,8 +128,7 @@ class AbstractSkillWrapper(GraphElement):
         return self._result_object_cache
 
     def controller(self, time: float,
-                   type_: Literal["set_disabled_and_time_left", "reduce_cooltime",
-                                  "reduce_cooltime_p", "set_enabled_and_time_left"] = 'set_disabled_and_time_left',
+                   type_: str = 'set_disabled_and_time_left',
                    name: Optional[str] = None) -> TaskHolder:
         # pylint: disable=no-member
         """ ``AbstractSkillWrapper`` 의 시간을 제어하는 그래프 요소를 생성합니다.
@@ -226,7 +225,7 @@ class AbstractSkillWrapper(GraphElement):
     def is_not_active(self) -> bool:
         return not self.is_active()
 
-    def is_cooltime_left(self, time: float, direction: Literal[1, -1]) -> bool:
+    def is_cooltime_left(self, time: float, direction: int) -> bool:
         """남은 쿨타임이 ``time`` 과 비교할 때의 대소를 반환합니다.
 
         Parameters
@@ -243,7 +242,7 @@ class AbstractSkillWrapper(GraphElement):
         else:
             return False
 
-    def is_time_left(self, time: float, direction: Literal[1, -1]) -> bool:
+    def is_time_left(self, time: float, direction: int) -> bool:
         """남은 지속시간이  ``time`` 과 비교할 때의 대소를 반환합니다.
 
         Parameters
@@ -398,7 +397,7 @@ class StackSkillWrapper(BuffSkillWrapper):
     def get_modifier(self) -> CharacterModifier:
         return CharacterModifier()
 
-    def stackController(self, d: int, name: str = None, dtype: Literal["vary", "set"] = 'vary') -> TaskHolder:
+    def stackController(self, d: int, name: str = None, dtype: str = 'vary') -> TaskHolder:
         if dtype == 'vary':
             task = Task(self, partial(self.vary, d))
         elif dtype == 'set':

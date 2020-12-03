@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, List, Literal, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Callable, List, Tuple, Union
 
 from ..graph import AbstractDynamicVariableInstance
 from .modifier import CharacterModifier
@@ -10,9 +10,6 @@ if TYPE_CHECKING:
     from ..abstract import AbstractCharacter
     from .callback import Callback
     from .modifier import SkillModifier
-
-GraphElementFlag = Literal[1, 2, 4, 8, 16, 32, 64, 128]
-Lang = Literal['ko', 'en']
 
 
 class Task:
@@ -89,15 +86,15 @@ class GraphElement:
         self._result_object_cache = ResultObject(0, CharacterModifier(), 0, 0, sname='Graph Element', spec='graph control')
         self._flag: int = 0
 
-    def set_flag(self, flag: GraphElementFlag) -> None:
+    def set_flag(self, flag: int) -> None:
         self._flag |= flag
 
     # TODO: Not used method.
-    def toggle_flag(self, flag: GraphElementFlag) -> None:
+    def toggle_flag(self, flag: int) -> None:
         self._flag ^= flag
 
     # TODO: Not used method.
-    def remove_flag(self, flag: GraphElementFlag) -> None:
+    def remove_flag(self, flag: int) -> None:
         self._flag &= ~flag
 
     def get_link(self) -> List[Tuple[GraphElement, GraphElement, str]]:
@@ -119,7 +116,7 @@ class GraphElement:
             li.append((self, context[0], "callback"))
         return li
 
-    def get_explanation(self, lang: Lang = "ko") -> str:
+    def get_explanation(self, lang: str = "ko") -> str:
         """
         해당 그래프 요소에 대한 설명을 받아옵니다.
 
@@ -258,7 +255,7 @@ class TaskHolder(GraphElement):
         super(TaskHolder, self).__init__(name)
         self._taskholder: Task = task
 
-    def get_explanation(self, lang: Lang = "ko") -> str:
+    def get_explanation(self, lang: str = "ko") -> str:
         if lang == "ko":
             return "%s" % self._id
         elif lang == "en":
@@ -322,7 +319,7 @@ class OptionalElement(GraphElement):
         self.fail: GraphElement = fail
         self.set_flag(self.Flag_Optional)
 
-    def get_explanation(self, lang: Lang = "ko") -> str:
+    def get_explanation(self, lang: str = "ko") -> str:
         if lang == "ko":
             return "종류:조건적 실행\n%s" % self._id
         elif lang == "en":
@@ -367,7 +364,7 @@ class RepeatElement(GraphElement):
         self.set_flag(self.Flag_Repeat)
         self._result_object_cache = ResultObject(0, CharacterModifier(), 0, 0, sname='Repeat Element', spec='graph control')
 
-    def get_explanation(self, lang: Lang = "ko") -> str:
+    def get_explanation(self, lang: str = "ko") -> str:
         if lang == "ko":
             return "종류:반복\n이름:%s\n반복대상:%s\n반복 횟수:%d" % (self._id, self._repeat_target._id, self.itr)
         elif lang == "en":
@@ -406,7 +403,7 @@ class ConstraintElement(GraphElement):
         self._ftn: Callable[[], bool] = cnst
         self.set_flag(self.Flag_Constraint)
 
-    def get_explanation(self, lang: Lang = "ko") -> str:
+    def get_explanation(self, lang: str = "ko") -> str:
         if lang == "ko":
             return "종류:제한\n이름:%s" % self._id
         elif lang == "en":
