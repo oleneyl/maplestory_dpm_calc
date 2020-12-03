@@ -160,15 +160,14 @@ JobGenerator
       - Example
 
         ```python
-        return (Paralyze, 
-                [Infinity, Meditation, EpicAdventure, OverloadMana.ensure(vEhc,1,5),
-                globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
-                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-                [DotPunisher.ensure(vEhc,0,0), PoisonChain, Meteor, MegidoFlame, FlameHeize, MistEruption, PoisonNova.ensure(vEhc,2,1), MirrorBreak, MirrorSpider] +\
-                [Ifritt, FireAura, FuryOfIfritt.ensure(vEhc,3,2),
-                    SlimeVirus, ParalyzeDOT, MistDOT, PoisonBreathDOT, IfrittDot, HeizeFlameDOT, TeleportMasteryDOT, MegidoFlameDOT, DotPunisherDOT.ensure(vEhc,0,0), PoisonNovaDOT.ensure(vEhc,2,1), PoisonChainToxic] +\
-                [UnstableMemorize] +\
-                [Paralyze])
+        class MirrorBreakWrapper(core.DamageSkillWrapper):
+          def __init__(self, vEhc, num1, num2, modifier) -> None:
+            super(MirrorBreakWrapper, self).__init__(
+              core.DamageSkill("스파이더 인 미러(공간 붕괴)", 720, 450+18*vEhc.getV(num1, num2), 15, cooltime = 250*1000, red = True, modifier=modifier)
+            )
+
+          def ensure(self, chtr: AbstractCharacter) -> bool:
+            return chtr.level >= 235
         ```
 
         - 
