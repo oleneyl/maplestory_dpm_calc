@@ -1,11 +1,9 @@
 from ..kernel.graph import DynamicVariableOperation
 from ..kernel import core
 from ..character import characterKernel as ck
-from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import ReservationRule, RuleSet, ConcurrentRunRule
+from ..execution.rules import ConditionRule, InactiveRule, ReservationRule, RuleSet, ConcurrentRunRule
 from . import globalSkill
-from .jobclass import heroes
 from .jobbranch import bowmen
 from math import ceil
 from typing import Any, Dict
@@ -31,6 +29,21 @@ class ElementalGhostWrapper(core.BuffSkillWrapper):
         
         skill_wrapper.onAfter(core.OptionalElement(self.is_active, copial_skill, name="엘고 ON"))
 
+class SylphidiaDamageSkill(core.DamageSkillWrapper):
+    """
+    일부 스킬들은 실피디아 탑승시 딜레이가 변경됨.
+    """
+    def __init__(self, skill: core.DamageSkill, sylphidia: core.BuffSkillWrapper, delay: int):
+        super(SylphidiaDamageSkill, self).__init__(skill)
+        self.sylphidia = sylphidia
+        self.delay = delay
+
+    def get_delay(self) -> float:
+        if self.sylphidia.is_active():
+            return self.delay
+        else:
+            return super().get_delay()
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -47,6 +60,8 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '엘리멘탈 고스트'), RuleSet.BASE)
         ruleset.add_rule(ReservationRule('엘비시 블레싱', '엘리멘탈 고스트'), RuleSet.BASE)
         ruleset.add_rule(ReservationRule('히어로즈 오쓰', '엘리멘탈 고스트'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('실피디아', '엘리멘탈 고스트'), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('실피디아', '엘리멘탈 고스트', lambda sk: sk.is_cooltime_left(30000, -1)), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -110,15 +125,6 @@ class JobGenerator(ck.JobGenerator):
         # Damage skill
         IshtarRing = core.DamageSkill("이슈타르의 링", 120, 220 + self.combat, 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        # 연계 스킬들 - 연계시 딜레이로 작성
-        UnicornSpike = core.DamageSkill("유니콘 스파이크", 450, 315+100 + 2*self.combat, 5, modifier = core.CharacterModifier(crit=100), cooltime = 10 * 1000, red=True).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-        UnicornSpikeBuff = core.BuffSkill("유니콘 스파이크(버프)", 0, 30 * 1000, pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper)  #직접시전 금지
-        RegendrySpear = core.DamageSkill("레전드리 스피어", 690, 700 + 10*self.combat, 3, cooltime = 5 * 1000, red=True, modifier = core.CharacterModifier(crit=100)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        RegendrySpearBuff = core.BuffSkill("레전드리 스피어(버프)", 0, (30+self.combat) * 1000, armor_ignore = 30+20+self.combat, cooltime = -1).wrap(core.BuffSkillWrapper) #직접시전 금지
-        LightningEdge = core.DamageSkill("라이트닝 엣지", 630, 420 + 5*self.combat, 3).wrap(core.DamageSkillWrapper)
-        LightningEdgeBuff = core.BuffSkill("라이트닝 엣지(버프)", 0, 30000, cooltime=-1).wrap(core.BuffSkillWrapper)
-        LeapTornado = core.DamageSkill("리프 토네이도", 390, 390+30+3*self.combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
-        GustDive = core.DamageSkill("거스트 다이브", 480, 430 + 3*self.combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
         AdvanceStrikeDualShot = core.DamageSkill("어드밴스드 스트라이크 듀얼샷", 480, 380, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         AdvanceStrikeDualShot_Link = core.DamageSkill("어드밴스드 스트라이크 듀얼샷(연계)", 360, 380, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
@@ -128,7 +134,6 @@ class JobGenerator(ck.JobGenerator):
     
         # Hyper
         ElvishBlessing = core.BuffSkill("엘비시 블레싱", 900, 60 * 1000, cooltime = 90 * 1000, att = 80).wrap(core.BuffSkillWrapper)
-        WrathOfEllil = core.DamageSkill("래쓰 오브 엔릴", 210, 400, 10, cooltime = 8 * 1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) #연계시 딜레이
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
         # 5th
@@ -142,6 +147,29 @@ class JobGenerator(ck.JobGenerator):
 
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
+
+        # 연계 스킬들 - 연계시 딜레이로 작성
+        UnicornSpike = SylphidiaDamageSkill(
+            core.DamageSkill("유니콘 스파이크", 450, 315+100 + 2*self.combat, 5, modifier = core.CharacterModifier(crit=100), cooltime = 10 * 1000, red=True).setV(vEhc, 5, 3, False),
+            Sylphidia,
+            540
+        )
+        UnicornSpikeBuff = core.BuffSkill("유니콘 스파이크(버프)", 0, 30 * 1000, pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper)  #직접시전 금지
+        RegendrySpear = SylphidiaDamageSkill(
+            core.DamageSkill("레전드리 스피어", 690, 700 + 10*self.combat, 3, cooltime = 5 * 1000, red=True, modifier = core.CharacterModifier(crit=100)).setV(vEhc, 4, 2, False),
+            Sylphidia,
+            540
+        )
+        RegendrySpearBuff = core.BuffSkill("레전드리 스피어(버프)", 0, (30+self.combat) * 1000, armor_ignore = 30+20+self.combat, cooltime = -1).wrap(core.BuffSkillWrapper) #직접시전 금지
+        LightningEdge = core.DamageSkill("라이트닝 엣지", 630, 420 + 5*self.combat, 3).wrap(core.DamageSkillWrapper)
+        LightningEdgeBuff = core.BuffSkill("라이트닝 엣지(버프)", 0, 30000, cooltime=-1).wrap(core.BuffSkillWrapper)
+        LeapTornado = core.DamageSkill("리프 토네이도", 390, 390+30+3*self.combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        GustDive = core.DamageSkill("거스트 다이브", 480, 430 + 3*self.combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        WrathOfEllil = SylphidiaDamageSkill(
+            core.DamageSkill("래쓰 오브 엔릴", 210, 400, 10, cooltime = 8 * 1000).setV(vEhc, 3, 2, False),
+            Sylphidia,
+            540
+        )
     
         ######   Skill Wrapper   ######
         #Buff
@@ -175,6 +203,8 @@ class JobGenerator(ck.JobGenerator):
         for sk in DebuffComboList[1:]:
             DebuffCombo.onAfter(sk)
             DebuffCombo.onAfter(LinkAttack)
+        DebuffCombo.onConstraint(core.ConstraintElement("디버프 없을시", UnicornSpikeBuff, UnicornSpikeBuff.is_not_active))
+        DebuffCombo.onConstraint(core.ConstraintElement("실피디아 아닐시", Sylphidia, Sylphidia.is_not_active))
 
         ElementalGhostCombo = core.DamageSkill("엘고 콤보", 0, 0, 0).wrap(core.DamageSkillWrapper)
         ElementalGhostComboList = [AdvanceStrikeDualShot_Link, WrathOfEllil, AdvanceStrikeDualShot_Link,
@@ -187,17 +217,12 @@ class JobGenerator(ck.JobGenerator):
         BasicAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
         if DEALCYCLE == "combo":
             BasicAttack.onAfter(
-                core.OptionalElement(ElementalGhost.is_active, ElementalGhostCombo,
-                    core.OptionalElement(UnicornSpikeBuff.is_not_active, DebuffCombo, IshtarRing)
-                )
+                core.OptionalElement(lambda: ElementalGhost.is_active() and Sylphidia.is_not_active(), ElementalGhostCombo, IshtarRing)
             )
         elif DEALCYCLE == "ishtar":
-            BasicAttack.onAfter(core.OptionalElement(UnicornSpikeBuff.is_not_active, DebuffCombo, IshtarRing))
+            BasicAttack.onAfter(IshtarRing)
         else:
             raise ValueError(DEALCYCLE)
-
-        # TODO: 실피디아 사용시 연계 딜레이와 디버프 콤보 조사하고, 딜 증가하는지 확인할 것
-        # Sylphidia.onConstraint(core.ConstraintElement("엘고와 따로 사용", ElementalGhost, lambda: ElementalGhost.is_not_active() and ElementalGhost.is_not_usable()))
 
         #Final Attack, Elemental Ghost
         UseElementalGhostSpirit = core.OptionalElement(
@@ -227,7 +252,11 @@ class JobGenerator(ck.JobGenerator):
 
         GuidedArrow.onTick(UseRoyalNightsAttack)
 
-        for sk in [UnicornSpike, RegendrySpear, WrathOfEllil, ElementalGhostSpirit, RoyalKnightsAttack]:
+        IsSylphidia = core.ConstraintElement("실피디아 탑승중", Sylphidia, Sylphidia.is_active)
+        for sk in [UnicornSpike, RegendrySpear, WrathOfEllil]: # 실피디아 탑승시에는 DebuffCombo를 통하지 않고 따로 사용
+            sk.onConstraint(IsSylphidia)
+
+        for sk in [ElementalGhostSpirit, RoyalKnightsAttack]:
             sk.protect_from_running()
 
         for sk in [UnicornSpikeBuff, RegendrySpearBuff, LightningEdgeBuff]:
@@ -236,9 +265,9 @@ class JobGenerator(ck.JobGenerator):
         return(BasicAttack,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), 
                     Booster, ElvishBlessing, AncientSpirit, HerosOath, RoyalKnights,
-                    CriticalReinforce, UnicornSpikeBuff, RegendrySpearBuff, LightningEdgeBuff, ElementalGhost,
+                    CriticalReinforce, UnicornSpikeBuff, RegendrySpearBuff, LightningEdgeBuff, ElementalGhost, Sylphidia,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-                [RoyalKnightsAttack, ElementalGhostSpirit,UnicornSpike, RegendrySpear, WrathOfEllil, IrkilaBreathInit] +\
+                [RoyalKnightsAttack, ElementalGhostSpirit, DebuffCombo, UnicornSpike, RegendrySpear, WrathOfEllil, IrkilaBreathInit] +\
                 [ElementalKnights, ElementalKnights_1, ElementalKnights_2, GuidedArrow, MirrorBreak, MirrorSpider] +\
                 [] +\
                 [BasicAttack])
