@@ -406,7 +406,7 @@ class JobGenerator:
 
         # 무기 소울
         refMDF = get_reference_modifier(chtr)
-        if refMDF.crit < 88:
+        if refMDF.crit <= 65:
             weapon_soul_modifier = ExMDF(crit=12, att=20)
         else:
             weapon_soul_modifier = ExMDF(patt=3, att=20)
