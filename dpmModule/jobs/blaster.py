@@ -214,13 +214,12 @@ class JobGenerator(ck.JobGenerator):
         ReleaseHammer.onAfter(HammerSmash)
         ReleaseHammer.onAfter(DuckingDelay)
         
-        for wrp in [MagnumPunch, DoublePang, HammerSmash, BalkanPunch, BalkanPunchTick, BurningBreaker]:
+        for wrp in [MagnumPunch, DoublePang, HammerSmash, BalkanPunch, BalkanPunchTick, BurningBreakerRush]:
             wrp.onAfter(RevolvingCannonMastery)
 
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
-        # 리스트 내용 검증 필요
-        for sk in [ReleaseHammer, BurningBreaker, HammerSmashWave, Mag_Pang]:
+        for sk in [ReleaseFileBunker, BurningBreaker, HammerSmash, MagnumPunch, DoublePang, BalkanPunch, BalkanPunchTick, BurningBreakerRush]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
