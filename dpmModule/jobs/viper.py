@@ -2,7 +2,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ConditionRule, MutualRule
+from ..execution.rules import InactiveRule, RuleSet, ConditionRule, MutualRule
 from . import globalSkill
 from .jobbranch import pirates
 from .jobclass import adventurer
@@ -63,6 +63,8 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(MutualRule('스티뮬레이트', '트랜스 폼'), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('스티뮬레이트', '에너지 차지', lambda sk: sk.judge(2000, -1) or sk.isStateOff()), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('유니티 오브 파워', '유니티 오브 파워(디버프)', lambda sk: sk.is_time_left(1000, -1)), RuleSet.BASE)
+        ruleset.add_rule(MutualRule('타임 리프', '소울 컨트랙트'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('타임 리프', '소울 컨트랙트'), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -122,6 +124,8 @@ class JobGenerator(ck.JobGenerator):
         
         Nautilus = core.DamageSkill("노틸러스", 690, 440+4*self.combat, 7, cooltime = 60 * 1000, red=True).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         NautilusFinalAttack = core.DamageSkill("노틸러스(파이널 어택)", 0, 165+2*self.combat, 2).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+
+        TimeLeap = core.DamageSkill("타임 리프", 1080, 0, 0, cooltime = 180000).wrap(core.DamageSkillWrapper)
 
         # Hyper
         Stimulate = core.BuffSkill("스티뮬레이트", 930, 120 * 1000, cooltime = 240 * 1000, pdamage = 20).wrap(core.BuffSkillWrapper)# 에너지 주기적으로 800씩 증가, 미완충시 풀완충.
@@ -207,13 +211,19 @@ class JobGenerator(ck.JobGenerator):
         HowlingFistInit.onConstraint(core.ConstraintElement("에너지 1750 이상", EnergyCharge, partial(EnergyCharge.judge, 1750, 1)))
         HowlingFistInit.onAfter(core.RepeatElement(HowlingFistCharge, 8))
         HowlingFistInit.onAfter(HowlingFistFinal)
+
+        SoulContract = globalSkill.soul_contract()
+
+        TimeLeap.onAfter(SoulContract.controller(1.0, "reduce_cooltime_p"))
+        TimeLeap.onAfter(Nautilus.controller(1.0, "reduce_cooltime_p"))
+        TimeLeap.onAfter(DragonStrike.controller(1.0, "reduce_cooltime_p"))
             
         return (BasicAttackWrapper,
             [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                 LuckyDice, Viposition, Stimulate, EpicAdventure, PirateFlag, Overdrive, Transform,
                 UnityOfPowerBuff, DragonStrikeBuff, EnergyCharge,
-                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-            [UnityOfPower, HowlingFistInit, Nautilus, DragonStrike, FuriousCharge, TransformEnergyOrbDummy, MirrorBreak, MirrorSpider] +\
+                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), SoulContract] +\
+            [UnityOfPower, HowlingFistInit, Nautilus, DragonStrike, FuriousCharge, TransformEnergyOrbDummy, MirrorBreak, MirrorSpider, TimeLeap] +\
             [SerpentScrew, SerpentScrewDummy, StimulateSummon] +\
             [] +\
             [BasicAttackWrapper])
