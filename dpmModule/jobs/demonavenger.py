@@ -85,9 +85,11 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill   ######
 
         ### Buff skills ###
-        Booster = core.BuffSkill("데몬 부스터", 990, 180*1000).wrap(core.BuffSkillWrapper)
-        DiabolicRecovery = core.BuffSkill("디아볼릭 리커버리", 990, 180*1000).wrap(core.BuffSkillWrapper)
-        WardEvil = core.BuffSkill("리프랙트 이블", 990, 180*1000).wrap(core.BuffSkillWrapper)
+        
+        # 펫버프
+        Booster = core.BuffSkill("데몬 부스터", 0, 180*1000).wrap(core.BuffSkillWrapper)
+        DiabolicRecovery = core.BuffSkill("디아볼릭 리커버리", 0, 180*1000).wrap(core.BuffSkillWrapper)
+        WardEvil = core.BuffSkill("리프랙트 이블", 0, 180*1000).wrap(core.BuffSkillWrapper)
 
         ForbiddenContract = core.BuffSkill("포비든 컨트랙트", 1020, 30*1000, cooltime = 75*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         DemonicFortitude = core.BuffSkill("데모닉 포티튜드", 0, 60*1000, cooltime=120*1000, pdamage=10).wrap(core.BuffSkillWrapper)
@@ -107,7 +109,7 @@ class JobGenerator(ck.JobGenerator):
         ExecutionExceed = core.DamageSkill("익시드: 엑스큐션 (강화)", 540, 540+8*self.combat, 6, modifier = core.CharacterModifier(armor_ignore = 30 + self.combat, pdamage = 20 + 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         # 최대 10회 공격
-        ShieldChasing = core.DamageSkill("실드 체이싱", 540, 500 + 10 * self.combat, 2*2*(8+2), cooltime = 6000, modifier = core.CharacterModifier(armor_ignore = 30 + passive_level, pdamage=20+20), red = True).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
+        ShieldChasing = core.DamageSkill("실드 체이싱", 720, 500 + 10 * self.combat, 2*2*(8+2), cooltime = 6000, modifier = core.CharacterModifier(armor_ignore = 30 + passive_level, pdamage=20+20), red = True).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
 
         ArmorBreak = core.DamageSkill("아머 브레이크", 0, 350 + 5 * self.combat, 4, cooltime = (30+self.combat)*1000).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         ArmorBreakBuff = core.BuffSkill("아머 브레이크(디버프)", 720, (30+self.combat)*1000, armor_ignore = 30 + self.combat).wrap(core.BuffSkillWrapper)
@@ -129,8 +131,9 @@ class JobGenerator(ck.JobGenerator):
 
         FrenzyDOT = core.SummonSkill("프렌지 장판", 0, 1000/10.8, 300 + 8 * vEhc.getV(0, 0), FRENZY_STACK, 99999999).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
-        # 블피 (즉시 시전)
-        DemonicBlast = core.DamageSkill("블러드 피스트", 0, 500 + 20*vEhc.getV(0,0), 7, cooltime = 10000, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        # 블피 (3중첩)
+        # TODO: 블피캔슬 구현 (다른스킬 시전중에 블피사용시 그 전에 사용한 스킬 딜레이가 캔슬되고 즉시 블피가 발동)
+        DemonicBlast = core.DamageSkill("블러드 피스트", 330, 800 + 32*vEhc.getV(0,0), 7, cooltime = 17000, modifier = core.CharacterModifier(crit = 100, armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         
         # 평딜 기준
         # 참고자료: https://blog.naver.com/oe135/221372243858
@@ -180,7 +183,7 @@ class JobGenerator(ck.JobGenerator):
         return(BasicAttack,
                [globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     FrenzyDOT, Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
-                    globalSkill.soul_contract(), Revenant, RevenantHit, CallMastema, AnotherGoddessBuff, AnotherVoid] +\
-                [ShieldChasing, ArmorBreakBuff] +\
-                [BatSwarm, MirrorBreak, MirrorSpider, DimensionSword, DemonicBlast] +\
+                    globalSkill.soul_contract(), Revenant, RevenantHit, CallMastema, AnotherGoddessBuff, AnotherVoid] +
+                [ShieldChasing, ArmorBreakBuff] +
+                [BatSwarm, MirrorBreak, MirrorSpider, DimensionSword, DemonicBlast] +
                 [BasicAttack])
