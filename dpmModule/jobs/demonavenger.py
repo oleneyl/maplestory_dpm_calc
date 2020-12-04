@@ -148,10 +148,6 @@ class JobGenerator(ck.JobGenerator):
         AnotherGoddessBuff, AnotherVoid = demon.AnotherWorldWrapper(vEhc, 0, 0)
 
         ######   Skill Wrapper   ######
-        '''딜 사이클 정리
-        https://blog.naver.com/oe135/221538210455
-        매 3분마다 버프류 스킬 사용하여 극딜
-        '''
         
         # TODO: 아머 브레이크 효율 확인필요
         ArmorBreakBuff.onAfter(ArmorBreak)
@@ -160,22 +156,27 @@ class JobGenerator(ck.JobGenerator):
         BasicAttack.onAfter(core.OptionalElement(ReleaseOverload.is_active, ExecutionExceed, ReleaseOverload))
         ReleaseOverload.onAfter(Execution_1)
         ReleaseOverload.onAfter(Execution_2)
+        ReleaseOverload.protect_from_running()
 
         RevenantHitOpt = core.OptionalElement(lambda : Revenant.is_active() and RevenantHit.is_available(), RevenantHit, name = "레버넌트 타격 여부 확인")
         RevenantHit.protect_from_running()
 
+        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
+
+        # 익시드 스킬 후속타
         for sk in [Execution_0, Execution_1, Execution_2, Execution_3, ExecutionExceed]:
             sk.onAfter(EnhancedExceed)
             sk.onAfter(RevenantHitOpt)
+            auraweapon_builder.add_aura_weapon(sk)
+        
+        # non 익시드 스킬 후속타
+        for sk in [ArmorBreak, DemonicBlast]:
+            auraweapon_builder.add_aura_weapon(sk)
+        
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
-        # 오라 웨폰
-        auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
-        for sk in [Execution_0, Execution_1, Execution_2, Execution_3, ExecutionExceed, ShieldChasing, ArmorBreak, DemonicBlast]:
-            auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
-        
         return(BasicAttack,
                [globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     FrenzyDOT, Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
