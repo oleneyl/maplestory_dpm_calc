@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, MutualRule, InactiveRule
@@ -7,6 +6,7 @@ from . import globalSkill
 from .jobclass import adventurer
 from .jobbranch import magicians
 from math import ceil
+from typing import Any, Dict
 
 class PoisonChainToxicWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2):
@@ -40,7 +40,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule('언스테이블 메모라이즈', '인피니티'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤", stat_main = 40)
@@ -58,7 +58,7 @@ class JobGenerator(ck.JobGenerator):
         return [HighWisdom, SpellMastery, MagicCritical, ElementalReset, 
                                     MasterMagic, ElementAmplication, ArcaneAim, UnstableMemorizePassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5*ceil(self.combat/2))
         ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", pdamage_indep = 20)
@@ -68,7 +68,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, ExtremeMagic, PerventDrain, ArcaneAim, ElementalResetActive]
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         포이즌 노바 4히트
         
@@ -123,15 +123,15 @@ class JobGenerator(ck.JobGenerator):
         #Ignite : Need Wrapper
         
         # DoT Skills
-        ParalyzeDOT = core.DotSkill("페럴라이즈(도트)", 0, 1000, 240 + self.combat * 4, 1, 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
-        MistDOT = core.DotSkill("포이즌 미스트(도트)", 0, 1000, 300 + self.combat * 1, 1, 12000, cooltime = -1).wrap(core.SummonSkillWrapper)
-        IfrittDot = core.DotSkill("이프리트(도트)", 0, 1000, 140 + self.combat * 3, 1, 4000, cooltime = -1).wrap(core.SummonSkillWrapper)
-        HeizeFlameDOT = core.DotSkill("플레임 헤이즈(도트)", 0, 1000, 200 + self.combat * 3, 1, 20000, cooltime = -1).wrap(core.SummonSkillWrapper)
-        TeleportMasteryDOT = core.DotSkill("텔레포트 마스터리(도트)", 0, 1000, 49, 1, 8000, cooltime = -1).wrap(core.SummonSkillWrapper)
-        PoisonBreathDOT = core.DotSkill("포이즌 브레스(도트)", 0, 1000, 60, 1, 20000, cooltime = -1).wrap(core.SummonSkillWrapper)
-        MegidoFlameDOT = core.DotSkill("메기도 플레임(도트)", 0, 1000, 700, 1, 60000, cooltime = -1).wrap(core.SummonSkillWrapper)
-        DotPunisherDOT = core.DotSkill("도트 퍼니셔(도트)", 0, 1000, 200+3*vEhc.getV(0,0), 1, 16000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
-        PoisonNovaDOT = core.DotSkill("포이즌 노바(도트)", 0, 1000, 300+12*vEhc.getV(2,1), 1, 20000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
+        ParalyzeDOT = core.DotSkill("페럴라이즈(도트)", 0, 1000, 240 + self.combat * 4, 1, 10000, cooltime = -1).wrap(core.DotSkillWrapper)
+        MistDOT = core.DotSkill("포이즌 미스트(도트)", 0, 1000, 300 + self.combat * 1, 1, 12000, cooltime = -1).wrap(core.DotSkillWrapper)
+        IfrittDot = core.DotSkill("이프리트(도트)", 0, 1000, 140 + self.combat * 3, 1, 4000, cooltime = -1).wrap(core.DotSkillWrapper)
+        HeizeFlameDOT = core.DotSkill("플레임 헤이즈(도트)", 0, 1000, 200 + self.combat * 3, 1, 20000, cooltime = -1).wrap(core.DotSkillWrapper)
+        TeleportMasteryDOT = core.DotSkill("텔레포트 마스터리(도트)", 0, 1000, 49, 1, 8000, cooltime = -1).wrap(core.DotSkillWrapper)
+        PoisonBreathDOT = core.DotSkill("포이즌 브레스(도트)", 0, 1000, 60, 1, 20000, cooltime = -1).wrap(core.DotSkillWrapper)
+        MegidoFlameDOT = core.DotSkill("메기도 플레임(도트)", 0, 1000, 700, 1, 60000, cooltime = -1).wrap(core.DotSkillWrapper)
+        DotPunisherDOT = core.DotSkill("도트 퍼니셔(도트)", 0, 1000, 200+3*vEhc.getV(0,0), 1, 16000, cooltime = -1).isV(vEhc,0,0).wrap(core.DotSkillWrapper)
+        PoisonNovaDOT = core.DotSkill("포이즌 노바(도트)", 0, 1000, 300+12*vEhc.getV(2,1), 1, 20000, cooltime = -1).isV(vEhc,2,1).wrap(core.DotSkillWrapper)
 
         # Unstable Memorize Skills
         EnergyBolt = core.DamageSkill("에너지 볼트", 630, 309, 1).wrap(core.DamageSkillWrapper)
@@ -139,7 +139,7 @@ class JobGenerator(ck.JobGenerator):
         PoisonBreath = core.DamageSkill("포이즌 브레스", 600, 180, 1).wrap(core.DamageSkillWrapper)
         Explosion = core.DamageSkill("익스플로젼", 540+150, 405, 2).wrap(core.DamageSkillWrapper) # magic6(720) -> explosion(180). 둘 다 공속 적용되어 540+150.
         PoisonMist = core.DamageSkill("포이즌 미스트", 1140, 270, 1).wrap(core.DamageSkillWrapper)
-        SlimeVirus = core.DotSkill("슬라임 바이러스", 1680, 1000, 160, 1, 10000, cooltime=-1).wrap(core.SummonSkillWrapper)
+        SlimeVirus = core.DotSkill("슬라임 바이러스", 1680, 1000, 160, 1, 10000, cooltime=-1).wrap(core.DotSkillWrapper)
         
         # Unstable Memorize
         UnstableMemorize = adventurer.UnstableMemorizeWrapper(vEhc, 4, 4, chtr.get_skill_modifier())
@@ -204,11 +204,11 @@ class JobGenerator(ck.JobGenerator):
         OverloadMana = overload_mana_builder.get_buff()
 
         return (Paralyze, 
-                [Infinity, Meditation, EpicAdventure, OverloadMana.ensure(vEhc,1,5),
+                [Infinity, Meditation, EpicAdventure, OverloadMana,
                 globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-                [DotPunisher.ensure(vEhc,0,0), PoisonChain, Meteor, MegidoFlame, FlameHeize, MistEruption, PoisonNova.ensure(vEhc,2,1), MirrorBreak, MirrorSpider] +\
-                [Ifritt, FireAura, FuryOfIfritt.ensure(vEhc,3,2),
-                    SlimeVirus, ParalyzeDOT, MistDOT, PoisonBreathDOT, IfrittDot, HeizeFlameDOT, TeleportMasteryDOT, MegidoFlameDOT, DotPunisherDOT.ensure(vEhc,0,0), PoisonNovaDOT.ensure(vEhc,2,1), PoisonChainToxic] +\
+                [DotPunisher, PoisonChain, Meteor, MegidoFlame, FlameHeize, MistEruption, PoisonNova, MirrorBreak, MirrorSpider] +\
+                [Ifritt, FireAura, FuryOfIfritt,
+                    SlimeVirus, ParalyzeDOT, MistDOT, PoisonBreathDOT, IfrittDot, HeizeFlameDOT, TeleportMasteryDOT, MegidoFlameDOT, DotPunisherDOT, PoisonNovaDOT, PoisonChainToxic] +\
                 [UnstableMemorize] +\
                 [Paralyze])

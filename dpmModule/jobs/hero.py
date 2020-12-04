@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -7,6 +6,7 @@ from ..execution.rules import ReservationRule, RuleSet, InactiveRule
 from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
+from typing import Any, Dict
 
 '''히어로 스킬 정리
 - 콤보 어택 :: 스택당 공격력 2, 최종뎀10% -> 오더 11% +2%(하이퍼) 보공+2%
@@ -72,7 +72,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리(두손도끼)", pdamage_indep = 10, pdamage = 5) # 두손도끼
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
@@ -84,7 +84,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponMastery, PhisicalTraining, ChanceAttack, CombatMastery, AdvancedFinalAttack]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 44)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5 * (passive_level // 2))        
@@ -92,7 +92,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, Enrage]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         두손도끼
 
@@ -129,7 +129,7 @@ class JobGenerator(ck.JobGenerator):
         
         Insizing = core.DamageSkill("인사이징", 660, 576 + 7 * self.combat, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         InsizingBuff = core.BuffSkill("인사이징(버프)", 0, (30 + self.combat // 2) * 1000, cooltime = -1, pdamage = 25 + ceil(self.combat / 2)).wrap(core.BuffSkillWrapper)
-        InsizingDot = core.DotSkill("인사이징(도트)", 0, 2000, 165 + 3*self.combat, 1, (30 + self.combat // 2) * 1000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        InsizingDot = core.DotSkill("인사이징(도트)", 0, 2000, 165 + 3*self.combat, 1, (30 + self.combat // 2) * 1000, cooltime = -1).wrap(core.DotSkillWrapper)
     
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 170 + 2*passive_level, 3 * 0.01 * (60 + ceil(passive_level/2) + 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 

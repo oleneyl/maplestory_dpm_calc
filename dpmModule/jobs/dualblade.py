@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -8,6 +7,7 @@ from . import globalSkill
 from .jobbranch import thieves
 from . import jobutils
 from math import ceil
+from typing import Any, Dict
 
 # TODO: 왜 레투다는 5차값이 1,1인데 레투다 패시브는 2,2일까?
 
@@ -22,7 +22,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(armor_ignore = 40)
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         
         Karma = core.InformedCharacterModifier("카르마", att = 30)
@@ -36,7 +36,7 @@ class JobGenerator(ck.JobGenerator):
         return [Karma, PhisicalTraining, SornsEffect, DualBladeExpert, Sharpness,
                             ReadyToDiePassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5 * ceil(passive_level / 2))    #오더스 기본적용!   
@@ -51,7 +51,7 @@ class JobGenerator(ck.JobGenerator):
         # ruleset.add_rule(ConcurrentRunRule('블레이드 스톰', '얼티밋 다크 사이트'), RuleSet.BASE)
         return ruleset
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         하이퍼 : 팬텀 블로우 - 리인포스, 이그노어 가드, 보너스 어택
         블레이드 퓨리 - 리인포스, 엑스트라 타겟
@@ -69,7 +69,7 @@ class JobGenerator(ck.JobGenerator):
         
         PhantomBlow = core.DamageSkill("팬텀 블로우", 540, 315 + 3 * self.combat, 6+1, modifier = core.CharacterModifier(armor_ignore = 44, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         SuddenRaid = core.DamageSkill("써든레이드", 690, 494+5*self.combat, 7, cooltime = (30-2*(self.combat//2))*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)    #파컷의 남은 쿨타임 20% 감소
-        SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 0, 1000, 210 + 4 * self.combat, 1, 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 0, 1000, 210 + 4 * self.combat, 1, 10000, cooltime = -1).wrap(core.DotSkillWrapper)
         
         FinalCut = core.DamageSkill("파이널 컷", 450, 2000 + 20 * self.combat, 1, cooltime = 90000, red=True).wrap(core.DamageSkillWrapper)
         FinalCutBuff = core.BuffSkill("파이널 컷(버프)", 0, 60000, rem = True, cooltime = -1, pdamage_indep = 40 + self.combat).wrap(core.BuffSkillWrapper)
@@ -78,7 +78,7 @@ class JobGenerator(ck.JobGenerator):
         
         FlashBang = core.DamageSkill("플래시 뱅", 390, 250, 1, cooltime = 60000, red=True).wrap(core.DamageSkillWrapper)  #임의 딜레이.
         FlashBangDebuff = core.BuffSkill("플래시 뱅(디버프)", 0, 50000/2, cooltime = -1, pdamage = 10 * 0.9).wrap(core.BuffSkillWrapper)
-        Venom = core.DotSkill("페이탈 베놈", 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 8000, cooltime = -1).wrap(core.SummonSkillWrapper) # 3회 중첩
+        Venom = core.DotSkill("페이탈 베놈", 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 8000, cooltime = -1).wrap(core.DotSkillWrapper) # 3회 중첩
 
         HiddenBladeBuff = core.BuffSkill("히든 블레이드(버프)", 0, 60000, cooltime = 90000, pdamage = 10).wrap(core.BuffSkillWrapper)
         HiddenBlade = core.DamageSkill("히든 블레이드", 0, 140, 1).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)

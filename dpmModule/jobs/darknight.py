@@ -1,11 +1,11 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
+from typing import Any, Dict
 
 #TODO: 비홀더스 리벤지 메인 효과 추가
 
@@ -22,7 +22,7 @@ class JobGenerator(ck.JobGenerator):
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(boss_pdamage=10, armor_ignore=44)
         
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         
         WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리",pdamage = 5)
@@ -38,7 +38,7 @@ class JobGenerator(ck.JobGenerator):
         CrossoverChainPassive = core.InformedCharacterModifier("크로스 오버 체인(패시브)", pdamage_indep=50)
         return [WeaponMastery, PhisicalTraining, LordOfDarkness, AdvancedWeaponMastery, ReincarnationBuff, ReincarnationHyper, SacrificePassive, CrossoverChainPassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 49)
@@ -47,7 +47,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, BiholdersBuff]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         창 사용
         크오체 풀피 가정
