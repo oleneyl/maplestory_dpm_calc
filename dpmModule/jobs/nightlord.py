@@ -24,6 +24,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('메이플월드 여신의 축복', '스프레드 스로우'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('레디 투 다이', '소울 컨트랙트'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('써든레이드', '스프레드 스로우'), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule('다크 플레어', '스프레드 스로우'), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -74,6 +75,8 @@ class JobGenerator(ck.JobGenerator):
 
         SuddenRaid = core.DamageSkill("써든레이드", 690, 494+5*self.combat, 7, cooltime = (30-2*(self.combat//2))*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 0, 1000, 210 + 4 * self.combat, 1, 10000, cooltime = -1).wrap(core.DotSkillWrapper)
+
+        DarkFlare = core.SummonSkill("다크 플레어", 600, 1000, 280, 1, 60000).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)
         
         MARK_PROP = (60+2*passive_level)/(160+2*passive_level)
         MarkOfNightlord = core.DamageSkill("마크 오브 나이트로드", 0, (60+3*passive_level+chtr.level), MARK_PROP*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
@@ -144,7 +147,7 @@ class JobGenerator(ck.JobGenerator):
         
         return (QuarupleThrow, 
             [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    ShadowPartner, SpiritJavelin, PurgeArea, BleedingToxin, EpicAdventure, 
+                    ShadowPartner, SpiritJavelin, PurgeArea, DarkFlare, BleedingToxin, EpicAdventure, 
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), UltimateDarksight, ReadyToDie, SpreadThrowInit,
                     ThrowBlasting, ThrowBlastingPassive, ThrowBlastingActive,
                     globalSkill.soul_contract()] + \
