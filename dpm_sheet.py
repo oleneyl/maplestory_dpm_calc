@@ -18,6 +18,7 @@ def get_args():
     parser.add_argument("--ulevel", type=int, default=8000)
     parser.add_argument("--time", type=int, default=1800)
     parser.add_argument("--thread", type=int, default=4)
+    parser.add_argument("--detail", action="store_true")
 
     return parser.parse_args()
 
@@ -87,25 +88,21 @@ def test(args):
     result = parser.get_detailed_dpm(ulevel=ulevel, cdr=cdr, options=options)
     dpm = result["dpm"]
     loss = result["loss"]
+    data = result["data"]
 
-    return jobname, cdr, description, dpm, loss, alt
+    return jobname, cdr, description, dpm, loss, data, alt
 
 
-if __name__ == "__main__":
-    args = get_args()
-    ulevel = args.ulevel
-    tasks = product(get_presets(), [ulevel], [0, 2, 4], [args.time])
-    pool = ProcessPoolExecutor(max_workers=args.thread)
-    results = pool.map(test, tasks)
-
+def summary_sheet(results, writer: xlsxwriter):
     df = pd.DataFrame.from_records(
         results,
-        columns=["직업", "쿨감", "비고", "dpm", "loss", "alt"],
+        exclude=["data"],
+        columns=["직업", "쿨감", "비고", "dpm", "loss", "data", "alt"],
     )
     # df.to_pickle("cache.pkl")
     # df: pd.DataFrame = pd.read_pickle("cache.pkl")
     df = df.sort_values(by="dpm", axis=0, ascending=False)
-    df = df.drop_duplicates(subset=["직업", "비고"]).copy()
+    df.drop_duplicates(subset=["직업", "비고"], inplace=True)
 
     median = df["dpm"].median()
     df["배율"] = df["dpm"] / median
@@ -119,7 +116,6 @@ if __name__ == "__main__":
     df = df.sort_values(by="dpm", axis=0, ascending=False)
     df = df[["직업", "쿨감", "비고", "dpm", "배율", "맥뎀누수율", "alt"]]
 
-    writer = pd.ExcelWriter("./result.xlsx", engine="xlsxwriter")
     df.to_excel(writer, sheet_name="dpm", index=False)
     workbook: xlsxwriter.Workbook = writer.book
     worksheet: xlsxwriter.workbook.Worksheet = writer.sheets["dpm"]
@@ -147,5 +143,77 @@ if __name__ == "__main__":
     worksheet.conditional_format(
         "A2:D55", {"type": "formula", "criteria": "$G2>0", "format": alt_format}
     )
+
+
+def detail_sheet(result, writer: xlsxwriter):
+    jobname, cdr, description, dpm, loss, data, alt = result
+
+    df = pd.DataFrame.from_dict(data)
+    df = df.drop(["time", "spec", "else"], axis=1)
+    df["sname"] = df["sname"].apply(lambda x: x.split("(")[0])
+    df["deal_one"] = df["deal"] / df["hit"]
+    df = df[df.deal > 0]
+    grouped = df.groupby(["sname"])
+
+    df = pd.DataFrame()
+    df["누적 데미지"] = grouped["deal"].sum()
+    df["맥뎀 누수"] = grouped["loss"].sum()
+    df["공격 횟수"] = grouped["hit"].sum()
+    df["최대 데미지(1타당)"] = grouped["deal_one"].max()
+    df["최소 데미지(1타당)"] = grouped["deal_one"].min()
+
+    deal_total = df["누적 데미지"].sum()
+    hit_total = df["공격 횟수"].sum()
+
+    df["점유율"] = df["누적 데미지"] / deal_total
+    df["맥뎀 누수율"] = df["맥뎀 누수"] / (df["누적 데미지"] + df["맥뎀 누수"])
+    df["맥뎀 누수율"].clip(lower=0, inplace=True)
+
+    df = df.sort_values(by="점유율", axis=0, ascending=False)
+
+    sheet_name = jobname.replace("/", "_") + "_" + str(cdr) + "_" + str(alt)
+    df.to_excel(writer, sheet_name=sheet_name, startrow=3)
+    workbook: xlsxwriter.Workbook = writer.book
+    worksheet: xlsxwriter.workbook.Worksheet = writer.sheets[sheet_name]
+
+    center_format = workbook.add_format({"align": "center"})
+    num_format = workbook.add_format({"num_format": "#,##0", "align": "center"})
+    percent_format = workbook.add_format({"num_format": "0.00%", "align": "center"})
+
+    worksheet.set_column("A:G", 20, center_format)
+    worksheet.set_column("B:F", 20, num_format)
+    worksheet.set_column("G:H", 10, percent_format)
+
+    worksheet.merge_range("B3:G3", "", center_format)
+
+    worksheet.write("A1", "직업")
+    worksheet.write("B1", jobname)
+    worksheet.write("A2", "쿨감")
+    worksheet.write("B2", cdr)
+    worksheet.write("A3", "비고")
+    worksheet.write("B3", description)
+    worksheet.write("C1", "dpm")
+    worksheet.write("D1", dpm)
+    worksheet.write("C2", "맥뎀누수")
+    worksheet.write("D2", loss)
+    worksheet.write("E1", "분당 타수")
+    worksheet.write("F1", hit_total / 30)
+    worksheet.write("E2", "맥뎀 누수율")
+    worksheet.write("F2", loss / dpm, percent_format)
+
+
+if __name__ == "__main__":
+    args = get_args()
+    ulevel = args.ulevel
+    tasks = product(get_presets(), [ulevel], [0, 2, 4], [args.time])
+    pool = ProcessPoolExecutor(max_workers=args.thread)
+    results = list(pool.map(test, tasks))
+    writer = pd.ExcelWriter("./result.xlsx", engine="xlsxwriter")
+
+    summary_sheet(results, writer)
+
+    if args.detail:
+        for result in results:
+            detail_sheet(result, writer)
 
     writer.close()

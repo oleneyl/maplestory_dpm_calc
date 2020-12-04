@@ -150,6 +150,7 @@ class Analytics:
         self.totalTime: float = 0
         self.total_damage: float = 0
         self.total_damage_without_restriction: float = 0
+        self.total_hit: float = 0
         self.logList: List[Dict[str, Any]] = []
         self.meta_save = {}  # TODO: Not used attribute.
         self.print_calculation_progress: bool = printFlag
@@ -268,6 +269,8 @@ class Analytics:
                     "time": log["time"],
                     "sname": log["result"].sname,
                     "deal": log["deal"],
+                    "hit": log["result"].hit,
+                    "loss": log["loss"],
                     "spec": log["result"].spec,
                     "else": log["result"].kwargs,
                 }
@@ -292,6 +295,7 @@ class Analytics:
         if deal > 0:
             self.total_damage += deal
             self.total_damage_without_restriction += free_deal
+            self.total_hit += result.hit
 
         # For speed acceleration
         if self.print_calculation_progress:
