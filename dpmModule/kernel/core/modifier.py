@@ -425,6 +425,10 @@ class CharacterModifier:
             )
         else:
             return None
+    
+    @classmethod
+    def load(cls, conf):
+        return CharacterModifier(**conf)
 
 
 class DynamicCharacterModifier(DynamicVariableInstance, CharacterModifier):
@@ -713,6 +717,12 @@ class InformedCharacterModifier(ExtendedCharacterModifier):
             stat_main_fixed=extended_modifier.stat_main_fixed,
             stat_sub_fixed=extended_modifier.stat_sub_fixed,
         )
+    
+    @classmethod
+    def load(cls, conf):
+        name = conf['name']
+        value_conf = {k: v for k, v in conf.items() if k != 'name'}
+        return InformedCharacterModifier(name, **value_conf)
 
 
 class VSkillModifier:
