@@ -50,21 +50,22 @@ class JobGenerator(ck.JobGenerator):
 
         # 메용: 체력+15%로 수정
         MapleHeroesDemon = core.InformedCharacterModifier("메이플 용사(데몬어벤져)", pstat_main = 15 + self.combat / 2)
-        # 최종데미지 (릴리즈 오버로드, 데몬 프렌지)
+
         InnerStrength = core.InformedCharacterModifier("이너 스트렝스", stat_main = 600)
 
-        HP_RATE = 100
-        #최대 HP 대비 소모된 HP 3%(24레벨가지는 4%)당 최종 데미지 1% 증가
-        FrenzyPassive = core.InformedCharacterModifier("데몬 프렌지 (최종 데미지)", pdamage_indep = (100 - HP_RATE) // (4 - (vEhc.getV(0, 0) // 25)))
-
-        return [AbyssalRage, AdvancedDesperadoMastery, OverwhelmingPower, DefenseExpertise, DemonicSharpness, MapleHeroesDemon, InnerStrength, FrenzyPassive]
+        return [AbyssalRage, AdvancedDesperadoMastery, OverwhelmingPower, DefenseExpertise, DemonicSharpness, MapleHeroesDemon, InnerStrength]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level/2))
-        
-        return [WeaponConstant, Mastery]
+
+        HP_RATE = options.get('hp_rate', 100)
+
+        #최대 HP 대비 소모된 HP 3%(24레벨가지는 4%)당 최종 데미지 1% 증가
+        FrenzyPassive = core.InformedCharacterModifier("데몬 프렌지 (최종 데미지)", pdamage_indep = (100 - HP_RATE) // (4 - (vEhc.getV(0, 0) // 25)))
+
+        return [WeaponConstant, Mastery, FrenzyPassive]
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
@@ -79,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
         
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        FRENZY_STACK = 2    # 중첩 수
+        FRENZY_STACK = options.get('frenzy_hit', 2)    # 중첩 수
 
         ######   Skill   ######
 
