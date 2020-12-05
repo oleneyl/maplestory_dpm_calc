@@ -428,7 +428,7 @@ class JobGenerator:
 
         # 링크 스킬
         refMDF = get_reference_modifier(chtr)
-        link = LinkSkill.get_link_skill_modifier(refMDF, self.jobname)
+        link = LinkSkill.get_link_skill_modifier(refMDF + ExMDF(armor_ignore=58, boss_pdamage=255), self.jobname)
         log_modifier(link, "link")
         chtr.apply_modifiers([link])
         log_buffed_character(chtr)
@@ -436,7 +436,7 @@ class JobGenerator:
         # 하이퍼 스탯
         refMDF = get_reference_modifier(chtr)
         hyperstat = HyperStat.get_hyper_modifier(
-            refMDF,
+            refMDF + ExMDF(armor_ignore=40, boss_pdamage=180),
             chtr.level,
             self.hyperStatPrefixed,
             critical_reinforce=self._use_critical_reinforce,
