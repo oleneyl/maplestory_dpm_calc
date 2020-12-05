@@ -9,13 +9,13 @@ import argparse
 
 def get_args():
     parser = argparse.ArgumentParser("DPM Test argument")
-    parser.add_argument("--job", type=str, help="Target job name to test dpm")
-    parser.add_argument("--level", type=int, default=None)
-    parser.add_argument("--ulevel", type=int, default=6000)
-    parser.add_argument("--time", type=int, default=1800)
-    parser.add_argument("--log", action="store_true")
-    parser.add_argument("--stat", action="store_true")
-    parser.add_argument("--cdr", type=int, default=0)
+    parser.add_argument("--job", type=str, help="Target class' Korean name to test DPM")
+    parser.add_argument("--level", type=int, default=None, help="Character's level, default depends on ulevel")
+    parser.add_argument("--ulevel", type=int, default=6000, help="Union level, default is 6000")
+    parser.add_argument("--time", type=int, default=1800, help="Test time in seconds, default is 1800(30 min)")
+    parser.add_argument("--cdr", type=int, default=0, help="Cooltime reduce (hat potential) in seconds, default is 0")
+    parser.add_argument("--log", action="store_true", help="print the log of the test")
+    parser.add_argument("--stat", action="store_true", help="print the statistics of the test")
     parser.add_argument("--task", default="dpm")
 
     return parser.parse_args()
