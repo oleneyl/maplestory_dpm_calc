@@ -136,7 +136,7 @@ class JobGenerator(ck.JobGenerator):
                                     QuickserviceMind, BasicDetection, WeaponMastery, QuickserviceMind_II, ReadyToDiePassive]
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 30, crit_damage = 40, pdamage = 20, crit = 6)
+        return core.CharacterModifier(armor_ignore = 30, crit_damage = 44, pdamage = 20, crit = 6)
                               
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat

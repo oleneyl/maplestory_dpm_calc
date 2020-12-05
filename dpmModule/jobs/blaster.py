@@ -80,6 +80,9 @@ class JobGenerator(ck.JobGenerator):
 
         return [WeaponConstant, Mastery, CombinationTraining]
 
+    def get_modifier_optimization_hint(self) -> core.CharacterModifier:
+        return core.CharacterModifier(boss_pdamage=10, armor_ignore=20)
+
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         하이퍼 : 쇼크웨이브 보너스어택 / 펀치-리인포스, 펀치-이그노어 가드, 릴파벙-리인포스, 릴파벙-숔웨리인포스

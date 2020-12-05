@@ -92,7 +92,7 @@ class JobGenerator(ck.JobGenerator):
         return [WeaponConstant, Mastery, IgnisRoarStack]
         
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 60, pdamage = 30)
+        return core.CharacterModifier(armor_ignore=55, pdamage=35, att=50, patt=5)
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
