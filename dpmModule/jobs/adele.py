@@ -137,7 +137,7 @@ class JobGenerator(ck.JobGenerator):
 
         게더링-블로섬 1020ms
 
-        게더링, 블로섬 80% 히트
+        게더링 80% 히트
 
         레조넌스 10초마다 사용
 
@@ -148,13 +148,13 @@ class JobGenerator(ck.JobGenerator):
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        ShardActive = core.DamageSkill("샤드(액티브)", 0, 80+30+115+225+passive_level*3, 3 * 5).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) # 자동사용만, 최종 450*3
-        Shard = core.DamageSkill("샤드", 0, 80+30+115+225+passive_level*3, 3 * 5, cooltime=8000, red=True).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) # 8초마다 트리거 스킬 적중시 시전
+        Shard = core.DamageSkill("샤드", 630, 80+30+115+225+passive_level*3, 3 * 5, cooltime=6000, red=True).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) # 450*3의 투사체 5개
+        Wonder = core.DamageSkill("샤드(원더)", 0, 80+30+115+225+passive_level*3, 3 * 5, cooltime=8000).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) # 8초마다 트리거 스킬 적중시 시전
 
         Ether = core.StackSkillWrapper(core.BuffSkill('에테르', 0, 9999999), 400)
         EtherTick = core.SummonSkill('에테르(자연 회복)', 0, 10020, 0, 0, 9999999).wrap(core.SummonSkillWrapper)
 
-        Resonance = core.DamageSkill("레조넌스", 690, (120+125+265+passive_level*3) * (1.15**6), 6, cooltime=10*1000, red=True).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 900ms, 스택 유지를 위해 10초마다 사용함
+        Resonance = core.DamageSkill("레조넌스", 690, (120+125+265+passive_level*3) * (1.15**6), 6, cooltime=10*1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 900ms, 스택 유지를 위해 10초마다 사용함
 
         ResonanceStack = core.BuffSkill('레조넌스(스택)', 0, 30*1000, cooltime=-1, pdamage_indep=10, armor_ignore=10).wrap(core.BuffSkillWrapper) # 최종뎀 5, 방무 5, 최대2회. 상시 중첩으로 가정
 
@@ -184,7 +184,7 @@ class JobGenerator(ck.JobGenerator):
         BlossomExceed = core.StackDamageSkillWrapper(
             core.DamageSkill('블로섬(초과)', 0, 650+self.combat*6, 8, cooltime=-1, modifier=core.CharacterModifier(pdamage_indep=-25)).setV(vEhc, 3, 2, False),
             Order,
-            lambda order: max(order.get_stack() * 0.8 - 1, 0)
+            lambda order: max(order.get_stack() - 1, 0)
         )
 
         Marker = core.DamageSkill('마커', 690, 500, 6*2, cooltime=60*1000, modifier=core.CharacterModifier(pdamage_indep=300)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 최종뎀 300% 증가, 임의위치 조각 5개, 1히트, 결정 5개, 생성/파쇄 각각 공격, 클라공속 900ms
@@ -269,17 +269,17 @@ class JobGenerator(ck.JobGenerator):
         Divide.onAfter(core.OptionalElement(Creation.is_available, Creation))
 
         # 원더
-        Divide.onAfter(core.OptionalElement(Shard.is_available, Shard))
+        Divide.onAfter(core.OptionalElement(Wonder.is_available, Wonder))
 
         Creation.protect_from_running()
-        Shard.protect_from_running()
+        Wonder.protect_from_running()
 
         return(Divide,
                 [globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
                     AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive, FloraGoddessBless,
                     globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract()] +\
-                [Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider] +\
-                [Order, Shard, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, Scool, ManaStorm] +\
+                [Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider, Shard] +\
+                [Order, Wonder, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, Scool, ManaStorm] +\
                 [] +\
                 [Divide])        
 
