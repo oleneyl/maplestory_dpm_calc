@@ -1,5 +1,6 @@
 dist/
 build/
+data/
 *.pyc
 .idea
 *.suo
