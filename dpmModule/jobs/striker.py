@@ -32,7 +32,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 1
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 40) # 뇌전 스택으로 평균 35~40%의 방무 적용
+        return core.CharacterModifier(armor_ignore=46, pdamage=20) # 뇌전 스택으로 평균 35~40%의 방무 적용 + 하이퍼
 
     def get_ruleset(self):
         ruleset = RuleSet()

@@ -91,6 +91,9 @@ class JobGenerator(ck.JobGenerator):
         Enrage = core.InformedCharacterModifier("인레이지",pdamage_indep = 25 + self.combat // 2, crit_damage = 20 + self.combat // 3)
         
         return [WeaponConstant, Mastery, Enrage]
+
+    def get_modifier_optimization_hint(self) -> core.CharacterModifier:
+        return core.CharacterModifier(boss_pdamage=65)
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
