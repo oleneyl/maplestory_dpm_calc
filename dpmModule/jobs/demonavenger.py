@@ -31,7 +31,7 @@ class JobGenerator(ck.JobGenerator):
         '''딜 사이클 정리
         '''
         ruleset = RuleSet()
-        ruleset.add_rule(ConcurrentRunRule('디멘션 소드 (평딜)', '데모닉 포티튜드'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('디멘션 소드', '데모닉 포티튜드'), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self):
@@ -71,9 +71,9 @@ class JobGenerator(ck.JobGenerator):
         '''
         하이퍼: 익시드 3종, 실드 체이싱 리인포스, 엑스트라 타겟 적용
 
-        데몬 프렌지 - 중첩당 10.8타/s
+        데몬 프렌지 - 중첩당 10.8타/s, 2중첩, HP 100%
 
-        HP 100%
+        블러드 피스트 쿨타임마다 3중첩 (캔슬 X)
 
         디멘션 소드 - 재시전 X
         '''
@@ -101,12 +101,12 @@ class JobGenerator(ck.JobGenerator):
 
         # 익시드 0~3스택: 클라기준 딜레이 900, 900, 840, 780
         # 릴리즈 사용 직후 익시드 사용시 3번만에 강화모드 진입
-        Execution_0 = core.DamageSkill("익시드: 엑스큐션 (0스택)", 660, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        Execution_1 = core.DamageSkill("익시드: 엑스큐션 (1스택)", 630, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        Execution_2 = core.DamageSkill("익시드: 엑스큐션 (2스택)", 600, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        Execution_3 = core.DamageSkill("익시드: 엑스큐션 (3스택)", 570, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Execution_0 = core.DamageSkill("익시드: 엑스큐션(0스택)", 660, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Execution_1 = core.DamageSkill("익시드: 엑스큐션(1스택)", 630, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Execution_2 = core.DamageSkill("익시드: 엑스큐션(2스택)", 600, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Execution_3 = core.DamageSkill("익시드: 엑스큐션(3스택)", 570, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         # 익시드 5스택 이상
-        ExecutionExceed = core.DamageSkill("익시드: 엑스큐션 (강화)", 540, 540+8*self.combat, 6, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ExecutionExceed = core.DamageSkill("익시드: 엑스큐션(강화)", 540, 540+8*self.combat, 6, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         # 최대 10회 공격
         ShieldChasing = core.DamageSkill("실드 체이싱", 720, 500+10*self.combat, 2*2*(8+2), cooltime=6000, modifier=core.CharacterModifier(armor_ignore=30+passive_level, pdamage=20+20), red=True).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
@@ -129,7 +129,7 @@ class JobGenerator(ck.JobGenerator):
         # 초당 10.8타 가정
         # http://www.inven.co.kr/board/maple/2304/23974
 
-        FrenzyDOT = core.SummonSkill("프렌지 장판", 0, 1000/10.8, 300+8*vEhc.getV(0, 0), FRENZY_STACK, 99999999).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        DemonFrenzy = core.SummonSkill("데몬 프렌지", 0, 1000/10.8, 300+8*vEhc.getV(0, 0), FRENZY_STACK, 99999999).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         # 블피 (3중첩)
         # TODO: 블피캔슬 구현 (다른스킬 시전중에 블피사용시 그 전에 사용한 스킬 딜레이가 캔슬되고 즉시 블피가 발동)
@@ -137,8 +137,8 @@ class JobGenerator(ck.JobGenerator):
 
         # 평딜 기준
         # 참고자료: https://blog.naver.com/oe135/221372243858
-        DimensionSword = core.SummonSkill("디멘션 소드 (평딜)", 660, 3000, 1250+14*vEhc.getV(0, 0), 8, 40*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
-        # DimensionSwordReuse = core.SummonSkill("디멘션 소드 (극딜)", 660, 210, 300+vEhc.getV(0, 0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        DimensionSword = core.SummonSkill("디멘션 소드", 660, 3000, 1250+14*vEhc.getV(0, 0), 8, 40*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        # DimensionSwordReuse = core.SummonSkill("디멘션 소드", 660, 210, 300+vEhc.getV(0, 0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         # 기본 4000ms
         # 엑큐 2번당 발동하도록 조정
@@ -180,9 +180,17 @@ class JobGenerator(ck.JobGenerator):
 
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
+        '''
+        프렌지 발동 타이밍을 앞당기기 위한 initializer입니다.
+        일반적으로 SummonSkill이 BuffSkill보다 실행 순위가 밀리기 때문에 이 코드가 없으면 프렌지가 7~8초 후에서야 실행됩니다.
+        '''
+        FrenzyInit = core.BuffSkill("데몬 프렌지(개시)", 0, 999999999).wrap(core.BuffSkillWrapper)
+        FrenzyInit.onAfter(DemonFrenzy)
+        DemonFrenzy.protect_from_running()
+
         return(BasicAttack,
-               [globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                FrenzyDOT, Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
+               [FrenzyInit, globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_hyper_body_demonavenger(),
+                DemonFrenzy, Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
                 globalSkill.soul_contract(), Revenant, RevenantHit, CallMastema, AnotherGoddessBuff, AnotherVoid] +
                [ShieldChasing, ArmorBreakBuff] +
                [BatSwarm, MirrorBreak, MirrorSpider, DimensionSword, DemonicBlast] +
