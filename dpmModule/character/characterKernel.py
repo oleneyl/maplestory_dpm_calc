@@ -1,3 +1,4 @@
+import json
 from typing import Any, Dict, List, Optional, Tuple
 
 from ..execution.rules import RuleSet
@@ -236,6 +237,21 @@ class JobGenerator:
         )
         self._use_critical_reinforce: bool = False
         self.hyperStatPrefixed: int = 0
+        self.conf: dict = None
+
+    def load(self, conf):
+        if isinstance(conf, str):
+            with open(conf, 'r') as f:
+                conf = json.load(f)
+        
+        self.conf = conf
+        self.buffrem = conf.get('buffrem', (0, 0))
+        self.vEnhanceNum = conf.get('vEnhanceNum', 10)
+        self.vskillNum = conf.get('vSkillNum', 6)
+        self.preEmptiveSkills = conf.get('preEmptiveSkills', 0)
+        self.jobname = conf['jobname']
+        self.jobtype = conf['jobtype']
+        self._use_critical_reinforce = conf.get('use_critical_reinforce', False)       
 
     def get_ruleset(self) -> Optional[RuleSet]:
         return
@@ -303,6 +319,7 @@ class JobGenerator:
     def get_passive_skill_list(
         self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
     ) -> List[InformedCharacterModifier]:
+        return [InformedCharacterModifier.load(opt) for _, opt in self.conf['passive_skill_list']]
         raise NotImplementedError("You must fill get_passive_skill_list function.")
 
     def build_not_implied_skill_list(
