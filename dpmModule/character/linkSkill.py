@@ -83,31 +83,28 @@ class LinkSkill:
     def get_link_skill_modifier(
         refMDF: ExMDF, job_name: str
     ) -> InformedCharacterModifier:
-        def append_link(links: List[InformedCharacterModifier], new_link):
-            return [link for link in links if link.name != new_link.name] + [new_link]
-
         def get_mdf(links: List[InformedCharacterModifier]):
             return reduce(lambda x, y: x + y, links)
 
-        links = [LinkSkill.Registance, LinkSkill.Angelicbuster]
-        links = append_link(links, LinkSkill.jobdict[job_name])
+        links = {LinkSkill.Registance, LinkSkill.Angelicbuster}
+        links.add(LinkSkill.jobdict[job_name])
 
         # TODO: 미하일링크 사용시 이쪽에 사용 직업들 추가
 
         if job_name in ["소울마스터", "카데나", "제로", "블래스터", "배틀메이지", "스트라이커", "나이트워커"]:
-            links = append_link(links, LinkSkill.Illium)
+            links.add(LinkSkill.Illium)
 
         if (refMDF + get_mdf(links)).armor_ignore < 90:
-            links = append_link(links, LinkSkill.Luminous)
+            links.add(LinkSkill.Luminous)
         if (refMDF + get_mdf(links)).armor_ignore < 85:
-            links = append_link(links, LinkSkill.Zero)
+            links.add(LinkSkill.Zero)
         if (refMDF + get_mdf(links)).armor_ignore < 85:
-            links = append_link(links, LinkSkill.Hoyoung)
+            links.add(LinkSkill.Hoyoung)
 
         if (refMDF + get_mdf(links)).crit < 90:
-            links = append_link(links, LinkSkill.Phantom)
+            links.add(LinkSkill.Phantom)
         if (refMDF + get_mdf(links)).crit < 90:
-            links = append_link(links, LinkSkill.AdventureArcher)
+            links.add(LinkSkill.AdventureArcher)
 
         link_priority = [
             LinkSkill.DemonSlayer,
@@ -124,6 +121,6 @@ class LinkSkill:
         ]
         for link in link_priority:
             if len(links) < 13:
-                links = append_link(links, link)
+                links.add(link)
 
         return get_mdf(links)
