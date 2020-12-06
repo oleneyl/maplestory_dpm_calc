@@ -47,35 +47,6 @@ class Simulator(object):
     def get_default_modifier(self) -> CharacterModifier:
         return self._default_modifier
 
-    def get_skill_info(self) -> Dict[str, Any]:
-        return self.analytics.get_skill_info()
-
-    def get_results(self) -> List[Dict[str, Any]]:
-        return self.analytics.get_results()
-
-    def get_metadata(self) -> Dict[str, float]:
-        mod = self.character.get_buffed_modifier()
-        return self.analytics.get_metadata(mod)
-
-    def getDPM(self, restricted: bool = True) -> float:
-        if not restricted:
-            return self.get_unrestricted_DPM()
-        else:
-            return (
-                self.analytics.total_damage / self.scheduler.total_time_initial * 60000
-            )
-
-    def get_unrestricted_DPM(self) -> float:
-        return (
-            self.analytics.total_damage_without_restriction
-            / self.scheduler.total_time_initial
-            * 60000
-        )
-
-    # TODO: Not used method.
-    def getTotalDamage(self) -> float:
-        return self.analytics.total_damage
-
     def start_simulation(self, time: float) -> None:
         self._modifier_cache_and_time = [-1, CharacterModifier()]
         self.scheduler.initialize(time)
@@ -147,7 +118,7 @@ class Simulator(object):
 
 class Analytics:
     def __init__(self, printFlag: bool = False) -> None:
-        self.totalTime: float = 0
+        self.total_time: float = 0
         self.total_damage: float = 0
         self.total_damage_without_restriction: float = 0
         self.logList: List[Dict[str, Any]] = []
@@ -157,7 +128,7 @@ class Analytics:
         self.chtrmdf = CharacterModifier()
 
     def set_total_runtime(self, time: float) -> None:
-        self.totalTime = time
+        self.total_time = time
 
     def analyze(self, chtr: AbstractCharacter, result: ResultObject) -> None:
         self.add_damage_from_result_with_log(chtr.get_modifier(), result)
@@ -184,10 +155,19 @@ class Analytics:
 
         return meta
 
+    def getDPM(self, restricted: bool = True) -> float:
+        if not restricted:
+            return self.get_unrestricted_DPM()
+        else:
+            return self.total_damage / self.total_time * 60000
+
+    def get_unrestricted_DPM(self) -> float:
+        return self.total_damage_without_restriction / self.total_time * 60000
+
     def statistics(self) -> None:
         print(
             "Total damage %.1f in %d second"
-            % (self.total_damage, self.totalTime / 1000)
+            % (self.total_damage, self.total_time / 1000)
         )
         print(f"Loss {self.total_damage_without_restriction - self.total_damage:.1f}")
 
@@ -397,7 +377,7 @@ class Analytics:
             continue_time_length // search_time_scan_rate
         ) * search_time_scan_rate
 
-        while scanning_end_time < self.totalTime:
+        while scanning_end_time < self.total_time:
             damage_log_queue.pop(0)
             damage_log_queue.append(
                 get_damage_sum_in_time_interval(
@@ -431,10 +411,59 @@ class Analytics:
             (self.chtrmdf + temporal_modifier).get_damage_factor()
             / (self.chtrmdf.get_damage_factor())
             - 1
-        ) * (continue_time_length / self.totalTime)
+        ) * (continue_time_length / self.total_time)
 
         return {
-            "damage": (total_damage - self.total_damage) * (60000 / self.totalTime),
+            "damage": (total_damage - self.total_damage) * (60000 / self.total_time),
             "increment": (total_damage / self.total_damage) - 1,
             "simple_increment": simple_increment,
         }
+
+
+class StatAnalytics:
+    def __init__(self) -> None:
+        self.total_time: float = 0
+        self.total_damage: float = 0
+        self.total_loss: float = 0
+        self.total_hit: float = 0
+        self.logList: List[Dict[str, Any]] = []
+
+    def set_total_runtime(self, time: float) -> None:
+        self.total_time = time
+
+    def analyze(self, chtr: AbstractCharacter, result: ResultObject) -> None:
+        if result.damage > 0:
+            mdf = chtr.get_modifier() + result.mdf
+            deal, loss = mdf.calculate_damage(result.damage, result.hit, result.spec)
+        else:
+            deal = 0
+            loss = 0
+
+        self.total_damage += deal
+        self.total_loss += loss
+        self.total_hit += result.hit
+
+        if deal > 0:
+            self.logList.append(
+                {
+                    "time": result.time,
+                    "name": result.sname,
+                    "deal": deal,
+                    "loss": loss,
+                    "hit": result.hit,
+                    "mdf": result.mdf.as_dict(),
+                    "spec": result.spec,
+                }
+            )
+
+    def get_dpm(self) -> float:
+        return self.total_damage / self.total_time * 60000
+
+    def get_dpm_loss(self) -> float:
+        return self.total_loss / self.total_time * 60000
+
+    def get_dpm_hit(self) -> float:
+        return self.total_hit / self.total_time * 60000
+
+    def get_log(self):
+        return self.logList

@@ -87,6 +87,13 @@ class HyperStat:
             return mdfSum
 
     @staticmethod
+    def get_hyper_object(
+        mdf: ExMDF, level: int, prefixed: int, critical_reinforce: bool = False
+    ):
+        mdf = HyperStat.get_hyper_modifier(mdf, level, prefixed, critical_reinforce)
+        return HyperStat(mdf, level)
+
+    @staticmethod
     def get_hyper_modifier(
         mdf: ExMDF, level: int, prefixed: int, critical_reinforce: bool = False
     ) -> Union[List[int], ExMDF]:

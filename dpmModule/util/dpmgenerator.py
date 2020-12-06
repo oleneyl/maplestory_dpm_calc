@@ -70,7 +70,7 @@ class IndividualDPMGenerator:
         control.start_simulation(self.runtime)
         if statistics:
             control.analytics.statistics()
-        return control.getDPM(restricted=restricted)
+        return analytics.getDPM(restricted=restricted)
 
     def get_detailed_dpm(self, ulevel=6000, weaponstat=[4, 9], cdr=0, options={}):
         # TODO target을 동적으로 생성할 수 있도록.
@@ -106,13 +106,13 @@ class IndividualDPMGenerator:
         control.start_simulation(self.runtime)
 
         return {
-            "data": control.get_results(),
-            "meta": control.get_metadata(),
-            "skill": control.get_skill_info(),
+            "data": analytics.get_results(),
+            "meta": analytics.get_metadata(target.get_buffed_modifier()),
+            "skill": analytics.get_skill_info(),
             "graph": graph.get_network_information("merged"),
-            "dpm": control.getDPM(),
+            "dpm": analytics.getDPM(),
             "detail": gen.generate.__doc__,
-            "loss": control.get_unrestricted_DPM() - control.getDPM(),
+            "loss": analytics.get_unrestricted_DPM() - analytics.getDPM(),
         }
 
 
