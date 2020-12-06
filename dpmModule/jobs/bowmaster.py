@@ -20,11 +20,11 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
     """
 
     def __init__(self, combat, chtr):
-        self.piercingModifier = core.CharacterModifier(
+        self.piercing_modifier = core.CharacterModifier(
             pdamage_indep=core.constant.ARMOR_RATE * (1 + combat * 0.05),
             armor_ignore=50 * (1 + combat * 0.02),
         )
-        self.emptyModifier = core.CharacterModifier()
+        self.empty_modifier = core.CharacterModifier()
         self.skill_modifier = chtr.get_skill_modifier()
         skill = core.BuffSkill("아머 피어싱", delay=0, remain=0, cooltime=9000, red=True)
         super(ArmorPiercingWrapper, self).__init__(skill)
@@ -32,12 +32,12 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
     def check(self):
         if self.is_available():
             self.cooltimeLeft = self.calculate_cooltime(self.skill_modifier)
-            return self.piercingModifier
+            return self.piercing_modifier
 
         if self.cooltimeLeft > 1000:
             self.cooltimeLeft = self.cooltimeLeft - 1000
 
-        return self.emptyModifier
+        return self.empty_modifier
 
 
 class ArrowOfStormWrapper(core.DamageSkillWrapper):
