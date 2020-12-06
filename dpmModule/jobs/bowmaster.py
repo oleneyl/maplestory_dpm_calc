@@ -35,7 +35,7 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
             return self.piercingModifier
 
         if self.cooltimeLeft > 1000:
-            self.cooltimeLeft = max(self.cooltimeLeft - 1000, 1000)
+            self.cooltimeLeft = self.cooltimeLeft - 1000
 
         return self.emptyModifier
 
@@ -51,59 +51,16 @@ class ArrowOfStormWrapper(core.DamageSkillWrapper):
         self.currentTime += time
         super(ArrowOfStormWrapper, self).spend_time(time)
 
-    def _use(self, skill_modifier: core.SkillModifier) -> core.ResultObject:
+    def get_delay(self) -> float:
         """
-        아머 피어싱 적용.
         현재 시간 > 마지막 시전 시간 + 딜레이 인 경우에 선딜을 추가함.
         딜레이가 0인 버프가 끼어들 수 있기에 정확한 구현은 아님.
         """
-        modifier = self.get_modifier()
-        modifier += self.armorPiercing.check()
-
-        delay = self.skill.delay
+        delay = super().get_delay()
         if self.currentTime > self.lastUsed:
             delay += 540
         self.lastUsed = self.currentTime + delay
-
-        return core.ResultObject(
-            delay,
-            modifier,
-            self.skill.damage,
-            self.skill.hit,
-            sname=self.skill.name,
-            spec=self.skill.spec,
-        )
-
-
-class GuidedArrowWrapper(bowmen.GuidedArrowWrapper):
-    def __init__(self, vEhc, num1, num2, armorPiercing: ArmorPiercingWrapper):
-        super(GuidedArrowWrapper, self).__init__(vEhc, num1, num2)
-        self.armorPiercing = armorPiercing
-
-    def _useTick(self) -> core.ResultObject:
-        if self.is_active() and self.tick <= 0:
-            self.tick += self.skill.delay
-
-            modifier = self.get_modifier()
-            modifier += self.armorPiercing.check()
-
-            return core.ResultObject(
-                0,
-                modifier,
-                self.skill.damage,
-                self.skill.hit,
-                sname=self.skill.name,
-                spec=self.skill.spec,
-            )
-        else:
-            return core.ResultObject(
-                0,
-                self.disabledModifier,
-                0,
-                0,
-                sname=self.skill.name,
-                spec=self.skill.spec,
-            )
+        return delay
 
 
 class JobGenerator(ck.JobGenerator):
@@ -220,16 +177,12 @@ class JobGenerator(ck.JobGenerator):
 
         # Damage Skills
         AdvancedQuibberAttack = (
-            core.DamageSkill(
-                "어드밴스드 퀴버", delay=0, damage=260, hit=0.6, modifier=MortalBlow
-            )
+            core.DamageSkill("어드밴스드 퀴버", delay=0, damage=260, hit=0.6)
             .setV(vEhc, 3, 2, True)
             .wrap(core.DamageSkillWrapper)
         )
         AdvancedQuibberAttack_ArrowRain = (
-            core.DamageSkill(
-                "어드밴스드 퀴버(애로우 레인)", delay=0, damage=260, hit=1, modifier=MortalBlow
-            )
+            core.DamageSkill("어드밴스드 퀴버(애로우 레인)", delay=0, damage=260, hit=1)
             .setV(vEhc, 3, 2, True)
             .wrap(core.DamageSkillWrapper)
         )
@@ -258,7 +211,7 @@ class JobGenerator(ck.JobGenerator):
         ArrowFlatter = (
             core.SummonSkill(
                 "애로우 플래터",
-                summondelay=600,
+                summondelay=600,  # 딜레이 모름
                 delay=210,
                 damage=85 + 90 + self.combat * 3,
                 hit=1,
@@ -267,7 +220,7 @@ class JobGenerator(ck.JobGenerator):
             )
             .setV(vEhc, 4, 2, False)
             .wrap(core.SummonSkillWrapper)
-        )  # 딜레이 모름
+        )
 
         GrittyGust = (
             core.DamageSkill(
@@ -307,7 +260,7 @@ class JobGenerator(ck.JobGenerator):
             core.SummonSkill(
                 "애로우 레인",
                 summondelay=0,
-                delay=1440,
+                delay=1440,  # 5초마다 3.5회 공격, 대략 1440ms당 1회
                 damage=600 + vEhc.getV(0, 0) * 24,
                 hit=8,
                 remain=(40 + vEhc.getV(0, 0)) * 1000,
@@ -316,7 +269,7 @@ class JobGenerator(ck.JobGenerator):
             )
             .isV(vEhc, 0, 0)
             .wrap(core.SummonSkillWrapper)
-        )  # 5초마다 3.5회 공격, 대략 1440ms당 1회
+        )
 
         # Summon Skills
         Pheonix = (
@@ -331,7 +284,7 @@ class JobGenerator(ck.JobGenerator):
             .setV(vEhc, 5, 3, True)
             .wrap(core.SummonSkillWrapper)
         )
-        GuidedArrow = GuidedArrowWrapper(vEhc, 4, 4, ArmorPiercing)
+        GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         Evolve = adventurer.EvolveWrapper(vEhc, 5, 5, Pheonix)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(
             vEhc, 0, 0, break_modifier=MortalBlow
@@ -431,6 +384,7 @@ class JobGenerator(ck.JobGenerator):
 
         QuibberFullBurstBuff.onAfter(QuibberFullBurstDOT)
         QuibberFullBurstBuff.onAfter(QuibberFullBurst)
+        QuibberFullBurst.onTick(AdvancedQuibberAttack)
 
         UseOpticalIllusion = core.OptionalElement(
             OpticalIllusion.is_available,
@@ -442,6 +396,10 @@ class JobGenerator(ck.JobGenerator):
         OpticalIllusion.protect_from_running()
         OpticalIllusion.onAfter(AdvancedQuibberAttack)
 
+        for sk in [ArrowOfStorm, ArrowRain, OpticalIllusion, GuidedArrow, MirrorBreak]:
+            sk.add_runtime_modifier(
+                ArmorPiercing, lambda armor_piercing: armor_piercing.check()
+            )
         ArmorPiercing.protect_from_running()
 
         ### Exports ###
