@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict, List, Tuple
 
 from .modifier import CharacterModifier
 
@@ -56,6 +56,8 @@ class Simulator(object):
         self.character.generate_modifier_cache()
         while not self.scheduler.is_simulation_end():
             task = self.scheduler.dequeue()
+            if task is None:
+                return
             try:
                 self.run_task_recursive(task)
             except Exception as e:
@@ -422,12 +424,13 @@ class Analytics:
 
 
 class StatAnalytics:
-    def __init__(self) -> None:
+    def __init__(self, printFlag: bool) -> None:
         self.total_time: float = 0
         self.total_damage: float = 0
         self.total_loss: float = 0
         self.total_hit: float = 0
         self.logList: List[Dict[str, Any]] = []
+        self.print_calculation_progress = printFlag
 
     def set_total_runtime(self, time: float) -> None:
         self.total_time = time
@@ -444,6 +447,20 @@ class StatAnalytics:
         self.total_loss += loss
         self.total_hit += result.hit
 
+        if self.print_calculation_progress:
+            if result.spec != "graph control":
+                print(
+                    "At Time %.1f, Skill [%s] ... Damage [%.1f] ... Loss [%.1f] ... Delay [%.1f] ... Spec [%s]"
+                    % (
+                        result.time,
+                        result.sname,
+                        deal,
+                        loss,
+                        result.delay,
+                        result.spec,
+                    )
+                )
+
         if deal > 0:
             self.logList.append(
                 {
@@ -453,6 +470,7 @@ class StatAnalytics:
                     "loss": loss,
                     "hit": result.hit,
                     "mdf": result.mdf.as_dict(),
+                    "delay": result.delay,
                     "spec": result.spec,
                 }
             )
@@ -468,3 +486,22 @@ class StatAnalytics:
 
     def get_log(self):
         return self.logList
+
+    def get_peak(self, range: float) -> Tuple[float, float, float, float]:
+        def scan_range(start, end):
+            filtered = [
+                log
+                for log in self.logList
+                if log["time"] >= start and log["time"] < end
+            ]
+            return (
+                start,
+                end,
+                sum([log["deal"] for log in filtered]),
+                sum([log["loss"] for log in filtered]),
+            )
+
+        return max(
+            [scan_range(log["time"], log["time"] + range) for log in self.logList],
+            key=lambda x: x[2],
+        )

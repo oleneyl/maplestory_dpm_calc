@@ -212,12 +212,42 @@ class JobGenerator(ck.JobGenerator):
         
         RoboFactory.onAfter(RoboFactoryFinal.controller(30*1000*ROBOT_SUMMON_REMAIN))
         RoboFactory.onAfter(RoboFactoryBuff)
+
+        SeedRing = jobutils.restraint_ring()
+        SeedRing.protect_from_running()
         
         return(MassiveFire,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, MagneticFieldBuff, RoboFactoryBuff, MultipleOptionBuff, MechCarrierBuff, BomberTime, Overdrive,
-                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
+                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract(), SeedRing] +\
                 [MicroMissle, MechCarrier, BusterCallInit] +\
                 [HommingMissleHolder, RegistanceLineInfantry, SupportWaver, MagneticField, Robolauncher, RoboFactory, DistortionField, MultipleOption, MirrorBreak, MirrorSpider] +\
                 [BusterCallBuff, BusterCallPenalty] +\
                 [MassiveFire])
+
+    def get_skill_rotation_10sec(self, graph):
+        return [
+            "메이플 용사",
+            "쓸만한 샤프 아이즈",
+            "쓸만한 컴뱃 오더스",
+            "부스터",
+            "로디드 다이스",
+            "서포트 웨이버",
+            "마그네틱 필드",
+            "로봇 런처:RM7",
+            "로봇 팩토리",
+            "멀티플 옵션",
+            "메카 캐리어",
+            "호밍 미사일(더미)",
+            "메이플월드 여신의 축복",
+            "윌 오브 리버티",
+            "오버 드라이브",
+            "소울 컨트랙트",
+            "레지스탕스 라인 인팬트리",
+            "디스토션 필드",
+            "리스트레인트 링",
+            "마이크로 미사일 컨테이너",
+            "스파이더 인 미러(공간 붕괴)",
+            "봄버 타임",
+            "메탈아머 전탄발사(시전)"
+        ]

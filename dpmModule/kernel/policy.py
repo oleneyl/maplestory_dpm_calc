@@ -339,6 +339,28 @@ class TypebaseFetchingPolicy(FetchingPolicy):
         return [i for i in self.sorted]
 
 
+class ListedFetchingPolicy(FetchingPolicy):
+    def __init__(self, skill_ids: List[str]) -> None:
+        super(ListedFetchingPolicy, self).__init__()
+        self.skill_ids = skill_ids
+        self.skills: List[GraphElement] = []
+
+    def __call__(self, graph: StorageLinkedGraph) -> ListedFetchingPolicy:
+        super(ListedFetchingPolicy, self).__call__(graph)
+        target_dict = {el._id: el for el in self.target}
+        self.skills = [target_dict[id] for id in self.skill_ids]
+        self.skills.reverse()
+        return self
+
+    def fetch_targets(self) -> Iterable[GraphElement]:
+        if len(self.skills) == 0:
+            return []
+        skill = self.skills.pop()
+        # if not skill.is_usable():
+        #     raise Exception(f"Skill {skill._id} is not usable")
+        return [skill]
+
+
 class AbstractRule:
     """Rule defines given element will be aceepted or not. This concept is somewhat simmillar with Constraint,
     but rule can constraint element 'Dynamically', which means can refer every context in judging point.

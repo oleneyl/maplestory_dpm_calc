@@ -274,15 +274,42 @@ class JobGenerator(ck.JobGenerator):
         Creation.protect_from_running()
         Wonder.protect_from_running()
 
+        SeedRing = jobutils.restraint_ring()
+        SeedRing.protect_from_running()
+
         return(Divide,
                 [globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
                     AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive, FloraGoddessBless,
-                    globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract()] +\
-                [Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider, Shard] +\
+                    globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract(), SeedRing] +\
+                [EtherTick, Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider, Shard] +\
                 [Order, Wonder, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, Scool, ManaStorm] +\
                 [] +\
                 [Divide])        
 
-
-        
-
+    def get_skill_rotation_10sec(self, graph):
+        return [
+            "에테르(자연 회복)",
+            "오더",
+            "레프의 용사",
+            "쓸만한 샤프 아이즈",
+            "쓸만한 컴뱃 오더스",
+            "오라 웨폰(버프)",
+            "그레이브",
+            "레조넌스",
+            "레이스 오브 갓",
+            "그란디스 여신의 축복(레프)",
+            "매직 서킷 풀드라이브(버프)",
+            "리스토어",
+            "인피니트",
+            "리스트레인트 링",
+            "소울 컨트랙트",
+            "스콜",
+            "루인(시전)",
+            "마커",
+            "스파이더 인 미러(공간 붕괴)",
+            "블로섬",
+            "테리토리",
+            "스톰",
+            "샤드",
+            *["디바이드"]*15,
+        ]
