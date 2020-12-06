@@ -150,9 +150,6 @@ class JobGenerator(ck.JobGenerator):
         SoulArrow = core.BuffSkill(
             "소울 애로우", delay=0, remain=300 * 1000, att=30  # 펫버프
         ).wrap(core.BuffSkillWrapper)
-        AdvancedQuibber = core.BuffSkill(
-            "어드밴스드 퀴버", delay=0, remain=30 * 1000, crit_damage=8  # 쿨타임 무시 가능, 딜레이 0
-        ).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill(
             "샤프 아이즈",
             delay=690,
@@ -176,12 +173,12 @@ class JobGenerator(ck.JobGenerator):
         ArmorPiercing = ArmorPiercingWrapper(passive_level, chtr)
 
         # Damage Skills
-        AdvancedQuibberAttack = (
+        MagicArrow = (
             core.DamageSkill("어드밴스드 퀴버", delay=0, damage=260, hit=0.6)
             .setV(vEhc, 3, 2, True)
             .wrap(core.DamageSkillWrapper)
         )
-        AdvancedQuibberAttack_ArrowRain = (
+        MagicArrow_ArrowRain = (
             core.DamageSkill("어드밴스드 퀴버(애로우 레인)", delay=0, damage=260, hit=1)
             .setV(vEhc, 3, 2, True)
             .wrap(core.DamageSkillWrapper)
@@ -288,7 +285,7 @@ class JobGenerator(ck.JobGenerator):
         Evolve = adventurer.EvolveWrapper(vEhc, 5, 5, Pheonix)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(
             vEhc, 0, 0, break_modifier=MortalBlow
-        )  # TODO: 아머 피어싱 적용
+        )
 
         # 잔영의시 미적용
         QuibberFullBurstBuff = core.BuffSkill(
@@ -371,20 +368,20 @@ class JobGenerator(ck.JobGenerator):
             vEhc, chtr, 3, 3, 25 + ceil(self.combat / 2)
         )
 
-        ArrowOfStorm.onAfter(AdvancedQuibberAttack)
+        ArrowOfStorm.onAfter(MagicArrow)
         ArrowOfStorm.onAfter(AdvancedFinalAttack)
 
         ArrowRainBuff.onAfter(ArrowRain)
-        ArrowRain.onTick(AdvancedQuibberAttack_ArrowRain)
+        ArrowRain.onTick(MagicArrow_ArrowRain)
 
         ImageArrow.onAfter(ImageArrowPassive.controller(3000))
         ImageArrow.onTick(AdvancedFinalAttack)
 
-        GuidedArrow.onTick(AdvancedQuibberAttack)
+        GuidedArrow.onTick(MagicArrow)
 
         QuibberFullBurstBuff.onAfter(QuibberFullBurstDOT)
         QuibberFullBurstBuff.onAfter(QuibberFullBurst)
-        QuibberFullBurst.onTick(AdvancedQuibberAttack)
+        QuibberFullBurst.onTick(MagicArrow)
 
         UseOpticalIllusion = core.OptionalElement(
             OpticalIllusion.is_available,
@@ -394,7 +391,7 @@ class JobGenerator(ck.JobGenerator):
         for sk in [ArrowOfStorm, GrittyGust]:
             sk.onAfter(UseOpticalIllusion)
         OpticalIllusion.protect_from_running()
-        OpticalIllusion.onAfter(AdvancedQuibberAttack)
+        OpticalIllusion.onAfter(MagicArrow)
 
         for sk in [ArrowOfStorm, ArrowRain, OpticalIllusion, GuidedArrow, MirrorBreak]:
             sk.add_runtime_modifier(
@@ -409,7 +406,6 @@ class JobGenerator(ck.JobGenerator):
                 globalSkill.maple_heros(chtr.level, combat_level=self.combat),
                 globalSkill.useful_combat_orders(),
                 SoulArrow,
-                AdvancedQuibber,
                 SharpEyes,
                 EpicAdventure,
                 ArmorPiercing,
