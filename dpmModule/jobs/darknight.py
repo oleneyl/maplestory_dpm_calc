@@ -123,7 +123,7 @@ class JobGenerator(ck.JobGenerator):
         PierceCyclone_.onAfter(PierceCycloneEnd)
         PierceCyclone.onAfter(PierceCyclone_)
 
-        DarknessAura.onAfter(DarknessAuraFinal.controller(40000))
+        DarknessAura.onEventEnd(DarknessAuraFinal)
 
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 1)
