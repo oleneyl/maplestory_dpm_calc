@@ -160,9 +160,8 @@ class JobGenerator(ck.JobGenerator):
         IncreaseCombo = ComboAttack.stackController(1)
         
         #Final attack type
-        ComboInstinct.onAfter(ComboInstinctOff.controller(30 * 1000))
         ComboInstinct.onAfter(ComboAttack.toggleController(True))
-        ComboInstinctOff.onAfter(ComboAttack.toggleController(False))
+        ComboInstinct.onEventEnd(ComboAttack.toggleController(False))
         InstinctFringeUse = core.OptionalElement(ComboInstinct.is_active, ComboInstinctFringe, name = "콤보 인스팅트 여부")
     
         #레이징 블로우
