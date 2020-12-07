@@ -143,7 +143,7 @@ class JobGenerator(ck.JobGenerator):
         DemonAwakning.onAfter(DemonAwakningSummon)
         DemonAwakningSummon.onTick(Cerberus)
 
-        SpiritOfRage.onAfter(SpiritOfRageEnd.controller((10+vEhc.getV(3, 3)//5)*1000))
+        SpiritOfRage.onEventEnd(SpiritOfRageEnd)
         Orthros.onAfter(Orthros_)
 
         DemonBaneInit.onAfter(core.RepeatElement(DemonBaneTick, 16))
