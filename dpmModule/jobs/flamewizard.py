@@ -67,7 +67,7 @@ class JobGenerator(ck.JobGenerator):
         FiresOfCreation = core.BuffSkill("스피릿 오브 플레임", 600, 300 * 1000, armor_ignore = 30+self.combat).wrap(core.BuffSkillWrapper)
         BurningRegion = core.BuffSkill("버닝 리전", 1080, 30 * 1000, cooltime =45 * 1000, rem = True, pdamage = 60+self.combat).wrap(core.BuffSkillWrapper)
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        Flame = core.BuffSkill("플레임", 0, 8000, att = 40 + passive_level).wrap(core.BuffSkillWrapper) # 벞지 적용 안되는 스킬
+        Flame = core.BuffSkill("플레임", 0, 8000, att = 40 + passive_level, cooltime=-1).wrap(core.BuffSkillWrapper) # 벞지 적용 안되는 스킬
         
         #Damage Skills
         InfernoRize = core.DamageSkill("인페르노라이즈", 570, 350+3*self.combat, 10, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage_indep = 90 + self.combat), red = True).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
@@ -82,17 +82,17 @@ class JobGenerator(ck.JobGenerator):
         DragonSlaveInit = core.DamageSkill("드래곤 슬레이브 개시(더미)", 0, 0, 0, cooltime = 90 * 1000).wrap(core.DamageSkillWrapper)
         DragonSlaveEnd = core.DamageSkill("드래곤 슬레이브 종결", 810, 500, 10).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
-        IgnitionDOT = core.DotSkill("이그니션", 0, 1000, 220*0.01*(100 + 60 + 2*passive_level), 1, 10*1000).wrap(core.DotSkillWrapper)
+        IgnitionDOT = core.DotSkill("이그니션", 0, 1000, 220*0.01*(100 + 60 + 2*passive_level), 1, 10*1000, cooltime=-1).wrap(core.DotSkillWrapper)
 
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         #여우 사용
         SavageFlameStack = core.StackSkillWrapper(core.BuffSkill("플레임 디스차지(스택)", 0, 99999999), 6)
         
-        SavageFlame = core.DamageSkill("플레임 디스차지", 0, 0, 0, cooltime = 20*1000, red = True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
-    
-        SavageFlame_2 = core.DamageSkill("플레임 디스차지(2스택)", 840, 250 + 10*vEhc.getV(4,4), 8*8).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
-        SavageFlame_3= core.DamageSkill("플레임 디스차지(3스택)", 840, 250 + 10*vEhc.getV(4,4), 8*(8+2)).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
-        SavageFlame_4 = core.DamageSkill("플레임 디스차지(4스택)", 840, 250 + 10*vEhc.getV(4,4), 8*(8+2+2)).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
+        SavageFlame = core.StackDamageSkillWrapper(
+            core.DamageSkill("플레임 디스차지", 840, 250 + 10*vEhc.getV(4,4), 8, cooltime = 20*1000, red = True).isV(vEhc,4,4),
+            SavageFlameStack,
+            lambda sk: (8 + (sk.stack - 2) * 2)
+        )
         
         InfinityFlameCircleTick = core.DamageSkill("인피니티 플레임 서클", 180, 500+20*vEhc.getV(3,3), 7, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #1틱
         InfinityFlameCircleInit = core.DamageSkill("인피니티 플레임 서클(개시)", 360, 0, 0, cooltime = 15*6*1000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
@@ -112,26 +112,27 @@ class JobGenerator(ck.JobGenerator):
         
         InfinityFlameCircleInit.onAfter(InfinityFlameCircle)
         
+        ApplyDOT = core.OptionalElement(IgnitionDOT.is_not_active, IgnitionDOT, name="도트 갱신")
+        for sk in [OrbitalFlame, BlazingOrbital, DragonSlaveTick, InfinityFlameCircleTick]:
+            sk.onAfter(Flame)
+            sk.onAfter(ApplyDOT)
         IgnitionDOT.onAfter(SavageFlameStack.stackController(1))
         InfernoRize.onAfter(IgnitionDOT.controller(1))
         DragonSlaveEnd.onAfter(IgnitionDOT.controller(1))
 
         InfernoRize.onConstraint(core.ConstraintElement("이그니션 시간 체크", IgnitionDOT, partial(IgnitionDOT.is_time_left, 9000, 1)))
 
-        StackCheck3 = core.OptionalElement(partial(SavageFlameStack.judge, 3, 1), SavageFlame_3, SavageFlame_2, name = "스택 확인")
-        StackCheck4 = core.OptionalElement(partial(SavageFlameStack.judge, 4, 1), SavageFlame_4, StackCheck3, name = "스택 확인")
-        SavageFlame.onAfter(StackCheck4)
         SavageFlame.onAfter(SavageFlameStack.stackController(-15))
         SavageFlame.onConstraint(core.ConstraintElement("2스택 이상", SavageFlameStack, partial(SavageFlameStack.judge, 2, 1)))
 
         SalamanderMischeif.onJustAfter(SalamanderMischeifStack.stackController(-45))
         SalamanderMischeif.onTick(SalamanderMischeifStack.stackController(1))
         SalamanderMischeif.add_runtime_modifier(SalamanderMischeifStack, lambda sk: core.CharacterModifier(pdamage_indep=sk.stack))
-        SalamanderMischeif.onJustAfter(SalamanderMischeifBuff.controller(60000))
+        SalamanderMischeif.onEventEnd(SalamanderMischeifBuff)
 
         # Overload Mana
         overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 2)
-        for sk in [OrbitalFlame, InfernoRize, DragonSlaveTick, DragonSlaveEnd, InfinityFlameCircleTick, SavageFlame_2, SavageFlame_3, SavageFlame_4,
+        for sk in [OrbitalFlame, InfernoRize, DragonSlaveTick, DragonSlaveEnd, InfinityFlameCircleTick, SavageFlame,
                     SalamanderMischeif, CygnusPhalanx]:
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
