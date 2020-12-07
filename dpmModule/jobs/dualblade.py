@@ -100,7 +100,7 @@ class JobGenerator(ck.JobGenerator):
         BladeTornadoSummon = core.SummonSkill("블레이드 토네이도(소환)", 0, 3000/5, 400+16*vEhc.getV(2,2), 6, 3000-1, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
         BladeTornadoSummonMirrorImaging = core.SummonSkill("블레이드 토네이도(소환)(미러이미징)", 0, 540, (400+16*vEhc.getV(2,2)) * 0.7, 6, 3000, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
 
-        HauntedEdge = core.DamageSkill("헌티드 엣지-나찰", 0, 200+8*vEhc.getV(0,0), 4*5, cooltime=14000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        HauntedEdge = core.DamageSkill("헌티드 엣지-나찰", 0, 200+8*vEhc.getV(0,0), 4*5, cooltime=14000, red=True, modifier=core.CharacterModifier(armor_ignore=30)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
     
