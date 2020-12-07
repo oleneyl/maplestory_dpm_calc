@@ -1,4 +1,5 @@
 import json
+import math
 from typing import Any, Dict, List, Optional, Tuple
 
 from ..execution.rules import RuleSet
@@ -26,6 +27,7 @@ from .linkSkill import LinkSkill
 from .personality import Personality
 from .union import Card, Union
 from .weaponPotential import WeaponPotential
+
 
 ExMDF = ExtendedCharacterModifier
 """Class AbstractCharacter : Basic template for building specific User. User is such object that contains:
@@ -319,8 +321,20 @@ class JobGenerator:
     def get_passive_skill_list(
         self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
     ) -> List[InformedCharacterModifier]:
-        return [InformedCharacterModifier.load(opt) for _, opt in self.conf['passive_skill_list']]
-        raise NotImplementedError("You must fill get_passive_skill_list function.")
+        def _get_passive_skill_with_mapping(conf, **kwargs):
+            global_variables = globals()
+            global_variables.update(kwargs)
+            exported_conf = {}
+            for k, v in conf.items():
+                if isinstance(v, str) and k != 'name':
+                    assert 'import' not in v
+                    exported_conf[k] = eval(v, global_variables)
+                else:
+                    exported_conf[k] = v
+            return InformedCharacterModifier.load(exported_conf)
+
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
+        return [_get_passive_skill_with_mapping(opt, passive_level=passive_level) for opt in self.conf['passive_skill_list']]
 
     def build_not_implied_skill_list(
         self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
