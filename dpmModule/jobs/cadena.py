@@ -270,7 +270,7 @@ class JobGenerator(ck.JobGenerator):
         
         ChainArts_Fury_Use = core.OptionalElement(lambda : ChainArts_Fury_Damage.is_available() and ChainArts_Fury.is_active(), ChainArts_Fury_Damage, name = "체인아츠:퓨리 발동조건")
         
-        AD_Odnunce.onAfter(AD_Odnunce_Final.controller(10000))
+        AD_Odnunce.onEventEnd(AD_Odnunce_Final)
         ChainArts_Maelstorm.onAfter(ChainArts_Maelstorm_Slow)
 
 
