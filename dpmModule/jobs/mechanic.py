@@ -201,16 +201,16 @@ class JobGenerator(ck.JobGenerator):
         BusterCallInit.onAfter(BusterCallBuff)
         BusterCallInit.onAfter(BusterCall)
         
-        Robolauncher.onAfter(RobolauncherFinal.controller(60*1000*ROBOT_SUMMON_REMAIN))
+        Robolauncher.onEventEnd(RobolauncherFinal)
         Robolauncher.onAfter(RobolauncherBuff)
 
         MagneticField.onBefore(core.RepeatElement(MagneticFieldInstall, 3))
         MagneticField.onAfter(MagneticFieldBuff)
         
-        SupportWaver.onAfter(SupportWaverFinal.controller(80*1000*ROBOT_SUMMON_REMAIN))
+        SupportWaver.onEventEnd(SupportWaverFinal)
         SupportWaver.onAfter(SupportWaverBuff)
         
-        RoboFactory.onAfter(RoboFactoryFinal.controller(30*1000*ROBOT_SUMMON_REMAIN))
+        RoboFactory.onEventEnd(RoboFactoryFinal)
         RoboFactory.onAfter(RoboFactoryBuff)
         
         return(MassiveFire,
