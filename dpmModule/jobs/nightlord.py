@@ -122,7 +122,7 @@ class JobGenerator(ck.JobGenerator):
         ThrowBlasting.onAfter(MarkOfNightlord)
         
         # 다크로드의 비전서
-        ArcaneOfDarklord.onAfter(ArcaneOfDarklordFinal.controller(8000))
+        ArcaneOfDarklord.onEventEnd(ArcaneOfDarklordFinal)
         
         # 블리딩 톡신
         BleedingToxin.onAfter(BleedingToxinDot)
