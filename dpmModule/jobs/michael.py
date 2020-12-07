@@ -122,7 +122,7 @@ class JobGenerator(ck.JobGenerator):
         LoyalGuard_5.onAfter(FinalAttack)
 
         # 클라우 솔라스
-        ClauSolis.onAfter(ClauSolisSummon.controller(5000))
+        ClauSolis.onEventElapsed(ClauSolisSummon, 5000)
         ClauSolis.onAfter(SoulAttack.controller(5000,"set_enabled_and_time_left"))
         ClauSolis.onAfter(FinalAttack)
         ClauSolisSummon.onTick(SoulAttack.controller(5000,"set_enabled_and_time_left"))
