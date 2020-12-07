@@ -41,6 +41,6 @@ jobs:
           then
             echo "Detect for ${changed_file}."
             flake8 ${changed_file} --count --select=E9,F63,F7,F82 --show-source --statistics
-            flake8 ${changed_file} --count --max-complexity=10 --max-line-length=256 --statistics
+            flake8 ${changed_file} --count --config .flake8 --statistics
           fi
         done
