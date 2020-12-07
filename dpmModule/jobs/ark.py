@@ -142,7 +142,7 @@ class AmplifiedSpellBuffWrapper(core.BuffSkillWrapper):
         self.timeLeft = self.csa_timeLeft()
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         delay = self.get_delay()
-        callbacks = self.create_callbacks(duration=self.timeLeft)
+        callbacks = self.create_callbacks(skill_modifier=skill_modifier, duration=self.timeLeft)
         return core.ResultObject(delay, core.CharacterModifier(), 0, 0, 
                                 sname = self.skill.name, 
                                 spec = self.skill.spec, 
