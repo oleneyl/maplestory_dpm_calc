@@ -374,7 +374,8 @@ class JobGenerator(ck.JobGenerator):
         ArrowRainBuff.onAfter(ArrowRain)
         ArrowRain.onTick(MagicArrow_ArrowRain)
 
-        ImageArrow.onAfter(ImageArrowPassive.controller(3000))
+        ImageArrow.onJustAfter(ImageArrowPassive.controller(99999999, "set_disabled_and_time_left"))
+        ImageArrow.onEventEnd(ImageArrowPassive)
         ImageArrow.onTick(AdvancedFinalAttack)
 
         GuidedArrow.onTick(MagicArrow)
