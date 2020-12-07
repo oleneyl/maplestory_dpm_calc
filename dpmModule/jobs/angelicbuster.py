@@ -1,6 +1,5 @@
-from ..kernel import core
+from ..kernel import core, policy
 from ..character import characterKernel as ck
-from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule
 from . import globalSkill
@@ -153,7 +152,7 @@ class JobGenerator(ck.JobGenerator):
         FinaturaFettuccia.onAfter(FinaturaFettucciaBuff)
         SpotLight.onAfter(SpotLightBuff)
         MascortFamilier.onAfter(MascortFamilierAttack)
-        MascortFamilier.onAfter(ShinyBubbleBreath.controller((30+(vEhc.getV(2,1)//5))*1000))
+        MascortFamilier.onEventEnd(ShinyBubbleBreath)
         
         SoulSeeker = core.OptionalElement(SoulExult.is_active, SoulSeekerExpert_PR, SoulSeekerExpert)
         
@@ -176,3 +175,25 @@ class JobGenerator(ck.JobGenerator):
                 [SuperNova, MascortFamilierAttack, ShinyBubbleBreath, SpotLight, TrinityFusionInit] +\
                 [] +\
                 [Trinity_1])
+
+    # def get_skill_rotation_10sec(self, graph: policy.StorageLinkedGraph):
+    #     return [
+    #         "노바의 용사",
+    #         "쓸만한 샤프 아이즈",
+    #         "쓸만한 컴뱃 오더스",
+    #         "쓸만한 윈드 부스터",
+    #         "소울 게이즈",
+    #         "로디드 다이스",
+    #         "파이널 컨트랙트",
+    #         "소울 익절트",
+    #         "소울 컨트랙트",
+    #         "오버 드라이브",
+    #         "피니투라 페투치아",
+    #         "스포트라이트",
+    #         "마스코트 패밀리어",
+    #         "노바 여신의 축복",
+    #         "에너지 버스트",
+    #         "스파이더 인 미러(공간 붕괴)",
+    #         "슈퍼 노바",
+    #         "트리니티"
+    #     ]

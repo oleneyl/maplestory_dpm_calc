@@ -122,7 +122,7 @@ class JobGenerator(ck.JobGenerator):
         ThrowBlasting.onAfter(MarkOfNightlord)
         
         # 다크로드의 비전서
-        ArcaneOfDarklord.onAfter(ArcaneOfDarklordFinal.controller(8000))
+        ArcaneOfDarklord.onEventElapsed(ArcaneOfDarklordFinal, 8000)
         
         # 블리딩 톡신
         BleedingToxin.onAfter(BleedingToxinDot)
@@ -161,7 +161,6 @@ class JobGenerator(ck.JobGenerator):
 
     def get_skill_rotation_10sec(self, graph):
         return [
-            "스파이더 인 미러(공간 붕괴)",
             "메이플 용사",
             "쓸만한 샤프 아이즈",
             "쓸만한 컴뱃 오더스",
@@ -169,13 +168,14 @@ class JobGenerator(ck.JobGenerator):
             "쉐도우 파트너",
             "스피릿 자벨린",
             "퍼지 에어리어",
+            "스로우 블래스팅(액티브)",
             "블리딩 톡신",
             "에픽 어드벤처",
             "메이플월드 여신의 축복",
-            "얼티밋 다크 사이트",
-            "레디 투 다이",
             "스프레드 스로우",
-            "스로우 블래스팅(액티브)",
+            "얼티밋 다크 사이트",
+            "스파이더 인 미러(공간 붕괴)",
+            "레디 투 다이",
             "소울 컨트랙트",
             "리스트레인트 링",
             "다크로드의 비전서",

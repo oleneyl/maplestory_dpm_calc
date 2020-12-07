@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Dict, List, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Tuple, Callable
 
 from .modifier import CharacterModifier
 
@@ -486,6 +486,65 @@ class StatAnalytics:
 
     def get_log(self):
         return self.logList
+
+    def statistics(
+        self, prediction: Callable[[Dict[str, Any]], bool] = lambda x: True
+    ) -> None:
+        def getSkillNames(logList) -> List[str]:
+            return sorted(set(map(lambda log: log["name"], logList)))
+
+        logList = [log for log in self.logList if prediction(log)]
+        print(logList[0])
+
+        print("\n===Buff Skills===")
+        buffList = list(filter(lambda log: log["spec"] == "buff", logList))
+        names = getSkillNames(buffList)
+        for name in names:
+            skillLog = list(filter(lambda log: log["name"] == name, buffList))
+            use = len(skillLog)
+            delay = sum(map(lambda log: log["delay"], skillLog))
+            print(f"{name} Used {use} Delay {delay}")
+
+        shareDict = defaultdict(int)
+
+        print("\n===Damage Skills===")
+        damageList = list(filter(lambda log: log["spec"] == "damage", logList))
+        names = getSkillNames(damageList)
+        for name in names:
+            skillLog = list(filter(lambda log: log["name"] == name, damageList))
+            use = len(skillLog)
+            hit = sum(map(lambda log: log["hit"], skillLog))
+            damage = sum(map(lambda log: log["deal"], skillLog))
+            loss = sum(map(lambda log: log["loss"], skillLog))
+            delay = sum(map(lambda log: log["delay"], skillLog))
+            share = damage / self.total_damage * 100
+            shareDict[name.split("(")[0]] += share
+            print(f"{name} Used {use} Delay {delay}")
+            print(f"Hit {hit} Damage {damage:.1f} Loss {loss:.1f}")
+            print(f"Share {share:.4f}%")
+
+        print("\n===Summon/DoT Skills===")
+        summonList = list(filter(lambda log: log["spec"] in ["summon", "dot"], logList))
+        names = getSkillNames(summonList)
+        for name in names:
+            skillLog = list(filter(lambda log: log["name"] == name, summonList))
+            summon = len(list(filter(lambda log: log["deal"] == 0, skillLog)))
+            use = len(skillLog) - summon
+            hit = sum(map(lambda log: log["hit"], skillLog))
+            damage = sum(map(lambda log: log["deal"], skillLog))
+            loss = sum(map(lambda log: log["loss"], skillLog))
+            delay = sum(map(lambda log: log["delay"], skillLog))
+            share = damage / self.total_damage * 100
+            shareDict[name.split("(")[0]] += share
+            print(f"{name} Summoned {summon} Delay {delay}")
+            print(f"Used {use} Hit {hit}")
+            print(f"Damage {damage:.1f} Loss {loss:.1f}")
+            print(f"Share {share:.4f}%")
+
+        print("\n===Skill Share===")
+        for name, share in sorted(shareDict.items(), key=lambda x: x[1], reverse=True):
+            if share > 0:
+                print(f"{name}, {share:.4f}%")
 
     def get_peak(self, range: float) -> Tuple[float, float, float, float]:
         def scan_range(start, end):

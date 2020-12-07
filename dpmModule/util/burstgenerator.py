@@ -47,6 +47,7 @@ class BurstGenerator:
             print(target.get_modifier())
         control = core.Simulator(sche, target, analytics)
         control.start_simulation(self.runtime)
+        start, end, dpm, loss = analytics.get_peak(10000)
         if statistics:
-            control.analytics.statistics()
-        return analytics.get_peak(10000)
+            analytics.statistics(lambda log: log["time"] >= start and log["time"] < end)
+        return start, end, dpm, loss

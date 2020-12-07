@@ -135,12 +135,38 @@ class JobGenerator(ck.JobGenerator):
         for sk in [PhantomBlow, SuddenRaid, FinalCut, FlashBang, AsuraTick, 
             BladeStorm, BladeStormTick, KarmaFury, BladeTornado, HiddenBlade, HauntedEdge]:
             jobutils.create_auxilary_attack(sk, 0.7, nametag='(미러이미징)')
+
+        SeedRing = jobutils.restraint_ring()
+        SeedRing.protect_from_running()
         
         return(PhantomBlow,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, DarkSight, FinalCutBuff, EpicAdventure, FlashBangDebuff, HiddenBladeBuff, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
-                    UltimateDarksight, ReadyToDie, globalSkill.soul_contract()] +\
+                    UltimateDarksight, ReadyToDie, globalSkill.soul_contract(), SeedRing] +\
                 [FinalCut, FlashBang, BladeTornado, SuddenRaid, KarmaFury, BladeStorm, Asura, MirrorBreak, MirrorSpider] +\
                 [SuddenRaidDOT, Venom, BladeTornadoSummon, BladeTornadoSummonMirrorImaging, HauntedEdge] +\
                 [] +\
                 [PhantomBlow])
+
+    def get_skill_rotation_10sec(self, graph):
+        return [
+            "메이플 용사",
+            "쓸만한 샤프 아이즈",
+            "쓸만한 컴뱃 오더스",
+            "히든 블레이드(버프)",
+            "파이널 컷",
+            "에픽 어드벤처",
+            "메이플월드 여신의 축복",
+            "얼티밋 다크 사이트",
+            "스파이더 인 미러(공간 붕괴)",
+            "레디 투 다이",
+            "소울 컨트랙트",
+            "리스트레인트 링",
+            "블레이드 토네이도",
+            "카르마 퓨리",
+            "팬텀 블로우",
+            "블레이드 스톰", # TODO: 블스를 쓰다말고 끊어야 함
+            "팬텀 블로우",
+            "블레이드 토네이도",
+            "카르마 퓨리"
+        ]
