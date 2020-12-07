@@ -76,7 +76,7 @@ class JobGenerator(ck.JobGenerator):
         SuddenRaid = core.DamageSkill("써든레이드", 690, 494+5*self.combat, 7, cooltime = (30-2*(self.combat//2))*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 0, 1000, 210 + 4 * self.combat, 1, 10000, cooltime = -1).wrap(core.DotSkillWrapper)
 
-        DarkFlare = core.SummonSkill("다크 플레어", 600, 1000, 280, 1, 60000).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)
+        DarkFlare = core.SummonSkill("다크 플레어", 600, 60000 / 62, 280, 1, 60000, cooltime=60000, red=True, rem=True).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)
         
         MARK_PROP = (60+2*passive_level)/(160+2*passive_level)
         MarkOfNightlord = core.DamageSkill("마크 오브 나이트로드", 0, (60+3*passive_level+chtr.level), MARK_PROP*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
