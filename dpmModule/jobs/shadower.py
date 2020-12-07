@@ -165,7 +165,7 @@ class JobGenerator(ck.JobGenerator):
         Eviscerate.onAfter(MesoStack.stackController(7*2*0.4, name = "메소 생성"))
         Eviscerate.protect_from_running()
 
-        ShadowFormation.onAfter(ShadowFormationFinal.controller(8000))
+        ShadowFormation.onEventEnd(ShadowFormationFinal)
         
         Assasinate = core.OptionalElement(AdvancedDarkSight.is_active, Assasinate1_D, Assasinate1, name = "닼사 여부")
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
