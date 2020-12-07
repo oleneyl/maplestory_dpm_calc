@@ -84,7 +84,10 @@ def test_callback_operation():
         A = core.DamageSkill('A', 200, 50, 5).wrap(core.DamageSkillWrapper)
         B = core.DamageSkill('B', 200, 50, 5).wrap(core.DamageSkillWrapper)
         C = core.DamageSkill('C', 200, 50, 5).wrap(core.DamageSkillWrapper)
-        X.callback_for_result = [core.Callback.from_graph_element(A, 320), core.Callback.from_graph_element(B, 390)]
+        X.callback_for_result = [
+            core.Callback.from_graph_element(A, 320),
+            core.Callback.from_graph_element(B, 390)
+        ]
         Y.callback_for_result = [core.Callback.from_graph_element(C, 390)]
 
         return Y, [X, Y]
