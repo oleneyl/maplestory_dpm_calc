@@ -352,8 +352,7 @@ class JobGenerator(ck.JobGenerator):
         LimitBreak.onBefore(SetBeta)
         LimitBreak.onAfter(LimitBreakAttack)
         LimitBreak.onAfter(LimitBreakCDR)
-        # 버프 종료 직전에 캔슬 TODO: 리밋브 최종뎀 종료 전에 발동되는 것이 반드시 보장되어야 함 (콜백)
-        LimitBreak.onAfter(LimitBreakFinal.controller((30+vEhc.getV(0,0)//2)*1000-1))
+        LimitBreak.onEventElapsed(LimitBreakFinal, (30+vEhc.getV(0,0)//2)*1000-1) # 버프 종료 직전에 막타
         LimitBreakFinal.add_runtime_modifier(BetaState, lambda beta: extra_dmg(15, False) if beta.is_active() else core.CharacterModifier())
 
         for sk in [TimeDistortion, SoulContract]:
