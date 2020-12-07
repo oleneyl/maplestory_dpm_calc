@@ -8,7 +8,7 @@ plt.style.use(["bmh"])
 def run(args, df: pd.DataFrame):
     df = df.drop(["name", "loss", "hit", "mdf", "spec"], axis=1)
     df["time"] = df["time"].astype("datetime64[ms]")
-    df["rolled"] = df.rolling("10000ms", on="time")["deal"].sum()
+    df["rolled"] = df.rolling(str(args.interval)+"ms", on="time")["deal"].sum()
     sorted_frames = df["rolled"].sort_values(axis=0, ascending=True)
     lorenz_curve = sorted_frames.cumsum()
     pred_line = np.linspace(
