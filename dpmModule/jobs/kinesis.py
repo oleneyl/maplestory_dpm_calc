@@ -167,7 +167,7 @@ class JobGenerator(ck.JobGenerator):
         #5차
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         AnotherGoddessBuff, AnotherVoid = demon.AnotherWorldWrapper(vEhc, 0, 0)
-        AnotherHeal = core.DamageSkill("회복의 축복", 0, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
+        AnotherHeal = core.SummonSkill("회복의 축복", 0, 4000/0.25, 0, 0, 40000, cooltime=-1).wrap(core.SummonSkillWrapper)
         
         PsychicTornado = core.SummonSkill("싸이킥 토네이도", 540, 1000, 500+20*vEhc.getV(2,2), 4, 20000, red = True, cooltime = 120000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)# -15
         PsychicTornadoFinal_1 = core.DamageSkill("싸이킥 토네이도(1)", 540, (200+3*vEhc.getV(2,2))*3, 2, cooltime=-1).wrap(core.DamageSkillWrapper)
@@ -194,8 +194,8 @@ class JobGenerator(ck.JobGenerator):
         LawOfGravityDebuff.onTick(TeleKinesis)
 
         ### 회복의 축복
-        AnotherVoid.onTick(AnotherHeal.controller(4000))
-        AnotherHeal.onAfter(PsychicPoint.stackController(40*0.01*(15+vEhc.getV(0,0)//2)))
+        AnotherVoid.onEventElapsed(AnotherHeal, 4000)
+        AnotherHeal.onTick(PsychicPoint.stackController(40*0.01*(15+vEhc.getV(0,0)//2)))
         
         ### Tandem skill connection
         PsychicForce3.onAfter(PsychicForce3Dot)
