@@ -53,8 +53,15 @@ class MirrorBreakWrapper(core.DamageSkillWrapper):
 class MirrorSpiderWrapper(core.SummonSkillWrapper):
     # 5번 연속 공격 후 종료, 재돌입 대기시간 3초
     def __init__(self, vEhc, num1, num2, modifier) -> None:
-        skill = core.SummonSkill("스파이더 인 미러(거울 속의 거미)", 0, 3000, 175+7*vEhc.getV(num1, num2), 8*5, 15*1000, cooltime=-1, modifier=modifier)
+        self.delays = [900, 850, 750, 650, 5730]  # 400001039.summonedSequenceAttack에서 가져온 딜레이, 5회째 공격 후 눈 감고뜨는 시간 5730ms
+        self.hit_count = 0
+        skill = core.SummonSkill("스파이더 인 미러(거울 속의 거미)", 0, 900, 175+7*vEhc.getV(num1, num2), 8, 50*1000, cooltime=-1, modifier=modifier)
         super(MirrorSpiderWrapper, self).__init__(skill)
+
+    def get_delay(self) -> float:
+        delay = self.delays[self.hit_count]
+        self.hit_count = (self.hit_count + 1) % 5
+        return delay
 
     def ensure(self, chtr: AbstractCharacter) -> bool:
         return chtr.level >= 235
@@ -63,7 +70,7 @@ class MirrorSpiderWrapper(core.SummonSkillWrapper):
 def SpiderInMirrorBuilder(enhancer, skill_importance, enhance_importance, break_modifier=core.CharacterModifier(), spider_modifier=core.CharacterModifier()):
     MirrorBreak = MirrorBreakWrapper(enhancer, skill_importance, enhance_importance, break_modifier)
     MirrorSpider = MirrorSpiderWrapper(enhancer, skill_importance, enhance_importance, spider_modifier)
-    MirrorBreak.onAfter(MirrorSpider.controller(3000))
+    MirrorBreak.onEventElapsed(MirrorSpider, 3000)
     return MirrorBreak, MirrorSpider
 
 
