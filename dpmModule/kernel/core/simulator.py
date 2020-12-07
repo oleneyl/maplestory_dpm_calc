@@ -91,7 +91,7 @@ class Simulator(object):
         for t in task._justAfter:
             self.run_task_recursive(t)
 
-        if result.delay > 0:
+        if result.delay > 0 or result.callbacks:
             time_to_spend = result.delay
             while True:
                 callback, time_to_spend = self.scheduler.apply_result(
@@ -105,6 +105,7 @@ class Simulator(object):
                 else:
                     break
 
+        if result.delay > 0:
             while True:
                 tick = self.scheduler.get_delayed_task()
                 if tick is not None:
