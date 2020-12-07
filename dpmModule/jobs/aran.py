@@ -237,7 +237,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 아드레날린
         AdrenalineBoost.onConstraint(core.ConstraintElement('콤보가 1000이상', Combo, partial(Combo.judge,1000,1) ))
-        AdrenalineBoost.onAfter(AdrenalineBoostEndDummy.controller(ADRENALINE_BOOST_REMAIN))
+        AdrenalineBoost.onEventEnd(AdrenalineBoostEndDummy)
         AdrenalineBoost.onAfter(Combo.stackController(-999999999, dtype='set'))
         AdrenalineBoost.onAfter(BoostEndHuntersTargetingHolder.controller(1))
         AdrenalineBoostEndDummy.onAfter(Combo.stackController(500, dtype='set'))

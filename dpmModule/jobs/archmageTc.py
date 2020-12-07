@@ -230,7 +230,7 @@ class JobGenerator(ck.JobGenerator):
 
         #Jupyter Thunder
         JupyterThunder.add_runtime_modifier(FrostEffect, applyFrostEffect) # TODO: 블리자드 파택 안터지는게 맞는지 확인할것
-        JupyterThunder.onAfter(JupyterThunderDecrement.controller(330*5))
+        JupyterThunder.onEventElapsed(JupyterThunderDecrement, 330*5)
         JupyterThunderDecrement.onTick(FrostDecrement)
 
         #Overload Mana
