@@ -254,13 +254,13 @@ class JobGenerator(ck.JobGenerator):
 
         # 루인
         Ruin.onAfter(RuinFirstTick)
-        Ruin.onAfter(RuinSecondTick.controller(2000))
+        RuinFirstTick.onEventEnd(RuinSecondTick)
 
         # 리스토어
         Restore.onAfter(RestoreTick)
 
         # 테리토리
-        Territory.onAfter(TerritoryEnd.controller(7000+4000))
+        Territory.onEventEnd(TerritoryEnd)
 
         # 레조넌스
         Resonance.onAfter(ResonanceStack)
