@@ -153,7 +153,7 @@ class JobGenerator(ck.JobGenerator):
         FinaturaFettuccia.onAfter(FinaturaFettucciaBuff)
         SpotLight.onAfter(SpotLightBuff)
         MascortFamilier.onAfter(MascortFamilierAttack)
-        MascortFamilier.onAfter(ShinyBubbleBreath.controller((30+(vEhc.getV(2,1)//5))*1000))
+        MascortFamilier.onEventEnd(ShinyBubbleBreath)
         
         SoulSeeker = core.OptionalElement(SoulExult.is_active, SoulSeekerExpert_PR, SoulSeekerExpert)
         
