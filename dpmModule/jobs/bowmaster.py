@@ -393,7 +393,7 @@ class JobGenerator(ck.JobGenerator):
         OpticalIllusion.protect_from_running()
         OpticalIllusion.onAfter(MagicArrow)
 
-        for sk in [ArrowOfStorm, ArrowRain, OpticalIllusion, GuidedArrow, MirrorBreak]:
+        for sk in [ArrowOfStorm, ArrowRain, QuibberFullBurst, OpticalIllusion, GuidedArrow, MirrorBreak]:
             sk.add_runtime_modifier(
                 ArmorPiercing, lambda armor_piercing: armor_piercing.check()
             )
