@@ -327,7 +327,7 @@ class AbstractSkillWrapper(GraphElement):
         """
         self._registered_callback_presets.append(("onEventEnd", (graph_element, 0)))
 
-    def create_callbacks(self, duration: float = 0, **kwargs) -> List[Callback]:
+    def create_callbacks(self, skill_modifier: SkillModifier, duration: float = 0, **kwargs) -> List[Callback]:
         """해당 object가 _use될 때 발생시키고자 하는 콜백들을 생성합니다."""
         callbacks = []
         for preset_type, context in self._registered_callback_presets:
@@ -336,10 +336,10 @@ class AbstractSkillWrapper(GraphElement):
                     duration > 0
                 ), "duration may larger than 0 to use onEventEnd callback."
                 element = context[0]
-                callbacks.append(Callback.from_graph_element(element, duration))
+                callbacks.append(Callback.from_graph_element(element, skill_modifier, duration))
             elif preset_type == "onEventElapsed":
                 element, elapsed_time = context
-                callbacks.append(Callback.from_graph_element(element, elapsed_time))
+                callbacks.append(Callback.from_graph_element(element, skill_modifier, elapsed_time))
 
         return callbacks
 
@@ -393,7 +393,7 @@ class BuffSkillWrapper(AbstractSkillWrapper):
         )
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         delay = self.get_delay()
-        callbacks = self.create_callbacks(duration=self.timeLeft)
+        callbacks = self.create_callbacks(skill_modifier=skill_modifier, duration=self.timeLeft)
         return ResultObject(
             delay,
             CharacterModifier(),
@@ -497,7 +497,7 @@ class DamageSkillWrapper(AbstractSkillWrapper):
 
     def _use(self, skill_modifier: SkillModifier) -> ResultObject:
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
-        callbacks = self.create_callbacks()
+        callbacks = self.create_callbacks(skill_modifier=skill_modifier)
         return ResultObject(
             self.get_delay(),
             self.get_modifier(),
@@ -621,7 +621,7 @@ class SummonSkillWrapper(AbstractSkillWrapper):
             1 + 0.01 * skill_modifier.summon_rem * self.skill.rem
         )
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
-        callbacks = self.create_callbacks(duration=self.timeLeft)
+        callbacks = self.create_callbacks(skill_modifier=skill_modifier, duration=self.timeLeft)
         return ResultObject(
             self.get_summon_delay(),
             self.disabledModifier,
@@ -706,7 +706,7 @@ class DotSkillWrapper(SummonSkillWrapper):
             1 + 0.01 * skill_modifier.summon_rem * self.skill.rem
         )
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
-        callbacks = self.create_callbacks(duration=self.timeLeft)
+        callbacks = self.create_callbacks(skill_modifier=skill_modifier, duration=self.timeLeft)
         return ResultObject(
             self.get_summon_delay(),
             self.disabledModifier,

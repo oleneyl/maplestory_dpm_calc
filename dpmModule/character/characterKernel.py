@@ -6,9 +6,9 @@ from ..kernel import policy
 from ..kernel.abstract import AbstractVBuilder, AbstractVEnhancer
 from ..kernel.core import (
     APPLY_PROP,
-    AbstractSkill,
+    AbstractSkillWrapper,
     CharacterModifier,
-    DamageSkill,
+    DamageSkillWrapper,
     ExtendedCharacterModifier,
     InformedCharacterModifier,
     SkillModifier,
@@ -287,7 +287,7 @@ class JobGenerator:
 
     def generate(
         self, vEhc: AbstractVEnhancer, chtr: AbstractCharacter, options: Dict[str, Any]
-    ) -> Tuple[DamageSkill, List[AbstractSkill]]:
+    ) -> Tuple[DamageSkillWrapper, List[AbstractSkillWrapper]]:
         raise NotImplementedError
 
     def build_passive_skill_list(
