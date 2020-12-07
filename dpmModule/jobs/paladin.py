@@ -102,7 +102,8 @@ class JobGenerator(ck.JobGenerator):
                             core.RepeatElement(GrandCrossLargeTick, 41), 
                             core.RepeatElement(GrandCrossSmallTick, 15)])
 
-        BlessedHammerActive.onAfter(BlessedHammer.controller(30 * 1000))
+        BlessedHammerActive.onAfter(BlessedHammer.controller(99999999))
+        BlessedHammerActive.onEventEnd(BlessedHammer)
 
         MightyMjollnirInit.onAfter(core.RepeatElement(MightyMjollnir, 4))
         MightyMjollnir.onAfter(MightyMjollnirWave)
