@@ -278,7 +278,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
                     AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive, FloraGoddessBless,
                     globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract()] +\
-                [Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider, Shard] +\
+                [EtherTick, Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider, Shard] +\
                 [Order, Wonder, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, Scool, ManaStorm] +\
                 [] +\
                 [Divide])        
