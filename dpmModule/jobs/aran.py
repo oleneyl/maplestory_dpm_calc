@@ -113,7 +113,6 @@ class JobGenerator(ck.JobGenerator):
         BeyonderThird = core.DamageSkill("비욘더(3타)", 420, 415 + 10 * ceil(self.combat / 3), 6, modifier=core.CharacterModifier(pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         AdrenalineBoost = core.BuffSkill("아드레날린 부스트", 0, ADRENALINE_BOOST_REMAIN).wrap(core.BuffSkillWrapper)
-        AdrenalineBoostEndDummy = core.BuffSkill("아드레날린 부스트(종료 더미)", 0, 0, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         AdrenalineSmashSwing = core.DamageSkill("스매시 스윙(아드레날린)", 360, 950, 4).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         AdrenalineFinalBlow = core.DamageSkill("파이널 블로우(아드레날린)", 420, 285 + 100 + (60 + 2 * passive_level) + (20 + passive_level) + 150, 7, modifier=core.CharacterModifier(armor_ignore=15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
@@ -237,16 +236,15 @@ class JobGenerator(ck.JobGenerator):
 
         # 아드레날린
         AdrenalineBoost.onConstraint(core.ConstraintElement('콤보가 1000이상', Combo, partial(Combo.judge,1000,1) ))
-        AdrenalineBoost.onAfter(AdrenalineBoostEndDummy.controller(ADRENALINE_BOOST_REMAIN))
         AdrenalineBoost.onAfter(Combo.stackController(-999999999, dtype='set'))
         AdrenalineBoost.onAfter(BoostEndHuntersTargetingHolder.controller(1))
-        AdrenalineBoostEndDummy.onAfter(Combo.stackController(500, dtype='set'))
+        AdrenalineBoost.onEventEnd(Combo.stackController(500, dtype='set'))
         AdrenalineGenerator.onConstraint(core.ConstraintElement('아드레날린부스트가 불가능할때', AdrenalineBoost, AdrenalineBoost.is_not_active))
         AdrenalineGenerator.onAfter(AdrenalineBoost)
         return(BasicAttack, 
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), HerosOath,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), Booster, SmashSwingIncr, SnowCharge, AdvancedComboAbility, ComboAbility,
-                    BlessingMaha, AdrenalineBoost, AdrenalineBoostEndDummy,
+                    BlessingMaha, AdrenalineBoost,
                     AdrenalineGenerator, 
                     InstallMaha, InstallMahaBlizzard, Combo, AuraWeaponBuff, AuraWeapon, BlizzardTempestAura,
                     globalSkill.soul_contract()] +\
