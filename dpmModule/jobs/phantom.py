@@ -131,7 +131,7 @@ class JobGenerator(ck.JobGenerator):
         #### 그래프 빌드
         
         FinalCut.onAfter(CarteNoir)
-        FinalCut.onAfter(FinalCutBuff.controller(1))
+        FinalCut.onAfter(FinalCutBuff)
         
         CardStack = core.StackSkillWrapper(core.BuffSkill("카드 스택", 0, 99999999), 40, name = "느와르 카르트 스택")
         
