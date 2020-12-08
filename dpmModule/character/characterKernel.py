@@ -1,5 +1,6 @@
 import json
 import math
+import copy
 from typing import Any, Dict, List, Optional, Tuple
 
 from ..execution.rules import RuleSet
@@ -257,7 +258,7 @@ class JobGenerator:
         self.conf: dict = None
 
     def _load_skill(self, skill_name, vEhc, background_information={}):
-        skill_conf = self.conf['skills'][skill_name]
+        skill_conf = copy.deepcopy(self.conf['skills'][skill_name])
         if 'name' not in skill_conf:
             skill_conf['name'] = skill_name
 
@@ -265,7 +266,17 @@ class JobGenerator:
             lv = vEhc.getV(skill_conf['use_priority'], skill_conf['upgrade_priority'])
             background_information['lv'] = lv
 
-        return load_skill(skill_conf, background_information)
+        skill = load_skill(skill_conf, background_information)
+
+        if skill_conf.get('enhanced_by_v', False):
+            skill = skill.setV(
+                vEhc,
+                skill_conf['upgrade_priority'],
+                skill_conf['v_increment'],
+                skill_conf['v_crit']
+            )
+
+        return skill
 
     def load_skill_wrapper(self, skill_name, vEhc=None):
         background_information = self.conf.get('constant', {})
