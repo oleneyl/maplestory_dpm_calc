@@ -35,17 +35,17 @@ class CriticalBindWrapper(core.BuffSkillWrapper):
         return super(CriticalBindWrapper, self).is_usable()
 
 
-# BuffSkillWrapper로 선언시 get_modifier가 작동하지 않아 StackSkillWrapper로 임시조치
 class DivineAuraWrapper(core.BuffSkillWrapper):
-    def __init__(self, skill, limit_break, time_distortion):
+    def __init__(self, skill_list):
+        skill = core.BuffSkill("디바인 스위프트/포스", 0, 99999999)  # 평소에는 디바인 스위프트 상태 유지
         super(DivineAuraWrapper, self).__init__(skill)
         self.modifierInvariantFlag = False
-        self.limit_break = limit_break
-        self.time_distortion = time_distortion
+        self.skill_list = skill_list
 
     def get_modifier(self):
-        if self.limit_break.is_active() or self.time_distortion.is_active():
-            return core.CharacterModifier(att=20)
+        for sk in self.skill_list:
+            if sk.is_active():
+                return core.CharacterModifier(att=20)  # 리스트에 있는 스킬 중 하나 이상 활성화시 디바인 포스로 변경
         return self.disabledModifier
 
 
@@ -170,12 +170,15 @@ class JobGenerator(ck.JobGenerator):
 
         WindCutter = core.DamageSkill("윈드 커터", 420, 165, 8).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         WindCutterSummon = core.DamageSkill("윈드 커터(소용돌이)", 0, 110, 3*2, cooltime=-1).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)  # 최대 3초지속, 2회 타격
+        WindCutterTAG = core.DamageSkill("윈드 커터(태그)", 0, 165, 8).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
 
         WindStrike = core.DamageSkill("윈드 스트라이크", 480, 250, 8).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
+        WindStrikeTAG = core.DamageSkill("윈드 스트라이크(태그)", 0, 250, 8).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
 
         AdvancedStormBreak = core.DamageSkill("어드밴스드 스톰 브레이크", 690, 335+2*self.combat, 10).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedStormBreakSummon = core.DamageSkill("어드밴스드 스톰 브레이크(소용돌이)", 0, 335+2*self.combat, 4, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  # 최대 3초지속, 1회 타격
         AdvancedStormBreakElectric = core.SummonSkill("어드밴스드 스톰 브레이크(전기)", 0, 1000, 230+2*self.combat, 1, (3+ceil(self.combat/10))*1000, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        AdvancedStormBreakTAG = core.DamageSkill("어드밴스드 스톰 브레이크(태그)", 0, 335+2*self.combat, 10).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
         # 도트스킬은 크뎀 미적용이므로 AlphaSkill 추가할 필요없음.
         DivineLeer = core.DotSkill("디바인 리어", 0, 1000, 200, 1, 99999999).wrap(core.DotSkillWrapper)
@@ -190,12 +193,16 @@ class JobGenerator(ck.JobGenerator):
         AdvancedPowerStompWave = core.DamageSkill("어드밴스드 파워 스텀프(파동)", 0, 330+5*self.combat, 9, modifier=extra_dmg(6, True)).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
         AdvancedPowerStompWaveTAG = core.DamageSkill("어드밴스드 파워 스텀프(파동)(태그)", 0, 330+5*self.combat, 9, modifier=extra_dmg(6, True)+BetaMDF-AlphaMDF).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)  # 항상 베타 스탯이 적용됨
 
-        THROWINGHIT = 5
         FrontSlash = core.DamageSkill("프론트 슬래시", 450, 205, 6, modifier=extra_dmg(6, True)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        FrontSlashTAG = core.DamageSkill("프론트 슬래시(태그)", 0, 205, 6, modifier=extra_dmg(6, True)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+
+        THROWINGHIT = 5
         ThrowingWeapon = core.SummonSkill("어드밴스드 스로잉 웨폰", 480, 300, 550+5*self.combat, 2, THROWINGHIT*300, cooltime=-1, modifier=extra_dmg(6, True)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
 
         TurningDrive = core.DamageSkill("터닝 드라이브", 360, 260, 6, modifier=extra_dmg(6, True)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        TurningDriveTAG = core.DamageSkill("터닝 드라이브(태그)", 0, 260, 6, modifier=extra_dmg(6, True)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedWheelWind = core.DamageSkill("어드밴스드 휠 윈드", 900, 200+2*self.combat, 2*7, modifier=extra_dmg(6, True)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # 0.1초당 1타, 최대 7초, 7타로 적용
+        AdvancedWheelWindTAG = core.DamageSkill("어드밴스드 휠 윈드(태그)", 0, 200+2*self.combat, 2*7, modifier=extra_dmg(6, True)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # 0.1초당 1타, 최대 7초, 7타로 적용
 
         GigaCrash = core.DamageSkill("기가 크래시", 540, 250, 6, modifier=extra_dmg(6, True)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         GigaCrashTAG = core.DamageSkill("기가 크래시(태그)", 0, 250, 6, modifier=extra_dmg(6, True)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
@@ -264,7 +271,7 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill Wrapper   ######
 
         # 디바인 오라
-        DivineAura = DivineAuraWrapper(core.BuffSkill("디바인 스위프트/포스", 0, 99999999), LimitBreak, TimeDistortion)
+        DivineAura = DivineAuraWrapper([LimitBreak, TimeDistortion])
 
         ### 스킬 연결 ###
         ### 알파 ###
