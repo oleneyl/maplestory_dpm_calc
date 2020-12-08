@@ -71,6 +71,28 @@
             "att": 30,
             "rem": true,
             "red": true
+        },
+        "에픽 어드벤처": {
+            "type": "BuffSkill",
+            "cooltime": 120000,
+            "delay": 0,
+            "red": false,
+            "rem": false,
+            "remain": 60000,
+            "pdamage": 10
+        },
+        "페럴라이즈": {
+            "type": "DamageSkill",
+            "delay": 600,
+            "damage": "220 + 3 * combat",
+            "hit": 8,
+            "modifier":{
+                "pdamage":10
+            },
+            "enhanced_by_v":true,
+            "upgrade_priority":1,
+            "v_increment": 2,
+            "v_crit":false
         }
     }
 }
