@@ -190,6 +190,7 @@ class JobGenerator(ck.JobGenerator):
         ### Telekinesis
         for sk in [PsychicGrab2, PsychicGroundDamage, PsycoBreakDamage, PsychicTornadoFinal_1, PsychicTornadoFinal_2, LawOfGravity, LawOfGravityFinal]:
             sk.onAfter(TeleKinesis)
+        PsychicTornado.onTick(TeleKinesis)
         LawOfGravityDebuff.onTick(TeleKinesis)
 
         ### 회복의 축복
