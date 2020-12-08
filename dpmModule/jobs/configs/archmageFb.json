@@ -1,0 +1,76 @@
+{
+    "buffrem": [0, 40],
+    "jobtype": "int",
+    "jobname": "아크메이지불/독",
+    "vEnhanceNum": 13,
+    "preEmptiveSkills": 2,
+    "passive_skill_list":[
+        {
+            "name": "하이 위즈덤",
+            "stat_main": 40
+        }, {
+            "name": "스펠 마스터리",
+            "att": 10
+        }, {
+            "name": "매직 크리티컬",
+            "crit": 30,
+            "crit_damage": 13
+        }, {
+            "name": "엘리멘트 엠플리피케이션",
+            "pdamage": 50
+        }, {
+            "name": "엘리멘탈 리셋",
+            "pdamage_indep": 40
+        }, {
+            "name": "마스터 매직",
+            "att": "30 + 3 * passive_level",
+            "buff_rem": "50 + 5 * passive_level"
+        }, {
+            "name": "아케인 에임",
+            "armor_ignore": "20 + math.ceil(passive_level / 2)"
+        }
+    ],
+    "not_implied_skill_list":[
+        {
+            "name": "무기상수",
+            "pdamage_indep": 20
+        }, {
+            "name": "숙련도",
+            "pdamage_indep": "-2.5 + 0.5 * math.ceil(combat / 2)"
+        }, {
+            "name": "익스트림 매직",
+            "pdamage_indep": 20
+        }, {
+            "name": "아케인 (실시간)",
+            "pdamage": 40
+        }, {
+            "name": "퍼번트 드레인",
+            "pdamage_indep": 25
+        }, {
+            
+            "name": "엘리멘탈 리셋(사용)",
+            "prop_ignore": 10
+        }
+    ],
+    "skills":{
+        "도트 퍼니셔":{
+            "type": "DamageSkill",
+            "delay": 690,
+            "damage": "400 + 15 * lv",
+            "tier": 5,
+            "use_priority": 0,
+            "upgrade_priority": 0,
+            "hit": 5,
+            "cooltime": 25000,
+            "red": true
+        },
+        "메디테이션":{
+            "type": "BuffSkill",
+            "delay": 0,
+            "remain": 240000,
+            "att": 30,
+            "rem": true,
+            "red": true
+        }
+    }
+}

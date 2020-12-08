@@ -6,7 +6,6 @@ data/
 *.suo
 *.db
 *.opendb
-*.json
 *.sqlite
 *.txt
 docs/_build/
