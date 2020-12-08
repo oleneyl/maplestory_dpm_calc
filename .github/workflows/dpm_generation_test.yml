@@ -28,7 +28,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest argparse
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Lint with flake8
+    - name: Run full_test.py
       run: |
         # Test with full_test.py
-        python full_test.py --ulevel 7000
+        python full_test.py --ulevel 7000 --time 180 --thread 2
