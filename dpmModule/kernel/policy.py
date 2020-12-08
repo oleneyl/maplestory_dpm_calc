@@ -1,17 +1,29 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import (TYPE_CHECKING, Any, Callable, Dict, Iterable, List,
-                    Optional, Tuple)
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Tuple,
+    Type,
+)
 
 from .abstract import AbstractScenarioGraph, AbstractVEnhancer
-from .core import (BuffSkillWrapper, CharacterModifier, DamageSkillWrapper,
-                   SummonSkillWrapper)
+from .core import (
+    BuffSkillWrapper,
+    CharacterModifier,
+    DamageSkillWrapper,
+    SummonSkillWrapper,
+)
 
 if TYPE_CHECKING:
     from ..character.characterKernel import AbstractCharacter
-    from .core import (AbstractSkillWrapper, Callback, GraphElement,
-                       ResultObject, Task)
+    from .core import AbstractSkillWrapper, Callback, GraphElement, ResultObject, Task
     from .graph import AbstractStorage
 
 
@@ -24,10 +36,12 @@ class NameIndexedGraph(AbstractScenarioGraph):
                 continue
             name = el._id
             if name in self._element_map:
-                raise KeyError(f'''Given Graph element {name} was duplicated, cannot create unique mapping.
+                raise KeyError(
+                    f"""Given Graph element {name} was duplicated, cannot create unique mapping.
                 Check yor graph configuration have graph element that has assigned as same name. This error
                 maight be solved becuase you may contaminate storage system with overriding.
-                ''')
+                """
+                )
             else:
                 self._element_map[name] = el
 
@@ -35,8 +49,10 @@ class NameIndexedGraph(AbstractScenarioGraph):
         if name in self._element_map:
             return self._element_map[name]
         else:
-            raise KeyError(f'''No element name {name} exist. Check your graph configuration, or
-            check with graph.get_storage()''')
+            raise KeyError(
+                f"""No element name {name} exist. Check your graph configuration, or
+            check with graph.get_storage()"""
+            )
 
     def get_all(self) -> List[GraphElement]:
         return self.accessible_elements
@@ -49,9 +65,15 @@ class NameIndexedGraph(AbstractScenarioGraph):
 
 
 class StorageLinkedGraph(NameIndexedGraph):
-    def __init__(self, base_element: GraphElement, storage: AbstractStorage, accessible_elements: List[GraphElement] = []) -> None:
+    def __init__(
+        self,
+        base_element: GraphElement,
+        storage: AbstractStorage,
+        accessible_elements: List[GraphElement] = [],
+    ) -> None:
         super(StorageLinkedGraph, self).__init__(
-            accessible_elements=accessible_elements)
+            accessible_elements=accessible_elements
+        )
         self.base_element: GraphElement = base_element
         self.storage: AbstractStorage = storage
         self._task_map: Dict[str, Task] = {}
@@ -63,18 +85,20 @@ class StorageLinkedGraph(NameIndexedGraph):
 
         for name, wrp in self._element_map.items():
             self._task_map[name] = wrp.build_task(skill_modifier)
-            if hasattr(wrp, 'build_periodic_task'):
-                self._tick_task_map[name] = wrp.build_periodic_task(
-                    skill_modifier)
+            if hasattr(wrp, "build_periodic_task"):
+                self._tick_task_map[name] = wrp.build_periodic_task(skill_modifier)
 
     def spend_time(self, t: float) -> None:
         for _, wrp in self._element_map.items():
             wrp.spend_time(t)
 
     def get_tick_task(self) -> Dict[str, Tuple[Task, Task]]:
-        return {n: (self._element_map[n], self._tick_task_map[n]) for n in self._tick_task_map}
+        return {
+            n: (self._element_map[n], self._tick_task_map[n])
+            for n in self._tick_task_map
+        }
 
-    def get_element_and_task(self) -> Dict[str, List[GraphElement, ]]:
+    def get_element_and_task(self) -> Dict[str, List[GraphElement, Task]]:
         ret_dict = {}
         for name in self._element_map:
             ret_dict[name] = [self._element_map[name], self._task_map[name]]
@@ -84,10 +108,15 @@ class StorageLinkedGraph(NameIndexedGraph):
         return self.storage
 
     def export_task(self, common_args={}, tick_args={}) -> None:
-        self._task_map = {k: self._element_map[k].build_task(
-            **common_args) for k in self._element_map}
-        self._tick_task_map = {k: self._element_map[k].build_periodic_task(**tick_args)
-                               for k in self._element_map if hasattr(self._element_map[k], 'is_periodic') and getattr(self._element_map[k], 'is_periodic')}
+        self._task_map = {
+            k: self._element_map[k].build_task(**common_args) for k in self._element_map
+        }
+        self._tick_task_map = {
+            k: self._element_map[k].build_periodic_task(**tick_args)
+            for k in self._element_map
+            if hasattr(self._element_map[k], "is_periodic")
+            and getattr(self._element_map[k], "is_periodic")
+        }
 
     def set_v_enhancer(self, vEhc: AbstractVEnhancer) -> None:
         self._vEhc = vEhc
@@ -102,28 +131,39 @@ class StorageLinkedGraph(NameIndexedGraph):
     def get_task_from_element(self, element: GraphElement) -> Task:
         return self._task_map[element._id]
 
-    def get_network_information(self, information_type: str) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
-        if information_type == 'merged':
+    def get_network_information(
+        self, information_type: str
+    ) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+        if information_type == "merged":
             return self.get_single_network_information(self.get_all(), is_list=True)
         elif information_type == "damage":
             return self.get_single_network_information(
-                self.filter_elements(lambda x: isinstance(x, DamageSkillWrapper)), is_list=True)
+                self.filter_elements(lambda x: isinstance(x, DamageSkillWrapper)),
+                is_list=True,
+            )
         elif information_type == "summon":
             return self.get_single_network_information(
-                self.filter_elements(lambda x: isinstance(x, SummonSkillWrapper)), is_list=True)
+                self.filter_elements(lambda x: isinstance(x, SummonSkillWrapper)),
+                is_list=True,
+            )
         elif information_type == "spend":
             return self.get_single_network_information([], is_list=True)
         elif information_type == "buff":
-            return self.get_single_network_information(self.filter_elements(lambda x: isinstance(x, BuffSkillWrapper)), is_list=True)
+            return self.get_single_network_information(
+                self.filter_elements(lambda x: isinstance(x, BuffSkillWrapper)),
+                is_list=True,
+            )
 
     # TODO: Parameter expl_level not used.
-    def get_whole_skill_info(self, expl_level=0) -> Dict[str, Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]]:
+    def get_whole_skill_info(
+        self, expl_level=0
+    ) -> Dict[str, Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]]:
         return {
             # "basic" : [self.default_task[0].skill.get_info(expl_level = expl_level)],
-            "buff": self.get_network_information('buff'),
-            "damage": self.get_network_information('damage'),
-            "summon": self.get_network_information('summon'),
-            "spend": self.get_network_information('spend'),
+            "buff": self.get_network_information("buff"),
+            "damage": self.get_network_information("damage"),
+            "summon": self.get_network_information("summon"),
+            "spend": self.get_network_information("spend"),
         }
 
 
@@ -132,13 +172,18 @@ class CallbackQueue:
         self._callback_queue = []
 
     def push_callbacks(self, callbacks: List[Callback], current_time: float) -> None:
-        self._callback_queue += [callback.adjust_by_current_time(
-            current_time) for callback in callbacks]
-        self._callback_queue = sorted(
-            self._callback_queue, key=lambda x: x.time)
+        self._callback_queue += [
+            callback.adjust_by_current_time(current_time) for callback in callbacks
+        ]
+        self._callback_queue = sorted(self._callback_queue, key=lambda x: x.time)
 
-    def impending_callback_exist(self, current_time: float, next_event_time: float) -> bool:
-        return len(self._callback_queue) != 0 and self.impending_callback_time(current_time) <= next_event_time
+    def impending_callback_exist(
+        self, current_time: float, next_event_time: float
+    ) -> bool:
+        return (
+            len(self._callback_queue) != 0
+            and self.impending_callback_time(current_time) <= next_event_time
+        )
 
     def impending_callback_time(self, current_time: float) -> float:
         return self._callback_queue[0].time - current_time
@@ -150,7 +195,9 @@ class CallbackQueue:
 
 
 class AdvancedGraphScheduler:
-    def __init__(self, graph: StorageLinkedGraph, fetching_policy: FetchingPolicy, rules) -> None:
+    def __init__(
+        self, graph: StorageLinkedGraph, fetching_policy: FetchingPolicy, rules
+    ) -> None:
         self._rule_map = defaultdict(list)
 
         self.graph: StorageLinkedGraph = graph
@@ -188,17 +235,21 @@ class AdvancedGraphScheduler:
 
     def get_delayed_task(self) -> Optional[Task]:
         for _, (wrp, tick) in self.graph.get_tick_task().items():
-            if hasattr(wrp, 'need_count'):
+            if hasattr(wrp, "need_count"):
                 if wrp.need_count():
                     return tick
         return None
 
-    def apply_result(self, result: ResultObject, time_to_spend: float) -> Tuple[Optional[Callback], float]:
-        self.callback_queue.push_callbacks(
-            result.callbacks, self.get_current_time())
-        if self.callback_queue.impending_callback_exist(self.get_current_time(), time_to_spend):
+    def apply_result(
+        self, result: ResultObject, time_to_spend: float
+    ) -> Tuple[Optional[Callback], float]:
+        self.callback_queue.push_callbacks(result.callbacks, self.get_current_time())
+        if self.callback_queue.impending_callback_exist(
+            self.get_current_time(), time_to_spend
+        ):
             time_until_callback_occur = self.callback_queue.impending_callback_time(
-                self.get_current_time())
+                self.get_current_time()
+            )
             self.spend_time(time_until_callback_occur)
             time_to_spend -= time_until_callback_occur
             return self.callback_queue.take_out_impending_callback(), time_to_spend
@@ -218,7 +269,9 @@ class AdvancedGraphScheduler:
             if isinstance(buffwrp, BuffSkillWrapper):
                 if buffwrp.skill.cooltime == 0 and buffwrp.modifierInvariantFlag:
                     # print(buffwrp.skill.name)  #캐싱되는 버프를 확인하기 위해 이 주석부분을 활성화 합니다.
-                    self._buffMdfPreCalc = self._buffMdfPreCalc + buffwrp.get_modifier_forced()
+                    self._buffMdfPreCalc = (
+                        self._buffMdfPreCalc + buffwrp.get_modifier_forced()
+                    )
                     st = False
                 else:
                     st = True
@@ -236,7 +289,9 @@ class AdvancedGraphScheduler:
                 mdf += buffwrp.get_modifier()
         return mdf
         """
-        mdf = self._buffMdfPreCalc.copy()  # BuffModifier는 쿨타임이 없는 버프에 한해 캐싱하여 연산량을 감소시킵니다. 캐싱된
+        mdf = (
+            self._buffMdfPreCalc.copy()
+        )  # BuffModifier는 쿨타임이 없는 버프에 한해 캐싱하여 연산량을 감소시킵니다. 캐싱된
         for buffwrp, st in self._buffMdfCalcZip:
             if st:
                 mdf += buffwrp.get_modifier()
@@ -256,24 +311,25 @@ class FetchingPolicy:
         return filter(lambda x: x.is_usable(), self.get_sorted())
 
     def get_sorted(self) -> List[GraphElement]:
-        raise NotImplementedError('''
+        raise NotImplementedError(
+            """
         Describle how to rearrange element's priority.
         You can also purpose some FILTERING in this actions, but
         it must be careful because following rules cannot notice filtered 
-        elements had been existed in graph.''')
+        elements had been existed in graph."""
+        )
 
 
 class TypebaseFetchingPolicy(FetchingPolicy):
-    def __init__(self, priority_list=[0, 1, 2, 3]) -> None:
+    def __init__(self, priority_list: List[Type] = [0, 1, 2, 3]) -> None:
         super(TypebaseFetchingPolicy, self).__init__()
-        self.priority_list = priority_list
+        self.priority_list: List[Type] = priority_list
 
     def __call__(self, graph: StorageLinkedGraph) -> TypebaseFetchingPolicy:
         super(TypebaseFetchingPolicy, self).__call__(graph)
         self.sorted = []
         for clstype in self.priority_list:
-            self.sorted += (list(filter(lambda x: isinstance(x,
-                                                             clstype), self.target)))
+            self.sorted += list(filter(lambda x: isinstance(x, clstype), self.target))
         if graph.base_element in self.sorted:
             self.sorted.pop(self.sorted.index(graph.base_element))
         self.sorted.append(graph.base_element)
@@ -288,15 +344,26 @@ class AbstractRule:
     but rule can constraint element 'Dynamically', which means can refer every context in judging point.
     """
 
-    def get_related_elements(self, reference_graph: NameIndexedGraph) -> List[GraphElement]:
-        raise NotImplementedError('''get_related_elements(reference_graph) will return which elements are 
+    def get_related_elements(
+        self, reference_graph: NameIndexedGraph
+    ) -> List[GraphElement]:
+        raise NotImplementedError(
+            """get_related_elements(reference_graph) will return which elements are 
         using this rule. Return : elements(list), will be hashed by unique namespace from storage.
-        ''')
+        """
+        )
 
-    def check(self, caller: AbstractSkillWrapper, reference_graph: NameIndexedGraph, context=None) -> None:
-        raise NotImplementedError('''check(referce_graph) will return current context / graph satisfy
+    def check(
+        self,
+        caller: AbstractSkillWrapper,
+        reference_graph: NameIndexedGraph,
+        context=None,
+    ) -> None:
+        raise NotImplementedError(
+            """check(referce_graph) will return current context / graph satisfy
         given rule or not. context not offered yet, but for future work it is given.
-        ''')
+        """
+        )
 
     def compile(self, reference_graph: NameIndexedGraph):
         """compile() is cache hint for fast running. You can get reference elements earlier, and store

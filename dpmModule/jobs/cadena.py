@@ -136,7 +136,7 @@ class JobGenerator(ck.JobGenerator):
                                     QuickserviceMind, BasicDetection, WeaponMastery, QuickserviceMind_II, ReadyToDiePassive]
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 30, crit_damage = 40, pdamage = 20, crit = 6)
+        return core.CharacterModifier(armor_ignore = 30, crit_damage = 44, pdamage = 20, crit = 6)
                               
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -174,7 +174,7 @@ class JobGenerator(ck.JobGenerator):
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         CheapShotII = core.CharacterModifier(crit = 2, crit_damage = 10 + ceil(passive_level / 4)) # 위크포인트 컨버징 어택
-        CheapShotIIBleed = core.DotSkill("위크포인트 컨버징 어택(출혈)", 0, 1000, 110 + 2 * passive_level, 1, 99999999).wrap(core.SummonSkillWrapper)
+        CheapShotIIBleed = core.DotSkill("위크포인트 컨버징 어택(출혈)", 0, 1000, 110 + 2 * passive_level, 1, 99999999).wrap(core.DotSkillWrapper)
         CheapShotIIBleedBuff = core.BuffSkill("위크포인트 컨버징 어택(출혈)(디버프)", 0, 99999999, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
         CheapShotIIAdventureMageBuff = core.BuffSkill("위크포인트 컨버징 어택(모법링크)", 0, 99999999, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
 
@@ -233,7 +233,7 @@ class JobGenerator(ck.JobGenerator):
         SummonBeatingNeedlebat_Honmy = core.BuffSkill("서먼 비팅 니들배트(혼미)", 0, 15000, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         # 5차
-        VenomBurst = core.DotSkill("베놈 버스트", 0, 1000, 160+6*vEhc.getV(4,4), 1, 99999999).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
+        VenomBurst = core.DotSkill("베놈 버스트", 0, 1000, 160+6*vEhc.getV(4,4), 1, 99999999).isV(vEhc,4,4).wrap(core.DotSkillWrapper)
         VenomBurst_Poison = core.BuffSkill("베놈 버스트(중독)", 0, 99999999, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage, cooltime = -1).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 3)

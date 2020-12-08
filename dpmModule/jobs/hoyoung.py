@@ -113,7 +113,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 1
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 40)
+        return core.CharacterModifier(armor_ignore=20, pdamage=40)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -201,7 +201,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 추정치 딜레이 (점프부터 이펙트 완전소멸까지 프레임 분석)
         Thousand_Ton_Stone = core.DamageSkill("둔갑 천근석", 1530, 275 + 3*self.combat, 6, cooltime = 500).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        Thousand_Ton_Stone_DOT = core.DotSkill("둔갑 천근석(출혈)", 0, 1000, 270 + self.combat, 1, 10000, cooltime = -1).setV(vEhc, 0, 2, False).wrap(core.SummonSkillWrapper)
+        Thousand_Ton_Stone_DOT = core.DotSkill("둔갑 천근석(출혈)", 0, 1000, 270 + self.combat, 1, 10000, cooltime = -1).setV(vEhc, 0, 2, False).wrap(core.DotSkillWrapper)
         Thousand_Ton_Stone.onAfter(Thousand_Ton_Stone_DOT)
 
         Waryu = core.SummonSkill("권술 : 흡성와류", 990, 1000 * 0.8, 240 + 4*self.combat, 6, 40000, rem=True).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)

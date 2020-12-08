@@ -171,7 +171,7 @@ class JobGenerator(ck.JobGenerator):
         AdvancedStormBreakElectric = core.SummonSkill("어드밴스드 스톰 브레이크(전기)", 0, 1000, 230+2*self.combat, 1, (3+ ceil(self.combat /10))*1000, cooltime = -1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
 
         # 도트스킬은 크뎀 미적용이므로 AlphaSkill 추가할 필요없음.
-        DivineLeer = core.DotSkill("디바인 리어", 0, 1000, 200, 1, 99999999).wrap(core.SummonSkillWrapper)
+        DivineLeer = core.DotSkill("디바인 리어", 0, 1000, 200, 1, 99999999).wrap(core.DotSkillWrapper)
 
         #### 베타 ####
 

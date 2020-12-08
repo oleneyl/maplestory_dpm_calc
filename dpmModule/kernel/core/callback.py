@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     from .graph_element import GraphElement, Task
     from .result_object import ResultObject
 
+
 class Callback:
     def __init__(self, task: Task, time: float) -> None:
         self.task: Task = task

@@ -193,7 +193,7 @@ class JobGenerator(ck.JobGenerator):
         SWIFT_OF_THUNDER_HIT = 2
         DIVE_OF_EARTH_HIT = 3
         BREAK_BACK_HIT_RATE = 0
-        BREATH_OF_WIND_BONUS = False
+        BREATH_OF_WIND_BONUS = options.get("hp_rate", False)
 
         ######   Skill   ######
         #Buff skills
