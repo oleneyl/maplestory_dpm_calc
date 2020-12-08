@@ -84,14 +84,12 @@ class JobGenerator(ck.JobGenerator):
         POISON_NOVA_HIT = 4
 
         # Buff Skills
-        # Meditation = core.BuffSkill("메디테이션", 0, 240000, att = 30, rem = True, red = True).wrap(core.BuffSkillWrapper)
         Meditation = self.load_skill_wrapper("메디테이션")
-        EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
+        EpicAdventure = self.load_skill_wrapper("에픽 어드벤처")
         Infinity = adventurer.InfinityWrapper(self.combat)
         
         # Damage Skills
-        Paralyze = core.DamageSkill("페럴라이즈", 600, 220 + 3*self.combat, 7+1, modifier = core.CharacterModifier(pdamage = 10)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-
+        Paralyze = self.load_skill_wrapper("페럴라이즈", vEhc)
         TeleportMastery = core.DamageSkill("텔레포트 마스터리", 0, 272, 1, cooltime=-1).setV(vEhc, 9, 3, True).wrap(core.DamageSkillWrapper)
         
         ERUPTION_RATE = [0, 0, 20, 45, 80, 125]
