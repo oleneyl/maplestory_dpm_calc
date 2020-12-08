@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Type, TypeVar
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Type, TypeVar, Any
 
 from ..graph import EvaluativeGraphElement
 from .constant import NOTWANTTOEXECUTE
@@ -459,7 +459,8 @@ def _map_background_information(conf, **kwargs):
     return exported_conf
 
 
-def load_skill(skill_conf, background_information):
+def load_skill(skill_conf, background_information: Dict[str, Any]) -> AbstractSkill:
+    skill_conf = {k: v for k, v in skill_conf.items()}
     if 'modifier' in skill_conf:
         skill_conf['modifier'] = CharacterModifier.load(skill_conf['modifier'])
 
