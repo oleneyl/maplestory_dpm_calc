@@ -444,3 +444,34 @@ class DotSkill(SummonSkill):
             li = []
 
         return self._parse_list_info_into_string(li)
+
+
+def _map_background_information(conf, **kwargs):
+    global_variables = globals()
+    global_variables.update(kwargs)
+    exported_conf = {}
+    for k, v in conf.items():
+        if isinstance(v, str) and k != 'name':
+            assert 'import' not in v
+            exported_conf[k] = eval(v, global_variables)
+        else:
+            exported_conf[k] = v
+    return exported_conf
+
+
+def load_skill(skill_conf, background_information):
+    if 'modifier' in skill_conf:
+        skill_conf['modifier'] = CharacterModifier.load(skill_conf['modifier'])
+
+    skill_object_type = {
+        'DamageSkill': DamageSkill,
+        'SummonSkill': SummonSkill,
+        'BuffSkill': BuffSkill
+    }
+
+    SkillObject = skill_object_type[skill_conf['type']]
+    
+    argument_space = SkillObject.__init__.__code__.co_varnames
+    filtered_skill_conf = {k: v for k, v in skill_conf.items() if k in argument_space}
+    filtered_skill_conf = _map_background_information(filtered_skill_conf, **background_information)
+    return SkillObject(**filtered_skill_conf)
