@@ -7,6 +7,7 @@ from .jobclass import adventurer
 from .jobbranch import magicians
 from math import ceil
 from typing import Any, Dict
+import os
 
 class PoisonChainToxicWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2):
@@ -31,12 +32,8 @@ class PoisonChainToxicWrapper(core.SummonSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = (0, 40)
-        self.jobtype = "int"
-        self.jobname = "아크메이지불/독"
-        self.vEnhanceNum = 13
+        self.load(os.path.join(os.path.dirname(__file__), 'configs', 'archmageFb.json'))
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
-        self.preEmptiveSkills = 2
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -45,6 +42,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
+        '''        
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤", stat_main = 40)
@@ -61,16 +59,13 @@ class JobGenerator(ck.JobGenerator):
         
         return [HighWisdom, SpellMastery, MagicCritical, ElementalReset, 
                                     MasterMagic, ElementAmplication, ArcaneAim, UnstableMemorizePassive]
+        '''
+        default_list = super(JobGenerator, self).get_passive_skill_list(vEhc, chtr, options)
+        UnstableMemorizePassive = adventurer.UnstableMemorizePassiveWrapper(vEhc, 4, 4)
+        default_list += [UnstableMemorizePassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5*ceil(self.combat/2))
-        ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", pdamage_indep = 20)
-        ArcaneAim = core.InformedCharacterModifier("아케인 (실시간)", pdamage = 40)
-        PerventDrain = core.InformedCharacterModifier("퍼번트 드레인", pdamage_indep = 25)
-        ElementalResetActive = core.InformedCharacterModifier("엘리멘탈 리셋(사용)", prop_ignore = 10)
-        
-        return [WeaponConstant, Mastery, ExtremeMagic, PerventDrain, ArcaneAim, ElementalResetActive]
+        return default_list
+
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
@@ -89,7 +84,8 @@ class JobGenerator(ck.JobGenerator):
         POISON_NOVA_HIT = 4
 
         # Buff Skills
-        Meditation = core.BuffSkill("메디테이션", 0, 240000, att = 30, rem = True, red = True).wrap(core.BuffSkillWrapper)
+        # Meditation = core.BuffSkill("메디테이션", 0, 240000, att = 30, rem = True, red = True).wrap(core.BuffSkillWrapper)
+        Meditation = self.load_skill_wrapper("메디테이션")
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         Infinity = adventurer.InfinityWrapper(self.combat)
         
@@ -102,7 +98,8 @@ class JobGenerator(ck.JobGenerator):
         FlameHeize = core.DamageSkill("플레임 헤이즈", 1080, 202 + 3*self.combat, 15, cooltime = 10 * 1000, red=True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         MistEruption = core.DamageSkill("미스트 이럽션", 720, 45 + self.combat, 15*4, cooltime = 4 * 1000, red=True, modifier = core.CharacterModifier(armor_ignore = 40 + self.combat, pdamage_indep = ERUPTION_RATE[5]) + core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        DotPunisher = core.DamageSkill("도트 퍼니셔", 690, 400+vEhc.getV(0,0)*15, 5, cooltime = 25 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DotPunisher = self.load_skill_wrapper("도트 퍼니셔", vEhc)
+        # DotPunisher = core.DamageSkill("도트 퍼니셔", 690, 400+vEhc.getV(0,0)*15, 5, cooltime = 25 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         DotPunisherExceed = core.DamageSkill("도트 퍼니셔(초과)", 0, 400+vEhc.getV(0,0)*15, 5*(DOT_PUNISHER_HIT-1), modifier = core.CharacterModifier(pdamage_indep=-35)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         PoisonNova = core.DamageSkill("포이즌 노바", 570, 250 + 10*vEhc.getV(2,1), 12, cooltime = 25*1000, red = True).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
         PoisonNovaErupt = core.DamageSkill("포이즌 노바(폭발)", 0, 225 + 9*vEhc.getV(2,1), 12 * 3).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
