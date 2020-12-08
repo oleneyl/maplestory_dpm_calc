@@ -11,6 +11,8 @@ from ..kernel.core import (
     AbstractSkillWrapper,
     CharacterModifier,
     DamageSkillWrapper,
+    BuffSkillWrapper,
+    SummonSkillWrapper,
     ExtendedCharacterModifier,
     InformedCharacterModifier,
     SkillModifier,
@@ -20,6 +22,7 @@ from ..kernel.graph import (
     _unsafe_access_global_storage,
     initialize_global_properties,
 )
+from ..kernel.core.skill import load_skill, BuffSkill, DamageSkill, SummonSkill
 from ..status.ability import Ability_grade, Ability_option, Ability_tool
 from .doping import Doping
 from .hyperStat import HyperStat
@@ -37,6 +40,18 @@ ExMDF = ExtendedCharacterModifier
 - Some else Modifiers.
 """
 
+
+def _get_loaded_object_with_mapping(conf, loadable, **kwargs):
+    global_variables = globals()
+    global_variables.update(kwargs)
+    exported_conf = {}
+    for k, v in conf.items():
+        if isinstance(v, str) and k != 'name':
+            assert 'import' not in v
+            exported_conf[k] = eval(v, global_variables)
+        else:
+            exported_conf[k] = v
+    return loadable.load(exported_conf)
 
 class AbstractCharacter:
     # TODO : get/set :: use decorator? could be...
@@ -241,9 +256,31 @@ class JobGenerator:
         self.hyperStatPrefixed: int = 0
         self.conf: dict = None
 
+    def _load_skill(self, skill_name, vEhc, background_information={}):
+        skill_conf = self.conf['skills'][skill_name]
+        if 'name' not in skill_conf:
+            skill_conf['name'] = skill_name
+
+        if skill_conf.get('tier', -1) == 5:
+            lv = vEhc.getV(skill_conf['use_priority'], skill_conf['upgrade_priority'])
+            background_information['lv'] = lv
+
+        return load_skill(skill_conf, background_information)
+
+    def load_skill_wrapper(self, skill_name, vEhc=None):
+        background_information = self.conf.get('constant', {})
+        background_information['combat'] = self.combat
+        skill = self._load_skill(skill_name, vEhc, background_information=background_information)
+        if isinstance(skill, DamageSkill):
+            return skill.wrap(DamageSkillWrapper)
+        elif isinstance(skill, BuffSkill):
+            return skill.wrap(BuffSkillWrapper)
+        elif isinstance(skill, SummonSkill):
+            return skill.wrap(SummonSkillWrapper)
+
     def load(self, conf):
         if isinstance(conf, str):
-            with open(conf, 'r') as f:
+            with open(conf, encoding='utf-8') as f:
                 conf = json.load(f)
         
         self.conf = conf
@@ -321,20 +358,12 @@ class JobGenerator:
     def get_passive_skill_list(
         self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
     ) -> List[InformedCharacterModifier]:
-        def _get_passive_skill_with_mapping(conf, **kwargs):
-            global_variables = globals()
-            global_variables.update(kwargs)
-            exported_conf = {}
-            for k, v in conf.items():
-                if isinstance(v, str) and k != 'name':
-                    assert 'import' not in v
-                    exported_conf[k] = eval(v, global_variables)
-                else:
-                    exported_conf[k] = v
-            return InformedCharacterModifier.load(exported_conf)
-
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        return [_get_passive_skill_with_mapping(opt, passive_level=passive_level) for opt in self.conf['passive_skill_list']]
+        return [
+            _get_loaded_object_with_mapping(opt, InformedCharacterModifier, passive_level=passive_level)
+            for opt
+            in self.conf['passive_skill_list']
+        ]
 
     def build_not_implied_skill_list(
         self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
@@ -345,7 +374,11 @@ class JobGenerator:
     def get_not_implied_skill_list(
         self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
     ) -> List[InformedCharacterModifier]:
-        raise NotImplementedError("You must fill get_not_implied_skill_list function.")
+        return [
+            _get_loaded_object_with_mapping(opt, InformedCharacterModifier, combat=self.combat)
+            for opt
+            in self.conf['not_implied_skill_list']
+        ]
 
     def get_passive_skill_modifier(self) -> ExMDF:
         passive_modifier = ExMDF()
