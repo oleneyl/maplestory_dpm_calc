@@ -12,8 +12,9 @@ def export_configuration(jobname):
 
     v_builder = core.AlwaysMaximumVBuilder()
     gen = supplier.JobGenerator()
-    gen.vEhc = v_builder.build_enhancer(target, gen)
+    vEhc = v_builder.build_enhancer(target, gen)
+    gen.vEhc = vEhc
 
-    graph = gen.build(target)
+    graph = gen.build(vEhc, target, {})
 
     return graph.storage.export()
