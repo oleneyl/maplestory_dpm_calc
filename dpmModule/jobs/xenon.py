@@ -1,7 +1,7 @@
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
-from ..execution.rules import RuleSet
+from ..execution.rules import RuleSet, ConcurrentRunRule, ConditionRule
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import thieves, pirates
@@ -106,6 +106,11 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
+        ruleset.add_rule(ConcurrentRunRule('메가 스매셔', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('레디 투 다이', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('포톤 레이', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('엑스트라 서플라이', '서플러스 서플라이', lambda sk : sk.stack<sk._max), RuleSet.BASE)
         return ruleset
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -171,18 +176,18 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.get_weapon_att("에너지소드")
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
 
-        MegaSmasher = core.SummonSkill("메가 스매셔", 0, 250, 0, 1, 16000, cooltime=180000, rem=False).wrap(core.SummonSkillWrapper)
+        MegaSmasher = core.SummonSkill("메가 스매셔", 0, 250, 0, 0, 16000, cooltime=180000, rem=False).wrap(core.SummonSkillWrapper)
         MegaSmasherTick = core.DamageSkill("메가 스매셔(틱)", 0, 300+10*vEhc.getV(4, 4), 6).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
         OVERLOAD_TIME = 70
-        OverloadMode = core.BuffSkill("오버로드 모드", 720, OVERLOAD_TIME * 1000, cooltime=180000).wrap(core.BuffSkillWrapper)
+        OverloadMode = core.BuffSkill("오버로드 모드", 720, OVERLOAD_TIME*1000, cooltime=180000).wrap(core.BuffSkillWrapper)
         # 첫 공격은 항상 5100ms 후에 시작
         # 공격 주기는 3600ms~10800ms 중 랜덤
-        OverloadHit = core.SummonSkill("오버로드 모드(전류)", 0, (3600+10800)/2, 180+7*vEhc.getV(4, 4), 6*4, OVERLOAD_TIME * 1000 - 5100, cooltime=-1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
+        OverloadHit = core.SummonSkill("오버로드 모드(전류)", 0, (3600+10800)/2, 180+7*vEhc.getV(4, 4), 6*4, OVERLOAD_TIME*1000-5100, cooltime=-1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         OverloadHit_copy = core.SummonSkill("오버로드 모드(전류)(버추얼 프로젝션)", 0, (3600+10800)/2, (180+7*vEhc.getV(4, 4))*0.7, 6*4, OVERLOAD_TIME*1000-5100, cooltime=-1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
 
         # 하이퍼 적용됨
-        Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", 930, (30000 + 10000)/176, 250 + 10 * vEhc.getV(4, 4), 5, 30000 + 10000, cooltime=100000, modifier=core.CharacterModifier(pdamage=10)).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
+        Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", 930, (30000+10000)/176, 250+10*vEhc.getV(4, 4), 5, 30000+10000, cooltime=100000, modifier=core.CharacterModifier(pdamage=10)).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         Hologram_Fusion_Buff = core.BuffSkill("홀로그램 그래피티 : 융합 (버프)", 0, 30000+10000, pdamage=5+vEhc.getV(4, 4)//2, rem=False).wrap(core.BuffSkillWrapper)
 
         # 30회 발동, 발사 딜레이 생략, 퍼지롭으로 충전
