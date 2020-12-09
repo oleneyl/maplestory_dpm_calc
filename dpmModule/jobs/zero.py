@@ -73,8 +73,8 @@ class JobGenerator(ck.JobGenerator):
 
         # 4카5앱 임시 구현
         # 유니온 6000 기준 (17성 카벨모 vs 17성 카루타 모자)
-        LuckyHat_Temp_6000 = core.InformedCharacterModifier("카오스 벨룸의 헬름 (임시)", boss_pdamage=30) - core.ExtendedCharacterModifier(armor_ignore=10, stat_main=21, stat_sub=21, pstat_main=5, pstat_sub=5, att=3)
-        LuckyHat_Temp_8000 = core.InformedCharacterModifier("카오스 벨룸의 헬름 (임시)", boss_pdamage=30, att=50) - core.ExtendedCharacterModifier(armor_ignore=10, stat_main=30+31, stat_sub=31, pstat_main=3, pstat_sub=3, att=8)
+        LuckyHat_Temp_6000 = core.ExtendedCharacterModifier(boss_pdamage=30) - core.ExtendedCharacterModifier(armor_ignore=10, stat_main=21, stat_sub=21, pstat_main=5, pstat_sub=5, att=3)
+        LuckyHat_Temp_8000 = core.ExtendedCharacterModifier(boss_pdamage=30, att=50) - core.ExtendedCharacterModifier(armor_ignore=10, stat_main=30+31, stat_sub=31, pstat_main=3, pstat_sub=3, att=8)
         LuckyHat_Temp = core.InformedCharacterModifier.from_extended_modifier("카오스 벨룸의 헬름 (임시)", LuckyHat_Temp_6000)
 
         return [Mastery, ResolutionTime, LuckyHat_Temp]
