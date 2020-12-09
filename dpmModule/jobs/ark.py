@@ -388,7 +388,7 @@ class JobGenerator(ck.JobGenerator):
         RaptRestriction.onConstraint(core.ConstraintElement("게이지 150 이상", SpecterState, partial(SpecterState.judge, 150, 1)))
         RaptRestriction.onAfter(SpecterState.onoffController(True))
         RaptRestriction.onAfter(RaptRestrictionSummon)
-        RaptRestriction.onEventElapsed(RaptRestrictionEnd, 690+9000)
+        RaptRestriction.onAfter(RaptRestrictionEnd.controller(9000))
 
         EndlessPainRepeat = core.RepeatElement(EndlessPainTick, 15)
         EndlessPainRepeat.onAfter(core.RepeatElement(EndlessPainEnd_Link, 5))
