@@ -2,7 +2,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import InactiveRule, RuleSet, ConditionRule, MutualRule
+from ..execution.rules import DisableRule, InactiveRule, RuleSet, ConditionRule, MutualRule
 from . import globalSkill
 from .jobbranch import pirates
 from .jobclass import adventurer
@@ -63,8 +63,9 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(MutualRule('스티뮬레이트', '트랜스 폼'), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('스티뮬레이트', '에너지 차지', lambda sk: sk.judge(2000, -1) or sk.isStateOff()), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('유니티 오브 파워', '유니티 오브 파워(디버프)', lambda sk: sk.is_time_left(1000, -1)), RuleSet.BASE)
-        #ruleset.add_rule(MutualRule('타임 리프', '소울 컨트랙트'), RuleSet.BASE)
-        #ruleset.add_rule(InactiveRule('타임 리프', '소울 컨트랙트'), RuleSet.BASE)
+        # ruleset.add_rule(MutualRule('타임 리프', '소울 컨트랙트'), RuleSet.BASE)
+        # ruleset.add_rule(InactiveRule('타임 리프', '소울 컨트랙트'), RuleSet.BASE)
+        ruleset.add_rule(DisableRule('타임 리프'), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -224,7 +225,7 @@ class JobGenerator(ck.JobGenerator):
                 LuckyDice, Viposition, Stimulate, EpicAdventure, PirateFlag, Overdrive, Transform,
                 UnityOfPowerBuff, DragonStrikeBuff, EnergyCharge,
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), SoulContract] +\
-            [UnityOfPower, HowlingFistInit, Nautilus, DragonStrike, FuriousCharge, TransformEnergyOrbDummy, MirrorBreak, MirrorSpider] +\
+            [UnityOfPower, HowlingFistInit, Nautilus, DragonStrike, FuriousCharge, TransformEnergyOrbDummy, MirrorBreak, MirrorSpider, TimeLeap] +\
             [SerpentScrew, SerpentScrewDummy, StimulateSummon] +\
             [] +\
             [BasicAttackWrapper])
