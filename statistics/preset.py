@@ -278,7 +278,7 @@ presets = [
     Preset(
         id="adele",
         job="아델",
-        description="게더링, 블로섬 80% 히트, 레조넌스 10초마다",
+        description="게더링 80% 히트, 레조넌스 10초마다",
         options={},
         alt=0,
     ),
@@ -319,3 +319,7 @@ preset_dict = {el.id: el for el in presets}
 
 def get_preset(id: str):
     return preset_dict[id]
+
+
+def get_preset_list():
+    return presets

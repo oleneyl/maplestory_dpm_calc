@@ -1,13 +1,14 @@
 import argparse
-from dpmModule.statistics.preset import get_preset
+from pathlib import Path
 
-from dpmModule.jobs import jobMap, weaponList
 from dpmModule.character.characterKernel import ItemedCharacter, JobGenerator
 from dpmModule.character.characterTemplate import get_template_generator
 from dpmModule.execution import rules
+from dpmModule.jobs import jobMap, weaponList
 from dpmModule.kernel import core, policy
 from dpmModule.status.ability import Ability_grade
-from importlib import import_module
+
+from .preset import get_preset
 
 try:
     import pandas as pd
@@ -17,27 +18,19 @@ except ImportError:
 
 
 def get_args():
-    parser = argparse.ArgumentParser("DPM Test argument")
+    parser = argparse.ArgumentParser("Statistics saver argument")
     parser.add_argument(
         "--id", type=str, help="Target preset id to calculate statistics"
     )
-    parser.add_argument("--engine", type=str)
-    parser.add_argument(
-        "--calc", action="store_true", help="Calculate dpm and save data"
-    )
     parser.add_argument("--ulevel", type=int, default=8000)
-    parser.add_argument("--time", type=int, default=1800)
     parser.add_argument("--cdr", type=int, default=0)
+    parser.add_argument("--time", type=int, default=1800)
+    parser.add_argument("--task", default="dpm")
 
     return parser.parse_args()
 
 
-def load_engine(args, df: pd.DataFrame):
-    engine = import_module(f"dpmModule.statistics.{args.engine}")
-    engine.run(args, df)
-
-
-def save_data(args):
+def dpm(args):
     preset = get_preset(args.id)
     template = get_template_generator("high_standard")().get_template(args.ulevel)
     target: ItemedCharacter = template(weaponList[preset.job], args.cdr)
@@ -68,22 +61,54 @@ def save_data(args):
     dpm = analytics.get_dpm()
     print(preset.job, dpm)
 
-    log = analytics.get_log()
+    return analytics.get_log()
+
+
+def burst10(args):
+    preset = get_preset(args.id)
+    template = get_template_generator("high_standard")().get_template(args.ulevel)
+    target: ItemedCharacter = template(weaponList[preset.job], args.cdr)
+    gen: JobGenerator = jobMap[preset.job].JobGenerator()
+    v_builder = core.AlwaysMaximumVBuilder()
+    graph = gen.package(
+        target,
+        v_builder,
+        options=preset.options,
+        ulevel=args.ulevel,
+        weaponstat=[4, 9],
+        ability_grade=Ability_grade(4, 1),
+    )
+    sche = policy.AdvancedGraphScheduler(
+        graph,
+        policy.ListedFetchingPolicy(skill_ids=gen.get_skill_rotation_10sec(graph)),
+        [rules.UniquenessRule()],
+    )
+    analytics = core.StatAnalytics()
+    control = core.Simulator(sche, target, analytics)
+    control.start_simulation(args.time * 1000)
+    start, end, dpm, loss = analytics.get_peak(10000)
+    print(dpm)
+
+    return analytics.get_log()
+
+
+def save_data(args):
+    if args.task == "dpm":
+        log = dpm(args)
+    elif args.task == "burst10":
+        log = burst10(args)
+    else:
+        raise ValueError(args.task)
+
     df = pd.DataFrame.from_records(log)
     df["name"] = df["name"].astype("category")
     df["spec"] = df["spec"].astype("category")
-    df.to_pickle(f"./data/{args.id}.pkl")
+
+    Path("./data").mkdir(parents=True, exist_ok=True)
+    df.to_pickle(f"data/{args.task}_{args.id}_{args.ulevel}_{args.cdr}.pkl")
+
     return df
 
 
-def test(args):
-    if args.calc:
-        df = save_data(args)
-    else:
-        df = pd.read_pickle(f"./data/{args.id}.pkl")
-
-    load_engine(args, df)
-
-
 if __name__ == "__main__":
-    test(get_args())
+    save_data(get_args())
