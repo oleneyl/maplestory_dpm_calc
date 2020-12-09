@@ -80,6 +80,9 @@ class JobGenerator(ck.JobGenerator):
 
         return [WeaponConstant, Mastery, CombinationTraining]
 
+    def get_modifier_optimization_hint(self) -> core.CharacterModifier:
+        return core.CharacterModifier(boss_pdamage=10, armor_ignore=20)
+
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         하이퍼 : 쇼크웨이브 보너스어택 / 펀치-리인포스, 펀치-이그노어 가드, 릴파벙-리인포스, 릴파벙-숔웨리인포스
@@ -214,13 +217,12 @@ class JobGenerator(ck.JobGenerator):
         ReleaseHammer.onAfter(HammerSmash)
         ReleaseHammer.onAfter(DuckingDelay)
         
-        for wrp in [MagnumPunch, DoublePang, HammerSmash, BalkanPunch, BalkanPunchTick, BurningBreaker]:
+        for wrp in [MagnumPunch, DoublePang, HammerSmash, BalkanPunch, BalkanPunchTick, BurningBreakerRush]:
             wrp.onAfter(RevolvingCannonMastery)
 
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
-        # 리스트 내용 검증 필요
-        for sk in [ReleaseHammer, BurningBreaker, HammerSmashWave, Mag_Pang]:
+        for sk in [ReleaseFileBunker, BurningBreaker, HammerSmash, MagnumPunch, DoublePang, BalkanPunch, BalkanPunchTick, BurningBreakerRush]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
