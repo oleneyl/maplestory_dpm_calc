@@ -346,9 +346,6 @@ class AbstractSkillWrapper(GraphElement):
 
 class BuffSkillWrapper(AbstractSkillWrapper):
     def __init__(self, skill: BuffSkill, name: str = None) -> None:
-        self._disabledResultobjectCache = ResultObject(
-            0, CharacterModifier(), 0, 0, sname=skill.name, spec="graph control"
-        )
         super(BuffSkillWrapper, self).__init__(skill, name=name)
         self.set_flag(self.Flag_BuffSkill)
         self.disabledModifier = CharacterModifier()
@@ -373,14 +370,14 @@ class BuffSkillWrapper(AbstractSkillWrapper):
 
     def set_disabled(self) -> ResultObject:
         self.timeLeft = 0
-        return self._disabledResultobjectCache
+        return self._result_object_cache
 
     def set_disabled_and_time_left(self, time: float) -> ResultObject:
         self.timeLeft = 0
         self.cooltimeLeft = time
         if time == -1:
             self.cooltimeLeft = NOTWANTTOEXECUTE
-        return self._disabledResultobjectCache
+        return self._result_object_cache
 
     # TODO : can make this process more faster.. maybe
     def spend_time(self, time: float) -> None:
@@ -557,6 +554,35 @@ class StackDamageSkillWrapper(DamageSkillWrapper):
         return self.skill.hit * stack
 
 
+class StackableDamageSkillWrapper(DamageSkillWrapper):
+    def __init__(self, skill: AbstractSkill, max_stack: int) -> None:
+        super(StackableDamageSkillWrapper, self).__init__(skill)
+        self.max_stack = max_stack
+        self.stack = self.max_stack
+
+    def spend_time(self, time: float) -> None:
+        super(StackableDamageSkillWrapper, self).spend_time(time)
+        if self.cooltimeLeft <= 0:
+            self.cooltimeLeft = self.skill.cooltime
+            self.stack = min(self.stack + 1, self.max_stack)
+
+    def _use(self, skill_modifier: SkillModifier) -> ResultObject:
+        self.stack -= 1
+        callbacks = self.create_callbacks(skill_modifier=skill_modifier)
+        return ResultObject(
+            self.get_delay(),
+            self.get_modifier(),
+            self.get_damage(),
+            self.get_hit(),
+            sname=self.skill.name,
+            spec=self.skill.spec,
+            callbacks=callbacks,
+        )
+
+    def is_available(self) -> bool:
+        return self.stack > 0
+
+
 class SummonSkillWrapper(AbstractSkillWrapper):
     def __init__(
         self,
@@ -633,25 +659,15 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         )
 
     def _useTick(self) -> ResultObject:
-        if self.is_active() and self.tick <= 0:
-            self.tick += self.get_delay()
-            return ResultObject(
-                0,
-                self.get_modifier(),
-                self.get_damage(),
-                self.get_hit(),
-                sname=self.skill.name,
-                spec=self.skill.spec,
-            )
-        else:
-            return ResultObject(
-                0,
-                self.disabledModifier,
-                0,
-                0,
-                sname=self.skill.name,
-                spec=self.skill.spec,
-            )
+        self.tick += self.get_delay()
+        return ResultObject(
+            0,
+            self.get_modifier(),
+            self.get_damage(),
+            self.get_hit(),
+            sname=self.skill.name,
+            spec=self.skill.spec,
+        )
 
     def build_periodic_task(self, skill_modifier: SkillModifier) -> Task:
         task = Task(self, self._useTick)

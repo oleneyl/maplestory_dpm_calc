@@ -51,6 +51,11 @@ class ArrowOfStormWrapper(core.DamageSkillWrapper):
         self.currentTime += time
         super(ArrowOfStormWrapper, self).spend_time(time)
 
+    def _use(self, skill_modifier: core.SkillModifier) -> core.ResultObject:
+        result = super(ArrowOfStormWrapper, self)._use(skill_modifier)
+        self.lastUsed = self.currentTime + result.delay
+        return result
+
     def get_delay(self) -> float:
         """
         현재 시간 > 마지막 시전 시간 + 딜레이 인 경우에 선딜을 추가함.
@@ -59,7 +64,6 @@ class ArrowOfStormWrapper(core.DamageSkillWrapper):
         delay = super().get_delay()
         if self.currentTime > self.lastUsed:
             delay += 540
-        self.lastUsed = self.currentTime + delay
         return delay
 
 

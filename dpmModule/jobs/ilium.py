@@ -49,7 +49,7 @@ class SoulOfCrystalWrapper(core.BuffSkillWrapper):
 
     def turnOff(self):
         self.timeLeft = 0
-        return self._disabledResultobjectCache
+        return self._result_object_cache
 
     def turnOffController(self):
         task = core.Task(self, self.turnOff)
@@ -71,21 +71,19 @@ class RiyoWrapper(core.SummonSkillWrapper):
         return super(RiyoWrapper, self)._use(skill_modifier)
     
     def _useTick(self):
-        if self.is_active() and self.tick <= 0:
-            if self.count < 10:
-                damage = 160
-            if self.count < 20:
-                damage = 200
-            else:
-                damage = 300
-            self.count += 1
-            if self.count >= 40:
-                self.count = 0
-            
-            self.tick += self.skill.delay
-            return core.ResultObject(0, self.get_modifier(), damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
+        result = super(RiyoWrapper, self)._useTick()
+        self.count += 1
+        if self.count >= 40:
+            self.count = 0
+        return result
+
+    def get_damage(self) -> float:
+        if self.count < 10:
+            return 160
+        elif self.count < 20:
+            return 200
         else:
-            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+            return 300
 
 class GramHolderWrapper(core.SummonSkillWrapper):
     """
@@ -93,26 +91,26 @@ class GramHolderWrapper(core.SummonSkillWrapper):
     """
     def __init__(self, skill):
         self.chargeBefore = 0
-        self.crystalCharge = None
+        self.crystalCharge: IliumStackWrapper = None
         self.gloryWing = None
         super(GramHolderWrapper, self).__init__(skill)
     
-    def registerCrystalCharge(self, skill):
+    def registerCrystalCharge(self, skill: IliumStackWrapper):
         self.crystalCharge = skill
 
     def registerGloryWing(self, skill):
         self.gloryWing = skill
     
     def _useTick(self):
-        if self.is_active() and self.tick <= 0:
-            modifier = self.get_modifier()
-            if self.gloryWing.is_active() or self.crystalCharge.judge(self.chargeBefore + 3, 1):
-                modifier = modifier + core.CharacterModifier(pdamage_indep = 100)
-            self.chargeBefore = self.crystalCharge.stack
-            self.tick += self.skill.delay
-            return core.ResultObject(0, modifier, self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
-        else:
-            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+        result = super(GramHolderWrapper, self)._useTick()
+        self.chargeBefore = self.crystalCharge.stack
+        return result
+    
+    def get_modifier(self) -> core.CharacterModifier:
+        modifier = super(GramHolderWrapper, self).get_modifier()
+        if self.gloryWing.is_active() or self.crystalCharge.judge(self.chargeBefore + 3, 1):
+            modifier = modifier + core.CharacterModifier(pdamage_indep=100)
+        return modifier
     
 class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):

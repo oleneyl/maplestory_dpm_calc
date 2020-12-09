@@ -58,10 +58,13 @@ class MirrorSpiderWrapper(core.SummonSkillWrapper):
         skill = core.SummonSkill("스파이더 인 미러(거울 속의 거미)", 0, 900, 175+7*vEhc.getV(num1, num2), 8, 50*1000, cooltime=-1, modifier=modifier)
         super(MirrorSpiderWrapper, self).__init__(skill)
 
-    def get_delay(self) -> float:
-        delay = self.delays[self.hit_count]
+    def _useTick(self) -> core.ResultObject:
+        result = super(MirrorSpiderWrapper, self)._useTick()
         self.hit_count = (self.hit_count + 1) % 5
-        return delay
+        return result
+
+    def get_delay(self) -> float:
+        return self.delays[self.hit_count]
 
     def ensure(self, chtr: AbstractCharacter) -> bool:
         return chtr.level >= 235

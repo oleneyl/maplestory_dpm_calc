@@ -84,15 +84,12 @@ class PunishingResonatorWrapper(core.SummonSkillWrapper):
         ]
         self.vlevel = vEhc.getV(3,2)
         self.getState = stateGetter
-    
-    def _useTick(self):
-        if self.is_active() and self.tick <= 0:
-            self.tick += self.skill.delay
 
-            damage, hit = self.skillList[self.getState()]
-            return core.ResultObject(0, self.get_modifier(), damage, hit, sname = self.skill.name, spec = self.skill.spec)
-        else:
-            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+    def get_damage(self) -> float:
+        return self.skillList[self.getState()][0]
+
+    def get_hit(self) -> float:
+        return self.skillList[self.getState()][1]
 
 class LightAndDarknessWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc, num1, num2):
