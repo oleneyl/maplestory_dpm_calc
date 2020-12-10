@@ -65,6 +65,8 @@ class JobGenerator(ck.JobGenerator):
         얼닼사는 스프 사용중에만 사용
         레투다를 2번에 한번씩 스프에 맞춰 사용
         '''
+        SPREAD_HIT = 3 - options.get("spread_loss", 0)
+
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         #Buff skills
         ShadowPartner = core.BuffSkill("쉐도우 파트너", 0, 200 * 1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
@@ -94,7 +96,7 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         #조건부 파이널어택으로 설정함.
-        SpreadThrowTick = core.DamageSkill("쿼드러플 스로우(스프레드)", 0, (378 + 4 * self.combat)*0.85, 5*3, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        SpreadThrowTick = core.DamageSkill("쿼드러플 스로우(스프레드)", 0, (378 + 4 * self.combat)*0.85, 5*SPREAD_HIT, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         SpreadThrowInit = core.BuffSkill("스프레드 스로우", 540, (20+vEhc.getV(0,0))*1000, cooltime = 180*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
         Pungma = core.SummonSkill("풍마수리검", 360, 100, 0, 1, 1450, cooltime = 25*1000, red=True).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)  #10타 가정
@@ -120,7 +122,7 @@ class JobGenerator(ck.JobGenerator):
             jobutils.create_auxilary_attack(sk, 0.7, nametag='(쉐도우파트너)')
 
         # 마크 오브 나이트로드
-        SpreadThrowTick.onAfter(core.RepeatElement(MarkOfNightlord, 15))
+        SpreadThrowTick.onAfter(core.RepeatElement(MarkOfNightlord, 5*SPREAD_HIT))
         Pungma.onTick(MarkOfNightlordPungma)
         ThrowBlasting.onAfter(MarkOfNightlord)
         
