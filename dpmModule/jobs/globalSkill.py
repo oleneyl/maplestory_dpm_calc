@@ -103,8 +103,8 @@ class AeonianRiseWrapper(core.DamageSkillWrapper):
         return False
 
 
-def GenesisSkillBuilder(chtr: AbstractCharacter):
-    return TandadianRuinWrapper(chtr), AeonianRiseWrapper(chtr)
+def GenesisSkillBuilder():
+    return TandadianRuinWrapper(), AeonianRiseWrapper()
 
 
 # 미완성 코드
