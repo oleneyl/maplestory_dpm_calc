@@ -143,7 +143,7 @@ presets = [
         job="미하일",
         description="솔플, 로얄가드 안씀",
         options={"royal_guard": False},
-        alt=0,
+        alt=1,
     ),
     Preset(
         id="flamewizard",
