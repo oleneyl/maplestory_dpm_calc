@@ -706,6 +706,39 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         self._runtime_modifier_list.append((skill, fn))
 
 
+class StackableSummonSkillWrapper(SummonSkillWrapper):
+    def __init__(self, skill: AbstractSkill, max_stack: int) -> None:
+        super(StackableSummonSkillWrapper, self).__init__(skill)
+        self.max_stack = max_stack
+        self.stack = self.max_stack
+
+    def spend_time(self, time: float) -> None:
+        super(StackableSummonSkillWrapper, self).spend_time(time)
+        if self.cooltimeLeft <= 0:
+            self.cooltimeLeft = self.skill.cooltime
+            self.stack = min(self.stack + 1, self.max_stack)
+
+    def _use(self, skill_modifier: SkillModifier) -> ResultObject:
+        self.tick = 0
+        self.timeLeft = self.skill.remain * (
+            1 + 0.01 * skill_modifier.summon_rem * self.skill.rem
+        )
+        self.stack -= 1
+        callbacks = self.create_callbacks(skill_modifier=skill_modifier, duration=self.timeLeft)
+        return ResultObject(
+            self.get_summon_delay(),
+            self.disabledModifier,
+            0,
+            0,
+            sname=self.skill.name,
+            spec=self.skill.spec,
+            callbacks=callbacks,
+        )
+
+    def is_available(self) -> bool:
+        return self.stack > 0 and self.is_not_active()
+
+
 class DotSkillWrapper(SummonSkillWrapper):
     def __init__(
         self,
