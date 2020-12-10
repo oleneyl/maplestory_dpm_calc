@@ -95,6 +95,13 @@ presets = [
         alt=0,
     ),
     Preset(
+        id="nightlord_spread_loss_1",
+        job="나이트로드",
+        description="스프 1줄샘",
+        options={"spread_loss": 1},
+        alt=1,
+    ),
+    Preset(
         id="shadower",
         job="섀도어",
         description="KP3 1타 94.6% / 2타 100%",
@@ -129,6 +136,13 @@ presets = [
         job="미하일",
         description="솔플, 로얄가드 쿨마다",
         options={},
+        alt=0,
+    ),
+    Preset(
+        id="michile_royal_guard_false",
+        job="미하일",
+        description="솔플, 로얄가드 안씀",
+        options={"royal_guard": False},
         alt=0,
     ),
     Preset(
