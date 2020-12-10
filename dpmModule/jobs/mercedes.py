@@ -8,26 +8,46 @@ from .jobbranch import bowmen
 from math import ceil
 from typing import Any, Dict
 
+
 class ElementalGhostWrapper(core.BuffSkillWrapper):
-    def __init__(self, vEhc, num1, num2):
-        skill = core.BuffSkill("엘리멘탈 고스트", 720, (40+vEhc.getV(num1,num2))*1000, cooltime=150*1000, red=True)
+    def __init__(self, vEhc, num1, num2, sylphidia: core.BuffSkillWrapper):
+        skill = core.BuffSkill("엘리멘탈 고스트", 720, (40+vEhc.getV(num1, num2))*1000, cooltime=150*1000, red=True)
         super(ElementalGhostWrapper, self).__init__(skill)
         self.ratio = (30 + vEhc.getV(num1, num2)) * 0.01
         self.prob_slow = 0.9 * (1 + 0.7 * (1 + 0.5))
         self.prob_fast = 0.45 * (1 + 0.35 * (1 + 0.25))
+        self.sylphidia = sylphidia
 
-    def addSkill(self, skill_wrapper, is_fast, is_final_attack):
+    def addSkill(self, skill_wrapper: core.DamageSkillWrapper, is_fast: bool, is_final_attack: bool):
         p = self.prob_fast if is_fast else self.prob_slow
         ratio = 1 if is_final_attack else self.ratio
-        
+
         original_skill = skill_wrapper.skill
-        copial_skill = core.DamageSkill(name = DynamicVariableOperation.reveal_argument(original_skill.name) + f"(엘고)",
-            delay = DynamicVariableOperation.wrap_argument(0),
-            damage = original_skill.damage * DynamicVariableOperation.wrap_argument(ratio),
-            hit = original_skill.hit * p,
-            modifier=original_skill._static_skill_modifier).wrap(core.DamageSkillWrapper)
-        
-        skill_wrapper.onAfter(core.OptionalElement(self.is_active, copial_skill, name="엘고 ON"))
+        copial_skill = core.DamageSkill(
+            name=DynamicVariableOperation.reveal_argument(original_skill.name) + "(엘고)",
+            delay=0,
+            damage=original_skill.damage * ratio,
+            hit=original_skill.hit * p,
+            modifier=original_skill._static_skill_modifier
+        ).wrap(core.DamageSkillWrapper)
+
+        if not is_final_attack:
+            skill_wrapper.add_runtime_modifier(
+                self.sylphidia,
+                lambda sk: core.CharacterModifier(pdamage_indep=p * ratio * 100)
+                if sk.is_active()
+                and self.is_active()  # TODO: runtime_modifier에 전달하지 않은 스킬을 참조하고 있음. runtime_modifier 확장할 것.
+                else core.CharacterModifier()
+            )
+
+        skill_wrapper.onAfter(
+            core.OptionalElement(
+                lambda: self.is_active() and self.sylphidia.is_not_active(),
+                copial_skill,
+                name="엘고 ON, 실피디아 OFF"
+            )
+        )
+
 
 class SylphidiaDamageSkill(core.DamageSkillWrapper):
     """
@@ -138,7 +158,7 @@ class JobGenerator(ck.JobGenerator):
         
         # 5th
         Sylphidia = core.BuffSkill("실피디아", 0, (30 + vEhc.getV(5,5)//2) * 1000, cooltime = 150 * 1000, red=True, patt = (5+vEhc.getV(5,5)//2)).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) # 정보 없음
-        ElementalGhost = ElementalGhostWrapper(vEhc, 0, 0)
+        ElementalGhost = ElementalGhostWrapper(vEhc, 0, 0, sylphidia=Sylphidia)
         ElementalGhostSpirit = core.DamageSkill("엘리멘탈 고스트(정령의 기운)", 0, 450+15*vEhc.getV(0,0), 8, cooltime=10*1000).wrap(core.DamageSkillWrapper)
         IrkilaBreathInit = core.DamageSkill("이르칼라의 숨결", 900, 0, 0, cooltime = 150 * 1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         IrkilaBreathTick = core.DamageSkill("이르칼라의 숨결(틱)", 150, 400+16*vEhc.getV(1,1), 8).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
