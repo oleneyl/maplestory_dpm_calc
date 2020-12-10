@@ -1,4 +1,5 @@
 import argparse
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 from dpmModule.character.characterKernel import ItemedCharacter, JobGenerator
@@ -8,7 +9,7 @@ from dpmModule.jobs import jobMap, weaponList
 from dpmModule.kernel import core, policy
 from dpmModule.status.ability import Ability_grade
 
-from .preset import get_preset
+from .preset import get_preset, get_preset_list
 
 try:
     import pandas as pd
@@ -26,6 +27,8 @@ def get_args():
     parser.add_argument("--cdr", type=int, default=0)
     parser.add_argument("--time", type=int, default=1800)
     parser.add_argument("--task", default="dpm")
+    parser.add_argument("--all", action="store_true")
+    parser.add_argument("--thread", type=int, default=4)
 
     return parser.parse_args()
 
@@ -110,5 +113,22 @@ def save_data(args):
     return df
 
 
+def save_all(args):
+    presets = get_preset_list()
+    tasks = [
+        argparse.Namespace(
+            id=id, ulevel=args.ulevel, cdr=args.cdr, time=args.time, task=args.task
+        )
+        for id, *_ in presets
+    ]
+    pool = ProcessPoolExecutor(max_workers=args.thread)
+    res = pool.map(save_data, tasks)
+    return list(res)
+
+
 if __name__ == "__main__":
-    save_data(get_args())
+    args = get_args()
+    if args.all is True:
+        save_all(args)
+    else:
+        save_data(args)
