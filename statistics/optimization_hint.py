@@ -1,5 +1,4 @@
 import argparse
-from typing import Tuple
 
 import pandas as pd
 from dpmModule.character.characterKernel import ItemedCharacter, JobGenerator
@@ -35,7 +34,7 @@ def armor_float_to_percent(num: float):
     return 100 - num * 100
 
 
-def get_modifier(args) -> Tuple[core.CharacterModifier, core.CharacterModifier]:
+def get_modifier(args) -> core.CharacterModifier:
     preset = get_preset(args.id)
     template = get_template_generator("high_standard")().get_template(args.ulevel)
     target: ItemedCharacter = template(weaponList[preset.job], args.cdr)
@@ -49,11 +48,11 @@ def get_modifier(args) -> Tuple[core.CharacterModifier, core.CharacterModifier]:
         weaponstat=[4, 9],
         ability_grade=Ability_grade(4, 1),
     )
-    return target.get_base_modifier(), graph.get_default_buff_modifier()
+    return graph.get_default_buff_modifier()
 
 
 def optimization_hint(args, df: pd.DataFrame):
-    base_modifier, buff_modifier = get_modifier(args)
+    buff_modifier = get_modifier(args)
 
     df = df[["name", "deal", "mdf"]]
     df = df.loc[df["deal"] > 0]
