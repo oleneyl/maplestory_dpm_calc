@@ -137,6 +137,9 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'buff_rem')
         self.preEmptiveSkills = 1
 
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(pdamage=24, armor_ignore=5)
+
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 

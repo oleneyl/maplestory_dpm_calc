@@ -27,7 +27,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 2
     
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 20)
+        return core.CharacterModifier(pdamage=50, armor_ignore=20, patt=15)
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat

@@ -27,6 +27,9 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule('다크 플레어', '스프레드 스로우'), RuleSet.BASE)
         return ruleset
 
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(pdamage=45)
+
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 

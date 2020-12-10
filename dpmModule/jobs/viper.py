@@ -68,6 +68,9 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(DisableRule('타임 리프'), RuleSet.BASE)
         return ruleset
 
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(pdamage=49, armor_ignore=15.3, crit_damage=39, patt=2.4)
+
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         CriticalRoar = core.InformedCharacterModifier("크리티컬 로어",crit = 20, crit_damage = 5)
         MentalClearity = core.InformedCharacterModifier("멘탈 클리어리티",att = 30)

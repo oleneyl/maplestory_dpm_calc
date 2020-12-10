@@ -138,6 +138,9 @@ class JobGenerator(ck.JobGenerator):
         # ruleset.add_rule(ConcurrentRunRule("크리스탈 이그니션(시전)", "글로리 윙(진입)"), RuleSet.BASE)
         # ruleset.add_rule(ConditionRule("글로리 윙(진입)", "크리스탈 이그니션(시전)", lambda x:x.is_cooltime_left(20000, 1) or x.is_cooltime_left(10000, -1)), RuleSet.BASE)
         return ruleset
+
+    def get_modifier_optimization_hint(self) -> core.CharacterModifier:
+        return core.CharacterModifier(boss_pdamage=108)
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         # 앱솔 무기 마력 241
