@@ -187,6 +187,9 @@ class JobGenerator(ck.JobGenerator):
         elif DEALCYCLE == "blast_discharge":
             BasicAttack = CardinalBlast
             Talent2 = None
+            BlackJack.onBefore(
+                core.DamageSkill("연계 취소 딜레이", 360-210, 0, 0).wrap(core.DamageSkillWrapper)
+            ) # 블디 연계 취소 딜레이, 가장 자주 사용되는 블랙잭에 걸어둠. TODO: 연계 취소 딜레이를 시뮬레이터에 구현
         else:
             raise ValueError(DEALCYCLE)
 
