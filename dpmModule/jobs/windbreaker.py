@@ -16,6 +16,9 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "윈드브레이커"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
 
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(pdamage=45, armor_ignore=15)
+
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
@@ -36,9 +39,6 @@ class JobGenerator(ck.JobGenerator):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5*ceil(passive_level / 2))
         
         return [WeaponConstant, Mastery]
-
-    def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(pdamage = 45, armor_ignore = 15)
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''

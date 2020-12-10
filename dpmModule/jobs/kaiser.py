@@ -163,6 +163,9 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule('마제스티 오브 카이저', '파이널 피규레이션'), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('어드밴스드 윌 오브 소드', '윌 오브 소드: 스트라이크', lambda sk: sk.is_cooltime_left(10000, 1)), RuleSet.BASE)
         return ruleset
+
+    def get_modifier_optimization_hint(self) -> core.CharacterModifier:
+        return core.CharacterModifier(pdamage=44, armor_ignore=17)
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat

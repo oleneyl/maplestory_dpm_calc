@@ -84,7 +84,7 @@ class JobGenerator(ck.JobGenerator):
         return [ArmorSplit]
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(crit=15, pdamage=80, armor_ignore=20, crit_damage=25)
+        return core.CharacterModifier(crit=15, pdamage=75, armor_ignore=20, crit_damage=22)
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''

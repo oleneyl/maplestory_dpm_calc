@@ -100,6 +100,9 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         return ruleset
 
+    def get_modifier_optimization_hint(self) -> core.CharacterModifier:
+        return core.CharacterModifier(pdamage=66, armor_ignore=25)
+
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         # 매직 서킷: 앱솔 기준 15.4
         WEAPON_ATT = jobutils.get_weapon_att("튜너")
