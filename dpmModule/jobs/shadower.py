@@ -18,7 +18,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 2
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(pdamage = 70, armor_ignore = 20)
+        return core.CharacterModifier(pdamage=102, armor_ignore=26.8, crit_damage=5)
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -95,7 +95,7 @@ class JobGenerator(ck.JobGenerator):
         
         BailOfShadow = core.SummonSkill("베일 오브 섀도우", 900 + 120, 12000 / 14, 800, 1, 12*1000, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper) # 다크 사이트 딜레이 합산
 
-        DarkFlare = core.SummonSkill("다크 플레어", 600, 60000 / 62, 360, 1, 60*1000, cooltime = 60000, red=True).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)
+        DarkFlare = core.SummonSkill("다크 플레어", 600, 60000 / 62, 360, 1, 60*1000, cooltime = 60000, red=True, rem=True).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)
     
         Smoke = core.BuffSkill("연막탄", 900 + 120, 30000, cooltime = (150-2*self.combat)*1000, crit_damage = 20+ceil(self.combat/3), red=True).wrap(core.BuffSkillWrapper) # 다크 사이트 딜레이 합산
         Venom = core.DotSkill("페이탈 베놈", 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 89999 * 1000).wrap(core.DotSkillWrapper)
@@ -165,7 +165,7 @@ class JobGenerator(ck.JobGenerator):
         Eviscerate.onAfter(MesoStack.stackController(7*2*0.4, name = "메소 생성"))
         Eviscerate.protect_from_running()
 
-        ShadowFormation.onAfter(ShadowFormationFinal.controller(8000))
+        ShadowFormation.onEventEnd(ShadowFormationFinal)
         
         Assasinate = core.OptionalElement(AdvancedDarkSight.is_active, Assasinate1_D, Assasinate1, name = "닼사 여부")
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)

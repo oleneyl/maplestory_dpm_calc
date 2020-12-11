@@ -45,6 +45,16 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 15
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'mess')
         self.preEmptiveSkills = 2
+        
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(InactiveRule("파쇄철조-회", "파쇄철조-반"), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("소혼 장막(시전)", "진 귀참", lambda x: not x.is_available()), RuleSet.BASE)
+        #ruleset.add_rule(ReservationRule("소울 컨트랙트", "정령 집속"), RuleSet.BASE)
+        return ruleset
+
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(pdamage=96, armor_ignore=20, crit_damage=5)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -74,13 +84,6 @@ class JobGenerator(ck.JobGenerator):
         WeaknessFinding_Bonus = core.InformedCharacterModifier("약점 간파(보너스)", crit_damage = (20+passive_level//3) * WEAKNESS_BONUS)
         
         return [WeaponConstant, Mastery, Weakness, WeaknessFinding_Bonus]
-        
-    def get_ruleset(self):
-        ruleset = RuleSet()
-        ruleset.add_rule(InactiveRule("파쇄철조-회", "파쇄철조-반"), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule("소혼 장막(시전)", "진 귀참", lambda x: not x.is_available()), RuleSet.BASE)
-        #ruleset.add_rule(ReservationRule("소울 컨트랙트", "정령 집속"), RuleSet.BASE)
-        return ruleset
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''

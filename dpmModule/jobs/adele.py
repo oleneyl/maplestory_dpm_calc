@@ -100,6 +100,9 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         return ruleset
 
+    def get_modifier_optimization_hint(self) -> core.CharacterModifier:
+        return core.CharacterModifier(pdamage=66, armor_ignore=25)
+
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         # 매직 서킷: 앱솔 기준 15.4
         WEAPON_ATT = jobutils.get_weapon_att("튜너")
@@ -254,13 +257,13 @@ class JobGenerator(ck.JobGenerator):
 
         # 루인
         Ruin.onAfter(RuinFirstTick)
-        Ruin.onAfter(RuinSecondTick.controller(2000))
+        RuinFirstTick.onEventEnd(RuinSecondTick)
 
         # 리스토어
         Restore.onAfter(RestoreTick)
 
         # 테리토리
-        Territory.onAfter(TerritoryEnd.controller(7000+4000))
+        Territory.onEventEnd(TerritoryEnd)
 
         # 레조넌스
         Resonance.onAfter(ResonanceStack)
@@ -278,7 +281,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
                     AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive, FloraGoddessBless,
                     globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract()] +\
-                [Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider, Shard] +\
+                [EtherTick, Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider, Shard] +\
                 [Order, Wonder, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, Scool, ManaStorm] +\
                 [] +\
                 [Divide])        
