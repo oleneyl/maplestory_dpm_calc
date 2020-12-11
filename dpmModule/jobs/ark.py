@@ -142,7 +142,7 @@ class AmplifiedSpellBuffWrapper(core.BuffSkillWrapper):
         self.timeLeft = self.csa_timeLeft()
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         delay = self.get_delay()
-        callbacks = self.create_callbacks(duration=self.timeLeft)
+        callbacks = self.create_callbacks(skill_modifier=skill_modifier, duration=self.timeLeft)
         return core.ResultObject(delay, core.CharacterModifier(), 0, 0, 
                                 sname = self.skill.name, 
                                 spec = self.skill.spec, 
@@ -159,7 +159,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 2
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(crit=20)
+        return core.CharacterModifier(crit=20, pdamage=71, boss_pdamage=53, armor_ignore=29.6)
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -388,7 +388,7 @@ class JobGenerator(ck.JobGenerator):
         RaptRestriction.onConstraint(core.ConstraintElement("게이지 150 이상", SpecterState, partial(SpecterState.judge, 150, 1)))
         RaptRestriction.onAfter(SpecterState.onoffController(True))
         RaptRestriction.onAfter(RaptRestrictionSummon)
-        RaptRestriction.onEventElapsed(RaptRestrictionEnd, 690+9000)
+        RaptRestriction.onAfter(RaptRestrictionEnd.controller(9000))
 
         EndlessPainRepeat = core.RepeatElement(EndlessPainTick, 15)
         EndlessPainRepeat.onAfter(core.RepeatElement(EndlessPainEnd_Link, 5))

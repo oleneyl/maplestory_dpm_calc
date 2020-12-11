@@ -16,6 +16,9 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "윈드브레이커"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
 
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(pdamage=45, armor_ignore=15)
+
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
@@ -36,9 +39,6 @@ class JobGenerator(ck.JobGenerator):
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5 + 0.5*ceil(passive_level / 2))
         
         return [WeaponConstant, Mastery]
-
-    def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(pdamage = 45, armor_ignore = 15)
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
@@ -89,17 +89,40 @@ class JobGenerator(ck.JobGenerator):
         #Summon Skills
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 5, 5)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0) # TODO: 윔 발생여부 확인할것
-        HowlingGail = core.SummonSkill("하울링 게일", 630, 150, 250 + 10*vEhc.getV(1, 1), 3, 150*58-1, cooltime = 20 * 1000).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper) #58타
-        WindWall = core.SummonSkill("윈드 월", 720, 2000, 550 + vEhc.getV(2, 2)*22, 5, 45 * 1000, cooltime = 90 * 1000, red=True).isV(vEhc, 2, 2).wrap(core.SummonSkillWrapper)
-        WindWallExceed = core.SummonSkill("윈드 월(초과)", 720, 2000, (550 + vEhc.getV(2, 2)*22) / 2, 5 * 2 , 45 * 1000, cooltime=-1).isV(vEhc, 2, 2).wrap(core.SummonSkillWrapper)
+        HowlingGail = core.StackableSummonSkillWrapper(
+            core.SummonSkill(
+                "하울링 게일",
+                summondelay=630,
+                delay=150,
+                damage=250 + 10*vEhc.getV(1, 1),
+                hit=3,
+                remain=150*58-1,  #58타
+                cooltime = 20 * 1000
+            )
+            .isV(vEhc, 1, 1),
+            2
+        )
+        WindWall = (
+            core.SummonSkill(
+                "윈드 월",
+                summondelay=720,
+                delay=2000,
+                damage=550 + vEhc.getV(2, 2) * 22,
+                hit=5,
+                remain=45 * 1000,
+                cooltime = 90 * 1000,
+                red=True,
+                modifier=core.CharacterModifier(pdamage_indep=-50)
+            )
+            .isV(vEhc, 2, 2)
+            .wrap(core.SummonSkillWrapper)
+        )
         VortexSphere = core.SummonSkill("볼텍스 스피어", 720, 180, 400+16*vEhc.getV(0,0), 6, 180*17-1, cooltime=35000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) # 17타
         
         ######   Skill Wrapper   #####
         
         CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 3, 3, 10 + 25+passive_level//2 + 20+ceil(self.combat/2)) # 실프스 에이드 + 알바트로스 맥시멈 + 샤프 아이즈
 
-        WindWall.onAfter(WindWallExceed)
-    
         #Damage
         SongOfHeaven.onAfters([TriflingWhim, StormBringer])
         PinPointPierce.onAfters([PinPointPierceDebuff, TriflingWhim, StormBringer])
@@ -117,6 +140,6 @@ class JobGenerator(ck.JobGenerator):
                     PinPointPierceDebuff,
                     globalSkill.soul_contract()] +\
                 [Mercilesswind]+\
-                [GuidedArrow, HowlingGail, VortexSphere, WindWall, WindWallExceed, MercilesswindDOT, CygnusPhalanx, PinPointPierce, MirrorBreak, MirrorSpider]+\
+                [GuidedArrow, HowlingGail, VortexSphere, WindWall, MercilesswindDOT, CygnusPhalanx, PinPointPierce, MirrorBreak, MirrorSpider]+\
                 []+\
                 [SongOfHeaven])

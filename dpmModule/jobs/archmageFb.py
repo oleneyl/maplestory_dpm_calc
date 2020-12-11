@@ -19,9 +19,13 @@ class PoisonChainToxicWrapper(core.SummonSkillWrapper):
         self.stack = 1
         return super(PoisonChainToxicWrapper, self)._use(skill_modifier)
 
+    def _useTick(self) -> core.ResultObject:
+        result = super(PoisonChainToxicWrapper, self)._useTick()
+        self.stack = min(self.stack + 1, 5)
+        return result
+
     def get_damage(self):
         damage = self.skill.damage + self.stack * self.per_stack
-        self.stack = min(self.stack + 1, 5)
         return damage
 
 class JobGenerator(ck.JobGenerator):

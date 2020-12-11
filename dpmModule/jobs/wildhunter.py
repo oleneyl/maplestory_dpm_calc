@@ -67,6 +67,9 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '재규어 스톰'), RuleSet.BASE)
         return ruleset
+
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(pdamage=45, crit_damage=17.3)
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat

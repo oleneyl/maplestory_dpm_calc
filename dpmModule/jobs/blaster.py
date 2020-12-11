@@ -9,6 +9,7 @@ from .jobclass import resistance
 from math import ceil
 from typing import Any, Dict
 
+
 class RevolvingCannonMasteryWrapper(core.DamageSkillWrapper):
     """
     실린더 게이지 1개일때 기본 데미지, 2개 이상부터 개당 1.1배 복리 계산.
@@ -21,16 +22,21 @@ class RevolvingCannonMasteryWrapper(core.DamageSkillWrapper):
         super(RevolvingCannonMasteryWrapper, self).__init__(skill)
         
     def _use(self, skill_modifier):
-        if self.overheat.is_active():
-            stack = 6
-        else:
-            stack = self.cylinder.stack
-        multiplier = 1.1 ** (stack - 1)
-
-        if stack <= 0:
+        if self._get_stack() <= 0:
             return self._result_object_cache
         
-        return core.ResultObject(0, self.get_modifier(), self.skill.damage * multiplier, self.skill.hit, sname = self._id, spec = 'damage')
+        return super(RevolvingCannonMasteryWrapper, self)._use(skill_modifier)
+
+    def _get_stack(self) -> float:
+        if self.overheat.is_active():
+            return 6
+        else:
+            return self.cylinder.stack
+
+    def get_damage(self) -> float:
+        damage = super(RevolvingCannonMasteryWrapper, self).get_damage()
+        multiplier = 1.1 ** (self._get_stack() - 1)
+        return damage * multiplier
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):

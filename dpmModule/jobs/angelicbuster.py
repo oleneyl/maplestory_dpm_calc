@@ -63,7 +63,7 @@ class JobGenerator(ck.JobGenerator):
         return [WeaponConstant, Mastery]        
 
     def get_modifier_optimization_hint(self) -> core.CharacterModifier:
-        return core.CharacterModifier(boss_pdamage=30, armor_ignore=20)
+        return core.CharacterModifier(boss_pdamage=60, armor_ignore=18.4)
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
@@ -153,7 +153,7 @@ class JobGenerator(ck.JobGenerator):
         FinaturaFettuccia.onAfter(FinaturaFettucciaBuff)
         SpotLight.onAfter(SpotLightBuff)
         MascortFamilier.onAfter(MascortFamilierAttack)
-        MascortFamilier.onAfter(ShinyBubbleBreath.controller((30+(vEhc.getV(2,1)//5))*1000))
+        MascortFamilier.onEventEnd(ShinyBubbleBreath)
         
         SoulSeeker = core.OptionalElement(SoulExult.is_active, SoulSeekerExpert_PR, SoulSeekerExpert)
         

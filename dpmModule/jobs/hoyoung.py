@@ -243,7 +243,7 @@ class JobGenerator(ck.JobGenerator):
         Nansin = core.BuffSkill("선기 : 강림 괴력난신", 900, 30*1000, cooltime= 200*1000, red=True, pdamage = vEhc.getV(0, 0)*2+20).wrap(core.BuffSkillWrapper)
         Nansin_Stack = core.StackSkillWrapper(core.BuffSkill("선기 : 강림 괴력난신(스택)", 0, 99999999), 12)
         Nansin_Attack = core.DamageSkill("선기 : 강림 괴력난신(신들의 일격)", 0, vEhc.getV(0, 0)*34 + 850, 8, cooltime = 1500).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        Nansin_Final = core.DamageSkill("선기 : 강림 괴력난신(신들의 강림)", 0, vEhc.getV(0, 0)*40+1000, 15*6, cooltime = -1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        Nansin_Final = core.DamageSkill("선기 : 강림 괴력난신(신들의 강림)", 2850, vEhc.getV(0, 0)*40+1000, 15*6, cooltime = -1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         Nansin_Final_Buff = core.BuffSkill("선기 : 강림 괴력난신(신들의 강림)(버프)", 0, 30000, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         Nansin_Attack_Opt = core.OptionalElement(lambda: Nansin_Stack.judge(12, 1), Nansin_Attack)

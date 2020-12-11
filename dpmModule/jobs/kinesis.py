@@ -54,20 +54,16 @@ class LawOfGravityDebuffWrapper(core.SummonSkillWrapper):
         return super(LawOfGravityDebuffWrapper, self)._use(skill_modifier)
     
     def _useTick(self): # 데미지 계산 -> 끌어당김 판정 -> 다음 틱 계산
-        if self.is_active() and self.tick <= 0: # TODO: afterTick() 같은 콜백 만들거나 / useTick의 if-else 없애거나 / if 내의 로직을 메소드로 뺴거나 / tickPassed 변수 만들거나 택1
-            result = core.ResultObject(0, self.get_modifier(), self.get_damage(), self.get_hit(), sname = self.skill.name, spec = self.skill.spec)
-            self.mobPulled += 6
-            self.tick += self.get_delay()
-            return result
-        else:
-            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+        result = super(LawOfGravityDebuffWrapper, self)._useTick()
+        self.mobPulled += 6
+        return result
 
     def get_modifier(self):
         modifier = super(LawOfGravityDebuffWrapper, self).get_modifier()
         return modifier + core.CharacterModifier(pdamage_indep = min(self.mobPulled * 3, 40)) # TODO: 2 아니면 3인데 실험 필요함
 
     def get_delay(self):
-        return max(self.skill.delay - self.mobPulled * 120, 1200)
+        return max(self.skill.delay - (self.mobPulled + 6) * 120, 1200)
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -167,7 +163,7 @@ class JobGenerator(ck.JobGenerator):
         #5차
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         AnotherGoddessBuff, AnotherVoid = demon.AnotherWorldWrapper(vEhc, 0, 0)
-        AnotherHeal = core.DamageSkill("회복의 축복", 0, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
+        AnotherHeal = core.SummonSkill("회복의 축복", 0, 4000/0.25, 0, 0, 40000, cooltime=-1).wrap(core.SummonSkillWrapper)
         
         PsychicTornado = core.SummonSkill("싸이킥 토네이도", 540, 1000, 500+20*vEhc.getV(2,2), 4, 20000, red = True, cooltime = 120000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)# -15
         PsychicTornadoFinal_1 = core.DamageSkill("싸이킥 토네이도(1)", 540, (200+3*vEhc.getV(2,2))*3, 2, cooltime=-1).wrap(core.DamageSkillWrapper)
@@ -190,11 +186,12 @@ class JobGenerator(ck.JobGenerator):
         ### Telekinesis
         for sk in [PsychicGrab2, PsychicGroundDamage, PsycoBreakDamage, PsychicTornadoFinal_1, PsychicTornadoFinal_2, LawOfGravity, LawOfGravityFinal]:
             sk.onAfter(TeleKinesis)
+        PsychicTornado.onTick(TeleKinesis)
         LawOfGravityDebuff.onTick(TeleKinesis)
 
         ### 회복의 축복
-        AnotherVoid.onTick(AnotherHeal.controller(4000))
-        AnotherHeal.onAfter(PsychicPoint.stackController(40*0.01*(15+vEhc.getV(0,0)//2)))
+        AnotherVoid.onEventElapsed(AnotherHeal, 4000)
+        AnotherHeal.onTick(PsychicPoint.stackController(40*0.01*(15+vEhc.getV(0,0)//2)))
         
         ### Tandem skill connection
         PsychicForce3.onAfter(PsychicForce3Dot)

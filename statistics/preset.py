@@ -95,6 +95,13 @@ presets = [
         alt=0,
     ),
     Preset(
+        id="nightlord_spread_loss_1",
+        job="나이트로드",
+        description="스프 1줄샘",
+        options={"spread_loss": 1},
+        alt=1,
+    ),
+    Preset(
         id="shadower",
         job="섀도어",
         description="KP3 1타 94.6% / 2타 100%",
@@ -130,6 +137,13 @@ presets = [
         description="솔플, 로얄가드 쿨마다",
         options={},
         alt=0,
+    ),
+    Preset(
+        id="michile_royal_guard_false",
+        job="미하일",
+        description="솔플, 로얄가드 안씀",
+        options={"royal_guard": False},
+        alt=1,
     ),
     Preset(
         id="flamewizard",
@@ -278,7 +292,7 @@ presets = [
     Preset(
         id="adele",
         job="아델",
-        description="게더링, 블로섬 80% 히트, 레조넌스 10초마다",
+        description="게더링 80% 히트, 레조넌스 10초마다",
         options={},
         alt=0,
     ),
@@ -319,3 +333,7 @@ preset_dict = {el.id: el for el in presets}
 
 def get_preset(id: str):
     return preset_dict[id]
+
+
+def get_preset_list():
+    return presets

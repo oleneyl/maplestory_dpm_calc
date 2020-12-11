@@ -19,6 +19,9 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(pdamage=30)
+
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         HighDexterity = core.InformedCharacterModifier("하이 덱스터리티",stat_sub = 40)
@@ -131,7 +134,7 @@ class JobGenerator(ck.JobGenerator):
         #### 그래프 빌드
         
         FinalCut.onAfter(CarteNoir)
-        FinalCut.onAfter(FinalCutBuff.controller(1))
+        FinalCut.onAfter(FinalCutBuff)
         
         CardStack = core.StackSkillWrapper(core.BuffSkill("카드 스택", 0, 99999999), 40, name = "느와르 카르트 스택")
         
@@ -184,6 +187,9 @@ class JobGenerator(ck.JobGenerator):
         elif DEALCYCLE == "blast_discharge":
             BasicAttack = CardinalBlast
             Talent2 = None
+            BlackJack.onBefore(
+                core.DamageSkill("연계 취소 딜레이", 360-210, 0, 0).wrap(core.DamageSkillWrapper)
+            ) # 블디 연계 취소 딜레이, 가장 자주 사용되는 블랙잭에 걸어둠. TODO: 연계 취소 딜레이를 시뮬레이터에 구현
         else:
             raise ValueError(DEALCYCLE)
 

@@ -54,6 +54,9 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "나이트워커"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
+
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(boss_pdamage=51)
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -215,7 +218,7 @@ class JobGenerator(ck.JobGenerator):
         #도미니언
         Dominion.onAfter(DominionAttack)
         #쉐도우 바이트
-        ShadowBite.onAfter(ShadowBiteBuff.controller(2000))
+        ShadowBite.onEventElapsed(ShadowBiteBuff, 2000)
                 
         return( QuintupleThrow,
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

@@ -70,9 +70,9 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         ruleset.add_rule(DisableRule('에인션트 아스트라'), RuleSet.BASE)
         ruleset.add_rule(DisableRule('스플릿 미스텔'), RuleSet.BASE)
-        ruleset.add_rule(DisableRule('카디널 트랜지션'), RuleSet.BASE)
+        ruleset.add_rule(DisableRule('콤보 어썰트'), RuleSet.BASE)
         ruleset.add_rule(MutualRule('이볼브', '레이븐 템페스트'), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule('콤보 어썰트', '커스 트랜지션', lambda sk: sk.is_time_left(2000, -1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('카디널 트랜지션', '커스 트랜지션', lambda sk: sk.is_time_left(2000, -1)), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('얼티밋 블래스트', '렐릭 차지', lambda sk: sk.judge(1000, 1)), RuleSet.BASE)
         return ruleset
 
