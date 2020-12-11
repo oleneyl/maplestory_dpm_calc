@@ -226,13 +226,12 @@ class JobGenerator(ck.JobGenerator):
         EndOverloadModeHolder.onAfter(EndOverloadMode)
 
         OverloadMode.onAfter(BeginOverloadMode)
-        OverloadMode.onAfter(EndOverloadModeHolder.controller(OVERLOAD_TIME * 1000))
-
-        OverloadMode.onAfter(OverloadHit.controller(5100))
-        OverloadMode.onAfter(OverloadHit_copy.controller(5100))
+        OverloadMode.onEventElapsed(EndOverloadModeHolder, OVERLOAD_TIME*1000)
+        OverloadMode.onEventElapsed(OverloadHit, 5100)
+        OverloadMode.onEventElapsed(OverloadHit_copy, 5100)
 
         # 퍼지롭 15회 사용 후 포톤레이 발동, 최적화 필요
-        PhotonRay.onAfter(PhotonRayHit.controller(690*15))
+        PhotonRay.onEventElapsed(PhotonRayHit, 690*15)
 
         for sk in [PurgeSnipe, MeltDown, MegaSmasherTick, OverloadHit]:
             sk.onAfter(TriangulationTrigger)
