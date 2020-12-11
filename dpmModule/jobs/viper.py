@@ -222,9 +222,11 @@ class JobGenerator(ck.JobGenerator):
         TimeLeap.onAfter(SoulContract.controller(1.0, "reduce_cooltime_p"))
         TimeLeap.onAfter(Nautilus.controller(1.0, "reduce_cooltime_p"))
         TimeLeap.onAfter(DragonStrike.controller(1.0, "reduce_cooltime_p"))
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
             
         return (BasicAttackWrapper,
-            [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+            [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                 LuckyDice, Viposition, Stimulate, EpicAdventure, PirateFlag, Overdrive, Transform,
                 UnityOfPowerBuff, DragonStrikeBuff, EnergyCharge,
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), SoulContract] +\

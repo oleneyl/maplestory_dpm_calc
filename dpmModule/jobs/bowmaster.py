@@ -404,11 +404,13 @@ class JobGenerator(ck.JobGenerator):
             )
         ArmorPiercing.protect_from_running()
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ### Exports ###
         return (
             ArrowOfStorm,
             [
-                globalSkill.maple_heros(chtr.level, combat_level=self.combat),
+                TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, combat_level=self.combat),
                 globalSkill.useful_combat_orders(),
                 SoulArrow,
                 SharpEyes,

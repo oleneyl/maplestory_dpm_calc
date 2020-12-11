@@ -236,8 +236,10 @@ class JobGenerator(ck.JobGenerator):
         for sk in [PinpointRocket, Triangulation, MegaSmasherTick, MeltDown_Armor, MeltDown_Damage, Hologram_Fusion_Buff, PhotonRayHit]:
             sk.protect_from_running()
         
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+        
         return(PurgeSnipe, 
-                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     globalSkill.useful_wind_booster(), globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract(),
                     SupplySurplus, SupplyCharger, InclinePower, EfficiencyPipeLine, Booster, HybridDefenses, VirtualProjection, ExtraSupply] +\
                 [Hologram_Penetrate, AmaranthGenerator, MirrorBreak, MirrorSpider, MegaSmasher, MegaSmasherTick, ResistanceLineInfantry, LuckyDice, ReadyToDie, Overdrive,

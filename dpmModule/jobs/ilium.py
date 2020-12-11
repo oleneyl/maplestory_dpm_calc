@@ -324,8 +324,10 @@ class JobGenerator(ck.JobGenerator):
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return(BasicAttackWrapper,
-                [SoulOfCrystalPassive, globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                [SoulOfCrystalPassive, TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, FastCharge, WraithOfGod, MagicCircuitFullDrive, FloraGoddessBless, SoulOfCrystal,
                     Craft_Javelin_EnhanceBuff, CrystalCharge, GloryWingUse,
                     OverloadMana, BlessMark, CurseMark, CrystalGate, CrystalGateBuff,

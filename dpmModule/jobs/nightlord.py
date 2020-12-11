@@ -150,8 +150,10 @@ class JobGenerator(ck.JobGenerator):
         for sk in [QuarupleThrow, SuddenRaid, Pungma, SpreadThrowTick]:
             sk.onAfter(FatalVenom)
         
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+        
         return (QuarupleThrow, 
-            [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+            [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     ShadowPartner, SpiritJavelin, PurgeArea, DarkFlare, BleedingToxin, EpicAdventure, 
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), UltimateDarksight, ReadyToDie, SpreadThrowInit,
                     ThrowBlasting, ThrowBlastingPassive, ThrowBlastingActive,

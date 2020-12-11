@@ -207,8 +207,10 @@ class JobGenerator(ck.JobGenerator):
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return (Paralyze, 
-                [Infinity, Meditation, EpicAdventure, OverloadMana,
+                [TandadianRuin, AeonianRise, Infinity, Meditation, EpicAdventure, OverloadMana,
                 globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
                 [DotPunisher, PoisonChain, Meteor, MegidoFlame, FlameHeize, MistEruption, PoisonNova, MirrorBreak, MirrorSpider] +\

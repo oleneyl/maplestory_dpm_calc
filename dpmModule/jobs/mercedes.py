@@ -281,9 +281,11 @@ class JobGenerator(ck.JobGenerator):
 
         for sk in [UnicornSpikeBuff, RegendrySpearBuff, LightningEdgeBuff]:
             sk.set_disabled_and_time_left(1) # 버프 묻은 채로 측정 시작
+        
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
     
         return(BasicAttack,
-                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), 
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), 
                     Booster, ElvishBlessing, AncientSpirit, HerosOath, RoyalKnights,
                     CriticalReinforce, UnicornSpikeBuff, RegendrySpearBuff, LightningEdgeBuff, ElementalGhost, Sylphidia,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\

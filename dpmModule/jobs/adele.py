@@ -277,8 +277,10 @@ class JobGenerator(ck.JobGenerator):
         Creation.protect_from_running()
         Wonder.protect_from_running()
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return(Divide,
-                [globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
                     AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive, FloraGoddessBless,
                     globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract()] +\
                 [EtherTick, Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider, Shard] +\

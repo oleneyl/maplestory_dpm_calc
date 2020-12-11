@@ -258,9 +258,11 @@ class JobGenerator(ck.JobGenerator):
                     EverPsychic, EverPsychicFinal, UltimatePsychicBullet, UltimatePsychicBulletBlackhole, UltimateTrain]:
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
         
         return(PsychicGrab2,
-                [globalSkill.maple_heros(chtr.level, name = "이계의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, name = "이계의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     Booster, PsychicShield, PsychicGround, 
                     PsycoBreak, UltimatePsychicBuff, PsychicCharging, 
                     AnotherGoddessBuff, AnotherVoid, AnotherHeal, PsychicOver, OverloadMana, PsychicPoint, LawOfGravityDebuff,

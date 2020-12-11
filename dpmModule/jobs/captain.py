@@ -177,8 +177,10 @@ class JobGenerator(ck.JobGenerator):
         DeathTriggerInit.onAfter(core.RepeatElement(DeathTrigger, 7))
         DeathTriggerInit.onAfter(DeathTriggerEnd)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return (RapidFire,
-                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     SummonCrewBuff, PirateStyle, Booster, InfiniteBullet, LuckyDice, EpicAdventure, PirateFlag, Overdrive,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), QuickDraw, globalSkill.soul_contract()] +\
                 [BattleshipBomber, DeathTriggerInit, Headshot, Nautilus, DeadEye, StrangeBomb, MirrorBreak, MirrorSpider] +\

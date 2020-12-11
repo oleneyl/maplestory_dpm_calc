@@ -343,9 +343,11 @@ class JobGenerator(ck.JobGenerator):
                             SummonReleasingBoom, SummonStrikingBrick,
                                 SummonBeatingNeedlebat_1, SummonThrowingWingdagger, ChainArts_Maelstorm, WeaponVarietyAttack, WeaponVarietyFinale]:
             s.protect_from_running()
+        
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return(NormalAttack,
-                [globalSkill.maple_heros(chtr.level, name = "노바의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, name = "노바의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     WeaponVariety, Booster, SpecialPotion, ProfessionalAgent,
                     ReadyToDie, ChainArts_Fury, NovaGoddessBless,
                     SummonSlachingKnife_Horror, SummonBeatingNeedlebat_Honmy, VenomBurst_Poison, ChainArts_Maelstorm_Slow,

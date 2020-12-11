@@ -193,9 +193,11 @@ class JobGenerator(ck.JobGenerator):
         else:
             raise ValueError(DEALCYCLE)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         
         return(BasicAttack,
-                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Talent2, CrossoverChain, FinalCutBuff, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), BoolsEye,
                     JudgementBuff, Booster, PrieredAria, HerosOath, ReadyToDie, JokerBuff,
                     globalSkill.soul_contract()] +\

@@ -116,9 +116,11 @@ class JobGenerator(ck.JobGenerator):
         for sk in [Blast, Sanctuary, GrandCrossSmallTick, GrandCrossLargeTick, MightyMjollnirInit]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
                         
         return(Blast,
-                [globalSkill.maple_heros(chtr.level, combat_level = 2), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, combat_level = 2), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                     Threat, ElementalForce, EpicAdventure, HolyUnity, AuraWeaponBuff, AuraWeapon,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
                 [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, GrandCross, MightyMjollnirInit, MirrorBreak, MirrorSpider] +\

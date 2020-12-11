@@ -118,9 +118,11 @@ class JobGenerator(ck.JobGenerator):
         ICBM.onAfter(ICBMDOT)
     
         SpecialMonkeyEscort_Canon.onAfter(SpecialMonkeyEscort_Boom)
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
     
         return(CanonBuster,
-                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     Booster, MonkeyWaveBuff, MonkeyFuriousBuff, MonkeyFuriousDot, OakRulet, Buckshot, MonkeyMagic,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), EpicAdventure, LuckyDice, Overdrive, PirateFlag,
                     globalSkill.soul_contract()] +\

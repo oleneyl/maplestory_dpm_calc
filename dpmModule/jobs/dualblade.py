@@ -136,8 +136,10 @@ class JobGenerator(ck.JobGenerator):
             BladeStorm, BladeStormTick, KarmaFury, BladeTornado, HiddenBlade, HauntedEdge]:
             jobutils.create_auxilary_attack(sk, 0.7, nametag='(미러이미징)')
         
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+        
         return(PhantomBlow,
-                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, DarkSight, FinalCutBuff, EpicAdventure, FlashBangDebuff, HiddenBladeBuff, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                     UltimateDarksight, ReadyToDie, globalSkill.soul_contract()] +\
                 [FinalCut, FlashBang, BladeTornado, SuddenRaid, KarmaFury, BladeStorm, Asura, MirrorBreak, MirrorSpider] +\

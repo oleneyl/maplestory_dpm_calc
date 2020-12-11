@@ -166,9 +166,10 @@ class JobGenerator(ck.JobGenerator):
         SuperNova.onTick(SoulSeeker)
         #SuperNova.onConstraint(core.ConstraintElement("익절트와 함께", SoulExult, SoulExult.is_active))
         
-    
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+        
         return (Trinity_1,
-                [Booster, SoulGaze, LuckyDice, FinalContract,
+                [TandadianRuin, AeonianRise, Booster, SoulGaze, LuckyDice, FinalContract,
                     SoulExult, SoulContract, Overdrive,
                     FinaturaFettucciaBuff, SpotLightBuff, MascortFamilier, NovaGoddessBless,
                     globalSkill.maple_heros(chtr.level, name = "노바의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster()] +\

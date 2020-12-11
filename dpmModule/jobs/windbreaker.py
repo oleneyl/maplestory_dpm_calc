@@ -134,8 +134,10 @@ class JobGenerator(ck.JobGenerator):
 
         Mercilesswind.onAfter(MercilesswindDOT)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return(SongOfHeaven, 
-                [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_combat_orders(),
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_combat_orders(),
                     Storm, SylphsAid, Albatross, SharpEyes, GloryOfGuardians, StormBringerDummy, CriticalReinforce, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                     PinPointPierceDebuff,
                     globalSkill.soul_contract()] +\

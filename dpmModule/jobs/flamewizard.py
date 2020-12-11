@@ -136,9 +136,11 @@ class JobGenerator(ck.JobGenerator):
                     SalamanderMischeif, CygnusPhalanx]:
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
         
         return (OrbitalFlame,
-                [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                      cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level), WordOfFire, FiresOfCreation, BurningRegion, GloryOfGuardians, OverloadMana, Flame, SalamanderMischeifBuff,
                     globalSkill.soul_contract()] +\
                 [SalamanderMischeif, CygnusPhalanx, BlazingOrbital, DragonSlaveInit, SavageFlame, InfinityFlameCircleInit, 

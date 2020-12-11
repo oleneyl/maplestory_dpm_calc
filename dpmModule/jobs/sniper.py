@@ -144,9 +144,11 @@ class JobGenerator(ck.JobGenerator):
 
         BasicAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
         BasicAttack.onAfter(core.OptionalElement(partial(CartrigeStack.judge, 1, 1), FullBurstShot, Snipping))
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
         
         return(BasicAttack,
-                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
                     SoulArrow, SharpEyes, BoolsEye, EpicAdventure, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                     CriticalReinforce, RepeatingCartrige, SplitArrowBuff, globalSkill.soul_contract()] +\
                 [TrueSnipping, ChargedArrowHold, ChargedArrow] +\

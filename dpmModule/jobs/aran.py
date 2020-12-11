@@ -241,8 +241,11 @@ class JobGenerator(ck.JobGenerator):
         AdrenalineBoost.onEventEnd(Combo.stackController(500, dtype='set'))
         AdrenalineGenerator.onConstraint(core.ConstraintElement('아드레날린부스트가 불가능할때', AdrenalineBoost, AdrenalineBoost.is_not_active))
         AdrenalineGenerator.onAfter(AdrenalineBoost)
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+        
         return(BasicAttack, 
-                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), HerosOath,
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), HerosOath,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), Booster, SmashSwingIncr, SnowCharge, AdvancedComboAbility, ComboAbility,
                     BlessingMaha, AdrenalineBoost,
                     AdrenalineGenerator, 

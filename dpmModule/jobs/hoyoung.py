@@ -371,8 +371,10 @@ class JobGenerator(ck.JobGenerator):
         Flames.onBefore(Pacho)
         Flames.onAfter(core.OptionalElement(GeumGoBong.is_available, GeumGoBong, YeoUiSeon))
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return(Topa,
-            [globalSkill.maple_heros(chtr.level, name = "아니마의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+            [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, name = "아니마의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                 Booster, Talisman_Clone, Butterfly_Dream, Clone_Rampage, Nansin, Nansin_Final_Buff, Elemental_Clone, Miracle_Tonic, AnimaGoddessBless, ReadyToDie,
                 globalSkill.soul_contract()] +\
             [Talisman_Seeker, Waryu, Summon_Sanryung, Miracle_Tonic_Charge] +\

@@ -209,8 +209,10 @@ class JobGenerator(ck.JobGenerator):
 
         Jaguar.onTick(JaguarSelector)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return(WildBalkan,
-                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_combat_orders(),
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_combat_orders(),
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), CriticalReinforce, SoulArrow,
                     Booster, Hauling, BeastForm, SharpEyes, SilentRampage, JaguerStorm, WillOfLiberty, Jaguar,
                     globalSkill.soul_contract()] +\

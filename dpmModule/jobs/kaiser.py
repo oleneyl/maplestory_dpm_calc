@@ -328,9 +328,11 @@ class JobGenerator(ck.JobGenerator):
         Wingbit_2.onTick(MorphGauge.stackController(1))
         
         DrakeSlasher.protect_from_running()
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
     
         return(BasicAttack,
-                [globalSkill.maple_heros(chtr.level, name = "노바의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), MorphGauge,
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, name = "노바의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), MorphGauge,
                     RegainStrenth, BlazeUp, FinalFiguration, MajestyOfKaiser, FinalTrance, AuraWeaponBuff, AuraWeapon, NovaGoddessBless,
                     SoulContract] +\
                 [AdvancedWillOfSword_Summon, WillOfSwordStrike, AdvancedWillOfSword] +\

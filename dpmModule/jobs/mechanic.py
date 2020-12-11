@@ -212,9 +212,11 @@ class JobGenerator(ck.JobGenerator):
         
         RoboFactory.onEventEnd(RoboFactoryFinal)
         RoboFactory.onAfter(RoboFactoryBuff)
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
         
         return(MassiveFire,
-                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                [TandadianRuin, AeonianRise, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, MagneticFieldBuff, RoboFactoryBuff, MultipleOptionBuff, MechCarrierBuff, BomberTime, Overdrive,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
                 [MicroMissle, MechCarrier, BusterCallInit] +\
