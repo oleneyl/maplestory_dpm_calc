@@ -222,18 +222,16 @@ class JobGenerator(ck.JobGenerator):
 
         BeginOverloadMode = SupplySurplus.beginOverloadMode()
         EndOverloadMode = SupplySurplus.endOverloadMode()
-        EndOverloadModeHolder = core.DamageSkill("오버로드 모드 종료 (홀더)", 0, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
-        EndOverloadModeHolder.onAfter(EndOverloadMode)
 
         OverloadMode.onAfter(BeginOverloadMode)
-        OverloadMode.onEventElapsed(EndOverloadModeHolder, OVERLOAD_TIME*1000)
+        OverloadMode.onEventElapsed(EndOverloadMode, OVERLOAD_TIME*1000)
         OverloadMode.onEventElapsed(OverloadHit, 5100)
         OverloadMode.onEventElapsed(OverloadHit_copy, 5100)
 
         # 퍼지롭 15회 사용 후 포톤레이 발동, 최적화 필요
         PhotonRay.onEventElapsed(PhotonRayHit, 690*15)
 
-        for sk in [PurgeSnipe, MeltDown, MegaSmasherTick, OverloadHit]:
+        for sk in [PurgeSnipe, MeltDown, MegaSmasherTick]:
             sk.onAfter(TriangulationTrigger)
             sk.onAfter(PinpointRocketOpt)
             jobutils.create_auxilary_attack(sk, 0.7, nametag="(버추얼 프로젝션)")
@@ -241,8 +239,8 @@ class JobGenerator(ck.JobGenerator):
         MeltDown.onAfter(MeltDown_Armor)
         MeltDown.onAfter(MeltDown_Damage)
 
-        for sk in [Hologram_Penetrate, Hologram_ForceField, Hologram_Fusion]:
-            sk.onTick(PinpointRocketOpt)
+        OverloadHit.onTick(TriangulationTrigger)
+        OverloadHit.onTick(PinpointRocketOpt)
 
         for sk in [PinpointRocket, Triangulation, MegaSmasherTick, MeltDown_Armor, MeltDown_Damage, Hologram_Fusion_Buff, PhotonRayHit]:
             sk.protect_from_running()
