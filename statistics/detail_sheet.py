@@ -34,20 +34,21 @@ def write_sheet(args, df: pd.DataFrame, writer: xlsxwriter):
     df["name"] = df["name"].apply(lambda x: x.split("(")[0])
     df["deal_one"] = df["deal"] / df["hit"]
     df = df.loc[df.deal > 0]
-    grouped = df.groupby(["name"])
+    deal_total = df["deal"].sum()
+    loss_total = df["loss"].sum()
+    hit_total = df["hit"].sum()
 
+    grouped = df.groupby(["name"])
     df = pd.DataFrame()
     df["누적 데미지"] = grouped["deal"].sum()
     df["맥뎀 누수"] = grouped["loss"].sum()
+    df["점유율"] = df["누적 데미지"] / deal_total
+    df["평균 데미지(1초당)"] = df["누적 데미지"] / 30
+    df["사용 횟수"] = grouped["hit"].count()
+    df["평균 데미지(1회당)"] = df["누적 데미지"] / df["사용 횟수"]
     df["공격 횟수"] = grouped["hit"].sum()
     df["최대 데미지(1타당)"] = grouped["deal_one"].max()
     df["최소 데미지(1타당)"] = grouped["deal_one"].min()
-
-    deal_total = df["누적 데미지"].sum()
-    loss_total = df["맥뎀 누수"].sum()
-    hit_total = df["공격 횟수"].sum()
-
-    df["점유율"] = df["누적 데미지"] / deal_total
     df["맥뎀 누수율"] = df["맥뎀 누수"] / (df["누적 데미지"] + df["맥뎀 누수"])
     df["맥뎀 누수율"].clip(lower=0, inplace=True)
 
@@ -63,9 +64,11 @@ def write_sheet(args, df: pd.DataFrame, writer: xlsxwriter):
     num_format = workbook.add_format({"num_format": "#,##0", "align": "center"})
     percent_format = workbook.add_format({"num_format": "0.00%", "align": "center"})
 
-    worksheet.set_column("A:G", 20, center_format)
-    worksheet.set_column("B:F", 20, num_format)
-    worksheet.set_column("G:H", 10, percent_format)
+    worksheet.set_column("A:K", 20, center_format)
+    worksheet.set_column("B:C", 20, num_format)
+    worksheet.set_column("D:D", 20, percent_format)
+    worksheet.set_column("E:J", 20, num_format)
+    worksheet.set_column("K:K", 10, percent_format)
 
     worksheet.merge_range("B3:G3", "", center_format)
 
@@ -76,11 +79,11 @@ def write_sheet(args, df: pd.DataFrame, writer: xlsxwriter):
     worksheet.write("A3", "비고")
     worksheet.write("B3", description)
     worksheet.write("C1", "dpm")
-    worksheet.write("D1", deal_total / 30)
+    worksheet.write("D1", deal_total / 30, num_format)
     worksheet.write("C2", "맥뎀누수")
-    worksheet.write("D2", loss_total / 30)
+    worksheet.write("D2", loss_total / 30, num_format)
     worksheet.write("E1", "분당 타수")
-    worksheet.write("F1", hit_total / 30)
+    worksheet.write("F1", hit_total / 30, num_format)
     worksheet.write("E2", "맥뎀 누수율")
     worksheet.write("F2", loss_total / deal_total, percent_format)
 
