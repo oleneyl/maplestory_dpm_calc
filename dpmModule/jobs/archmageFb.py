@@ -173,7 +173,7 @@ class JobGenerator(ck.JobGenerator):
         Explosion.onAfter(MeteorPassive)
         PoisonMist.onAfter(MeteorPassive)
         Paralyze.onAfter(MeteorPassive)
-        MistEruption.onAfter(core.RepeatElement(MeteorPassive, 4))
+        MistEruption.onAfter(MeteorPassive)
         FlameHeize.onAfter(MeteorPassive)
         DotPunisher.onAfter(core.RepeatElement(MeteorPassive, DOT_PUNISHER_HIT))
         PoisonNova.onAfter(MeteorPassive)
