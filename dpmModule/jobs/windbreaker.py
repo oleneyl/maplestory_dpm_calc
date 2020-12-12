@@ -1,6 +1,7 @@
 from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, ConcurrentRunRule, ComplexConditionRule
 from . import globalSkill
 from .jobbranch import bowmen
 from .jobclass import cygnus
@@ -17,6 +18,25 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set(
             "boss_pdamage", "crit", "buff_rem"
         )
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(ConcurrentRunRule("소울 컨트랙트", "크리티컬 리인포스"), RuleSet.BASE)
+
+        def howling_gale_rule(howling_gale, critical_reinforce):
+            if critical_reinforce.is_active():
+                return True
+            if howling_gale.judge(1, -1) and critical_reinforce.is_cooltime_left(
+                30000, -1
+            ):
+                return False
+            return True
+
+        ruleset.add_rule(
+            ComplexConditionRule("하울링 게일", ["크리티컬 리인포스"], howling_gale_rule),
+            RuleSet.BASE,
+        )
+        return ruleset
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(pdamage=45, armor_ignore=15)
@@ -181,7 +201,7 @@ class JobGenerator(ck.JobGenerator):
 
         CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 0, 0)
 
-        Mercilesswind = (
+        IdleWhim = (
             core.DamageSkill(
                 "아이들 윔",
                 delay=600,
@@ -263,7 +283,7 @@ class JobGenerator(ck.JobGenerator):
         HowlingGail.onTicks([TriflingWhim, StormBringer])
         VortexSphere.onTicks([TriflingWhim, StormBringer])
 
-        Mercilesswind.onAfter(MercilesswindDOT)
+        IdleWhim.onAfter(MercilesswindDOT)
 
         return (
             SongOfHeaven,
@@ -276,25 +296,28 @@ class JobGenerator(ck.JobGenerator):
                 SylphsAid,
                 Albatross,
                 SharpEyes,
-                GloryOfGuardians,
                 StormBringerDummy,
-                CriticalReinforce,
                 cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
-                PinPointPierceDebuff,
+                GloryOfGuardians,
+                CriticalReinforce,
                 globalSkill.soul_contract(),
             ]
-            + [Mercilesswind]
             + [
                 GuidedArrow,
+                CygnusPhalanx,
                 HowlingGail,
                 VortexSphere,
                 WindWall,
-                MercilesswindDOT,
-                CygnusPhalanx,
-                PinPointPierce,
-                MirrorBreak,
-                MirrorSpider,
             ]
-            + []
+            + [
+                MirrorBreak,
+                IdleWhim,
+                PinPointPierce,
+            ]
+            + [
+                PinPointPierceDebuff,
+                MirrorSpider,
+                MercilesswindDOT,
+            ]  # Not used from scheduler
             + [SongOfHeaven],
         )
