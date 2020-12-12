@@ -36,6 +36,38 @@ class ConditionRule(AbstractRule):
         )
 
 
+class ComplexConditionRule(AbstractRule):
+    """
+    GraphElement A, List[GraphElement] B와 check_function에 대해, check_function(A, *B)가 True를 리턴하면 A를 사용합니다.
+    """
+
+    def __init__(
+        self, state_element: str, checking_elements: List[str], check_function
+    ) -> None:
+        self._state_element_name = state_element
+        self._checking_element_names = checking_elements
+        self._check_function = check_function
+
+    def get_related_elements(
+        self, reference_graph: NameIndexedGraph
+    ) -> List[GraphElement]:
+        return [reference_graph.get_element(self._state_element_name)]
+
+    def check(
+        self,
+        caller: AbstractSkillWrapper,
+        reference_graph: NameIndexedGraph,
+        context=None,
+    ) -> bool:
+        return self._check_function(
+            caller,
+            *[
+                reference_graph.get_element(name)
+                for name in self._checking_element_names
+            ],
+        )
+
+
 class UniquenessRule(AbstractRule):
     """
     주어진 Element가 on 상태가 아니면 사용을 금지합니다.

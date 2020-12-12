@@ -582,6 +582,9 @@ class StackableDamageSkillWrapper(DamageSkillWrapper):
     def is_available(self) -> bool:
         return self.stack > 0
 
+    def judge(self, stack: int, direction: int) -> bool:
+        return (self.stack - stack) * direction >= 0
+
 
 class SummonSkillWrapper(AbstractSkillWrapper):
     def __init__(
@@ -737,6 +740,9 @@ class StackableSummonSkillWrapper(SummonSkillWrapper):
 
     def is_available(self) -> bool:
         return self.stack > 0 and self.is_not_active()
+
+    def judge(self, stack: int, direction: int) -> bool:
+        return (self.stack - stack) * direction >= 0
 
 
 class DotSkillWrapper(SummonSkillWrapper):
