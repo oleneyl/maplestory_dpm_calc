@@ -84,7 +84,6 @@ class JobGenerator(ck.JobGenerator):
 
         """
         base_modifier = chtr.get_base_modifier()
-        additional_target = base_modifier.additional_target
         passive_level = base_modifier.passive_level + self.combat
         # Buff skills
         Storm = core.BuffSkill(
@@ -165,9 +164,7 @@ class JobGenerator(ck.JobGenerator):
 
         # Damage Skills
         # 하이퍼: 데미지 증가, 보스 데미지 증가
-        target_pdamage = ((120 + self.combat // 2) / 100) ** (
-            4 + additional_target
-        ) * 100 - 100
+        target_pdamage = ((120 + self.combat // 2) / 100) ** 3 * 100 - 100
         SongOfHeaven = (
             core.DamageSkill(
                 "천공의 노래",
