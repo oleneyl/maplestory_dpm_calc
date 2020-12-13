@@ -144,7 +144,7 @@ class JobGenerator(ck.JobGenerator):
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         # 앱솔 무기 마력 241
-        WEAPON_ATT = jobutils.get_weapon_att("건틀렛")
+        WEAPON_ATT = jobutils.get_weapon_att(chtr)
         MagicCircuit = core.InformedCharacterModifier("매직 서킷", att = WEAPON_ATT*0.2)
         
         MagicGuntletMastery = core.InformedCharacterModifier("매직 건틀렛 마스터리", crit = 20)
@@ -213,7 +213,7 @@ class JobGenerator(ck.JobGenerator):
 
         #5차 스킬들
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
-        FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att("건틀렛"))
+        FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att(chtr))
         GramHolder = GramHolderWrapper(core.SummonSkill("그람홀더", 210, 3000, 500+20*vEhc.getV(4,3), 12, 40000, cooltime = 180000).isV(vEhc,4,3))
 
         CrystalIgnitionInit = core.DamageSkill("크리스탈 이그니션(시전)", 720, 0, 0, cooltime = 180*1000).wrap(core.DamageSkillWrapper)

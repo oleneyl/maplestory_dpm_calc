@@ -105,7 +105,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         # 매직 서킷: 앱솔 기준 15.4
-        WEAPON_ATT = jobutils.get_weapon_att("튜너")
+        WEAPON_ATT = jobutils.get_weapon_att(chtr)
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         
         MagicCircuit = core.InformedCharacterModifier("매직 서킷", att=WEAPON_ATT * 0.15)  #무기 공격력의 15%, 최대치 가정.
@@ -196,7 +196,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 5차
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
-        FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att("튜너"))
+        FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att(chtr))
 
         Ruin = core.DamageSkill('루인(시전)', 600, 0, 0, cooltime=60*1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper) # 4초에 나누어서 시전되는 것으로 가정
         RuinFirstTick = core.SummonSkill('루인(소환)', 0, 160, 250 + vEhc.getV(2,2)*10, 6, 2000, cooltime=-1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 12번, 2초에 나누어 사용으로 가정
