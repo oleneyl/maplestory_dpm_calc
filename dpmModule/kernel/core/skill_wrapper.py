@@ -562,6 +562,8 @@ class StackableDamageSkillWrapper(DamageSkillWrapper):
 
     def spend_time(self, time: float) -> None:
         super(StackableDamageSkillWrapper, self).spend_time(time)
+        if self.stack == self.max_stack:
+            self.cooltimeLeft = self.skill.cooltime
         if self.cooltimeLeft <= 0:
             self.cooltimeLeft = self.skill.cooltime
             self.stack = min(self.stack + 1, self.max_stack)
@@ -717,6 +719,8 @@ class StackableSummonSkillWrapper(SummonSkillWrapper):
 
     def spend_time(self, time: float) -> None:
         super(StackableSummonSkillWrapper, self).spend_time(time)
+        if self.stack == self.max_stack:
+            self.cooltimeLeft = self.skill.cooltime
         if self.cooltimeLeft <= 0:
             self.cooltimeLeft = self.skill.cooltime
             self.stack = min(self.stack + 1, self.max_stack)
