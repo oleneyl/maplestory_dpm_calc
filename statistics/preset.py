@@ -46,13 +46,6 @@ presets = [
         alt=0,
     ),
     Preset(
-        id="archmage_tc_thunder_8",
-        job="아크메이지썬/콜",
-        description="썬브 8히트, 언스 사용",
-        options={"thunder_break_hit": 8},
-        alt=1,
-    ),
-    Preset(
         id="bishop",
         job="비숍",
         description="피스메이커 3히트, 솔플, 언스 사용",
@@ -170,8 +163,15 @@ presets = [
         id="nightwalker",
         job="나이트워커",
         description="점샷 400ms",
-        options={},
+        options={"jump_rate": 1},
         alt=0,
+    ),
+    Preset(
+        id="nightwalker",
+        job="나이트워커",
+        description="노점샷",
+        options={"jump_rate": 0},
+        alt=1,
     ),
     Preset(
         id="striker",
@@ -325,7 +325,20 @@ presets = [
         options={"dealcycle": "alpha_legacy"},
         alt=1,
     ),
-    Preset(id="kinesis", job="키네시스", description="메테리얼", options={}, alt=0),
+    Preset(
+        id="kinesis",
+        job="키네시스",
+        description="메테리얼",
+        options={"dealcycle": "material"},
+        alt=0,
+    ),
+    Preset(
+        id="kinesis",
+        job="키네시스",
+        description="샷 80%",
+        options={"dealcycle": "shot", "shot_rate": 0.8},
+        alt=1,
+    ),
 ]
 
 preset_dict = {el.id: el for el in presets}
