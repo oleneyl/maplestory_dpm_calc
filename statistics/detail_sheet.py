@@ -29,6 +29,7 @@ def get_args():
 
 def write_sheet(args, df: pd.DataFrame, writer: xlsxwriter):
     id, jobname, description, options, alt = get_preset(args.id)
+    time = 1800
 
     df = df.drop(["time", "spec", "mdf"], axis=1)
     df["name"] = df["name"].apply(lambda x: x.split("(")[0])
@@ -43,7 +44,7 @@ def write_sheet(args, df: pd.DataFrame, writer: xlsxwriter):
     df["누적 데미지"] = grouped["deal"].sum()
     df["맥뎀 누수"] = grouped["loss"].sum()
     df["점유율"] = df["누적 데미지"] / deal_total
-    df["평균 데미지(1초당)"] = df["누적 데미지"] / 30
+    df["평균 데미지(1초당)"] = df["누적 데미지"] / time
     df["사용 횟수"] = grouped["hit"].count()
     df["평균 데미지(1회당)"] = df["누적 데미지"] / df["사용 횟수"]
     df["공격 횟수"] = grouped["hit"].sum()
@@ -79,11 +80,11 @@ def write_sheet(args, df: pd.DataFrame, writer: xlsxwriter):
     worksheet.write("A3", "비고")
     worksheet.write("B3", description)
     worksheet.write("C1", "dpm")
-    worksheet.write("D1", deal_total / 30, num_format)
+    worksheet.write("D1", deal_total / (time / 60), num_format)
     worksheet.write("C2", "맥뎀누수")
-    worksheet.write("D2", loss_total / 30, num_format)
+    worksheet.write("D2", loss_total / (time / 60), num_format)
     worksheet.write("E1", "분당 타수")
-    worksheet.write("F1", hit_total / 30, num_format)
+    worksheet.write("F1", hit_total / (time / 60), num_format)
     worksheet.write("E2", "맥뎀 누수율")
     worksheet.write("F2", loss_total / deal_total, percent_format)
 
