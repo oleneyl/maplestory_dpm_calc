@@ -27,7 +27,7 @@ class JobGenerator(ck.JobGenerator):
             if critical_reinforce.is_active():
                 return True
             if howling_gale.judge(1, -1) and critical_reinforce.is_cooltime_left(
-                30000, -1
+                25000, -1
             ):
                 return False
             return True
