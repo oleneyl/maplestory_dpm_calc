@@ -128,7 +128,7 @@ class JobGenerator(ck.JobGenerator):
         메테리얼 사용
         불릿 사용하지 않음.
         '''
-        DEALCYCLE = options.get("deal_cycle", "material")
+        DEALCYCLE = options.get("dealcycle", "material")
         SHOT_RATE = options.get("shot_rate", 0.8)
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         ######   Skill   ######
