@@ -1,7 +1,7 @@
 from ..kernel import core
 from ..character import characterKernel as ck
-from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import RuleSet, ConditionRule
 from . import globalSkill
 from .jobbranch import pirates
 from .jobclass import adventurer
@@ -17,6 +17,21 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 16
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'reuse')
         self.preEmptiveSkills = 2
+
+    def get_ruleset(self):
+        def cannonball_rule(soul_contract):
+            if soul_contract.is_active():
+                return True
+            if soul_contract.is_cooltime_left(50000, -1):
+                return False
+            return True
+
+        ruleset = RuleSet()
+        ruleset.add_rule(
+            ConditionRule("빅 휴즈 기간틱 캐논볼", "소울 컨트랙트", cannonball_rule),
+            RuleSet.BASE,
+        )
+        return ruleset
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(pdamage=66, crit_damage=6, armor_ignore=30)
@@ -57,7 +72,7 @@ class JobGenerator(ck.JobGenerator):
         코강 순서:
         버스터-서포트-다수기-롤캐
         '''
-        COCOBALLHIT = 27
+        COCOBALLHIT = options.get("cocoball_hit", 27)
         ICBMHIT = 6
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         
@@ -95,8 +110,18 @@ class JobGenerator(ck.JobGenerator):
 
         # 쿨타임마다 사용
         # 허수아비 대상 27회 충돌
-        BFGCannonball = core.SummonSkill("빅 휴즈 기간틱 캐논볼", 600, 210, (450+15*vEhc.getV(0,0)) * 0.45, 4 * 3, 210*COCOBALLHIT, cooltime = 25000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
-
+        BFGCannonball = core.StackableSummonSkillWrapper(
+            core.SummonSkill(
+                "빅 휴즈 기간틱 캐논볼",
+                summondelay=600,
+                delay=210,
+                damage=(450+15*vEhc.getV(0, 0)) * 0.45,
+                hit=4 * 3,
+                remain=210*COCOBALLHIT,
+                cooltime=25000,
+            ).isV(vEhc, 0, 0),
+            max_stack=3,
+        )
 
         ICBM = core.DamageSkill("ICBM", 1140, (800+32*vEhc.getV(1,1)) * 0.45, 5*ICBMHIT * 3, cooltime = 30000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         ICBMDOT = core.SummonSkill("ICBM(장판)", 0, 15000/27, (500+20*vEhc.getV(1,1)) * 0.45, 1 * 3, 15000, cooltime = -1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) #27타
@@ -113,11 +138,14 @@ class JobGenerator(ck.JobGenerator):
         CanonBuster.onAfter(OakRuletDOT)
         BFGCannonball.onAfter(OakRuletDOT)
         ICBM.onAfter(OakRuletDOT)
-        SupportMonkeyTwins.onAfter(OakRuletDOT)
         
         ICBM.onAfter(ICBMDOT)
     
-        SpecialMonkeyEscort_Canon.onAfter(SpecialMonkeyEscort_Boom)
+        SpecialMonkeyEscort_Canon.onJustAfter(SpecialMonkeyEscort_Boom)
+
+        # Scheduling
+        MonkeyWaveBuff.controller(1)
+        MonkeyFuriousBuff.controller(1)
     
         return(CanonBuster,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
