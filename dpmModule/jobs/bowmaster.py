@@ -26,24 +26,29 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
         )
         self.empty_modifier = core.CharacterModifier()
         self.skill_modifier = chtr.get_skill_modifier()
+        self.cooltime_skip_task = core.TaskHolder(core.Task(self, self._cooltime_skip))
         skill = core.BuffSkill("아머 피어싱", delay=0, remain=0, cooltime=9000, red=True)
         super(ArmorPiercingWrapper, self).__init__(skill)
 
-    def check(self):
-        if self.is_available():
+    def check_modifier(self) -> core.CharacterModifier:
+        if self.cooltimeLeft <= 0:
             self.cooltimeLeft = self.calculate_cooltime(self.skill_modifier)
             return self.piercing_modifier
+        else:
+            return self.empty_modifier
 
+    def _cooltime_skip(self) -> None:
         if self.cooltimeLeft > 1000:
             self.cooltimeLeft = self.cooltimeLeft - 1000
+        return self._result_object_cache
 
-        return self.empty_modifier
+    def cooltime_skip(self):
+        return self.cooltime_skip_task
 
 
 class ArrowOfStormWrapper(core.DamageSkillWrapper):
-    def __init__(self, skill: core.DamageSkill, armorPiercing: ArmorPiercingWrapper):
+    def __init__(self, skill: core.DamageSkill):
         super(ArrowOfStormWrapper, self).__init__(skill)
-        self.armorPiercing = armorPiercing
         self.lastUsed = -9999
         self.currentTime = 0
 
@@ -65,6 +70,22 @@ class ArrowOfStormWrapper(core.DamageSkillWrapper):
         if self.currentTime > self.lastUsed:
             delay += 540
         return delay
+
+
+class DelayVaryingSummonSkillWrapper(core.SummonSkillWrapper):
+    # TODO: temporal fix... move to kernel/core, make DelayVaryingSummonSkill and use self.skill.delays
+    def __init__(self, skill, delays) -> None:
+        super(DelayVaryingSummonSkillWrapper, self).__init__(skill)
+        self.delays = delays
+        self.hit_count = 0
+
+    def _useTick(self) -> core.ResultObject:
+        result = super(DelayVaryingSummonSkillWrapper, self)._useTick()
+        self.hit_count = (self.hit_count + 1) % len(self.delays)
+        return result
+
+    def get_delay(self) -> float:
+        return self.delays[self.hit_count]
 
 
 class JobGenerator(ck.JobGenerator):
@@ -198,7 +219,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
 
-        ArrowOfStorm = ArrowOfStormWrapper(
+        ArrowOfStorm = (
             core.DamageSkill(
                 "폭풍의 시",
                 delay=120,
@@ -206,8 +227,9 @@ class JobGenerator(ck.JobGenerator):
                 hit=1 + 1,
                 modifier=core.CharacterModifier(pdamage=30, boss_pdamage=10)
                 + MortalBlow,
-            ).setV(vEhc, 0, 2, True),
-            ArmorPiercing,
+            )
+            .setV(vEhc, 0, 2, True)
+            .wrap(ArrowOfStormWrapper)
         )
         ArrowFlatter = (
             core.SummonSkill(
@@ -257,20 +279,19 @@ class JobGenerator(ck.JobGenerator):
             .isV(vEhc, 0, 0)
             .wrap(core.BuffSkillWrapper)
         )
-        ArrowRain = (
+        ArrowRain = DelayVaryingSummonSkillWrapper(
             core.SummonSkill(
                 "애로우 레인",
                 summondelay=0,
-                delay=1440,  # 5초마다 3.5회 공격, 대략 1440ms당 1회
+                delay=-1,
                 damage=600 + vEhc.getV(0, 0) * 24,
                 hit=8,
                 remain=(40 + vEhc.getV(0, 0)) * 1000,
                 cooltime=-1,
                 modifier=MortalBlow,
-            )
-            .isV(vEhc, 0, 0)
-            .wrap(core.SummonSkillWrapper)
-        )
+            ).isV(vEhc, 0, 0),
+            delays=[1000, 1000, 1000, (5000 - 3000), 1000, 1000, (5000 - 2000)],
+        )  # 1초마다 떨어지고, 평균 3.5히트가 나오도록.
 
         # Summon Skills
         Pheonix = (
@@ -301,20 +322,19 @@ class JobGenerator(ck.JobGenerator):
             patt=(5 + int(vEhc.getV(2, 2) * 0.5)),
             crit_damage=8,  # 독화살 크뎀을 이쪽에 합침
         ).wrap(core.BuffSkillWrapper)
-        QuibberFullBurst = (
+        QuibberFullBurst = DelayVaryingSummonSkillWrapper(
             core.SummonSkill(
                 "퀴버 풀버스트",
                 summondelay=780,
-                delay=2 * 1000 / 6,
+                delay=-1,
                 damage=250 + 10 * vEhc.getV(2, 2),
                 hit=9,
                 remain=30 * 1000,
                 cooltime=-1,
                 modifier=MortalBlow,
-            )
-            .isV(vEhc, 2, 2)
-            .wrap(core.SummonSkillWrapper)
-        )
+            ).isV(vEhc, 2, 2),
+            delays=[90, 90, 90, 90, 90, 90 + (2000 - 90 * 6)],
+        )  # 2초에 한번씩 90ms 간격으로 6회 발사
         QuibberFullBurstDOT = core.DotSkill(
             "독화살",
             summondelay=0,
@@ -353,16 +373,18 @@ class JobGenerator(ck.JobGenerator):
         )
 
         OpticalIllusion = (
-            core.DamageSkill(
+            core.SummonSkill(
                 "실루엣 미라주",
-                delay=0,
+                summondelay=0,
+                delay=210,
                 damage=400 + 16 * vEhc.getV(0, 0),
                 hit=3,
+                remain=210 * 5,
                 cooltime=7500,
                 modifier=MortalBlow,
             )
             .isV(vEhc, 0, 0)
-            .wrap(core.DamageSkillWrapper)
+            .wrap(core.SummonSkillWrapper)
         )
 
         ######   Skill Wrapper   ######
@@ -378,7 +400,9 @@ class JobGenerator(ck.JobGenerator):
         ArrowRainBuff.onAfter(ArrowRain)
         ArrowRain.onTick(MagicArrow_ArrowRain)
 
-        ImageArrow.onJustAfter(ImageArrowPassive.controller(99999999, "set_disabled_and_time_left"))
+        ImageArrow.onJustAfter(
+            ImageArrowPassive.controller(99999999, "set_disabled_and_time_left")
+        )
         ImageArrow.onEventEnd(ImageArrowPassive)
         ImageArrow.onTick(AdvancedFinalAttack)
 
@@ -390,7 +414,7 @@ class JobGenerator(ck.JobGenerator):
 
         UseOpticalIllusion = core.OptionalElement(
             OpticalIllusion.is_available,
-            core.RepeatElement(OpticalIllusion, 5),
+            OpticalIllusion,
             name="쿨타임 체크",
         )
         for sk in [ArrowOfStorm, GrittyGust]:
@@ -398,10 +422,21 @@ class JobGenerator(ck.JobGenerator):
         OpticalIllusion.protect_from_running()
         OpticalIllusion.onAfter(MagicArrow)
 
-        for sk in [ArrowOfStorm, ArrowRain, QuibberFullBurst, OpticalIllusion, GuidedArrow, MirrorBreak]:
+        # Armor Piercing
+        for sk in [
+            ArrowOfStorm,
+            ArrowRain,
+            QuibberFullBurst,
+            OpticalIllusion,
+            GuidedArrow,
+            MirrorBreak,
+        ]:
+            sk.onBefore(ArmorPiercing.cooltime_skip())
             sk.add_runtime_modifier(
-                ArmorPiercing, lambda armor_piercing: armor_piercing.check()
+                ArmorPiercing,
+                lambda armor_piercing: armor_piercing.check_modifier(),
             )
+
         ArmorPiercing.protect_from_running()
 
         ### Exports ###
@@ -428,13 +463,13 @@ class JobGenerator(ck.JobGenerator):
                 Pheonix,
                 Evolve,
                 ArrowFlatter,
-                ArrowRain,
-                GuidedArrow,
                 QuibberFullBurst,
+                OpticalIllusion,
+                GuidedArrow,
+                ArrowRain,
                 ImageArrow,
                 MirrorBreak,
                 MirrorSpider,
-                OpticalIllusion,
             ]
             + []
             + [ArrowOfStorm],
