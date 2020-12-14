@@ -14,6 +14,7 @@ from ..kernel.core import (
     DamageSkillWrapper,
     BuffSkillWrapper,
     SummonSkillWrapper,
+    DotSkillWrapper,
     ExtendedCharacterModifier,
     InformedCharacterModifier,
     SkillModifier,
@@ -23,7 +24,7 @@ from ..kernel.graph import (
     _unsafe_access_global_storage,
     initialize_global_properties,
 )
-from ..kernel.core.skill import load_skill, BuffSkill, DamageSkill, SummonSkill
+from ..kernel.core.skill import load_skill, BuffSkill, DamageSkill, SummonSkill, DotSkill
 from ..status.ability import Ability_grade, Ability_option, Ability_tool
 from .doping import Doping
 from .hyperStat import HyperStat
@@ -286,6 +287,8 @@ class JobGenerator:
             return skill.wrap(DamageSkillWrapper)
         elif isinstance(skill, BuffSkill):
             return skill.wrap(BuffSkillWrapper)
+        elif isinstance(skill, DotSkill):
+            return skill.wrap(DotSkillWrapper)
         elif isinstance(skill, SummonSkill):
             return skill.wrap(SummonSkillWrapper)
 
@@ -371,7 +374,12 @@ class JobGenerator:
     ) -> List[InformedCharacterModifier]:
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         return [
-            _get_loaded_object_with_mapping(opt, InformedCharacterModifier, passive_level=passive_level)
+            _get_loaded_object_with_mapping(
+                opt,
+                InformedCharacterModifier,
+                passive_level=passive_level,
+                combat=self.combat,
+            )
             for opt
             in self.conf['passive_skill_list']
         ]
@@ -385,8 +393,14 @@ class JobGenerator:
     def get_not_implied_skill_list(
         self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
     ) -> List[InformedCharacterModifier]:
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         return [
-            _get_loaded_object_with_mapping(opt, InformedCharacterModifier, combat=self.combat)
+            _get_loaded_object_with_mapping(
+                opt,
+                InformedCharacterModifier,
+                passive_level=passive_level,
+                combat=self.combat,
+            )
             for opt
             in self.conf['not_implied_skill_list']
         ]
