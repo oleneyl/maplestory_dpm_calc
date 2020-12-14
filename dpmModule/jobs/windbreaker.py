@@ -244,7 +244,7 @@ class JobGenerator(ck.JobGenerator):
                 summondelay=720,
                 delay=2000,
                 damage=550 + vEhc.getV(2, 2) * 22,
-                hit=5,
+                hit=5 * 3,
                 remain=45 * 1000,
                 cooltime=90 * 1000,
                 red=True,
