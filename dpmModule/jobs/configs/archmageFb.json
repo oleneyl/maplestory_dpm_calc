@@ -52,6 +52,10 @@
             "prop_ignore": 10
         }
     ],
+    "constant":{
+        "DOT_PUNISHER_HIT": 22,
+        "ERUPTION_RATE": [0, 0, 20, 45, 80, 125]
+    },
     "skills":{
         "도트 퍼니셔":{
             "type": "DamageSkill",
@@ -93,6 +97,73 @@
             "upgrade_priority":1,
             "v_increment": 2,
             "v_crit":false
+        },
+        "텔레포트 마스터리": {
+            "cooltime": -1,
+            "delay": 0,
+            "name": "텔레포트 마스터리",
+            "red": false,
+            "rem": false,
+            "enhanced_by_v":true,
+            "upgrade_priority":9,
+            "v_increment": 3,
+            "v_crit":true,
+            "damage": 272,
+            "hit": 1,
+            "type": "DamageSkill"
+        },
+        "플레임 헤이즈": {
+            "cooltime": 10000,
+            "delay": 1080,
+            "name": "플레임 헤이즈",
+            "red": true,
+            "rem": false,
+            "damage": "202 + 3 * combat",
+            "hit": 15,
+            "type": "DamageSkill",
+            "enhanced_by_v":true,
+            "upgrade_priority": 2,
+            "v_increment": 2,
+            "v_crit":true
+        },
+        "미스트 이럽션": {
+            "cooltime": 4000,
+            "delay": 720,
+            "name": "미스트 이럽션",
+            "red": true,
+            "rem": false,
+            "modifier": {
+                "pdamage": 10,
+                "pdamage_indep": "ERUPTION_RATE[5]",
+                "armor_ignore": 52.8 
+            },
+            "damage": "45 + combat",
+            "hit": 60,
+            "type": "DamageSkill",
+            "enhanced_by_v":true,
+            "upgrade_priority": 0,
+            "v_increment": 2,
+            "v_crit":false
+
+        },
+        "도트 퍼니셔(초과)": {
+            "cooltime": 0,
+            "delay": 0,
+            "name": "도트 퍼니셔(초과)",
+            "red": false,
+            "rem": false,
+            "modifier": {
+                "pdamage_indep": -35
+            },
+            "tier": 5,
+            "use_priority": 0,
+            "upgrade_priority": 0,
+            "damage": "400 + 15 * lv",
+            "hit": "5 * (DOT_PUNISHER_HIT - 1)",
+            "type": "DamageSkill"
         }
+    
+    
+        
     }
 }

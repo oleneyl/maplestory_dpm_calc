@@ -90,15 +90,14 @@ class JobGenerator(ck.JobGenerator):
         
         # Damage Skills
         Paralyze = self.load_skill_wrapper("페럴라이즈", vEhc)
-        TeleportMastery = core.DamageSkill("텔레포트 마스터리", 0, 272, 1, cooltime=-1).setV(vEhc, 9, 3, True).wrap(core.DamageSkillWrapper)
+        TeleportMastery = self.load_skill_wrapper("텔레포트 마스터리", vEhc)
         
         ERUPTION_RATE = [0, 0, 20, 45, 80, 125]
-        FlameHeize = core.DamageSkill("플레임 헤이즈", 1080, 202 + 3*self.combat, 15, cooltime = 10 * 1000, red=True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
-        MistEruption = core.DamageSkill("미스트 이럽션", 720, 45 + self.combat, 15*4, cooltime = 4 * 1000, red=True, modifier = core.CharacterModifier(armor_ignore = 40 + self.combat, pdamage_indep = ERUPTION_RATE[5]) + core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        FlameHeize = self.load_skill_wrapper("플레임 헤이즈", vEhc)
+        MistEruption = self.load_skill_wrapper("미스트 이럽션", vEhc)
         
         DotPunisher = self.load_skill_wrapper("도트 퍼니셔", vEhc)
-        # DotPunisher = core.DamageSkill("도트 퍼니셔", 690, 400+vEhc.getV(0,0)*15, 5, cooltime = 25 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        DotPunisherExceed = core.DamageSkill("도트 퍼니셔(초과)", 0, 400+vEhc.getV(0,0)*15, 5*(DOT_PUNISHER_HIT-1), modifier = core.CharacterModifier(pdamage_indep=-35)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DotPunisherExceed = self.load_skill_wrapper("도트 퍼니셔(초과)", vEhc)
         PoisonNova = core.DamageSkill("포이즌 노바", 570, 250 + 10*vEhc.getV(2,1), 12, cooltime = 25*1000, red = True).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
         PoisonNovaErupt = core.DamageSkill("포이즌 노바(폭발)", 0, 225 + 9*vEhc.getV(2,1), 12 * 3).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
         PoisonNovaEruptExceed = core.DamageSkill("포이즌 노바(폭발)(초과)", 0, 225 + 9*vEhc.getV(2,1), 12 * (POISON_NOVA_HIT - 3), modifier = core.CharacterModifier(pdamage_indep=-50)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
