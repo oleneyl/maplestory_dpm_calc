@@ -7,6 +7,5 @@ data/
 *.db
 *.opendb
 *.sqlite
-*.txt
 docs/_build/
 *.xlsx
