@@ -92,7 +92,7 @@ class JobGenerator(ck.JobGenerator):
         
         # Hyper
         SacredCube = core.BuffSkill("세이크리드 큐브", 90, 30000, cooltime = 210000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        DeadlyCharge = core.DamageSkill("데들리 차지", 810, 600, 10, cooltime = 15000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        DeadlyCharge = core.DamageSkill("데들리 차지", 30, 600, 10, cooltime = 15000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  # Base delay 810 -> Royal Guard cancel 30
         DeadlyChargeBuff = core.BuffSkill("데들리 차지(디버프)", 0, 10000, cooltime = -1, pdamage = 10).wrap(core.BuffSkillWrapper)
         QueenOfTomorrow = core.BuffSkill("퀸 오브 투모로우", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
@@ -148,6 +148,10 @@ class JobGenerator(ck.JobGenerator):
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
+        # Scheduling
+        LoyalGuard_5.onConstraint(core.ConstraintElement("로얄 가드로 캔슬 가능할때", DeadlyCharge, lambda: DeadlyCharge.is_available() or DeadlyCharge.is_cooltime_left(5500, 1)))
+        DeadlyCharge.onAfter(LoyalGuard_5)
+
         if USE_ROYAL_GUARD is False:
             LoyalGuard_5 = None
             LoyalGuardBuff = None
@@ -157,6 +161,6 @@ class JobGenerator(ck.JobGenerator):
                     GuardOfLight, LoyalGuardBuff, SoulAttack, Booster, Invigorate, SacredCube, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                     DeadlyChargeBuff, QueenOfTomorrow, AuraWeaponBuff, AuraWeapon, RoIias, SwordOfSoullight, LightOfCourage, LightOfCourageSummon, LightOfCourageFinal,
                     globalSkill.soul_contract()] +\
-                [CygnusPhalanx, LoyalGuard_5, ShiningCross, DeadlyCharge, ClauSolis, MirrorBreak, MirrorSpider] +\
+                [CygnusPhalanx, DeadlyCharge, LoyalGuard_5, ShiningCross, ClauSolis, MirrorBreak, MirrorSpider] +\
                 [ShiningCrossInstall, ClauSolisSummon] +\
                 [BasicAttackWrapper])
