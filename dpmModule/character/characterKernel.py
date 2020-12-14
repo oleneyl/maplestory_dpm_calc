@@ -298,7 +298,7 @@ class JobGenerator:
             with open(conf, encoding='utf-8') as f:
                 if conf.split('.')[-1] == 'json':
                     conf = json.load(f)
-                elif conf.split('.')[-1] == 'yaml':
+                elif conf.split('.')[-1] == 'yml':
                     conf = yaml.safe_load(f)
 
         self.conf = conf
