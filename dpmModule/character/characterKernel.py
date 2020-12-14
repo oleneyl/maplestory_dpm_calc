@@ -1,6 +1,7 @@
 import json
 import math
 import copy
+import yaml
 from typing import Any, Dict, List, Optional, Tuple
 
 from ..execution.rules import RuleSet
@@ -295,8 +296,11 @@ class JobGenerator:
     def load(self, conf):
         if isinstance(conf, str):
             with open(conf, encoding='utf-8') as f:
-                conf = json.load(f)
-        
+                if conf.split('.')[-1] == 'json':
+                    conf = json.load(f)
+                elif conf.split('.')[-1] == 'yaml':
+                    conf = yaml.safe_load(f)
+
         self.conf = conf
         self.buffrem = conf.get('buffrem', (0, 0))
         self.vEnhanceNum = conf.get('vEnhanceNum', 10)
