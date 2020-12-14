@@ -27,7 +27,7 @@ presets = [
     Preset(
         id="darknight",
         job="다크나이트",
-        description="다크 스피어 8히트, 체력 100%, 리인카 사용",
+        description="다크 스피어 8히트, 체력 100%, 리인카 쿨마다 사용",
         options={},
         alt=0,
     ),
