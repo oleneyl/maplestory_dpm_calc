@@ -101,7 +101,6 @@
         "텔레포트 마스터리": {
             "cooltime": -1,
             "delay": 0,
-            "name": "텔레포트 마스터리",
             "red": false,
             "rem": false,
             "enhanced_by_v":true,
@@ -115,7 +114,6 @@
         "플레임 헤이즈": {
             "cooltime": 10000,
             "delay": 1080,
-            "name": "플레임 헤이즈",
             "red": true,
             "rem": false,
             "damage": "202 + 3 * combat",
@@ -129,7 +127,6 @@
         "미스트 이럽션": {
             "cooltime": 4000,
             "delay": 720,
-            "name": "미스트 이럽션",
             "red": true,
             "rem": false,
             "modifier": {
@@ -149,7 +146,6 @@
         "도트 퍼니셔(초과)": {
             "cooltime": 0,
             "delay": 0,
-            "name": "도트 퍼니셔(초과)",
             "red": false,
             "rem": false,
             "modifier": {
@@ -161,7 +157,49 @@
             "damage": "400 + 15 * lv",
             "hit": "5 * (DOT_PUNISHER_HIT - 1)",
             "type": "DamageSkill"
+        },
+        "포이즌 노바": {
+            "cooltime": 25000,
+            "delay": 570,
+            "red": true,
+            "rem": false,
+            "damage": "250 + 10 * lv",
+            "hit": 12,
+            "type": "DamageSkill",
+            "tier": 5,
+            "use_priority": 2,
+            "upgrade_priority": 1
+        },
+        "포이즌 노바(폭발)": {
+            "cooltime": 0,
+            "delay": 0,
+            "red": false,
+            "rem": false,
+            "damage": "225 + 9 * lv",
+            "hit": 36,
+            "type": "DamageSkill",
+            "tier": 5,
+            "use_priority": 2,
+            "upgrade_priority": 1
+        },
+        "포이즌 노바(폭발)(초과)": {
+            "cooltime": 0,
+            "delay": 0,
+            "name": "포이즌 노바(폭발)(초과)",
+            "red": false,
+            "rem": false,
+            "modifier": {
+                "pdamage_indep": -50
+            },
+            "damage": 495,
+            "hit": 12,
+            "type": "DamageSkill",
+            "tier": 5,
+            "use_priority": 2,
+            "upgrade_priority": 1
+
         }
+    
     
     
         

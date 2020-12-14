@@ -32,7 +32,7 @@ class PoisonChainToxicWrapper(core.SummonSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.load(os.path.join(os.path.dirname(__file__), 'configs', 'archmageFb.json'))
+        self.load(os.path.join(os.path.dirname(__file__), 'configs', 'archmageFb.yaml'))
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
 
     def get_ruleset(self):
@@ -92,15 +92,14 @@ class JobGenerator(ck.JobGenerator):
         Paralyze = self.load_skill_wrapper("페럴라이즈", vEhc)
         TeleportMastery = self.load_skill_wrapper("텔레포트 마스터리", vEhc)
         
-        ERUPTION_RATE = [0, 0, 20, 45, 80, 125]
         FlameHeize = self.load_skill_wrapper("플레임 헤이즈", vEhc)
         MistEruption = self.load_skill_wrapper("미스트 이럽션", vEhc)
         
         DotPunisher = self.load_skill_wrapper("도트 퍼니셔", vEhc)
         DotPunisherExceed = self.load_skill_wrapper("도트 퍼니셔(초과)", vEhc)
-        PoisonNova = core.DamageSkill("포이즌 노바", 570, 250 + 10*vEhc.getV(2,1), 12, cooltime = 25*1000, red = True).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
-        PoisonNovaErupt = core.DamageSkill("포이즌 노바(폭발)", 0, 225 + 9*vEhc.getV(2,1), 12 * 3).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
-        PoisonNovaEruptExceed = core.DamageSkill("포이즌 노바(폭발)(초과)", 0, 225 + 9*vEhc.getV(2,1), 12 * (POISON_NOVA_HIT - 3), modifier = core.CharacterModifier(pdamage_indep=-50)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
+        PoisonNova = self.load_skill_wrapper("포이즌 노바", vEhc)
+        PoisonNovaErupt = self.load_skill_wrapper("포이즌 노바(폭발)", vEhc)
+        PoisonNovaEruptExceed = self.load_skill_wrapper("포이즌 노바(폭발)(초과)", vEhc)
         PoisonChain = core.DamageSkill("포이즌 체인", 600, 300+12*vEhc.getV(0,0), 4, cooltime=30*1000, red=True).wrap(core.DamageSkillWrapper)
         PoisonChainToxic = PoisonChainToxicWrapper(vEhc, 0, 0)
     

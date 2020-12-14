@@ -1,0 +1,173 @@
+---
+buffrem:
+- 0
+- 40
+jobtype: int
+jobname: 아크메이지불/독
+vEnhanceNum: 13
+preEmptiveSkills: 2
+passive_skill_list:
+- name: 하이 위즈덤
+  stat_main: 40
+- name: 스펠 마스터리
+  att: 10
+- name: 매직 크리티컬
+  crit: 30
+  crit_damage: 13
+- name: 엘리멘트 엠플리피케이션
+  pdamage: 50
+- name: 엘리멘탈 리셋
+  pdamage_indep: 40
+- name: 마스터 매직
+  att: 30 + 3 * passive_level
+  buff_rem: 50 + 5 * passive_level
+- name: 아케인 에임
+  armor_ignore: 20 + math.ceil(passive_level / 2)
+not_implied_skill_list:
+- name: 무기상수
+  pdamage_indep: 20
+- name: 숙련도
+  pdamage_indep: "-2.5 + 0.5 * math.ceil(combat / 2)"
+- name: 익스트림 매직
+  pdamage_indep: 20
+- name: 아케인 (실시간)
+  pdamage: 40
+- name: 퍼번트 드레인
+  pdamage_indep: 25
+- name: 엘리멘탈 리셋(사용)
+  prop_ignore: 10
+constant:
+  DOT_PUNISHER_HIT: 22
+  ERUPTION_RATE:
+  - 0
+  - 0
+  - 20
+  - 45
+  - 80
+  - 125
+skills:
+  도트 퍼니셔:
+    type: DamageSkill
+    delay: 690
+    damage: 400 + 15 * lv
+    tier: 5
+    use_priority: 0
+    upgrade_priority: 0
+    hit: 5
+    cooltime: 25000
+    red: true
+  메디테이션:
+    type: BuffSkill
+    delay: 0
+    remain: 240000
+    att: 30
+    rem: true
+    red: true
+  에픽 어드벤처:
+    type: BuffSkill
+    cooltime: 120000
+    delay: 0
+    red: false
+    rem: false
+    remain: 60000
+    pdamage: 10
+  페럴라이즈:
+    type: DamageSkill
+    delay: 600
+    damage: 220 + 3 * combat
+    hit: 8
+    modifier:
+      pdamage: 10
+    enhanced_by_v: true
+    upgrade_priority: 1
+    v_increment: 2
+    v_crit: false
+  텔레포트 마스터리:
+    cooltime: -1
+    delay: 0
+    red: false
+    rem: false
+    enhanced_by_v: true
+    upgrade_priority: 9
+    v_increment: 3
+    v_crit: true
+    damage: 272
+    hit: 1
+    type: DamageSkill
+  플레임 헤이즈:
+    cooltime: 10000
+    delay: 1080
+    red: true
+    rem: false
+    damage: 202 + 3 * combat
+    hit: 15
+    type: DamageSkill
+    enhanced_by_v: true
+    upgrade_priority: 2
+    v_increment: 2
+    v_crit: true
+  미스트 이럽션:
+    cooltime: 4000
+    delay: 720
+    red: true
+    rem: false
+    modifier:
+      pdamage: 10
+      pdamage_indep: ERUPTION_RATE[5]
+      armor_ignore: 52.8
+    damage: 45 + combat
+    hit: 60
+    type: DamageSkill
+    enhanced_by_v: true
+    upgrade_priority: 0
+    v_increment: 2
+    v_crit: false
+  도트 퍼니셔(초과):
+    cooltime: 0
+    delay: 0
+    red: false
+    rem: false
+    modifier:
+      pdamage_indep: -35
+    tier: 5
+    use_priority: 0
+    upgrade_priority: 0
+    damage: 400 + 15 * lv
+    hit: 5 * (DOT_PUNISHER_HIT - 1)
+    type: DamageSkill
+  포이즌 노바:
+    cooltime: 25000
+    delay: 570
+    red: true
+    rem: false
+    damage: 250 + 10 * lv
+    hit: 12
+    type: DamageSkill
+    tier: 5
+    use_priority: 2
+    upgrade_priority: 1
+  포이즌 노바(폭발):
+    cooltime: 0
+    delay: 0
+    red: false
+    rem: false
+    damage: 225 + 9 * lv
+    hit: 36
+    type: DamageSkill
+    tier: 5
+    use_priority: 2
+    upgrade_priority: 1
+  포이즌 노바(폭발)(초과):
+    cooltime: 0
+    delay: 0
+    name: 포이즌 노바(폭발)(초과)
+    red: false
+    rem: false
+    modifier:
+      pdamage_indep: -50
+    damage: 495
+    hit: 12
+    type: DamageSkill
+    tier: 5
+    use_priority: 2
+    upgrade_priority: 1
