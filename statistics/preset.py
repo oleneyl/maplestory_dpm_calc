@@ -167,7 +167,7 @@ presets = [
         alt=0,
     ),
     Preset(
-        id="nightwalker",
+        id="nightwalker_jump_0",
         job="나이트워커",
         description="노점샷",
         options={"jump_rate": 0},
@@ -333,7 +333,7 @@ presets = [
         alt=0,
     ),
     Preset(
-        id="kinesis",
+        id="kinesis_shot",
         job="키네시스",
         description="샷 80%",
         options={"dealcycle": "shot", "shot_rate": 0.8},
