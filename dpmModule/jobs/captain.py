@@ -123,8 +123,7 @@ class JobGenerator(ck.JobGenerator):
         # 5th
         PirateFlag = adventurer.PirateFlagWrapper(vEhc, 2, 1, chtr.level)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
-        #오버드라이브 (앱솔 가정)
-        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
+
         WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 4, 4, WEAPON_ATT)
         
