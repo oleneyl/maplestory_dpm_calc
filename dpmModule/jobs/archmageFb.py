@@ -32,7 +32,7 @@ class PoisonChainToxicWrapper(core.SummonSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.load(os.path.join(os.path.dirname(__file__), 'configs', 'archmageFb.yml'))
+        self.load(os.path.join(os.path.dirname(__file__), 'configs', 'archmageFb.json'))
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
 
     def get_ruleset(self):
@@ -100,43 +100,43 @@ class JobGenerator(ck.JobGenerator):
         PoisonNova = self.load_skill_wrapper("포이즌 노바", vEhc)
         PoisonNovaErupt = self.load_skill_wrapper("포이즌 노바(폭발)", vEhc)
         PoisonNovaEruptExceed = self.load_skill_wrapper("포이즌 노바(폭발)(초과)", vEhc)
-        PoisonChain = core.DamageSkill("포이즌 체인", 600, 300+12*vEhc.getV(0,0), 4, cooltime=30*1000, red=True).wrap(core.DamageSkillWrapper)
+        PoisonChain = self.load_skill_wrapper("포이즌 체인", vEhc)
         PoisonChainToxic = PoisonChainToxicWrapper(vEhc, 0, 0)
     
-        Meteor = core.DamageSkill("메테오", 690, 315+self.combat*3, 12, cooltime = 45 * 1000, red=True).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
-        MegidoFlame = core.DamageSkill("메기도 플레임", 690, 420, 15, cooltime = 50 * 1000).setV(vEhc, 8, 2, True).wrap(core.DamageSkillWrapper)
+        Meteor = self.load_skill_wrapper("메테오", vEhc)
+        MegidoFlame = self.load_skill_wrapper("메기도 플레임", vEhc)
         
         # Summoning Skills
-        Ifritt = core.SummonSkill("이프리트", 600, 3030, 150+2*self.combat, 3, (260+5*self.combat)*1000).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
-        FireAura = core.SummonSkill("파이어 오라", 0, 3000, 400, 2, 999999999, modifier = core.CharacterModifier(pdamage = -50)).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
-        FuryOfIfritt = core.SummonSkill("퓨리 오브 이프리트", 360, 6000/25, 200+8*vEhc.getV(3,2), 6, 6*1000-1, cooltime = 75000, red = True).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
+        Ifritt = self.load_skill_wrapper("이프리트", vEhc)
+        FireAura = self.load_skill_wrapper("파이어 오라", vEhc)
+        FuryOfIfritt = self.load_skill_wrapper("퓨리 오브 이프리트", vEhc)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         # Final Attack
         METEOR_PROP = 0.6+0.02*self.combat
-        MeteorPassive = core.DamageSkill("메테오(패시브)", 0, 220+4*self.combat, METEOR_PROP).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
-        Ignite = core.DamageSkill("이그나이트", 0, 40, 3 * 3 * 0.5).setV(vEhc, 3, 4, False).wrap(core.DamageSkillWrapper)
-        IgniteMeteor = core.DamageSkill("이그나이트(메테오)", 0, 40, 3 * 3 * 0.5 * METEOR_PROP).setV(vEhc, 3, 4, False).wrap(core.DamageSkillWrapper) # 메테오의 발동 확률 고려
+        MeteorPassive = self.load_skill_wrapper("메테오(패시브)", vEhc)
+        Ignite = self.load_skill_wrapper("이그나이트", vEhc)
+        IgniteMeteor = self.load_skill_wrapper("이그나이트(메테오)", vEhc)
         #Ignite : Need Wrapper
         
         # DoT Skills
-        ParalyzeDOT = core.DotSkill("페럴라이즈(도트)", 0, 1000, 240 + self.combat * 4, 1, 10000, cooltime = -1).wrap(core.DotSkillWrapper)
-        MistDOT = core.DotSkill("포이즌 미스트(도트)", 0, 1000, 300 + self.combat * 1, 1, 12000, cooltime = -1).wrap(core.DotSkillWrapper)
-        IfrittDot = core.DotSkill("이프리트(도트)", 0, 1000, 140 + self.combat * 3, 1, 4000, cooltime = -1).wrap(core.DotSkillWrapper)
-        HeizeFlameDOT = core.DotSkill("플레임 헤이즈(도트)", 0, 1000, 200 + self.combat * 3, 1, 20000, cooltime = -1).wrap(core.DotSkillWrapper)
-        TeleportMasteryDOT = core.DotSkill("텔레포트 마스터리(도트)", 0, 1000, 49, 1, 8000, cooltime = -1).wrap(core.DotSkillWrapper)
-        PoisonBreathDOT = core.DotSkill("포이즌 브레스(도트)", 0, 1000, 60, 1, 20000, cooltime = -1).wrap(core.DotSkillWrapper)
-        MegidoFlameDOT = core.DotSkill("메기도 플레임(도트)", 0, 1000, 700, 1, 60000, cooltime = -1).wrap(core.DotSkillWrapper)
-        DotPunisherDOT = core.DotSkill("도트 퍼니셔(도트)", 0, 1000, 200+3*vEhc.getV(0,0), 1, 16000, cooltime = -1).isV(vEhc,0,0).wrap(core.DotSkillWrapper)
-        PoisonNovaDOT = core.DotSkill("포이즌 노바(도트)", 0, 1000, 300+12*vEhc.getV(2,1), 1, 20000, cooltime = -1).isV(vEhc,2,1).wrap(core.DotSkillWrapper)
+        ParalyzeDOT = self.load_skill_wrapper("페럴라이즈(도트)")
+        MistDOT = self.load_skill_wrapper("포이즌 미스트(도트)")
+        IfrittDot = self.load_skill_wrapper("이프리트(도트)")
+        HeizeFlameDOT = self.load_skill_wrapper("플레임 헤이즈(도트)")
+        TeleportMasteryDOT = self.load_skill_wrapper("텔레포트 마스터리(도트)")
+        PoisonBreathDOT = self.load_skill_wrapper("포이즌 브레스(도트)")
+        MegidoFlameDOT = self.load_skill_wrapper("메기도 플레임(도트)")
+        DotPunisherDOT = self.load_skill_wrapper("도트 퍼니셔(도트)", vEhc)
+        PoisonNovaDOT = self.load_skill_wrapper("포이즌 노바(도트)", vEhc)
 
         # Unstable Memorize Skills
-        EnergyBolt = core.DamageSkill("에너지 볼트", 630, 309, 1).wrap(core.DamageSkillWrapper)
-        FlameOrb = core.DamageSkill("플레임 오브", 630, 301, 2).wrap(core.DamageSkillWrapper)
-        PoisonBreath = core.DamageSkill("포이즌 브레스", 600, 180, 1).wrap(core.DamageSkillWrapper)
-        Explosion = core.DamageSkill("익스플로젼", 540+150, 405, 2).wrap(core.DamageSkillWrapper) # magic6(720) -> explosion(180). 둘 다 공속 적용되어 540+150.
-        PoisonMist = core.DamageSkill("포이즌 미스트", 1140, 270, 1).wrap(core.DamageSkillWrapper)
-        SlimeVirus = core.DotSkill("슬라임 바이러스", 1680, 1000, 160, 1, 10000, cooltime=-1).wrap(core.DotSkillWrapper)
+        EnergyBolt = self.load_skill_wrapper("에너지 볼트")
+        FlameOrb = self.load_skill_wrapper("플레임 오브")
+        PoisonBreath = self.load_skill_wrapper("포이즌 브레스")
+        Explosion = self.load_skill_wrapper("익스플로젼") # magic6(720) -> explosion(180). 둘 다 공속 적용되어 540+150.
+        PoisonMist = self.load_skill_wrapper("포이즌 미스트")
+        SlimeVirus = self.load_skill_wrapper("슬라임 바이러스")
         
         # Unstable Memorize
         UnstableMemorize = adventurer.UnstableMemorizeWrapper(vEhc, 4, 4, chtr.get_skill_modifier())
