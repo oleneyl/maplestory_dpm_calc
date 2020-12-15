@@ -1,6 +1,7 @@
 dist/
 build/
 data/
+.vscode/
 *.pyc
 .idea
 *.suo
