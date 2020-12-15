@@ -230,7 +230,7 @@ class JobGenerator(ck.JobGenerator):
         RapidFire = (
             core.DamageSkill(
                 "래피드 파이어",
-                delay=150,
+                delay=120,
                 damage=325 + 3 * self.combat,
                 hit=1,
                 modifier=core.CharacterModifier(pdamage=30, boss_pdamage=20)
