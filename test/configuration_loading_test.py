@@ -2,11 +2,11 @@ import sys
 import json
 
 sys.path.append('../')
-import dpmModule
 
-from dpmModule.kernel.core import CharacterModifier,InformedCharacterModifier
 from dpmModule.character.characterKernel import JobGenerator
 from dpmModule.character.characterTemplate import get_template_generator
+from dpmModule.kernel.core import CharacterModifier, InformedCharacterModifier
+
 
 def test_modifier_loading():
     test_modifier_conf = {
@@ -31,6 +31,7 @@ def test_informed_modifier_loading():
     assert test_modifier.pdamage_indep == 20
     assert test_modifier.name == 'test_md'
 
+
 def test_job_generator_creation():
     with open('../dpmModule/jobs/configs/archmageFb.json', encoding='utf-8') as f:
         test_conf = json.load(f)
@@ -41,3 +42,4 @@ def test_job_generator_creation():
     passive_skill_list = gen.get_passive_skill_list(vEhc, character, None)
     not_implied_skill_list = gen.get_not_implied_skill_list(vEhc, character, None)
     print(passive_skill_list)
+    print(not_implied_skill_list)

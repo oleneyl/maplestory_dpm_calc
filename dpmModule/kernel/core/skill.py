@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Type, TypeVar, Any
 
-from ..graph import EvaluativeGraphElement
 from .constant import NOTWANTTOEXECUTE
 from .modifier import CharacterModifier
+from ..graph import EvaluativeGraphElement
 
 if TYPE_CHECKING:
     from ..abstract import AbstractVEnhancer
@@ -474,7 +474,7 @@ def load_skill(skill_conf, background_information: Dict[str, Any]) -> AbstractSk
     }
 
     SkillObject = skill_object_type[skill_conf['type']]
-    
+
     argument_space = SkillObject.__init__.__code__.co_varnames
     filtered_skill_conf = {k: v for k, v in skill_conf.items() if k in argument_space}
     filtered_skill_conf = _map_background_information(filtered_skill_conf, **background_information)
