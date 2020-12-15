@@ -11,7 +11,7 @@ from math import ceil
 from typing import Any, Dict
 
 '''
-Advisor: Monolith, 몰라
+Advisor: Monolith, 몰라#4508
 '''
 
 # TODO: 하이퍼스탯으로 스탠스 10% 확보 필요
@@ -38,9 +38,6 @@ class SupplyStackWrapper(core.StackSkillWrapper):
         '''
         return core.CharacterModifier(pstat_main=self.stack, pstat_sub=self.stack, pdamage_indep=max(0, self.stack-20))
 
-    def chargeController(self):
-        return core.TaskHolder(core.Task(self, partial(self.set_stack, self._max-self.stack)), name="서플라이 차지")
-
     def begin_overload(self):
         self._max = 40
         return self._result_object_cache
@@ -66,21 +63,29 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
 
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(ConcurrentRunRule('메가 스매셔(개시)', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('레디 투 다이', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('포톤 레이', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('엑스트라 서플라이', '서플러스 서플라이', lambda sk : sk.stack < sk._max), RuleSet.BASE)
+        return ruleset
+
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(pstat_main=20, pstat_sub=20)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        '''
-        효율성을 위해 합쳐진 코드 사용 (합계 40%)
+
         Multilateral1 = core.InformedCharacterModifier("멀티래터럴 I", pdamage=3)
         Multilateral2 = core.InformedCharacterModifier("멀티래터럴 II", pdamage=5)
         Multilateral3 = core.InformedCharacterModifier("멀티래터럴 III", pdamage=7)
         Multilateral4 = core.InformedCharacterModifier("멀티래터럴 IV", pdamage=10)
         Multilateral5 = core.InformedCharacterModifier("멀티래터럴 V", pdamage=10)
         Multilateral6 = core.InformedCharacterModifier("멀티래터럴 VI", pdamage=5)
-        '''
-        Multilateral = core.InformedCharacterModifier("멀티래터럴", pdamage=40)
+
+        Multilateral = [Multilateral1, Multilateral2, Multilateral3, Multilateral4, Multilateral5, Multilateral6]
 
         LinearPerspective = core.InformedCharacterModifier("리니어 퍼스펙티브", crit=40)
         MinoritySupport = core.InformedCharacterModifier("마이너리티 서포트", stat_main=20, stat_sub=20)
@@ -92,7 +97,7 @@ class JobGenerator(ck.JobGenerator):
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 3, 4)
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 2, 2)
 
-        return [Multilateral, LinearPerspective, MinoritySupport, XenonMastery, HybridDefensesPassive, XenonExpert, OffensiveMatrix,
+        return Multilateral + [LinearPerspective, MinoritySupport, XenonMastery, HybridDefensesPassive, XenonExpert, OffensiveMatrix,
                 LoadedDicePassive, ReadyToDiePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -103,15 +108,6 @@ class JobGenerator(ck.JobGenerator):
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-5+0.5*ceil(passive_level/2))
 
         return [WeaponConstant, JobConstant, Mastery]
-
-    def get_ruleset(self):
-        ruleset = RuleSet()
-        ruleset.add_rule(ConcurrentRunRule('메가 스매셔', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule('레디 투 다이', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule('포톤 레이', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule('엑스트라 서플라이', '서플러스 서플라이', lambda sk : sk.stack<sk._max), RuleSet.BASE)
-        return ruleset
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
@@ -148,7 +144,7 @@ class JobGenerator(ck.JobGenerator):
 
         PurgeSnipe = core.DamageSkill("퍼지롭 매스커레이드 : 저격", 690, 345 + 2*self.combat, 7, modifier=core.CharacterModifier(armor_ignore=30 + self.combat) + core.CharacterModifier(pdamage=20, armor_ignore=10)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
-        # 관통 기준
+        # 역장 기준
         # 하이퍼 3종 적용
         Hologram_Penetrate = core.SummonSkill("홀로그램 그래피티 : 관통", 720, 30000/116, 213+3*self.combat, 1, 20000+10000, cooltime=30000-1000*ceil(self.combat/3), modifier=core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
         Hologram_ForceField = core.SummonSkill("홀로그램 그래피티 : 역장", 720, 30000/64, 400+5*self.combat, 1, 20000+10000, cooltime=30000-1000*ceil(self.combat/3), modifier=core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
@@ -176,8 +172,8 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.get_weapon_att("에너지소드")
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
 
-        MegaSmasher = core.SummonSkill("메가 스매셔", 0, 250, 0, 0, 16000, cooltime=180000, rem=False).wrap(core.SummonSkillWrapper)
-        MegaSmasherTick = core.DamageSkill("메가 스매셔(틱)", 0, 300+10*vEhc.getV(4, 4), 6).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        MegaSmasher = core.DamageSkill("메가 스매셔(개시)", 0, 0, 0, cooltime=180000).wrap(core.DamageSkillWrapper)
+        MegaSmasherTick = core.DamageSkill("메가 스매셔(틱)", 250, 300+10*vEhc.getV(4, 4), 6).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
         OVERLOAD_TIME = 70
         OverloadMode = core.BuffSkill("오버로드 모드", 720, OVERLOAD_TIME*1000, cooltime=180000).wrap(core.BuffSkillWrapper)
@@ -192,7 +188,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 30회 발동, 발사 딜레이 생략, 퍼지롭으로 충전
         PhotonRay = core.BuffSkill("포톤 레이", 300, 20000, cooltime=35000).wrap(core.BuffSkillWrapper)
-        PhotonRayHit = core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4), 4*30).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        PhotonRayHit = core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4)*14, 4*30).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
         SupplySurplus = SupplyStackWrapper(core.BuffSkill("서플러스 서플라이", 0, 999999999), AmaranthGenerator)
@@ -211,14 +207,13 @@ class JobGenerator(ck.JobGenerator):
         ExtraSupply.onAfter(SupplySurplus.stackController(10))
         OOPArtsCode.onAfter(SupplySurplus.stackController(-20))
 
-        chargeController = SupplySurplus.chargeController()
-        AmaranthGenerator.onAfter(chargeController)
+        AmaranthGenerator.onAfter(SupplySurplus.stackController(40))
 
         TriangulationStack = core.StackSkillWrapper(core.BuffSkill("트라이앵글 스택", 0, 99999999), 3)
         TriangulationTrigger = core.OptionalElement(lambda : TriangulationStack.judge(3, 1), Triangulation, TriangulationStack.stackController(0.3))
         Triangulation.onAfter(TriangulationStack.stackController(0, dtype='set'))
 
-        MegaSmasher.onTick(MegaSmasherTick)
+        MegaSmasher.onAfter(core.RepeatElement(MegaSmasherTick, 64))
 
         BeginOverloadMode = SupplySurplus.beginOverloadMode()
         EndOverloadMode = SupplySurplus.endOverloadMode()
@@ -247,9 +242,9 @@ class JobGenerator(ck.JobGenerator):
 
         return(PurgeSnipe,
                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                globalSkill.useful_wind_booster(), globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract(),
+                globalSkill.useful_wind_booster(), globalSkill.useful_hyper_body_xenon(), globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract(),
                 SupplySurplus, SupplyCharger, InclinePower, EfficiencyPipeLine, Booster, HybridDefenses, VirtualProjection, ExtraSupply] +
-               [Hologram_Penetrate, AmaranthGenerator, MirrorBreak, MirrorSpider, MegaSmasher, MegaSmasherTick, ResistanceLineInfantry, LuckyDice, ReadyToDie, Overdrive,
-                OverloadMode, Hologram_Fusion, Hologram_Fusion_Buff, OverloadHit, OverloadHit_copy, PhotonRay, PhotonRayHit] +
+               [Hologram_ForceField, AmaranthGenerator, MirrorBreak, MirrorSpider, MegaSmasher, MegaSmasherTick, ResistanceLineInfantry, LuckyDice, ReadyToDie, Overdrive,
+                OverloadMode, Hologram_Fusion, Hologram_Fusion_Buff, OverloadHit, OverloadHit_copy, PhotonRay, PhotonRayHit, MeltDown, MeltDown_Armor, MeltDown_Damage] +
                [PinpointRocket, Triangulation, OOPArtsCode] +
                [PurgeSnipe])
