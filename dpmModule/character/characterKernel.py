@@ -47,6 +47,7 @@ ExMDF = ExtendedCharacterModifier
 def _get_loaded_object_with_mapping(conf, loadable, **kwargs):
     global_variables = globals()
     global_variables.update(kwargs)
+    global_variables['math'] = math
     exported_conf = {}
     for k, v in conf.items():
         if isinstance(v, str) and k != 'name':
@@ -55,6 +56,7 @@ def _get_loaded_object_with_mapping(conf, loadable, **kwargs):
         else:
             exported_conf[k] = v
     return loadable.load(exported_conf)
+
 
 class AbstractCharacter:
     # TODO : get/set :: use decorator? could be...
@@ -308,7 +310,7 @@ class JobGenerator:
         self.preEmptiveSkills = conf.get('preEmptiveSkills', 0)
         self.jobname = conf['jobname']
         self.jobtype = conf['jobtype']
-        self._use_critical_reinforce = conf.get('use_critical_reinforce', False)       
+        self._use_critical_reinforce = conf.get('use_critical_reinforce', False)
 
     def get_ruleset(self) -> Optional[RuleSet]:
         return
