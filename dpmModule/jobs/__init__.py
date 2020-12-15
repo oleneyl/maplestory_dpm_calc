@@ -1,28 +1,28 @@
-from . import archmageFb as archmageFb
-from . import archmageTc as archmageTc
-from . import bishop as bishop
-from . import hero as hero
-from . import paladin as paladin
-from . import sniper as sniper
-from . import windBreaker as windbreaker
-from . import soulmaster as soulmaster
-from . import luminous as luminous
-from . import battlemage as battlemage
-from . import mechanic as mechanic
-from . import mercedes as mercedes
-from . import demonslayer as demonslayer
-from . import darknight as darknight
-from . import wildhunter as wildhunter
-from . import flamewizard as flamewizard
-from . import shadower as shadower
-from . import cannonshooter as cannonshooter
-from . import michael as michael
-from . import dualblade as dualblade
-from . import kaiser as kaiser
-from . import captain as captain
-from . import angelicbuster as angelicbuster
-from . import phantom as phantom
-from . import nightlord as nightlord
+from . import archmageFb
+from . import archmageTc
+from . import bishop
+from . import hero
+from . import paladin
+from . import sniper
+from . import windbreaker
+from . import soulmaster
+from . import luminous
+from . import battlemage
+from . import mechanic
+from . import mercedes
+from . import demonslayer
+from . import darknight
+from . import wildhunter
+from . import flamewizard
+from . import shadower
+from . import cannonshooter
+from . import michael
+from . import dualblade
+from . import kaiser
+from . import captain
+from . import angelicbuster
+from . import phantom
+from . import nightlord
 from . import viper
 from . import eunwol
 from . import nightwalker
@@ -39,6 +39,8 @@ from . import blaster
 from . import aran
 from . import adele
 from . import hoyoung
+from . import demonavenger
+from . import xenon
 
 __all__ = ["archmageFb", "archmageTc", "hero", "paladin", "sniper", "windbreaker", "soulmaster", 
             "flamewizard", "mercedes", "luminous", "bishop", "battlemage", "mechanic", "demonslayer", "darknight", "wildhunter",
@@ -175,11 +177,7 @@ weaponList = {"아크메이지불/독" : "스태프",
         "호영" : "부채"
 }
 
-jobListOrder = ["archmageFb", "archmageTc", "hero", "paladin", "sniper", "windbreaker", "soulmaster", 
-            "flamewizard", "mercedes", "luminous", "bishop", "battlemage", "mechanic", "demonslayer", "darknight", "wildhunter",
-            "shadower", "cannonshooter", "michael", "dualblade", "kaiser", "captain", "angelicbuster", "phantom", "nightlord",
-            "eunwol", "viper", "nightwalker", "striker", "evan", "bowmaster", "zero", "kinesis", "ilium", "pathfinder", "cadena", "ark",
-            "blaster", "aran", "adele", "hoyoung"]
+jobListOrder = __all__.copy()
 
 def getKoJobName(enJob):
         if enJob in jobList:

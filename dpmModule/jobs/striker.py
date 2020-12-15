@@ -32,7 +32,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 1
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 40) # 뇌전 스택으로 평균 35~40%의 방무 적용
+        return core.CharacterModifier(armor_ignore=43, pdamage=43)  # 뇌전 스택으로 평균 35~40%의 방무 적용 + 하이퍼
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -88,6 +88,8 @@ class JobGenerator(ck.JobGenerator):
         소울 컨트랙트를 창뇌연격에 맞춰 사용
         천지개벽과 창뇌연격이 겹쳐지지 않게 사용
         '''
+        DEALCYCLE = options.get('dealcycle', 'waterwave')
+
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         CHOOKROI = 0.7 + 0.01*passive_level
         LINK_MASTERY = core.CharacterModifier(pdamage_indep = 20)
@@ -120,9 +122,7 @@ class JobGenerator(ck.JobGenerator):
         CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,1,3).wrap(core.BuffSkillWrapper)
 
-        #오버드라이브 (앱솔 가정)
-        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-        WEAPON_ATT = jobutils.get_weapon_att("너클")
+        WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
@@ -159,8 +159,14 @@ class JobGenerator(ck.JobGenerator):
         WaterWaveCancelHurricane = core.GraphElement("파파태")
         WaterWaveCancelHurricane.onAfter(WaterWaveConcatCancel)
         WaterWaveCancelHurricane.onAfter(Hurricane)
-        
-        BasicAttack = core.OptionalElement(SkyOpen.is_active, HurricaneDestroy, WaterWaveDestroy)
+
+        if DEALCYCLE == "waterwave":
+            BasicAttack = core.OptionalElement(SkyOpen.is_active, HurricaneDestroy, WaterWaveDestroy)
+        elif DEALCYCLE == "thunder":
+            BasicAttack = core.OptionalElement(SkyOpen.is_active, HurricaneDestroy, ThunderDestroy)
+        else:
+            raise ValueError(DEALCYCLE)
+
         BasicAttackWrapper = core.DamageSkill('기본 공격', 0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
         

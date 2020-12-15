@@ -1,5 +1,6 @@
 dist/
 build/
+data/
 *.pyc
 .idea
 *.suo
@@ -7,6 +8,6 @@ build/
 *.opendb
 *.json
 *.sqlite
-dpm_output.txt
+*.txt
 docs/_build/
-*result.xlsx
+*.xlsx

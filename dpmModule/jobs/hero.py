@@ -91,6 +91,9 @@ class JobGenerator(ck.JobGenerator):
         Enrage = core.InformedCharacterModifier("인레이지",pdamage_indep = 25 + self.combat // 2, crit_damage = 20 + self.combat // 3)
         
         return [WeaponConstant, Mastery, Enrage]
+
+    def get_modifier_optimization_hint(self) -> core.CharacterModifier:
+        return core.CharacterModifier(boss_pdamage=65)
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
@@ -129,7 +132,7 @@ class JobGenerator(ck.JobGenerator):
         
         Insizing = core.DamageSkill("인사이징", 660, 576 + 7 * self.combat, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         InsizingBuff = core.BuffSkill("인사이징(버프)", 0, (30 + self.combat // 2) * 1000, cooltime = -1, pdamage = 25 + ceil(self.combat / 2)).wrap(core.BuffSkillWrapper)
-        InsizingDot = core.DotSkill("인사이징(도트)", 0, 2000, 165 + 3*self.combat, 1, (30 + self.combat // 2) * 1000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        InsizingDot = core.DotSkill("인사이징(도트)", 0, 2000, 165 + 3*self.combat, 1, (30 + self.combat // 2) * 1000, cooltime = -1).wrap(core.DotSkillWrapper)
     
         AdvancedFinalAttack = core.DamageSkill("어드밴스드 파이널 어택", 0, 170 + 2*passive_level, 3 * 0.01 * (60 + ceil(passive_level/2) + 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
@@ -157,9 +160,8 @@ class JobGenerator(ck.JobGenerator):
         IncreaseCombo = ComboAttack.stackController(1)
         
         #Final attack type
-        ComboInstinct.onAfter(ComboInstinctOff.controller(30 * 1000))
         ComboInstinct.onAfter(ComboAttack.toggleController(True))
-        ComboInstinctOff.onAfter(ComboAttack.toggleController(False))
+        ComboInstinct.onEventEnd(ComboAttack.toggleController(False))
         InstinctFringeUse = core.OptionalElement(ComboInstinct.is_active, ComboInstinctFringe, name = "콤보 인스팅트 여부")
     
         #레이징 블로우

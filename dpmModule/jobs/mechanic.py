@@ -27,19 +27,22 @@ class MultipleOptionWrapper(core.SummonSkillWrapper):
         super(MultipleOptionWrapper, self).__init__(skill)
 
     def _useTick(self):
-        if self.is_active() and self.tick <= 0:
-            if self.cycle < 3:
-                damage = 350+10*self.vEhc.getV(2,1)
-                hit = 8
-            else:
-                damage = 200+8*self.vEhc.getV(2,1)
-                hit = 6
-            self.cycle = (self.cycle + 1) % 8
+        result = super(MultipleOptionWrapper, self)._useTick()
+        self.cycle = (self.cycle + 1) % 8
+        return result
 
-            self.tick += self.skill.delay
-            return core.ResultObject(0, self.get_modifier(), damage, hit, sname = self.skill.name, spec = self.skill.spec)
+    def get_damage(self) -> float:
+        if self.cycle < 3:
+            return 350+10*self.vEhc.getV(2, 1)
         else:
-            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+            return 200+8*self.vEhc.getV(2, 1)
+
+    def get_hit(self) -> float:
+        if self.cycle < 3:
+            return 8
+        else:
+            return 6
+
 
 class MechCarrierWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, modifier):
@@ -52,19 +55,16 @@ class MechCarrierWrapper(core.SummonSkillWrapper):
         return super(MechCarrierWrapper, self)._use(skill_modifier)
     
     def _useTick(self):
-        if self.is_active() and self.tick <= 0: # TODO: afterTick() 같은 콜백 만들자....
-            self.tick += self.get_delay()
-            hit = self.get_hit()
-            self.interceptor = min(self.interceptor + 1, 16)
-            return core.ResultObject(0, self.get_modifier(), self.get_damage(), hit, sname = self.skill.name, spec = self.skill.spec)
-        else:
-            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)    
+        result = super(MechCarrierWrapper, self)._useTick()
+        self.interceptor = min(self.interceptor + 1, 16)
+        return result
 
     def get_hit(self):
         return self.skill.hit * self.interceptor
 
     def get_delay(self):
         return self.skill.delay + self.interceptor * 120
+
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -76,7 +76,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 1
         
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 10, pdamage = 28+20)
+        return core.CharacterModifier(pdamage=51)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         
@@ -154,10 +154,8 @@ class JobGenerator(ck.JobGenerator):
         
         BomberTime = core.BuffSkill("봄버 타임", 900, 10*1000, cooltime = 100*1000).wrap(core.BuffSkillWrapper)
         DistortionField = core.SummonSkill("디스토션 필드", 690, 4000/15, 350, 2, 4000-1, cooltime = 8000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
-    
-        #오버드라이브 (앱솔 가정)
-        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-        WEAPON_ATT = jobutils.get_weapon_att("건")
+
+        WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
@@ -201,16 +199,16 @@ class JobGenerator(ck.JobGenerator):
         BusterCallInit.onAfter(BusterCallBuff)
         BusterCallInit.onAfter(BusterCall)
         
-        Robolauncher.onAfter(RobolauncherFinal.controller(60*1000*ROBOT_SUMMON_REMAIN))
+        Robolauncher.onEventEnd(RobolauncherFinal)
         Robolauncher.onAfter(RobolauncherBuff)
 
         MagneticField.onBefore(core.RepeatElement(MagneticFieldInstall, 3))
         MagneticField.onAfter(MagneticFieldBuff)
         
-        SupportWaver.onAfter(SupportWaverFinal.controller(80*1000*ROBOT_SUMMON_REMAIN))
+        SupportWaver.onEventEnd(SupportWaverFinal)
         SupportWaver.onAfter(SupportWaverBuff)
         
-        RoboFactory.onAfter(RoboFactoryFinal.controller(30*1000*ROBOT_SUMMON_REMAIN))
+        RoboFactory.onEventEnd(RoboFactoryFinal)
         RoboFactory.onAfter(RoboFactoryBuff)
         
         return(MassiveFire,

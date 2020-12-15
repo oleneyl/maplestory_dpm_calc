@@ -20,7 +20,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 2
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(boss_pdamage=10, armor_ignore=44)
+        return core.CharacterModifier(boss_pdamage=60, armor_ignore=44)
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -123,7 +123,7 @@ class JobGenerator(ck.JobGenerator):
         PierceCyclone_.onAfter(PierceCycloneEnd)
         PierceCyclone.onAfter(PierceCyclone_)
 
-        DarknessAura.onAfter(DarknessAuraFinal.controller(40000))
+        DarknessAura.onEventEnd(DarknessAuraFinal)
 
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 1)

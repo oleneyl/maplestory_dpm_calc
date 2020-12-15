@@ -11,10 +11,9 @@ from typing import Any, Dict
 
 ######   Passive Skill   ######
 
-class WeaponVarietyStackWrapper(core.StackSkillWrapper): # TODO: 굳이 관리할 필요 없이 항상 최대 스택 가정해도 되지 않을까?
+class WeaponVarietyStackWrapper(core.StackSkillWrapper):
     def __init__(self, _max, prof_agent, final_attack, use_prof_agent_attack):
         super(WeaponVarietyStackWrapper, self).__init__(core.BuffSkill("웨폰 버라이어티 스택", 0, 99999999), _max)
-        self.stackLog = []
         self.currentWeapon = None
         self.use_final_attack = core.OptionalElement(final_attack.is_available, final_attack, name = "웨폰 버라이어티 쿨타임")
         self.use_prof_agent_attack = use_prof_agent_attack
@@ -22,18 +21,14 @@ class WeaponVarietyStackWrapper(core.StackSkillWrapper): # TODO: 굳이 관리�
         self.modifierInvariantFlag = False
         
     def vary(self, weapon):
-        if weapon not in self.stackLog:
-            self.stackLog.append(weapon)
-        
         self.currentWeapon = weapon
-            
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
     
     def get_modifier(self):
         multiplier = 11
         if self.prof_agent.is_active():
             multiplier *= 2
-        return core.CharacterModifier(pdamage_indep = len(self.stackLog) * multiplier)
+        return core.CharacterModifier(pdamage_indep = 8 * multiplier)
 
     def _changed(self, weapon):
         return self.currentWeapon != weapon
@@ -59,18 +54,18 @@ class MaelstromWrapper(core.SummonSkillWrapper):
 
     def _use(self, skill_modifier):
         result = super(MaelstromWrapper, self)._use(skill_modifier)
-        self.currentTick = 0
         self.tick = self.tick_list[0]
-        self.currentTick += 1
+        self.currentTick = 1
         return result
 
     def _useTick(self):
-        if self.is_active() and self.tick <= 0:
-            self.tick += self.tick_list[self.currentTick]
-            self.currentTick += 1
-            return core.ResultObject(0, self.get_modifier(), self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
-        else:
-            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+        result = super(MaelstromWrapper, self)._useTick()
+        self.currentTick += 1
+        return result
+
+    def get_delay(self) -> float:
+        return self.tick_list[self.currentTick]
+
 
 def comboBuilder(name, skill_list):
     combo = core.DamageSkill(name, 0, 0, 0).wrap(core.DamageSkillWrapper)
@@ -89,26 +84,6 @@ def comboBuilder(name, skill_list):
 
     return combo
 
-class WeaponVarietyFinaleWrapper(core.DamageSkillWrapper):
-    def __init__(self, vEhc, num1, num2) -> None:
-        skill = core.DamageSkill("웨폰 버라이어티 피날레", 0, 250+10*vEhc.getV(num1,num2), 7*4, cooltime=11000).isV(vEhc,num1,num2) # 7타씩 4회
-        super(WeaponVarietyFinaleWrapper, self).__init__(skill)
-        self.max_stack = 3
-        self.stack = self.max_stack
-        self.tick = 0
-
-    def spend_time(self, time):
-        super(WeaponVarietyFinaleWrapper, self).spend_time(time)
-        if self.cooltimeLeft <= 0:
-            self.cooltimeLeft = self.skill.cooltime
-            self.stack = min(self.stack + 1, self.max_stack)
-
-    def _use(self, skill_modifier) -> core.ResultObject:
-        self.stack -= 1
-        return core.ResultObject(self.get_delay(), self.get_modifier(), self.get_damage(), self.get_hit(), sname = self.skill.name, spec = self.skill.spec)
-
-    def is_available(self) -> bool:
-        return self.stack > 0
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -136,7 +111,7 @@ class JobGenerator(ck.JobGenerator):
                                     QuickserviceMind, BasicDetection, WeaponMastery, QuickserviceMind_II, ReadyToDiePassive]
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 30, crit_damage = 40, pdamage = 20, crit = 6)
+        return core.CharacterModifier(armor_ignore = 30, crit_damage = 44, pdamage = 20, crit = 6)
                               
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -174,7 +149,7 @@ class JobGenerator(ck.JobGenerator):
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         CheapShotII = core.CharacterModifier(crit = 2, crit_damage = 10 + ceil(passive_level / 4)) # 위크포인트 컨버징 어택
-        CheapShotIIBleed = core.DotSkill("위크포인트 컨버징 어택(출혈)", 0, 1000, 110 + 2 * passive_level, 1, 99999999).wrap(core.SummonSkillWrapper)
+        CheapShotIIBleed = core.DotSkill("위크포인트 컨버징 어택(출혈)", 0, 1000, 110 + 2 * passive_level, 1, 99999999).wrap(core.DotSkillWrapper)
         CheapShotIIBleedBuff = core.BuffSkill("위크포인트 컨버징 어택(출혈)(디버프)", 0, 99999999, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
         CheapShotIIAdventureMageBuff = core.BuffSkill("위크포인트 컨버징 어택(모법링크)", 0, 99999999, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
 
@@ -233,7 +208,7 @@ class JobGenerator(ck.JobGenerator):
         SummonBeatingNeedlebat_Honmy = core.BuffSkill("서먼 비팅 니들배트(혼미)", 0, 15000, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         # 5차
-        VenomBurst = core.DotSkill("베놈 버스트", 0, 1000, 160+6*vEhc.getV(4,4), 1, 99999999).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)
+        VenomBurst = core.DotSkill("베놈 버스트", 0, 1000, 160+6*vEhc.getV(4,4), 1, 99999999).isV(vEhc,4,4).wrap(core.DotSkillWrapper)
         VenomBurst_Poison = core.BuffSkill("베놈 버스트(중독)", 0, 99999999, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage, cooltime = -1).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 3)
@@ -249,7 +224,10 @@ class JobGenerator(ck.JobGenerator):
         ChainArts_Maelstorm = MaelstromWrapper(vEhc, 8)
         ChainArts_Maelstorm_Slow = core.BuffSkill("체인아츠:메일스트롬(중독)", 0, 4000+6000, crit = CheapShotII.crit, crit_damage = CheapShotII.crit_damage, cooltime = -1).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
 
-        WeaponVarietyFinale = WeaponVarietyFinaleWrapper(vEhc, 0, 0)
+        WeaponVarietyFinale = core.StackableDamageSkillWrapper(
+            core.DamageSkill("웨폰 버라이어티 피날레", 0, 250+10*vEhc.getV(0, 0), 7*4, cooltime=11000).isV(vEhc, 0, 0),
+            3
+        )
         WeaponVarietyFinaleTrigger = core.StackSkillWrapper(core.BuffSkill("웨폰 버라이어티 피날레(웨버횟수)", 0, 99999999), 4)
         ######   Skill Wrapper   ######
 
@@ -270,7 +248,7 @@ class JobGenerator(ck.JobGenerator):
         
         ChainArts_Fury_Use = core.OptionalElement(lambda : ChainArts_Fury_Damage.is_available() and ChainArts_Fury.is_active(), ChainArts_Fury_Damage, name = "체인아츠:퓨리 발동조건")
         
-        AD_Odnunce.onAfter(AD_Odnunce_Final.controller(10000))
+        AD_Odnunce.onEventEnd(AD_Odnunce_Final)
         ChainArts_Maelstorm.onAfter(ChainArts_Maelstorm_Slow)
 
 

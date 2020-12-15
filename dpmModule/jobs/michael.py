@@ -20,7 +20,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 1
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(crit = 20)
+        return core.CharacterModifier(crit=20, pdamage=30, armor_ignore=12)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -65,6 +65,8 @@ class JobGenerator(ck.JobGenerator):
         
         로얄 가드는 6초마다 사용하며 다른 스킬로 인해 약간 나중에 사용할 수도 있음. 로얄 가드 5중첩 버프를 상시 유지하도록 가정.
         '''
+        USE_ROYAL_GUARD = options.get("royal_guard", True)
+
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         # Buff skills
@@ -122,7 +124,7 @@ class JobGenerator(ck.JobGenerator):
         LoyalGuard_5.onAfter(FinalAttack)
 
         # 클라우 솔라스
-        ClauSolis.onAfter(ClauSolisSummon.controller(5000))
+        ClauSolis.onEventElapsed(ClauSolisSummon, 5000)
         ClauSolis.onAfter(SoulAttack.controller(5000,"set_enabled_and_time_left"))
         ClauSolis.onAfter(FinalAttack)
         ClauSolisSummon.onTick(SoulAttack.controller(5000,"set_enabled_and_time_left"))
@@ -145,6 +147,10 @@ class JobGenerator(ck.JobGenerator):
         for sk in [SoullightSlash, SoulAssult, DeadlyCharge, LoyalGuard_5, ShiningCross]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
+
+        if USE_ROYAL_GUARD is False:
+            LoyalGuard_5 = None
+            LoyalGuardBuff = None
         
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

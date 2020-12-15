@@ -44,6 +44,9 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(DisableRule('힐'), RuleSet.BASE)
         return ruleset
 
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(pdamage=43)
+
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 

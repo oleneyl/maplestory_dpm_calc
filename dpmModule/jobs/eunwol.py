@@ -45,6 +45,16 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 15
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'mess')
         self.preEmptiveSkills = 2
+        
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(InactiveRule("파쇄철조-회", "파쇄철조-반"), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("소혼 장막(시전)", "진 귀참", lambda x: not x.is_available()), RuleSet.BASE)
+        #ruleset.add_rule(ReservationRule("소울 컨트랙트", "정령 집속"), RuleSet.BASE)
+        return ruleset
+
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(pdamage=96, armor_ignore=20, crit_damage=5)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -68,18 +78,12 @@ class JobGenerator(ck.JobGenerator):
         Weakness = core.InformedCharacterModifier("약화",pdamage = 20) #디버프지만 상시발동가정
 
         # 약점 간파: 체력 (50 + passive_level)% 이하일 때 발동
-        WEAKNESS_BONUS = False
+
+        WEAKNESS_BONUS = options.get("hp_rate", False)
 
         WeaknessFinding_Bonus = core.InformedCharacterModifier("약점 간파(보너스)", crit_damage = (20+passive_level//3) * WEAKNESS_BONUS)
         
         return [WeaponConstant, Mastery, Weakness, WeaknessFinding_Bonus]
-        
-    def get_ruleset(self):
-        ruleset = RuleSet()
-        ruleset.add_rule(InactiveRule("파쇄철조-회", "파쇄철조-반"), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule("소혼 장막(시전)", "진 귀참", lambda x: not x.is_available()), RuleSet.BASE)
-        #ruleset.add_rule(ReservationRule("소울 컨트랙트", "정령 집속"), RuleSet.BASE)
-        return ruleset
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
@@ -129,10 +133,7 @@ class JobGenerator(ck.JobGenerator):
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
-        #오버드라이브 (앱솔 가정)
-        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-
-        WEAPON_ATT = jobutils.get_weapon_att("너클")
+        WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
