@@ -14,36 +14,9 @@ https://github.com/oleneyl/maplestory_dpm_calc/issues/247
 """
 
 
-class ArmorPiercingWrapper(core.BuffSkillWrapper):
-    """
-    아머 피어싱 - 적 방어율만큼 최종뎀 추가, 방무+50%. 쿨타임 9초, 공격마다 1초씩 감소, 최소 재발동 대기시간 1초
-    """
-
-    def __init__(self, combat, chtr):
-        self.piercing_modifier = core.CharacterModifier(
-            pdamage_indep=core.constant.ARMOR_RATE * (1 + combat * 0.05),
-            armor_ignore=50 * (1 + combat * 0.02),
-        )
-        self.empty_modifier = core.CharacterModifier()
-        self.skill_modifier = chtr.get_skill_modifier()
-        skill = core.BuffSkill("아머 피어싱", delay=0, remain=0, cooltime=9000, red=True)
-        super(ArmorPiercingWrapper, self).__init__(skill)
-
-    def check(self):
-        if self.is_available():
-            self.cooltimeLeft = self.calculate_cooltime(self.skill_modifier)
-            return self.piercing_modifier
-
-        if self.cooltimeLeft > 1000:
-            self.cooltimeLeft = self.cooltimeLeft - 1000
-
-        return self.empty_modifier
-
-
 class ArrowOfStormWrapper(core.DamageSkillWrapper):
-    def __init__(self, skill: core.DamageSkill, armorPiercing: ArmorPiercingWrapper):
+    def __init__(self, skill: core.DamageSkill):
         super(ArrowOfStormWrapper, self).__init__(skill)
-        self.armorPiercing = armorPiercing
         self.lastUsed = -9999
         self.currentTime = 0
 
@@ -144,10 +117,22 @@ class JobGenerator(ck.JobGenerator):
 
         프리퍼레이션, 엔버링크를 120초 주기에 맞춰 사용
         """
-        passive_level = chtr.get_base_modifier().passive_level + self.combat
+        base_modifier = chtr.get_base_modifier()
+        passive_level = base_modifier.passive_level + self.combat
+
+        # 반응하는 스킬이 정해져있음. Issue # 247 참고.
         MortalBlow = core.CharacterModifier(
             pdamage=80 / 10
-        )  # 반응하는 스킬이 정해져있음. Issue # 247 참고.
+        )
+
+        # 말뚝딜 환경에서는 사실상 폭풍의 시에만 터지는 것으로 보임.
+        # 쿨감 0초, 메르5% 기준으로 평딜시 12회, 극딜시 5~12회의 폭시마다 아머 피어싱이 터짐.
+        # 동일 기준 전투분석에서 10회에 한번 터지는 정도의 유효 최종뎀으로 계산됨.
+        # TODO: 쿨감별 발동 빈도 반영
+        ArmorPiercing = core.CharacterModifier(
+            pdamage_indep=300 / 10,
+            armor_ignore=50 / 10,
+        )
 
         ######   Skill   ######
         # Buff skills
@@ -174,8 +159,6 @@ class JobGenerator(ck.JobGenerator):
             "에픽 어드벤처", delay=0, remain=60 * 1000, cooltime=120 * 1000, pdamage=10
         ).wrap(core.BuffSkillWrapper)
 
-        ArmorPiercing = ArmorPiercingWrapper(passive_level, chtr)
-
         # Damage Skills
         MagicArrow = (
             core.DamageSkill("어드밴스드 퀴버", delay=0, damage=260, hit=0.6)
@@ -198,16 +181,18 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
 
-        ArrowOfStorm = ArrowOfStormWrapper(
+        ArrowOfStorm = (
             core.DamageSkill(
                 "폭풍의 시",
                 delay=120,
                 damage=(350 + self.combat * 3) * 0.75,
                 hit=1 + 1,
                 modifier=core.CharacterModifier(pdamage=30, boss_pdamage=10)
-                + MortalBlow,
-            ).setV(vEhc, 0, 2, True),
-            ArmorPiercing,
+                + MortalBlow
+                + ArmorPiercing
+            )
+            .setV(vEhc, 0, 2, True)
+            .wrap(ArrowOfStormWrapper)
         )
         ArrowFlatter = (
             core.SummonSkill(
@@ -378,7 +363,9 @@ class JobGenerator(ck.JobGenerator):
         ArrowRainBuff.onAfter(ArrowRain)
         ArrowRain.onTick(MagicArrow_ArrowRain)
 
-        ImageArrow.onJustAfter(ImageArrowPassive.controller(99999999, "set_disabled_and_time_left"))
+        ImageArrow.onJustAfter(
+            ImageArrowPassive.controller(99999999, "set_disabled_and_time_left")
+        )
         ImageArrow.onEventEnd(ImageArrowPassive)
         ImageArrow.onTick(AdvancedFinalAttack)
 
@@ -398,12 +385,6 @@ class JobGenerator(ck.JobGenerator):
         OpticalIllusion.protect_from_running()
         OpticalIllusion.onAfter(MagicArrow)
 
-        for sk in [ArrowOfStorm, ArrowRain, QuibberFullBurst, OpticalIllusion, GuidedArrow, MirrorBreak]:
-            sk.add_runtime_modifier(
-                ArmorPiercing, lambda armor_piercing: armor_piercing.check()
-            )
-        ArmorPiercing.protect_from_running()
-
         ### Exports ###
         return (
             ArrowOfStorm,
@@ -413,7 +394,6 @@ class JobGenerator(ck.JobGenerator):
                 SoulArrow,
                 SharpEyes,
                 EpicAdventure,
-                ArmorPiercing,
                 Preparation,
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                 ArrowRainBuff,
