@@ -157,7 +157,7 @@ class JobGenerator(ck.JobGenerator):
         Ether = core.StackSkillWrapper(core.BuffSkill('에테르', 0, 9999999), 400)
         EtherTick = core.SummonSkill('에테르(자연 회복)', 0, 10020, 0, 0, 9999999).wrap(core.SummonSkillWrapper)
 
-        Resonance = core.DamageSkill("레조넌스", 690, (120+125+265+passive_level*3) * (1.15**6), 6, cooltime=10*1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 900ms, 스택 유지를 위해 10초마다 사용함
+        Resonance = core.DamageSkill("레조넌스", 690, (120+125+265+passive_level*3) * (1.15**5), 6, cooltime=10*1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 900ms, 스택 유지를 위해 10초마다 사용함
 
         ResonanceStack = core.BuffSkill('레조넌스(스택)', 0, 30*1000, cooltime=-1, pdamage_indep=10, armor_ignore=10).wrap(core.BuffSkillWrapper) # 최종뎀 5, 방무 5, 최대2회. 상시 중첩으로 가정
 

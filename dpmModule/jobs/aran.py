@@ -83,7 +83,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         def get_beyonder_pdamage(excess_target, reinforce = True):
-            return int(1.06 ** excess_target * 100 - 100 + reinforce * 20)
+            return int(1.06 ** (excess_target - 1) * 100 - 100 + reinforce * 20)
 
         BEYONDER_PDAMAGE = get_beyonder_pdamage(6)
         BEYONDER_ADRENALINE_PDAMAGE = get_beyonder_pdamage(11)
