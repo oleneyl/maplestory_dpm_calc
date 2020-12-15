@@ -1,3 +1,7 @@
+import json
+import math
+import copy
+import yaml
 from typing import Any, Dict, List, Optional, Tuple
 
 from ..execution.rules import RuleSet
@@ -9,6 +13,9 @@ from ..kernel.core import (
     AbstractSkillWrapper,
     CharacterModifier,
     DamageSkillWrapper,
+    BuffSkillWrapper,
+    SummonSkillWrapper,
+    DotSkillWrapper,
     ExtendedCharacterModifier,
     InformedCharacterModifier,
     SkillModifier,
@@ -18,6 +25,7 @@ from ..kernel.graph import (
     _unsafe_access_global_storage,
     initialize_global_properties,
 )
+from ..kernel.core.skill import load_skill, BuffSkill, DamageSkill, SummonSkill, DotSkill
 from ..status.ability import Ability_grade, Ability_option, Ability_tool
 from .doping import Doping
 from .hyperStat import HyperStat
@@ -26,6 +34,7 @@ from .personality import Personality
 from .union import Card, Union
 from .weaponPotential import WeaponPotential
 
+
 ExMDF = ExtendedCharacterModifier
 """Class AbstractCharacter : Basic template for building specific User. User is such object that contains:
 - Items
@@ -33,6 +42,20 @@ ExMDF = ExtendedCharacterModifier
 - Damage Skill Wrappers
 - Some else Modifiers.
 """
+
+
+def _get_loaded_object_with_mapping(conf, loadable, **kwargs):
+    global_variables = globals()
+    global_variables.update(kwargs)
+    global_variables['math'] = math
+    exported_conf = {}
+    for k, v in conf.items():
+        if isinstance(v, str) and k != 'name':
+            assert 'import' not in v
+            exported_conf[k] = eval(v, global_variables)
+        else:
+            exported_conf[k] = v
+    return loadable.load(exported_conf)
 
 
 class AbstractCharacter:
@@ -236,6 +259,58 @@ class JobGenerator:
         )
         self._use_critical_reinforce: bool = False
         self.hyperStatPrefixed: int = 0
+        self.conf: dict = None
+
+    def _load_skill(self, skill_name, vEhc, background_information={}):
+        skill_conf = copy.deepcopy(self.conf['skills'][skill_name])
+        if 'name' not in skill_conf:
+            skill_conf['name'] = skill_name
+
+        if skill_conf.get('tier', -1) == 5:
+            lv = vEhc.getV(skill_conf['use_priority'], skill_conf['upgrade_priority'])
+            background_information['lv'] = lv
+
+        skill = load_skill(skill_conf, background_information)
+
+        if skill_conf.get('enhanced_by_v', False):
+            skill = skill.setV(
+                vEhc,
+                skill_conf['upgrade_priority'],
+                skill_conf['v_increment'],
+                skill_conf['v_crit']
+            )
+
+        return skill
+
+    def load_skill_wrapper(self, skill_name, vEhc=None):
+        background_information = self.conf.get('constant', {})
+        background_information['combat'] = self.combat
+        skill = self._load_skill(skill_name, vEhc, background_information=background_information)
+        if isinstance(skill, DamageSkill):
+            return skill.wrap(DamageSkillWrapper)
+        elif isinstance(skill, BuffSkill):
+            return skill.wrap(BuffSkillWrapper)
+        elif isinstance(skill, DotSkill):
+            return skill.wrap(DotSkillWrapper)
+        elif isinstance(skill, SummonSkill):
+            return skill.wrap(SummonSkillWrapper)
+
+    def load(self, conf):
+        if isinstance(conf, str):
+            with open(conf, encoding='utf-8') as f:
+                if conf.split('.')[-1] == 'json':
+                    conf = json.load(f)
+                elif conf.split('.')[-1] == 'yml':
+                    conf = yaml.safe_load(f)
+
+        self.conf = conf
+        self.buffrem = conf.get('buffrem', (0, 0))
+        self.vEnhanceNum = conf.get('vEnhanceNum', 10)
+        self.vskillNum = conf.get('vSkillNum', 6)
+        self.preEmptiveSkills = conf.get('preEmptiveSkills', 0)
+        self.jobname = conf['jobname']
+        self.jobtype = conf['jobtype']
+        self._use_critical_reinforce = conf.get('use_critical_reinforce', False)
 
     def get_ruleset(self) -> Optional[RuleSet]:
         return
@@ -303,7 +378,17 @@ class JobGenerator:
     def get_passive_skill_list(
         self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
     ) -> List[InformedCharacterModifier]:
-        raise NotImplementedError("You must fill get_passive_skill_list function.")
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
+        return [
+            _get_loaded_object_with_mapping(
+                opt,
+                InformedCharacterModifier,
+                passive_level=passive_level,
+                combat=self.combat,
+            )
+            for opt
+            in self.conf['passive_skill_list']
+        ]
 
     def build_not_implied_skill_list(
         self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
@@ -314,7 +399,17 @@ class JobGenerator:
     def get_not_implied_skill_list(
         self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
     ) -> List[InformedCharacterModifier]:
-        raise NotImplementedError("You must fill get_not_implied_skill_list function.")
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
+        return [
+            _get_loaded_object_with_mapping(
+                opt,
+                InformedCharacterModifier,
+                passive_level=passive_level,
+                combat=self.combat,
+            )
+            for opt
+            in self.conf['not_implied_skill_list']
+        ]
 
     def get_passive_skill_modifier(self) -> ExMDF:
         passive_modifier = ExMDF()

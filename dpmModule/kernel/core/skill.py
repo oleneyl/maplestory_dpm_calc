@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Type, TypeVar
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Type, TypeVar, Any
 
-from ..graph import EvaluativeGraphElement
 from .constant import NOTWANTTOEXECUTE
 from .modifier import CharacterModifier
+from ..graph import EvaluativeGraphElement
 
 if TYPE_CHECKING:
     from ..abstract import AbstractVEnhancer
@@ -444,3 +444,38 @@ class DotSkill(SummonSkill):
             li = []
 
         return self._parse_list_info_into_string(li)
+
+
+def _map_background_information(conf, **kwargs):
+    global_variables = globals()
+    global_variables.update(kwargs)
+    exported_conf = {}
+    for k, v in conf.items():
+        if isinstance(v, str) and k != 'name':
+            assert 'import' not in v
+            exported_conf[k] = eval(v, global_variables)
+        else:
+            exported_conf[k] = v
+    return exported_conf
+
+
+def load_skill(skill_conf, background_information: Dict[str, Any]) -> AbstractSkill:
+    skill_conf = {k: v for k, v in skill_conf.items()}
+    if 'modifier' in skill_conf:
+        skill_conf['modifier'] = CharacterModifier.load(
+            _map_background_information(skill_conf['modifier'], **background_information)
+        )
+
+    skill_object_type = {
+        'DamageSkill': DamageSkill,
+        'SummonSkill': SummonSkill,
+        'BuffSkill': BuffSkill,
+        'DotSkill': DotSkill
+    }
+
+    SkillObject = skill_object_type[skill_conf['type']]
+
+    argument_space = SkillObject.__init__.__code__.co_varnames
+    filtered_skill_conf = {k: v for k, v in skill_conf.items() if k in argument_space}
+    filtered_skill_conf = _map_background_information(filtered_skill_conf, **background_information)
+    return SkillObject(**filtered_skill_conf)

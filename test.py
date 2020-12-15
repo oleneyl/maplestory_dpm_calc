@@ -32,8 +32,42 @@ def test():
 def conf(args):
     job_real = args.job[:].replace("-", "/")
 
+    configuration = export_configuration(job_real)
+
+    regularized_configuration = {}
+    for k_name, v in configuration.items():
+        new_v = v
+        if new_v['cooltime'] == 99999999:
+            new_v['cooltime'] = -1
+        if 'static_character_modifier' in new_v:
+            for modifier_k, modifier_v in new_v.items():
+                if modifier_v != 0:
+                    new_v[modifier_k] = modifier_v
+            new_v.pop('static_character_modifier')
+
+        if 'static_character_modifier' in new_v:
+            new_v['type'] = 'BuffSkill'
+        elif 'summondelay' in new_v:
+            new_v['type'] = 'SummonSkill'
+        else:
+            new_v['type'] = 'DamageSkill'
+
+        new_v.pop('explanation')
+
+        if '_static_skill_modifier' in new_v:
+            if '0' in new_v['_static_skill_modifier']:
+                for k in new_v['_static_skill_modifier']:
+                    pops = [k1 for k1, v in new_v['_static_skill_modifier'][k].items() if v == 0]
+                    for k2 in pops:
+                        new_v['_static_skill_modifier'][k].pop(k2)
+            else:
+                pops = [k1 for k1, v in new_v['_static_skill_modifier'].items() if v == 0]
+                for k2 in pops:
+                    new_v['_static_skill_modifier'].pop(k2)
+        regularized_configuration[k_name] = v
+
     with open(f"{args.job}.conf.json", "w", encoding="utf8") as f:
-        json.dump(export_configuration(job_real), f, ensure_ascii=False, indent=4)
+        json.dump(regularized_configuration, f, ensure_ascii=False, indent=4)
 
 
 def dpm(args):
