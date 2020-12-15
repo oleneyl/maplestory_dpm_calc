@@ -416,9 +416,14 @@ class JobGenerator(ck.JobGenerator):
             sk.onAfter(CaptainDignity)
 
         # 퀵 드로우
-        QuickDraw.onAfter(QuickDrawStack.stackController(-1, name="퀵 드로우 준비 해제"))
         QuickDrawProc = QuickDrawStack.stackController(
             (8 + self.combat) * 0.01, name="퀵 드로우 확률"
+        )
+        QuickDrawProc.onJustAfter(
+            core.OptionalElement(
+                partial(QuickDrawStack.judge, 1, 1),
+                QuickDraw.controller(0),
+            )
         )
         for sk in [
             RapidFire,
@@ -427,24 +432,29 @@ class JobGenerator(ck.JobGenerator):
             StrangeBomb,
             BulletPartyTick,
             DeadEye,
-            NautilusAssult,
             DeathTrigger,
         ]:
-            sk.onAfter(QuickDrawProc)
+            sk.onJustAfter(QuickDrawProc)
 
-        QuickDrawActivateTrigger = core.OptionalElement(
-            partial(QuickDrawStack.judge, 1, 1),
-            QuickDraw,
-            name="퀵 드로우 사용",
-        )
-        QuickDrawShutdownTrigger = core.OptionalElement(
-            QuickDraw.is_active,
-            QuickDraw.controller(-1),
-            name="퀵 드로우 종료",
-        )
-        for sk in [Headshot, StrangeBomb, DeadEye]:
-            sk.onBefore(QuickDrawActivateTrigger)
+        QuickDrawShutdownTrigger = QuickDraw.controller(-1)
+        QuickDrawShutdownTrigger.onJustAfter(QuickDrawStack.stackController(-1))
+        for sk in [Headshot, StrangeBomb, DeadEye, DeathTrigger, Nautilus, MirrorBreak]:
             sk.onJustAfter(QuickDrawShutdownTrigger)
+        for sk in [NautilusAssult, NautilusAssult_2]:
+            sk.onTick(QuickDrawShutdownTrigger)
+
+        for sk in [  # 이 스킬들에는 퀵 드로우 최종뎀이 안들어감
+            RapidFire,
+            CaptainDignity,
+            BulletPartyTick,
+        ]:
+            sk.add_runtime_modifier(
+                QuickDraw,
+                lambda sk: core.CharacterModifier()
+                - core.CharacterModifier(
+                    pdamage_indep=(25 + self.combat) * sk.is_active()
+                ),
+            )
 
         # 노틸러스 어썰트
         NautilusAssult.onAfter(NautilusAssult_2)
