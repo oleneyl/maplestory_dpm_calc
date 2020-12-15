@@ -82,13 +82,14 @@ class JobGenerator(ck.JobGenerator):
         ADRENALINE_BOOST_REMAIN = (20+3)*1000
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
+        # reinforce: hyper skill reinforce
         def get_beyonder_pdamage(excess_target, reinforce = True):
-            return int(1.06 ** (excess_target - 1) * 100 - 100 + reinforce * 20)
+            return (1.06 ** excess_target - 1) * 100 + reinforce * 20
 
-        BEYONDER_PDAMAGE = get_beyonder_pdamage(6)
-        BEYONDER_ADRENALINE_PDAMAGE = get_beyonder_pdamage(11)
-        PENRIL_PDAMAGE = get_beyonder_pdamage(10)
-        PENRIL_ADRENALINE_PDAMAGE = get_beyonder_pdamage(15)
+        BEYONDER_PDAMAGE = get_beyonder_pdamage(5)
+        BEYONDER_ADRENALINE_PDAMAGE = get_beyonder_pdamage(10)
+        PENRIL_PDAMAGE = get_beyonder_pdamage(9)
+        PENRIL_ADRENALINE_PDAMAGE = get_beyonder_pdamage(14)
         
         SmashSwing = core.DamageSkill("스매시 스윙", 360, 800 + 50 * passive_level, 2).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         SmashSwingIncr = core.BuffSkill("스매시 스윙(최종데미지)", 0, 5000+3000, pdamage_indep=15 + passive_level, pdamage=20, cooltime=-1).wrap(core.BuffSkillWrapper)
