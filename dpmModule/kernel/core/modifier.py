@@ -425,7 +425,7 @@ class CharacterModifier:
             )
         else:
             return None
-    
+
     @classmethod
     def load(cls, conf):
         return CharacterModifier(**conf)
@@ -717,7 +717,7 @@ class InformedCharacterModifier(ExtendedCharacterModifier):
             stat_main_fixed=extended_modifier.stat_main_fixed,
             stat_sub_fixed=extended_modifier.stat_sub_fixed,
         )
-    
+
     @classmethod
     def load(cls, conf):
         name = conf['name']
