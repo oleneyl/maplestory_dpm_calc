@@ -31,7 +31,7 @@ def PantheonWrapper(vEhc, num1: int, num2: int):
     Pantheon = (
         core.DamageSkill(
             "판테온",
-            delay=510,
+            delay=390,  # base delay 510, AS applied
             damage=2000 + 80 * vEhc.getV(num1, num2),
             hit=10,
             cooltime=1200 * 1000,
