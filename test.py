@@ -84,7 +84,7 @@ def dpm(args):
             statistics=args.stat or args.log,
         )
     finally:
-        print(args.job, dpm)
+        print(args.job, f"{dpm:,.3f}")
 
 
 if __name__ == "__main__":

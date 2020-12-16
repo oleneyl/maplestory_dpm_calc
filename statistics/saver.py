@@ -62,7 +62,7 @@ def dpm(args):
     control = core.Simulator(sche, target, analytics)
     control.start_simulation(args.time * 1000)
     dpm = analytics.get_dpm()
-    print(preset.job, dpm)
+    print(preset.job, f"{dpm:,.3f}")
 
     return analytics.get_log()
 
@@ -90,7 +90,7 @@ def burst10(args):
     control = core.Simulator(sche, target, analytics)
     control.start_simulation(args.time * 1000)
     start, end, dpm, loss = analytics.get_peak(10000)
-    print(dpm)
+    print(preset.job, f"{dpm:,.3f}")
 
     return analytics.get_log()
 
