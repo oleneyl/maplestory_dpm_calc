@@ -41,12 +41,13 @@ from . import adele
 from . import hoyoung
 from . import demonavenger
 from . import xenon
+from . import kain
 
 __all__ = ["archmageFb", "archmageTc", "hero", "paladin", "sniper", "windbreaker", "soulmaster", 
             "flamewizard", "mercedes", "luminous", "bishop", "battlemage", "mechanic", "demonslayer", "darknight", "wildhunter",
             "shadower", "cannonshooter", "michael", "dualblade", "kaiser", "captain", "angelicbuster", "phantom", "nightlord",
             "eunwol", "viper", "nightwalker", "striker","evan", "bowmaster", "zero", "kinesis", "ilium", "pathfinder", "cadena",
-            "ark", "blaster", "aran", "adele", "hoyoung"]
+            "ark", "blaster", "aran", "adele", "hoyoung", "kain"]
 
 jobMap = {"아크메이지불/독" : archmageFb,
         "아크메이지썬/콜" : archmageTc,
@@ -88,7 +89,8 @@ jobMap = {"아크메이지불/독" : archmageFb,
         "블래스터" : blaster,
         "아란" : aran,
         "아델" : adele,
-        "호영" : hoyoung
+        "호영" : hoyoung,
+        "카인" : kain
 }
 
 jobList = {"archmageFb" : "아크메이지불/독",
@@ -131,7 +133,8 @@ jobList = {"archmageFb" : "아크메이지불/독",
         "blaster" : "블래스터",
         "aran" : "아란",
         "adele" : "아델",
-        "hoyoung" : "호영"
+        "hoyoung" : "호영",
+        "kain" : "카인"
 }
 
 weaponList = {"아크메이지불/독" : "스태프",
@@ -174,7 +177,8 @@ weaponList = {"아크메이지불/독" : "스태프",
         "블래스터" : "리볼버",
         "아란" : "폴암",
         "아델" : "튜너",
-        "호영" : "부채"
+        "호영" : "부채",
+        "카인" : "브레스슈터"
 }
 
 jobListOrder = __all__.copy()
