@@ -13,7 +13,6 @@ class Doping:
     dopingListStat = {"향상된 10단계 물약": ExMDF(stat_main=30)}
 
     dopingListDamage = {
-        "매칭": ExMDF(boss_pdamage=10),
         "노블레스(뎀퍼)": ExMDF(pdamage=30),
         "노블레스(보공)": ExMDF(boss_pdamage=28),
         "반빨별": ExMDF(boss_pdamage=20),

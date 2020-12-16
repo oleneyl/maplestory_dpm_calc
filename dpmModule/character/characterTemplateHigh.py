@@ -544,6 +544,9 @@ def getU8500CharacterTemplate(_type, cdr = 0):
 
     template.add_summary("아케인포스: 1320")
     template.apply_modifiers([ExMDF(stat_main_fixed = 13200)])
+
+    template.add_summary("어센틱포스: 10")
+    template.apply_modifiers([ExMDF(stat_main_fixed = 500)])
     
     return template
 
