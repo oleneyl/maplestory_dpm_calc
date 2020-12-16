@@ -108,7 +108,13 @@ presets = [
         options={},
         alt=0,
     ),
-    Preset(id="viper", job="바이퍼", description="카운터 어택 미발동", options={}, alt=0),
+    Preset(
+        id="viper",
+        job="바이퍼",
+        description="카운터 어택 미발동",
+        options={},
+        alt=0,
+    ),
     Preset(
         id="captain",
         job="캡틴",
@@ -123,7 +129,13 @@ presets = [
         options={},
         alt=0,
     ),
-    Preset(id="soulmaster", job="소울마스터", description="", options={}, alt=0),
+    Preset(
+        id="soulmaster",
+        job="소울마스터",
+        description="",
+        options={},
+        alt=0,
+    ),
     Preset(
         id="michile",
         job="미하일",
@@ -215,8 +227,20 @@ presets = [
         options={},
         alt=0,
     ),
-    Preset(id="mechanic", job="메카닉", description="", options={}, alt=0),
-    Preset(id="aran", job="아란", description="", options={}, alt=0),
+    Preset(
+        id="mechanic",
+        job="메카닉",
+        description="",
+        options={},
+        alt=0,
+    ),
+    Preset(
+        id="aran",
+        job="아란",
+        description="",
+        options={},
+        alt=0,
+    ),
     Preset(
         id="evan",
         job="에반",
@@ -224,7 +248,13 @@ presets = [
         options={},
         alt=0,
     ),
-    Preset(id="luminous", job="루미너스", description="", options={}, alt=0),
+    Preset(
+        id="luminous",
+        job="루미너스",
+        description="",
+        options={},
+        alt=0,
+    ),
     Preset(
         id="mercedes",
         job="메르세데스",
@@ -267,7 +297,13 @@ presets = [
         options={"hp_rate": False},
         alt=1,
     ),
-    Preset(id="kaiser", job="카이저", description="", options={}, alt=0),
+    Preset(
+        id="kaiser",
+        job="카이저",
+        description="",
+        options={},
+        alt=0,
+    ),
     Preset(
         id="cadena",
         job="카데나",
@@ -296,7 +332,13 @@ presets = [
         options={},
         alt=0,
     ),
-    Preset(id="illium", job="일리움", description="", options={}, alt=0),
+    Preset(
+        id="illium",
+        job="일리움",
+        description="",
+        options={},
+        alt=0,
+    ),
     Preset(
         id="ark",
         job="아크",
