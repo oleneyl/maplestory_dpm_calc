@@ -92,7 +92,17 @@ class JobGenerator(ck.JobGenerator):
         
         # Hyper
         SacredCube = core.BuffSkill("세이크리드 큐브", 90, 30000, cooltime = 210000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        DeadlyCharge = core.DamageSkill("데들리 차지", 30, 600, 10, cooltime = 15000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  # Base delay 810 -> Royal Guard cancel 30
+        DeadlyCharge = (
+            core.DamageSkill(
+                "데들리 차지",
+                delay=30 if USE_ROYAL_GUARD else 810,
+                damage=600,
+                hit=10,
+                cooltime = 15000,
+            )
+            .setV(vEhc, 4, 2, False)
+            .wrap(core.DamageSkillWrapper)
+        )
         DeadlyChargeBuff = core.BuffSkill("데들리 차지(디버프)", 0, 10000, cooltime = -1, pdamage = 10).wrap(core.BuffSkillWrapper)
         QueenOfTomorrow = core.BuffSkill("퀸 오브 투모로우", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
@@ -149,10 +159,16 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         # Scheduling
-        LoyalGuard_5.onConstraint(core.ConstraintElement("로얄 가드로 캔슬 가능할때", DeadlyCharge, lambda: DeadlyCharge.is_available() or DeadlyCharge.is_cooltime_left(5500, 1)))
-        DeadlyCharge.onAfter(LoyalGuard_5)
-
-        if USE_ROYAL_GUARD is False:
+        if USE_ROYAL_GUARD is True:
+            DeadlyCharge.onAfter(LoyalGuard_5)
+            DeadlyCharge.onConstraint(
+                core.ConstraintElement(
+                    "로얄 가드로 캔슬 가능할때",
+                    LoyalGuard_5,
+                    lambda: LoyalGuard_5.is_available(),
+                )
+            )
+        else:
             LoyalGuard_5 = None
             LoyalGuardBuff = None
         
