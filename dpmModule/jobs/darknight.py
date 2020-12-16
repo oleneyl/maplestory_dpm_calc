@@ -87,7 +87,7 @@ class JobGenerator(ck.JobGenerator):
     
         #5차
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
-        DarkSpear = core.DamageSkill("다크 스피어", 750, 350+10*vEhc.getV(1,0), 7 * 8, cooltime = 10000, red = True, modifier = core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc,1,0).wrap(core.DamageSkillWrapper)
+        DarkSpear = core.DamageSkill("다크 스피어", 750, 350+10*vEhc.getV(1,0), 7*10, cooltime = 10000, red = True, modifier = core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc,1,0).wrap(core.DamageSkillWrapper)
         BiholderImpact = core.SummonSkill("비홀더 임팩트", 0, 270, 100+vEhc.getV(0,2), 6, 2880, cooltime = 20000, red = True, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).isV(vEhc,0,2).wrap(core.SummonSkillWrapper)#onTick으로 0.3초씩
         PierceCyclone = core.DamageSkill("피어스 사이클론(더미)", 90, 0, 0, cooltime = 180*1000, red = True).wrap(core.DamageSkillWrapper)
         PierceCycloneTick = core.DamageSkill("피어스 사이클론", 360, 400+16*vEhc.getV(3,3), 12, modifier = core.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #25타
