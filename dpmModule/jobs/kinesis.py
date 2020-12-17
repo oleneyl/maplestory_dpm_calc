@@ -215,7 +215,6 @@ class JobGenerator(ck.JobGenerator):
 
         ### Psychic point
         Ultimate_Material.onConstraint(core.ConstraintElement("7포인트", PsychicPoint, partial(PsychicPoint.judge_ultimate,7)))
-        Ultimate_Material.onConstraint(core.ConstraintElement("트레인 깔려있으면", UltimateTrain, partial(UltimateTrain.is_time_left, 0, 1))) # 0 -> 2000으로 조절하면 트레인 비중 높은 딜사이클이 됨
         Ultimate_Material.onBefore(PsychicPoint.stackController(-7))
         
         PsychicForce3.onConstraint(core.ConstraintElement("도트 종료시", PsychicForce3Dot, PsychicForce3Dot.is_not_active))
@@ -266,10 +265,17 @@ class JobGenerator(ck.JobGenerator):
         OverloadMana = overload_mana_builder.get_buff()
 
         # Scheduling
+        TrainConstraint = core.ConstraintElement(
+            "트레인 깔려있으면",
+            UltimateTrain,
+            partial(UltimateTrain.is_time_left, 3000, 1),  # 3000 -> 0으로 조절하면 트레인 비중 낮은 딜사이클이 됨
+        )
         if DEALCYCLE == "material":
             UltimatePsychic.protect_from_running()
+            Ultimate_Material.onConstraint(TrainConstraint)
         elif DEALCYCLE == "shot":
             Ultimate_Material.protect_from_running()
+            UltimatePsychic.onConstraint(TrainConstraint)
         else:
             raise ValueError(DEALCYCLE)
         
