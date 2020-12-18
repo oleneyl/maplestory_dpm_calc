@@ -76,7 +76,7 @@ def getU4000CharacterTemplate(_type, cdr = 0):
     template.add_summary("기타: 킹오루, 우르스 격파왕, 하트X, 펫공 X")
 
     template.set_items({
-        "head": empressSet["head"],
+        "head": rootAbyssSet["head"],
         "glove": empressSet["glove"],
         "top": rootAbyssSet["top"],
         "bottom": rootAbyssSet["bottom"],
@@ -104,7 +104,7 @@ def getU4000CharacterTemplate(_type, cdr = 0):
         "pet": Else.get_pet(0),
     })
     
-    template.apply_modifiers([Empress.Factory.getSetOption(5), RootAbyss.Factory.getSetOption(4), BossAccesory.Factory.getSetOption(9)])
+    template.apply_modifiers([Empress.Factory.getSetOption(4), RootAbyss.Factory.getSetOption(4), BossAccesory.Factory.getSetOption(9)])
     
     template.add_summary("아케인포스: 240")
     template.apply_modifiers([ExMDF(stat_main_fixed = 2400)])
