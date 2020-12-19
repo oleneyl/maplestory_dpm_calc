@@ -92,11 +92,11 @@ class AbstractSkill(EvaluativeGraphElement):
         }
         return my_json
 
-    def wrap(self, wrapper: Type[T], name: str = None) -> T:
+    def wrap(self, wrapper: Type[T], name: str = None, unique_reduce: int = 0, reusable: bool = False) -> T:
         if name is None:
-            return wrapper(self)
+            return wrapper(self, unique_reduce=unique_reduce, reusable=reusable)
         else:
-            return wrapper(self, name=name)
+            return wrapper(self, unique_reduce=unique_reduce, reusable=reusable, name=name)
 
     def isV(self, enhancer: BasicVEnhancer, use_index: int, upgrade_index: int):
         """Speed hack"""

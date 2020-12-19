@@ -31,7 +31,7 @@ class AbstractSkillWrapper(GraphElement):
         제어 대상이 되는 스킬입니다.
     """
 
-    def __init__(self, skill: AbstractSkill, name: str = None) -> None:
+    def __init__(self, skill: AbstractSkill, name: str = None, unique_reduce: float = 0, reusable: bool = False) -> None:
         if name is None:
             super(AbstractSkillWrapper, self).__init__(skill.name)
         else:
@@ -54,6 +54,9 @@ class AbstractSkillWrapper(GraphElement):
 
         # Context referring
         self._refer_runtime_context: bool = False
+
+        self.unique_reduce = unique_reduce
+        self.reusable = reusable
 
     def enable_referring_runtime_context(self) -> None:
         """If this is true, given skill wrapper may use runtime context.
@@ -290,7 +293,7 @@ class AbstractSkillWrapper(GraphElement):
             return self.get_cooltime()
 
         cooltime = self.get_cooltime()
-        pcooltime_reduce = skill_modifier.pcooltime_reduce  # 쿨감%
+        pcooltime_reduce = skill_modifier.pcooltime_reduce + self.unique_reduce  # 쿨감%
         cooltime_reduce = skill_modifier.cooltime_reduce  # 쿨감+ (ms)
 
         if cooltime * (1 - 0.01 * pcooltime_reduce) <= 1000:  # 쿨감%부터 적용, 최소 1초까지
@@ -308,7 +311,12 @@ class AbstractSkillWrapper(GraphElement):
             cdr_applied = cd - cooltime_reduce
 
         # 5초까지 감소, 단 이미 스킬쿨이 5초 아래였을 경우 그대로 사용
-        return max(cdr_applied, min(cd, 5000))
+        result_cooltime = max(cdr_applied, min(cd, 5000))
+
+        # 재사용 어빌 사용시 보정된 쿨타임 적용
+        if self.reusable:
+            return (1 - 0.01 * skill_modifier.reuse_chance) * result_cooltime + 0.01 * skill_modifier.reuse_chance * self.skill.delay
+        return result_cooltime
 
     def get_cooltime(self) -> float:
         return self.skill.cooltime
@@ -345,8 +353,8 @@ class AbstractSkillWrapper(GraphElement):
 
 
 class BuffSkillWrapper(AbstractSkillWrapper):
-    def __init__(self, skill: BuffSkill, name: str = None) -> None:
-        super(BuffSkillWrapper, self).__init__(skill, name=name)
+    def __init__(self, skill: BuffSkill, name: str = None, unique_reduce: float = 0, reusable: bool = False) -> None:
+        super(BuffSkillWrapper, self).__init__(skill, name=name, unique_reduce=unique_reduce, reusable=reusable)
         self.set_flag(self.Flag_BuffSkill)
         self.disabledModifier = CharacterModifier()
         self.modifierInvariantFlag: bool = True
@@ -419,8 +427,8 @@ class BuffSkillWrapper(AbstractSkillWrapper):
 
 
 class StackSkillWrapper(BuffSkillWrapper):
-    def __init__(self, skill: BuffSkill, max_: int, name: str = None) -> None:
-        super(StackSkillWrapper, self).__init__(skill, name=name)
+    def __init__(self, skill: BuffSkill, max_: int, name: str = None, unique_reduce: float = 0, reusable: bool = False) -> None:
+        super(StackSkillWrapper, self).__init__(skill, name=name, unique_reduce=unique_reduce, reusable=reusable)
         self.stack: int = 0
         self._max: int = max_
         self._style: Optional[str] = None
@@ -465,8 +473,10 @@ class DamageSkillWrapper(AbstractSkillWrapper):
         skill: DamageSkill,
         modifier: CharacterModifier = CharacterModifier(),
         name: str = None,
+        unique_reduce: float = 0,
+        reusable: bool = False
     ):
-        super(DamageSkillWrapper, self).__init__(skill, name=name)
+        super(DamageSkillWrapper, self).__init__(skill, name=name, unique_reduce=unique_reduce, reusable=reusable)
         self.modifier: CharacterModifier = modifier
         self._runtime_modifier_list: List[
             Tuple[
@@ -536,9 +546,11 @@ class StackDamageSkillWrapper(DamageSkillWrapper):
         fn,
         modifier: CharacterModifier = CharacterModifier(),
         name: str = None,
+        unique_reduce: float = 0,
+        reusable: bool = False
     ) -> None:
         super(StackDamageSkillWrapper, self).__init__(
-            skill, modifier=modifier, name=name
+            skill, modifier=modifier, name=name, unique_reduce=unique_reduce, reusable=reusable
         )
         self.stack_skill: AbstractSkillWrapper = stack_skill
         self.fn = fn
@@ -555,8 +567,8 @@ class StackDamageSkillWrapper(DamageSkillWrapper):
 
 
 class StackableDamageSkillWrapper(DamageSkillWrapper):
-    def __init__(self, skill: AbstractSkill, max_stack: int) -> None:
-        super(StackableDamageSkillWrapper, self).__init__(skill)
+    def __init__(self, skill: AbstractSkill, max_stack: int, unique_reduce: float = 0, reusable: bool = False) -> None:
+        super(StackableDamageSkillWrapper, self).__init__(skill, unique_reduce=unique_reduce, reusable=reusable)
         self.max_stack = max_stack
         self.stack = self.max_stack
 
@@ -594,8 +606,10 @@ class SummonSkillWrapper(AbstractSkillWrapper):
         skill: SummonSkill,
         modifier: CharacterModifier = CharacterModifier(),
         name: str = None,
+        unique_reduce: float = 0,
+        reusable: bool = False
     ) -> None:
-        super(SummonSkillWrapper, self).__init__(skill, name=name)
+        super(SummonSkillWrapper, self).__init__(skill, name=name, unique_reduce=unique_reduce, reusable=reusable)
         self.tick: int = 0
         self.modifier: CharacterModifier = modifier
         self._runtime_modifier_list: List[
@@ -712,8 +726,8 @@ class SummonSkillWrapper(AbstractSkillWrapper):
 
 
 class StackableSummonSkillWrapper(SummonSkillWrapper):
-    def __init__(self, skill: AbstractSkill, max_stack: int) -> None:
-        super(StackableSummonSkillWrapper, self).__init__(skill)
+    def __init__(self, skill: AbstractSkill, max_stack: int, unique_reduce: float = 0, reusable: bool = False) -> None:
+        super(StackableSummonSkillWrapper, self).__init__(skill, unique_reduce=unique_reduce, reusable=reusable)
         self.max_stack = max_stack
         self.stack = self.max_stack
 
@@ -755,8 +769,10 @@ class DotSkillWrapper(SummonSkillWrapper):
         skill: DotSkill,
         modifier: CharacterModifier = CharacterModifier(),
         name: str = None,
+        unique_reduce: float = 0,
+        reusable: bool = False
     ) -> None:
-        super(DotSkillWrapper, self).__init__(skill, modifier, name=name)
+        super(DotSkillWrapper, self).__init__(skill, modifier, name=name, unique_reduce=unique_reduce, reusable=reusable)
 
     # _use only alloted for start.
     def _use(self, skill_modifier: SkillModifier) -> ResultObject:
