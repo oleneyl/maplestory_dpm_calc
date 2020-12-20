@@ -1,11 +1,10 @@
 import sys
-import json
 
 sys.path.append('../')
 
 from dpmModule.character.characterKernel import JobGenerator
 from dpmModule.character.characterTemplate import get_template_generator
-from dpmModule.kernel.core import CharacterModifier, InformedCharacterModifier
+from dpmModule.kernel.core import CharacterModifier, InformedCharacterModifier, AlwaysMaximumVBuilder
 
 
 def test_modifier_loading():
@@ -33,13 +32,10 @@ def test_informed_modifier_loading():
 
 
 def test_job_generator_creation():
-    with open('../dpmModule/jobs/configs/archmageFb.json', encoding='utf-8') as f:
-        test_conf = json.load(f)
-    vEhc = None
-    gen = JobGenerator()
     character = get_template_generator("high_standard")().get_template(8000)('스태프')
-    gen.load(test_conf)
-    passive_skill_list = gen.get_passive_skill_list(vEhc, character, None)
-    not_implied_skill_list = gen.get_not_implied_skill_list(vEhc, character, None)
+    gen = JobGenerator(character, v_builder=AlwaysMaximumVBuilder(), options={})
+    gen.load('../dpmModule/jobs/configs/archmageFb.json')
+    passive_skill_list = gen.loader.load_passive_skill_list()
+    not_implied_skill_list = gen.loader.load_not_implied_skill_list()
     print(passive_skill_list)
     print(not_implied_skill_list)
