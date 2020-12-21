@@ -15,7 +15,21 @@ Advisor: Monolith, 몰라#4508
 '''
 
 # TODO: 하이퍼스탯으로 스탠스 10% 확보 필요
+# 도적템 럭제논 가정
 
+def XenonMapleHeroes(level, combat_level=0):
+    return core.BuffSkill("메이플 용사", 0, (900+15*combat_level)*1000,
+                                 stat_main=ceil(15+combat_level/2)*0.01*(25+level*5-652),
+                                 stat_sub=ceil(15+combat_level/2)*0.01*326,
+                                 rem=True
+                                 ).wrap(core.BuffSkillWrapper)
+
+def XenonMapleHeroes2(vEhc, num1, num2, level, combat_level):
+    return core.BuffSkill("메이플월드 여신의 축복", 450, 60*1000,
+                          stat_main=(2+vEhc.getV(num1, num2)/10)*ceil(15+combat_level/2)*0.01*(25+level*5-652),
+                          stat_sub=(2+vEhc.getV(num1, num2)/10)*ceil(15+combat_level/2)*0.01*326,
+                          pdamage=5+vEhc.getV(num1, num2)//2, cooltime=180*1000, red=True
+                          ).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
 
 class SupplyStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill, amaranth_generator):
@@ -88,7 +102,7 @@ class JobGenerator(ck.JobGenerator):
         Multilateral = [Multilateral1, Multilateral2, Multilateral3, Multilateral4, Multilateral5, Multilateral6]
 
         LinearPerspective = core.InformedCharacterModifier("리니어 퍼스펙티브", crit=40)
-        MinoritySupport = core.InformedCharacterModifier("마이너리티 서포트", stat_main=20, stat_sub=20)
+        MinoritySupport = core.InformedCharacterModifier("마이너리티 서포트", stat_main=20, stat_sub=20, stat_main_fixed = 50527*0.4)
         XenonMastery = core.InformedCharacterModifier("제논 마스터리", att=20)
         HybridDefensesPassive = core.InformedCharacterModifier("듀얼브리드 디펜시브(패시브)", stat_main=10, stat_sub=10)
         XenonExpert = core.InformedCharacterModifier("제논 엑스퍼트", att=30 + passive_level, crit_damage=8)
@@ -241,8 +255,8 @@ class JobGenerator(ck.JobGenerator):
             sk.protect_from_running()
 
         return(PurgeSnipe,
-               [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                globalSkill.useful_wind_booster(), globalSkill.useful_hyper_body_xenon(), globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract(),
+               [XenonMapleHeroes(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                globalSkill.useful_wind_booster(), globalSkill.useful_hyper_body_xenon(), XenonMapleHeroes2(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract(),
                 SupplySurplus, SupplyCharger, InclinePower, EfficiencyPipeLine, Booster, HybridDefenses, VirtualProjection, ExtraSupply] +
                [Hologram_ForceField, AmaranthGenerator, MirrorBreak, MirrorSpider, MegaSmasher, MegaSmasherTick, ResistanceLineInfantry, LuckyDice, ReadyToDie, Overdrive,
                 OverloadMode, Hologram_Fusion, Hologram_Fusion_Buff, OverloadHit, OverloadHit_copy, PhotonRay, PhotonRayHit, MeltDown, MeltDown_Armor, MeltDown_Damage] +
