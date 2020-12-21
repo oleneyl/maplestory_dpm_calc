@@ -223,8 +223,8 @@ class JobGenerator(ck.JobGenerator):
         #### 초월자 스킬 ####
 
         DoubleTime = core.BuffSkill("래피드 타임", 0, 9999*10000, crit=20, pdamage=10).wrap(core.BuffSkillWrapper)
-        TimeDistortion = core.BuffSkill("타임 디스토션", 540, 30000, cooltime=240*1000, pdamage=25).wrap(core.BuffSkillWrapper)
-        TimeHolding = core.BuffSkill("타임 홀딩", 0, 90000, cooltime=180*1000, pdamage=10, red=False).wrap(core.BuffSkillWrapper)  # 쿨타임 초기화. (타임 리와 / 리미트 브레이크 제외)
+        TimeDistortion = core.BuffSkill("타임 디스토션", 540, 30000, cooltime=240*1000, red=True, pdamage=25).wrap(core.BuffSkillWrapper)
+        TimeHolding = core.BuffSkill("타임 홀딩", 0, 90000, cooltime=180*1000, pdamage=10, red=True).wrap(core.BuffSkillWrapper)  # 쿨타임 초기화. (타임 리와 / 리미트 브레이크 제외)
         # 인탠시브 타임 - 기본 도핑에 영메 포함되어 있음
 
         # 알파 4410ms 베타 4980ms
@@ -241,7 +241,7 @@ class JobGenerator(ck.JobGenerator):
         LimitBreak = core.BuffSkill("리미트 브레이크(버프)", 450, (30+vEhc.getV(0, 0)//2)*1000, pdamage_indep=30+vEhc.getV(0, 0)//5, cooltime=240*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
         LimitBreakCDR = core.SummonSkill("리미트 브레이크(재사용 대기시간 감소)", 0, 1000, 0, 0, (30+vEhc.getV(0, 0)//2)*1000, cooltime=-1).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
-        LimitBreakFinal = core.DamageSkill("리미트 브레이크 (막타)", 0, 650 + 26*vEhc.getV(0, 0), 12*6, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        LimitBreakFinal = core.DamageSkill("리미트 브레이크(막타)", 0, 650 + 26*vEhc.getV(0, 0), 12*6, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         # 베타로 사용함.
         TwinBladeOfTime = core.DamageSkill("조인트 어택", 0, 0, 0, cooltime=120*1000, red=True).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
         TwinBladeOfTime_Alpha_1 = core.DamageSkill("조인트 어택(알파)(1)", 450, 875+35*vEhc.getV(1, 1), 8).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
@@ -262,7 +262,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 초월자 륀느의 기원
         RhinneBless = core.BuffSkill("초월자 륀느의 기원", 480, (30+vEhc.getV(0, 0)//2)*1000, cooltime=240000, att=10+3*vEhc.getV(0, 0)).wrap(core.BuffSkillWrapper)
-        RhinneBlessAttack_hit = core.DamageSkill("초월자 륀느의 기원 (타격)", 0, 125+5*vEhc.getV(0, 0), 5).wrap(core.DamageSkillWrapper)
+        RhinneBlessAttack_hit = core.DamageSkill("초월자 륀느의 기원(타격)", 0, 125+5*vEhc.getV(0, 0), 5).wrap(core.DamageSkillWrapper)
         RhinneBlessAttack = core.OptionalElement(RhinneBless.is_active, RhinneBlessAttack_hit)
 
         # 에고 웨폰
@@ -327,7 +327,12 @@ class JobGenerator(ck.JobGenerator):
             # 윈커(0ms) - 윈스(420ms) - 스톰(900ms) - 문스(1590ms) - 피어싱(1920ms) - 문스(2430ms) - 피어싱(2760ms) - 3270ms
             # 기가(60ms) -       점핑(690ms) -   어스(1260ms) - 어퍼 씹힘 -   어파스(2340ms)   어퍼, 어파스 씹힘  - 2970ms
             AlphaCombo = [SetAlpha, WindCutter, GigaCrashTAG, WindStrike, JumpingCrashTAG, AdvancedStormBreak, AdvancedEarthBreakTAG,
-                          MoonStrikeLink, PierceStrike, MoonStrikeLink, PierceStrike, AdvancedPowerStompTAG]
+                          MoonStrikeLink, PierceStrike, AdvancedPowerStompTAG, MoonStrikeLink, PierceStrike]
+        elif DEALCYCLE == "alpha_legacy2":
+            # 윈커-윈스-문스-피어싱-쉐스-문스-피어싱-쉐스
+            # 어시 목록은 동일
+            AlphaCombo = [SetAlpha, WindCutter, GigaCrashTAG, WindStrike, JumpingCrashTAG, AdvancedStormBreak, AdvancedEarthBreakTAG,
+                          MoonStrikeLink, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike, MoonStrikeLink, PierceStrikeLink, ShadowStrike]
         else:
             raise ValueError(DEALCYCLE)
 
