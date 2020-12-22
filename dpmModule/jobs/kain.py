@@ -10,9 +10,10 @@ from math import ceil
 from typing import Any, Dict
 
 
-BREATH_SHOOTER_REINFORCE = core.CharacterModifier()  # pdamage=10
+BREATH_SHOOTER_REINFORCE = core.CharacterModifier(pdamage=10)
 BREATH_SHOOTER_BOSSKILLER = core.CharacterModifier(boss_pdamage=15)
 EXECUTION_BOSSKILLER = core.CharacterModifier(boss_pdamage=20)
+EXECUTION_IGNORE_GUARD = core.CharacterModifier(armor_ignore=25)
 REMAIN_INCENSE_REINFORCE = core.CharacterModifier(pdamage=50)
 
 
@@ -307,7 +308,7 @@ def chain_sickle(vEhc, combat: int):
             hit=6,
             cooltime=7000,
             red=True,
-            modifier=EXECUTION_BOSSKILLER,
+            modifier=EXECUTION_BOSSKILLER + EXECUTION_IGNORE_GUARD,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -319,7 +320,7 @@ def chain_sickle(vEhc, combat: int):
             damage=200 + 2 * combat,
             hit=12,
             cooltime=-1,
-            modifier=EXECUTION_BOSSKILLER,
+            modifier=EXECUTION_BOSSKILLER + EXECUTION_IGNORE_GUARD,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -338,7 +339,7 @@ def poison_needle(vEhc, combat: int):
             hit=8,
             cooltime=15000,
             red=True,
-            modifier=EXECUTION_BOSSKILLER,
+            modifier=EXECUTION_BOSSKILLER + EXECUTION_IGNORE_GUARD,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -349,7 +350,7 @@ def poison_needle(vEhc, combat: int):
             delay=900 - 360,
             damage=150 + combat,
             hit=8 * 5,  # 8타, 5회 반복
-            modifier=EXECUTION_BOSSKILLER,
+            modifier=EXECUTION_BOSSKILLER + EXECUTION_IGNORE_GUARD,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -768,7 +769,7 @@ class JobGenerator(ck.JobGenerator):
                 delay=510,  # base delay 660
                 damage=155 + 75 + passive_level,
                 hit=6,
-                modifier=EXECUTION_BOSSKILLER,
+                modifier=EXECUTION_BOSSKILLER + EXECUTION_IGNORE_GUARD,
             )
             .setV(vEhc, 0, 2)
             .wrap(core.DamageSkillWrapper)
@@ -782,7 +783,7 @@ class JobGenerator(ck.JobGenerator):
                 hit=7,
                 cooltime=4500,
                 red=True,
-                modifier=EXECUTION_BOSSKILLER,
+                modifier=EXECUTION_BOSSKILLER + EXECUTION_IGNORE_GUARD,
             )
             .setV(vEhc, 0, 2)
             .wrap(core.DamageSkillWrapper)
