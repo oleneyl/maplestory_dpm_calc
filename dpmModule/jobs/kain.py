@@ -10,10 +10,10 @@ from math import ceil
 from typing import Any, Dict
 
 
-BREATH_SHOOTER_REINFORCE = core.CharacterModifier(pdamage=10)
+BREATH_SHOOTER_REINFORCE = core.CharacterModifier()  # pdamage=10
 BREATH_SHOOTER_BOSSKILLER = core.CharacterModifier(boss_pdamage=15)
 EXECUTION_BOSSKILLER = core.CharacterModifier(boss_pdamage=20)
-REMAIN_INCENSE_REINFORCE = core.CharacterModifier()  # pdamage=50
+REMAIN_INCENSE_REINFORCE = core.CharacterModifier(pdamage=50)
 
 
 def strike_arrow(vEhc, passive_level: int):  # 1980ms 대기하면 초기화
@@ -154,7 +154,7 @@ def scattering_shot(vEhc, passive_level: int):
             delay=480,  # base delay 630
             damage=135 + 80 + 80 + passive_level,
             hit=4,
-            cooltime=7000,
+            cooltime=6000,
             modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
         )
         .setV(vEhc, 0, 2)
@@ -214,7 +214,7 @@ def shaft_break(vEhc, passive_level: int):
             delay=510,  # base delay 660
             damage=180 + 75 + passive_level,
             hit=3,
-            cooltime=12000,
+            cooltime=11000,
             modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
         )
         .setV(vEhc, 0, 2)
@@ -274,7 +274,7 @@ def falling_dust(vEhc, combat: int):
             delay=510,  # base delay 660
             damage=420 + 5 * combat,
             hit=8,
-            cooltime=16000,
+            cooltime=14000,
             modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
         )
         .setV(vEhc, 0, 2)
@@ -303,7 +303,7 @@ def chain_sickle(vEhc, combat: int):
         core.DamageSkill(
             name="[처형] 체인 시클",
             delay=240,  # base delay 300
-            damage=180 + 2 * combat,
+            damage=160 + 2 * combat,
             hit=6,
             cooltime=7000,
             red=True,
@@ -316,7 +316,7 @@ def chain_sickle(vEhc, combat: int):
         core.DamageSkill(
             name="[처형] 체인 시클(마무리 일격)",
             delay=360,  # base delay 480
-            damage=230 + 2 * combat,
+            damage=200 + 2 * combat,
             hit=12,
             cooltime=-1,
             modifier=EXECUTION_BOSSKILLER,
@@ -334,7 +334,7 @@ def poison_needle(vEhc, combat: int):
         core.DamageSkill(
             name="[처형] 포이즌 니들",
             delay=360,  # base delay 360
-            damage=260 + 3 * combat,
+            damage=225 + 3 * combat,
             hit=8,
             cooltime=15000,
             red=True,
@@ -347,8 +347,8 @@ def poison_needle(vEhc, combat: int):
         core.DamageSkill(  # 연속공격을 스킬 하나에 합쳐둠
             name="[처형] 포이즌 니들(연속 공격)",
             delay=900 - 360,
-            damage=115 + combat,
-            hit=12 * 5,  # 12타, 5회 반복
+            damage=150 + combat,
+            hit=8 * 5,  # 8타, 5회 반복
             modifier=EXECUTION_BOSSKILLER,
         )
         .setV(vEhc, 0, 2)
@@ -381,68 +381,47 @@ def poison_needle(vEhc, combat: int):
 
 
 def remain_incense(vEhc, passive_level: int):
-    class RemainIncenseWrapper(core.DamageSkillWrapper):
-        def __init__(self):
-            skill = core.DamageSkill(
-                name="리메인 인센스",
-                delay=0,
-                damage=150 + 100 + passive_level,
-                hit=4,
-                cooltime=6000,  # TODO: 재생성 대기시간에 쿨감이 적용되는지?
-                modifier=REMAIN_INCENSE_REINFORCE,
-            ).setV(vEhc, 0, 2)
-            super(RemainIncenseWrapper, self).__init__(skill)
-            self.thanatos_descent: core.BuffSkillWrapper = None
-
-        def get_cooltime(self) -> float:
-            if self.thanatos_descent.is_active():
-                return 1500
-            else:
-                return super(RemainIncenseWrapper, self).get_cooltime()
-
-        def register_thanatos(self, skill: core.BuffSkillWrapper):
-            self.thanatos_descent = skill
-
-    RemainIncense = RemainIncenseWrapper()
-    RemainIncenseExceed = (
+    RemainIncense = (
         core.DamageSkill(
-            name="리메인 인센스(초과)",
+            name="리메인 인센스",
             delay=0,
-            damage=150 + 100 + passive_level,
-            hit=4 * 4,  # 4타, 4회 반복
-            cooltime=-1,
-            modifier=core.CharacterModifier(pdamage_indep=-50)
-            + REMAIN_INCENSE_REINFORCE,
+            damage=90 + 60 + passive_level,
+            hit=4,
+            cooltime=300,
+            modifier=REMAIN_INCENSE_REINFORCE,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
     )
-    RemainIncense.onJustAfter(RemainIncenseExceed)
 
-    UseRemainIncense = core.OptionalElement(RemainIncense.is_available, RemainIncense)
+    def use_remain_incense(count):
+        return core.OptionalElement(
+            RemainIncense.is_available, core.RepeatElement(RemainIncense, count)
+        )
+
     RemainIncense.protect_from_running()
 
-    return RemainIncense, UseRemainIncense
+    return RemainIncense, use_remain_incense
 
 
 def death_blessing(vEhc, passive_level: int):
     Incarnation = core.BuffSkill(
         name="인카네이션",
         delay=780,
-        remain=30000,
+        remain=40000,
         cooltime=180 * 1000,
         pdamage=15,
         patt=15,
     ).wrap(core.BuffSkillWrapper)
 
     DeathBlessingStack = core.StackSkillWrapper(
-        core.BuffSkill(name="데스 블레싱 스택", delay=0, remain=9999999), 10
+        core.BuffSkill(name="데스 블레싱 스택", delay=0, remain=9999999), 15
     )
     DeathBlessing = (
         core.DamageSkill(
             name="데스 블레싱",
             delay=0,
-            damage=150 + 155 + passive_level * 5,
+            damage=140 + 135 + passive_level * 3,
             hit=10,
             cooltime=-1,
         )
@@ -453,7 +432,7 @@ def death_blessing(vEhc, passive_level: int):
         core.DamageSkill(
             name="데스 블레싱(인카네이션)",
             delay=0,
-            damage=150 + 155 + passive_level * 5,
+            damage=140 + 135 + passive_level * 3,
             hit=13,
             cooltime=-1,
         )
@@ -467,13 +446,6 @@ def death_blessing(vEhc, passive_level: int):
         cooltime=-1,
     ).wrap(core.BuffSkillWrapper)
 
-    for sk in [DeathBlessing, DeathBlessingIncarnation]:
-        sk.onJustAfter(DeathBlessingStack.stackController(-1))
-        sk.onJustAfter(DeathBlessingBonus)
-        sk.add_runtime_modifier(
-            DeathBlessingBonus,
-            lambda sk: core.CharacterModifier(pdamage_indep=10 * sk.is_active()),
-        )
     UseDeathBlessing = core.OptionalElement(
         partial(DeathBlessingStack.judge, 1, 1),
         core.OptionalElement(
@@ -482,6 +454,10 @@ def death_blessing(vEhc, passive_level: int):
             DeathBlessing,
         ),
     )
+
+    for sk in [DeathBlessing, DeathBlessingIncarnation]:
+        sk.onJustAfter(DeathBlessingStack.stackController(-1))
+        sk.onJustAfter(DeathBlessingBonus)
 
     return (
         Incarnation,
@@ -499,17 +475,16 @@ def dragon_burst(vEhc):
         delay=300,
         damage=0,
         hit=0,
-        cooltime=60000,
+        cooltime=90000,
         red=True,
     ).wrap(core.DamageSkillWrapper)
     DragonBurstReleaseTick = (
         core.DamageSkill(
             name="[발현] 드래곤 버스트(키다운)",
-            delay=210,
-            damage=475 + vEhc.getV(0, 0) * 19,
-            hit=10,
+            delay=180,
+            damage=400 + vEhc.getV(0, 0) * 16,
+            hit=12,
             cooltime=-1,
-            modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
         )
         .isV(vEhc, 0, 0)
         .wrap(core.DamageSkillWrapper)
@@ -522,7 +497,7 @@ def dragon_burst(vEhc):
         cooltime=-1,
     ).wrap(core.DamageSkillWrapper)
 
-    DragonBurstReleaseRepeat = core.RepeatElement(DragonBurstReleaseTick, 10)
+    DragonBurstReleaseRepeat = core.RepeatElement(DragonBurstReleaseTick, 15)
     DragonBurstReleaseInit.onAfter(DragonBurstReleaseRepeat)
     DragonBurstReleaseRepeat.onAfter(DragonBurstReleaseEnd)
 
@@ -535,17 +510,16 @@ def fatal_blitz(vEhc):
         delay=360,
         damage=0,
         hit=0,
-        cooltime=60000,
+        cooltime=90000,
         red=True,
     ).wrap(core.DamageSkillWrapper)
     FatalBlitzTick = (
         core.DamageSkill(
             name="[처형] 페이탈 블리츠(키다운)",
-            delay=240,
-            damage=325 + vEhc.getV(0, 0) * 13,
+            delay=90,
+            damage=300 + vEhc.getV(0, 0) * 12,
             hit=12,
             cooltime=-1,
-            modifier=EXECUTION_BOSSKILLER,
         )
         .isV(vEhc, 0, 0)
         .wrap(core.DamageSkillWrapper)
@@ -558,7 +532,7 @@ def fatal_blitz(vEhc):
         cooltime=-1,
     ).wrap(core.DamageSkillWrapper)
 
-    FatalBlitzRepeat = core.RepeatElement(FatalBlitzTick, 10)
+    FatalBlitzRepeat = core.RepeatElement(FatalBlitzTick, 14)
     FatalBlitzInit.onAfter(FatalBlitzRepeat)
     FatalBlitzRepeat.onAfter(FatalBlitzEnd)
 
@@ -580,47 +554,67 @@ def thanatos_descent(vEhc):
     )
     ThanatosDescentHand = (
         core.DamageSkill(
-            name="타나토스 디센트(죽음의 손길)",
+            name="타나토스 디센트(죽음의 화살)",
             delay=0,
-            damage=500 + 20 * vEhc.getV(0, 0),
-            hit=12,
+            damage=325 + 13 * vEhc.getV(0, 0),
+            hit=3 * 6,  # 3타, 6개 발사
             cooltime=3000,
         )
         .isV(vEhc, 0, 0)
         .wrap(core.DamageSkillWrapper)
     )
-    ThanatosDescentFinish = (
+    ThanatosDescentFinalInit = (
+        core.DamageSkill(
+            name="타나토스 디센트(죽음의 영역)(시전)",
+            delay=2490,
+            damage=0,
+            hit=0,
+            cooltime=-1,
+        )
+        .isV(vEhc, 0, 0)
+        .wrap(core.DamageSkillWrapper)
+    )
+    ThanatosDescentFinal = (
         core.DamageSkill(
             name="타나토스 디센트(죽음의 영역)",
-            delay=4890,  # TODO: check actual delay
+            delay=180,
             damage=650 + 26 * vEhc.getV(0, 0),
-            hit=15 * 9,  # 15타, 9회 반복 TODO: is *9 correct?
+            hit=15,
+            cooltime=-1,
+        )
+        .isV(vEhc, 0, 0)
+        .wrap(core.DamageSkillWrapper)
+    )
+    ThanatosDescentFinalFinish = (
+        core.DamageSkill(
+            name="타나토스 디센트(죽음의 영역)(후딜)",
+            delay=780,
+            damage=0,
+            hit=0,
             cooltime=-1,
         )
         .isV(vEhc, 0, 0)
         .wrap(core.DamageSkillWrapper)
     )
 
-    ThanatosDescentStack = core.StackSkillWrapper(
-        core.BuffSkill("타나토스 디센트(죽음의 손길)(스택)", 0, 9999999), 6
-    )
     UseThanatosDescentHand = core.OptionalElement(
-        lambda: ThanatosDescentHand.is_available() and ThanatosDescentStack.judge(6, 1),
+        lambda: ThanatosDescentHand.is_available(),
         ThanatosDescentHand,
     )
-    UseThanatosDescentHand.onBefore(ThanatosDescentStack.stackController(1))
-    ThanatosDescentHand.onJustAfter(ThanatosDescentStack.stackController(-6))
 
-    ThanatosDescent.onJustAfter(ThanatosDescentFinish.controller(35000))
+    ThanatosDescent.onJustAfter(ThanatosDescentFinalInit.controller(35000))
+    ThanatosDescentFinalRepeat = core.RepeatElement(ThanatosDescentFinal, 9)
+    ThanatosDescentFinalInit.onAfter(ThanatosDescentFinalRepeat)
+    ThanatosDescentFinalRepeat.onAfter(ThanatosDescentFinalFinish)
 
     ThanatosDescentHand.protect_from_running()
 
     return (
         ThanatosDescent,
         ThanatosDescentHand,
-        ThanatosDescentFinish,
+        ThanatosDescentFinalInit,
+        ThanatosDescentFinal,
         UseThanatosDescentHand,
-        ThanatosDescentStack,
     )
 
 
@@ -630,21 +624,22 @@ class GrapOfAgonyWrapper(core.SummonSkillWrapper):
             name="그립 오브 애거니",
             summondelay=510,  # base delay 660, TODO: check AS applying
             delay=340,  # TODO: check delay in game
-            damage=225 + 9 * vEhc.getV(num1, num2),
-            hit=4,
+            damage=475 + 19 * vEhc.getV(num1, num2),
+            hit=6,
             remain=6000,
             cooltime=180 * 1000,
             red=True,
         ).isV(vEhc, num1, num2)
         super(GrapOfAgonyWrapper, self).__init__(skill)
         self.stack = 0
-        self.max_stack = 15 * 12
+        self.hit_per_stack = 25
+        self.max_stack = 15 * self.hit_per_stack
         self.remain_time = self.skill.remain
 
     def _use(self, skill_modifier):
         result = super(GrapOfAgonyWrapper, self)._use(skill_modifier)
-        self.timeLeft += (self.stack // 12 - 1) * 1000
-        self.stack = self.stack % 12
+        self.timeLeft += (self.stack // self.hit_per_stack - 1) * 1000
+        self.stack = self.stack % self.hit_per_stack
         return result
 
     def vary(self, d: int) -> core.ResultObject:
@@ -771,7 +766,7 @@ class JobGenerator(ck.JobGenerator):
             core.DamageSkill(
                 name="[처형] 팬텀 블레이드",
                 delay=510,  # base delay 660
-                damage=190 + 100 + passive_level,
+                damage=155 + 75 + passive_level,
                 hit=6,
                 modifier=EXECUTION_BOSSKILLER,
             )
@@ -783,7 +778,7 @@ class JobGenerator(ck.JobGenerator):
             core.DamageSkill(
                 name="[처형] 테어링 나이프",
                 delay=510,  # base delay 660
-                damage=250 + 80 + passive_level,
+                damage=210 + 95 + passive_level,
                 hit=7,
                 cooltime=4500,
                 red=True,
@@ -805,12 +800,12 @@ class JobGenerator(ck.JobGenerator):
         ) = poison_needle(vEhc, self.combat)
 
         # Additional Hit
-        DragonPang = (
+        DragonPang = (  # TODO: 공격주기 정확히 측정
             core.SummonSkill(
                 name="드래곤 팡",
                 summondelay=0,
                 delay=(1650 * 7 + 3000) / 7,  # 평균으로 계산, 필요해지면 공격 간격 정확히 반영
-                damage=85 + 50 + 40 + passive_level,
+                damage=100 + 60 + 70 + passive_level * 2,
                 hit=4 * 3,  # 구체 3개 유지 가정
                 remain=9999999,
             )
@@ -818,7 +813,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.SummonSkillWrapper)
         )
 
-        RemainIncense, UseRemainIncense = remain_incense(vEhc, passive_level)
+        RemainIncense, use_remain_incense = remain_incense(vEhc, passive_level)
         (
             Incarnation,
             DeathBlessingStack,
@@ -835,7 +830,7 @@ class JobGenerator(ck.JobGenerator):
         MaliceTick = core.SummonSkill(
             name="멜리스(자연회복)",
             summondelay=0,
-            delay=5010,
+            delay=4020,
             damage=0,
             hit=0,
             remain=99999999,
@@ -865,7 +860,7 @@ class JobGenerator(ck.JobGenerator):
             core.DamageSkill(
                 name="스니키 스나이핑",
                 delay=420 + 270,  # prepare.action + keydownend.action, need more check
-                damage=150,
+                damage=175,
                 hit=10 * 5,  # 10타, 5회 반복
                 cooltime=45000,
             )
@@ -876,7 +871,7 @@ class JobGenerator(ck.JobGenerator):
             core.DamageSkill(
                 name="[발현/처형] 스니키 스나이핑",
                 delay=420 + 270,  # prepare.time + keydownend.action
-                damage=190,
+                damage=200,
                 hit=12 * 5,  # 12타, 5회 반복
                 cooltime=60000,
             )
@@ -903,9 +898,9 @@ class JobGenerator(ck.JobGenerator):
         (
             ThanatosDescent,
             ThanatosDescentHand,
-            ThanatosDescentFinish,
+            ThanatosDescentFinalInit,
+            ThanatosDescentFinal,
             UseThanatosDescentHand,
-            ThanatosDescentStack,
         ) = thanatos_descent(vEhc)
         GrapOfAgony = GrapOfAgonyWrapper(vEhc, 0, 0)
 
@@ -914,14 +909,14 @@ class JobGenerator(ck.JobGenerator):
         MaliceTick.onAfter(
             core.OptionalElement(
                 ThanatosDescent.is_active,
+                Malice.stackController(40),
                 Malice.stackController(20),
-                Malice.stackController(10),
             )
         )
         AddMalice = core.OptionalElement(
             ThanatosDescent.is_active,
-            Malice.stackController(25),
-            Malice.stackController(17),
+            Malice.stackController(35),
+            Malice.stackController(20),
         )
         for sk in [
             StrikeArrowI,
@@ -958,18 +953,16 @@ class JobGenerator(ck.JobGenerator):
 
         # Remain Incense
         # 발현 스킬의 쿨타임 있는 파이널 어택처럼 취급
-        for sk in [
-            StrikeArrowRelease,
-            ScatteringShotRelease,
-            ShaftBreakReleaseExplode,
-            FallingDustRelease,
-            SneakySnipingRelease,
-            DragonBurstReleaseTick,
-            ThanatosDescentHand,
-            ThanatosDescentFinish,
+        for sk, count in [
+            (StrikeArrowRelease, 1),
+            (ScatteringShotRelease, 2 * 2),  # 기본 2개지만, 원거리에서는 쿨타임이 돌면서 2번 생김
+            (ShaftBreakReleaseExplode, 6),
+            (FallingDustRelease, 8),
+            (SneakySnipingRelease, 8),
+            (DragonBurstReleaseTick, 1),
+            (ThanatosDescentFinal, 2),
         ]:
-            sk.onJustAfter(UseRemainIncense)
-        GrapOfAgony.onTick(UseRemainIncense)
+            sk.onJustAfter(use_remain_incense(count))
 
         # Death Blessing
         AddDeathBlessingStack = DeathBlessingStack.stackController(1)
@@ -980,6 +973,7 @@ class JobGenerator(ck.JobGenerator):
             FallingDustRelease,
             SneakySnipingRelease,
             DragonBurstReleaseTick,
+            ThanatosDescentFinal,
         ]:
             sk.onJustAfter(AddDeathBlessingStack)
         for sk in [
@@ -992,9 +986,30 @@ class JobGenerator(ck.JobGenerator):
         ]:
             sk.onJustAfter(UseDeathBlessing)
 
-        # Thanatos Descent
-        RemainIncense.register_thanatos(ThanatosDescent)
+        DeathBlessingBonusMalice = core.OptionalElement(
+            lambda: DeathBlessingBonus.is_active() and DeathBlessingStack.judge(1, 1),
+            Malice.stackController(12),
+        )
+        for sk in [
+            PhantomBlade,
+            TearingKnife,
+            ChainSickle,
+            PoisonNeedle,
+            FatalBlitzTick,
+        ]:
+            sk.add_runtime_modifier(
+                DeathBlessingBonus,
+                lambda sk: core.CharacterModifier(pdamage_indep=15 * sk.is_active()),
+            )
+            sk.onJustAfter(DeathBlessingBonusMalice)
 
+        for sk in [DeathBlessing, DeathBlessingIncarnation]:
+            sk.add_runtime_modifier(
+                DeathBlessingBonus,
+                lambda sk: core.CharacterModifier(pdamage_indep=15 * sk.is_active()),
+            )
+
+        # Thanatos Descent
         counted_skills = [
             StrikeArrowI,
             StrikeArrowII,
@@ -1061,7 +1076,7 @@ class JobGenerator(ck.JobGenerator):
                 Possession,
             ]
             + [MaliceTick, DragonPang, GuidedArrow, GrapOfAgony]
-            + [ThanatosDescentFinish]  # reserved task, use as early as possible
+            + [ThanatosDescentFinalInit]  # reserved task, use as early as possible
             + [Pantheon]
             + [
                 DragonBurstReleaseInit,
