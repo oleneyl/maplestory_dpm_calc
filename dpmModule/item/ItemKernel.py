@@ -21,6 +21,9 @@ class Item():
         self.main_option = main_option.copy()
         self.potential = potential.copy()
         self.additional_potential = additional_potential.copy()
+
+        #Weapon base att
+        self.weapon_base_att = None
         
         self.level = level
 
@@ -32,6 +35,9 @@ class Item():
     
     def set_main_option(self, mf : ExMDF):
         self.main_option = mf.copy()
+    
+    def set_weapon_base_att(self, att: int):
+        self.weapon_base_att = att
         
     def set_potential(self, mdf : ExMDF):
         self.potential = mdf.copy()
@@ -309,6 +315,7 @@ class WeaponFactoryClass():
             _type = '단검'
         _att, _bonus = self.getMap(_type)
         item = Item(name = _type, main_option = self.modifier, level = self.level)
+        item.set_weapon_base_att(_att)
         item.add_main_option(ExMDF(att = _att))
         item.add_main_option(EnhancerFactory.get_weapon_scroll_enhancement(self.level, elist))
         item.add_main_option(ExMDF(att = _bonus[-1*bonusAttIndex]))

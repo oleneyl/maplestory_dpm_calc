@@ -27,7 +27,7 @@ presets = [
     Preset(
         id="darknight",
         job="다크나이트",
-        description="다크 스피어 8히트, 체력 100%, 리인카 사용",
+        description="다크 스피어 10히트, 체력 100%, 리인카 쿨마다 사용",
         options={},
         alt=0,
     ),
@@ -44,13 +44,6 @@ presets = [
         description="썬브 2히트, 언스 사용",
         options={"thunder_break_hit": 2},
         alt=0,
-    ),
-    Preset(
-        id="archmage_tc_thunder_8",
-        job="아크메이지썬/콜",
-        description="썬브 8히트, 언스 사용",
-        options={"thunder_break_hit": 8},
-        alt=1,
     ),
     Preset(
         id="bishop",
@@ -115,7 +108,13 @@ presets = [
         options={},
         alt=0,
     ),
-    Preset(id="viper", job="바이퍼", description="카운터 어택 미발동", options={}, alt=0),
+    Preset(
+        id="viper",
+        job="바이퍼",
+        description="카운터 어택 미발동",
+        options={},
+        alt=0,
+    ),
     Preset(
         id="captain",
         job="캡틴",
@@ -130,7 +129,13 @@ presets = [
         options={},
         alt=0,
     ),
-    Preset(id="soulmaster", job="소울마스터", description="", options={}, alt=0),
+    Preset(
+        id="soulmaster",
+        job="소울마스터",
+        description="",
+        options={},
+        alt=0,
+    ),
     Preset(
         id="michile",
         job="미하일",
@@ -170,8 +175,15 @@ presets = [
         id="nightwalker",
         job="나이트워커",
         description="점샷 400ms",
-        options={},
+        options={"jump_rate": 1},
         alt=0,
+    ),
+    Preset(
+        id="nightwalker_jump_0",
+        job="나이트워커",
+        description="노점샷",
+        options={"jump_rate": 0},
+        alt=1,
     ),
     Preset(
         id="striker",
@@ -215,8 +227,20 @@ presets = [
         options={},
         alt=0,
     ),
-    Preset(id="mechanic", job="메카닉", description="", options={}, alt=0),
-    Preset(id="aran", job="아란", description="", options={}, alt=0),
+    Preset(
+        id="mechanic",
+        job="메카닉",
+        description="",
+        options={},
+        alt=0,
+    ),
+    Preset(
+        id="aran",
+        job="아란",
+        description="",
+        options={},
+        alt=0,
+    ),
     Preset(
         id="evan",
         job="에반",
@@ -224,7 +248,13 @@ presets = [
         options={},
         alt=0,
     ),
-    Preset(id="luminous", job="루미너스", description="", options={}, alt=0),
+    Preset(
+        id="luminous",
+        job="루미너스",
+        description="",
+        options={},
+        alt=0,
+    ),
     Preset(
         id="mercedes",
         job="메르세데스",
@@ -267,7 +297,13 @@ presets = [
         options={"hp_rate": False},
         alt=1,
     ),
-    Preset(id="kaiser", job="카이저", description="", options={}, alt=0),
+    Preset(
+        id="kaiser",
+        job="카이저",
+        description="",
+        options={},
+        alt=0,
+    ),
     Preset(
         id="cadena",
         job="카데나",
@@ -296,7 +332,13 @@ presets = [
         options={},
         alt=0,
     ),
-    Preset(id="illium", job="일리움", description="", options={}, alt=0),
+    Preset(
+        id="illium",
+        job="일리움",
+        description="",
+        options={},
+        alt=0,
+    ),
     Preset(
         id="ark",
         job="아크",
@@ -325,7 +367,20 @@ presets = [
         options={"dealcycle": "alpha_legacy"},
         alt=1,
     ),
-    Preset(id="kinesis", job="키네시스", description="메테리얼", options={}, alt=0),
+    Preset(
+        id="kinesis",
+        job="키네시스",
+        description="메테리얼",
+        options={"dealcycle": "material"},
+        alt=0,
+    ),
+    Preset(
+        id="kinesis_shot",
+        job="키네시스",
+        description="샷 80%",
+        options={"dealcycle": "shot", "shot_rate": 0.8},
+        alt=1,
+    ),
 ]
 
 preset_dict = {el.id: el for el in presets}

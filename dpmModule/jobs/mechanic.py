@@ -154,10 +154,8 @@ class JobGenerator(ck.JobGenerator):
         
         BomberTime = core.BuffSkill("봄버 타임", 900, 10*1000, cooltime = 100*1000).wrap(core.BuffSkillWrapper)
         DistortionField = core.SummonSkill("디스토션 필드", 690, 4000/15, 350, 2, 4000-1, cooltime = 8000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
-    
-        #오버드라이브 (앱솔 가정)
-        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-        WEAPON_ATT = jobutils.get_weapon_att("건")
+
+        WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 

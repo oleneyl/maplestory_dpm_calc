@@ -1,13 +1,12 @@
 dist/
 build/
 data/
+.vscode/
 *.pyc
 .idea
 *.suo
 *.db
 *.opendb
-*.json
 *.sqlite
-*.txt
 docs/_build/
 *.xlsx

@@ -4,7 +4,6 @@ from ..kernel import core
 import dpmModule.jobs as maplejobs
 
 
-
 def export_configuration(jobname):
     template, _ = get_template_generator('high_standard')().query(6000)
     target = template(maplejobs.weaponList[jobname])
@@ -12,8 +11,9 @@ def export_configuration(jobname):
 
     v_builder = core.AlwaysMaximumVBuilder()
     gen = supplier.JobGenerator()
-    gen.vEhc = v_builder.build_enhancer(target, gen)
+    vEhc = v_builder.build_enhancer(target, gen)
+    gen.vEhc = vEhc
 
-    graph = gen.build(target)
+    graph = gen.build(vEhc, target, {})
 
     return graph.storage.export()

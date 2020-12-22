@@ -14,35 +14,38 @@ from typing import Any, Dict
 
 
 class KinesisStackWrapper(core.StackSkillWrapper):
-    def __init__(self, skill, _max, psychicoverjudge, name = None):
-        super().__init__(skill, _max, name = name)
+    def __init__(self, skill, _max, psychicoverjudge, name=None):
+        super().__init__(skill, _max, name=name)
         self.psychicoverjudge = psychicoverjudge
         self.set_name_style("pp 변화 : %d")
-    
+
     def vary(self, d):
         delta = d
 
-        if self.psychicoverjudge() and delta < -1: # BPM은 0이 되면 안됨
-            # print("==싸이킥 오버==")
-            delta = abs(delta) // 2 * -1
-        
-        result = super().vary(delta)
+        if self.psychicoverjudge() and delta < 0:
+            delta = max(abs(delta) // 2, 1) * -1  # BPM의 소모값은 0이 되면 안됨
+
+        result = super(KinesisStackWrapper, self).vary(delta)
         return result
 
     def charge(self):
         delta = (self._max - self.stack) // 2
-        result = super().vary(delta)
+        result = super(KinesisStackWrapper, self).vary(delta)
         return result
 
     def chargeController(self):
         task = core.Task(self, self.charge)
-        return core.TaskHolder(task, name = "싸이킥 차지")
-    
+        return core.TaskHolder(task, name="싸이킥 차지")
+
+    def judge_bpm_safe(self, stack):  # BPM 유지를 위해 pp를 최소 2 이상 유지해야함
+        return self.stack - stack >= 2
+
     def judge_ultimate(self, stack):
         if self.psychicoverjudge():
-            return self.judge(stack // 2, 1)
+            return self.judge_bpm_safe(stack // 2)
         else:
-            return self.judge(stack, 1)
+            return self.judge_bpm_safe(stack)
+
 
 class LawOfGravityDebuffWrapper(core.SummonSkillWrapper):
     def __init__(self, skill):
@@ -52,18 +55,19 @@ class LawOfGravityDebuffWrapper(core.SummonSkillWrapper):
     def _use(self, skill_modifier):
         self.mobPulled = 0
         return super(LawOfGravityDebuffWrapper, self)._use(skill_modifier)
-    
-    def _useTick(self): # 데미지 계산 -> 끌어당김 판정 -> 다음 틱 계산
+
+    def _useTick(self):  # 데미지 계산 -> 끌어당김 판정 -> 다음 틱 계산
         result = super(LawOfGravityDebuffWrapper, self)._useTick()
         self.mobPulled += 6
         return result
 
     def get_modifier(self):
         modifier = super(LawOfGravityDebuffWrapper, self).get_modifier()
-        return modifier + core.CharacterModifier(pdamage_indep = min(self.mobPulled * 3, 40)) # TODO: 2 아니면 3인데 실험 필요함
+        return modifier + core.CharacterModifier(pdamage_indep=min(self.mobPulled * 3, 40))  # TODO: 2 아니면 3인데 실험 필요함
 
     def get_delay(self):
         return max(self.skill.delay - (self.mobPulled + 6) * 120, 1200)
+
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -124,6 +128,8 @@ class JobGenerator(ck.JobGenerator):
         메테리얼 사용
         불릿 사용하지 않음.
         '''
+        DEALCYCLE = options.get("dealcycle", "material")
+        SHOT_RATE = options.get("shot_rate", 0.8)
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         ######   Skill   ######
 
@@ -146,12 +152,12 @@ class JobGenerator(ck.JobGenerator):
         TeleKinesis = core.DamageSkill("텔레키네시스", 0, 350, 0.7).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         UltimateBPM = core.SummonSkill("얼티메이트-B.P.M.", 0, 600, 175 + 2*self.combat, 7, 999999999, modifier = ULTIMATE_AWAKENING).setV(vEhc, 0, 2, False).wrap(core.SummonSkillWrapper) #1
         PsychicGrab2 = core.DamageSkill("싸이킥 그랩", 576, 470 + 4*passive_level, 5,  modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) #+2, 그랩 1번에 스매싱 5회 사용 가능 (510*5+210)/5
-        UltimatePsychic = core.DamageSkill("얼티메이트-싸이킥 샷", 1080, 300+3*self.combat, 3*5*2*0.8,  modifier = ULTIMATE_AWAKENING + core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) #5, 그랩 1번에 샷 1회 사용가능 (900+210)
+        UltimatePsychic = core.DamageSkill("얼티메이트-싸이킥 샷", 1080, 300+3*self.combat, 3*5*2*SHOT_RATE,  modifier = ULTIMATE_AWAKENING + core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) #5, 그랩 1번에 샷 1회 사용가능 (900+210)
         UltimatePsychicBuff = core.BuffSkill("얼티메이트-싸이킥 샷(디버프)", 0, 10000, rem = True, armor_ignore = 15, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         PsychicCharging = core.BuffSkill("싸이킥 차징", 0, 500, cooltime = (45 - self.combat)*1000, red = True).wrap(core.BuffSkillWrapper) #남은포인트의 50%충전
         
-        UltimateTrain = core.SummonSkill("얼티메이트-트레인", 600, 11999 / 17, 180 + 3*self.combat, 6, 12000, modifier = ULTIMATE_AWAKENING).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper) # 220% -> 140% 평균
+        UltimateTrain = core.SummonSkill("얼티메이트-트레인", 630, 11999 / 17, 180 + 3*self.combat, 6, 12000, modifier = ULTIMATE_AWAKENING).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper) # 220% -> 140% 평균
 
         #하이퍼
         EverPsychic = core.DamageSkill("에버 싸이킥", 870, 400, 16, cooltime = 120000).wrap(core.DamageSkillWrapper) # 캔슬 통해 딜레 870ms
@@ -206,10 +212,9 @@ class JobGenerator(ck.JobGenerator):
         UltimatePsychicBullet.onAfter(UltimatePsychicBulletBlackhole)
         LawOfGravity.onAfter(LawOfGravityDebuff)
         LawOfGravity.onAfter(LawOfGravityFinal.controller(22000))
-                
+
         ### Psychic point
         Ultimate_Material.onConstraint(core.ConstraintElement("7포인트", PsychicPoint, partial(PsychicPoint.judge_ultimate,7)))
-        Ultimate_Material.onConstraint(core.ConstraintElement("트레인 깔려있으면", UltimateTrain, partial(UltimateTrain.is_time_left, 0, 1))) # 0 -> 2000으로 조절하면 트레인 비중 높은 딜사이클이 됨
         Ultimate_Material.onBefore(PsychicPoint.stackController(-7))
         
         PsychicForce3.onConstraint(core.ConstraintElement("도트 종료시", PsychicForce3Dot, PsychicForce3Dot.is_not_active))
@@ -248,7 +253,7 @@ class JobGenerator(ck.JobGenerator):
         UltimateTrain.onConstraint(core.ConstraintElement("15포인트", PsychicPoint, partial(PsychicPoint.judge_ultimate,15)))
         UltimateTrain.onBefore(PsychicPoint.stackController(-15))
 
-        LawOfGravity.onConstraint(core.ConstraintElement("5포인트", PsychicPoint, partial(PsychicPoint.judge,5,1)))
+        LawOfGravity.onConstraint(core.ConstraintElement("5포인트", PsychicPoint, partial(PsychicPoint.judge_bpm_safe,5)))
         LawOfGravity.onBefore(PsychicPoint.stackController(-5))
 
         # Overload Mana
@@ -258,14 +263,68 @@ class JobGenerator(ck.JobGenerator):
                     EverPsychic, EverPsychicFinal, UltimatePsychicBullet, UltimatePsychicBulletBlackhole, UltimateTrain]:
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
+
+        # Scheduling
+        TrainConstraint = core.ConstraintElement(
+            "트레인 깔려있으면",
+            UltimateTrain,
+            partial(UltimateTrain.is_time_left, 3000, 1),  # 3000 -> 0으로 조절하면 트레인 비중 낮은 딜사이클이 됨
+        )
+        if DEALCYCLE == "material":
+            UltimatePsychic.protect_from_running()
+            Ultimate_Material.onConstraint(TrainConstraint)
+        elif DEALCYCLE == "shot":
+            Ultimate_Material.protect_from_running()
+            UltimatePsychic.onConstraint(TrainConstraint)
+        else:
+            raise ValueError(DEALCYCLE)
         
-        return(PsychicGrab2,
-                [globalSkill.maple_heros(chtr.level, name = "이계의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
-                    Booster, PsychicShield, PsychicGround, 
-                    PsycoBreak, UltimatePsychicBuff, PsychicCharging, 
-                    AnotherGoddessBuff, AnotherVoid, AnotherHeal, PsychicOver, OverloadMana, PsychicPoint, LawOfGravityDebuff,
-                    globalSkill.soul_contract()] +\
-                [EverPsychic, Ultimate_Material] +\
-                [PsychicDrain, PsychicForce3, PsychicForce3Dot, UltimateBPM, PsychicOverSummon, PsychicTornado, UltimateMovingMatter, PsychicTornadoFinal_1, PsychicTornadoFinal_2] +\
-                [UltimateTrain, LawOfGravity, LawOfGravityFinal, MirrorBreak, MirrorSpider] +\
-                [PsychicGrab2])
+        return (
+            PsychicGrab2,
+            [
+                PsychicPoint,
+                globalSkill.maple_heros(chtr.level, name = "이계의 용사", combat_level=self.combat),
+                globalSkill.useful_sharp_eyes(),
+                globalSkill.useful_combat_orders(),
+                globalSkill.useful_wind_booster(),
+                OverloadMana,
+                Booster,
+                PsychicShield,
+                PsychicGround,
+                PsycoBreak,
+                PsychicCharging,
+                AnotherGoddessBuff,
+                PsychicOver,
+                globalSkill.soul_contract()
+            ]
+            + [
+                AnotherHeal,
+                PsychicTornadoFinal_1,
+                PsychicTornadoFinal_2,
+                LawOfGravityFinal,
+              ]  # reserved task, use as early as possible
+            + [
+                PsychicDrain,
+                UltimateBPM,
+                PsychicTornado,
+                UltimateTrain,
+                UltimateMovingMatter,
+            ]
+            + [
+                PsychicForce3,
+                EverPsychic,
+                Ultimate_Material,
+                LawOfGravity,
+                UltimatePsychic,
+                MirrorBreak
+            ]
+            + [
+                UltimatePsychicBuff,
+                PsychicOverSummon,
+                PsychicForce3Dot,
+                AnotherVoid,
+                LawOfGravityDebuff,
+                MirrorSpider
+            ]  # Not used from scheduler
+            + [PsychicGrab2]
+        )

@@ -122,9 +122,7 @@ class JobGenerator(ck.JobGenerator):
         CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,1,3).wrap(core.BuffSkillWrapper)
 
-        #오버드라이브 (앱솔 가정)
-        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-        WEAPON_ATT = jobutils.get_weapon_att("너클")
+        WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 

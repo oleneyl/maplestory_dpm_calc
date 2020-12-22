@@ -11,7 +11,7 @@ from typing import Any, Dict
 
 ######   Passive Skill   ######
 
-class WeaponVarietyStackWrapper(core.StackSkillWrapper): # TODO: 굳이 관리할 필요 없이 항상 최대 스택 가정해도 되지 않을까?
+class WeaponVarietyStackWrapper(core.StackSkillWrapper):
     def __init__(self, _max, prof_agent, final_attack, use_prof_agent_attack):
         super(WeaponVarietyStackWrapper, self).__init__(core.BuffSkill("웨폰 버라이어티 스택", 0, 99999999), _max)
         self.currentWeapon = None

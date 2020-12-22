@@ -46,6 +46,7 @@ if __name__ == "__main__":
 
     df = pd.DataFrame.from_records(
         results,
+        exclude=["loss"],
         columns=["직업", "쿨감", "비고", "dpm", "loss", "alt"],
     )
     # df.to_pickle("cache.pkl")
@@ -53,19 +54,15 @@ if __name__ == "__main__":
     df = df.sort_values(by="dpm", axis=0, ascending=False)
     df = df.drop_duplicates(subset=["직업", "비고"]).copy()
 
-    median = df["dpm"].median()
+    df["best"] = df.groupby(["직업"])["dpm"].transform("max")
+    df = df.sort_values(by=["best", "dpm"], axis=0, ascending=False)
+
+    median = df["best"].median()
     df["배율"] = df["dpm"] / median
-    df["맥뎀누수율"] = df["loss"] / df["dpm"]
 
-    non_alts = df[df["alt"] == 0].copy()
-    non_alts["격차"] = non_alts["배율"] - non_alts["배율"].shift(-1)
-    alts = df[df["alt"] > 0].copy()
+    df = df[["직업", "쿨감", "비고", "dpm", "배율", "alt"]]
 
-    df = non_alts.append(alts)
-    df = df.sort_values(by="dpm", axis=0, ascending=False)
-    df = df[["직업", "쿨감", "비고", "dpm", "배율", "맥뎀누수율", "alt"]]
-
-    writer = pd.ExcelWriter("./result.xlsx", engine="xlsxwriter")
+    writer = pd.ExcelWriter("./dpm_sheet.xlsx", engine="xlsxwriter")
     df.to_excel(writer, sheet_name="dpm", index=False)
     workbook: xlsxwriter.Workbook = writer.book
     worksheet: xlsxwriter.workbook.Worksheet = writer.sheets["dpm"]
@@ -81,17 +78,12 @@ if __name__ == "__main__":
     worksheet.set_column("C:C", 45)
     worksheet.set_column("D:D", 18, num_format)
     worksheet.set_column("E:E", 10, percent_format)
-    worksheet.set_column("F:F", 10, percent_format)
-    worksheet.set_column("G:G", None, None, {"hidden": True})
+    worksheet.set_column("F:F", None, None, {"hidden": True})
 
     worksheet.conditional_format(
         "E2:E55", {"type": "data_bar", "bar_solid": True, "bar_color": "#63C384"}
     )
     worksheet.conditional_format(
-        "F2:F55", {"type": "data_bar", "bar_solid": True, "bar_color": "#FF555A"}
+        "A2:D55", {"type": "formula", "criteria": "$F2>0", "format": alt_format}
     )
-    worksheet.conditional_format(
-        "A2:D55", {"type": "formula", "criteria": "$G2>0", "format": alt_format}
-    )
-
     writer.close()
