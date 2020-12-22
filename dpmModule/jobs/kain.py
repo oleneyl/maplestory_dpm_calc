@@ -1056,7 +1056,7 @@ class JobGenerator(ck.JobGenerator):
         ]:
             sk.onConstraint(IsDeathBlessed)
 
-        GrapOfAgony.vary(15 * 12)  # start with full stack
+        GrapOfAgony.vary(15 * 25)  # start with full stack
         StrikeArrowRelease.protect_from_running()
 
         return (
