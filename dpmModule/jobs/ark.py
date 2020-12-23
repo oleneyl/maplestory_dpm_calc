@@ -176,7 +176,7 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         # 매직 서킷: 앱솔 기준 15.4
-        WEAPON_ATT = jobutils.get_weapon_att("너클")
+        WEAPON_ATT = jobutils.get_weapon_att(chtr)
         
         MagicCircuit = core.InformedCharacterModifier("매직 서킷", att = WEAPON_ATT * 0.1)  #무기 마력의 25%, 최대치 가정.
         MisticArtsMastery = core.InformedCharacterModifier("미스틱 아츠 마스터리", att = 20)
@@ -304,10 +304,8 @@ class JobGenerator(ck.JobGenerator):
         
         # 5차
         LuckyDice = core.BuffSkill("럭키 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,3,4).wrap(core.BuffSkillWrapper)
-    
-        #오버드라이브 (앱솔 가정)
-        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-        WEAPON_ATT = jobutils.get_weapon_att("너클")
+
+        WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, WEAPON_ATT)
