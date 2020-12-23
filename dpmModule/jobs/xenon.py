@@ -208,7 +208,7 @@ class JobGenerator(ck.JobGenerator):
         SupplyCharger = core.SummonSkill("서플라이 충전", 0, 4000, 0, 0, 9999999999).wrap(core.SummonSkillWrapper)
         SupplyCharger.onTick(SupplySurplus.stackController(1))
 
-        PinpointRocketOpt = core.OptionalElement(PinpointRocket.is_active, PinpointRocket)
+        PinpointRocketOpt = core.OptionalElement(PinpointRocket.is_available, PinpointRocket)
 
         # 홀로그램 융합 활성화시 10개, 아니면 3개
         AegisSystemOpt_ = core.OptionalElement(Hologram_Fusion_Buff.is_active, core.RepeatElement(AegisSystem, 10), core.RepeatElement(AegisSystem, 3))
@@ -258,5 +258,5 @@ class JobGenerator(ck.JobGenerator):
                 SupplySurplus, SupplyCharger, InclinePower, EfficiencyPipeLine, Booster, HybridDefenses, VirtualProjection, ExtraSupply] +
                [Hologram_ForceField, AmaranthGenerator, MirrorBreak, MirrorSpider, MegaSmasher, MegaSmasherTick, ResistanceLineInfantry, LuckyDice, ReadyToDie, Overdrive,
                 OverloadMode, Hologram_Fusion, Hologram_Fusion_Buff, OverloadHit, OverloadHit_copy, PhotonRay, PhotonRayHit, MeltDown, MeltDown_Armor, MeltDown_Damage] +
-               [PinpointRocket, Triangulation, OOPArtsCode] +
+               [PinpointRocket, PinpointRocketOpt, Triangulation, OOPArtsCode] +
                [PurgeSnipe])
