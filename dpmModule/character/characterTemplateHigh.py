@@ -470,7 +470,7 @@ def getU8500CharacterTemplate(_type, cdr = 0):
     bonusAttIndex = 1
 
     template.add_summary("장신구: 칠흑셋, 칠요")
-    template.add_summary("방어구 : 아케인6셋, 카루타 2셋")
+    template.add_summary("방어구 : 아케인 5셋, 카루타 3셋")
 
     rootAbyssSet = RootAbyss.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, enhance = 30, star = armorStar, additional_potential = armorAPtnl)
 
@@ -502,14 +502,14 @@ def getU8500CharacterTemplate(_type, cdr = 0):
     arcaneSet = Arcane.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, enhance = 30, star = armorStar, additional_potential = armorAPtnl)
     arcaneSet["glove"].set_potential(ExMDF(crit_damage = 16, stat_main = 9))
 
-    apply_cdr(arcaneSet["head"], armorPtnl, cdr)
+    apply_cdr(rootAbyssSet["head"], armorPtnl, cdr)
     
     weeklySet = Else.get_weekly_set()
 
     template.add_summary("기타: 핑아, 하트 공160, 펫공 120")
     
     template.set_items({
-        "head": arcaneSet["head"],
+        "head": rootAbyssSet["head"],
         "glove": arcaneSet["glove"],
         "top": rootAbyssSet["top"],
         "bottom": rootAbyssSet["bottom"],
@@ -537,8 +537,8 @@ def getU8500CharacterTemplate(_type, cdr = 0):
         "pet": Else.get_pet(120),
     })
     
-    template.apply_modifiers([Arcane.Factory.getSetOption(6), 
-                                RootAbyss.Factory.getSetOption(2),
+    template.apply_modifiers([Arcane.Factory.getSetOption(5), 
+                                RootAbyss.Factory.getSetOption(3),
                                 BossAccesory.Factory.getSetOption(3),
                                 Darkness.Factory.getSetOption(4)])
 
