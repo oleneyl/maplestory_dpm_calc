@@ -70,7 +70,6 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('레디 투 다이', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('오버 드라이브', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule('홀로그램 그래피티 : 역장', '홀로그램 그래피티 : 융합'), RuleSet.BASE)  # 홀로그램 바뀔 때 같이 수정바람
         # ruleset.add_rule(ConcurrentRunRule('포톤 레이', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
         # ruleset.add_rule(ConditionRule('포톤 레이', '홀로그램 그래피티 : 융합', lambda sk : sk.is_active() or sk.is_cooltime_left(690*15, 1)), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('엑스트라 서플라이', '서플러스 서플라이', lambda sk : sk.stack < sk._max - 10), RuleSet.BASE)
@@ -199,6 +198,11 @@ class JobGenerator(ck.JobGenerator):
         SupplyCharger = core.SummonSkill("서플라이 충전", 0, 4000, 0, 0, 9999999999).wrap(core.SummonSkillWrapper)
         SupplyCharger.onTick(SupplySurplus.stackController(1))
 
+        # 홀로그램 스킬들은 융합과 함께 사용불가
+        for skill in [Hologram_ForceField, Hologram_Penetrate]:
+            skill.onConstraint(core.ConstraintElement(skill._id + '(사용 제한)', Hologram_Fusion, Hologram_Fusion.is_not_active))
+            Hologram_Fusion.onAfter(skill.controller(1, 'set_disabled'))
+
         PinpointRocketOpt = core.OptionalElement(PinpointRocket.is_available, PinpointRocket)
 
         # 홀로그램 융합 활성화시 10개, 아니면 3개
@@ -241,7 +245,6 @@ class JobGenerator(ck.JobGenerator):
         OverloadHit.onTick(PinpointRocketOpt)
 
         Hologram_Fusion.onAfter(Hologram_Fusion_Buff)
-        Hologram_Fusion.onAfter(Hologram_ForceField.controller(1, 'set_disabled'))
 
         for sk in [PinpointRocket, Triangulation, MegaSmasherTick, Hologram_Fusion_Buff, PhotonRayHit]:
             sk.protect_from_running()
