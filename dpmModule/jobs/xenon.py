@@ -1,7 +1,6 @@
 from ..kernel import core
 from ..character import characterKernel as ck
-from functools import partial
-from ..execution.rules import InactiveRule, RuleSet, ConcurrentRunRule, ConditionRule, SynchronizeRule
+from ..execution.rules import RuleSet, ConcurrentRunRule, ConditionRule
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import thieves, pirates
@@ -16,6 +15,8 @@ Advisor: Monolith, 몰라#4508
 
 # TODO: 하이퍼스탯으로 스탠스 10% 확보 필요
 # 도적템 럭제논 가정
+# 이지스 시스템 미사용
+
 
 class SupplyStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill, amaranth_generator):
@@ -65,13 +66,12 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ConcurrentRunRule('메가 스매셔(개시)', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule('메가 스매셔(개시)', '오파츠 코드'), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule('레디 투 다이', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule('오버 드라이브', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
-        # ruleset.add_rule(ConcurrentRunRule('포톤 레이', '홀로그램 그래피티 : 융합'), RuleSet.BASE)
+
+        for skill in ['메가 스매셔(개시)', '소울 컨트랙트', '레디 투 다이', '오버 드라이브']:
+            ruleset.add_rule(ConcurrentRunRule(skill, '홀로그램 그래피티 : 융합'), RuleSet.BASE)
+
         # ruleset.add_rule(ConditionRule('포톤 레이', '홀로그램 그래피티 : 융합', lambda sk : sk.is_active() or sk.is_cooltime_left(690*15, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('메가 스매셔(개시)', '오파츠 코드'), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('엑스트라 서플라이', '서플러스 서플라이', lambda sk : sk.stack < sk._max - 10), RuleSet.BASE)
 
         return ruleset
@@ -102,7 +102,7 @@ class JobGenerator(ck.JobGenerator):
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 2, 2)
 
         return Multilateral + [LinearPerspective, MinoritySupport, XenonMastery, HybridDefensesPassive, XenonExpert, OffensiveMatrix,
-                LoadedDicePassive, ReadyToDiePassive]
+                               LoadedDicePassive, ReadyToDiePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -118,8 +118,6 @@ class JobGenerator(ck.JobGenerator):
         TODO: 딜사이클 최적화, return문 정리
         하이퍼 스킬: 홀로그램 3종, 퍼지롭 뎀증 + 방무
         '''
-
-        passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         # Buff skills
         # 펫버프: 인클라인, 에피션시, 부스터
@@ -139,9 +137,8 @@ class JobGenerator(ck.JobGenerator):
         # 로켓강화 적용됨
         PinpointRocket = core.DamageSkill("핀포인트 로켓", 0, 50+40+40+100, 4, cooltime=2000).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
-        # 이지스: 현재 미적용
         # 타수는 Skill Wrapper 쪽으로 이관
-        AegisSystem = core.DamageSkill("이지스 시스템", 0, 120, 1, modifier=core.CharacterModifier(pdamage=20+passive_level//3), cooltime=1500).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        # AegisSystem = core.DamageSkill("이지스 시스템", 0, 120, 1, modifier=core.CharacterModifier(pdamage=20+passive_level//3), cooltime=1500).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         # 30%확률로 중첩 쌓임, 3중첩 쌓은 후 공격시 터지면서 사라지도록
         Triangulation = core.DamageSkill("트라이앵글 포메이션", 0, 340, 3).setV(vEhc, 0, 3, True).wrap(core.DamageSkillWrapper)
@@ -206,8 +203,8 @@ class JobGenerator(ck.JobGenerator):
         PinpointRocketOpt = core.OptionalElement(PinpointRocket.is_available, PinpointRocket)
 
         # 홀로그램 융합 활성화시 10개, 아니면 3개
-        AegisSystemOpt_ = core.OptionalElement(Hologram_Fusion_Buff.is_active, core.RepeatElement(AegisSystem, 10), core.RepeatElement(AegisSystem, 3))
-        AegisSystemOpt = core.OptionalElement(AegisSystem.is_active, AegisSystemOpt_)
+        # AegisSystemOpt_ = core.OptionalElement(Hologram_Fusion_Buff.is_active, core.RepeatElement(AegisSystem, 10), core.RepeatElement(AegisSystem, 3))
+        # AegisSystemOpt = core.OptionalElement(AegisSystem.is_active, AegisSystemOpt_)
 
         InclinePower.onAfter(SupplySurplus.stackController(-3))
         HybridDefenses.onAfter(SupplySurplus.stackController(-7))
@@ -222,11 +219,8 @@ class JobGenerator(ck.JobGenerator):
 
         MegaSmasher.onAfter(core.RepeatElement(MegaSmasherTick, 78))
 
-        BeginOverloadMode = SupplySurplus.beginOverloadMode()
-        EndOverloadMode = SupplySurplus.endOverloadMode()
-
-        OverloadMode.onAfter(BeginOverloadMode)
-        OverloadMode.onEventElapsed(EndOverloadMode, OVERLOAD_TIME*1000)
+        OverloadMode.onAfter(SupplySurplus.beginOverloadMode())
+        OverloadMode.onEventElapsed(SupplySurplus.endOverloadMode(), OVERLOAD_TIME*1000)
         OverloadMode.onEventElapsed(OverloadHit, 5100)
         OverloadMode.onEventElapsed(OverloadHit_copy, 5100)
 
