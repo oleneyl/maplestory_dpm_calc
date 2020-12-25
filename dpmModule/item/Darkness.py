@@ -38,7 +38,11 @@ class Factory():
         
         item_list = [black_face, black_eye, black_belt, black_pendant, black_ring, black_ear, black_pocket, black_badge, black_heart]
         level_list = [160, 160, 200, 160, 200, 200, 160, 200, 120]
-        enhance_list = [5, 3, 3, 5, 2, 6, 0, 0, 0]
+
+        if not hammer:
+            enhance_list = [5, 3, 3, 5, 2, 6, 0, 0, 0]
+        else:
+            enhance_list = [6, 4, 4, 6, 3, 7, 0, 0, 0]
         
         # 루컨마, 마깃안, 몽벨, 고근, 거공, 커포
         for idx in range(6):
@@ -82,7 +86,7 @@ class Factory():
                 "face" : black_face,
                 "belt" : black_belt,
                 "pendant1" : black_pendant,
-                "ring2" : black_ring,  # 고피아 vs 고근
+                "ring2" : black_ring,  # 고피아 vs 거공
                 "ear" : black_ear,
                 "pocket" : black_pocket,
                 "badge" : black_badge,
