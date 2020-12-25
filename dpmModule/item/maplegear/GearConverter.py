@@ -62,7 +62,7 @@ def gear_to_item(gear: Gear, stat_main: str, stat_sub: str, stat_sub2: str = Non
     # 장비 옵션 합치기
     
     modifier = ExMDF()
-    each_stat = [gear.base_stat, gear.additional_stat, gear.scroll_stat, gear.star_stat]
+    each_stat = [gear.base_stat, gear.additional_stat, gear.scroll_stat, gear.star_stat, gear.potential, gear.additional_potential]
 
     for index in each_stat:
         # 마력 사용여부 들어가야함
