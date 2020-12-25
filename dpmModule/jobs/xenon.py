@@ -1,6 +1,6 @@
 from ..kernel import core
 from ..character import characterKernel as ck
-from ..execution.rules import RuleSet, ConcurrentRunRule, ConditionRule
+from ..execution.rules import DisableRule, RuleSet, ConcurrentRunRule, ConditionRule
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import thieves, pirates
@@ -102,11 +102,12 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
 
-        for skill in ['메가 스매셔(개시)', '소울 컨트랙트', '레디 투 다이', '오버 드라이브']:
-            ruleset.add_rule(ConcurrentRunRule(skill, '홀로그램 그래피티 : 융합'), RuleSet.BASE)
+        for skill in ["메가 스매셔(개시)", "소울 컨트랙트", "레디 투 다이", "오버 드라이브"]:
+            ruleset.add_rule(ConcurrentRunRule(skill, "홀로그램 그래피티 : 융합"), RuleSet.BASE)
 
         # TODO: 포톤 레이가 융합과 함께 사용되는 빈도를 늘릴 수 있음
-        ruleset.add_rule(ConditionRule('엑스트라 서플라이', '서플러스 서플라이', lambda sk : sk.stack < sk._max - 10), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("엑스트라 서플라이", "서플러스 서플라이", lambda sk : sk.stack < sk._max - 10), RuleSet.BASE)
+        ruleset.add_rule(DisableRule("멜트다운 익스플로전"), RuleSet.BASE)
 
         return ruleset
 
