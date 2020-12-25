@@ -11,7 +11,7 @@ stat_dict = {
              "HP" : [GearPropType.MHP, GearPropType.MHP_rate]
             }
 
-def convert_option_mdf(propType, chtr_stat, is_matt):
+def convert_option_mdf(propType, chtr_stat):
     # 고정스탯을 포함한 일부 정보는 누락됨
 
     # 주스탯
@@ -39,7 +39,7 @@ def convert_option_mdf(propType, chtr_stat, is_matt):
         cooltime_reduce=propType[GearPropType.cooltime_reduce]  # TODO: Gear 저장값이 초단위인지 밀리초인지 확인바람
     )
 
-    if is_matt:
+    if chtr_stat[0][0] == GearPropType.INT:  # 마력직업인지 공격력직업인지 확인
         modifier += ExMDF(
             att=propType[GearPropType.matt],
             patt=propType[GearPropType.matt_rate]
@@ -65,8 +65,7 @@ def gear_to_item(gear: Gear, stat_main: str, stat_sub: str, stat_sub2: str = Non
     each_stat = [gear.base_stat, gear.additional_stat, gear.scroll_stat, gear.star_stat, gear.potential, gear.additional_potential]
 
     for index in each_stat:
-        # 마력 사용여부 들어가야함
-        modifier += convert_option_mdf(index, chtr_stat, stat_main == "INT")
+        modifier += convert_option_mdf(index, chtr_stat)
 
     item = it.Item(name=gear.name, level=gear.props[GearPropType.req_level], main_option=modifier)
 
