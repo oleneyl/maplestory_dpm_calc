@@ -1,14 +1,14 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ConditionRule, MutualRule
+from ..execution.rules import DisableRule, InactiveRule, RuleSet, ConditionRule, MutualRule
 from . import globalSkill
 from .jobbranch import pirates
 from .jobclass import adventurer
 from . import jobutils
 from math import ceil
+from typing import Any, Dict
 
 class EnergyChargeWrapper(core.StackSkillWrapper):
     def __init__(self, combat):
@@ -63,9 +63,15 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(MutualRule('스티뮬레이트', '트랜스 폼'), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('스티뮬레이트', '에너지 차지', lambda sk: sk.judge(2000, -1) or sk.isStateOff()), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('유니티 오브 파워', '유니티 오브 파워(디버프)', lambda sk: sk.is_time_left(1000, -1)), RuleSet.BASE)
+        # ruleset.add_rule(MutualRule('타임 리프', '소울 컨트랙트'), RuleSet.BASE)
+        # ruleset.add_rule(InactiveRule('타임 리프', '소울 컨트랙트'), RuleSet.BASE)
+        ruleset.add_rule(DisableRule('타임 리프'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(pdamage=49, armor_ignore=15.3, crit_damage=39, patt=2.4)
+
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         CriticalRoar = core.InformedCharacterModifier("크리티컬 로어",crit = 20, crit_damage = 5)
         MentalClearity = core.InformedCharacterModifier("멘탈 클리어리티",att = 30)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
@@ -76,7 +82,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [CriticalRoar, MentalClearity, PhisicalTraining, CriticalRage, StimulatePassive, LoadedDicePassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
@@ -88,7 +94,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, CriticalRage, GuardCrush]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         울트라 차지 : 공격시 350충전, 보스공격시 2배 충전. 최대스택 10000.
 
@@ -123,6 +129,9 @@ class JobGenerator(ck.JobGenerator):
         Nautilus = core.DamageSkill("노틸러스", 690, 440+4*self.combat, 7, cooltime = 60 * 1000, red=True).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         NautilusFinalAttack = core.DamageSkill("노틸러스(파이널 어택)", 0, 165+2*self.combat, 2).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
 
+        # 타임 리프: 안 쓰는 게 더 셈
+        TimeLeap = core.DamageSkill("타임 리프", 1080, 0, 0, cooltime = 180000).wrap(core.DamageSkillWrapper)
+
         # Hyper
         Stimulate = core.BuffSkill("스티뮬레이트", 930, 120 * 1000, cooltime = 240 * 1000, pdamage = 20).wrap(core.BuffSkillWrapper)# 에너지 주기적으로 800씩 증가, 미완충시 풀완충.
         StimulateSummon = core.SummonSkill("스티뮬레이트(게이지 증가 더미)", 0, (5 + serverlag) * 1000, 0, 0, 120 * 1000, cooltime = -1).wrap(core.SummonSkillWrapper)
@@ -132,10 +141,8 @@ class JobGenerator(ck.JobGenerator):
 
         # 5th
         PirateFlag = adventurer.PirateFlagWrapper(vEhc, 3, 2, chtr.level)
-        
-        #오버드라이브 (앱솔 가정)
-        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-        WEAPON_ATT = jobutils.get_weapon_att("너클")
+
+        WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
@@ -207,13 +214,19 @@ class JobGenerator(ck.JobGenerator):
         HowlingFistInit.onConstraint(core.ConstraintElement("에너지 1750 이상", EnergyCharge, partial(EnergyCharge.judge, 1750, 1)))
         HowlingFistInit.onAfter(core.RepeatElement(HowlingFistCharge, 8))
         HowlingFistInit.onAfter(HowlingFistFinal)
+
+        SoulContract = globalSkill.soul_contract()
+
+        TimeLeap.onAfter(SoulContract.controller(1.0, "reduce_cooltime_p"))
+        TimeLeap.onAfter(Nautilus.controller(1.0, "reduce_cooltime_p"))
+        TimeLeap.onAfter(DragonStrike.controller(1.0, "reduce_cooltime_p"))
             
         return (BasicAttackWrapper,
             [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                 LuckyDice, Viposition, Stimulate, EpicAdventure, PirateFlag, Overdrive, Transform,
                 UnityOfPowerBuff, DragonStrikeBuff, EnergyCharge,
-                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-            [UnityOfPower, HowlingFistInit, Nautilus, DragonStrike, FuriousCharge, TransformEnergyOrbDummy, MirrorBreak, MirrorSpider] +\
+                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), SoulContract] +\
+            [UnityOfPower, HowlingFistInit, Nautilus, DragonStrike, FuriousCharge, TransformEnergyOrbDummy, MirrorBreak, MirrorSpider, TimeLeap] +\
             [SerpentScrew, SerpentScrewDummy, StimulateSummon] +\
             [] +\
             [BasicAttackWrapper])

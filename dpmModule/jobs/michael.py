@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -7,6 +6,7 @@ from . import globalSkill
 from .jobclass import cygnus
 from .jobbranch import warriors
 from math import ceil
+from typing import Any, Dict
 # 미하일 영메 적용여부에 대해 고민해볼 필요 있음
 
 
@@ -20,9 +20,9 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 1
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(crit = 20)
+        return core.CharacterModifier(crit=20, pdamage=30, armor_ignore=12)
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",patt = 10)
@@ -40,7 +40,7 @@ class JobGenerator(ck.JobGenerator):
                             InvigoratePassive, Intension, ShiningCharge, CombatMastery, AdvancedSowrdMastery,
                             AdvancedFinalAttackPassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         PARTYPEOPLE = 1        
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
@@ -51,7 +51,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, SoulLink, SoulRage]
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         파티원 1명
         
@@ -65,6 +65,8 @@ class JobGenerator(ck.JobGenerator):
         
         로얄 가드는 6초마다 사용하며 다른 스킬로 인해 약간 나중에 사용할 수도 있음. 로얄 가드 5중첩 버프를 상시 유지하도록 가정.
         '''
+        USE_ROYAL_GUARD = options.get("royal_guard", True)
+
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         # Buff skills
@@ -90,7 +92,17 @@ class JobGenerator(ck.JobGenerator):
         
         # Hyper
         SacredCube = core.BuffSkill("세이크리드 큐브", 90, 30000, cooltime = 210000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        DeadlyCharge = core.DamageSkill("데들리 차지", 810, 600, 10, cooltime = 15000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        DeadlyCharge = (
+            core.DamageSkill(
+                "데들리 차지",
+                delay=30 if USE_ROYAL_GUARD else 810,
+                damage=600,
+                hit=10,
+                cooltime = 15000,
+            )
+            .setV(vEhc, 4, 2, False)
+            .wrap(core.DamageSkillWrapper)
+        )
         DeadlyChargeBuff = core.BuffSkill("데들리 차지(디버프)", 0, 10000, cooltime = -1, pdamage = 10).wrap(core.BuffSkillWrapper)
         QueenOfTomorrow = core.BuffSkill("퀸 오브 투모로우", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
@@ -122,7 +134,7 @@ class JobGenerator(ck.JobGenerator):
         LoyalGuard_5.onAfter(FinalAttack)
 
         # 클라우 솔라스
-        ClauSolis.onAfter(ClauSolisSummon.controller(5000))
+        ClauSolis.onEventElapsed(ClauSolisSummon, 5000)
         ClauSolis.onAfter(SoulAttack.controller(5000,"set_enabled_and_time_left"))
         ClauSolis.onAfter(FinalAttack)
         ClauSolisSummon.onTick(SoulAttack.controller(5000,"set_enabled_and_time_left"))
@@ -145,12 +157,26 @@ class JobGenerator(ck.JobGenerator):
         for sk in [SoullightSlash, SoulAssult, DeadlyCharge, LoyalGuard_5, ShiningCross]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
+
+        # Scheduling
+        if USE_ROYAL_GUARD is True:
+            DeadlyCharge.onAfter(LoyalGuard_5)
+            DeadlyCharge.onConstraint(
+                core.ConstraintElement(
+                    "로얄 가드로 캔슬 가능할때",
+                    LoyalGuard_5,
+                    lambda: LoyalGuard_5.is_available(),
+                )
+            )
+        else:
+            LoyalGuard_5 = None
+            LoyalGuardBuff = None
         
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     GuardOfLight, LoyalGuardBuff, SoulAttack, Booster, Invigorate, SacredCube, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                     DeadlyChargeBuff, QueenOfTomorrow, AuraWeaponBuff, AuraWeapon, RoIias, SwordOfSoullight, LightOfCourage, LightOfCourageSummon, LightOfCourageFinal,
                     globalSkill.soul_contract()] +\
-                [CygnusPhalanx, LoyalGuard_5, ShiningCross, DeadlyCharge, ClauSolis, MirrorBreak, MirrorSpider] +\
+                [CygnusPhalanx, DeadlyCharge, LoyalGuard_5, ShiningCross, ClauSolis, MirrorBreak, MirrorSpider] +\
                 [ShiningCrossInstall, ClauSolisSummon] +\
                 [BasicAttackWrapper])

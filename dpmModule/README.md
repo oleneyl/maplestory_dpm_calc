@@ -13,6 +13,7 @@ Structure
   - `execution` : 시뮬레이션 규칙.
   - `status` : 어빌리티
   - `util` : 편의용 코드. 빠른 DPM 계산, 최적 하이퍼/유니온 계산.
+  - `test` : 테스트
 
 
 Principle

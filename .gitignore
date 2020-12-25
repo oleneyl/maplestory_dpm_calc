@@ -1,12 +1,12 @@
 dist/
 build/
+data/
+.vscode/
 *.pyc
 .idea
 *.suo
 *.db
 *.opendb
-*.json
 *.sqlite
-dpm_output.txt
 docs/_build/
-*result.xlsx
+*.xlsx

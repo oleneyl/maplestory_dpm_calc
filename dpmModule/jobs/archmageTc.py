@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -8,6 +7,7 @@ from . import globalSkill
 from .jobclass import adventurer
 from .jobbranch import magicians
 from math import ceil
+from typing import Any, Dict
 
 class FrostEffectWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
@@ -37,7 +37,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule('언스테이블 메모라이즈', '인피니티'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         ######   Passive Skill   ######
         
@@ -55,7 +55,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [HighWisdom, SpellMastery, MagicCritical, ElementalReset, MasterMagic, ElementAmplication, ArcaneAim, UnstableMemorizePassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5*ceil(self.combat/2))
         ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", pdamage_indep = 20)
@@ -64,7 +64,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, ExtremeMagic, ArcaneAim, ElementalResetActive]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         코강 순서
         체라-라스피-블자-오브-엘퀴-썬더스톰
@@ -83,7 +83,7 @@ class JobGenerator(ck.JobGenerator):
         그 외의 극딜기는 쿨마다 사용
         프로즌 오브 쿨마다 사용, 19타
         '''
-        THUNDER_BREAK_HIT = 2
+        THUNDER_BREAK_HIT = options.get("thunder_break_hit", 2)
         ICE_AGE_SUMMON_HIT = 2
 
         ######   Skill   ######
@@ -124,7 +124,6 @@ class JobGenerator(ck.JobGenerator):
         IceAura = core.SummonSkill("아이스 오라", 0, 1200, 0, 1, 999999999).wrap(core.SummonSkillWrapper)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         JupyterThunder = core.SummonSkill("주피터 썬더", 630, 330, 300+12*vEhc.getV(0,0), 5, 330*30-1, cooltime=75000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
-        JupyterThunderDecrement = core.SummonSkill("주피터 썬더(빙결 감소)", 0, 330*5, 0, 0, 330*25-1, cooltime=-1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         
         #FinalAttack
         Blizzard = core.DamageSkill("블리자드", 690, 301+3*self.combat, 12, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
@@ -230,8 +229,8 @@ class JobGenerator(ck.JobGenerator):
 
         #Jupyter Thunder
         JupyterThunder.add_runtime_modifier(FrostEffect, applyFrostEffect) # TODO: 블리자드 파택 안터지는게 맞는지 확인할것
-        JupyterThunder.onAfter(JupyterThunderDecrement.controller(330*5))
-        JupyterThunderDecrement.onTick(FrostDecrement)
+        for i in range(1, 6 + 1):
+            JupyterThunder.onEventElapsed(FrostDecrement, 330 * 5 * i) # 5회 타격시마다 빙결 감소, 총 6회 감소
 
         #Overload Mana
         overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 5)
@@ -245,7 +244,7 @@ class JobGenerator(ck.JobGenerator):
                 [Infinity, Meditation, EpicAdventure, OverloadMana, FrostEffect,
                 globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
-                [IceAgeInit, Blizzard, JupyterThunder, JupyterThunderDecrement, LighteningSpear, ThunderBrake, MirrorBreak, MirrorSpider] +\
+                [IceAgeInit, Blizzard, JupyterThunder, LighteningSpear, ThunderBrake, MirrorBreak, MirrorSpider] +\
                 [ThunderStorm, Elquiness, IceAura, IceAgeSummon, FrozenOrb, SpiritOfSnow] +\
                 [UnstableMemorize] +\
                 [ChainLightening])

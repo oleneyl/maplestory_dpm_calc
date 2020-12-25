@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
 from ..execution.rules import ConcurrentRunRule, RuleSet, SynchronizeRule, InactiveRule, DisableRule
@@ -8,6 +7,7 @@ from functools import partial
 from .jobclass import adventurer
 from .jobbranch import magicians
 from math import ceil
+from typing import Any, Dict
 
 class PrayWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, num1, num2):
@@ -44,7 +44,10 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(DisableRule('힐'), RuleSet.BASE)
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(pdamage=43)
+
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
@@ -62,7 +65,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [HighWisdom, SpellMastery, MagicCritical, HolyFocus, MasterMagic, ArcaneAim, VengenceOfAngelOff, UnstableMemorizePassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
@@ -74,7 +77,7 @@ class JobGenerator(ck.JobGenerator):
         AngelRayArmorIgnore = core.InformedCharacterModifier("엔젤레이(방깎)", armor_ignore = (10 + ceil(self.combat / 3)) * 4)
         return [WeaponConstant, Mastery, ArcaneAim, VengenceOfAngelOn, BlessingEnsemble, AngelRayArmorIgnore]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         ######   Skill   ###### 
         '''리브라 ON
         서버렉 3초

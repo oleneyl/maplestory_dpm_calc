@@ -7,6 +7,8 @@ from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import magicians
+from typing import Any, Dict
+
 
 class MagicParticleWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc, upgrade_index, passive_level):
@@ -135,7 +137,10 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'buff_rem')
         self.preEmptiveSkills = 1
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(pdamage=24, armor_ignore=5)
+
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         InheritWill = core.InformedCharacterModifier("계승된 의지",att = 10, stat_main = 10, stat_sub = 10)
@@ -160,7 +165,7 @@ class JobGenerator(ck.JobGenerator):
             HighWisdom, SpellMastery, ElementalReset, CriticalMagic, MagicAmplification, DragonPotential,
             MagicMastery, DragonFury, HighDragonPotential, SpiralOfManaPassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 0)
@@ -170,7 +175,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, Interaction, ElementalResetActive]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         다오어-브레스-브오어
 
@@ -191,7 +196,7 @@ class JobGenerator(ck.JobGenerator):
         SWIFT_OF_THUNDER_HIT = 2
         DIVE_OF_EARTH_HIT = 3
         BREAK_BACK_HIT_RATE = 0
-        BREATH_OF_WIND_BONUS = False
+        BREATH_OF_WIND_BONUS = options.get("hp_rate", False)
 
         ######   Skill   ######
         #Buff skills

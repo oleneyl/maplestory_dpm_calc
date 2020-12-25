@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -9,6 +8,7 @@ from .jobbranch import pirates
 from .jobclass import flora
 from . import jobutils
 from math import ceil
+from typing import Any, Dict
 
 # TODO: core쪽으로 옮길 것, .wrap()과 함께 사용 가능하게 할 것
 class MultipleDamageSkillWrapper(core.DamageSkillWrapper):
@@ -142,7 +142,7 @@ class AmplifiedSpellBuffWrapper(core.BuffSkillWrapper):
         self.timeLeft = self.csa_timeLeft()
         self.cooltimeLeft = self.calculate_cooltime(skill_modifier)
         delay = self.get_delay()
-        callbacks = self.create_callbacks(duration=self.timeLeft)
+        callbacks = self.create_callbacks(skill_modifier=skill_modifier, duration=self.timeLeft)
         return core.ResultObject(delay, core.CharacterModifier(), 0, 0, 
                                 sname = self.skill.name, 
                                 spec = self.skill.spec, 
@@ -159,7 +159,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 2
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(crit=20)
+        return core.CharacterModifier(crit=20, pdamage=71, boss_pdamage=53, armor_ignore=29.6)
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -173,10 +173,10 @@ class JobGenerator(ck.JobGenerator):
 
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         # 매직 서킷: 앱솔 기준 15.4
-        WEAPON_ATT = jobutils.get_weapon_att("너클")
+        WEAPON_ATT = jobutils.get_weapon_att(chtr)
         
         MagicCircuit = core.InformedCharacterModifier("매직 서킷", att = WEAPON_ATT * 0.1)  #무기 마력의 25%, 최대치 가정.
         MisticArtsMastery = core.InformedCharacterModifier("미스틱 아츠 마스터리", att = 20)
@@ -192,13 +192,13 @@ class JobGenerator(ck.JobGenerator):
                                     NuckleMastery, PhisicalTraining, 
                                     FusionProgress, NuckleExpret, FusionComplete, BattleRage, LoadedDicePassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5*ceil((chtr.get_base_modifier().passive_level + self.combat)/2))
         
         return [WeaponConstant, Mastery]        
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         연계 시 플레인 차지드라이브 540 → 240ms, 끝나지 않는 흉몽 540 → 180ms
         각각 +30ms 적용해 270ms, 210ms로 적용됨
@@ -304,10 +304,8 @@ class JobGenerator(ck.JobGenerator):
         
         # 5차
         LuckyDice = core.BuffSkill("럭키 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,3,4).wrap(core.BuffSkillWrapper)
-    
-        #오버드라이브 (앱솔 가정)
-        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-        WEAPON_ATT = jobutils.get_weapon_att("너클")
+
+        WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, WEAPON_ATT)
@@ -388,7 +386,7 @@ class JobGenerator(ck.JobGenerator):
         RaptRestriction.onConstraint(core.ConstraintElement("게이지 150 이상", SpecterState, partial(SpecterState.judge, 150, 1)))
         RaptRestriction.onAfter(SpecterState.onoffController(True))
         RaptRestriction.onAfter(RaptRestrictionSummon)
-        RaptRestriction.onEventElapsed(RaptRestrictionEnd, 690+9000)
+        RaptRestriction.onAfter(RaptRestrictionEnd.controller(9000))
 
         EndlessPainRepeat = core.RepeatElement(EndlessPainTick, 15)
         EndlessPainRepeat.onAfter(core.RepeatElement(EndlessPainEnd_Link, 5))

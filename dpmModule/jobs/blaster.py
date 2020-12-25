@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -8,6 +7,8 @@ from . import globalSkill
 from .jobbranch import warriors
 from .jobclass import resistance
 from math import ceil
+from typing import Any, Dict
+
 
 class RevolvingCannonMasteryWrapper(core.DamageSkillWrapper):
     """
@@ -21,16 +22,21 @@ class RevolvingCannonMasteryWrapper(core.DamageSkillWrapper):
         super(RevolvingCannonMasteryWrapper, self).__init__(skill)
         
     def _use(self, skill_modifier):
-        if self.overheat.is_active():
-            stack = 6
-        else:
-            stack = self.cylinder.stack
-        multiplier = 1.1 ** (stack - 1)
-
-        if stack <= 0:
+        if self._get_stack() <= 0:
             return self._result_object_cache
         
-        return core.ResultObject(0, self.get_modifier(), self.skill.damage * multiplier, self.skill.hit, sname = self._id, spec = 'damage')
+        return super(RevolvingCannonMasteryWrapper, self)._use(skill_modifier)
+
+    def _get_stack(self) -> float:
+        if self.overheat.is_active():
+            return 6
+        else:
+            return self.cylinder.stack
+
+    def get_damage(self) -> float:
+        damage = super(RevolvingCannonMasteryWrapper, self).get_damage()
+        multiplier = 1.1 ** (self._get_stack() - 1)
+        return damage * multiplier
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -55,7 +61,7 @@ class JobGenerator(ck.JobGenerator):
         
         return ruleset
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         GuntletMastery = core.InformedCharacterModifier("건틀렛 마스터리", crit= 30, att = 20)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
@@ -69,7 +75,7 @@ class JobGenerator(ck.JobGenerator):
         return [GuntletMastery, PhisicalTraining, ChargeMastery, 
                         GuntletExpert, AdvancedChargeMastery, CombinationTraining]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5 * ceil(passive_level / 2))
@@ -80,7 +86,10 @@ class JobGenerator(ck.JobGenerator):
 
         return [WeaponConstant, Mastery, CombinationTraining]
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_modifier_optimization_hint(self) -> core.CharacterModifier:
+        return core.CharacterModifier(boss_pdamage=10, armor_ignore=20)
+
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         하이퍼 : 쇼크웨이브 보너스어택 / 펀치-리인포스, 펀치-이그노어 가드, 릴파벙-리인포스, 릴파벙-숔웨리인포스
         
@@ -214,13 +223,12 @@ class JobGenerator(ck.JobGenerator):
         ReleaseHammer.onAfter(HammerSmash)
         ReleaseHammer.onAfter(DuckingDelay)
         
-        for wrp in [MagnumPunch, DoublePang, HammerSmash, BalkanPunch, BalkanPunchTick, BurningBreaker]:
+        for wrp in [MagnumPunch, DoublePang, HammerSmash, BalkanPunch, BalkanPunchTick, BurningBreakerRush]:
             wrp.onAfter(RevolvingCannonMastery)
 
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
-        # 리스트 내용 검증 필요
-        for sk in [ReleaseHammer, BurningBreaker, HammerSmashWave, Mag_Pang]:
+        for sk in [ReleaseFileBunker, BurningBreaker, HammerSmash, MagnumPunch, DoublePang, BalkanPunch, BalkanPunchTick, BurningBreakerRush]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 

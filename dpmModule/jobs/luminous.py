@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -8,6 +7,7 @@ from . import globalSkill, jobutils
 from .jobclass import heroes
 from .jobbranch import magicians
 from math import ceil
+from typing import Any, Dict
 
 class LuminousStateController(core.BuffSkillWrapper):
     DARK = 0
@@ -84,15 +84,12 @@ class PunishingResonatorWrapper(core.SummonSkillWrapper):
         ]
         self.vlevel = vEhc.getV(3,2)
         self.getState = stateGetter
-    
-    def _useTick(self):
-        if self.is_active() and self.tick <= 0:
-            self.tick += self.skill.delay
 
-            damage, hit = self.skillList[self.getState()]
-            return core.ResultObject(0, self.get_modifier(), damage, hit, sname = self.skill.name, spec = self.skill.spec)
-        else:
-            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+    def get_damage(self) -> float:
+        return self.skillList[self.getState()][0]
+
+    def get_hit(self) -> float:
+        return self.skillList[self.getState()][1]
 
 class LightAndDarknessWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc, num1, num2):
@@ -148,8 +145,11 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConditionRule('소울 컨트랙트', '루미너스 상태', lambda state: state.isEqual() and state.isEqualLeft(20000)), RuleSet.BASE) # TODO: 소울 컨트랙트의 벞지 적용된 지속시간을 가져와야 함
         ruleset.add_rule(ConditionRule('퍼니싱 리소네이터', '루미너스 상태', lambda state: state.isEqual()), RuleSet.BASE)
         return ruleset
+
+    def get_modifier_optimization_hint(self) -> core.CharacterModifier:
+        return core.CharacterModifier(pdamage=32, armor_ignore=32)
                 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         PowerOfLight = core.InformedCharacterModifier("파워 오브 라이트",stat_main = 20)
@@ -162,7 +162,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [PowerOfLight, SpellMastery, HighWisdom, LifeTidal, MagicMastery, MorningStarfall, DarknessSocery]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter): 
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]): 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
@@ -173,7 +173,7 @@ class JobGenerator(ck.JobGenerator):
 
         return [WeaponConstant, Mastery, BlessOfDarkness, DarknessSoceryActive]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         아포 22회 / 라리플 25회가 이퀄리브리엄 진입까지 요구됨
         

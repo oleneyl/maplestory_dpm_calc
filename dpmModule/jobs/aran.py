@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..kernel.graph import DynamicVariableOperation
 from ..character import characterKernel as ck
 from functools import partial
@@ -9,6 +8,7 @@ from .jobclass import heroes
 from .jobbranch import warriors
 from ..execution.rules import RuleSet, InactiveRule, ConditionRule
 from math import ceil
+from typing import Any, Dict
 
 # Advisor : 아지르캐리(크로아)
 
@@ -27,9 +27,9 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 2
     
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore = 20)
+        return core.CharacterModifier(pdamage=50, armor_ignore=20, patt=15)
         
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         RetrievedMemory = core.InformedCharacterModifier("되찾은 기억", patt=5)
         SnowChargePassive = core.InformedCharacterModifier("스노우 차지(패시브)", pdamage=10)
@@ -43,7 +43,7 @@ class JobGenerator(ck.JobGenerator):
         return [RetrievedMemory, SnowChargePassive, PhisicalTraining, 
             AdvancedComboAbilityPassive, CleavingAttack, Might, HighMastery, AdvancedFinalAttackPassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 49)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level / 2))        
@@ -64,7 +64,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         하이퍼 : 비욘더(3종)
         스윙 - 리메인타임 리인포스
@@ -82,13 +82,14 @@ class JobGenerator(ck.JobGenerator):
         ADRENALINE_BOOST_REMAIN = (20+3)*1000
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
+        # reinforce: hyper skill reinforce
         def get_beyonder_pdamage(excess_target, reinforce = True):
-            return int(1.06 ** excess_target * 100 - 100 + reinforce * 20)
+            return (1.06 ** excess_target - 1) * 100 + reinforce * 20
 
-        BEYONDER_PDAMAGE = get_beyonder_pdamage(6)
-        BEYONDER_ADRENALINE_PDAMAGE = get_beyonder_pdamage(11)
-        PENRIL_PDAMAGE = get_beyonder_pdamage(10)
-        PENRIL_ADRENALINE_PDAMAGE = get_beyonder_pdamage(15)
+        BEYONDER_PDAMAGE = get_beyonder_pdamage(5)
+        BEYONDER_ADRENALINE_PDAMAGE = get_beyonder_pdamage(10)
+        PENRIL_PDAMAGE = get_beyonder_pdamage(9)
+        PENRIL_ADRENALINE_PDAMAGE = get_beyonder_pdamage(14)
         
         SmashSwing = core.DamageSkill("스매시 스윙", 360, 800 + 50 * passive_level, 2).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         SmashSwingIncr = core.BuffSkill("스매시 스윙(최종데미지)", 0, 5000+3000, pdamage_indep=15 + passive_level, pdamage=20, cooltime=-1).wrap(core.BuffSkillWrapper)
@@ -113,7 +114,6 @@ class JobGenerator(ck.JobGenerator):
         BeyonderThird = core.DamageSkill("비욘더(3타)", 420, 415 + 10 * ceil(self.combat / 3), 6, modifier=core.CharacterModifier(pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         AdrenalineBoost = core.BuffSkill("아드레날린 부스트", 0, ADRENALINE_BOOST_REMAIN).wrap(core.BuffSkillWrapper)
-        AdrenalineBoostEndDummy = core.BuffSkill("아드레날린 부스트(종료 더미)", 0, 0, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         AdrenalineSmashSwing = core.DamageSkill("스매시 스윙(아드레날린)", 360, 950, 4).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         AdrenalineFinalBlow = core.DamageSkill("파이널 블로우(아드레날린)", 420, 285 + 100 + (60 + 2 * passive_level) + (20 + passive_level) + 150, 7, modifier=core.CharacterModifier(armor_ignore=15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
@@ -237,16 +237,15 @@ class JobGenerator(ck.JobGenerator):
 
         # 아드레날린
         AdrenalineBoost.onConstraint(core.ConstraintElement('콤보가 1000이상', Combo, partial(Combo.judge,1000,1) ))
-        AdrenalineBoost.onAfter(AdrenalineBoostEndDummy.controller(ADRENALINE_BOOST_REMAIN))
         AdrenalineBoost.onAfter(Combo.stackController(-999999999, dtype='set'))
         AdrenalineBoost.onAfter(BoostEndHuntersTargetingHolder.controller(1))
-        AdrenalineBoostEndDummy.onAfter(Combo.stackController(500, dtype='set'))
+        AdrenalineBoost.onEventEnd(Combo.stackController(500, dtype='set'))
         AdrenalineGenerator.onConstraint(core.ConstraintElement('아드레날린부스트가 불가능할때', AdrenalineBoost, AdrenalineBoost.is_not_active))
         AdrenalineGenerator.onAfter(AdrenalineBoost)
         return(BasicAttack, 
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), HerosOath,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), Booster, SmashSwingIncr, SnowCharge, AdvancedComboAbility, ComboAbility,
-                    BlessingMaha, AdrenalineBoost, AdrenalineBoostEndDummy,
+                    BlessingMaha, AdrenalineBoost,
                     AdrenalineGenerator, 
                     InstallMaha, InstallMahaBlizzard, Combo, AuraWeaponBuff, AuraWeapon, BlizzardTempestAura,
                     globalSkill.soul_contract()] +\

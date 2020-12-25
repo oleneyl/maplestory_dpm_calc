@@ -1,18 +1,7 @@
-import sys, os
-
-import dpmModule as dpm
 from dpmModule.character.characterTemplate import get_template_generator
-
-from dpmModule.util.dpmgenerator import IndividualDPMGenerator
-from dpmModule.kernel import graph
-from dpmModule.jobs import jobMap
 from ..kernel import core
 
 import dpmModule.jobs as maplejobs
-
-import time
-import argparse
-
 
 
 def export_configuration(jobname):
@@ -20,10 +9,11 @@ def export_configuration(jobname):
     target = template(maplejobs.weaponList[jobname])
     supplier = maplejobs.jobMap[jobname]
 
-    v_builder = core.AlwaysMaximumVBuilder(skill_core_level=25, each_enhanced_amount=17)
+    v_builder = core.AlwaysMaximumVBuilder()
     gen = supplier.JobGenerator()
-    gen.vEhc = v_builder.build_enhancer(target, gen)
+    vEhc = v_builder.build_enhancer(target, gen)
+    gen.vEhc = vEhc
 
-    graph = gen.build(target)
+    graph = gen.build(vEhc, target, {})
 
     return graph.storage.export()

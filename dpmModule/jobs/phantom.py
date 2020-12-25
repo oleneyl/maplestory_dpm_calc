@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -8,6 +7,7 @@ from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import thieves
 from math import ceil
+from typing import Any, Dict
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -19,7 +19,10 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_modifier_optimization_hint(self):
+        return core.CharacterModifier(pdamage=30)
+
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         HighDexterity = core.InformedCharacterModifier("하이 덱스터리티",stat_sub = 40)
         LuckMonopoly = core.InformedCharacterModifier("럭 모노폴리",stat_main = 60)
@@ -32,7 +35,7 @@ class JobGenerator(ck.JobGenerator):
 
         return [HighDexterity, LuckMonopoly, LuckOfPhantomtheif, MoonLight, AcuteSence, CainExpert, ReadyToDiePassive]
                                 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 +0.5*ceil(passive_level / 2))
@@ -44,7 +47,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ReservationRule("소울 컨트랙트", "마크 오브 팬텀"), RuleSet.BASE)
         return ruleset
 
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         하이퍼 : 
         템오카 - 리인포스 / 쿨리듀스
@@ -59,7 +62,7 @@ class JobGenerator(ck.JobGenerator):
         펫버프 : 프레이 오브 아리아, 메용, 크오체
         템페스트 오브 카드 사용하지 않음
         '''
-        passive_level = chtr.get_base_modifier().passive_level + self.combat
+        DEALCYCLE = options.get('dealcycle', 'ultimate_drive')
 
         ##### Steal skills #####
 
@@ -131,7 +134,7 @@ class JobGenerator(ck.JobGenerator):
         #### 그래프 빌드
         
         FinalCut.onAfter(CarteNoir)
-        FinalCut.onAfter(FinalCutBuff.controller(1))
+        FinalCut.onAfter(FinalCutBuff)
         
         CardStack = core.StackSkillWrapper(core.BuffSkill("카드 스택", 0, 99999999), 40, name = "느와르 카르트 스택")
         
@@ -145,9 +148,8 @@ class JobGenerator(ck.JobGenerator):
         MileAiguilles.onAfter(CarteNoir)
         MileAiguilles.onAfter(MileAiguillesInit.controller(500, 'set_enabled_and_time_left'))
         
-        BasicAttack = core.OptionalElement(MileAiguillesInit.is_active, MileAiguilles, MileAiguillesInit, name = "선딜 반영")
-        BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
-        BasicAttackWrapper.onAfter(BasicAttack)
+        MileAiguillesHolder = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
+        MileAiguillesHolder.onAfter(core.OptionalElement(MileAiguillesInit.is_active, MileAiguilles, MileAiguillesInit, name = "선딜 반영"))
         # TempestOfCardInit.onAfter(core.RepeatElement(TempestOfCard, 56))
         # TempestOfCard.onAfter(CarteNoir)
         
@@ -168,8 +170,6 @@ class JobGenerator(ck.JobGenerator):
         LiftBreak.onAfter(core.RepeatElement(CarteNoir, 7))
 
         MileAiguillesInit.protect_from_running()
-        
-        #이들 정보교환 부분을 굳이 Task exchange로 표현할 필요가 있을까?
 
         CardinalBlast.onAfter(CarteNoir)
         CardinalDischarge.onAfter(CarteNoir)
@@ -177,16 +177,29 @@ class JobGenerator(ck.JobGenerator):
         CardinalBlast.onAfter(CardinalDischarge)
         
         '''
-        얼드: BasicAttackWrapper
+        얼드: MileAiguillesHolder
         블디: CardinalBlast
         '''
+
+        if DEALCYCLE == "ultimate_drive":
+            BasicAttack = MileAiguillesHolder
+            Talent2 = Fury
+        elif DEALCYCLE == "blast_discharge":
+            BasicAttack = CardinalBlast
+            Talent2 = None
+            BlackJack.onBefore(
+                core.DamageSkill("연계 취소 딜레이", 360-210, 0, 0).wrap(core.DamageSkillWrapper)
+            ) # 블디 연계 취소 딜레이, 가장 자주 사용되는 블랙잭에 걸어둠. TODO: 연계 취소 딜레이를 시뮬레이터에 구현
+        else:
+            raise ValueError(DEALCYCLE)
+
         
-        return(BasicAttackWrapper,
+        return(BasicAttack,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    Fury, CrossoverChain, FinalCutBuff, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), BoolsEye,
+                    Talent2, CrossoverChain, FinalCutBuff, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), BoolsEye,
                     JudgementBuff, Booster, PrieredAria, HerosOath, ReadyToDie, JokerBuff,
                     globalSkill.soul_contract()] +\
                 [FinalCut, JokerInit, MarkOfPhantom, LiftBreak, BlackJackFinal] +\
                 [BlackJack, MirrorBreak, MirrorSpider] +\
                 [MileAiguillesInit] +\
-                [BasicAttackWrapper])
+                [BasicAttack])

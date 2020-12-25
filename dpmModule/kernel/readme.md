@@ -16,13 +16,31 @@ kernel을 제외한 다른 module는 dpmModule을 실제 상황에 적용할 수
 
   - 시뮬레이션 그래프의 내부 동작에 필요한 기능이 정의되어 있습니다.
   
-- core.py
-
-  - Maplestory DPM 계산에 필요한 class들이 정의되어 있습니다.
-  
 - policy.py
 
   - 시뮬레이션 작동 제어를 위한 class들이 정의되어 있습니다.
+
+- core
+
+  - Maplestory DPM 계산에 필요한 class들이 정의되어 있는 하위 모듈입니다.
+    
+    - callback.py: 콜백 함수가 정의되어 있습니다.
+
+    - constant.py: 맥뎀, 방무, 반감여부, 최종뎀 등의 상수가 정의되어 있습니다.
+
+    - graph_element.py: `GraphElement`에 대해 정의되어 있습니다.
+
+    - modifier.py: 캐릭터의 스펙을 변경하는 `CharacterModifier`, `SkillModifier`와 기타 기능들이 정의되어 있습니다.
+
+    - result_object.py: 각 동작의 결과를 나타내는 `ResultObject`가 정의되어 있습니다.
+
+    - simulator.py: DPM 연산 시뮬레이터와 분석기가 정의되어 있습니다.
+
+    - skill.py: `AbstractSkill`과 그것을 바탕으로 한 `DamageSkill`, `SummonSkill`, `BuffSkill` 등이 정의되어 있습니다.
+
+    - skill_wrapper.py: `AbstractSkillWrapper`과 그것을 바탕으로 한 각각 Skill의 wrapper, 그리고 응용된 특수 wrapper들이 정의되어 있습니다.
+
+    - vmatrix.py: V 매트릭스 코어강화에 대해 정의되어 있습니다.
 
 
 dpmModule의 기본 작동 방식

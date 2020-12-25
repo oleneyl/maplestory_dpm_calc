@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -8,6 +7,7 @@ from . import globalSkill
 from .jobbranch import warriors
 from .jobclass import nova
 from math import ceil
+from typing import Any, Dict
 
 ######   Passive Skill   ######
 class MorphGaugeWrapper(core.StackSkillWrapper):
@@ -69,7 +69,7 @@ class WillOfSwordSummonWrapper(core.BuffSkillWrapper):
 
     def _off(self):
         self.timeLeft = 0
-        return self._disabledResultobjectCache
+        return self._result_object_cache
 
     def off(self):
         task = core.Task(self, self._off)
@@ -163,8 +163,11 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule('마제스티 오브 카이저', '파이널 피규레이션'), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('어드밴스드 윌 오브 소드', '윌 오브 소드: 스트라이크', lambda sk: sk.is_cooltime_left(10000, 1)), RuleSet.BASE)
         return ruleset
+
+    def get_modifier_optimization_hint(self) -> core.CharacterModifier:
+        return core.CharacterModifier(pdamage=44, armor_ignore=17)
         
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         InnerBlaze = core.InformedCharacterModifier("이너 블레이즈",stat_main = 20)
@@ -177,7 +180,7 @@ class JobGenerator(ck.JobGenerator):
         return [InnerBlaze, AdvancedInnerBlaze, Catalyze, 
                 AdvancedWillOfSwordPassive, UnflinchingCourage, AdvancedSwordMastery]
                 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
@@ -187,7 +190,7 @@ class JobGenerator(ck.JobGenerator):
         
         return [WeaponConstant, Mastery, ReshuffleSwitchAttack]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         모프 수급량
         어윌소 12*5

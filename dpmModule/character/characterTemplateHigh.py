@@ -3,6 +3,7 @@ from .characterTemplate import AbstractTemplateGenerator, register_template_gene
 from ..item import Arcane, Absolab, Empress, RootAbyss, BossAccesory, Default, Else, Meister, Darkness
 from ..item.ItemKernel import ExMDF
 from ..item import ItemKernel as it
+from .cdr import apply_cdr
 # Define UnionCharacter : Character that is oftenly used for union.
 '''
 캐릭터 템플릿
@@ -36,7 +37,7 @@ from ..item import ItemKernel as it
 '''
 Pre - generated characters
 '''
-def getU4000CharacterTemplate(_type):
+def getU4000CharacterTemplate(_type, cdr = 0):
     ''' CharacterTemplate : set items w/o weapon-type potentials.
     무기류 유닠1줄 + 10성 + 2추옵
     방어구/장신구 에픽6% + 10성 + 추옵 50급
@@ -110,7 +111,7 @@ def getU4000CharacterTemplate(_type):
     
     return template
 
-def getU5000CharacterTemplate(_type):
+def getU5000CharacterTemplate(_type, cdr = 0):
     #Temporal union object..
     template = ichar(level = 230)
 
@@ -178,7 +179,7 @@ def getU5000CharacterTemplate(_type):
     
     return template
 
-def getU6000CharacterTemplate(_type):
+def getU6000CharacterTemplate(_type, cdr = 0):
     #Temporal union object..
     template = ichar(level = 240)
     
@@ -252,7 +253,7 @@ def getU6000CharacterTemplate(_type):
     
     return template
 
-def getU7000CharacterTemplate(_type):
+def getU7000CharacterTemplate(_type, cdr = 0):
     #Temporal union object..
     template = ichar(level = 250)
     
@@ -344,7 +345,7 @@ def getU7000CharacterTemplate(_type):
     return template    
 
 
-def getU8000CharacterTemplate(_type):
+def getU8000CharacterTemplate(_type, cdr = 0):
     #Temporal union object..
     template = ichar(level = 255)
     
@@ -397,6 +398,8 @@ def getU8000CharacterTemplate(_type):
     absolabSet = Absolab.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, enhance = 30, star = armorStar, additional_potential = armorAPtnl)
     absolabSet["glove"].set_potential(ExMDF(crit_damage = 16))
 
+    apply_cdr(absolabSet["head"], armorPtnl, cdr)
+
     weeklySet = Else.get_weekly_set()
 
     template.add_summary("기타: 핑아, 하트 공120, 펫공 120")
@@ -440,7 +443,7 @@ def getU8000CharacterTemplate(_type):
 
     return template            
     
-def getU8500CharacterTemplate(_type):
+def getU8500CharacterTemplate(_type, cdr = 0):
     #Temporal union object..
     template = ichar(level = 260)
     
@@ -498,6 +501,8 @@ def getU8500CharacterTemplate(_type):
     
     arcaneSet = Arcane.Factory.getArmorSetDict(potential = armorPtnl, bonus = armorBonus, enhance = 30, star = armorStar, additional_potential = armorAPtnl)
     arcaneSet["glove"].set_potential(ExMDF(crit_damage = 16, stat_main = 9))
+
+    apply_cdr(arcaneSet["head"], armorPtnl, cdr)
     
     weeklySet = Else.get_weekly_set()
 
@@ -539,6 +544,9 @@ def getU8500CharacterTemplate(_type):
 
     template.add_summary("아케인포스: 1320")
     template.apply_modifiers([ExMDF(stat_main_fixed = 13200)])
+
+    template.add_summary("어센틱포스: 10")
+    template.apply_modifiers([ExMDF(stat_main_fixed = 500)])
     
     return template
 

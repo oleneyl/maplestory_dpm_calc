@@ -1,0 +1,613 @@
+{
+    "메디테이션": {
+        "cooltime": 0,
+        "delay": 0,
+        "name": "메디테이션",
+        "red": true,
+        "rem": true,
+        "remain": 240000,
+        "type": "DamageSkill"
+    },
+    "에픽 어드벤처": {
+        "cooltime": 120000,
+        "delay": 0,
+        "name": "에픽 어드벤처",
+        "red": false,
+        "rem": false,
+        "remain": 60000,
+        "type": "DamageSkill"
+    },
+    "인피니티": {
+        "cooltime": 180000,
+        "delay": 600,
+        "name": "인피니티",
+        "red": true,
+        "rem": true,
+        "remain": 41000,
+        "type": "DamageSkill"
+    },
+    "페럴라이즈": {
+        "cooltime": 0,
+        "delay": 600,
+        "name": "페럴라이즈",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {
+            "0": {
+                "pdamage": 10
+            },
+            "1": {
+                "pdamage_indep": 120,
+                "armor_ignore": 20
+            }
+        },
+        "damage": 223,
+        "hit": 8,
+        "type": "DamageSkill"
+    },
+    "텔레포트 마스터리": {
+        "cooltime": -1,
+        "delay": 0,
+        "name": "텔레포트 마스터리",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {
+            "0": {},
+            "1": {
+                "crit": 5,
+                "pdamage_indep": 180,
+                "armor_ignore": 20
+            }
+        },
+        "damage": 272,
+        "hit": 1,
+        "type": "DamageSkill"
+    },
+    "플레임 헤이즈": {
+        "cooltime": 10000,
+        "delay": 1080,
+        "name": "플레임 헤이즈",
+        "red": true,
+        "rem": false,
+        "_static_skill_modifier": {
+            "0": {},
+            "1": {
+                "crit": 5,
+                "pdamage_indep": 120,
+                "armor_ignore": 20
+            }
+        },
+        "damage": 205,
+        "hit": 15,
+        "type": "DamageSkill"
+    },
+    "미스트 이럽션": {
+        "cooltime": 4000,
+        "delay": 720,
+        "name": "미스트 이럽션",
+        "red": true,
+        "rem": false,
+        "_static_skill_modifier": {
+            "0": {
+                "pdamage": 10,
+                "pdamage_indep": 125.0,
+                "armor_ignore": 52.8
+            },
+            "1": {
+                "pdamage_indep": 120,
+                "armor_ignore": 20
+            }
+        },
+        "damage": 46,
+        "hit": 60,
+        "type": "DamageSkill"
+    },
+    "도트 퍼니셔": {
+        "cooltime": 25000,
+        "delay": 690,
+        "name": "도트 퍼니셔",
+        "red": true,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 850,
+        "hit": 5,
+        "type": "DamageSkill"
+    },
+    "도트 퍼니셔(초과)": {
+        "cooltime": 0,
+        "delay": 0,
+        "name": "도트 퍼니셔(초과)",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {
+            "pdamage_indep": -35
+        },
+        "damage": 850,
+        "hit": 105,
+        "type": "DamageSkill"
+    },
+    "포이즌 노바": {
+        "cooltime": 25000,
+        "delay": 570,
+        "name": "포이즌 노바",
+        "red": true,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 550,
+        "hit": 12,
+        "type": "DamageSkill"
+    },
+    "포이즌 노바(폭발)": {
+        "cooltime": 0,
+        "delay": 0,
+        "name": "포이즌 노바(폭발)",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 495,
+        "hit": 36,
+        "type": "DamageSkill"
+    },
+    "포이즌 노바(폭발)(초과)": {
+        "cooltime": 0,
+        "delay": 0,
+        "name": "포이즌 노바(폭발)(초과)",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {
+            "pdamage_indep": -50
+        },
+        "damage": 495,
+        "hit": 12,
+        "type": "DamageSkill"
+    },
+    "포이즌 체인": {
+        "cooltime": 30000,
+        "delay": 600,
+        "name": "포이즌 체인",
+        "red": true,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 660,
+        "hit": 4,
+        "type": "DamageSkill"
+    },
+    "포이즌 체인(중독)": {
+        "cooltime": -1,
+        "delay": 1800,
+        "name": "포이즌 체인(중독)",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 330,
+        "hit": 6,
+        "remain": 16199,
+        "summondelay": 0,
+        "type": "SummonSkill"
+    },
+    "메테오": {
+        "cooltime": 45000,
+        "delay": 690,
+        "name": "메테오",
+        "red": true,
+        "rem": false,
+        "_static_skill_modifier": {
+            "0": {},
+            "1": {
+                "crit": 5,
+                "pdamage_indep": 120,
+                "armor_ignore": 20
+            }
+        },
+        "damage": 318,
+        "hit": 12,
+        "type": "DamageSkill"
+    },
+    "메기도 플레임": {
+        "cooltime": 50000,
+        "delay": 690,
+        "name": "메기도 플레임",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {
+            "0": {},
+            "1": {
+                "crit": 5,
+                "pdamage_indep": 120,
+                "armor_ignore": 20
+            }
+        },
+        "damage": 420,
+        "hit": 15,
+        "type": "DamageSkill"
+    },
+    "이프리트": {
+        "cooltime": 0,
+        "delay": 3030,
+        "name": "이프리트",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {
+            "0": {},
+            "1": {
+                "pdamage_indep": 120,
+                "armor_ignore": 20
+            }
+        },
+        "damage": 152,
+        "hit": 3,
+        "remain": 265000,
+        "summondelay": 600,
+        "type": "SummonSkill"
+    },
+    "파이어 오라": {
+        "cooltime": 0,
+        "delay": 3000,
+        "name": "파이어 오라",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {
+            "0": {
+                "pdamage": -50
+            },
+            "1": {
+                "crit": 5,
+                "pdamage_indep": 120,
+                "armor_ignore": 20
+            }
+        },
+        "damage": 400,
+        "hit": 2,
+        "remain": 999999999,
+        "summondelay": 0,
+        "type": "SummonSkill"
+    },
+    "퓨리 오브 이프리트": {
+        "cooltime": 75000,
+        "delay": 240.0,
+        "name": "퓨리 오브 이프리트",
+        "red": true,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 440,
+        "hit": 6,
+        "remain": 5999,
+        "summondelay": 360,
+        "type": "SummonSkill"
+    },
+    "스파이더 인 미러(공간 붕괴)": {
+        "cooltime": 250000,
+        "delay": 720,
+        "name": "스파이더 인 미러(공간 붕괴)",
+        "red": true,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 990,
+        "hit": 15,
+        "type": "DamageSkill"
+    },
+    "스파이더 인 미러(거울 속의 거미)": {
+        "cooltime": -1,
+        "delay": 900,
+        "name": "스파이더 인 미러(거울 속의 거미)",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 385,
+        "hit": 8,
+        "remain": 50000,
+        "summondelay": 0,
+        "type": "SummonSkill"
+    },
+    "메테오(패시브)": {
+        "cooltime": 0,
+        "delay": 0,
+        "name": "메테오(패시브)",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {
+            "0": {},
+            "1": {
+                "crit": 5,
+                "pdamage_indep": 120,
+                "armor_ignore": 20
+            }
+        },
+        "damage": 224,
+        "hit": 0.62,
+        "type": "DamageSkill"
+    },
+    "이그나이트": {
+        "cooltime": 0,
+        "delay": 0,
+        "name": "이그나이트",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {
+            "0": {},
+            "1": {
+                "pdamage_indep": 240,
+                "armor_ignore": 20
+            }
+        },
+        "damage": 40,
+        "hit": 4.5,
+        "type": "DamageSkill"
+    },
+    "이그나이트(메테오)": {
+        "cooltime": 0,
+        "delay": 0,
+        "name": "이그나이트(메테오)",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {
+            "0": {},
+            "1": {
+                "pdamage_indep": 240,
+                "armor_ignore": 20
+            }
+        },
+        "damage": 40,
+        "hit": 2.79,
+        "type": "DamageSkill"
+    },
+    "페럴라이즈(도트)": {
+        "cooltime": -1,
+        "delay": 1000,
+        "name": "페럴라이즈(도트)",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 244,
+        "hit": 1,
+        "remain": 10000,
+        "summondelay": 0,
+        "type": "SummonSkill"
+    },
+    "포이즌 미스트(도트)": {
+        "cooltime": -1,
+        "delay": 1000,
+        "name": "포이즌 미스트(도트)",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 301,
+        "hit": 1,
+        "remain": 12000,
+        "summondelay": 0,
+        "type": "SummonSkill"
+    },
+    "이프리트(도트)": {
+        "cooltime": -1,
+        "delay": 1000,
+        "name": "이프리트(도트)",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 143,
+        "hit": 1,
+        "remain": 4000,
+        "summondelay": 0,
+        "type": "SummonSkill"
+    },
+    "플레임 헤이즈(도트)": {
+        "cooltime": -1,
+        "delay": 1000,
+        "name": "플레임 헤이즈(도트)",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 203,
+        "hit": 1,
+        "remain": 20000,
+        "summondelay": 0,
+        "type": "SummonSkill"
+    },
+    "텔레포트 마스터리(도트)": {
+        "cooltime": -1,
+        "delay": 1000,
+        "name": "텔레포트 마스터리(도트)",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 49,
+        "hit": 1,
+        "remain": 8000,
+        "summondelay": 0,
+        "type": "SummonSkill"
+    },
+    "포이즌 브레스(도트)": {
+        "cooltime": -1,
+        "delay": 1000,
+        "name": "포이즌 브레스(도트)",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 60,
+        "hit": 1,
+        "remain": 20000,
+        "summondelay": 0,
+        "type": "SummonSkill"
+    },
+    "메기도 플레임(도트)": {
+        "cooltime": -1,
+        "delay": 1000,
+        "name": "메기도 플레임(도트)",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 700,
+        "hit": 1,
+        "remain": 60000,
+        "summondelay": 0,
+        "type": "SummonSkill"
+    },
+    "도트 퍼니셔(도트)": {
+        "cooltime": -1,
+        "delay": 1000,
+        "name": "도트 퍼니셔(도트)",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 290,
+        "hit": 1,
+        "remain": 16000,
+        "summondelay": 0,
+        "type": "SummonSkill"
+    },
+    "포이즌 노바(도트)": {
+        "cooltime": -1,
+        "delay": 1000,
+        "name": "포이즌 노바(도트)",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 660,
+        "hit": 1,
+        "remain": 20000,
+        "summondelay": 0,
+        "type": "SummonSkill"
+    },
+    "에너지 볼트": {
+        "cooltime": 0,
+        "delay": 630,
+        "name": "에너지 볼트",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 309,
+        "hit": 1,
+        "type": "DamageSkill"
+    },
+    "플레임 오브": {
+        "cooltime": 0,
+        "delay": 630,
+        "name": "플레임 오브",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 301,
+        "hit": 2,
+        "type": "DamageSkill"
+    },
+    "포이즌 브레스": {
+        "cooltime": 0,
+        "delay": 600,
+        "name": "포이즌 브레스",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 180,
+        "hit": 1,
+        "type": "DamageSkill"
+    },
+    "익스플로젼": {
+        "cooltime": 0,
+        "delay": 690,
+        "name": "익스플로젼",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 405,
+        "hit": 2,
+        "type": "DamageSkill"
+    },
+    "포이즌 미스트": {
+        "cooltime": 0,
+        "delay": 1140,
+        "name": "포이즌 미스트",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 270,
+        "hit": 1,
+        "type": "DamageSkill"
+    },
+    "슬라임 바이러스": {
+        "cooltime": -1,
+        "delay": 1000,
+        "name": "슬라임 바이러스",
+        "red": false,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 160,
+        "hit": 1,
+        "remain": 10000,
+        "summondelay": 1680,
+        "type": "SummonSkill"
+    },
+    "언스테이블 메모라이즈": {
+        "cooltime": 9000,
+        "delay": 870,
+        "name": "언스테이블 메모라이즈",
+        "red": true,
+        "rem": false,
+        "_static_skill_modifier": {},
+        "damage": 0,
+        "hit": 0,
+        "type": "DamageSkill"
+    },
+    "오버로드 마나": {
+        "cooltime": 0,
+        "delay": 0,
+        "name": "오버로드 마나",
+        "red": false,
+        "rem": false,
+        "remain": 999990000,
+        "type": "DamageSkill"
+    },
+    "메이플 용사": {
+        "cooltime": 0,
+        "delay": 0,
+        "name": "메이플 용사",
+        "red": false,
+        "rem": true,
+        "remain": 915000,
+        "type": "DamageSkill"
+    },
+    "쓸만한 샤프 아이즈": {
+        "cooltime": 0,
+        "delay": 900,
+        "name": "쓸만한 샤프 아이즈",
+        "red": false,
+        "rem": false,
+        "remain": 183000,
+        "type": "DamageSkill"
+    },
+    "쓸만한 컴뱃 오더스": {
+        "cooltime": 0,
+        "delay": 1500,
+        "name": "쓸만한 컴뱃 오더스",
+        "red": false,
+        "rem": false,
+        "remain": 183000,
+        "type": "DamageSkill"
+    },
+    "쓸만한 윈드 부스터": {
+        "cooltime": 0,
+        "delay": 900,
+        "name": "쓸만한 윈드 부스터",
+        "red": false,
+        "rem": false,
+        "remain": 183000,
+        "type": "DamageSkill"
+    },
+    "메이플월드 여신의 축복": {
+        "cooltime": 180000,
+        "delay": 450,
+        "name": "메이플월드 여신의 축복",
+        "red": true,
+        "rem": false,
+        "remain": 60000,
+        "type": "DamageSkill"
+    },
+    "소울 컨트랙트": {
+        "cooltime": 90000,
+        "delay": 900,
+        "name": "소울 컨트랙트",
+        "red": true,
+        "rem": true,
+        "remain": 10000,
+        "type": "DamageSkill"
+    }
+}

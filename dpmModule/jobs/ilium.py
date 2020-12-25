@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -8,6 +7,8 @@ from . import globalSkill
 from .jobbranch import magicians
 from .jobclass import flora
 from . import jobutils
+from typing import Any, Dict
+
 
 class IliumStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill, _max, fastChargeJudge, stopJudge, name = None):
@@ -48,7 +49,7 @@ class SoulOfCrystalWrapper(core.BuffSkillWrapper):
 
     def turnOff(self):
         self.timeLeft = 0
-        return self._disabledResultobjectCache
+        return self._result_object_cache
 
     def turnOffController(self):
         task = core.Task(self, self.turnOff)
@@ -70,21 +71,19 @@ class RiyoWrapper(core.SummonSkillWrapper):
         return super(RiyoWrapper, self)._use(skill_modifier)
     
     def _useTick(self):
-        if self.is_active() and self.tick <= 0:
-            if self.count < 10:
-                damage = 160
-            if self.count < 20:
-                damage = 200
-            else:
-                damage = 300
-            self.count += 1
-            if self.count >= 40:
-                self.count = 0
-            
-            self.tick += self.skill.delay
-            return core.ResultObject(0, self.get_modifier(), damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
+        result = super(RiyoWrapper, self)._useTick()
+        self.count += 1
+        if self.count >= 40:
+            self.count = 0
+        return result
+
+    def get_damage(self) -> float:
+        if self.count < 10:
+            return 160
+        elif self.count < 20:
+            return 200
         else:
-            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+            return 300
 
 class GramHolderWrapper(core.SummonSkillWrapper):
     """
@@ -92,26 +91,26 @@ class GramHolderWrapper(core.SummonSkillWrapper):
     """
     def __init__(self, skill):
         self.chargeBefore = 0
-        self.crystalCharge = None
+        self.crystalCharge: IliumStackWrapper = None
         self.gloryWing = None
         super(GramHolderWrapper, self).__init__(skill)
     
-    def registerCrystalCharge(self, skill):
+    def registerCrystalCharge(self, skill: IliumStackWrapper):
         self.crystalCharge = skill
 
     def registerGloryWing(self, skill):
         self.gloryWing = skill
     
     def _useTick(self):
-        if self.is_active() and self.tick <= 0:
-            modifier = self.get_modifier()
-            if self.gloryWing.is_active() or self.crystalCharge.judge(self.chargeBefore + 3, 1):
-                modifier = modifier + core.CharacterModifier(pdamage_indep = 100)
-            self.chargeBefore = self.crystalCharge.stack
-            self.tick += self.skill.delay
-            return core.ResultObject(0, modifier, self.skill.damage, self.skill.hit, sname = self.skill.name, spec = self.skill.spec)
-        else:
-            return core.ResultObject(0, self.disabledModifier, 0, 0, sname = self.skill.name, spec = self.skill.spec)
+        result = super(GramHolderWrapper, self)._useTick()
+        self.chargeBefore = self.crystalCharge.stack
+        return result
+    
+    def get_modifier(self) -> core.CharacterModifier:
+        modifier = super(GramHolderWrapper, self).get_modifier()
+        if self.gloryWing.is_active() or self.crystalCharge.judge(self.chargeBefore + 3, 1):
+            modifier = modifier + core.CharacterModifier(pdamage_indep=100)
+        return modifier
     
 class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):
@@ -139,10 +138,13 @@ class JobGenerator(ck.JobGenerator):
         # ruleset.add_rule(ConcurrentRunRule("크리스탈 이그니션(시전)", "글로리 윙(진입)"), RuleSet.BASE)
         # ruleset.add_rule(ConditionRule("글로리 윙(진입)", "크리스탈 이그니션(시전)", lambda x:x.is_cooltime_left(20000, 1) or x.is_cooltime_left(10000, -1)), RuleSet.BASE)
         return ruleset
+
+    def get_modifier_optimization_hint(self) -> core.CharacterModifier:
+        return core.CharacterModifier(boss_pdamage=108)
         
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         # 앱솔 무기 마력 241
-        WEAPON_ATT = jobutils.get_weapon_att("건틀렛")
+        WEAPON_ATT = jobutils.get_weapon_att(chtr)
         MagicCircuit = core.InformedCharacterModifier("매직 서킷", att = WEAPON_ATT*0.2)
         
         MagicGuntletMastery = core.InformedCharacterModifier("매직 건틀렛 마스터리", crit = 20)
@@ -156,13 +158,13 @@ class JobGenerator(ck.JobGenerator):
         return [MagicCircuit, MagicGuntletMastery, BlessMarkPassive,
             LefMastery, DestinyPioneer, ContinualResearch, CrystalSecret ]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5)
         
         return [WeaponConstant, Mastery]
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         하이퍼 : 자벨린- 보스킬러, 리인포스, 보너스 어택
         
@@ -211,7 +213,7 @@ class JobGenerator(ck.JobGenerator):
 
         #5차 스킬들
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
-        FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att("건틀렛"))
+        FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att(chtr))
         GramHolder = GramHolderWrapper(core.SummonSkill("그람홀더", 210, 3000, 500+20*vEhc.getV(4,3), 12, 40000, cooltime = 180000).isV(vEhc,4,3))
 
         CrystalIgnitionInit = core.DamageSkill("크리스탈 이그니션(시전)", 720, 0, 0, cooltime = 180*1000).wrap(core.DamageSkillWrapper)

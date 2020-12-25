@@ -1,5 +1,4 @@
 from ..kernel import core
-from ..kernel.core import VSkillModifier as V
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
@@ -9,6 +8,7 @@ from .jobbranch import pirates
 from .jobclass import nova
 from . import jobutils
 from math import ceil
+from typing import Any, Dict
 
 def getAffinityIV(duration): # TODO: 와헌 어나더 바이트처럼 실시간 계산
     """
@@ -37,7 +37,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '스포트라이트'), RuleSet.BASE)
         return ruleset
     
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         SoulShooterMastery = core.InformedCharacterModifier("소울슈터 마스터리", att = 20)
         InnerFire = core.InformedCharacterModifier("이너 파이어", stat_main = 40)
@@ -55,14 +55,17 @@ class JobGenerator(ck.JobGenerator):
                             CallOfAncient, AffinityIII, AffinityIV, TrinityPassive, SoulShooterExpert,
                             LoadedDicePassive, TrinityFusionPassive]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5 * ceil(passive_level / 2))
         
         return [WeaponConstant, Mastery]        
+
+    def get_modifier_optimization_hint(self) -> core.CharacterModifier:
+        return core.CharacterModifier(boss_pdamage=60, armor_ignore=18.4)
         
-    def generate(self, vEhc, chtr : ck.AbstractCharacter):
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         어피니티IV 가동률 94.18%
         트리니티 버프 지속시간 갱신불가 적용
@@ -88,7 +91,7 @@ class JobGenerator(ck.JobGenerator):
         
         '''
         
-        SPOTLIGHTHIT = 3
+        SPOTLIGHTHIT = options.get('spotlight', 3)
         TRINITY_MDF = core.CharacterModifier(pdamage = 20) + core.CharacterModifier(pdamage = 10*3, armor_ignore = 10*3) # 하이퍼 리인포스 + 3중첩
         
         #Buff skills
@@ -117,9 +120,7 @@ class JobGenerator(ck.JobGenerator):
         #로디드 데미지 고정.
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,1,2).wrap(core.BuffSkillWrapper)
         
-        #오버드라이브 (앱솔 가정)
-        #TODO: 템셋을 읽어서 무기별로 다른 수치 적용하도록 만들어야 함.
-        WEAPON_ATT = jobutils.get_weapon_att("소울슈터")
+        WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 3, 3, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         NovaGoddessBless = nova.NovaGoddessBlessWrapper(vEhc, 0, 0)
@@ -150,7 +151,7 @@ class JobGenerator(ck.JobGenerator):
         FinaturaFettuccia.onAfter(FinaturaFettucciaBuff)
         SpotLight.onAfter(SpotLightBuff)
         MascortFamilier.onAfter(MascortFamilierAttack)
-        MascortFamilier.onAfter(ShinyBubbleBreath.controller((30+(vEhc.getV(2,1)//5))*1000))
+        MascortFamilier.onEventEnd(ShinyBubbleBreath)
         
         SoulSeeker = core.OptionalElement(SoulExult.is_active, SoulSeekerExpert_PR, SoulSeekerExpert)
         
