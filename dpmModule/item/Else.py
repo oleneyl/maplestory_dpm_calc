@@ -45,3 +45,18 @@ def ocean_glow(star, each_enhance = it.ExMDF(), potential = it.ExMDF(),
     OceanGlowEaring.add_main_option(it.EnhancerFactory.get_armor_starforce_enhancement(150, star))
     return OceanGlowEaring
 
+# 스칼렛 링: 놀장 가정
+def scarlet_ring(star=12, each_enhance = it.ExMDF(), potential = it.ExMDF(), additional_potential = it.ExMDF()):
+    ScarletRing = it.Item(name="스칼렛 링", level=135, main_option = ExMDF(stat_main = 4, stat_sub = 4, att = 1))
+    ScarletRing.set_potential(potential)
+    ScarletRing.set_additional_potential(additional_potential)
+
+    scroll_enhance = it.ExMDF()
+    for i in range(2):
+        scroll_enhance += each_enhance
+    ScarletRing.add_main_option(scroll_enhance)
+
+    # 135제 놀장강화의 raw data가 없어 130제로 임시적용
+    ScarletRing.add_main_option(it.EnhancerFactory.get_surprise_enhancement(130, star))
+
+    return ScarletRing
