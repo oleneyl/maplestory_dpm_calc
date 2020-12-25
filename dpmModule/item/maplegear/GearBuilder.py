@@ -24,10 +24,10 @@ class GearBuilder:
         if grade <= 0:
             return False
         grade = min(grade, 7)
-        req_level = self.gear.get_prop_value(GearPropType.req_level)
+        req_level = self.gear.req_level
         if req_level <= 0:
             return False
-        boss_reward = self.gear.get_boolean_value(GearPropType.boss_reward)
+        boss_reward = self.gear.boss_reward
         value = 0
         if prop_type == GearPropType.allstat:
             self.gear.additional_stat[GearPropType.STR_rate] += grade
@@ -92,7 +92,7 @@ class GearBuilder:
 
     @property
     def scroll_available(self):
-        return self.gear.get_prop_value(GearPropType.tuc) + self.gear.hammer - self.gear.scroll_fail - self.gear.scroll_up
+        return self.gear.tuc + self.gear.hammer - self.gear.scroll_fail - self.gear.scroll_up
 
     def apply_scroll(self, scroll: Scroll, count: int = 1) -> bool:
         count = min(count, self.scroll_available)
@@ -118,7 +118,7 @@ class GearBuilder:
         return self.apply_scroll(spell_trace, count)
 
     def apply_hammer(self) -> bool:
-        if self.gear.get_prop_value(GearPropType.tuc) <= 0:
+        if self.gear.tuc <= 0:
             return False
         if self.gear.hammer == 0:
             self.gear.hammer = 1
@@ -129,7 +129,7 @@ class GearBuilder:
         if self.gear.star >= self.gear.max_star:
             return False
         if amazing_scroll:
-            if self.gear.get_prop_value(GearPropType.req_level) > 150:
+            if self.gear.req_level > 150:
                 return False
             if self.gear.star >= 15:
                 return False
@@ -139,7 +139,7 @@ class GearBuilder:
         stat_data = _get_star_data(self.gear, amazing_scroll, False)
         att_data = _get_star_data(self.gear, amazing_scroll, True)
         is_weapon = Gear.is_weapon(self.gear.type) or self.gear.type == GearType.katara
-        if self.gear.get_boolean_value(GearPropType.superior_eqp):
+        if self.gear.superior_eqp:
             for prop_type in (GearPropType.STR, GearPropType.DEX, GearPropType.INT, GearPropType.LUK):
                 self.gear.star_stat[prop_type] += stat_data[star]
             for att_type in (GearPropType.att, GearPropType.matt):
@@ -157,7 +157,7 @@ class GearBuilder:
                 [GearPropType.STR, GearPropType.DEX],
             ]
             stat_set: Set[GearPropType]
-            req_job = self.gear.get_prop_value(GearPropType.req_job)
+            req_job = self.gear.req_job
             if req_job == 0:
                 stat_set = {GearPropType.STR, GearPropType.DEX, GearPropType.INT, GearPropType.LUK}
             else:
@@ -221,13 +221,13 @@ class GearBuilder:
                 self.gear.star_stat[GearPropType.incSpeed] += speed_jump_data[star]
                 self.gear.star_stat[GearPropType.incJump] += speed_jump_data[star]
         else:
-            statBonus = (2 if star > 5 else 1) if bonus else 0
+            stat_bonus = (2 if star > 5 else 1) if bonus else 0
             for prop_type in (GearPropType.STR, GearPropType.DEX, GearPropType.INT, GearPropType.LUK):
                 if self.gear.base_stat[prop_type] >= 0 or \
                         self.gear.additional_stat[prop_type] >= 0 or \
                         self.gear.scroll_stat[prop_type] >= 0 or \
                         self.gear.star_stat[prop_type] >= 0:
-                    self.gear.star_stat[prop_type] += stat_data[prop_type] + statBonus
+                    self.gear.star_stat[prop_type] += stat_data[prop_type] + stat_bonus
             att_bonus = 1 if bonus and (is_weapon or self.gear.type == GearType.shield) else 0
 
             for att_type in (GearPropType.att, GearPropType.matt):
@@ -257,7 +257,7 @@ class GearBuilder:
 
 
 def _get_star_data(gear: Gear, amazing_scroll: bool, att: bool) -> List[int]:
-    if gear.get_boolean_value(GearPropType.superior_eqp):
+    if gear.superior_eqp:
         if att:
             data = __superior_att_data
         else:
@@ -275,10 +275,9 @@ def _get_star_data(gear: Gear, amazing_scroll: bool, att: bool) -> List[int]:
             data = __amazing_att_data
         else:
             data = __amazing_stat_data
-    reqLevel = gear.get_prop_value(GearPropType.req_level)
     stat = None
     for item in data:
-        if reqLevel >= item[0]:
+        if gear.req_level >= item[0]:
             stat = item
         else:
             break

@@ -35,12 +35,12 @@ class Scroll:
             raise TypeError('Invalid prop_type: ' + prop_type.name)
 
         scroll: Scroll = Scroll()
-        req_job: int = gear.get_prop_value(GearPropType.req_job)
+        req_job: int = gear.req_job
         mad: bool = req_job == 0 or math.floor(req_job / 2) % 2 == 1
         pad: bool = req_job == 0 or not mad
         attack_type = GearPropType.matt if prop_type == GearPropType.INT else GearPropType.att
         gear_type = gear.type
-        req_level = gear.get_prop_value(GearPropType.req_level)
+        req_level = gear.req_level
         level_range = 2 if req_level > 110 else (1 if req_level > 70 else 0)
 
         if Gear.is_weapon(gear_type) or gear_type == GearType.katara:

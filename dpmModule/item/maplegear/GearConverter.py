@@ -67,7 +67,7 @@ def gear_to_item(gear: Gear, stat_main: str, stat_sub: str, stat_sub2: str = Non
     for index in each_stat:
         modifier += convert_option_mdf(index, chtr_stat)
 
-    item = it.Item(name=gear.name, level=gear.props[GearPropType.req_level], main_option=modifier)
+    item = it.Item(name=gear.name, level=gear.req_level, main_option=modifier)
 
     return item
 

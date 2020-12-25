@@ -16,10 +16,20 @@ class Gear:
     item_id: int = 0
     name: str = None
     type: GearType = 0
-    props: PropMap = defaultdict(int)
 
+    req_level: int = 0,
+    req_job: int = 0,
+    set_item_id: int = 0
+    boss_reward: bool = False
+
+    superior_eqp: bool = False
+    joker_to_set_item: bool = False
+
+    amazing_scroll: bool = False
     star: int = 0
     max_star: int = 0
+
+    tuc: int = 0
     scroll_up: int = 0
     scroll_fail: int = 0
     hammer: int = 0
@@ -70,20 +80,14 @@ class Gear:
         return "ID: " + str(self.item_id) + '\n' + \
                "이름: " + self.name + '\n' + \
                "분류: " + self.type.name + '\n' + \
-               ("놀장" if self.get_boolean_value(GearPropType.amazing_scroll) else "스타포스") + ": " + \
+               ("놀장" if self.amazing_scroll else "스타포스") + ": " + \
                str(self.star) + '/' + str(self.max_star) + '\n' + \
-               "최대 업횟: " + str(self.get_prop_value(GearPropType.tuc)) + \
+               "최대 업횟: " + str(self.tuc) + \
                " +(황금 망치: " + str(self.hammer) + ')\n' + \
                "업그레이드 성공 횟수: " + str(self.scroll_up) + '\n' + \
                "업그레이드 실패 횟수: " + str(self.scroll_fail) + '\n' + \
                "옵션: 합계 (기본 +추옵 +주문서 +별)\n" + statStr + \
                "기타 속성:\n" + propStr
-
-    def get_prop_value(self, gear_prop_type: GearPropType) -> int:
-        return self.props[gear_prop_type]
-
-    def get_boolean_value(self, gear_prop_type: GearPropType) -> bool:
-        return self.props[gear_prop_type] > 0
 
     def get_max_star(self) -> int:
         if self.is_mechanic_gear(self.type) or self.is_dragon_gear(self.type):
@@ -97,15 +101,14 @@ class Gear:
             [140, 25, 15],
         ]
         data = None
-        reqLevel = self.get_prop_value(GearPropType.req_level)
         for item in starData:
-            if reqLevel >= item[0]:
+            if self.req_level >= item[0]:
                 data = item
             else:
                 break
         if data is None:
             return 0
-        return data[2 if self.get_boolean_value(GearPropType.superior_eqp) else 1]
+        return data[2 if self.superior_eqp else 1]
 
     @staticmethod
     def is_weapon(gear_type: GearType) -> bool:
@@ -178,17 +181,12 @@ class Gear:
         gear.type = Gear.get_gear_type(gear_id)
         gear.name = data_node['name']
         for key in data_node:
-            try:
-                prop_type = GearPropType[key]
-            except KeyError as e:
-                print(e)
-                continue
             value: int = data_node[key]
-
-            if prop_type.value < 100:
+            if key in GearPropType:
+                prop_type = GearPropType[key]
                 gear.base_stat[prop_type] = value
             else:
-                gear.props[prop_type] = value
+                setattr(gear, key, value)
         gear.max_star = gear.get_max_star()
         return gear
 
@@ -197,7 +195,6 @@ def _search_ids_by_name(name: str, exact: bool = True) -> List[int]:
     # utility function
     ids = []
     for gear_id in gear_data:
-        if (exact and name == gear_data[gear_id]['name']) or \
-                (not exact and name in gear_data[gear_id]['name']):
+        if (exact and name == gear_data[gear_id]['name']) or (not exact and name in gear_data[gear_id]['name']):
             ids.append(int(gear_id))
     return ids

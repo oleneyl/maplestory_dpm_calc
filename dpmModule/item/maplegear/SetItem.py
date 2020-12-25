@@ -60,8 +60,8 @@ def eval_set_item_effect(equipped_gears: List[Gear]) -> PropMap:
     set_item_effect: defaultdict[GearPropType, int] = defaultdict(int)
     # setup setItems
     for gear in equipped_gears:
-        set_item_id = gear.get_prop_value(GearPropType.set_item_id)
-        if gear.get_boolean_value(GearPropType.joker_to_set_item):
+        set_item_id = gear.set_item_id
+        if gear.joker_to_set_item:
             if gear.item_id < active_joker_id:
                 active_joker_id = gear.item_id
         if set_item_id == 0:
