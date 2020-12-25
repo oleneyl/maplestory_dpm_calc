@@ -75,7 +75,7 @@ class SpiralOfManaWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2):
         self.penaltyTime = 0
         skill = core.SummonSkill(
-            "스파이럴 오브 마나", 360, 420, 235+vEhc.getV(num1,num2), 6, 7000, cooltime=5000-50*vEhc.getV(num1,num2), red=True
+            "스파이럴 오브 마나", 180+360, 420, 235+vEhc.getV(num1,num2), 6, 7000, cooltime=5000-50*vEhc.getV(num1,num2), red=True
         ).setV(vEhc, 0, 2, False).isV(vEhc, num1, num2)
         super(SpiralOfManaWrapper, self).__init__(skill)
 
