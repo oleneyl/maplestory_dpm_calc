@@ -1,7 +1,7 @@
-from ...kernel.core import ExtendedCharacterModifier as ExMDF
-from .. import ItemKernel as it
-from . import Gear
-from . GearPropType import GearPropType
+from ..kernel.core import ExtendedCharacterModifier as ExMDF
+from . import ItemKernel as it
+from .maplegear.Gear import Gear
+from .maplegear.GearPropType import GearPropType
 
 stat_dict = {
              "STR" : [GearPropType.STR, GearPropType.STR_rate],
