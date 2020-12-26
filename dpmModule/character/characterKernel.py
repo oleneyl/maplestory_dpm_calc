@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from ..execution.rules import RuleSet
 from ..item.ItemKernel import Item
 from ..item.maplegear.Gear import Gear
+from ..item.maplegear.GearPropType import GearPropType
 from ..kernel import policy
 from ..kernel.abstract import AbstractVBuilder, AbstractVEnhancer
 from ..kernel.core import (
@@ -190,6 +191,9 @@ class GearedCharacter(AbstractCharacter):
                 raise TypeError(key + " item is missing")
             self.gear_list[key] = gear_dict[key]
             self.add_gear_modifier(gear_dict[key])
+
+    def get_weapon_base_att(self) -> int:
+        return self.gear_list["weapon"].base_stat[GearPropType.att]
 
     def remove_gear_modifier(self, gear: Gear) -> None:
         mdf = gear.get_modifier("DEX", "STR")
