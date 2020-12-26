@@ -1,10 +1,10 @@
 import math
 from typing import List, Set
 
-from Gear import Gear
-from GearPropType import GearPropType
-from GearType import GearType
-from Scroll import Scroll
+from .Gear import Gear
+from .GearPropType import GearPropType
+from .GearType import GearType
+from .Scroll import Scroll
 
 
 class GearBuilder:
@@ -110,11 +110,7 @@ class GearBuilder:
         return True
 
     def apply_spell_trace_scroll(self, probability: int, prop_type: GearPropType, count: int = 1) -> bool:
-        try:
-            spell_trace = Scroll.get_spell_trace_scroll(self.gear, probability, prop_type)
-        except Exception as e:
-            print(e)
-            return False
+        spell_trace = Scroll.get_spell_trace_scroll(self.gear, probability, prop_type)
         return self.apply_scroll(spell_trace, count)
 
     def apply_hammer(self) -> bool:
@@ -144,10 +140,10 @@ class GearBuilder:
                 self.gear.star_stat[prop_type] += stat_data[star]
             for att_type in (GearPropType.att, GearPropType.matt):
                 self.gear.star_stat[att_type] += att_data[star]
-            pdd = self.gear.base_stat[GearPropType.incPDD] + \
-                  self.gear.scroll_stat[GearPropType.incPDD] + \
-                  self.gear.star_stat[GearPropType.incPDD]
-            self.gear.star_stat[GearPropType.incPDD] += pdd // 20 + 1
+            # pdd = self.gear.base_stat[GearPropType.incPDD] + \
+            #       self.gear.scroll_stat[GearPropType.incPDD] + \
+            #       self.gear.star_stat[GearPropType.incPDD]
+            # self.gear.star_stat[GearPropType.incPDD] += pdd // 20 + 1
         elif not amazing_scroll:
             job_stat = [
                 [GearPropType.STR, GearPropType.DEX],
@@ -202,10 +198,11 @@ class GearBuilder:
                         self.gear.star_stat[GearPropType.att] += glove_bonus[star]
 
             if not is_weapon and self.gear.type != GearType.machine_heart:
-                pdd = self.gear.base_stat[GearPropType.incPDD] + \
-                      self.gear.scroll_stat[GearPropType.incPDD] + \
-                      self.gear.star_stat[GearPropType.incPDD]
-                self.gear.star_stat[GearPropType.incPDD] += pdd // 20 + 1
+                # pdd = self.gear.base_stat[GearPropType.incPDD] + \
+                #       self.gear.scroll_stat[GearPropType.incPDD] + \
+                #       self.gear.star_stat[GearPropType.incPDD]
+                # self.gear.star_stat[GearPropType.incPDD] += pdd // 20 + 1
+                pass
 
             mhp_data = [0, 5, 5, 5, 10, 10, 15, 15, 20, 20, 25, 25, 25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             mhp_types = [GearType.cap, GearType.coat, GearType.longcoat, GearType.pants, GearType.cape, GearType.ring,
@@ -218,8 +215,8 @@ class GearBuilder:
 
             if self.gear.type == GearType.shoes:
                 speed_jump_data = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                self.gear.star_stat[GearPropType.incSpeed] += speed_jump_data[star]
-                self.gear.star_stat[GearPropType.incJump] += speed_jump_data[star]
+                # self.gear.star_stat[GearPropType.incSpeed] += speed_jump_data[star]
+                # self.gear.star_stat[GearPropType.incJump] += speed_jump_data[star]
         else:
             stat_bonus = (2 if star > 5 else 1) if bonus else 0
             for prop_type in (GearPropType.STR, GearPropType.DEX, GearPropType.INT, GearPropType.LUK):

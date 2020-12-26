@@ -1,9 +1,10 @@
 from dpmModule.status.ability import Ability_grade
-from dpmModule.character.characterKernel import ItemedCharacter, JobGenerator
+from dpmModule.character.characterKernel import GearedCharacter, JobGenerator
 
 from ..kernel import core
 
 from ..character.characterTemplate import get_template_generator
+from dpmModule.character.characterTemplate2 import get_character_template
 
 import dpmModule.jobs as maplejobs
 
@@ -36,7 +37,8 @@ class IndividualDPMGenerator:
         default_modifier=core.CharacterModifier(),
     ):
         # TODO target을 동적으로 생성할 수 있도록.
-        target: ItemedCharacter = self.template(maplejobs.weaponList[self.job], cdr)
+        # target: ItemedCharacter = self.template(maplejobs.weaponList[self.job], cdr)
+        target: GearedCharacter = get_character_template(self.job, ulevel)
         if level is not None:
             target.unsafe_change_level(level)
         gen: JobGenerator = self.supplier.JobGenerator()

@@ -3,25 +3,24 @@ from typing import DefaultDict
 
 from collections import defaultdict
 
-from Gear import Gear
-from GearPropType import GearPropType
-from GearType import GearType
+from .Gear import Gear
+from .GearPropType import GearPropType
+from .GearType import GearType
 
 PropMap = DefaultDict[GearPropType, int]
 
 
 class Scroll:
-    def __init__(self, name: str = None, stat: PropMap = defaultdict(int),
+    def __init__(self, stat: PropMap = None, name: str = None,
                  bonus_pad_on_fourth: bool = False, bonus_mad_on_fourth: bool = False):
-        self.name = name
-        self.stat = stat
-        self.bonus_pad_on_fourth = bonus_pad_on_fourth
-        self.bonus_mad_on_fourth = bonus_mad_on_fourth
+        self.name: str = name
+        self.stat: DefaultDict = stat or defaultdict(int)
+        self.bonus_pad_on_fourth: bool = bonus_pad_on_fourth
+        self.bonus_mad_on_fourth: bool = bonus_mad_on_fourth
 
-    name: str = None
-    stat: PropMap = defaultdict(int)
-    bonus_pad_on_fourth: bool = False
-    bonus_mad_on_fourth: bool = False
+    @staticmethod
+    def create_from_dict(stat: dict, name: str = None):
+        return Scroll(defaultdict(int, stat), name)
 
     @staticmethod
     def get_spell_trace_scroll(gear: Gear, probability: int, prop_type: GearPropType):
@@ -58,7 +57,7 @@ class Scroll:
             scroll.stat = stat
             return scroll
         elif probability == 15:
-            raise TypeError('Invalid probability ' + str(probability) + ' for GearType: ' + GearType.name)
+            raise TypeError('Invalid probability', probability, 'for GearType: ', gear_type)
         elif gear_type == GearType.glove:
             if probability == 100:
                 data = [0, 1, 1]
@@ -67,7 +66,8 @@ class Scroll:
             elif probability == 30:
                 data = [2, 3, 3]
             value = data[level_range]
-            stat = {GearPropType.incPDD: 3} if value == 0 else {attack_type: value}
+            # stat = {GearPropType.incPDD: 3} if value == 0 else {attack_type: value}
+            stat = {} if value == 0 else {attack_type: value}
             scroll.stat = stat
             return scroll
         elif Gear.is_armor(gear_type):
@@ -79,8 +79,9 @@ class Scroll:
                 data = [[3, 30, 4], [5, 70, 7], [7, 120, 10]]
             stat_value = 0 if prop_type == GearPropType.MHP else data[level_range][0]
             mhp_value = data[level_range][1] + (data[level_range][0] * 50 if prop_type == GearPropType.MHP else 0)
-            pdd_value = data[level_range][2]
-            stat = {GearPropType.MHP: mhp_value, GearPropType.incPDD: pdd_value}
+            # pdd_value = data[level_range][2]
+            # stat = {GearPropType.MHP: mhp_value, GearPropType.incPDD: pdd_value}
+            stat = {GearPropType.MHP: mhp_value}
             if stat_value > 0:
                 stat[prop_type] = stat_value
             scroll.stat = stat

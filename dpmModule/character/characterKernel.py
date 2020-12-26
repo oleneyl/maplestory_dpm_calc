@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from ..execution.rules import RuleSet
 from ..item.ItemKernel import Item
+from ..item.maplegear.Gear import Gear
 from ..kernel import policy
 from ..kernel.abstract import AbstractVBuilder, AbstractVEnhancer
 from ..kernel.core import (
@@ -116,6 +117,110 @@ class AbstractCharacter:
 
     def get_static_modifier(self) -> CharacterModifier:
         return self.base_modifier.degenerate()
+
+
+class GearedCharacter(AbstractCharacter):
+    def __init__(self, job: str, level: int = 230) -> None:
+        super(GearedCharacter, self).__init__(level)
+        self.gear_list: Dict[str, Optional[Gear]] = {
+            "head": None,
+            "glove": None,
+            "top": None,
+            "bottom": None,
+            "shoes": None,
+            "cape": None,
+            "eye": None,
+            "face": None,
+            "ear": None,
+            "belt": None,
+            "ring1": None,
+            "ring2": None,
+            "ring3": None,
+            "ring4": None,
+            "shoulder": None,
+            "pendant1": None,
+            "pendant2": None,
+            "pocket": None,
+            "badge": None,
+            "weapon": None,
+            "subweapon": None,
+            "emblem": None,
+            "medal": None,
+            "heart": None,
+            "title": None,
+            "pet": None,
+            "set_effect": None,
+        }
+        self.job: str = job
+
+    def set_gears(self, gear_dict: Dict[str, Gear]) -> None:
+        keys = [
+            "head",
+            "glove",
+            "top",
+            "bottom",
+            "shoes",
+            "cape",
+            "eye",
+            "face",
+            "ear",
+            "belt",
+            "ring1",
+            "ring2",
+            "ring3",
+            "ring4",
+            "shoulder",
+            "pendant1",
+            "pendant2",
+            "pocket",
+            "badge",
+            "weapon",
+            "subweapon",
+            "emblem",
+            "medal",
+            "heart",
+            "title",
+            "pet",
+            "set_effect",
+        ]
+
+        for key in keys:
+            item = gear_dict[key]
+            if item is None:
+                raise TypeError(key + " item is missing")
+            self.gear_list[key] = gear_dict[key]
+            self.add_gear_modifier(gear_dict[key])
+
+    def remove_gear_modifier(self, gear: Gear) -> None:
+        mdf = gear.get_modifier("DEX", "STR")
+        self.base_modifier = self.base_modifier - mdf
+
+    def add_gear_modifier(self, gear: Gear) -> None:
+        mdf = gear.get_modifier("DEX", "STR")
+        self.base_modifier = self.base_modifier + mdf
+
+    def set_weapon_potential(self, weapon_potential: Dict[str, List[ExMDF]]) -> None:
+        for gear_id in ["weapon", "subweapon", "emblem"]:
+            potentials = weapon_potential[gear_id]
+            ptnl = ExMDF()
+
+            if len(potentials) > 3:
+                raise TypeError("무기류 잠재능력은 아이템당 최대 3개입니다.")
+
+            for i in range(len(potentials)):
+                ptnl = ptnl + potentials[i]
+
+            gear = self.gear_list[gear_id]
+            self.remove_gear_modifier(gear)
+            gear.potential = ptnl.copy()
+            self.add_gear_modifier(gear)
+
+    '''
+    def print_items(self) -> None:
+        for item in self.itemlist:
+            print("===" + item + "===")
+            print(self.itemlist[item].log())
+            '''
 
 
 class ItemedCharacter(AbstractCharacter):
@@ -448,7 +553,6 @@ class JobGenerator:
     ) -> policy.StorageLinkedGraph:
         """Packaging function"""
         vEhc = v_builder.build_enhancer(chtr, self)
-        chtr = chtr
 
         self.build_passive_skill_list(vEhc, chtr, options)
         self.build_not_implied_skill_list(vEhc, chtr, options)

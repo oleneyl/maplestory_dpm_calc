@@ -1,15 +1,15 @@
 import json
+import os
 from typing import List, DefaultDict, Dict
 
 from collections import defaultdict
 
-from Gear import Gear
-from GearPropType import GearPropType
-from GearType import GearType
+from .Gear import Gear
+from .GearPropType import GearPropType
 
 PropMap = DefaultDict[GearPropType, int]
 
-with open('resources/setitem.json', encoding='utf8') as file:
+with open(os.path.join(os.path.dirname(__file__), 'resources', 'setitem.json'), encoding='utf8') as file:
     setItemData = json.load(file)
 
 
@@ -62,6 +62,8 @@ def eval_set_item_effect(equipped_gears: List[Gear]) -> PropMap:
     for gear in equipped_gears:
         set_item_id = gear.set_item_id
         if gear.joker_to_set_item:
+            if active_joker_id == 0:
+                active_joker_id = gear.item_id
             if gear.item_id < active_joker_id:
                 active_joker_id = gear.item_id
         if set_item_id == 0:
@@ -84,6 +86,7 @@ def eval_set_item_effect(equipped_gears: List[Gear]) -> PropMap:
                     break
     # sum setItem effects
     for set_item in set_items.values():
+        print(set_item.set_item_name, set_item.item_count)
         count = set_item.item_count
         for index in set_item.effects:
             if index <= count:

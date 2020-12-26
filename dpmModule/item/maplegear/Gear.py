@@ -1,55 +1,52 @@
 import json
+import os
 from typing import DefaultDict, List
 
 from collections import defaultdict
 
-from GearPropType import GearPropType
-from GearType import GearType
+from .GearPropType import GearPropType
+from .GearType import GearType
+from dpmModule.kernel.core import ExtendedCharacterModifier
 
 PropMap = DefaultDict[GearPropType, int]
 
-with open('./resources/geardata.json', encoding='utf8') as gear_file:
+with open(os.path.join(os.path.dirname(__file__), 'resources', 'geardata.json'), encoding='utf8') as gear_file:
     gear_data = json.load(gear_file)
 
 
 class Gear:
-    item_id: int = 0
-    name: str = None
-    type: GearType = 0
-
-    req_level: int = 0,
-    req_job: int = 0,
-    set_item_id: int = 0
-    boss_reward: bool = False
-
-    superior_eqp: bool = False
-    joker_to_set_item: bool = False
-
-    amazing_scroll: bool = False
-    star: int = 0
-    max_star: int = 0
-
-    tuc: int = 0
-    scroll_up: int = 0
-    scroll_fail: int = 0
-    hammer: int = 0
-
-    base_stat: PropMap = defaultdict(int)  # 기본 옵션
-    additional_stat: PropMap = defaultdict(int)  # 추가 옵션
-    scroll_stat: PropMap = defaultdict(int)  # 주문서 옵션
-    star_stat: PropMap = defaultdict(int)  # 스타포스 옵션
-
-    potential: PropMap  # 잠재옵션
-    additional_potential: PropMap  # 에디셔널 잠재옵션
+    __slots__ = "item_id", "name", "type", "req_level", "req_job", "set_item_id", "boss_reward", "superior_eqp", "joker_to_set_item", "amazing_scroll", "star", "max_star", "tuc", "scroll_up", "scroll_fail", "hammer", "base_stat", "additional_stat", "scroll_stat", "star_stat", "potential", "additional_potential"
 
     def __init__(self):
-        self.props = defaultdict(int)
+        self.item_id: int = 0
+        self.name: str = None
+        self.type: GearType = 0
+
+        self.req_level: int = 0
+        self.req_job: int = 0
+        self.set_item_id: int = 0
+        self.boss_reward: bool = False
+
+        self.superior_eqp: bool = False
+        self.joker_to_set_item: bool = False
+
+        self.amazing_scroll: bool = False
+        self.star: int = 0
+        self.max_star: int = 0
+
+        self.tuc: int = 0
+        self.scroll_up: int = 0
+        self.scroll_fail: int = 0
+        self.hammer: int = 0
+
         self.base_stat: PropMap = defaultdict(int)
         self.additional_stat: PropMap = defaultdict(int)
         self.scroll_stat: PropMap = defaultdict(int)
         self.star_stat: PropMap = defaultdict(int)
-        self.potential = defaultdict(int)
-        self.additional_potential = defaultdict(int)
+        # self.potential = defaultdict(int)
+        # self.additional_potential = defaultdict(int)
+        self.potential = ExtendedCharacterModifier()
+        self.additional_potential = ExtendedCharacterModifier()
 
     def __str__(self):
         # for debug
@@ -72,24 +69,23 @@ class Gear:
             statStr += "%s: %d (%d +%d +%d +%d)\n" % (propType.name, sum(stats[propType]),
                                                       stats[propType][0], stats[propType][1],
                                                       stats[propType][2], stats[propType][3])
-        propStr = ""
-        keys = sorted(self.props)
-        for propType in keys:
-            propStr += propType.name + ": " + str(self.props[propType]) + '\n'
 
-        return "ID: " + str(self.item_id) + '\n' + \
-               "이름: " + self.name + '\n' + \
-               "분류: " + self.type.name + '\n' + \
+        return "= ID: " + str(self.item_id) + '\n' + \
+               "= 이름: " + self.name + '\n' + \
+               "= 분류: " + self.type.name + '\n' + \
                ("놀장" if self.amazing_scroll else "스타포스") + ": " + \
                str(self.star) + '/' + str(self.max_star) + '\n' + \
-               "최대 업횟: " + str(self.tuc) + \
-               " +(황금 망치: " + str(self.hammer) + ')\n' + \
-               "업그레이드 성공 횟수: " + str(self.scroll_up) + '\n' + \
-               "업그레이드 실패 횟수: " + str(self.scroll_fail) + '\n' + \
-               "옵션: 합계 (기본 +추옵 +주문서 +별)\n" + statStr + \
-               "기타 속성:\n" + propStr
+               "= 최대 업횟: " + str(self.tuc) + \
+               " (황금 망치: +" + str(self.hammer) + ')\n' + \
+               "= 업그레이드 성공 횟수: " + str(self.scroll_up) + '\n' + \
+               "= 업그레이드 실패 횟수: " + str(self.scroll_fail) + '\n' + \
+               "= 옵션: 합계 (기본 +추옵 +주문서 +별)\n" + statStr + \
+               "= 잠재능력: \n" + str(self.potential) + \
+               "= 에디셔널 잠재능력: \n" + str(self.additional_potential)
 
     def get_max_star(self) -> int:
+        if self.tuc <= 0:
+            return 0
         if self.is_mechanic_gear(self.type) or self.is_dragon_gear(self.type):
             return 0
         starData = [
@@ -109,6 +105,36 @@ class Gear:
         if data is None:
             return 0
         return data[2 if self.superior_eqp else 1]
+
+    def get_modifier(self, stat_main: str, stat_sub: str, stat_sub2: str = None) -> ExtendedCharacterModifier:
+        stats = (
+            self.base_stat,
+            self.additional_stat,
+            self.scroll_stat,
+            self.star_stat,
+            # self.potential,
+            # self.additional_potential
+        )
+        mdf = ExtendedCharacterModifier()
+        att_type = GearPropType.matt if stat_main == "INT" else GearPropType.att
+        patt_type = GearPropType.matt_rate if stat_main == "INT" else GearPropType.att_rate
+        for stat_map in stats:
+            mdf.stat_main += stat_map[_stat_lookup[stat_main][0]]
+            mdf.pstat_main += stat_map[_stat_lookup[stat_main][1]]
+            mdf.stat_sub += stat_map[_stat_lookup[stat_sub][0]]
+            mdf.pstat_sub += stat_map[_stat_lookup[stat_sub][1]]
+            if stat_sub2 is not None:
+                mdf.stat_sub += stat_map[_stat_lookup[stat_sub2][0]]
+                mdf.stat_sub += stat_map[_stat_lookup[stat_sub2][1]]
+            mdf.att += stat_map[att_type]
+            mdf.patt += stat_map[patt_type]
+            mdf.boss_pdamage += stat_map[GearPropType.boss_pdamage]
+            mdf.armor_ignore += stat_map[GearPropType.armor_ignore]
+            mdf.pdamage += stat_map[GearPropType.pdamage]
+            mdf.crit += stat_map[GearPropType.crit]
+            mdf.crit_damage += stat_map[GearPropType.crit_damage]
+            mdf.cooltime_reduce = stat_map[GearPropType.cooltime_reduce]
+        return mdf
 
     @staticmethod
     def is_weapon(gear_type: GearType) -> bool:
@@ -160,10 +186,12 @@ class Gear:
             return GearType.shining_rod
         if value == 1213:
             return GearType.tuner
+        if value == 1214:
+            return GearType.breath_shooter
         value = gear_id // 10000
         if value == 135:
             value = gear_id // 100
-            if value == 13522 or value == 13528 or value == 13529:
+            if value == 13522 or value == 13528 or value == 13529 or value == 13540:
                 return GearType(gear_id // 10)
             return GearType(gear_id // 100 * 10)
 
@@ -182,7 +210,8 @@ class Gear:
         gear.name = data_node['name']
         for key in data_node:
             value: int = data_node[key]
-            if key in GearPropType:
+            if key in ("STR", "DEX", "INT", "LUK", "att", "matt", "MHP", "MMP", "MHP_rate", "MMP_rate",
+                       "boss_pdamage", "armor_ignore", "crit", "crit_damage", "pdamage"):
                 prop_type = GearPropType[key]
                 gear.base_stat[prop_type] = value
             else:
@@ -190,11 +219,22 @@ class Gear:
         gear.max_star = gear.get_max_star()
         return gear
 
+    @staticmethod
+    def get_id_from_name(name: str, exact: bool = True) -> int:
+        for gear_id in gear_data:
+            if (exact and name == gear_data[gear_id]['name']) or (not exact and name in gear_data[gear_id]['name']):
+                return int(gear_id)
+        return 0
 
-def _search_ids_by_name(name: str, exact: bool = True) -> List[int]:
-    # utility function
-    ids = []
-    for gear_id in gear_data:
-        if (exact and name == gear_data[gear_id]['name']) or (not exact and name in gear_data[gear_id]['name']):
-            ids.append(int(gear_id))
-    return ids
+    @staticmethod
+    def create_from_name(name: str, exact: bool = True):
+        return Gear.create_from_id(Gear.get_id_from_name(name, exact))
+
+
+_stat_lookup = {
+    "STR": (GearPropType.STR, GearPropType.STR_rate),
+    "DEX": (GearPropType.DEX, GearPropType.DEX_rate),
+    "INT": (GearPropType.INT, GearPropType.INT_rate),
+    "LUK": (GearPropType.LUK, GearPropType.LUK_rate),
+    "HP": (GearPropType.MHP, GearPropType.MHP_rate)
+}

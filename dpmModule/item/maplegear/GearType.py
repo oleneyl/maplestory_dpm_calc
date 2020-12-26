@@ -111,3 +111,4 @@ class GearType(IntEnum):
     dragon_wings = 196,
     dragon_tail = 197,
     pet_equip = 180,
+    title = 200,

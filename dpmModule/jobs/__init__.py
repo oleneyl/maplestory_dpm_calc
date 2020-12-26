@@ -60,6 +60,7 @@ jobMap = {"아크메이지불/독" : archmageFb,
         "배틀메이지" : battlemage,
         "메카닉" : mechanic,
         "메르세데스" : mercedes,
+        # "데몬어벤져": demonavenger,
         "데몬슬레이어" : demonslayer,
         "다크나이트" : darknight,
         "와일드헌터" : wildhunter,
@@ -88,7 +89,8 @@ jobMap = {"아크메이지불/독" : archmageFb,
         "블래스터" : blaster,
         "아란" : aran,
         "아델" : adele,
-        "호영" : hoyoung
+        "호영" : hoyoung,
+        # "제논": xenon,
 }
 
 jobList = {"archmageFb" : "아크메이지불/독",
