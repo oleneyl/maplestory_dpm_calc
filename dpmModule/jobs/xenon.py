@@ -1,6 +1,6 @@
 from ..kernel import core
 from ..character import characterKernel as ck
-from ..execution.rules import DisableRule, RuleSet, ConcurrentRunRule, ConditionRule
+from ..execution.rules import DisableRule, InactiveRule, RuleSet, ConcurrentRunRule, ConditionRule
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import thieves, pirates
@@ -108,6 +108,8 @@ class JobGenerator(ck.JobGenerator):
         # TODO: 포톤 레이가 융합과 함께 사용되는 빈도를 늘릴 수 있음
         ruleset.add_rule(ConditionRule("엑스트라 서플라이", "서플러스 서플라이", lambda sk : sk.stack < sk._max - 10), RuleSet.BASE)
         ruleset.add_rule(DisableRule("멜트다운 익스플로전"), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule("아마란스 제너레이터", "오버로드 모드"), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule("엑스트라 서플라이", "오버로드 모드"), RuleSet.BASE)
 
         return ruleset
 
@@ -154,8 +156,8 @@ class JobGenerator(ck.JobGenerator):
         '''
 
         # Buff skills
-        # 펫버프: 인클라인, 에피션시, 부스터
-        InclinePower = core.BuffSkill("인클라인 파워", 0, 240000, att=30, rem=True).wrap(core.BuffSkillWrapper)
+        # 펫버프: 에피션시, 부스터
+        InclinePower = core.BuffSkill("인클라인 파워", 990, 240000, att=30, rem=True).wrap(core.BuffSkillWrapper)
         EfficiencyPipeLine = core.BuffSkill("에피션시 파이프라인", 0, 240000, rem=True).wrap(core.BuffSkillWrapper)
         Booster = core.BuffSkill("제논 부스터", 0, 240000, rem=True).wrap(core.BuffSkillWrapper)
         VirtualProjection = core.BuffSkill("버추얼 프로젝션", 0, 999999999).wrap(core.BuffSkillWrapper)
@@ -240,6 +242,11 @@ class JobGenerator(ck.JobGenerator):
         ExtraSupply.onAfter(SupplySurplus.stackController(10))
         OOPArtsCode.onAfter(SupplySurplus.stackController(-20))
 
+        # 에너지 소모 후 빈칸이 있으면 1개가 즉시 충전됨
+        InclinePower.onAfter(SupplySurplus.stackController(1))
+        ExtraSupply.onAfter(SupplySurplus.stackController(1))
+        OOPArtsCode.onAfter(SupplySurplus.stackController(1))
+
         AmaranthGenerator.onAfter(SupplySurplus.beginAmaranthGenerator())
         AmaranthGenerator.onEventEnd(SupplySurplus.endAmaranthGenerator())
 
@@ -284,10 +291,10 @@ class JobGenerator(ck.JobGenerator):
                 InclinePower,
                 EfficiencyPipeLine,
                 VirtualProjection,
-                ExtraSupply,
                 LuckyDice,
                 OOPArtsCode,
                 AmaranthGenerator,
+                ExtraSupply,
                 OverloadMode,
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                 Overdrive,
