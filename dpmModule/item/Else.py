@@ -45,26 +45,3 @@ def ocean_glow(star, each_enhance = it.ExMDF(), potential = it.ExMDF(),
     OceanGlowEaring.add_main_option(it.EnhancerFactory.get_armor_starforce_enhancement(150, star))
     return OceanGlowEaring
 
-
-def zero_hat(star, enhance, potential = it.ExMDF(), additional_potential = it.ExMDF(), bonus = it.ExMDF(), hammer = True):
-
-    upgrades = 11 + hammer
-
-    if enhance == 100:
-        scrolls = [upgrades,0,0]
-    elif enhance == 70:
-        scrolls = [0,upgrades,0]
-    elif enhance == 30:
-        scrolls = [0,0,upgrades]
-    else:
-        raise TypeError("enhance must be 100, 70, or 30.")
-        
-    item = it.Item(name="카오스 벨룸의 헬름", level = 140, main_option = ExMDF(stat_main = 23, stat_sub = 23, att = 1))
-    item.set_potential(potential)
-    item.set_additional_potential(additional_potential)
-    item.add_main_option(bonus)
-    item.add_main_option(it.EnhancerFactory.get_armor_starforce_enhancement(140, star))
-    item.add_main_option(it.EnhancerFactory.get_armor_scroll_enhancement(140, elist = scrolls))
-        
-    return item
-
