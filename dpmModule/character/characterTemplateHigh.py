@@ -76,7 +76,7 @@ def getU4000CharacterTemplate(_type, cdr = 0):
     template.add_summary("기타: 킹오루, 우르스 격파왕, 하트X, 펫공 X")
 
     template.set_items({
-        "head": rootAbyssSet["head"],
+        "head": empressSet["head"],
         "glove": empressSet["glove"],
         "top": rootAbyssSet["top"],
         "bottom": rootAbyssSet["bottom"],
@@ -104,7 +104,7 @@ def getU4000CharacterTemplate(_type, cdr = 0):
         "pet": Else.get_pet(0),
     })
     
-    template.apply_modifiers([Empress.Factory.getSetOption(4), RootAbyss.Factory.getSetOption(4), BossAccesory.Factory.getSetOption(9)])
+    template.apply_modifiers([Empress.Factory.getSetOption(5), RootAbyss.Factory.getSetOption(4), BossAccesory.Factory.getSetOption(9)])
     
     # 제로: 모자를 카오스 벨룸의 헬름으로 교체
     # 추옵은 절반만 적용
