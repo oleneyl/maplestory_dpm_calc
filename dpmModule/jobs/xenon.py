@@ -242,11 +242,6 @@ class JobGenerator(ck.JobGenerator):
         ExtraSupply.onAfter(SupplySurplus.stackController(10))
         OOPArtsCode.onAfter(SupplySurplus.stackController(-20))
 
-        # 에너지 소모 후 빈칸이 있으면 1개가 즉시 충전됨
-        InclinePower.onAfter(SupplySurplus.stackController(1))
-        ExtraSupply.onAfter(SupplySurplus.stackController(1))
-        OOPArtsCode.onAfter(SupplySurplus.stackController(1))
-
         AmaranthGenerator.onAfter(SupplySurplus.beginAmaranthGenerator())
         AmaranthGenerator.onEventEnd(SupplySurplus.endAmaranthGenerator())
 
