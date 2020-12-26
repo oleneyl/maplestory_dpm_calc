@@ -104,16 +104,16 @@ def getU4000CharacterTemplate(_type, cdr = 0):
         "pet": Else.get_pet(0),
     })
     
+    template.apply_modifiers([Empress.Factory.getSetOption(4), RootAbyss.Factory.getSetOption(4), BossAccesory.Factory.getSetOption(9)])
+    
     # 제로: 모자를 카오스 벨룸의 헬름으로 교체
     # 추옵은 절반만 적용
     # 템셋 자체를 골드라벨로 교체하는 것이 더 효율적이나 편의를 위해 여제셋 유지
     if _type == '제로무기':
         zeroHat_bonus = ExMDF(pstat_main = 3, pstat_sub = 3)
         template.itemlist["head"] = Else.zero_hat(potential = armorPtnl, bonus = zeroHat_bonus, star = armorStar, enhance = 70)
-        # 4카 5여제
-        template.apply_modifiers([Empress.Factory.getSetOption(5), RootAbyss.Factory.getSetOption(4), BossAccesory.Factory.getSetOption(9)])
-    else:
-        template.apply_modifiers([Empress.Factory.getSetOption(4), RootAbyss.Factory.getSetOption(4), BossAccesory.Factory.getSetOption(9)])
+        # 여제4셋 효과를 여제5셋으로 교체
+        template.apply_modifiers([Empress.Factory.getSetOption(5) - Empress.Factory.getSetOption(4)])
 
     template.add_summary("아케인포스: 240")
     template.apply_modifiers([ExMDF(stat_main_fixed = 2400)])
@@ -180,15 +180,15 @@ def getU5000CharacterTemplate(_type, cdr = 0):
         "pet": Else.get_pet(30),
     })
     
+    template.apply_modifiers([Absolab.Factory.getSetOption(5), RootAbyss.Factory.getSetOption(3), BossAccesory.Factory.getSetOption(9)])
+
     # 제로: 모자를 카오스 벨룸의 헬름으로 교체
     # 추옵은 절반만 적용
     if _type == '제로무기':
         zeroHat_bonus = ExMDF(pstat_main = 2.5, pstat_sub = 2.5, stat_main = 10)
         template.itemlist["head"] = Else.zero_hat(potential = armorPtnl, bonus = zeroHat_bonus, star = armorStar, enhance = 30, additional_potential = armorAPtnl)
-        # 4카 5앱
-        template.apply_modifiers([Absolab.Factory.getSetOption(5), RootAbyss.Factory.getSetOption(4), BossAccesory.Factory.getSetOption(9)])
-    else:
-        template.apply_modifiers([Absolab.Factory.getSetOption(5), RootAbyss.Factory.getSetOption(3), BossAccesory.Factory.getSetOption(9)])
+        # 불필요한 연산을 피하기 위해 카루타 4세트(보공 30%)를 직접 더함
+        template.apply_modifiers([ExMDF(boss_pdamage=30)])
 
     template.add_summary("아케인포스: 540")
     template.apply_modifiers([ExMDF(stat_main_fixed = 5400)])
@@ -262,15 +262,15 @@ def getU6000CharacterTemplate(_type, cdr = 0):
         "pet": Else.get_pet(40),
     })
     
+    template.apply_modifiers([Absolab.Factory.getSetOption(5), RootAbyss.Factory.getSetOption(3), BossAccesory.Factory.getSetOption(9)])
+
     # 제로: 모자를 카오스 벨룸의 헬름으로 교체
     # 추옵은 절반만 적용
     if _type == '제로무기':
         zeroHat_bonus = ExMDF(pstat_main = 2.5, pstat_sub = 2.5, stat_main = 20)
         template.itemlist["head"] = Else.zero_hat(potential = armorPtnl, bonus = zeroHat_bonus, star = armorStar, enhance = 30, additional_potential = armorAPtnl)
-        # 4카 5앱
-        template.apply_modifiers([Absolab.Factory.getSetOption(5), RootAbyss.Factory.getSetOption(4), BossAccesory.Factory.getSetOption(9)])
-    else:
-        template.apply_modifiers([Absolab.Factory.getSetOption(5), RootAbyss.Factory.getSetOption(3), BossAccesory.Factory.getSetOption(9)])
+        # 불필요한 연산을 피하기 위해 카루타 4세트(보공 30%)를 직접 더함
+        template.apply_modifiers([ExMDF(boss_pdamage=30)])
 
     template.add_summary("아케인포스: 780")
     template.apply_modifiers([ExMDF(stat_main_fixed = 7800)])
@@ -360,16 +360,16 @@ def getU7000CharacterTemplate(_type, cdr = 0):
         "title": Else.PingkbinAndMe.copy(),
         "pet": Else.get_pet(80),
     })
+    
+    template.apply_modifiers([Absolab.Factory.getSetOption(5), RootAbyss.Factory.getSetOption(2), BossAccesory.Factory.getSetOption(7)])
 
     # 제로: 모자를 카오스 벨룸의 헬름으로 교체
     # 추옵은 절반만 적용
     if _type == '제로무기':
         zeroHat_bonus = ExMDF(pstat_main = 2.5, pstat_sub = 2.5, stat_main = 30)
         template.itemlist["head"] = Else.zero_hat(potential = armorPtnl, bonus = zeroHat_bonus, star = armorStar, enhance = 30, additional_potential = armorAPtnl)
-        # 4카 5앱
-        template.apply_modifiers([Absolab.Factory.getSetOption(5), RootAbyss.Factory.getSetOption(4), BossAccesory.Factory.getSetOption(7)])
-    else:
-        template.apply_modifiers([Absolab.Factory.getSetOption(5), RootAbyss.Factory.getSetOption(2), BossAccesory.Factory.getSetOption(7)])
+        # 불필요한 연산을 피하기 위해 카루타 3세트+4세트(공격력 50, 보공 30%)를 직접 더함
+        template.apply_modifiers([ExMDF(att=50, boss_pdamage=30)])
 
     template.add_summary("아케인포스: 960")
     template.apply_modifiers([ExMDF(stat_main_fixed = 9600)])
@@ -466,19 +466,17 @@ def getU8000CharacterTemplate(_type, cdr = 0):
         "pet": Else.get_pet(120),
     })
     
+    template.apply_modifiers([Absolab.Factory.getSetOption(5), 
+                                RootAbyss.Factory.getSetOption(2), 
+                                BossAccesory.Factory.getSetOption(5)])
+    
     # 제로: 모자를 카오스 벨룸의 헬름으로 교체
     # 추옵은 절반만 적용
     if _type == '제로무기':
         zeroHat_bonus = ExMDF(pstat_main = 3, pstat_sub = 3, stat_main = 30)
         template.itemlist["head"] = Else.zero_hat(potential = armorPtnl, bonus = zeroHat_bonus, star = armorStar, enhance = 30, additional_potential = armorAPtnl)
-        # 4카 5앱
-        template.apply_modifiers([Absolab.Factory.getSetOption(5), 
-                                RootAbyss.Factory.getSetOption(4), 
-                                BossAccesory.Factory.getSetOption(5)])
-    else:
-        template.apply_modifiers([Absolab.Factory.getSetOption(5), 
-                                RootAbyss.Factory.getSetOption(2), 
-                                BossAccesory.Factory.getSetOption(5)])
+        # 불필요한 연산을 피하기 위해 카루타 3세트+4세트(공격력 50, 보공 30%)를 직접 더함
+        template.apply_modifiers([ExMDF(att=50, boss_pdamage=30)])
 
     template.add_summary("아케인포스: 1140")
     template.apply_modifiers([ExMDF(stat_main_fixed = 11400)])
@@ -579,21 +577,19 @@ def getU8500CharacterTemplate(_type, cdr = 0):
         "pet": Else.get_pet(120),
     })
     
+    template.apply_modifiers([Arcane.Factory.getSetOption(6), 
+                                RootAbyss.Factory.getSetOption(2),
+                                BossAccesory.Factory.getSetOption(3),
+                                Darkness.Factory.getSetOption(4)])
+    
     # 제로: 모자를 카오스 벨룸의 헬름으로 교체
     # 추옵은 절반만 적용
     if _type == '제로무기':
         zeroHat_bonus = ExMDF(pstat_main = 3, pstat_sub = 3, stat_main = 35)
         template.itemlist["head"] = Else.zero_hat(potential = armorPtnl, bonus = zeroHat_bonus, star = armorStar, enhance = 30, additional_potential = armorAPtnl)
-        # 5아케인 4카루타로 변경
-        template.apply_modifiers([Arcane.Factory.getSetOption(5), 
-                                RootAbyss.Factory.getSetOption(4),
-                                BossAccesory.Factory.getSetOption(3),
-                                Darkness.Factory.getSetOption(4)])
-    else:
-        template.apply_modifiers([Arcane.Factory.getSetOption(6), 
-                                RootAbyss.Factory.getSetOption(2),
-                                BossAccesory.Factory.getSetOption(3),
-                                Darkness.Factory.getSetOption(4)])
+        # 6아케인 2카루타 -> 5아케인 4카루타로 변경
+        set_option_change = (Arcane.Factory.getSetOption(5) - Arcane.Factory.getSetOption(6)) + (RootAbyss.Factory.getSetOption(4) - RootAbyss.Factory.getSetOption(2))
+        template.apply_modifiers([set_option_change])
 
     template.add_summary("아케인포스: 1320")
     template.apply_modifiers([ExMDF(stat_main_fixed = 13200)])
