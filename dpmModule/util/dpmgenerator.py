@@ -38,10 +38,10 @@ class IndividualDPMGenerator:
     ):
         # TODO target을 동적으로 생성할 수 있도록.
         # target: ItemedCharacter = self.template(maplejobs.weaponList[self.job], cdr)
-        target: GearedCharacter = get_character_template(self.job, ulevel)
+        gen: JobGenerator = self.supplier.JobGenerator()
+        target: GearedCharacter = get_character_template(gen, ulevel)
         if level is not None:
             target.unsafe_change_level(level)
-        gen: JobGenerator = self.supplier.JobGenerator()
         v_builder = core.AlwaysMaximumVBuilder()
         graph = gen.package(
             target,

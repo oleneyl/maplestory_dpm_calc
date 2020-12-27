@@ -1,0 +1,25 @@
+{
+  "핑아일체": {
+    "name": "핑아일체",
+    "STR": 10,
+    "DEX": 10,
+    "INT": 10,
+    "LUK": 10,
+    "att": 5,
+    "matt": 5,
+    "boss_pdamage": 10
+  },
+  "스완 드림": {
+    "name": "스완 드림",
+    "STR": 15,
+    "DEX": 15,
+    "INT": 15,
+    "LUK": 15,
+    "att": 15,
+    "matt": 15,
+    "MHP": 750,
+    "MMP": 750,
+    "boss_pdamage": 10,
+    "armor_ignore": 10
+  }
+}

@@ -6,8 +6,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from ..execution.rules import RuleSet
 from ..item.ItemKernel import Item
-from ..item.maplegear.Gear import Gear
-from ..item.maplegear.GearPropType import GearPropType
+from dpmModule.gear.Gear import Gear
+from dpmModule.gear.GearPropType import GearPropType
 from ..kernel import policy
 from ..kernel.abstract import AbstractVBuilder, AbstractVEnhancer
 from ..kernel.core import (
@@ -121,8 +121,10 @@ class AbstractCharacter:
 
 
 class GearedCharacter(AbstractCharacter):
-    def __init__(self, job: str, level: int = 230) -> None:
+    def __init__(self, gen, level: int = 230) -> None:
         super(GearedCharacter, self).__init__(level)
+        self.jobname: str = gen.jobname
+        self.jobtype: str = gen.jobtype
         self.gear_list: Dict[str, Optional[Gear]] = {
             "head": None,
             "glove": None,
@@ -152,42 +154,10 @@ class GearedCharacter(AbstractCharacter):
             "pet": None,
             "set_effect": None,
         }
-        self.job: str = job
 
     def set_gears(self, gear_dict: Dict[str, Gear]) -> None:
-        keys = [
-            "head",
-            "glove",
-            "top",
-            "bottom",
-            "shoes",
-            "cape",
-            "eye",
-            "face",
-            "ear",
-            "belt",
-            "ring1",
-            "ring2",
-            "ring3",
-            "ring4",
-            "shoulder",
-            "pendant1",
-            "pendant2",
-            "pocket",
-            "badge",
-            "weapon",
-            "subweapon",
-            "emblem",
-            "medal",
-            "heart",
-            "title",
-            "pet",
-            "set_effect",
-        ]
-
-        for key in keys:
-            item = gear_dict[key]
-            if item is None:
+        for key in self.gear_list:
+            if key not in gear_dict:
                 raise TypeError(key + " item is missing")
             self.gear_list[key] = gear_dict[key]
             self.add_gear_modifier(gear_dict[key])
@@ -196,12 +166,10 @@ class GearedCharacter(AbstractCharacter):
         return self.gear_list["weapon"].base_stat[GearPropType.att]
 
     def remove_gear_modifier(self, gear: Gear) -> None:
-        mdf = gear.get_modifier("DEX", "STR")
-        self.base_modifier = self.base_modifier - mdf
+        self.base_modifier -= gear.get_modifier(self.jobtype)
 
     def add_gear_modifier(self, gear: Gear) -> None:
-        mdf = gear.get_modifier("DEX", "STR")
-        self.base_modifier = self.base_modifier + mdf
+        self.base_modifier += gear.get_modifier(self.jobtype)
 
     def set_weapon_potential(self, weapon_potential: Dict[str, List[ExMDF]]) -> None:
         for gear_id in ["weapon", "subweapon", "emblem"]:
@@ -546,7 +514,7 @@ class JobGenerator:
 
     def package(
         self,
-        chtr: ItemedCharacter,
+        chtr: GearedCharacter,
         v_builder: AbstractVBuilder,
         options: Dict[str, Any],
         ulevel: int,

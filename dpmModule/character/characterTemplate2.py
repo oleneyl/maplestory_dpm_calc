@@ -3,39 +3,29 @@ import os
 from collections import defaultdict
 from copy import deepcopy
 
-from dpmModule.item.maplegear.GearType import GearType
-from dpmModule.item.maplegear.SetItem import eval_set_item_effect
+from dpmModule.gear.GearType import GearType
+from dpmModule.gear.SetItem import eval_set_item_effect
 from dpmModule.kernel.core.modifier import ExtendedCharacterModifier
-from dpmModule.character.characterKernel import GearedCharacter
-from dpmModule.item.maplegear.Gear import Gear
-from dpmModule.item.maplegear.GearBuilder import GearBuilder
-from dpmModule.item.maplegear.GearPropType import GearPropType
-from dpmModule.item.maplegear.Scroll import Scroll
+from dpmModule.character.characterKernel import GearedCharacter, JobGenerator
+from dpmModule.gear.Gear import Gear
+from dpmModule.gear.GearBuilder import GearBuilder
+from dpmModule.gear.GearPropType import GearPropType
+from dpmModule.gear.Scroll import Scroll
 
 with open(os.path.join(os.path.dirname(__file__), 'configs', 'template.json'), encoding='utf8') as template_file:
     data = json.load(template_file)
 
 
-def get_character_template(job: str, unionlevel: int, cdr: int = 0) -> GearedCharacter:
+def get_character_template(gen: JobGenerator, unionlevel: int, cdr: int = 0) -> GearedCharacter:
     """
     job: 한글 직업명
     unionlevel: 8000 | (8500)
     """
     # functions
-    def _get_job_branch(job: str) -> int:
-        return _job_branch[job]
+    def _get_job_branch(jobname: str):
+        return _job_branch[jobname]
 
-    def _get_prop_types(job_index: int):
-        return [
-            (GearPropType.STR, GearPropType.DEX),
-            (GearPropType.INT, GearPropType.LUK),
-            (GearPropType.DEX, GearPropType.STR),
-            (GearPropType.LUK, GearPropType.DEX),
-            (GearPropType.STR, GearPropType.DEX),
-            (GearPropType.DEX, GearPropType.STR),
-        ][job_index]
-
-    def _get_id_from_str(name: str, part: str):
+    def _get_id_from_name(name: str, part: str):
         if part == "weapon" or part == "subweapon" or part == "emblem":
             if name in _weapon_lookup:
                 if job in _weapon_lookup[name]:
@@ -65,11 +55,7 @@ def get_character_template(job: str, unionlevel: int, cdr: int = 0) -> GearedCha
         return set_effect
 
     def _get_title(name: str):
-        title: Gear = Gear()
-        title.name = name
-        title.type = GearType.title
-        title.base_stat = defaultdict(int, _title_data[name])
-        return title
+        return Gear.create_title_from_name(name)
 
     def _get_pet_equip(att: int):
         pet: Gear = Gear()
@@ -79,29 +65,31 @@ def get_character_template(job: str, unionlevel: int, cdr: int = 0) -> GearedCha
         pet.base_stat[GearPropType.matt] = att
         return pet
 
-    def _get_zero_subweapon():
+    def _get_zero_subweapon(zero_weapon: Gear):
+        _zero_data = Gear.create_from_id(_zero_weapon_lookup[zero_weapon.item_id])
         zero_sub = Gear()
-        zero_sub.name = "제로 보조무기"
-        zero_sub.type = GearType.sword_zb
+        zero_sub.name = _zero_data.name
+        zero_sub.type = _zero_data.type
         zero_sub.base_stat[GearPropType.STR] = 1
         zero_sub.base_stat[GearPropType.att] = 1
+        zero_sub.base_stat[GearPropType.boss_pdamage] = zero_weapon.base_stat[GearPropType.boss_pdamage]
+        zero_sub.base_stat[GearPropType.armor_ignore] = zero_weapon.base_stat[GearPropType.armor_ignore]
+        zero_sub.base_stat[GearPropType.pdamage] = zero_weapon.base_stat[GearPropType.pdamage]
+        zero_sub.additional_stat[GearPropType.boss_pdamage] = zero_weapon.additional_stat[GearPropType.boss_pdamage]
+        zero_sub.additional_stat[GearPropType.armor_ignore] = zero_weapon.additional_stat[GearPropType.armor_ignore]
+        zero_sub.additional_stat[GearPropType.pdamage] = zero_weapon.additional_stat[GearPropType.pdamage]
+        zero_sub.additional_stat[GearPropType.STR_rate] = zero_weapon.additional_stat[GearPropType.STR_rate]
+        zero_sub.additional_stat[GearPropType.DEX_rate] = zero_weapon.additional_stat[GearPropType.DEX_rate]
+        zero_sub.additional_stat[GearPropType.INT_rate] = zero_weapon.additional_stat[GearPropType.INT_rate]
+        zero_sub.additional_stat[GearPropType.LUK_rate] = zero_weapon.additional_stat[GearPropType.LUK_rate]
+        zero_sub.additional_potential[GearPropType.STR_rate] = zero_weapon.additional_potential[GearPropType.STR_rate]
+        zero_sub.additional_potential[GearPropType.DEX_rate] = zero_weapon.additional_potential[GearPropType.DEX_rate]
+        zero_sub.additional_potential[GearPropType.att] = zero_weapon.additional_potential[GearPropType.att]
+        zero_sub.additional_potential[GearPropType.crit_damage] = zero_weapon.additional_potential[GearPropType.crit_damage]
+        zero_sub.additional_potential[GearPropType.att_rate] = zero_weapon.additional_potential[GearPropType.att_rate]
         return zero_sub
 
     def _get_enchanted_gear(part: str) -> Gear:
-        def _is_addition_gear(part: str) -> bool:
-            _part = part.rstrip("0123456789")
-            return _part in ("head", "top", "bottom", "shoes", "glove", "cape",
-                             "face", "eye", "ear", "belt", "ring", "pendant", "pocket", "weapon")
-
-        def _is_potential_gear(part: str) -> bool:
-            _part = part.rstrip("0123456789")
-            return _part in ("head", "top", "bottom", "shoes", "glove", "cape",
-                             "shoulder", "face", "eye", "ear", "belt", "ring", "pendant", "heart")
-
-        def _is_add_potential_gear(part: str) -> bool:
-            _part = part.rstrip("0123456789")
-            return _is_potential_gear(part) or _part in ("weapon", "subweapon", "emblem", "blade")
-
         def _get_fallback_part(part: str) -> str:
             _part = part.rstrip("0123456789")
             if _part in ("head", "top", "bottom", "shoes", "glove", "cape"):
@@ -120,33 +108,75 @@ def get_character_template(job: str, unionlevel: int, cdr: int = 0) -> GearedCha
             else:
                 return None
 
+        def _is_addition_gear(part: str) -> bool:
+            _part = part.rstrip("0123456789")
+            return _part in ("head", "top", "bottom", "shoes", "glove", "cape",
+                             "face", "eye", "ear", "belt", "ring", "pendant", "pocket", "weapon")
+
+        def _is_potential_gear(part: str) -> bool:
+            _part = part.rstrip("0123456789")
+            return _part in ("head", "top", "bottom", "shoes", "glove", "cape",
+                             "shoulder", "face", "eye", "ear", "belt", "ring", "pendant", "heart")
+
+        def _is_add_potential_gear(part: str) -> bool:
+            _part = part.rstrip("0123456789")
+            return _is_potential_gear(part) or _part in ("weapon", "subweapon", "emblem", "blade")
+
+        def _apply_scroll(gear: Gear, scroll_data):
+            scroll_type, scroll_value = scroll_data
+            gb = GearBuilder(gear)
+            if scroll_type == 0:
+                gb.apply_spell_trace_scroll(scroll_value, main_type, gb.scroll_available)
+            elif scroll_type == 1:
+                gb.apply_scroll(Scroll.create_from_dict({att_type: scroll_value}))
+                gb.apply_spell_trace_scroll(30, main_type, gb.scroll_available)
+            elif scroll_type == 2:
+                gb.apply_scroll(Scroll.create_from_dict({att_type: 2}), 3)
+                gb.apply_spell_trace_scroll(30, main_type)
+                gb.apply_scroll(Scroll.create_from_dict({att_type: 2}), gb.scroll_available)
+            elif scroll_type == 10:
+                scroll = Scroll.create_from_dict({att_type: scroll_value // 10, main_type: scroll_value % 10})
+                gb.apply_scroll(scroll, gb.scroll_available)
+            elif scroll_type == 20:
+                scroll = Scroll.create_from_dict({
+                    GearPropType.STR: 3, GearPropType.DEX: 3, GearPropType.INT: 3, GearPropType.LUK: 3,
+                    att_type: scroll_value
+                })
+                gb.apply_scroll(scroll, gb.scroll_available)
+            elif scroll_type == 100:
+                scroll = Scroll.create_from_dict({
+                    GearPropType.STR: 3, GearPropType.DEX: 3, GearPropType.INT: 3, GearPropType.LUK: 3,
+                    GearPropType.MHP: 40, GearPropType.MMP: 40, GearPropType.PAD: 3, GearPropType.MAD: 3,
+                })
+                gb.apply_scroll(scroll, gb.scroll_available)
+            elif scroll_type == 101:
+                scroll = Scroll.create_from_dict({
+                    GearPropType.STR: 10, GearPropType.DEX: 10, GearPropType.INT: 10, GearPropType.LUK: 10,
+                    GearPropType.MHP: 1000, GearPropType.MMP: 1000, GearPropType.PAD: 5, GearPropType.MAD: 5,
+                })
+                gb.apply_scroll(scroll, gb.scroll_available)
+
+
         fallback_part = _get_fallback_part(part)
-        if part == "subweapon" and job == "제로":
-            gear: Gear = _get_zero_subweapon()
-            gb: GearBuilder = GearBuilder(gear)
-            addition_data = _get_part_data(node["addition"], part, fallback_part)
-            if addition_data is not None:
-                gear.additional_stat[GearPropType.boss_pdamage] = addition_data[1]
-                gear.additional_stat[GearPropType.pdamage] = addition_data[2]
-                gb.apply_additional_stat(GearPropType.allstat, addition_data[3])
-            add_potential_data = _get_part_data(node["add_potential"], part, fallback_part)
-            if add_potential_data is not None:
-                gear.additional_potential.pstat_main = add_potential_data[0]
-                gear.additional_potential.pstat_sub = add_potential_data[1]
-                gear.additional_potential.att = add_potential_data[2]
-                gear.additional_potential.crit_damage = add_potential_data[3]
-                gear.additional_potential.patt = add_potential_data[4]
-            return gear
-        if part == "subweapon" and job == "듀얼블레이드":
+        if part == "subweapon" and gen.jobname == "제로":
+            return Gear()
+        if part == "subweapon" and gen.jobname == "듀얼블레이드":
             part = "blade"
         gear_id = node["gear_id"][part][0]
         if gear_id == 0:
-            gear_id = _get_id_from_str(node["gear_id"][part][1], part)
+            gear_id = _get_id_from_name(node["gear_id"][part][1], part)
         if gear_id == 0:
             raise TypeError('Invalid gear_id:', node["gear_id"][part][0], node["gear_id"][part][1], part, job)
 
-        main_type, sub_type = _get_prop_types(_get_job_branch(job))
-        att_type = GearPropType.matt if main_type == GearPropType.INT else GearPropType.att
+        main_type, sub_type, sub_type2, att_type, att_rate_type = {
+            "str": (GearPropType.STR, GearPropType.DEX, None, GearPropType.att, GearPropType.att_rate),
+            "dex": (GearPropType.DEX, GearPropType.STR,  None, GearPropType.att, GearPropType.att_rate),
+            "int": (GearPropType.INT, GearPropType.LUK, None, GearPropType.matt, GearPropType.matt_rate),
+            "luk": (GearPropType.LUK, GearPropType.DEX, None, GearPropType.att, GearPropType.att_rate),
+            "luk2": (GearPropType.LUK, GearPropType.DEX, GearPropType.STR, GearPropType.att, GearPropType.att_rate),
+            "hp": (GearPropType.MHP, GearPropType.STR, None, GearPropType.att, GearPropType.att_rate),
+            "xenon": (GearPropType.LUK, GearPropType.DEX, GearPropType.STR, GearPropType.att, GearPropType.att_rate),
+        }[gen.jobtype]
         gear: Gear = Gear.create_from_id(gear_id)
         gb: GearBuilder = GearBuilder(gear)
         # 추가옵션
@@ -161,44 +191,17 @@ def get_character_template(job: str, unionlevel: int, cdr: int = 0) -> GearedCha
                 else:
                     gear.additional_stat[main_type] = addition_data[0]
                     gear.additional_stat[sub_type] = addition_data[1]
-                    gear.additional_stat[att_type] = addition_data[2]
-                    gb.apply_additional_stat(GearPropType.allstat, addition_data[3])
+                    if sub_type2 is not None:
+                        gear.additional_stat[sub_type2] = addition_data[2]
+                    gear.additional_stat[att_type] = addition_data[3]
+                    gb.apply_additional_stat(GearPropType.allstat, addition_data[4])
         # 주문서
         scroll_data = _get_part_data(node["upgrade"], part, fallback_part)
         if gear.tuc > 0:
             if scroll_data is not None:
                 # 황금 망치
                 gb.apply_hammer()
-                if scroll_data[0] == 0:
-                    gb.apply_spell_trace_scroll(scroll_data[1], main_type, gb.scroll_available)
-                elif scroll_data[0] == 1:
-                    gb.apply_scroll(Scroll.create_from_dict({att_type: scroll_data[1]}))
-                    gb.apply_spell_trace_scroll(30, main_type, gb.scroll_available)
-                elif scroll_data[0] == 2:
-                    gb.apply_scroll(Scroll.create_from_dict({att_type: 2}), 3)
-                    gb.apply_spell_trace_scroll(30, main_type)
-                    gb.apply_scroll(Scroll.create_from_dict({att_type: 2}), gb.scroll_available)
-                elif scroll_data[0] == 10:
-                    scroll = Scroll.create_from_dict({att_type: scroll_data[1] // 10, main_type: scroll_data[1] % 10})
-                    gb.apply_scroll(scroll, gb.scroll_available)
-                elif scroll_data[0] == 20:
-                    scroll = Scroll.create_from_dict({
-                        GearPropType.STR: 3, GearPropType.DEX: 3, GearPropType.INT: 3, GearPropType.LUK: 3,
-                        att_type: scroll_data[1]
-                    })
-                    gb.apply_scroll(scroll, gb.scroll_available)
-                elif scroll_data[0] == 100:
-                    scroll = Scroll.create_from_dict({
-                        GearPropType.STR: 3, GearPropType.DEX: 3, GearPropType.INT: 3, GearPropType.LUK: 3,
-                        GearPropType.MHP: 40, GearPropType.MMP: 40, GearPropType.PAD: 3, GearPropType.MAD: 3,
-                    })
-                    gb.apply_scroll(scroll, gb.scroll_available)
-                elif scroll_data[0] == 101:
-                    scroll = Scroll.create_from_dict({
-                        GearPropType.STR: 10, GearPropType.DEX: 10, GearPropType.INT: 10, GearPropType.LUK: 10,
-                        GearPropType.MHP: 1000, GearPropType.MMP: 1000, GearPropType.PAD: 5, GearPropType.MAD: 5,
-                    })
-                    gb.apply_scroll(scroll, gb.scroll_available)
+                _apply_scroll(gear, scroll_data)
         # 스타포스
         star_data = _get_part_data(node["star"], part, fallback_part)
         if star_data is not None:
@@ -208,22 +211,21 @@ def get_character_template(job: str, unionlevel: int, cdr: int = 0) -> GearedCha
                 gb.apply_stars(star_data // 2, True, False)
                 gb.apply_stars(star_data - (star_data // 2), True, True)
         # 잠재능력
-        # 현재 ExMDF 구조상 바로 pstat_main, ... 으로 적용
         if _is_potential_gear(part):
             potential_data = _get_part_data(node["potential"], part, fallback_part)
             if potential_data is not None:
-                gear.potential.pstat_main = potential_data[0]
-                gear.potential.pstat_sub = potential_data[1]
-                gear.potential.crit_damage = potential_data[2]
+                gear.potential[main_type] = potential_data[0]
+                gear.potential[sub_type] = potential_data[1]
+                gear.potential[GearPropType.crit_damage] = potential_data[2]
         # 에디셔널 잠재능력
         if _is_add_potential_gear(part):
             add_potential_data = _get_part_data(node["add_potential"], part, fallback_part)
             if add_potential_data is not None:
-                gear.additional_potential.pstat_main = add_potential_data[0]
-                gear.additional_potential.pstat_sub = add_potential_data[1]
-                gear.additional_potential.att = add_potential_data[2]
-                gear.additional_potential.crit_damage = add_potential_data[3]
-                gear.additional_potential.patt = add_potential_data[4]
+                gear.additional_potential[main_type] = add_potential_data[0]
+                gear.additional_potential[sub_type] = add_potential_data[1]
+                gear.additional_potential[att_type] = add_potential_data[2]
+                gear.additional_potential[GearPropType.crit_damage] = add_potential_data[3]
+                gear.additional_potential[att_rate_type] = add_potential_data[4]
         return gear
     # end functions
 
@@ -231,6 +233,7 @@ def get_character_template(job: str, unionlevel: int, cdr: int = 0) -> GearedCha
         raise TypeError('Invalid unionlevel')
     union_node = data[str(unionlevel)]
 
+    job = gen.jobname
     node = union_node["default"]
     if job in union_node:
         if union_node[job]["type"] == "full":
@@ -254,13 +257,15 @@ def get_character_template(job: str, unionlevel: int, cdr: int = 0) -> GearedCha
         "pendant1", "pendant2", "heart", "pocket", "weapon", "subweapon", "emblem",
         "badge", "medal",
     ]
-    template = GearedCharacter(job=job, level=node["level"])
+    template = GearedCharacter(gen=gen, level=node["level"])
     # 아케인심볼 스탯
-    template.apply_modifiers([ExtendedCharacterModifier(stat_main_fixed=node["arcane_stat"])])
+    template.apply_modifiers([ExtendedCharacterModifier(stat_main_fixed=node["arcane_stat"] * 3 if job == "제논" else 1)])
     # 장비
     gear_list = {}
     for key in keys:
         gear_list[key] = _get_enchanted_gear(key)
+    if job == "제로":
+        gear_list["subweapon"] = _get_zero_subweapon(gear_list["weapon"])
     # 세트효과
     gear_list["set_effect"] = _get_set_effect(gear_list, node)
     # 칭호
@@ -270,6 +275,7 @@ def get_character_template(job: str, unionlevel: int, cdr: int = 0) -> GearedCha
     template.set_gears(gear_list)
 
     return template
+
 
 # 0: warrior 1: magician 2: bowman 3: thief 4: pirate(str) 5: pirate(dex)
 _job_branch = {
@@ -642,32 +648,21 @@ _weapon_lookup = {
     }
 }
 
+_zero_weapon_lookup = {
+    1572001: 1562001,
+    1572002: 1562002,
+    1572003: 1562003,
+    1572004: 1562004,
+    1572005: 1562005,
+    1572006: 1562006,
+    1572007: 1562007,
+    1572008: 1562008,
+    1572009: 1562009,
+    1572010: 1562010,
+}
+
 _weapon_lucky_item_lookup = {
     "카루타": 247,
     "앱솔랩스": 504,
     "아케인셰이드": 617,
-}
-
-_title_data = {
-    "핑아일체": {
-        GearPropType.STR: 10,
-        GearPropType.DEX: 10,
-        GearPropType.INT: 10,
-        GearPropType.LUK: 10,
-        GearPropType.att: 5,
-        GearPropType.matt: 5,
-        GearPropType.boss_pdamage: 10,
-    },
-    "스완 드림": {
-        GearPropType.STR: 15,
-        GearPropType.DEX: 15,
-        GearPropType.INT: 15,
-        GearPropType.LUK: 15,
-        GearPropType.att: 15,
-        GearPropType.matt: 15,
-        GearPropType.MHP: 750,
-        GearPropType.MMP: 750,
-        GearPropType.boss_pdamage: 10,
-        GearPropType.armor_ignore: 10,
-    },
 }
