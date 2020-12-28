@@ -124,6 +124,7 @@ class JobGenerator(ck.JobGenerator):
         Overdrive = pirates.OverdriveWrapper(vEhc, 3, 3, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         NovaGoddessBless = nova.NovaGoddessBlessWrapper(vEhc, 0, 0)
+        Phanteon = nova.PantheonWrapper(vEhc, 0, 0)
     
         EnergyBurst = core.DamageSkill("에너지 버스트", 900, (450+18*vEhc.getV(4,4)) * 3, 15, red = True, cooltime = 120 * 1000).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         
@@ -171,6 +172,6 @@ class JobGenerator(ck.JobGenerator):
                     FinaturaFettucciaBuff, SpotLightBuff, MascortFamilier, NovaGoddessBless,
                     globalSkill.maple_heros(chtr.level, name = "노바의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster()] +\
                 [FinaturaFettuccia, EnergyBurst, MirrorBreak, MirrorSpider] +\
-                [SuperNova, MascortFamilierAttack, ShinyBubbleBreath, SpotLight, TrinityFusionInit] +\
+                [SuperNova, MascortFamilierAttack, ShinyBubbleBreath, SpotLight, TrinityFusionInit, Phanteon] +\
                 [] +\
                 [Trinity_1])
