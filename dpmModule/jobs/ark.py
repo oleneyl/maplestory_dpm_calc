@@ -296,8 +296,8 @@ class JobGenerator(ck.JobGenerator):
 
         EndlessPain = core.DamageSkill("끝없는 고통", 360, 0, 0, cooltime = 3030 + 60 * 1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   # onTick==> 다가오는 죽음
         EndlessPainTick = core.DamageSkill("끝없는 고통(틱)", 180, 300, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #15타
-        EndlessPainEnd = core.DamageSkill("끝없는 고통(종결)", 1200, 100*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 딜레이 : 1200ms 또는 1050ms(이후 연계 시). 일단 1200으로.
-        EndlessPainEnd_Link = core.DamageSkill("끝없는 고통(종결,연계)", 1050, 100*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        EndlessPainEnd = core.DamageSkill("끝없는 고통(종결)", 1200/5, 100*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 딜레이 : 1200ms 또는 1050ms(이후 연계 시). 일단 1200으로. 5회 반복되므로 -> 딜레이 /5
+        EndlessPainEnd_Link = core.DamageSkill("끝없는 고통(종결,연계)", 1050/5, 100*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         EndlessPainBuff = core.BuffSkill("끝없는 고통(버프)", 0, 3 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper) # 정신력 소모되지 않음
         
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60*1000, pdamage = 10, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
@@ -359,7 +359,7 @@ class JobGenerator(ck.JobGenerator):
         ScarletSpell.onAfter(ScarletBuff)
         ScarletSpell.onAfter(core.OptionalElement(ChargeSpellAmplification.is_active, ScarletBuff2))
         ScarletChargeDrive.onAfter(ScarletSpell)
-        ScarletChargeDrive_Link.onAfter(ScarletSpell)      
+        ScarletChargeDrive_Link.onAfter(ScarletSpell)
         ScarletChargeDrive.onAfter(ScarletChargeDrive_After)
         ScarletChargeDrive_Link.onAfter(ScarletChargeDrive_After)
 
@@ -389,14 +389,15 @@ class JobGenerator(ck.JobGenerator):
         RaptRestriction.onAfter(RaptRestrictionEnd.controller(9000))
 
         EndlessPainRepeat = core.RepeatElement(EndlessPainTick, 15)
-        EndlessPainRepeat.onAfter(core.RepeatElement(EndlessPainEnd_Link, 5))
+        EndlessPainEndRepeat = core.RepeatElement(EndlessPainEnd_Link, 5)
+        EndlessPainRepeat.onAfter(EndlessPainEndRepeat)
         EndlessPain.onConstraint(core.ConstraintElement("차지앰플 확인", ChargeSpellAmplification, SpellBuffsArePrepared))
         EndlessPain.onConstraint(core.ConstraintElement("게이지 150 이상", SpecterState, partial(SpecterState.judge, 150, 1)))
         EndlessPain.onAfter(SpecterState.onoffController(True))
         EndlessPain.onAfter(EndlessPainBuff)
         EndlessPain.onAfter(EndlessPainRepeat)
         AdditionalConsumption = core.OptionalElement(MemoryOfSourceBuff.is_not_active, SpecterState.advancedController())
-        EndlessPainEnd.onJustAfter(AdditionalConsumption)
+        EndlessPainEndRepeat.onJustAfter(AdditionalConsumption)
 
         magic_curcuit_full_drive_builder = flora.MagicCircuitFullDriveBuilder(vEhc, 4, 3)
         for sk in (HUMAN_SKILLS_MCF + SPECTER_SKILLS_MCF +
@@ -437,7 +438,7 @@ class JobGenerator(ck.JobGenerator):
         ForeverHungryBeastInit.onConstraint(core.ConstraintElement("게이지 250 이상", SpecterState, partial(SpecterState.judge, 250, 1)))
         ForeverHungryBeastInit.onAfter(SpecterState.onoffController(True))
         ForeverHungryBeastInit.onAfter(ForeverHungryBeastTrigger.controller(6000)) # 6초 후 등장 TODO: 기본 9600+1740ms에 스펙터 스킬 적중시마다 시간 줄어들도록 할것
-        ForeverHungryBeastTrigger.onAfter(core.RepeatElement(ForeverHungryBeast, 20))\
+        ForeverHungryBeastTrigger.onAfter(core.RepeatElement(ForeverHungryBeast, 20))
         
         # 기본 공격 : 540ms 중립스킬
         PlainAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
