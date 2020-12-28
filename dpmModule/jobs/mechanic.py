@@ -151,6 +151,8 @@ class JobGenerator(ck.JobGenerator):
         RoboFactory = core.SummonSkill("로봇 팩토리", 630, 3000, 500+self.combat*5, 3, 30*1000*ROBOT_SUMMON_REMAIN, cooltime=60*1000, red=True, modifier = ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
         RoboFactoryBuff = core.BuffSkill("로봇 팩토리(버프)", 0, 30*1000*ROBOT_SUMMON_REMAIN, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
         RoboFactoryFinal = core.DamageSkill("로봇 팩토리(폭발)", 0, 1000+self.combat*10, 1, modifier = ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+
+        OpenGateBuff = core.BuffSkill("오픈 게이트(버프)", 630*2+600, 300*1000*ROBOT_SUMMON_REMAIN, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)  # 동위치 설치불가, 매시브 1회 손실을 딜레이로 보정
         
         BomberTime = core.BuffSkill("봄버 타임", 900, 10*1000, cooltime = 100*1000).wrap(core.BuffSkillWrapper)
         DistortionField = core.SummonSkill("디스토션 필드", 690, 4000/15, 350, 2, 4000-1, cooltime = 8000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
@@ -213,7 +215,7 @@ class JobGenerator(ck.JobGenerator):
         
         return(MassiveFire,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, MagneticFieldBuff, RoboFactoryBuff, MultipleOptionBuff, MechCarrierBuff, BomberTime, Overdrive,
+                    Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, MagneticFieldBuff, RoboFactoryBuff, OpenGateBuff, MultipleOptionBuff, MechCarrierBuff, BomberTime, Overdrive,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
                 [MicroMissle, MechCarrier, BusterCallInit] +\
                 [HommingMissleHolder, RegistanceLineInfantry, SupportWaver, MagneticField, Robolauncher, RoboFactory, DistortionField, MultipleOption, MirrorBreak, MirrorSpider] +\
