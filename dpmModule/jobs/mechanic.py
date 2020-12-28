@@ -70,7 +70,7 @@ class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.vEnhanceNum = 14
-        self.jobtype = "dex"
+        self.jobtype = "DEX"
         self.jobname = "메카닉"
         self.ability_list = Ability_tool.get_ability_set('passive_level', 'boss_pdamage', 'crit')
         self.preEmptiveSkills = 1

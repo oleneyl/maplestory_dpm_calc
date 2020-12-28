@@ -228,7 +228,7 @@ class Card:
     ]
 
     priority = {
-        "str": {
+        "STR": {
             "order": [
                 2,
                 4,
@@ -243,15 +243,15 @@ class Card:
             ],  # 크확, 크뎀, 방무, 보공, 뎀퍼, 쿨감, 벞지, 주스탯, 제논, 부스탯
             "max": [8, 4, 2, 1, 1, 1, 1, 1, 1, 1, 1],
         },
-        "dex": {
+        "DEX": {
             "order": [2, 4, 5, 6, 7, 9, 10, 0, 8, 1],
             "max": [4, 8, 2, 1, 1, 1, 1, 1, 1, 1, 1],
         },
-        "int": {
+        "INT": {
             "order": [2, 4, 5, 6, 7, 9, 10, 0, 8, 1],
             "max": [7, 5, 2, 1, 1, 1, 1, 1, 1, 1, 1],
         },
-        "luk": {
+        "LUK": {
             "order": [2, 4, 5, 6, 7, 9, 10, 0, 8, 1],
             "max": [5, 4, 2, 1, 1, 1, 1, 1, 1, 1, 1],
         },
@@ -278,7 +278,11 @@ class Card:
         """get_card : 캐릭터카드 효과를 리턴합니다.
         리턴 형태 : Modifier
         """
-        if jobtype not in ["str", "dex", "int", "luk"]:
+        # TODO: 실행을 위해 임시로 변환
+        if jobtype == "LUK2": jobtype = "LUK"
+        if jobtype == "HP": jobtype = "STR"
+        if jobtype == "xenon": jobtype = "LUK"
+        if jobtype not in ["STR", "DEX", "INT", "LUK"]:
             raise TypeError("jobtype must str, dex, int or luk, get:" + str(jobtype))
         retmdf = ExMDF()
         card_4, card_3 = Card.get_apt_slot(ulevel, maplem=maplem)

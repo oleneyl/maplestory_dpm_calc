@@ -118,17 +118,18 @@ class Gear:
             self.additional_potential
         )
         mdf = ExtendedCharacterModifier()
-        stat_main = jobtype
-        att_type = GearPropType.matt if stat_main == "int" else GearPropType.att
-        patt_type = GearPropType.matt_rate if stat_main == "int" else GearPropType.att_rate
+        main_type, main_ptype, sub_type, sub_ptype = _stat_lookup[jobtype]
+        sub_type2 = GearPropType.STR if jobtype == "LUK2" else None
+        att_type = GearPropType.matt if jobtype == "INT" else GearPropType.att
+        patt_type = GearPropType.matt_rate if jobtype == "INT" else GearPropType.att_rate
         for stat_map in stats:
-            mdf.stat_main += stat_map[_stat_lookup[stat_main][0]]
-            mdf.pstat_main += stat_map[_stat_lookup[stat_main][1]]
-            mdf.stat_sub += stat_map[_stat_lookup[stat_sub][0]]
-            mdf.pstat_sub += stat_map[_stat_lookup[stat_sub][1]]
-            if stat_sub2 is not None:
-                mdf.stat_sub += stat_map[_stat_lookup[stat_sub2][0]]
-                mdf.stat_sub += stat_map[_stat_lookup[stat_sub2][1]]
+            mdf.stat_main += stat_map[main_type]
+            mdf.pstat_main += stat_map[main_ptype]
+            mdf.stat_sub += stat_map[sub_type]
+            mdf.pstat_sub += stat_map[sub_ptype]
+            if sub_type2 is not None:
+                # template에서 부스탯%, 부스탯2%가 달라질 경우가 없다고 가정
+                mdf.stat_sub += stat_map[sub_type2]
             mdf.att += stat_map[att_type]
             mdf.patt += stat_map[patt_type]
             mdf.boss_pdamage += stat_map[GearPropType.boss_pdamage]
@@ -249,9 +250,11 @@ class Gear:
 
 
 _stat_lookup = {
-    "str": (GearPropType.STR, GearPropType.STR_rate),
-    "dex": (GearPropType.DEX, GearPropType.DEX_rate),
-    "int": (GearPropType.INT, GearPropType.INT_rate),
-    "luk": (GearPropType.LUK, GearPropType.LUK_rate),
-    "hp": (GearPropType.MHP, GearPropType.MHP_rate)
+    "STR": (GearPropType.STR, GearPropType.STR_rate, GearPropType.DEX, GearPropType.DEX_rate),
+    "DEX": (GearPropType.DEX, GearPropType.DEX_rate, GearPropType.STR, GearPropType.STR_rate),
+    "INT": (GearPropType.INT, GearPropType.INT_rate, GearPropType.LUK, GearPropType.LUK_rate),
+    "LUK": (GearPropType.LUK, GearPropType.LUK_rate, GearPropType.DEX, GearPropType.DEX_rate),
+    "LUK2": (GearPropType.LUK, GearPropType.LUK_rate, GearPropType.DEX, GearPropType.DEX_rate),
+    "HP": (GearPropType.MHP, GearPropType.MHP_rate, GearPropType.STR, GearPropType.STR_rate),
+    "xenon": (GearPropType.LUK, GearPropType.LUK_rate, GearPropType.DEX, GearPropType.DEX_rate)
 }

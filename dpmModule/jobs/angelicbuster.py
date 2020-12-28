@@ -25,7 +25,7 @@ def getAffinityIV(duration): # TODO: 와헌 어나더 바이트처럼 실시간 
 class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):
         super(JobGenerator, self).__init__(vEhc = vEhc)
-        self.jobtype = "dex"
+        self.jobtype = "DEX"
         self.jobname = "엔젤릭버스터"
         self.vEnhanceNum = 12
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')

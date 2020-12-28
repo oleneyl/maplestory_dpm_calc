@@ -1,16 +1,17 @@
 import json
 import os
-from collections import defaultdict
 from copy import deepcopy
+from typing import Union
 
-from dpmModule.gear.GearType import GearType
-from dpmModule.gear.SetItem import eval_set_item_effect
-from dpmModule.kernel.core.modifier import ExtendedCharacterModifier
-from dpmModule.character.characterKernel import GearedCharacter, JobGenerator
 from dpmModule.gear.Gear import Gear
 from dpmModule.gear.GearBuilder import GearBuilder
 from dpmModule.gear.GearPropType import GearPropType
 from dpmModule.gear.Scroll import Scroll
+from dpmModule.gear.GearType import GearType
+from dpmModule.gear.SetItem import eval_set_item_effect
+from dpmModule.kernel.core.modifier import ExtendedCharacterModifier
+from dpmModule.character.characterKernel import GearedCharacter, JobGenerator
+from dpmModule.jobs import job_branch_list
 
 with open(os.path.join(os.path.dirname(__file__), 'configs', 'template.json'), encoding='utf8') as template_file:
     data = json.load(template_file)
@@ -23,24 +24,30 @@ def get_character_template(gen: JobGenerator, unionlevel: int, cdr: int = 0) -> 
     """
     # functions
     def _get_job_branch(jobname: str):
-        return _job_branch[jobname]
+        return job_branch_list[jobname]
 
-    def _get_id_from_name(name: str, part: str):
-        if part == "weapon" or part == "subweapon" or part == "emblem":
-            if name in _weapon_lookup:
-                if job in _weapon_lookup[name]:
-                    return _weapon_lookup[name][job]
-        else:
-            if name in _armor_lookup:
-                if part in _armor_lookup[name]:
-                    ids = _armor_lookup[name][part]
-                    if len(ids) == 6:
-                        return ids[_get_job_branch(job)]
-                    else:
-                        return ids[0]
-        return Gear.get_id_from_name(name)
+    def _get_id_from_name(name: Union[str, int], part: str):
+        try:
+            # name is int or int as str
+            return int(name)
+        except ValueError:
+            # name is str
+            if part == "weapon" or part == "subweapon" or part == "emblem":
+                if name in _weapon_lookup:
+                    if job in _weapon_lookup[name]:
+                        return _weapon_lookup[name][job]
+            else:
+                if name in _armor_lookup:
+                    if part in _armor_lookup[name]:
+                        ids = _armor_lookup[name][part]
+                        if len(ids) == 6:
+                            return ids[_get_job_branch(job)]
+                        else:
+                            return ids[0]
+            return Gear.get_id_from_name(name)
 
     def _get_set_effect(gears, node):
+        # replace to mdf later.
         set_effect = Gear()
         set_effect.name = "세트효과 합계"
         set_effect.type = GearType._dummy
@@ -155,30 +162,33 @@ def get_character_template(gen: JobGenerator, unionlevel: int, cdr: int = 0) -> 
                     GearPropType.MHP: 1000, GearPropType.MMP: 1000, GearPropType.PAD: 5, GearPropType.MAD: 5,
                 })
                 gb.apply_scroll(scroll, gb.scroll_available)
+            else:
+                raise TypeError('Not implemented scroll type: ', scroll_type)
 
-
-        fallback_part = _get_fallback_part(part)
         if part == "subweapon" and gen.jobname == "제로":
             return Gear()
         if part == "subweapon" and gen.jobname == "듀얼블레이드":
             part = "blade"
+
+        main_type, sub_type, sub_type2, att_type, att_rate_type = {
+            "STR": (GearPropType.STR, GearPropType.DEX, None, GearPropType.att, GearPropType.att_rate),
+            "DEX": (GearPropType.DEX, GearPropType.STR,  None, GearPropType.att, GearPropType.att_rate),
+            "INT": (GearPropType.INT, GearPropType.LUK, None, GearPropType.matt, GearPropType.matt_rate),
+            "LUK": (GearPropType.LUK, GearPropType.DEX, None, GearPropType.att, GearPropType.att_rate),
+            "LUK2": (GearPropType.LUK, GearPropType.DEX, GearPropType.STR, GearPropType.att, GearPropType.att_rate),
+            "HP": (GearPropType.MHP, GearPropType.STR, None, GearPropType.att, GearPropType.att_rate),
+            "xenon": (GearPropType.LUK, GearPropType.DEX, GearPropType.STR, GearPropType.att, GearPropType.att_rate),
+        }[gen.jobtype]
+        ######
         gear_id = node["gear_id"][part][0]
         if gear_id == 0:
             gear_id = _get_id_from_name(node["gear_id"][part][1], part)
         if gear_id == 0:
             raise TypeError('Invalid gear_id:', node["gear_id"][part][0], node["gear_id"][part][1], part, job)
-
-        main_type, sub_type, sub_type2, att_type, att_rate_type = {
-            "str": (GearPropType.STR, GearPropType.DEX, None, GearPropType.att, GearPropType.att_rate),
-            "dex": (GearPropType.DEX, GearPropType.STR,  None, GearPropType.att, GearPropType.att_rate),
-            "int": (GearPropType.INT, GearPropType.LUK, None, GearPropType.matt, GearPropType.matt_rate),
-            "luk": (GearPropType.LUK, GearPropType.DEX, None, GearPropType.att, GearPropType.att_rate),
-            "luk2": (GearPropType.LUK, GearPropType.DEX, GearPropType.STR, GearPropType.att, GearPropType.att_rate),
-            "hp": (GearPropType.MHP, GearPropType.STR, None, GearPropType.att, GearPropType.att_rate),
-            "xenon": (GearPropType.LUK, GearPropType.DEX, GearPropType.STR, GearPropType.att, GearPropType.att_rate),
-        }[gen.jobtype]
+        ######
         gear: Gear = Gear.create_from_id(gear_id)
         gb: GearBuilder = GearBuilder(gear)
+        fallback_part = _get_fallback_part(part)
         # 추가옵션
         if _is_addition_gear(part):
             addition_data = _get_part_data(node["addition"], part, fallback_part)
@@ -259,6 +269,7 @@ def get_character_template(gen: JobGenerator, unionlevel: int, cdr: int = 0) -> 
     ]
     template = GearedCharacter(gen=gen, level=node["level"])
     # 아케인심볼 스탯
+    # replace to _get_arcane_stat(arcane_force: int, gen: JobGenerator) -> ExMDF later.
     template.apply_modifiers([ExtendedCharacterModifier(stat_main_fixed=node["arcane_stat"] * 3 if job == "제논" else 1)])
     # 장비
     gear_list = {}
@@ -276,53 +287,6 @@ def get_character_template(gen: JobGenerator, unionlevel: int, cdr: int = 0) -> 
 
     return template
 
-
-# 0: warrior 1: magician 2: bowman 3: thief 4: pirate(str) 5: pirate(dex)
-_job_branch = {
-    "아크메이지불/독": 1,
-    "아크메이지썬/콜": 1,
-    "비숍": 1,
-    "히어로": 0,
-    "팔라딘": 0,
-    "신궁": 2,
-    "윈드브레이커": 2,
-    "소울마스터": 0,
-    "루미너스": 1,
-    "배틀메이지": 1,
-    "메카닉": 5,
-    "메르세데스": 2,
-    "데몬어벤져": 0,
-    "데몬슬레이어": 0,
-    "제논": 3,
-    "다크나이트": 0,
-    "와일드헌터": 2,
-    "플레임위자드": 1,
-    "섀도어": 3,
-    "캐논슈터": 4,
-    "미하일": 0,
-    "듀얼블레이드": 3,
-    "카이저": 0,
-    "캡틴": 5,
-    "엔젤릭버스터": 5,
-    "팬텀": 3,
-    "나이트로드": 3,
-    "은월": 0,
-    "바이퍼": 4,
-    "나이트워커": 3,
-    "스트라이커": 4,
-    "에반": 1,
-    "보우마스터": 2,
-    "제로": 0,
-    "키네시스": 1,
-    "일리움": 1,
-    "패스파인더": 2,
-    "카데나": 3,
-    "아크": 4,
-    "블래스터": 0,
-    "아란": 0,
-    "아델": 0,
-    "호영": 3
-}
 
 _armor_lookup = {
     # "여제": {},

@@ -30,7 +30,7 @@ class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.buffrem = (0, 40)
-        self.jobtype = "int"
+        self.jobtype = "INT"
         self.jobname = "비숍"
         self.vEnhanceNum = 8
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')

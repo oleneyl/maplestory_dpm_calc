@@ -14,7 +14,7 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.buffrem = (12, 12)
         self.vEnhanceNum = 14
-        self.jobtype = "luk"
+        self.jobtype = "LUK"
         self.jobname = "팬텀"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1

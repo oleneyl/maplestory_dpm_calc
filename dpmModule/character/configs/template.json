@@ -57,6 +57,55 @@
       "arcane_stat": 11400,
       "title": "핑아일체",
       "pet": 120,
+
+      "head": {
+        "id": "int: 1234506, str: '1235235', str: '앱솔랩스', str: '실버블라썸 링' / 우선순위: gear_id, predefined_str, gear_name",
+        "addition": {
+          "__": "가능한 값: main, sub, sub2, att(자신에게 맞는 att or matt), allstat(올스탯%), boss_pdamage, pdamage, armor_ignore",
+          "main": 60,
+          "sub": 20,
+          "all_rate": 6
+        },
+        "upgrade": {
+          "__": "미리 정해둔 type 내에서 선택, 장점: 편함, 단점: 새로운 종류의 작을 입력하려면 코드를 수정해야됨",
+          "type": "주문의 흔적",
+          "value": 30
+        },
+        "upgrade2": [
+          {
+            "__": "주문서 종류, 순서를 template에서 정의, 장점: template에서 모든 작 구현 가능, 단점: 귀찮음",
+            "type": "주문의 흔적",
+            "prob": 30,
+            "stat": "main | sub | sub2 | STR | DEX | INT | LUK | HP, 무기 작은 동일하게 입력해도 GearBuilder에서 처리됨.",
+            "count": 3
+          },
+          {
+            "type": "직접",
+            "stat": {
+              "STR": 10,
+              "main": 2,
+              "att": 5
+            },
+            "count": -1,
+            "__": " ^ 음수를 입력하면 남은 업횟을 모두 사용"
+          },
+          {
+            "type": "매지컬",
+            "value": "(코드상에 매지컬, 프악공 등 type을 처리하거나 template.json에서 매지컬의 스탯을 직접 구현하여 입력하거나?)"
+          }
+        ],
+        "star": 22,
+        "potential": {
+          "main_rate": 27,
+          "main": 14,
+          "sub_rate": 9
+        },
+        "add_potential": {
+          "cooltime_reduce": 1,
+          "att": 12
+        }
+      },
+
       "addition": {
         "armor": [120, 30, 0, 0, 0],
         "accessory": [60, 20, 0, 0, 6],

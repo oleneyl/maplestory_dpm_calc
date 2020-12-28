@@ -19,7 +19,7 @@ Advisor:
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.jobtype = "str"
+        self.jobtype = "HP"
         self.jobname = "데몬어벤져"
         self.vEnhanceNum = 12
         # 쓸샾, 쓸뻥, 쓸오더(아직 미구현)

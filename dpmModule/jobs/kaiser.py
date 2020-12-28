@@ -152,7 +152,7 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.vSkillNum = 5
         self.vEnhanceNum = 13
-        self.jobtype = "str"
+        self.jobtype = "STR"
         self.jobname = "카이저"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1

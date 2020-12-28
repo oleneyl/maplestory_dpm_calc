@@ -20,7 +20,7 @@ from ..kernel.core import (
     DotSkillWrapper,
     ExtendedCharacterModifier,
     InformedCharacterModifier,
-    SkillModifier,
+    SkillModifier, defaultdict,
 )
 from ..kernel.graph import (
     GlobalOperation,
@@ -172,6 +172,26 @@ class GearedCharacter(AbstractCharacter):
         self.base_modifier += gear.get_modifier(self.jobtype)
 
     def set_weapon_potential(self, weapon_potential: Dict[str, List[ExMDF]]) -> None:
+        # temp code
+        for gear_id in ["weapon", "subweapon", "emblem"]:
+            potentials = weapon_potential[gear_id]
+            ptnl = ExMDF()
+
+            if len(potentials) > 3:
+                raise TypeError("무기류 잠재능력은 아이템당 최대 3개입니다.")
+
+            for i in range(len(potentials)):
+                ptnl = ptnl + potentials[i]
+
+            potential = defaultdict(int)
+            potential[GearPropType.boss_pdamage] = ptnl.boss_pdamage
+            potential[GearPropType.armor_ignore] = ptnl.armor_ignore
+            potential[GearPropType.att_rate] = potential[GearPropType.matt_rate] = ptnl.patt
+            gear = self.gear_list[gear_id]
+            self.remove_gear_modifier(gear)
+            gear.potential = potential
+            self.add_gear_modifier(gear)
+        '''
         for gear_id in ["weapon", "subweapon", "emblem"]:
             potentials = weapon_potential[gear_id]
             ptnl = ExMDF()
@@ -186,6 +206,7 @@ class GearedCharacter(AbstractCharacter):
             self.remove_gear_modifier(gear)
             gear.potential = ptnl.copy()
             self.add_gear_modifier(gear)
+            '''
 
     '''
     def print_items(self) -> None:
