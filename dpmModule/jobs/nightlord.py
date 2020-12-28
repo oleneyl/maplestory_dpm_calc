@@ -2,7 +2,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import ConditionRule, RuleSet, ConcurrentRunRule, InactiveRule
+from ..execution.rules import ComplexConditionRule, ConditionRule, RuleSet, ConcurrentRunRule, InactiveRule
 from . import globalSkill
 from .jobbranch import thieves
 from . import jobutils
@@ -19,9 +19,18 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 1
 
     def get_ruleset(self):
+        def use_uds(uds, spread, blasting):
+            if spread.is_active():
+                return spread.is_time_left(10000, 1)
+            elif blasting.is_active() and blasting.is_time_left(50000, 1):
+                return spread.is_cooltime_left(50000, 1)
+            else:
+                return False
+        
         ruleset = RuleSet()
-        ruleset.add_rule(ConcurrentRunRule('얼티밋 다크 사이트', '스프레드 스로우'), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule('메이플월드 여신의 축복', '스프레드 스로우'), RuleSet.BASE)
+        ruleset.add_rule(ComplexConditionRule('얼티밋 다크 사이트', ['스프레드 스로우', '스로우 블래스팅(액티브)'], use_uds), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('메이플월드 여신의 축복', '스프레드 스로우', lambda sk: sk.is_active() or sk.is_usable()), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '스로우 블래스팅(액티브)'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('레디 투 다이', '소울 컨트랙트'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('써든레이드', '스프레드 스로우'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('다크 플레어', '스프레드 스로우'), RuleSet.BASE)
