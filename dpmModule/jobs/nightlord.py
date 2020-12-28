@@ -75,6 +75,7 @@ class JobGenerator(ck.JobGenerator):
         레투다를 2번에 한번씩 스프에 맞춰 사용
         '''
         SPREAD_HIT = 3 - options.get("spread_loss", 0)
+        JAVELIN_ATT = core.CharacterModifier(att=29)  # 플레임 표창
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         #Buff skills
@@ -85,7 +86,7 @@ class JobGenerator(ck.JobGenerator):
         BleedingToxinDot = core.DotSkill("블리딩 톡신(도트)", 0, 1000, 1000, 1, 90*1000, cooltime = -1).wrap(core.DotSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        QuarupleThrow = core.DamageSkill("쿼드러플 스로우", 600, 378 + 4 * self.combat, 5, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)    #쉐도우 파트너 적용
+        QuarupleThrow = core.DamageSkill("쿼드러플 스로우", 600, 378 + 4 * self.combat, 5, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20) + JAVELIN_ATT).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)    #쉐도우 파트너 적용
 
         SuddenRaid = core.DamageSkill("써든레이드", 690, 494+5*self.combat, 7, cooltime = (30-2*(self.combat//2))*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 0, 1000, 210 + 4 * self.combat, 1, 10000, cooltime = -1).wrap(core.DotSkillWrapper)
@@ -93,8 +94,8 @@ class JobGenerator(ck.JobGenerator):
         DarkFlare = core.SummonSkill("다크 플레어", 600, 60000 / 62, 280, 1, 60000, cooltime=60000, red=True, rem=True).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)
         
         MARK_PROP = (60+2*passive_level)/(160+2*passive_level)
-        MarkOfNightlord = core.DamageSkill("마크 오브 나이트로드", 0, (60+3*passive_level+chtr.level), MARK_PROP*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        MarkOfNightlordPungma = core.DamageSkill("마크 오브 나이트로드(풍마)", 0, (60+3*passive_level+chtr.level), MARK_PROP*3).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 툴팁대로면 19.355%가 맞으나, 쿼드러플과 동일한 37.5%로 적용되는 중
+        MarkOfNightlord = core.DamageSkill("마크 오브 나이트로드", 0, (60+3*passive_level+chtr.level), MARK_PROP*3, modifier=JAVELIN_ATT).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        MarkOfNightlordPungma = core.DamageSkill("마크 오브 나이트로드(풍마)", 0, (60+3*passive_level+chtr.level), MARK_PROP*3, modifier=JAVELIN_ATT).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 툴팁대로면 19.355%가 맞으나, 쿼드러플과 동일한 37.5%로 적용되는 중
 
         FatalVenom = core.DotSkill("페이탈 베놈", 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 8000, cooltime = -1).wrap(core.DotSkillWrapper)
     
@@ -105,15 +106,15 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         #조건부 파이널어택으로 설정함.
-        SpreadThrowTick = core.DamageSkill("쿼드러플 스로우(스프레드)", 0, (378 + 4 * self.combat)*0.85, 5*SPREAD_HIT, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        SpreadThrowTick = core.DamageSkill("쿼드러플 스로우(스프레드)", 0, (378 + 4 * self.combat)*0.85, 5*SPREAD_HIT, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20) + JAVELIN_ATT).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         SpreadThrowInit = core.BuffSkill("스프레드 스로우", 540, (20+vEhc.getV(0,0))*1000, cooltime = 180*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
         Pungma = core.SummonSkill("풍마수리검", 360, 100, 0, 1, 1450, cooltime = 25*1000, red=True).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)  #10타 가정
-        PungmaHit = core.DamageSkill("풍마수리검(타격)", 0, 250+vEhc.getV(4,4)*10, 5, cooltime = -1).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
+        PungmaHit = core.DamageSkill("풍마수리검(타격)", 0, 250+vEhc.getV(4,4)*10, 5, cooltime = -1, modifier=JAVELIN_ATT).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
         
-        ArcaneOfDarklord = core.SummonSkill("다크로드의 비전서", 360, 1020, 350+14*vEhc.getV(2,2), 7 + 5, 11990, cooltime = 60*1000, red=True, modifier=core.CharacterModifier(boss_pdamage=30)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 132타
-        ArcaneOfDarklordFinal = core.DamageSkill("다크로드의 비전서(막타)", 0, 900+36*vEhc.getV(2,2), 10, cooltime = -1, modifier=core.CharacterModifier(boss_pdamage=30)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        ThrowBlasting = core.DamageSkill("스로우 블래스팅(폭발 부적)", 0, 475+19*vEhc.getV(0,0), 5, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        ArcaneOfDarklord = core.SummonSkill("다크로드의 비전서", 360, 1020, 350+14*vEhc.getV(2,2), 7 + 5, 11990, cooltime = 60*1000, red=True, modifier=core.CharacterModifier(boss_pdamage=30) + JAVELIN_ATT).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 132타
+        ArcaneOfDarklordFinal = core.DamageSkill("다크로드의 비전서(막타)", 0, 900+36*vEhc.getV(2,2), 10, cooltime = -1, modifier=core.CharacterModifier(boss_pdamage=30) + JAVELIN_ATT).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
+        ThrowBlasting = core.DamageSkill("스로우 블래스팅(폭발 부적)", 0, 475+19*vEhc.getV(0,0), 5, cooltime=-1, modifier=JAVELIN_ATT).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ThrowBlastingStack = core.StackSkillWrapper(core.BuffSkill("스로우 블래스팅(부적 스택)", 0, 99999999), 45)
         ThrowBlastingActive = core.BuffSkill("스로우 블래스팅(액티브)", 720, 60000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ThrowBlastingPassive = core.DamageSkill("스로우 블래스팅(패시브)", 0, 0, 0, cooltime=10000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
