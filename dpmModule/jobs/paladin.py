@@ -137,6 +137,7 @@ class JobGenerator(ck.JobGenerator):
                             core.RepeatElement(GrandCrossLargeTick, 41),
                             core.RepeatElement(GrandCrossSmallTick, 15)])
 
+        BlessedHammer.onTick(FinalAttack)
         BlessedHammerActive.onAfter(BlessedHammer.controller(99999999))
         BlessedHammerActive.onEventEnd(BlessedHammer)
 
