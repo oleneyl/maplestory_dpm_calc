@@ -1,7 +1,7 @@
 from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ConcurrentRunRule
+from ..execution.rules import ComplexConditionRule, ConditionRule, RuleSet
 from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
@@ -19,8 +19,24 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 2
 
     def get_ruleset(self):
+        def use_soul_contract(soul_contract, grand_cross, holy_unity):
+            if holy_unity.is_not_active():
+                return False
+            if grand_cross.is_usable() and holy_unity.is_time_left(7000, 1):
+                return True
+            return False
+
+        def use_mighty_mjolnir(mjolnir, unity):
+            if mjolnir.stack >= 2:
+                return True
+            if unity.is_not_active():
+                return False
+            return True
+
         ruleset = RuleSet()
-        ruleset.add_rule(ConcurrentRunRule('그랜드 크로스', '홀리 유니티'), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('그랜드 크로스', '홀리 유니티', lambda sk: sk.is_time_left(7000, 1)), RuleSet.BASE)
+        ruleset.add_rule(ComplexConditionRule('소울 컨트랙트', ['그랜드 크로스', '홀리 유니티'], use_soul_contract), RuleSet.BASE)
+        ruleset.add_rule(ComplexConditionRule('마이티 묠니르(시전)', ['홀리 유니티'], use_mighty_mjolnir), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self):
@@ -91,8 +107,8 @@ class JobGenerator(ck.JobGenerator):
 
         Blast = core.DamageSkill("블래스트", 630, 291, 9+2+1, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
-        MightyMjollnirInit = core.DamageSkill("마이티 묠니르(시전)", 630, 0, 0, cooltime=15000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        MightyMjollnir = core.DamageSkill("마이티 묠니르", 0, 225+9*vEhc.getV(0, 0), 6, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        MightyMjollnirInit = core.StackableDamageSkillWrapper(core.DamageSkill("마이티 묠니르(시전)", 630, 0, 0, cooltime=15000).isV(vEhc, 0, 0), 2)
+        MightyMjollnir = core.DamageSkill("마이티 묠니르", 0, 225+9*vEhc.getV(0, 0), 6, cooltime=-1, modifier=core.CharacterModifier(crit=50)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         MightyMjollnirWave = core.DamageSkill("마이티 묠니르(충격파)", 0, 250+10*vEhc.getV(0, 0), 9, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         # Summon Skills
@@ -135,10 +151,20 @@ class JobGenerator(ck.JobGenerator):
 
         return(
             Blast,
-            [globalSkill.maple_heros(chtr.level, combat_level=2), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
-                Threat, ElementalForce, EpicAdventure, HolyUnity, AuraWeaponBuff, AuraWeapon,
-                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +
-            [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, GrandCross, MightyMjollnirInit, MirrorBreak, MirrorSpider] +
+            [
+                globalSkill.maple_heros(chtr.level, combat_level=2),
+                globalSkill.useful_sharp_eyes(),
+                globalSkill.useful_wind_booster(),
+                Threat,
+                ElementalForce,
+                EpicAdventure,
+                HolyUnity,
+                AuraWeaponBuff,
+                AuraWeapon,
+                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
+                globalSkill.soul_contract()
+            ] +
+            [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, MightyMjollnirInit, GrandCross, MirrorBreak, MirrorSpider] +
             [BlessedHammer, BlessedHammerActive] +
             [Blast]
         )
