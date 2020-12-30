@@ -141,8 +141,8 @@ class JobGenerator(ck.JobGenerator):
 
         #마그네틱 필드는 로봇 마스터리, 하이퍼를 제외한 소환수 지속시간 영향을 받지 않음. 설치 완료 후부터 쿨타임이 돔.
         MagneticFieldInstall = core.DamageSkill("마그네틱 필드(설치)", 630, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
-        MagneticField = core.SummonSkill("마그네틱 필드", 0, 990, 200, 1, 60*1000*(0.4+passive_level*0.01)+10, cooltime = 160*0.75*1000, red=True, modifier = ROBOT_MASTERY).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
-        MagneticFieldBuff = core.BuffSkill("마그네틱 필드(버프)", 0, 60*1000*(0.4+passive_level*0.01)+10, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
+        MagneticField = core.SummonSkill("마그네틱 필드", 0, 990, 200, 1, 60*1000*ROBOT_SUMMON_REMAIN+10000, cooltime = 160*0.75*1000, red=True, modifier = ROBOT_MASTERY).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
+        MagneticFieldBuff = core.BuffSkill("마그네틱 필드(버프)", 0, 60*1000*ROBOT_SUMMON_REMAIN+10000, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
         
         SupportWaver = core.SummonSkill("서포트 웨이버", 630, 80000*ROBOT_SUMMON_REMAIN, 0, 0, 80*1000*ROBOT_SUMMON_REMAIN).wrap(core.SummonSkillWrapper)
         SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*ROBOT_SUMMON_REMAIN, pdamage_indep=10+5+math.ceil(passive_level/3), pdamage = ROBOT_BUFF, cooltime = -1, armor_ignore=10).wrap(core.BuffSkillWrapper)
