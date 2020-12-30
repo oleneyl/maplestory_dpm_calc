@@ -22,7 +22,7 @@ class JobGenerator(ck.JobGenerator):
         def use_soul_contract(soul_contract, grand_cross, holy_unity):
             if holy_unity.is_not_active():
                 return False
-            if grand_cross.is_usable() and holy_unity.is_time_left(7000, 1):
+            if grand_cross.is_usable() and holy_unity.is_time_left(9000, 1):  # 억지로 맞췄는데... 그크 직전에 정확히 쓰도록 해줄 방법이?
                 return True
             return False
 
