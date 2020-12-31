@@ -80,7 +80,8 @@ class JobGenerator(ck.JobGenerator):
 
         passive_level = chtr.get_base_modifier().passive_level+self.combat
 
-        FRENZY_STACK = options.get('frenzy_hit', 2)    # 중첩 수
+        FRENZY_STACK = options.get('frenzy_hit', 2)  # 프렌지 중첩 수
+        BATS_HIT = options.get('bats', 24)  # 배츠 스웜 타수
 
         ######   Skill   ######
 
@@ -119,8 +120,10 @@ class JobGenerator(ck.JobGenerator):
         # 보너스 찬스 70% -> 80%
         EnhancedExceed = core.DamageSkill("인핸스드 익시드", 0, 200+4*passive_level, 2*(0.8+0.04*passive_level), cooltime=-1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
 
-        # 허수아비 상대 24타
-        BatSwarm = core.SummonSkill("배츠 스웜", 840, 330, 200, 1, 24*330).setV(vEhc, 3, 5, True).wrap(core.SummonSkillWrapper)
+        if BATS_HIT > 0:  # avoid dividing by zero
+            BatSwarm = core.SummonSkill("배츠 스웜", 840, 330/(BATS_HIT/24), 200, 1, 24*330).setV(vEhc, 3, 5, True).wrap(core.SummonSkillWrapper)
+        else:
+            BatSwarm = core.SummonSkill("배츠 스웜(미사용)", 0, 0, 0, 0, 0, cooltime=-1).wrap(core.SummonSkillWrapper)
 
         # BloodImprison = core.DamageSkill("블러디 임프리즌", 0, 800, 3, cooltime = 120*1000)
 
