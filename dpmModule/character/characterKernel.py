@@ -126,12 +126,14 @@ class GearedCharacter(AbstractCharacter):
         self.jobname: str = gen.jobname
         self.jobtype: str = gen.jobtype
         self.gear_list: Dict[str, Optional[Gear]] = {
+            # armor
             "head": None,
             "top": None,
             "bottom": None,
             "shoes": None,
             "glove": None,
             "cape": None,
+            # accessory
             "shoulder": None,
             "face": None,
             "eye": None,
@@ -144,12 +146,14 @@ class GearedCharacter(AbstractCharacter):
             "pendant1": None,
             "pendant2": None,
             "pocket": None,
-            "heart": None,
             "badge": None,
             "medal": None,
+            # weapon
             "weapon": None,
             "subweapon": None,
             "emblem": None,
+            # etc
+            "heart": None,
             "title": None,
             "set_effect": None,
         }

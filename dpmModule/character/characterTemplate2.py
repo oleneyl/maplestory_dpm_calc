@@ -1,6 +1,6 @@
 import json
 import os
-from copy import copy
+from copy import deepcopy
 from typing import Optional, Tuple, Union
 
 from dpmModule.gear.Gear import Gear
@@ -37,7 +37,7 @@ with open_json('configs', 'template.json') as template_json:
 
 parts = ("head", "top", "bottom", "shoes", "glove", "cape", "shoulder", "face", "eye", "ear", "belt",
          "ring1", "ring2", "ring3", "ring4", "pendant1", "pendant2",
-         "pocket", "heart", "badge", "medal", "weapon", "subweapon", "emblem", "title")
+         "pocket", "badge", "medal", "weapon", "subweapon", "emblem", "heart", "title")
 
 
 def get_character_template(gen: JobGenerator, ulevel: int, cdr: int = 0) -> GearedCharacter:
@@ -69,15 +69,28 @@ def get_character_template(gen: JobGenerator, ulevel: int, cdr: int = 0) -> Gear
 def _get_template_dict(ulevel: int, jobname: str) -> dict:
     if ulevel not in data:
         raise ValueError('Invalid ulevel: ', ulevel)
-    node: dict = copy(data[ulevel]['default'])
+    # Get job specific copy of node
+    node: dict = deepcopy(data[ulevel]['default'])
     if jobname in data[ulevel]:
         if data[ulevel][jobname]['type'] == "full":
-            node = data[ulevel][jobname]
+            node = deepcopy([ulevel][jobname])
         elif data[ulevel][jobname]['type'] == "override":
             for node_key in data[ulevel][jobname]:
-                node[node_key] = data[ulevel][jobname][node_key]
-    # check if node contains all necessary parts
+                node[node_key] = deepcopy(data[ulevel][jobname][node_key])
+    # Assert node contains all necessary parts
     assert("level" in node and set(parts) <= node.keys())
+    # Apply wildcard options (armor, acc)
+    if "armor" in node:
+        for part in ("head", "top", "bottom", "shoes", "glove", "cape"):
+            for option in node["armor"]:
+                if option not in node[part]:
+                    node[part][option] = node["armor"][option]
+    if "acc" in node:
+        for part in ("shoulder", "face", "eye", "ear", "belt", "ring1", "ring2", "ring3", "ring4",
+                     "pendant1", "pendant2", "pocket", "badge", "medal"):
+            for option in node["acc"]:
+                if option not in node[part]:
+                    node[part][option] = node["acc"][option]
     return node
 
 
