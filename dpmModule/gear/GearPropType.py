@@ -26,3 +26,4 @@ class GearPropType(IntEnum):
     att_rate = 100,  # 공격력%
     matt_rate = 101,  # 마력%
     cooltime_reduce = 131,  # 쿨타임 감소 (잠재옵션, 에디셔널 잠재옵션에 사용)
+    pdamage_indep = 132, # 최종 데미지%

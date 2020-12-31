@@ -1,0 +1,553 @@
+{
+  "summary": [
+    "일반: 22성...",
+    "제논: 놀12..."
+  ],
+  "default": {
+    "level": 260,
+    "arcane_symbol_force": 1320,
+    "authentic_symbol_level": [3],
+    "pet_equip": 98,
+    "pet_set": 20,
+    "cash": {
+      "stat_main": 75,
+      "stat_sub": 75,
+      "stat_sub2": 75,
+      "att": 40
+    },
+    "head": {
+      "id": "앱솔랩스",
+      "bonus": {
+        "stat_main": 120
+      },
+      "upgrade": [
+        {
+          "type": "주문의 흔적",
+          "prob": 30,
+          "stat": "stat_main",
+          "count": -1
+        }
+      ],
+      "star": 22,
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "top": {
+      "id": "카루타",
+      "bonus": {
+        "stat_main": 120
+      },
+      "upgrade": [
+        {
+          "type": "주문의 흔적",
+          "prob": 30,
+          "stat": "stat_main",
+          "count": -1
+        }
+      ],
+      "star": 22,
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "bottom": {
+      "id": "카루타",
+      "bonus": {
+        "stat_main": 120
+      },
+      "upgrade": [
+        {
+          "type": "주문의 흔적",
+          "prob": 30,
+          "stat": "stat_main",
+          "count": -1
+        }
+      ],
+      "star": 22,
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "shoes": {
+      "id": "앱솔랩스",
+      "bonus": {
+        "stat_main": 120
+      },
+      "upgrade": [
+        {
+          "type": "주문의 흔적",
+          "prob": 30,
+          "stat": "stat_main",
+          "count": -1
+        }
+      ],
+      "star": 22,
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "glove": {
+      "id": "앱솔랩스",
+      "bonus": {
+        "stat_main": 120
+      },
+      "upgrade": [
+        {
+          "type": "주문의 흔적",
+          "prob": 30,
+          "stat": "stat_main",
+          "count": -1
+        }
+      ],
+      "star": 22,
+      "potential": {
+        "crit_damage": 16
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "cape": {
+      "id": "앱솔랩스",
+      "bonus": {
+        "stat_main": 120
+      },
+      "upgrade": [
+        {
+          "type": "주문의 흔적",
+          "prob": 30,
+          "stat": "stat_main",
+          "count": -1
+        }
+      ],
+      "star": 22,
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "shoulder": {
+      "id": "앱솔랩스",
+      "upgrade": [
+        {
+          "type": "혼줌",
+          "option": {
+            "att": 6
+          },
+          "count": -1
+        }
+      ],
+      "star": 22,
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "face": {
+      "id": "130얼장",
+      "bonus": {
+        "stat_main": 60,
+        "all_stat_rate": 6
+      },
+      "upgrade": [
+        {
+          "type": "혼줌",
+          "option": {
+            "att": 4
+          },
+          "count": -1
+        }
+      ],
+      "star": 20,
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "eye": {
+      "id": "파풀라투스 마크",
+      "bonus": {
+        "stat_main": 60,
+        "all_stat_rate": 6
+      },
+      "upgrade": [
+        {
+          "type": "혼줌",
+          "option": {
+            "att": 4
+          },
+          "count": -1
+        }
+      ],
+      "star": 22,
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "ear": {
+      "id": "마이스터 이어링",
+      "bonus": {
+        "stat_main": 60,
+        "all_stat_rate": 6
+      },
+      "upgrade": [
+        {
+          "type": "혼줌",
+          "option": {
+            "att": 4
+          },
+          "count": -1
+        }
+      ],
+      "star": 22,
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "belt": {
+      "id": "타일런트",
+      "bonus": {
+        "stat_main": 60,
+        "all_stat_rate": 6
+      },
+      "upgrade": [
+        {
+          "type": "혼줌",
+          "option": {
+            "att": 4
+          },
+          "count": -1
+        }
+      ],
+      "star": 12,
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "ring1": {
+      "id": "고귀한 이피아의 반지",
+      "upgrade": [
+        {
+          "type": "혼줌",
+          "option": {
+            "att": 4
+          },
+          "count": -1
+        }
+      ],
+      "star": 15,
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "ring2": {
+      "id": "마이스터링",
+      "upgrade": [
+        {
+          "type": "혼줌",
+          "option": {
+            "att": 4
+          },
+          "count": -1
+        }
+      ],
+      "star": 22,
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "ring3": {
+      "id": "글로리온 링 : 슈프림",
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "ring4": {
+      "id": "이터널 플레임 링",
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "pendant1": {
+      "id": "130펜던",
+      "bonus": {
+        "stat_main": 20,
+        "all_stat_rate": 4
+      },
+      "upgrade": [
+        {
+          "type": "혼줌",
+          "option": {
+            "att": 4
+          },
+          "count": -1
+        }
+      ],
+      "star": 20,
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "pendant2": {
+      "id": "도미네이터 펜던트",
+      "bonus": {
+        "stat_main": 60,
+        "all_stat_rate": 6
+      },
+      "upgrade": [
+        {
+          "type": "파편",
+          "count": -1
+        }
+      ],
+      "star": 22,
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "pocket": {
+      "id": "핑크빛 성배",
+      "bonus": {
+        "stat_main": 60,
+        "all_stat_rate": 6
+      }
+    },
+    "heart": {
+      "id": "티타늄 하트",
+      "upgrade": [
+        {
+          "type": "매지컬",
+          "value": 10,
+          "count": 5
+        },
+        {
+          "type": "매지컬",
+          "value": 9,
+          "count": -1
+        }
+      ],
+      "star": 8,
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "badge": {
+      "id": "칠요의 뱃지"
+    },
+    "medal": {
+      "id": "칠요의 몬스터파커"
+    },
+    "weapon": {
+      "id": "아케인셰이드",
+      "bonus": {
+        "att_grade": 7
+      },
+      "upgrade": [
+        {
+          "type": "주문의 흔적",
+          "prob": 15,
+          "stat": "stat_main",
+          "count": -1
+        }
+      ],
+      "star": 18,
+      "add_potential": {
+        "patt": 21
+      }
+    },
+    "subweapon": {
+      "id": "보조무기(방패)",
+      "bonus": {
+        "att_grade": 7
+      },
+      "upgrade": [
+        {
+          "type": "혼줌",
+          "option": {
+            "stat_main": 3
+          },
+          "count": -1
+        }
+      ],
+      "star": 20,
+      "add_potential": {
+        "patt": 21
+      }
+    },
+    "emblem": {
+      "id": "엠블렘",
+      "add_potential": {
+        "patt": 21
+      }
+    },
+    "title": {
+      "id": "핑아일체"
+    }
+  },
+  "에반": {
+    "type": "override",
+    "job_specific_item": {
+      "stat_main":
+    }
+  },
+  "메카닉": {
+    "type": "override",
+    "job_specific_item": {
+      "stat_main": ,
+    }
+  },
+  "듀얼블레이드": {
+    "type": "override",
+    "subweapon": {
+      "id": "아케인셰이드",
+      "star": 18,
+      "upgrade": [
+        {
+          "type": "주문의 흔적",
+          "stat": "stat_main",
+          "prob": 15,
+          "count": -1
+        }
+      ],
+      "add_potential": {
+        "patt": 21
+      }
+    }
+  },
+  "제로": {
+    "type": "override",
+    "head": {
+      "id": "카오스 벨룸의 헬름",
+      "bonus": {
+        "stat_main": 20,
+        "all_stat_rate": 4
+      },
+      "upgrade": [
+        {
+          "type": "주문의 흔적",
+          "prob": 30,
+          "stat": "stat_main",
+          "count": -1
+        }
+      ],
+      "star": 22,
+      "potential": {
+        "stat_main": 27,
+        "stat_sub": 9
+      },
+      "add_potential": {
+        "stat_main": 6,
+        "att": 10
+      }
+    },
+    "weapon": {
+      "id": "아케인셰이드",
+      "bonus": {
+        "att_grade": 4
+      },
+      "upgrade": [
+        {
+          "type": "주문의 흔적",
+          "prob": 15,
+          "stat": "stat_main",
+          "count": -1
+        }
+      ],
+      "star": 22,
+      "add_potential": {
+        "patt": 21
+      }
+    },
+    "zero_weapon_set_name": "카루타"
+  },
+  "데몬어벤져": {
+    "type": "full"
+  },
+  "제논": {
+    "type": "full"
+  }
+}

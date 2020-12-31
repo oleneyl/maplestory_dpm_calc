@@ -1,6 +1,6 @@
 import json
 import os
-from typing import List, DefaultDict, Dict
+from typing import List, DefaultDict, Dict, Iterable
 
 from collections import defaultdict
 
@@ -53,7 +53,7 @@ class SetItem:
         return set_item
 
 
-def eval_set_item_effect(equipped_gears: List[Gear]) -> PropMap:
+def eval_set_item_effect(equipped_gears: Iterable[Gear]) -> PropMap:
     gear: Gear
     set_items: Dict[int, SetItem] = {}
     active_joker_id: int = 0
@@ -86,7 +86,6 @@ def eval_set_item_effect(equipped_gears: List[Gear]) -> PropMap:
                     break
     # sum setItem effects
     for set_item in set_items.values():
-        print(set_item.set_item_name, set_item.item_count)
         count = set_item.item_count
         for index in set_item.effects:
             if index <= count:
