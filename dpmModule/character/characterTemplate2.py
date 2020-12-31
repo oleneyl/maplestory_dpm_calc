@@ -73,7 +73,7 @@ def _get_template_dict(ulevel: int, jobname: str) -> dict:
     node: dict = deepcopy(data[ulevel]['default'])
     if jobname in data[ulevel]:
         if data[ulevel][jobname]['type'] == "full":
-            node = deepcopy([ulevel][jobname])
+            node = deepcopy(data[ulevel][jobname])
         elif data[ulevel][jobname]['type'] == "override":
             for node_key in data[ulevel][jobname]:
                 node[node_key] = deepcopy(data[ulevel][jobname][node_key])

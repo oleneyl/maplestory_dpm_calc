@@ -29,11 +29,11 @@
       ],
       "star": 22,
       "potential": {
-        "stat_main": 27,
-        "stat_sub": 9
+        "pstat_main": 27,
+        "pstat_sub": 9
       },
       "add_potential": {
-        "stat_main": 6,
+        "pstat_main": 6,
         "att": 10
       }
     },
@@ -53,11 +53,11 @@
       ],
       "star": 22,
       "potential": {
-        "stat_main": 27,
-        "stat_sub": 9
+        "pstat_main": 27,
+        "pstat_sub": 9
       },
       "add_potential": {
-        "stat_main": 6,
+        "pstat_main": 6,
         "att": 10
       }
     },
@@ -80,27 +80,7 @@
       }
     },
     "cape": {
-      "id": "앱솔랩스",
-      "bonus": {
-        "stat_main": 120
-      },
-      "upgrade": [
-        {
-          "type": "주문의 흔적",
-          "prob": 30,
-          "stat": "stat_main",
-          "count": -1
-        }
-      ],
-      "star": 22,
-      "potential": {
-        "stat_main": 27,
-        "stat_sub": 9
-      },
-      "add_potential": {
-        "stat_main": 6,
-        "att": 10
-      }
+      "id": "앱솔랩스"
     },
     "shoulder": {
       "id": "앱솔랩스",
@@ -112,7 +92,7 @@
           },
           "count": -1
         }
-      ],
+      ]
     },
     "face": {
       "id": "130얼장",
@@ -134,18 +114,22 @@
     },
     "ring1": {
       "id": "고귀한 이피아의 반지",
+      "bonus": {},
       "star": 15
     },
     "ring2": {
-      "id": "마이스터링"
+      "id": "마이스터링",
+      "bonus": {}
     },
     "ring3": {
       "id": "글로리온 링 : 슈프림",
+      "bonus": {},
       "upgrade": [],
       "star": 0
     },
     "ring4": {
       "id": "이터널 플레임 링",
+      "bonus": {},
       "upgrade": [],
       "star": 0
     },
@@ -174,6 +158,7 @@
     },
     "badge": {
       "id": "칠요의 뱃지",
+      "bonus": {},
       "upgrade": [],
       "star": 0,
       "potential": {},
@@ -181,6 +166,7 @@
     },
     "medal": {
       "id": "칠요의 몬스터파커",
+      "bonus": {},
       "upgrade": [],
       "star": 0,
       "potential": {},
@@ -206,14 +192,12 @@
     },
     "subweapon": {
       "id": "보조무기(방패)",
-      "bonus": {
-        "att_grade": 7
-      },
       "upgrade": [
         {
           "type": "혼줌",
           "option": {
-            "stat_main": 3
+            "stat_main": 2,
+            "att": 3
           },
           "count": -1
         }
@@ -245,11 +229,11 @@
       ],
       "star": 8,
       "potential": {
-        "stat_main": 27,
-        "stat_sub": 9
+        "pstat_main": 27,
+        "pstat_sub": 9
       },
       "add_potential": {
-        "stat_main": 6,
+        "pstat_main": 6,
         "att": 10
       }
     },
@@ -266,7 +250,9 @@
   "메카닉": {
     "type": "override",
     "job_specific_item": {
-      "stat_main": ,
+      "stat_main": 18,
+      "stat_sub": 18,
+      "att": 16
     }
   },
   "듀얼블레이드": {
@@ -306,9 +292,261 @@
     "zero_weapon_set_name": "카루타"
   },
   "데몬어벤져": {
-    "type": "full"
+    "type": "full",
   },
   "제논": {
-    "type": "full"
+    "type": "full",
+    "level": 260,
+    "arcane_symbol_force": 1320,
+    "authentic_symbol_level": [3],
+    "pet_equip": 98,
+    "pet_set": 20,
+    "cash": {
+      "stat_main": 75,
+      "stat_sub": 75,
+      "stat_sub2": 75,
+      "att": 40
+    },
+    "armor": {
+      "bonus": {
+        "stat_main": 40,
+        "stat_sub": 40,
+        "stat_sub2": 40,
+        "all_stat_rate": 6
+      },
+      "upgrade": [
+        {
+          "type": "혼줌",
+          "option": {
+            "att": 3
+          },
+          "count": 3
+        },
+        {
+          "type": "주문의 흔적",
+          "prob": 30,
+          "stat": "stat_sub2",
+          "count": 1
+        },
+        {
+          "type": "혼줌",
+          "option": {
+            "att": 2
+          },
+          "count": -1
+        }
+      ],
+      "star": 22,
+      "potential": {
+        "pstat_main": 18,
+        "pstat_sub": 18,
+        "pstat_sub2": 18
+      },
+      "add_potential": {
+        "pstat_main": 2,
+        "pstat_sub": 2,
+        "pstat_sub2": 2,
+        "att": 21
+      }
+    },
+    "acc": {
+      "bonus": {
+        "stat_main": 40,
+        "stat_sub": 40,
+        "stat_sub2": 40,
+        "all_stat_rate": 6
+      },
+      "upgrade": [
+        {
+          "type": "혼줌",
+          "option": {
+            "att": 4
+          },
+          "count": -1
+        }
+      ],
+      "star": 22,
+      "potential": {
+        "pstat_main": 18,
+        "pstat_sub": 18,
+        "pstat_sub2": 18
+      },
+      "add_potential": {
+        "pstat_main": 2,
+        "pstat_sub": 2,
+        "pstat_sub2": 2,
+        "att": 21
+      }
+    },
+    "head": {
+      "id": "앱솔랩스"
+    },
+    "top": {
+      "id": "카루타"
+    },
+    "bottom": {
+      "id": "카루타"
+    },
+    "shoes": {
+      "id": "앱솔랩스"
+    },
+    "glove": {
+      "id": "앱솔랩스",
+      "potential": {
+        "crit_damage": 16
+      }
+    },
+    "cape": {
+      "id": "앱솔랩스",
+    },
+    "shoulder": {
+      "id": "앱솔랩스",
+      "upgrade": [
+        {
+          "type": "혼줌",
+          "option": {
+            "att": 6
+          },
+          "count": -1
+        }
+      ],
+    },
+    "face": {
+      "id": "130얼장",
+      "bonus": {
+        "stat_main": 20,
+        "all_stat_rate": 4
+      },
+      "star": 20
+    },
+    "eye": {
+      "id": "파풀라투스 마크"
+    },
+    "ear": {
+      "id": "마이스터 이어링"
+    },
+    "belt": {
+      "id": "타일런트",
+      "star": 12
+    },
+    "ring1": {
+      "id": "고귀한 이피아의 반지",
+      "bonus": {},
+      "star": 15
+    },
+    "ring2": {
+      "id": "마이스터링",
+      "bonus": {}
+    },
+    "ring3": {
+      "id": "글로리온 링 : 슈프림",
+      "bonus": {},
+      "upgrade": [],
+      "star": 0
+    },
+    "ring4": {
+      "id": "이터널 플레임 링",
+      "bonus": {},
+      "upgrade": [],
+      "star": 0
+    },
+    "pendant1": {
+      "id": "130펜던",
+      "bonus": {
+        "all_stat_rate": 5
+      }
+    },
+    "pendant2": {
+      "id": "도미네이터 펜던트",
+      "upgrade": [
+        {
+          "type": "파편",
+          "count": -1
+        }
+      ]
+    },
+    "pocket": {
+      "id": "핑크빛 성배",
+      "upgrade": [],
+      "star": 0,
+      "potential": {},
+      "add_potential": {}
+    },
+    "badge": {
+      "id": "칠요의 뱃지",
+      "bonus": {},
+      "upgrade": [],
+      "star": 0,
+      "potential": {},
+      "add_potential": {}
+    },
+    "medal": {
+      "id": "칠요의 몬스터파커",
+      "bonus": {},
+      "upgrade": [],
+      "star": 0,
+      "potential": {},
+      "add_potential": {}
+    },
+    "weapon": {
+      "id": "아케인셰이드",
+      "bonus": {
+        "att_grade": 7
+      },
+      "upgrade": [
+        {
+          "type": "주문의 흔적",
+          "prob": 15,
+          "stat": "stat_main",
+          "count": -1
+        }
+      ],
+      "star": 18,
+      "add_potential": {
+        "patt": 21
+      }
+    },
+    "subweapon": {
+      "id": "보조무기(방패)",
+      "add_potential": {
+        "patt": 21
+      }
+    },
+    "emblem": {
+      "id": "엠블렘",
+      "add_potential": {
+        "patt": 21
+      }
+    },
+    "heart": {
+      "id": "티타늄 하트",
+      "upgrade": [
+        {
+          "type": "매지컬",
+          "value": 10,
+          "count": 5
+        },
+        {
+          "type": "매지컬",
+          "value": 9,
+          "count": -1
+        }
+      ],
+      "star": 8,
+      "potential": {
+        "pstat_main": 18,
+        "pstat_sub": 18,
+        "pstat_sub2": 18
+      },
+      "add_potential": {
+        "pstat_main": 2,
+        "pstat_sub": 2,
+        "pstat_sub2": 2,
+        "att": 21
+      }
+    },
+    "title": {
+      "id": "핑아일체"
+    }
   }
 }
