@@ -303,7 +303,7 @@ def chain_sickle(vEhc, combat: int):
     ChainSickle = (
         core.DamageSkill(
             name="[처형] 체인 시클",
-            delay=240,  # base delay 300
+            delay=270,  # base delay 330
             damage=160 + 2 * combat,
             hit=6,
             cooltime=7000,
@@ -316,7 +316,7 @@ def chain_sickle(vEhc, combat: int):
     ChainSickleFinish = (
         core.DamageSkill(
             name="[처형] 체인 시클(마무리 일격)",
-            delay=360,  # base delay 480
+            delay=390,  # base delay 510
             damage=200 + 2 * combat,
             hit=12,
             cooltime=-1,
@@ -334,8 +334,8 @@ def poison_needle(vEhc, combat: int):
     PoisonNeedle = (
         core.DamageSkill(
             name="[처형] 포이즌 니들",
-            delay=360,  # base delay 360
-            damage=225 + 3 * combat,
+            delay=330,  # prepare.time 330
+            damage=235 + 3 * combat,
             hit=8,
             cooltime=15000,
             red=True,
@@ -347,9 +347,9 @@ def poison_needle(vEhc, combat: int):
     PoisonNeedleSpin = (
         core.DamageSkill(  # 연속공격을 스킬 하나에 합쳐둠
             name="[처형] 포이즌 니들(연속 공격)",
-            delay=900 - 360,
-            damage=150 + combat,
-            hit=8 * 5,  # 8타, 5회 반복
+            delay=720 - 330,  # common.updatableTime - prepare.time
+            damage=185 + combat,
+            hit=8 * 4,  # 8타, 4회 반복
             modifier=EXECUTION_BOSSKILLER + EXECUTION_IGNORE_GUARD,
         )
         .setV(vEhc, 0, 2)
@@ -527,7 +527,7 @@ def fatal_blitz(vEhc):
     )
     FatalBlitzEnd = core.DamageSkill(
         name="[처형] 페이탈 블리츠(후딜)",
-        delay=360,
+        delay=180,
         damage=0,
         hit=0,
         cooltime=-1,
@@ -917,7 +917,7 @@ class JobGenerator(ck.JobGenerator):
         AddMalice = core.OptionalElement(
             ThanatosDescent.is_active,
             Malice.stackController(35),
-            Malice.stackController(20),
+            Malice.stackController(18),
         )
         for sk in [
             StrikeArrowI,
