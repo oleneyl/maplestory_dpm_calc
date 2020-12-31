@@ -132,3 +132,15 @@ def crit_defense_ring(level: int = 4):
         armor_ignore=25*level,
         red=True
     ).wrap(core.BuffSkillWrapper)
+
+
+def durability_ring(level: int = 4):
+    # 데몬어벤져 전용
+    return core.BuffSkill(
+        "듀라빌리티 링",
+        delay=0,
+        remain=(6+6*level)*1000,
+        cooltime=180000,
+        pstat_main=100,
+        red=True
+    ).wrap(core.BuffSkillWrapper)
