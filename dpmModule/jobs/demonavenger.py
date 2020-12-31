@@ -82,6 +82,7 @@ class JobGenerator(ck.JobGenerator):
 
         FRENZY_STACK = options.get('frenzy_hit', 2)  # 프렌지 중첩 수
         BATS_HIT = options.get('bats', 24)  # 배츠 스웜 타수
+        DIMENSION_REUSE = options.get('dimension_reuse', False)
 
         ######   Skill   ######
 
@@ -140,8 +141,10 @@ class JobGenerator(ck.JobGenerator):
 
         # 평딜 기준
         # 참고자료: https://blog.naver.com/oe135/221372243858
-        DimensionSword = core.SummonSkill("디멘션 소드", 660, 3000, 1250+14*vEhc.getV(0, 0), 8, 40*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
-        # DimensionSwordReuse = core.SummonSkill("디멘션 소드", 660, 210, 300+vEhc.getV(0, 0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        if not DIMENSION_REUSE:
+            DimensionSword = core.SummonSkill("디멘션 소드", 660, 3000, 1250+14*vEhc.getV(0, 0), 8, 40*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        else:
+            DimensionSword = core.SummonSkill("디멘션 소드", 660, 210, 300+vEhc.getV(0, 0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         # 기본 4000ms
         # 엑큐 2번당 발동하도록 조정
