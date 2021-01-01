@@ -4,7 +4,6 @@ import json
 sys.path.append('../')
 
 from dpmModule.character.characterKernel import JobGenerator
-from dpmModule.character.characterTemplate import get_template_generator
 from dpmModule.kernel.core import CharacterModifier, InformedCharacterModifier
 
 

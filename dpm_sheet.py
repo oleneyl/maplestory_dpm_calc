@@ -3,7 +3,6 @@ from concurrent.futures import ProcessPoolExecutor
 from itertools import product
 from statistics.preset import get_preset_list
 
-from dpmModule.character.characterTemplate import get_template_generator
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
 
 try:

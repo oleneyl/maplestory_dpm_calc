@@ -27,6 +27,10 @@ def get_weapon_att(chtr):
     return chtr.get_weapon_base_att()
 
 
+def get_starforce_count(chtr):
+    return chtr.get_starforce_count()
+
+
 def debug_skill(skill_wrapper):
     skill_wrapper.onJustAfter(
         core.BuffSkill(skill_wrapper._id + "(디버그)", 0, 1, cooltime=-1).wrap(

@@ -2,10 +2,9 @@ import argparse
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
-from dpmModule.character.characterKernel import ItemedCharacter, JobGenerator
-from dpmModule.character.characterTemplate import get_template_generator
+from dpmModule.character.characterKernel import GearedCharacter, JobGenerator
 from dpmModule.execution import rules
-from dpmModule.jobs import jobMap, weaponList
+from dpmModule.jobs import jobMap
 from dpmModule.kernel import core, policy
 from dpmModule.status.ability import Ability_grade
 

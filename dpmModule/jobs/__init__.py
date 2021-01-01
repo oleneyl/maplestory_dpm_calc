@@ -71,11 +71,11 @@ __all__ = [
     "eunwol",
     "luminous",
     "demonslayer",
-    # "demonavenger",
+    "demonavenger",
     "battlemage",
     "wildhunter",
     "mechanic",
-    # "xenon",
+    "xenon",
     "blaster",
     "kaiser",
     # "kain",
@@ -117,11 +117,11 @@ jobMap = {
     "은월": eunwol,
     "루미너스": luminous,
     "데몬슬레이어": demonslayer,
-    # "데몬어벤져": demonavenger,
+    "데몬어벤져": demonavenger,
     "배틀메이지": battlemage,
     "와일드헌터": wildhunter,
     "메카닉": mechanic,
-    # "제논": xenon,
+    "제논": xenon,
     "블래스터": blaster,
     "카이저": kaiser,
     # "카인": kain,
@@ -176,7 +176,9 @@ jobList = {
     "blaster": "블래스터",
     "aran": "아란",
     "adele": "아델",
-    "hoyoung": "호영"
+    "hoyoung": "호영",
+    "xenon": "제논",
+    "demonavenger": "데몬어벤져"
 }
 
 # used for gear lookup

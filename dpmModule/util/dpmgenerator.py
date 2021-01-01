@@ -3,8 +3,7 @@ from dpmModule.character.characterKernel import GearedCharacter, JobGenerator
 
 from ..kernel import core
 
-from ..character.characterTemplate import get_template_generator
-from dpmModule.character.characterTemplate2 import get_character_template
+from dpmModule.character.characterTemplate import get_character_template
 
 import dpmModule.jobs as maplejobs
 
@@ -15,9 +14,8 @@ from dpmModule.execution import rules
 class IndividualDPMGenerator:
     """IndividualDPMGenerator는 단일 직업의 dpm을 연산합니다. 연산을 위해 인자로 job 과 template 를 받습니다."""
 
-    def __init__(self, job, template):
+    def __init__(self, job):
         self.job = job
-        self.template = template
         self.supplier = maplejobs.jobMap[job]
         self.runtime = 1800 * 1000
 
@@ -26,9 +24,8 @@ class IndividualDPMGenerator:
 
     def get_dpm(
         self,
-        ulevel=6000,
-        level=None,
-        weaponstat=[4, 9],
+        ulevel=8000,
+        weaponstat=(4, 9),
         cdr=0,
         options={},
         printFlag=False,
@@ -37,11 +34,9 @@ class IndividualDPMGenerator:
         default_modifier=core.CharacterModifier(),
     ):
         # TODO target을 동적으로 생성할 수 있도록.
-        # target: ItemedCharacter = self.template(maplejobs.weaponList[self.job], cdr)
         gen: JobGenerator = self.supplier.JobGenerator()
         target: GearedCharacter = get_character_template(gen, ulevel)
-        if level is not None:
-            target.unsafe_change_level(level)
+
         v_builder = core.AlwaysMaximumVBuilder()
         graph = gen.package(
             target,
@@ -74,11 +69,10 @@ class IndividualDPMGenerator:
             control.analytics.statistics()
         return analytics.getDPM(restricted=restricted)
 
-    def get_detailed_dpm(self, ulevel=6000, weaponstat=[4, 9], cdr=0, options={}):
+    def get_detailed_dpm(self, ulevel=6000, weaponstat=(4, 9), cdr=0, options={}):
         # TODO target을 동적으로 생성할 수 있도록.
-
-        target: ItemedCharacter = self.template(maplejobs.weaponList[self.job], cdr)
-        gen: JobGenerator = (self.supplier).JobGenerator()
+        gen: JobGenerator = self.supplier.JobGenerator()
+        target: GearedCharacter = get_character_template(gen, ulevel)
 
         # 코어강화량 설정
         v_builder = core.AlwaysMaximumVBuilder()
@@ -90,6 +84,7 @@ class IndividualDPMGenerator:
             weaponstat=weaponstat,
             ability_grade=Ability_grade(4, 1),
         )
+        # 가져온 그래프를 토대로 스케줄러를 생성합니다.
         sche = policy.AdvancedGraphScheduler(
             graph,
             policy.TypebaseFetchingPolicy(
@@ -100,11 +95,13 @@ class IndividualDPMGenerator:
                 ]
             ),
             [rules.UniquenessRule()] + gen.get_predefined_rules(rules.RuleSet.BASE),
-        )  # 가져온 그래프를 토대로 스케줄러를 생성합니다.
-        analytics = core.Analytics()  # 데이터를 분석할 분석기를 생성합니다.
+        )
+        # 데이터를 분석할 분석기를 생성합니다.
+        analytics = core.Analytics()
+        # 시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
         control = core.Simulator(
             sche, target, analytics
-        )  # 시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
+        )
         control.start_simulation(self.runtime)
 
         return {

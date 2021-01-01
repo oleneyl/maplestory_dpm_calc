@@ -154,9 +154,9 @@ class GearedCharacter(AbstractCharacter):
             "emblem": None,
             # etc
             "heart": None,
-            "title": None,
             "set_effect": None,
         }
+        self.title = None
 
     def set_gears(self, gear_dict: Dict[str, Gear]) -> None:
         for key in self.gear_list:
@@ -167,6 +167,12 @@ class GearedCharacter(AbstractCharacter):
 
     def get_weapon_base_att(self) -> int:
         return self.gear_list["weapon"].base_stat[GearPropType.att]
+
+    def get_starforce_count(self) -> int:
+        count = 0
+        for gear in self.gear_list.values():
+            count += gear.star
+        return count
 
     def remove_gear_modifier(self, gear: Gear) -> None:
         self.base_modifier -= gear.get_modifier(self.jobtype)
@@ -217,115 +223,6 @@ class GearedCharacter(AbstractCharacter):
             print("===" + item + "===")
             print(self.itemlist[item].log())
             '''
-
-
-class ItemedCharacter(AbstractCharacter):
-    def __init__(self, level=230) -> None:
-        super(ItemedCharacter, self).__init__(level)
-        self.itemlist: Dict[str, Optional[Item]] = {}
-
-        # 6 items for armor
-        self.itemlist["head"] = None
-        self.itemlist["glove"] = None
-        self.itemlist["top"] = None
-        self.itemlist["bottom"] = None
-        self.itemlist["shoes"] = None
-        self.itemlist["cloak"] = None
-
-        # 13 items for accessory
-
-        self.itemlist["eye"] = None
-        self.itemlist["face"] = None
-        self.itemlist["ear"] = None
-        self.itemlist["belt"] = None
-        self.itemlist["ring1"] = None
-        self.itemlist["ring2"] = None
-        self.itemlist["ring3"] = None
-        self.itemlist["ring4"] = None
-        self.itemlist["shoulder"] = None
-        self.itemlist["pendant1"] = None
-        self.itemlist["pendant2"] = None
-        self.itemlist["pocket"] = None
-        self.itemlist["badge"] = None
-
-        # 3 items for weapon
-
-        self.itemlist["weapon"] = None
-        self.itemlist["subweapon"] = None
-        self.itemlist["emblem"] = None
-
-        # 2 items for else
-
-        self.itemlist["medal"] = None
-        self.itemlist["heart"] = None
-        self.itemlist["title"] = None
-        self.itemlist["pet"] = None
-
-    def remove_item_modifier(self, item: Item) -> None:
-        mdf = item.get_modifier()
-        self.base_modifier = self.base_modifier - mdf
-
-    def add_item_modifier(self, item: Item) -> None:
-        mdf = item.get_modifier()
-        self.base_modifier = self.base_modifier + mdf
-
-    def set_items(self, item_dict: Dict[str, Item]) -> None:
-        keys = [
-            "head",
-            "glove",
-            "top",
-            "bottom",
-            "shoes",
-            "cloak",
-            "eye",
-            "face",
-            "ear",
-            "belt",
-            "ring1",
-            "ring2",
-            "ring3",
-            "ring4",
-            "shoulder",
-            "pendant1",
-            "pendant2",
-            "pocket",
-            "badge",
-            "weapon",
-            "subweapon",
-            "emblem",
-            "medal",
-            "heart",
-            "title",
-            "pet",
-        ]
-
-        for key in keys:
-            item = item_dict[key]
-            if item is None:
-                raise TypeError(key + " item is missing")
-            self.itemlist[key] = item_dict[key]
-            self.add_item_modifier(item_dict[key])
-
-    def set_weapon_potential(self, weapon_potential: Dict[str, List[ExMDF]]) -> None:
-        for item_id in ["weapon", "subweapon", "emblem"]:
-            potentials = weapon_potential[item_id]
-            ptnl = ExMDF()
-
-            if len(potentials) > 3:
-                raise TypeError("무기류 잠재능력은 아이템당 최대 3개입니다.")
-
-            for i in range(len(potentials)):
-                ptnl = ptnl + potentials[i]
-
-            item = self.itemlist[item_id]
-            self.remove_item_modifier(item)
-            item.set_potential(ptnl)
-            self.add_item_modifier(item)
-
-    def print_items(self) -> None:
-        for item in self.itemlist:
-            print("===" + item + "===")
-            print(self.itemlist[item].log())
 
 
 class JobGenerator:

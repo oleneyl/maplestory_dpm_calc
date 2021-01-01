@@ -12,7 +12,7 @@ PropMap = DefaultDict[GearPropType, int]
 
 with open(os.path.join(os.path.dirname(__file__), 'resources', 'geardata.json'), encoding='utf8') as gear_file:
     gear_data = json.load(gear_file)
-with open(os.path.join(os.path.dirname(__file__), 'resources', 'geardata.json'), encoding='utf8') as title_file:
+with open(os.path.join(os.path.dirname(__file__), 'resources', 'titledata.json'), encoding='utf8') as title_file:
     title_data = json.load(title_file)
 
 
@@ -118,26 +118,33 @@ class Gear:
             self.additional_potential
         )
         mdf = ExtendedCharacterModifier()
-        main_type, main_ptype, sub_type, sub_ptype = _stat_lookup[jobtype]
-        sub_type2 = GearPropType.STR if jobtype == "LUK2" else None
-        att_type = GearPropType.matt if jobtype == "INT" else GearPropType.att
-        patt_type = GearPropType.matt_rate if jobtype == "INT" else GearPropType.att_rate
+        from dpmModule.character.characterTemplate import _get_stat_type
+        stat_main, pstat_main, stat_sub, pstat_sub, stat_sub2, pstat_sub2, att, patt = _get_stat_type(jobtype)
         for stat_map in stats:
-            mdf.stat_main += stat_map[main_type]
-            mdf.pstat_main += stat_map[main_ptype]
-            mdf.stat_sub += stat_map[sub_type]
-            mdf.pstat_sub += stat_map[sub_ptype]
-            if sub_type2 is not None:
-                # template에서 부스탯%, 부스탯2%가 달라질 경우가 없다고 가정
-                mdf.stat_sub += stat_map[sub_type2]
-            mdf.att += stat_map[att_type]
-            mdf.patt += stat_map[patt_type]
-            mdf.boss_pdamage += stat_map[GearPropType.boss_pdamage]
-            mdf.armor_ignore += stat_map[GearPropType.armor_ignore]
+            if jobtype == "HP":
+                mdf.stat_main += stat_map[stat_main] / 2
+                mdf.stat_sub += stat_map[stat_sub]
+                mdf.pstat_main += stat_map[pstat_main]
+                mdf.pstat_sub += stat_map[pstat_sub]
+            elif jobtype == "xenon":
+                mdf.stat_main += stat_map[stat_main] + stat_map[stat_sub] + stat_map[stat_sub2]
+                mdf.pstat_main += stat_map[pstat_main]
+            else:
+                mdf.stat_main += stat_map[stat_main]
+                mdf.stat_sub += stat_map[stat_sub]
+                mdf.pstat_main += stat_map[pstat_main]
+                mdf.pstat_sub += stat_map[pstat_sub]
+                if stat_sub2 is not None:
+                    mdf.stat_sub += stat_map[stat_sub2]
+            mdf.att += stat_map[att]
+            mdf.patt += stat_map[patt]
             mdf.pdamage += stat_map[GearPropType.pdamage]
+            mdf.boss_pdamage += stat_map[GearPropType.boss_pdamage]
+            mdf.armor_ignore = 100 - 0.01 * (100 - mdf.armor_ignore) * (100 - stat_map[GearPropType.armor_ignore])
             mdf.crit += stat_map[GearPropType.crit]
             mdf.crit_damage += stat_map[GearPropType.crit_damage]
-            mdf.cooltime_reduce = stat_map[GearPropType.cooltime_reduce]
+            mdf.cooltime_reduce += stat_map[GearPropType.cooltime_reduce]
+            mdf.pdamage_indep += stat_map[GearPropType.pdamage_indep] * (1 + mdf.pdamage_indep * 0.01)
         return mdf
 
     @staticmethod
@@ -241,20 +248,9 @@ class Gear:
 
     @staticmethod
     def create_title_from_name(name: str):
-        if(name not in title_data):
-            return Gear()
+        if name not in title_data:
+            raise ValueError('Gear does not exist with name: ' + name)
         gear = Gear._create_from_node(title_data[name], 2000000)
         gear.item_id = 1
         gear.type = GearType.title
         return gear
-
-
-_stat_lookup = {
-    "STR": (GearPropType.STR, GearPropType.STR_rate, GearPropType.DEX, GearPropType.DEX_rate),
-    "DEX": (GearPropType.DEX, GearPropType.DEX_rate, GearPropType.STR, GearPropType.STR_rate),
-    "INT": (GearPropType.INT, GearPropType.INT_rate, GearPropType.LUK, GearPropType.LUK_rate),
-    "LUK": (GearPropType.LUK, GearPropType.LUK_rate, GearPropType.DEX, GearPropType.DEX_rate),
-    "LUK2": (GearPropType.LUK, GearPropType.LUK_rate, GearPropType.DEX, GearPropType.DEX_rate),
-    "HP": (GearPropType.MHP, GearPropType.MHP_rate, GearPropType.STR, GearPropType.STR_rate),
-    "xenon": (GearPropType.LUK, GearPropType.LUK_rate, GearPropType.DEX, GearPropType.DEX_rate)
-}
