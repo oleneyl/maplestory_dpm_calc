@@ -26,8 +26,7 @@ def test(args):
     preset, ulevel, cdr, runtime = args
     id, jobname, description, options, alt = preset
 
-    template = get_template_generator("high_standard")().get_template(ulevel)
-    parser = IndividualDPMGenerator(jobname, template)
+    parser = IndividualDPMGenerator(jobname)
     parser.set_runtime(runtime * 1000)
     result = parser.get_detailed_dpm(ulevel=ulevel, cdr=cdr, options=options)
     dpm = result["dpm"]
@@ -42,6 +41,8 @@ if __name__ == "__main__":
     tasks = product(get_preset_list(), [ulevel], [0, 2, 4], [args.time])
     pool = ProcessPoolExecutor(max_workers=args.thread)
     results = pool.map(test, tasks)
+    print(results)
+    raise TypeError()
 
     df = pd.DataFrame.from_records(
         results,
