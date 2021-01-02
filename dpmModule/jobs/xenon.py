@@ -1,6 +1,7 @@
+from functools import partial
 from ..kernel import core
 from ..character import characterKernel as ck
-from ..execution.rules import DisableRule, RuleSet, ConcurrentRunRule, ConditionRule
+from ..execution.rules import DisableRule, InactiveRule, RuleSet, ConcurrentRunRule, ConditionRule
 from ..status.ability import Ability_tool
 from . import globalSkill
 from .jobbranch import thieves, pirates
@@ -22,32 +23,56 @@ class SupplyStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
         super(SupplyStackWrapper, self).__init__(skill, 20)
         self.stack = 20
-        self.set_name_style("서플라이 변화 : %d")
         self.amaranth_generator = False
         self.overload_mode = False
         self.tick_duration = 4000
         self.tick = self.tick_duration
 
     # 아마란스 혹은 오버로드 활성화시 에너지 소모 없음
-    def vary(self, d):
-        delta = d
-        if self.amaranth_generator or self.overload_mode:
-            delta = max(0, delta)
+    def consume(self, d):
+        if not self.amaranth_generator and not self.overload_mode:
+            self.stack = max(self.stack - d, 0)
 
-        return super(SupplyStackWrapper, self).vary(delta)
+        return core.ResultObject(
+            0, core.CharacterModifier(), 0, 0, sname=self.skill.name, spec="graph control"
+        )
+
+    def consumeController(self, d):
+        return core.TaskHolder(core.Task(self, partial(self.consume, d)), name=f"에너지 -{d}")
+
+    # 엑스트라, 아마란스는 20개 초과해서 충전되지 않음
+    def charge(self, d):
+        self.stack = min(self.stack + d, max(self.stack, 20))
+        return core.ResultObject(
+            0, core.CharacterModifier(), 0, 0, sname=self.skill.name, spec="graph control"
+        )
+
+    def chargeController(self, d):
+        return core.TaskHolder(core.Task(self, partial(self.charge, d)), name=f"에너지 +{d}")
+
+    def judge_energy(self, stack):
+        if self.amaranth_generator or self.overload_mode:
+            return True
+        else:
+            return super(SupplyStackWrapper, self).judge(stack, 1)
 
     def spend_time(self, time: float) -> None:
+        """
+        스택이 최대치일 경우 틱이 0으로 고정되어, 스택이 소모되거나 제한이 늘어날 때 즉시 한칸이 충전됨
+        """
         self.tick -= time
-        if self.tick <= 0:
-            self.vary(1)
-            self.tick = self.tick_duration
+        if self.stack == self._max:
+            self.tick = 0
+        elif self.tick <= 0:
+            self.stack = min(self.stack + 1, self._max)
+            self.tick = self.tick_duration + self.tick
 
         return super(SupplyStackWrapper, self).spend_time(time)
 
     def get_modifier(self):
-        '''
-        서플러스 서플라이: 서플러스 에너지 1개 당 모든 능력치 1%만큼 증가, 20 초과시 초과 에너지당 최종 데미지 1% 증가
-        '''
+        """
+        서플러스 에너지 1개 당 모든 능력치 1%만큼 증가, 20 초과시 초과 에너지당 최종 데미지 1% 증가
+        """
         return core.CharacterModifier(
             pstat_main=self.stack,
             pstat_sub=self.stack,
@@ -75,7 +100,6 @@ class SupplyStackWrapper(core.StackSkillWrapper):
 
     def begin_amaranth(self):
         self.amaranth_generator = True
-        self.stack = max(20, self.stack)
         return self._result_object_cache
 
     def beginAmaranthGenerator(self):
@@ -98,17 +122,24 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
         self.hyperStatPrefixed = 25  # 스탠스 5레벨 투자
+        self.buffrem = (0, 40)
 
+    # TODO: 포톤 레이가 융합과 함께 사용되는 빈도를 늘릴 수 있음
     def get_ruleset(self):
         ruleset = RuleSet()
+
+        ruleset.add_rule(ConditionRule("엑스트라 서플라이", "서플러스 서플라이", lambda sk : sk.stack < 20), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule("아마란스 제네레이터", "오버로드 모드"), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("아마란스 제네레이터", "서플러스 서플라이", lambda sk : sk.stack <= 1), RuleSet.BASE)
 
         for skill in ["메가 스매셔(개시)", "소울 컨트랙트", "레디 투 다이", "오버 드라이브"]:
             ruleset.add_rule(ConcurrentRunRule(skill, "홀로그램 그래피티 : 융합"), RuleSet.BASE)
 
-        # TODO: 포톤 레이가 융합과 함께 사용되는 빈도를 늘릴 수 있음
-        ruleset.add_rule(ConditionRule("엑스트라 서플라이", "서플러스 서플라이", lambda sk : sk.stack < sk._max - 10), RuleSet.BASE)
-        ruleset.add_rule(DisableRule("멜트다운 익스플로전"), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("홀로그램 그래피티 : 융합", "오버로드 모드", lambda sk: sk.is_time_left(40000, -1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("오버로드 모드", "홀로그램 그래피티 : 융합", lambda sk: sk.is_cooltime_left(70000-40000, -1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("메이플월드 여신의 축복", "오버로드 모드", lambda sk: sk.is_active() and sk.is_time_left(60000, -1)), RuleSet.BASE)
 
+        ruleset.add_rule(DisableRule("멜트다운 익스플로전"), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self):
@@ -152,10 +183,11 @@ class JobGenerator(ck.JobGenerator):
         '''
         하이퍼 스킬: 홀로그램 3종, 퍼지롭 뎀증 + 방무
         '''
+        HOLOGRAM_FUSION_HIT = 680
 
         # Buff skills
-        # 펫버프: 인클라인, 에피션시, 부스터
-        InclinePower = core.BuffSkill("인클라인 파워", 0, 240000, att=30, rem=True).wrap(core.BuffSkillWrapper)
+        # 펫버프: 에피션시, 부스터
+        InclinePower = core.BuffSkill("인클라인 파워", 990, 240000, att=30, rem=True).wrap(core.BuffSkillWrapper)
         EfficiencyPipeLine = core.BuffSkill("에피션시 파이프라인", 0, 240000, rem=True).wrap(core.BuffSkillWrapper)
         Booster = core.BuffSkill("제논 부스터", 0, 240000, rem=True).wrap(core.BuffSkillWrapper)
         VirtualProjection = core.BuffSkill("버추얼 프로젝션", 0, 999999999).wrap(core.BuffSkillWrapper)
@@ -163,7 +195,7 @@ class JobGenerator(ck.JobGenerator):
         # 위컴알에 딜레이 없음
         ExtraSupply = core.BuffSkill("엑스트라 서플라이", 0, 1, cooltime=30000, red=True).wrap(core.BuffSkillWrapper)
 
-        OOPArtsCode = core.BuffSkill("오파츠 코드", 990, (30+self.combat//2)*1000, pdamage_indep=25+self.combat//2, boss_pdamage=30+self.combat).wrap(core.BuffSkillWrapper)
+        OOPArtsCode = core.BuffSkill("오파츠 코드", 990, (30+self.combat//2)*1000, pdamage_indep=25+self.combat//2, boss_pdamage=30+self.combat, rem=True).wrap(core.BuffSkillWrapper)
 
         # Damage skills
 
@@ -215,7 +247,7 @@ class JobGenerator(ck.JobGenerator):
         OverloadHit_copy = core.SummonSkill("오버로드 모드(전류)(버추얼 프로젝션)", 0, (3600+10800)/2, (180+7*vEhc.getV(4, 4))*0.7, 6*4, OVERLOAD_TIME*1000-5100, cooltime=-1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
 
         # 하이퍼 적용됨
-        Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", 930, (30000+10000)/176, 250+10*vEhc.getV(4, 4), 5, 30000+10000, cooltime=100000, red=True, modifier=core.CharacterModifier(pdamage=10)).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
+        Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", 930, (30000+10000)/(HOLOGRAM_FUSION_HIT/5), 250+10*vEhc.getV(4, 4), 5, 30000+10000, cooltime=100000, red=True, modifier=core.CharacterModifier(pdamage=10)).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         Hologram_Fusion_Buff = core.BuffSkill("홀로그램 그래피티 : 융합 (버프)", 0, 30000+10000, pdamage=5+vEhc.getV(4, 4)//2, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         # 30회 발동, 발사 딜레이 생략, 퍼지롭으로 충전
@@ -228,7 +260,7 @@ class JobGenerator(ck.JobGenerator):
         # 홀로그램 스킬들은 융합과 함께 사용불가
         for skill in [Hologram_ForceField, Hologram_Penetrate]:
             skill.onConstraint(core.ConstraintElement(skill._id + '(사용 제한)', Hologram_Fusion, Hologram_Fusion.is_not_active))
-            Hologram_Fusion.onAfter(skill.controller(1, 'set_disabled'))
+            Hologram_Fusion.onJustAfter(skill.controller(1, 'set_disabled'))
 
         PinpointRocketOpt = core.OptionalElement(PinpointRocket.is_available, PinpointRocket)
 
@@ -236,20 +268,24 @@ class JobGenerator(ck.JobGenerator):
         # AegisSystemOpt_ = core.OptionalElement(Hologram_Fusion_Buff.is_active, core.RepeatElement(AegisSystem, 10), core.RepeatElement(AegisSystem, 3))
         # AegisSystemOpt = core.OptionalElement(AegisSystem.is_active, AegisSystemOpt_)
 
-        InclinePower.onAfter(SupplySurplus.stackController(-3))
-        ExtraSupply.onAfter(SupplySurplus.stackController(10))
-        OOPArtsCode.onAfter(SupplySurplus.stackController(-20))
+        ExtraSupply.onJustAfter(SupplySurplus.chargeController(10))
+        AmaranthGenerator.onJustAfter(SupplySurplus.chargeController(20))
 
-        AmaranthGenerator.onAfter(SupplySurplus.beginAmaranthGenerator())
+        InclinePower.onConstraint(core.ConstraintElement("에너지 3", SupplySurplus, partial(SupplySurplus.judge_energy, 3)))
+        InclinePower.onJustAfter(SupplySurplus.consumeController(3))
+        OOPArtsCode.onConstraint(core.ConstraintElement("에너지 20", SupplySurplus, partial(SupplySurplus.judge_energy, 20)))
+        OOPArtsCode.onJustAfter(SupplySurplus.consumeController(20))
+
+        AmaranthGenerator.onJustAfter(SupplySurplus.beginAmaranthGenerator())
         AmaranthGenerator.onEventEnd(SupplySurplus.endAmaranthGenerator())
 
         TriangulationStack = core.StackSkillWrapper(core.BuffSkill("트라이앵글 스택", 0, 99999999), 3)
         TriangulationTrigger = core.OptionalElement(lambda : TriangulationStack.judge(3, 1), Triangulation, TriangulationStack.stackController(0.3))
-        Triangulation.onAfter(TriangulationStack.stackController(0, dtype='set'))
+        Triangulation.onJustAfter(TriangulationStack.stackController(0, dtype='set'))
 
         MegaSmasher.onAfter(core.RepeatElement(MegaSmasherTick, 78))
 
-        OverloadMode.onAfter(SupplySurplus.beginOverloadMode())
+        OverloadMode.onJustAfter(SupplySurplus.beginOverloadMode())
         OverloadMode.onEventEnd(SupplySurplus.endOverloadMode())
         OverloadMode.onEventElapsed(OverloadHit, 5100)
         OverloadMode.onEventElapsed(OverloadHit_copy, 5100)
@@ -258,19 +294,23 @@ class JobGenerator(ck.JobGenerator):
         PhotonRay.onEventElapsed(PhotonRayHit, 690*15)
 
         for sk in [PurgeSnipe, MeltDown, MegaSmasherTick]:
-            sk.onAfter(TriangulationTrigger)
-            sk.onAfter(PinpointRocketOpt)
+            sk.onJustAfter(TriangulationTrigger)
+            sk.onJustAfter(PinpointRocketOpt)
             jobutils.create_auxilary_attack(sk, 0.7, nametag="(버추얼 프로젝션)")
 
-        MeltDown.onAfter(MeltDown_Armor)
-        MeltDown.onAfter(MeltDown_Damage)
+        MeltDown.onJustAfter(MeltDown_Armor)
+        MeltDown.onJustAfter(MeltDown_Damage)
 
         OverloadHit.onTick(TriangulationTrigger)
         OverloadHit.onTick(PinpointRocketOpt)
 
-        Hologram_Fusion.onAfter(Hologram_Fusion_Buff)
+        Hologram_Fusion.onJustAfter(Hologram_Fusion_Buff)
 
         PinpointRocket.protect_from_running()
+
+        # Scheduling
+        EnsureOOPArtsCode = core.OptionalElement(lambda: OverloadMode.is_active() and OOPArtsCode.is_time_left(16000, -1), OOPArtsCode)
+        MegaSmasher.onBefore(EnsureOOPArtsCode)
 
         return (
             PurgeSnipe,
@@ -284,11 +324,11 @@ class JobGenerator(ck.JobGenerator):
                 InclinePower,
                 EfficiencyPipeLine,
                 VirtualProjection,
-                ExtraSupply,
                 LuckyDice,
-                OOPArtsCode,
-                AmaranthGenerator,
+                ExtraSupply,
                 OverloadMode,
+                AmaranthGenerator,
+                OOPArtsCode,
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                 Overdrive,
                 ReadyToDie,
