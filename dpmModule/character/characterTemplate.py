@@ -53,19 +53,17 @@ def get_character_template(gen: JobGenerator, ulevel: int, cdr: int = 0) -> Gear
     ])
     # Equip title
     template.title = _get_title(node)
-    # template.add_gear_modifier(template.title)
+    template.add_gear_modifier(template.title)
     # Equip gears
     gear_list = {}
     for part in parts:
-        gear_list[part] = _get_enchanted_gear(part, node, gen)
-    # Apply cdr
-    # TODO: Implement cdr
-    # Change zero subweapon
+        gear_list[part] = _get_enchanted_gear(part, node, gen, cdr)
+    # Set zero subweapon
     if gen.jobname == "제로":
         gear_list["subweapon"] = _get_zero_subweapon(gear_list["weapon"])
-    # Apply set item effects
-    # Change set item effect to mdf after mdf change
+    # Get set item effects
     gear_list["set_effect"] = _get_set_effect(gear_list, node)
+    # Apply gear, set item effect to character mdf
     template.set_gears(gear_list)
     return template
 
@@ -161,8 +159,8 @@ def _get_title(node):
     return Gear.create_title_from_name(node["title"]['id'])
 
 
-def _get_enchanted_gear(part: str, node, gen: JobGenerator):
-    return _apply_gear_options(_get_gear_base(node[part]['id'], part, gen.jobname), node[part], gen.jobtype)
+def _get_enchanted_gear(part: str, node, gen: JobGenerator, cdr: int):
+    return _apply_gear_options(_get_gear_base(node[part]['id'], part, gen.jobname), node[part], gen.jobtype, cdr)
 
 
 def _get_gear_base(name: Union[int, str], part: str, jobname: str) -> Gear:
@@ -194,35 +192,19 @@ def _get_gear_base(name: Union[int, str], part: str, jobname: str) -> Gear:
     return Gear.create_from_id(name)
 
 
-def _apply_gear_options(gear: Gear, gear_node, jobtype: str):
-    stat_main, pstat_main, stat_sub, pstat_sub, stat_sub2, pstat_sub2, att, patt = _get_stat_type(jobtype)
-    stat_type = {
-        "stat_main": stat_main, "pstat_main": pstat_main,
-        "stat_sub": stat_sub, "pstat_sub": pstat_sub,
-        "stat_sub2": stat_sub2, "pstat_sub2": pstat_sub2,
-        "att": att, "patt": patt,
-        "pdamage": GearPropType.pdamage,
-        "boss_pdamage": GearPropType.boss_pdamage,
-        "armor_ignore": GearPropType.armor_ignore,
-        "crit": GearPropType.crit,
-        "crit_damage": GearPropType.crit_damage,
-        "cooltime_reduce": GearPropType.cooltime_reduce,
-        "pdamage_indep": GearPropType.pdamage_indep,
-    }
-    gb = GearBuilder(gear)
-    # 추가옵션
-    if 'bonus' in gear_node:
-        for bonus_type in gear_node['bonus']:
+def _apply_gear_options(gear: Gear, gear_node, jobtype: str, cdr):
+    def _apply_bonus(bonus_node):
+        for bonus_type in bonus_node:
             if bonus_type == "att_grade":
-                gb.apply_additional_stat(att, gear_node['bonus'][bonus_type])
+                gb.apply_additional_stat(att, bonus_node[bonus_type])
             elif bonus_type == "all_stat_rate":
-                gb.apply_additional_stat(GearPropType.allstat, gear_node['bonus'][bonus_type])
+                gb.apply_additional_stat(GearPropType.allstat, bonus_node[bonus_type])
             else:
-                gear.additional_stat[stat_type[bonus_type]] = gear_node['bonus'][bonus_type]
-    # 주문서 강화
-    if 'upgrade' in gear_node and gear.tuc > 0:
+                gear.additional_stat[stat_type[bonus_type]] = bonus_node[bonus_type]
+
+    def _apply_upgrade(upgrade_node):
         gb.apply_hammer()
-        for scroll in gear_node['upgrade']:
+        for scroll in upgrade_node:
             type = scroll['type']
             count = scroll['count']
             if count < 0:
@@ -250,8 +232,8 @@ def _apply_gear_options(gear: Gear, gear_node, jobtype: str):
                 gb.apply_scroll(Scroll.create_from_dict(stat), count)
             else:
                 raise TypeError('Invalid upgrade type: ', type)
-    # 스타포스 강화
-    if 'star' in gear_node:
+
+    def _apply_star(gear_node):
         star = gear_node['star']
         if star > 0:
             gb.apply_stars(star)
@@ -262,14 +244,55 @@ def _apply_gear_options(gear: Gear, gear_node, jobtype: str):
             bonus_count = star * bonus // 100
             gb.apply_stars(star - bonus_count, True, False)
             gb.apply_stars(bonus_count, True, True)
+
+    def _apply_potential(potential_node, gear_potential_dict):
+        gear_potential_dict.clear()
+        for stat_key in potential_node:
+            if stat_key == "all_stat_rate":
+                gear_potential_dict[pstat_main] += gear_node['potential'][stat_key]
+                gear_potential_dict[pstat_sub] += gear_node['potential'][stat_key]
+                gear_potential_dict[pstat_sub2] += gear_node['potential'][stat_key]
+            gear_potential_dict[stat_type[stat_key]] += gear_node['potential'][stat_key]
+
+    stat_main, pstat_main, stat_sub, pstat_sub, stat_sub2, pstat_sub2, att, patt = _get_stat_type(jobtype)
+    stat_type = {
+        "stat_main": stat_main, "pstat_main": pstat_main,
+        "stat_sub": stat_sub, "pstat_sub": pstat_sub,
+        "stat_sub2": stat_sub2, "pstat_sub2": pstat_sub2,
+        "att": att, "patt": patt,
+        "pdamage": GearPropType.pdamage,
+        "boss_pdamage": GearPropType.boss_pdamage,
+        "armor_ignore": GearPropType.armor_ignore,
+        "crit": GearPropType.crit,
+        "crit_damage": GearPropType.crit_damage,
+        "cooltime_reduce": GearPropType.cooltime_reduce,
+        "pdamage_indep": GearPropType.pdamage_indep,
+    }
+    gb = GearBuilder(gear)
+    # 추가옵션
+    if 'bonus' in gear_node:
+        _apply_bonus(gear_node['bonus'])
+    # 주문서 강화
+    if 'upgrade' in gear_node and gear.tuc > 0:
+        _apply_upgrade(gear_node['upgrade'])
+    # 스타포스 강화
+    if 'star' in gear_node:
+        _apply_star(gear_node)
     # 잠재능력
     if 'potential' in gear_node:
-        for stat_key in gear_node['potential']:
-            gear.potential[stat_type[stat_key]] = gear_node['potential'][stat_key]
+        _apply_potential(gear_node['potential'], gear.potential)
     # 에디셔널 잠재능력
     if 'add_potential' in gear_node:
-        for stat_key in gear_node['add_potential']:
-            gear.additional_potential[stat_type[stat_key]] = gear_node['add_potential'][stat_key]
+        _apply_potential(gear_node['add_potential'], gear.additional_potential)
+
+    if gear.type == GearType.cap and cdr > 0:
+        if "cdr" not in gear_node or str(cdr) not in gear_node["cdr"]:
+            raise ValueError('template does not contain cdr information for cdr input: ' + str(cdr))
+        cdr_node = gear_node["cdr"][str(cdr)]
+        if 'potential' in cdr_node:
+            _apply_potential(cdr_node['potential'], gear.potential)
+        if 'add_potential' in cdr_node:
+            _apply_potential(cdr_node['add_potential'], gear.additional_potential)
     return gear
 
 

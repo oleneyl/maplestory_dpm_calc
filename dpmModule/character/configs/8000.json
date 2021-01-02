@@ -62,7 +62,33 @@
       }
     },
     "head": {
-      "id": "앱솔랩스"
+      "id": "앱솔랩스",
+      "cdr": {
+        "1": {
+          "potential": {
+            "cooltime_reduce": 1,
+            "stat_main": 18
+          }
+        },
+        "2": {
+          "potential": {
+            "cooltime_reduce": 2,
+            "stat_main": 15
+          }
+        },
+        "3": {
+          "potential": {
+            "cooltime_reduce": 3,
+            "stat_main": 6
+          }
+        },
+        "4": {
+          "potential": {
+            "cooltime_reduce": 4,
+            "stat_main": -3
+          }
+        }
+      }
     },
     "top": {
       "id": "카루타"
@@ -280,7 +306,32 @@
       "bonus": {
         "stat_main": 20,
         "all_stat_rate": 4
-      }
+      },
+      "cdr": {
+        "1": {
+          "potential": {
+            "cooltime_reduce": 1,
+            "stat_main": 18
+          }
+        },
+        "2": {
+          "potential": {
+            "cooltime_reduce": 2,
+            "stat_main": 15
+          }
+        },
+        "3": {
+          "potential": {
+            "cooltime_reduce": 3,
+            "stat_main": 6
+          }
+        },
+        "4": {
+          "potential": {
+            "cooltime_reduce": 4,
+            "stat_main": -3
+          }
+        }
     },
     "weapon": {
       "id": "아케인셰이드",
@@ -357,7 +408,32 @@
       }
     },
     "head": {
-      "id": "앱솔랩스"
+      "id": "앱솔랩스",
+      "cdr": {
+        "1": {
+          "potential": {
+            "cooltime_reduce": 1,
+            "stat_main": 18
+          }
+        },
+        "2": {
+          "potential": {
+            "cooltime_reduce": 2,
+            "stat_main": 15
+          }
+        },
+        "3": {
+          "potential": {
+            "cooltime_reduce": 3,
+            "stat_main": 6
+          }
+        },
+        "4": {
+          "potential": {
+            "cooltime_reduce": 4,
+            "stat_main": -3
+          }
+        }
     },
     "top": {
       "id": "카루타"
@@ -601,7 +677,32 @@
       }
     },
     "head": {
-      "id": "앱솔랩스"
+      "id": "앱솔랩스",
+      "cdr": {
+        "1": {
+          "potential": {
+            "cooltime_reduce": 1,
+            "stat_main": 18
+          }
+        },
+        "2": {
+          "potential": {
+            "cooltime_reduce": 2,
+            "stat_main": 15
+          }
+        },
+        "3": {
+          "potential": {
+            "cooltime_reduce": 3,
+            "stat_main": 6
+          }
+        },
+        "4": {
+          "potential": {
+            "cooltime_reduce": 4,
+            "stat_main": -3
+          }
+        }
     },
     "top": {
       "id": "카루타"

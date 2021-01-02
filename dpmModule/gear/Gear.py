@@ -150,7 +150,7 @@ class Gear:
         mdf.armor_ignore = 100 - 0.01 * (100 - mdf.armor_ignore) * (100 - stat_map[GearPropType.armor_ignore])
         mdf.crit += stat_map[GearPropType.crit]
         mdf.crit_damage += stat_map[GearPropType.crit_damage]
-        mdf.cooltime_reduce += stat_map[GearPropType.cooltime_reduce]
+        mdf.cooltime_reduce += stat_map[GearPropType.cooltime_reduce] * 1000
         mdf.pdamage_indep += stat_map[GearPropType.pdamage_indep] * (1 + mdf.pdamage_indep * 0.01)
         return mdf
 
