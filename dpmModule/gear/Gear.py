@@ -108,7 +108,7 @@ class Gear:
             return 0
         return data[2 if self.superior_eqp else 1]
 
-    def get_modifier(self, jobtype: str) -> ExtendedCharacterModifier:
+    def get_stat_map(self):
         stats = (
             self.base_stat,
             self.additional_stat,
@@ -117,34 +117,41 @@ class Gear:
             self.potential,
             self.additional_potential
         )
-        mdf = ExtendedCharacterModifier()
+        stat_map = defaultdict(int)
+        for _stat_map in stats:
+            for key in _stat_map:
+                stat_map[key] += _stat_map[key]
+        return stat_map
+
+    def get_modifier(self, jobtype: str) -> ExtendedCharacterModifier:
         from dpmModule.character.characterTemplate import _get_stat_type
         stat_main, pstat_main, stat_sub, pstat_sub, stat_sub2, pstat_sub2, att, patt = _get_stat_type(jobtype)
-        for stat_map in stats:
-            if jobtype == "HP":
-                mdf.stat_main += stat_map[stat_main] / 2
-                mdf.stat_sub += stat_map[stat_sub]
-                mdf.pstat_main += stat_map[pstat_main]
-                mdf.pstat_sub += stat_map[pstat_sub]
-            elif jobtype == "xenon":
-                mdf.stat_main += stat_map[stat_main] + stat_map[stat_sub] + stat_map[stat_sub2]
-                mdf.pstat_main += stat_map[pstat_main]
-            else:
-                mdf.stat_main += stat_map[stat_main]
-                mdf.stat_sub += stat_map[stat_sub]
-                mdf.pstat_main += stat_map[pstat_main]
-                mdf.pstat_sub += stat_map[pstat_sub]
-                if stat_sub2 is not None:
-                    mdf.stat_sub += stat_map[stat_sub2]
-            mdf.att += stat_map[att]
-            mdf.patt += stat_map[patt]
-            mdf.pdamage += stat_map[GearPropType.pdamage]
-            mdf.boss_pdamage += stat_map[GearPropType.boss_pdamage]
-            mdf.armor_ignore = 100 - 0.01 * (100 - mdf.armor_ignore) * (100 - stat_map[GearPropType.armor_ignore])
-            mdf.crit += stat_map[GearPropType.crit]
-            mdf.crit_damage += stat_map[GearPropType.crit_damage]
-            mdf.cooltime_reduce += stat_map[GearPropType.cooltime_reduce]
-            mdf.pdamage_indep += stat_map[GearPropType.pdamage_indep] * (1 + mdf.pdamage_indep * 0.01)
+        stat_map = self.get_stat_map()
+        mdf = ExtendedCharacterModifier()
+        if jobtype == "HP":
+            mdf.stat_main += stat_map[stat_main] / 2
+            mdf.stat_sub += stat_map[stat_sub]
+            mdf.pstat_main += stat_map[pstat_main]
+            mdf.pstat_sub += stat_map[pstat_sub]
+        elif jobtype == "xenon":
+            mdf.stat_main += stat_map[stat_main] + stat_map[stat_sub] + stat_map[stat_sub2]
+            mdf.pstat_main += stat_map[pstat_main]
+        else:
+            mdf.stat_main += stat_map[stat_main]
+            mdf.stat_sub += stat_map[stat_sub]
+            mdf.pstat_main += stat_map[pstat_main]
+            mdf.pstat_sub += stat_map[pstat_sub]
+            if stat_sub2 is not None:
+                mdf.stat_sub += stat_map[stat_sub2]
+        mdf.att += stat_map[att]
+        mdf.patt += stat_map[patt]
+        mdf.pdamage += stat_map[GearPropType.pdamage]
+        mdf.boss_pdamage += stat_map[GearPropType.boss_pdamage]
+        mdf.armor_ignore = 100 - 0.01 * (100 - mdf.armor_ignore) * (100 - stat_map[GearPropType.armor_ignore])
+        mdf.crit += stat_map[GearPropType.crit]
+        mdf.crit_damage += stat_map[GearPropType.crit_damage]
+        mdf.cooltime_reduce += stat_map[GearPropType.cooltime_reduce]
+        mdf.pdamage_indep += stat_map[GearPropType.pdamage_indep] * (1 + mdf.pdamage_indep * 0.01)
         return mdf
 
     @staticmethod

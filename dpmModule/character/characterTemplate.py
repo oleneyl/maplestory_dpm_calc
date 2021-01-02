@@ -229,6 +229,8 @@ def _apply_gear_options(gear: Gear, gear_node, jobtype: str):
                 prob = scroll['prob']
                 stat = stat_type[scroll['stat']]
                 gb.apply_spell_trace_scroll(prob, stat, count)
+            elif type == "방공" or type == "악공":
+                gb.apply_scroll(Scroll.create_from_dict({att: scroll['value']}), count)
             elif type == "매지컬":
                 value = scroll['value']
                 gb.apply_scroll(Scroll.create_from_dict({

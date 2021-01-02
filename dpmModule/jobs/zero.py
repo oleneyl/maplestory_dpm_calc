@@ -71,13 +71,7 @@ class JobGenerator(ck.JobGenerator):
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-5)
         ResolutionTime = core.InformedCharacterModifier("리졸브 타임", pdamage_indep=25, stat_main=50)
 
-        # 4카5앱 임시 구현
-        # 유니온 6000 기준 (17성 카벨모 vs 17성 카루타 모자)
-        LuckyHat_Temp_6000 = core.ExtendedCharacterModifier(boss_pdamage=30) - core.ExtendedCharacterModifier(armor_ignore=10, stat_main=21, stat_sub=21, pstat_main=5, pstat_sub=5, att=3)
-        LuckyHat_Temp_8000 = core.ExtendedCharacterModifier(boss_pdamage=30, att=50) - core.ExtendedCharacterModifier(armor_ignore=10, stat_main=30+31, stat_sub=31, pstat_main=3, pstat_sub=3, att=8)
-        LuckyHat_Temp = core.InformedCharacterModifier.from_extended_modifier("카오스 벨룸의 헬름 (임시)", LuckyHat_Temp_6000)
-
-        return [Mastery, ResolutionTime, LuckyHat_Temp]
+        return [Mastery, ResolutionTime]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         ArmorSplit = core.InformedCharacterModifier("아머 스플릿", armor_ignore=50)

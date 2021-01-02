@@ -31,8 +31,7 @@
       ],
       "star": 22,
       "potential": {
-        "pstat_main": 27,
-        "pstat_sub": 9
+        "pstat_main": 27
       },
       "add_potential": {
         "pstat_main": 6,
@@ -48,17 +47,14 @@
       },
       "upgrade": [
         {
-          "type": "혼줌",
-          "option": {
-            "att": 4
-          },
+          "type": "악공",
+          "value": 4,
           "count": -1
         }
       ],
       "star": 22,
       "potential": {
-        "pstat_main": 27,
-        "pstat_sub": 9
+        "pstat_main": 27
       },
       "add_potential": {
         "pstat_main": 6,
@@ -92,7 +88,7 @@
         {
           "type": "혼줌",
           "option": {
-            "att": 6
+            "att": 5
           },
           "count": -1
         }
@@ -188,19 +184,19 @@
           "count": -1
         }
       ],
-      "star": 18,
+      "star": 22,
       "add_potential": {
         "patt": 21
       }
     },
     "subweapon": {
-      "id": "보조무기(방패)",
+      "id": "보조무기",
       "upgrade": [
         {
           "type": "혼줌",
           "option": {
             "stat_main": 2,
-            "att": 3
+            "att": 2
           },
           "count": -1
         }
@@ -232,8 +228,7 @@
       ],
       "star": 8,
       "potential": {
-        "pstat_main": 27,
-        "pstat_sub": 9
+        "pstat_main": 27
       },
       "add_potential": {
         "pstat_main": 6,
@@ -247,9 +242,8 @@
   "에반": {
     "type": "override",
     "job_specific_item": {
-      "stat_main": 50,
-      "stat_sub": 50,
-      "att": 9
+      "stat_main": 46,
+      "stat_sub": 46
     }
   },
   "메카닉": {
@@ -264,7 +258,7 @@
     "type": "override",
     "subweapon": {
       "id": "아케인셰이드",
-      "star": 18,
+      "star": 22,
       "upgrade": [
         {
           "type": "주문의 흔적",
@@ -290,7 +284,7 @@
     "weapon": {
       "id": "아케인셰이드",
       "bonus": {
-        "att_grade": 4
+        "att_grade": 5
       },
       "star": 22
     },
@@ -322,8 +316,7 @@
       ],
       "star": 22,
       "potential": {
-        "pstat_main": 27,
-        "pstat_sub": 9
+        "pstat_main": 27
       },
       "add_potential": {
         "pstat_main": 7,
@@ -337,17 +330,14 @@
       },
       "upgrade": [
         {
-          "type": "혼줌",
-          "option": {
-            "att": 4
-          },
+          "type": "악공",
+          "value": 4,
           "count": -1
         }
       ],
       "star": 22,
       "potential": {
-        "pstat_main": 27,
-        "pstat_sub": 9
+        "pstat_main": 27
       },
       "add_potential": {
         "pstat_main": 7,
@@ -381,7 +371,7 @@
         {
           "type": "혼줌",
           "option": {
-            "att": 6
+            "att": 5
           },
           "count": -1
         }
@@ -475,13 +465,13 @@
           "count": -1
         }
       ],
-      "star": 18,
+      "star": 22,
       "add_potential": {
         "patt": 21
       }
     },
     "subweapon": {
-      "id": "보조무기(방패)",
+      "id": "보조무기",
       "add_potential": {
         "patt": 21
       }
@@ -508,8 +498,7 @@
       ],
       "star": 8,
       "potential": {
-        "pstat_main": 27,
-        "pstat_sub": 9
+        "pstat_main": 27
       },
       "add_potential": {
         "pstat_main": 7,
@@ -542,10 +531,8 @@
       },
       "upgrade": [
         {
-          "type": "혼줌",
-          "option": {
-            "att": 3
-          },
+          "type": "방공",
+          "value": 3,
           "count": 3
         },
         {
@@ -555,10 +542,8 @@
           "count": 1
         },
         {
-          "type": "혼줌",
-          "option": {
-            "att": 2
-          },
+          "type": "방공",
+          "value": 2,
           "count": -1
         }
       ],
@@ -584,10 +569,8 @@
       },
       "upgrade": [
         {
-          "type": "혼줌",
-          "option": {
-            "att": 4
-          },
+          "type": "악공",
+          "value": 4,
           "count": -1
         }
       ],
@@ -631,7 +614,7 @@
         {
           "type": "혼줌",
           "option": {
-            "att": 6
+            "att": 5
           },
           "count": -1
         }
@@ -726,13 +709,13 @@
           "count": -1
         }
       ],
-      "star": 18,
+      "star": 22,
       "add_potential": {
         "patt": 21
       }
     },
     "subweapon": {
-      "id": "보조무기(방패)",
+      "id": "보조무기",
       "add_potential": {
         "patt": 21
       }
