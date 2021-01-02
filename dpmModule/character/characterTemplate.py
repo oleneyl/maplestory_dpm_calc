@@ -90,12 +90,14 @@ def _get_template_dict(ulevel: int, jobname: str) -> dict:
             for option in node["armor"]:
                 if option not in node[part]:
                     node[part][option] = node["armor"][option]
+        del node["armor"]
     if "acc" in node:
         for part in ("shoulder", "face", "eye", "ear", "belt", "ring1", "ring2", "ring3", "ring4",
                      "pendant1", "pendant2", "pocket", "badge", "medal"):
             for option in node["acc"]:
                 if option not in node[part]:
                     node[part][option] = node["acc"][option]
+        del node["acc"]
     return node
 
 
@@ -195,9 +197,9 @@ def _get_gear_base(name: Union[int, str], part: str, jobname: str) -> Gear:
 def _apply_gear_options(gear: Gear, gear_node, jobtype: str):
     stat_main, pstat_main, stat_sub, pstat_sub, stat_sub2, pstat_sub2, att, patt = _get_stat_type(jobtype)
     stat_type = {
-        "stat_main": stat_main, "stat_sub": stat_sub,
-        "stat_sub2": stat_sub2, "pstat_main": pstat_main,
-        "pstat_sub": pstat_sub, "pstat_sub2": pstat_sub2,
+        "stat_main": stat_main, "pstat_main": pstat_main,
+        "stat_sub": stat_sub, "pstat_sub": pstat_sub,
+        "stat_sub2": stat_sub2, "pstat_sub2": pstat_sub2,
         "att": att, "patt": patt,
         "pdamage": GearPropType.pdamage,
         "boss_pdamage": GearPropType.boss_pdamage,

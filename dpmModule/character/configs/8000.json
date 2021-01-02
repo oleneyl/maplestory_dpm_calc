@@ -84,6 +84,7 @@
     },
     "shoulder": {
       "id": "앱솔랩스",
+      "bonus": {},
       "upgrade": [
         {
           "type": "혼줌",
@@ -258,7 +259,6 @@
     "type": "override",
     "subweapon": {
       "id": "아케인셰이드",
-      "star": 22,
       "upgrade": [
         {
           "type": "주문의 흔적",
@@ -267,6 +267,7 @@
           "count": -1
         }
       ],
+      "star": 22,
       "add_potential": {
         "patt": 21
       }
@@ -286,7 +287,18 @@
       "bonus": {
         "att_grade": 5
       },
-      "star": 22
+      "upgrade": [
+        {
+          "type": "주문의 흔적",
+          "stat": "stat_main",
+          "prob": 15,
+          "count": -1
+        }
+      ],
+      "star": 22,
+      "add_potential": {
+        "patt": 21
+      }
     },
     "zero_weapon_set_name": "카루타"
   },
@@ -367,6 +379,7 @@
     },
     "shoulder": {
       "id": "앱솔랩스",
+      "bonus": {},
       "upgrade": [
         {
           "type": "혼줌",
@@ -471,7 +484,7 @@
       }
     },
     "subweapon": {
-      "id": "보조무기",
+      "id": "방패(보조무기)",
       "add_potential": {
         "patt": 21
       }
@@ -610,6 +623,7 @@
     },
     "shoulder": {
       "id": "앱솔랩스",
+      "bonus": {},
       "upgrade": [
         {
           "type": "혼줌",
@@ -715,7 +729,7 @@
       }
     },
     "subweapon": {
-      "id": "보조무기",
+      "id": "방패(보조무기)",
       "add_potential": {
         "patt": 21
       }
