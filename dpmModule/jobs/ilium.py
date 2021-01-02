@@ -120,6 +120,7 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 12
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
+        self.combat = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -325,7 +326,7 @@ class JobGenerator(ck.JobGenerator):
         OverloadMana = overload_mana_builder.get_buff()
 
         return(BasicAttackWrapper,
-                [SoulOfCrystalPassive, globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                [SoulOfCrystalPassive, globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=0), globalSkill.useful_sharp_eyes(),
                     Booster, FastCharge, WraithOfGod, MagicCircuitFullDrive, FloraGoddessBless, SoulOfCrystal,
                     Craft_Javelin_EnhanceBuff, CrystalCharge, GloryWingUse,
                     OverloadMana, BlessMark, CurseMark, CrystalGate, CrystalGateBuff,

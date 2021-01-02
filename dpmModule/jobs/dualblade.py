@@ -2,7 +2,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ConditionRule
+from ..execution.rules import ComplexConditionRule, RuleSet, ConditionRule
 from . import globalSkill
 from .jobbranch import thieves
 from . import jobutils
@@ -33,8 +33,7 @@ class JobGenerator(ck.JobGenerator):
         Sharpness = core.InformedCharacterModifier("샤프니스", crit = 35 + 3 * passive_level, crit_damage = 13 + passive_level)
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 2, 2)
         
-        return [Karma, PhisicalTraining, SornsEffect, DualBladeExpert, Sharpness,
-                            ReadyToDiePassive]
+        return [Karma, PhisicalTraining, SornsEffect, DualBladeExpert, Sharpness, ReadyToDiePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -46,9 +45,19 @@ class JobGenerator(ck.JobGenerator):
         def check_final_cut_time(final_cut):
             return (final_cut.is_not_usable() and final_cut.is_cooltime_left(80*1000, 1)) # 파컷 직후 써레 1번만 쓰는게 더 효율적임
 
+        def sync_burst_buff(burst_buff, blade_storm, ultimate_dark_sight):
+            if blade_storm.is_usable():
+                if ultimate_dark_sight.is_cooltime_left(80000, 1) or ultimate_dark_sight.is_active():
+                    return True
+            return False
+
         ruleset = RuleSet()
         ruleset.add_rule(ConditionRule('써든레이드', '파이널 컷', check_final_cut_time), RuleSet.BASE)
-        # ruleset.add_rule(ConcurrentRunRule('블레이드 스톰', '얼티밋 다크 사이트'), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('아수라', '카르마 퓨리', lambda sk: sk.is_cooltime_left(6000, 1)), RuleSet.BASE)  # TODO: 쿨감 4초기준 최적화, 쿨감 수치를 받아와서 처리해야 함
+        ruleset.add_rule(ComplexConditionRule('레디 투 다이', ['블레이드 스톰', '얼티밋 다크 사이트'], sync_burst_buff), RuleSet.BASE)
+        ruleset.add_rule(ComplexConditionRule('소울 컨트랙트', ['블레이드 스톰', '얼티밋 다크 사이트'], sync_burst_buff), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('블레이드 스톰', '얼티밋 다크 사이트', lambda sk: sk.is_active() or sk.is_cooltime_left(80000, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('메이플월드 여신의 축복', '얼티밋 다크 사이트', lambda sk: sk.is_active() or sk.is_usable()), RuleSet.BASE)
         return ruleset
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -98,7 +107,7 @@ class JobGenerator(ck.JobGenerator):
         KarmaFury = core.DamageSkill("카르마 퓨리", 750, 400+16*vEhc.getV(1,1), 7 * 5, red = True, cooltime = 10000, modifier = core.CharacterModifier(armor_ignore = 30)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         BladeTornado = core.DamageSkill("블레이드 토네이도", 540, 600+24*vEhc.getV(2,2), 7, red = True, cooltime = 12000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
         BladeTornadoSummon = core.SummonSkill("블레이드 토네이도(소환)", 0, 3000/5, 400+16*vEhc.getV(2,2), 6, 3000-1, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
-        BladeTornadoSummonMirrorImaging = core.SummonSkill("블레이드 토네이도(소환)(미러이미징)", 0, 540, (400+16*vEhc.getV(2,2)) * 0.7, 6, 3000, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
+        BladeTornadoSummonMirrorImaging = core.SummonSkill("블레이드 토네이도(소환)(미러이미징)", 0, 3000/5, (400+16*vEhc.getV(2,2)) * 0.7, 6, 3000-1, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
 
         HauntedEdge = core.DamageSkill("헌티드 엣지-나찰", 0, 200+8*vEhc.getV(0,0), 4*5, cooltime=14000, red=True, modifier=core.CharacterModifier(armor_ignore=30)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
@@ -116,7 +125,7 @@ class JobGenerator(ck.JobGenerator):
         for sk in [PhantomBlow, AsuraTick, BladeStormTick]:
             sk.onAfter(Venom)
         
-        AsuraRepeat = core.RepeatElement(AsuraTick, 28)
+        AsuraRepeat = core.RepeatElement(AsuraTick, 26)  # 최대 28회까지 가능하나, dpm 최적화를 위해 26회로 설정함.
         Asura.onAfter(AsuraRepeat)
         AsuraRepeat.onAfter(AsuraEnd)
 

@@ -141,8 +141,8 @@ class JobGenerator(ck.JobGenerator):
 
         #마그네틱 필드는 로봇 마스터리, 하이퍼를 제외한 소환수 지속시간 영향을 받지 않음. 설치 완료 후부터 쿨타임이 돔.
         MagneticFieldInstall = core.DamageSkill("마그네틱 필드(설치)", 630, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
-        MagneticField = core.SummonSkill("마그네틱 필드", 0, 990, 200, 1, 60*1000*(0.4+passive_level*0.01)+10, cooltime = 160*0.75*1000, red=True, modifier = ROBOT_MASTERY).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
-        MagneticFieldBuff = core.BuffSkill("마그네틱 필드(버프)", 0, 60*1000*(0.4+passive_level*0.01)+10, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
+        MagneticField = core.SummonSkill("마그네틱 필드", 0, 990, 200, 1, 60*1000*ROBOT_SUMMON_REMAIN+10000, cooltime = 160*0.75*1000, red=True, modifier = ROBOT_MASTERY).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
+        MagneticFieldBuff = core.BuffSkill("마그네틱 필드(버프)", 0, 60*1000*ROBOT_SUMMON_REMAIN+10000, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
         
         SupportWaver = core.SummonSkill("서포트 웨이버", 630, 80000*ROBOT_SUMMON_REMAIN, 0, 0, 80*1000*ROBOT_SUMMON_REMAIN).wrap(core.SummonSkillWrapper)
         SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*ROBOT_SUMMON_REMAIN, pdamage_indep=10+5+math.ceil(passive_level/3), pdamage = ROBOT_BUFF, cooltime = -1, armor_ignore=10).wrap(core.BuffSkillWrapper)
@@ -151,6 +151,8 @@ class JobGenerator(ck.JobGenerator):
         RoboFactory = core.SummonSkill("로봇 팩토리", 630, 3000, 500+self.combat*5, 3, 30*1000*ROBOT_SUMMON_REMAIN, cooltime=60*1000, red=True, modifier = ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
         RoboFactoryBuff = core.BuffSkill("로봇 팩토리(버프)", 0, 30*1000*ROBOT_SUMMON_REMAIN, cooltime = -1, pdamage = ROBOT_BUFF).wrap(core.BuffSkillWrapper)
         RoboFactoryFinal = core.DamageSkill("로봇 팩토리(폭발)", 0, 1000+self.combat*10, 1, modifier = ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+
+        OpenGateBuff = core.BuffSkill("오픈 게이트(버프)", 630*2+600, 300*1000*ROBOT_SUMMON_REMAIN, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)  # 동위치 설치불가, 매시브 1회 손실을 딜레이로 보정
         
         BomberTime = core.BuffSkill("봄버 타임", 900, 10*1000, cooltime = 100*1000).wrap(core.BuffSkillWrapper)
         DistortionField = core.SummonSkill("디스토션 필드", 690, 4000/15, 350, 2, 4000-1, cooltime = 8000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
@@ -213,7 +215,7 @@ class JobGenerator(ck.JobGenerator):
         
         return(MassiveFire,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, MagneticFieldBuff, RoboFactoryBuff, MultipleOptionBuff, MechCarrierBuff, BomberTime, Overdrive,
+                    Booster, WillOfLiberty, LuckyDice, SupportWaverBuff, RobolauncherBuff, MagneticFieldBuff, RoboFactoryBuff, OpenGateBuff, MultipleOptionBuff, MechCarrierBuff, BomberTime, Overdrive,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
                 [MicroMissle, MechCarrier, BusterCallInit] +\
                 [HommingMissleHolder, RegistanceLineInfantry, SupportWaver, MagneticField, Robolauncher, RoboFactory, DistortionField, MultipleOption, MirrorBreak, MirrorSpider] +\
