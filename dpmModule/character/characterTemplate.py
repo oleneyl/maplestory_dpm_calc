@@ -155,7 +155,8 @@ def _get_job_specific_item_modifier(node):
 
 
 def _get_title(node):
-    assert("title" in node)
+    if "title" not in node:
+        raise TypeError('template does not contain title.')
     return Gear.create_title_from_name(node["title"]['id'])
 
 
@@ -249,10 +250,10 @@ def _apply_gear_options(gear: Gear, gear_node, jobtype: str, cdr):
         gear_potential_dict.clear()
         for stat_key in potential_node:
             if stat_key == "all_stat_rate":
-                gear_potential_dict[pstat_main] += gear_node['potential'][stat_key]
-                gear_potential_dict[pstat_sub] += gear_node['potential'][stat_key]
-                gear_potential_dict[pstat_sub2] += gear_node['potential'][stat_key]
-            gear_potential_dict[stat_type[stat_key]] += gear_node['potential'][stat_key]
+                gear_potential_dict[pstat_main] += potential_node[stat_key]
+                gear_potential_dict[pstat_sub] += potential_node[stat_key]
+                gear_potential_dict[pstat_sub2] += potential_node[stat_key]
+            gear_potential_dict[stat_type[stat_key]] += potential_node[stat_key]
 
     stat_main, pstat_main, stat_sub, pstat_sub, stat_sub2, pstat_sub2, att, patt = _get_stat_type(jobtype)
     stat_type = {
@@ -284,7 +285,7 @@ def _apply_gear_options(gear: Gear, gear_node, jobtype: str, cdr):
     # 에디셔널 잠재능력
     if 'add_potential' in gear_node:
         _apply_potential(gear_node['add_potential'], gear.additional_potential)
-
+    # 모자 쿨타임 감소 옵션
     if gear.type == GearType.cap and cdr > 0:
         if "cdr" not in gear_node or str(cdr) not in gear_node["cdr"]:
             raise ValueError('template does not contain cdr information for cdr input: ' + str(cdr))

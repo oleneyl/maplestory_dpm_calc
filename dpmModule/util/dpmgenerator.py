@@ -35,7 +35,7 @@ class IndividualDPMGenerator:
     ):
         # TODO target을 동적으로 생성할 수 있도록.
         gen: JobGenerator = self.supplier.JobGenerator()
-        target: GearedCharacter = get_character_template(gen, ulevel)
+        target: GearedCharacter = get_character_template(gen, ulevel, cdr)
 
         v_builder = core.AlwaysMaximumVBuilder()
         graph = gen.package(
