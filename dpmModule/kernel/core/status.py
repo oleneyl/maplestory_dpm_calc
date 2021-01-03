@@ -14,13 +14,15 @@ class CharacterStatus:
         "pdamage",
         "pdamage_indep",
         "stat",
-        "pstat",
+        "stat_rate",
         "boss_pdamage",
         "armor_ignore",
-        "patt",
         "att",
+        "matt",
+        "att_rate",
+        "matt_rate",
         "stat_fixed",
-        "hp"
+        "MHP"
     )
     """CharacterStatus : Holds information about character modifiing factors ex ) pdamage, stat, att%, etc.AbstractSkill
     - parameters
@@ -33,7 +35,7 @@ class CharacterStatus:
 
       .stat : stat, [STR, DEX, INT, LUK]
 
-      .pstat : stat increment %, [STR, DEX, INT, LUK]
+      .stat_rate : stat increment %, [STR, DEX, INT, LUK]
 
       .boss_pdamage : Boss Attack Damage increment%
       .armor_ignore : Armor Ignorance %
@@ -41,7 +43,7 @@ class CharacterStatus:
       .att : AD increment
       .patt : AD increment %
 
-      .hp : HP
+      .MHP : MHP
 
       * Additional parameters can be involved with inherit this class.
 
@@ -53,14 +55,29 @@ class CharacterStatus:
         crit_damage: float = 0,
         pdamage: float = 0,
         pdamage_indep: float = 0,
-        stat: float = 0,
-        pstat: float = 0,
-        stat_fixed: float = 0,
-        hp: float = 0,
+        stat: list = [0, 0, 0, 0],
+        stat_rate: list = [0, 0, 0, 0],
+        stat_fixed: list = [0, 0, 0, 0],
+        MHP: float = 0,
         boss_pdamage: float = 0,
         armor_ignore: float = 0,
+
         att: float = 0,
-        patt: float = 0
+        matt: float = 0,
+        att_rate: float = 0,
+        matt_rate: float = 0,
+
+        STR: float = 0,
+        DEX: float = 0,
+        INT: float = 0,
+        LUK: float = 0,
+
+        pSTR: float = 0,
+        pDEX: float = 0,
+        pINT: float = 0,
+        pLUK: float = 0,
+
+        
     ) -> None:
         self.crit: float = crit
         self.crit_damage: float = crit_damage
@@ -69,15 +86,17 @@ class CharacterStatus:
         self.pdamage_indep: float = pdamage_indep
 
         self.stat: list = stat
-        self.pstat: list = pstat
+        self.stat_rate: list = stat_rate
         self.stat_fixed: list = stat_fixed
-        self.hp: float = hp
+        self.MHP: float = MHP
 
         self.boss_pdamage: float = boss_pdamage
         self.armor_ignore: float = armor_ignore
 
-        self.att: list = att
-        self.patt: list = patt
+        self.att: float = att
+        self.matt: float = matt
+        self.att_rate: float = att_rate
+        self.matt_rate: float = matt_rate
 
     def __iadd__(self, arg: CharacterStatus) -> CharacterStatus:
         self.crit += arg.crit
@@ -89,19 +108,20 @@ class CharacterStatus:
 
         for i in range(4):
             self.stat[i] += arg.stat[i]
-            self.pstat[i] += arg.pstat[i]
+            self.stat_rate[i] += arg.stat_rate[i]
             self.stat_fixed[i] += arg.stat_fixed[i]
 
-        self.hp += arg.hp
+        self.MHP += arg.MHP
 
         self.boss_pdamage += arg.boss_pdamage
         self.armor_ignore = 100 - 0.01 * (
             (100 - self.armor_ignore) * (100 - arg.armor_ignore)
         )
 
-        for i in range(2):
-            self.patt[i] += arg.patt[i]
-            self.att[i] += arg.att[i]
+        self.att += arg.att
+        self.matt += arg.matt
+        self.att_rate += arg.att_rate
+        self.matt_rate += arg.matt_rate
 
         return self
 
@@ -118,14 +138,16 @@ class CharacterStatus:
             pdamage_indep=(100 + self.pdamage_indep) / (100 + arg.pdamage_indep) * 100
             - 100,
             stat=[self.stat[i] - arg.stat[i] for i in range(4)],
-            pstat=[self.pstat[i] - arg.pstat[i] for i in range(4)],
+            stat_rate=[self.stat_rate[i] - arg.stat_rate[i] for i in range(4)],
             stat_fixed=[self.stat_fixed[i] - arg.stat_fixed[i] for i in range(4)],
-            hp=(self.hp - arg.hp),
+            MHP=(self.MHP - arg.MHP),
             boss_pdamage=(self.boss_pdamage - arg.boss_pdamage),
             armor_ignore=100
             - 100 * (100 - self.armor_ignore) / (100 - arg.armor_ignore),
-            patt=[self.patt[i] - arg.patt[i] for i in range(2)],
-            att=[self.att[i] - arg.att[i] for i in range(2)],
+            att=self.att - arg.att,
+            matt=self.matt - arg.matt,
+            att_rate=self.att_rate - arg.att_rate,
+            matt_rate=self.matt_rate - arg.matt_rate,
         )
 
     def copy(self) -> CharacterStatus:
@@ -136,15 +158,17 @@ class CharacterStatus:
             pdamage_indep=self.pdamage_indep,
 
             stat=[i for i in self.stat],
-            pstat=[i for i in self.pstat],
+            stat_rate=[i for i in self.stat_rate],
             stat_fixed=[i for i in self.stat_fixed],
-            hp=self.hp,
+            MHP=self.MHP,
 
             boss_pdamage=self.boss_pdamage,
             armor_ignore=self.armor_ignore,
 
-            patt=[i for i in self.patt],
-            att=[i for i in self.att],
+            att=self.att,
+            matt=self.matt,
+            att_rate=self.att_rate,
+            matt_rate=self.matt_rate
         )
 
     def extend(self) -> ExtendedCharacterStatus:
@@ -154,13 +178,15 @@ class CharacterStatus:
             pdamage=self.pdamage,
             pdamage_indep=self.pdamage_indep,
             stat=self.stat,
-            pstat=self.pstat,
+            stat_rate=self.stat_rate,
             stat_fixed=self.stat_fixed,
-            hp=self.hp,
+            MHP=self.MHP,
             boss_pdamage=self.boss_pdamage,
             armor_ignore=self.armor_ignore,
-            patt=self.patt,
-            att=self.att
+            att=self.att,
+            matt=self.matt,
+            att_rate=self.att_rate,
+            matt_rate=self.matt_rate
         )
 
     def log(self) -> str:
@@ -170,12 +196,13 @@ class CharacterStatus:
             self.pdamage_indep,
         )
         txt += "stat : %s\n" % '.'.join(map(str, self.stat))
-        txt += "pstat : %s\n" % '.'.join(map(str, self.pstat))
+        txt += "stat_rate : %s\n" % '.'.join(map(str, self.stat_rate))
         txt += "stat_fixed : %s\n" % '.'.join(map(str, self.stat_fixed))
         txt += "att : %s\n" % '.'.join(map(str, self.att))
 
-        txt += "hp : %.1f\n" % (self.hp)
-        txt += "att : %.1f, patt : %.1f\n" % (self.att, self.patt)
+        txt += "MHP : %.1f\n" % (self.MHP)
+        txt += "att : %.1f, att_rate : %.1f\n" % (self.att, self.att_rate)
+        txt += "matt : %.1f, matt_rate : %.1f\n" % (self.matt, self.matt_rate)
         return txt
 
     def as_dict(self) -> Dict[str, float]:
@@ -185,13 +212,15 @@ class CharacterStatus:
             "pdamage": self.pdamage,
             "pdamage_indep": self.pdamage_indep,
             "stat": self.stat,
-            "pstat": self.pstat,
+            "stat_rate": self.stat_rate,
             "stat_fixed": self.stat_fixed,
-            "hp": self.hp,
+            "MHP": self.MHP,
             "boss_pdamage": self.boss_pdamage,
             "armor_ignore": self.armor_ignore,
-            "patt": self.patt,
             "att": self.att,
+            "matt": self.matt,
+            "att_rate": self.att_rate,
+            "matt_rate": self.matt_rate
         }
 
 class DynamicCharacterStatus(DynamicVariableInstance, CharacterStatus):
@@ -212,13 +241,15 @@ class DynamicCharacterStatus(DynamicVariableInstance, CharacterStatus):
             pdamage=self.pdamage.evaluate(),
             pdamage_indep=self.pdamage_indep.evaluate(),
             stat=self.stat.evaluate(),
-            pstat=self.pstat.evaluate(),
+            stat_rate=self.stat_rate.evaluate(),
             stat_fixed=self.stat_fixed.evaluate(),
-            hp=self.hp.evaluate(),
+            MHP=self.MHP.evaluate(),
             boss_pdamage=self.boss_pdamage.evaluate(),
             armor_ignore=self.armor_ignore.evaluate(),
-            patt=self.patt.evaluate(),
             att=self.att.evaluate(),
+            matt=self.matt.evaluate(),
+            att_rate=self.att_rate.evaluate(),
+            matt_rate=self.matt_rate.evaluate(),
         )
 
 
@@ -276,14 +307,19 @@ class ExtendedCharacterStatus(CharacterStatus):
             crit_damage=self.crit_damage,
             pdamage=self.pdamage,
             pdamage_indep=self.pdamage_indep,
+
             stat=[i for i in self.stat],
-            pstat=[i for i in self.pstat],
+            stat_rate=[i for i in self.stat_rate],
             stat_fixed=[i for i in self.stat_fixed],
-            hp=self.hp,
+            MHP=self.MHP,
+
             boss_pdamage=self.boss_pdamage,
             armor_ignore=self.armor_ignore,
-            patt=[i for i in self.patt],
-            att=[i for i in self.att],
+
+            att=self.att,
+            matt=self.matt,
+            att_rate=self.att_rate,
+            matt_rate=self.matt_rate
         )
 
     def degenerate(self) -> CharacterStatus:
@@ -330,19 +366,20 @@ class ExtendedCharacterStatus(CharacterStatus):
 
         for i in range(4):
             self.stat[i] += arg.stat[i]
-            self.pstat[i] += arg.pstat[i]
+            self.stat_rate[i] += arg.stat_rate[i]
             self.stat_fixed[i] += arg.stat_fixed[i]
 
-        self.hp += arg.hp
+        self.MHP += arg.MHP
 
         self.boss_pdamage += arg.boss_pdamage
         self.armor_ignore = 100 - 0.01 * (
             (100 - self.armor_ignore) * (100 - arg.armor_ignore)
         )
 
-        for i in range(2):
-            self.patt[i] += arg.patt[i]
-            self.att[i] += arg.att[i]
+        self.att += arg.att
+        self.matt += arg.matt
+        self.att_rate += arg.att_rate
+        self.matt_rate += arg.matt_rate
         
         return self
 
@@ -367,14 +404,16 @@ class ExtendedCharacterStatus(CharacterStatus):
             pdamage_indep=(100 + self.pdamage_indep) / (100 + arg.pdamage_indep) * 100
             - 100,
             stat=[self.stat[i] - arg.stat[i] for i in range(4)],
-            pstat=[self.pstat[i] - arg.pstat[i] for i in range(4)],
+            stat_rate=[self.stat_rate[i] - arg.stat_rate[i] for i in range(4)],
             stat_fixed=[self.stat_fixed[i] - arg.stat_fixed[i] for i in range(4)],
-            hp=(self.hp - arg.hp),
+            MHP=(self.MHP - arg.MHP),
             boss_pdamage=(self.boss_pdamage - arg.boss_pdamage),
             armor_ignore=100
             - 100 * (100 - self.armor_ignore) / (100 - arg.armor_ignore),
-            patt=[self.patt[i] - arg.patt[i] for i in range(2)],
-            att=[self.att[i] - arg.att[i] for i in range(2)],
+            att=self.att - arg.att,
+            matt=self.matt - arg.matt,
+            att_rate=self.att_rate - arg.att_rate,
+            matt_rate=self.matt_rate - arg.matt_rate,
         )
 
 
@@ -410,8 +449,8 @@ class InformedCharacterStatus(ExtendedCharacterStatus):
             pdamage_indep=extended_modifier.pdamage_indep,
             stat_main=extended_modifier.stat_main,
             stat_sub=extended_modifier.stat_sub,
-            pstat_main=extended_modifier.pstat_main,
-            pstat_sub=extended_modifier.pstat_sub,
+            stat_rate_main=extended_modifier.stat_rate_main,
+            stat_rate_sub=extended_modifier.stat_rate_sub,
             boss_pdamage=extended_modifier.boss_pdamage,
             armor_ignore=extended_modifier.armor_ignore,
             patt=extended_modifier.patt,
