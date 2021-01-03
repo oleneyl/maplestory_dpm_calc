@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from .constant import FINAL_DAMAGE_RATIO, MAX_DAMAGE_RESTRICTION, ARMOR_RATE
 from ..graph import DynamicVariableInstance, DynamicVariableOperation
-
+from .modifier import SkillModifier
 
 class CharacterStatus:
     __slots__ = (
@@ -110,8 +110,8 @@ class CharacterStatus:
         status += arg
         return status
 
-    def __sub__(self, arg: CharacterModifier) -> CharacterModifier:
-        return CharacterModifier(
+    def __sub__(self, arg: CharacterStatus) -> CharacterStatus:
+        return CharacterStatus(
             crit=(self.crit - arg.crit),
             crit_damage=(self.crit_damage - arg.crit_damage),
             pdamage=(self.pdamage - arg.pdamage),
@@ -120,7 +120,7 @@ class CharacterStatus:
             stat=[self.stat[i] - arg.stat[i] for i in range(4)],
             pstat=[self.pstat[i] - arg.pstat[i] for i in range(4)],
             stat_fixed=[self.stat_fixed[i] - arg.stat_fixed[i] for i in range(4)],
-            hp=(self.hp - arg.hp)
+            hp=(self.hp - arg.hp),
             boss_pdamage=(self.boss_pdamage - arg.boss_pdamage),
             armor_ignore=100
             - 100 * (100 - self.armor_ignore) / (100 - arg.armor_ignore),
@@ -128,16 +128,16 @@ class CharacterStatus:
             att=[self.att[i] - arg.att[i] for i in range(2)],
         )
 
-    def copy(self) -> CharacterModifier:
+    def copy(self) -> CharacterStatus:
         return CharacterStatus(
             crit=self.crit,
             crit_damage=self.crit_damage,
             pdamage=self.pdamage,
             pdamage_indep=self.pdamage_indep,
 
-            stat=[i for i in self.stat_main],
-            pstat=[i for i in self.stat_sub],
-            stat_fixed=[i for i in self.pstat_main],
+            stat=[i for i in self.stat],
+            pstat=[i for i in self.pstat],
+            stat_fixed=[i for i in self.stat_fixed],
             hp=self.hp,
 
             boss_pdamage=self.boss_pdamage,
@@ -147,22 +147,20 @@ class CharacterStatus:
             att=[i for i in self.att],
         )
 
-    def extend(self) -> ExtendedCharacterModifier:
-        return ExtendedCharacterModifier(
+    def extend(self) -> ExtendedCharacterStatus:
+        return ExtendedCharacterStatus(
             crit=self.crit,
             crit_damage=self.crit_damage,
             pdamage=self.pdamage,
             pdamage_indep=self.pdamage_indep,
-            stat_main=self.stat_main,
-            stat_sub=self.stat_sub,
-            pstat_main=self.pstat_main,
-            pstat_sub=self.pstat_sub,
+            stat=self.stat,
+            pstat=self.pstat,
+            stat_fixed=self.stat_fixed,
+            hp=self.hp,
             boss_pdamage=self.boss_pdamage,
             armor_ignore=self.armor_ignore,
             patt=self.patt,
-            att=self.att,
-            stat_main_fixed=self.stat_main_fixed,
-            stat_sub_fixed=self.stat_sub_fixed,
+            att=self.att
         )
 
     def log(self) -> str:
@@ -177,22 +175,24 @@ class CharacterStatus:
         txt += "att : %s\n" % '.'.join(map(str, self.att))
 
         txt += "hp : %.1f\n" % (self.hp)
-        txt += "pstat_main : %.1f, pstat_sub : %.1f\n" % (
-            self.pstat_main,
-            self.pstat_sub,
-        )
-        txt += "stat_main_fixed : %.1f, stat_sub_fixed : %.1f\n" % (
-            self.stat_main_fixed,
-            self.stat_sub_fixed,
-        )
-        txt += "boss_pdamage : %.1f, armor_ignore : %.1f\n" % (
-            self.boss_pdamage,
-            self.armor_ignore,
-        )
         txt += "att : %.1f, patt : %.1f\n" % (self.att, self.patt)
-        txt += "damageFactor : %.1f\n" % (self.get_damage_factor())
         return txt
 
+    def as_dict(self) -> Dict[str, float]:
+        return {
+            "crit": self.crit,
+            "crit_damage": self.crit_damage,
+            "pdamage": self.pdamage,
+            "pdamage_indep": self.pdamage_indep,
+            "stat": self.stat,
+            "pstat": self.pstat,
+            "stat_fixed": self.stat_fixed,
+            "hp": self.hp,
+            "boss_pdamage": self.boss_pdamage,
+            "armor_ignore": self.armor_ignore,
+            "patt": self.patt,
+            "att": self.att,
+        }
 
 class DynamicCharacterStatus(DynamicVariableInstance, CharacterStatus):
     def __init__(self, **kwargs) -> None:
@@ -327,54 +327,29 @@ class ExtendedCharacterStatus(CharacterStatus):
         self.pdamage_indep += (
             arg.pdamage_indep + (self.pdamage_indep * arg.pdamage_indep) * 0.01
         )
-        self.stat_main += arg.stat_main
-        self.stat_sub += arg.stat_sub
-        self.pstat_main += arg.pstat_main
-        self.pstat_sub += arg.pstat_sub
+
+        for i in range(4):
+            self.stat[i] += arg.stat[i]
+            self.pstat[i] += arg.pstat[i]
+            self.stat_fixed[i] += arg.stat_fixed[i]
+
+        self.hp += arg.hp
+
         self.boss_pdamage += arg.boss_pdamage
         self.armor_ignore = 100 - 0.01 * (
             (100 - self.armor_ignore) * (100 - arg.armor_ignore)
         )
-        self.patt += arg.patt
-        self.att += arg.att
-        self.stat_main_fixed += arg.stat_main_fixed
-        self.stat_sub_fixed += arg.stat_sub_fixed
+
+        for i in range(2):
+            self.patt[i] += arg.patt[i]
+            self.att[i] += arg.att[i]
+        
         return self
 
     def __add__(self, arg: ExtendedCharacterStatus) -> ExtendedCharacterStatus:
         status = self.copy()
         status += arg
         return status
-
-        return ExtendedCharacterStatus(
-            buff_rem=(self.buff_rem + arg.buff_rem),
-            summon_rem=(self.summon_rem + arg.summon_rem),
-            cooltime_reduce=(self.cooltime_reduce + arg.cooltime_reduce),
-            pcooltime_reduce=(self.pcooltime_reduce + arg.pcooltime_reduce),
-            reuse_chance=(self.reuse_chance + arg.reuse_chance),
-            prop_ignore=(self.prop_ignore + arg.prop_ignore),
-            additional_target=(self.additional_target + arg.additional_target),
-            passive_level=(self.passive_level + arg.passive_level),
-            crit=(self.crit + arg.crit),
-            crit_damage=(self.crit_damage + arg.crit_damage),
-            pdamage=(self.pdamage + arg.pdamage),
-            pdamage_indep=(
-                self.pdamage_indep
-                + arg.pdamage_indep
-                + (self.pdamage_indep * arg.pdamage_indep) * 0.01
-            ),
-            stat_main=(self.stat_main + arg.stat_main),
-            stat_sub=(self.stat_sub + arg.stat_sub),
-            pstat_main=(self.pstat_main + arg.pstat_main),
-            pstat_sub=(self.pstat_sub + arg.pstat_sub),
-            boss_pdamage=(self.boss_pdamage + arg.boss_pdamage),
-            armor_ignore=100
-            - 0.01 * ((100 - self.armor_ignore) * (100 - arg.armor_ignore)),
-            patt=(self.patt + arg.patt),
-            att=(self.att + arg.att),
-            stat_main_fixed=(self.stat_main_fixed + arg.stat_main_fixed),
-            stat_sub_fixed=(self.stat_sub_fixed + arg.stat_sub_fixed),
-        )
 
     def __sub__(self, arg: ExtendedCharacterStatus) -> ExtendedCharacterStatus:
         return ExtendedCharacterStatus(
@@ -391,37 +366,35 @@ class ExtendedCharacterStatus(CharacterStatus):
             pdamage=(self.pdamage - arg.pdamage),
             pdamage_indep=(100 + self.pdamage_indep) / (100 + arg.pdamage_indep) * 100
             - 100,
-            stat_main=(self.stat_main - arg.stat_main),
-            stat_sub=(self.stat_sub - arg.stat_sub),
-            pstat_main=(self.pstat_main - arg.pstat_main),
-            pstat_sub=(self.pstat_sub - arg.pstat_sub),
+            stat=[self.stat[i] - arg.stat[i] for i in range(4)],
+            pstat=[self.pstat[i] - arg.pstat[i] for i in range(4)],
+            stat_fixed=[self.stat_fixed[i] - arg.stat_fixed[i] for i in range(4)],
+            hp=(self.hp - arg.hp),
             boss_pdamage=(self.boss_pdamage - arg.boss_pdamage),
             armor_ignore=100
             - 100 * (100 - self.armor_ignore) / (100 - arg.armor_ignore),
-            patt=(self.patt - arg.patt),
-            att=(self.att - arg.att),
-            stat_main_fixed=(self.stat_main_fixed - arg.stat_main_fixed),
-            stat_sub_fixed=(self.stat_sub_fixed - arg.stat_sub_fixed),
+            patt=[self.patt[i] - arg.patt[i] for i in range(2)],
+            att=[self.att[i] - arg.att[i] for i in range(2)],
         )
 
 
-class InformedCharacterModifier(ExtendedCharacterStatus):
+class InformedCharacterStatus(ExtendedCharacterStatus):
     __slots__ = "name"
 
     def __init__(self, name: str, **kwargs) -> None:
-        super(InformedCharacterModifier, self).__init__(**kwargs)
+        super(InformedCharacterStatus, self).__init__(**kwargs)
         self.name: str = name
 
     def as_dict(self) -> Dict[str, Any]:
-        ret_dict: Dict[str, Any] = super(InformedCharacterModifier, self).as_dict()
+        ret_dict: Dict[str, Any] = super(InformedCharacterStatus, self).as_dict()
         ret_dict["name"] = self.name
         return ret_dict
 
     @staticmethod
     def from_extended_modifier(
-        name: str, extended_modifier: ExtendedCharacterModifier
-    ) -> InformedCharacterModifier:
-        return InformedCharacterModifier(
+        name: str, extended_modifier: ExtendedCharacterStatus
+    ) -> InformedCharacterStatus:
+        return InformedCharacterStatus(
             name,
             buff_rem=extended_modifier.buff_rem,
             summon_rem=extended_modifier.summon_rem,
@@ -451,20 +424,20 @@ class InformedCharacterModifier(ExtendedCharacterStatus):
     def load(cls, conf):
         name = conf['name']
         value_conf = {k: v for k, v in conf.items() if k != 'name'}
-        return InformedCharacterModifier(name, **value_conf)
+        return InformedCharacterStatus(name, **value_conf)
 
 
 class VSkillModifier:
     @staticmethod
-    def get_reinforcement(incr: int, lv: int, crit: bool = False) -> CharacterModifier:
+    def get_reinforcement(incr: int, lv: int, crit: bool = False) -> CharacterStatus:
         armor = 0
         if lv >= 40:
             armor = 20
         if lv >= 20 and crit:
-            return CharacterModifier(
+            return CharacterStatus(
                 crit=5, pdamage_indep=(lv * incr), armor_ignore=armor
             )
         else:
-            return CharacterModifier(
+            return CharacterStatus(
                 crit=0, pdamage_indep=(lv * incr), armor_ignore=armor
             )
