@@ -55,9 +55,9 @@ class CharacterStatus:
         crit_damage: float = 0,
         pdamage: float = 0,
         pdamage_indep: float = 0,
-        stat: list = [0, 0, 0, 0],
-        stat_rate: list = [0, 0, 0, 0],
-        stat_fixed: list = [0, 0, 0, 0],
+        stat: Optional[List] = None,
+        stat_rate: Optional[List] = None,
+        stat_fixed: Optional[List] = None,
         MHP: float = 0,
         boss_pdamage: float = 0,
         armor_ignore: float = 0,
@@ -72,12 +72,15 @@ class CharacterStatus:
         INT: float = 0,
         LUK: float = 0,
 
-        pSTR: float = 0,
-        pDEX: float = 0,
-        pINT: float = 0,
-        pLUK: float = 0,
+        STR_rate: float = 0,
+        DEX_rate: float = 0,
+        INT_rate: float = 0,
+        LUK_rate: float = 0,
 
-        
+        STR_fixed: float = 0,
+        DEX_fixed: float = 0,
+        INT_fixed: float = 0,
+        LUK_fixed: float = 0
     ) -> None:
         self.crit: float = crit
         self.crit_damage: float = crit_damage
@@ -85,9 +88,24 @@ class CharacterStatus:
         self.pdamage: float = pdamage
         self.pdamage_indep: float = pdamage_indep
 
-        self.stat: list = stat
-        self.stat_rate: list = stat_rate
-        self.stat_fixed: list = stat_fixed
+        if stat is not None:
+            assert len(stat) == 4
+            self.stat: list = stat
+        else:
+            self.stat = [STR, DEX, INT, LUK]
+
+        if stat_rate is not None:
+            assert len(stat_rate) == 4
+            self.stat_rate: list = stat_rate
+        else:
+            self.stat_rate = [STR_rate, DEX_rate, INT_rate, LUK_rate]
+
+        if stat_fixed is not None:
+            assert len(stat_fixed) == 4
+            self.stat_fixed: list = stat_fixed
+        else:
+            self.stat_fixed = [STR_fixed, DEX_fixed, INT_fixed, LUK_fixed]
+
         self.MHP: float = MHP
 
         self.boss_pdamage: float = boss_pdamage
