@@ -66,6 +66,15 @@ def test_status_keyword_overloading():
     assert status.INT == 4
     assert status.LUK == 5
 
+
+def test_complex_status_keyword_overloading():
+    status = CharacterStatus(stat_fixed=[3,4,5,6])
+    assert status.STR_fixed == 3
+    assert status.DEX_fixed == 4
+    assert status.INT_fixed == 5
+    assert status.LUK_fixed == 6
+
+
 def test_status_keyword_setting_overloading():
     status = CharacterStatus()
     status.STR = 3
