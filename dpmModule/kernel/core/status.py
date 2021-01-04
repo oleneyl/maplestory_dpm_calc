@@ -7,7 +7,7 @@ from .constant import FINAL_DAMAGE_RATIO, MAX_DAMAGE_RESTRICTION, ARMOR_RATE
 from ..graph import DynamicVariableInstance, DynamicVariableOperation
 from .modifier import SkillModifier
 
-class CharacterStatus:
+class CharacterStatus(object):
     __slots__ = (
         "crit",
         "crit_damage",
@@ -48,6 +48,13 @@ class CharacterStatus:
       * Additional parameters can be involved with inherit this class.
 
     """
+
+    STAT_ORDER = {
+        'STR': 0,
+        'DEX': 1,
+        'INT': 2,
+        'LUK': 3
+    }
 
     def __init__(
         self,
@@ -115,6 +122,25 @@ class CharacterStatus:
         self.matt: float = matt
         self.att_rate: float = att_rate
         self.matt_rate: float = matt_rate
+
+    def __getattr__(self, name):
+        if '_' in name:
+            prefix, category = name.split('_')
+            if category == 'rate':
+                return self.stat_rate[CharacterStatus.STAT_ORDER[prefix]]
+            if category == 'fixed':
+                return self.stat_fixed[CharacterStatus.STAT_ORDER[prefix]]
+        else:
+            if name in CharacterStatus.STAT_ORDER:
+                return self.stat[CharacterStatus.STAT_ORDER[name]]
+            else:
+                raise AttributeError(name)
+
+    def __setattr__(self, name, value):
+        if name in CharacterStatus.STAT_ORDER:
+            self.stat[CharacterStatus.STAT_ORDER[name]] = value
+        else:
+            super(CharacterStatus, self).__setattr__(name, value)
 
     def __iadd__(self, arg: CharacterStatus) -> CharacterStatus:
         self.crit += arg.crit

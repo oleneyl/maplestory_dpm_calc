@@ -55,4 +55,30 @@ def test_status_addition():
 
 
 def test_status_keyword_overloading():
-    pass
+    status = CharacterStatus(STR=3, DEX=2, INT=4, LUK=5)
+    assert status.stat[0] == 3
+    assert status.stat[1] == 2
+    assert status.stat[2] == 4
+    assert status.stat[3] == 5
+
+    assert status.STR == 3
+    assert status.DEX == 2
+    assert status.INT == 4
+    assert status.LUK == 5
+
+def test_status_keyword_setting_overloading():
+    status = CharacterStatus()
+    status.STR = 3
+    status.DEX = 4
+    status.INT = 5
+    status.LUK = 6
+
+    assert status.STR == 3
+    assert status.DEX == 4
+    assert status.INT == 5
+    assert status.LUK == 6
+
+    assert status.stat[0] == 3
+    assert status.stat[1] == 4
+    assert status.stat[2] == 5
+    assert status.stat[3] == 6
