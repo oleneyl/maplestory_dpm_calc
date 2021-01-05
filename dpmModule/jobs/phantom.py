@@ -2,7 +2,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ConcurrentRunRule, ReservationRule
+from ..execution.rules import ConditionRule, RuleSet, ConcurrentRunRule, ReservationRule
 from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import thieves
@@ -45,6 +45,10 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(ReservationRule("소울 컨트랙트", "마크 오브 팬텀"), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("템페스트 오브 카드(시전)", "블랙잭", lambda sk: sk.is_cooltime_left(10000, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("템페스트 오브 카드(시전)", "마크 오브 팬텀", lambda sk: sk.is_cooltime_left(10000, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("템페스트 오브 카드(시전)", "리프트 브레이크", lambda sk: sk.is_cooltime_left(10000, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("템페스트 오브 카드(시전)", "조커(시전)", lambda sk: sk.is_cooltime_left(10000, 1)), RuleSet.BASE)
         return ruleset
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -92,13 +96,10 @@ class JobGenerator(ck.JobGenerator):
 
         ##### Phantom skills #####
 
-        #Buff skills
-    
-        JudgementBuff = core.BuffSkill("저지먼트(버프)", 0, 999999999, crit = 0).wrap(core.BuffSkillWrapper)    #확률성 크리티컬
-        
+        # Buff skills
+
         Booster = core.BuffSkill("부스터", 0, 240 * 1000, rem = True).wrap(core.BuffSkillWrapper)    #딜레이 모름
-        
-        MileAiguillesInit = core.BuffSkill("얼티밋 드라이브(개시)", 240, 250).wrap(core.BuffSkillWrapper)
+
         MileAiguilles = core.DamageSkill("얼티밋 드라이브", 150, 125 + self.combat, 3, modifier = core.CharacterModifier(pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         CarteNoir = core.DamageSkill("느와르 카르트", 0, 270, min(chtr.get_modifier().crit/100 + 0.1, 1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
@@ -107,8 +108,8 @@ class JobGenerator(ck.JobGenerator):
         PrieredAria = core.BuffSkill("프레이 오브 아리아", 0, (240+7*self.combat)*1000, pdamage = 30+self.combat, armor_ignore = 30+self.combat).wrap(core.BuffSkillWrapper)
 
         # 템오카 안쓰는게 더 높게 나옴
-        # TempestOfCardInit = core.DamageSkill("템페스트 오브 카드(시전)", 0, 0, 0, cooltime = 18000*0.8 + 180*56, red = True).wrap(core.DamageSkillWrapper, name = "템오카 시전")
-        # TempestOfCard = core.DamageSkill("템페스트 오브 카드", 180, 200+2*self.combat, 3, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        TempestOfCardInit = core.DamageSkill("템페스트 오브 카드(시전)", 0, 0, 0, cooltime = 18000*0.8 + 180*56, red = True).wrap(core.DamageSkillWrapper)
+        TempestOfCard = core.DamageSkill("템페스트 오브 카드", 180, 200+2*self.combat, 3, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
     
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
@@ -116,7 +117,7 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         # 트와일라이트 미적용 상태
-        # Twilight = core.BuffSkill("트와일라이트", 120, 15000, cooltime = 15000, armor_ignore = 20 + self.combat//2).wrap(core.BuffSkillWrapper)
+        # Twilight = core.BuffSkill("트와일라이트", 150, 15000, cooltime = 15000, armor_ignore = 20 + self.combat//2).wrap(core.BuffSkillWrapper)
         # TwilightHit = core.DamageSkill("트와일라이트(공격)", 540, 450+3*self.combat, 3, cooltime = -1).wrap(core.DamageSkillWrapper)
 
         JokerInit = core.DamageSkill("조커(시전)", 540, 0, 0, cooltime = 150000, red = True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
@@ -146,12 +147,9 @@ class JobGenerator(ck.JobGenerator):
         CarteNoir.onAfter(AddCard)
         CarteNoir.onAfter(FullStack)
         MileAiguilles.onAfter(CarteNoir)
-        MileAiguilles.onAfter(MileAiguillesInit.controller(500, 'set_enabled_and_time_left'))
-        
-        MileAiguillesHolder = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
-        MileAiguillesHolder.onAfter(core.OptionalElement(MileAiguillesInit.is_active, MileAiguilles, MileAiguillesInit, name = "선딜 반영"))
-        # TempestOfCardInit.onAfter(core.RepeatElement(TempestOfCard, 56))
-        # TempestOfCard.onAfter(CarteNoir)
+
+        TempestOfCardInit.onAfter(core.RepeatElement(TempestOfCard, 56))
+        TempestOfCard.onAfter(CarteNoir)
         
         JokerDamage.onAfter(core.RepeatElement(CarteNoir, 10))    #조커는 느와르를 발동하나, 조커 3타에 1번씩만 들어가므로 30 / 3 = 10
         
@@ -169,37 +167,54 @@ class JobGenerator(ck.JobGenerator):
 
         LiftBreak.onAfter(core.RepeatElement(CarteNoir, 7))
 
-        MileAiguillesInit.protect_from_running()
-
         CardinalBlast.onAfter(CarteNoir)
         CardinalDischarge.onAfter(CarteNoir)
 
         CardinalBlast.onAfter(CardinalDischarge)
         
         '''
-        얼드: MileAiguillesHolder
+        얼드: MileAiguilles
         블디: CardinalBlast
         '''
 
+        interrupting_skills = [FinalCut, JokerInit, BlackJack]
+
         if DEALCYCLE == "ultimate_drive":
-            BasicAttack = MileAiguillesHolder
+            BasicAttack = MileAiguilles
             Talent2 = Fury
+            Inturrupt = core.DamageSkill("얼드 후딜", 120, 0, 0).wrap(core.DamageSkillWrapper)
+            for sk in interrupting_skills:
+                sk.onBefore(Inturrupt)
         elif DEALCYCLE == "blast_discharge":
             BasicAttack = CardinalBlast
             Talent2 = None
-            BlackJack.onBefore(
-                core.DamageSkill("연계 취소 딜레이", 360-210, 0, 0).wrap(core.DamageSkillWrapper)
-            ) # 블디 연계 취소 딜레이, 가장 자주 사용되는 블랙잭에 걸어둠. TODO: 연계 취소 딜레이를 시뮬레이터에 구현
+            Inturrupt = core.DamageSkill("연계 취소 딜레이", 360-210, 0, 0).wrap(core.DamageSkillWrapper)
+            for sk in interrupting_skills:
+                sk.onBefore(Inturrupt)  # 블디 연계 취소 딜레이. TODO: 연계 취소 딜레이를 시뮬레이터에 구현 
         else:
             raise ValueError(DEALCYCLE)
 
         
-        return(BasicAttack,
-                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    Talent2, CrossoverChain, FinalCutBuff, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), BoolsEye,
-                    JudgementBuff, Booster, PrieredAria, HerosOath, ReadyToDie, JokerBuff,
-                    globalSkill.soul_contract()] +\
-                [FinalCut, JokerInit, MarkOfPhantom, LiftBreak, BlackJackFinal] +\
-                [BlackJack, MirrorBreak, MirrorSpider] +\
-                [MileAiguillesInit] +\
-                [BasicAttack])
+        return (
+            BasicAttack,
+            [
+                globalSkill.maple_heros(chtr.level, combat_level=self.combat),
+                globalSkill.useful_sharp_eyes(),
+                globalSkill.useful_combat_orders(),
+                Talent2,
+                CrossoverChain,
+                Booster,
+                PrieredAria,
+                FinalCutBuff,
+                JokerBuff,
+                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
+                BoolsEye,
+                HerosOath,
+                ReadyToDie,
+                globalSkill.soul_contract()
+            ] +
+            [BlackJackFinal]+  # reserved task, use as early as possible
+            [FinalCut, BlackJack, MarkOfPhantom, LiftBreak, JokerInit] +
+            [MirrorBreak, MirrorSpider, TempestOfCardInit] +
+            [BasicAttack]
+        )
