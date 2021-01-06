@@ -108,7 +108,7 @@ class JobGenerator(ck.JobGenerator):
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         에인션트 아스트라 사용하지 않음
-        콤보 어썰트는 커스 트랜지션의 지속시간이 2초 이하 남았을때 사용
+        카디널 트랜지션은 커스 트랜지션의 지속시간이 2초 이하 남았을때 사용
         블래 210ms 디차 240ms
         렐릭 언바운드 디스차지로 사용
 
@@ -126,7 +126,7 @@ class JobGenerator(ck.JobGenerator):
         미스텔 미사용(데미지 감소함)
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        ANCIENT_ARCHERY = core.CharacterModifier(pdamage_indep=10, boss_pdamage=50+20, armor_ignore=20)
+        ANCIENT_ARCHERY = core.CharacterModifier(pdamage_indep=10, boss_pdamage=50+20+passive_level, armor_ignore=20)
         LINK_DELAY = 30
 
         ######   Skill   ######
