@@ -6,8 +6,8 @@ from typing import Optional, Tuple, Union, List
 from dpmModule.gear.Gear import Gear
 from dpmModule.gear.GearBuilder import GearBuilder
 from dpmModule.gear.GearPropType import GearPropType
-from dpmModule.gear.Scroll import Scroll
 from dpmModule.gear.GearType import GearType
+from dpmModule.gear.Scroll import Scroll
 from dpmModule.gear.SetItem import eval_set_item_effect
 from dpmModule.kernel.core.modifier import ExtendedCharacterModifier
 from dpmModule.character.characterKernel import GearedCharacter, JobGenerator
@@ -63,17 +63,12 @@ class TemplateGenerator:
         template = GearedCharacter(gen=gen, level=node['level'])
         # Apply arcane, authentic, pet, cash modifiers
 
-        template.apply_modifiers([self._get_arcane_modifier(node, gen.jobtype)])
-        template.apply_modifiers([self._get_authentic_modifier(node, gen.jobtype)])
-        template.apply_modifiers([self._get_pet_modifier(node)])
-        template.apply_modifiers([self._get_cash_modifier(node)])
-        template.apply_modifiers([self._get_job_specific_item_modifier(node)])
         template.apply_modifiers([
             self._get_arcane_modifier(node, gen.jobtype),
             self._get_authentic_modifier(node, gen.jobtype),
             self._get_pet_modifier(node),
             self._get_cash_modifier(node),
-            self._get_job_specific_item_modifier(node),
+            self._get_job_specific_item_modifier(node)
         ])
         # Equip title
         template.title = self._get_title(node)
@@ -214,6 +209,9 @@ class TemplateGenerator:
         return Gear.create_from_id(name)
 
     def _apply_gear_options(self, gear: Gear, gear_node, jobtype: str, cdr) -> Gear:
+        def _is_bonus_type(GearType):
+            pass
+
         def _apply_bonus(bonus_node):
             for bonus_type in bonus_node:
                 if bonus_type == "att_grade":

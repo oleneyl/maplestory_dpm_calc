@@ -93,8 +93,7 @@ class AbstractCharacter:
         You must sure that this function call is appropriate.
         """
         for mdf in li:
-            if mdf is not None:
-                self.base_modifier += mdf
+            self.base_modifier += mdf
 
     def generate_modifier_cache(self) -> None:
         self._modifier_cache = (
