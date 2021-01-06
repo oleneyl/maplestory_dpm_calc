@@ -3,6 +3,7 @@ from concurrent.futures import ProcessPoolExecutor
 from itertools import product
 from statistics.preset import get_preset_list
 
+from dpmModule.character.characterTemplate import get_template_generator
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
 
 try:
@@ -25,7 +26,6 @@ def get_args():
 def test(args):
     preset, ulevel, cdr, runtime = args
     id, jobname, description, options, alt = preset
-
     parser = IndividualDPMGenerator(jobname)
     parser.set_runtime(runtime * 1000)
     result = parser.get_detailed_dpm(ulevel=ulevel, cdr=cdr, options=options)
@@ -41,8 +41,6 @@ if __name__ == "__main__":
     tasks = product(get_preset_list(), [ulevel], [0, 2, 4], [args.time])
     pool = ProcessPoolExecutor(max_workers=args.thread)
     results = pool.map(test, tasks)
-    print(results)
-    raise TypeError()
 
     df = pd.DataFrame.from_records(
         results,

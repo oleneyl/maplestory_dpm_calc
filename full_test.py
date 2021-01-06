@@ -27,7 +27,7 @@ def test(args):
 
     parser = IndividualDPMGenerator(jobname)
     parser.set_runtime(runtime * 1000)
-    dpm = parser.get_dpm(ulevel=ulevel, cdr=cdr, weaponstat=(4, 9))
+    dpm = parser.get_dpm(spec_name=str(ulevel), ulevel=ulevel, cdr=cdr)
 
     end = time.time()
     print(f"{jobname} {ulevel} 계산완료, {end - start:.3f}초")

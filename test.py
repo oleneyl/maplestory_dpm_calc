@@ -70,15 +70,13 @@ def conf(args):
 
 
 def dpm(args):
-    template = get_template_generator("high_standard")().get_template(args.ulevel)
-    parser = IndividualDPMGenerator(args.job, template)
+    parser = IndividualDPMGenerator(args.job)
     parser.set_runtime(args.time * 1000)
     try:
         dpm = parser.get_dpm(
-            ulevel=args.ulevel,
+            spec_name=str(args.ulevel),
             cdr=args.cdr,
-            level=args.level,
-            weaponstat=[4, 9],
+            ulevel=args.ulevel,
             printFlag=args.log,
             statistics=args.stat or args.log,
         )

@@ -439,7 +439,7 @@ class JobGenerator:
         v_builder: AbstractVBuilder,
         options: Dict[str, Any],
         ulevel: int,
-        weaponstat: List[int],
+        weaponstat: Tuple[int, int],
         ability_grade: Ability_grade,
         log: bool = False,
         storage_handler=None,

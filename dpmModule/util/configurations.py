@@ -1,14 +1,15 @@
 from ..kernel import core
+from ..character.characterTemplate import TemplateGenerator
 
 import dpmModule.jobs as maplejobs
 
 
 def export_configuration(jobname):
-    target = template(maplejobs.weaponList[jobname])
     supplier = maplejobs.jobMap[jobname]
+    gen = supplier.JobGenerator()
+    target = TemplateGenerator().get_template(gen, "6000")
 
     v_builder = core.AlwaysMaximumVBuilder()
-    gen = supplier.JobGenerator()
     vEhc = v_builder.build_enhancer(target, gen)
     gen.vEhc = vEhc
 

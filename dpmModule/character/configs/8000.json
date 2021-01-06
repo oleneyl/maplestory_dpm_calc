@@ -15,6 +15,7 @@
       "stat_sub2": 75,
       "att": 40
     },
+    "weapon_stat": [4, 9],
     "armor": {
       "bonus": {
         "stat_main": 120,
@@ -365,6 +366,7 @@
       "stat_sub": 75,
       "att": 40
     },
+    "weapon_stat": [4, 9],
     "armor": {
       "bonus": {
         "stat_main": 2520,
@@ -613,6 +615,7 @@
       "stat_sub2": 75,
       "att": 40
     },
+    "weapon_stat": [4, 9],
     "armor": {
       "bonus": {
         "stat_main": 40,
