@@ -2,7 +2,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import ConditionRule, DisableRule, MutualRule, RuleSet
+from ..execution.rules import ConcurrentRunRule, ConditionRule, DisableRule, MutualRule, RuleSet
 from . import globalSkill
 from .jobbranch import bowmen
 from .jobclass import adventurer
@@ -76,6 +76,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(MutualRule('이볼브', '레이븐 템페스트'), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('카디널 트랜지션', '커스 트랜지션', lambda sk: sk.is_time_left(2000, -1)), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('얼티밋 블래스트', '렐릭 차지', lambda sk: sk.judge(1000, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '크리티컬 리인포스'), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self):
