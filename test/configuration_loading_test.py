@@ -1,10 +1,10 @@
 import sys
 import json
 
-from dpmModule.character.characterTemplate import TemplateGenerator
 
 sys.path.append('../')
 
+from dpmModule.character.characterTemplate import TemplateGenerator
 from dpmModule.character.characterKernel import JobGenerator
 from dpmModule.kernel.core import CharacterModifier, InformedCharacterModifier
 
