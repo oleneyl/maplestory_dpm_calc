@@ -1,13 +1,19 @@
+import copy
 import json
 import math
-import copy
-import yaml
+from collections import defaultdict
 from typing import Any, Dict, List, Optional, Tuple
 
+import yaml
+
+from dpmModule.gear import Gear, GearPropType
+from .doping import Doping
+from .hyperStat import HyperStat
+from .linkSkill import LinkSkill
+from .personality import Personality
+from .union import Card, Union
+from .weaponPotential import WeaponPotential
 from ..execution.rules import RuleSet
-from ..item.ItemKernel import Item
-from dpmModule.gear.Gear import Gear
-from dpmModule.gear.GearPropType import GearPropType
 from ..kernel import policy
 from ..kernel.abstract import AbstractVBuilder, AbstractVEnhancer
 from ..kernel.core import (
@@ -20,26 +26,18 @@ from ..kernel.core import (
     DotSkillWrapper,
     ExtendedCharacterModifier,
     InformedCharacterModifier,
-    SkillModifier, defaultdict,
+    SkillModifier,
 )
+from ..kernel.core.skill import load_skill, BuffSkill, DamageSkill, SummonSkill, DotSkill
 from ..kernel.graph import (
     GlobalOperation,
     _unsafe_access_global_storage,
     initialize_global_properties,
 )
-from ..kernel.core.skill import load_skill, BuffSkill, DamageSkill, SummonSkill, DotSkill
 from ..status.ability import Ability_grade, Ability_option, Ability_tool
-from .doping import Doping
-from .hyperStat import HyperStat
-from .linkSkill import LinkSkill
-from .personality import Personality
-from .union import Card, Union
-from .weaponPotential import WeaponPotential
-
 
 ExMDF = ExtendedCharacterModifier
 """Class AbstractCharacter : Basic template for building specific User. User is such object that contains:
-- Items
 - Buff Skill Wrappers
 - Damage Skill Wrappers
 - Some else Modifiers.
@@ -63,7 +61,6 @@ def _get_loaded_object_with_mapping(conf, loadable, **kwargs):
 class AbstractCharacter:
     # TODO : get/set :: use decorator? could be...
     def __init__(self, level: int = 230) -> None:
-        # Initialize Items
         self.level: int = level
         self.base_modifier: ExMDF = ExMDF(stat_main=18 + level * 5, stat_sub=4, crit=5)
 
@@ -128,7 +125,7 @@ class GearedCharacter(AbstractCharacter):
         if self.jobtype == "HP":
             self.base_modifier = ExMDF(stat_main=545 + level * 90, stat_sub=4, crit=5)
         # elif self.jobtype == "xenon":
-        #    self.base_modifier = ExMDF(stat_main=18 + level * 5, stat_sub=4, crit=5) # TODO: 힘덱인럭 저용 시 바꾸세요!
+        #    self.base_modifier = ExMDF(stat_main=18 + level * 5, stat_sub=4, crit=5) # TODO: 힘덱인럭 적용 시 바꾸세요!
         else:
             self.base_modifier = ExMDF(stat_main=18 + level * 5, stat_sub=4, crit=5)
         self.gear_list: Dict[str, Optional[Gear]] = {
@@ -223,12 +220,10 @@ class GearedCharacter(AbstractCharacter):
             self.add_gear_modifier(gear)
             '''
 
-    '''
-    def print_items(self) -> None:
-        for item in self.itemlist:
-            print("===" + item + "===")
-            print(self.itemlist[item].log())
-            '''
+    def print_gears(self) -> None:
+        for gear in self.gear_list:
+            print("===" + gear + "===")
+            print(self.gear_list[gear])
 
 
 class JobGenerator:

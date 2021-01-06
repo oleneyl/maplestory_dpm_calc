@@ -3,13 +3,8 @@ import os
 from copy import copy, deepcopy
 from typing import Optional, Tuple, Union, List
 
-from dpmModule.gear.Gear import Gear
-from dpmModule.gear.GearBuilder import GearBuilder
-from dpmModule.gear.GearPropType import GearPropType
-from dpmModule.gear.GearType import GearType
-from dpmModule.gear.Scroll import Scroll
-from dpmModule.gear.SetItem import eval_set_item_effect
 from dpmModule.kernel.core.modifier import ExtendedCharacterModifier
+from dpmModule.gear import Gear, GearBuilder, GearType, GearPropType, Scroll, eval_set_item_effect
 from dpmModule.character.characterKernel import GearedCharacter, JobGenerator
 from dpmModule.jobs import job_branch_list
 
@@ -209,9 +204,6 @@ class TemplateGenerator:
         return Gear.create_from_id(name)
 
     def _apply_gear_options(self, gear: Gear, gear_node, jobtype: str, cdr) -> Gear:
-        def _is_bonus_type(GearType):
-            pass
-
         def _apply_bonus(bonus_node):
             for bonus_type in bonus_node:
                 if bonus_type == "att_grade":

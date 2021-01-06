@@ -1,8 +1,7 @@
 import json
 import os
-from typing import List, DefaultDict, Dict, Iterable
-
 from collections import defaultdict
+from typing import DefaultDict, Dict, Iterable
 
 from .Gear import Gear
 from .GearPropType import GearPropType
@@ -91,8 +90,8 @@ def eval_set_item_effect(equipped_gears: Iterable[Gear]) -> PropMap:
             if index <= count:
                 for prop_type in set_item.effects[index]:
                     if prop_type == GearPropType.armor_ignore:
-                        set_item_effect[prop_type] = 100 - (1 - set_item_effect[prop_type] / 100) * \
-                                                  (1 - set_item.effects[index][prop_type] / 100) * 100
+                        set_item_effect[prop_type] = (100 - (1 - set_item_effect[prop_type] / 100) *
+                                                      (1 - set_item.effects[index][prop_type] / 100) * 100)
                     else:
                         set_item_effect[prop_type] += set_item.effects[index][prop_type]
             else:

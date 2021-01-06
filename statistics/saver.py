@@ -3,6 +3,7 @@ from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 from dpmModule.character.characterKernel import GearedCharacter, JobGenerator
+from dpmModule.character.characterTemplate import TemplateGenerator
 from dpmModule.execution import rules
 from dpmModule.jobs import jobMap
 from dpmModule.kernel import core, policy
@@ -34,16 +35,15 @@ def get_args():
 
 def dpm(args):
     preset = get_preset(args.id)
-    template = get_template_generator("high_standard")().get_template(args.ulevel)
-    target: ItemedCharacter = template(weaponList[preset.job], args.cdr)
     gen: JobGenerator = jobMap[preset.job].JobGenerator()
+    target, weapon_stat = TemplateGenerator().get_template_and_weapon_stat(gen, str(args.ulevel), args.cdr)
     v_builder = core.AlwaysMaximumVBuilder()
     graph = gen.package(
         target,
         v_builder,
         options=preset.options,
         ulevel=args.ulevel,
-        weaponstat=[4, 9],
+        weaponstat=weapon_stat,
         ability_grade=Ability_grade(4, 1),
     )
     sche = policy.AdvancedGraphScheduler(
@@ -68,16 +68,15 @@ def dpm(args):
 
 def burst10(args):
     preset = get_preset(args.id)
-    template = get_template_generator("high_standard")().get_template(args.ulevel)
-    target: ItemedCharacter = template(weaponList[preset.job], args.cdr)
     gen: JobGenerator = jobMap[preset.job].JobGenerator()
+    target, weapon_stat = TemplateGenerator().get_template_and_weapon_stat(gen, str(args.ulevel), args.cdr)
     v_builder = core.AlwaysMaximumVBuilder()
     graph = gen.package(
         target,
         v_builder,
         options=preset.options,
         ulevel=args.ulevel,
-        weaponstat=[4, 9],
+        weaponstat=weapon_stat,
         ability_grade=Ability_grade(4, 1),
     )
     sche = policy.AdvancedGraphScheduler(

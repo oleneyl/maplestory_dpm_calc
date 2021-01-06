@@ -603,19 +603,7 @@
     }
   },
   "제논": {
-    "type": "full",
-    "level": 260,
-    "arcane_symbol_force": 1320,
-    "authentic_symbol_level": [3],
-    "pet_equip": 98,
-    "pet_set": 20,
-    "cash": {
-      "stat_main": 75,
-      "stat_sub": 75,
-      "stat_sub2": 75,
-      "att": 40
-    },
-    "weapon_stat": [4, 9],
+    "type": "override",
     "armor": {
       "bonus": {
         "stat_main": 40,

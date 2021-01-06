@@ -1,7 +1,6 @@
 import math
-from typing import DefaultDict
-
 from collections import defaultdict
+from typing import DefaultDict
 
 from .Gear import Gear
 from .GearPropType import GearPropType
