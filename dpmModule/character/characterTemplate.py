@@ -1,7 +1,7 @@
 import json
 import os
 from copy import copy, deepcopy
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple, Union, List
 
 from dpmModule.gear.Gear import Gear
 from dpmModule.gear.GearBuilder import GearBuilder
@@ -38,8 +38,12 @@ class TemplateGenerator:
         for key in _template_json:
             self.data[key] = open_json('configs', _template_json[key])
 
-    def get_spec_names(self):
-        return (name for name in self.data.keys() if not name.startswith("_"))
+    def get_spec_names(self) -> Tuple[str]:
+        names: List[str] = []
+        for name in self.data.keys():
+            if not name.startswith("_"):
+                names.append(name)
+        return tuple(names)
 
     def get_template_and_weapon_stat(self, gen: JobGenerator, spec_name: str, cdr: int = 0):
         return self.get_template(gen, spec_name, cdr), self.get_weapon_stat(gen, spec_name)
@@ -58,6 +62,12 @@ class TemplateGenerator:
         # Create GearedCharacter with level
         template = GearedCharacter(gen=gen, level=node['level'])
         # Apply arcane, authentic, pet, cash modifiers
+
+        template.apply_modifiers([self._get_arcane_modifier(node, gen.jobtype)])
+        template.apply_modifiers([self._get_authentic_modifier(node, gen.jobtype)])
+        template.apply_modifiers([self._get_pet_modifier(node)])
+        template.apply_modifiers([self._get_cash_modifier(node)])
+        template.apply_modifiers([self._get_job_specific_item_modifier(node)])
         template.apply_modifiers([
             self._get_arcane_modifier(node, gen.jobtype),
             self._get_authentic_modifier(node, gen.jobtype),
@@ -110,12 +120,12 @@ class TemplateGenerator:
             del node["acc"]
         return node
 
-    def _get_weapon_stat(self, node):
-        if 'weapon_stat' not in node or len(node['weapon_stat']) is not 2:
+    def _get_weapon_stat(self, node) -> Tuple[int, int]:
+        if 'weapon_stat' not in node or len(node['weapon_stat']) != 2:
             raise TypeError('template does not contain valid weapon_stat field')
         return tuple(node['weapon_stat'])
 
-    def _get_arcane_modifier(self, node, jobtype: str):
+    def _get_arcane_modifier(self, node, jobtype: str) -> ExMDF:
         if "arcane_symbol_force" not in node:
             return ExMDF()
         value = node["arcane_symbol_force"] // 10
@@ -128,7 +138,7 @@ class TemplateGenerator:
             # return ExMDF(stat_main_fixed=value * 39, stat_sub_fixed=value * 39)
             return ExMDF(stat_main_fixed=value * 39 * 3)
 
-    def _get_authentic_modifier(self, node, jobtype: str):
+    def _get_authentic_modifier(self, node, jobtype: str) -> ExMDF:
         if "authentic_symbol_level" not in node:
             return ExMDF()
         value = sum([(2 * n + 3) for n in node["authentic_symbol_level"]])
@@ -141,7 +151,7 @@ class TemplateGenerator:
             # return ExMDF(stat_main_fixed=value * 39, stat_sub_fixed=value * 39 * 2)
             return ExMDF(stat_main_fixed=value * 39 * 3)
 
-    def _get_pet_modifier(self, node):
+    def _get_pet_modifier(self, node) -> ExMDF:
         mdf = ExMDF()
         if "pet_equip" in node:
             mdf.att += node["pet_equip"]
@@ -149,7 +159,7 @@ class TemplateGenerator:
             mdf.att += node["pet_set"]
         return mdf
 
-    def _get_cash_modifier(self, node):
+    def _get_cash_modifier(self, node) -> ExMDF:
         if "cash" not in node:
             return ExMDF()
         mdf = ExMDF()
@@ -157,7 +167,7 @@ class TemplateGenerator:
             setattr(mdf, stat_key, node["cash"][stat_key])
         return mdf
 
-    def _get_job_specific_item_modifier(self, node):
+    def _get_job_specific_item_modifier(self, node) -> ExMDF:
         if "job_specific_item" not in node:
             return ExMDF()
         mdf = ExMDF()
@@ -165,12 +175,12 @@ class TemplateGenerator:
             setattr(mdf, stat_key, node["job_specific_item"][stat_key])
         return mdf
 
-    def _get_title(self, node):
+    def _get_title(self, node) -> Gear:
         if "title" not in node:
             raise TypeError('template does not contain title.')
         return Gear.create_title_from_name(node["title"]['id'])
 
-    def _get_enchanted_gear(self, part: str, node, gen: JobGenerator, cdr: int):
+    def _get_enchanted_gear(self, part: str, node, gen: JobGenerator, cdr: int) -> Gear:
         return self._apply_gear_options(
             self._get_gear_base(node[part]['id'], part, gen.jobname), node[part], gen.jobtype, cdr
         )
@@ -203,7 +213,7 @@ class TemplateGenerator:
             raise ValueError('Invalid gear name: ' + debug_name + ' (part: ' + part + ', jobname: ' + jobname + ')')
         return Gear.create_from_id(name)
 
-    def _apply_gear_options(self, gear: Gear, gear_node, jobtype: str, cdr):
+    def _apply_gear_options(self, gear: Gear, gear_node, jobtype: str, cdr) -> Gear:
         def _apply_bonus(bonus_node):
             for bonus_type in bonus_node:
                 if bonus_type == "att_grade":
@@ -306,7 +316,7 @@ class TemplateGenerator:
                 _apply_potential(cdr_node['add_potential'], gear.additional_potential)
         return gear
 
-    def _get_zero_subweapon(self, zero_weapon: Gear):
+    def _get_zero_subweapon(self, zero_weapon: Gear) -> Gear:
         assert (zero_weapon.type == GearType.sword_zl)
         subweapon_id = zero_weapon.item_id - 10000
         subweapon = Gear.create_from_id(subweapon_id)
@@ -318,7 +328,7 @@ class TemplateGenerator:
         subweapon.additional_potential = copy(zero_weapon.additional_potential)
         return subweapon
 
-    def _get_set_effect(self, gears, node):
+    def _get_set_effect(self, gears, node) -> Gear:
         def _get_zero_weapon_set_id(name: str):
             try:
                 return self.data['_preset']["zero_weapon_set_id"][name]
@@ -340,53 +350,53 @@ class TemplateGenerator:
         gears["weapon"].set_item_id = weapon_set_item_id
         return set_effect
 
-    def _get_stat_type(self, jobtype: str) -> Tuple[
-            GearPropType, GearPropType,
-            GearPropType, GearPropType,
-            Optional[GearPropType], Optional[GearPropType],
-            GearPropType, GearPropType]:
-        # stat_main, pstat_main, stat_sub, pstat_sub, stat_sub2, pstat_sub2, att, patt
-        return {
-            "STR": (
-                GearPropType.STR, GearPropType.STR_rate,
-                GearPropType.DEX, GearPropType.DEX_rate,
-                None, None,
-                GearPropType.att, GearPropType.att_rate
-            ),
-            "DEX": (
-                GearPropType.DEX, GearPropType.DEX_rate,
-                GearPropType.STR, GearPropType.STR_rate,
-                None, None,
-                GearPropType.att, GearPropType.att_rate
-            ),
-            "INT": (
-                GearPropType.INT, GearPropType.INT_rate,
-                GearPropType.LUK, GearPropType.LUK_rate,
-                None, None,
-                GearPropType.matt, GearPropType.matt_rate
-            ),
-            "LUK": (
-                GearPropType.LUK, GearPropType.LUK_rate,
-                GearPropType.DEX, GearPropType.DEX_rate,
-                None, None,
-                GearPropType.att, GearPropType.att_rate
-            ),
-            "LUK2": (
-                GearPropType.LUK, GearPropType.LUK_rate,
-                GearPropType.DEX, GearPropType.DEX_rate,
-                GearPropType.STR, GearPropType.STR_rate,
-                GearPropType.att, GearPropType.att_rate
-            ),
-            "HP": (
-                GearPropType.MHP, GearPropType.MHP_rate,
-                GearPropType.STR, GearPropType.STR_rate,
-                None, None,
-                GearPropType.att, GearPropType.att_rate
-            ),
-            "xenon": (
-                GearPropType.LUK, GearPropType.LUK_rate,
-                GearPropType.DEX, GearPropType.DEX_rate,
-                GearPropType.STR, GearPropType.STR_rate,
-                GearPropType.att, GearPropType.att_rate
-            ),
-        }[jobtype]
+def _get_stat_type(jobtype: str) -> Tuple[
+        GearPropType, GearPropType,
+        GearPropType, GearPropType,
+        Optional[GearPropType], Optional[GearPropType],
+        GearPropType, GearPropType]:
+    # stat_main, pstat_main, stat_sub, pstat_sub, stat_sub2, pstat_sub2, att, patt
+    return {
+        "STR": (
+            GearPropType.STR, GearPropType.STR_rate,
+            GearPropType.DEX, GearPropType.DEX_rate,
+            None, None,
+            GearPropType.att, GearPropType.att_rate
+        ),
+        "DEX": (
+            GearPropType.DEX, GearPropType.DEX_rate,
+            GearPropType.STR, GearPropType.STR_rate,
+            None, None,
+            GearPropType.att, GearPropType.att_rate
+        ),
+        "INT": (
+            GearPropType.INT, GearPropType.INT_rate,
+            GearPropType.LUK, GearPropType.LUK_rate,
+            None, None,
+            GearPropType.matt, GearPropType.matt_rate
+        ),
+        "LUK": (
+            GearPropType.LUK, GearPropType.LUK_rate,
+            GearPropType.DEX, GearPropType.DEX_rate,
+            None, None,
+            GearPropType.att, GearPropType.att_rate
+        ),
+        "LUK2": (
+            GearPropType.LUK, GearPropType.LUK_rate,
+            GearPropType.DEX, GearPropType.DEX_rate,
+            GearPropType.STR, GearPropType.STR_rate,
+            GearPropType.att, GearPropType.att_rate
+        ),
+        "HP": (
+            GearPropType.MHP, GearPropType.MHP_rate,
+            GearPropType.STR, GearPropType.STR_rate,
+            None, None,
+            GearPropType.att, GearPropType.att_rate
+        ),
+        "xenon": (
+            GearPropType.LUK, GearPropType.LUK_rate,
+            GearPropType.DEX, GearPropType.DEX_rate,
+            GearPropType.STR, GearPropType.STR_rate,
+            GearPropType.att, GearPropType.att_rate
+        ),
+    }[jobtype]

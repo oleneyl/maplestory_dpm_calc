@@ -88,12 +88,13 @@ class AbstractCharacter:
             pdamage_indep=-50
         )
 
-    def apply_modifiers(self, li: List[CharacterModifier]) -> None:
+    def apply_modifiers(self, li: List[ExMDF]) -> None:
         """Be careful! This function PERMANENTLY change character's property.
         You must sure that this function call is appropriate.
         """
         for mdf in li:
-            self.base_modifier += mdf
+            if mdf is not None:
+                self.base_modifier += mdf
 
     def generate_modifier_cache(self) -> None:
         self._modifier_cache = (
@@ -125,6 +126,12 @@ class GearedCharacter(AbstractCharacter):
         super(GearedCharacter, self).__init__(level)
         self.jobname: str = gen.jobname
         self.jobtype: str = gen.jobtype
+        if self.jobtype == "HP":
+            self.base_modifier = ExMDF(stat_main=545 + level * 90, stat_sub=4, crit=5)
+        # elif self.jobtype == "xenon":
+        #    self.base_modifier = ExMDF(stat_main=18 + level * 5, stat_sub=4, crit=5) # TODO: 힘덱인럭 저용 시 바꾸세요!
+        else:
+            self.base_modifier = ExMDF(stat_main=18 + level * 5, stat_sub=4, crit=5)
         self.gear_list: Dict[str, Optional[Gear]] = {
             # armor
             "head": None,
@@ -249,7 +256,7 @@ class JobGenerator:
         self.vSkillNum: int = 3 + 3
         self.preEmptiveSkills: int = 0
         self.jobname: Optional[str] = None
-        self.jobtype: str = "str"  # 재상속 하도록 명시할 필요가 있음.
+        self.jobtype: str = "STR"  # 재상속 하도록 명시할 필요가 있음.
         self._passive_skill_list = []  # 각 생성기가 자동으로 그래프 생성 시점에서 연산합니다.
         self.combat: int = 1
         self.ability_list: List[Ability_option] = Ability_tool.get_ability_set(

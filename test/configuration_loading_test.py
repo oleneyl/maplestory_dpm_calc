@@ -38,8 +38,8 @@ def test_job_generator_creation():
         test_conf = json.load(f)
     vEhc = None
     gen = JobGenerator()
-    character = TemplateGenerator().get_template(gen, "8000")
     gen.load(test_conf)
+    character = TemplateGenerator().get_template(gen, "8000")
     passive_skill_list = gen.get_passive_skill_list(vEhc, character, None)
     not_implied_skill_list = gen.get_not_implied_skill_list(vEhc, character, None)
     print(passive_skill_list)
