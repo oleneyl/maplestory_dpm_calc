@@ -1,0 +1,704 @@
+{
+    "summary": [
+      "일반: 17성..."
+    ],
+    "default": {
+      "level": 240,
+      "arcane_symbol_force": 780,
+      "pet_equip": 98,
+      "pet_set": 20,
+      "cash": {
+        "stat_main": 75,
+        "stat_sub": 75,
+        "stat_sub2": 75,
+        "att": 40
+      },
+      "armor": {
+        "bonus": {
+          "stat_main": 90,
+          "stat_sub": 20,
+          "stat_sub2": 20
+        },
+        "upgrade": [
+          {
+            "type": "주문의 흔적",
+            "prob": 30,
+            "stat": "stat_main",
+            "count": -1
+          }
+        ],
+        "star": 17,
+        "potential": {
+          "pstat_main": 15
+        },
+        "add_potential": {
+          "att": 10
+        }
+      },
+      "acc": {
+        "bonus": {
+          "stat_main": 60,
+          "stat_sub": 20,
+          "stat_sub2": 20,
+          "all_stat_rate": 3
+        },
+        "upgrade": [
+          {
+            "type": "악공",
+            "value": 4,
+            "count": -1
+          }
+        ],
+        "star": 17,
+        "potential": {
+          "pstat_main": 15
+        },
+        "add_potential": {
+          "att": 10
+        }
+      },
+      "head": {
+        "id": "카루타"
+      },
+      "top": {
+        "id": "카루타"
+      },
+      "bottom": {
+        "id": "카루타"
+      },
+      "shoes": {
+        "id": "앱솔랩스"
+      },
+      "glove": {
+        "id": "앱솔랩스",
+        "potential": {
+          "crit_damage": 8
+        }
+      },
+      "cape": {
+        "id": "앱솔랩스"
+      },
+      "shoulder": {
+        "id": "앱솔랩스",
+        "upgrade": [
+          {
+            "type": "혼줌",
+            "option": {
+              "att": 3
+            },
+            "count": -1
+          }
+        ]
+      },
+      "face": {
+        "id": "응축된 힘의 결정석",
+        "star": 10
+      },
+      "eye": {
+        "id": "블랙빈 마크"
+      },
+      "ear": {
+        "id": "데아 시두스 이어링"
+      },
+      "belt": {
+        "id": "골든 클로버 벨트"
+      },
+      "ring1": {
+        "id": "고귀한 이피아의 반지",
+        "bonus": {},
+        "star": 12
+      },
+      "ring2": {
+        "id": "실버블라썸 링",
+        "bonus": {},
+        "star" : 10
+      },
+      "ring3": {
+        "id": "글로리온 링 : 슈프림",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0
+      },
+      "ring4": {
+        "id": "이터널 플레임 링",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0
+      },
+      "pendant1": {
+        "id": "매커네이터 펜던트",
+        "star": 12
+      },
+      "pendant2": {
+        "id": "도미네이터 펜던트",
+        "upgrade": [
+          {
+            "type": "파편",
+            "count": -1
+          }
+        ]
+      },
+      "pocket": {
+        "id": "핑크빛 성배",
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "badge": {
+        "id": "크리스탈 웬투스 뱃지",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "medal": {
+        "id": "카오스 벨룸 킬러",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "weapon": {
+        "id": "앱솔랩스",
+        "bonus": {
+          "att_grade": 6
+        },
+        "upgrade": [
+          {
+            "type": "주문의 흔적",
+            "prob": 15,
+            "stat": "stat_main",
+            "count": -1
+          }
+        ],
+        "star": 17,
+        "add_potential": {
+          "patt": 6
+        }
+      },
+      "subweapon": {
+        "id": "보조무기",
+        "upgrade": [
+          {
+            "type": "혼줌",
+            "option": {
+              "stat_main": 2,
+              "att": 2
+            },
+            "count": -1
+          }
+        ],
+        "star": 17,
+        "add_potential": {
+          "patt": 6
+        }
+      },
+      "emblem": {
+        "id": "엠블렘",
+        "add_potential": {
+          "patt": 6
+        }
+      },
+      "heart": {
+        "id": "티타늄 하트",
+        "upgrade": [
+          {
+            "type": "파퀘",
+            "value": 5,
+            "count": -1
+          }
+        ],
+        "star": 8,
+        "potential": {
+          "pstat_main": 15
+        },
+        "add_potential": {
+          "att": 10
+        }
+      },
+      "title": {
+        "id": "핑아일체"
+      }
+    },
+    "에반": {
+      "type": "override",
+      "job_specific_item": {
+        "stat_main": 46,
+        "stat_sub": 46
+      }
+    },
+    "메카닉": {
+      "type": "override",
+      "job_specific_item": {
+        "stat_main": 18,
+        "stat_sub": 18,
+        "att": 16
+      }
+    },
+    "듀얼블레이드": {
+      "type": "override",
+      "subweapon": {
+        "id": "앱솔랩스",
+        "star": 17,
+        "upgrade": [
+          {
+            "type": "주문의 흔적",
+            "stat": "stat_main",
+            "prob": 15,
+            "count": -1
+          }
+        ],
+        "add_potential": {
+          "patt": 6
+        }
+      }
+    },
+    "제로": {
+      "type": "override",
+      "head": {
+        "id": "카오스 벨룸의 헬름",
+        "bonus": {
+          "stat_main": 20,
+          "all_stat_rate": 2
+        }
+      },
+      "weapon": {
+        "id": "앱솔랩스",
+        "bonus": {
+          "att_grade": 4
+        },
+        "star": 17
+      },
+      "zero_weapon_set_name": "카루타"
+    },
+    "데몬어벤져": {
+      "type": "full",
+      "level": 240,
+      "arcane_symbol_force": 780,
+      "pet_equip": 98,
+      "pet_set": 20,
+      "cash": {
+        "stat_sub": 75,
+        "att": 40
+      },
+      "armor": {
+        "bonus": {
+          "stat_main": 2520
+        },
+        "upgrade": [
+          {
+            "type": "주문의 흔적",
+            "prob": 30,
+            "stat": "stat_main",
+            "count": -1
+          }
+        ],
+        "star": 17,
+        "potential": {
+          "pstat_main": 15
+        },
+        "add_potential": {
+          "att": 10
+        }
+      },
+      "acc": {
+        "bonus": {
+          "stat_main": 2520
+        },
+        "upgrade": [
+          {
+            "type": "악공",
+            "value": 4,
+            "count": -1
+          }
+        ],
+        "star": 17,
+        "potential": {
+          "pstat_main": 15
+        },
+        "add_potential": {
+          "att": 10
+        }
+      },
+      "head": {
+        "id": "카루타"
+      },
+      "top": {
+        "id": "카루타"
+      },
+      "bottom": {
+        "id": "카루타"
+      },
+      "shoes": {
+        "id": "앱솔랩스"
+      },
+      "glove": {
+        "id": "앱솔랩스",
+        "potential": {
+          "crit_damage": 8
+        }
+      },
+      "cape": {
+        "id": "앱솔랩스"
+      },
+      "shoulder": {
+        "id": "앱솔랩스",
+        "upgrade": [
+          {
+            "type": "혼줌",
+            "option": {
+              "att": 5
+            },
+            "count": -1
+          }
+        ]
+      },
+      "face": {
+        "id": "응축된 힘의 결정석"
+      },
+      "eye": {
+        "id": "블랙빈 마크"
+      },
+      "ear": {
+        "id": "마이스터 이어링"
+      },
+      "belt": {
+        "id": "분노한 자쿰의 벨트"
+      },
+      "ring1": {
+        "id": "고귀한 이피아의 반지",
+        "bonus": {},
+        "star": 12
+      },
+      "ring2": {
+        "id": "마이스터링",
+        "bonus": {}
+      },
+      "ring3": {
+        "id": "실버블라썸 링",
+        "bonus": {},
+        "star" : 10
+      },
+      "ring4": {
+        "id": "이터널 플레임 링",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0
+      },
+      "pendant1": {
+        "id": "매커네이터 펜던트"
+      },
+      "pendant2": {
+        "id": "도미네이터 펜던트",
+        "upgrade": [
+          {
+            "type": "파편",
+            "count": -1
+          }
+        ]
+      },
+      "pocket": {
+        "id": "핑크빛 성배",
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "badge": {
+        "id": "크리스탈 웬투스 뱃지",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "medal": {
+        "id": "카오스 벨룸 킬러",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "weapon": {
+        "id": "앱솔랩스",
+        "bonus": {
+          "att_grade": 6
+        },
+        "upgrade": [
+          {
+            "type": "주문의 흔적",
+            "prob": 15,
+            "stat": "stat_main",
+            "count": -1
+          }
+        ],
+        "star": 17,
+        "add_potential": {
+          "patt": 6
+        }
+      },
+      "subweapon": {
+        "id": "보조무기",
+        "add_potential": {
+          "patt": 6
+        }
+      },
+      "emblem": {
+        "id": "엠블렘",
+        "add_potential": {
+          "patt": 6
+        }
+      },
+      "heart": {
+        "id": "티타늄 하트",
+        "upgrade": [
+          {
+            "type": "파퀘",
+            "value": 5,
+            "count": -1
+          }
+        ],
+        "star": 8,
+        "potential": {
+          "pstat_main": 15
+        },
+        "add_potential": {
+          "att": 10
+        }
+      },
+      "title": {
+        "id": "핑아일체"
+      }
+    },
+    "제논": {
+      "type": "full",
+      "level": 240,
+      "arcane_symbol_force": 780,
+      "pet_equip": 98,
+      "pet_set": 20,
+      "cash": {
+        "stat_main": 75,
+        "stat_sub": 75,
+        "stat_sub2": 75,
+        "att": 40
+      },
+      "armor": {
+        "bonus": {
+          "stat_main": 20,
+          "stat_sub": 20,
+          "stat_sub2": 20,
+          "all_stat_rate": 6
+        },
+        "upgrade": [
+          {
+            "type": "방공",
+            "value": 3,
+            "count": 3
+          },
+          {
+            "type": "주문의 흔적",
+            "prob": 30,
+            "stat": "stat_sub2",
+            "count": 1
+          },
+          {
+            "type": "방공",
+            "value": 2,
+            "count": -1
+          }
+        ],
+        "star": 17,
+        "potential": {
+          "pstat_main": 9,
+          "pstat_sub": 9,
+          "pstat_sub2": 9
+        },
+        "add_potential": {
+          "att": 10
+        }
+      },
+      "acc": {
+        "bonus": {
+          "stat_main": 20,
+          "stat_sub": 20,
+          "stat_sub2": 20,
+          "all_stat_rate": 6
+        },
+        "upgrade": [
+          {
+            "type": "악공",
+            "value": 4,
+            "count": -1
+          }
+        ],
+        "star": 17,
+        "potential": {
+          "pstat_main": 9,
+          "pstat_sub": 9,
+          "pstat_sub2": 9
+        },
+        "add_potential": {
+          "att": 10
+        }
+      },
+      "head": {
+        "id": "카루타"
+      },
+      "top": {
+        "id": "카루타"
+      },
+      "bottom": {
+        "id": "카루타"
+      },
+      "shoes": {
+        "id": "앱솔랩스"
+      },
+      "glove": {
+        "id": "앱솔랩스",
+        "potential": {
+          "crit_damage": 8
+        }
+      },
+      "cape": {
+        "id": "앱솔랩스"
+      },
+      "shoulder": {
+        "id": "앱솔랩스",
+        "upgrade": [
+          {
+            "type": "혼줌",
+            "option": {
+              "att": 5
+            },
+            "count": -1
+          }
+        ]
+      },
+      "face": {
+        "id": "응축된 힘의 결정석",
+        "star": 10
+      },
+      "eye": {
+        "id": "블랙빈 마크"
+      },
+      "ear": {
+        "id": "데아 시두스 이어링"
+      },
+      "belt": {
+        "id": "분노한 자쿰의 벨트"
+      },
+      "ring1": {
+        "id": "고귀한 이피아의 반지",
+        "bonus": {},
+        "star": 15
+      },
+      "ring2": {
+        "id": "마이스터링",
+        "bonus": {}
+      },
+      "ring3": {
+        "id": "글로리온 링 : 슈프림",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0
+      },
+      "ring4": {
+        "id": "이터널 플레임 링",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0
+      },
+      "pendant1": {
+        "id": "매커네이터 펜던트"
+      },
+      "pendant2": {
+        "id": "도미네이터 펜던트",
+        "upgrade": [
+          {
+            "type": "파편",
+            "count": -1
+          }
+        ]
+      },
+      "pocket": {
+        "id": "핑크빛 성배",
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "badge": {
+        "id": "크리스탈 웬투스 뱃지",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "medal": {
+        "id": "카오스 벨룸 킬러",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "weapon": {
+        "id": "앱솔랩스",
+        "bonus": {
+          "att_grade": 6
+        },
+        "upgrade": [
+          {
+            "type": "주문의 흔적",
+            "prob": 15,
+            "stat": "stat_main",
+            "count": -1
+          }
+        ],
+        "star": 17,
+        "add_potential": {
+          "patt": 6
+        }
+      },
+      "subweapon": {
+        "id": "보조무기",
+        "add_potential": {
+          "patt": 6
+        }
+      },
+      "emblem": {
+        "id": "엠블렘",
+        "add_potential": {
+          "patt": 6
+        }
+      },
+      "heart": {
+        "id": "티타늄 하트",
+        "upgrade": [
+          {
+            "type": "파퀘",
+            "value": 5,
+            "count": -1
+          }
+        ],
+        "star": 8,
+        "potential": {
+          "pstat_main": 9,
+          "pstat_sub": 9,
+          "pstat_sub2": 9
+        },
+        "add_potential": {
+          "att": 10
+        }
+      },
+      "title": {
+        "id": "핑아일체"
+      }
+    }
+  }
+  

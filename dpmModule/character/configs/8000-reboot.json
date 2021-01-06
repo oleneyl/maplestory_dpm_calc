@@ -1,0 +1,550 @@
+{
+    "summary": [
+      "일반: 22성...",
+      "제논: 22성..."
+    ],
+    "default": {
+      "level": 260,
+      "arcane_symbol_force": 1320,
+      "authentic_symbol_level": [3],
+      "pet_equip": 98,
+      "pet_set": 20,
+      "cash": {
+        "stat_main": 75,
+        "stat_sub": 75,
+        "stat_sub2": 75,
+        "att": 40
+      },
+      "armor": {
+        "bonus": {
+          "stat_main": 120,
+          "stat_sub": 20,
+          "stat_sub2": 20
+        },
+        "upgrade": [],
+        "star": 22,
+        "potential": {
+          "pstat_main": 27
+        },
+        "add_potential": {}
+      },
+      "acc": {
+        "bonus": {
+          "stat_main": 60,
+          "stat_sub": 20,
+          "stat_sub2": 20,
+          "all_stat_rate": 6
+        },
+        "upgrade": [],
+        "star": 22,
+        "potential": {
+          "pstat_main": 27
+        },
+        "add_potential": {}
+      },
+      "head": {
+        "id": "앱솔랩스"
+      },
+      "top": {
+        "id": "카루타"
+      },
+      "bottom": {
+        "id": "카루타"
+      },
+      "shoes": {
+        "id": "앱솔랩스"
+      },
+      "glove": {
+        "id": "앱솔랩스",
+        "potential": {
+          "crit_damage": 16
+        }
+      },
+      "cape": {
+        "id": "앱솔랩스"
+      },
+      "shoulder": {
+        "id": "앱솔랩스"
+      },
+      "face": {
+        "id": "130얼장",
+        "bonus": {
+          "stat_main": 20,
+          "all_stat_rate": 4
+        },
+        "star": 20
+      },
+      "eye": {
+        "id": "파풀라투스 마크"
+      },
+      "ear": {
+        "id": "마이스터 이어링"
+      },
+      "belt": {
+        "id": "분노한 자쿰의 벨트"
+      },
+      "ring1": {
+        "id": "고귀한 이피아의 반지",
+        "bonus": {},
+        "star": 15
+      },
+      "ring2": {
+        "id": "마이스터링",
+        "bonus": {}
+      },
+      "ring3": {
+        "id": "글로리온 링 : 슈프림",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0
+      },
+      "ring4": {
+        "id": "이터널 플레임 링",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0
+      },
+      "pendant1": {
+        "id": "130펜던",
+        "bonus": {
+          "stat_main": 20,
+          "all_stat_rate": 4
+        }
+      },
+      "pendant2": {
+        "id": "도미네이터 펜던트"
+      },
+      "pocket": {
+        "id": "핑크빛 성배",
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "badge": {
+        "id": "칠요의 뱃지",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "medal": {
+        "id": "칠요의 몬스터파커",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "weapon": {
+        "id": "아케인셰이드",
+        "bonus": {
+          "att_grade": 7
+        },
+        "upgrade": [],
+        "star": 22,
+        "add_potential": {}
+      },
+      "subweapon": {
+        "id": "보조무기",
+        "upgrade": [],
+        "star": 20,
+        "add_potential": {}
+      },
+      "emblem": {
+        "id": "엠블렘",
+        "add_potential": {}
+      },
+      "heart": {
+        "id": "티타늄 하트",
+        "upgrade": [],
+        "star": 8,
+        "potential": {
+          "pstat_main": 27
+        },
+        "add_potential": {}
+      },
+      "title": {
+        "id": "핑아일체"
+      }
+    },
+    "에반": {
+      "type": "override",
+      "job_specific_item": {
+        "stat_main": 46,
+        "stat_sub": 46
+      }
+    },
+    "메카닉": {
+      "type": "override",
+      "job_specific_item": {
+        "stat_main": 8,
+        "stat_sub": 8,
+        "att": 10
+      }
+    },
+    "듀얼블레이드": {
+      "type": "override",
+      "subweapon": {
+        "id": "아케인셰이드",
+        "star": 22,
+        "upgrade": [],
+        "add_potential": {}
+      }
+    },
+    "제로": {
+      "type": "override",
+      "head": {
+        "id": "카오스 벨룸의 헬름",
+        "bonus": {
+          "stat_main": 20,
+          "all_stat_rate": 4
+        }
+      },
+      "weapon": {
+        "id": "아케인셰이드",
+        "bonus": {
+          "att_grade": 5
+        },
+        "star": 22
+      },
+      "zero_weapon_set_name": "카루타"
+    },
+    "데몬어벤져": {
+      "type": "full",
+      "level": 260,
+      "arcane_symbol_force": 1320,
+      "authentic_symbol_level": [3],
+      "pet_equip": 98,
+      "pet_set": 20,
+      "cash": {
+        "stat_sub": 75,
+        "att": 40
+      },
+      "armor": {
+        "bonus": {
+          "stat_main": 2520,
+          "att": 5
+        },
+        "upgrade": [],
+        "star": 22,
+        "potential": {
+          "pstat_main": 27
+        },
+        "add_potential": {}
+      },
+      "acc": {
+        "bonus": {
+          "stat_main": 2520,
+          "att": 5
+        },
+        "upgrade": [],
+        "star": 22,
+        "potential": {
+          "pstat_main": 27
+        },
+        "add_potential": {}
+      },
+      "head": {
+        "id": "앱솔랩스"
+      },
+      "top": {
+        "id": "카루타"
+      },
+      "bottom": {
+        "id": "카루타"
+      },
+      "shoes": {
+        "id": "앱솔랩스"
+      },
+      "glove": {
+        "id": "앱솔랩스",
+        "potential": {
+          "crit_damage": 16
+        }
+      },
+      "cape": {
+        "id": "앱솔랩스"
+      },
+      "shoulder": {
+        "id": "앱솔랩스",
+        "upgrade": []
+      },
+      "face": {
+        "id": "130얼장",
+        "bonus": {
+          "stat_main": 1560
+        },
+        "star": 20
+      },
+      "eye": {
+        "id": "파풀라투스 마크"
+      },
+      "ear": {
+        "id": "마이스터 이어링"
+      },
+      "belt": {
+        "id": "분노한 자쿰의 벨트"
+      },
+      "ring1": {
+        "id": "고귀한 이피아의 반지",
+        "bonus": {},
+        "star": 15
+      },
+      "ring2": {
+        "id": "마이스터링",
+        "bonus": {}
+      },
+      "ring3": {
+        "id": "글로리온 링 : 슈프림",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0
+      },
+      "ring4": {
+        "id": "이터널 플레임 링",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0
+      },
+      "pendant1": {
+        "id": "130펜던",
+        "bonus": {
+          "stat_main": 1560
+        }
+      },
+      "pendant2": {
+        "id": "도미네이터 펜던트",
+        "upgrade": []
+      },
+      "pocket": {
+        "id": "핑크빛 성배",
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "badge": {
+        "id": "칠요의 뱃지",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "medal": {
+        "id": "칠요의 몬스터파커",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "weapon": {
+        "id": "아케인셰이드",
+        "bonus": {
+          "att_grade": 7
+        },
+        "upgrade": [],
+        "star": 22,
+        "add_potential": {}
+      },
+      "subweapon": {
+        "id": "보조무기",
+        "add_potential": {}
+      },
+      "emblem": {
+        "id": "엠블렘",
+        "add_potential": {}
+      },
+      "heart": {
+        "id": "티타늄 하트",
+        "upgrade": [],
+        "star": 8,
+        "potential": {
+          "pstat_main": 27
+        },
+        "add_potential": {}
+      },
+      "title": {
+        "id": "핑아일체"
+      }
+    },
+    "제논": {
+      "type": "full",
+      "level": 260,
+      "arcane_symbol_force": 1320,
+      "authentic_symbol_level": [3],
+      "pet_equip": 98,
+      "pet_set": 20,
+      "cash": {
+        "stat_main": 75,
+        "stat_sub": 75,
+        "stat_sub2": 75,
+        "att": 40
+      },
+      "armor": {
+        "bonus": {
+          "stat_main": 40,
+          "stat_sub": 40,
+          "stat_sub2": 40,
+          "all_stat_rate": 6
+        },
+        "upgrade": [],
+        "star": 22,
+        "potential": {
+          "pstat_main": 18,
+          "pstat_sub": 18,
+          "pstat_sub2": 18
+        },
+        "add_potential": {}
+      },
+      "acc": {
+        "bonus": {
+          "stat_main": 40,
+          "stat_sub": 40,
+          "stat_sub2": 40,
+          "all_stat_rate": 6
+        },
+        "upgrade": [],
+        "star": 22,
+        "potential": {
+          "pstat_main": 18,
+          "pstat_sub": 18,
+          "pstat_sub2": 18
+        },
+        "add_potential": {}
+      },
+      "head": {
+        "id": "앱솔랩스"
+      },
+      "top": {
+        "id": "카루타"
+      },
+      "bottom": {
+        "id": "카루타"
+      },
+      "shoes": {
+        "id": "앱솔랩스"
+      },
+      "glove": {
+        "id": "앱솔랩스",
+        "potential": {
+          "crit_damage": 16
+        }
+      },
+      "cape": {
+        "id": "앱솔랩스"
+      },
+      "shoulder": {
+        "id": "앱솔랩스",
+        "upgrade": []
+      },
+      "face": {
+        "id": "130얼장",
+        "bonus": {
+          "stat_main": 20,
+          "all_stat_rate": 4
+        },
+        "star": 20
+      },
+      "eye": {
+        "id": "파풀라투스 마크"
+      },
+      "ear": {
+        "id": "마이스터 이어링"
+      },
+      "belt": {
+        "id": "분노한 자쿰의 벨트"
+      },
+      "ring1": {
+        "id": "고귀한 이피아의 반지",
+        "bonus": {},
+        "star": 15
+      },
+      "ring2": {
+        "id": "마이스터링",
+        "bonus": {}
+      },
+      "ring3": {
+        "id": "글로리온 링 : 슈프림",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0
+      },
+      "ring4": {
+        "id": "이터널 플레임 링",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0
+      },
+      "pendant1": {
+        "id": "130펜던",
+        "bonus": {
+          "all_stat_rate": 5
+        }
+      },
+      "pendant2": {
+        "id": "도미네이터 펜던트",
+        "upgrade": []
+      },
+      "pocket": {
+        "id": "핑크빛 성배",
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "badge": {
+        "id": "칠요의 뱃지",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "medal": {
+        "id": "칠요의 몬스터파커",
+        "bonus": {},
+        "upgrade": [],
+        "star": 0,
+        "potential": {},
+        "add_potential": {}
+      },
+      "weapon": {
+        "id": "아케인셰이드",
+        "bonus": {
+          "att_grade": 7
+        },
+        "upgrade": [],
+        "star": 22,
+        "add_potential": {
+          "patt": 21
+        }
+      },
+      "subweapon": {
+        "id": "보조무기",
+        "add_potential": {}
+      },
+      "emblem": {
+        "id": "엠블렘",
+        "add_potential": {}
+      },
+      "heart": {
+        "id": "티타늄 하트",
+        "upgrade": [],
+        "star": 8,
+        "potential": {
+          "pstat_main": 18,
+          "pstat_sub": 18,
+          "pstat_sub2": 18
+        },
+        "add_potential": {}
+      },
+      "title": {
+        "id": "핑아일체"
+      }
+    }
+  }
+  
