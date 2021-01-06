@@ -1,6 +1,8 @@
 import sys
 import json
 
+from dpmModule.character.characterTemplate import TemplateGenerator
+
 sys.path.append('../')
 
 from dpmModule.character.characterKernel import JobGenerator
@@ -36,7 +38,7 @@ def test_job_generator_creation():
         test_conf = json.load(f)
     vEhc = None
     gen = JobGenerator()
-    character = get_template_generator("high_standard")().get_template(8000)('스태프')
+    character = TemplateGenerator().get_template(gen, "8000")
     gen.load(test_conf)
     passive_skill_list = gen.get_passive_skill_list(vEhc, character, None)
     not_implied_skill_list = gen.get_not_implied_skill_list(vEhc, character, None)
