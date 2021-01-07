@@ -51,7 +51,7 @@ def strike_arrow(vEhc, passive_level: int):  # 1980ms 대기하면 초기화
         core.DamageSkill(
             name="스트라이크 애로우",
             delay=450,  # base delay 570
-            damage=70 + 89 + 79 + 85 + passive_level,
+            damage=70 + 89 + 79 + 100 + passive_level,
             hit=5,
             modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
         )
@@ -62,7 +62,7 @@ def strike_arrow(vEhc, passive_level: int):  # 1980ms 대기하면 초기화
         core.DamageSkill(
             name="스트라이크 애로우 II",
             delay=450,  # base delay 570
-            damage=160 + 79 + 85 + passive_level,
+            damage=160 + 79 + 100 + passive_level,
             hit=5,
             modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
         )
@@ -85,7 +85,7 @@ def strike_arrow(vEhc, passive_level: int):  # 1980ms 대기하면 초기화
         core.DamageSkill(
             name="스트라이크 애로우 III",
             delay=450,  # base delay 570
-            damage=240 + 85 + passive_level,
+            damage=240 + 100 + passive_level,
             hit=5,
             modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
         )
@@ -304,7 +304,7 @@ def chain_sickle(vEhc, combat: int):
         core.DamageSkill(
             name="[처형] 체인 시클",
             delay=270,  # base delay 330
-            damage=160 + 2 * combat,
+            damage=200 + 2 * combat,
             hit=6,
             cooltime=7000,
             red=True,
@@ -348,7 +348,7 @@ def poison_needle(vEhc, combat: int):
         core.DamageSkill(  # 연속공격을 스킬 하나에 합쳐둠
             name="[처형] 포이즌 니들(연속 공격)",
             delay=720 - 330,  # common.updatableTime - prepare.time
-            damage=185 + combat,
+            damage=190 + combat,
             hit=8 * 4,  # 8타, 4회 반복
             modifier=EXECUTION_BOSSKILLER + EXECUTION_IGNORE_GUARD,
         )
@@ -685,10 +685,10 @@ class JobGenerator(ck.JobGenerator):
     ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         Hitman = core.InformedCharacterModifier("히트맨", att=40, crit=35)
-        BreathShooterMastery = core.InformedCharacterModifier("브레스 슈터 마스터리", att=30)
+        BreathShooterMastery = core.InformedCharacterModifier("브레스 슈터 마스터리", att=40)
         PhysicalTraining = core.InformedCharacterModifier("피지컬 트레이닝", stat_main=60)
         NaturalBornInstinct = core.InformedCharacterModifier(
-            "네츄럴 본 인스팅트", pdamage_indep=25, att=40, crit=20, armor_ignore=10
+            "내츄럴 본 인스팅트", pdamage_indep=20, att=40, crit=20, armor_ignore=10
         )
         GrindingII = core.InformedCharacterModifier("그라인딩 II", att=30 + passive_level)
         Dogma = core.InformedCharacterModifier(
