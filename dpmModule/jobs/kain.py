@@ -553,7 +553,7 @@ def thanatos_descent(vEhc):
         .isV(vEhc, 0, 0)
         .wrap(core.BuffSkillWrapper)
     )
-    ThanatosDescentHand = (
+    ThanatosDescentArrow = (
         core.DamageSkill(
             name="타나토스 디센트(죽음의 화살)",
             delay=0,
@@ -598,9 +598,9 @@ def thanatos_descent(vEhc):
         .wrap(core.DamageSkillWrapper)
     )
 
-    UseThanatosDescentHand = core.OptionalElement(
-        lambda: ThanatosDescentHand.is_available(),
-        ThanatosDescentHand,
+    UseThanatosDescentArrow = core.OptionalElement(
+        lambda: ThanatosDescentArrow.is_available() and ThanatosDescent.is_active(),
+        ThanatosDescentArrow,
     )
 
     ThanatosDescent.onJustAfter(ThanatosDescentFinalInit.controller(35000))
@@ -608,14 +608,14 @@ def thanatos_descent(vEhc):
     ThanatosDescentFinalInit.onAfter(ThanatosDescentFinalRepeat)
     ThanatosDescentFinalRepeat.onAfter(ThanatosDescentFinalFinish)
 
-    ThanatosDescentHand.protect_from_running()
+    ThanatosDescentArrow.protect_from_running()
 
     return (
         ThanatosDescent,
-        ThanatosDescentHand,
+        ThanatosDescentArrow,
         ThanatosDescentFinalInit,
         ThanatosDescentFinal,
-        UseThanatosDescentHand,
+        UseThanatosDescentArrow,
     )
 
 
@@ -903,10 +903,10 @@ class JobGenerator(ck.JobGenerator):
         ) = fatal_blitz(vEhc)
         (
             ThanatosDescent,
-            ThanatosDescentHand,
+            ThanatosDescentArrow,
             ThanatosDescentFinalInit,
             ThanatosDescentFinal,
-            UseThanatosDescentHand,
+            UseThanatosDescentArrow,
         ) = thanatos_descent(vEhc)
         GrapOfAgony = GrapOfAgonyWrapper(vEhc, 0, 0)
 
@@ -1038,7 +1038,7 @@ class JobGenerator(ck.JobGenerator):
             FatalBlitzTick,
         ]
         for sk in counted_skills:
-            sk.onJustAfter(UseThanatosDescentHand)
+            sk.onJustAfter(UseThanatosDescentArrow)
 
         # Grap of Agony
         AddAgony = GrapOfAgony.stackController(1)
@@ -1098,7 +1098,7 @@ class JobGenerator(ck.JobGenerator):
                 RemainIncense,
                 DeathBlessingBonus,
                 PoisonNeedleDOT,
-                ThanatosDescentHand,
+                ThanatosDescentArrow,
             ]  # Not used from scheduler
             + [BasicAttack],
         )
