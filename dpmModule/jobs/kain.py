@@ -1010,7 +1010,7 @@ class JobGenerator(ck.JobGenerator):
             )
             sk.onJustAfter(DeathBlessingBonusMalice)
 
-        for sk in [DeathBlessing, DeathBlessingIncarnation]:
+        for sk in [ChainSickleFinal, PoisonNeedleSpin, DeathBlessing, DeathBlessingIncarnation]:
             sk.add_runtime_modifier(
                 DeathBlessingBonus,
                 lambda sk: core.CharacterModifier(pdamage_indep=15 * sk.is_active()),
@@ -1063,7 +1063,16 @@ class JobGenerator(ck.JobGenerator):
             sk.onConstraint(IsDeathBlessed)
 
         GrapOfAgony.vary(15 * 25)  # start with full stack
-        StrikeArrowRelease.protect_from_running()
+        StrikeArrowRelease.onConstraint(
+            core.ConstraintElement("맬리스 조건", Malice, partial(Malice.judge, 500, 1))
+        )
+        PhantomBlade.onConstraint(
+            core.ConstraintElement(
+                "데스 블레싱 조건",
+                DeathBlessingStack,
+                partial(DeathBlessingStack.judge, 9, 1),
+            )
+        )
 
         return (
             BasicAttack,
