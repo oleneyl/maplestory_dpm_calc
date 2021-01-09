@@ -864,6 +864,7 @@ class JobGenerator(ck.JobGenerator):
                 damage=175,
                 hit=10 * 5,  # 10타, 5회 반복
                 cooltime=45000,
+                modifier=BREATH_SHOOTER_BOSSKILLER + BREATH_SHOOTER_REINFORCE,
             )
             .setV(vEhc, 0, 2)
             .wrap(core.DamageSkillWrapper)
@@ -875,6 +876,10 @@ class JobGenerator(ck.JobGenerator):
                 damage=200,
                 hit=12 * 5,  # 12타, 5회 반복
                 cooltime=60000,
+                modifier=BREATH_SHOOTER_BOSSKILLER
+                + BREATH_SHOOTER_REINFORCE
+                + EXECUTION_BOSSKILLER
+                + EXECUTION_IGNORE_GUARD,
             )
             .setV(vEhc, 0, 2)
             .wrap(core.DamageSkillWrapper)
