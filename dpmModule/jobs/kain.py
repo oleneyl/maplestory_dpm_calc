@@ -674,7 +674,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 1
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(crit_damage=15, pdamage=40, armor_ignore=-10)
+        return core.CharacterModifier(crit_damage=15, pdamage=50)
 
     def get_ruleset(self):
         ruleset = RuleSet()
