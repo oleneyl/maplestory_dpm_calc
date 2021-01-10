@@ -10,10 +10,10 @@ from math import ceil
 from typing import Any, Dict
 
 
-BREATH_SHOOTER_REINFORCE = core.CharacterModifier(pdamage=10)
-BREATH_SHOOTER_BOSSKILLER = core.CharacterModifier(boss_pdamage=15)
-EXECUTION_REINFORCE = core.CharacterModifier(pdamage=20)
-EXECUTION_IGNORE_GUARD = core.CharacterModifier(armor_ignore=25)
+BREATH_SHOOTER_HYPER = core.CharacterModifier(
+    pdamage=10, boss_pdamage=15, armor_ignore=15
+)  # 리인포스, 보스킬러, 이그노어 가드
+EXECUTION_HYPER = core.CharacterModifier(armor_ignore=25)  # 이그노어 가드
 REMAIN_INCENSE_REINFORCE = core.CharacterModifier(pdamage=50)
 
 
@@ -53,7 +53,7 @@ def strike_arrow(vEhc, passive_level: int):  # 1980ms 대기하면 초기화
             delay=450,  # base delay 570
             damage=70 + 89 + 79 + 100 + passive_level,
             hit=5,
-            modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
+            modifier=BREATH_SHOOTER_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -64,7 +64,7 @@ def strike_arrow(vEhc, passive_level: int):  # 1980ms 대기하면 초기화
             delay=450,  # base delay 570
             damage=160 + 79 + 100 + passive_level,
             hit=5,
-            modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
+            modifier=BREATH_SHOOTER_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -76,7 +76,7 @@ def strike_arrow(vEhc, passive_level: int):  # 1980ms 대기하면 초기화
             damage=200 + 80 + 85 + passive_level,
             hit=8,
             cooltime=1000,
-            modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
+            modifier=BREATH_SHOOTER_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -87,7 +87,7 @@ def strike_arrow(vEhc, passive_level: int):  # 1980ms 대기하면 초기화
             delay=450,  # base delay 570
             damage=240 + 100 + passive_level,
             hit=5,
-            modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
+            modifier=BREATH_SHOOTER_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -131,7 +131,7 @@ def scattering_shot(vEhc, passive_level: int):
             damage=120 + 75 + 75 + passive_level,
             hit=4,
             cooltime=6000,
-            modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
+            modifier=BREATH_SHOOTER_HYPER,
         ).setV(vEhc, 0, 2),
         max_stack=3,
     )
@@ -142,9 +142,7 @@ def scattering_shot(vEhc, passive_level: int):
             damage=120 + 75 + 75 + passive_level,
             hit=4 * 4,  # 4타, 4회 반복
             cooltime=-1,
-            modifier=core.CharacterModifier(pdamage_indep=-50)
-            + BREATH_SHOOTER_REINFORCE
-            + BREATH_SHOOTER_BOSSKILLER,
+            modifier=core.CharacterModifier(pdamage_indep=-50) + BREATH_SHOOTER_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -156,7 +154,7 @@ def scattering_shot(vEhc, passive_level: int):
             damage=135 + 80 + 80 + passive_level,
             hit=4,
             cooltime=6000,
-            modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
+            modifier=BREATH_SHOOTER_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -167,9 +165,7 @@ def scattering_shot(vEhc, passive_level: int):
             delay=0,
             damage=135 + 80 + 80 + passive_level,
             hit=4 * 5,  # 4타, 5회 반복
-            modifier=core.CharacterModifier(pdamage_indep=-50)
-            + BREATH_SHOOTER_REINFORCE
-            + BREATH_SHOOTER_BOSSKILLER,
+            modifier=core.CharacterModifier(pdamage_indep=-50) + BREATH_SHOOTER_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -194,7 +190,7 @@ def shaft_break(vEhc, passive_level: int):
             damage=180 + 60 + passive_level,
             hit=3,
             cooltime=8000,
-            modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
+            modifier=BREATH_SHOOTER_HYPER,
         ).setV(vEhc, 0, 2),
         max_stack=3,
     )
@@ -204,7 +200,7 @@ def shaft_break(vEhc, passive_level: int):
             delay=0,
             damage=140 + 60 + passive_level,
             hit=10,
-            modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
+            modifier=BREATH_SHOOTER_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -216,7 +212,7 @@ def shaft_break(vEhc, passive_level: int):
             damage=180 + 75 + passive_level,
             hit=3,
             cooltime=11000,
-            modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
+            modifier=BREATH_SHOOTER_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -227,7 +223,7 @@ def shaft_break(vEhc, passive_level: int):
             delay=0,
             damage=240 + 75 + passive_level,
             hit=10,
-            modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
+            modifier=BREATH_SHOOTER_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -238,7 +234,7 @@ def shaft_break(vEhc, passive_level: int):
             delay=0,
             damage=40 + 20 + passive_level // 3,
             hit=3 * 12,  # 3타, 12회 타격
-            modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
+            modifier=BREATH_SHOOTER_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -265,7 +261,7 @@ def falling_dust(vEhc, combat: int):
             damage=410 + 5 * combat,
             hit=8,
             cooltime=10000,
-            modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
+            modifier=BREATH_SHOOTER_HYPER,
         ).setV(vEhc, 0, 2),
         max_stack=2,
     )
@@ -276,7 +272,7 @@ def falling_dust(vEhc, combat: int):
             damage=420 + 5 * combat,
             hit=8,
             cooltime=14000,
-            modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
+            modifier=BREATH_SHOOTER_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -288,7 +284,7 @@ def falling_dust(vEhc, combat: int):
             damage=240 + 5 * combat,
             hit=15,
             cooltime=-1,
-            modifier=BREATH_SHOOTER_REINFORCE + BREATH_SHOOTER_BOSSKILLER,
+            modifier=BREATH_SHOOTER_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -303,12 +299,12 @@ def chain_sickle(vEhc, combat: int):
     ChainSickle = (
         core.DamageSkill(
             name="[처형] 체인 시클",
-            delay=270,  # base delay 330
+            delay=240,  # base delay 330 -> 300 by skipActionFrame=4
             damage=200 + 2 * combat,
             hit=6,
             cooltime=7000,
             red=True,
-            modifier=EXECUTION_REINFORCE + EXECUTION_IGNORE_GUARD,
+            modifier=EXECUTION_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -320,7 +316,7 @@ def chain_sickle(vEhc, combat: int):
             damage=200 + 2 * combat,
             hit=12,
             cooltime=-1,
-            modifier=EXECUTION_REINFORCE + EXECUTION_IGNORE_GUARD,
+            modifier=EXECUTION_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -339,7 +335,7 @@ def poison_needle(vEhc, combat: int):
             hit=8,
             cooltime=15000,
             red=True,
-            modifier=EXECUTION_REINFORCE + EXECUTION_IGNORE_GUARD,
+            modifier=EXECUTION_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -350,7 +346,7 @@ def poison_needle(vEhc, combat: int):
             delay=720 - 330,  # common.updatableTime - prepare.time
             damage=190 + combat,
             hit=8 * 4,  # 8타, 4회 반복
-            modifier=EXECUTION_REINFORCE + EXECUTION_IGNORE_GUARD,
+            modifier=EXECUTION_HYPER,
         )
         .setV(vEhc, 0, 2)
         .wrap(core.DamageSkillWrapper)
@@ -770,7 +766,7 @@ class JobGenerator(ck.JobGenerator):
                 delay=510,  # base delay 660
                 damage=155 + 75 + passive_level,
                 hit=6,
-                modifier=EXECUTION_REINFORCE + EXECUTION_IGNORE_GUARD,
+                modifier=EXECUTION_HYPER,
             )
             .setV(vEhc, 0, 2)
             .wrap(core.DamageSkillWrapper)
@@ -784,7 +780,7 @@ class JobGenerator(ck.JobGenerator):
                 hit=7,
                 cooltime=4500,
                 red=True,
-                modifier=EXECUTION_REINFORCE + EXECUTION_IGNORE_GUARD,
+                modifier=EXECUTION_HYPER,
             )
             .setV(vEhc, 0, 2)
             .wrap(core.DamageSkillWrapper)
@@ -853,7 +849,7 @@ class JobGenerator(ck.JobGenerator):
                 damage=320,
                 hit=6 * 3,
                 cooltime=30000,
-                modifier=BREATH_SHOOTER_BOSSKILLER + BREATH_SHOOTER_REINFORCE,
+                modifier=BREATH_SHOOTER_HYPER,
             )
             .setV(vEhc, 0, 2)
             .wrap(core.DamageSkillWrapper)
@@ -864,8 +860,8 @@ class JobGenerator(ck.JobGenerator):
                 delay=420 + 270,  # prepare.action + keydownend.action, need more check
                 damage=175,
                 hit=10 * 5,  # 10타, 5회 반복
-                cooltime=45000,
-                modifier=BREATH_SHOOTER_BOSSKILLER + BREATH_SHOOTER_REINFORCE,
+                cooltime=40000,
+                modifier=BREATH_SHOOTER_HYPER,
             )
             .setV(vEhc, 0, 2)
             .wrap(core.DamageSkillWrapper)
@@ -877,10 +873,7 @@ class JobGenerator(ck.JobGenerator):
                 damage=200,
                 hit=12 * 5,  # 12타, 5회 반복
                 cooltime=60000,
-                modifier=BREATH_SHOOTER_BOSSKILLER
-                + BREATH_SHOOTER_REINFORCE
-                + EXECUTION_REINFORCE
-                + EXECUTION_IGNORE_GUARD,
+                modifier=BREATH_SHOOTER_HYPER + EXECUTION_HYPER,
             )
             .setV(vEhc, 0, 2)
             .wrap(core.DamageSkillWrapper)
@@ -1010,7 +1003,12 @@ class JobGenerator(ck.JobGenerator):
             )
             sk.onJustAfter(DeathBlessingBonusMalice)
 
-        for sk in [ChainSickleFinal, PoisonNeedleSpin, DeathBlessing, DeathBlessingIncarnation]:
+        for sk in [
+            ChainSickleFinal,
+            PoisonNeedleSpin,
+            DeathBlessing,
+            DeathBlessingIncarnation,
+        ]:
             sk.add_runtime_modifier(
                 DeathBlessingBonus,
                 lambda sk: core.CharacterModifier(pdamage_indep=15 * sk.is_active()),
@@ -1047,6 +1045,8 @@ class JobGenerator(ck.JobGenerator):
             sk.onJustAfter(AddAgony)
 
         # Scheduling
+        GrapOfAgony.vary(15 * 25)  # start with full stack
+
         IsDeathBlessed = core.ConstraintElement(
             "데스 블레싱 스택 >= 1",
             DeathBlessingStack,
@@ -1061,8 +1061,6 @@ class JobGenerator(ck.JobGenerator):
             FatalBlitzTick,
         ]:
             sk.onConstraint(IsDeathBlessed)
-
-        GrapOfAgony.vary(15 * 25)  # start with full stack
         StrikeArrowRelease.onConstraint(
             core.ConstraintElement("맬리스 조건", Malice, partial(Malice.judge, 500, 1))
         )
@@ -1093,17 +1091,16 @@ class JobGenerator(ck.JobGenerator):
             ]
             + [MaliceTick, DragonPang, GuidedArrow, GrapOfAgony]
             + [ThanatosDescentFinalInit]  # reserved task, use as early as possible
-            + [Pantheon]
+            + [Pantheon, DragonBurstReleaseInit, FatalBlitzInit]
             + [
-                DragonBurstReleaseInit,
                 SneakySnipingRelease,
                 FallingDustRelease,
                 ShaftBreakRelease,
                 ScatteringShotRelease,
                 StrikeArrowRelease,
             ]
-            + [FatalBlitzInit, ChainSickle, PoisonNeedle, TearingKnife, PhantomBlade]
-            + [ChasingShot, SneakySniping, FallingDust, ShaftBreak, ScatteringShot]
+            + [PoisonNeedle, ChainSickle, TearingKnife, PhantomBlade]
+            + [ChasingShot, SneakySniping, ShaftBreak, ScatteringShot, FallingDust]
             + [
                 RemainIncense,
                 DeathBlessingBonus,
