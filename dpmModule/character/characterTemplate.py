@@ -3,17 +3,34 @@ import os
 from copy import copy, deepcopy
 from typing import Optional, Tuple, Union, List
 
-from dpmModule.kernel.core.modifier import ExtendedCharacterModifier
-from dpmModule.gear import Gear, GearBuilder, GearType, GearPropType, Scroll, eval_set_item_effect
-from dpmModule.character.characterKernel import GearedCharacter, JobGenerator
-from dpmModule.jobs import job_branch_list
-
-ExMDF = ExtendedCharacterModifier
+from ..character.characterKernel import GearedCharacter, JobGenerator
+from ..gear import Gear, GearBuilder, GearType, GearPropType, Scroll, eval_set_item_effect
+from ..jobs import job_branch_list
+from ..kernel.core.modifier import ExtendedCharacterModifier as ExMDF
 
 
 def open_json(*paths) -> dict:
     with open(os.path.join(os.path.dirname(__file__), *paths), encoding='utf8') as _file:
         return json.load(_file)
+
+
+'''How template override works:
+1. "default" <- "job" (type: override):
+    Override by keys in "job"
+    ex) default.armor = job.armor, default.head = job.head
+2. "armor" <- "head":
+    Override by keys in "head"
+'''
+
+'''Order of template gear attributes:
+1. id*
+2. bonus
+3. upgrade
+4. star
+5. potential
+6. add_potential
+7. cdr
+'''
 
 
 class TemplateGenerator:
@@ -22,6 +39,10 @@ class TemplateGenerator:
         # "데몬슬레이어": 1099004,  # 성장으로 STR 9, DEX 9, HP 200, 방어력 20 상승
         # "데몬어벤져": 1099009,  # 성장으로 STR 9, HP 200, 방어력 20 상승
         # "미하일": 1098003,  # 성장으로 STR 9, DEX 9, HP 200, 방어력 20 상승
+        # TODO: Maybe use 'inherit: true' keyword to inherit from 'armor', 'acc', etc... ?
+        # ex 1) eye: { "inherit": "true", "bonus": { ... }, ... } # inherit everything
+        # ex 2) eye: { "bonus": "inherit" or { ... }, ... } # inherit single attribute
+        # Or create gear factory json and load by key (maybe simpler to implement)
 
         self.parts = ("head", "top", "bottom", "shoes", "glove", "cape", "shoulder", "face", "eye", "ear", "belt",
                       "ring1", "ring2", "ring3", "ring4", "pendant1", "pendant2",
@@ -71,10 +92,11 @@ class TemplateGenerator:
         # Equip gears
         gear_list = {}
         for part in self.parts:
-            gear_list[part] = self._get_enchanted_gear(part, node, gen, cdr)
         # Set zero subweapon
-        if gen.jobname == "제로":
-            gear_list["subweapon"] = self._get_zero_subweapon(gear_list["weapon"])
+            if part == "subweapon" and gen.jobname == "제로":
+                gear_list["subweapon"] = self._get_zero_subweapon(gear_list["weapon"])
+            else:
+                gear_list[part] = self._get_enchanted_gear(part, node, gen, cdr)
         # Get set item effects
         gear_list["set_effect"] = self._get_set_effect(gear_list, node)
         # Apply gear, set item effect to character mdf
@@ -94,7 +116,7 @@ class TemplateGenerator:
                     node[node_key] = deepcopy(self.data[spec_name][jobname][node_key])
         # Assert node contains all necessary parts
         assert("level" in node and set(self.parts) <= node.keys())
-        # Apply wildcard options (armor, acc)
+        # Apply wildcard options: 'armor'
         if "armor" in node:
             for part in ("head", "top", "bottom", "shoes", "glove", "cape"):
                 for option in node["armor"]:
@@ -102,12 +124,7 @@ class TemplateGenerator:
                         node[part][option] = node["armor"][option]
             del node["armor"]
         if "acc" in node:
-            for part in ("shoulder", "face", "eye", "ear", "belt", "ring1", "ring2", "ring3", "ring4",
-                         "pendant1", "pendant2", "pocket", "badge", "medal"):
-                for option in node["acc"]:
-                    if option not in node[part]:
-                        node[part][option] = node["acc"][option]
-            del node["acc"]
+            raise TypeError('Deprecated wildcard keyword: acc')
         return node
 
     def _get_weapon_stat(self, node) -> Tuple[int, int]:
@@ -172,7 +189,7 @@ class TemplateGenerator:
 
     def _get_enchanted_gear(self, part: str, node, gen: JobGenerator, cdr: int) -> Gear:
         return self._apply_gear_options(
-            self._get_gear_base(node[part]['id'], part, gen.jobname), node[part], gen.jobtype, cdr
+            self._get_gear_base(node[part]['id'], part, gen.jobname), node[part], part, gen.jobtype, cdr
         )
 
     def _get_gear_base(self, name: Union[int, str], part: str, jobname: str) -> Gear:
@@ -203,8 +220,14 @@ class TemplateGenerator:
             raise ValueError('Invalid gear name: ' + debug_name + ' (part: ' + part + ', jobname: ' + jobname + ')')
         return Gear.create_from_id(name)
 
-    def _apply_gear_options(self, gear: Gear, gear_node, jobtype: str, cdr) -> Gear:
+    def _apply_gear_options(self, gear: Gear, gear_node, part: str, jobtype: str, cdr) -> Gear:
         def _apply_bonus(bonus_node):
+            def _is_bonus_gear(part: str):
+                part = part.rstrip("0123456789")
+                return part in ("head", "top", "bottom", "shoes", "glove", "cape", "shoulder",
+                                "face", "eye", "ear", "belt", "pendant", "pocket", "weapon")
+            if len(bonus_node) > 0 and not _is_bonus_gear(part):
+                raise TypeError('Cannot apply bonus to gear type: ' + gear.type.name)
             for bonus_type in bonus_node:
                 if bonus_type == "att_grade":
                     gb.apply_additional_stat(att, bonus_node[bonus_type])
@@ -214,6 +237,9 @@ class TemplateGenerator:
                     gear.additional_stat[stat_type[bonus_type]] = bonus_node[bonus_type]
 
         def _apply_upgrade(upgrade_node):
+            # Ignore special case: subweapon / shield
+            if len(upgrade_node) > 0 and gear.tuc < 1 and part != "subweapon":
+                raise TypeError('Cannot apply scroll upgrade to gear: ' + str(gear))
             gb.apply_hammer()
             for scroll in upgrade_node:
                 type = scroll['type']
@@ -246,6 +272,9 @@ class TemplateGenerator:
 
         def _apply_star(gear_node):
             star = gear_node['star']
+            # Ignore special case: subweapon / shield
+            if abs(star) > gear.max_star and part != "subweapon":
+                raise TypeError('Tried to apply star ' + str(star) + ' but max_star was ' + str(gear.max_star))
             if star > 0:
                 gb.apply_stars(star)
             elif star < 0:
@@ -257,13 +286,20 @@ class TemplateGenerator:
                 gb.apply_stars(bonus_count, True, True)
 
         def _apply_potential(potential_node, gear_potential_dict):
+            def _is_potential_gear(part: str):
+                part = part.rstrip("0123456789")
+                return part in ("head", "top", "bottom", "shoes", "glove", "cape", "shoulder", "face", "eye",
+                                "ear", "belt", "ring", "pendant", "weapon", "subweapon", "emblem", "heart")
+            if len(potential_node) > 0 and not _is_potential_gear(part):
+                raise TypeError('Cannot apply potential to gear type: ' + gear.type.name)
             gear_potential_dict.clear()
             for stat_key in potential_node:
                 if stat_key == "all_stat_rate":
                     gear_potential_dict[pstat_main] += potential_node[stat_key]
                     gear_potential_dict[pstat_sub] += potential_node[stat_key]
                     gear_potential_dict[pstat_sub2] += potential_node[stat_key]
-                gear_potential_dict[stat_type[stat_key]] += potential_node[stat_key]
+                else:
+                    gear_potential_dict[stat_type[stat_key]] += potential_node[stat_key]
 
         stat_main, pstat_main, stat_sub, pstat_sub, stat_sub2, pstat_sub2, att, patt = _get_stat_type(jobtype)
         stat_type = {
@@ -284,7 +320,7 @@ class TemplateGenerator:
         if 'bonus' in gear_node:
             _apply_bonus(gear_node['bonus'])
         # 주문서 강화
-        if 'upgrade' in gear_node and gear.tuc > 0:
+        if 'upgrade' in gear_node:
             _apply_upgrade(gear_node['upgrade'])
         # 스타포스 강화
         if 'star' in gear_node:

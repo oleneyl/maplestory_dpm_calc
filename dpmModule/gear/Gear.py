@@ -20,8 +20,8 @@ class Gear:
 
     def __init__(self):
         self.item_id: int = 0
-        self.name: str = None
-        self.type: GearType = 0
+        self.name: str = "Default name!"
+        self.type: GearType = GearType._dummy
 
         self.req_level: int = 0
         self.req_job: int = 0
@@ -68,7 +68,6 @@ class Gear:
             statStr += "%s: %d (%d +%d +%d +%d)\n" % (propType.name, sum(stats[propType]),
                                                       stats[propType][0], stats[propType][1],
                                                       stats[propType][2], stats[propType][3])
-
         return ("= ID: " + str(self.item_id) + '\n' +
                 "= 이름: " + self.name + '\n' +
                 "= 분류: " + self.type.name + '\n' +
