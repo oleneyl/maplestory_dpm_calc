@@ -1,27 +1,42 @@
 import math
 from collections import defaultdict
+from typing import Dict, DefaultDict
 
 from .Gear import Gear
 from .GearPropType import GearPropType
 from .GearType import GearType
 
-PropMap = defaultdict[GearPropType, int]
+PropMap = DefaultDict[GearPropType, int]
 
 
 class Scroll:
     def __init__(self, stat: PropMap = None, name: str = None,
                  bonus_pad_on_fourth: bool = False, bonus_mad_on_fourth: bool = False):
-        self.name: str = name
         self.stat: PropMap = stat or defaultdict(int)
+        self.name: str = name
         self.bonus_pad_on_fourth: bool = bonus_pad_on_fourth
         self.bonus_mad_on_fourth: bool = bonus_mad_on_fourth
 
     @staticmethod
-    def create_from_dict(stat: dict, name: str = None):
+    def create_from_dict(stat: Dict[GearPropType, int], name: str = None):
+        """
+        Create scroll with given stat and name.
+        :param stat: Dict with stats.
+        :param name: Name of the scroll.
+        :return: Scroll with given stat and name.
+        """
         return Scroll(defaultdict(int, stat), name)
 
     @staticmethod
     def get_spell_trace_scroll(gear: Gear, probability: int, prop_type: GearPropType):
+        """
+        Returns corresponding spell trace scroll.
+        :param gear: Target gear; req_job, req_level, type are used.
+        :param probability: 100 or 70 or 30 or 15
+        :param prop_type: Prop type of spell trace scroll.
+        :return: Spell trace scroll.
+        :raises TypeError: If matching spell trace scroll does not exist for gear.
+        """
         if probability != 100 and probability != 70 and probability != 30 and probability != 15:
             raise TypeError('Invalid probability: ' + str(probability))
         if (prop_type != GearPropType.STR and
@@ -55,7 +70,7 @@ class Scroll:
             scroll.stat = stat
             return scroll
         elif probability == 15:
-            raise TypeError('Invalid probability', probability, 'for GearType: ', gear_type)
+            raise TypeError('Invalid probability' + str(probability) + 'for GearType: ' + gear_type.name)
         elif gear_type == GearType.glove:
             if probability == 100:
                 data = [0, 1, 1]
@@ -111,4 +126,4 @@ class Scroll:
             scroll.stat = stat
             return scroll
         else:
-            raise TypeError('Spell trace Scroll does not exist for GearType: ' + GearType.name)
+            raise TypeError('Spell trace Scroll does not exist for GearType: ' + gear_type.name)

@@ -231,7 +231,7 @@ class TemplateGenerator:
             for bonus_type in bonus_node:
                 if bonus_type == "att_grade":
                     gb.apply_additional_stat(att, bonus_node[bonus_type])
-                elif bonus_type == "all_stat_rate":
+                elif bonus_type == "allstat_rate":
                     gb.apply_additional_stat(GearPropType.allstat, bonus_node[bonus_type])
                 else:
                     gear.additional_stat[stat_type[bonus_type]] = bonus_node[bonus_type]
@@ -294,7 +294,7 @@ class TemplateGenerator:
                 raise TypeError('Cannot apply potential to gear type: ' + gear.type.name)
             gear_potential_dict.clear()
             for stat_key in potential_node:
-                if stat_key == "all_stat_rate":
+                if stat_key == "allstat_rate":
                     gear_potential_dict[pstat_main] += potential_node[stat_key]
                     gear_potential_dict[pstat_sub] += potential_node[stat_key]
                     gear_potential_dict[pstat_sub2] += potential_node[stat_key]

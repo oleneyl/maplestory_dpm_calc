@@ -1,12 +1,12 @@
 import json
 import os
 from collections import defaultdict
-from typing import Dict, Iterable
+from typing import Dict, DefaultDict, Iterable, List
 
 from .Gear import Gear
 from .GearPropType import GearPropType
 
-PropMap = defaultdict[GearPropType, int]
+PropMap = DefaultDict[GearPropType, int]
 
 with open(os.path.join(os.path.dirname(__file__), 'resources', 'setitem.json'), encoding='utf8') as file:
     setItemData = json.load(file)
@@ -32,12 +32,22 @@ class SetItem:
 
     @property
     def item_count(self) -> int:
+        """
+        Returns the number of active items in this set item.
+        :return: The number of active items.
+        """
         return sum(self.item_ids.values())
 
     @staticmethod
     def create_from_id(set_item_id: int):
+        """
+        Create SetItem from given set_item_id.
+        :param set_item_id: SetItem's id stored in MapleStory client data.
+        :return: SetItem for gear_id.
+        :raises ValueError: If SetItem does not exist for set_item_id.
+        """
         if str(set_item_id) not in setItemData:
-            return SetItem()
+            raise ValueError('SetItem does not exist for set_item_id: ' + str(set_item_id))
         set_item_node = setItemData[str(set_item_id)]
         set_item = SetItem()
         set_item.set_item_id = set_item_id
@@ -53,39 +63,45 @@ class SetItem:
 
 
 def eval_set_item_effect(equipped_gears: Iterable[Gear]) -> PropMap:
-    gear: Gear
+    """
+    Get summed set item effects of given gears. Faithful to MapleStory set item calculation.
+    :param equipped_gears: Equipped gears.
+    :return: Defaultdict of summed set item effects.
+    """
     set_items: Dict[int, SetItem] = {}
-    active_joker_id: int = 0
+    joker_ids: List[int] = []
     set_item_effect: defaultdict[GearPropType, int] = defaultdict(int)
-    # setup setItems
+    # Setup set items and joker items
     for gear in equipped_gears:
-        set_item_id = gear.set_item_id
         if gear.joker_to_set_item:
-            if active_joker_id == 0:
-                active_joker_id = gear.item_id
-            if gear.item_id < active_joker_id:
-                active_joker_id = gear.item_id
+            joker_ids.append(gear.item_id)
+        set_item_id = gear.set_item_id
         if set_item_id == 0:
             continue
         if set_item_id not in set_items:
             set_items[set_item_id] = SetItem.create_from_id(set_item_id)
         set_items[set_item_id].item_ids[gear.item_id] = True
-    # apply joker item to setItems
-    if active_joker_id > 0:
+    # Apply joker item
+    # Sort so that gear with lower id is evaluated first.
+    joker_ids.sort()
+    for joker_id in joker_ids:
+        joker_applied = False
         for set_item in set_items.values():
-            if not set_item.joker_possible:
-                continue
-            if set_item.item_count < 3:
+            if not set_item.joker_possible or set_item.item_count < 3:
                 continue
             for item_id in set_item.item_ids:
                 if set_item.item_ids[item_id]:
                     continue
-                if Gear.get_gear_type(item_id) == Gear.get_gear_type(active_joker_id):
+                if Gear.get_gear_type(item_id) == Gear.get_gear_type(joker_id):
                     set_item.item_ids[item_id] = True
+                    joker_applied = True
                     break
-    # sum setItem effects
+        if joker_applied:
+            break
+    # Sum set item effects
     for set_item in set_items.values():
         count = set_item.item_count
+        print(set_item.set_item_name, set_item.set_item_id, count)
         for index in set_item.effects:
             if index <= count:
                 for prop_type in set_item.effects[index]:

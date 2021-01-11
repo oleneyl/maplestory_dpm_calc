@@ -1,12 +1,13 @@
 import json
 import os
 from collections import defaultdict
+from typing import DefaultDict
 
 from dpmModule.kernel.core import ExtendedCharacterModifier
 from .GearPropType import GearPropType
 from .GearType import GearType
 
-PropMap = defaultdict[GearPropType, int]
+PropMap = DefaultDict[GearPropType, int]
 
 with open(os.path.join(os.path.dirname(__file__), 'resources', 'geardata.json'), encoding='utf8') as gear_file:
     gear_data = json.load(gear_file)
@@ -15,8 +16,10 @@ with open(os.path.join(os.path.dirname(__file__), 'resources', 'titledata.json')
 
 
 class Gear:
-    __slots__ = "item_id", "name", "type", "req_level", "req_job", "set_item_id", "boss_reward", "superior_eqp", "joker_to_set_item", "amazing_scroll", "star", "max_star", "tuc", "scroll_up", "scroll_fail", "hammer", "base_stat", "additional_stat", "scroll_stat", "star_stat", "potential", "additional_potential"
-
+    __slots__ = (
+        "item_id", "name", "type", "req_level", "req_job", "set_item_id", "boss_reward", "superior_eqp",
+        "joker_to_set_item", "amazing_scroll", "star", "max_star", "tuc", "scroll_up", "scroll_fail",
+        "hammer", "base_stat", "additional_stat", "scroll_stat", "star_stat", "potential", "additional_potential")
     def __init__(self):
         self.item_id: int = 0
         self.name: str = "Default name!"
@@ -48,7 +51,7 @@ class Gear:
 
     def __str__(self):
         # for debug
-        statStr = ""
+        stat_str = ""
         stats = {}
         for propType in self.base_stat:
             stats.setdefault(propType, [0, 0, 0, 0])
@@ -64,7 +67,7 @@ class Gear:
             stats[propType][3] = self.star_stat[propType]
         keys = sorted(stats)
         for propType in keys:
-            statStr += "%s: %d (%d +%d +%d +%d)\n" % (propType.name, sum(stats[propType]),
+            stat_str += "%s: %d (%d +%d +%d +%d)\n" % (propType.name, sum(stats[propType]),
                                                       stats[propType][0], stats[propType][1],
                                                       stats[propType][2], stats[propType][3])
         return ("= ID: " + str(self.item_id) + '\n' +
@@ -76,16 +79,20 @@ class Gear:
                 " (황금 망치: +" + str(self.hammer) + ')\n' +
                 "= 업그레이드 성공 횟수: " + str(self.scroll_up) + '\n' +
                 "= 업그레이드 실패 횟수: " + str(self.scroll_fail) + '\n' +
-                "= 옵션: 합계 (기본 +추옵 +주문서 +별)\n" + statStr +
+                "= 옵션: 합계 (기본 +추옵 +주문서 +별)\n" + stat_str +
                 "= 잠재능력: \n" + str(self.potential) +
                 "= 에디셔널 잠재능력: \n" + str(self.additional_potential))
 
     def get_max_star(self) -> int:
+        """
+        Returns the number of gear's max star.
+        :return: The number of gear's max star.
+        """
         if self.tuc <= 0:
             return 0
         if self.is_mechanic_gear(self.type) or self.is_dragon_gear(self.type):
             return 0
-        starData = [
+        star_data = [
             [0, 5, 3],
             [95, 8, 5],
             [110, 10, 8],
@@ -94,7 +101,7 @@ class Gear:
             [140, 25, 15],
         ]
         data = None
-        for item in starData:
+        for item in star_data:
             if self.req_level >= item[0]:
                 data = item
             else:
@@ -103,7 +110,11 @@ class Gear:
             return 0
         return data[2 if self.superior_eqp else 1]
 
-    def get_stat_map(self):
+    def get_stat_map(self) -> PropMap:
+        """
+        Returns summed up stats of gear.
+        :return: Summed up stats of gear.
+        """
         stats = (
             self.base_stat,
             self.additional_stat,
@@ -119,6 +130,11 @@ class Gear:
         return stat_map
 
     def get_modifier(self, jobtype: str) -> ExtendedCharacterModifier:
+        """
+        (temporary)
+        :param jobtype: Target jobtype.
+        :return: This gear's stat_map converted to ExMDF.
+        """
         from dpmModule.character.characterTemplate import _get_stat_type
         stat_main, pstat_main, stat_sub, pstat_sub, stat_sub2, pstat_sub2, att, patt = _get_stat_type(jobtype)
         stat_map = self.get_stat_map()
@@ -231,27 +247,53 @@ class Gear:
 
     @staticmethod
     def create_from_id(gear_id: int):
+        """
+        Create Gear from given gear_id.
+        :param gear_id: Gear's id stored in MapleStory client data.
+        :return: Gear for gear_id.
+        :raises ValueError: If gear does not exist for gear_id.
+        """
         if str(gear_id) not in gear_data:
-            return Gear()
+            raise ValueError('Gear does not exist for gear_id: ' + str(gear_id))
         data_node = gear_data[str(gear_id)]
         gear = Gear._create_from_node(data_node, gear_id)
         return gear
 
     @staticmethod
     def get_id_from_name(name: str, exact: bool = True) -> int:
+        """
+        Search first matching gear's id for name.
+        :param name: String to search for in gear names.
+        :param exact: (gear.name) equals name if True; (gear.name) contains name if False.
+        :return: First matching gear's id.
+        :raises ValueError: If gear does not exist for name.
+        """
         for gear_id in gear_data:
             if (exact and name == gear_data[gear_id]['name']) or (not exact and name in gear_data[gear_id]['name']):
                 return int(gear_id)
-        return 0
+        raise ValueError('Gear does not exist for name: ' + name + ', exact: ' + str(exact))
 
     @staticmethod
     def create_from_name(name: str, exact: bool = True):
+        """
+        Create Gear from given name.
+        :param name: String to search for in gear names.
+        :param exact: (gear.name) equals name if True; (gear.name) contains name if False.
+        :return: First matching gear for name.
+        :raises ValueError: If gear does not exist for name.
+        """
         return Gear.create_from_id(Gear.get_id_from_name(name, exact))
 
     @staticmethod
     def create_title_from_name(name: str):
+        """
+        Create 'title' Gear from given name.
+        :param name: Title Gear's name.
+        :return: Title Gear for name.
+        :raises ValueError: If gear does not exist for name.
+        """
         if name not in title_data:
-            raise ValueError('Gear does not exist with name: ' + name)
+            raise ValueError('Gear does not exist for name: ' + name)
         gear = Gear._create_from_node(title_data[name], 2000000)
         gear.item_id = 1
         gear.type = GearType.title

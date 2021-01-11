@@ -1,5 +1,5 @@
 import math
-from typing import Set
+from typing import List, Optional, Set
 
 from .Gear import Gear
 from .GearPropType import GearPropType
@@ -9,9 +9,7 @@ from .Scroll import Scroll
 
 class GearBuilder:
     def __init__(self, gear: Gear = None):
-        self.gear = gear
-
-    gear: Gear = None
+        self.gear: Optional[Gear] = gear
 
     def set_gear(self, gear: Gear) -> bool:
         self.gear = gear
@@ -21,6 +19,14 @@ class GearBuilder:
         return self.gear
 
     def apply_additional_stat(self, prop_type: GearPropType, grade: int, is_double_add: bool = False) -> bool:
+        """
+        Apply additional stat (bonus) to gear.
+        :param prop_type: Type to apply additional stat to. allstat applies allstat_rate.
+        :param grade: 1~7.
+        :param is_double_add: Apply as double add stat if True; Apply as single add stat otherwise.
+        :return: True if applied; False otherwise.
+        :raises AttributeError: If gear is not set.
+        """
         if grade <= 0:
             return False
         grade = min(grade, 7)
@@ -28,7 +34,6 @@ class GearBuilder:
         if req_level <= 0:
             return False
         boss_reward = self.gear.boss_reward
-        value = 0
         if prop_type == GearPropType.allstat:
             self.gear.additional_stat[GearPropType.STR_rate] += grade
             self.gear.additional_stat[GearPropType.DEX_rate] += grade
@@ -42,8 +47,9 @@ class GearBuilder:
         elif prop_type == GearPropType.att or prop_type == GearPropType.matt:
             gear_type = self.gear.type
             if Gear.is_weapon(gear_type):
-                data = [0, 0, 1, 1.4666, 2.0166, 2.663, 3.4166] if boss_reward \
-                    else [1, 2.222, 3.63, 5.325, 7.32, 8.777, 10.25]
+                data = ([0, 0, 1, 1.4666, 2.0166, 2.663, 3.4166]
+                        if boss_reward else
+                        [1, 2.222, 3.63, 5.325, 7.32, 8.777, 10.25])
                 att = self.gear.base_stat[GearPropType.att]
                 if gear_type == GearType.sword_zb or gear_type == GearType.sword_zl:
                     if gear_type == GearType.sword_zl:
@@ -92,9 +98,20 @@ class GearBuilder:
 
     @property
     def scroll_available(self):
+        """
+        Returns the number of available scroll upgrade.
+        :return: The number of available scroll upgrade.
+        """
         return self.gear.tuc + self.gear.hammer - self.gear.scroll_fail - self.gear.scroll_up
 
     def apply_scroll(self, scroll: Scroll, count: int = 1) -> bool:
+        """
+        Apply given scroll.
+        :param scroll: Scroll to apply.
+        :param count: Number of upgrades.
+        :return: True if applied at least once; False otherwise.
+        :raises AttributeError: If gear is not set.
+        """
         count = min(count, self.scroll_available)
         if count < 1:
             return False
@@ -110,10 +127,24 @@ class GearBuilder:
         return True
 
     def apply_spell_trace_scroll(self, probability: int, prop_type: GearPropType, count: int = 1) -> bool:
+        """
+        Apply matching spell trace scroll.
+        :param probability: 100 or 70 or 30 or 15
+        :param prop_type: Prop type of spell trace scroll.
+        :param count: Number of upgrades.
+        :return: True if applied at least once; False otherwise.
+        :raises AttributeError: If gear is not set.
+        :raises TypeError: If matching spell trace scroll does not exist for gear.
+        """
         spell_trace = Scroll.get_spell_trace_scroll(self.gear, probability, prop_type)
         return self.apply_scroll(spell_trace, count)
 
     def apply_hammer(self) -> bool:
+        """
+        Apply golden hammer.
+        :return: True if applied; False otherwise.
+        :raises AttributeError: If gear is not set.
+        """
         if self.gear.tuc <= 0:
             return False
         if self.gear.hammer == 0:
@@ -122,6 +153,13 @@ class GearBuilder:
         return False
 
     def apply_star(self, amazing_scroll: bool = False, bonus: bool = False) -> bool:
+        """
+        Apply single star and corresponding stats.
+        :param amazing_scroll: True to apply blue star; False to apply yellow star.
+        :param bonus: True to apply bonus stat to blue star; False otherwise.
+        :return: True if applied; False otherwise.
+        :raises AttributeError: If gear is not set.
+        """
         if self.gear.star >= self.gear.max_star:
             return False
         if amazing_scroll:
@@ -140,9 +178,9 @@ class GearBuilder:
                 self.gear.star_stat[prop_type] += stat_data[star]
             for att_type in (GearPropType.att, GearPropType.matt):
                 self.gear.star_stat[att_type] += att_data[star]
-            # pdd = self.gear.base_stat[GearPropType.incPDD] + \
-            #       self.gear.scroll_stat[GearPropType.incPDD] + \
-            #       self.gear.star_stat[GearPropType.incPDD]
+            # pdd = (self.gear.base_stat[GearPropType.incPDD] +
+            #        self.gear.scroll_stat[GearPropType.incPDD] +
+            #        self.gear.star_stat[GearPropType.incPDD])
             # self.gear.star_stat[GearPropType.incPDD] += pdd // 20 + 1
         elif not amazing_scroll:
             job_stat = [
@@ -175,14 +213,14 @@ class GearBuilder:
                     if use_mad:
                         self.gear.star_stat[GearPropType.matt] += att_data[star]
                 else:
-                    pad = self.gear.base_stat[GearPropType.att] + \
-                          self.gear.scroll_stat[GearPropType.att] + \
-                          self.gear.star_stat[GearPropType.att]
+                    pad = (self.gear.base_stat[GearPropType.att] +
+                           self.gear.scroll_stat[GearPropType.att] +
+                           self.gear.star_stat[GearPropType.att])
                     self.gear.star_stat[GearPropType.att] += pad // 50 + 1
                     if use_mad:
-                        mad = self.gear.base_stat[GearPropType.matt] + \
-                              self.gear.scroll_stat[GearPropType.matt] + \
-                              self.gear.star_stat[GearPropType.matt]
+                        mad = (self.gear.base_stat[GearPropType.matt] +
+                               self.gear.scroll_stat[GearPropType.matt] +
+                               self.gear.star_stat[GearPropType.matt])
                         self.gear.star_stat[GearPropType.matt] += mad // 50 + 1
             else:
                 self.gear.star_stat[GearPropType.att] += att_data[star]
@@ -198,9 +236,9 @@ class GearBuilder:
                         self.gear.star_stat[GearPropType.att] += glove_bonus[star]
 
             if not is_weapon and self.gear.type != GearType.machine_heart:
-                # pdd = self.gear.base_stat[GearPropType.incPDD] + \
-                #       self.gear.scroll_stat[GearPropType.incPDD] + \
-                #       self.gear.star_stat[GearPropType.incPDD]
+                # pdd = (self.gear.base_stat[GearPropType.incPDD] +
+                #        self.gear.scroll_stat[GearPropType.incPDD] +
+                #        self.gear.star_stat[GearPropType.incPDD])
                 # self.gear.star_stat[GearPropType.incPDD] += pdd // 20 + 1
                 pass
 
@@ -213,47 +251,55 @@ class GearBuilder:
             elif self.gear.type in mhp_types:
                 self.gear.star_stat[GearPropType.MHP] += mhp_data[star]
 
-            if self.gear.type == GearType.shoes:
-                speed_jump_data = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            # if self.gear.type == GearType.shoes:
+                # speed_jump_data = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 # self.gear.star_stat[GearPropType.incSpeed] += speed_jump_data[star]
                 # self.gear.star_stat[GearPropType.incJump] += speed_jump_data[star]
         else:
             stat_bonus = (2 if star > 5 else 1) if bonus else 0
             for prop_type in (GearPropType.STR, GearPropType.DEX, GearPropType.INT, GearPropType.LUK):
-                if self.gear.base_stat[prop_type] >= 0 or \
-                        self.gear.additional_stat[prop_type] >= 0 or \
-                        self.gear.scroll_stat[prop_type] >= 0 or \
-                        self.gear.star_stat[prop_type] >= 0:
+                if (self.gear.base_stat[prop_type] >= 0 or
+                        self.gear.additional_stat[prop_type] >= 0 or
+                        self.gear.scroll_stat[prop_type] >= 0 or
+                        self.gear.star_stat[prop_type] >= 0):
                     self.gear.star_stat[prop_type] += stat_data[prop_type] + stat_bonus
             att_bonus = 1 if bonus and (is_weapon or self.gear.type == GearType.shield) else 0
 
             for att_type in (GearPropType.att, GearPropType.matt):
-                att = self.gear.base_stat[att_type] + \
-                      self.gear.additional_stat[att_type] + \
-                      self.gear.scroll_stat[att_type] + \
-                      self.gear.star_stat[att_type]
+                att = (self.gear.base_stat[att_type] +
+                       self.gear.additional_stat[att_type] +
+                       self.gear.scroll_stat[att_type] +
+                       self.gear.star_stat[att_type])
                 if att > 0:
                     self.gear.star_stat[att_type] += att_data[star] + att_bonus
                     if is_weapon:
                         self.gear.star_stat[att_type] += att // 50 + 1
-            pdd = self.gear.base_stat[GearPropType.incPDD] + \
-                  self.gear.additional_stat[GearPropType.incPDD] + \
-                  self.gear.scroll_stat[GearPropType.incPDD] + \
-                  self.gear.star_stat[GearPropType.incPDD]
+            pdd = (self.gear.base_stat[GearPropType.incPDD] +
+                   self.gear.additional_stat[GearPropType.incPDD] +
+                   self.gear.scroll_stat[GearPropType.incPDD] +
+                   self.gear.star_stat[GearPropType.incPDD])
             self.gear.star_stat[GearPropType.incPDD] += pdd // 20 + 1
             if bonus and Gear.is_armor(self.gear.type):
                 self.gear.star_stat[GearPropType.incPDD] += 50
-            self.gear.props[GearPropType.amazing_scroll] = 1
+            self.gear.amazing_scroll = True
         return True
 
     def apply_stars(self, count: int, amazing_scroll: bool = False, bonus: bool = False) -> int:
+        """
+        Apply multiple stars and corresponding stats.
+        :param count: Number for stars to apply.
+        :param amazing_scroll: True to apply blue star; False to apply yellow star.
+        :param bonus: True to apply bonus stat to blue star; False otherwise.
+        :return: Number of increased stars.
+        :raises AttributeError: If gear is not set.
+        """
         suc = 0
         for i in range(0, count):
             suc += 1 if self.apply_star(amazing_scroll, bonus) else 0
         return suc
 
 
-def _get_star_data(gear: Gear, amazing_scroll: bool, att: bool) -> list(int):
+def _get_star_data(gear: Gear, amazing_scroll: bool, att: bool) -> List[int]:
     if gear.superior_eqp:
         if att:
             data = __superior_att_data

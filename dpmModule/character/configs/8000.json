@@ -109,7 +109,7 @@
       "id": "130얼장",
       "bonus": {
         "stat_main": 20,
-        "all_stat_rate": 4
+        "allstat_rate": 4
       },
       "upgrade": [
         {
@@ -133,7 +133,7 @@
         "stat_main": 60,
         "stat_sub": 20,
         "stat_sub2": 20,
-        "all_stat_rate": 6
+        "allstat_rate": 6
       },
       "upgrade": [
         {
@@ -157,7 +157,7 @@
         "stat_main": 60,
         "stat_sub": 20,
         "stat_sub2": 20,
-        "all_stat_rate": 6
+        "allstat_rate": 6
       },
       "upgrade": [
         {
@@ -181,7 +181,7 @@
         "stat_main": 60,
         "stat_sub": 20,
         "stat_sub2": 20,
-        "all_stat_rate": 6
+        "allstat_rate": 6
       },
       "upgrade": [
         {
@@ -259,7 +259,7 @@
       "id": "130펜던",
       "bonus": {
         "stat_main": 20,
-        "all_stat_rate": 4
+        "allstat_rate": 4
       },
       "upgrade": [
         {
@@ -283,7 +283,7 @@
         "stat_main": 60,
         "stat_sub": 20,
         "stat_sub2": 20,
-        "all_stat_rate": 6
+        "allstat_rate": 6
       },
       "upgrade": [
         {
@@ -306,7 +306,7 @@
         "stat_main": 60,
         "stat_sub": 20,
         "stat_sub2": 20,
-        "all_stat_rate": 6
+        "allstat_rate": 6
       }
     },
     "badge": {
@@ -422,7 +422,7 @@
       "id": "카오스 벨룸의 헬름",
       "bonus": {
         "stat_main": 20,
-        "all_stat_rate": 4
+        "allstat_rate": 4
       },
       "cdr": {
         "1": {
@@ -778,7 +778,7 @@
         "stat_main": 40,
         "stat_sub": 40,
         "stat_sub2": 40,
-        "all_stat_rate": 6
+        "allstat_rate": 6
       },
       "upgrade": [
         {
@@ -800,10 +800,10 @@
       ],
       "star": 22,
       "potential": {
-        "all_stat_rate": 18
+        "allstat_rate": 18
       },
       "add_potential": {
-        "all_stat_rate": 2,
+        "allstat_rate": 2,
         "att": 21
       }
     },
@@ -867,10 +867,10 @@
       ],
       "star": 22,
       "potential": {
-        "all_stat_rate": 18
+        "allstat_rate": 18
       },
       "add_potential": {
-        "all_stat_rate": 2,
+        "allstat_rate": 2,
         "att": 21
       }
     },
@@ -878,7 +878,7 @@
       "id": "130얼장",
       "bonus": {
         "stat_main": 20,
-        "all_stat_rate": 4
+        "allstat_rate": 4
       },
       "upgrade": [
         {
@@ -891,10 +891,10 @@
       ],
       "star": 20,
       "potential": {
-        "all_stat_rate": 18
+        "allstat_rate": 18
       },
       "add_potential": {
-        "all_stat_rate": 2,
+        "allstat_rate": 2,
         "att": 21
       }
     },
@@ -904,7 +904,7 @@
         "stat_main": 40,
         "stat_sub": 40,
         "stat_sub2": 40,
-        "all_stat_rate": 6
+        "allstat_rate": 6
       },
       "upgrade": [
         {
@@ -915,10 +915,10 @@
       ],
       "star": 22,
       "potential": {
-        "all_stat_rate": 18
+        "allstat_rate": 18
       },
       "add_potential": {
-        "all_stat_rate": 2,
+        "allstat_rate": 2,
         "att": 21
       }
     },
@@ -928,7 +928,7 @@
         "stat_main": 40,
         "stat_sub": 40,
         "stat_sub2": 40,
-        "all_stat_rate": 6
+        "allstat_rate": 6
       },
       "upgrade": [
         {
@@ -939,10 +939,10 @@
       ],
       "star": 22,
       "potential": {
-        "all_stat_rate": 18
+        "allstat_rate": 18
       },
       "add_potential": {
-        "all_stat_rate": 2,
+        "allstat_rate": 2,
         "att": 21
       }
     },
@@ -952,7 +952,7 @@
         "stat_main": 40,
         "stat_sub": 40,
         "stat_sub2": 40,
-        "all_stat_rate": 6
+        "allstat_rate": 6
       },
       "upgrade": [
         {
@@ -963,10 +963,10 @@
       ],
       "star": 22,
       "potential": {
-        "all_stat_rate": 18
+        "allstat_rate": 18
       },
       "add_potential": {
-        "all_stat_rate": 2,
+        "allstat_rate": 2,
         "att": 21
       }
     },
@@ -981,10 +981,10 @@
       ],
       "star": 15,
       "potential": {
-        "all_stat_rate": 18
+        "allstat_rate": 18
       },
       "add_potential": {
-        "all_stat_rate": 2,
+        "allstat_rate": 2,
         "att": 21
       }
     },
@@ -999,37 +999,37 @@
       ],
       "star": 22,
       "potential": {
-        "all_stat_rate": 18
+        "allstat_rate": 18
       },
       "add_potential": {
-        "all_stat_rate": 2,
+        "allstat_rate": 2,
         "att": 21
       }
     },
     "ring3": {
       "id": "글로리온 링 : 슈프림",
       "potential": {
-        "all_stat_rate": 18
+        "allstat_rate": 18
       },
       "add_potential": {
-        "all_stat_rate": 2,
+        "allstat_rate": 2,
         "att": 21
       }
     },
     "ring4": {
       "id": "이터널 플레임 링",
       "potential": {
-        "all_stat_rate": 18
+        "allstat_rate": 18
       },
       "add_potential": {
-        "all_stat_rate": 2,
+        "allstat_rate": 2,
         "att": 21
       }
     },
     "pendant1": {
       "id": "130펜던",
       "bonus": {
-        "all_stat_rate": 5
+        "allstat_rate": 5
       },
       "upgrade": [
         {
@@ -1040,10 +1040,10 @@
       ],
       "star": 20,
       "potential": {
-        "all_stat_rate": 18
+        "allstat_rate": 18
       },
       "add_potential": {
-        "all_stat_rate": 2,
+        "allstat_rate": 2,
         "att": 21
       }
     },
@@ -1053,7 +1053,7 @@
         "stat_main": 40,
         "stat_sub": 40,
         "stat_sub2": 40,
-        "all_stat_rate": 6
+        "allstat_rate": 6
       },
       "upgrade": [
         {
@@ -1063,10 +1063,10 @@
       ],
       "star": 22,
       "potential": {
-        "all_stat_rate": 18
+        "allstat_rate": 18
       },
       "add_potential": {
-        "all_stat_rate": 2,
+        "allstat_rate": 2,
         "att": 21
       }
     },
@@ -1076,7 +1076,7 @@
         "stat_main": 40,
         "stat_sub": 40,
         "stat_sub2": 40,
-        "all_stat_rate": 6
+        "allstat_rate": 6
       }
     },
     "badge": {
@@ -1131,10 +1131,10 @@
       ],
       "star": 8,
       "potential": {
-        "all_stat_rate": 18
+        "allstat_rate": 18
       },
       "add_potential": {
-        "all_stat_rate": 2,
+        "allstat_rate": 2,
         "att": 21
       }
     },
