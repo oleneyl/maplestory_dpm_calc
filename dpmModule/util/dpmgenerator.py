@@ -39,12 +39,12 @@ class IndividualDPMGenerator:
         target: ItemedCharacter = self.template(maplejobs.weaponList[self.job], cdr)
         if level is not None:
             target.unsafe_change_level(level)
-        gen: JobGenerator = self.supplier.JobGenerator()
-        v_builder = core.AlwaysMaximumVBuilder()
-        graph = gen.package(
-            target,
-            v_builder,
+        gen: JobGenerator = self.supplier.JobGenerator(
+            chtr=target,
+            v_builder=core.AlwaysMaximumVBuilder(),
             options=options,
+        )
+        graph = gen.package(
             ulevel=ulevel,
             weaponstat=weaponstat,
             ability_grade=Ability_grade(4, 1),
@@ -76,14 +76,12 @@ class IndividualDPMGenerator:
         # TODO target을 동적으로 생성할 수 있도록.
 
         target: ItemedCharacter = self.template(maplejobs.weaponList[self.job], cdr)
-        gen: JobGenerator = (self.supplier).JobGenerator()
-
-        # 코어강화량 설정
-        v_builder = core.AlwaysMaximumVBuilder()
-        graph = gen.package(
-            target,
-            v_builder,
+        gen: JobGenerator = self.supplier.JobGenerator(
+            chtr=target,
+            v_builder=core.AlwaysMaximumVBuilder(),
             options=options,
+        )
+        graph = gen.package(
             ulevel=ulevel,
             weaponstat=weaponstat,
             ability_grade=Ability_grade(4, 1),

@@ -37,12 +37,12 @@ def dpm(args):
     preset = get_preset(args.id)
     template = get_template_generator("high_standard")().get_template(args.ulevel)
     target: ItemedCharacter = template(weaponList[preset.job], args.cdr)
-    gen: JobGenerator = jobMap[preset.job].JobGenerator()
-    v_builder = core.AlwaysMaximumVBuilder()
-    graph = gen.package(
-        target,
-        v_builder,
+    gen: JobGenerator = jobMap[preset.job].JobGenerator(
+        chtr=target,
+        v_builder=core.AlwaysMaximumVBuilder(),
         options=preset.options,
+    )
+    graph = gen.package(
         ulevel=args.ulevel,
         weaponstat=[4, 9],
         ability_grade=Ability_grade(4, 1),
@@ -71,12 +71,12 @@ def burst10(args):
     preset = get_preset(args.id)
     template = get_template_generator("high_standard")().get_template(args.ulevel)
     target: ItemedCharacter = template(weaponList[preset.job], args.cdr)
-    gen: JobGenerator = jobMap[preset.job].JobGenerator()
-    v_builder = core.AlwaysMaximumVBuilder()
-    graph = gen.package(
-        target,
-        v_builder,
+    gen: JobGenerator = jobMap[preset.job].JobGenerator(
+        chtr=target,
+        v_builder=core.AlwaysMaximumVBuilder(),
         options=preset.options,
+    )
+    graph = gen.package(
         ulevel=args.ulevel,
         weaponstat=[4, 9],
         ability_grade=Ability_grade(4, 1),

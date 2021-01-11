@@ -1,6 +1,5 @@
 import json
 import math
-import copy
 import yaml
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -13,9 +12,6 @@ from ..kernel.core import (
     AbstractSkillWrapper,
     CharacterModifier,
     DamageSkillWrapper,
-    BuffSkillWrapper,
-    SummonSkillWrapper,
-    DotSkillWrapper,
     ExtendedCharacterModifier,
     InformedCharacterModifier,
     SkillModifier,
@@ -25,7 +21,6 @@ from ..kernel.graph import (
     _unsafe_access_global_storage,
     initialize_global_properties,
 )
-from ..kernel.core.skill import load_skill, BuffSkill, DamageSkill, SummonSkill, DotSkill
 from ..status.ability import Ability_grade, Ability_option, Ability_tool
 from .doping import Doping
 from .hyperStat import HyperStat
@@ -33,6 +28,7 @@ from .linkSkill import LinkSkill
 from .personality import Personality
 from .union import Card, Union
 from .weaponPotential import WeaponPotential
+from .config import ConfigLoader
 
 
 ExMDF = ExtendedCharacterModifier
@@ -42,20 +38,6 @@ ExMDF = ExtendedCharacterModifier
 - Damage Skill Wrappers
 - Some else Modifiers.
 """
-
-
-def _get_loaded_object_with_mapping(conf, loadable, **kwargs):
-    global_variables = globals()
-    global_variables.update(kwargs)
-    global_variables['math'] = math
-    exported_conf = {}
-    for k, v in conf.items():
-        if isinstance(v, str) and k != 'name':
-            assert 'import' not in v
-            exported_conf[k] = eval(v, global_variables)
-        else:
-            exported_conf[k] = v
-    return loadable.load(exported_conf)
 
 
 class AbstractCharacter:
@@ -233,7 +215,7 @@ class JobGenerator:
 
     - Functions that you must re-implement
 
-    .generate(chtr : ck.AbstractCharacter, vlevel: int = 0, vEnhance: list = [0,0,0]) :
+    .generate() :
         This function generate given chtr's graph and returns schedule.
 
     - Values that you must re-  implement
@@ -245,7 +227,12 @@ class JobGenerator:
     """
 
     # TODO: vEhc is not used.
-    def __init__(self, vEhc=None) -> None:
+    def __init__(
+        self,
+        chtr: AbstractCharacter,
+        v_builder: AbstractVBuilder,
+        options: Dict[str, Any],
+    ) -> None:
         self.buffrem: Tuple[int, int] = (0, 0)
         self.vEnhanceNum: int = 10
         self.vSkillNum: int = 3 + 3
@@ -259,58 +246,22 @@ class JobGenerator:
         )
         self._use_critical_reinforce: bool = False
         self.hyperStatPrefixed: int = 0
-        self.conf: dict = None
 
-    def _load_skill(self, skill_name, vEhc, background_information={}):
-        skill_conf = copy.deepcopy(self.conf['skills'][skill_name])
-        if 'name' not in skill_conf:
-            skill_conf['name'] = skill_name
+        self.chtr = chtr
+        self.vEhc: AbstractVEnhancer = v_builder.build_enhancer(chtr, self)
+        self.options = options
+        self.loader: ConfigLoader = None
 
-        if skill_conf.get('tier', -1) == 5:
-            lv = vEhc.getV(skill_conf['use_priority'], skill_conf['upgrade_priority'])
-            background_information['lv'] = lv
-
-        skill = load_skill(skill_conf, background_information)
-
-        if skill_conf.get('enhanced_by_v', False):
-            skill = skill.setV(
-                vEhc,
-                skill_conf['upgrade_priority'],
-                skill_conf['v_increment'],
-                skill_conf['v_crit']
-            )
-
-        return skill
-
-    def load_skill_wrapper(self, skill_name, vEhc=None):
-        background_information = self.conf.get('constant', {})
-        background_information['combat'] = self.combat
-        skill = self._load_skill(skill_name, vEhc, background_information=background_information)
-        if isinstance(skill, DamageSkill):
-            return skill.wrap(DamageSkillWrapper)
-        elif isinstance(skill, BuffSkill):
-            return skill.wrap(BuffSkillWrapper)
-        elif isinstance(skill, DotSkill):
-            return skill.wrap(DotSkillWrapper)
-        elif isinstance(skill, SummonSkill):
-            return skill.wrap(SummonSkillWrapper)
-
-    def load(self, conf):
-        if isinstance(conf, str):
-            with open(conf, encoding='utf-8') as f:
-                if conf.split('.')[-1] == 'json':
-                    conf = json.load(f)
-                elif conf.split('.')[-1] == 'yml':
-                    conf = yaml.safe_load(f)
-
-        self.conf = conf
-        self.buffrem = conf.get('buffrem', (0, 0))
-        self.vEnhanceNum = conf.get('vEnhanceNum', 10)
-        self.vskillNum = conf.get('vSkillNum', 6)
-        self.preEmptiveSkills = conf.get('preEmptiveSkills', 0)
-        self.jobname = conf['jobname']
-        self.jobtype = conf['jobtype']
-        self._use_critical_reinforce = conf.get('use_critical_reinforce', False)
+    def load(self, conf_path: str):
+        self.loader = ConfigLoader(self, conf_path)
+        conf = self.loader.get_conf()
+        self.buffrem = conf.get("buffrem", (0, 0))
+        self.vEnhanceNum = conf.get("vEnhanceNum", 10)
+        self.vskillNum = conf.get("vSkillNum", 6)
+        self.preEmptiveSkills = conf.get("preEmptiveSkills", 0)
+        self.jobname = conf.get("jobname")
+        self.jobtype = conf.get("jobtype")
+        self._use_critical_reinforce = conf.get("use_critical_reinforce", False)
 
     def get_ruleset(self) -> Optional[RuleSet]:
         return
@@ -334,15 +285,12 @@ class JobGenerator:
 
     def build(
         self,
-        vEhc: AbstractVEnhancer,
-        chtr: AbstractCharacter,
-        options: Dict[str, Any],
         storage_handler=None,
     ) -> policy.StorageLinkedGraph:
         initialize_global_properties()
 
-        base_element, all_elements = self.generate(vEhc, chtr, options)
-        ensured_elements = [el for el in all_elements if el and el.ensure(chtr)]
+        base_element, all_elements = self.generate()
+        ensured_elements = [el for el in all_elements if el and el.ensure(self.chtr)]
 
         GlobalOperation.assign_storage()
         GlobalOperation.attach_namespace()
@@ -356,60 +304,30 @@ class JobGenerator:
         graph = policy.StorageLinkedGraph(
             base_element, collection.get_storage(), accessible_elements=ensured_elements
         )
-        graph.build(chtr)
+        graph.build(self.chtr)
 
         return graph
 
-    def generate(
-        self, vEhc: AbstractVEnhancer, chtr: AbstractCharacter, options: Dict[str, Any]
-    ) -> Tuple[DamageSkillWrapper, List[AbstractSkillWrapper]]:
+    def generate(self) -> Tuple[DamageSkillWrapper, List[AbstractSkillWrapper]]:
         raise NotImplementedError
 
-    def build_passive_skill_list(
-        self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
-    ) -> None:
-        self._passive_skill_list = self.get_passive_skill_list(vEhc, chtr, options)
+    def build_passive_skill_list(self) -> None:
+        self._passive_skill_list = self.get_passive_skill_list()
         self._passive_skill_list += [InformedCharacterModifier("여제의 축복", att=30)]
         if self.jobname != "제로":
             self._passive_skill_list += [
                 InformedCharacterModifier("연합의 의지", att=5, stat_main=5, stat_sub=5)
             ]
 
-    def get_passive_skill_list(
-        self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
-    ) -> List[InformedCharacterModifier]:
-        passive_level = chtr.get_base_modifier().passive_level + self.combat
-        return [
-            _get_loaded_object_with_mapping(
-                opt,
-                InformedCharacterModifier,
-                passive_level=passive_level,
-                combat=self.combat,
-            )
-            for opt
-            in self.conf['passive_skill_list']
-        ]
+    def get_passive_skill_list(self) -> List[InformedCharacterModifier]:
+        raise NotImplementedError("You must fill get_passive_skill_list function.")
 
-    def build_not_implied_skill_list(
-        self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
-    ) -> None:
-        notImpliedBuffList = self.get_not_implied_skill_list(vEhc, chtr, options)
+    def build_not_implied_skill_list(self) -> None:
+        notImpliedBuffList = self.get_not_implied_skill_list()
         self._passive_skill_list += notImpliedBuffList
 
-    def get_not_implied_skill_list(
-        self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
-    ) -> List[InformedCharacterModifier]:
-        passive_level = chtr.get_base_modifier().passive_level + self.combat
-        return [
-            _get_loaded_object_with_mapping(
-                opt,
-                InformedCharacterModifier,
-                passive_level=passive_level,
-                combat=self.combat,
-            )
-            for opt
-            in self.conf['not_implied_skill_list']
-        ]
+    def get_not_implied_skill_list(self) -> List[InformedCharacterModifier]:
+        raise NotImplementedError("You must fill get_not_implied_skill_list function.")
 
     def get_passive_skill_modifier(self) -> ExMDF:
         passive_modifier = ExMDF()
@@ -419,27 +337,19 @@ class JobGenerator:
 
     def package_bare(
         self,
-        chtr: AbstractCharacter,
-        v_builder: AbstractVBuilder,
-        options: Dict[str, Any],
     ) -> policy.StorageLinkedGraph:
-        vEhc = v_builder.build_enhancer(chtr, self)
-
         # Since given character specification already imply both option; ignore these two.
 
-        self.build_not_implied_skill_list(vEhc, chtr, options)
-        chtr.apply_modifiers([self.get_passive_skill_modifier()])
+        self.build_not_implied_skill_list()
+        self.self.chtr.apply_modifiers([self.get_passive_skill_modifier()])
 
-        graph = self.build(vEhc, chtr, options)
-        graph.set_v_enhancer(vEhc)
+        graph = self.build()
+        graph.set_v_enhancer(self.vEhc)
 
         return graph
 
     def package(
         self,
-        chtr: ItemedCharacter,
-        v_builder: AbstractVBuilder,
-        options: Dict[str, Any],
         ulevel: int,
         weaponstat: List[int],
         ability_grade: Ability_grade,
@@ -447,11 +357,8 @@ class JobGenerator:
         storage_handler=None,
     ) -> policy.StorageLinkedGraph:
         """Packaging function"""
-        vEhc = v_builder.build_enhancer(chtr, self)
-        chtr = chtr
-
-        self.build_passive_skill_list(vEhc, chtr, options)
-        self.build_not_implied_skill_list(vEhc, chtr, options)
+        self.build_passive_skill_list()
+        self.build_not_implied_skill_list()
 
         # 어빌리티 적용
         adjusted_ability = Ability_tool.adjusted_ability(
@@ -460,14 +367,14 @@ class JobGenerator:
             self.ability_list[1],
             self.ability_list[2],
         )
-        chtr.apply_modifiers([self.get_passive_skill_modifier()])
-        chtr.apply_modifiers([adjusted_ability])
+        self.chtr.apply_modifiers([self.get_passive_skill_modifier()])
+        self.chtr.apply_modifiers([adjusted_ability])
 
         # 성향 적용
         personality = Personality.get_personality(100)
-        chtr.apply_modifiers([personality])
+        self.chtr.apply_modifiers([personality])
 
-        graph = self.build(vEhc, chtr, options, storage_handler=storage_handler)
+        graph = self.build(storage_handler=storage_handler)
 
         def log_modifier(modifier, name) -> None:
             if log:
@@ -496,52 +403,52 @@ class JobGenerator:
                 + self.get_total_modifier_optimization_hint()
             )
 
-        log_character(chtr)
-        log_buffed_character(chtr)
+        log_character(self.chtr)
+        log_buffed_character(self.chtr)
 
         # 무기 소울
-        refMDF = get_reference_modifier(chtr)
+        refMDF = get_reference_modifier(self.chtr)
         if refMDF.crit <= 65:
             weapon_soul_modifier = ExMDF(crit=12, att=20)
         else:
             weapon_soul_modifier = ExMDF(patt=3, att=20)
         log_modifier(weapon_soul_modifier, "weapon soul")
-        chtr.apply_modifiers([weapon_soul_modifier])
-        log_buffed_character(chtr)
+        self.chtr.apply_modifiers([weapon_soul_modifier])
+        log_buffed_character(self.chtr)
 
         # 도핑
         doping = Doping.get_full_doping()
         log_modifier(doping, "doping")
-        chtr.apply_modifiers([doping])
-        log_buffed_character(chtr)
+        self.chtr.apply_modifiers([doping])
+        log_buffed_character(self.chtr)
 
         # 유니온 공격대원
         unionCard = Card.get_card(self.jobtype, ulevel, True)
         log_modifier(unionCard, "union card")
-        chtr.apply_modifiers([unionCard])
-        log_buffed_character(chtr)
+        self.chtr.apply_modifiers([unionCard])
+        log_buffed_character(self.chtr)
 
         # 링크 스킬
-        refMDF = get_reference_modifier(chtr)
+        refMDF = get_reference_modifier(self.chtr)
         link = LinkSkill.get_link_skill_modifier(refMDF, self.jobname)
         log_modifier(link, "link")
-        chtr.apply_modifiers([link])
-        log_buffed_character(chtr)
+        self.chtr.apply_modifiers([link])
+        log_buffed_character(self.chtr)
 
         # 하이퍼 스탯
-        refMDF = get_reference_modifier(chtr)
+        refMDF = get_reference_modifier(self.chtr)
         hyperstat = HyperStat.get_hyper_modifier(
             refMDF,
-            chtr.level,
+            self.chtr.level,
             self.hyperStatPrefixed,
             critical_reinforce=self._use_critical_reinforce,
         )
         log_modifier(hyperstat, "hyper stat")
-        chtr.apply_modifiers([hyperstat])
-        log_buffed_character(chtr)
+        self.chtr.apply_modifiers([hyperstat])
+        log_buffed_character(self.chtr)
 
         # 유니온 점령
-        refMDF = get_reference_modifier(chtr)
+        refMDF = get_reference_modifier(self.chtr)
         union = Union.get_union(
             refMDF,
             ulevel,
@@ -549,11 +456,11 @@ class JobGenerator:
             critical_reinforce=self._use_critical_reinforce,
         )
         log_modifier(union, "union")
-        chtr.apply_modifiers([union])
-        log_buffed_character(chtr)
+        self.chtr.apply_modifiers([union])
+        log_buffed_character(self.chtr)
 
         # 무기류 잠재능력
-        refMDF = get_reference_modifier(chtr)
+        refMDF = get_reference_modifier(self.chtr)
         weapon_potential = WeaponPotential.get_weapon_pontential(
             refMDF, weaponstat[0], weaponstat[1]
         )
@@ -563,14 +470,14 @@ class JobGenerator:
             log_modifier(wp, "subweapon " + str(index + 1))
         for index, wp in enumerate(weapon_potential["emblem"]):
             log_modifier(wp, "emblem " + str(index + 1))
-        chtr.set_weapon_potential(weapon_potential)
-        log_buffed_character(chtr)
+        self.chtr.set_weapon_potential(weapon_potential)
+        log_buffed_character(self.chtr)
 
         # 그래프를 다시 빌드합니다.
-        graph = self.build(vEhc, chtr, options, storage_handler=storage_handler)
-        graph.set_v_enhancer(vEhc)
+        graph = self.build(storage_handler=storage_handler)
+        graph.set_v_enhancer(self.vEhc)
 
-        log_character(chtr)
-        log_buffed_character(chtr)
+        log_character(self.chtr)
+        log_buffed_character(self.chtr)
 
         return graph
