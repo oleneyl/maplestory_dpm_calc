@@ -1,46 +1,47 @@
+from . import hero
+from . import paladin
+from . import darknight
 from . import archmageFb
 from . import archmageTc
 from . import bishop
-from . import hero
-from . import paladin
+from . import bowmaster
 from . import sniper
-from . import windbreaker
-from . import soulmaster
-from . import luminous
-from . import battlemage
-from . import mechanic
-from . import mercedes
-from . import demonslayer
-from . import darknight
-from . import wildhunter
-from . import flamewizard
-from . import shadower
-from . import cannonshooter
-from . import michael
-from . import dualblade
-from . import kaiser
-from . import captain
-from . import angelicbuster
-from . import phantom
+from . import pathfinder
 from . import nightlord
+from . import shadower
+from . import dualblade
 from . import viper
-from . import eunwol
+from . import captain
+from . import cannonshooter
+from . import soulmaster
+from . import flamewizard
+from . import windbreaker
 from . import nightwalker
 from . import striker
+from . import michael
+from . import aran
 from . import evan
-from . import bowmaster
+from . import mercedes
+from . import phantom
+from . import eunwol
+from . import luminous
+from . import demonslayer
+from . import demonavenger
+from . import battlemage
+from . import wildhunter
+from . import mechanic
+from . import xenon
+from . import blaster
+from . import kaiser
+from . import kain
+from . import cadena
+from . import angelicbuster
 from . import zero
 from . import kinesis
-from . import ilium
-from . import pathfinder
-from . import cadena
-from . import ark
-from . import blaster
-from . import aran
 from . import adele
+from . import ilium
+from . import ark
 from . import hoyoung
-from . import demonavenger
-from . import xenon
 
 __all__ = [
     "hero",
@@ -78,7 +79,7 @@ __all__ = [
     "xenon",
     "blaster",
     "kaiser",
-    # "kain",
+    "kain",
     "cadena",
     "angelicbuster",
     "zero",
@@ -124,7 +125,7 @@ jobMap = {
     "제논": xenon,
     "블래스터": blaster,
     "카이저": kaiser,
-    # "카인": kain,
+    "카인": kain,
     "카데나": cadena,
     "엔젤릭버스터": angelicbuster,
     "제로": zero,
@@ -136,49 +137,50 @@ jobMap = {
 }
 
 jobList = {
-    "archmageFb": "아크메이지불/독",
-    "archmageTc": "아크메이지썬/콜",
     "hero": "히어로",
     "paladin": "팔라딘",
-    "sniper": "신궁",
-    "windbreaker": "윈드브레이커",
-    "soulmaster": "소울마스터",
-    "viper": "바이퍼",
-    "flamewizard": "플레임위자드",
-    "nightlord": "나이트로드",
-    "mercedes": "메르세데스",
-    "luminous": "루미너스",
-    "bishop": "비숍",
-    "battlemage": "배틀메이지",
-    "mechanic": "메카닉",
-    "demonslayer": "데몬슬레이어",
     "darknight": "다크나이트",
-    "wildhunter": "와일드헌터",
+    "archmageFb": "아크메이지불/독",
+    "archmageTc": "아크메이지썬/콜",
+    "bishop": "비숍",
+    "bowmaster": "보우마스터",
+    "sniper": "신궁",
+    "pathfinder": "패스파인더",
+    "nightlord": "나이트로드",
     "shadower": "섀도어",
-    "cannonshooter": "캐논슈터",
-    "michael": "미하일",
     "dualblade": "듀얼블레이드",
-    "kaiser": "카이저",
+    "viper": "바이퍼",
     "captain": "캡틴",
-    "angelicbuster": "엔젤릭버스터",
-    "phantom": "팬텀",
-    "eunwol": "은월",
+    "cannonshooter": "캐논슈터",
+    "soulmaster": "소울마스터",
+    "flamewizard": "플레임위자드",
+    "windbreaker": "윈드브레이커",
     "nightwalker": "나이트워커",
     "striker": "스트라이커",
+    "michael": "미하일",
+    "aran": "아란",
     "evan": "에반",
-    "bowmaster": "보우마스터",
+    "mercedes": "메르세데스",
+    "phantom": "팬텀",
+    "eunwol": "은월",
+    "luminous": "루미너스",
+    "demonslayer": "데몬슬레이어",
+    "demonavenger": "데몬어벤져",
+    "battlemage": "배틀메이지",
+    "wildhunter": "와일드헌터",
+    "mechanic": "메카닉",
+    "xenon": "제논",
+    "blaster": "블래스터",
+    "kaiser": "카이저",
+    "kain": "카인",
+    "cadena": "카데나",
+    "angelicbuster": "엔젤릭버스터",
     "zero": "제로",
     "kinesis": "키네시스",
-    "ilium": "일리움",
-    "pathfinder": "패스파인더",
-    "cadena": "카데나",
-    "ark": "아크",
-    "blaster": "블래스터",
-    "aran": "아란",
     "adele": "아델",
+    "ilium": "일리움",
+    "ark": "아크",
     "hoyoung": "호영",
-    "xenon": "제논",
-    "demonavenger": "데몬어벤져"
 }
 
 # used for gear lookup
@@ -219,7 +221,7 @@ job_branch_list = {
     "제논": 3,
     "블래스터": 0,
     "카이저": 0,
-    # "카인": 2,
+    "카인": 2,
     "카데나": 3,
     "엔젤릭버스터": 5,
     "제로": 0,
