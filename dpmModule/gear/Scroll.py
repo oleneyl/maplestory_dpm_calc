@@ -1,19 +1,18 @@
 import math
 from collections import defaultdict
-from typing import DefaultDict
 
 from .Gear import Gear
 from .GearPropType import GearPropType
 from .GearType import GearType
 
-PropMap = DefaultDict[GearPropType, int]
+PropMap = defaultdict[GearPropType, int]
 
 
 class Scroll:
     def __init__(self, stat: PropMap = None, name: str = None,
                  bonus_pad_on_fourth: bool = False, bonus_mad_on_fourth: bool = False):
         self.name: str = name
-        self.stat: DefaultDict = stat or defaultdict(int)
+        self.stat: PropMap = stat or defaultdict(int)
         self.bonus_pad_on_fourth: bool = bonus_pad_on_fourth
         self.bonus_mad_on_fourth: bool = bonus_mad_on_fourth
 

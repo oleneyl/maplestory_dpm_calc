@@ -1,7 +1,7 @@
 import json
 import os
 from copy import copy, deepcopy
-from typing import Optional, Tuple, Union, List
+from typing import List, Optional, Tuple, Union
 
 from ..character.characterKernel import GearedCharacter, JobGenerator
 from ..gear import Gear, GearBuilder, GearType, GearPropType, Scroll, eval_set_item_effect

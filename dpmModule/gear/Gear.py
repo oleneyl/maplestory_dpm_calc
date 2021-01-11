@@ -1,13 +1,12 @@
 import json
 import os
 from collections import defaultdict
-from typing import DefaultDict
 
 from dpmModule.kernel.core import ExtendedCharacterModifier
 from .GearPropType import GearPropType
 from .GearType import GearType
 
-PropMap = DefaultDict[GearPropType, int]
+PropMap = defaultdict[GearPropType, int]
 
 with open(os.path.join(os.path.dirname(__file__), 'resources', 'geardata.json'), encoding='utf8') as gear_file:
     gear_data = json.load(gear_file)

@@ -1,12 +1,11 @@
 import copy
 import json
 import math
+import yaml
 from collections import defaultdict
 from typing import Any, Dict, List, Optional, Tuple
 
-import yaml
-
-from dpmModule.gear import Gear, GearPropType
+from ..gear import Gear, GearPropType
 from .doping import Doping
 from .hyperStat import HyperStat
 from .linkSkill import LinkSkill

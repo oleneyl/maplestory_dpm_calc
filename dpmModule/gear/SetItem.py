@@ -1,12 +1,12 @@
 import json
 import os
 from collections import defaultdict
-from typing import DefaultDict, Dict, Iterable
+from typing import Dict, Iterable
 
 from .Gear import Gear
 from .GearPropType import GearPropType
 
-PropMap = DefaultDict[GearPropType, int]
+PropMap = defaultdict[GearPropType, int]
 
 with open(os.path.join(os.path.dirname(__file__), 'resources', 'setitem.json'), encoding='utf8') as file:
     setItemData = json.load(file)

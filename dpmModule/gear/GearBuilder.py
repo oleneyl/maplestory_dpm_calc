@@ -1,5 +1,5 @@
 import math
-from typing import List, Set
+from typing import Set
 
 from .Gear import Gear
 from .GearPropType import GearPropType
@@ -253,7 +253,7 @@ class GearBuilder:
         return suc
 
 
-def _get_star_data(gear: Gear, amazing_scroll: bool, att: bool) -> List[int]:
+def _get_star_data(gear: Gear, amazing_scroll: bool, att: bool) -> list(int):
     if gear.superior_eqp:
         if att:
             data = __superior_att_data
