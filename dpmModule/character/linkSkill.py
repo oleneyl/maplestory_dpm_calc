@@ -23,6 +23,7 @@ class LinkSkill:
     Phantom = InformedCharacterModifier("링크(팬텀)", crit=15)
     AdventureArcher = InformedCharacterModifier("링크(모궁)", crit=10)
     Kinesis = InformedCharacterModifier("링크(키네시스)", crit_damage=4)
+    Kain = InformedCharacterModifier("링크(카인)", pdamage=17/2)  # pdamage TODO: implement kain link skill
     Angelicbuster = InformedCharacterModifier("링크(엔젤릭버스터)")  # Skill
     Michael = InformedCharacterModifier("링크(미하일)")  # Util skill
     Mercedes = InformedCharacterModifier("링크(메르세데스)")  # Exp
@@ -77,6 +78,7 @@ class LinkSkill:
         "제로": Zero,
         "키네시스": Kinesis,
         "호영": Hoyoung,
+        "카인": Kain
     }
 
     @staticmethod

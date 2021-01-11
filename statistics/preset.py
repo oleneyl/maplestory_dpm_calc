@@ -305,6 +305,13 @@ presets = [
         alt=0,
     ),
     Preset(
+        id="kain",
+        job="카인",
+        description="",
+        options={},
+        alt=0,
+    ),
+    Preset(
         id="cadena",
         job="카데나",
         description="1타캔슬 150ms, 캔슬 180ms, 윙대거 3틱",

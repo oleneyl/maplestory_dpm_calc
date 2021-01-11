@@ -5,7 +5,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import ConditionRule, DisableRule, RuleSet
+from ..execution.rules import ConcurrentRunRule, ConditionRule, DisableRule, RuleSet
 from . import globalSkill
 from .jobbranch import thieves
 from math import ceil
@@ -140,8 +140,8 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         ruleset.add_rule(DisableRule('멸화염 : 천'), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('권술 : 미생강변', '권술 : 흡성와류', lambda sk: sk.is_time_left(2000, 1)), RuleSet.BASE)
-        # ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '선기 : 천지인 환영'), RuleSet.BASE)
-        # ruleset.add_rule(ConcurrentRunRule('레디 투 다이', '선기 : 천지인 환영'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '선기 : 천지인 환영'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('레디 투 다이', '선기 : 천지인 환영'), RuleSet.BASE)
         return ruleset
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -205,8 +205,7 @@ class JobGenerator(ck.JobGenerator):
         Thousand_Ton_Stone.onAfter(Thousand_Ton_Stone_DOT)
 
         Waryu = core.SummonSkill("권술 : 흡성와류", 990, 1000 * 0.8, 240 + 4*self.combat, 6, 40000, rem=True).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
-        
-        # 벞지 & 소환수 지속시간 둘다 적용
+
         Butterfly_Dream = core.BuffSkill("권술 : 호접지몽", 600, 100*1000, rem=True, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
         Butterfly_Dream_Attack = core.DamageSkill("권술 : 호접지몽(공격)", 0, 275 + 3 * self.combat, 5, cooltime = 1000, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Butterfly_Dream_Attack_Opt = core.OptionalElement(Butterfly_Dream_Attack.is_available, Butterfly_Dream_Attack)
