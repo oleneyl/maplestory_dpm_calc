@@ -374,6 +374,10 @@ class JobGenerator(ck.JobGenerator):
         Flames.onBefore(Pacho)
         Flames.onAfter(core.OptionalElement(GeumGoBong.is_available, GeumGoBong, YeoUiSeon))
 
+        # scheduling - start with full gauge
+        TalismanEnergy.vary(100)
+        ScrollEnergy.vary(900)
+
         return (
             Topa,
             [
