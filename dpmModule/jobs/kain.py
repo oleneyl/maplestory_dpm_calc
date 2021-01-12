@@ -845,7 +845,7 @@ class JobGenerator(ck.JobGenerator):
         ChasingShot = (
             core.DamageSkill(
                 name="체이싱 샷",
-                delay=960,  # base delay 960, AS not applied
+                delay=840,  # base delay 960, AS from buff not applied
                 damage=320,
                 hit=6 * 3,
                 cooltime=30000,
@@ -857,7 +857,7 @@ class JobGenerator(ck.JobGenerator):
         SneakySniping = (
             core.DamageSkill(
                 name="스니키 스나이핑",
-                delay=420 + 270,  # prepare.action + keydownend.action, need more check
+                delay=60 + 270,  # 60 + keydownend.action
                 damage=175,
                 hit=10 * 5,  # 10타, 5회 반복
                 cooltime=40000,
@@ -869,7 +869,7 @@ class JobGenerator(ck.JobGenerator):
         SneakySnipingRelease = (
             core.DamageSkill(
                 name="[발현/처형] 스니키 스나이핑",
-                delay=420 + 270,  # prepare.time + keydownend.action
+                delay=60 + 270,  # 60 + keydownend.action
                 damage=200,
                 hit=12 * 5,  # 12타, 5회 반복
                 cooltime=60000,
@@ -1100,7 +1100,7 @@ class JobGenerator(ck.JobGenerator):
                 StrikeArrowRelease,
             ]
             + [PoisonNeedle, ChainSickle, TearingKnife, PhantomBlade]
-            + [ChasingShot, SneakySniping, ShaftBreak, ScatteringShot, FallingDust]
+            + [ChasingShot, SneakySniping, FallingDust, ScatteringShot, ShaftBreak]
             + [
                 RemainIncense,
                 DeathBlessingBonus,
