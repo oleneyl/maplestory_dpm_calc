@@ -450,9 +450,6 @@ class JobGenerator:
         vEhc = v_builder.build_enhancer(chtr, self)
         chtr = chtr
 
-        self.build_passive_skill_list(vEhc, chtr, options)
-        self.build_not_implied_skill_list(vEhc, chtr, options)
-
         # 어빌리티 적용
         adjusted_ability = Ability_tool.adjusted_ability(
             ability_grade,
@@ -460,8 +457,12 @@ class JobGenerator:
             self.ability_list[1],
             self.ability_list[2],
         )
-        chtr.apply_modifiers([self.get_passive_skill_modifier()])
         chtr.apply_modifiers([adjusted_ability])
+
+        # 패시브 스킬 적용
+        self.build_passive_skill_list(vEhc, chtr, options)
+        self.build_not_implied_skill_list(vEhc, chtr, options)
+        chtr.apply_modifiers([self.get_passive_skill_modifier()])
 
         # 성향 적용
         personality = Personality.get_personality(100)
