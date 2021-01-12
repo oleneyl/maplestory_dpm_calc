@@ -77,12 +77,14 @@ class JobGenerator(ck.JobGenerator):
         return core.CharacterModifier(pdamage=51)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
+
         HiddenPiece = core.InformedCharacterModifier("히든 피스", pdamage=10)
         MechanicMastery = core.InformedCharacterModifier("메카닉 마스터리", att=20, crit=10, crit_damage=5)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝", stat_main=30, stat_sub=30)
 
         OverTunning = core.InformedCharacterModifier("오버 튜닝", pdamage_indep=20, crit=20, armor_ignore=30)
-        MetalArmorExtreme = core.InformedCharacterModifier("메탈아머 익스트림", att=55)
+        MetalArmorExtreme = core.InformedCharacterModifier("메탈아머 익스트림", att=55 + passive_level)
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
 
         PureGoldSet = core.InformedCharacterModifier("메카닉 전용장비", att=16, stat_main=18, stat_sub=18)  # 작당 평균 +2 가정
@@ -90,8 +92,10 @@ class JobGenerator(ck.JobGenerator):
         return [HiddenPiece, MechanicMastery, PhisicalTraining, LoadedDicePassive, MetalArmorExtreme, OverTunning, PureGoldSet]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
+
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=50)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-7.5)
+        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-7.5 + 0.5*ceil(passive_level / 2))
 
         MetalArmorTank = core.InformedCharacterModifier("메탈아머:탱크", crit=30)
 
@@ -141,7 +145,7 @@ class JobGenerator(ck.JobGenerator):
         MagneticFieldBuff = core.BuffSkill("마그네틱 필드(버프)", 0, 60*1000*ROBOT_SUMMON_REMAIN+10000, cooltime=-1, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)
 
         SupportWaver = core.SummonSkill("서포트 웨이버", 630, 80000*ROBOT_SUMMON_REMAIN, 0, 0, 80*1000*ROBOT_SUMMON_REMAIN).wrap(core.SummonSkillWrapper)
-        SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*ROBOT_SUMMON_REMAIN, pdamage_indep=10+5+ceil(passive_level/3), pdamage=ROBOT_BUFF, cooltime=-1, armor_ignore=10).wrap(core.BuffSkillWrapper)
+        SupportWaverBuff = core.BuffSkill("서포트 웨이버(버프)", 0, 80*1000*ROBOT_SUMMON_REMAIN, pdamage_indep=10+5+ceil(passive_level/3), pdamage=ROBOT_BUFF, armor_ignore=10, cooltime=-1).wrap(core.BuffSkillWrapper)
         SupportWaverFinal = core.DamageSkill("서포트 웨이버(폭발)", 0, 1100+passive_level*20, 1, modifier=ROBOT_MASTERY, cooltime=-1).wrap(core.DamageSkillWrapper)
 
         RoboFactory = core.SummonSkill("로봇 팩토리", 630, 3000, 500+self.combat*5, 3, 30*1000*ROBOT_SUMMON_REMAIN, cooltime=60*1000, red=True, modifier=ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
@@ -216,7 +220,6 @@ class JobGenerator(ck.JobGenerator):
                 globalSkill.useful_sharp_eyes(),
                 globalSkill.useful_combat_orders(),
                 Booster,
-                WillOfLiberty,
                 LuckyDice,
                 SupportWaverBuff,
                 RobolauncherBuff,
@@ -225,9 +228,10 @@ class JobGenerator(ck.JobGenerator):
                 OpenGateBuff,
                 MultipleOptionBuff,
                 MechCarrierBuff,
+                WillOfLiberty,
+                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                 BomberTime,
                 Overdrive,
-                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                 globalSkill.soul_contract()
             ] +
             [MicroMissle, MechCarrier, BusterCallInit] +
