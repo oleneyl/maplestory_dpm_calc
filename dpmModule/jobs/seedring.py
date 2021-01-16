@@ -54,9 +54,7 @@ def crisis_ring(level: int = 4):
     ).wrap(core.BuffSkillWrapper)
 
 
-def weaponpuff_ring(level: int = 4, weapon_att: int = -1):
-    if weapon_att == -1:
-        raise ValueError
+def weaponpuff_ring(weapon_att: int, level: int = 4):
     return core.BuffSkill(
         "웨폰퍼프 링",
         delay=60,
@@ -67,9 +65,7 @@ def weaponpuff_ring(level: int = 4, weapon_att: int = -1):
     ).wrap(core.BuffSkillWrapper)
 
 
-def levelpuff_ring(level: int = 4, chtr_level: int = -1):
-    if chtr_level == -1:
-        raise ValueError
+def levelpuff_ring(chtr_level: int, level: int = 4):
     return core.BuffSkill(
         "레벨퍼프 링",
         delay=60,
