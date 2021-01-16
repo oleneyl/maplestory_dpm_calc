@@ -20,6 +20,16 @@ def restraint_ring(level: int = 4):
         red=True
     ).wrap(core.BuffSkillWrapper)
 
+def crisis_hm_ring(level: int = 4):
+    return core.BuffSkill(
+        "크라이시스-HM링",
+        delay=0,
+        remain=(7+2*level)*1000,
+        cooltime=180000,
+        patt=25*level,
+        red=True
+    ).wrap(core.BuffSkillWrapper)
+
 
 def risktaker_ring(level: int = 4):
     return core.BuffSkill(
