@@ -880,6 +880,7 @@ class JobGenerator(ck.JobGenerator):
         )
 
         # V skills
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 0, 0, 10)
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 0, 0)
         Pantheon = nova.PantheonWrapper(vEhc, 0, 0)
@@ -1091,7 +1092,7 @@ class JobGenerator(ck.JobGenerator):
             ]
             + [MaliceTick, DragonPang, GuidedArrow, GrapOfAgony]
             + [ThanatosDescentFinalInit]  # reserved task, use as early as possible
-            + [Pantheon, DragonBurstReleaseInit, FatalBlitzInit]
+            + [Pantheon, DragonBurstReleaseInit, FatalBlitzInit, MirrorBreak, MirrorSpider]
             + [
                 SneakySnipingRelease,
                 FallingDustRelease,
