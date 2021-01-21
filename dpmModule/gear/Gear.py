@@ -171,10 +171,7 @@ class Gear:
 
     @staticmethod
     def is_left_weapon(gear_type: GearType) -> bool:
-        _type: int = gear_type.value
-        if gear_type == GearType.shining_rod or gear_type == GearType.tuner:
-            _type = gear_type.value // 10
-        return 121 <= _type <= 139 and gear_type != GearType.katara
+        return 121 <= gear_type.value <= 139 and gear_type != GearType.katara or gear_type.value // 10 == 121
 
     @staticmethod
     def is_sub_weapon(gear_type: GearType) -> bool:
