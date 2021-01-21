@@ -565,7 +565,7 @@ class StackableDamageSkillWrapper(DamageSkillWrapper):
         if self.stack == self.max_stack:
             self.cooltimeLeft = self.skill.cooltime
         if self.cooltimeLeft <= 0:
-            self.cooltimeLeft = self.skill.cooltime
+            self.cooltimeLeft += self.skill.cooltime
             self.stack = min(self.stack + 1, self.max_stack)
 
     def _use(self, skill_modifier: SkillModifier) -> ResultObject:
@@ -722,7 +722,7 @@ class StackableSummonSkillWrapper(SummonSkillWrapper):
         if self.stack == self.max_stack:
             self.cooltimeLeft = self.skill.cooltime
         if self.cooltimeLeft <= 0:
-            self.cooltimeLeft = self.skill.cooltime
+            self.cooltimeLeft += self.skill.cooltime
             self.stack = min(self.stack + 1, self.max_stack)
 
     def _use(self, skill_modifier: SkillModifier) -> ResultObject:
