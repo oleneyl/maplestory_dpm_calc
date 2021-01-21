@@ -43,7 +43,7 @@ def useful_advanced_bless(slevel=1):
 
 class MirrorBreakWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc, num1, num2, modifier) -> None:
-        skill = core.DamageSkill("스파이더 인 미러(공간 붕괴)", 720, 450+18*vEhc.getV(num1, num2), 15, cooltime=250*1000, red=True, modifier=modifier)
+        skill = core.DamageSkill("스파이더 인 미러(공간 붕괴)", 720, 450+18*vEhc.getV(num1, num2), 15, cooltime=250*1000, red=True, modifier=modifier).isV(vEhc, num1, num2)
         super(MirrorBreakWrapper, self).__init__(skill)
 
     def ensure(self, chtr: AbstractCharacter) -> bool:
@@ -55,7 +55,7 @@ class MirrorSpiderWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, modifier) -> None:
         self.delays = [900, 850, 750, 650, 5730]  # 400001039.summonedSequenceAttack에서 가져온 딜레이, 5회째 공격 후 눈 감고뜨는 시간 5730ms
         self.hit_count = 0
-        skill = core.SummonSkill("스파이더 인 미러(거울 속의 거미)", 0, 900, 175+7*vEhc.getV(num1, num2), 8, 50*1000, cooltime=-1, modifier=modifier)
+        skill = core.SummonSkill("스파이더 인 미러(거울 속의 거미)", 0, 900, 175+7*vEhc.getV(num1, num2), 8, 50*1000, cooltime=-1, modifier=modifier).isV(vEhc, num1, num2)
         super(MirrorSpiderWrapper, self).__init__(skill)
 
     def _useTick(self) -> core.ResultObject:
@@ -105,6 +105,29 @@ class AeonianRiseWrapper(core.DamageSkillWrapper):
 
 def GenesisSkillBuilder():
     return TandadianRuinWrapper(), AeonianRiseWrapper()
+
+
+class MitraFlameWrapper(core.DamageSkillWrapper):
+    def __init__(self, vEhc, num1, num2, modifier) -> None:
+        skill = core.DamageSkill("크레스트 오브 더 솔라(미트라의 불꽃)", 870, 750+30*vEhc.getV(num1, num2), 12, cooltime=250*1000, red=True, modifier=modifier).isV(vEhc, num1, num2)
+        super(MitraFlameWrapper, self).__init__(skill)
+
+    def ensure(self, chtr: AbstractCharacter) -> bool:
+        return chtr.level >= 260
+
+class FlamePatternWrapper(core.SummonSkillWrapper):
+    def __init__(self, vEhc, num1, num2, modifier) -> None:
+        skill = core.SummonSkill("크레스트 오브 더 솔라(불꽃의 문양)", 0, 2100, 275+11*vEhc.getV(num1, num2), 6, 51*1000, cooltime=-1, modifier=modifier).isV(vEhc, num1, num2)
+        super(MirrorSpiderWrapper, self).__init__(skill)
+
+    def ensure(self, chtr: AbstractCharacter) -> bool:
+        return chtr.level >= 260
+
+def CrestOfTheSolarBuilder(enhancer, skill_importance, enhance_importance, modifier=core.CharacterModifier()):
+    MitraFlame = MitraFlameWrapper(enhancer, skill_importance, enhance_importance, modifier)
+    FlamePattern = FlamePatternWrapper(enhancer, skill_importance, enhance_importance, modifier)
+    MitraFlame.onAfter(FlamePattern)
+    return MitraFlame, FlamePattern
 
 
 # 미완성 코드
