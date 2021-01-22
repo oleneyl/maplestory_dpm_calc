@@ -87,9 +87,7 @@ class JobGenerator(ck.JobGenerator):
         MetalArmorExtreme = core.InformedCharacterModifier("메탈아머 익스트림", att=55 + passive_level)
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
 
-        PureGoldSet = core.InformedCharacterModifier("메카닉 전용장비", att=16, stat_main=18, stat_sub=18)  # 작당 평균 +2 가정
-
-        return [HiddenPiece, MechanicMastery, PhisicalTraining, LoadedDicePassive, MetalArmorExtreme, OverTunning, PureGoldSet]
+        return [HiddenPiece, MechanicMastery, PhisicalTraining, LoadedDicePassive, MetalArmorExtreme, OverTunning]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat

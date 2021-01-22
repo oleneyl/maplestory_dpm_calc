@@ -1,4 +1,4 @@
-import json
+import yaml
 import os
 from copy import copy, deepcopy
 from typing import List, Optional, Tuple, Union
@@ -9,9 +9,9 @@ from ..jobs import job_branch_list
 from ..kernel.core.modifier import ExtendedCharacterModifier as ExMDF
 
 
-def open_json(*paths) -> dict:
+def open_yaml(*paths) -> dict:
     with open(os.path.join(os.path.dirname(__file__), *paths), encoding='utf8') as _file:
-        return json.load(_file)
+        return yaml.safe_load(_file)
 
 
 '''How template override works:
@@ -48,11 +48,11 @@ class TemplateGenerator:
                       "ring1", "ring2", "ring3", "ring4", "pendant1", "pendant2",
                       "pocket", "badge", "medal", "weapon", "subweapon", "emblem", "heart")
 
-        # load template.json to 'data'
+        # load template.yaml to 'data'
         self.data = {}
-        _template_json = open_json('configs', 'template.json')
-        for key in _template_json:
-            self.data[key] = open_json('configs', _template_json[key])
+        _template_yml = open_yaml('configs', 'template.yaml')
+        for key in _template_yml:
+            self.data[key] = open_yaml('configs', _template_yml[key])
 
     def get_spec_names(self) -> Tuple[str]:
         names: List[str] = []
@@ -92,7 +92,7 @@ class TemplateGenerator:
         # Equip gears
         gear_list = {}
         for part in self.parts:
-        # Set zero subweapon
+            # Set zero subweapon
             if part == "subweapon" and gen.jobname == "제로":
                 gear_list["subweapon"] = self._get_zero_subweapon(gear_list["weapon"])
             else:

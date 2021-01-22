@@ -101,7 +101,6 @@ def eval_set_item_effect(equipped_gears: Iterable[Gear]) -> PropMap:
     # Sum set item effects
     for set_item in set_items.values():
         count = set_item.item_count
-        print(set_item.set_item_name, set_item.set_item_id, count)
         for index in set_item.effects:
             if index <= count:
                 for prop_type in set_item.effects[index]:
