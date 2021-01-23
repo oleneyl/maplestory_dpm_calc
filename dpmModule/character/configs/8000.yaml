@@ -1,6 +1,13 @@
 ---
 summary:
-  - '...'
+  - 1아2카5앱 / 3보장 / 탈벨12성 / 칠요
+  - 데벤은 5보장 분자벨22성
+  - 스타포스 - 무기 22성 / 방어구 22성
+  - 추옵 - 무기 공1추 / 방어구, 악세 추옵 120급
+  - 잠재능력
+  - 무기류 윗잠 9줄유효 에디 공21%
+  - 방어구, 악세 레전27% / 에디 에픽2.5줄
+  - 장갑 크뎀2줄
 
 anchors:
   armor: &armor
@@ -172,23 +179,21 @@ default:
     star: 22
     <<: *acc_potential
   belt:
-    id: 분노한 자쿰의 벨트
+    id: 타일런트
     bonus: *acc_bonus
     upgrade: *acc_upgrade
-    star: 22
+    star: 12
     <<: *acc_potential
   ring1:
-    id: 고귀한 이피아의 반지
-    upgrade: *acc_upgrade
-    star: 15
-    <<: *acc_potential
-  ring2:
     id: 마이스터링
     upgrade: *acc_upgrade
     star: 22
     <<: *acc_potential
+  ring2:
+    id: 이터널 플레임 링
+    <<: *acc_potential
   ring3:
-    id: '글로리온 링 : 슈프림'
+    id: 이터널 플레임 링
     <<: *acc_potential
   ring4:
     id: 이터널 플레임 링
@@ -375,7 +380,7 @@ default:
     star: 22
     <<: *demon_acc_potential
   ring3:
-    id: '글로리온 링 : 슈프림'
+    id: 이터널 플레임 링
     <<: *demon_acc_potential
   ring4:
     id: 이터널 플레임 링
@@ -487,23 +492,21 @@ default:
     star: 22
     <<: *xenon_acc_potential
   belt:
-    id: 분노한 자쿰의 벨트
+    id: 타일런트
     bonus: *xenon_acc_bonus
     upgrade: *acc_upgrade
-    star: 22
+    star: 12
     <<: *xenon_acc_potential
   ring1:
-    id: 고귀한 이피아의 반지
-    upgrade: *acc_upgrade
-    star: 15
-    <<: *xenon_acc_potential
-  ring2:
     id: 마이스터링
     upgrade: *acc_upgrade
     star: 22
     <<: *xenon_acc_potential
+  ring2:
+    id: 이터널 플레임 링
+    <<: *xenon_acc_potential
   ring3:
-    id: '글로리온 링 : 슈프림'
+    id: 이터널 플레임 링
     <<: *xenon_acc_potential
   ring4:
     id: 이터널 플레임 링
