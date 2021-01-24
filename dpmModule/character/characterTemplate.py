@@ -50,9 +50,9 @@ class TemplateGenerator:
 
         # load template.yaml to 'data'
         self.data = {}
-        _template_yml = open_yaml('configs', 'template.yaml')
-        for key in _template_yml:
-            self.data[key] = open_yaml('configs', _template_yml[key])
+        _template_yaml = open_yaml('configs', 'template.yaml')
+        for key in _template_yaml:
+            self.data[key] = open_yaml('configs', _template_yaml[key])
 
     def get_spec_names(self) -> Tuple[str]:
         names: List[str] = []
