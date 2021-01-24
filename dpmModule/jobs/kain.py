@@ -955,7 +955,7 @@ class JobGenerator(ck.JobGenerator):
         # 발현 스킬의 쿨타임 있는 파이널 어택처럼 취급
         for sk, count in [
             (StrikeArrowRelease, 1),
-            (ScatteringShotRelease, 2 * 2),  # 기본 2개지만, 원거리에서는 쿨타임이 돌면서 2번 생김
+            (ScatteringShotRelease, 2),
             (ShaftBreakReleaseExplode, 6),
             (FallingDustRelease, 8),
             (SneakySnipingRelease, 8),
