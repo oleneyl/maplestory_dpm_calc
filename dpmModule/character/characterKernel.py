@@ -217,7 +217,7 @@ class GearedCharacter(AbstractCharacter):
             self.remove_gear_modifier(gear)
             gear.potential = ptnl.copy()
             self.add_gear_modifier(gear)
-            '''
+        '''
 
     def print_gears(self) -> None:
         for gear in self.gear_list:

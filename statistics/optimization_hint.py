@@ -1,9 +1,9 @@
 import argparse
 
 import pandas as pd
-from dpmModule.character.characterKernel import GearedCharacter, JobGenerator
+from dpmModule.character.characterKernel import JobGenerator
 from dpmModule.character.characterTemplate import TemplateGenerator
-from dpmModule.jobs import jobMap, weaponList
+from dpmModule.jobs import jobMap
 from dpmModule.kernel import core
 from dpmModule.status.ability import Ability_grade
 
