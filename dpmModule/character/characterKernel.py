@@ -1,11 +1,18 @@
+import copy
 import json
 import math
-import copy
 import yaml
+from collections import defaultdict
 from typing import Any, Dict, List, Optional, Tuple
 
+from ..gear import Gear, GearPropType
+from .doping import Doping
+from .hyperStat import HyperStat
+from .linkSkill import LinkSkill
+from .personality import Personality
+from .union import Card, Union
+from .weaponPotential import WeaponPotential
 from ..execution.rules import RuleSet
-from ..item.ItemKernel import Item
 from ..kernel import policy
 from ..kernel.abstract import AbstractVBuilder, AbstractVEnhancer
 from ..kernel.core import (
@@ -20,24 +27,16 @@ from ..kernel.core import (
     InformedCharacterModifier,
     SkillModifier,
 )
+from ..kernel.core.skill import load_skill, BuffSkill, DamageSkill, SummonSkill, DotSkill
 from ..kernel.graph import (
     GlobalOperation,
     _unsafe_access_global_storage,
     initialize_global_properties,
 )
-from ..kernel.core.skill import load_skill, BuffSkill, DamageSkill, SummonSkill, DotSkill
 from ..status.ability import Ability_grade, Ability_option, Ability_tool
-from .doping import Doping
-from .hyperStat import HyperStat
-from .linkSkill import LinkSkill
-from .personality import Personality
-from .union import Card, Union
-from .weaponPotential import WeaponPotential
-
 
 ExMDF = ExtendedCharacterModifier
 """Class AbstractCharacter : Basic template for building specific User. User is such object that contains:
-- Items
 - Buff Skill Wrappers
 - Damage Skill Wrappers
 - Some else Modifiers.
@@ -61,7 +60,6 @@ def _get_loaded_object_with_mapping(conf, loadable, **kwargs):
 class AbstractCharacter:
     # TODO : get/set :: use decorator? could be...
     def __init__(self, level: int = 230) -> None:
-        # Initialize Items
         self.level: int = level
         self.base_modifier: ExMDF = ExMDF(stat_main=18 + level * 5, stat_sub=4, crit=5)
 
@@ -86,7 +84,7 @@ class AbstractCharacter:
             pdamage_indep=-50
         )
 
-    def apply_modifiers(self, li: List[CharacterModifier]) -> None:
+    def apply_modifiers(self, li: List[ExMDF]) -> None:
         """Be careful! This function PERMANENTLY change character's property.
         You must sure that this function call is appropriate.
         """
@@ -118,96 +116,76 @@ class AbstractCharacter:
         return self.base_modifier.degenerate()
 
 
-class ItemedCharacter(AbstractCharacter):
-    def __init__(self, level=230) -> None:
-        super(ItemedCharacter, self).__init__(level)
-        self.itemlist: Dict[str, Optional[Item]] = {}
+class GearedCharacter(AbstractCharacter):
+    def __init__(self, gen, level: int = 230) -> None:
+        super(GearedCharacter, self).__init__(level)
+        self.jobname: str = gen.jobname
+        self.jobtype: str = gen.jobtype
+        if self.jobtype == "HP":
+            self.base_modifier = ExMDF(stat_main=545 + level * 90, stat_sub=4, crit=5)
+        # elif self.jobtype == "xenon":
+        #    self.base_modifier = ExMDF(stat_main=18 + level * 5, stat_sub=4, crit=5) # TODO: 힘덱인럭 적용 시 바꾸세요!
+        else:
+            self.base_modifier = ExMDF(stat_main=18 + level * 5, stat_sub=4, crit=5)
+        self.gear_list: Dict[str, Optional[Gear]] = {
+            # armor
+            "head": None,
+            "top": None,
+            "bottom": None,
+            "shoes": None,
+            "glove": None,
+            "cape": None,
+            # accessory
+            "shoulder": None,
+            "face": None,
+            "eye": None,
+            "ear": None,
+            "belt": None,
+            "ring1": None,
+            "ring2": None,
+            "ring3": None,
+            "ring4": None,
+            "pendant1": None,
+            "pendant2": None,
+            "pocket": None,
+            "badge": None,
+            "medal": None,
+            # weapon
+            "weapon": None,
+            "subweapon": None,
+            "emblem": None,
+            # etc
+            "heart": None,
+            "set_effect": None,
+        }
+        self.title = None
 
-        # 6 items for armor
-        self.itemlist["head"] = None
-        self.itemlist["glove"] = None
-        self.itemlist["top"] = None
-        self.itemlist["bottom"] = None
-        self.itemlist["shoes"] = None
-        self.itemlist["cloak"] = None
-
-        # 13 items for accessory
-
-        self.itemlist["eye"] = None
-        self.itemlist["face"] = None
-        self.itemlist["ear"] = None
-        self.itemlist["belt"] = None
-        self.itemlist["ring1"] = None
-        self.itemlist["ring2"] = None
-        self.itemlist["ring3"] = None
-        self.itemlist["ring4"] = None
-        self.itemlist["shoulder"] = None
-        self.itemlist["pendant1"] = None
-        self.itemlist["pendant2"] = None
-        self.itemlist["pocket"] = None
-        self.itemlist["badge"] = None
-
-        # 3 items for weapon
-
-        self.itemlist["weapon"] = None
-        self.itemlist["subweapon"] = None
-        self.itemlist["emblem"] = None
-
-        # 2 items for else
-
-        self.itemlist["medal"] = None
-        self.itemlist["heart"] = None
-        self.itemlist["title"] = None
-        self.itemlist["pet"] = None
-
-    def remove_item_modifier(self, item: Item) -> None:
-        mdf = item.get_modifier()
-        self.base_modifier = self.base_modifier - mdf
-
-    def add_item_modifier(self, item: Item) -> None:
-        mdf = item.get_modifier()
-        self.base_modifier = self.base_modifier + mdf
-
-    def set_items(self, item_dict: Dict[str, Item]) -> None:
-        keys = [
-            "head",
-            "glove",
-            "top",
-            "bottom",
-            "shoes",
-            "cloak",
-            "eye",
-            "face",
-            "ear",
-            "belt",
-            "ring1",
-            "ring2",
-            "ring3",
-            "ring4",
-            "shoulder",
-            "pendant1",
-            "pendant2",
-            "pocket",
-            "badge",
-            "weapon",
-            "subweapon",
-            "emblem",
-            "medal",
-            "heart",
-            "title",
-            "pet",
-        ]
-
-        for key in keys:
-            item = item_dict[key]
-            if item is None:
+    def set_gears(self, gear_dict: Dict[str, Gear]) -> None:
+        for key in self.gear_list:
+            if key not in gear_dict:
                 raise TypeError(key + " item is missing")
-            self.itemlist[key] = item_dict[key]
-            self.add_item_modifier(item_dict[key])
+            self.gear_list[key] = gear_dict[key]
+            self.add_gear_modifier(gear_dict[key])
+
+    def get_weapon_base_att(self) -> int:
+        return self.gear_list["weapon"].base_stat[GearPropType.att]
+
+    def get_starforce_count(self) -> int:
+        count = 0
+        for gear in self.gear_list.values():
+            count += gear.star
+        return count
+
+    def remove_gear_modifier(self, gear: Gear) -> None:
+        self.base_modifier -= gear.get_modifier(self.jobtype)
+
+    def add_gear_modifier(self, gear: Gear) -> None:
+        self.base_modifier += gear.get_modifier(self.jobtype)
 
     def set_weapon_potential(self, weapon_potential: Dict[str, List[ExMDF]]) -> None:
-        for item_id in ["weapon", "subweapon", "emblem"]:
-            potentials = weapon_potential[item_id]
+        # temp code
+        for gear_id in ["weapon", "subweapon", "emblem"]:
+            potentials = weapon_potential[gear_id]
             ptnl = ExMDF()
 
             if len(potentials) > 3:
@@ -216,15 +194,35 @@ class ItemedCharacter(AbstractCharacter):
             for i in range(len(potentials)):
                 ptnl = ptnl + potentials[i]
 
-            item = self.itemlist[item_id]
-            self.remove_item_modifier(item)
-            item.set_potential(ptnl)
-            self.add_item_modifier(item)
+            potential = defaultdict(int)
+            potential[GearPropType.boss_pdamage] = ptnl.boss_pdamage
+            potential[GearPropType.armor_ignore] = ptnl.armor_ignore
+            potential[GearPropType.att_rate] = potential[GearPropType.matt_rate] = ptnl.patt
+            gear = self.gear_list[gear_id]
+            self.remove_gear_modifier(gear)
+            gear.potential = potential
+            self.add_gear_modifier(gear)
+        '''
+        for gear_id in ["weapon", "subweapon", "emblem"]:
+            potentials = weapon_potential[gear_id]
+            ptnl = ExMDF()
 
-    def print_items(self) -> None:
-        for item in self.itemlist:
-            print("===" + item + "===")
-            print(self.itemlist[item].log())
+            if len(potentials) > 3:
+                raise TypeError("무기류 잠재능력은 아이템당 최대 3개입니다.")
+
+            for i in range(len(potentials)):
+                ptnl = ptnl + potentials[i]
+
+            gear = self.gear_list[gear_id]
+            self.remove_gear_modifier(gear)
+            gear.potential = ptnl.copy()
+            self.add_gear_modifier(gear)
+        '''
+
+    def print_gears(self) -> None:
+        for gear in self.gear_list:
+            print("===" + gear + "===")
+            print(self.gear_list[gear])
 
 
 class JobGenerator:
@@ -251,7 +249,7 @@ class JobGenerator:
         self.vSkillNum: int = 3 + 3
         self.preEmptiveSkills: int = 0
         self.jobname: Optional[str] = None
-        self.jobtype: str = "str"  # 재상속 하도록 명시할 필요가 있음.
+        self.jobtype: str = "STR"  # 재상속 하도록 명시할 필요가 있음.
         self._passive_skill_list = []  # 각 생성기가 자동으로 그래프 생성 시점에서 연산합니다.
         self.combat: int = 1
         self.ability_list: List[Ability_option] = Ability_tool.get_ability_set(
@@ -437,18 +435,17 @@ class JobGenerator:
 
     def package(
         self,
-        chtr: ItemedCharacter,
+        chtr: GearedCharacter,
         v_builder: AbstractVBuilder,
         options: Dict[str, Any],
         ulevel: int,
-        weaponstat: List[int],
+        weaponstat: Tuple[int, int],
         ability_grade: Ability_grade,
         log: bool = False,
         storage_handler=None,
     ) -> policy.StorageLinkedGraph:
         """Packaging function"""
         vEhc = v_builder.build_enhancer(chtr, self)
-        chtr = chtr
 
         # 어빌리티 적용
         adjusted_ability = Ability_tool.adjusted_ability(

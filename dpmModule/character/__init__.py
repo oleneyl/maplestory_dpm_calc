@@ -1,4 +1,0 @@
-from .characterTemplate import register_template_generator
-from .characterTemplateHigh import TemplateGenerator
-
-register_template_generator(TemplateGenerator, TemplateGenerator.TEMPLATE_NAME)

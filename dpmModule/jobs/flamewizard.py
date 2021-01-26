@@ -12,7 +12,7 @@ from typing import Any, Dict
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.jobtype = "int"
+        self.jobtype = "INT"
         self.jobname = "플레임위자드"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1

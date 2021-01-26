@@ -235,6 +235,13 @@ presets = [
         alt=0,
     ),
     Preset(
+        id="xenon",
+        job="제논",
+        description="오버로드 70초, 융합 680타",
+        options={},
+        alt=0,
+    ),
+    Preset(
         id="aran",
         job="아란",
         description="",

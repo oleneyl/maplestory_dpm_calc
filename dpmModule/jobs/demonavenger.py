@@ -5,6 +5,7 @@ from . import globalSkill
 from ..execution.rules import RuleSet, ConcurrentRunRule
 from .jobbranch import warriors
 from .jobclass import demon
+from . import jobutils
 from math import ceil
 from typing import Any, Dict
 
@@ -19,7 +20,7 @@ Advisor:
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.jobtype = "str"
+        self.jobtype = "HP"
         self.jobname = "데몬어벤져"
         self.vEnhanceNum = 12
         # 쓸샾, 쓸뻥, 쓸오더(아직 미구현)
@@ -39,8 +40,24 @@ class JobGenerator(ck.JobGenerator):
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        # TODO: 블러드 컨트랙트, 컨버전 스타포스
+        # TODO: 블러드 컨트랙트
+        # 컨버전 스타포스
+        star = jobutils.get_starforce_count(chtr)
+        if star <= 35: value = 60
+        elif star <= 60: value = 80
+        elif star <= 100: value = 100
+        elif star <= 140: value = 120
+        elif star <= 200: value = 140
+        elif star <= 220: value = 142
+        elif star <= 250: value = 144
+        elif star <= 270: value = 146
+        elif star <= 290: value = 148
+        elif star <= 310: value = 150
+        else: value = (star - 301) // 10 * 2 + 150
+        ConversionStarforce = core.InformedCharacterModifier("컨버전 스타포스", stat_main=star * value)
 
+
+        # 주스탯 미반영, 추가바람.
         # 주스탯 미반영, 추가바람.
         AbyssalRage = core.InformedCharacterModifier("어비셜 레이지", att=40)
         AdvancedDesperadoMastery = core.InformedCharacterModifier("어드밴스드 데스페라도 마스터리", att=50+passive_level, crit_damage=8)
@@ -53,7 +70,7 @@ class JobGenerator(ck.JobGenerator):
 
         InnerStrength = core.InformedCharacterModifier("이너 스트렝스", stat_main=600)
 
-        return [AbyssalRage, AdvancedDesperadoMastery, OverwhelmingPower, DefenseExpertise, DemonicSharpness, MapleHeroesDemon, InnerStrength]
+        return [ConversionStarforce, AbyssalRage, AdvancedDesperadoMastery, OverwhelmingPower, DefenseExpertise, DemonicSharpness, MapleHeroesDemon, InnerStrength]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat

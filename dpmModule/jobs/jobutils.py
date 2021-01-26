@@ -24,7 +24,11 @@ def create_auxilary_attack(skill_wrapper: core.DamageSkillWrapper, ratio=1, name
 
 
 def get_weapon_att(chtr):
-    return chtr.itemlist["weapon"].weapon_base_att
+    return chtr.get_weapon_base_att()
+
+
+def get_starforce_count(chtr):
+    return chtr.get_starforce_count()
 
 
 def debug_skill(skill_wrapper):

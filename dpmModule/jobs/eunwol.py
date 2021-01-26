@@ -40,7 +40,7 @@ class SoulTrapStackWrapper(core.StackSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.jobtype = "str"
+        self.jobtype = "STR"
         self.jobname = "은월"
         self.vEnhanceNum = 15
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'mess')

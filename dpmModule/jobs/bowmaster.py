@@ -91,7 +91,7 @@ class DelayVaryingSummonSkillWrapper(core.SummonSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.jobtype = "dex"
+        self.jobtype = "DEX"
         self.jobname = "보우마스터"
         self.vEnhanceNum = 11
         self.ability_list = Ability_tool.get_ability_set(

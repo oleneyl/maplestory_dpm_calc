@@ -1,10 +1,9 @@
 from .. import jobs as maplejobs
-from ..character.characterKernel import ItemedCharacter as ichar
+from ..character.characterKernel import GearedCharacter as GChar
 from ..character.characterKernel import Union, HyperStat
 from ..kernel import core
 from dpmModule.kernel import policy
 from dpmModule.execution import rules
-from ..item import Absolab
 
 MDF = core.CharacterModifier
 
@@ -91,7 +90,7 @@ def get_instant_dpm(
     else:
         raise TypeError("Unsupported job type(en): " + str(job))
 
-    template = ichar()
+    template = GChar(gen)
     if otherspec is not None:
         if "buffrem" in otherspec:
             template.buff_rem = otherspec["buffrem"]
@@ -119,11 +118,6 @@ def get_instant_dpm(
         sche, template, analytics
     )  # 시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
     control.start_simulation(180 * 1000)
-
-    if weaponAtt is None:
-        weaponAtt = Absolab.WeaponFactory.getWeapon(
-            maplejobs.weaponList[koJob], star=17, elist=[0, 0, 0, 9]
-        ).main_option.att
 
     if seed_rings:
         seed_ring_specs = [

@@ -91,7 +91,7 @@ class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.vEnhanceNum = 11
-        self.jobtype = "luk"
+        self.jobtype = "LUK2"
         self.jobname = "카데나"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'mess')  # 임시로 보공 첫줄 사용, 재사용 구현시 변경
         self.preEmptiveSkills = 1

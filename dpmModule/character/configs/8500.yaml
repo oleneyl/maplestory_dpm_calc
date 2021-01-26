@@ -1,0 +1,532 @@
+---
+summary:
+  - '...'
+
+anchors:
+  armor: &armor
+    bonus:
+      stat_main: 130
+      stat_sub: 20
+      stat_sub2: 20
+    upgrade:
+      - type: 주문의 흔적
+        prob: 30
+        stat: stat_main
+        count: -1
+    star: 22
+    potential:
+      pstat_main: 33
+    add_potential:
+      pstat_main: 12
+      att: 12
+  head_cdr: &head_cdr
+    '1':
+      potential:
+        cooltime_reduce: 1
+        pstat_main: 24
+    '2':
+      potential:
+        cooltime_reduce: 2
+        pstat_main: 21
+    '3':
+      potential:
+        cooltime_reduce: 3
+        pstat_main: 12
+    '4':
+      potential:
+        cooltime_reduce: 4
+        pstat_main: 3
+  acc_bonus: &acc_bonus
+    stat_main: 70
+    stat_sub: 20
+    stat_sub2: 20
+    allstat_rate: 6
+  acc_upgrade: &acc_upgrade
+    - type: 혼줌
+      option:
+        att: 6
+        stat_main: 1
+      count: -1
+  acc_potential: &acc_potential
+    potential:
+      pstat_main: 33
+    add_potential:
+      pstat_main: 12
+      att: 12
+
+  demon_armor: &demon_armor
+    upgrade:
+      - type: 주문의 흔적
+        prob: 30
+        stat: stat_main
+        count: -1
+    star: 22
+    potential:
+      pstat_main: 33
+    add_potential:
+      pstat_main: 17
+      att: 12
+  demon_acc_upgrade: &demon_acc_upgrade
+    - type: 혼줌
+      option:
+        att: 6
+        stat_main: 10
+      count: -1
+  demon_acc_potential: &demon_acc_potential
+    potential:
+      pstat_main: 33
+    add_potential:
+      pstat_main: 17
+      att: 12
+
+  xenon_armor: &xenon_armor
+    bonus:
+      stat_main: 40
+      stat_sub: 40
+      stat_sub2: 40
+      allstat_rate: 7
+    upgrade:
+      - type: 방공
+        value: 3
+        count: 3
+      - type: 주문의 흔적
+        prob: 30
+        stat: stat_sub2
+        count: 1
+      - type: 방공
+        value: 2
+        count: -1
+    star: 22
+    potential:
+      allstat_rate: 24
+    add_potential:
+      allstat_rate: 9
+      att: 12
+  xenon_acc_bonus: &xenon_acc_bonus
+    stat_main: 40
+    stat_sub: 40
+    stat_sub2: 40
+    allstat_rate: 7
+  xenon_acc_potential: &xenon_acc_potential
+    potential:
+      allstat_rate: 24
+    add_potential:
+      allstat_rate: 9
+      att: 12
+
+default:
+  level: 275
+  arcane_symbol_force: 1320
+  authentic_symbol_level:
+    - 3
+  pet_equip: 124 # 프펫공, 루나 드림 2세트(5+4*9)*2, 루나 쁘띠 1세트(10+4*8)
+  pet_set: 24 # 루나 드림 2세트(7+9), 루나 쁘띠 1세트(6)
+  cash:
+    stat_main: 75
+    stat_sub: 75
+    stat_sub2: 75
+    att: 40
+  weapon_stat:
+    - 4
+    - 9
+  head:
+    id: 카루타
+    <<: *armor
+    cdr: *head_cdr
+  top:
+    id: 카루타
+    <<: *armor
+  bottom:
+    id: 카루타
+    <<: *armor
+  shoes:
+    id: 아케인셰이드
+    <<: *armor
+  glove:
+    id: 아케인셰이드
+    <<: *armor
+    potential:
+      crit_damage: 16
+      pstat_main: 9
+  cape:
+    id: 아케인셰이드
+    <<: *armor
+  shoulder:
+    id: 아케인셰이드
+    upgrade:
+      - type: 혼줌
+        option:
+          att: 6
+          stat_main: 1
+        count: -1
+    star: 22
+    <<: *acc_potential
+  face:
+    id: 루즈 컨트롤 머신 마크
+    bonus: *acc_bonus
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *acc_potential
+  eye:
+    id: 마력이 깃든 안대
+    bonus: *acc_bonus
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *acc_potential
+  ear:
+    id: 커맨더 포스 이어링
+    bonus: *acc_bonus
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *acc_potential
+  belt:
+    id: 몽환의 벨트
+    bonus: *acc_bonus
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *acc_potential
+  ring1:
+    id: 거대한 공포
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *acc_potential
+  ring2:
+    id: 마이스터링
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *acc_potential
+  ring3:
+    id: 스칼렛 링
+    upgrade: *acc_upgrade
+    star: -12
+    <<: *acc_potential
+  ring4:
+    id: '글로리온 링 : 슈프림'
+    <<: *acc_potential
+  pendant1:
+    id: 고통의 근원
+    bonus: *acc_bonus
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *acc_potential
+  pendant2:
+    id: 도미네이터 펜던트
+    bonus: *acc_bonus
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *acc_potential
+  pocket:
+    id: 마도서
+    bonus: *acc_bonus
+  badge:
+    id: 칠요의 뱃지
+  medal:
+    id: 칠요의 몬스터파커
+  weapon:
+    id: 제네시스
+    bonus:
+      att_grade: 7
+    upgrade:
+      - type: 주문의 흔적
+        prob: 15
+        stat: stat_main
+        count: -1
+    star: 22
+    add_potential:
+      patt: 24
+  subweapon:
+    id: 보조무기
+    add_potential:
+      patt: 24
+  emblem:
+    id: 엠블렘
+    add_potential:
+      patt: 24
+  heart:
+    id: 티타늄 하트
+    upgrade:
+      - type: 매지컬
+        value: 11
+        count: 5
+      - type: 매지컬
+        value: 10
+        count: -1
+    star: 8
+    <<: *acc_potential
+  title:
+    id: 핑아일체
+에반:
+  type: override
+  job_specific_item:
+    stat_main: 46
+    stat_sub: 46
+메카닉:
+  type: override
+  job_specific_item:
+    stat_main: 18
+    stat_sub: 18
+    att: 16
+듀얼블레이드:
+  type: override
+  subweapon:
+    id: 아케인셰이드
+    upgrade:
+      - type: 주문의 흔적
+        stat: stat_main
+        prob: 15
+        count: -1
+    star: 22
+    add_potential:
+      patt: 24
+데몬어벤져:
+  type: override
+  head:
+    id: 아케인셰이드
+    bonus:
+      stat_main: 3600
+      att: 5
+    <<: *demon_armor
+    cdr: *head_cdr
+  top:
+    id: 카루타
+    bonus:
+      stat_main: 2700
+      att: 5
+    <<: *demon_armor
+  bottom:
+    id: 카루타
+    bonus:
+      stat_main: 2700
+      att: 5
+    <<: *demon_armor
+  shoes:
+    id: 아케인셰이드
+    bonus:
+      stat_main: 3600
+      att: 5
+    <<: *demon_armor
+  glove:
+    id: 아케인셰이드
+    bonus:
+      stat_main: 3600
+      att: 5
+    <<: *demon_armor
+    potential:
+      crit_damage: 16
+      pstat_main: 9
+  cape:
+    id: 아케인셰이드
+    bonus:
+      stat_main: 3600
+      att: 5
+    <<: *demon_armor
+  shoulder:
+    id: 아케인셰이드
+    upgrade:
+      - type: 혼줌
+        option:
+          att: 6
+          stat_main: 10
+        count: -1
+    star: 22
+    <<: *demon_acc_potential
+  face:
+    id: 루즈 컨트롤 머신 마크
+    bonus:
+      stat_main: 2880
+      att: 5
+    upgrade: *demon_acc_upgrade
+    star: 22
+    <<: *demon_acc_potential
+  eye:
+    id: 마력이 깃든 안대
+    bonus:
+      stat_main: 2880
+      att: 5
+    upgrade: *demon_acc_upgrade
+    star: 22
+    <<: *demon_acc_potential
+  ear:
+    id: 커맨더 포스 이어링
+    bonus:
+      stat_main: 3600
+      att: 5
+    upgrade: *demon_acc_upgrade
+    star: 22
+    <<: *demon_acc_potential
+  belt:
+    id: 몽환의 벨트
+    bonus:
+      stat_main: 3600
+      att: 5
+    upgrade: *demon_acc_upgrade
+    star: 22
+    <<: *demon_acc_potential
+  ring1:
+    id: 거대한 공포
+    upgrade: *demon_acc_upgrade
+    star: 22
+    <<: *demon_acc_potential
+  ring2:
+    id: 마이스터링
+    upgrade: *demon_acc_upgrade
+    star: 22
+    <<: *demon_acc_potential
+  ring3:
+    id: 스칼렛 링
+    upgrade: *demon_acc_upgrade
+    star: -12
+    <<: *demon_acc_potential
+  ring4:
+    id: '글로리온 링 : 슈프림'
+    <<: *demon_acc_potential
+  pendant1:
+    id: 고통의 근원
+    bonus:
+      stat_main: 2880
+      att: 5
+    upgrade: *demon_acc_upgrade
+    star: 22
+    <<: *demon_acc_potential
+  pendant2:
+    id: 도미네이터 펜던트
+    bonus:
+      stat_main: 2520
+      att: 5
+    upgrade: *demon_acc_upgrade
+    star: 22
+    <<: *demon_acc_potential
+  pocket:
+    id: 마도서
+    bonus:
+      stat_main: 2880
+      att: 5
+  heart:
+    id: 티타늄 하트
+    upgrade:
+      - type: 매지컬
+        value: 11
+        count: 5
+      - type: 매지컬
+        value: 10
+        count: -1
+    star: 8
+    <<: *demon_acc_potential
+제논:
+  type: override
+  head:
+    id: 아케인셰이드
+    <<: *xenon_armor
+    cdr:
+      '1':
+        potential:
+          cooltime_reduce: 1
+          allstat_rate: 18
+      '2':
+        potential:
+          cooltime_reduce: 2
+          allstat_rate: 15
+      '3':
+        potential:
+          cooltime_reduce: 3
+          allstat_rate: 9
+      '4':
+        potential:
+          cooltime_reduce: 4
+          allstat_rate: 3
+  top:
+    id: 카루타
+    <<: *xenon_armor
+  bottom:
+    id: 카루타
+    <<: *xenon_armor
+  shoes:
+    id: 아케인셰이드
+    <<: *xenon_armor
+  glove:
+    id: 아케인셰이드
+    <<: *xenon_armor
+    potential:
+      crit_damage: 16
+      allstat_rate: 6
+  cape:
+    id: 아케인셰이드
+    <<: *xenon_armor
+  shoulder:
+    id: 아케인셰이드
+    upgrade:
+      - type: 혼줌
+        option:
+          att: 6
+          stat_main: 1
+        count: -1
+    star: 22
+    <<: *xenon_acc_potential
+  face:
+    id: 루즈 컨트롤 머신 마크
+    bonus: *xenon_acc_bonus
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *xenon_acc_potential
+  eye:
+    id: 마력이 깃든 안대
+    bonus: *xenon_acc_bonus
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *xenon_acc_potential
+  ear:
+    id: 커맨더 포스 이어링
+    bonus: *xenon_acc_bonus
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *xenon_acc_potential
+  belt:
+    id: 몽환의 벨트
+    bonus: *xenon_acc_bonus
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *xenon_acc_potential
+  ring1:
+    id: 거대한 공포
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *xenon_acc_potential
+  ring2:
+    id: 마이스터링
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *xenon_acc_potential
+  ring3:
+    id: 스칼렛 링
+    upgrade: *acc_upgrade
+    star: -12
+    <<: *xenon_acc_potential
+  ring4:
+    id: '글로리온 링 : 슈프림'
+    <<: *xenon_acc_potential
+  pendant1:
+    id: 고통의 근원
+    bonus: *xenon_acc_bonus
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *xenon_acc_potential
+  pendant2:
+    id: 도미네이터 펜던트
+    bonus: *xenon_acc_bonus
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *xenon_acc_potential
+  pocket:
+    id: 마도서
+    bonus: *xenon_acc_bonus
+  heart:
+    id: 티타늄 하트
+    upgrade:
+      - type: 매지컬
+        value: 11
+        count: 5
+      - type: 매지컬
+        value: 10
+        count: -1
+    star: 8
+    <<: *xenon_acc_potential

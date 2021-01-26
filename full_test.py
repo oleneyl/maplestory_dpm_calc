@@ -1,4 +1,3 @@
-from dpmModule.character.characterTemplate import get_template_generator
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
 from dpmModule.jobs import jobMap
 from concurrent.futures import ProcessPoolExecutor
@@ -12,7 +11,7 @@ import argparse
 def get_args():
     parser = argparse.ArgumentParser("DPM Full Test argument")
     parser.add_argument(
-        "--ulevel", nargs="+", type=int, default=[4000, 5000, 6000, 7000, 8000, 8500]
+        "--ulevel", nargs="+", type=int, default=[4500, 5000, 6000, 7000, 8000, 8500]
     )
     parser.add_argument("--time", type=int, default=1800)
     parser.add_argument("--cdr", type=int, default=0)
@@ -26,10 +25,9 @@ def test(args):
     start = time.time()
     print(f"{jobname} {ulevel} 계산중")
 
-    template = get_template_generator("high_standard")().get_template(ulevel)
-    parser = IndividualDPMGenerator(jobname, template)
+    parser = IndividualDPMGenerator(jobname)
     parser.set_runtime(runtime * 1000)
-    dpm = parser.get_dpm(ulevel=ulevel, cdr=cdr, weaponstat=[4, 9])
+    dpm = parser.get_dpm(spec_name=str(ulevel), ulevel=ulevel, cdr=cdr)
 
     end = time.time()
     print(f"{jobname} {ulevel} 계산완료, {end - start:.3f}초")

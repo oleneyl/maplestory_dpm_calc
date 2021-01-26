@@ -1,0 +1,545 @@
+---
+summary:
+  - 1아2카5앱 / 3보장 / 탈벨12성 / 칠요
+  - 데벤은 5보장 분자벨22성
+  - 스타포스 - 무기 22성 / 방어구 22성
+  - 추옵 - 무기 공1추 / 방어구, 악세 추옵 120급
+  - 잠재능력
+  - 무기류 윗잠 9줄유효 에디 공21%
+  - 방어구, 악세 레전27% / 에디 에픽2.5줄
+  - 장갑 크뎀2줄
+  - 아케인심볼 고정주스탯 13200
+  - 어센틱심볼 고정주스탯 900
+  - 마라벨 풀셋, 프펫공작
+
+anchors:
+  armor: &armor
+    bonus:
+      stat_main: 120
+      stat_sub: 20
+      stat_sub2: 20
+    upgrade:
+      - type: 주문의 흔적
+        prob: 30
+        stat: stat_main
+        count: -1
+    star: 22
+    potential:
+      pstat_main: 27
+    add_potential:
+      pstat_main: 6
+      att: 10
+  head_cdr: &head_cdr
+    '1':
+      potential:
+        cooltime_reduce: 1
+        pstat_main: 18
+    '2':
+      potential:
+        cooltime_reduce: 2
+        pstat_main: 15
+    '3':
+      potential:
+        cooltime_reduce: 3
+        pstat_main: 6
+    '4':
+      potential:
+        cooltime_reduce: 4
+        pstat_main: -3
+  acc_bonus: &acc_bonus
+    stat_main: 60
+    stat_sub: 20
+    stat_sub2: 20
+    allstat_rate: 6
+  acc_upgrade: &acc_upgrade
+    - type: 악공
+      value: 4
+      count: -1
+  acc_potential: &acc_potential
+    potential:
+      pstat_main: 27
+    add_potential:
+      pstat_main: 6
+      att: 10
+
+  demon_armor: &demon_armor
+    upgrade:
+      - type: 주문의 흔적
+        prob: 30
+        stat: stat_main
+        count: -1
+    star: 22
+    potential:
+      pstat_main: 27
+    add_potential:
+      pstat_main: 7
+      att: 10
+  demon_acc_potential: &demon_acc_potential
+    potential:
+      pstat_main: 27
+    add_potential:
+      pstat_main: 7
+      att: 10
+
+  xenon_armor: &xenon_armor
+    bonus:
+      stat_main: 40
+      stat_sub: 40
+      stat_sub2: 40
+      allstat_rate: 6
+    upgrade:
+      - type: 방공
+        value: 3
+        count: 3
+      - type: 주문의 흔적
+        prob: 30
+        stat: stat_sub2
+        count: 1
+      - type: 방공
+        value: 2
+        count: -1
+    star: 22
+    potential:
+      allstat_rate: 18
+    add_potential:
+      allstat_rate: 2
+      att: 21
+  xenon_acc_bonus: &xenon_acc_bonus
+    stat_main: 40
+    stat_sub: 40
+    stat_sub2: 40
+    allstat_rate: 6
+  xenon_acc_potential: &xenon_acc_potential
+    potential:
+      allstat_rate: 18
+    add_potential:
+      allstat_rate: 2
+      att: 21
+
+default:
+  level: 260
+  arcane_symbol_force: 1320
+  authentic_symbol_level:
+    - 3
+  pet_equip: 124 # 프펫공, 루나 드림 2세트(5+4*9)*2, 루나 쁘띠 1세트(10+4*8)
+  pet_set: 24 # 루나 드림 2세트(7+9), 루나 쁘띠 1세트(6)
+  cash:
+    stat_main: 75
+    stat_sub: 75
+    stat_sub2: 75
+    att: 40
+  weapon_stat:
+    - 4
+    - 9
+  head:
+    id: 앱솔랩스
+    <<: *armor
+    cdr: *head_cdr
+  top:
+    id: 카루타
+    <<: *armor
+  bottom:
+    id: 카루타
+    <<: *armor
+  shoes:
+    id: 앱솔랩스
+    <<: *armor
+  glove:
+    id: 앱솔랩스
+    <<: *armor
+    potential:
+      crit_damage: 16
+  cape:
+    id: 앱솔랩스
+    <<: *armor
+  shoulder:
+    id: 앱솔랩스
+    upgrade:
+      - type: 혼줌
+        option:
+          att: 5
+        count: -1
+    star: 22
+    <<: *acc_potential
+  face:
+    id: 130얼장
+    bonus:
+      stat_main: 20
+      allstat_rate: 4
+    upgrade: *acc_upgrade
+    star: 20
+    <<: *acc_potential
+  eye:
+    id: 파풀라투스 마크
+    bonus: *acc_bonus
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *acc_potential
+  ear:
+    id: 마이스터 이어링
+    bonus: *acc_bonus
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *acc_potential
+  belt:
+    id: 타일런트
+    bonus: *acc_bonus
+    upgrade: *acc_upgrade
+    star: 12
+    <<: *acc_potential
+  ring1:
+    id: 마이스터링
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *acc_potential
+  ring2:
+    id: 이터널 플레임 링
+    <<: *acc_potential
+  ring3:
+    id: 이터널 플레임 링
+    <<: *acc_potential
+  ring4:
+    id: 이터널 플레임 링
+    <<: *acc_potential
+  pendant1:
+    id: 130펜던
+    bonus:
+      stat_main: 20
+      allstat_rate: 4
+    upgrade: *acc_upgrade
+    star: 20
+    <<: *acc_potential
+  pendant2:
+    id: 도미네이터 펜던트
+    bonus: *acc_bonus
+    upgrade:
+      - type: 파편
+        count: -1
+    star: 22
+    <<: *acc_potential
+  pocket:
+    id: 핑크빛 성배
+    bonus: *acc_bonus
+  badge:
+    id: 칠요의 뱃지
+  medal:
+    id: 칠요의 몬스터파커
+  weapon:
+    id: 아케인셰이드
+    bonus:
+      att_grade: 7
+    upgrade:
+      - type: 주문의 흔적
+        prob: 15
+        stat: stat_main
+        count: -1
+    star: 22
+    add_potential:
+      patt: 21
+  subweapon:
+    id: 보조무기
+    add_potential:
+      patt: 21
+  emblem:
+    id: 엠블렘
+    add_potential:
+      patt: 21
+  heart:
+    id: 티타늄 하트
+    upgrade:
+      - type: 매지컬
+        value: 10
+        count: 5
+      - type: 매지컬
+        value: 9
+        count: -1
+    star: 8
+    <<: *acc_potential
+  title:
+    id: 핑아일체
+에반:
+  type: override
+  job_specific_item:
+    stat_main: 46
+    stat_sub: 46
+메카닉:
+  type: override
+  job_specific_item:
+    stat_main: 18
+    stat_sub: 18
+    att: 16
+듀얼블레이드:
+  type: override
+  subweapon:
+    id: 아케인셰이드
+    upgrade:
+      - type: 주문의 흔적
+        stat: stat_main
+        prob: 15
+        count: -1
+    star: 22
+    add_potential:
+      patt: 21
+제로:
+  type: override
+  head:
+    id: 카오스 벨룸의 헬름
+    <<: *armor
+    bonus:
+      stat_main: 20
+      allstat_rate: 4
+    cdr: *head_cdr
+  zero_weapon_set_name: 카루타
+데몬어벤져:
+  type: override
+  head:
+    id: 앱솔랩스
+    bonus:
+      stat_main: 2880
+      att: 5
+    <<: *demon_armor
+    cdr: *head_cdr
+  top:
+    id: 카루타
+    bonus:
+      stat_main: 2700
+      att: 5
+    <<: *demon_armor
+  bottom:
+    id: 카루타
+    bonus:
+      stat_main: 2700
+      att: 5
+    <<: *demon_armor
+  shoes:
+    id: 앱솔랩스
+    bonus:
+      stat_main: 2880
+      att: 5
+    <<: *demon_armor
+  glove:
+    id: 앱솔랩스
+    bonus:
+      stat_main: 2880
+      att: 5
+    <<: *demon_armor
+    potential:
+      crit_damage: 16
+  cape:
+    id: 앱솔랩스
+    bonus:
+      stat_main: 2880
+      att: 5
+    <<: *demon_armor
+  shoulder:
+    id: 앱솔랩스
+    upgrade:
+      - type: 혼줌
+        option:
+          att: 5
+        count: -1
+    star: 22
+    <<: *demon_acc_potential
+  face:
+    id: 130얼장
+    bonus:
+      stat_main: 1560
+      att: 3
+    upgrade: *acc_upgrade
+    star: 20
+    <<: *demon_acc_potential
+  eye:
+    id: 파풀라투스 마크
+    bonus:
+      stat_main: 2520
+      att: 5
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *demon_acc_potential
+  ear:
+    id: 마이스터 이어링
+    bonus:
+      stat_main: 2520
+      att: 5
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *demon_acc_potential
+  belt:
+    id: 분노한 자쿰의 벨트
+    bonus:
+      stat_main: 2520
+      att: 5
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *demon_acc_potential
+  ring1:
+    id: 고귀한 이피아의 반지
+    upgrade: *acc_upgrade
+    star: 15
+    <<: *demon_acc_potential
+  ring2:
+    id: 마이스터링
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *demon_acc_potential
+  ring3:
+    id: 이터널 플레임 링
+    <<: *demon_acc_potential
+  ring4:
+    id: 이터널 플레임 링
+    <<: *demon_acc_potential
+  pendant1:
+    id: 130펜던
+    bonus:
+      stat_main: 1560
+      att: 3
+    upgrade: *acc_upgrade
+    star: 20
+    <<: *demon_acc_potential
+  pendant2:
+    id: 도미네이터 펜던트
+    bonus:
+      stat_main: 2520
+      att: 5
+    upgrade:
+      - type: 파편
+        count: -1
+    star: 22
+    <<: *demon_acc_potential
+  pocket:
+    id: 핑크빛 성배
+    bonus:
+      stat_main: 2520
+      att: 5
+  heart:
+    id: 티타늄 하트
+    upgrade:
+      - type: 매지컬
+        value: 10
+        count: 5
+      - type: 매지컬
+        value: 9
+        count: -1
+    star: 8
+    <<: *demon_acc_potential
+제논:
+  type: override
+  head:
+    id: 앱솔랩스
+    <<: *xenon_armor
+    cdr:
+      '1':
+        potential:
+          cooltime_reduce: 1
+          allstat_rate: 12
+      '2':
+        potential:
+          cooltime_reduce: 2
+          allstat_rate: 9
+      '3':
+        potential:
+          cooltime_reduce: 3
+          allstat_rate: 3
+      '4':
+        potential:
+          cooltime_reduce: 4
+          allstat_rate: -3
+  top:
+    id: 카루타
+    <<: *xenon_armor
+  bottom:
+    id: 카루타
+    <<: *xenon_armor
+  shoes:
+    id: 앱솔랩스
+    <<: *xenon_armor
+  glove:
+    id: 앱솔랩스
+    <<: *xenon_armor
+    potential:
+      crit_damage: 16
+  cape:
+    id: 앱솔랩스
+    <<: *xenon_armor
+  shoulder:
+    id: 앱솔랩스
+    upgrade:
+      - type: 혼줌
+        option:
+          att: 5
+        count: -1
+    star: 22
+    <<: *xenon_acc_potential
+  face:
+    id: 130얼장
+    bonus:
+      stat_main: 20
+      allstat_rate: 4
+    upgrade:
+      - type: 혼줌
+        option:
+          att: 5
+        count: -1
+    star: 20
+    <<: *xenon_acc_potential
+  eye:
+    id: 파풀라투스 마크
+    bonus: *xenon_acc_bonus
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *xenon_acc_potential
+  ear:
+    id: 마이스터 이어링
+    bonus: *xenon_acc_bonus
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *xenon_acc_potential
+  belt:
+    id: 타일런트
+    bonus: *xenon_acc_bonus
+    upgrade: *acc_upgrade
+    star: 12
+    <<: *xenon_acc_potential
+  ring1:
+    id: 마이스터링
+    upgrade: *acc_upgrade
+    star: 22
+    <<: *xenon_acc_potential
+  ring2:
+    id: 이터널 플레임 링
+    <<: *xenon_acc_potential
+  ring3:
+    id: 이터널 플레임 링
+    <<: *xenon_acc_potential
+  ring4:
+    id: 이터널 플레임 링
+    <<: *xenon_acc_potential
+  pendant1:
+    id: 130펜던
+    bonus:
+      allstat_rate: 5
+    upgrade: *acc_upgrade
+    star: 20
+    <<: *xenon_acc_potential
+  pendant2:
+    id: 도미네이터 펜던트
+    bonus: *xenon_acc_bonus
+    upgrade:
+      - type: 파편
+        count: -1
+    star: 22
+    <<: *xenon_acc_potential
+  pocket:
+    id: 핑크빛 성배
+    bonus: *xenon_acc_bonus
+  heart:
+    id: 티타늄 하트
+    upgrade:
+      - type: 매지컬
+        value: 10
+        count: 5
+      - type: 매지컬
+        value: 9
+        count: -1
+    star: 8
+    <<: *xenon_acc_potential

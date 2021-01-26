@@ -109,7 +109,7 @@ class PausableBuffSkillWrapper(core.BuffSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.jobtype = "luk"
+        self.jobtype = "LUK"
         self.jobname = "호영"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'buff_rem', 'mess')
         self.preEmptiveSkills = 1

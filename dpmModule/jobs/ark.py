@@ -152,7 +152,7 @@ class AmplifiedSpellBuffWrapper(core.BuffSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self, vEhc = None):
         super(JobGenerator, self).__init__(vEhc = vEhc)
-        self.jobtype = "str"
+        self.jobtype = "STR"
         self.jobname = "아크"
         self.vEnhanceNum = 12
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'mess')

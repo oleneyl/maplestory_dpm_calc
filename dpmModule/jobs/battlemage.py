@@ -55,7 +55,7 @@ class Roulette():
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.jobtype = "int"
+        self.jobtype = "INT"
         self.jobname = "배틀메이지"
         self.vEnhanceNum = 10
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'reuse')

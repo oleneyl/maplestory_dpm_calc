@@ -15,7 +15,7 @@ from typing import Any, Dict
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.jobtype = "str"
+        self.jobtype = "STR"
         self.jobname = "데몬슬레이어"
         self.vEnhanceNum = 15
         self.preEmptiveSkills = 1
