@@ -2,7 +2,7 @@ from ..kernel import core
 
 
 """
-시드링 (기본 4레벨)
+시드링
 
 헬스컷, 마나컷, 리밋 등 효율이 낮거나 스위프트, 오버패스 등 딜 기여가 없는 링은 제외
 
@@ -10,7 +10,7 @@ TODO: 링오브썸, 듀라빌리티, 얼티메이덤
 """
 
 
-def restraint_ring(level: int = 4):
+def restraint_ring(level: int):
     return core.BuffSkill(
         "리스트레인트 링",
         delay=60,
@@ -21,7 +21,7 @@ def restraint_ring(level: int = 4):
     ).wrap(core.BuffSkillWrapper)
 
 
-def crisis_hm_ring(level: int = 4):
+def crisis_hm_ring(level: int):
     return core.BuffSkill(
         "크라이시스-HM링",
         delay=60,
@@ -32,7 +32,7 @@ def crisis_hm_ring(level: int = 4):
     ).wrap(core.BuffSkillWrapper)
 
 
-def risktaker_ring(level: int = 4):
+def risktaker_ring(level: int):
     return core.BuffSkill(
         "리스트테이커 링",
         delay=60,
@@ -43,7 +43,7 @@ def risktaker_ring(level: int = 4):
     ).wrap(core.BuffSkillWrapper)
 
 
-def crisis_ring(level: int = 4):
+def crisis_ring(level: int):
     return core.BuffSkill(
         "크라이시스 H/M 링",
         delay=60,
@@ -54,7 +54,7 @@ def crisis_ring(level: int = 4):
     ).wrap(core.BuffSkillWrapper)
 
 
-def weaponpuff_ring(weapon_att: int, level: int = 4):
+def weaponpuff_ring(level: int, weapon_att: int):
     return core.BuffSkill(
         "웨폰퍼프 링",
         delay=60,
@@ -65,7 +65,7 @@ def weaponpuff_ring(weapon_att: int, level: int = 4):
     ).wrap(core.BuffSkillWrapper)
 
 
-def levelpuff_ring(chtr_level: int, level: int = 4):
+def levelpuff_ring(level: int, chtr_level: int):
     return core.BuffSkill(
         "레벨퍼프 링",
         delay=60,
@@ -76,7 +76,7 @@ def levelpuff_ring(chtr_level: int, level: int = 4):
     ).wrap(core.BuffSkillWrapper)
 
 
-def crit_damage_ring(level: int = 4):
+def crit_damage_ring(level: int):
     return core.BuffSkill(
         "크리데미지 링",
         delay=60,
@@ -87,7 +87,7 @@ def crit_damage_ring(level: int = 4):
     ).wrap(core.BuffSkillWrapper)
 
 
-def crit_defense_ring(level: int = 4):
+def crit_defense_ring(level: int):
     # 크확 100% 가정
     return core.BuffSkill(
         "크리디펜스 링",
