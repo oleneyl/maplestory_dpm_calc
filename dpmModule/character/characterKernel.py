@@ -123,8 +123,8 @@ class GearedCharacter(AbstractCharacter):
         self.jobtype: str = gen.jobtype
         if self.jobtype == "HP":
             self.base_modifier = ExMDF(stat_main=545 + level * 90, stat_sub=4, crit=5)
-        # elif self.jobtype == "xenon":
-        #    self.base_modifier = ExMDF(stat_main=18 + level * 5, stat_sub=4, crit=5) # TODO: 힘덱인럭 적용 시 바꾸세요!
+        elif self.jobtype == "xenon":
+            self.base_modifier = ExMDF(stat_main=26 + level * 5, crit=5)
         else:
             self.base_modifier = ExMDF(stat_main=18 + level * 5, stat_sub=4, crit=5)
         self.gear_list: Dict[str, Optional[Gear]] = {
