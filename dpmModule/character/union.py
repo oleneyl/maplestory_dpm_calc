@@ -225,35 +225,33 @@ class Card:
         [ExMDF(stat_main_fixed=i, stat_sub_fixed=i) for i in [5, 10, 20, 40, 50]],
         [ExMDF(pcooltime_reduce=i) for i in [2, 3, 4, 5, 6]],
         [ExMDF(buff_rem=i) for i in [5, 10, 15, 20, 25]],
+        [ExMDF(stat_main_fixed=i * 3) for i in [5, 10, 20, 40, 50]],  # 제논 전용 제논 공격대원
     ]
 
     priority = {
-        "STR": {
-            "order": [
-                2,
-                4,
-                5,
-                6,
-                7,
-                9,
-                10,
-                0,
-                8,
-                1,
-            ],  # 크확, 크뎀, 방무, 보공, 뎀퍼, 쿨감, 벞지, 주스탯, 제논, 부스탯
-            "max": [8, 4, 2, 1, 1, 1, 1, 1, 1, 1, 1],
+        "STR": {  # 크확, 크뎀, 방무, 보공, 뎀퍼, 쿨감, 벞지, 주스탯, 제논, 부스탯
+            "order": [2, 4, 5, 6, 7, 9, 10, 0, 8, 1],
+            "max": [8, 5, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0],
         },
         "DEX": {
             "order": [2, 4, 5, 6, 7, 9, 10, 0, 8, 1],
-            "max": [4, 8, 2, 1, 1, 1, 1, 1, 1, 1, 1],
+            "max": [5, 8, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0],
         },
         "INT": {
             "order": [2, 4, 5, 6, 7, 9, 10, 0, 8, 1],
-            "max": [7, 5, 2, 1, 1, 1, 1, 1, 1, 1, 1],
+            "max": [7, 5, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0],
         },
         "LUK": {
             "order": [2, 4, 5, 6, 7, 9, 10, 0, 8, 1],
-            "max": [5, 4, 2, 1, 1, 1, 1, 1, 1, 1, 1],
+            "max": [5, 5, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        },
+        "LUK2": {
+            "order": [2, 4, 5, 6, 7, 9, 10, 0, 8, 1],
+            "max": [5, 13, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        },
+        "xenon": {  # 크확, 크뎀, 방무, 보공, 뎀퍼, 쿨감, 벞지, 제논, 주스탯
+            "order": [2, 4, 5, 6, 7, 9, 10, 11, 0],
+            "max": [18, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         },
     }
 
@@ -279,10 +277,9 @@ class Card:
         리턴 형태 : Modifier
         """
         # TODO: 실행을 위해 임시로 변환
-        if jobtype == "LUK2": jobtype = "LUK"
-        if jobtype == "HP": jobtype = "STR"
-        if jobtype == "xenon": jobtype = "LUK"
-        if jobtype not in ["STR", "DEX", "INT", "LUK"]:
+        if jobtype == "HP":
+            jobtype = "STR"
+        if jobtype not in ["STR", "DEX", "INT", "LUK", "LUK2", "xenon"]:
             raise TypeError("jobtype must str, dex, int or luk, get:" + str(jobtype))
         retmdf = ExMDF()
         card_4, card_3 = Card.get_apt_slot(ulevel, maplem=maplem)

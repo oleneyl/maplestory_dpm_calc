@@ -103,7 +103,7 @@ anchors:
       allstat_rate: 18
     add_potential:
       allstat_rate: 2
-      att: 21
+      att: 20
   xenon_acc_bonus: &xenon_acc_bonus
     stat_main: 40
     stat_sub: 40
@@ -114,7 +114,7 @@ anchors:
       allstat_rate: 18
     add_potential:
       allstat_rate: 2
-      att: 21
+      att: 20
 
 default:
   level: 260
