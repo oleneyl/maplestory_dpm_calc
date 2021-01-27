@@ -158,7 +158,6 @@ class GearedCharacter(AbstractCharacter):
             "heart": None,
             "set_effect": None,
         }
-        self.title = None
 
     def set_gears(self, gear_dict: Dict[str, Gear]) -> None:
         for key in self.gear_list:
