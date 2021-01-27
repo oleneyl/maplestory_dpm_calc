@@ -116,15 +116,6 @@ class TemplateGenerator:
                     node[node_key] = deepcopy(self.data[spec_name][jobname][node_key])
         # Assert node contains all necessary parts
         assert("level" in node and set(self.parts) <= node.keys())
-        # Apply wildcard options: 'armor'
-        if "armor" in node:
-            for part in ("head", "top", "bottom", "shoes", "glove", "cape"):
-                for option in node["armor"]:
-                    if option not in node[part]:
-                        node[part][option] = node["armor"][option]
-            del node["armor"]
-        if "acc" in node:
-            raise TypeError('Deprecated wildcard keyword: acc')
         return node
 
     def _get_weapon_stat(self, node) -> Tuple[int, int]:
