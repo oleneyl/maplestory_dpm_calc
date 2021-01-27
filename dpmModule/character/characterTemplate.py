@@ -83,7 +83,7 @@ class TemplateGenerator:
             self._get_arcane_modifier(node, gen.jobtype),
             self._get_authentic_modifier(node, gen.jobtype),
             self._get_pet_modifier(node),
-            self._get_cash_modifier(node),
+            self._get_cash_modifier(node, gen.jobtype),
             self._get_job_specific_item_modifier(node)
         ])
         # Equip title
@@ -166,12 +166,23 @@ class TemplateGenerator:
             mdf.att += node["pet_set"]
         return mdf
 
-    def _get_cash_modifier(self, node) -> ExMDF:
+    def _get_cash_modifier(self, node, jobtype: str) -> ExMDF:
         if "cash" not in node:
             return ExMDF()
         mdf = ExMDF()
-        for stat_key in node["cash"]:
-            setattr(mdf, stat_key, node["cash"][stat_key])
+        for stat_key in ("att", "stat_main"):
+            if stat_key in node["cash"]:
+                setattr(mdf, stat_key, node["cash"][stat_key])
+        if "stat_sub" in node["cash"]:  # TODO: 캐시장비도 Gear로 처리하도록 변경할것
+            if jobtype == "xenon":
+                setattr(mdf, "stat_main", getattr(mdf, "stat_main", 0) + node["cash"]["stat_sub"])
+            else:
+                setattr(mdf, "stat_sub", node["cash"]["stat_sub"])
+        if "stat_sub2" in node["cash"]:
+            if jobtype == "xenon":
+                setattr(mdf, "stat_main", getattr(mdf, "stat_main", 0) + node["cash"]["stat_sub2"])
+            if jobtype == "LUK2":
+                setattr(mdf, "stat_sub", getattr(mdf, "stat_sub", 0) + node["cash"]["stat_sub2"])
         return mdf
 
     def _get_job_specific_item_modifier(self, node) -> ExMDF:
@@ -375,6 +386,7 @@ class TemplateGenerator:
         gears["weapon"].item_id = weapon_id
         gears["weapon"].set_item_id = weapon_set_item_id
         return set_effect
+
 
 def _get_stat_type(jobtype: str) -> Tuple[
         GearPropType, GearPropType,
