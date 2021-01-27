@@ -45,10 +45,12 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(ReservationRule("소울 컨트랙트", "마크 오브 팬텀"), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule("템페스트 오브 카드(시전)", "블랙잭", lambda sk: sk.is_cooltime_left(10000, 1)), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule("템페스트 오브 카드(시전)", "마크 오브 팬텀", lambda sk: sk.is_cooltime_left(10000, 1)), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule("템페스트 오브 카드(시전)", "리프트 브레이크", lambda sk: sk.is_cooltime_left(10000, 1)), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule("템페스트 오브 카드(시전)", "조커(시전)", lambda sk: sk.is_cooltime_left(10000, 1)), RuleSet.BASE)
+
+        # TODO: 쿨감 4초기준 최적화, 쿨감 수치를 받아와서 처리해야 함
+        ruleset.add_rule(ConditionRule("템페스트 오브 카드(시전)", "블랙잭", lambda sk: sk.is_cooltime_left(8500, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("템페스트 오브 카드(시전)", "마크 오브 팬텀", lambda sk: sk.is_cooltime_left(8500, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("템페스트 오브 카드(시전)", "리프트 브레이크", lambda sk: sk.is_cooltime_left(8500, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule("템페스트 오브 카드(시전)", "조커(시전)", lambda sk: sk.is_cooltime_left(8500, 1)), RuleSet.BASE)
         return ruleset
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -107,7 +109,6 @@ class JobGenerator(ck.JobGenerator):
 
         PrieredAria = core.BuffSkill("프레이 오브 아리아", 0, (240+7*self.combat)*1000, pdamage=30+self.combat, armor_ignore=30+self.combat).wrap(core.BuffSkillWrapper)
 
-        # 템오카 안쓰는게 더 높게 나옴
         TempestOfCardInit = core.DamageSkill("템페스트 오브 카드(시전)", 0, 0, 0, cooltime=18000*0.8 + 180*56, red=True).wrap(core.DamageSkillWrapper)
         TempestOfCard = core.DamageSkill("템페스트 오브 카드", 180, 200+2*self.combat, 3, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
@@ -148,7 +149,7 @@ class JobGenerator(ck.JobGenerator):
         CarteNoir.onAfter(FullStack)
         MileAiguilles.onAfter(CarteNoir)
 
-        TempestOfCardInit.onAfter(core.RepeatElement(TempestOfCard, 56))
+        TempestOfCardInit.onAfter(core.RepeatElement(TempestOfCard, 45))  # 최대 56, 쿨감 4초 기준 딜사이클 최적화를 위해 45로 변경
         TempestOfCard.onAfter(CarteNoir)
 
         JokerDamage.onAfter(core.RepeatElement(CarteNoir, 10))  # 조커는 느와르를 발동하나, 조커 3타에 1번씩만 들어가므로 30 / 3 = 10
