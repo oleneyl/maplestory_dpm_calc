@@ -77,7 +77,7 @@ anchors:
         count: -1
     star: 12
     potential:
-      allstat_rate: 9
+      allstat_rate: 6
     add_potential:
       att: 10
   xenon_acc_bonus: &xenon_acc_bonus
@@ -87,7 +87,7 @@ anchors:
       allstat_rate: 6
   xenon_acc_potential: &xenon_acc_potential
     potential:
-      allstat_rate: 9
+      allstat_rate: 6
     add_potential:
       att: 10
 
