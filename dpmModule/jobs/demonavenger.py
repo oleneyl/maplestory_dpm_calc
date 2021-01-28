@@ -26,7 +26,7 @@ class JobGenerator(ck.JobGenerator):
         # 쓸샾, 쓸뻥, 쓸오더(아직 미구현)
         self.preEmptiveSkills = 3
 
-        self.ability_list = Ability_tool.get_ability_set('reuse', 'crit', 'boss_pdamage')
+        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'reuse')
 
     def get_ruleset(self):
         '''딜 사이클 정리
