@@ -100,7 +100,7 @@ anchors:
     allstat_rate: 5
   xenon_acc_potential: &xenon_acc_potential
     potential:
-      allstat_rate: 12
+      allstat_rate: 15
     add_potential:
       att: 21
 
