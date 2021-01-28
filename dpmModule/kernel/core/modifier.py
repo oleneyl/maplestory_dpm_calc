@@ -268,10 +268,11 @@ class CharacterModifier:
 
         # Optimized
         real_crit = min(100, self.crit)
-        stat = (
-            4 * self.stat_main * (1 + 0.01 * self.pstat_main)
-            + self.stat_sub * (1 + 0.01 * self.pstat_sub)
-        ) + (4 * self.stat_main_fixed + self.stat_sub_fixed)
+        stat_main = self.stat_main * (1 + 0.01 * self.pstat_main) + self.stat_main_fixed
+        pure_hp = 24029  # 629 + level * 90
+        stat_main = pure_hp / 14 + (stat_main - pure_hp) / 17.5
+        stat_sub = self.stat_sub * (1 + 0.01 * self.pstat_sub) + self.stat_sub_fixed
+        stat = 4 * stat_main + stat_sub
         adap = self.att * (1 + 0.01 * self.patt)
         factor_crit_removed = (
             1 + 0.01 * (max(self.pdamage + self.boss_pdamage, 0))
