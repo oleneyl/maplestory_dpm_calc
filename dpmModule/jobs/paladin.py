@@ -150,6 +150,8 @@ class JobGenerator(ck.JobGenerator):
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return(
             Blast,
             [
@@ -163,9 +165,10 @@ class JobGenerator(ck.JobGenerator):
                 AuraWeaponBuff,
                 AuraWeapon,
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
-                globalSkill.soul_contract()
+                globalSkill.soul_contract(),
+                TandadianRuin,
             ] +
-            [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, MightyMjollnirInit, GrandCross, MirrorBreak, MirrorSpider] +
+            [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, MightyMjollnirInit, GrandCross, MirrorBreak, MirrorSpider, AeonianRise] +
             [BlessedHammer, BlessedHammerActive] +
             [Blast]
         )

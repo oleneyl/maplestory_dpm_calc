@@ -394,12 +394,14 @@ class JobGenerator(ck.JobGenerator):
             sk.onAfter(UseEgoWeaponBeta)
         EgoWeaponBeta.protect_from_running()
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return(ComboHolder,
                [globalSkill.maple_heros(chtr.level, name="륀느의 가호", combat_level=0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
                 DivineAura, AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, RhinneBless,
                 DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, LimitBreakFinal, CriticalBind,
-                SoulContract] +
-               [TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta, MirrorBreak, MirrorSpider] +
+                SoulContract, TandadianRuin] +
+               [TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta, MirrorBreak, MirrorSpider, AeonianRise] +
                [AdvancedStormBreakSummon, AdvancedStormBreakElectric, AdvancedEarthBreakElectric, WindCutterSummon, ThrowingWeapon] +
                [EgoWeaponAlpha, EgoWeaponBeta] +
                [ComboHolder])

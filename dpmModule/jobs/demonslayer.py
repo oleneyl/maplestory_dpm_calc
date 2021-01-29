@@ -168,11 +168,13 @@ class JobGenerator(ck.JobGenerator):
         # 블블 추가타 적용
         for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DemonBaneTick, DemonBane2Tick, DevilCry, Cerberus, AuraWeapon]:
             jobutils.create_auxilary_attack(sk, 0.9, nametag='(블루 블러드)')
+        
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return(BasicAttackWrapper,
                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                 Booster, DemonSlashRemainTime, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
-                *demon.AnotherWorldWrapper(vEhc, 0, 0), globalSkill.soul_contract()] +
+                *demon.AnotherWorldWrapper(vEhc, 0, 0), globalSkill.soul_contract(), TandadianRuin] +
                [Cerberus, DevilCry, DemonSlash1, SpiritOfRageEnd] +
-               [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_, DemonBaneInit, MirrorBreak, MirrorSpider] +
+               [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_, DemonBaneInit, MirrorBreak, MirrorSpider, AeonianRise] +
                [BasicAttackWrapper])

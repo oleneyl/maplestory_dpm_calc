@@ -236,11 +236,13 @@ class JobGenerator(ck.JobGenerator):
         BurningBreaker.onBefore(SoulContract)
 
         SoulContract.protect_from_running()
-        
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return(Mag_Pang,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), MaximizeCannon, WillOfLiberty, AuraWeaponBuff, AuraWeapon, BunkerBuster, Cylinder, Overheat, HammerSmashDebuff,
-                    SoulContract] +\
-                [ReleaseHammer, BurningBreaker, BalkanPunch, AfterImageShockInit, AfterImageShockActive, AfterImageShockPassive, MirrorBreak, MirrorSpider] +\
+                    SoulContract, TandadianRuin] +\
+                [ReleaseHammer, BurningBreaker, BalkanPunch, AfterImageShockInit, AfterImageShockActive, AfterImageShockPassive, MirrorBreak, MirrorSpider, AeonianRise] +\
                 [RegistanceLineInfantry, HammerSmashWave] +\
                 [Mag_Pang])

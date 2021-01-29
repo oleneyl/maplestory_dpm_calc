@@ -194,6 +194,8 @@ class JobGenerator(ck.JobGenerator):
                 sk.onBefore(Inturrupt)  # 블디 연계 취소 딜레이. TODO: 연계 취소 딜레이를 시뮬레이터에 구현
         else:
             raise ValueError(DEALCYCLE)
+        
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return (
             BasicAttack,
@@ -211,10 +213,11 @@ class JobGenerator(ck.JobGenerator):
                 BoolsEye,
                 HerosOath,
                 ReadyToDie,
-                globalSkill.soul_contract()
+                globalSkill.soul_contract(),
+                TandadianRuin,
             ] +
             [BlackJackFinal] +  # reserved task, use as early as possible
             [FinalCut, BlackJack, MarkOfPhantom, LiftBreak, JokerInit] +
-            [MirrorBreak, MirrorSpider, TempestOfCardInit] +
+            [MirrorBreak, MirrorSpider, AeonianRise, TempestOfCardInit] +
             [BasicAttack]
         )

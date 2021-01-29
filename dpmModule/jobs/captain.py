@@ -498,6 +498,8 @@ class JobGenerator(ck.JobGenerator):
         DeathTriggerInit.onAfter(core.RepeatElement(DeathTrigger, 7))
         DeathTriggerInit.onAfter(DeathTriggerEnd)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return (
             RapidFire,
             [
@@ -513,6 +515,7 @@ class JobGenerator(ck.JobGenerator):
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                 QuickDraw,
                 globalSkill.soul_contract(),
+                TandadianRuin,
             ]
             + [
                 BattleshipBomber,
@@ -523,6 +526,7 @@ class JobGenerator(ck.JobGenerator):
                 StrangeBomb,
                 MirrorBreak,
                 MirrorSpider,
+                AeonianRise,
             ]
             + [
                 OctaQuaterdeck,

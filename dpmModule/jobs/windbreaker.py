@@ -285,6 +285,8 @@ class JobGenerator(ck.JobGenerator):
 
         IdleWhim.onAfter(MercilesswindDOT)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return (
             SongOfHeaven,
             [
@@ -301,6 +303,7 @@ class JobGenerator(ck.JobGenerator):
                 GloryOfGuardians,
                 CriticalReinforce,
                 globalSkill.soul_contract(),
+                TandadianRuin,
             ]
             + [
                 GuidedArrow,
@@ -317,6 +320,7 @@ class JobGenerator(ck.JobGenerator):
             + [
                 PinPointPierceDebuff,
                 MirrorSpider,
+                AeonianRise,
                 MercilesswindDOT,
             ]  # Not used from scheduler
             + [SongOfHeaven],

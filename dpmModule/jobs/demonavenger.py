@@ -205,10 +205,12 @@ class JobGenerator(ck.JobGenerator):
         FrenzyInit.onAfter(DemonFrenzy)
         DemonFrenzy.protect_from_running()
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return(BasicAttack,
                [FrenzyInit, globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_hyper_body_demonavenger(),
                 DemonFrenzy, Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
-                globalSkill.soul_contract(), Revenant, RevenantHit, CallMastema, AnotherGoddessBuff, AnotherVoid] +
+                globalSkill.soul_contract(), TandadianRuin, Revenant, RevenantHit, CallMastema, AnotherGoddessBuff, AnotherVoid] +
                [ShieldChasing, ArmorBreakBuff] +
-               [BatSwarm, MirrorBreak, MirrorSpider, DimensionSword, DemonicBlast] +
+               [BatSwarm, MirrorBreak, MirrorSpider, AeonianRise,DimensionSword, DemonicBlast] +
                [BasicAttack])

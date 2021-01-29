@@ -378,6 +378,8 @@ class JobGenerator(ck.JobGenerator):
         TalismanEnergy.vary(100)
         ScrollEnergy.vary(900)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return (
             Topa,
             [
@@ -393,11 +395,12 @@ class JobGenerator(ck.JobGenerator):
                 Miracle_Tonic,
                 AnimaGoddessBless,
                 ReadyToDie,
-                globalSkill.soul_contract()
+                globalSkill.soul_contract(),
+                TandadianRuin,
             ]
             + [Talisman_Seeker, Waryu, Summon_Sanryung]
             + [Nansin_Final]  # reserved task, use early as possible
-            + [GeumGoBong, EarthQuake, Flames, Mabong, Misaeng, CloneBinding, MirrorBreak, MirrorSpider]
+            + [GeumGoBong, EarthQuake, Flames, Mabong, Misaeng, CloneBinding, MirrorBreak, MirrorSpider, AeonianRise]
             + [
                 Miracle_Tonic_Charge,
                 Nansin_Final_Buff,

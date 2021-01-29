@@ -222,14 +222,16 @@ class JobGenerator(ck.JobGenerator):
         Dominion.onAfter(DominionAttack)
         #쉐도우 바이트
         ShadowBite.onEventElapsed(ShadowBiteBuff, 2000)
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
                 
         return( QuintupleThrow,
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     ElementalDarkness, Booster, ShadowServent, SpiritThrowing, ShadowBatStack,
                     ShadowElusion, ReadyToDie, Dominion, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                     GloryOfGuardians, ShadowSpear, ShadowServentExtend, ShadowBite, ShadowBiteBuff,
-                    globalSkill.soul_contract()] +\
-                [RapidThrowInit, CygnusPhalanx, MirrorBreak, MirrorSpider] +\
+                    globalSkill.soul_contract(), TandadianRuin] +\
+                [RapidThrowInit, CygnusPhalanx, MirrorBreak, MirrorSpider, AeonianRise] +\
                 [ElementalDarknessDOT, ShadowSpearLarge] +\
                 [] +\
                 [QuintupleThrow])

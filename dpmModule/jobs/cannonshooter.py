@@ -346,6 +346,8 @@ class JobGenerator(ck.JobGenerator):
 
         SpecialMonkeyEscort_Cannon.onJustAfter(SpecialMonkeyEscort_Bomb)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return (
             CannonBuster,
             [
@@ -363,6 +365,7 @@ class JobGenerator(ck.JobGenerator):
                 Overdrive,
                 PirateFlag,
                 globalSkill.soul_contract(),
+                TandadianRuin,
             ]
             + [
                 SpecialMonkeyEscort_Cannon,
@@ -375,6 +378,7 @@ class JobGenerator(ck.JobGenerator):
             + [
                 SpecialMonkeyEscort_Bomb,
                 MirrorSpider,
+                AeonianRise,
                 OakRuletDOT,
                 MonkeyFuriousDot,
                 MonkeyWaveBuff,

@@ -312,6 +312,8 @@ class JobGenerator(ck.JobGenerator):
         EnsureOOPArtsCode = core.OptionalElement(lambda: OverloadMode.is_active() and OOPArtsCode.is_time_left(16000, -1), OOPArtsCode)
         MegaSmasher.onBefore(EnsureOOPArtsCode)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return (
             PurgeSnipe,
             [
@@ -333,6 +335,7 @@ class JobGenerator(ck.JobGenerator):
                 Overdrive,
                 ReadyToDie,
                 globalSkill.soul_contract(),
+                TandadianRuin,
             ]
             + [
                 Hologram_Fusion,
@@ -344,6 +347,7 @@ class JobGenerator(ck.JobGenerator):
                 PhotonRay,
                 MirrorBreak,
                 MirrorSpider,
+                AeonianRise,
                 MegaSmasher,
                 MeltDown,
                 MeltDown_Armor,

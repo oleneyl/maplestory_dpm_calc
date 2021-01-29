@@ -309,15 +309,17 @@ class JobGenerator(ck.JobGenerator):
         # 기본공격 = 블래스트-디스차지
         CardinalBlast.onAfter(CardinalDischarge)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ### Exports ###
         return(CardinalBlast,
                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
                 RelicCharge, AncientBowBooster, CurseTolerance, CurseTransition, SharpEyes,
                 RelicEvolution, EpicAdventure,
                 AncientGuidance, AdditionalTransition, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), CriticalReinforce,
-                globalSkill.soul_contract()] +
+                globalSkill.soul_contract(), TandadianRuin] +
                [RelicUnboundDischarge, AncientAstraHolder, TripleImpact, EdgeOfResonance,
                 ComboAssultHolder, UltimateBlast, SplitMistel, CardinalTransition] +
-               [Evolve, Raven, GuidedArrow, RavenTempest, ObsidionBarrierBlast, MirrorBreak, MirrorSpider] +
+               [Evolve, Raven, GuidedArrow, RavenTempest, ObsidionBarrierBlast, MirrorBreak, MirrorSpider, AeonianRise] +
                [] +
                [CardinalBlast])

@@ -279,6 +279,8 @@ class JobGenerator(ck.JobGenerator):
         else:
             raise ValueError(DEALCYCLE)
         
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+        
         return (
             PsychicGrab2,
             [
@@ -295,7 +297,8 @@ class JobGenerator(ck.JobGenerator):
                 PsychicCharging,
                 AnotherGoddessBuff,
                 PsychicOver,
-                globalSkill.soul_contract()
+                globalSkill.soul_contract(),
+                TandadianRuin,
             ]
             + [
                 AnotherHeal,
@@ -316,7 +319,8 @@ class JobGenerator(ck.JobGenerator):
                 Ultimate_Material,
                 LawOfGravity,
                 UltimatePsychic,
-                MirrorBreak
+                MirrorBreak,
+                AeonianRise
             ]
             + [
                 UltimatePsychicBuff,

@@ -220,12 +220,14 @@ class JobGenerator(ck.JobGenerator):
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return(BasicAttack,
                 [Booster, globalSkill.maple_heros(chtr.level, combat_level=self.combat), OverloadMana,
                 globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), WillOfLiberty, MasterOfDeath, UnionAura, AbyssyalLightning,
-                globalSkill.soul_contract()] +\
+                globalSkill.soul_contract(), TandadianRuin] +\
                 [DarkGenesis, BattlekingBar] +\
-                [RegistanceLineInfantry, Death, BlackMagicAlter, GrimReaper, MirrorBreak, MirrorSpider] +\
+                [RegistanceLineInfantry, Death, BlackMagicAlter, GrimReaper, MirrorBreak, MirrorSpider, AeonianRise] +\
                 [] +\
                 [BasicAttack])

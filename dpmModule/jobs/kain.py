@@ -1073,6 +1073,8 @@ class JobGenerator(ck.JobGenerator):
             )
         )
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return (
             BasicAttack,
             [
@@ -1088,11 +1090,12 @@ class JobGenerator(ck.JobGenerator):
                 Incarnation,
                 ThanatosDescent,
                 globalSkill.soul_contract(),
+                TandadianRuin,
                 Possession,
             ]
             + [MaliceTick, DragonPang, GuidedArrow, GrapOfAgony]
             + [ThanatosDescentFinalInit]  # reserved task, use as early as possible
-            + [Pantheon, DragonBurstReleaseInit, FatalBlitzInit, MirrorBreak, MirrorSpider]
+            + [Pantheon, DragonBurstReleaseInit, FatalBlitzInit, MirrorBreak, MirrorSpider, AeonianRise]
             + [
                 SneakySnipingRelease,
                 FallingDustRelease,

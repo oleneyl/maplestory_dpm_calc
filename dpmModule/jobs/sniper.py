@@ -334,6 +334,8 @@ class JobGenerator(ck.JobGenerator):
             )
         )
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return (
             BasicAttack,
             [
@@ -349,9 +351,10 @@ class JobGenerator(ck.JobGenerator):
                 RepeatingCartrige,
                 SplitArrowBuff,
                 globalSkill.soul_contract(),
+                TandadianRuin,
             ]
             + [TrueSnipping, ChargedArrowHold, ChargedArrow]
-            + [Freezer, Evolve, GuidedArrow, MirrorBreak, MirrorSpider]
+            + [Freezer, Evolve, GuidedArrow, MirrorBreak, MirrorSpider, AeonianRise]
             + []
             + [BasicAttack],
         )

@@ -165,6 +165,8 @@ class JobGenerator(ck.JobGenerator):
         SuperNova.onTick(SoulSeeker)
         #SuperNova.onConstraint(core.ConstraintElement("익절트와 함께", SoulExult, SoulExult.is_active))
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return (
             Trinity_1,
             [
@@ -183,8 +185,9 @@ class JobGenerator(ck.JobGenerator):
                 SoulContract,
                 FinaturaFettucciaBuff,
                 SpotLightBuff,
+                TandadianRuin,
             ] +
-            [FinaturaFettuccia, EnergyBurst, MirrorBreak, MirrorSpider] +
+            [FinaturaFettuccia, EnergyBurst, MirrorBreak, MirrorSpider, AeonianRise] +
             [SuperNova, MascortFamilierAttack, ShinyBubbleBreath, SpotLight, TrinityFusionInit, Phanteon] +
             [Trinity_1]
         )

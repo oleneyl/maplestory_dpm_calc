@@ -172,11 +172,13 @@ class JobGenerator(ck.JobGenerator):
             LoyalGuard_5 = None
             LoyalGuardBuff = None
         
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+        
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     GuardOfLight, LoyalGuardBuff, SoulAttack, Booster, Invigorate, SacredCube, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                     DeadlyChargeBuff, QueenOfTomorrow, AuraWeaponBuff, AuraWeapon, RoIias, SwordOfSoullight, LightOfCourage, LightOfCourageSummon, LightOfCourageFinal,
-                    globalSkill.soul_contract()] +\
-                [CygnusPhalanx, DeadlyCharge, LoyalGuard_5, ShiningCross, ClauSolis, MirrorBreak, MirrorSpider] +\
+                    globalSkill.soul_contract(), TandadianRuin] +\
+                [CygnusPhalanx, DeadlyCharge, LoyalGuard_5, ShiningCross, ClauSolis, MirrorBreak, MirrorSpider, AeonianRise] +\
                 [ShiningCrossInstall, ClauSolisSummon] +\
                 [BasicAttackWrapper])

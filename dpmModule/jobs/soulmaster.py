@@ -126,11 +126,13 @@ class JobGenerator(ck.JobGenerator):
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(),
                     NimbleFinger, TrueSight, SolunaTime, SoulForge, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
-                    GloryOfGuardians, AuraWeaponBuff, AuraWeapon, globalSkill.soul_contract(), SelestialDanceInit, Elision, ElisionBreak,
+                    GloryOfGuardians, AuraWeaponBuff, AuraWeapon, globalSkill.soul_contract(), TandadianRuin, SelestialDanceInit, Elision, ElisionBreak,
                     ] +\
                 [FlareSlash, CygnusPhalanx, SolunaDivide] +\
-                [SelestialDanceSummon, SoulEclipse, MirrorBreak, MirrorSpider] +\
+                [SelestialDanceSummon, SoulEclipse, MirrorBreak, MirrorSpider, AeonianRise] +\
                 [BasicAttackWrapper])

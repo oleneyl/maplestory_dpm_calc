@@ -519,16 +519,18 @@ class JobGenerator(ck.JobGenerator):
         DeviousNightmare.protect_from_running()
         DeviousDream.protect_from_running()
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return(PlainAttack, 
                 [globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     ContactCaravan, Booster, LuckyDice, ScarletBuff, AbyssBuff, SpecterState, ScarletBuff2, AbyssBuff2,
                     ChargeSpellAmplification, WraithOfGod, InfinitySpell, MagicCircuitFullDrive, FloraGoddessBless, Overdrive, 
                     MemoryOfSourceBuff, EndlessPainBuff,
-                    globalSkill.soul_contract()] +\
+                    globalSkill.soul_contract(), TandadianRuin] +\
                 [MemoryOfSource, RaptRestriction, RaptRestrictionEnd, UpcomingDeath, ReturningHate,
                     ForeverHungryBeastInit, ForeverHungryBeastTrigger, CrawlingFear_Link, EndlessPain, 
                     EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, 
                     UncurableHurt_Link, UnfulfilledHunger_Link, Impulse_Connected, UncontrollableChaos_Link, 
-                    AbyssSpell, RaptRestrictionSummon, DeviousNightmare, DeviousDream, MirrorBreak, MirrorSpider] +\
+                    AbyssSpell, RaptRestrictionSummon, DeviousNightmare, DeviousDream, MirrorBreak, MirrorSpider, AeonianRise] +\
                 [MagicCircuitFullDriveStorm] +\
                 [PlainAttack])

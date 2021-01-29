@@ -192,12 +192,14 @@ class JobGenerator(ck.JobGenerator):
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return(RaisingBlowInrage,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), ComboAttack, Fury, EpicAdventure, Valhalla, 
                     InsizingBuff, InsizingDot, AuraWeaponBuff, AuraWeapon, ComboDeathFaultBuff, 
                     ComboInstinct, ComboInstinctOff, PanicBuff,
-                    globalSkill.soul_contract()] +\
+                    globalSkill.soul_contract(), TandadianRuin] +\
                 [Panic, Insizing, ComboDeathFault, SwordIllusionInit, RisingRage] +\
-                [SwordOfBurningSoul, MirrorBreak, MirrorSpider] +\
+                [SwordOfBurningSoul, MirrorBreak, MirrorSpider, AeonianRise] +\
                 [RaisingBlowInrage])

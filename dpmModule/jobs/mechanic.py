@@ -211,6 +211,8 @@ class JobGenerator(ck.JobGenerator):
         RoboFactory.onEventEnd(RoboFactoryFinal)
         RoboFactory.onAfter(RoboFactoryBuff)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return (
             MassiveFire,
             [
@@ -230,7 +232,8 @@ class JobGenerator(ck.JobGenerator):
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                 BomberTime,
                 Overdrive,
-                globalSkill.soul_contract()
+                globalSkill.soul_contract(),
+                TandadianRuin,
             ] +
             [MicroMissle, MechCarrier, BusterCallInit] +
             [
@@ -243,7 +246,8 @@ class JobGenerator(ck.JobGenerator):
                 DistortionField,
                 MultipleOption,
                 MirrorBreak,
-                MirrorSpider
+                MirrorSpider,
+                AeonianRise,
             ] +
             [BusterCallBuff, BusterCallPenalty] +
             [MassiveFire]

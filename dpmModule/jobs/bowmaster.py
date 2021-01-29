@@ -438,6 +438,8 @@ class JobGenerator(ck.JobGenerator):
         )
         ArmorPiercing.protect_from_running()
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ### Exports ###
         return (
             ArrowOfStorm,
@@ -456,6 +458,7 @@ class JobGenerator(ck.JobGenerator):
                 QuibberFullBurstDOT,
                 ImageArrowPassive,
                 globalSkill.soul_contract(),
+                TandadianRuin,
             ]
             + []
             + [
@@ -468,6 +471,7 @@ class JobGenerator(ck.JobGenerator):
                 ImageArrow,
                 MirrorBreak,
                 MirrorSpider,
+                AeonianRise,
                 OpticalIllusion,
             ]
             + []

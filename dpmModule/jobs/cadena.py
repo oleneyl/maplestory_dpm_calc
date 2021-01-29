@@ -343,15 +343,17 @@ class JobGenerator(ck.JobGenerator):
                   SummonReleasingBoom, SummonStrikingBrick,
                   SummonBeatingNeedlebat_1, SummonThrowingWingdagger, ChainArts_Maelstorm, WeaponVarietyAttack, WeaponVarietyFinale]:
             s.protect_from_running()
+        
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return(NormalAttack,
                [globalSkill.maple_heros(chtr.level, name="노바의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                 WeaponVariety, Booster, SpecialPotion, ProfessionalAgent,
                 ReadyToDie, ChainArts_Fury, NovaGoddessBless,
                 SummonSlachingKnife_Horror, SummonBeatingNeedlebat_Honmy, VenomBurst_Poison, ChainArts_Maelstorm_Slow,
-                globalSkill.soul_contract(), CheapShotIIBleed, CheapShotIIBleedBuff, CheapShotIIAdventureMageBuff] +
+                globalSkill.soul_contract(), TandadianRuin, CheapShotIIBleed, CheapShotIIBleedBuff, CheapShotIIAdventureMageBuff] +
                [SummonReleasingBoom_Explode, SummonThrowingWingdaggerEnd, AD_Odnunce_Final] +
-               [WingDaggerCombo, BatCombo, BommBrickCombo, ShootgunClawCombo, SimiterChaseCombo, KnifeCombo, MaleStromCombo, ChainArts_Crush, MirrorBreak, MirrorSpider] +
+               [WingDaggerCombo, BatCombo, BommBrickCombo, ShootgunClawCombo, SimiterChaseCombo, KnifeCombo, MaleStromCombo, ChainArts_Crush, MirrorBreak, MirrorSpider, AeonianRise] +
                [WeaponVarietyAttack, SummonThrowingWingdaggerSummon, VenomBurst, AD_Odnunce, ChainArts_Maelstorm] +
                [ChainArts_Fury_Damage, WeaponVarietyFinale, SummonShootingShotgun, SummonScratchingClaw,
                 SummonCuttingSimiter, SummonSlachingKnife,
