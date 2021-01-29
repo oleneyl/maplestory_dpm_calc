@@ -58,7 +58,7 @@ def get_optimal_hyper_union(spec, job, otherspec, hyper, union):
     newHyper = HyperStat.get_hyper_object(ref, job, hyper.level, 0)
     ref += newHyper.mdf
 
-    newUnion = Union.get_union_object(ref, -1, buffrem=buffremFlag, slot=union.slots)
+    newUnion = Union.get_union_object(ref, job, -1, buffrem=buffremFlag, slot=union.slots)
 
     return {"hyper": newHyper, "union": newUnion}
 
