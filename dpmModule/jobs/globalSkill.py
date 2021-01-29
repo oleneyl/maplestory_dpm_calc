@@ -91,7 +91,7 @@ class TandadianRuinWrapper(core.BuffSkillWrapper):
         super(TandadianRuinWrapper, self).__init__(skill)
 
     def ensure(self, chtr: AbstractCharacter) -> bool:
-        return False
+        return chtr.gear_list["weapon"].name.startswith("제네시스")
 
 
 class AeonianRiseWrapper(core.DamageSkillWrapper):
@@ -100,7 +100,7 @@ class AeonianRiseWrapper(core.DamageSkillWrapper):
         super(AeonianRiseWrapper, self).__init__(skill)
 
     def ensure(self, chtr: AbstractCharacter) -> bool:
-        return False
+        return chtr.gear_list["weapon"].name.startswith("제네시스")
 
 
 def GenesisSkillBuilder():
