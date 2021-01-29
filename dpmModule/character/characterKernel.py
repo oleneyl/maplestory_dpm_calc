@@ -461,7 +461,7 @@ class JobGenerator:
         chtr.apply_modifiers([self.get_passive_skill_modifier()])
 
         # 성향 적용
-        personality = Personality.get_personality(100, self.jobname)
+        personality = Personality.get_personality(100, self.jobtype)
         chtr.apply_modifiers([personality])
 
         graph = self.build(vEhc, chtr, options, storage_handler=storage_handler)
@@ -507,7 +507,7 @@ class JobGenerator:
         log_buffed_character(chtr)
 
         # 도핑
-        doping = Doping.get_full_doping()
+        doping = Doping.get_full_doping(self.jobtype)
         log_modifier(doping, "doping")
         chtr.apply_modifiers([doping])
         log_buffed_character(chtr)
@@ -542,6 +542,7 @@ class JobGenerator:
         refMDF = get_reference_modifier(chtr)
         union = Union.get_union(
             refMDF,
+            self.jobname,
             ulevel,
             buffrem=self.buffrem,
             critical_reinforce=self._use_critical_reinforce,

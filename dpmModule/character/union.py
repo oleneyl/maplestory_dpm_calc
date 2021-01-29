@@ -66,19 +66,21 @@ class Union:
     @staticmethod
     def get_union_object(
         mdf: ExMDF,
+        jobname: str,
         ulevel: int,
         buffrem: Tuple[int, int],
         asIndex: bool = False,
         slot=None,
     ) -> Union:
         mdf, buffrem = Union.get_union(
-            mdf, ulevel, buffrem=buffrem, asIndex=asIndex, slot=slot
+            mdf, jobname, ulevel, buffrem=buffrem, asIndex=asIndex, slot=slot
         )
         return Union(mdf, buffrem, -1, ulevel)
 
     @staticmethod
     def get_union(
         mdf: ExMDF,
+        jobname: str,
         ulevel: int,
         buffrem: Tuple[int, int],
         asIndex: bool = False,
@@ -110,20 +112,20 @@ class Union:
                 _state = [j for j in state]
                 _state[i] = min(_state[i] + 1, maxvalue)
                 _eff = Union._get_union_increment_from_state(
-                    mdf, _state, critical_reinforce=critical_reinforce
+                    mdf, jobname, _state, critical_reinforce=critical_reinforce
                 )
                 if _eff > eff:
                     idx = i
                     eff = _eff
             if idx == -1:
-                if (Union._get_union_from_state(state) + mdf).armor_ignore < 66.7:
+                if (Union._get_union_from_state(state, jobname) + mdf).armor_ignore < 66.7:
                     idx = 3
                 else:
                     for i in range(6):
                         _state = [j for j in state]
                         _state[i] = min(_state[i] + 1, maxvalue)
                         _eff = Union._get_union_increment_from_state(
-                            mdf, _state, critical_reinforce=critical_reinforce
+                            mdf, jobname, _state, critical_reinforce=critical_reinforce
                         )
                         print(_state, _eff)
                         if _eff > eff:
@@ -148,22 +150,22 @@ class Union:
             if state[3] > 100:
                 print(state)
                 raise ValueError("something gonna wrong")
-            return Union._get_union_from_state(state)
+            return Union._get_union_from_state(state, jobname)
 
     @staticmethod
     def _get_union_increment_from_state(
-        mdf: ExMDF, state: List[int], critical_reinforce: bool = False
+        mdf: ExMDF, jobname: str, state: List[int], critical_reinforce: bool = False
     ):
-        mdfCopy = mdf + Union._get_union_from_state(state)
+        mdfCopy = mdf + Union._get_union_from_state(state, jobname)
         if critical_reinforce:
             mdfCopy += ExMDF(crit_damage=max(0, mdfCopy.crit) * 0.125)
         return mdfCopy.get_damage_factor()
 
     @staticmethod
-    def _get_union_from_state(state: List[int]) -> ExMDF:
+    def _get_union_from_state(state: List[int], jobname: str) -> ExMDF:
         return (
             ExMDF(att=state[0])
-            + ExMDF(stat_main=5 * state[1])
+            + (ExMDF(stat_main=250 * state[1]) if jobname == "데몬어벤져" else ExMDF(stat_main=5 * state[1]))
             + ExMDF(boss_pdamage=state[2])
             + ExMDF(armor_ignore=state[3])
             + ExMDF(crit=state[4])
