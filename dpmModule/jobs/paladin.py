@@ -162,7 +162,7 @@ class JobGenerator(ck.JobGenerator):
                 HolyUnity,
                 AuraWeaponBuff,
                 AuraWeapon,
-                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
+                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, combat_level=2),
                 globalSkill.soul_contract()
             ] +
             [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, MightyMjollnirInit, GrandCross, MirrorBreak, MirrorSpider] +
