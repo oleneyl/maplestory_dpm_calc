@@ -91,7 +91,7 @@ class LinkSkill:
         links = {LinkSkill.Registance, LinkSkill.Angelicbuster}
         links.add(LinkSkill.jobdict[job_name])
 
-        # TODO: 미하일링크 사용시 이쪽에 사용 직업들 추가
+        # TODO: When using Mihile Link, add jobs to use here. 미하일링크 사용시 이쪽에 사용 직업들 추가
 
         if job_name in ["소울마스터", "카데나", "제로", "블래스터", "배틀메이지", "스트라이커", "나이트워커"]:
             links.add(LinkSkill.Illium)
