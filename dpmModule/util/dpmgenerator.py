@@ -139,7 +139,7 @@ class DpmSetting:
     def __init__(
         self,
         # v_builder=core.AlwaysMaximumVBuilder(),
-        ulevel: int =0,
+        ulevel: int = 0,
     ):
         self.ulevel = ulevel
         self.detail = ""
@@ -161,7 +161,7 @@ class DpmSetting:
         retli = []
         retDict = []
 
-        for _job, idx in zip(jobli, range(len(jobli))):
+        for idx, _job in enumerate(jobli):
             job = maplejobs.jobList[_job]
             generator = IndividualDPMGenerator(job)
             dpm = generator.get_dpm(
@@ -174,9 +174,7 @@ class DpmSetting:
             value = {"name": job, "dpm": dpm}
             # print(value)
             retDict.append(value)
-            print(
-                "%s done ... %d / %d ... %d" % (job, idx + 1, len(jobli), value["dpm"])
-            )
+            print("%s (%s) done ... %d / %d ... %d" % (_job, job, idx + 1, len(jobli), value["dpm"]))
 
         sorteddata = sorted(retDict, key=lambda d: d["dpm"])
         data = {
