@@ -5,7 +5,7 @@ from ...kernel import core
 class OverloadManaBuilder:
     def __init__(self, vEhc, num1, num2) -> None:
         self.skill = (
-            core.BuffSkill("오버로드 마나", 0, 99999 * 10000)
+            core.BuffSkill("오버로드 마나", 0, 99999 * 10000)  # Mana Overlord
             .isV(vEhc, num1, num2)
             .wrap(core.BuffSkillWrapper)
         )
