@@ -238,12 +238,8 @@ jobListOrder = __all__.copy()
 def getKoJobName(enJob):
     if enJob in jobList:
         return jobList[enJob]
-    else:
-        return None
 
 
 def getGenerator(koJob):
     if koJob in jobMap:
         return jobMap[koJob]
-    else:
-        return None
