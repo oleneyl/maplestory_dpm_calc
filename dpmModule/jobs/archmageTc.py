@@ -66,6 +66,23 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        Node order
+        ??-??-??-??
+
+        ?? 2 hit
+        Ice Age Floor 2 hits
+
+        Hyper:
+        Teleport-Ad Range
+        Chain Lightning-Reinforcement/Bonus Attack/Increase the number of targets
+        Orb-Dempsey
+
+        Unstable Memory is used when Infinity is off
+        Lightning Sphere is used only when Infinity is on
+
+        Other extreme deals are used for each cooldown.
+        Used per Frozen of Cool, 19 hits
+
         코강 순서
         체라-라스피-블자-오브-엘퀴-썬더스톰
         
@@ -103,9 +120,9 @@ class JobGenerator(ck.JobGenerator):
         IceAgeInit = core.DamageSkill("아이스 에이지(개시)", 660, 500 + vEhc.getV(2,3)*20, 10, cooltime = 60 * 1000, red = True).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
         IceAgeSummon = core.SummonSkill("아이스 에이지(장판)", 0, 810, 125 + vEhc.getV(2,3)*5, 3*ICE_AGE_SUMMON_HIT, 15 * 1000, cooltime = -1).isV(vEhc,2,3).wrap(core.SummonSkillWrapper)
                 
-        # 중첩당 감소량 5%
-        # TODO: 썬브가 이전 스킬 딜레이 캔슬하는것 구현해야 함
-        ThunderBrake = core.DamageSkill("썬더 브레이크 개시스킬", 120, 0, 1, red = True, cooltime = 40 * 1000).wrap(core.DamageSkillWrapper) #Awesome! -> Tandem 사출처리 해야함...Later. 690을 일단 급한대로 분배해서 사용.
+        # 5% reduction per stack. 중첩당 감소량 5%.
+        # TODO: ?? must implement canceling the previous skill delay. 썬브가 이전 스킬 딜레이 캔슬하는것 구현해야 함.
+        ThunderBrake = core.DamageSkill("썬더 브레이크 개시스킬", 120, 0, 1, red = True, cooltime = 40 * 1000).wrap(core.DamageSkillWrapper)  # Awesome! -> Tandem injection treatment is required...Later. Distribute the 690 as soon as possible. Awesome! -> Tandem 사출처리 해야함...Later. 690을 일단 급한대로 분배해서 사용.
         ThunderBrake1 = core.DamageSkill("썬더 브레이크(1)", 120, (750 + vEhc.getV(0,0)*30), 8).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ThunderBrake2 = core.DamageSkill("썬더 브레이크(2)", 120, (750 + vEhc.getV(0,0)*30)*0.95, 8).wrap(core.DamageSkillWrapper)
         ThunderBrake3 = core.DamageSkill("썬더 브레이크(3)", 120, (750 + vEhc.getV(0,0)*30)*0.9, 8).wrap(core.DamageSkillWrapper)
@@ -115,7 +132,7 @@ class JobGenerator(ck.JobGenerator):
         ThunderBrake7 = core.DamageSkill("썬더 브레이크(7)", 120, (750 + vEhc.getV(0,0)*30)*0.7, 8).wrap(core.DamageSkillWrapper)
         ThunderBrake8 = core.DamageSkill("썬더 브레이크(8)", 120, (750 + vEhc.getV(0,0)*30)*0.65, 8).wrap(core.DamageSkillWrapper)
         
-        # 단일 대상 기준
+        # Single target criteria. 단일 대상 기준.
         SpiritOfSnow = core.SummonSkill("스피릿 오브 스노우", 720, 3000, 850+34*vEhc.getV(3,1), 9, 30000, red = True, cooltime = 120*1000).isV(vEhc, 3,1).wrap(core.SummonSkillWrapper)
         
         #Summoning skill
@@ -182,7 +199,7 @@ class JobGenerator(ck.JobGenerator):
         Elquiness.onTick(FrostIncrement)
         
         #Frozen Orb
-        FrozenOrb.onTick(BlizzardPassive) # TODO: onTick 실행순서 바뀌면 순서 조정해야 함
+        FrozenOrb.onTick(BlizzardPassive)  # TODO: If the order of onTick execution changes, the order must be adjusted. onTick 실행순서 바뀌면 순서 조정해야 함.
         FrozenOrb.onTick(FrostIncrement)
         
         #Chain Lightening
@@ -227,7 +244,7 @@ class JobGenerator(ck.JobGenerator):
         SpiritOfSnow.onTick(FrostEffect.stackController(3))
 
         #Jupyter Thunder
-        JupyterThunder.add_runtime_modifier(FrostEffect, applyFrostEffect) # TODO: 블리자드 파택 안터지는게 맞는지 확인할것
+        JupyterThunder.add_runtime_modifier(FrostEffect, applyFrostEffect)  # TODO: Make sure that Blizzard does not burst. 블리자드 파택 안터지는게 맞는지 확인할것.
         for i in range(1, 6 + 1):
             JupyterThunder.onEventElapsed(FrostDecrement, 330 * 5 * i) # 5회 타격시마다 빙결 감소, 총 6회 감소
 
