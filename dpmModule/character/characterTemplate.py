@@ -35,9 +35,12 @@ def open_yaml(*paths) -> dict:
 
 class TemplateGenerator:
     def __init__(self):
-        # TODO: 보조무기 성장치 반영
+        # TODO: Reflects secondary weapon growth. 보조무기 성장치 반영.
+        # "Demon Slayer": 1099004, # Increases STR 9, DEX 9, HP 200, DEF by 20 with growth
         # "데몬슬레이어": 1099004,  # 성장으로 STR 9, DEX 9, HP 200, 방어력 20 상승
+        # "Demon Avenger": 1099009, # Increases STR 9, HP 200, and DEF by 20 through growth
         # "데몬어벤져": 1099009,  # 성장으로 STR 9, HP 200, 방어력 20 상승
+        # "Mihile": 1098003, # Increases STR 9, DEX 9, HP 200, DEF 20 by growth
         # "미하일": 1098003,  # 성장으로 STR 9, DEX 9, HP 200, 방어력 20 상승
         # TODO: Maybe use 'inherit: true' keyword to inherit from 'armor', 'acc', etc... ?
         # ex 1) eye: { "inherit": "true", "bonus": { ... }, ... } # inherit everything
@@ -70,8 +73,8 @@ class TemplateGenerator:
     def get_template(self, gen: JobGenerator, spec_name: str, cdr: int = 0) -> GearedCharacter:
         """
         :param gen: JobGenerator
-        :param spec_name: 스펙 이름; 유니온 레벨이 사용됩니다.
-        :param cdr: 쿨타임 감소 (초)
+        :param spec_name: specification name; Legion level is used. 스펙 이름; 유니온 레벨이 사용됩니다.
+        :param cdr: Cooldown reduction (sec). 쿨타임 감소 (초).
         :return: GearedCharacter
         """
         node = self._get_template_dict(spec_name, gen.jobname)
@@ -132,7 +135,7 @@ class TemplateGenerator:
         elif jobtype == "HP":
             return ExMDF(stat_main_fixed=value * 1750)
         elif jobtype == "xenon":
-            # TODO: 제논 아케인심볼 힘덱럭 적용
+            # TODO: Xenon Arcane symbol power applied. 제논 아케인심볼 힘덱럭 적용
             # return ExMDF(stat_main_fixed=value * 39, stat_sub_fixed=value * 39)
             return ExMDF(stat_main_fixed=value * 39 * 3)
 
@@ -145,7 +148,7 @@ class TemplateGenerator:
         elif jobtype == "HP":
             return ExMDF(stat_main_fixed=value * 1750)
         elif jobtype == "xenon":
-            # TODO: 제논 어센틱심볼 힘덱럭 적용
+            # TODO: Xenon authentic symbol power applied. 제논 어센틱심볼 힘덱럭 적용.
             # return ExMDF(stat_main_fixed=value * 39, stat_sub_fixed=value * 39 * 2)
             return ExMDF(stat_main_fixed=value * 39 * 3)
 
@@ -164,7 +167,7 @@ class TemplateGenerator:
         for stat_key in ("att", "stat_main"):
             if stat_key in node["cash"]:
                 setattr(mdf, stat_key, node["cash"][stat_key])
-        if "stat_sub" in node["cash"]:  # TODO: 캐시장비도 Gear로 처리하도록 변경할것
+        if "stat_sub" in node["cash"]:  # TODO: Change the cache equipment to be handled by Gear. 캐시장비도 Gear로 처리하도록 변경할것.
             if jobtype == "xenon":
                 setattr(mdf, "stat_main", getattr(mdf, "stat_main", 0) + node["cash"]["stat_sub"])
             else:
