@@ -7,9 +7,9 @@ from dpmModule.jobs import jobMap
 from dpmModule.kernel import core
 from dpmModule.status.ability import Ability_grade
 
-from .loader import load_data
-from .preset import get_preset
-from .saver import save_data
+from statistics.loader import load_data
+from statistics.preset import get_preset
+from statistics.saver import save_data
 
 
 def get_args():
