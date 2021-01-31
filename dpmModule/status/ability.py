@@ -4,11 +4,11 @@ ExMDF = core.ExtendedCharacterModifier
 
 class Ability_grade:
     '''
-    0 : 노말
-    1 : 레어
-    2 : 에픽
-    3 : 유니크
-    4 : 레전
+    0 : Normal | 노말
+    1 : Rare | 레어
+    2 : Epic | 에픽
+    3 : Unique | 유니크
+    4 : Legendary | 레전
     '''
     def __init__(self, level, nth = 1):
         self.level_list = [level, 0, 0]
