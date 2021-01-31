@@ -79,7 +79,17 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         ######   Skill   ###### 
-        '''리브라 ON
+        '''
+        Libra ON
+        Server rack 3 seconds
+        Peacemaker 3 hits
+
+        Unstable Memorise is used when Infinity is off
+        The fray is used in a way that ends when the infi ends.
+        Soul contract is used in line with the end of Infi
+        Libra is used every cool time
+
+        리브라 ON
         서버렉 3초
         피스메이커 3히트
         
@@ -101,7 +111,7 @@ class JobGenerator(ck.JobGenerator):
         Pray = PrayWrapper(vEhc, 2, 2)
         
         #Damage Skills
-        AngelRay = core.DamageSkill("엔젤레이", 630, 225 + 5*self.combat, 14).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #벤전스 사용 가정
+        AngelRay = core.DamageSkill("엔젤레이", 630, 225 + 5*self.combat, 14).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  # Vengeance use assumptions. 벤전스 사용 가정.
         
         HeavensDoor = core.DamageSkill("헤븐즈도어", 270, 1000, 8, cooltime = 180 * 1000).wrap(core.DamageSkillWrapper)
 
@@ -114,8 +124,8 @@ class JobGenerator(ck.JobGenerator):
         DivinePunishmentTick = core.DamageSkill("디바인 퍼니시먼트(키다운)", 240, 175+7*vEhc.getV(0,0), 5+5, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
     
         #Summoning skill
-        Bahamutt = core.SummonSkill("바하뮤트", 0, 3030, 170+2*self.combat, 3, 90 * 1000, cooltime = 120 * 1000, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #최종뎀25%스택, 리브라 종료시 자동소환 되므로 딜레이 0
-        AngelOfLibra = core.SummonSkill("엔젤 오브 리브라", 540, 4020, 500 + 20*vEhc.getV(3,1), 12, 30 * 1000, cooltime = 120 * 1000, red=True).isV(vEhc,3,1).wrap(core.SummonSkillWrapper)    #최종뎀50%스택
+        Bahamutt = core.SummonSkill("바하뮤트", 0, 3030, 170+2*self.combat, 3, 90 * 1000, cooltime = 120 * 1000, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    # Delay 0 as it is automatically summoned at the end of the final Dem 25% stack and Libra ends. 최종뎀25%스택, 리브라 종료시 자동소환 되므로 딜레이 0.
+        AngelOfLibra = core.SummonSkill("엔젤 오브 리브라", 540, 4020, 500 + 20*vEhc.getV(3,1), 12, 30 * 1000, cooltime = 120 * 1000, red=True).isV(vEhc,3,1).wrap(core.SummonSkillWrapper)    # 50% final damage stack. 최종뎀50%스택.
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         #Unstable Memorize skills
@@ -134,7 +144,7 @@ class JobGenerator(ck.JobGenerator):
         ######   Wrappers    ######
         #Unstable Memorize
         UnstableMemorize = adventurer.UnstableMemorizeWrapper(vEhc, 4, 4, chtr.get_skill_modifier())
-        UnstableMemorize.onAfter(VengenceOfAngel_Delay) # 벤전스 OFF(딜레이 0) - 언스테이블 - 벤전스 ON(딜레이 480)
+        UnstableMemorize.onAfter(VengenceOfAngel_Delay)  # Vengeance OFF (Delay 0)-Unstable-Vengeance ON (Delay 480). 벤전스 OFF(딜레이 0) - 언스테이블 - 벤전스 ON(딜레이 480).
         
         for sk, weight in [(EnergyBolt, 1), (HolyArrow, 10), (Heal, 10), (ShiningRay, 10),
                             (HolyFountain, 10), (Dispell, 25), (DivineProtection, 10), (AngelRay, 25), (Genesis, 25),
