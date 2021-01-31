@@ -10,9 +10,7 @@ import argparse
 
 def get_args():
     parser = argparse.ArgumentParser("DPM Full Test argument")
-    parser.add_argument(
-        "--ulevel", nargs="+", type=int, default=[4500, 5000, 6000, 7000, 8000, 8500]
-    )
+    parser.add_argument("--ulevel", nargs="+", type=int, default=[4500, 5000, 6000, 7000, 8000, 8500])
     parser.add_argument("--time", type=int, default=1800)
     parser.add_argument("--cdr", type=int, default=0)
     parser.add_argument("--thread", type=int, default=4)
@@ -23,14 +21,14 @@ def get_args():
 def test(args):
     jobname, ulevel, runtime, cdr = args
     start = time.time()
-    print(f"{jobname} {ulevel} 계산중")
+    print(f"{jobname} {ulevel} Calculating | 계산중")
 
     parser = IndividualDPMGenerator(jobname)
     parser.set_runtime(runtime * 1000)
     dpm = parser.get_dpm(spec_name=str(ulevel), ulevel=ulevel, cdr=cdr)
 
     end = time.time()
-    print(f"{jobname} {ulevel} 계산완료, {end - start:.3f}초")
+    print(f"{jobname} {ulevel} Calculation Completed | 계산완료, {end - start:.3f} seconds | 초")
     return jobname, ulevel, dpm
 
 
@@ -54,4 +52,4 @@ if __name__ == "__main__":
     results = pool.map(test, tasks)
     write_results(results)
     end = time.time()
-    print(f"총 소요시간: {end - start:.3f}초")
+    print(f"Total Time | 총 소요시간: {end - start:.3f} seconds | 초")
