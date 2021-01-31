@@ -75,8 +75,8 @@ def dpm(args):
     try:
         dpm = parser.get_dpm(
             spec_name=str(args.ulevel),
-            cdr=args.cdr,
             ulevel=args.ulevel,
+            cdr=args.cdr,
             printFlag=args.log,
             statistics=args.stat or args.log,
         )
