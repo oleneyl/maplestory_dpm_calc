@@ -12,7 +12,7 @@ class AuraWeaponBuilder:
     ):
         self.AuraWeaponBuff = (
             core.BuffSkill(
-                "오라 웨폰(버프)",
+                "오라 웨폰(버프)",  # Weapon Aura (Buff)
                 delay=720,
                 remain=(80 + 2 * enhancer.getV(skill_importance, enhance_importance)) * 1000,
                 cooltime=180 * 1000,
@@ -26,7 +26,7 @@ class AuraWeaponBuilder:
             .wrap(core.BuffSkillWrapper)
         )
         self.AuraWeapon = core.DamageSkill(
-            "오라 웨폰(파동)",
+            "오라 웨폰(파동)",  # Weapon Aura (Wave)
             delay=0,
             damage=500 + 20 * enhancer.getV(skill_importance, enhance_importance),
             hit=hit,
