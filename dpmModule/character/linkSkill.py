@@ -1,4 +1,5 @@
 from functools import reduce
+from itertools import combinations
 from typing import List
 
 from ..kernel.core import ExtendedCharacterModifier as ExMDF
@@ -96,33 +97,37 @@ class LinkSkill:
         if job_name in ["소울마스터", "카데나", "제로", "블래스터", "배틀메이지", "스트라이커", "나이트워커"]:
             links.add(LinkSkill.Illium)
 
-        if (refMDF + get_mdf(links)).armor_ignore < 90:
-            links.add(LinkSkill.Luminous)
-        if (refMDF + get_mdf(links)).armor_ignore < 85:
-            links.add(LinkSkill.Zero)
-        if (refMDF + get_mdf(links)).armor_ignore < 85:
-            links.add(LinkSkill.Hoyoung)
-
         if (refMDF + get_mdf(links)).crit < 90:
             links.add(LinkSkill.Phantom)
         if (refMDF + get_mdf(links)).crit < 90:
             links.add(LinkSkill.AdventureArcher)
 
-        link_priority = [
-            LinkSkill.DemonSlayer,
-            LinkSkill.AdventureMage,
-            LinkSkill.Cadena,
-            LinkSkill.Kinesis,
-            LinkSkill.Ark,
-            LinkSkill.DemonAvenger,
-            LinkSkill.AdventureRog,
-            LinkSkill.Zenon,
-            LinkSkill.Cygnus,
-            LinkSkill.Adele,
-            LinkSkill.AdventurePirate,
-        ]
-        for link in link_priority:
-            if len(links) < 13:
-                links.add(link)
+        link_combinations = combinations(
+            {
+                LinkSkill.Luminous,
+                LinkSkill.Zero,
+                LinkSkill.Hoyoung,
+                LinkSkill.DemonSlayer,
+                LinkSkill.AdventureMage,
+                LinkSkill.Cadena,
+                LinkSkill.Kinesis,
+                LinkSkill.Ark,
+                LinkSkill.DemonAvenger,
+                LinkSkill.AdventureRog,
+                LinkSkill.Zenon,
+                LinkSkill.Cygnus,
+                LinkSkill.Adele,
+                LinkSkill.AdventurePirate,
+            }
+            - links,
+            13 - len(links),
+        )
+
+        refMDF = refMDF + get_mdf(links)
+        optimal = max(link_combinations, key=lambda x: (refMDF + get_mdf(x)).get_damage_factor())
+        links.update(optimal)
+
+        if len(links) != 13:
+            raise Exception("link skill setting error")
 
         return get_mdf(links)
