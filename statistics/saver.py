@@ -14,15 +14,13 @@ from .preset import get_preset, get_preset_list
 try:
     import pandas as pd
 except ImportError:
-    print("pandas 모듈을 설치해야 합니다.")
+    print("pandas module is missing, please import it. 모듈을 설치해야 합니다.")
     exit()
 
 
 def get_args():
     parser = argparse.ArgumentParser("Statistics saver argument")
-    parser.add_argument(
-        "--id", type=str, help="Target preset id to calculate statistics"
-    )
+    parser.add_argument( "--id", type=str, required=True, help="Target preset id to calculate statistics")
     parser.add_argument("--ulevel", type=int, default=8000)
     parser.add_argument("--cdr", type=int, default=0)
     parser.add_argument("--time", type=int, default=1800)
