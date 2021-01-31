@@ -70,7 +70,7 @@ class AbstractCharacter:
 
     def unsafe_change_level(self, level: int) -> None:
         level_delta = level - self.level
-        self.add_summary(f"레벨 강제 변경 : {self.level} -> {level}")
+        self.add_summary(f"레벨 강제 변경 : {self.level} -> {level}")  # Force level change
         self.level = level
         self.base_modifier += ExMDF(stat_main=level_delta * 5)
 
@@ -188,7 +188,7 @@ class GearedCharacter(AbstractCharacter):
             ptnl = ExMDF()
 
             if len(potentials) > 3:
-                raise TypeError("무기류 잠재능력은 아이템당 최대 3개입니다.")
+                raise TypeError("Weapons potential is up to 3 per item. 무기류 잠재능력은 아이템당 최대 3개입니다.")
 
             for i in range(len(potentials)):
                 ptnl = ptnl + potentials[i]
@@ -207,7 +207,7 @@ class GearedCharacter(AbstractCharacter):
             ptnl = ExMDF()
 
             if len(potentials) > 3:
-                raise TypeError("무기류 잠재능력은 아이템당 최대 3개입니다.")
+                raise TypeError("Weapons potential is up to 3 per item. 무기류 잠재능력은 아이템당 최대 3개입니다.")
 
             for i in range(len(potentials)):
                 ptnl = ptnl + potentials[i]
@@ -236,9 +236,9 @@ class JobGenerator:
     - Values that you must re-  implement
 
     .buffrem : (min, max), option that this character will use bufrem property in union, card, etc.
-    .jobtype : str, int, dex, luk. 사용하는 스탯의 종류를 명시해야 합니다. You must specify which type of stat this job uses.
-    .vEnhanceNum : 5차 강화 스킬의 총 개수입니다.
-    .vSkillNum : 5차 스킬의 총 개수입니다.
+    .jobtype : str, int, dex, luk. You must specify which type of stat this job uses. 사용하는 스탯의 종류를 명시해야 합니다.
+    .vEnhanceNum : Total number of 5th enhancement skills. 5차 강화 스킬의 총 개수입니다.
+    .vSkillNum : Total number of 5th skills. 5차 스킬의 총 개수입니다.
     """
 
     # TODO: vEhc is not used.
