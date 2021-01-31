@@ -167,7 +167,8 @@ class GearedCharacter(AbstractCharacter):
             self.add_gear_modifier(gear_dict[key])
 
     def get_weapon_base_att(self) -> int:
-        return self.gear_list["weapon"].base_stat[GearPropType.att]
+        weapon_base_stat = self.gear_list["weapon"].base_stat
+        return max(weapon_base_stat[GearPropType.att], weapon_base_stat[GearPropType.matt])
 
     def get_starforce_count(self) -> int:
         count = 0
