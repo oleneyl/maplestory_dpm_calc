@@ -22,12 +22,14 @@ if TYPE_CHECKING:
 
 
 class AbstractSkillWrapper(GraphElement):
-    """특정 스킬의 사용을 제어하는 ``GraphElement`` 입니다. 이 객체의 _use() 함수 호출은
-    인게임 내에서 대응되는 스킬의 시전과 동일하게 작용합니다.
+    """
+    It is a ``GraphElement`` that controls the use of certain skills. Calling this object's _use() function works the same as casting the corresponding skill in-game.
+    특정 스킬의 사용을 제어하는 ``GraphElement`` 입니다. 이 객체의 _use() 함수 호출은 인게임 내에서 대응되는 스킬의 시전과 동일하게 작용합니다.
 
     Parameters
     ----------
     skill : AbstractSkill
+        This skill is the subject of control.
         제어 대상이 되는 스킬입니다.
     """
 
@@ -60,14 +62,19 @@ class AbstractSkillWrapper(GraphElement):
         with this option, you MUST override _use() method with **kwargs argument is enabled.
         given context may passed by **kwargs option.
 
+        When this function is called, you can refer to `runtime_context` at the execution point of the _use() function.
         이 함수가 호출될 경우, _use() 함수의 실행 시점에서 `runtime_context`를 참조할 수 있습니다.
         """
         self._refer_runtime_context = True
 
     def protect_from_running(self) -> None:
-        """``Scheduler`` 에 의해 이 객체가 선택되는 것을 방지합니다.
+        """
+        Prevents this object from being selected by ``Scheduler``.
+        ``Scheduler`` 에 의해 이 객체가 선택되는 것을 방지합니다.
+        This does not prevent execution through chaining like ``onAfter()``.
         이는 ``onAfter()`` 과 같은 chaining을 통한 실행은 막지 않습니다.
         """
+        # 사용 금지 = Prohibited Use
         constraint = ConstraintElement("사용 금지", self, lambda: False)
         self.onConstraint(constraint)
 
@@ -96,9 +103,13 @@ class AbstractSkillWrapper(GraphElement):
         self.onConstraint(ConstraintElement(const_name, const_ref, const_ftn))
 
     def onConstraint(self, constraint: ConstraintElement) -> None:
-        """주어진 제한 조건을 실행 ``constraint`` 목록에 추가합니다.
+        """
+        Add the given constraint to the execution ``constraint`` list.
+        주어진 제한 조건을 실행 ``constraint`` 목록에 추가합니다.
+        If the constraints are not satisfied, this ``GraphElement`` will not be executed by ``Scheduler``.
         해당 제한 조건이 만족되지 않을경우, 이 ``GraphElement``는 ``Scheduler`` 에 의해 실행되지 않습니다.
 
+        This does not prevent execution through chaining like ``onAfter()``.
         이는 ``onAfter()`` 과 같은 chaining을 통한 실행은 막지 않습니다.
 
         Parameters
@@ -108,11 +119,13 @@ class AbstractSkillWrapper(GraphElement):
         self.constraint.append(constraint)
 
     def set_disabled(self) -> ResultObject:
-        """주어진 요소를 실행 불가 상태로 만듭니다."""
+        """Makes the given element non-executable. 주어진 요소를 실행 불가 상태로 만듭니다."""
         raise NotImplementedError
 
     def set_disabled_and_time_left(self, time: float) -> ResultObject:
-        """주어진 요소를 실행 불가 상태로 만들고, ``time`` 이후에 실행가능하도록 합니다.
+        """
+        Makes the given element non-executable, making it executable after ``time``.
+        주어진 요소를 실행 불가 상태로 만들고, ``time`` 이후에 실행가능하도록 합니다.
 
         Parameters
         ----------
@@ -121,7 +134,9 @@ class AbstractSkillWrapper(GraphElement):
         raise NotImplementedError
 
     def reduce_cooltime(self, time: float) -> ResultObject:
-        """주어진 요소의 남은 ``cooltime``을  ``time`` 만큼  감소시킵니다.
+        """
+        Decrease the remaining ``cooltime`` of the given element by ``time``
+        주어진 요소의 남은 ``cooltime``을  ``time`` 만큼  감소시킵니다.
 
         Parameters
         ----------
@@ -131,11 +146,14 @@ class AbstractSkillWrapper(GraphElement):
         return self._result_object_cache
 
     def reduce_cooltime_p(self, p: float) -> ResultObject:
-        """주어진 요소의 남은 ``cooltime``을  ``p`` 만큼 비율로  감소시킵니다.
+        """
+        Decrease the remaining ``cooltime`` of the given element by a percentage by ``p``.
+        주어진 요소의 남은 ``cooltime``을  ``p`` 만큼 비율로  감소시킵니다.
 
         Parameters
         ----------
         p : float
+            Must be a value between 0 and 1. If 1, all cooldowns are removed. If it's 0, nothing happens.
             0에서 1 사이의 값이어야 합니다. 1일 경우 모든 쿨타임이 제거됩니다. 0일 경우 아무 일도 일어나지 않습니다.
         """
         self.cooltimeLeft -= self.cooltimeLeft * p
@@ -148,41 +166,48 @@ class AbstractSkillWrapper(GraphElement):
         name: Optional[str] = None,
     ) -> TaskHolder:
         # pylint: disable=no-member
-        """``AbstractSkillWrapper`` 의 시간을 제어하는 그래프 요소를 생성합니다.
+        """
+        Create a graph element that controls the time of the ``AbstractSkillWrapper``.
+        ``AbstractSkillWrapper`` 의 시간을 제어하는 그래프 요소를 생성합니다.
+        This method returns ``TaskHolder``, so the returned element can be chained through ``onAfter`` of other ``GraphElements`` etc.
         이 메서드는 ``TaskHolder`` 를 반환하므로, 반환된 요소를 다른 ``GraphElement`` 들의 ``onAfter`` 등을 통해 chaining할 수 있습니다.
 
         Parameters
         ----------
         time : float
+            Value between 0 and 1 for ``reduce_cooltime_p``, otherwise, time in ms
             ``reduce_cooltime_p`` 인 경우 0에서 1 사이의 값, 그렇지 않을 경우 ms단위의 시간
         type_ : str
             set_disabled_and_time_left, reduce_cooltime, reduce_cooltime_p, set_enabled_and_time_left
         name : str(default:None)
+            The name of the element to be returned
             반환될 요소의 이름
 
         Returns
         -------
         element : TaskHolder
+            When executed, the ``TaskHolder`` that controls the remaining time of the ``GraphElement``
             실행될 경우, 해당 ``GraphElement`` 의 잔여 시간을 제어하는 ``TaskHolder``
 
         """
         if type_ == "set_disabled":
-            _name = "사용 종료"
+            _name = "사용 종료"  # End of use
             task = Task(self, self.set_disabled)
         elif type_ == "set_disabled_and_time_left":
             if time == -1:
-                _name = "사용 불가"
+                _name = "사용 불가"  # Can not be used
             else:
-                _name = "%.1f초이후 시전" % (time * 1.0 / 1000)
+                _name = "%.1f초이후 시전" % (time * 1.0 / 1000)  # Cast after first
             task = Task(self, partial(self.set_disabled_and_time_left, time))
         elif type_ == "reduce_cooltime":
-            _name = "쿨-%.1f초" % (time * 1.0 / 1000)
+            calculated_time = time * 1.0 / 1000
+            _name = "reduce cooldown -%.1f seconds | 쿨-%.1f초" % (calculated_time, calculated_time)  # Reduce Cooldown -%.1f seconds
             task = Task(self, partial(self.reduce_cooltime, time))
         elif type_ == "reduce_cooltime_p":
-            _name = "쿨-" + str(int(time * 100)) + "%"
+            _name = "reduce cooldown | 쿨-" + str(int(time * 100)) + "%"
             task = Task(self, partial(self.reduce_cooltime_p, time))
         elif type_ == "set_enabled_and_time_left":
-            _name = "%.1f초간 시전" % (time * 1.0 / 1000)
+            _name = "%.1f초간 시전" % (time * 1.0 / 1000)  # Second cast
             task = Task(self, partial(self.set_enabled_and_time_left, time))
         else:
             raise TypeError("You must specify control type correctly.")
@@ -211,7 +236,10 @@ class AbstractSkillWrapper(GraphElement):
         return ContextReferringTask(self, context_referring_function)
 
     def is_usable(self) -> bool:
-        """이 ``GraphElement`` 가 실행가능한지 여부를 반환합니다.
+        """
+        Returns whether this ``GraphElement`` is executable.
+        In this process ``constraints`` are checked.
+        이 ``GraphElement`` 가 실행가능한지 여부를 반환합니다.
         이 과정에서 ``constraint`` 들은 검사됩니다.
         """
         if len(self.constraint) > 0:
@@ -221,13 +249,19 @@ class AbstractSkillWrapper(GraphElement):
         return self.is_available()
 
     def is_available(self) -> bool:
-        """이 ``GraphElement`` 가 실행가능한지 여부를 반환합니다.
+        """
+        Returns whether this ``GraphElement`` is executable.
+        ``constraints`` are not checked during this process.
+        이 ``GraphElement`` 가 실행가능한지 여부를 반환합니다.
         이 과정에서 ``constraint`` 들은 검사되지 않습니다.
         """
         return self.cooltimeLeft <= 0
 
     def is_not_usable(self) -> bool:
-        """이 ``GraphElement`` 가 실행 불가능한지 여부를 반환합니다.
+        """
+        Returns whether this ``GraphElement`` is not executable.
+        In this process ``constraints`` are checked.
+        이 ``GraphElement`` 가 실행 불가능한지 여부를 반환합니다.
         이 과정에서 ``constraint`` 들은 검사됩니다.
         """
         return not self.is_usable()
@@ -236,7 +270,10 @@ class AbstractSkillWrapper(GraphElement):
         raise NotImplementedError
 
     def is_active(self) -> bool:
-        """이 ``GraphElement`` 가 실행되고 있는지에 대한 여부를 반환합니다.
+        """
+        Returns whether this ``GraphElement`` is running.
+        Use only for objects with a duration.
+        이 ``GraphElement`` 가 실행되고 있는지에 대한 여부를 반환합니다.
         지속 시간이 있는 객체에 대해서만 사용합니다.
         """
         return self.timeLeft > 0
@@ -245,14 +282,19 @@ class AbstractSkillWrapper(GraphElement):
         return not self.is_active()
 
     def is_cooltime_left(self, time: float, direction: int) -> bool:
-        """남은 쿨타임이 ``time`` 과 비교할 때의 대소를 반환합니다.
+        """
+        Returns the size of the remaining cooldown compared to ``time``.
+        남은 쿨타임이 ``time`` 과 비교할 때의 대소를 반환합니다.
 
         Parameters
         ----------
         time : float
+            This is the time to compare.
             비교 기준이 되는 시간입니다.
 
         direction : 1 or -1
+            If direction > 0, it is true if the remaining ``cooltime`` is longer than ``time``.
+            If direction < 0, it is true if the remaining ``cooltime`` is shorter than ``time``.
             direction > 0 이면 ``time`` 보다 남은 ``cooltime`` 이 길 경우 True입니다.
             direction < 0 이면 ``time`` 보다 남은 ``cooltime`` 이 짧을 경우 True입니다.
         """
@@ -262,14 +304,19 @@ class AbstractSkillWrapper(GraphElement):
             return False
 
     def is_time_left(self, time: float, direction: int) -> bool:
-        """남은 지속시간이  ``time`` 과 비교할 때의 대소를 반환합니다.
+        """
+        Returns the case of the remaining duration compared to ``time``.
+        남은 지속시간이  ``time`` 과 비교할 때의 대소를 반환합니다.
 
         Parameters
         ----------
         time : float
+            This is the time to compare.
             비교 기준이 되는 시간입니다.
 
         direction : 1 or -1
+            If direction> 0, it is true if the remaining duration is longer than ``time``.
+            If direction <0, it is true if the remaining duration is shorter than ``time``.
             direction > 0 이면 ``time`` 보다 남은 지속시간이 길 경우 True입니다.
             direction < 0 이면 ``time`` 보다 남은 지속시간이 짧을 경우 True입니다.
         """
@@ -279,11 +326,14 @@ class AbstractSkillWrapper(GraphElement):
             return False
 
     def calculate_cooltime(self, skill_modifier: SkillModifier) -> float:
-        """``skill_modifier`` 를 바탕으로, 주어진 ``Skill`` 의 실질적 쿨타임을 계산합니다.
+        """
+        Based on the ``skill_modifier``, calculates the actual cooldown for a given ``Skill``.
+        ``skill_modifier`` 를 바탕으로, 주어진 ``Skill`` 의 실질적 쿨타임을 계산합니다.
 
         Parameters
         ----------
         skill_modifier : SkillModifier
+            This is the ``SkillModifier`` provided by the ``Character`` using the current skill.
             현재 스킬을 사용하는 ``Character`` 가 제공한 ``SkillModifier`` 입니다.
         """
         if self.skill.red is False:
@@ -328,7 +378,7 @@ class AbstractSkillWrapper(GraphElement):
         self._registered_callback_presets.append(("onEventEnd", (graph_element, 0)))
 
     def create_callbacks(self, skill_modifier: SkillModifier, duration: float = 0, **kwargs) -> List[Callback]:
-        """해당 object가 _use될 때 발생시키고자 하는 콜백들을 생성합니다."""
+        """Create callbacks that you want to fire when the object is _use. 해당 object가 _use될 때 발생시키고자 하는 콜백들을 생성합니다."""
         callbacks = []
         for preset_type, context in self._registered_callback_presets:
             if preset_type == "onEventEnd":
