@@ -1,16 +1,12 @@
 from typing import Any, Dict, List
 
-from dpmModule.status.ability import Ability_grade
-from dpmModule.character.characterKernel import GearedCharacter, JobGenerator
-
-from ..kernel import core
-
-from dpmModule.character.characterTemplate import TemplateGenerator
-
 import dpmModule.jobs as maplejobs
-
-from dpmModule.kernel import policy
+from dpmModule.character.characterKernel import JobGenerator
+from dpmModule.character.characterTemplate import TemplateGenerator
 from dpmModule.execution import rules
+from dpmModule.kernel import core
+from dpmModule.kernel import policy
+from dpmModule.status.ability import Ability_grade
 
 
 class IndividualDPMGenerator:
