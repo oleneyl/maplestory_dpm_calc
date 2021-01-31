@@ -32,15 +32,15 @@ def get_starforce_count(chtr):
 
 
 def debug_skill(skill_wrapper):
-    skill_wrapper.onJustAfter(
+    skill_wrapper.onJustAfter(           # (Debug)
         core.BuffSkill(skill_wrapper._id + "(디버그)", 0, 1, cooltime=-1).wrap(
             core.BuffSkillWrapper
         )
     )
 
 
-# 리부트 패시브
+# Reboot passive. 리부트 패시브.
 def reboot_passive(level=-1):
     if level == -1:
-        raise ValueError
+        raise ValueError                 # Reboot
     return core.InformedCharacterModifier("리부트", att=5, pdamage=level // 2)
