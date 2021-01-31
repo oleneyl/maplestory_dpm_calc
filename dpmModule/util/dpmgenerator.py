@@ -18,7 +18,10 @@ class IndividualDPMGenerator:
 
     def __init__(self, job):
         self.job = job
-        self.supplier = maplejobs.jobMap[job]
+        if maplejobs.getKoJobName(job):
+            self.supplier = maplejobs.jobMap[maplejobs.getKoJobName(job)]
+        else:
+            self.supplier = maplejobs.jobMap[job]
         self.runtime = 1800 * 1000
 
     def set_runtime(self, time):

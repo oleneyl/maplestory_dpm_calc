@@ -5,7 +5,10 @@ import dpmModule.jobs as maplejobs
 
 
 def export_configuration(jobname):
-    supplier = maplejobs.jobMap[jobname]
+    if maplejobs.getKoJobName(jobname):
+        supplier = maplejobs.jobMap[maplejobs.getKoJobName(jobname)]
+    else:
+        supplier = maplejobs.jobMap[jobname]
     gen = supplier.JobGenerator()
     target = TemplateGenerator().get_template(gen, "6000")
 
