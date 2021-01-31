@@ -1,18 +1,18 @@
-from ...kernel import core
-from ...character import characterKernel as ck
+from dpmModule.kernel import core
+from dpmModule.character import characterKernel as ck
 
 
-# 보마 = 22.5 (샤프 아이즈 + 샤프 아이즈-크리티컬 레이트)
-# 메르 = 10 (쓸만한 샤프 아이즈)
-# 패파 = 20 (샤프 아이즈)
-# 신궁 = 20+20 (샤프 아이즈 + 불스아이)
-# 와헌 = 20 (샤프 아이즈)
-# 윈브 = 55 (샤프 아이즈, 실프스 에이드, 알바트로스 맥시멈)
-# bonus = 직업별 보정 수치. self.char.get_modifier()가 패시브만 적용된 수치를 반환하므로, 버프 스킬로 오르는 크확을 따로 표시해줘야 한다.
+# ?? | 보마 = 22.5 (Sharp Eyes + Sharp Eyes-Critical Rate) | (샤프 아이즈 + 샤프 아이즈-크리티컬 레이트)
+# ?? | 메르 = 10 (Useful Sharp Eyes) | (쓸만한 샤프 아이즈)
+# ?? | 패파 = 20 (Sharp Eyes) | (샤프 아이즈)
+# ?? | 신궁 = 20+20 (Sharp Eyes + ??) | (샤프 아이즈 + 불스아이)
+# ?? | 와헌 = 20 (Sharp Eyes) | (샤프 아이즈)
+# ?? | 윈브 = 55 (Sharp Eyes, ??, ??) | (샤프 아이즈, 실프스 에이드, 알바트로스 맥시멈)
+# bonus = Correction figures by occupation. Since self.char.get_modifier() returns a numerical value applied only to the passive, the amount of increase with the buff skill must be marked separately. 직업별 보정 수치. self.char.get_modifier()가 패시브만 적용된 수치를 반환하므로, 버프 스킬로 오르는 크확을 따로 표시해줘야 한다.
 class CriticalReinforceWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, character: ck.AbstractCharacter, num1, num2, bonus):
         skill = core.BuffSkill(
-            "크리티컬 리인포스",
+            "크리티컬 리인포스",  # Critical Reinforcement
             delay=600,
             remain=30 * 1000,
             cooltime=120 * 1000,
@@ -36,7 +36,7 @@ class CriticalReinforceWrapper(core.BuffSkillWrapper):
 class GuidedArrowWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, modifier=core.CharacterModifier()):
         skill = core.SummonSkill(
-            "가이디드 애로우",
+            "가이디드 애로우",  # Guided Arrow
             summondelay=720,
             delay=510,
             damage=400 + 16 * vEhc.getV(num1, num2),
