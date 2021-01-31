@@ -9,7 +9,7 @@ try:
     import pandas as pd
     import xlsxwriter
 except ImportError:
-    print("pandas, xlsxwriter 모듈을 설치해야 합니다.")
+    print("pandas, xlsxwriter modules are missing, please import them. 모듈을 설치해야 합니다.")
     exit()
 
 
@@ -38,15 +38,15 @@ def write_sheet(args, df: pd.DataFrame, writer: xlsxwriter):
 
     grouped = df.groupby(["name"])
     df = pd.DataFrame()
-    df["누적 데미지"] = grouped["deal"].sum()
-    df["점유율"] = df["누적 데미지"] / deal_total
-    df["평균 데미지(1초당)"] = df["누적 데미지"] / time
-    df["공격 횟수"] = grouped["hit"].sum()
-    df["최대 데미지(1타당)"] = grouped["deal_one"].max()
-    df["평균 데미지(1타당)"] = grouped["deal_one"].mean()
-    df["최소 데미지(1타당)"] = grouped["deal_one"].min()
+    df["Cumulative Damage | 누적 데미지"] = grouped["deal"].sum()
+    df["Share of Total | 점유율"] = df["Cumulative Damage | 누적 데미지"] / deal_total
+    df["Average Damage (per second) | 평균 데미지(1초당)"] = df["Cumulative Damage | 누적 데미지"] / time
+    df["Number of Attacks | 공격 횟수"] = grouped["hit"].sum()
+    df["Maximum Damage (per 1 hit) | 최대 데미지(1타당)"] = grouped["deal_one"].max()
+    df["Average Damage (per 1 hit) | 평균 데미지(1타당)"] = grouped["deal_one"].mean()
+    df["Minimum Damage (per 1 hit) | 최소 데미지(1타당)"] = grouped["deal_one"].min()
 
-    df = df.sort_values(by="점유율", axis=0, ascending=False)
+    df = df.sort_values(by="Share of Total | 점유율", axis=0, ascending=False)
 
     sheet_name = jobname.replace("/", "_") + "_" + str(args.cdr) + "_" + str(alt)
     df.to_excel(writer, sheet_name=sheet_name, startrow=3)
@@ -65,15 +65,15 @@ def write_sheet(args, df: pd.DataFrame, writer: xlsxwriter):
 
     worksheet.merge_range("B3:G3", "", center_format)
 
-    worksheet.write("A1", "직업")
-    worksheet.write("B1", jobname)
-    worksheet.write("A2", "쿨감")
+    worksheet.write("A1", "Job | 직업")
+    worksheet.write("B1", f"{id} | {jobname}")
+    worksheet.write("A2", "CDR | 쿨감")
     worksheet.write("B2", args.cdr)
-    worksheet.write("A3", "비고")
+    worksheet.write("A3", "Remarks | 비고")
     worksheet.write("B3", description)
     worksheet.write("C1", "dpm")
     worksheet.write("D1", deal_total / (time / 60), num_format)
-    worksheet.write("C2", "분당 타수")
+    worksheet.write("C2", "Hits per minute | 분당 타수")
     worksheet.write("D2", hit_total / (time / 60), num_format)
 
 
