@@ -216,6 +216,7 @@ class CharacterModifier:
         self, damage: float, hit: float, spec: str, armor: float = ARMOR_RATE
     ) -> Tuple[float, float]:
         """Return : (damage, loss) tuple
+        Proficiency is assumed to be 90-100 (5% deviation)
         숙련도는 90~100으로 가정함(5% deviation)
         """
 
