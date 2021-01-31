@@ -24,6 +24,7 @@ class SetItem:
         self.effects = {}
 
     def __str__(self):
+        # ID, Name, Lucky Item, Equipment ID, effect
         return """ID: {}
 이름: {}
 럭키아이템: {}
