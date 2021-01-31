@@ -10,7 +10,7 @@ from . import jobutils
 from math import ceil
 from typing import Any, Dict
 
-# TODO: core쪽으로 옮길 것, .wrap()과 함께 사용 가능하게 할 것
+# TODO: Move to core, make it available with .wrap(). core쪽으로 옮길 것, .wrap()과 함께 사용 가능하게 할 것.
 class MultipleDamageSkillWrapper(core.DamageSkillWrapper):
     def __init__(self, skill, _max, timeLimit):
         self._timeLimit = timeLimit            
@@ -76,6 +76,11 @@ class SpecterWrapper(core.BuffSkillWrapper):
 
     def spend_time(self, time):
         """
+        The gauge is updated every 1020ms, it fluctuates by +13 in the Lev state and -23 in the Specter state.
+        Specter Encroachment-Increases recovery by 10% when using Extra Healing.
+        State transition through encroachment control has a cooldown of 3 seconds.
+        Spirit is not consumed for 30 seconds after the start of the memory of the source, and 3 seconds for the endless pain keydown.
+
         1020ms마다 게이지가 갱신되며, 레프 상태에서는 +13, 스펙터 상태에서는 -23씩 변동.
         스펙터 잠식-엑스트라 힐링 사용 시 회복량 10% 증가.
         잠식 제어를 통한 상태 전환은 3초의 쿨타임이 있음.
@@ -200,6 +205,22 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        When linked, Plane Charge Drive 540 → 240ms, Unending Nightmare 540 → 180ms
+        Each +30ms is applied to 270ms and 210ms.
+
+        Automatic use of spell bullets
+
+        Hyper: Battle Arts-Reinforce, Boss Killer, Ignor Guard / Extra Healing, Enhance
+
+        5th order of importance
+
+        Infinity Fell-Spirit Hunger-Dexterity-Source-Loaded-Maserful
+
+        5th reinforcement
+
+        Death Coming/Hate Coming Back-Unending Nightmare/Smoky Dream-Plane Charge Drive-Fear/Redemption/Pain
+        -Scarlet/Wound-Gust/Hunger-Abyss/Confusion-Impulse/Instinct
+
         연계 시 플레인 차지드라이브 540 → 240ms, 끝나지 않는 흉몽 540 → 180ms
         각각 +30ms 적용해 270ms, 210ms로 적용됨
 
@@ -215,7 +236,6 @@ class JobGenerator(ck.JobGenerator):
         
         다가오는 죽음/돌아오는 증오 - 끝나지 않는 악몽/흉몽 - 플레인 차지드라이브 - 공포/구속/고통 
         - 스칼렛/상처 - 거스트/굶주림 - 어비스/혼돈 - 충동/본능
-        
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         LINK_DELAY = 30
@@ -233,7 +253,7 @@ class JobGenerator(ck.JobGenerator):
         PlainChargeDrive = core.DamageSkill('플레인 차지드라이브', 540, 610 + 3*passive_level, 3, modifier=BattleArtsHyper).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         PlainChargeDrive_Link = core.DamageSkill('플레인 차지드라이브(연계)', 240+LINK_DELAY, 610 + 3*passive_level, 3, modifier=BattleArtsHyper).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         PlainSpell = core.DamageSkill("플레인 스펠", 0, 370 + 3*passive_level, 2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        PlainBuff = core.BuffSkill("플레인 버프", 0, 60 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper)  # dpm에 영향을 주지 않아 미사용
+        PlainBuff = core.BuffSkill("플레인 버프", 0, 60 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper)  # Not used because it does not affect dpm. dpm에 영향을 주지 않아 미사용.
         
         ScarletChargeDrive = core.DamageSkill("스칼렛 차지드라이브", 540, 350 + 3*passive_level, 3, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         ScarletChargeDrive_Link = core.DamageSkill("스칼렛 차지드라이브(연계)", 510, 350 + 3*passive_level, 3, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
@@ -245,7 +265,7 @@ class JobGenerator(ck.JobGenerator):
 
         GustChargeDrive_Link = core.DamageSkill("거스트 차지드라이브(연계)", 450, 400 + 3*passive_level, 6, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         GustSpell = core.DamageSkill('거스트 스펠', 0, 230 + passive_level, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
-        GustBuff = core.BuffSkill("거스트 버프", 0, 60*1000, cooltime = -1).wrap(core.BuffSkillWrapper) # dpm에 영향을 주지 않아 미사용        
+        GustBuff = core.BuffSkill("거스트 버프", 0, 60*1000, cooltime = -1).wrap(core.BuffSkillWrapper)  # Not used because it does not affect dpm. dpm에 영향을 주지 않아 미사용.
         
         AbyssChargeDrive_Link = core.DamageSkill("어비스 차지드라이브(연계)", 630, 340 + 3*self.combat, 4, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         AbyssChargeDrive_After = core.DamageSkill("어비스 차지드라이브(후속타)", 0, 410 + 3*self.combat, 6, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
@@ -255,7 +275,7 @@ class JobGenerator(ck.JobGenerator):
         HUMAN_SKILLS_MCF = [EndlessNightmare_Link, PlainChargeDrive, PlainChargeDrive_Link, ScarletChargeDrive, ScarletChargeDrive_Link, UnstoppableImpulse_Link,
             GustChargeDrive_Link, AbyssChargeDrive_Link, PlainSpell, ScarletSpell, GustSpell, AbyssSpell]
         
-        ##### 스펙터 상태일 때 #####
+        ##### When in Specter state | 스펙터 상태일 때 #####
         UpcomingDeath = core.DamageSkill("다가오는 죽음", 0, 450 + 3*passive_level, 2, cooltime = -1).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         ReturningHateStack = core.StackSkillWrapper(core.BuffSkill("돌아오는 증오(스택)", 0, 99999999), 12)
         ReturningHate = core.StackDamageSkillWrapper(
@@ -264,20 +284,20 @@ class JobGenerator(ck.JobGenerator):
             lambda sk: sk.stack
         )
 
-        EndlessBadDream = core.DamageSkill("끝나지 않는 흉몽", 540, 445 + 3*passive_level, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
-        EndlessBadDream_Link = core.DamageSkill("끝나지 않는 흉몽(연계)", 180+LINK_DELAY, 445 + 3*passive_level, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 끝나지 않는 악몽 변형
+        EndlessBadDream = core.DamageSkill("끝나지 않는 흉몽", 540, 445 + 3*passive_level, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  # An unending nightmare transformation. 끝나지 않는 악몽 변형.
+        EndlessBadDream_Link = core.DamageSkill("끝나지 않는 흉몽(연계)", 180+LINK_DELAY, 445 + 3*passive_level, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  # An unending nightmare transformation. 끝나지 않는 악몽 변형.
 
-        UncurableHurt_Link = core.DamageSkill("지워지지 않는 상처(연계)", 480, 510 + 3*passive_level, 6, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  #스칼렛 차지 드라이브의 변형
+        UncurableHurt_Link = core.DamageSkill("지워지지 않는 상처(연계)", 480, 510 + 3*passive_level, 6, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  # A variant of the Scarlet Charge Drive. 스칼렛 차지 드라이브의 변형.
         
         TenaciousInstinct_Link = core.DamageSkill("멈출 수 없는 본능(연계)", 540, 460 + 3*passive_level, 6, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
 
-        UnfulfilledHunger = core.DamageSkill("채워지지 않는 굶주림", 750, 510 + 3*passive_level, 7, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #거스트 차지 드라이브 변형
+        UnfulfilledHunger = core.DamageSkill("채워지지 않는 굶주림", 750, 510 + 3*passive_level, 7, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  # Gust charge drive variant. 거스트 차지 드라이브 변형.
         UnfulfilledHunger_Link = core.DamageSkill("채워지지 않는 굶주림(연계)", 660, 510 + 3*passive_level, 7, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
         CrawlingFear = core.DamageSkill("기어 다니는 공포", 30 + 630, 1290 + 3*passive_level, 15, cooltime = 60*1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         CrawlingFear_Link = core.DamageSkill("기어 다니는 공포(연계)", 30 + 360, 1290 + 3*passive_level, 15, cooltime = 60*1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
 
-        UncontrollableChaos = core.DamageSkill("걷잡을 수 없는 혼돈", 810, 440 + 3*self.combat, 12, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) #어비스 차지 드라이브 변형
+        UncontrollableChaos = core.DamageSkill("걷잡을 수 없는 혼돈", 810, 440 + 3*self.combat, 12, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)  # Abyss Charge Drive variant. 어비스 차지 드라이브 변형.
         UncontrollableChaos_Link = core.DamageSkill("걷잡을 수 없는 혼돈(연계)", 720, 440 + 3*self.combat, 12, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
 
         RaptRestriction = core.DamageSkill("황홀한 구속", 690, 600 + 10*self.combat, 6, cooltime = 180 * 1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
@@ -289,28 +309,28 @@ class JobGenerator(ck.JobGenerator):
         SPECTER_SKILLS_MCF = [ReturningHate, EndlessBadDream, EndlessBadDream_Link, UncurableHurt_Link, TenaciousInstinct_Link, UnfulfilledHunger, UnfulfilledHunger_Link,
             CrawlingFear, CrawlingFear_Link, UncontrollableChaos, UncontrollableChaos_Link, RaptRestriction, RaptRestrictionSummon, RaptRestrictionEnd]
             
-        # 하이퍼
+        # Hyper. 하이퍼.
         ChargeSpellAmplification = core.BuffSkill("차지 스펠 앰플리피케이션", 720, 60000, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         ScarletBuff2 = AmplifiedSpellBuffWrapper(core.BuffSkill("증폭된 스칼렛 버프", 0, 60000, cooltime = -1, att = 30, crit = 20), lambda: ChargeSpellAmplification.timeLeft)
         AbyssBuff2 = AmplifiedSpellBuffWrapper(core.BuffSkill("증폭된 어비스 버프", 0, 60000, cooltime = -1, pdamage = 20 + self.combat//2, boss_pdamage = 30 + self.combat, armor_ignore = 20 + self.combat//2), lambda: ChargeSpellAmplification.timeLeft)
 
-        EndlessPain = core.DamageSkill("끝없는 고통", 360, 0, 0, cooltime = 3030 + 60 * 1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   # onTick==> 다가오는 죽음
-        EndlessPainTick = core.DamageSkill("끝없는 고통(틱)", 180, 300, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #15타
-        EndlessPainEnd = core.DamageSkill("끝없는 고통(종결)", 1200/5, 100*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 딜레이 : 1200ms 또는 1050ms(이후 연계 시). 일단 1200으로. 5회 반복되므로 -> 딜레이 /5
+        EndlessPain = core.DamageSkill("끝없는 고통", 360, 0, 0, cooltime = 3030 + 60 * 1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   # onTick==> Coming death. onTick==> 다가오는 죽음.
+        EndlessPainTick = core.DamageSkill("끝없는 고통(틱)", 180, 300, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   # 15 hits. 15타.
+        EndlessPainEnd = core.DamageSkill("끝없는 고통(종결)", 1200/5, 100*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # Delay: 1200ms or 1050ms (when connected later). First to 1200. It repeats 5 times -> delay /5. 딜레이 : 1200ms 또는 1050ms(이후 연계 시). 일단 1200으로. 5회 반복되므로 -> 딜레이 /5.
         EndlessPainEnd_Link = core.DamageSkill("끝없는 고통(종결,연계)", 1050/5, 100*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        EndlessPainBuff = core.BuffSkill("끝없는 고통(버프)", 0, 3 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper) # 정신력 소모되지 않음
+        EndlessPainBuff = core.BuffSkill("끝없는 고통(버프)", 0, 3 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper)  # No mental power is consumed. 정신력 소모되지 않음.
         
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60*1000, pdamage = 10, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         
         # 5차
-        LuckyDice = core.BuffSkill("럭키 다이스", 0, 180*1000, pdamage = 20).isV(vEhc,3,4).wrap(core.BuffSkillWrapper)
+        LuckyDice = core.BuffSkill("럭키 다이스", 0, 180*1000, pdamage = 20).isV(vEhc, 3, 4).wrap(core.BuffSkillWrapper)
 
         WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, WEAPON_ATT)
     
-        MemoryOfSource = core.DamageSkill("근원의 기억", 990, 0, 0, cooltime = 200 * 1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        MemoryOfSource = core.DamageSkill("근원의 기억", 990, 0, 0, cooltime = 200 * 1000, red=True).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
         MemoryOfSourceTick = core.DamageSkill("근원의 기억(틱)", 210, 400 + 16 * vEhc.getV(1,1), 6).wrap(core.DamageSkillWrapper)    # 43타
         MemoryOfSourceEnd = core.DamageSkill("근원의 기억(종결)", 60, 1200 + 48 * vEhc.getV(1,1), 12 * 6).wrap(core.DamageSkillWrapper)
         MemoryOfSourceBuff = core.BuffSkill("근원의 기억(버프)", 0, 30 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper) # 정신력 소모되지 않음
@@ -328,24 +348,24 @@ class JobGenerator(ck.JobGenerator):
 
         SpecterState = SpecterWrapper(MemoryOfSourceBuff, EndlessPainBuff)
         
-        # 기본 연결 설정(스펙터)
+        # Basic connection settings (spector). 기본 연결 설정(스펙터).
         for skill in [UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, TenaciousInstinct_Link]:
             skill.onBefore(EndlessBadDream_Link)
-        # 흉몽(스펙터)과 플레인(레프)에서도 연계 가능한 스킬
+        # A skill that can also be linked in the Nightmare (Specter) and Plane (Lev). 흉몽(스펙터)과 플레인(레프)에서도 연계 가능한 스킬.
         for skill in [CrawlingFear_Link, RaptRestriction, EndlessPain, MemoryOfSource]:
             skill.onBefore(core.OptionalElement(SpecterState.is_active, EndlessBadDream_Link, PlainChargeDrive_Link))
   
-        # 보스 1:1 시 공격 1회 당 다가오는 죽음 1개 생성, 인피니티 스펠 상태 시 강화레벨에 따라 총 3 ~ 4개 생성
+        # When the boss is 1:1, 1 oncoming death is generated per attack, and when infinity spell is activated, a total of 3 to 4 are generated depending on the reinforcement level. 보스 1:1 시 공격 1회 당 다가오는 죽음 1개 생성, 인피니티 스펠 상태 시 강화레벨에 따라 총 3 ~ 4개 생성.
         UpcomingDeath_Connected = core.OptionalElement(InfinitySpell.is_active, core.RepeatElement(UpcomingDeath, 3 + vEhc.getV(0,0) // 25), UpcomingDeath)
         UpcomingDeath.onAfter(ReturningHateStack.stackController(0.2))
         ReturningHate.onJustAfter(ReturningHateStack.stackController(-15))
         
 
-        # 기본 연결 설정(레프)
+        # Basic connection settings (lev). 기본 연결 설정(레프).
         for skill in [EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, UnstoppableImpulse_Link]:
             skill.onBefore(PlainChargeDrive_Link)
         
-        # 인피니티 스펠 상태 시 스펠 불릿 스택에는 해당 스펠 1칸 + 플레인 스펠 4칸이 채워짐
+        # When infinity spell is in effect, the spell bullet stack is filled with 1 corresponding spell + 4 plane spells. 인피니티 스펠 상태 시 스펠 불릿 스택에는 해당 스펠 1칸 + 플레인 스펠 4칸이 채워짐.
         PlainSpell_Connected = core.OptionalElement(InfinitySpell.is_active, core.RepeatElement(PlainSpell, 5), PlainSpell)
         for skill in [ScarletSpell, GustSpell, AbyssSpell]:
             skill.onAfter(core.OptionalElement(InfinitySpell.is_active, core.RepeatElement(PlainSpell, 4)))
@@ -372,13 +392,13 @@ class JobGenerator(ck.JobGenerator):
         
         Impulse_Connected.onAfter(core.OptionalElement(SpecterState.is_active, TenaciousInstinct_Link, UnstoppableImpulse_Link))
 
-        # 인피니티 스펠 지속 중일 때 악몽과 충동의 사용을 제한함
+        # Limits the use of nightmares and impulses while infinity spells are active. 인피니티 스펠 지속 중일 때 악몽과 충동의 사용을 제한함.
         EndlessNightmare_Link.onConstraint(core.ConstraintElement("악몽 사용제한", InfinitySpell, 
             lambda: InfinitySpell.is_not_active() or DeviousNightmare.is_available()))
         Impulse_Connected.onConstraint(core.ConstraintElement("충동 사용제한", InfinitySpell, 
             lambda: InfinitySpell.is_not_active() or SpecterState.is_active()))
 
-        # 차지 스펠 앰플리피케이션으로 인한 변신 스케쥴 꼬임 방지
+        # Prevent twisting of transformation schedule due to charge spell amplification. 차지 스펠 앰플리피케이션으로 인한 변신 스케쥴 꼬임 방지.
         def SpellBuffsArePrepared(): 
             return ChargeSpellAmplification.is_not_active() or (ScarletBuff2.is_active() and AbyssBuff2.is_active())
 
@@ -406,7 +426,7 @@ class JobGenerator(ck.JobGenerator):
             magic_curcuit_full_drive_builder.add_trigger(sk)
         MagicCircuitFullDrive, MagicCircuitFullDriveStorm = magic_curcuit_full_drive_builder.get_skill()
 
-        # 스펙터 상태 파이널어택류 연계
+        # Specter state final attack type connection. 스펙터 상태 파이널어택류 연계.
         for skill in [EndlessBadDream, EndlessBadDream_Link, DeviousDream,
             UnfulfilledHunger, UncontrollableChaos, 
             UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, TenaciousInstinct_Link,
@@ -415,7 +435,7 @@ class JobGenerator(ck.JobGenerator):
         MagicCircuitFullDriveStorm.onAfter(core.OptionalElement(SpecterState.is_active, UpcomingDeath_Connected))
         MirrorBreak.onAfter(core.OptionalElement(SpecterState.is_active, UpcomingDeath_Connected))
         
-        # 5차 - 새어나오는 악몽 / 흉몽 연계
+        # 5th-Leaking Nightmare / Nightmare Connection. 5차 - 새어나오는 악몽 / 흉몽 연계.
         EndlessNightmare_Link.onAfter(core.OptionalElement(DeviousNightmare.is_available, DeviousNightmare))
         EndlessBadDream.onAfter(core.OptionalElement(DeviousDream.is_available, DeviousDream))
         EndlessBadDream_Link.onAfter(core.OptionalElement(DeviousDream.is_available, DeviousDream))
@@ -433,23 +453,23 @@ class JobGenerator(ck.JobGenerator):
             for skill in skills:
                 skill.onAfter(DeviousDream.reduceCooltime(1000, _id))
 
-        # 5차 - 영원히 굶주리는 짐승
+        # 5th-The beast that hungers forever. 5차 - 영원히 굶주리는 짐승.
         ForeverHungryBeastInit.onConstraint(core.ConstraintElement("차지앰플 확인", ChargeSpellAmplification, SpellBuffsArePrepared))
         ForeverHungryBeastInit.onConstraint(core.ConstraintElement("게이지 250 이상", SpecterState, partial(SpecterState.judge, 250, 1)))
         ForeverHungryBeastInit.onAfter(SpecterState.onoffController(True))
-        ForeverHungryBeastInit.onAfter(ForeverHungryBeastTrigger.controller(6000)) # 6초 후 등장 TODO: 기본 9600+1740ms에 스펙터 스킬 적중시마다 시간 줄어들도록 할것
+        ForeverHungryBeastInit.onAfter(ForeverHungryBeastTrigger.controller(6000)) # Appears after 6 seconds. 6초 후 등장. TODO: The default 9600+1740ms will decrease the time for each Specter skill hit. 기본 9600+1740ms에 스펙터 스킬 적중시마다 시간 줄어들도록 할것.
         ForeverHungryBeastTrigger.onAfter(core.RepeatElement(ForeverHungryBeast, 20))
         
-        # 기본 공격 : 540ms 중립스킬
+        # Basic Attack: 540ms neutral skill. 기본 공격 : 540ms 중립스킬.
         PlainAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
         PlainAttack.onAfter(core.OptionalElement(SpecterState.is_active, EndlessBadDream, PlainChargeDrive))
         
-        # Constraint 추가하기 : 레프 모드
+        # Adding Constraint: Lev Mode. Constraint 추가하기 : 레프 모드.
         for skill in [PlainChargeDrive, PlainChargeDrive_Link, ScarletChargeDrive, ScarletChargeDrive_Link,
                 EndlessNightmare_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, UnstoppableImpulse_Link]:
             skill.onConstraint(core.ConstraintElement("레프 모드", SpecterState, SpecterState.is_not_active))
         
-        # Constraint 추가하기 : 스펙터 모드
+        # Adding Constraint: Specter Mode. Constraint 추가하기 : 스펙터 모드.
         for skill in [EndlessBadDream, UnfulfilledHunger, UncontrollableChaos, ReturningHate,
                 EndlessBadDream_Link, UncurableHurt_Link, UnfulfilledHunger_Link, UncontrollableChaos_Link, TenaciousInstinct_Link]:
             skill.onConstraint(core.ConstraintElement("스펙터 모드", SpecterState, SpecterState.is_active))
@@ -472,6 +492,8 @@ class JobGenerator(ck.JobGenerator):
 
         def schedule(gauge, stopwatch):
             """
+            Specter <-> Responsible for scheduling the LEV status.
+            Returning True converts it to Specter, returning False converts it to LEV.
             스펙터 <-> 레프 상태 스케쥴링을 담당합니다.
             True를 리턴하면 스펙터, False를 리턴하면 레프 상태로 변환합니다.
             """
@@ -488,7 +510,7 @@ class JobGenerator(ck.JobGenerator):
             if ScarletBuff.is_not_active() and ScarletChargeDrive_Link.is_available():
                 return False
 
-            # 인피니티 스펠 지속 중일 때 게이지 소모를 우선
+            # Gauge consumption is given priority while infinity spell is ongoing. 인피니티 스펠 지속 중일 때 게이지 소모를 우선.
             if InfinitySpell.is_active():
                 if gauge <= 200:
                     return False
@@ -499,7 +521,7 @@ class JobGenerator(ck.JobGenerator):
                     if SpecterState.is_active() and stopwatch >= 10590:
                         return False
                 return True
-            # 인피니티 스펠 지속 중이 아닐 때 게이지 회복을 우선
+            # Prioritizes gauge recovery when infinity spell is not ongoing. 인피니티 스펠 지속 중이 아닐 때 게이지 회복을 우선.
             else:   
                 if gauge > 800:
                     return True
@@ -513,7 +535,7 @@ class JobGenerator(ck.JobGenerator):
 
         SpecterState.registerSchedule(schedule)
 
-        ScarletBuff.set_disabled_and_time_left(0) # 스칼렛/어비스 버프가 있는 채로 딜 시작하는 것을 가정함.
+        ScarletBuff.set_disabled_and_time_left(0)  # Assumes starting a deal with a Scarlet/Abyss buff. 스칼렛/어비스 버프가 있는 채로 딜 시작하는 것을 가정함.
         AbyssBuff.set_disabled_and_time_left(0)
 
         DeviousNightmare.protect_from_running()
