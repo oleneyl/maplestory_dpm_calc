@@ -191,10 +191,10 @@ class DpmSetting:
 
     def processJob(
             self,
-            koJob: str,
+            job: str,
             runtime: int = 180 * 1000
     ) -> Dict[str, Any]:
-        generator = IndividualDPMGenerator(koJob)
+        generator = IndividualDPMGenerator(job)
         generator.set_runtime(runtime)
         return generator.get_detailed_dpm(
             spec_name=str(self.ulevel),
@@ -233,10 +233,10 @@ class DpmInterface:
 
     def calculate_job(
             self,
-            koJob: str,
+            job: str,
             ulevel: int,
             runtime: int = 180 * 1000
     ) -> Dict[str, Any]:
         setting = DpmSetting(ulevel=ulevel)
 
-        return setting.processJob(koJob, runtime=runtime)
+        return setting.processJob(job, runtime=runtime)
