@@ -12,6 +12,9 @@ from typing import Any, Dict
 
 class RevolvingCannonMasteryWrapper(core.DamageSkillWrapper):
     """
+    Basic damage for one cylinder gauge, 1.1x compounded for each one from two or more.
+    During cylinder overheating, it is treated as the maximum gauge.
+
     실린더 게이지 1개일때 기본 데미지, 2개 이상부터 개당 1.1배 복리 계산.
     실린더 과열 도중에는 게이지 최대치로 취급함.
     """
@@ -92,6 +95,20 @@ class JobGenerator(ck.JobGenerator):
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        Hyper: Shockwave Bonus Attack / Punch-Reinforce, Punch-Ignor Guard, Lil Pavung-Reinforce, Lil Pavung-Shuweree Inforce
+
+        Nasal order
+        Release File Bunker> Magnum Punch = Double Pang> Hammer Smash> Revolving Cannon> Shockwave Punch
+
+        5th skill enhancement order
+        Bunker Buster-Burning Breaker-Ora Weapon-Resistance Line Infantry-Balkan Punch
+
+        MagPang 510ms
+        Bunker Buster is not used with Burning Breaker or Maximize Cannon
+        Vulcan Punch is not used with Bunker Buster or Maximize Cannon.
+
+        Final damage is not applied when the Vulcan Punch is hit.
+
         하이퍼 : 쇼크웨이브 보너스어택 / 펀치-리인포스, 펀치-이그노어 가드, 릴파벙-리인포스, 릴파벙-숔웨리인포스
         
         코강 순서
@@ -106,10 +123,10 @@ class JobGenerator(ck.JobGenerator):
         
         발칸 펀치의 피격시 최종 데미지는 적용하지 않음
         '''          
-        CANCEL_DELAY = 180 # 최소 150
-        DUCKING_DELAY = 150 # 최소 110 (30 + 80)
+        CANCEL_DELAY = 180  # At least 150. 최소 150.
+        DUCKING_DELAY = 150  # At least 110 (30 + 80). 최소 110 (30 + 80).
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        CHARGE_TIME = ceil(480 * (1 - 2 * (20 + passive_level) * 0.01) // 30) * 30 # 어드밴스드 차지 마스터리 적용된 차지 속도 계산
+        CHARGE_TIME = ceil(480 * (1 - 2 * (20 + passive_level) * 0.01) // 30) * 30  # Advanced Charge Mastery Charge speed calculation applied. 어드밴스드 차지 마스터리 적용된 차지 속도 계산.
         
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
@@ -133,16 +150,16 @@ class JobGenerator(ck.JobGenerator):
         
         HammerSmash = core.DamageSkill("해머 스매시", CANCEL_DELAY, 395 + 2*self.combat, 6, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         HammerSmashWave = core.SummonSkill("해머 스매시(충격파)", 0, 1500, 150, 2+2, 5000, cooltime = -1).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
-        HammerSmashDebuff = core.BuffSkill("해머 스매시(디버프)", 0, 10*1000+5000, pdamage_indep = 10, rem = False, cooltime = -1).wrap(core.BuffSkillWrapper) # 기본 10초, 충격파의 지속시간 합산
+        HammerSmashDebuff = core.BuffSkill("해머 스매시(디버프)", 0, 10*1000+5000, pdamage_indep = 10, rem = False, cooltime = -1).wrap(core.BuffSkillWrapper)  # The default is 10 seconds, plus the duration of the shock wave. 기본 10초, 충격파의 지속시간 합산.
         
         RevolvingCannonMastery = RevolvingCannonMasteryWrapper(Cylinder, Overheat, passive_level)
         
-        #하이퍼
-        # 불릿을 사용하는 스킬 데미지 50% 증가, 불릿자동리로드 70%감소, 릴파벙이후 과열시간 1초로 감소
+        # Hyper. 하이퍼.
+        # Increases skill damage using bullets by 50%, reduces automatic bullet reload by 70%, and reduces overheating time to 1 second after reel break. 불릿을 사용하는 스킬 데미지 50% 증가, 불릿자동리로드 70%감소, 릴파벙이후 과열시간 1초로 감소.
         MaximizeCannon = core.BuffSkill("맥시마이즈 캐논", 870, 35*1000, cooltime = 240 * 1000).wrap(core.BuffSkillWrapper)
         WillOfLiberty = core.BuffSkill("윌 오브 리버티", 0, 60*1000, cooltime = 120*1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        #5차
+        # 5th. 5차.
         RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
@@ -150,10 +167,10 @@ class JobGenerator(ck.JobGenerator):
         BunkerBusterAttack = core.DamageSkill("벙커 버스터(공격)", 0, 180 + 7 * vEhc.getV(0,0), 8, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         
         BalkanPunch = core.DamageSkill("발칸 펀치", 1140, 500 + 20 * vEhc.getV(4,4), 12, cooltime = 60 * 1000, red = True).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
-        BalkanPunchTick = core.DamageSkill("발칸 펀치(틱)", 120, 425 + 17 * vEhc.getV(4,4), 8).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper) # 24회 반복
+        BalkanPunchTick = core.DamageSkill("발칸 펀치(틱)", 120, 425 + 17 * vEhc.getV(4,4), 8).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)  # 24 repetitions. 24회 반복.
         BalkanPunchEnd = core.DamageSkill("발칸 펀치(후딜)", 360, 0, 0).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
         
-        BurningBreaker = core.DamageSkill("버닝 브레이커(준비)", 120+210*5, 0, 0, cooltime = 100*1000, red = True).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper) # 리볼빙*3 매크로 사용, 1->2 120ms, 2~ 210ms 총 1170ms
+        BurningBreaker = core.DamageSkill("버닝 브레이커(준비)", 120+210*5, 0, 0, cooltime = 100*1000, red = True).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)  # Revolving*3 macro use, 1->2 120ms, 2~210ms total 1170ms. 리볼빙*3 매크로 사용, 1->2 120ms, 2~ 210ms 총 1170ms.
         BurningBreakerRush = core.DamageSkill("버닝 브레이커(돌진)", 2220, 1500 + 60*vEhc.getV(1,1), 15, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper) # 공속 적용됨, 2940ms -> 2220ms
         BurningBreakerExplode = core.DamageSkill("버닝 브레이커(폭발)", 0, 1200+48*vEhc.getV(1,1), 15 * 6, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
 
@@ -162,7 +179,7 @@ class JobGenerator(ck.JobGenerator):
         AfterImageShockActive = core.DamageSkill("애프터이미지 쇼크(액티브)", 0, 450+18*vEhc.getV(0,0), 5, cooltime=100).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         AfterImageShockPassive = core.DamageSkill("애프터이미지 쇼크(패시브)", 0, 500+20*vEhc.getV(0,0), 3, cooltime=6000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
-        #스킬 기본 연계 연결
+        # Skill basic linkage connection. 스킬 기본 연계 연결.
         ReleaseFileBunker.onAfter(Cylinder.stackController(-6))
         ReleaseFileBunker.onAfter(core.OptionalElement(
             MaximizeCannon.is_active,
@@ -172,26 +189,26 @@ class JobGenerator(ck.JobGenerator):
         ReleaseFileBunker.onAfters([ReleaseFileBunker_A, ReleaseFileBunker_B, ReleaseFileBunker_C, ReleaseFileBunker_D])
         HammerSmash.onAfters([HammerSmashWave, HammerSmashDebuff])
 
-        #발칸 펀치
+        # Vulcan Punch. 발칸 펀치.
         BalkanPunchRepeat = core.RepeatElement(BalkanPunchTick, 24)
         BalkanPunch.onAfter(BalkanPunchRepeat)
         BalkanPunchRepeat.onAfter(BalkanPunchEnd)
         
-        #맥시마이즈 캐논
+        # Maximize Cannon. 맥시마이즈 캐논.
         for sk in [BurningBreakerExplode, BunkerBusterAttack, MagnumPunch_Revolve, DoublePang_Revolve]:
             sk.add_runtime_modifier(MaximizeCannon, lambda sk: core.CharacterModifier(pdamage=50*sk.is_active()))
         
-        #버닝 브레이커
+        # Burning breaker. 버닝 브레이커.
         BurningBreaker.onAfter(BurningBreakerRush)
         BurningBreakerRush.onAfter(BurningBreakerExplode)
 
-        #애프터이미지 쇼크 - 패시브
+        # After image shock-Passive. 애프터이미지 쇼크 - 패시브.
         UseAfterImageShockPassive = core.OptionalElement(lambda: AfterImageShockStack.judge(0, -1) and AfterImageShockPassive.is_available(), AfterImageShockPassive)
         for sk in [MagnumPunch, DoublePang, HammerSmash, BalkanPunch, BalkanPunchTick, BurningBreakerExplode]:
             sk.onAfter(UseAfterImageShockPassive)
         AfterImageShockPassive.protect_from_running()
 
-        #애프터이미지 쇼크 - 액티브
+        # After Image Shock-Active. 애프터이미지 쇼크 - 액티브.
         AfterImageShockInit.onAfter(AfterImageShockStack.stackController(99))
         UseAfterImageShockActive = core.OptionalElement(lambda: AfterImageShockStack.judge(1, 1) and AfterImageShockActive.is_available(), AfterImageShockActive)
         AfterImageShockActive.onAfter(AfterImageShockStack.stackController(-1))
@@ -199,7 +216,7 @@ class JobGenerator(ck.JobGenerator):
             sk.onAfter(UseAfterImageShockActive)
         AfterImageShockActive.protect_from_running()
         
-        # 리볼빙 캐논 발동
+        # Activates Revolving Cannon. 리볼빙 캐논 발동.
         AddCylinder = core.OptionalElement(Overheat.is_not_active, Cylinder.stackController(1))
         
         MagnumPunch_Revolve_Final = core.OptionalElement(BunkerBuster.is_active, BunkerBusterAttack, MagnumPunch_Revolve)
@@ -211,13 +228,13 @@ class JobGenerator(ck.JobGenerator):
 
         HammerSmash.onAfter(core.OptionalElement(BunkerBuster.is_active, BunkerBusterAttack))
         
-        # 기본 콤보
+        # Basic combo. 기본 콤보.
         Mag_Pang = core.DamageSkill("매그-팡", 0, 0, 0).wrap(core.DamageSkillWrapper)
         Mag_Pang.onAfter(MagnumPunch)
         Mag_Pang.onAfter(DoublePang)
         Mag_Pang.onAfter(DuckingDelay)
         
-        # TODO: 맥시마이즈 캐논일땐 매번 릴파벙해머를 쓸 필요가 없음
+        # TODO: With Maximize Cannon, you don't need to use a reel hammer every time. 맥시마이즈 캐논일땐 매번 릴파벙해머를 쓸 필요가 없음.
         ReleaseHammer = core.DamageSkill("릴파벙해머", 0, 0, 0).wrap(core.DamageSkillWrapper)
         ReleaseHammer.onConstraint(core.ConstraintElement("실린더 게이지 최대", Cylinder, partial(Cylinder.judge, 6, 1)))
         ReleaseHammer.onAfter(ReleaseFileBunker)
@@ -227,7 +244,7 @@ class JobGenerator(ck.JobGenerator):
         for wrp in [MagnumPunch, DoublePang, HammerSmash, BalkanPunch, BalkanPunchTick, BurningBreakerRush]:
             wrp.onAfter(RevolvingCannonMastery)
 
-        # 오라 웨폰
+        # Weapon Aura Weapon. 오라 웨폰.
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
         for sk in [ReleaseFileBunker, BurningBreaker, HammerSmash, MagnumPunch, DoublePang, BalkanPunch, BalkanPunchTick, BurningBreakerRush]:
             auraweapon_builder.add_aura_weapon(sk)
