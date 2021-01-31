@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional, Tuple
 
-from ..kernel.core import ExtendedCharacterModifier as ExMDF
+from dpmModule.kernel.core import ExtendedCharacterModifier as ExMDF
 
 
 class WeaponPotential:
