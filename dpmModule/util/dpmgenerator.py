@@ -142,7 +142,7 @@ class DpmSetting:
 
     def getSettingInfo(self) -> List[str]:
         retli = []
-        retli.append("Legion (유니온): %d" % self.ulevel)
+        retli.append("Legion | 유니온: %d" % self.ulevel)
         # retli.append("무기상태 %s %d줄" % (self.itemGrade[self.weaponstat[0]], (self.weaponstat[1] // 3)))
         retli.append(self.detail)
         return retli
@@ -170,7 +170,7 @@ class DpmSetting:
             value = {"name": job, "dpm": dpm}
             # print(value)
             retDict.append(value)
-            print("%s (%s) done ... %d / %d ... %d" % (_job, job, idx + 1, len(jobli), value["dpm"]))
+            print("%s | %s done ... %d / %d ... %d" % (_job, job, idx + 1, len(jobli), value["dpm"]))
 
         sorteddata = sorted(retDict, key=lambda d: d["dpm"])
         data = {
