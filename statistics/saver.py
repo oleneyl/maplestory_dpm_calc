@@ -9,7 +9,7 @@ from dpmModule.jobs import jobMap
 from dpmModule.kernel import core, policy
 from dpmModule.status.ability import Ability_grade
 
-from .preset import get_preset, get_preset_list
+from statistics.preset import get_preset, get_preset_list
 
 try:
     import pandas as pd
