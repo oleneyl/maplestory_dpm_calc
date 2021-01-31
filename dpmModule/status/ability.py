@@ -1,4 +1,4 @@
-from ..kernel import core
+from dpmModule.kernel import core
 
 ExMDF = core.ExtendedCharacterModifier
 
