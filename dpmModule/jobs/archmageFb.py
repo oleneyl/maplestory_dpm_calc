@@ -14,14 +14,14 @@ from ..execution.rules import RuleSet, MutualRule, InactiveRule
 class PoisonChainToxicWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2):
         skill = core.SummonSkill(
-            "포이즌 체인(중독)",
+            "포이즌 체인(중독)",  # Poison chain (addiction)
             0,
             1800,
             150 + 6 * vEhc.getV(3, 2),
             6,
             9 * 1800 - 1,
             cooltime=-1
-        ).isV(vEhc, num1, num2)  # 9회 폭발, 1800ms 간격
+        ).isV(vEhc, num1, num2)  # 9 explosions, 1800 ms interval. 9회 폭발, 1800ms 간격.
         super(PoisonChainToxicWrapper, self).__init__(skill)
         self.stack = 0
         self.per_stack = 30 + vEhc.getV(num1, num2)
@@ -61,6 +61,16 @@ class JobGenerator(ck.JobGenerator):
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        Poison Nova 4 Hit
+
+        V core strengthening ranking
+
+        ??/??/(??)/??/Nova/??/??
+        ??/??/Haze/Ignite/Aura/Mete/??/??/??
+
+        Extreme deal skills are used every cool time
+        Unstable Memory is used when Infinity is off
+
         포이즌 노바 4히트
 
         V 코어 강화 순위
@@ -71,7 +81,7 @@ class JobGenerator(ck.JobGenerator):
         극딜형 스킬은 쿨마다 사용함
         언스테이블 메모라이즈는 인피니티가 꺼져있을때 사용
         '''
-        DOT_PUNISHER_HIT = self.conf["constant"]["DOT_PUNISHER_HIT"]  # TODO: 현재 도트 개수를 참조해 타수 결정
+        DOT_PUNISHER_HIT = self.conf["constant"]["DOT_PUNISHER_HIT"]  # TODO: The number of strokes is determined by referring to the current number of dots. 현재 도트 개수를 참조해 타수 결정.
 
         # Buff Skills
         Meditation = self.load_skill_wrapper("메디테이션")
@@ -123,7 +133,7 @@ class JobGenerator(ck.JobGenerator):
         EnergyBolt = self.load_skill_wrapper("에너지 볼트")
         FlameOrb = self.load_skill_wrapper("플레임 오브")
         PoisonBreath = self.load_skill_wrapper("포이즌 브레스")
-        Explosion = self.load_skill_wrapper("익스플로젼")  # magic6(720) -> explosion(180). 둘 다 공속 적용되어 540+150.
+        Explosion = self.load_skill_wrapper("익스플로젼")  # magic6(720) -> explosion(180). Both are applied at the speed of 540+150. magic6(720) -> explosion(180). 둘 다 공속 적용되어 540+150.
         PoisonMist = self.load_skill_wrapper("포이즌 미스트")
         SlimeVirus = self.load_skill_wrapper("슬라임 바이러스")
 
