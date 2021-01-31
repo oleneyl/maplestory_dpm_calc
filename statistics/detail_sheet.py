@@ -15,9 +15,7 @@ except ImportError:
 
 def get_args():
     parser = argparse.ArgumentParser("Detail sheet argument")
-    parser.add_argument(
-        "--id", type=str, help="Target preset id to calculate statistics"
-    )
+    parser.add_argument("--id", type=str, required=True, help="Target preset id to calculate statistics")
     parser.add_argument("--ulevel", type=int, default=8000)
     parser.add_argument("--cdr", type=int, default=0)
     parser.add_argument("--task", default="dpm")
