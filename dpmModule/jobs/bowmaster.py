@@ -9,13 +9,14 @@ from math import ceil
 from typing import Any, Dict
 
 """
-Advisor : 저격장(레드)
+Advisor : Sniper range (red). 저격장(레드).
 https://github.com/oleneyl/maplestory_dpm_calc/issues/247
 """
 
 
 class ArmorPiercingWrapper(core.BuffSkillWrapper):
     """
+    Armor Piercing-Adds final damage as much as enemy DEF, Bangmu +50%. Cooldown 9 seconds, decreases by 1 second per attack, minimum reactivation wait time 1 second
     아머 피어싱 - 적 방어율만큼 최종뎀 추가, 방무+50%. 쿨타임 9초, 공격마다 1초씩 감소, 최소 재발동 대기시간 1초
     """
 
@@ -63,6 +64,9 @@ class ArrowOfStormWrapper(core.DamageSkillWrapper):
 
     def get_delay(self) -> float:
         """
+        In case of current time> last cast time + delay, add a sun deal.
+        This is not an accurate implementation because a buff with a delay of 0 can be interrupted.
+
         현재 시간 > 마지막 시전 시간 + 딜레이 인 경우에 선딜을 추가함.
         딜레이가 0인 버프가 끼어들 수 있기에 정확한 구현은 아님.
         """
@@ -124,7 +128,7 @@ class JobGenerator(ck.JobGenerator):
         )
         AdvancedFinalAttackPassive = core.InformedCharacterModifier(
             "어드밴스드 파이널 어택(패시브)", att=20 + ceil(passive_level / 2)
-        )  # 오더스 적용필요
+        )  # Need to apply order. 오더스 적용필요.
 
         ElusionStep = core.InformedCharacterModifier(
             "일루젼 스탭", stat_main=80 + 2 * passive_level
@@ -155,6 +159,16 @@ class JobGenerator(ck.JobGenerator):
 
     def generate(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
         """
+        Remnant Poetry: Active 13*3 hits, passive 3.5*3 hits. Passive use 10 to 11 times during cooldown
+        Arrow Lane: 1 stalk, hitting 3.5 times each fall
+
+        Nose sequence:
+        Foxy-Patag-Uncarble-Quieber-Platter-Phoenix
+
+        Hyper: Storm City 3 types / Sharp Eyes-Ignor Guard, Critical Rate
+
+        Preparation and ?? are used in a 120-second cycle
+
         잔영의 시 : 액티브 13*3타, 패시브 3.5*3타. 패시브는 쿨타임동안 10~11회 사용
         애로우 레인 : 1줄기, 떨어질 때 마다 3.5회 타격
 
@@ -168,12 +182,12 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         MortalBlow = core.CharacterModifier(
             pdamage=80 / 10
-        )  # 반응하는 스킬이 정해져있음. Issue # 247 참고.
+        )  # Skills to respond are determined See Issue #247. 반응하는 스킬이 정해져있음. Issue # 247 참고.
 
         ######   Skill   ######
         # Buff skills
         SoulArrow = core.BuffSkill(
-            "소울 애로우", delay=0, remain=300 * 1000, att=30  # 펫버프
+            "소울 애로우", delay=0, remain=300 * 1000, att=30  # Pet buff. 펫버프.
         ).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill(
             "샤프 아이즈",
@@ -234,7 +248,7 @@ class JobGenerator(ck.JobGenerator):
         ArrowFlatter = (
             core.SummonSkill(
                 "애로우 플래터",
-                summondelay=600,  # 딜레이 모름
+                summondelay=600,  # I don't know the delay. 딜레이 모름.
                 delay=210,
                 damage=85 + 90 + self.combat * 3,
                 hit=1,
@@ -291,13 +305,13 @@ class JobGenerator(ck.JobGenerator):
                 modifier=MortalBlow,
             ).isV(vEhc, 0, 0),
             delays=[1000, 1000, 1000, (5000 - 3000), 1000, 1000, (5000 - 2000)],
-        )  # 1초마다 떨어지고, 평균 3.5히트가 나오도록.
+        )  # It drops every second and averages 3.5 hits. 1초마다 떨어지고, 평균 3.5히트가 나오도록.
 
         # Summon Skills
         Pheonix = (
             core.SummonSkill(
                 "피닉스",
-                summondelay=0,  # 이볼브가 끝나면 자동으로 소환되므로 딜레이 0
+                summondelay=0,  # When Evolve is over, it is automatically summoned, so the delay is 0. 이볼브가 끝나면 자동으로 소환되므로 딜레이 0.
                 delay=1710,
                 damage=390,
                 hit=1,
@@ -312,7 +326,7 @@ class JobGenerator(ck.JobGenerator):
             vEhc, 0, 0, break_modifier=MortalBlow
         )
 
-        # 잔영의시 미적용
+        # No application of remnant poems. 잔영의시 미적용.
         QuibberFullBurstBuff = core.BuffSkill(
             "퀴버 풀버스트(버프)",
             delay=0,
@@ -320,7 +334,7 @@ class JobGenerator(ck.JobGenerator):
             cooltime=120 * 1000,
             red=True,
             patt=(5 + int(vEhc.getV(2, 2) * 0.5)),
-            crit_damage=8,  # 독화살 크뎀을 이쪽에 합침
+            crit_damage=8,  # Combine poison arrow Cdem here. 독화살 크뎀을 이쪽에 합침.
         ).wrap(core.BuffSkillWrapper)
         QuibberFullBurst = DelayVaryingSummonSkillWrapper(
             core.SummonSkill(
@@ -334,13 +348,13 @@ class JobGenerator(ck.JobGenerator):
                 modifier=MortalBlow,
             ).isV(vEhc, 2, 2),
             delays=[90, 90, 90, 90, 90, 90 + (2000 - 90 * 6)],
-        )  # 2초에 한번씩 90ms 간격으로 6회 발사
+        )  # Fires 6 times every 2 seconds at 90ms intervals. 2초에 한번씩 90ms 간격으로 6회 발사.
         QuibberFullBurstDOT = core.DotSkill(
             "독화살",
             summondelay=0,
             delay=1000,
             damage=220,
-            hit=3,  # 3회 중첩
+            hit=3,  # Stacks 3 times. 3회 중첩.
             remain=30 * 1000,
             cooltime=-1,
         ).wrap(core.DotSkillWrapper)
@@ -351,7 +365,7 @@ class JobGenerator(ck.JobGenerator):
                 summondelay=720,
                 delay=240,
                 damage=400 + 16 * vEhc.getV(1, 1),
-                hit=3,  # 13 * 3타
+                hit=3,  # 13 * 3 hits. 13 * 3타.
                 remain=3000,
                 cooltime=30000,
                 red=True,
@@ -365,7 +379,7 @@ class JobGenerator(ck.JobGenerator):
                 summondelay=0,
                 delay=2580,
                 damage=400 + 16 * vEhc.getV(1, 1),
-                hit=3.5 * 3,  # 3~4 * 3타, 잔시 쿨동안 11회 사용
+                hit=3.5 * 3,  # 3~4 * 3 hits, 11 times during cooldown. 3~4 * 3타, 잔시 쿨동안 11회 사용.
                 remain=9999999,
             )
             .isV(vEhc, 1, 1)
