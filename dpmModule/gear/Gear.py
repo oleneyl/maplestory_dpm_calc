@@ -20,6 +20,7 @@ class Gear:
         "item_id", "name", "type", "req_level", "req_job", "set_item_id", "boss_reward", "superior_eqp",
         "joker_to_set_item", "amazing_scroll", "star", "max_star", "tuc", "scroll_up", "scroll_fail",
         "hammer", "base_stat", "additional_stat", "scroll_stat", "star_stat", "potential", "additional_potential")
+
     def __init__(self):
         self.item_id: int = 0
         self.name: str = "Default name!"
@@ -68,20 +69,20 @@ class Gear:
         keys = sorted(stats)
         for propType in keys:
             stat_str += "%s: %d (%d +%d +%d +%d)\n" % (propType.name, sum(stats[propType]),
-                                                      stats[propType][0], stats[propType][1],
-                                                      stats[propType][2], stats[propType][3])
-        return ("= ID: " + str(self.item_id) + '\n' +
-                "= 이름: " + self.name + '\n' +
-                "= 분류: " + self.type.name + '\n' +
-                ("놀장" if self.amazing_scroll else "스타포스") + ": " +
+                                                       stats[propType][0], stats[propType][1],
+                                                       stats[propType][2], stats[propType][3])
+        return ("= ID: " + str(self.item_id) + '\n' +  # ID
+                "= 이름: " + self.name + '\n' +  # Name
+                "= 분류: " + self.type.name + '\n' +  # Classification
+                ("놀장" if self.amazing_scroll else "스타포스") + ": " +  # Amazing Scroll/Star force
                 str(self.star) + '/' + str(self.max_star) + '\n' +
-                "= 최대 업횟: " + str(self.tuc) +
-                " (황금 망치: +" + str(self.hammer) + ')\n' +
-                "= 업그레이드 성공 횟수: " + str(self.scroll_up) + '\n' +
-                "= 업그레이드 실패 횟수: " + str(self.scroll_fail) + '\n' +
-                "= 옵션: 합계 (기본 +추옵 +주문서 +별)\n" + stat_str +
-                "= 잠재능력: \n" + str(self.potential) +
-                "= 에디셔널 잠재능력: \n" + str(self.additional_potential))
+                "= 최대 업횟: " + str(self.tuc) +  # Maximum number of upgrades?
+                " (황금 망치: +" + str(self.hammer) + ')\n' +  # Golden hammer
+                "= 업그레이드 성공 횟수: " + str(self.scroll_up) + '\n' +  # Number of successful upgrades
+                "= 업그레이드 실패 횟수: " + str(self.scroll_fail) + '\n' +  # Number of upgrade failures
+                "= 옵션: 합계 (기본 +추옵 +주문서 +별)\n" + stat_str +  # Options: Total (Basic +Choice +Order +Star)
+                "= 잠재능력: \n" + str(self.potential) +  # Potential
+                "= 에디셔널 잠재능력: \n" + str(self.additional_potential))  # Additional potential
 
     def get_max_star(self) -> int:
         """
