@@ -61,12 +61,12 @@ def extract_every_skill_info(enjob: str):
     gen = maplejobs.getGenerator(maplejobs.getKoJobName(enjob)).JobGenerator()
     template = GChar(gen)
 
-    # 1레벨
+    # 1 levels | 1레벨
     no_enhancer = DirectVBuilder([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                                  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
     graph_bare = gen.package_bare(template, v_builder=no_enhancer)
 
-    # 25레벨
+    # 25 levels | 25레벨
     gen = maplejobs.getGenerator(maplejobs.getKoJobName(enjob)).JobGenerator()
     graph_full = gen.package_bare(template, v_builder=no_enhancer)
 
