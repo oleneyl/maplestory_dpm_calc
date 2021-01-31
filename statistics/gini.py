@@ -5,8 +5,8 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
-from .loader import load_data
-from .saver import save_data
+from statistics.loader import load_data
+from statistics.saver import save_data
 
 plt.style.use(["bmh"])
 
