@@ -43,52 +43,6 @@ from . import ilium
 from . import ark
 from . import hoyoung
 
-__all__ = [
-    "hero",
-    "paladin",
-    "darknight",
-    "archmageFb",
-    "archmageTc",
-    "bishop",
-    "bowmaster",
-    "sniper",
-    "pathfinder",
-    "nightlord",
-    "shadower",
-    "dualblade",
-    "viper",
-    "captain",
-    "cannonshooter",
-    "soulmaster",
-    "flamewizard",
-    "windbreaker",
-    "nightwalker",
-    "striker",
-    "michael",
-    "aran",
-    "evan",
-    "mercedes",
-    "phantom",
-    "eunwol",
-    "luminous",
-    "demonslayer",
-    "demonavenger",
-    "battlemage",
-    "wildhunter",
-    "mechanic",
-    "xenon",
-    "blaster",
-    "kaiser",
-    "kain",
-    "cadena",
-    "angelicbuster",
-    "zero",
-    "kinesis",
-    "adele",
-    "ilium",
-    "ark",
-    "hoyoung"]
-
 jobMap = {
     "히어로": hero,
     "팔라딘": paladin,
@@ -232,7 +186,8 @@ job_branch_list = {
     "호영": 3,
 }
 
-jobListOrder = __all__.copy()
+__all__ = jobList.keys()
+jobListOrder = jobList.keys()
 
 
 def getKoJobName(enJob):
