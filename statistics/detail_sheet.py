@@ -1,9 +1,9 @@
 import argparse
 from pathlib import Path
 
-from .loader import load_data
-from .preset import get_preset
-from .saver import save_data
+from statistics.loader import load_data
+from statistics.preset import get_preset
+from statistics.saver import save_data
 
 try:
     import pandas as pd
