@@ -11,7 +11,7 @@ from typing import Any, Dict
 
 class JaguerStack(core.DamageSkillWrapper):
     def __init__(self, level, vEhc):
-        self.debuffQueue = [] # (확률, 시간)
+        self.debuffQueue = []  # (Probability, time). (확률, 시간).
         self.currentTime = 0
         self.stack = 0
         self.DEBUF_PERSISTENCE_TIME = 8000 # 8000ms
@@ -27,6 +27,7 @@ class JaguerStack(core.DamageSkillWrapper):
 
     def calculate_stack(self):
         """
+        The expected stack value is calculated based on the probability that all Jaguar attacks from the current point in time to 8 seconds ago have failed.
         현재 시점부터 8초 이전까지의 재규어 공격이 전부 실패했을 확률을 바탕으로 스택 기댓값을 연산합니다.
         """
         fail_prob = reduce(lambda x, y: x * y, [max(1 - x[1], 0) for x in self.debuffQueue], 1)
@@ -34,7 +35,7 @@ class JaguerStack(core.DamageSkillWrapper):
 
     def spend_time(self, time):
         self.currentTime += time
-        # 8초 이상 지난 기록 제거
+        # Remove records older than 8 seconds. 8초 이상 지난 기록 제거.
         self.debuffQueue = [x for x in self.debuffQueue if x[0] + self.DEBUF_PERSISTENCE_TIME > self.currentTime]
         self.stack = self.calculate_stack()
         super(JaguerStack, self).spend_time(time)
@@ -103,6 +104,18 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        Jaguar Storm 3 Hit
+
+        Hyper:
+        Beast Form-Reinforce
+        Summon Jaguar-Reinforce, Cool Time Reduce
+        Wild Arrow Blast-Reinforce, Boss Killer
+
+        Soul contract is used according to Critical Reinforce + Jaguar Storm + Wild Vulcan Type X
+
+        Nose sequence:
+        Vulcan-(Surman/Another)-Patek-Clawcut-Hunting Unit-Rampage As One/Flash Lane-Sonic Boom-Jaguar Soul-Cross Road-Drill Container
+
         재규어 스톰 3히트
 
         하이퍼:
@@ -174,7 +187,7 @@ class JobGenerator(ck.JobGenerator):
         WildGrenade = core.SummonSkill("와일드 그레네이드", 0, 4500, 600+24*vEhc.getV(2,2), 5, 9999*10000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
 
         WildBalkanTypeXInit = core.DamageSkill("와일드 발칸 Type X(개시)", 540, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        WildBalkanTypeXTick = core.DamageSkill("와일드 발칸 Type X", 120, 475+19*vEhc.getV(0,0), 4, cooltime=-1, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 67회 반복
+        WildBalkanTypeXTick = core.DamageSkill("와일드 발칸 Type X", 120, 475+19*vEhc.getV(0,0), 4, cooltime=-1, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  # 67 reps. 67회 반복.
         WildBalkanTypeXEnd = core.DamageSkill("와일드 발칸 Type X(후딜)", 540, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         #Build Graph
