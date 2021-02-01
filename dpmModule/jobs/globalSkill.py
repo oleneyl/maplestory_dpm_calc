@@ -13,14 +13,14 @@ def soul_contract():
     return core.BuffSkill("소울 컨트랙트", 900, 10*1000, cooltime=90000, pdamage=45, rem=True, red=True).wrap(core.BuffSkillWrapper)
 
 
-# combat_level: 제로 = 0, 팔라딘 = 2, 이외 직업은 self.combat 입력
+# combat_level: Zero = 0, Paladin = 2, for other jobs, enter self.combat. 제로 = 0, 팔라딘 = 2, 이외 직업은 self.combat 입력.
 def maple_heros(level, name="메이플 용사", combat_level=0):
     return core.BuffSkill(name, 0, (900+15*combat_level)*1000,
                           stat_main=math.ceil(15+combat_level/2)*0.01*(25+level*5), rem=True
                           ).wrap(core.BuffSkillWrapper)
 
 
-# 1레벨 고정 (레벨당 보너스가 내성이므로)
+# Fixed level 1 (since the bonus per level is resistant). 1레벨 고정 (레벨당 보너스가 내성이므로).
 def useful_combat_orders():
     return core.BuffSkill("쓸만한 컴뱃 오더스", 1500, usefulSkillRemain(), rem=False).wrap(core.BuffSkillWrapper)
 
@@ -51,9 +51,9 @@ class MirrorBreakWrapper(core.DamageSkillWrapper):
 
 
 class MirrorSpiderWrapper(core.SummonSkillWrapper):
-    # 5번 연속 공격 후 종료, 재돌입 대기시간 3초
+    # Ends after 5 consecutive attacks, 3 seconds waiting time for re-entry. 5번 연속 공격 후 종료, 재돌입 대기시간 3초.
     def __init__(self, vEhc, num1, num2, modifier) -> None:
-        self.delays = [900, 850, 750, 650, 5730]  # 400001039.summonedSequenceAttack에서 가져온 딜레이, 5회째 공격 후 눈 감고뜨는 시간 5730ms
+        self.delays = [900, 850, 750, 650, 5730]  # 400001039. Delay taken from summonedSequenceAttack, 5730ms of open eyes after 5th attack. 400001039.summonedSequenceAttack에서 가져온 딜레이, 5회째 공격 후 눈 감고뜨는 시간 5730ms.
         self.hit_count = 0
         skill = core.SummonSkill("스파이더 인 미러(거울 속의 거미)", 0, 900, 175+7*vEhc.getV(num1, num2), 8, 50*1000, cooltime=-1, modifier=modifier).isV(vEhc, num1, num2)
         super(MirrorSpiderWrapper, self).__init__(skill)
@@ -77,7 +77,7 @@ def SpiderInMirrorBuilder(enhancer, skill_importance, enhance_importance, break_
     return MirrorBreak, MirrorSpider
 
 
-# 모험가, 영웅, 레지스탕스가 사용
+# Used by adventurers, heroes, and resistance. 모험가, 영웅, 레지스탕스가 사용.
 def MapleHeroes2Wrapper(vEhc, num1, num2, level, combat_level):
     return core.BuffSkill("메이플월드 여신의 축복", 450, 60*1000,
                           stat_main=(2+vEhc.getV(num1, num2)/10)*math.ceil(15+combat_level/2)*0.01*(25+level*5),
@@ -130,16 +130,16 @@ def CrestOfTheSolarBuilder(enhancer, skill_importance, enhance_importance, modif
     return MitraFlame, FlamePattern
 
 
-# 미완성 코드
+# Unfinished code. 미완성 코드.
 def useful_hyper_body_demonavenger(slevel=1):
-    # 딜레이 클라기준
+    # Based on delay clas. 딜레이 클라기준.
     return core.BuffSkill("쓸만한 하이퍼 바디 (데몬어벤져)", 600, usefulSkillRemain(slevel),
                           pstat_main=40, stat_sub=passiveStat(slevel), rem=False
                           ).wrap(core.BuffSkillWrapper)
 
 
 def useful_hyper_body_xenon(slevel=1):
-    # 마나뻥 처리는 직업코드에서
+    # Manapup treatment in the job code. 마나뻥 처리는 직업코드에서.
     return core.BuffSkill("쓸만한 하이퍼 바디 (제논)", 600, usefulSkillRemain(slevel),
                           stat_main=passiveStat(slevel), stat_sub=passiveStat(slevel), rem=False
                           ).wrap(core.BuffSkillWrapper)
