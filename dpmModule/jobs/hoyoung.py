@@ -11,7 +11,7 @@ from .jobbranch import thieves
 from math import ceil
 from typing import Any, Dict
 '''
-TODO: 다른 직업들과 비슷한 스타일로 순서 재정리
+TODO: Reorder in a similar style to other professions. 다른 직업들과 비슷한 스타일로 순서 재정리.
 '''
 
 
@@ -148,34 +148,36 @@ class JobGenerator(ck.JobGenerator):
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         """
+        Hyper: Heaven and Earth Reinforcement & Boss Killer, Hunting Naturalization Heist, Hypnotic Vortex Heist, Illusion Reinforcement Ignor Guard
+
         하이퍼 : 천지인 리인포스 & 보스 킬러, 추적 귀화부 헤이스트, 흡성와류 헤이스트, 환영 분신부 이그노어 가드
         """
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         BASIC_HYPER = core.CharacterModifier(pdamage=10, boss_pdamage=15)
 
-        # 1차
+        # Primary. 1차.
         ChunJiIn = ChunJiInWrapper()
         TalismanEnergy = core.StackSkillWrapper(core.BuffSkill("부적 도력", 0, 99999999), 100)
         TalismanEnergy.set_name_style("%+d")
-        # 부채 타격 가정
+        # Assuming a debt blow. 부채 타격 가정.
         YeoUiSeon = core.DamageSkill("여의선 : 인", 540 + 30, 560 + 5*passive_level, 5, modifier=BASIC_HYPER + core.CharacterModifier(pdamage_indep=5)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        Mabong = core.DamageSkill("마봉 호로부", 360+210, 1000 + 10 * passive_level, 6, modifier=core.CharacterModifier(boss_pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  # 흡수 360 공격 210
+        Mabong = core.DamageSkill("마봉 호로부", 360+210, 1000 + 10 * passive_level, 6, modifier=core.CharacterModifier(boss_pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  # Absorption 360 Attack 210. 흡수 360 공격 210.
 
-        # 2차
+        # Secondary. 2차.
         Topa = core.DamageSkill("토파류 : 지", 540 + 30, 385 + 5*passive_level, 4, modifier=BASIC_HYPER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         Topa_Clone = core.DamageSkill("토파류 : 허/실", 0, 385 + 5*passive_level, 4, cooltime=-1, modifier=BASIC_HYPER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         Topa.onAfter(Topa_Clone)
 
-        # 벞지 & 소환수 지속시간 둘다 적용
+        # Both vegetation & pet duration apply. 벞지 & 소환수 지속시간 둘다 적용.
         Talisman_Clone = core.BuffSkill("환영 분신부", 900, 200*1000, rem=True).wrap(PausableBuffSkillWrapper)
         Talisman_Clone_Attack = core.DamageSkill("환영 분신부(공격)", 0, 60 + 60 + 110 + 2*passive_level, 4 * 3, cooltime=1500, modifier=core.CharacterModifier(armor_ignore=25)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Talisman_Clone_Attack_Opt = core.OptionalElement(lambda : Talisman_Clone.is_active() and Talisman_Clone_Attack.is_available(), Talisman_Clone_Attack)
         Talisman_Clone_Attack.protect_from_running()
 
-        Booster = core.BuffSkill("부채 가속", 0, 200*1000, rem=True).wrap(core.BuffSkillWrapper)  # 펫버프
+        Booster = core.BuffSkill("부채 가속", 0, 200*1000, rem=True).wrap(core.BuffSkillWrapper)  # Pet buff. 펫버프.
 
-        # 3차
+        # 3rd. 3차.
         ScrollEnergy = core.StackSkillWrapper(core.BuffSkill("두루마리 도력", 0, 99999999), 900)
         ScrollEnergy.set_name_style("%+d")
         Pacho = core.DamageSkill("파초풍 : 천", 510 + 60, 265 + 2*passive_level, 5, modifier=BASIC_HYPER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
@@ -192,7 +194,7 @@ class JobGenerator(ck.JobGenerator):
         Misaeng_Debuff = core.BuffSkill("권술 : 미생강변(디버프)", 0, 60*1000, armor_ignore=20, cooltime=-1).wrap(core.BuffSkillWrapper)
         Misaeng.onAfter(Misaeng_Debuff)
 
-        # 4차
+        # 4th. 4차.
         Flames = core.DamageSkill("멸화염 : 천", 420 + 60, 340 + self.combat, 6, modifier=BASIC_HYPER, cooltime=8000, red=True).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         Flames_Clone = core.DamageSkill("멸화염 : 허/실", 0, 340 + self.combat, 6, modifier=BASIC_HYPER, cooltime=-1).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         Flames.onAfter(Flames_Clone)
@@ -201,7 +203,7 @@ class JobGenerator(ck.JobGenerator):
         GeumGoBong_2 = core.DamageSkill("금고봉 : 인(2타)", 300 + 30, 420 + self.combat, 8, cooltime=-1, modifier=BASIC_HYPER + core.CharacterModifier(boss_pdamage=30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         GeumGoBong.onAfter(GeumGoBong_2)
 
-        # 추정치 딜레이 (점프부터 이펙트 완전소멸까지 프레임 분석)
+        # Estimated delay (frame analysis from jump to complete loss of effect). 추정치 딜레이 (점프부터 이펙트 완전소멸까지 프레임 분석).
         Thousand_Ton_Stone = core.DamageSkill("둔갑 천근석", 1530, 275 + 3*self.combat, 6, cooltime=500).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         Thousand_Ton_Stone_DOT = core.DotSkill("둔갑 천근석(출혈)", 0, 1000, 270 + self.combat, 1, 10000, cooltime=-1).setV(vEhc, 0, 2, False).wrap(core.DotSkillWrapper)
         Thousand_Ton_Stone.onAfter(Thousand_Ton_Stone_DOT)
@@ -213,23 +215,23 @@ class JobGenerator(ck.JobGenerator):
         Butterfly_Dream_Attack_Opt = core.OptionalElement(Butterfly_Dream_Attack.is_available, Butterfly_Dream_Attack)
         Butterfly_Dream_Attack.protect_from_running()
 
-        # 하이퍼 액티브
+        # Hyper Active. 하이퍼 액티브.
         Miracle_Tonic = core.BuffSkill("선기 : 영약 태을선단", 540, 12*1000, cooltime=100*1000).wrap(core.BuffSkillWrapper)
         Miracle_Tonic_Charge = core.SummonSkill("선기 : 영약 태을선단(회복)", 0, 1000, 0, 0, 12*1000, cooltime=-1).wrap(core.SummonSkillWrapper)
         Miracle_Tonic.onAfter(Miracle_Tonic_Charge)
 
         CloneBinding = core.DamageSkill("선기 : 분신 둔갑 태을선인", 540, 800, 8, cooltime=200000).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
-        # 5차 공용 (베놈 버스트 생략)
+        # 5th common (Venom burst omitted). 5차 공용 (베놈 버스트 생략).
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 0, 0)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
-        # 그란디스 여신의 축복 (아니마)
-        # 아니마 신직업 등장시 공용코드화 할것
+        # Goddess Grandis' blessing (no). 그란디스 여신의 축복 (아니마).
+        # Anima Make public code when a new job appears. 아니마 신직업 등장시 공용코드화 할것.
         AnimaGoddessBless = core.BuffSkill("그란디스 여신의 축복 (아니마)", 0, 40*1000, cooltime=240*1000, red=True, pdamage=10 + vEhc.getV(0, 0)).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
 
-        # 환영 분신부를 대체하는 스킬 (알고리즘 구현 필요)
-        # 환영 분신부 지속중에만 사용가능, 발동 중에는 환영 분신부의 지속시간이 감소하지 않음
+        # A skill that replaces the phantom alter ego (algorithm implementation required). 환영 분신부를 대체하는 스킬 (알고리즘 구현 필요).
+        # Can only be used during the duration of the illusionist, and the duration of the illusionist is not reduced while active. 환영 분신부 지속중에만 사용가능, 발동 중에는 환영 분신부의 지속시간이 감소하지 않음.
         Clone_Rampage = core.BuffSkill("선기 : 극대 분신난무", 900, 30*1000, cooltime=200*1000, red=True).wrap(core.BuffSkillWrapper)
         Clone_Rampage_Attack = core.DamageSkill("선기 : 극대 분신난무(공격)", 0, 60 + 60 + 110 + 2*passive_level + 200 + vEhc.getV(0, 0) * 8, 4 * 12, cooltime=1500, modifier=core.CharacterModifier(armor_ignore=25)).setV(vEhc, 0, 2, True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
@@ -238,7 +240,7 @@ class JobGenerator(ck.JobGenerator):
 
         Summon_Sanryung = core.SummonSkill("권술 : 산령소환", 900, 3000, 0, 0, (vEhc.getV(0, 0)//2 + 45)*1000, cooltime=200*1000, red=True).wrap(core.SummonSkillWrapper)
         Summon_Sanryung_Normal = core.DamageSkill("권술 : 산령소환(일반)", 0, vEhc.getV(0, 0)*36 + 900, 8, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        Summon_Sanryung_Roar = core.DamageSkill("권술 : 산령소환(포효)", 0, vEhc.getV(0, 0)*14 + 350, 7*4, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)  # 4타씩 7회
+        Summon_Sanryung_Roar = core.DamageSkill("권술 : 산령소환(포효)", 0, vEhc.getV(0, 0)*14 + 350, 7*4, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)  # 7 reps of 4 strokes. 4타씩 7회.
         Summon_Sanryung_Check = core.StackSkillWrapper(core.BuffSkill("권술 : 산령소환(포효 가능)", 0, 99999999), 1)
 
         Nansin = core.BuffSkill("선기 : 강림 괴력난신", 900, 30*1000, cooltime=200*1000, red=True, pdamage=vEhc.getV(0, 0)*2+20).wrap(core.BuffSkillWrapper)
@@ -265,7 +267,7 @@ class JobGenerator(ck.JobGenerator):
         Elemental_Clone_Opt = core.OptionalElement(Elemental_Clone.is_active, Elemental_Clone_Active_Opt, Elemental_Clone_Passive_Opt)
 
         ### Skill Wrapper ###
-        # 그란디스 여신의 축복(아니마)
+        # Goddess Grandis' blessing (no). 그란디스 여신의 축복(아니마).
         def gainEnergy(energy: core.StackSkillWrapper, stack):
             return core.OptionalElement(
                 AnimaGoddessBless.is_active,
@@ -274,7 +276,7 @@ class JobGenerator(ck.JobGenerator):
                 name="그여축(도력 충전량)"
             )
 
-        # 천지인 연계
+        # Connection with Heaven and Earth. 천지인 연계.
         AddChun = ChunJiIn.add_element("천")
         AddJi = ChunJiIn.add_element("지")
         AddIn = ChunJiIn.add_element("인")
@@ -307,7 +309,7 @@ class JobGenerator(ck.JobGenerator):
         for sk in [YeoUiSeon, GeumGoBong]:
             sk.onAfter(AddIn)
 
-        # 부적 도술
+        # Amulet swordsmanship. 부적 도술.
         TalismanConstraint = core.ConstraintElement("부적 도력 100", TalismanEnergy, partial(TalismanEnergy.judge, 100, 1))
         TalismanConsume = TalismanEnergy.stackController(-100)
         TalismanConsume.onAfter(gainEnergy(ScrollEnergy, 200))
@@ -315,31 +317,31 @@ class JobGenerator(ck.JobGenerator):
             sk.onConstraint(TalismanConstraint)
             sk.onAfter(TalismanConsume)
 
-        # 두루마리 도술
+        # Scroll swordsmanship. 두루마리 도술.
         ScrollConstraint = core.ConstraintElement("두루마리 도력 900", ScrollEnergy, partial(ScrollEnergy.judge, 900, 1))
         ScrollConsume = ScrollEnergy.stackController(-900)
         for sk in [Misaeng, Waryu, Butterfly_Dream, Summon_Sanryung]:
             sk.onConstraint(ScrollConstraint)
             sk.onAfter(ScrollConsume)
 
-        # 태을선단
+        # Taeeul Seondan. 태을선단.
         Miracle_Tonic_Charge.onTick(gainEnergy(TalismanEnergy, 35))
         Miracle_Tonic_Charge.onTick(gainEnergy(ScrollEnergy, 350))
 
-        # 극대 분신난무
+        # The greatest self-immolation. 극대 분신난무.
         Clone_Rampage.onConstraint(core.ConstraintElement("환영 분신부 지속중", Talisman_Clone, Talisman_Clone.is_active))
         Clone_Rampage.onAfter(Talisman_Clone.controller(1))
         Talisman_Clone.pauseWhile(Clone_Rampage)
 
-        # 괴력난신
-        Nansin.onAfter(Nansin_Final.controller(30*1000-1))  # 버프 종료 직전에 막타 발동
+        # Superpowerful god. 괴력난신.
+        Nansin.onAfter(Nansin_Final.controller(30*1000-1))  # Last hit just before the buff ends. 버프 종료 직전에 막타 발동.
         Nansin.onAfter(Nansin_Stack.stackController(-12))
         Nansin_Attack.onAfter(Nansin_Stack.stackController(-12))
         AddNansinStack = core.OptionalElement(Nansin.is_active, Nansin_Stack.stackController(1))
         AddNansinStack.onAfter(Nansin_Attack_Opt)
         Nansin_Final.onAfter(Nansin_Final_Buff)
 
-        # 산령소환
+        # Summon mountain spirit. 산령소환.
         Summon_Sanryung.onTick(core.OptionalElement(
             partial(Summon_Sanryung_Check.judge, 1, 1),
             Summon_Sanryung_Roar,
@@ -347,7 +349,7 @@ class JobGenerator(ck.JobGenerator):
         ))
         Summon_Sanryung_Roar.onAfter(Summon_Sanryung_Check.stackController(-1))
 
-        # 천지인 환영
+        # Welcome to Heaven and Earth. 천지인 환영.
         Elemental_Clone_Passive.onAfter(FillElement)
         Elemental_Clone_Active.onAfter(FillElement)
 
@@ -355,22 +357,22 @@ class JobGenerator(ck.JobGenerator):
         Elemental_Clone_Active.onAfter(core.OptionalElement(partial(Elemental_Clone_Active_Stack.judge, 1, 1), Elemental_Clone_Active_Reset))
         Elemental_Clone_Active_Reset.onAfter(Elemental_Clone_Active_Stack.stackController(-1))
 
-        # 신들의 강림 후 30초동안 천/지/인 속성 스킬 및 허/실 스킬의 데미지 20% 증가
+        # For 30 seconds after the advent of the gods, the damage of the thousand/ji/in attribute skills and heo/sil skills increases by 20%. 신들의 강림 후 30초동안 천/지/인 속성 스킬 및 허/실 스킬의 데미지 20% 증가.
         ELEMENT_SKILLS = [YeoUiSeon, Topa, Topa_Clone, Pacho, Pacho_Clone, EarthQuake, EarthQuake_Clone, Flames, Flames_Clone, GeumGoBong, GeumGoBong_2]
         for sk in ELEMENT_SKILLS:
             sk.add_runtime_modifier(Nansin_Final_Buff, lambda sk: core.CharacterModifier(pdamage=20*sk.is_active()))
 
-        # 환영 분신부, 극대 분신난무, 호접지몽, 천지인 환영, 괴력난신
+        # Welcoming spontaneous bride, maximal spontaneous frenzy, Phalaenopsis dream, celestial spirit phantom, supernatural power. 환영 분신부, 극대 분신난무, 호접지몽, 천지인 환영, 괴력난신.
         for base in ELEMENT_SKILLS + [Mabong, Misaeng, CloneBinding]:
             for opt in [Talisman_Clone_Attack_Opt, Clone_Rampage_Attack_Opt, Butterfly_Dream_Attack_Opt, Elemental_Clone_Opt, AddNansinStack]:
                 base.onAfter(opt)
 
-        # 추가타가 괴력난신 카운트에 들어감
+        # Extra strokes are counted for the superpowers. 추가타가 괴력난신 카운트에 들어감.
         for sk, stack in [(Talisman_Clone_Attack, 3), (Clone_Rampage_Attack, 12), (Butterfly_Dream_Attack, 5), (Elemental_Clone_Active, 1), (Elemental_Clone_Passive, 1)]:
             sk.onAfter(core.OptionalElement(Nansin.is_active, Nansin_Stack.stackController(stack)))
             sk.onAfter(Nansin_Attack_Opt)
 
-        # 파초풍-멸화염-인스킬(토파류 공중시전 불가)
+        # Pacho Wind-Annihilation Flame-Inskill (Topa cannot be cast in the air). 파초풍-멸화염-인스킬(토파류 공중시전 불가).
         Flames.onBefore(Pacho)
         Flames.onAfter(core.OptionalElement(GeumGoBong.is_available, GeumGoBong, YeoUiSeon))
 
