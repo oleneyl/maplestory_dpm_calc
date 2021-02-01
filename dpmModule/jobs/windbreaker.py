@@ -91,6 +91,17 @@ class JobGenerator(ck.JobGenerator):
 
     def generate(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
         """
+        Nose sequence:
+        Cheonno-Wim-Bringer
+
+        Hyper:
+        Tripling Wim-Reinforce, Enhance, Double Chance
+        Celestial Song-Reinforce, Boss Killer
+
+        Howlingale 58 times, vortex sphere 17 times
+
+        Calculated as the average of the tripling wim
+
         코강 순서:
         천노-윔-브링어
 
@@ -101,7 +112,6 @@ class JobGenerator(ck.JobGenerator):
         하울링게일 58회, 볼텍스 스피어 17회 타격
 
         트라이플링 윔 평균치로 계산
-
         """
         base_modifier = chtr.get_base_modifier()
         passive_level = base_modifier.passive_level + self.combat
@@ -140,11 +150,11 @@ class JobGenerator(ck.JobGenerator):
 
         StormBringerDummy = core.BuffSkill(
             "스톰 브링어(버프)",
-            delay=0,  # 딜레이 계산 필요
+            delay=0,  # Delay calculation required. 딜레이 계산 필요.
             remain=200 * 1000,
         ).wrap(core.BuffSkillWrapper)
 
-        # 하이퍼: 데미지 증가, 확률 10% 증가, 타수 증가
+        # Hyper: Increases damage, increases probability by 10%, and increases the number of strokes. 하이퍼: 데미지 증가, 확률 10% 증가, 타수 증가.
         whim_proc = (50 + 10 + passive_level // 2) * 0.01
         advanced_proc = (20 + passive_level // 3) * 0.01
         TriflingWhim = (
@@ -165,7 +175,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
 
-        # 핀포인트 피어스
+        # Pinpoint Pierce. 핀포인트 피어스.
         PinPointPierce = core.DamageSkill(
             "핀포인트 피어스",
             delay=690,
@@ -183,7 +193,7 @@ class JobGenerator(ck.JobGenerator):
         ).wrap(core.BuffSkillWrapper)
 
         # Damage Skills
-        # 하이퍼: 데미지 증가, 보스 데미지 증가
+        # Hyper: Increased damage, increased boss damage. 하이퍼: 데미지 증가, 보스 데미지 증가.
         target_pdamage = ((120 + self.combat // 2) / 100) ** 3 * 100 - 100
         SongOfHeaven = (
             core.DamageSkill(
@@ -272,7 +282,7 @@ class JobGenerator(ck.JobGenerator):
 
         CriticalReinforce = bowmen.CriticalReinforceWrapper(
             vEhc, chtr, 3, 3, 10 + 25 + passive_level // 2 + 20 + ceil(self.combat / 2)
-        )  # 실프스 에이드 + 알바트로스 맥시멈 + 샤프 아이즈
+        )  # Silps Aid + Albatross Maximum + Sharp Eyes. 실프스 에이드 + 알바트로스 맥시멈 + 샤프 아이즈.
 
         # Damage
         SongOfHeaven.onAfters([TriflingWhim, StormBringer])
