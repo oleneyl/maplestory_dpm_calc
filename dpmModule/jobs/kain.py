@@ -12,12 +12,12 @@ from typing import Any, Dict
 
 BREATH_SHOOTER_HYPER = core.CharacterModifier(
     pdamage=10, boss_pdamage=15, armor_ignore=15
-)  # 리인포스, 보스킬러, 이그노어 가드
-EXECUTION_HYPER = core.CharacterModifier(armor_ignore=25)  # 이그노어 가드
+)  # Reinforce, Boss Killer, Ignor Guard. 리인포스, 보스킬러, 이그노어 가드.
+EXECUTION_HYPER = core.CharacterModifier(armor_ignore=25)  # Ignore Guard. 이그노어 가드.
 REMAIN_INCENSE_REINFORCE = core.CharacterModifier(pdamage=50)
 
 
-def strike_arrow(vEhc, passive_level: int):  # 1980ms 대기하면 초기화
+def strike_arrow(vEhc, passive_level: int):  # Reset when waiting for 1980ms. 1980ms 대기하면 초기화.
     class StrikeArrowStatusWrapper(core.StackSkillWrapper):
         def __init__(self) -> None:
             super(StrikeArrowStatusWrapper, self).__init__(
@@ -140,7 +140,7 @@ def scattering_shot(vEhc, passive_level: int):
             name="스캐터링 샷(초과)",
             delay=0,
             damage=120 + 75 + 75 + passive_level,
-            hit=4 * 4,  # 4타, 4회 반복
+            hit=4 * 4,  # 4 strokes, repeat 4 times. 4타, 4회 반복.
             cooltime=-1,
             modifier=core.CharacterModifier(pdamage_indep=-50) + BREATH_SHOOTER_HYPER,
         )
@@ -164,7 +164,7 @@ def scattering_shot(vEhc, passive_level: int):
             name="[발현] 스캐터링 샷(초과)",
             delay=0,
             damage=135 + 80 + 80 + passive_level,
-            hit=4 * 5,  # 4타, 5회 반복
+            hit=4 * 5,  # 4 strokes, 5 reps. 4타, 5회 반복.
             modifier=core.CharacterModifier(pdamage_indep=-50) + BREATH_SHOOTER_HYPER,
         )
         .setV(vEhc, 0, 2)
@@ -233,7 +233,7 @@ def shaft_break(vEhc, passive_level: int):
             name="[발현] 샤프트 브레이크(회오리)",
             delay=0,
             damage=40 + 20 + passive_level // 3,
-            hit=3 * 12,  # 3타, 12회 타격
+            hit=3 * 12,  # 3 hits, 12 hits. 3타, 12회 타격.
             modifier=BREATH_SHOOTER_HYPER,
         )
         .setV(vEhc, 0, 2)
@@ -341,11 +341,11 @@ def poison_needle(vEhc, combat: int):
         .wrap(core.DamageSkillWrapper)
     )
     PoisonNeedleSpin = (
-        core.DamageSkill(  # 연속공격을 스킬 하나에 합쳐둠
+        core.DamageSkill(  # Combines continuous attacks into one skill. 연속공격을 스킬 하나에 합쳐둠.
             name="[처형] 포이즌 니들(연속 공격)",
             delay=720 - 330,  # common.updatableTime - prepare.time
             damage=190 + combat,
-            hit=8 * 4,  # 8타, 4회 반복
+            hit=8 * 4,  # 8 strokes, 4 reps. 8타, 4회 반복.
             modifier=EXECUTION_HYPER,
         )
         .setV(vEhc, 0, 2)
@@ -554,7 +554,7 @@ def thanatos_descent(vEhc):
             name="타나토스 디센트(죽음의 화살)",
             delay=0,
             damage=325 + 13 * vEhc.getV(0, 0),
-            hit=3 * 6,  # 3타, 6개 발사
+            hit=3 * 6,  # 3 shots, 6 shots. 3타, 6개 발사.
             cooltime=3000,
         )
         .isV(vEhc, 0, 0)
@@ -802,9 +802,9 @@ class JobGenerator(ck.JobGenerator):
             core.SummonSkill(
                 name="드래곤 팡",
                 summondelay=0,
-                delay=(1650 * 7 + 3000) / 7,  # 평균으로 계산, 필요해지면 공격 간격 정확히 반영
+                delay=(1650 * 7 + 3000) / 7,  # Calculated as average, accurately reflecting the attack interval if necessary. 평균으로 계산, 필요해지면 공격 간격 정확히 반영.
                 damage=100 + 60 + 70 + passive_level * 2,
-                hit=4 * 3,  # 구체 3개 유지 가정
+                hit=4 * 3,  # Assume to maintain 3 spheres. 구체 3개 유지 가정.
                 remain=9999999,
             )
             .setV(vEhc, 0, 2)
@@ -836,7 +836,7 @@ class JobGenerator(ck.JobGenerator):
 
         Possession = core.BuffSkill(
             name="포제션",
-            delay=0,  # base delay 270, 다른 스킬 딜레이 중 사용 가능 -> 0
+            delay=0,  # base delay 270, can be used during other skill delays -> 0. base delay 270, 다른 스킬 딜레이 중 사용 가능 -> 0.
             remain=15000,
             cooltime=30,
         ).wrap(core.BuffSkillWrapper)
@@ -859,7 +859,7 @@ class JobGenerator(ck.JobGenerator):
                 name="스니키 스나이핑",
                 delay=60 + 270,  # 60 + keydownend.action
                 damage=175,
-                hit=10 * 5,  # 10타, 5회 반복
+                hit=10 * 5,  # 10 strokes, 5 reps. 10타, 5회 반복.
                 cooltime=40000,
                 modifier=BREATH_SHOOTER_HYPER,
             )
@@ -871,7 +871,7 @@ class JobGenerator(ck.JobGenerator):
                 name="[발현/처형] 스니키 스나이핑",
                 delay=60 + 270,  # 60 + keydownend.action
                 damage=200,
-                hit=12 * 5,  # 12타, 5회 반복
+                hit=12 * 5,  # 12 strokes, 5 reps. 12타, 5회 반복.
                 cooltime=60000,
                 modifier=BREATH_SHOOTER_HYPER + EXECUTION_HYPER,
             )
@@ -953,7 +953,7 @@ class JobGenerator(ck.JobGenerator):
             )
 
         # Remain Incense
-        # 발현 스킬의 쿨타임 있는 파이널 어택처럼 취급
+        # Treated like a final attack with a cooldown of the manifestation skill. 발현 스킬의 쿨타임 있는 파이널 어택처럼 취급.
         for sk, count in [
             (StrikeArrowRelease, 1),
             (ScatteringShotRelease, 2),
