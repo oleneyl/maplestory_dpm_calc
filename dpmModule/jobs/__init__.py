@@ -1,29 +1,29 @@
 from . import hero
 from . import paladin
 from . import darknight
-from . import archmageFb
-from . import archmageTc
+from . import archmageFP
+from . import archmageIL
 from . import bishop
 from . import bowmaster
-from . import sniper
+from . import marksman
 from . import pathfinder
 from . import nightlord
 from . import shadower
 from . import dualblade
-from . import viper
-from . import captain
-from . import cannonshooter
-from . import soulmaster
-from . import flamewizard
-from . import windbreaker
+from . import buccaneer
+from . import corsair
+from . import cannoneer
+from . import dawnwarrior
+from . import blazewizard
+from . import windarcher
 from . import nightwalker
-from . import striker
-from . import michael
+from . import thunderbreaker
+from . import mihile
 from . import aran
 from . import evan
 from . import mercedes
 from . import phantom
-from . import eunwol
+from . import shade
 from . import luminous
 from . import demonslayer
 from . import demonavenger
@@ -47,29 +47,29 @@ jobMap = {
     "히어로": hero,
     "팔라딘": paladin,
     "다크나이트": darknight,
-    "아크메이지불/독": archmageFb,
-    "아크메이지썬/콜": archmageTc,
+    "아크메이지불/독": archmageFP,
+    "아크메이지썬/콜": archmageIL,
     "비숍": bishop,
     "보우마스터": bowmaster,
-    "신궁": sniper,
+    "신궁": marksman,
     "패스파인더": pathfinder,
     "나이트로드": nightlord,
     "섀도어": shadower,
     "듀얼블레이드": dualblade,
-    "바이퍼": viper,
-    "캡틴": captain,
-    "캐논슈터": cannonshooter,
-    "소울마스터": soulmaster,
-    "플레임위자드": flamewizard,
-    "윈드브레이커": windbreaker,
+    "바이퍼": buccaneer,
+    "캡틴": corsair,
+    "캐논슈터": cannoneer,
+    "소울마스터": dawnwarrior,
+    "플레임위자드": blazewizard,
+    "윈드브레이커": windarcher,
     "나이트워커": nightwalker,
-    "스트라이커": striker,
-    "미하일": michael,
+    "스트라이커": thunderbreaker,
+    "미하일": mihile,
     "아란": aran,
     "에반": evan,
     "메르세데스": mercedes,
     "팬텀": phantom,
-    "은월": eunwol,
+    "은월": shade,
     "루미너스": luminous,
     "데몬슬레이어": demonslayer,
     "데몬어벤져": demonavenger,
