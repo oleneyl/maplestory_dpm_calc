@@ -7,7 +7,7 @@ from .jobclass import cygnus
 from .jobbranch import warriors
 from math import ceil
 from typing import Any, Dict
-# 미하일 영메 적용여부에 대해 고민해볼 필요 있음
+# It is necessary to consider whether to apply Mihile Youngme. 미하일 영메 적용여부에 대해 고민해볼 필요 있음.
 
 
 class JobGenerator(ck.JobGenerator):
@@ -53,6 +53,18 @@ class JobGenerator(ck.JobGenerator):
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        1 party member
+
+        Hyper
+        Shining Cross-Reinforce / Install / Bonus Attack
+        Soul Assault-Reinforce / Bonus Attack
+
+        Soul Assault-Shining Cross-Royal Guard-Patek-Deadly Charge
+
+        Shining Cross keeps the cross always there
+
+        Royal Guard is used every 6 seconds and may be used slightly later due to other skills. It is assumed to maintain the Royal Guard 5 stack buff at all times.
+
         파티원 1명
         
         하이퍼
@@ -83,12 +95,12 @@ class JobGenerator(ck.JobGenerator):
         LoyalGuard_5 = core.DamageSkill("로얄 가드(5)", 630, 565+chtr.level, 9, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         LoyalGuardBuff = core.BuffSkill("로얄 가드", 0, 12000, att = 45).wrap(core.BuffSkillWrapper)  #10->15->20->30->45
         
-        SoulAssult = core.DamageSkill("소울 어썰트", 600, 210+3*self.combat, 11+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   #암흑 20%
+        SoulAssult = core.DamageSkill("소울 어썰트", 600, 210+3*self.combat, 11+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   # 20% darkness. 암흑 20%.
         
         FinalAttack = core.DamageSkill("파이널 어택", 0, 95+passive_level, 4*0.01*(75+passive_level)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
-        ShiningCross = core.DamageSkill("샤이닝 크로스", 600, 440+3*self.combat, 4+1, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   #암흑 30% 10초
-        ShiningCrossInstall = core.SummonSkill("샤이닝 크로스-인스톨", 0, 1200, 75, 4+1, 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #100% 암흑 5초
+        ShiningCross = core.DamageSkill("샤이닝 크로스", 600, 440+3*self.combat, 4+1, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   # Darkness 30% 10 seconds. 암흑 30% 10초.
+        ShiningCrossInstall = core.SummonSkill("샤이닝 크로스-인스톨", 0, 1200, 75, 4+1, 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    # 100% dark 5 seconds. 100% 암흑 5초.
         
         # Hyper
         SacredCube = core.BuffSkill("세이크리드 큐브", 90, 30000, cooltime = 210000, pdamage = 10).wrap(core.BuffSkillWrapper)
@@ -110,8 +122,8 @@ class JobGenerator(ck.JobGenerator):
         CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 3, 3)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         RoIias = core.BuffSkill("로 아이아스", 840, (75+3*vEhc.getV(0,0))*1000, cooltime = 300*1000, red = True, pdamage_indep = 5 + (35+3*(vEhc.getV(0,0)//4))//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        ClauSolis = core.DamageSkill("클라우 솔라스", 690, 700+28*vEhc.getV(4,4), 7, cooltime = 12000, red = True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)    #로얄가드 버프지속시간 6초 증가. 100% 암흑 5초
-        ClauSolisSummon = core.SummonSkill("클라우 솔라스(소환)", 0, 5000, 350+14*vEhc.getV(4,4), 7, 7000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #100% 암흑 5초
+        ClauSolis = core.DamageSkill("클라우 솔라스", 690, 700+28*vEhc.getV(4,4), 7, cooltime = 12000, red = True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)    # Royal Guard buff duration increased by 6 seconds. 100% dark 5 seconds. 로얄가드 버프지속시간 6초 증가. 100% 암흑 5초.
+        ClauSolisSummon = core.SummonSkill("클라우 솔라스(소환)", 0, 5000, 350+14*vEhc.getV(4,4), 7, 7000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   # 100% dark 5 seconds. 100% 암흑 5초.
     
         SwordOfSoullight = core.BuffSkill("소드 오브 소울 라이트", 810, 30000, cooltime = 180*1000, red = True, patt = 15 + vEhc.getV(1,1)//2, crit = 100, armor_ignore = 100).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         SoullightSlash = core.DamageSkill("소울 라이트 슬래시", 630, 400+16*vEhc.getV(1,1), 12).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
@@ -122,37 +134,37 @@ class JobGenerator(ck.JobGenerator):
         LightOfCourageFinal = core.DamageSkill("라이트 오브 커리지(용기의 빛)(종료)", 360, 375+15*vEhc.getV(0,0), 10*6, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ##### Build Graph
         
-        # 기본 공격
+        # Basic attack. 기본 공격.
         BasicAttack = core.OptionalElement(SwordOfSoullight.is_active, SoullightSlash, SoulAssult)
         BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
 
-        FinalAttack.onAfter(core.OptionalElement(LightOfCourage.is_active, LightOfCourageAttack)) # 용기의 빛과 파이널 어택 발동시키는 스킬 목록이 같다고 가정함
+        FinalAttack.onAfter(core.OptionalElement(LightOfCourage.is_active, LightOfCourageAttack)) # It is assumed that the light of courage and the list of skills that trigger Final Attack are the same. 용기의 빛과 파이널 어택 발동시키는 스킬 목록이 같다고 가정함.
         
         SoullightSlash.onAfter(FinalAttack)
         SoulAssult.onAfter(FinalAttack)
         LoyalGuard_5.onAfter(FinalAttack)
 
-        # 클라우 솔라스
+        # ClauSolis. 클라우 솔라스.
         ClauSolis.onEventElapsed(ClauSolisSummon, 5000)
         ClauSolis.onAfter(SoulAttack.controller(5000,"set_enabled_and_time_left"))
         ClauSolis.onAfter(FinalAttack)
         ClauSolisSummon.onTick(SoulAttack.controller(5000,"set_enabled_and_time_left"))
 
-        # 데들리 차지
+        # Deadly Charge. 데들리 차지.
         DeadlyCharge.onAfter(DeadlyChargeBuff)
         DeadlyCharge.onAfter(FinalAttack)
         
-        # 샤이닝 크로스
+        # Shining Cross. 샤이닝 크로스.
         ShiningCross.onAfter(ShiningCrossInstall)
         ShiningCross.onAfter(FinalAttack)
         ShiningCrossInstall.onTick(SoulAttack.controller(5000,"set_enabled_and_time_left"))
 
-        # 라이트 오브 커리지
+        # Light of Courage. 라이트 오브 커리지.
         LightOfCourage.onAfter(LightOfCourageSummon)
         LightOfCourage.onAfter(LightOfCourageFinal.controller(25000))
 
-        # 오라 웨폰
+        # Weapon Aura 오라 웨폰.
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
         for sk in [SoullightSlash, SoulAssult, DeadlyCharge, LoyalGuard_5, ShiningCross]:
             auraweapon_builder.add_aura_weapon(sk)
