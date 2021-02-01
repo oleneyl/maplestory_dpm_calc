@@ -36,7 +36,7 @@ class ElementalGhostWrapper(core.BuffSkillWrapper):
                 self.sylphidia,
                 lambda sk: core.CharacterModifier(pdamage_indep=p * ratio * 100)
                 if sk.is_active()
-                and self.is_active()  # TODO: runtime_modifier에 전달하지 않은 스킬을 참조하고 있음. runtime_modifier 확장할 것.
+                and self.is_active()  # TODO: Refers to a skill not passed to runtime_modifier Extend runtime_modifier. runtime_modifier에 전달하지 않은 스킬을 참조하고 있음. runtime_modifier 확장할 것.
                 else core.CharacterModifier()
             )
 
@@ -51,6 +51,8 @@ class ElementalGhostWrapper(core.BuffSkillWrapper):
 
 class SylphidiaDamageSkill(core.DamageSkillWrapper):
     """
+    Some skills are delayed when riding Silphidia.
+
     일부 스킬들은 실피디아 탑승시 딜레이가 변경됨.
     """
     def __init__(self, skill: core.DamageSkill, sylphidia: core.BuffSkillWrapper, delay: int):
@@ -116,6 +118,20 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        Hyper
+        Ishtar's Ring-Reinforce, Ignor Guard, Boss Killer
+        Legendary Spear-Reduce Armor, Linked Reinforcement
+
+        Nasal order
+        Issue, Sudu/Pataek, Elemental, Rath of Enlil, Legendary, Unicorn, Letto/Dive
+
+        Elemental Ghost, Irkala's Breath, Critical Reinforce, Soul Contract, Elvisy Blessing, and Heroes Oth are used together
+
+        Not using Silphidia
+
+        Elgo Link
+        Sudew-Enlil-Sudew-Unicorn-Sudew-Sphere-It's
+
         하이퍼
         이슈타르의 링-리인포스, 이그노어 가드, 보스 킬러
         레전드리 스피어-리듀스 아머, 링크드 리인포스
@@ -138,7 +154,7 @@ class JobGenerator(ck.JobGenerator):
         AncientSpirit = core.BuffSkill("엔시언트 스피릿", 0, (200+5*self.combat) * 1000, patt = 30+self.combat, rem=True).wrap(core.BuffSkillWrapper)
 
         # Summon skill
-        ElementalKnights = core.DamageSkill("엘리멘탈 나이트", 0, 0, 0, cooltime=120*1000, red=True).setV(vEhc, 2, 3, False).wrap(core.DamageSkillWrapper) #도트 반영필요
+        ElementalKnights = core.DamageSkill("엘리멘탈 나이트", 0, 0, 0, cooltime=120*1000, red=True).setV(vEhc, 2, 3, False).wrap(core.DamageSkillWrapper) # Dot reflection required. 도트 반영필요.
         ElementalKnights_1 = core.SummonSkill("엘리멘탈 나이트(1)", 0, 1470, (385+385+485)/3, 1, 210 * 1000, cooltime=-1, rem=True).setV(vEhc, 2, 3, False).wrap(core.SummonSkillWrapper)
         ElementalKnights_2 = core.SummonSkill("엘리멘탈 나이트(2)", 0, 1470, (385+385+485)/3, 1, 210 * 1000, cooltime=-1, rem=True).setV(vEhc, 2, 3, False).wrap(core.SummonSkillWrapper)
         
@@ -157,7 +173,7 @@ class JobGenerator(ck.JobGenerator):
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
         # 5th
-        Sylphidia = core.BuffSkill("실피디아", 0, (30 + vEhc.getV(5,5)//2) * 1000, cooltime = 150 * 1000, red=True, patt = (5+vEhc.getV(5,5)//2)).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) # 정보 없음
+        Sylphidia = core.BuffSkill("실피디아", 0, (30 + vEhc.getV(5,5)//2) * 1000, cooltime = 150 * 1000, red=True, patt = (5+vEhc.getV(5,5)//2)).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) # No information. 정보 없음.
         ElementalGhost = ElementalGhostWrapper(vEhc, 0, 0, sylphidia=Sylphidia)
         ElementalGhostSpirit = core.DamageSkill("엘리멘탈 고스트(정령의 기운)", 0, 450+15*vEhc.getV(0,0), 8, cooltime=10*1000).wrap(core.DamageSkillWrapper)
         IrkilaBreathInit = core.DamageSkill("이르칼라의 숨결", 900, 0, 0, cooltime = 150 * 1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
@@ -168,19 +184,19 @@ class JobGenerator(ck.JobGenerator):
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
-        # 연계 스킬들 - 연계시 딜레이로 작성
+        # Linked skills-Write as a delay when linking. 연계 스킬들 - 연계시 딜레이로 작성.
         UnicornSpike = SylphidiaDamageSkill(
             core.DamageSkill("유니콘 스파이크", 450, 315+100 + 2*self.combat, 5, modifier = core.CharacterModifier(crit=100), cooltime = 10 * 1000, red=True).setV(vEhc, 5, 3, False),
             Sylphidia,
             540
         )
-        UnicornSpikeBuff = core.BuffSkill("유니콘 스파이크(버프)", 0, 30 * 1000, pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper)  #직접시전 금지
+        UnicornSpikeBuff = core.BuffSkill("유니콘 스파이크(버프)", 0, 30 * 1000, pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper)  # No direct casting. 직접시전 금지.
         RegendrySpear = SylphidiaDamageSkill(
             core.DamageSkill("레전드리 스피어", 690, 700 + 10*self.combat, 3, cooltime = 5 * 1000, red=True, modifier = core.CharacterModifier(crit=100)).setV(vEhc, 4, 2, False),
             Sylphidia,
             540
         )
-        RegendrySpearBuff = core.BuffSkill("레전드리 스피어(버프)", 0, (30+self.combat) * 1000, armor_ignore = 30+20+self.combat, cooltime = -1).wrap(core.BuffSkillWrapper) #직접시전 금지
+        RegendrySpearBuff = core.BuffSkill("레전드리 스피어(버프)", 0, (30+self.combat) * 1000, armor_ignore = 30+20+self.combat, cooltime = -1).wrap(core.BuffSkillWrapper) # No direct casting. 직접시전 금지.
         LightningEdge = core.DamageSkill("라이트닝 엣지", 630, 420 + 5*self.combat, 3).wrap(core.DamageSkillWrapper)
         LightningEdgeBuff = core.BuffSkill("라이트닝 엣지(버프)", 0, 30000, cooltime=-1).wrap(core.BuffSkillWrapper)
         LeapTornado = core.DamageSkill("리프 토네이도", 390, 390+30+3*self.combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
@@ -257,11 +273,11 @@ class JobGenerator(ck.JobGenerator):
             wrp.onAfter(UseElementalGhostSpirit)
             wrp.onAfter(UseRoyalNightsAttack)
         
-        GustDive.onAfter(AdvancedFinalAttackSlow) # 거스트 다이브는 엘고 잔상이 안터짐
+        GustDive.onAfter(AdvancedFinalAttackSlow)  # Gust Dive does not have an afterimage of Elgo. 거스트 다이브는 엘고 잔상이 안터짐.
         GustDive.onAfter(UseRoyalNightsAttack)
 
-        # Issue #446 잔상 파택이 거의 전부 씹히는 오류
-        # ElementalGhost.addSkill(AdvancedFinalAttackSlow, is_fast=False, is_final_attack=True) # 잔상->파택을 파택->잔상으로 처리, 대신 최종뎀 감소는 적용하지 않게 함
+        # Issue #446 An error in which almost all of the afterimages are chewed. Issue #446 잔상 파택이 거의 전부 씹히는 오류.
+        # ElementalGhost.addSkill(AdvancedFinalAttackSlow, is_fast=False, is_final_attack=True) # Afterimage->Pataek is treated as afterimage->Afterimage, the final damage reduction is not applied instead. 잔상->파택을 파택->잔상으로 처리, 대신 최종뎀 감소는 적용하지 않게 함.
             
         for wrp in [IshtarRing, IrkilaBreathTick]:
             ElementalGhost.addSkill(wrp, is_fast=True, is_final_attack=False)
@@ -273,14 +289,14 @@ class JobGenerator(ck.JobGenerator):
         GuidedArrow.onTick(UseRoyalNightsAttack)
 
         IsSylphidia = core.ConstraintElement("실피디아 탑승중", Sylphidia, Sylphidia.is_active)
-        for sk in [UnicornSpike, RegendrySpear, WrathOfEllil]: # 실피디아 탑승시에는 DebuffCombo를 통하지 않고 따로 사용
+        for sk in [UnicornSpike, RegendrySpear, WrathOfEllil]:  # When boarding Silphidia, use it separately without going through DebuffCombo. 실피디아 탑승시에는 DebuffCombo를 통하지 않고 따로 사용.
             sk.onConstraint(IsSylphidia)
 
         for sk in [ElementalGhostSpirit, RoyalKnightsAttack]:
             sk.protect_from_running()
 
         for sk in [UnicornSpikeBuff, RegendrySpearBuff, LightningEdgeBuff]:
-            sk.set_disabled_and_time_left(1) # 버프 묻은 채로 측정 시작
+            sk.set_disabled_and_time_left(1)  # Start measuring with the buff on. 버프 묻은 채로 측정 시작.
     
         return(BasicAttack,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), 
