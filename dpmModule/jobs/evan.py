@@ -85,7 +85,7 @@ class SpiralOfManaWrapper(core.SummonSkillWrapper):
 
     def _use(self, skill_modifier):
         result = super(SpiralOfManaWrapper, self)._use(skill_modifier)
-        self.tick = 780 # TODO: SummonSkill에 공격 시작 시간 입력 가능하게 할 것
+        self.tick = 780 # TODO: Enable to input attack start time in SummonSkill. SummonSkill에 공격 시작 시간 입력 가능하게 할 것.
         self.penaltyTime = 0
         return result
 
@@ -115,6 +115,9 @@ class MirSkillWrapper(core.SummonSkillWrapper):
 
     def endSoon(self, time):
         """
+        When the fusion/return cast is judged by only available and timeLeft, the activation often fails because available first becomes false.
+        With the attacking variable set aside, it is determined whether the skill can be cast by fusion/return under the premise that the skill is terminated only by always fusion/return.
+
         available, timeLeft만으로 융합/돌아와 시전을 판정하면 종종 available이 먼저 false가 되어 발동에 실패함.
         attacking 변수를 따로 두고, 항상 융합/돌아와 만으로만 스킬이 종료된다는 전제 하에 융합/돌아와 시전 가능 여부를 판정함.
         """
@@ -177,6 +180,21 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        Dao-Breath-Bore
+
+        Dao 3 hits
+
+        Hyper:
+        Des / Deda / Deve Cool Reduce
+        Deda-Earth Enhance
+        Dev-Wind Bonus Chance
+
+        All fusion skills are canceled except for the 5th
+
+        Core strengthening
+        Seooma, Seoeo (+ Dao, Beo), Breath (Breath-Come back), Seoowin, (+ Bowin, Seowin)
+        Seo Sun (Seo Sun, Dao Sun), Dragon Master, Magic Wreck, Dragon Sparking, Swift
+
         다오어-브레스-브오어
 
         다오어 3히트
@@ -203,7 +221,7 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)
         OnixBless = core.BuffSkill("오닉스의 축복", 0, (180+2*self.combat)*1000, rem = True, att = 80+2*self.combat).wrap(core.BuffSkillWrapper)
 
-        ### 에반 스킬
+        ### Fusion skill. 에반 스킬.
         CircleOfMana1 = core.DamageSkill("서클 오브 마나 IV(1타)", 180, 290 + self.combat, 4).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         CircleOfMana2 = core.DamageSkill("서클 오브 마나 IV(2타)", 390, 330 + self.combat, 4).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DragonSparking = core.DamageSkill("드래곤 스파킹", 0, 150, 1).setV(vEhc, 7, 3, True).wrap(core.DamageSkillWrapper)
@@ -214,35 +232,35 @@ class JobGenerator(ck.JobGenerator):
         CircleOfEarth = core.DamageSkill("서클 오브 어스", 660, 320+self.combat, 5).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         DarkFog = core.DamageSkill("다크 포그", 870, 400+2*self.combat, 6, cooltime = 40000, red=True).wrap(core.DamageSkillWrapper)
         
-        ### 미르 스킬
+        ### Mir skill. 미르 스킬.
         Mir = core.BuffSkill("미르(공격중)", 0, 0, cooltime=-1).wrap(core.BuffSkillWrapper)
         DragonSwift = core.SummonSkill("드래곤 스위프트", 0, 540, 415 + 2*self.combat, 4, 3360, cooltime = 6000, red=True).setV(vEhc, 8, 2, False).wrap(MirSkillWrapper)
         DragonDive = core.SummonSkill("드래곤 다이브", 0, 360, 325 + self.combat, 3, 3480, cooltime = 6000, red=True).wrap(MirSkillWrapper)
         DragonBreath = core.SummonSkill("드래곤 브레스", 0, 360, 240 + self.combat, 5, 2880, cooltime = 7500, red=True).setV(vEhc, 2, 2, False).wrap(MirSkillWrapper)
 
-        ## 융합 스킬
+        ## Fusion skill. 융합 스킬.
         SwiftOfWind = core.SummonSkill("스위프트 오브 윈드", 0, 360, 215 + self.combat, 2*3, 3360, cooltime=-1, modifier=MDF(pdamage_indep=-35)).setV(vEhc, 3, 2, False).wrap(MirSkillWrapper)
         SwiftOfThunder = core.SummonSkill("스위프트 오브 썬더", 0, 2280/SWIFT_OF_THUNDER_HIT, 450 + self.combat, 6, 2280, cooltime=-1).setV(vEhc, 4, 2, False).wrap(MirSkillWrapper)
-        # DiveOfThunder - 안씀
+        # DiveOfThunder - 안씀.
         DiveOfEarth = core.SummonSkill("다이브 오브 어스", 0, 2310/DIVE_OF_EARTH_HIT, 190 + 420, 6, 2310, cooltime=-1, modifier = MDF(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(MirSkillWrapper) # 컴뱃오더스: 위컴알 기준 적용이나 인게임에서 미적용
         BreathOfWind = core.SummonSkill("브레스 오브 윈드", 0, 450, 215+self.combat+BREATH_OF_WIND_BONUS*(65+self.combat+85), 5, 3510, cooltime=-1).setV(vEhc, 3, 2, False).wrap(MirSkillWrapper)
         BreathOfEarth = core.SummonSkill("브레스 오브 어스", 0, 450, 280+self.combat, 5, 3510, cooltime=-1).setV(vEhc, 1, 2, False).wrap(MirSkillWrapper)
         
-        ### 돌아와!
+        ### Come back! 돌아와!
         SwiftBack = core.BuffSkill("스위프트-돌아와!", 30, 60000, cooltime=-1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
         DiveBack = core.BuffSkill("다이브-돌아와!", 30, 60000, cooltime=-1, rem=True).wrap(core.BuffSkillWrapper)
         BreathBack = core.SummonSkill("브레스-돌아와!", 30, 450, 150+self.combat, 1, (30+self.combat // 2)*1000, cooltime=-1).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         
-        # 하이퍼
+        # Hyper. 하이퍼.
         SummonOnixDragon = core.SummonSkill("서먼 오닉스 드래곤", 900, 3030, 550, 2, 40000, cooltime = 80000).wrap(core.SummonSkillWrapper)
         
-        # 드래곤 마스터 - 미사용
+        # Dragon Master-Unused. 드래곤 마스터 - 미사용.
         HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        # 5차
+        # 5th. 5차.
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
-        # 각 타마다 최종뎀 스택이 적용됨. 1타(0%)-2타(5%)-3타(10%)-4타(15%) = 평균 7.5%
+        # The final damage stack is applied for each hit. 1 stroke (0%) -2 stroke (5%) -3 stroke (10%) -4 stroke (15%) = 7.5% average. 각 타마다 최종뎀 스택이 적용됨. 1타(0%)-2타(5%)-3타(10%)-4타(15%) = 평균 7.5%.
         ElementalBlast = core.DamageSkill("엘리멘탈 블래스트", 600, 750+30*vEhc.getV(2,3), 6 * 4, cooltime = 60000, red = True, modifier = MDF(crit = 100, pdamage_indep = 7.5)).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
         ElementalBlastBuff = core.BuffSkill("엘리멘탈 블래스트(버프)", 0, 10000, pdamage_indep = 20, cooltime=-1).isV(vEhc,2,3).wrap(core.BuffSkillWrapper)
 
@@ -259,7 +277,7 @@ class JobGenerator(ck.JobGenerator):
         CircleOfMana1.onAfter(core.OptionalElement(SpiralOfMana.is_not_active, SpiralOfMana, CircleOfMana2))
         SpiralOfMana.protect_from_running()
 
-        # 마법 잔해
+        # Magic wreckage. 마법 잔해.
         AddParticle = MagicParticle.add_stack()
         BreathOfEarth.onTick(AddParticle)
         BreathOfWind.onTick(AddParticle)
@@ -267,7 +285,7 @@ class JobGenerator(ck.JobGenerator):
         SwiftOfThunder.onTick(AddParticle)
         SwiftOfWind.onTick(AddParticle)
         
-        #미르 제한조건.
+        # Mir constraint. 미르 제한조건.
         MirConstraint = core.ConstraintElement("미르(사용중)", Mir, Mir.is_not_active)
 
         for sk in [DragonSwift, DragonDive, DragonBreath, DragonBreak]:
@@ -283,7 +301,7 @@ class JobGenerator(ck.JobGenerator):
                 back.onAfter(sk.end())
             back.onAfter(Mir.controller(1))
 
-        # 브레이크/엘블/임브
+        # Brake/Elble/Imb. 브레이크/엘블/임브.
         ElementalBlast.onConstraint(core.ConstraintElement("엘리멘탈 블래스트 실행조건", Mir, lambda: DragonBreak.endSoon(1000)))
         ElementalBlast.onAfter(ElementalBlastBuff)
         ElementalBlast.onAfter(ImperialBreath)
@@ -296,25 +314,25 @@ class JobGenerator(ck.JobGenerator):
             lambda: ImperialBreath.endSoon(1000) or (DragonBreak.endSoon(1000) and not ElementalBlast.is_available())
         ))
 
-        # 브레스
+        # Breath. 브레스.
         DragonBreath.onAfter(BreathOfEarth.controller(1))
         BreathOfEarth.onConstraint(core.ConstraintElement("브오어 실행조건", Mir, lambda: DragonBreath.endSoon(1000)))
-        BreathOfEarth.onAfter(CircleOfMana1) # 마나캔슬
+        BreathOfEarth.onAfter(CircleOfMana1)  # 마나캔슬.
         BreathOfEarth.onAfter(DragonBreath.end())
         
         BreathOfEarth.onAfter(BreathBack.controller(1))
         BreathBack.onConstraint(core.ConstraintElement("브레스-돌아와! 실행조건", Mir, lambda: BreathOfEarth.endSoon(1000)))
 
-        # 다이브
+        # Dive. 다이브.
         DragonDive.onAfter(DiveOfEarth.controller(1))
         DiveOfEarth.onConstraint(core.ConstraintElement("다오어 실행조건", Mir, lambda: DragonDive.is_active()))
-        DiveOfEarth.onAfter(CircleOfMana1) # 마나캔슬
+        DiveOfEarth.onAfter(CircleOfMana1)  # 마나캔슬.
         DiveOfEarth.onAfter(DragonDive.end())
 
         DiveOfEarth.onAfter(core.OptionalElement(lambda: DiveBack.is_time_left(8500, -1), DiveBack.controller(1)))
         DiveBack.onConstraint(core.ConstraintElement("다이브-돌아와! 실행조건", Mir, lambda: DiveOfEarth.endSoon(1000)))
 
-        # 스위프트
+        # Swift. 스위프트.
         DragonSwift.onConstraint(core.ConstraintElement("스위프트 실행조건", Mir, lambda: SwiftBack.is_time_left(5000, -1))) # 버프 없을때만 사용
         SwiftOfWind.onAfter(DragonSwift.end())
 
@@ -322,7 +340,7 @@ class JobGenerator(ck.JobGenerator):
         SwiftOfWind.onAfter(SwiftBack.controller(1))
         SwiftBack.onConstraint(core.ConstraintElement("스위프트-돌아와! 실행조건", Mir, lambda: SwiftOfWind.is_active() or DragonSwift.is_active())) # 스위프트 즉시 종료
 
-        #조디악 레이
+        # Swift Zodiac Ray. 조디악 레이.
         ZodiacStack3 = ZodiacRay.add_mana(3)
         ZodiacStack1 = ZodiacRay.add_mana(1)
         for sk in [DragonBreath, CircleOfWind, BreathOfWind, BreathBack, CircleOfEarth, SwiftOfWind, DarkFog]:
@@ -332,11 +350,11 @@ class JobGenerator(ck.JobGenerator):
         for sk in [MagicParticle, DragonBreath, CircleOfWind, BreathOfWind, BreathBack, MagicParticle, DragonSwift, CircleOfEarth, SwiftOfWind, MagicParticle, DarkFog]:
             ZodiacRay.onAfter(sk)
         
-        #파이널 어택
+        # Final Attack. 파이널 어택.
         for i in [CircleOfMana2, CircleOfEarth, CircleOfWind, CircleOfThunder, DarkFog]:
             i.onAfter(DragonSparking)
 
-        #오버로드 마나
+        # Overload mana. 오버로드 마나.
         overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 2)
         for sk in [CircleOfMana1, CircleOfMana2, CircleOfEarth, CircleOfThunder, CircleOfWind, DarkFog, ElementalBlast, SpiralOfMana,
                     DragonSwift, SwiftOfWind, SwiftOfThunder, DragonDive, DiveOfEarth, DragonBreath, BreathOfWind, BreathOfEarth,
