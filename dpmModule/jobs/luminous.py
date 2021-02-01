@@ -27,13 +27,13 @@ class LuminousStateController(core.BuffSkillWrapper):
     def spend_time(self, time : int) -> None:
         super(LuminousStateController, self).spend_time(time)
         self.remain -= time
-        #이퀄이 끝나면, 다음 상태로 진입합니다.
+        # When the equalization is over, it enters the next state. 이퀄이 끝나면, 다음 상태로 진입합니다.
         if self.remain < 0 and self.state == LuminousStateController.EQUAL:
             self.state = self.currentState
             self.stack = LuminousStateController.STACK
 
     def _modify_stack(self, stack):
-        self.stack -= stack * 1.05 # 다크라이트 마스터리 1.05배
+        self.stack -= stack * 1.05  # Dark Light Mastery 1.05 times. 다크라이트 마스터리 1.05배.
         
         if self.stack <= 0:
             self.stack = LuminousStateController.STACK
@@ -142,7 +142,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ConditionRule('소울 컨트랙트', '루미너스 상태', lambda state: state.isEqual() and state.isEqualLeft(20000)), RuleSet.BASE) # TODO: 소울 컨트랙트의 벞지 적용된 지속시간을 가져와야 함
+        ruleset.add_rule(ConditionRule('소울 컨트랙트', '루미너스 상태', lambda state: state.isEqual() and state.isEqualLeft(20000)), RuleSet.BASE) # TODO: Should bring the last applied duration of the soul contract. 소울 컨트랙트의 벞지 적용된 지속시간을 가져와야 함.
         ruleset.add_rule(ConditionRule('퍼니싱 리소네이터', '루미너스 상태', lambda state: state.isEqual()), RuleSet.BASE)
         return ruleset
 
@@ -175,6 +175,13 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        Apo 22 times / La Ripple 25 times are required to enter the Equilibrium
+
+        Soul contract is used in accordance with Equilibrium
+        Furnishing Resonator is used in accordance with Equilibrium
+        Memorise is not equal and is used when the cooldown is running.
+        Liberation Orb is used every cool time
+
         아포 22회 / 라리플 25회가 이퀄리브리엄 진입까지 요구됨
         
         소울 컨트랙트는 이퀄리브리엄에 맞춰 사용
@@ -183,12 +190,12 @@ class JobGenerator(ck.JobGenerator):
         리버레이션 오브는 쿨마다 사용
         '''
         ######   Skill   ######
-        DarkAffinity = core.CharacterModifier(pdamage_indep = 5) # 어둠 마법 강화
+        DarkAffinity = core.CharacterModifier(pdamage_indep = 5) # Strengthen dark magic. 어둠 마법 강화.
 
         #Buff skills
-        Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
-        PodicMeditaion = core.BuffSkill("포딕 메디테이션", 0, 1800000, att = 40).wrap(core.BuffSkillWrapper) # 펫버프
-        DarkCrescendo = core.BuffSkill("다크 크레센도", 0, (180 + 4*self.combat) * 1000, pdamage = 28, rem = True).wrap(core.BuffSkillWrapper) # 펫버프. 스택 제대로 계산 필요함.
+        Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)  # Pet buff. 펫버프.
+        PodicMeditaion = core.BuffSkill("포딕 메디테이션", 0, 1800000, att = 40).wrap(core.BuffSkillWrapper)  # Pet buff. 펫버프.
+        DarkCrescendo = core.BuffSkill("다크 크레센도", 0, (180 + 4*self.combat) * 1000, pdamage = 28, rem = True).wrap(core.BuffSkillWrapper)  # Pet buff. Need to properly calculate the stack. 펫버프. 스택 제대로 계산 필요함.
         DarknessSocery = core.BuffSkill("다크니스 소서리(버프)", 270, (180 + 5*self.combat) * 1000, rem = True).wrap(core.BuffSkillWrapper)
     
         LuminousState = LuminousStateController(core.BuffSkill("루미너스 상태", 0, 99999999), chtr.get_base_modifier().buff_rem)
@@ -197,7 +204,7 @@ class JobGenerator(ck.JobGenerator):
         LightReflection = core.DamageSkill("라이트 리플렉션", 690, 400+5*self.combat, 4, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         Apocalypse = core.DamageSkill("아포칼립스", 720, 340+4*self.combat, 7, modifier = core.CharacterModifier(pdamage = 20) + DarkAffinity).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         AbsoluteKill = core.DamageSkill("앱솔루트 킬", 630, 385+3*self.combat, 7*2, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(이퀄X)', 630, 385+3*self.combat, 7, cooltime = 12000, red=True, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) # 안쓰는게 dpm이 더 높음
+        AbsoluteKillCooltimed = core.DamageSkill('앱솔루트 킬(이퀄X)', 630, 385+3*self.combat, 7, cooltime = 12000, red=True, modifier = core.CharacterModifier(pdamage = 20, crit = 100, armor_ignore=40) + DarkAffinity).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  # If you don't use it, the dpm is higher. 안쓰는게 dpm이 더 높음.
 
         # Hyper
         Memorize = core.BuffSkill("메모라이즈", 900, 10, cooltime = 150 * 1000).wrap(core.BuffSkillWrapper)
@@ -205,10 +212,10 @@ class JobGenerator(ck.JobGenerator):
 
         # 5th
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
-        DoorOfTruth = core.SummonSkill("진리의 문", 870, 3030, 375 + 15 * vEhc.getV(4,4), 10, (25 + vEhc.getV(4,4) // 2) * 1000, cooltime = -1).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)   #이퀄시 사용 가능해짐.
+        DoorOfTruth = core.SummonSkill("진리의 문", 870, 3030, 375 + 15 * vEhc.getV(4,4), 10, (25 + vEhc.getV(4,4) // 2) * 1000, cooltime = -1).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)   # Equally available. 이퀄시 사용 가능해짐.
         PunishingResonator = PunishingResonatorWrapper(vEhc, 2, 1, LuminousState.getState)
         LightAndDarkness = LightAndDarknessWrapper(vEhc, 0, 0)
-        LiberationOrbPassive = core.DamageSkill("리버레이션 오브(패시브)", 0, 375+15*vEhc.getV(0,0), 4, cooltime=6000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # TODO: 여러번 타격 가능한지 확인할것
+        LiberationOrbPassive = core.DamageSkill("리버레이션 오브(패시브)", 0, 375+15*vEhc.getV(0,0), 4, cooltime=6000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # TODO: Check if you can hit multiple times. 여러번 타격 가능한지 확인할것.
         LiberationOrbStackLight = core.StackSkillWrapper(core.BuffSkill("리버레이션 오브(스택)(빛)", 0, 99999999), 4)
         LiberationOrbStackDark = core.StackSkillWrapper(core.BuffSkill("리버레이션 오브(스택)(어둠)", 0, 99999999), 4)
         LiberationOrb = core.BuffSkill("리버레이션 오브", 690, 45000, cooltime=180*1000, red=True).wrap(core.BuffSkillWrapper)
@@ -217,7 +224,7 @@ class JobGenerator(ck.JobGenerator):
 
         # Skill Wrapper - Basic Attack
         LightReflection.onAfter(LuminousState.modifyStack(390))
-        Apocalypse.onAfter(LuminousState.modifyStack(410 + 40)) # 아포칼립스-리차지 +40
+        Apocalypse.onAfter(LuminousState.modifyStack(410 + 40))  # Apocalypse-recharge +40. 아포칼립스-리차지 +40.
         
         Attack = core.DamageSkill('기본 공격', 0, 0, 0).wrap(core.DamageSkillWrapper)
         IsLight = core.OptionalElement(LuminousState.isLight, LightReflection, Apocalypse, name = '빛이면 라리플 사용')
