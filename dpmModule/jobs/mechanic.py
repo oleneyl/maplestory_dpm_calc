@@ -15,6 +15,9 @@ from typing import Any, Dict
 
 class MultipleOptionWrapper(core.SummonSkillWrapper):
     """
+    3 missiles-5 gatlings repeated. 1530 ms interval.
+    At level 30, 33 missiles, 55 Gatling.
+
     미사일 3회 - 개틀링 5회가 반복됨. 1530ms 간격.
     30레벨 기준 미사일 33회, 개틀링 55회.
     """
@@ -108,6 +111,14 @@ class JobGenerator(ck.JobGenerator):
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        Nose sequence:
+        Massive-Homing-Distortion-Magnetic Field-RM7-RM1
+
+        Hyper:
+        Massive Fire-Reinforce, Bonus Attack
+        Magnetic Field-Persist, Cool Time Reduce
+        Support Waver-Party Reinforcement
+
         코강 순서:
         매시브-호밍-디스토션-마그네틱필드-RM7-RM1
 
@@ -129,15 +140,15 @@ class JobGenerator(ck.JobGenerator):
         MassiveFire = core.DamageSkill("매시브 파이어", 600, 285+self.combat*6, 6+1, modifier=core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         MassiveFire2 = core.DamageSkill("매시브 파이어(2)", 0, 350+self.combat*10, 1, modifier=core.CharacterModifier(pdamage=10)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
-        # 로디드 데미지 고정.
+        # Fixed loaded damage. 로디드 데미지 고정.
         LuckyDice = core.BuffSkill("로디드 다이스", 0, 180*1000, pdamage=20+10/6+10/6*(5/6+1/11)*(10*(5+passive_level)*0.01)).isV(vEhc, 1, 2).wrap(core.BuffSkillWrapper)
 
-        # 로봇들 :: 로봇당 총뎀6%, 어빌리티 적용 시 7%
+        # Robots :: Total Dem 6% per robot, 7% when Ability is applied. 로봇들 :: 로봇당 총뎀6%, 어빌리티 적용 시 7%.
         Robolauncher = core.SummonSkill("로봇 런처:RM7", 630, 1000, 250+135+passive_level*4, 1, 60*1000*ROBOT_SUMMON_REMAIN, modifier=ROBOT_MASTERY).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         RobolauncherFinal = core.DamageSkill("로봇 런처:RM7(폭발)", 0, 400+135+passive_level*4, 1, modifier=ROBOT_MASTERY, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         RobolauncherBuff = core.BuffSkill("로봇 런처:RM7(버프)", 0, 60*1000*ROBOT_SUMMON_REMAIN, cooltime=-1, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)
 
-        # 마그네틱 필드는 로봇 마스터리, 하이퍼를 제외한 소환수 지속시간 영향을 받지 않음. 설치 완료 후부터 쿨타임이 돔.
+        # Magnetic field is not affected by the duration of minions except Robot Mastery and Hyper. Cooldown is dome after installation is complete. 마그네틱 필드는 로봇 마스터리, 하이퍼를 제외한 소환수 지속시간 영향을 받지 않음. 설치 완료 후부터 쿨타임이 돔.
         MagneticFieldInstall = core.DamageSkill("마그네틱 필드(설치)", 630, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
         MagneticField = core.SummonSkill("마그네틱 필드", 0, 990, 200, 1, 60*1000*ROBOT_SUMMON_REMAIN+10000, cooltime=160*0.75*1000, red=True, modifier=ROBOT_MASTERY).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
         MagneticFieldBuff = core.BuffSkill("마그네틱 필드(버프)", 0, 60*1000*ROBOT_SUMMON_REMAIN+10000, cooltime=-1, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)
@@ -150,7 +161,7 @@ class JobGenerator(ck.JobGenerator):
         RoboFactoryBuff = core.BuffSkill("로봇 팩토리(버프)", 0, 30*1000*ROBOT_SUMMON_REMAIN, cooltime=-1, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)
         RoboFactoryFinal = core.DamageSkill("로봇 팩토리(폭발)", 0, 1000+self.combat*10, 1, modifier=ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
 
-        OpenGateBuff = core.BuffSkill("오픈 게이트(버프)", 630*2+600, 300*1000*ROBOT_SUMMON_REMAIN, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)  # 동위치 설치불가, 매시브 1회 손실을 딜레이로 보정
+        OpenGateBuff = core.BuffSkill("오픈 게이트(버프)", 630*2+600, 300*1000*ROBOT_SUMMON_REMAIN, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)  # Cannot be installed in the same position, and compensates for the loss of one mass by delay. 동위치 설치불가, 매시브 1회 손실을 딜레이로 보정.
 
         BomberTime = core.BuffSkill("봄버 타임", 900, 10*1000, cooltime=100*1000).wrap(core.BuffSkillWrapper)
         DistortionField = core.SummonSkill("디스토션 필드", 690, 4000/15, 350, 2, 4000-1, cooltime=8000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
@@ -166,7 +177,7 @@ class JobGenerator(ck.JobGenerator):
 
         MicroMissle = core.DamageSkill("마이크로 미사일 컨테이너", 540, 375+17*vEhc.getV(0, 0), (30 + vEhc.getV(0, 0) // 3) * 5, cooltime=25000, red=True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         BusterCall_ = core.DamageSkill("메탈아머 전탄발사", 8670/49, 400+16*vEhc.getV(4, 4), 11).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
-        BusterCallInit = core.DamageSkill("메탈아머 전탄발사(시전)", 1330, 0, 0, cooltime=200*1000, red=True).wrap(core.DamageSkillWrapper)  # 선딜레이
+        BusterCallInit = core.DamageSkill("메탈아머 전탄발사(시전)", 1330, 0, 0, cooltime=200*1000, red=True).wrap(core.DamageSkillWrapper)  # Sun delay. 선딜레이.
         BusterCallBuff = core.BuffSkill("메탈아머 전탄발사(버프)", 0, 8670, cooltime=-1).isV(vEhc, 4, 4).wrap(core.BuffSkillWrapper)
         BusterCallEnd = core.DamageSkill("메탈아머 전탄발사(하차)", 1800, 0, 0).wrap(core.DamageSkillWrapper)
         BusterCallPenalty = core.BuffSkill("메탈아머 전탄발사(페널티)", 0, 2000, cooltime=-1).wrap(core.BuffSkillWrapper)
@@ -175,7 +186,7 @@ class JobGenerator(ck.JobGenerator):
         MechCarrierBuff = core.BuffSkill("메카 캐리어(버프)", 0, MechCarrier.skill.remain, cooltime=-1, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)
 
         MassiveFire.onAfter(MassiveFire2)
-        #### 호밍 미사일 정의 ####
+        #### Homing Missile Definition | 호밍 미사일 정의 ####
         HommingMissle_ = core.DamageSkill("호밍 미사일", 0, 500*0.6, 9+passive_level).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         HommingMissle_B = core.DamageSkill("호밍 미사일(봄버)", 0, 500*0.6, 9+passive_level+6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         HommingMissle_Bu = core.DamageSkill("호밍 미사일(전탄)", 0, 500, 9+passive_level+7).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
