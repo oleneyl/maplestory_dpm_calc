@@ -8,7 +8,19 @@ from .jobbranch import warriors
 from math import ceil
 from typing import Any, Dict
 
-'''히어로 스킬 정리
+'''
+Hero skill summary
+-Combo Attack: 2 Attack Power per Stack, 10% Final Damage -> 11% Order +2% (Hyper) Bogong +2%
+-Anger (ball 30)
+-Weapon Mastery (Final Dem 10 + Ax Dem 5%)
+-Physical training (major/minor stats 30)
+-Chance Attack (Creat 20, Dempeng 25 in case of abnormal condition)
+-Inlay (25 final dem, 20 dem last)
+-Combat Mastery (Bangmu 50)
+-Fish (30 blank), 75% (applied hyper +15)
+-Level +20%, At-bats +1
+
+히어로 스킬 정리
 - 콤보 어택 :: 스택당 공격력 2, 최종뎀10% -> 오더 11% +2%(하이퍼) 보공+2%
 - 분노(공30)
 - 웨폰 마스터리 (최종뎀 10 + 도끼 뎀5%)
@@ -74,7 +86,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리(두손도끼)", pdamage_indep = 10, pdamage = 5) # 두손도끼
+        WeaponMastery = core.InformedCharacterModifier("웨폰 마스터리(두손도끼)", pdamage_indep = 10, pdamage = 5)  # Two-handed ax. 두손도끼.
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         
         ChanceAttack = core.InformedCharacterModifier("찬스 어택(패시브)",crit = 20)
@@ -97,6 +109,25 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        Two-handed ax
+
+        Nose sequence:
+        Level-Patek-Uprising-Shout-Greeting-Panic
+
+        Advanced Combo-Reinforcement, Boss Killer / Advanced Final Attack-Bonus Chance / Raging Blow-Reinforcement, Bonus Attack
+
+        Use the main shaft according to the instinct
+
+        Combo counter increase probability
+        64%-2
+        16%-1
+        20%-0
+
+        Instinct City
+        24%-2
+        6%-1 piece
+        70%-0
+
         두손도끼
 
         코강 순서:
@@ -127,8 +158,8 @@ class JobGenerator(ck.JobGenerator):
         PanicBuff = core.BuffSkill("패닉(디버프)", 0, 40000, cooltime = -1, pdamage_indep = 25, rem = False).wrap(core.BuffSkillWrapper)
         
         RaisingBlow = core.DamageSkill("레이징 블로우", 600, 200 + 3*self.combat, 8, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        RaisingBlowInrage = core.DamageSkill("레이징 블로우(인레이지)", 600, 215+3*self.combat, 6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함.
-        RaisingBlowInrageFinalizer = core.DamageSkill("레이징 블로우(인레이지)(최종타)", 0, 215+3*self.combat, 2, modifier = core.CharacterModifier(pdamage = 20, crit = 100)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  #이걸 사용함. 둘을 연결해야 함.
+        RaisingBlowInrage = core.DamageSkill("레이징 블로우(인레이지)", 600, 215+3*self.combat, 6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  # I use this. 이걸 사용함.
+        RaisingBlowInrageFinalizer = core.DamageSkill("레이징 블로우(인레이지)(최종타)", 0, 215+3*self.combat, 2, modifier = core.CharacterModifier(pdamage = 20, crit = 100)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  # I use this. You need to connect the two. 이걸 사용함. 둘을 연결해야 함.
         
         Insizing = core.DamageSkill("인사이징", 660, 576 + 7 * self.combat, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         InsizingBuff = core.BuffSkill("인사이징(버프)", 0, (30 + self.combat // 2) * 1000, cooltime = -1, pdamage = 25 + ceil(self.combat / 2)).wrap(core.BuffSkillWrapper)
@@ -164,7 +195,7 @@ class JobGenerator(ck.JobGenerator):
         ComboInstinct.onEventEnd(ComboAttack.toggleController(False))
         InstinctFringeUse = core.OptionalElement(ComboInstinct.is_active, ComboInstinctFringe, name = "콤보 인스팅트 여부")
     
-        #레이징 블로우
+        # Raging blow. 레이징 블로우.
         RaisingBlowInrage.onAfters([InstinctFringeUse, RaisingBlowInrageFinalizer, AdvancedFinalAttack, IncreaseCombo])
 
         RisingRage.onAfters([AdvancedFinalAttack, IncreaseCombo])
@@ -172,7 +203,7 @@ class JobGenerator(ck.JobGenerator):
         Insizing.onBefore(ComboAttack.stackController(-1))
         Insizing.onAfters([InsizingBuff, InsizingDot, AdvancedFinalAttack])
     
-        ComboDeathFault.onBefores([ComboDeathFaultBuff, ComboAttack.stackController(-6)]) # TODO: 데스폴트 데미지에 콤보 카운터 어떻게 적용되는지 확인 필요
+        ComboDeathFault.onBefores([ComboDeathFaultBuff, ComboAttack.stackController(-6)])  # TODO: It is necessary to check how the combo counter is applied to the death fault damage. 데스폴트 데미지에 콤보 카운터 어떻게 적용되는지 확인 필요.
         ComboDeathFault.onAfter(AdvancedFinalAttack)
         ComboDeathFault.onConstraint(core.ConstraintElement("콤보 6개 이상", ComboAttack, partial(ComboAttack.judge, 6, 1)))
 
@@ -186,7 +217,7 @@ class JobGenerator(ck.JobGenerator):
         Panic.onBefore(ComboAttack.stackController(-2))
         Panic.onAfters([PanicBuff, AdvancedFinalAttack])
         
-        # 오라 웨폰
+        # Weapon Aura. 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 3, 2)
         for sk in [RaisingBlowInrageFinalizer, ComboDeathFault, Panic, Insizing, RisingRage]:
             auraweapon_builder.add_aura_weapon(sk)
