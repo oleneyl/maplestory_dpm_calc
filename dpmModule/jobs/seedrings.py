@@ -2,6 +2,12 @@ from ..kernel import core
 
 
 """
+Oz rings
+
+Excluding rings with low efficiency such as health cut, mana cut, limit, or no deal contribution such as Swift and Overpass
+
+TODO: Ring of ??, Durability, Ultimatum
+
 시드링
 
 헬스컷, 마나컷, 리밋 등 효율이 낮거나 스위프트, 오버패스 등 딜 기여가 없는 링은 제외
@@ -88,7 +94,7 @@ def crit_damage_ring(level: int):
 
 
 def crit_defense_ring(level: int):
-    # 크확 100% 가정
+    # 100% assumption. 크확 100% 가정.
     return core.BuffSkill(
         "크리디펜스 링",
         delay=60,
