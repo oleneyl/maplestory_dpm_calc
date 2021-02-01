@@ -23,15 +23,15 @@ class MorphGaugeWrapper(core.StackSkillWrapper):
             return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self._id, spec = 'graph control')
 
     def get_morph_level(self):
-        if self.final_figuration.is_active() or self.stack >= 700: # 3단계
+        if self.final_figuration.is_active() or self.stack >= 700:  # Step 3. 3단계.
             return 3
-        if self.stack >= 300: # 2단계
+        if self.stack >= 300: # Step 2. 2단계.
             return 2
-        if self.stack >= 100: # 1단계
+        if self.stack >= 100: # Step 1. 1단계.
             return 1
         return 0
 
-    def get_modifier(self): # 아이언 윌 - 모프 게이지 단계당 데미지 3% 증가
+    def get_modifier(self):  # Iron Will-Increases damage by 3% per morph gauge step. 아이언 윌 - 모프 게이지 단계당 데미지 3% 증가.
         return core.CharacterModifier(pdamage = 3 * self.get_morph_level())
 
 class GigaSlasherWrapper(core.DamageSkillWrapper):
@@ -192,6 +192,20 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        Morph supply and demand
+        Awillso 12*5
+        Prominence 50
+        Infernal 40
+        Giga Slasher 5
+        1 per wingbeat attack
+
+        Hyper
+        Giga Slasher-Reinforce, Bonus Attack
+        Wing Beat-Reinforce, Persist, Extra Attack
+
+        Core hardening priority
+        Giga Slasher-Wing Beat-Sword Strike-Will of Sword-Infernal Breath-Petrified-Prominence
+
         모프 수급량
         어윌소 12*5
         프로미넌스 50
@@ -216,8 +230,8 @@ class JobGenerator(ck.JobGenerator):
         FinalFiguration = core.BuffSkill("파이널 피규레이션", 0, 60000, pdamage_indep = 15, boss_pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
         MorphGauge = MorphGaugeWrapper(core.BuffSkill("모프 게이지", 0, 9999999), FinalFiguration)
 
-        Wingbit_1 = WingbitWrapper(core.SummonSkill("윙비트", 0, 330, 200, 1, 15900, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, True), FinalFiguration) #48타
-        Wingbit_2 = WingbitWrapper(core.SummonSkill("윙비트(2)", 0, 330, 200, 1, 15900, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, True), FinalFiguration) #48타
+        Wingbit_1 = WingbitWrapper(core.SummonSkill("윙비트", 0, 330, 200, 1, 15900, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, True), FinalFiguration) # 48 strokes. 48타.
+        Wingbit_2 = WingbitWrapper(core.SummonSkill("윙비트(2)", 0, 330, 200, 1, 15900, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, True), FinalFiguration) # 48 strokes. 48타.
         
         GigaSlasher = GigaSlasherWrapper(core.DamageSkill("기가 슬래셔", 540, 330 + 2*self.combat, 9+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False), FinalFiguration)
     
@@ -229,19 +243,19 @@ class JobGenerator(ck.JobGenerator):
 
         Petrified = core.SummonSkill("페트리파이드", 450, 3030, 400, 1, 60000).setV(vEhc, 5, 3, False).wrap(core.SummonSkillWrapper)
     
-        # 하이퍼
+        # Hyper. 하이퍼.
         MajestyOfKaiser = core.BuffSkill("마제스티 오브 카이저", 900, 30000, att = 30, cooltime = 90000).wrap(core.BuffSkillWrapper)
-        FinalTrance = core.BuffSkill("파이널 트랜스", 0, 60000, cooltime = 300000).wrap(core.BuffSkillWrapper) # 딜레이 모름
+        FinalTrance = core.BuffSkill("파이널 트랜스", 0, 60000, cooltime = 300000).wrap(core.BuffSkillWrapper) # I don't know the delay. 딜레이 모름.
         Prominence = ProminenceWrapper(core.DamageSkill("프로미넌스", 2220, 1000, 15, cooltime = 60000).setV(vEhc, 6, 2, True), FinalFiguration)
 
-        # 5차
+        # 5th. 5차.
         Phanteon = nova.PantheonWrapper(vEhc, 4, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         NovaGoddessBless = nova.NovaGoddessBlessWrapper(vEhc, 0, 0, MorphGauge)
 
-        GuardianOfNova_1 = core.SummonSkill("가디언 오브 노바(1)", 600, 45000/46, 450+15*vEhc.getV(2,2), 4, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = 120000, red=True).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 46*4타
-        GuardianOfNova_2 = core.SummonSkill("가디언 오브 노바(2)", 0, 45000/34, 250+10*vEhc.getV(2,2), 6, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 34*6타
-        GuardianOfNova_3 = core.SummonSkill("가디언 오브 노바(3)", 0, 45000/26, 900+35*vEhc.getV(2,2), 2, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 26*2타
+        GuardianOfNova_1 = core.SummonSkill("가디언 오브 노바(1)", 600, 45000/46, 450+15*vEhc.getV(2,2), 4, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = 120000, red=True).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)  # 46*4 strokes. 46*4타.
+        GuardianOfNova_2 = core.SummonSkill("가디언 오브 노바(2)", 0, 45000/34, 250+10*vEhc.getV(2,2), 6, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)  # 34*6 strokes. 34*6타.
+        GuardianOfNova_3 = core.SummonSkill("가디언 오브 노바(3)", 0, 45000/26, 900+35*vEhc.getV(2,2), 2, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)  # 26*2 strokes. 26*2타.
 
         WillOfSwordStrike = WillOfSwordStrikeWrapper(core.DamageSkill("윌 오브 소드: 스트라이크", 150, 500+20*vEhc.getV(3,3), 4*5, cooltime = 30000, red=True).isV(vEhc,3,3), FinalFiguration)
         WillOfSwordStrike_Explode = WillOfSwordStrikeExplodeWrapper(core.DamageSkill("윌 오브 소드: 스트라이크(폭발)", 0, 1000+40*vEhc.getV(3,3), 6*5).isV(vEhc,3,3), FinalFiguration)
@@ -255,34 +269,34 @@ class JobGenerator(ck.JobGenerator):
         
         ######   Skill Wrapper   ######
         
-        # 파이널 피규레이션
+        # Final figure. 파이널 피규레이션.
         FinalFiguration.onAfter(MorphGauge.stackController(-9999, name = "게이지 리셋"))
         FinalFiguration.onConstraint(core.ConstraintElement("게이지 충전시 변신", MorphGauge, partial(MorphGauge.judge, 700, 1)))
 
-        # 파이널 트랜스
+        # Final Trance. 파이널 트랜스.
         FinalTrance.onAfter(FinalFiguration.controller(60000, "set_enabled_and_time_left"))
         FinalTrance.onConstraint(core.ConstraintElement("파이널 피규레이션 여부 확인", FinalFiguration, FinalFiguration.is_not_active))
         
-        # 윙비트
+        # Wing beat. 윙비트.
         Wingbit_1.onAfter(Wingbit_2)
 
-        # 인퍼널 브레스
+        # Infernal Breath. 인퍼널 브레스.
         InfernalBreath.onAfter(InfernalBreath_Tile)
         
-        # 드라코 슬래셔
+        # Draco Slasher. 드라코 슬래셔.
         DrakeSlasher.onAfter(DrakeSlasher_Projectile)
         
-        # 기본공격 - 드라코 슬래셔 / 기가 슬래셔 분기
+        # Basic Attack-Draco Slasher / Giga Slasher Branch. 기본공격 - 드라코 슬래셔 / 기가 슬래셔 분기.
         BasicAttack = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttack.onAfter(core.OptionalElement(DrakeSlasher.is_available, DrakeSlasher, GigaSlasher, name = "드라코 슬래셔 충전시"))
         
-        # 어드밴스드 윌 오브 소드
+        # Advanced Will of Sword. 어드밴스드 윌 오브 소드.
         IsSwordSummoned = core.ConstraintElement("윌 오브 소드 소환시", AdvancedWillOfSword_Summon, AdvancedWillOfSword_Summon.is_active)
         TurnOffSword = AdvancedWillOfSword_Summon.off()
         AdvancedWillOfSword.onConstraint(IsSwordSummoned)
         AdvancedWillOfSword.onJustAfter(TurnOffSword)
 
-        # 윌 오브 소드:스트라이크
+        # Will of Sword: Strike. 윌 오브 소드:스트라이크.
         WillOfSwordStrike.onConstraint(IsSwordSummoned)
         WillOfSwordStrike.onJustAfter(TurnOffSword)
         WillOfSwordStrike.onAfter(WillOfSwordStrike_Explode)
@@ -294,20 +308,20 @@ class JobGenerator(ck.JobGenerator):
         WillOfSwordStrike_Explode.onAfter(DrakeSlasherResetStack.stackController(3))
         WillOfSwordStrike_Explode.onAfter(DrakeSlasherReset)
         
-        # 오라 웨폰
+        # Weapon Aura. 오라 웨폰.
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 1, 1)
         for sk in [GigaSlasher, DrakeSlasher, DrakeSlasher_Projectile]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
         
-        # 쿨 초기화
+        # Cooldown reset. 쿨 초기화.
         for sk in [AdvancedWillOfSword_Summon, InfernalBreath, SoulContract]:
             MajestyOfKaiser.onAfter(sk.controller(1, "reduce_cooltime_p"))
         
-        # 조상님
+        # Ancestors. 조상님.
         GuardianOfNova_1.onAfters([GuardianOfNova_2, GuardianOfNova_3])
 
-        # 드래곤 블레이즈
+        # Dragon Blaze. 드래곤 블레이즈.
         UseDragonBlazeAura = core.OptionalElement(lambda: DragonBlaze.is_active() and DragonBlazeAura.is_available(), DragonBlazeAura)
         UseDragonBlazeFireball = core.OptionalElement(lambda: DragonBlaze.is_not_active() and DragonBlazeFireball.is_available(), DragonBlazeFireball)
         for sk in [GigaSlasher, DrakeSlasher, DrakeSlasher_Projectile]:
@@ -316,7 +330,7 @@ class JobGenerator(ck.JobGenerator):
         DragonBlazeAura.protect_from_running()
         DragonBlazeFireball.protect_from_running()
         
-        # 스택량 계산
+        # Stack amount calculation. 스택량 계산.
         for sk, incr in [[DrakeSlasher, 5],
                             [GigaSlasher, 5],
                             [AdvancedWillOfSword, 60],
