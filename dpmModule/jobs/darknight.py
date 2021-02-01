@@ -7,7 +7,7 @@ from .jobbranch import warriors
 from math import ceil
 from typing import Any, Dict
 
-#TODO: 비홀더스 리벤지 메인 효과 추가
+#TODO: Beholder's Revenge main effect added. 비홀더스 리벤지 메인 효과 추가.
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -49,6 +49,18 @@ class JobGenerator(ck.JobGenerator):
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        Window use
+        Croce Fulpie Assumption
+        Beholder-Reinforce
+        Reincarnation-Damage, Critical Rate
+        Goongnil-Reinforce, Ignor Guard
+
+        Beholder Impact 9 strokes
+        Pierce Cyclone 25 strokes
+        Dark Sphere 8 Hit
+
+        Impale-Gungnil-Beholder-Final Attack
+
         창 사용
         크오체 풀피 가정
         비홀더 - 리인포스
@@ -60,14 +72,13 @@ class JobGenerator(ck.JobGenerator):
         다크 스피어 8히트
         
         임페일-궁그닐-비홀더-파이널어택
-
         '''
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         
         #Buff skills
-        Booster = core.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
-        CrossoverChain = core.BuffSkill("크로스 오버 체인", 0, 200*1000, pdamage_indep = 20).wrap(core.BuffSkillWrapper) # 펫버프
+        Booster = core.BuffSkill("부스터", 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper)  # Pet Buff. 펫버프.
+        CrossoverChain = core.BuffSkill("크로스 오버 체인", 0, 200*1000, pdamage_indep = 20).wrap(core.BuffSkillWrapper)  # Pet Buff. 펫버프.
         FinalAttack = core.DamageSkill("파이널 어택", 0, 80, 2*0.4).setV(vEhc, 3, 4, True).wrap(core.DamageSkillWrapper)
         BiholderDominant = core.SummonSkill("비홀더 도미넌트", 0, 10000, 210, 1, 99999*10000, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).wrap(core.SummonSkillWrapper)
         BiholderShock = core.DamageSkill("비홀더 쇼크", 0, 215+300 + 5 * passive_level, 6, cooltime = 12000, red=True, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).wrap(core.DamageSkillWrapper)
@@ -78,22 +89,22 @@ class JobGenerator(ck.JobGenerator):
         GoungnilDescentNoCooltime = core.DamageSkill("궁그닐 디센트(무한)", 600, 225 + self.combat, 12, modifier = GOUNGNIL_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    
         GoungnilDescent = core.DamageSkill("궁그닐 디센트", 600, 225 + self.combat, 12, cooltime = 8000, red=True, modifier = GOUNGNIL_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        Sacrifice = core.BuffSkill("새크리파이스", 1080, (30 + self.combat // 2)*1000, rem = True, red = True, cooltime = 70000, armor_ignore = 10 + self.combat // 3, boss_pdamage = 10 + self.combat // 3).wrap(core.BuffSkillWrapper)   #궁그닐 쿨 무시, 비홀더 공격시 쿨0.3감소
-        Reincarnation = core.BuffSkill("리인카네이션", 0, (40+passive_level)*1000, cooltime = (900 - 7 * passive_level) * 1000, rem = True, red = True, pdamage_indep=30).wrap(core.BuffSkillWrapper) #궁그닐 쿨 무시
+        Sacrifice = core.BuffSkill("새크리파이스", 1080, (30 + self.combat // 2)*1000, rem = True, red = True, cooltime = 70000, armor_ignore = 10 + self.combat // 3, boss_pdamage = 10 + self.combat // 3).wrap(core.BuffSkillWrapper)   # Ignores the cool cool, decreases the cool by 0.3 when attacking the beholder. 궁그닐 쿨 무시, 비홀더 공격시 쿨0.3감소.
+        Reincarnation = core.BuffSkill("리인카네이션", 0, (40+passive_level)*1000, cooltime = (900 - 7 * passive_level) * 1000, rem = True, red = True, pdamage_indep=30).wrap(core.BuffSkillWrapper)  # Ignore cooldown. 궁그닐 쿨 무시.
         
-        #하이퍼
+        # Hypers. 하이퍼.
         DarkThurst = core.BuffSkill("다크 서스트", 900, 30000, cooltime = 120*1000, att = 80).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
-        #5차
+        # 5th. 5차.
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         DarkSpear = core.DamageSkill("다크 스피어", 750, 350+10*vEhc.getV(1,0), 7*10, cooltime = 10000, red = True, modifier = core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc,1,0).wrap(core.DamageSkillWrapper)
-        BiholderImpact = core.SummonSkill("비홀더 임팩트", 0, 270, 100+vEhc.getV(0,2), 6, 2880, cooltime = 20000, red = True, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).isV(vEhc,0,2).wrap(core.SummonSkillWrapper)#onTick으로 0.3초씩
+        BiholderImpact = core.SummonSkill("비홀더 임팩트", 0, 270, 100+vEhc.getV(0,2), 6, 2880, cooltime = 20000, red = True, modifier = core.CharacterModifier(pdamage = 150)).setV(vEhc, 2, 3, False).isV(vEhc,0,2).wrap(core.SummonSkillWrapper) # 0.3 seconds each with onTick. onTick으로 0.3초씩.
         PierceCyclone = core.DamageSkill("피어스 사이클론(더미)", 90, 0, 0, cooltime = 180*1000, red = True).wrap(core.DamageSkillWrapper)
-        PierceCycloneTick = core.DamageSkill("피어스 사이클론", 360, 400+16*vEhc.getV(3,3), 12, modifier = core.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #25타
+        PierceCycloneTick = core.DamageSkill("피어스 사이클론", 360, 400+16*vEhc.getV(3,3), 12, modifier = core.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) # 25 strokes. 25타.
         PierceCycloneEnd = core.DamageSkill("피어스 사이클론(종료)", 900, 300+12*vEhc.getV(3,3), 15*5, modifier = core.CharacterModifier(crit=100, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
         DarknessAura = core.SummonSkill("다크니스 오라", 600, 1530, 400+16*vEhc.getV(0,0), 5, 40000, cooltime=180*1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
-        DarknessAuraFinal = core.DamageSkill("다크니스 오라(폭발)", 0, 650+25*vEhc.getV(0,0), 13*(1+15//3), cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 생명력 3마다 폭발 1회 추가, 생명력 최대 15
+        DarknessAuraFinal = core.DamageSkill("다크니스 오라(폭발)", 0, 650+25*vEhc.getV(0,0), 13*(1+15//3), cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # Adds 1 explosion every 3 health, maximum health 15. 생명력 3마다 폭발 1회 추가, 생명력 최대 15.
         
         ######   Skill Wrapper   ######
     
@@ -125,7 +136,7 @@ class JobGenerator(ck.JobGenerator):
 
         DarknessAura.onEventEnd(DarknessAuraFinal)
 
-        # 오라 웨폰
+        # Weapon Aura. 오라 웨폰.
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 1)
         for sk in [GoungnilDescent, GoungnilDescentNoCooltime, DarkImpail, PierceCycloneEnd]:
             auraweapon_builder.add_aura_weapon(sk)
