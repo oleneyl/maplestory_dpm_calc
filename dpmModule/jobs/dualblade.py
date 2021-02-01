@@ -9,7 +9,7 @@ from . import jobutils
 from math import ceil
 from typing import Any, Dict
 
-# TODO: 왜 레투다는 5차값이 1,1인데 레투다 패시브는 2,2일까?
+# TODO: Why is Retouda 5th order value 1,1, but Retouda passive is 2,2? 왜 레투다는 5차값이 1,1인데 레투다 패시브는 2,2일까?
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -38,12 +38,12 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 30)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5 * ceil(passive_level / 2))    #오더스 기본적용!   
+        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5 * ceil(passive_level / 2))    # Basic application of orders! 오더스 기본적용!
         return [WeaponConstant, Mastery]
 
     def get_ruleset(self):
         def check_final_cut_time(final_cut):
-            return (final_cut.is_not_usable() and final_cut.is_cooltime_left(80*1000, 1)) # 파컷 직후 써레 1번만 쓰는게 더 효율적임
+            return (final_cut.is_not_usable() and final_cut.is_cooltime_left(80*1000, 1)) # It is more efficient to use only one harrow immediately after breaking. 파컷 직후 써레 1번만 쓰는게 더 효율적임.
 
         def sync_burst_buff(burst_buff, blade_storm, ultimate_dark_sight):
             if blade_storm.is_usable():
@@ -53,7 +53,7 @@ class JobGenerator(ck.JobGenerator):
 
         ruleset = RuleSet()
         ruleset.add_rule(ConditionRule('써든레이드', '파이널 컷', check_final_cut_time), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule('아수라', '카르마 퓨리', lambda sk: sk.is_cooltime_left(6000, 1)), RuleSet.BASE)  # TODO: 쿨감 4초기준 최적화, 쿨감 수치를 받아와서 처리해야 함
+        ruleset.add_rule(ConditionRule('아수라', '카르마 퓨리', lambda sk: sk.is_cooltime_left(6000, 1)), RuleSet.BASE)  # TODO: Optimized for 4 seconds of cooldown reduction, you need to receive and process cooldown reduction values. 쿨감 4초기준 최적화, 쿨감 수치를 받아와서 처리해야 함.
         ruleset.add_rule(ComplexConditionRule('레디 투 다이', ['블레이드 스톰', '얼티밋 다크 사이트'], sync_burst_buff), RuleSet.BASE)
         ruleset.add_rule(ComplexConditionRule('소울 컨트랙트', ['블레이드 스톰', '얼티밋 다크 사이트'], sync_burst_buff), RuleSet.BASE)
         ruleset.add_rule(ConditionRule('블레이드 스톰', '얼티밋 다크 사이트', lambda sk: sk.is_active() or sk.is_cooltime_left(80000, 1)), RuleSet.BASE)
@@ -62,6 +62,14 @@ class JobGenerator(ck.JobGenerator):
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        Hyper: Phantom Blow-Reinforce, Ignor Guard, Bonus Attack
+        Blade Fury-Reinforce, Extra Target
+
+        Asura 41 strokes
+        Blade Tornado 5 Hits
+
+        16 cores valid: Fanble / Asura / Fury - Sudden Raid / Ascension / Hidden Blade
+
         하이퍼 : 팬텀 블로우 - 리인포스, 이그노어 가드, 보너스 어택
         블레이드 퓨리 - 리인포스, 엑스트라 타겟
         
@@ -77,7 +85,7 @@ class JobGenerator(ck.JobGenerator):
         DarkSight = core.BuffSkill("다크 사이트", 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper)#, pdamage_indep = 20 + 10 + int(0.2*vEhc.getV(3,3))).wrap(core.BuffSkillWrapper)
         
         PhantomBlow = core.DamageSkill("팬텀 블로우", 540, 315 + 3 * self.combat, 6+1, modifier = core.CharacterModifier(armor_ignore = 44, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        SuddenRaid = core.DamageSkill("써든레이드", 690, 494+5*self.combat, 7, cooltime = (30-2*(self.combat//2))*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)    #파컷의 남은 쿨타임 20% 감소
+        SuddenRaid = core.DamageSkill("써든레이드", 690, 494+5*self.combat, 7, cooltime = (30-2*(self.combat//2))*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)    # Pacutt's remaining cooldown is reduced by 20%. 파컷의 남은 쿨타임 20% 감소.
         SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 0, 1000, 210 + 4 * self.combat, 1, 10000, cooltime = -1).wrap(core.DotSkillWrapper)
         
         FinalCut = core.DamageSkill("파이널 컷", 450, 2000 + 20 * self.combat, 1, cooltime = 90000, red=True).wrap(core.DamageSkillWrapper)
@@ -85,9 +93,9 @@ class JobGenerator(ck.JobGenerator):
         
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
-        FlashBang = core.DamageSkill("플래시 뱅", 390, 250, 1, cooltime = 60000, red=True).wrap(core.DamageSkillWrapper)  #임의 딜레이.
+        FlashBang = core.DamageSkill("플래시 뱅", 390, 250, 1, cooltime = 60000, red=True).wrap(core.DamageSkillWrapper)  # Random delay. 임의 딜레이.
         FlashBangDebuff = core.BuffSkill("플래시 뱅(디버프)", 0, 50000/2, cooltime = -1, pdamage = 10 * 0.9).wrap(core.BuffSkillWrapper)
-        Venom = core.DotSkill("페이탈 베놈", 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 8000, cooltime = -1).wrap(core.DotSkillWrapper) # 3회 중첩
+        Venom = core.DotSkill("페이탈 베놈", 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 8000, cooltime = -1).wrap(core.DotSkillWrapper)  # Stacks 3 times. 3회 중첩.
 
         HiddenBladeBuff = core.BuffSkill("히든 블레이드(버프)", 0, 60000, cooltime = 90000, pdamage = 10).wrap(core.BuffSkillWrapper)
         HiddenBlade = core.DamageSkill("히든 블레이드", 0, 140, 1).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
@@ -125,7 +133,7 @@ class JobGenerator(ck.JobGenerator):
         for sk in [PhantomBlow, AsuraTick, BladeStormTick]:
             sk.onAfter(Venom)
         
-        AsuraRepeat = core.RepeatElement(AsuraTick, 26)  # 최대 28회까지 가능하나, dpm 최적화를 위해 26회로 설정함.
+        AsuraRepeat = core.RepeatElement(AsuraTick, 26)  # Up to 28 times are possible, but 26 times are set for dpm optimization. 최대 28회까지 가능하나, dpm 최적화를 위해 26회로 설정함.
         Asura.onAfter(AsuraRepeat)
         AsuraRepeat.onAfter(AsuraEnd)
 
