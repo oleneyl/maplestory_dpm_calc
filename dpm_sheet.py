@@ -58,7 +58,7 @@ if __name__ == "__main__":
     median = df["best"].median()
     df["Percentage to Median | 배율"] = df["dpm"] / median
 
-    df = df[["Job | 직업", "CDR | 쿨감", "Remarks | 비고", "dpm", "Percentage to Median | 배율", "alt"]]
+    df = df[["Job | 직업", "CDR | 쿨감", "Remarks | 비고", "dpm", "Percentage of Median | 배율", "alt"]]
 
     writer = pd.ExcelWriter(f"./dpm_sheet_{ulevel}.xlsx", engine="xlsxwriter")
     df.to_excel(writer, sheet_name="dpm", index=False)
