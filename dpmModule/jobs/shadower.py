@@ -30,7 +30,7 @@ class JobGenerator(ck.JobGenerator):
         Grid = core.InformedCharacterModifier("그리드",att = 5)
         
         PrimaCriticalPassive = core.InformedCharacterModifier("프리마 크리티컬(패시브)",stat_main = 10, crit_damage = 20)
-        PrimaCritical = core.InformedCharacterModifier("프리마 크리티컬", crit_damage = 8.33) # 스택식으로도 계산 가능. 150 / 18 = 8.33...
+        PrimaCritical = core.InformedCharacterModifier("프리마 크리티컬", crit_damage = 8.33)  # Can also be calculated stacked. 150/18 = 8.33... 스택식으로도 계산 가능. 150 / 18 = 8.33...
         
         BoomerangStepPassive = core.InformedCharacterModifier("부메랑 스텝(패시브)",pdamage_indep = 25+2*(self.combat//3))
         
@@ -46,12 +46,22 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5+0.5*ceil(passive_level/2))    #오더스 기본적용!
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5+0.5*ceil(passive_level/2))    # Basic application of orders! 오더스 기본적용!
         
         return [WeaponConstant, Mastery]
     
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        Normal dark sites are not used as gangs.
+
+        Prima Critical Cdem: 8.33%
+        Shadow partner only applies to incision, assassination, and sonic blow.
+
+        Hyper: Meic Enhance, Assassination Reinforce / Vokill / Ignor Guard.
+
+        Killing Points 3 Stack Chance 1 hit 94.6% / 2 hits 100%
+        Assassination-Single-Make-Beosha
+
         일반 다크사이트는 깡으로 사용하지 않음.
         
         프리마 크리티컬 크뎀 : 8.33%
@@ -66,8 +76,8 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill   ######
         # http://m.inven.co.kr/board/powerbbs.php?come_idx=2297&stype=subject&svalue=%EC%8A%A4%ED%83%9D&l=52201
 
-        # 1타 94.6%, 2타 100%
-        # 크로아 서버 스킨헤드님
+        # 1 hit 94.6%, 2 hits 100%. 1타 94.6%, 2타 100%.
+        # Croa Server Skinhead. 크로아 서버 스킨헤드님.
         # https://drive.google.com/file/d/1ORJc-F77ELssCSVWgHiuQP49pifgCjpo/view
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -83,21 +93,21 @@ class JobGenerator(ck.JobGenerator):
         
         ShadowPartner = core.BuffSkill("섀도우 파트너", 0, 2000*1000, rem = True).wrap(core.BuffSkillWrapper)
         
-        #킬포3개 사용시 최종뎀 100% 증가.
-        Assasinate1 = core.DamageSkill("암살(1타)", 630, 275+4*self.combat, 6, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타")   #쉐파
-        Assasinate2 = core.DamageSkill("암살(2타)", 420, 350+5*self.combat, 6, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타")   #쉐파
+        # When using 3 kills, the final damage is increased by 100%. 킬포3개 사용시 최종뎀 100% 증가.
+        Assasinate1 = core.DamageSkill("암살(1타)", 630, 275+4*self.combat, 6, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타")   # ??. 쉐파.
+        Assasinate2 = core.DamageSkill("암살(2타)", 420, 350+5*self.combat, 6, modifier = core.CharacterModifier(pdamage=20, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타")   # ??. 쉐파.
         
-        Assasinate1_D = core.DamageSkill("암살(1타)(다크사이트)", 630, 275+4*self.combat, 6, modifier = core.CharacterModifier(pdamage=20+150+4*self.combat, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타(닼사)")   #쉐파
-        Assasinate2_D = core.DamageSkill("암살(2타)(다크사이트)", 420, 350+5*self.combat, 6, modifier = core.CharacterModifier(pdamage=20+150+4*self.combat, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타(닼사)")   #쉐파
+        Assasinate1_D = core.DamageSkill("암살(1타)(다크사이트)", 630, 275+4*self.combat, 6, modifier = core.CharacterModifier(pdamage=20+150+4*self.combat, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 1타(닼사)")   # ??. 쉐파.
+        Assasinate2_D = core.DamageSkill("암살(2타)(다크사이트)", 420, 350+5*self.combat, 6, modifier = core.CharacterModifier(pdamage=20+150+4*self.combat, boss_pdamage = 20, armor_ignore = 10, pdamage_indep = STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper, name = "암살 2타(닼사)")   # ??. 쉐파.
 
         MesoStack = core.StackSkillWrapper(core.BuffSkill("픽파킷", 0, 9999999), 20)
         MesoExplosion = core.StackDamageSkillWrapper(core.DamageSkill("메소 익스플로전", 0, 120, 2).setV(vEhc, 2, 3, False), MesoStack, lambda skill: skill.stack)
         
-        BailOfShadow = core.SummonSkill("베일 오브 섀도우", 900 + 120, 12000 / 14, 800, 1, 12*1000, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper) # 다크 사이트 딜레이 합산
+        BailOfShadow = core.SummonSkill("베일 오브 섀도우", 900 + 120, 12000 / 14, 800, 1, 12*1000, cooltime = 60000).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)  # Dark sight delay summation. 다크 사이트 딜레이 합산.
 
         DarkFlare = core.SummonSkill("다크 플레어", 600, 60000 / 62, 360, 1, 60*1000, cooltime = 60000, red=True, rem=True).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)
     
-        Smoke = core.BuffSkill("연막탄", 900 + 120, 30000, cooltime = (150-2*self.combat)*1000, crit_damage = 20+ceil(self.combat/3), red=True).wrap(core.BuffSkillWrapper) # 다크 사이트 딜레이 합산
+        Smoke = core.BuffSkill("연막탄", 900 + 120, 30000, cooltime = (150-2*self.combat)*1000, crit_damage = 20+ceil(self.combat/3), red=True).wrap(core.BuffSkillWrapper)  # Dark sight delay summation. 다크 사이트 딜레이 합산.
         Venom = core.DotSkill("페이탈 베놈", 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 89999 * 1000).wrap(core.DotSkillWrapper)
         
         AdvancedDarkSight = core.BuffSkill("어드밴스드 다크 사이트", 0, 10000, cooltime = -1, pdamage_indep = 5).wrap(core.BuffSkillWrapper)
@@ -111,7 +121,7 @@ class JobGenerator(ck.JobGenerator):
         
         UltimateDarksight = core.BuffSkill("얼티밋 다크 사이트", 750, 30000,
             cooltime = (220-vEhc.getV(3, 3))*1000,
-            pdamage_indep= (100 + 10 + 5 + vEhc.getV(3, 3)//5) / (100 + 5) * 100 - 100, # (얼닼사 + 어닼사) - (어닼사) 최종뎀 연산
+            pdamage_indep= (100 + 10 + 5 + vEhc.getV(3, 3)//5) / (100 + 5) * 100 - 100,  # (?? + ??)-(??) Final damage calculation. (얼닼사 + 어닼사) - (어닼사) 최종뎀 연산.
             red = True
         ).isV(vEhc, 3, 3).wrap(core.BuffSkillWrapper)
 
@@ -120,7 +130,7 @@ class JobGenerator(ck.JobGenerator):
         
         Eviscerate = core.DamageSkill("절개", 570, 475+19*vEhc.getV(0,0), 7*4, modifier = core.CharacterModifier(crit=100, armor_ignore=100), cooltime = 14000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 720ms - 150ms(암살 2타연계)
 		
-		# 1.2.324 패치 적용
+		# Patch 1.2.324 applied. 1.2.324 패치 적용.
         SonicBlow = core.DamageSkill("소닉 블로우", 900, 0, 0, cooltime = 80 * 1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         SonicBlowTick = core.DamageSkill("소닉 블로우(틱)", 107, 500+20*vEhc.getV(1,1), 7, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper, name = "소닉 블로우(사용)") # 7 * 15
 
