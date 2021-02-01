@@ -92,6 +92,15 @@ class JobGenerator(ck.JobGenerator):
 
     def generate(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
         """
+        Hyper: Monkey Twins-Split, Enhance, Cannon Buster-Reinforce, Bonus Attack.
+        Rolling Cannon Rainbow 26
+
+        Coco ball 6 seconds
+        Lee's Bomb 5
+
+        Nose sequence:
+        Buster-Support-Many-roll-car
+
         하이퍼 : 몽키트윈스-스플릿, 인핸스, 캐논버스터 - 리인포스, 보너스 어택.
         롤링캐논레인보우 26타
 
@@ -249,8 +258,8 @@ class JobGenerator(ck.JobGenerator):
         PirateFlag = adventurer.PirateFlagWrapper(vEhc, 4, 3, chtr.level)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
-        # 쿨타임마다 사용
-        # 허수아비 대상 27회 충돌
+        # Used every cooldown. 쿨타임마다 사용.
+        # Conflict 27 times against the scarecrow. 허수아비 대상 27회 충돌.
         BFGCannonball = core.StackableSummonSkillWrapper(
             core.SummonSkill(
                 "빅 휴즈 기간틱 캐논볼",
@@ -280,7 +289,7 @@ class JobGenerator(ck.JobGenerator):
             core.SummonSkill(
                 "ICBM(장판)",
                 summondelay=0,
-                delay=15000 / 27,  # 27타
+                delay=15000 / 27,  # 27 hits. 27타.
                 damage=(500 + 20 * vEhc.getV(1, 1)) * 0.45,  # BuckShot
                 hit=1 * 3,
                 remain=15000,
