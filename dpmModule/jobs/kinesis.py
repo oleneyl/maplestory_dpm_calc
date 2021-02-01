@@ -279,7 +279,7 @@ class JobGenerator(ck.JobGenerator):
         TrainConstraint = core.ConstraintElement(
             "트레인 깔려있으면",
             UltimateTrain,
-            partial(UltimateTrain.is_time_left, 3000, 1),  # If you adjust it to 3000 -> 0, it becomes a deal cycle with low train weight. 3000 -> 0으로 조절하면 트레인 비중 낮은 딜사이클이 됨.
+            partial(UltimateTrain.is_time_left, 3000, 1),  # If you adjust it to 3000 -> 0, it becomes a damage cycle with low train weight. 3000 -> 0으로 조절하면 트레인 비중 낮은 딜사이클이 됨.
         )
         if DEALCYCLE == "material":
             UltimatePsychic.protect_from_running()

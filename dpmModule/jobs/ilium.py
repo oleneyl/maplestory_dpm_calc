@@ -138,7 +138,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ReservationRule("크리스탈 스킬:데우스", "글로리 윙(진입)"), RuleSet.BASE)
         ruleset.add_rule(ConditionRule("글로리 윙(진입)", "크리스탈 스킬:데우스", lambda x:x.is_active() or x.is_not_usable()), RuleSet.BASE)
 
-        # A deal cycle that uses Ignition and Glory Wings separately. 이그니션과 글로리 윙 따로 사용하는 딜사이클.
+        # A damage cycle that uses Ignition and Glory Wings separately. 이그니션과 글로리 윙 따로 사용하는 딜사이클.
         ruleset.add_rule(InactiveRule("크리스탈 이그니션(시전)", "글로리 윙(진입)"), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule("크리스탈 이그니션(시전)", "소울 오브 크리스탈"), RuleSet.BASE)
 

@@ -230,7 +230,7 @@ class JobGenerator(ck.JobGenerator):
         LinkAttack.onAfter(RegendrySpear.controller(1000, "reduce_cooltime"))
         LinkAttack.onAfter(ElementalGhostSpirit.controller(1000, "reduce_cooltime"))
         
-        #Deal Cycle
+        # Damage Cycle
         DebuffCombo = core.DamageSkill("디버프 콤보", 0, 0, 0).wrap(core.DamageSkillWrapper)
         DebuffComboList = [AdvanceStrikeDualShot_Link, WrathOfEllil, AdvanceStrikeDualShot_Link,
                             UnicornSpike, AdvanceStrikeDualShot_Link, LightningEdge, AdvanceStrikeDualShot_Link,

@@ -11,7 +11,7 @@ from . import jobutils
 from math import ceil
 from typing import Any, Dict
 
-#TODO : Added to the Haesin Advent deal cycle. 해신강림 딜사이클에 추가.
+#TODO : Added to the Haesin Advent damage cycle. 해신강림 딜사이클에 추가.
 
 class LightningWrapper(core.StackSkillWrapper):
     def __init__(self, skill):

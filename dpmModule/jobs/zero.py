@@ -334,7 +334,7 @@ class JobGenerator(ck.JobGenerator):
 
         BetaState.controller(1)  # Start with beta. 베타로 시작.
 
-        ### Create deal cycle. 딜사이클 생성.
+        ### Create damage cycle. 딜사이클 생성.
         if DEALCYCLE == "alpha_new":
             # Moons(0ms)-Pierce(330ms)-Chess(690ms)-Moons(1020ms)-Pierces(1350ms)-Chess(1710ms)-Moons(2040ms)-Pierces(2370ms)-Chess(2730ms)-Moons(3060ms) -3450 ms.
             # Upper(60ms)-Upper(330ms)-Upper(900ms)-Upper(1350ms)-Upper(1920ms)-Upper(2370ms)-2940ms-3330ms.

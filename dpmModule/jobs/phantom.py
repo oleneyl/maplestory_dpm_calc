@@ -162,7 +162,7 @@ class JobGenerator(ck.JobGenerator):
         CarteNoir.onAfter(FullStack)
         MileAiguilles.onAfter(CarteNoir)
 
-        TempestOfCardInit.onAfter(core.RepeatElement(TempestOfCard, 45))  # Changed to 45 to optimize the deal cycle based on a maximum of 56 and a cool feeling of 4 seconds. 최대 56, 쿨감 4초 기준 딜사이클 최적화를 위해 45로 변경.
+        TempestOfCardInit.onAfter(core.RepeatElement(TempestOfCard, 45))  # Changed to 45 to optimize the damage cycle based on a maximum of 56 and a cool feeling of 4 seconds. 최대 56, 쿨감 4초 기준 딜사이클 최적화를 위해 45로 변경.
         TempestOfCard.onAfter(CarteNoir)
 
         JokerDamage.onAfter(core.RepeatElement(CarteNoir, 10))  # The Joker activates noir, but it only goes once per 3 Joker strokes, so 30/3 = 10. 조커는 느와르를 발동하나, 조커 3타에 1번씩만 들어가므로 30 / 3 = 10.
