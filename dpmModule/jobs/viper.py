@@ -75,7 +75,7 @@ class JobGenerator(ck.JobGenerator):
         CriticalRoar = core.InformedCharacterModifier("크리티컬 로어",crit = 20, crit_damage = 5)
         MentalClearity = core.InformedCharacterModifier("멘탈 클리어리티",att = 30)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
-        CriticalRage = core.InformedCharacterModifier("크리티컬 레이지",crit = 15, crit_damage = 10)    #보스상대 추가+20% 크리율
+        CriticalRage = core.InformedCharacterModifier("크리티컬 레이지",crit = 15, crit_damage = 10)    # Boss opponent +20% Crit rate. 보스상대 추가+20% 크리율.
         StimulatePassive = core.InformedCharacterModifier("스티뮬레이트(패시브)",boss_pdamage = 20)
 
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 2, 3)
@@ -88,14 +88,25 @@ class JobGenerator(ck.JobGenerator):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(self.combat/2))
 
-        CriticalRage = core.InformedCharacterModifier("크리티컬 레이지(보스)",crit = 20)    #보스상대 추가+20% 크리율
-        GuardCrush = core.InformedCharacterModifier("가드 크러시",armor_ignore = 40 + 2*passive_level) #40% 확률로 방무 100% 무시.
-        # CounterAttack = core.InformedCharacterModifier("카운터 어택",pdamage = 25 + 2*passive_level) # TODO: 적용 여부 결정해야함
+        CriticalRage = core.InformedCharacterModifier("크리티컬 레이지(보스)",crit = 20)    # Boss opponent +20% Crit rate. 보스상대 추가+20% 크리율.
+        GuardCrush = core.InformedCharacterModifier("가드 크러시",armor_ignore = 40 + 2*passive_level)  # 40% chance of ignoring 100% of defence. 40% 확률로 방무 100% 무시.
+        # CounterAttack = core.InformedCharacterModifier("카운터 어택",pdamage = 25 + 2*passive_level) # TODO: Should decide whether to apply. 적용 여부 결정해야함.
         
         return [WeaponConstant, Mastery, CriticalRage, GuardCrush]
         
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        Ultra Charge: 350 charge when attacking, double charge when attacking boss. Stack 10000.
+
+        Stimulate is used when it is not in a fully buffered state or is below 2000 gauge
+        Energy Orb is used for gauge recovery
+
+        Double Lucky Dice-Enhance
+        Fist Enrage-Reinforce, Boss Killer, Bonus Attack
+        Energy Blast-Bonus Attack
+
+        Inlay-Nautil-Des-Unity
+
         울트라 차지 : 공격시 350충전, 보스공격시 2배 충전. 최대스택 10000.
 
         스티뮬레이트는 완충 상태가 아니거나 게이지 2000 이하일때 사용
