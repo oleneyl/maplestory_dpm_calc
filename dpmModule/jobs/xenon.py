@@ -14,9 +14,9 @@ from typing import Any, Dict
 Advisor: Monolith, 몰라#4508
 '''
 
-# TODO: 딜사이클 최적화
-# 도적템 럭제논 가정
-# 이지스 시스템 미사용
+# TODO: damage cycle optimization. 딜사이클 최적화.
+# Rogue item Ruxenon family. 도적템 럭제논 가정.
+# Aegis system not used. 이지스 시스템 미사용.
 
 
 class SupplyStackWrapper(core.StackSkillWrapper):
@@ -28,7 +28,7 @@ class SupplyStackWrapper(core.StackSkillWrapper):
         self.tick_duration = 4000
         self.tick = self.tick_duration
 
-    # 아마란스 혹은 오버로드 활성화시 에너지 소모 없음
+    # No energy consumption when activated by Amaranth or Overlord. 아마란스 혹은 오버로드 활성화시 에너지 소모 없음.
     def consume(self, d):
         if not self.amaranth_generator and not self.overload_mode:
             self.stack = max(self.stack - d, 0)
@@ -40,7 +40,7 @@ class SupplyStackWrapper(core.StackSkillWrapper):
     def consumeController(self, d):
         return core.TaskHolder(core.Task(self, partial(self.consume, d)), name=f"에너지 -{d}")
 
-    # 엑스트라, 아마란스는 20개 초과해서 충전되지 않음
+    # Extra and Amaranth cannot be charged in excess of 20. 엑스트라, 아마란스는 20개 초과해서 충전되지 않음.
     def charge(self, d):
         self.stack = min(self.stack + d, max(self.stack, 20))
         return core.ResultObject(
@@ -58,7 +58,8 @@ class SupplyStackWrapper(core.StackSkillWrapper):
 
     def spend_time(self, time: float) -> None:
         """
-        스택이 최대치일 경우 틱이 0으로 고정되어, 스택이 소모되거나 제한이 늘어날 때 즉시 한칸이 충전됨
+        If the stack is at its maximum, the tick is fixed at 0, and one space is immediately charged when the stack is consumed or the limit is increased.
+        스택이 최대치일 경우 틱이 0으로 고정되어, 스택이 소모되거나 제한이 늘어날 때 즉시 한칸이 충전됨.
         """
         self.tick -= time
         if self.stack == self._max:
@@ -71,7 +72,8 @@ class SupplyStackWrapper(core.StackSkillWrapper):
 
     def get_modifier(self):
         """
-        서플러스 에너지 1개 당 모든 능력치 1%만큼 증가, 20 초과시 초과 에너지당 최종 데미지 1% 증가
+        Increases all stats by 1% per 1 surplus energy, and increases final damage by 1% per excess energy when exceeding 20.
+        서플러스 에너지 1개 당 모든 능력치 1%만큼 증가, 20 초과시 초과 에너지당 최종 데미지 1% 증가.
         """
         return core.CharacterModifier(
             pstat_main=self.stack,
@@ -124,7 +126,7 @@ class JobGenerator(ck.JobGenerator):
         self.hyperStatPrefixed = 25  # 스탠스 5레벨 투자
         self.buffrem = (0, 40)
 
-    # TODO: 포톤 레이가 융합과 함께 사용되는 빈도를 늘릴 수 있음
+    # TODO: Photon ray can be used more often with fusion. 포톤 레이가 융합과 함께 사용되는 빈도를 늘릴 수 있음.
     def get_ruleset(self):
         ruleset = RuleSet()
 
@@ -158,9 +160,9 @@ class JobGenerator(ck.JobGenerator):
         Multilateral = [Multilateral1, Multilateral2, Multilateral3, Multilateral4, Multilateral5, Multilateral6]
 
         LinearPerspective = core.InformedCharacterModifier("리니어 퍼스펙티브", crit=40)
-        MinoritySupport = core.InformedCharacterModifier("마이너리티 서포트", stat_main=60)  # 힘덱럭 20씩
+        MinoritySupport = core.InformedCharacterModifier("마이너리티 서포트", stat_main=60)  # Strength deck 20 each. 힘덱럭 20씩.
         XenonMastery = core.InformedCharacterModifier("제논 마스터리", att=20)
-        HybridDefensesPassive = core.InformedCharacterModifier("듀얼브리드 디펜시브(패시브)", stat_main=30)  # 힘덱럭 30씩
+        HybridDefensesPassive = core.InformedCharacterModifier("듀얼브리드 디펜시브(패시브)", stat_main=30)  # Strength deck 30 each. 힘덱럭 30씩.
         XenonExpert = core.InformedCharacterModifier("제논 엑스퍼트", att=30 + passive_level, crit_damage=8)
         OffensiveMatrix = core.InformedCharacterModifier("오펜시브 매트릭스", armor_ignore=30 + passive_level)
 
@@ -181,37 +183,38 @@ class JobGenerator(ck.JobGenerator):
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
-        하이퍼 스킬: 홀로그램 3종, 퍼지롭 뎀증 + 방무
+        Hyper Skill: 3 types of holograms, Fuzzy Lop Demjeung + Bangmu.
+        하이퍼 스킬: 홀로그램 3종, 퍼지롭 뎀증 + 방무.
         '''
         HOLOGRAM_FUSION_HIT = 680
 
         # Buff skills
-        # 펫버프: 에피션시, 부스터
+        # Pet Buff: Epision City, Booster. 펫버프: 에피션시, 부스터.
         InclinePower = core.BuffSkill("인클라인 파워", 990, 240000, att=30, rem=True).wrap(core.BuffSkillWrapper)
         EfficiencyPipeLine = core.BuffSkill("에피션시 파이프라인", 0, 240000, rem=True).wrap(core.BuffSkillWrapper)
         Booster = core.BuffSkill("제논 부스터", 0, 240000, rem=True).wrap(core.BuffSkillWrapper)
         VirtualProjection = core.BuffSkill("버추얼 프로젝션", 0, 999999999).wrap(core.BuffSkillWrapper)
 
-        # 위컴알에 딜레이 없음
+        # No delay in Wickham R. 위컴알에 딜레이 없음.
         ExtraSupply = core.BuffSkill("엑스트라 서플라이", 0, 1, cooltime=30000, red=True).wrap(core.BuffSkillWrapper)
 
         OOPArtsCode = core.BuffSkill("오파츠 코드", 990, (30+self.combat//2)*1000, pdamage_indep=25+self.combat//2, boss_pdamage=30+self.combat, rem=True).wrap(core.BuffSkillWrapper)
 
         # Damage skills
 
-        # 로켓강화 적용됨
+        # Rocket enhancement applied. 로켓강화 적용됨.
         PinpointRocket = core.DamageSkill("핀포인트 로켓", 0, 50+40+40+100, 4, cooltime=2000).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
-        # 타수는 Skill Wrapper 쪽으로 이관
+        # At-bats are transferred to Skill Wrapper. 타수는 Skill Wrapper 쪽으로 이관.
         # AegisSystem = core.DamageSkill("이지스 시스템", 0, 120, 1, modifier=core.CharacterModifier(pdamage=20+passive_level//3), cooltime=1500).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
-        # 30%확률로 중첩 쌓임, 3중첩 쌓은 후 공격시 터지면서 사라지도록
+        # Stacks with a 30% probability, stacks 3 stacks, and then disappears when attacking. 30%확률로 중첩 쌓임, 3중첩 쌓은 후 공격시 터지면서 사라지도록.
         Triangulation = core.DamageSkill("트라이앵글 포메이션", 0, 340, 3, cooltime=-1).setV(vEhc, 0, 3, True).wrap(core.DamageSkillWrapper)
 
         PurgeSnipe = core.DamageSkill("퍼지롭 매스커레이드 : 저격", 690, 345 + 2*self.combat, 7, modifier=core.CharacterModifier(armor_ignore=30 + self.combat) + core.CharacterModifier(pdamage=20, armor_ignore=10)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
-        # 역장 기준
-        # 하이퍼 3종 적용
+        # Force field criteria. 역장 기준.
+        # 3 types of hyper applied. 하이퍼 3종 적용.
         Hologram_Penetrate = core.SummonSkill("홀로그램 그래피티 : 관통", 720, 30000/116, 213+3*self.combat, 1, 20000+10000, cooltime=30000-1000*ceil(self.combat/3), modifier=core.CharacterModifier(pdamage=10), red=True).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
         Hologram_ForceField = core.SummonSkill("홀로그램 그래피티 : 역장", 720, 30000/64, 400+5*self.combat, 1, 20000+10000, cooltime=30000-1000*ceil(self.combat/3), modifier=core.CharacterModifier(pdamage=10), red=True).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
 
@@ -241,30 +244,30 @@ class JobGenerator(ck.JobGenerator):
 
         OVERLOAD_TIME = 70
         OverloadMode = core.BuffSkill("오버로드 모드", 720, OVERLOAD_TIME*1000, cooltime=180000, red=True).wrap(core.BuffSkillWrapper)
-        # 첫 공격은 항상 5100ms 후에 시작
-        # 공격 주기는 3600ms~10800ms 중 랜덤
+        # First attack always starts after 5100ms. 첫 공격은 항상 5100ms 후에 시작.
+        # Attack period is random from 3600ms~10800ms. 공격 주기는 3600ms~10800ms 중 랜덤.
         OverloadHit = core.SummonSkill("오버로드 모드(전류)", 0, (3600+10800)/2, 180+7*vEhc.getV(4, 4), 6*4, OVERLOAD_TIME*1000-5100, cooltime=-1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         OverloadHit_copy = core.SummonSkill("오버로드 모드(전류)(버추얼 프로젝션)", 0, (3600+10800)/2, (180+7*vEhc.getV(4, 4))*0.7, 6*4, OVERLOAD_TIME*1000-5100, cooltime=-1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
 
-        # 하이퍼 적용됨
+        # Hyper applied. 하이퍼 적용됨.
         Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", 930, (30000+10000)/(HOLOGRAM_FUSION_HIT/5), 250+10*vEhc.getV(4, 4), 5, 30000+10000, cooltime=100000, red=True, modifier=core.CharacterModifier(pdamage=10)).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         Hologram_Fusion_Buff = core.BuffSkill("홀로그램 그래피티 : 융합 (버프)", 0, 30000+10000, pdamage=5+vEhc.getV(4, 4)//2, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
 
-        # 30회 발동, 발사 딜레이 생략, 퍼지롭으로 충전
+        # Activates 30 times, skips firing delay, and charges with fuzzy robs. 30회 발동, 발사 딜레이 생략, 퍼지롭으로 충전.
         PhotonRay = core.BuffSkill("포톤 레이", 0, 20000, cooltime=35000, red=True).wrap(core.BuffSkillWrapper)
         PhotonRayHit = core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4)*14, 4*30, cooltime=-1).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
         SupplySurplus = SupplyStackWrapper(core.BuffSkill("서플러스 서플라이", 0, 999999999))
 
-        # 홀로그램 스킬들은 융합과 함께 사용불가
+        # Hologram skills cannot be used with fusion. 홀로그램 스킬들은 융합과 함께 사용불가.
         for skill in [Hologram_ForceField, Hologram_Penetrate]:
             skill.onConstraint(core.ConstraintElement(skill._id + '(사용 제한)', Hologram_Fusion, Hologram_Fusion.is_not_active))
             Hologram_Fusion.onJustAfter(skill.controller(1, 'set_disabled'))
 
         PinpointRocketOpt = core.OptionalElement(PinpointRocket.is_available, PinpointRocket)
 
-        # 홀로그램 융합 활성화시 10개, 아니면 3개
+        # 10 or 3 when holographic fusion is activated. 홀로그램 융합 활성화시 10개, 아니면 3개.
         # AegisSystemOpt_ = core.OptionalElement(Hologram_Fusion_Buff.is_active, core.RepeatElement(AegisSystem, 10), core.RepeatElement(AegisSystem, 3))
         # AegisSystemOpt = core.OptionalElement(AegisSystem.is_active, AegisSystemOpt_)
 
@@ -290,7 +293,7 @@ class JobGenerator(ck.JobGenerator):
         OverloadMode.onEventElapsed(OverloadHit, 5100)
         OverloadMode.onEventElapsed(OverloadHit_copy, 5100)
 
-        # 퍼지롭 15회 사용 후 포톤레이 발동, 최적화 필요
+        # Photon Ray activation after using Fuzzy Lob 15 times, optimization required. 퍼지롭 15회 사용 후 포톤레이 발동, 최적화 필요.
         PhotonRay.onEventElapsed(PhotonRayHit, 690*15)
 
         for sk in [PurgeSnipe, MeltDown, MegaSmasherTick]:
