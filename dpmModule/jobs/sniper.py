@@ -81,6 +81,10 @@ class JobGenerator(ck.JobGenerator):
 
     def generate(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
         """
+        Distance 400
+
+        Snare, piercing, long let, freezer
+
         거리 400
 
         스나, 피어싱, 롱레트, 프리저
@@ -205,7 +209,7 @@ class JobGenerator(ck.JobGenerator):
             core.SummonSkill("차지드 애로우(더미)", 0, 10000, 0, 0, 9999999, cooltime=-1)
             .isV(vEhc, 1, 1)
             .wrap(core.SummonSkillWrapper)
-        )  # TODO: 공격 주기에 쿨감 적용해야 함
+        )  # TODO: Cool feeling should be applied to the attack cycle. 공격 주기에 쿨감 적용해야 함.
 
         # Summon Skills
         Freezer = (
@@ -220,7 +224,7 @@ class JobGenerator(ck.JobGenerator):
             )
             .setV(vEhc, 3, 3, False)
             .wrap(core.SummonSkillWrapper)
-        )  # 이볼브 종료시 자동소환되므로 딜레이 0, 사거리 280보다 멀면 공격안함
+        )  # It is automatically summoned at the end of Evolve, so if it is more than 0 delay and 280 range, it does not attack. 이볼브 종료시 자동소환되므로 딜레이 0, 사거리 280보다 멀면 공격안함.
         Evolve = adventurer.EvolveWrapper(
             vEhc, 5, 5, Freezer, modifier=PASSIVE_MODIFIER_SUMMON
         )
@@ -258,7 +262,7 @@ class JobGenerator(ck.JobGenerator):
             .isV(vEhc, 0, 0)
             .wrap(core.BuffSkillWrapper)
         )
-        # TODO : 스플릿애로우 계산
+        # TODO : Split Arrow calculation. 스플릿애로우 계산.
 
         RepeatingCartrige = (
             core.BuffSkill(
@@ -301,7 +305,7 @@ class JobGenerator(ck.JobGenerator):
 
         CriticalReinforce = bowmen.CriticalReinforceWrapper(
             vEhc, chtr, 3, 3, 20 + 20 + ceil(self.combat / 2)
-        )  # 샤프 아이즈 20 + 불스아이 20. 불스아이를 항상 크리인에 맞춰쓰므로 가동률 고려 X
+        )  # Sharp Eyes 20 + Bull's Eye 20. Considering the utilization rate as Bull's Eye is always used according to Cree X. 샤프 아이즈 20 + 불스아이 20. 불스아이를 항상 크리인에 맞춰쓰므로 가동률 고려 X.
 
         SplitArrowOption = core.OptionalElement(
             SplitArrowBuff.is_active, SplitArrow, name="스플릿 애로우 여부 확인"
@@ -313,16 +317,16 @@ class JobGenerator(ck.JobGenerator):
         TrueSnipping.onBefore(ChargedArrowHold.controller(10000, name="차징 유예"))
         TrueSnipping.onAfter(TrueSnippingDeal)
 
-        # TODO: 차지드 캔슬 구현할것 / 딜레이 중간에 끊는게 구현되기 전까지 어려움
+        # TODO: Implementing charged cancel / Difficulty stopping mid-delay until it is implemented. 차지드 캔슬 구현할것 / 딜레이 중간에 끊는게 구현되기 전까지 어려움.
         ChargedArrowHold.onTick(
             core.OptionalElement(partial(CartrigeStack.judge, 0, -1), ChargedArrow)
-        )  # 풀버스트샷 도중에는 차지드 동시발사가 안됨
+        )  # Charged simultaneous firing is not allowed during full burst shot. 풀버스트샷 도중에는 차지드 동시발사가 안됨.
 
         for sk in [Snipping, TrueSnippingTick, ChargedArrow]:
             sk.onAfter(FinalAttack)
         FullBurstShot.onAfter(core.RepeatElement(FinalAttack, 4))
 
-        ChargedArrowHold.set_disabled_and_time_left(5000)  # 최초 차징 시간
+        ChargedArrowHold.set_disabled_and_time_left(5000)  # Initial charging time. 최초 차징 시간.
 
         RepeatingCartrige.onAfter(CartrigeStack.stackController(8))
         FullBurstShot.onAfter(CartrigeStack.stackController(-1))
