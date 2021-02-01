@@ -20,6 +20,10 @@ class ShadowBatStackWrapper(core.StackSkillWrapper):
         
     def _add_throw(self):
         '''
+        Summons 1 bet for every 3 uses of the commendation.
+        However, the number of summoned bats + summoned bats can be up to 5.
+        Therefore, the summon queue can only contain a maximum of (5-current stack).
+
         표창 사용 3회마다 배트를 1개씩 소환합니다.
         단, 소환중인 배트 + 소환된 배트의 수는 최대 5개 까지만 가능합니다.
         따라서 소환 큐에는 최대 (5 - 현재 스택) 개수까지만 들어갈 수 있습니다.
@@ -36,6 +40,8 @@ class ShadowBatStackWrapper(core.StackSkillWrapper):
 
     def spend_time(self, time):
         '''
+        Every hour, elements older than 960ms are removed from the queue and added to the stack.
+
         매 시간마다 큐에서 960ms 이상 지난 원소들을 제거하고, 그만큼 스택에 추가합니다.
         '''
         self.currentTime += time
@@ -82,12 +88,25 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 75)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5+0.5*ceil(passive_level/2))    #오더스 기본적용!
+        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5+0.5*ceil(passive_level/2))    # Basic application of orders! 오더스 기본적용!
         
         return [WeaponConstant, Mastery]
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        Hyper Skill:
+        Quintuple Throw-Reinforce, Boss Killer / Siphon Vitality-Reinforce / Darkness Omen 2ea
+
+        V core: 9
+        Quintuple, Bat, Dominion, Darkness Omen: Tier 1
+
+        Also works on spear bats
+        1 spear for every quintuple
+
+        Point shot operation rate 100%
+
+        quintuple-throw
+
         하이퍼 스킬 : 
         퀸터플 스로우-리인포스, 보스킬러 / 사이펀 바이탈리티-리인포스 / 다크니스 오멘 2개
         
@@ -102,23 +121,23 @@ class JobGenerator(ck.JobGenerator):
         퀸터-배트
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        JAVELIN_ATT = core.CharacterModifier(att=29)  # 플레임 표창
+        JAVELIN_ATT = core.CharacterModifier(att=29)  # 플레임 표창.
         JUMPRATE = options.get("jump_rate", 1)
 
         QUINTAPLE_MDF = core.CharacterModifier(pdamage=20, boss_pdamage=20, pdamage_indep=(JUMPRATE*15)) + JAVELIN_ATT
-        RAPID_MDF = core.CharacterModifier(pdamage_indep=15) + JAVELIN_ATT  # 항상 공중에서 사용
+        RAPID_MDF = core.CharacterModifier(pdamage_indep=15) + JAVELIN_ATT  # Always used in the air. 항상 공중에서 사용.
         ######   Skill   ######
 
-        ElementalDarkness = core.BuffSkill("엘리멘탈 : 다크니스", 0, 180000, armor_ignore = (4+1+1+1) * (2+1+1+1), att = 60).wrap(core.BuffSkillWrapper) # 펫버프, 사이펀 바이탈리티-리인포스 합산
+        ElementalDarkness = core.BuffSkill("엘리멘탈 : 다크니스", 0, 180000, armor_ignore = (4+1+1+1) * (2+1+1+1), att = 60).wrap(core.BuffSkillWrapper)  # Pet buff, siphon vitality-reinforce summed. 펫버프, 사이펀 바이탈리티-리인포스 합산.
         ElementalDarknessDOT = core.DotSkill("엘리멘탈 : 다크니스(도트)", 0, 1000, 80 + 40 + 50 + 50, 2+1+1+1, 100000000, cooltime = -1).wrap(core.DotSkillWrapper)
-        Booster = core.BuffSkill("부스터", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper) # 펫버프
-        ShadowServent = core.BuffSkill("쉐도우 서번트", 990, 180000).wrap(core.BuffSkillWrapper) # 펫버프 등록불가
-        SpiritThrowing = core.BuffSkill("스피릿 스로잉", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper) # 펫버프
+        Booster = core.BuffSkill("부스터", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper)  # Pet buff. 펫버프.
+        ShadowServent = core.BuffSkill("쉐도우 서번트", 990, 180000).wrap(core.BuffSkillWrapper)  # Pet buff registration is not possible. 펫버프 등록불가.
+        SpiritThrowing = core.BuffSkill("스피릿 스로잉", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper)  # Pet buff. 펫버프.
 
         ShadowBatStack = ShadowBatStackWrapper(core.BuffSkill("쉐도우 배트(스택)", 0, 0, cooltime=-1))
         ShadowBat = core.DamageSkill("쉐도우 배트", 0, 150 + 120 + 150 + 200 + 4*passive_level, 1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
-        #점샷기준(400ms)
+        # Based on point shot (400ms). 점샷기준(400ms).
         QuintupleThrow = core.DamageSkill("퀸터플 스로우", (400 * JUMPRATE + 630 * (1-JUMPRATE)), 340+self.combat, 4, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         QuintupleThrowFinal = core.DamageSkill("퀸터플 스로우(막타)", 0, 475+self.combat, 1, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
@@ -133,7 +152,7 @@ class JobGenerator(ck.JobGenerator):
         QuintupleThrow_V = core.DamageSkill("퀸터플 스로우(5차)", 0, (340+self.combat) * 0.01 * (25+vEhc.getV(0,0)), 4, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         QuintupleThrowFinal_V = core.DamageSkill("퀸터플 스로우(5차)(막타)", 0, (475+self.combat) * 0.01 * (25+vEhc.getV(0,0)), 1, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
     
-        #하이퍼스킬
+        # Hyper skill. 하이퍼스킬.
         ShadowElusion = core.BuffSkill("쉐도우 일루전", 690, 30000, cooltime = 180000).wrap(core.BuffSkillWrapper)
         Dominion = core.BuffSkill("도미니언", 1890, 30000, crit = 100, pdamage_indep = 20, cooltime = 180000).wrap(core.BuffSkillWrapper)
         DominionAttack = core.DamageSkill("도미니언(공격)", 0, 1000, 10, modifier=JAVELIN_ATT).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
@@ -218,9 +237,9 @@ class JobGenerator(ck.JobGenerator):
         RapidThrowInit.onAfter(core.RepeatElement(RapidThrow, 22))
         RapidThrowInit.onAfter(RapidThrowFinal)
 
-        #도미니언
+        # Dominion. 도미니언.
         Dominion.onAfter(DominionAttack)
-        #쉐도우 바이트
+        # Shadow Bite. 쉐도우 바이트.
         ShadowBite.onEventElapsed(ShadowBiteBuff, 2000)
                 
         return( QuintupleThrow,
