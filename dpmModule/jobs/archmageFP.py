@@ -43,7 +43,7 @@ class PoisonChainToxicWrapper(core.SummonSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.load(os.path.join(os.path.dirname(__file__), 'configs', 'archmageFb.yml'))
+        self.load(os.path.join(os.path.dirname(__file__), 'configs', 'archmageFP.yml'))
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
 
     def get_ruleset(self):
