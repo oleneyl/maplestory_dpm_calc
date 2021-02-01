@@ -86,6 +86,32 @@ class JobGenerator(ck.JobGenerator):
 
     def generate(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
         """
+        ----Information---
+        Crew Commandership: 15% Final Dem
+        Murat: 500 Cdem 5
+        Valerie: 560 cri 15
+        Jack: 320
+        Stoner: 480
+        Summon two
+
+        Hyper
+        Rapid Fire-Boss Killer, Reinforce, Ad Range
+        Headshot-Bonus Attack, Reinforcement
+
+        Dead eye aiming rate 3x
+
+        Quick Draw: If available, use before headshot, stir spring, and dead eye
+
+        Summon Crew 17 hits per minute, average Perdem 465
+        Bomber average damage 297%x3 per 600ms
+
+        Counter attack not activated
+
+        5th reinforcement
+        Rapid / Persil / Dignity
+        Headshot / Battleship / Octa
+        Summon Crew / Sturbom / Nautilus
+
         ----정보---
         크루 커멘더쉽 : 최종뎀 15%
         무라트 : 500 크뎀5
@@ -142,7 +168,7 @@ class JobGenerator(ck.JobGenerator):
         )
         QuickDraw = core.BuffSkill(
             "퀵 드로우",
-            delay=0,  # 래피드/불파 도중 사용가능
+            delay=0,  # Can be used during rapid/bulging. 래피드/불파 도중 사용가능.
             remain=core.infinite_time(),
             cooltime=-1,
             pdamage_indep=25 + self.combat,
@@ -170,8 +196,8 @@ class JobGenerator(ck.JobGenerator):
             core.SummonSkill(
                 "서먼 크루",
                 summondelay=900,
-                delay=60000 / 17,  # 분당 17타
-                damage=465,  # 평균 퍼뎀 465
+                delay=60000 / 17,  # 17 shots per minute. 분당 17타.
+                damage=465,  # Average Perdem 465. 평균 퍼뎀 465.
                 hit=2,
                 remain=120000,
                 modifier=core.CharacterModifier(pdamage_indep=15 + passive_level),
@@ -191,6 +217,12 @@ class JobGenerator(ck.JobGenerator):
         ).wrap(core.BuffSkillWrapper)
 
         """
+        Dontle: 330 Normal 13/22 at-bats 3 600
+        Black Bark: 445 Slow 15/18 At-bats 3 810
+        Schrinz: 200 Fast 15/27 at-bats 3 570
+        Jonathan: 320 Normal 12/20 at-bats 3 600
+        Average Damage 297 per 600ms
+        
         돈틀레스 : 330 보통 13/22 타수3 600
         블랙바크 : 445 느림 15/18 타수3 810
         슈린츠 : 200 빠름   15/27 타수3 570
@@ -203,7 +235,7 @@ class JobGenerator(ck.JobGenerator):
             + (200 + 3 * self.combat) * (600 / 570)
             + (320 + 3 * self.combat)
         ) / 4
-        # TODO: 배틀쉽 봄버 공격주기 확인 필요
+        # TODO: Battleship Bomber attack cycle needs to be checked. 배틀쉽 봄버 공격주기 확인 필요.
         BattleshipBomber = core.BuffSkill(
             "배틀쉽 봄버", delay=0, remain=0, cooltime=30000, red=True
         ).wrap(core.BuffSkillWrapper)
@@ -325,7 +357,7 @@ class JobGenerator(ck.JobGenerator):
         BulletPartyTick = (
             core.DamageSkill(
                 "불릿 파티(틱)",
-                delay=BULLET_PARTY_TICK,  # 12초간 지속 -> 50회 시전
+                delay=BULLET_PARTY_TICK,  # Lasts 12 seconds -> Cast 50 times. 12초간 지속 -> 50회 시전.
                 damage=230 + 9 * vEhc.getV(5, 5),
                 hit=5,
                 modifier=CONTINUAL_AIMING + BULLET_ATT,
@@ -339,7 +371,7 @@ class JobGenerator(ck.JobGenerator):
                 delay=450,
                 damage=(320 + 13 * vEhc.getV(3, 3)) * DEADEYEACC,
                 hit=15,
-                cooltime=30000 + DEADEYEAIM,  # TODO: 조준시간은 쿨감 안받아야함
+                cooltime=30000 + DEADEYEAIM,  # TODO: Aiming time should not cooldown. 조준시간은 쿨감 안받아야함.
                 red=True,
                 modifier=core.CharacterModifier(crit=100, pdamage_indep=4 * 11)
                 + CONTINUAL_AIMING
@@ -402,10 +434,10 @@ class JobGenerator(ck.JobGenerator):
 
         ######   Skill Wrapper   ######
 
-        # 크루 사용 후 버프 제공
+        # Buff provided after crew use. 크루 사용 후 버프 제공.
         SummonCrew.onAfter(SummonCrewBuff)
 
-        # 배틀쉽은 둘 중 꺼져있는걸로 시전
+        # Battleship is cast as either off. 배틀쉽은 둘 중 꺼져있는걸로 시전.
         BattleshipBomber.onAfter(
             core.OptionalElement(
                 BattleshipBomber_1.is_active,
@@ -415,10 +447,10 @@ class JobGenerator(ck.JobGenerator):
             )
         )
 
-        # 노틸러스 이후 배틀쉽 쿨감
+        # Battleship cool after Nautilus. 노틸러스 이후 배틀쉽 쿨감.
         Nautilus.onAfter(BattleshipBomber.controller(0.5, "reduce_cooltime_p"))
 
-        # 디그니티는 노틸러스 쿨타임에 강화됨
+        # Dignity is enhanced by Nautilus cooldown. 디그니티는 노틸러스 쿨타임에 강화됨.
         CaptainDignity.add_runtime_modifier(
             Nautilus,
             lambda sk: core.CharacterModifier(
@@ -428,7 +460,7 @@ class JobGenerator(ck.JobGenerator):
         for sk in [RapidFire, Headshot, BulletPartyTick, DeadEye, DeathTrigger]:
             sk.onAfter(CaptainDignity)
 
-        # 퀵 드로우
+        # Quick draw. 퀵 드로우.
         QuickDrawProc = core.OptionalElement(
             QuickDraw.is_not_active,
             QuickDrawStack.stackController((8 + ceil(self.combat/2)) * 0.01, name="퀵 드로우 확률"),
@@ -459,7 +491,7 @@ class JobGenerator(ck.JobGenerator):
         for sk in [NautilusAssult, NautilusAssult_2]:
             sk.onTick(QuickDrawShutdownTrigger)
 
-        for sk in [  # 이 스킬들에는 퀵 드로우 최종뎀이 안들어감
+        for sk in [  # These skills do not have a quick draw final dem. 이 스킬들에는 퀵 드로우 최종뎀이 안들어감.
             RapidFire,
             CaptainDignity,
             BulletPartyTick,
@@ -472,7 +504,7 @@ class JobGenerator(ck.JobGenerator):
                 ),
             )
 
-        # 노틸러스 어썰트
+        # Nautilus Assault. 노틸러스 어썰트.
         NautilusAssult.onEventEnd(NautilusAssult_2)
         NautilusAssult.onJustAfter(
             core.OptionalElement(
@@ -489,12 +521,12 @@ class JobGenerator(ck.JobGenerator):
             )
         )
 
-        # 불릿파티
+        # Bullet Party. 불릿파티.
         BulletParty.onAfter(
             core.RepeatElement(BulletPartyTick, 11820 // BULLET_PARTY_TICK)
         )
 
-        # 데스 트리거
+        # Death trigger. 데스 트리거.
         DeathTriggerInit.onAfter(core.RepeatElement(DeathTrigger, 7))
         DeathTriggerInit.onAfter(DeathTriggerEnd)
 
