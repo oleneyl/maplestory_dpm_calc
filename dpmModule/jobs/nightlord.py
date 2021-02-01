@@ -67,6 +67,13 @@ class JobGenerator(ck.JobGenerator):
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
+        Quad-mark-showdown
+
+        Hit 3 lines of soup
+
+        Use only while using the soup
+        Retouda is used once every 2 times to match the soup
+
         쿼드-마크-쇼다운
         
         스프 3줄 히트
@@ -99,13 +106,13 @@ class JobGenerator(ck.JobGenerator):
 
         FatalVenom = core.DotSkill("페이탈 베놈", 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 8000, cooltime = -1).wrap(core.DotSkillWrapper)
     
-        #_VenomBurst = core.DamageSkill("베놈 버스트", ??) ## 패시브 50%확률로 10초간 160+6*vlevel dot. 사용시 도트뎀 모두 피해 + (500+20*vlevel) * 5. 어차피 안쓰는 스킬이므로 작성X
+        #_VenomBurst = core.DamageSkill("베놈 버스트", ??) ## 160+6*vlevel dot for 10 seconds with 50% probability of passive. When used, damage to all Dot Dem + (500+20*vlevel) * 5. Since it is a skill I don't use anyway, write X. 패시브 50%확률로 10초간 160+6*vlevel dot. 사용시 도트뎀 모두 피해 + (500+20*vlevel) * 5. 어차피 안쓰는 스킬이므로 작성X
         
         UltimateDarksight = thieves.UltimateDarkSightWrapper(vEhc, 3, 3)
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 1, 1)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
-        #조건부 파이널어택으로 설정함.
+        # Set as conditional final attack. 조건부 파이널어택으로 설정함.
         SpreadThrowTick = core.DamageSkill("쿼드러플 스로우(스프레드)", 0, (378 + 4 * self.combat)*0.85, 5*SPREAD_HIT, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20) + JAVELIN_ATT).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         SpreadThrowInit = core.BuffSkill("스프레드 스로우", 540, (20+vEhc.getV(0,0))*1000, cooltime = 180*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
@@ -121,34 +128,34 @@ class JobGenerator(ck.JobGenerator):
 
         ######   Skill Wrapper   ######
 
-        # 써든레이드
+        # Sudden Raid. 써든레이드.
         SuddenRaid.onAfter(SuddenRaidDOT)
 
-        # 풍마수리검
+        # ?? Repair Sword. 풍마수리검.
         Pungma.onTick(PungmaHit)
 
-        # 쉐도우 파트너
+        # Shadow Partner. 쉐도우 파트너.
         for sk in [QuarupleThrow, SuddenRaid, ThrowBlasting, PungmaHit]:
             jobutils.create_auxilary_attack(sk, 0.7, nametag='(쉐도우파트너)')
 
-        # 마크 오브 나이트로드
+        # Dark Lord's Scroll. 마크 오브 나이트로드.
         SpreadThrowTick.onAfter(core.RepeatElement(MarkOfNightlord, 5*SPREAD_HIT))
         Pungma.onTick(MarkOfNightlordPungma)
         ThrowBlasting.onAfter(MarkOfNightlord)
         
-        # 다크로드의 비전서
+        # 다크로드의 비전서.
         ArcaneOfDarklord.onEventEnd(ArcaneOfDarklordFinal)
         
-        # 블리딩 톡신
+        # Bleeding toxin. 블리딩 톡신.
         BleedingToxin.onAfter(BleedingToxinDot)
 
-        # 스로우 블래스팅
+        # Throw blasting. 스로우 블래스팅.
         ThrowBlastingActive.onAfter(ThrowBlastingStack.stackController(45))
         ThrowBlasting.onAfter(ThrowBlastingStack.stackController(-1))
         ThrowBlastingPassive.onAfter(ThrowBlasting)
         ThrowBlastingPassive.protect_from_running()
         
-        # 쿼드러플 관련 - 스프레드, 스로우 블래스팅
+        # Quadruple related-spread, throw blasting. 쿼드러플 관련 - 스프레드, 스로우 블래스팅.
         QuarupleThrow.onAfter(core.OptionalElement(SpreadThrowInit.is_active, SpreadThrowTick))
         QuarupleThrow.onAfter(core.OptionalElement(lambda: ThrowBlastingStack.judge(0, -1) and ThrowBlastingPassive.is_available(), ThrowBlastingPassive))
         QuarupleThrow.onAfter(core.OptionalElement(
