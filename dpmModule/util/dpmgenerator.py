@@ -27,8 +27,8 @@ class IndividualDPMGenerator:
     def get_dpm(
         self,
         spec_name: str,
+        ulevel: int,
         cdr: int = 0,
-        ulevel: int = 8000,
         options={},
         printFlag=False,
         statistics=False,
@@ -72,9 +72,9 @@ class IndividualDPMGenerator:
 
     def get_detailed_dpm(
             self,
-            spec_name: str = "8000",
+            spec_name: str,
+            ulevel: int,
             cdr: int = 0,
-            ulevel: int = 6000,
             options={}
     ) -> Dict[str, Any]:
         gen: JobGenerator = self.supplier.JobGenerator()

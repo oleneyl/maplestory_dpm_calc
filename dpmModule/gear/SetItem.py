@@ -111,4 +111,6 @@ def eval_set_item_effect(equipped_gears: Iterable[Gear]) -> PropMap:
                         set_item_effect[prop_type] += set_item.effects[index][prop_type]
             else:
                 break
+        # remove comment below to check set items
+        # print(set_item.set_item_name, count)
     return set_item_effect

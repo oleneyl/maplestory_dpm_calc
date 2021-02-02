@@ -10,7 +10,7 @@ Utility functions for calculate DPM easier.
   
   - 하이퍼스텟 최적화, 유니온 최적화 등을 수행합니다.
 
-  - get_optimal_hyper_from_bare(spec : CharacterModifier, level : int) -> HyperStat
+  - get_optimal_hyper_from_bare(spec : CharacterModifier, job, level : int) -> HyperStat
     
     - 최적 하이퍼스텟을 계산합니다.
 

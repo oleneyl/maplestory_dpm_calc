@@ -38,9 +38,9 @@ union : 유니온
 """
 
 
-def get_optimal_hyper_from_bare(spec, level):
+def get_optimal_hyper_from_bare(spec, job, level):
     ref = spec.copy()
-    newHyper = HyperStat.get_hyper_object(ref, level, 0)
+    newHyper = HyperStat.get_hyper_object(ref, job, level, 0)
     return newHyper
 
 
@@ -55,10 +55,10 @@ def get_optimal_hyper_union(spec, job, otherspec, hyper, union):
 
     buffremFlag = union.buff_rem > 0
 
-    newHyper = HyperStat.get_hyper_object(ref, hyper.level, 0)
+    newHyper = HyperStat.get_hyper_object(ref, job, hyper.level, 0)
     ref += newHyper.mdf
 
-    newUnion = Union.get_union_object(ref, -1, buffrem=buffremFlag, slot=union.slots)
+    newUnion = Union.get_union_object(ref, job, -1, buffrem=buffremFlag, slot=union.slots)
 
     return {"hyper": newHyper, "union": newUnion}
 

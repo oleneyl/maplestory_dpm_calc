@@ -56,6 +56,8 @@ anchors:
       option:
         att: 6
         stat_main: 1
+        stat_sub: 1
+        stat_sub2: 1
       count: -1
   acc_potential: &acc_potential
     potential:
@@ -133,13 +135,14 @@ anchors:
         count: -1
     star: 20
     add_potential:
-      patt: 24
+      patt: 30
 
 default:
   level: 275
   arcane_symbol_force: 1320
   authentic_symbol_level:
     - 3
+    - 1
   pet_equip: 124 # 프펫공, 루나 드림 2세트(5+4*9)*2, 루나 쁘띠 1세트(10+4*8)
   pet_set: 24 # 루나 드림 2세트(7+9), 루나 쁘띠 1세트(6)
   cash:
@@ -254,26 +257,26 @@ default:
         count: -1
     star: 22
     add_potential:
-      patt: 24
+      patt: 30
   subweapon:
     id: 보조무기
     add_potential:
-      patt: 24
+      patt: 30
   emblem:
     id: 엠블렘
     add_potential:
-      patt: 24
+      patt: 30
   heart:
-    id: 티타늄 하트
+    id: 블랙 하트
     upgrade:
-      - type: 매지컬
-        value: 11
-        count: 5
-      - type: 매지컬
-        value: 10
-        count: -1
-    star: 8
-    <<: *acc_potential
+      - type: 주문의 흔적
+        prob: 30
+        stat: stat_main
+        count: 11
+    star: 15
+    potential:
+      boss_pdamage: 30
+      armor_ignore: 30
   title:
     id: 핑아일체
 아크메이지불/독:
@@ -320,7 +323,7 @@ default:
         count: -1
     star: 20
     add_potential:
-      patt: 24
+      patt: 30
 듀얼블레이드:
   type: override
   subweapon:
@@ -332,13 +335,13 @@ default:
         count: -1
     star: 22
     add_potential:
-      patt: 24
+      patt: 30
 데몬슬레이어:
   type: override
   subweapon:
     id: 루인 포스실드
     add_potential:
-      patt: 24
+      patt: 30
 데몬어벤져:
   type: override
   head:
@@ -465,18 +468,18 @@ default:
   subweapon:
     id: 루인 포스실드
     add_potential:
-      patt: 24
+      patt: 30
   heart:
-    id: 티타늄 하트
+    id: 블랙 하트
     upgrade:
-      - type: 매지컬
-        value: 11
-        count: 5
-      - type: 매지컬
-        value: 10
-        count: -1
-    star: 8
-    <<: *demon_acc_potential
+      - type: 주문의 흔적
+        prob: 30
+        stat: stat_main
+        count: 11
+    star: 15
+    potential:
+      boss_pdamage: 30
+      armor_ignore: 30
 제논:
   type: override
   head:
@@ -585,13 +588,13 @@ default:
     id: 마도서
     bonus: *xenon_acc_bonus
   heart:
-    id: 티타늄 하트
+    id: 블랙 하트
     upgrade:
-      - type: 매지컬
-        value: 11
-        count: 5
-      - type: 매지컬
-        value: 10
-        count: -1
-    star: 8
-    <<: *xenon_acc_potential
+      - type: 주문의 흔적
+        prob: 30
+        stat: stat_main
+        count: 11
+    star: 15
+    potential:
+      boss_pdamage: 30
+      armor_ignore: 30
