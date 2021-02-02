@@ -87,7 +87,7 @@ def MapleHeroes2Wrapper(vEhc, num1, num2, level, combat_level):
 
 class TandadianRuinWrapper(core.BuffSkillWrapper):
     def __init__(self) -> None:
-        skill = core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime=90000, pdamage_indep=15, rem=False, red=False)
+        skill = core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime=90000, pdamage_indep=15, rem=False)
         super(TandadianRuinWrapper, self).__init__(skill)
 
     def ensure(self, chtr: AbstractCharacter) -> bool:
@@ -96,7 +96,7 @@ class TandadianRuinWrapper(core.BuffSkillWrapper):
 
 class AeonianRiseWrapper(core.DamageSkillWrapper):
     def __init__(self) -> None:
-        skill = core.DamageSkill("창조의 아이온", 0, 1500, 7, cooltime=180000, red=False)
+        skill = core.DamageSkill("창조의 아이온", 0, 1500, 7, cooltime=180000)
         super(AeonianRiseWrapper, self).__init__(skill)
 
     def ensure(self, chtr: AbstractCharacter) -> bool:
