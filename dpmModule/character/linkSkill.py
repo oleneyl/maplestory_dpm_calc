@@ -23,13 +23,14 @@ class LinkSkill:
     Phantom = InformedCharacterModifier("링크(팬텀)", crit=15)
     AdventureArcher = InformedCharacterModifier("링크(모궁)", crit=10)
     Kinesis = InformedCharacterModifier("링크(키네시스)", crit_damage=4)
+    Kain = InformedCharacterModifier("링크(카인)", pdamage=17/2)  # pdamage TODO: implement kain link skill
     Angelicbuster = InformedCharacterModifier("링크(엔젤릭버스터)")  # Skill
     Michael = InformedCharacterModifier("링크(미하일)")  # Util skill
     Mercedes = InformedCharacterModifier("링크(메르세데스)")  # Exp
     Aran = InformedCharacterModifier("링크(아란)")  # Exp
     Evan = InformedCharacterModifier("링크(에반)")  # Exp
     Eunwol = InformedCharacterModifier("링크(은월)")  # Util
-    Kaiser = InformedCharacterModifier("링크(카이저)")  # HP
+    Kaiser = InformedCharacterModifier("링크(카이저)", pstat_main=15)  # HP - Demon Avenger only
     Registance = InformedCharacterModifier("링크(레지스탕스)")  # Util
     AdventureWarrior = InformedCharacterModifier("링크(모전)")  # Skill
 
@@ -77,6 +78,7 @@ class LinkSkill:
         "제로": Zero,
         "키네시스": Kinesis,
         "호영": Hoyoung,
+        "카인": Kain
     }
 
     @staticmethod
@@ -114,7 +116,7 @@ class LinkSkill:
             LinkSkill.Ark,
             LinkSkill.DemonAvenger,
             LinkSkill.AdventureRog,
-            LinkSkill.Zenon,
+            LinkSkill.Kaiser if job_name == "데몬어벤져" else LinkSkill.Zenon,
             LinkSkill.Cygnus,
             LinkSkill.Adele,
             LinkSkill.AdventurePirate,

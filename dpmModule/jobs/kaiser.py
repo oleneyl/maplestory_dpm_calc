@@ -152,7 +152,7 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.vSkillNum = 5
         self.vEnhanceNum = 13
-        self.jobtype = "str"
+        self.jobtype = "STR"
         self.jobname = "카이저"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
@@ -235,7 +235,7 @@ class JobGenerator(ck.JobGenerator):
         Prominence = ProminenceWrapper(core.DamageSkill("프로미넌스", 2220, 1000, 15, cooltime = 60000).setV(vEhc, 6, 2, True), FinalFiguration)
 
         # 5차
-        Phanteon = core.DamageSkill("판테온", 420, 2000+80*vEhc.getV(4,4), 10, cooltime = 1200*1000, red=True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
+        Phanteon = nova.PantheonWrapper(vEhc, 4, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         NovaGoddessBless = nova.NovaGoddessBlessWrapper(vEhc, 0, 0, MorphGauge)
 

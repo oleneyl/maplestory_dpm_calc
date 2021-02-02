@@ -1,4 +1,3 @@
-from dpmModule.character.characterTemplate import get_template_generator
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
 from dpmModule.util.configurations import export_configuration
 
@@ -71,15 +70,13 @@ def conf(args):
 
 
 def dpm(args):
-    template = get_template_generator("high_standard")().get_template(args.ulevel)
-    parser = IndividualDPMGenerator(args.job, template)
+    parser = IndividualDPMGenerator(args.job)
     parser.set_runtime(args.time * 1000)
     try:
         dpm = parser.get_dpm(
+            spec_name=str(args.ulevel),
             ulevel=args.ulevel,
             cdr=args.cdr,
-            level=args.level,
-            weaponstat=[4, 9],
             printFlag=args.log,
             statistics=args.stat or args.log,
         )

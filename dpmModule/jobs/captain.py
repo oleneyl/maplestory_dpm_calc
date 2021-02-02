@@ -2,6 +2,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
+from ..execution.rules import ConditionRule, ReservationRule, RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobbranch import pirates
 from .jobclass import adventurer
@@ -13,7 +14,7 @@ from typing import Any, Dict
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.jobtype = "dex"
+        self.jobtype = "DEX"
         self.jobname = "캡틴"
         self.vEnhanceNum = 14
         self.ability_list = Ability_tool.get_ability_set(
@@ -23,6 +24,14 @@ class JobGenerator(ck.JobGenerator):
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(pdamage=28, armor_ignore=22)
+
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(ConditionRule('노틸러스', '노틸러스 어썰트', lambda sk: sk.is_cooltime_left(8000, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('소울 컨트랙트', '노틸러스 어썰트', lambda sk: sk.is_usable() or sk.is_cooltime_left(70000, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('노틸러스 어썰트', '소울 컨트랙트'), RuleSet.BASE)
+
+        return ruleset
 
     def get_passive_skill_list(
         self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
@@ -108,6 +117,7 @@ class JobGenerator(ck.JobGenerator):
         DEADEYEAIM = 3480
         BULLET_PARTY_TICK = 150
         CONTINUAL_AIMING = core.CharacterModifier(pdamage_indep=25 + 2 * self.combat)
+        BULLET_ATT = core.CharacterModifier(att=22)  # 자이언트 불릿
 
         ######   Skill   ######
         # Buff skills
@@ -234,7 +244,8 @@ class JobGenerator(ck.JobGenerator):
                 damage=325 + 3 * self.combat,
                 hit=1,
                 modifier=core.CharacterModifier(pdamage=30, boss_pdamage=20)
-                + CONTINUAL_AIMING,
+                + CONTINUAL_AIMING
+                + BULLET_ATT,
             )
             .setV(vEhc, 0, 2, True)
             .wrap(core.DamageSkillWrapper)
@@ -248,7 +259,8 @@ class JobGenerator(ck.JobGenerator):
                 cooltime=5000,
                 red=True,
                 modifier=core.CharacterModifier(crit=100, armor_ignore=60, pdamage=20)
-                + CONTINUAL_AIMING,
+                + CONTINUAL_AIMING
+                + BULLET_ATT,
             )
             .setV(vEhc, 3, 2, True)
             .wrap(core.DamageSkillWrapper)
@@ -262,7 +274,7 @@ class JobGenerator(ck.JobGenerator):
                 hit=7,
                 red=True,
                 cooltime=30000,
-                modifier=CONTINUAL_AIMING,
+                modifier=CONTINUAL_AIMING + BULLET_ATT,
             )
             .setV(vEhc, 8, 2, True)
             .wrap(core.DamageSkillWrapper)
@@ -273,7 +285,7 @@ class JobGenerator(ck.JobGenerator):
                 delay=0,
                 damage=275 + 3 * passive_level,
                 hit=1,
-                modifier=CONTINUAL_AIMING,
+                modifier=CONTINUAL_AIMING + BULLET_ATT,
             )
             .setV(vEhc, 1, 2, True)
             .wrap(core.DamageSkillWrapper)
@@ -287,7 +299,7 @@ class JobGenerator(ck.JobGenerator):
                 damage=400,
                 hit=12,
                 cooltime=30000,
-                modifier=CONTINUAL_AIMING,
+                modifier=CONTINUAL_AIMING + BULLET_ATT,
             )
             .setV(vEhc, 7, 2, True)
             .wrap(core.DamageSkillWrapper)
@@ -316,7 +328,7 @@ class JobGenerator(ck.JobGenerator):
                 delay=BULLET_PARTY_TICK,  # 12초간 지속 -> 50회 시전
                 damage=230 + 9 * vEhc.getV(5, 5),
                 hit=5,
-                modifier=CONTINUAL_AIMING,
+                modifier=CONTINUAL_AIMING + BULLET_ATT,
             )
             .isV(vEhc, 5, 5)
             .wrap(core.DamageSkillWrapper)
@@ -330,7 +342,8 @@ class JobGenerator(ck.JobGenerator):
                 cooltime=30000 + DEADEYEAIM,  # TODO: 조준시간은 쿨감 안받아야함
                 red=True,
                 modifier=core.CharacterModifier(crit=100, pdamage_indep=4 * 11)
-                + CONTINUAL_AIMING,
+                + CONTINUAL_AIMING
+                + BULLET_ATT,
             )
             .isV(vEhc, 3, 3)
             .wrap(core.DamageSkillWrapper)
@@ -345,7 +358,7 @@ class JobGenerator(ck.JobGenerator):
                 remain=360 * 7 - 1,
                 cooltime=180000,
                 red=True,
-                modifier=CONTINUAL_AIMING,
+                modifier=CONTINUAL_AIMING + BULLET_ATT,
             )
             .isV(vEhc, 0, 0)
             .wrap(core.SummonSkillWrapper)
@@ -359,7 +372,7 @@ class JobGenerator(ck.JobGenerator):
                 hit=12,
                 remain=160 * 36 - 1,
                 cooltime=-1,
-                modifier=CONTINUAL_AIMING,
+                modifier=CONTINUAL_AIMING + BULLET_ATT,
             )
             .isV(vEhc, 0, 0)
             .wrap(core.SummonSkillWrapper)
@@ -376,7 +389,7 @@ class JobGenerator(ck.JobGenerator):
                 damage=575 + 23 * vEhc.getV(0, 0),
                 hit=11,
                 cooltime=-1,
-                modifier=CONTINUAL_AIMING,
+                modifier=CONTINUAL_AIMING + BULLET_ATT,
             )
             .isV(vEhc, 0, 0)
             .wrap(core.DamageSkillWrapper)
@@ -416,13 +429,15 @@ class JobGenerator(ck.JobGenerator):
             sk.onAfter(CaptainDignity)
 
         # 퀵 드로우
-        QuickDrawProc = QuickDrawStack.stackController(
-            (8 + self.combat) * 0.01, name="퀵 드로우 확률"
+        QuickDrawProc = core.OptionalElement(
+            QuickDraw.is_not_active,
+            QuickDrawStack.stackController((8 + ceil(self.combat/2)) * 0.01, name="퀵 드로우 확률"),
         )
+        QuickDraw.onJustAfter(QuickDrawStack.stackController(-1))
         QuickDrawProc.onJustAfter(
             core.OptionalElement(
-                partial(QuickDrawStack.judge, 1, 1),
-                QuickDraw.controller(0),
+                lambda: QuickDrawStack.judge(1, 1) and QuickDraw.is_not_active(),
+                QuickDraw,
             )
         )
         for sk in [
@@ -435,9 +450,10 @@ class JobGenerator(ck.JobGenerator):
             DeathTrigger,
         ]:
             sk.onJustAfter(QuickDrawProc)
+        for sk in [NautilusAssult, NautilusAssult_2]:
+            sk.onTick(QuickDrawProc)
 
         QuickDrawShutdownTrigger = QuickDraw.controller(-1)
-        QuickDrawShutdownTrigger.onJustAfter(QuickDrawStack.stackController(-1))
         for sk in [Headshot, StrangeBomb, DeadEye, DeathTrigger, Nautilus, MirrorBreak]:
             sk.onJustAfter(QuickDrawShutdownTrigger)
         for sk in [NautilusAssult, NautilusAssult_2]:
@@ -457,15 +473,15 @@ class JobGenerator(ck.JobGenerator):
             )
 
         # 노틸러스 어썰트
-        NautilusAssult.onAfter(NautilusAssult_2)
-        NautilusAssult.onAfter(
+        NautilusAssult.onEventEnd(NautilusAssult_2)
+        NautilusAssult.onJustAfter(
             core.OptionalElement(
                 partial(Nautilus.is_cooltime_left, 8000, -1),
                 Nautilus.controller(8000),
                 name="노틸러스 쿨타임 8초",
             )
         )
-        Nautilus.onAfter(
+        Nautilus.onJustAfter(
             core.OptionalElement(
                 partial(NautilusAssult.is_cooltime_left, 8000, -1),
                 NautilusAssult.controller(8000),

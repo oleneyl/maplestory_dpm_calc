@@ -13,7 +13,7 @@ from typing import Any, Dict
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.jobtype = "str"
+        self.jobtype = "STR"
         self.jobname = "캐논슈터"
         self.vEnhanceNum = 16
         self.ability_list = Ability_tool.get_ability_set(

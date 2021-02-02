@@ -2,9 +2,10 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
 from . import globalSkill
-from ..execution.rules import RuleSet, ConcurrentRunRule
+from ..execution.rules import RuleSet
 from .jobbranch import warriors
 from .jobclass import demon
+from . import jobutils
 from math import ceil
 from typing import Any, Dict
 
@@ -18,15 +19,17 @@ Advisor:
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.jobtype = "str"
+        self.jobtype = "HP"
         self.jobname = "데몬어벤져"
-        self.vEnhanceNum = 12  # 정확한 수치 아님
-        self.preEmptiveSkills = 3  # 쓸샾, 쓸뻥, 쓸컴뱃
-        self.ability_list = Ability_tool.get_ability_set('reuse', 'crit', 'boss_pdamage')
+        self.vEnhanceNum = 12
+        # 쓸샾, 쓸뻥, 쓸오더(아직 미구현)
+        self.preEmptiveSkills = 3
+
+        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'reuse')
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ConcurrentRunRule('디멘션 소드', '데모닉 포티튜드'), RuleSet.BASE)
+        # ruleset.add_rule(ConcurrentRunRule('디멘션 소드', '데모닉 포티튜드'), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self):
@@ -34,7 +37,24 @@ class JobGenerator(ck.JobGenerator):
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
+        # TODO: 블러드 컨트랙트
+        # 컨버전 스타포스
+        star = jobutils.get_starforce_count(chtr)
+        if star <= 35: value = 60
+        elif star <= 60: value = 80
+        elif star <= 100: value = 100
+        elif star <= 140: value = 120
+        elif star <= 200: value = 140
+        elif star <= 220: value = 142
+        elif star <= 250: value = 144
+        elif star <= 270: value = 146
+        elif star <= 290: value = 148
+        elif star <= 310: value = 150
+        else: value = (star - 301) // 10 * 2 + 150
+        ConversionStarforce = core.InformedCharacterModifier("컨버전 스타포스", stat_main=star * value)
 
+
+        # 주스탯 미반영, 추가바람.
         # 주스탯 미반영, 추가바람.
         AbyssalRage = core.InformedCharacterModifier("어비셜 레이지", att=40)
         AdvancedDesperadoMastery = core.InformedCharacterModifier("어드밴스드 데스페라도 마스터리", att=50+passive_level, crit_damage=8)
@@ -47,7 +67,7 @@ class JobGenerator(ck.JobGenerator):
 
         InnerStrength = core.InformedCharacterModifier("이너 스트렝스", stat_main=600)
 
-        return [AbyssalRage, AdvancedDesperadoMastery, OverwhelmingPower, DefenseExpertise, DemonicSharpness, MapleHeroesDemon, InnerStrength]
+        return [ConversionStarforce, AbyssalRage, AdvancedDesperadoMastery, OverwhelmingPower, DefenseExpertise, DemonicSharpness, MapleHeroesDemon, InnerStrength]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -96,19 +116,19 @@ class JobGenerator(ck.JobGenerator):
         ### Damage skills ###
 
         # 익시드 0~3스택: 클라기준 딜레이 900, 900, 840, 780
-        # 릴리즈 사용 직후 익시드 사용시 3번만에 강화모드 진입
+        # 릴리즈 사용 직후 익시드 사용시 2스택 부터 시작
         Execution_0 = core.DamageSkill("익시드: 엑스큐션(0스택)", 660, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         Execution_1 = core.DamageSkill("익시드: 엑스큐션(1스택)", 630, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         Execution_2 = core.DamageSkill("익시드: 엑스큐션(2스택)", 600, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         Execution_3 = core.DamageSkill("익시드: 엑스큐션(3스택)", 570, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        # 익시드 5스택 이상
+        # 익시드 4스택 이상
         ExecutionExceed = core.DamageSkill("익시드: 엑스큐션(강화)", 540, 540+8*self.combat, 6, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         # 최대 10회 공격
         ShieldChasing = core.DamageSkill("실드 체이싱", 720, 500+10*self.combat, 2*2*(8+2), cooltime=6000, modifier=core.CharacterModifier(armor_ignore=30+passive_level, pdamage=20+20), red=True).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
 
-        ArmorBreak = core.DamageSkill("아머 브레이크", 0, 350+5*self.combat, 4, cooltime=(30+self.combat)*1000).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        ArmorBreakBuff = core.BuffSkill("아머 브레이크(디버프)", 720, (30+self.combat)*1000, armor_ignore=30+self.combat).wrap(core.BuffSkillWrapper)
+        ArmorBreak = core.DamageSkill("아머 브레이크", 720, 350+5*self.combat, 4, cooltime=-1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        ArmorBreakBuff = core.BuffSkill("아머 브레이크(디버프)", 0, (30+self.combat)*1000, armor_ignore=30+self.combat).wrap(core.BuffSkillWrapper)
 
         # ThousandSword = core.Damageskill("사우전드 소드", 0, 500, 8, cooltime = 8*1000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
 
@@ -126,23 +146,23 @@ class JobGenerator(ck.JobGenerator):
 
         # 초당 10.8타 가정
         # http://www.inven.co.kr/board/maple/2304/23974
-
         DemonFrenzy = core.SummonSkill("데몬 프렌지", 0, 1000/10.8, 300+8*vEhc.getV(0, 0), FRENZY_STACK, 99999999).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         # 블피 (3중첩)
         # TODO: 블피캔슬 구현 (다른스킬 시전중에 블피사용시 그 전에 사용한 스킬 딜레이가 캔슬되고 즉시 블피가 발동)
-        DemonicBlast = core.DamageSkill("블러드 피스트", 330, 800+32*vEhc.getV(0, 0), 7, cooltime=17000, modifier=core.CharacterModifier(crit=100, armor_ignore=100), red=True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        DemonicBlast = core.DamageSkill("블러드 피스트", 330, 800+32*vEhc.getV(0, 0), 7, cooltime=17000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         # 평딜 기준
         # 참고자료: https://blog.naver.com/oe135/221372243858
         if DIMENSION_PHASE == 1:
-            DimensionSword = core.SummonSkill("디멘션 소드", 660, 3000, 1250+14*vEhc.getV(0, 0), 8, 40*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100), red=True).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+            DimensionSword = core.SummonSkill("디멘션 소드", 510, 3000, 850+34*vEhc.getV(0, 0), 8, 40*1000, cooltime=120*1000, red=True, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
         else:
-            DimensionSword = core.SummonSkill("디멘션 소드", 660, 210, 300+vEhc.getV(0, 0)*12, 6, (40*1000-660)*0.2, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100), red=True).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+            DimensionSword = core.SummonSkill("디멘션 소드", 510, 210, 300+12*vEhc.getV(0, 0), 6, (40*1000-510)*0.2, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100), red=True).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
-        # 기본 4000ms, 분노 수치에 따라 쿨감적용
-        REVENANT_COOLTIME = 1080  # 엑큐 2번당 발동하도록 조정
-        Revenant = core.BuffSkill("레버넌트", 1530, (30+vEhc.getV(0, 0)//5)*1000, cooltime=300000, rem=False, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
+        # 기본 4000ms
+        # 엑큐 2번당 발동하도록 조정
+        REVENANT_COOLTIME = 1080
+        Revenant = core.BuffSkill("레버넌트", 1530, (30+vEhc.getV(0, 0)//5)*1000, cooltime=300*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
         RevenantHit = core.DamageSkill("레버넌트(분노의 가시)", 0, 300+vEhc.getV(0, 0)*12, 9, cooltime=REVENANT_COOLTIME, modifier=core.CharacterModifier(armor_ignore=30), red=False).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         # 데몬 5차 공용
@@ -150,14 +170,12 @@ class JobGenerator(ck.JobGenerator):
         AnotherGoddessBuff, AnotherVoid = demon.AnotherWorldWrapper(vEhc, 0, 0)
 
         ######   Skill Wrapper   ######
-
-        # TODO: 아머 브레이크 효율 확인필요
-        ArmorBreakBuff.onAfter(ArmorBreak)
+        ArmorBreakBuff.onBefore(ArmorBreak)
 
         BasicAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
         BasicAttack.onAfter(core.OptionalElement(ReleaseOverload.is_active, ExecutionExceed, ReleaseOverload))
-        ReleaseOverload.onAfter(Execution_1)
         ReleaseOverload.onAfter(Execution_2)
+        ReleaseOverload.onAfter(Execution_3)
         ReleaseOverload.protect_from_running()
 
         RevenantHitOpt = core.OptionalElement(lambda : Revenant.is_active() and RevenantHit.is_available(), RevenantHit, name="레버넌트 타격 여부 확인")

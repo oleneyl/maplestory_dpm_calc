@@ -14,6 +14,38 @@ https://github.com/oleneyl/maplestory_dpm_calc/issues/247
 """
 
 
+class ArmorPiercingWrapper(core.BuffSkillWrapper):
+    """
+    아머 피어싱 - 적 방어율만큼 최종뎀 추가, 방무+50%. 쿨타임 9초, 공격마다 1초씩 감소, 최소 재발동 대기시간 1초
+    """
+
+    def __init__(self, combat, chtr):
+        self.piercing_modifier = core.CharacterModifier(
+            pdamage_indep=core.constant.ARMOR_RATE * (1 + combat * 0.05),
+            armor_ignore=50 * (1 + combat * 0.02),
+        )
+        self.empty_modifier = core.CharacterModifier()
+        self.skill_modifier = chtr.get_skill_modifier()
+        self.cooltime_skip_task = core.TaskHolder(core.Task(self, self._cooltime_skip))
+        skill = core.BuffSkill("아머 피어싱", delay=0, remain=0, cooltime=9000, red=True)
+        super(ArmorPiercingWrapper, self).__init__(skill)
+
+    def check_modifier(self) -> core.CharacterModifier:
+        if self.cooltimeLeft <= 0:
+            self.cooltimeLeft = self.calculate_cooltime(self.skill_modifier)
+            return self.piercing_modifier
+        else:
+            return self.empty_modifier
+
+    def _cooltime_skip(self) -> None:
+        if self.cooltimeLeft > 1000:
+            self.cooltimeLeft = self.cooltimeLeft - 1000
+        return self._result_object_cache
+
+    def cooltime_skip(self):
+        return self.cooltime_skip_task
+
+
 class ArrowOfStormWrapper(core.DamageSkillWrapper):
     def __init__(self, skill: core.DamageSkill):
         super(ArrowOfStormWrapper, self).__init__(skill)
@@ -40,10 +72,26 @@ class ArrowOfStormWrapper(core.DamageSkillWrapper):
         return delay
 
 
+class DelayVaryingSummonSkillWrapper(core.SummonSkillWrapper):
+    # TODO: temporal fix... move to kernel/core, make DelayVaryingSummonSkill and use self.skill.delays
+    def __init__(self, skill, delays) -> None:
+        super(DelayVaryingSummonSkillWrapper, self).__init__(skill)
+        self.delays = delays
+        self.hit_count = 0
+
+    def _useTick(self) -> core.ResultObject:
+        result = super(DelayVaryingSummonSkillWrapper, self)._useTick()
+        self.hit_count = (self.hit_count + 1) % len(self.delays)
+        return result
+
+    def get_delay(self) -> float:
+        return self.delays[self.hit_count]
+
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.jobtype = "dex"
+        self.jobtype = "DEX"
         self.jobname = "보우마스터"
         self.vEnhanceNum = 11
         self.ability_list = Ability_tool.get_ability_set(
@@ -117,22 +165,10 @@ class JobGenerator(ck.JobGenerator):
 
         프리퍼레이션, 엔버링크를 120초 주기에 맞춰 사용
         """
-        base_modifier = chtr.get_base_modifier()
-        passive_level = base_modifier.passive_level + self.combat
-
-        # 반응하는 스킬이 정해져있음. Issue # 247 참고.
+        passive_level = chtr.get_base_modifier().passive_level + self.combat
         MortalBlow = core.CharacterModifier(
             pdamage=80 / 10
-        )
-
-        # 말뚝딜 환경에서는 사실상 폭풍의 시에만 터지는 것으로 보임.
-        # 쿨감 0초, 메르5% 기준으로 평딜시 12회, 극딜시 5~12회의 폭시마다 아머 피어싱이 터짐.
-        # 동일 기준 전투분석에서 10회에 한번 터지는 정도의 유효 최종뎀으로 계산됨.
-        # TODO: 쿨감별 발동 빈도 반영
-        ArmorPiercing = core.CharacterModifier(
-            pdamage_indep=300 / 10,
-            armor_ignore=50 / 10,
-        )
+        )  # 반응하는 스킬이 정해져있음. Issue # 247 참고.
 
         ######   Skill   ######
         # Buff skills
@@ -158,6 +194,8 @@ class JobGenerator(ck.JobGenerator):
         EpicAdventure = core.BuffSkill(
             "에픽 어드벤처", delay=0, remain=60 * 1000, cooltime=120 * 1000, pdamage=10
         ).wrap(core.BuffSkillWrapper)
+
+        ArmorPiercing = ArmorPiercingWrapper(passive_level, chtr)
 
         # Damage Skills
         MagicArrow = (
@@ -188,8 +226,7 @@ class JobGenerator(ck.JobGenerator):
                 damage=(350 + self.combat * 3) * 0.75,
                 hit=1 + 1,
                 modifier=core.CharacterModifier(pdamage=30, boss_pdamage=10)
-                + MortalBlow
-                + ArmorPiercing
+                + MortalBlow,
             )
             .setV(vEhc, 0, 2, True)
             .wrap(ArrowOfStormWrapper)
@@ -242,20 +279,19 @@ class JobGenerator(ck.JobGenerator):
             .isV(vEhc, 0, 0)
             .wrap(core.BuffSkillWrapper)
         )
-        ArrowRain = (
+        ArrowRain = DelayVaryingSummonSkillWrapper(
             core.SummonSkill(
                 "애로우 레인",
                 summondelay=0,
-                delay=1440,  # 5초마다 3.5회 공격, 대략 1440ms당 1회
+                delay=-1,
                 damage=600 + vEhc.getV(0, 0) * 24,
                 hit=8,
                 remain=(40 + vEhc.getV(0, 0)) * 1000,
                 cooltime=-1,
                 modifier=MortalBlow,
-            )
-            .isV(vEhc, 0, 0)
-            .wrap(core.SummonSkillWrapper)
-        )
+            ).isV(vEhc, 0, 0),
+            delays=[1000, 1000, 1000, (5000 - 3000), 1000, 1000, (5000 - 2000)],
+        )  # 1초마다 떨어지고, 평균 3.5히트가 나오도록.
 
         # Summon Skills
         Pheonix = (
@@ -286,20 +322,19 @@ class JobGenerator(ck.JobGenerator):
             patt=(5 + int(vEhc.getV(2, 2) * 0.5)),
             crit_damage=8,  # 독화살 크뎀을 이쪽에 합침
         ).wrap(core.BuffSkillWrapper)
-        QuibberFullBurst = (
+        QuibberFullBurst = DelayVaryingSummonSkillWrapper(
             core.SummonSkill(
                 "퀴버 풀버스트",
                 summondelay=780,
-                delay=2 * 1000 / 6,
+                delay=-1,
                 damage=250 + 10 * vEhc.getV(2, 2),
                 hit=9,
                 remain=30 * 1000,
                 cooltime=-1,
                 modifier=MortalBlow,
-            )
-            .isV(vEhc, 2, 2)
-            .wrap(core.SummonSkillWrapper)
-        )
+            ).isV(vEhc, 2, 2),
+            delays=[90, 90, 90, 90, 90, 90 + (2000 - 90 * 6)],
+        )  # 2초에 한번씩 90ms 간격으로 6회 발사
         QuibberFullBurstDOT = core.DotSkill(
             "독화살",
             summondelay=0,
@@ -338,16 +373,18 @@ class JobGenerator(ck.JobGenerator):
         )
 
         OpticalIllusion = (
-            core.DamageSkill(
+            core.SummonSkill(
                 "실루엣 미라주",
-                delay=0,
+                summondelay=0,
+                delay=210,
                 damage=400 + 16 * vEhc.getV(0, 0),
                 hit=3,
+                remain=210 * 5,
                 cooltime=7500,
                 modifier=MortalBlow,
             )
             .isV(vEhc, 0, 0)
-            .wrap(core.DamageSkillWrapper)
+            .wrap(core.SummonSkillWrapper)
         )
 
         ######   Skill Wrapper   ######
@@ -377,13 +414,29 @@ class JobGenerator(ck.JobGenerator):
 
         UseOpticalIllusion = core.OptionalElement(
             OpticalIllusion.is_available,
-            core.RepeatElement(OpticalIllusion, 5),
+            OpticalIllusion,
             name="쿨타임 체크",
         )
         for sk in [ArrowOfStorm, GrittyGust]:
             sk.onAfter(UseOpticalIllusion)
         OpticalIllusion.protect_from_running()
         OpticalIllusion.onAfter(MagicArrow)
+
+        # Armor Piercing
+        for sk in [
+            ArrowOfStorm,
+            ArrowRain,
+            QuibberFullBurst,
+            OpticalIllusion,
+            GuidedArrow,
+            MirrorBreak,
+        ]:
+            sk.onBefore(ArmorPiercing.cooltime_skip())
+        ArrowOfStorm.add_runtime_modifier(
+            ArmorPiercing,
+            lambda armor_piercing: armor_piercing.check_modifier(),
+        )
+        ArmorPiercing.protect_from_running()
 
         ### Exports ###
         return (
@@ -394,6 +447,7 @@ class JobGenerator(ck.JobGenerator):
                 SoulArrow,
                 SharpEyes,
                 EpicAdventure,
+                ArmorPiercing,
                 Preparation,
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                 ArrowRainBuff,

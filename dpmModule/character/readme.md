@@ -38,10 +38,11 @@ JobGenerator
 
     아래 값들을 올바른 값으로 다시 초기화 합니다.
     
+    - self.jobname : 직업명
+    - self.jobtype : 주스텟입니다. "STR", "DEX", "INT", "LUK", "LUK2", "HP", "xenon" 중 하나.
     - self.buffrem : 버프 지속시간이 중요한 직업인지 표시합니다.
     - self.vEnhanceNum : 5차 코어를 통해 강화되는 스킬의 수입니다.
     - self.vSkillNum : 사용하는 5차 스킬의 개수입니다. 베놈 버스트와 같은 것을 제외하면됩니다.
-    - self.jobtype : 주스텟입니다. "str", "int", "luk", "dex" 중 하나.
     - self.ability_list : 사용 어빌리티입니다. Ability_tool.get_ability_set 함수를 사용합니다.
     - self._use_critical_reinforce : 크리티컬 리인포스 보유 여부입니다.
 

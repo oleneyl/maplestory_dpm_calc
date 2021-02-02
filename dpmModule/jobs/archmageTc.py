@@ -23,7 +23,7 @@ class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.buffrem = (0, 40)
-        self.jobtype = "int"
+        self.jobtype = "INT"
         self.jobname = "아크메이지썬/콜"
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
         self.preEmptiveSkills = 2
@@ -179,7 +179,6 @@ class JobGenerator(ck.JobGenerator):
         ThunderStorm.add_runtime_modifier(FrostEffect, applyFrostEffect)
         
         #Elquiness
-        Elquiness.onTick(BlizzardPassive) # TODO: onTick 실행순서 바뀌면 순서 조정해야 함
         Elquiness.onTick(FrostIncrement)
         
         #Frozen Orb

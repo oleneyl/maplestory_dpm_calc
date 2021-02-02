@@ -2,7 +2,7 @@
 buffrem:
 - 0
 - 40
-jobtype: int
+jobtype: INT
 jobname: 아크메이지불/독
 vEnhanceNum: 13
 preEmptiveSkills: 2

@@ -2,7 +2,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import ReservationRule, RuleSet, InactiveRule
+from ..execution.rules import ConcurrentRunRule, ReservationRule, RuleSet, InactiveRule
 from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
@@ -59,7 +59,7 @@ class ComboAttackWrapper(core.StackSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.jobtype = "str"
+        self.jobtype = "STR"
         self.jobname = "히어로"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'mess')
         self.preEmptiveSkills = 2
@@ -69,8 +69,8 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule('콤보 데스폴트', '콤보 인스팅트'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('레이지 업라이징', '콤보 인스팅트'), RuleSet.BASE)
         ruleset.add_rule(ReservationRule('메이플월드 여신의 축복', '콤보 인스팅트'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '소드 오브 버닝 소울'), RuleSet.BASE)
         return ruleset
-
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat

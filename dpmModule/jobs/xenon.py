@@ -116,7 +116,7 @@ class SupplyStackWrapper(core.StackSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.jobtype = "luk"
+        self.jobtype = "xenon"
         self.jobname = "제논"
         self.vEnhanceNum = None
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
@@ -158,9 +158,9 @@ class JobGenerator(ck.JobGenerator):
         Multilateral = [Multilateral1, Multilateral2, Multilateral3, Multilateral4, Multilateral5, Multilateral6]
 
         LinearPerspective = core.InformedCharacterModifier("리니어 퍼스펙티브", crit=40)
-        MinoritySupport = core.InformedCharacterModifier("마이너리티 서포트", stat_main=20, stat_sub=20)
+        MinoritySupport = core.InformedCharacterModifier("마이너리티 서포트", stat_main=60)  # 힘덱럭 20씩
         XenonMastery = core.InformedCharacterModifier("제논 마스터리", att=20)
-        HybridDefensesPassive = core.InformedCharacterModifier("듀얼브리드 디펜시브(패시브)", stat_main=10, stat_sub=10)
+        HybridDefensesPassive = core.InformedCharacterModifier("듀얼브리드 디펜시브(패시브)", stat_main=30)  # 힘덱럭 30씩
         XenonExpert = core.InformedCharacterModifier("제논 엑스퍼트", att=30 + passive_level, crit_damage=8)
         OffensiveMatrix = core.InformedCharacterModifier("오펜시브 매트릭스", armor_ignore=30 + passive_level)
 
