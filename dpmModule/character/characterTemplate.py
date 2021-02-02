@@ -283,8 +283,8 @@ class TemplateGenerator:
                 bonus = 0
                 if 'surprise_bonus' in gear_node:
                     bonus = gear_node['surprise_bonus']
-                bonus_count = star * bonus // 100
-                gb.apply_stars(star - bonus_count, True, False)
+                bonus_count = abs(star) * bonus // 100
+                gb.apply_stars(abs(star) - bonus_count, True, False)
                 gb.apply_stars(bonus_count, True, True)
 
         def _apply_potential(potential_node, gear_potential_dict):
