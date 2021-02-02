@@ -342,9 +342,9 @@ default:
 데몬어벤져:
   type: override
   head:
-    id: 아케인셰이드
+    id: 카루타
     bonus:
-      stat_main: 3600
+      stat_main: 2700
       att: 5
     <<: *demon_armor
     cdr: *head_cdr
@@ -480,7 +480,7 @@ default:
 제논:
   type: override
   head:
-    id: 아케인셰이드
+    id: 카루타
     <<: *xenon_armor
     cdr:
       '1':
