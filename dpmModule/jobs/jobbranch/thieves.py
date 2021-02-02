@@ -1,13 +1,18 @@
+from enum import Enum
+
 from ...kernel import core
 
 # Venom Burst is currently only using Cadena, so don't add it. 베놈 버스트는 현재 카데나만 사용하고 있으므로 추가하지 않음.
 
+class ThiefSkills(Enum):
+    LastResort = 'Last Resort | 레디 투 다이'  # Taken from https://maplestory.fandom.com/wiki/Last_Resort
+    ShadowWalker = 'Shadow Walker | 얼티밋 다크 사이트'  # Taken from https://maplestory.fandom.com/wiki/Shadow_Walker
 
 # Need to integrate once job-specific scripts are fully understood. 직업별 스크립트 완전히 파악되면 통합 필요.
 def ReadyToDieWrapper(vEhc, num1, num2):
     ReadyToDie = (
         core.BuffSkill(
-            "레디 투 다이",  # Ready to Die
+            ThiefSkills.LastResort.value,  # Ready to Die
             delay=600 * 2,
             remain=15 * 1000,
             cooltime=(90 - int(0.5 * vEhc.getV(num1, num2))) * 1000,
@@ -22,7 +27,7 @@ def ReadyToDieWrapper(vEhc, num1, num2):
 
 def ReadyToDiePassiveWrapper(vEhc, num1, num2):
     ReadyToDiePassive = core.InformedCharacterModifier(
-        "레디 투 다이(패시브)", att=vEhc.getV(num1, num2)  # Ready to Die (Passive)
+        f"{ThiefSkills.LastResort.value}(passive | 패시브)", att=vEhc.getV(num1, num2)  # Ready to Die (Passive)
     )
     return ReadyToDiePassive
 
@@ -31,7 +36,7 @@ def ReadyToDiePassiveWrapper(vEhc, num1, num2):
 def UltimateDarkSightWrapper(vEhc, num1, num2, aDS=0):
     UltimateDarkSight = (
         core.BuffSkill(
-            "얼티밋 다크 사이트",  # Ultimate Dark Site
+            ThiefSkills.ShadowWalker.value,  # Ultimate Dark Site
             delay=750,
             remain=30000,
             cooltime=(220 - vEhc.getV(num1, num2)) * 1000,
