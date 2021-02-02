@@ -113,6 +113,17 @@ anchors:
     add_potential:
       allstat_rate: 9
       att: 12
+  
+  magician_shield: &magician_shield
+    id: 데이모스 세이지 실드
+    upgrade:
+      - type: 혼줌
+        option:
+          att: 5
+        count: -1
+    star: 20
+    add_potential:
+      patt: 24
 
 default:
   level: 275
@@ -255,17 +266,51 @@ default:
     <<: *acc_potential
   title:
     id: 핑아일체
+아크메이지불/독:
+  type: override
+  subweapon:
+    << : *magician_shield
+아크메이지썬/콜:
+  type: override
+  subweapon:
+    << : *magician_shield
+비숍:
+  type: override
+  subweapon:
+    << : *magician_shield
+플레임위자드:
+  type: override
+  subweapon:
+    << : *magician_shield
+배틀메이지:
+  type: override
+  subweapon:
+    << : *magician_shield
 에반:
   type: override
   job_specific_item:
     stat_main: 46
     stat_sub: 46
+  subweapon:
+    << : *magician_shield
 메카닉:
   type: override
   job_specific_item:
     stat_main: 18
     stat_sub: 18
     att: 16
+섀도어:
+  type: override
+  subweapon:
+    id: 데이모스 세이지 실드
+    upgrade:
+      - type: 혼줌
+        option:
+          att: 5
+        count: -1
+    star: 20
+    add_potential:
+      patt: 24
 듀얼블레이드:
   type: override
   subweapon:
@@ -276,6 +321,12 @@ default:
         prob: 15
         count: -1
     star: 22
+    add_potential:
+      patt: 24
+데몬슬레이어:
+  type: override
+  subweapon:
+    id: 루인 포스실드
     add_potential:
       patt: 24
 데몬어벤져:
@@ -401,6 +452,10 @@ default:
     bonus:
       stat_main: 2880
       att: 5
+  subweapon:
+    id: 루인 포스실드
+    add_potential:
+      patt: 24
   heart:
     id: 티타늄 하트
     upgrade:
