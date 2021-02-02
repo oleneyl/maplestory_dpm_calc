@@ -1,3 +1,5 @@
+from enum import Enum
+
 from ..kernel import core
 
 
@@ -16,9 +18,25 @@ TODO: 링오브썸, 듀라빌리티, 얼티메이덤
 """
 
 
+# English Oz Ring effects and names can be found here https://maplestory.fandom.com/wiki/Miscellaneous_Skills#Equipment_Skills
+# and here https://dexless.com/guides/tower-of-oz-comprehensive-guide.145/
+class OzRings(Enum):
+    RingofRestraint = 'Ring of Restraint | 리스트레인트 링'
+    UltimatumRing = 'Ultimatum Ring | '
+    LimitRing = 'Limit Ring | '
+    HealthCutRing = 'Health Cut Ring | '
+    ManaCutRing = 'Mana Cut Ring | '
+    CriticalShiftRing = 'Critical Shift Ring | '
+    WeaponJumpRing = 'Weapon Jump Ring | 웨폰퍼프 링'
+    CriticalDamageRing = 'Critical Damage Ring | 크리데미지 링'
+    CriticalDefenseRing = 'Critical Defense Ring | 크리디펜스 링'
+    LevelJumpRing = 'Level Jump Ring | '
+    RiskTakerRing = 'Risk Taker Ring | 리스트테이커 링'
+    CrisisHMRing = 'Crisis HM Ring | 크라이시스 H/M 링'
+
 def restraint_ring(level: int):
     return core.BuffSkill(
-        "리스트레인트 링",
+        OzRings.RingofRestraint.value,
         delay=60,
         remain=(7+2*level)*1000,
         cooltime=180000,
@@ -29,7 +47,7 @@ def restraint_ring(level: int):
 
 def crisis_hm_ring(level: int):
     return core.BuffSkill(
-        "크라이시스-HM링",
+        OzRings.CrisisHMRing.value,
         delay=60,
         remain=(7+2*level)*1000,
         cooltime=180000,
@@ -40,7 +58,7 @@ def crisis_hm_ring(level: int):
 
 def risktaker_ring(level: int):
     return core.BuffSkill(
-        "리스트테이커 링",
+        OzRings.RiskTakerRing.value,
         delay=60,
         remain=(6+6*level)*1000,
         cooltime=180000,
@@ -51,7 +69,7 @@ def risktaker_ring(level: int):
 
 def crisis_ring(level: int):
     return core.BuffSkill(
-        "크라이시스 H/M 링",
+        OzRings.CrisisHMRing.value,
         delay=60,
         remain=(7+2*level)*1000,
         cooltime=180000,
@@ -73,7 +91,7 @@ def weaponpuff_ring(level: int, weapon_att: int):
 
 def levelpuff_ring(level: int, chtr_level: int):
     return core.BuffSkill(
-        "레벨퍼프 링",
+        OzRings.WeaponJumpRing.value,
         delay=60,
         remain=(7+2*level)*1000,
         cooltime=180000,
@@ -84,7 +102,7 @@ def levelpuff_ring(level: int, chtr_level: int):
 
 def crit_damage_ring(level: int):
     return core.BuffSkill(
-        "크리데미지 링",
+        OzRings.CriticalDamageRing.value,
         delay=60,
         remain=(7+2*level)*1000,
         cooltime=180000,
@@ -96,7 +114,7 @@ def crit_damage_ring(level: int):
 def crit_defense_ring(level: int):
     # 100% assumption. 크확 100% 가정.
     return core.BuffSkill(
-        "크리디펜스 링",
+        OzRings.CriticalDefenseRing.value,
         delay=60,
         remain=(7+2*level)*1000,
         cooltime=180000,
