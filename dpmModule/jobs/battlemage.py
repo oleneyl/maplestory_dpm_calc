@@ -148,7 +148,9 @@ class JobGenerator(ck.JobGenerator):
         GrimReaper = GrimReaperWrapper(vEhc, 2, 2, MasterOfDeath)
         AbyssyalLightning = core.BuffSkill("어비셜 라이트닝", 540, 35000, cooltime=200*1000, red=True).wrap(core.BuffSkillWrapper)
         AbyssyalDarkLightning = core.DamageSkill("어비셜 라이트닝(칠흑의 번개)", 0, 1100, 5*3, modifier=core.CharacterModifier(crit=100, armor_ignore=20, pdamage_indep=-20)).wrap(core.DamageSkillWrapper)
-        
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         #Build Graph
         """
         스킬간 발동관계 참고 링크
@@ -219,8 +221,6 @@ class JobGenerator(ck.JobGenerator):
                     AbyssyalDarkLightning, RegistanceLineInfantry]:
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return(BasicAttack,
                 [Booster, globalSkill.maple_heros(chtr.level, combat_level=self.combat), OverloadMana,

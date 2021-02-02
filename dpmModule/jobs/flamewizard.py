@@ -101,7 +101,9 @@ class JobGenerator(ck.JobGenerator):
         SalamanderMischeif = core.SummonSkill("샐리맨더 미스칩", 750, 710, 150+6*vEhc.getV(0,0), 7, 60000, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         SalamanderMischeifStack = core.StackSkillWrapper(core.BuffSkill("샐리맨더 미스칩(불씨)", 0, 99999999), 15+vEhc.getV(0,0))
         SalamanderMischeifBuff = core.BuffSkill("샐리맨더 미스칩(버프)", 0, 30000, cooltime=-1, att=15+2*(15+vEhc.getV(0,0))).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Wrappers    ######
     
         DragonSlave = core.RepeatElement(DragonSlaveTick, 7)
@@ -136,8 +138,6 @@ class JobGenerator(ck.JobGenerator):
                     SalamanderMischeif, CygnusPhalanx]:
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
         
         return (OrbitalFlame,
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

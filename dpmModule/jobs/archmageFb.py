@@ -163,6 +163,8 @@ class JobGenerator(ck.JobGenerator):
         MegidoFlame.onAfter(MegidoFlameDOT)
         PoisonNova.onAfter(PoisonNovaDOT)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         # Skill Link
         DotPunisher.onBefore(TeleportMastery)
         DotPunisher.onJustAfter(DotPunisherExceed)
@@ -178,9 +180,7 @@ class JobGenerator(ck.JobGenerator):
                    PoisonNovaErupt, PoisonNovaEruptExceed, PoisonChain, PoisonChainToxic,
                    EnergyBolt, FlameOrb, PoisonBreath, Explosion]:
             overload_mana_builder.add_skill(sk)
-        OverloadMana = overload_mana_builder.get_buff()
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+        OverloadMana = overload_mana_builder.get_buff()        
 
         return (Paralyze,
                 [Infinity, Meditation, EpicAdventure, OverloadMana,

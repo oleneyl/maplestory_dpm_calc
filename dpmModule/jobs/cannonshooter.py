@@ -334,6 +334,8 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.SummonSkillWrapper)
         )
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ### build graph relationships
         MonkeyWave.onAfter(MonkeyWaveBuff)
         MonkeyFurious.onAfters([MonkeyFuriousBuff, MonkeyFuriousDot])
@@ -345,8 +347,6 @@ class JobGenerator(ck.JobGenerator):
         ICBM.onAfter(ICBMDOT)
 
         SpecialMonkeyEscort_Cannon.onJustAfter(SpecialMonkeyEscort_Bomb)
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return (
             CannonBuster,

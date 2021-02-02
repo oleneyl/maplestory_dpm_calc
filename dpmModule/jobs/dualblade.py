@@ -110,7 +110,9 @@ class JobGenerator(ck.JobGenerator):
         BladeTornadoSummonMirrorImaging = core.SummonSkill("블레이드 토네이도(소환)(미러이미징)", 0, 3000/5, (400+16*vEhc.getV(2,2)) * 0.7, 6, 3000-1, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
 
         HauntedEdge = core.DamageSkill("헌티드 엣지-나찰", 0, 200+8*vEhc.getV(0,0), 4*5, cooltime=14000, red=True, modifier=core.CharacterModifier(armor_ignore=30)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
     
         SuddenRaid.onAfter(SuddenRaidDOT)
@@ -144,8 +146,6 @@ class JobGenerator(ck.JobGenerator):
         for sk in [PhantomBlow, SuddenRaid, FinalCut, FlashBang, AsuraTick, 
             BladeStorm, BladeStormTick, KarmaFury, BladeTornado, HiddenBlade, HauntedEdge]:
             jobutils.create_auxilary_attack(sk, 0.7, nametag='(미러이미징)')
-        
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
         
         return(PhantomBlow,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

@@ -183,6 +183,8 @@ class JobGenerator(ck.JobGenerator):
 
         HommingMissleHolder = core.SummonSkill("호밍 미사일(더미)", 0, 660, 0, 0, 99999 * 100000).wrap(core.SummonSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         MultipleOption.onAfter(MultipleOptionBuff)
         MechCarrier.onAfter(MechCarrierBuff)
 
@@ -210,8 +212,6 @@ class JobGenerator(ck.JobGenerator):
 
         RoboFactory.onEventEnd(RoboFactoryFinal)
         RoboFactory.onAfter(RoboFactoryBuff)
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return (
             MassiveFire,

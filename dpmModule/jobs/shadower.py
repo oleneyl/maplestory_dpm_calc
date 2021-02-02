@@ -126,7 +126,9 @@ class JobGenerator(ck.JobGenerator):
 
         ShadowFormation = core.SummonSkill("멸귀참영진", 0, 8000/12, 425+17*vEhc.getV(0,0), 8, 8000-1, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         ShadowFormationFinal = core.DamageSkill("멸귀참영진(우두머리)", 0, 625+25*vEhc.getV(0,0), 15*4, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        
+      
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ### build graph relationships
         def isNotDarkSight():
             return (not AdvancedDarkSight.is_active())
@@ -172,9 +174,7 @@ class JobGenerator(ck.JobGenerator):
         BasicAttackWrapper.onAfter(Assasinate)
 
         for sk in [Assasinate1, Assasinate2, Assasinate1_D, Assasinate2_D, Eviscerate, SonicBlowTick]:
-            jobutils.create_auxilary_attack(sk, 0.7, nametag='(쉐도우파트너)')
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+            jobutils.create_auxilary_attack(sk, 0.7, nametag='(쉐도우파트너)')        
 
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

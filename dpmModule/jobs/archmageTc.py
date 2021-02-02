@@ -139,6 +139,8 @@ class JobGenerator(ck.JobGenerator):
         ThunderBolt = core.DamageSkill("썬더 볼트", 630, 210, 3).wrap(core.DamageSkillWrapper)
         IceStrike = core.DamageSkill("아이스 스트라이크", 630, 335, 4).wrap(core.DamageSkillWrapper)
         GlacialChain = core.DamageSkill("글레이셜 체인", 630, 383, 3).wrap(core.DamageSkillWrapper)
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
         
         ######   Skill Wrapper   ######
         #Unstable Memorize
@@ -238,8 +240,6 @@ class JobGenerator(ck.JobGenerator):
                     JupyterThunder, EnergyBolt, ColdBeam, ThunderBolt, IceStrike, GlacialChain]:
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return(ChainLightening,
                 [Infinity, Meditation, EpicAdventure, OverloadMana, FrostEffect,

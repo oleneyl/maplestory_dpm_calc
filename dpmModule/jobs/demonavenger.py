@@ -166,6 +166,8 @@ class JobGenerator(ck.JobGenerator):
         CallMastema = demon.CallMastemaWrapper(vEhc, 0, 0)
         AnotherGoddessBuff, AnotherVoid = demon.AnotherWorldWrapper(vEhc, 0, 0)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
         ArmorBreakBuff.onBefore(ArmorBreak)
 
@@ -201,8 +203,6 @@ class JobGenerator(ck.JobGenerator):
         FrenzyInit = core.BuffSkill("데몬 프렌지(개시)", 0, 999999999).wrap(core.BuffSkillWrapper)
         FrenzyInit.onAfter(DemonFrenzy)
         DemonFrenzy.protect_from_running()
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return(BasicAttack,
                [FrenzyInit, globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_hyper_body_demonavenger(),

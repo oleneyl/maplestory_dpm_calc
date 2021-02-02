@@ -140,6 +140,8 @@ class JobGenerator(ck.JobGenerator):
         TrinityFusionInit = core.DamageSkill("트리니티 퓨전(시전)", 660-150, 0, 0, cooltime=(16-vEhc.getV(0,0)//10)*1000, red=True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         TrinityFusion = core.DamageSkill("트리니티 퓨전", 0, 330+vEhc.getV(0,0), 3, cooltime=-1, modifier = TRINITY_MDF).setV(vEhc, 0, 2, True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ### build graph relationships
     
         Trinity_1.onAfter(Trinity_2)
@@ -164,8 +166,6 @@ class JobGenerator(ck.JobGenerator):
         
         SuperNova.onTick(SoulSeeker)
         #SuperNova.onConstraint(core.ConstraintElement("익절트와 함께", SoulExult, SoulExult.is_active))
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return (
             Trinity_1,

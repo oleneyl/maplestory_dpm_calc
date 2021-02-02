@@ -120,6 +120,9 @@ class JobGenerator(ck.JobGenerator):
         LightOfCourageSummon = core.SummonSkill("라이트 오브 커리지(빛의 검)", 0, 2400, 325+13*vEhc.getV(0,0), 5, 25000, cooltime=-1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         LightOfCourageAttack = core.DamageSkill("라이트 오브 커리지(용기의 빛)", 0, 175+7*vEhc.getV(0,0), 2, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         LightOfCourageFinal = core.DamageSkill("라이트 오브 커리지(용기의 빛)(종료)", 360, 375+15*vEhc.getV(0,0), 10*6, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ##### Build Graph
         
         # 기본 공격
@@ -171,8 +174,6 @@ class JobGenerator(ck.JobGenerator):
         else:
             LoyalGuard_5 = None
             LoyalGuardBuff = None
-        
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
         
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

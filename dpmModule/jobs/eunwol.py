@@ -154,6 +154,8 @@ class JobGenerator(ck.JobGenerator):
         BladeImp = core.DamageSkill("파쇄철조-회", 360, 160, 4).wrap(core.DamageSkillWrapper)
         BladeImpBuff = core.BuffSkill("파쇄철조-반", 0, 15 * 1000, cooltime=-1, pdamage_indep=10).wrap(core.BuffSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         #분혼 격참
@@ -210,9 +212,7 @@ class JobGenerator(ck.JobGenerator):
         #소혼장막
         SpiritFrenzy.onAfter(core.RepeatElement(SpiritFrenzy_Tick, 56))
         SpiritFrenzyConstraint = core.ConstraintElement("소혼 장막(제한)", EnhanceSpiritLinkSummon_J, EnhanceSpiritLinkSummon_J.is_active)
-        SpiritFrenzy.onConstraint(SpiritFrenzyConstraint)
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+        SpiritFrenzy.onConstraint(SpiritFrenzyConstraint)        
 
         return(BasicAttackWrapper, 
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),

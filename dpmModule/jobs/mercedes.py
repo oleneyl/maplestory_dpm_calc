@@ -213,7 +213,9 @@ class JobGenerator(ck.JobGenerator):
         LinkAttack.onAfter(UnicornSpike.controller(1000, "reduce_cooltime"))
         LinkAttack.onAfter(RegendrySpear.controller(1000, "reduce_cooltime"))
         LinkAttack.onAfter(ElementalGhostSpirit.controller(1000, "reduce_cooltime"))
-        
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         #Deal Cycle
         DebuffCombo = core.DamageSkill("디버프 콤보", 0, 0, 0).wrap(core.DamageSkillWrapper)
         DebuffComboList = [AdvanceStrikeDualShot_Link, WrathOfEllil, AdvanceStrikeDualShot_Link,
@@ -281,8 +283,6 @@ class JobGenerator(ck.JobGenerator):
 
         for sk in [UnicornSpikeBuff, RegendrySpearBuff, LightningEdgeBuff]:
             sk.set_disabled_and_time_left(1) # 버프 묻은 채로 측정 시작
-        
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
     
         return(BasicAttack,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), 

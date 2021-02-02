@@ -128,6 +128,8 @@ class JobGenerator(ck.JobGenerator):
         DemonBane2Tick = core.DamageSkill("데몬 베인(2)", 2400/21, 650+26*vEhc.getV(0, 0), 7, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)  # 2400ms 21회
         DemonBane2After = core.DamageSkill("데몬 베인(2)(후딜)", 240, 0, 0, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         DemonSlashAW1.onAfter(DemonSlashAW2)
@@ -168,8 +170,6 @@ class JobGenerator(ck.JobGenerator):
         # 블블 추가타 적용
         for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DemonBaneTick, DemonBane2Tick, DevilCry, Cerberus, AuraWeapon]:
             jobutils.create_auxilary_attack(sk, 0.9, nametag='(블루 블러드)')
-        
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return(BasicAttackWrapper,
                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

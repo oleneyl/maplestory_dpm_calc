@@ -297,6 +297,8 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         CriticalReinforce = bowmen.CriticalReinforceWrapper(
@@ -333,8 +335,6 @@ class JobGenerator(ck.JobGenerator):
                 partial(CartrigeStack.judge, 1, 1), FullBurstShot, Snipping
             )
         )
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return (
             BasicAttack,

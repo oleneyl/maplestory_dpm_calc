@@ -119,6 +119,8 @@ class JobGenerator(ck.JobGenerator):
         ThrowBlastingActive = core.BuffSkill("스로우 블래스팅(액티브)", 720, 60000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ThrowBlastingPassive = core.DamageSkill("스로우 블래스팅(패시브)", 0, 0, 0, cooltime=10000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         # 써든레이드
@@ -159,8 +161,6 @@ class JobGenerator(ck.JobGenerator):
 
         for sk in [QuarupleThrow, SuddenRaid, Pungma, SpreadThrowTick]:
             sk.onAfter(FatalVenom)
-        
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
         
         return (QuarupleThrow, 
             [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

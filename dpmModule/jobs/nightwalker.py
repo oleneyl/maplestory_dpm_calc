@@ -167,6 +167,9 @@ class JobGenerator(ck.JobGenerator):
         RapidThrowFinal_I50 = core.DamageSkill("래피드 스로우(막타)(일루젼 50%)", 0, (850+34*vEhc.getV(0,0))*0.5, 13, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         RapidThrowFinal_I30 = core.DamageSkill("래피드 스로우(막타)(일루젼 30%)", 0, (850+34*vEhc.getV(0,0))*0.3, 13, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         RapidThrowFinal_V = core.DamageSkill("래피드 스로우(막타)(5차)", 0, (850+34*vEhc.getV(0,0)) * 0.01 * (25+vEhc.getV(0,0)), 13, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         ElementalDarkness.onAfter(ElementalDarknessDOT)
@@ -222,8 +225,6 @@ class JobGenerator(ck.JobGenerator):
         Dominion.onAfter(DominionAttack)
         #쉐도우 바이트
         ShadowBite.onEventElapsed(ShadowBiteBuff, 2000)
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
                 
         return( QuintupleThrow,
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

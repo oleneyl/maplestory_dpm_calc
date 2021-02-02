@@ -95,6 +95,8 @@ class JobGenerator(ck.JobGenerator):
         DarknessAura = core.SummonSkill("다크니스 오라", 600, 1530, 400+16*vEhc.getV(0,0), 5, 40000, cooltime=180*1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
         DarknessAuraFinal = core.DamageSkill("다크니스 오라(폭발)", 0, 650+25*vEhc.getV(0,0), 13*(1+15//3), cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 생명력 3마다 폭발 1회 추가, 생명력 최대 15
         
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
     
         #Damage skill
@@ -129,9 +131,7 @@ class JobGenerator(ck.JobGenerator):
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 1)
         for sk in [GoungnilDescent, GoungnilDescentNoCooltime, DarkImpail, PierceCycloneEnd]:
             auraweapon_builder.add_aura_weapon(sk)
-        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+        AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()        
         
         return(BasicAttackWrapped, 
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

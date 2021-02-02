@@ -905,6 +905,8 @@ class JobGenerator(ck.JobGenerator):
         ) = thanatos_descent(vEhc)
         GrapOfAgony = GrapOfAgonyWrapper(vEhc, 0, 0)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
         # Malice
         MaliceTick.onTick(
@@ -1072,8 +1074,6 @@ class JobGenerator(ck.JobGenerator):
                 partial(DeathBlessingStack.judge, 9, 1),
             )
         )
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return (
             BasicAttack,

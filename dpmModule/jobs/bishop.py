@@ -130,7 +130,9 @@ class JobGenerator(ck.JobGenerator):
         Resurrection = core.DamageSkill("리저렉션", 900, 0, 0).wrap(core.DamageSkillWrapper)
 
         VengenceOfAngel_Delay = core.DamageSkill("벤전스 오브 엔젤(딜레이)", 480, 0, 0).wrap(core.DamageSkillWrapper)
-        
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Wrappers    ######
         #Unstable Memorize
         UnstableMemorize = adventurer.UnstableMemorizeWrapper(vEhc, 4, 4, chtr.get_skill_modifier())
@@ -169,8 +171,6 @@ class JobGenerator(ck.JobGenerator):
                     EnergyBolt, HolyArrow, ShiningRay]:
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return(AngelRay, 
                 [Booster, SacredMark, Infinity, PeaceMakerFinalBuff, Pray, EpicAdventure, OverloadMana,

@@ -254,6 +254,8 @@ class JobGenerator(ck.JobGenerator):
         PhotonRay = core.BuffSkill("포톤 레이", 0, 20000, cooltime=35000, red=True).wrap(core.BuffSkillWrapper)
         PhotonRayHit = core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4)*14, 4*30, cooltime=-1).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
         SupplySurplus = SupplyStackWrapper(core.BuffSkill("서플러스 서플라이", 0, 999999999))
 
@@ -311,8 +313,6 @@ class JobGenerator(ck.JobGenerator):
         # Scheduling
         EnsureOOPArtsCode = core.OptionalElement(lambda: OverloadMode.is_active() and OOPArtsCode.is_time_left(16000, -1), OOPArtsCode)
         MegaSmasher.onBefore(EnsureOOPArtsCode)
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return (
             PurgeSnipe,

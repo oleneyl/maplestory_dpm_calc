@@ -133,6 +133,8 @@ class JobGenerator(ck.JobGenerator):
 
         LiftBreak = core.DamageSkill("리프트 브레이크", 750, 400+16*vEhc.getV(0, 0), 7*7, cooltime=30000, red=True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         #### 그래프 빌드
 
         FinalCut.onAfter(CarteNoir)
@@ -194,8 +196,6 @@ class JobGenerator(ck.JobGenerator):
                 sk.onBefore(Inturrupt)  # 블디 연계 취소 딜레이. TODO: 연계 취소 딜레이를 시뮬레이터에 구현
         else:
             raise ValueError(DEALCYCLE)
-        
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return (
             BasicAttack,

@@ -134,7 +134,8 @@ class JobGenerator(ck.JobGenerator):
         SonicBoom_JG = core.DamageSkill("소닉 붐(재규어 스톰)", 0, (220+chtr.level)*(62+vEhc.getV(0,0))*0.01, 6 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         JaguarSoul_JG = core.DamageSkill("재규어 소울(재규어 스톰)", 0, (270+chtr.level)*(62+vEhc.getV(0,0))*0.01, 12 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         RampageAsOne_JG = core.DamageSkill("램피지 애즈 원(재규어 스톰)", 0, (500+1*chtr.level)*(62+vEhc.getV(0,0))*0.01, 9 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
-    
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         ######   Skill   ######
         #Buff skills
@@ -208,8 +209,6 @@ class JobGenerator(ck.JobGenerator):
                 skill.protect_from_running()
 
         Jaguar.onTick(JaguarSelector)
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return(WildBalkan,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_combat_orders(),

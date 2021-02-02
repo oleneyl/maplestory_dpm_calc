@@ -141,6 +141,8 @@ class JobGenerator(ck.JobGenerator):
         SpearLightningAttack_Final = core.DamageSkill("창뇌연격(막타)", 450, 600+24*vEhc.getV(0,0), 7, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         SpearLightningAttack_Final_Lightning = core.DamageSkill("창뇌연격(막타)(번개)", 0, 725+29*vEhc.getV(0,0), 6, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         #섬멸 연계 (default)
         WaterWaveDestroy = core.GraphElement("파섬")
         WaterWaveDestroy.onAfter(WaterWaveConcat)
@@ -194,8 +196,6 @@ class JobGenerator(ck.JobGenerator):
         SpearLightningAttack_Final.onAfter(SpearLightningAttack_Final_Lightning)
         SpearLightningAttackInit.onAfter(core.RepeatElement(SpearLightningAttack, 11))
         SpearLightningAttackInit.onAfter(SpearLightningAttack_Final)
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

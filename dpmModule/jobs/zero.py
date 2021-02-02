@@ -263,6 +263,8 @@ class JobGenerator(ck.JobGenerator):
         EgoWeaponAlpha = core.DamageSkill("에고 웨폰(알파)", 0, 175+7*vEhc.getV(0, 0), 6*9, cooltime=15000, red=True).wrap(core.DamageSkillWrapper)
         EgoWeaponBeta = core.DamageSkill("에고 웨폰(베타)", 0, 175+7*vEhc.getV(0, 0), 9*2*3, cooltime=15000, red=True, modifier=extra_damage(4)).wrap(core.DamageSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         # 디바인 오라
@@ -393,8 +395,6 @@ class JobGenerator(ck.JobGenerator):
                    JumpingCrash, AdvancedEarthBreak, ShadowFlashBeta, ShadowFlashBetaEnd]:
             sk.onAfter(UseEgoWeaponBeta)
         EgoWeaponBeta.protect_from_running()
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return(ComboHolder,
                [globalSkill.maple_heros(chtr.level, name="륀느의 가호", combat_level=0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),

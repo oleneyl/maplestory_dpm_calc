@@ -161,7 +161,9 @@ class JobGenerator(ck.JobGenerator):
         AfterImageShockStack = core.StackSkillWrapper(core.BuffSkill("애프터이미지 쇼크(스택)", 0, 99999999), 99)
         AfterImageShockActive = core.DamageSkill("애프터이미지 쇼크(액티브)", 0, 450+18*vEhc.getV(0,0), 5, cooltime=100).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         AfterImageShockPassive = core.DamageSkill("애프터이미지 쇼크(패시브)", 0, 500+20*vEhc.getV(0,0), 3, cooltime=6000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         #스킬 기본 연계 연결
         ReleaseFileBunker.onAfter(Cylinder.stackController(-6))
         ReleaseFileBunker.onAfter(core.OptionalElement(
@@ -237,8 +239,6 @@ class JobGenerator(ck.JobGenerator):
         BurningBreaker.onBefore(SoulContract)
 
         SoulContract.protect_from_running()
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return(Mag_Pang,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

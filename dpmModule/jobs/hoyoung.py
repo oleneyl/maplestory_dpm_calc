@@ -264,6 +264,8 @@ class JobGenerator(ck.JobGenerator):
 
         Elemental_Clone_Opt = core.OptionalElement(Elemental_Clone.is_active, Elemental_Clone_Active_Opt, Elemental_Clone_Passive_Opt)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ### Skill Wrapper ###
         # 그란디스 여신의 축복(아니마)
         def gainEnergy(energy: core.StackSkillWrapper, stack):
@@ -377,8 +379,6 @@ class JobGenerator(ck.JobGenerator):
         # scheduling - start with full gauge
         TalismanEnergy.vary(100)
         ScrollEnergy.vary(900)
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return (
             Topa,
