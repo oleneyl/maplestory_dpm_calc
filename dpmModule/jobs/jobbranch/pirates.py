@@ -1,10 +1,17 @@
+from enum import Enum
+
 from ...kernel import core
+
+
+class PirateSkills(Enum):
+    Overdrive = 'Overdrive | 오버 드라이브'  # Taken from https://maplestory.fandom.com/wiki/Overdrive
+    LoadedDice = 'Loaded Dice | 로디드 다이스'  # Taken from https://maplestory.fandom.com/wiki/Loaded_Dice
 
 
 class OverdriveWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, num1, num2, WEAPON_ATT):
         skill = core.BuffSkill(
-            "오버 드라이브",  # Overdrive
+            PirateSkills.Overdrive.value,  # Overdrive
             delay=420,
             remain=30 * 1000,
             cooltime=(70 - vEhc.getV(num1, num2) // 5) * 1000,
@@ -25,6 +32,6 @@ class OverdriveWrapper(core.BuffSkillWrapper):
 
 def LoadedDicePassiveWrapper(vEhc, num1, num2):
     LoadedDicePassive = core.InformedCharacterModifier(
-        "로디드 다이스(패시브)", att=vEhc.getV(num1, num2) + 10  # Loaded Dice (Passive)
+        f"{PirateSkills.LoadedDice.value}(passive | 패시브)", att=vEhc.getV(num1, num2) + 10  # Loaded Dice (Passive)
     )
     return LoadedDicePassive
