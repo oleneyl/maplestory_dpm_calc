@@ -21,6 +21,7 @@ class Gear:
         "superior_eqp", "joker_to_set_item", "amazing_scroll", "star", "max_star",
         "tuc", "scroll_up", "scroll_fail", "hammer", "block_hammer",
         "base_stat", "additional_stat", "scroll_stat", "star_stat", "potential", "additional_potential")
+
     def __init__(self):
         self.item_id: int = 0
         self.name: str = "Default name!"
@@ -70,8 +71,8 @@ class Gear:
         keys = sorted(stats)
         for propType in keys:
             stat_str += "%s: %d (%d +%d +%d +%d)\n" % (propType.name, sum(stats[propType]),
-                                                      stats[propType][0], stats[propType][1],
-                                                      stats[propType][2], stats[propType][3])
+                                                       stats[propType][0], stats[propType][1],
+                                                       stats[propType][2], stats[propType][3])
         return ("= ID: " + str(self.item_id) + '\n' +
                 "= 이름: " + self.name + '\n' +
                 "= 분류: " + self.type.name + '\n' +
