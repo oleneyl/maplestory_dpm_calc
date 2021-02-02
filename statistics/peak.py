@@ -22,7 +22,7 @@ def get_args():
     parser.add_argument("--time", type=int, default=1800)
     parser.add_argument("--calc", action="store_true")
     parser.add_argument("--show", action="store_true")
-    parser.add_argument("--interval", default=10000)
+    parser.add_argument("--interval", type=int, default=10000)
     parser.add_argument("--xlim", type=int, default=480)
 
     return parser.parse_args()
@@ -41,8 +41,8 @@ def gini(args, df: pd.DataFrame):
     preset = get_preset(args.id)
 
     plt.plot(rolled["time"], rolled["deal"])
-    plt.yticks(np.arange(0, 10e+12, 1e+12), [f"{i/1e+12}M" for i in np.arange(0, 10e+12, 1e+12)])
-    plt.title(f"{preset.job} {preset.description}, 쿨감{args.cdr}초", fontsize=12)
+    plt.yticks(np.arange(0, 10e+12, 1e+12), [f"{i/1e+12}T" for i in np.arange(0, 10e+12, 1e+12)])
+    plt.title(f"{preset.job} {preset.description}, 쿨감{args.cdr}초, {args.interval//1000}초 이동합계", fontsize=12)
     if args.show:
         plt.show()
     else:

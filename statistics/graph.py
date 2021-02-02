@@ -43,7 +43,7 @@ def graph(args, df: pd.DataFrame):
     plt.plot(range(len(deals)), [line_y for _ in range(len(deals))], 'r--')
     plt.xticks(np.arange(0, args.xlim//5, args.xlim//40), [f"{i*5}" for i in np.arange(0, args.xlim//5, args.xlim//40)])
     plt.ylim(0, 5.5e+12)
-    plt.yticks(np.arange(0, 5.5e+12, 1e+12), [f"{i/1e+12}M" for i in np.arange(0, 5.5e+12, 1e+12)])
+    plt.yticks(np.arange(0, 5.5e+12, 1e+12), [f"{i/1e+12}T" for i in np.arange(0, 5.5e+12, 1e+12)])
     plt.title(f"{preset.job} {preset.description}, 쿨감{args.cdr}초", fontsize=12)
     if args.show:
         plt.show()
