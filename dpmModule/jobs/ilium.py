@@ -232,7 +232,9 @@ class JobGenerator(ck.JobGenerator):
         CrystalGate = core.BuffSkill("크리스탈 게이트", 420*2, (130+vEhc.getV(0,0))*1000, cooltime=180*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         CrystalGateBuff = core.BuffSkill("크리스탈 게이트(버프)", 0, 25000, att=5+2*vEhc.getV(0,0)).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         CrystalGateAttack = core.DamageSkill("크리스탈 게이트(폭격)", 0, 450+18*vEhc.getV(0,0), 5, cooltime=1500).wrap(core.DamageSkillWrapper)
-        
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         #스킬간 연결
 
         Reaction_Destruction_Link = core.OptionalElement(SoulOfCrystal.is_active, SoulOfCrystal_Reaction_Destruction, name = "리액션:디스트럭션(소오크여부)")
@@ -266,7 +268,7 @@ class JobGenerator(ck.JobGenerator):
         CrystalSkill_Deus.onAfter(Machina.controller(30000, type_="set_disabled_and_time_left"))
         
         magic_curcuit_full_drive_builder = flora.MagicCircuitFullDriveBuilder(vEhc, 3, 2)
-        for sk in [Craft_Orb, Craft_Javelin, Craft_Javelin_AfterOrb, Craft_Longinus, CrystalSkill_MortalSwing, GloryWing_MortalWingbit, GloryWing_Craft_Javelin, CrystalIgnition, MirrorSpider]:
+        for sk in [Craft_Orb, Craft_Javelin, Craft_Javelin_AfterOrb, Craft_Longinus, CrystalSkill_MortalSwing, GloryWing_MortalWingbit, GloryWing_Craft_Javelin, CrystalIgnition, MirrorSpider, AeonianRise]:
             magic_curcuit_full_drive_builder.add_trigger(sk)
         MagicCircuitFullDrive, MagicCircuitFullDriveStorm = magic_curcuit_full_drive_builder.get_skill()
 
@@ -324,8 +326,6 @@ class JobGenerator(ck.JobGenerator):
                     CrystalIgnition, Reaction_Spectrum, SoulOfCrystal_Reaction_Spectrum, GramHolder, GloryWing_Craft_Javelin]:
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return(BasicAttackWrapper,
                 [SoulOfCrystalPassive, globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=0), globalSkill.useful_sharp_eyes(),

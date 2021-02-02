@@ -309,7 +309,9 @@ class JobGenerator(ck.JobGenerator):
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, WEAPON_ATT)
-    
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         MemoryOfSource = core.DamageSkill("근원의 기억", 990, 0, 0, cooltime = 200 * 1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         MemoryOfSourceTick = core.DamageSkill("근원의 기억(틱)", 210, 400 + 16 * vEhc.getV(1,1), 6).wrap(core.DamageSkillWrapper)    # 43타
         MemoryOfSourceEnd = core.DamageSkill("근원의 기억(종결)", 60, 1200 + 48 * vEhc.getV(1,1), 12 * 6).wrap(core.DamageSkillWrapper)
@@ -402,7 +404,7 @@ class JobGenerator(ck.JobGenerator):
         magic_curcuit_full_drive_builder = flora.MagicCircuitFullDriveBuilder(vEhc, 4, 3)
         for sk in (HUMAN_SKILLS_MCF + SPECTER_SKILLS_MCF +
             [EndlessPainTick, EndlessPainEnd, EndlessPainEnd_Link, MemoryOfSourceTick, MemoryOfSourceEnd, 
-            DeviousNightmare, DeviousDream, ForeverHungryBeast, MirrorBreak]):
+            DeviousNightmare, DeviousDream, ForeverHungryBeast, MirrorBreak, AeonianRise]):
             magic_curcuit_full_drive_builder.add_trigger(sk)
         MagicCircuitFullDrive, MagicCircuitFullDriveStorm = magic_curcuit_full_drive_builder.get_skill()
 
@@ -414,6 +416,7 @@ class JobGenerator(ck.JobGenerator):
             skill.onAfter(UpcomingDeath_Connected)
         MagicCircuitFullDriveStorm.onAfter(core.OptionalElement(SpecterState.is_active, UpcomingDeath_Connected))
         MirrorBreak.onAfter(core.OptionalElement(SpecterState.is_active, UpcomingDeath_Connected))
+        AeonianRise.onAfter(core.OptionalElement(SpecterState.is_active, UpcomingDeath_Connected))
         
         # 5차 - 새어나오는 악몽 / 흉몽 연계
         EndlessNightmare_Link.onAfter(core.OptionalElement(DeviousNightmare.is_available, DeviousNightmare))
@@ -518,8 +521,6 @@ class JobGenerator(ck.JobGenerator):
 
         DeviousNightmare.protect_from_running()
         DeviousDream.protect_from_running()
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return(PlainAttack, 
                 [globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

@@ -229,6 +229,8 @@ class JobGenerator(ck.JobGenerator):
         WeaponVarietyFinale = core.StackableDamageSkillWrapper(core.DamageSkill("웨폰 버라이어티 피날레", 0, 250+10*vEhc.getV(0, 0), 7*4, cooltime=11000).isV(vEhc, 0, 0), 3)
         WeaponVarietyFinaleTrigger = core.StackSkillWrapper(core.BuffSkill("웨폰 버라이어티 피날레(웨버횟수)", 0, 99999999), 4)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         # 기본 연계 연결
@@ -321,11 +323,13 @@ class JobGenerator(ck.JobGenerator):
         for s in [ChainArts_Stroke_1, ChainArts_Stroke_2, ChainArts_Stroke_1_Cancel, ChainArts_Stroke_2_Cancel,
                   SummonCuttingSimiter, SummonScratchingClaw, SummonShootingShotgun, SummonSlachingKnife, ChainArts_Chais, SummonThrowingWingdaggerEnd,
                   ChainArts_Takedown_Init, ChainArts_Takedown_Attack, ChainArts_Takedown_Wave, ChainArts_Takedown_Final, ChainArts_Crush,
-                  SummonReleasingBoom, SummonStrikingBrick, SummonBeatingNeedlebat_1, SummonBeatingNeedlebat_2, SummonBeatingNeedlebat_3, MirrorBreak]:
+                  SummonReleasingBoom, SummonStrikingBrick, SummonBeatingNeedlebat_1, SummonBeatingNeedlebat_2, SummonBeatingNeedlebat_3, MirrorBreak, AeonianRise]:
             s.onAfter(ChainArts_Fury_Use)
 
         for s in [SummonThrowingWingdaggerSummon, ChainArts_Maelstorm]:
             s.onTick(ChainArts_Fury_Use)
+        
+        
 
         # 프로페셔널 에이전트 추가타
         for s in [ChainArts_Stroke_1, ChainArts_Stroke_2, ChainArts_Stroke_1_Cancel, ChainArts_Stroke_2_Cancel,
@@ -343,8 +347,6 @@ class JobGenerator(ck.JobGenerator):
                   SummonReleasingBoom, SummonStrikingBrick,
                   SummonBeatingNeedlebat_1, SummonThrowingWingdagger, ChainArts_Maelstorm, WeaponVarietyAttack, WeaponVarietyFinale]:
             s.protect_from_running()
-        
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return(NormalAttack,
                [globalSkill.maple_heros(chtr.level, name="노바의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

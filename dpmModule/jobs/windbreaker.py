@@ -268,6 +268,8 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.SummonSkillWrapper)
         )  # 17타
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   #####
 
         CriticalReinforce = bowmen.CriticalReinforceWrapper(
@@ -278,14 +280,13 @@ class JobGenerator(ck.JobGenerator):
         SongOfHeaven.onAfters([TriflingWhim, StormBringer])
         PinPointPierce.onAfters([PinPointPierceDebuff, TriflingWhim, StormBringer])
         MirrorBreak.onAfters([TriflingWhim, StormBringer])
+        AeonianRise.onAfters([TriflingWhim, StormBringer])
         # Summon
         CygnusPhalanx.onTicks([TriflingWhim, StormBringer])
         HowlingGail.onTicks([TriflingWhim, StormBringer])
         VortexSphere.onTicks([TriflingWhim, StormBringer])
 
         IdleWhim.onAfter(MercilesswindDOT)
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return (
             SongOfHeaven,

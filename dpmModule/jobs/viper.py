@@ -159,6 +159,8 @@ class JobGenerator(ck.JobGenerator):
         HowlingFistCharge = core.DamageSkill("하울링 피스트(충전)", 240, 425+17*vEhc.getV(0,0), 6, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         HowlingFistFinal = core.DamageSkill("하울링 피스트(막타)", 1950, 525+21*vEhc.getV(0,0), 10*14, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
         # Energy Charge
         EnergyCharge = EnergyChargeWrapper(passive_level)
@@ -177,6 +179,8 @@ class JobGenerator(ck.JobGenerator):
         DragonStrike.onAfter(EnergyCharge.chargeController(-180))
         UnityOfPower.onAfter(EnergyCharge.chargeController(-1500))
         HowlingFistInit.onAfter(EnergyCharge.chargeController(-1750))
+
+        AeonianRise.onAfter(EnergyCharge.chargeController(700))
         
         # Basic Attack
         BasicAttack = core.OptionalElement(EnergyCharge.isStateOn, FistInrage_T, FistInrage, "에너지 완충")
@@ -220,8 +224,6 @@ class JobGenerator(ck.JobGenerator):
         TimeLeap.onAfter(SoulContract.controller(1.0, "reduce_cooltime_p"))
         TimeLeap.onAfter(Nautilus.controller(1.0, "reduce_cooltime_p"))
         TimeLeap.onAfter(DragonStrike.controller(1.0, "reduce_cooltime_p"))
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
             
         return (BasicAttackWrapper,
             [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

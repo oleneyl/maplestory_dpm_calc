@@ -208,9 +208,11 @@ class JobGenerator(ck.JobGenerator):
 
         Storm = StormWrapper(vEhc, 0, 0, Order)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 4, 4)
         magic_curcuit_full_drive_builder = flora.MagicCircuitFullDriveBuilder(vEhc, 3, 3)
-        for sk in [Divide, Resonance, Ruin, Marker, Grave, Scool, Order, RestoreTick, Storm]:
+        for sk in [Divide, Resonance, Ruin, Marker, Grave, Scool, Order, RestoreTick, Storm, MirrorBreak, AeonianRise]:
             auraweapon_builder.add_aura_weapon(sk)
             magic_curcuit_full_drive_builder.add_trigger(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
@@ -276,8 +278,6 @@ class JobGenerator(ck.JobGenerator):
 
         Creation.protect_from_running()
         Wonder.protect_from_running()
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return(Divide,
                 [globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,

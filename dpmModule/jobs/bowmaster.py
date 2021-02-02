@@ -387,6 +387,8 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.SummonSkillWrapper)
         )
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
         GrittyGust.onAfter(GrittyGustDOT)
 
@@ -430,6 +432,7 @@ class JobGenerator(ck.JobGenerator):
             OpticalIllusion,
             GuidedArrow,
             MirrorBreak,
+            AeonianRise,
         ]:
             sk.onBefore(ArmorPiercing.cooltime_skip())
         ArrowOfStorm.add_runtime_modifier(
@@ -437,8 +440,6 @@ class JobGenerator(ck.JobGenerator):
             lambda armor_piercing: armor_piercing.check_modifier(),
         )
         ArmorPiercing.protect_from_running()
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         ### Exports ###
         return (

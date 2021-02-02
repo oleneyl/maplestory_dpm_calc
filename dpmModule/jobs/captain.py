@@ -400,6 +400,8 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         # 크루 사용 후 버프 제공
@@ -454,7 +456,7 @@ class JobGenerator(ck.JobGenerator):
             sk.onTick(QuickDrawProc)
 
         QuickDrawShutdownTrigger = QuickDraw.controller(-1)
-        for sk in [Headshot, StrangeBomb, DeadEye, DeathTrigger, Nautilus, MirrorBreak]:
+        for sk in [Headshot, StrangeBomb, DeadEye, DeathTrigger, Nautilus, MirrorBreak, AeonianRise]:
             sk.onJustAfter(QuickDrawShutdownTrigger)
         for sk in [NautilusAssult, NautilusAssult_2]:
             sk.onTick(QuickDrawShutdownTrigger)
@@ -497,8 +499,6 @@ class JobGenerator(ck.JobGenerator):
         # 데스 트리거
         DeathTriggerInit.onAfter(core.RepeatElement(DeathTrigger, 7))
         DeathTriggerInit.onAfter(DeathTriggerEnd)
-
-        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
 
         return (
             RapidFire,
