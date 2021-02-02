@@ -17,7 +17,7 @@ python3 -m statistics.gini --id archmage_fp --interval 10000
 * id
   * preset id to calculate
 * ulevel
-  * union level (4000, 5000, 6000, 7000, 8000, 8500)
+  * union level (4500, 6000, 7000, 8000, 8500)
   * default = 8000
 * cdr
   * cooltime reduce hat (0~4)
