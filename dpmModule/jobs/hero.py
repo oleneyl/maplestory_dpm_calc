@@ -1,3 +1,6 @@
+from enum import Enum
+
+from .globalSkill import GlobalSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -31,6 +34,50 @@ Hero skill summary
 - 어파 (공30), 75%(하이퍼적용+15)
 - 레블 +20%, 타수+1
 '''
+
+
+# English skill information for Hero here https://maplestory.fandom.com/wiki/Hero/Skills
+class HeroSkills(Enum):
+    # 1st Job
+    SlashBlast = 'Slash Blast | 슬래시 블러스트'
+    WarLeap = 'War Leap | 워리어 리프'
+    LeapAttack = 'Leap Attack | 리프 어택'
+    # 2nd Job
+    Brandish = 'Brandish | 브랜디쉬'
+    ComboFury = 'Combo Fury | 콤보 포스'
+    ComboAttack = 'Combo Attack | 콤보 어택'
+    WeaponBooster = 'Weapon Booster | 웨폰 부스터'
+    Rage = 'Rage | 분노'
+    WeaponMastery = 'Weapon Mastery | 웨폰 마스터리'
+    FinalAttack = 'Final Attack | 파이널 어택'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    # 3rd Job
+    Panic = 'Panic | 패닉 '
+    Rush = 'Rush | 돌진'
+    IntrepidSlash = 'Intrepid Slash | 브레이브 슬래시'
+    Shout = 'Shout | 샤우트'
+    UpwardCharge = 'Upward Charge | 어퍼 차지'
+    ComboSynergy = 'Combo Synergy | 콤보 시너지'
+    ChanceAttack = 'Chance Attack | 찬스 어택'
+    # 4th Job
+    RagingBlow = 'Raging Blow | 레이징 블로우'
+    Puncture = 'Puncture | 인사이징'
+    MagicCrash = 'Magic Crash | 매직 크래쉬'
+    PowerStance = 'Power Stance | 스탠스'
+    Enrage = 'Enrage | 인레이지'
+    AdvancedCombo = 'Advanced Combo | 어드밴스드 콤보'
+    CombatMastery = 'Combat Mastery | 컴뱃 마스터리'
+    AdvancedFinalAttack = 'Advanced Final Attack | 어드밴스드 파이널 어택'
+    # Hypers
+    RisingRage = 'Rising Rage | 레이지 업라이징'
+    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
+    CryValhalla = 'Cry Valhalla | 발할라'
+    # 5th Job
+    SwordIllusion = 'Sword Illusion | 소드 일루전'
+    InstinctualCombo = 'Instinctual Combo | 콤보 인스팅트'
+    Worldreaver = 'Worldreaver | 콤보 데스폴트'
+    BurningSoulBlade = 'Burning Soul Blade | 소드 오브 버닝 소울'
+
 
 #ComboAttack
 class ComboAttackWrapper(core.StackSkillWrapper):
