@@ -9,12 +9,11 @@ from . import jobutils
 from math import ceil
 from typing import Any, Dict
 
-# TODO: 극딜 딜사이클, 패시브 수치
 
-'''
+"""
 Advisor:
 연어먹던곰, 키카이, 능이조아
-'''
+"""
 
 
 class JobGenerator(ck.JobGenerator):
@@ -29,8 +28,6 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'reuse')
 
     def get_ruleset(self):
-        '''딜 사이클 정리
-        '''
         ruleset = RuleSet()
         # ruleset.add_rule(ConcurrentRunRule('디멘션 소드', '데모닉 포티튜드'), RuleSet.BASE)
         return ruleset
@@ -85,7 +82,7 @@ class JobGenerator(ck.JobGenerator):
         return [WeaponConstant, Mastery, FrenzyPassive]
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
-        '''
+        """
         하이퍼: 익시드 3종, 실드 체이싱 리인포스, 엑스트라 타겟 적용
 
         데몬 프렌지 - 중첩당 10.8타/s, 2중첩, HP 100%
@@ -93,11 +90,13 @@ class JobGenerator(ck.JobGenerator):
         블러드 피스트 쿨타임마다 3중첩 (캔슬 X)
 
         디멘션 소드 - 재시전 X
-        '''
+        """
 
         passive_level = chtr.get_base_modifier().passive_level+self.combat
 
-        FRENZY_STACK = options.get('frenzy_hit', 2)    # 중첩 수
+        FRENZY_STACK = options.get('frenzy_hit', 2)  # 프렌지 중첩 수
+        BATS_HIT = options.get('bats', 24)  # 배츠 스웜 타수
+        DIMENSION_PHASE = options.get('dimension_phase', 1)
 
         ######   Skill   ######
 
@@ -136,8 +135,10 @@ class JobGenerator(ck.JobGenerator):
         # 보너스 찬스 70% -> 80%
         EnhancedExceed = core.DamageSkill("인핸스드 익시드", 0, 200+4*passive_level, 2*(0.8+0.04*passive_level), cooltime=-1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
 
-        # 허수아비 상대 24타
-        BatSwarm = core.SummonSkill("배츠 스웜", 840, 330, 200, 1, 24*330).setV(vEhc, 3, 5, True).wrap(core.SummonSkillWrapper)
+        if BATS_HIT > 0:  # avoid dividing by zero
+            BatSwarm = core.SummonSkill("배츠 스웜", 840, 330/(BATS_HIT/24), 200, 1, 24*330).setV(vEhc, 3, 5, True).wrap(core.SummonSkillWrapper)
+        else:
+            BatSwarm = None
 
         # BloodImprison = core.DamageSkill("블러디 임프리즌", 0, 800, 3, cooltime = 120*1000)
 
@@ -153,8 +154,10 @@ class JobGenerator(ck.JobGenerator):
 
         # 평딜 기준
         # 참고자료: https://blog.naver.com/oe135/221372243858
-        DimensionSword = core.SummonSkill("디멘션 소드", 510, 3000, 850+34*vEhc.getV(0, 0), 8, 40*1000, cooltime=120*1000, red=True, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
-        # DimensionSwordReuse = core.SummonSkill("디멘션 소드", 660, 210, 300+vEhc.getV(0, 0)*12, 6, 8*1000, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        if DIMENSION_PHASE == 1:
+            DimensionSword = core.SummonSkill("디멘션 소드", 510, 3000, 850+34*vEhc.getV(0, 0), 8, 40*1000, cooltime=120*1000, red=True, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        else:
+            DimensionSword = core.SummonSkill("디멘션 소드", 510, 210, 300+12*vEhc.getV(0, 0), 6, (40*1000-510)*0.2, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100), red=True).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         # 기본 4000ms
         # 엑큐 2번당 발동하도록 조정
@@ -194,18 +197,19 @@ class JobGenerator(ck.JobGenerator):
 
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
-        '''
+        """
         프렌지 발동 타이밍을 앞당기기 위한 initializer입니다.
         일반적으로 SummonSkill이 BuffSkill보다 실행 순위가 밀리기 때문에 이 코드가 없으면 프렌지가 7~8초 후에서야 실행됩니다.
-        '''
+        """
+
         FrenzyInit = core.BuffSkill("데몬 프렌지(개시)", 0, 999999999).wrap(core.BuffSkillWrapper)
         FrenzyInit.onAfter(DemonFrenzy)
         DemonFrenzy.protect_from_running()
 
         return(BasicAttack,
                [FrenzyInit, globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_hyper_body_demonavenger(),
-                DemonFrenzy, Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
+                Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
                 globalSkill.soul_contract(), Revenant, RevenantHit, CallMastema, AnotherGoddessBuff, AnotherVoid] +
-               [ShieldChasing, ArmorBreakBuff] +
+               [DemonFrenzy, ShieldChasing, ArmorBreakBuff] +
                [BatSwarm, MirrorBreak, MirrorSpider, DimensionSword, DemonicBlast] +
                [BasicAttack])
