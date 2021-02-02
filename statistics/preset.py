@@ -370,15 +370,15 @@ presets = [
     Preset(
         id="zero",
         job="제로",
-        description="문피쉐, 카벨뚝",
-        options={"dealcycle": "alpha_new"},
+        description="문피쉐",
+        options={"dealcycle": "moon_pierce_shadow"},
         alt=0,
     ),
     Preset(
-        id="zero_alpha_legacy",
+        id="zero_advanced_power_stomp",
         job="제로",
-        description="어파스, 카벨뚝",
-        options={"dealcycle": "alpha_legacy"},
+        description="어파스",
+        options={"dealcycle": "advanced_power_stomp"},
         alt=1,
     ),
     Preset(

@@ -102,7 +102,16 @@ class JobGenerator(ck.JobGenerator):
 
         어파스 기준
         '''
-        DEALCYCLE = options.get('dealcycle', 'alpha_new')
+        DEALCYCLE = options.get('dealcycle', 'moon_pierce_shadow')
+
+        THROWINGHIT = 5
+
+        if DEALCYCLE != "advanced_earth_break":
+            WHEELWIND_DELAY = 900
+            WHEELWIND_HIT=7
+        else:
+            WHEELWIND_DELAY = 750
+            WHEELWIND_HIT=5
 
         #### 마스터리 ####
         # 베타 마스터리의 공격력 +4는 무기 기본 공격력 차이
@@ -191,12 +200,11 @@ class JobGenerator(ck.JobGenerator):
         FrontSlash = core.DamageSkill("프론트 슬래시", 450, 205, 6, modifier=extra_damage(6)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         FrontSlashTAG = core.DamageSkill("프론트 슬래시(태그)", 0, 205, 6, modifier=extra_damage(6)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
 
-        THROWINGHIT = 5
         ThrowingWeapon = core.SummonSkill("어드밴스드 스로잉 웨폰", 480, 300, 550+5*self.combat, 2, THROWINGHIT*300, cooltime=-1, modifier=extra_damage(6)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
 
         TurningDrive = core.DamageSkill("터닝 드라이브", 360, 260, 6, modifier=extra_damage(6)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         TurningDriveTAG = core.DamageSkill("터닝 드라이브(태그)", 0, 260, 6, modifier=extra_damage(6)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedWheelWind = core.DamageSkill("어드밴스드 휠 윈드", 900, 200+2*self.combat, 2*7, modifier=extra_damage(6)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # 0.1초당 1타, 최대 7초, 7타로 적용
+        AdvancedWheelWind = core.DamageSkill("어드밴스드 휠 윈드", WHEELWIND_DELAY, 200+2*self.combat, 2*WHEELWIND_HIT, modifier=extra_damage(6)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # 0.1초당 1타, 최대 7초, 7타로 적용
         AdvancedWheelWindTAG = core.DamageSkill("어드밴스드 휠 윈드(태그)", 0, 200+2*self.combat, 2*7, modifier=extra_damage(6)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # 0.1초당 1타, 최대 7초, 7타로 적용
 
         GigaCrash = core.DamageSkill("기가 크래시", 540, 250, 6, modifier=extra_damage(6)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
@@ -312,7 +320,7 @@ class JobGenerator(ck.JobGenerator):
         BetaState.controller(1)  # 베타로 시작
 
         ### 딜사이클 생성
-        if DEALCYCLE == "alpha_new":
+        if DEALCYCLE == "moon_pierce_shadow":
             # 문스(0ms) - 피어스(330ms) - 쉐스(690ms) - 문스(1020ms) - 피어스(1350ms) - 쉐스(1710ms) - 문스(2040ms) - 피어스(2370ms) - 쉐스(2730ms) - 문스(3060ms) - 3450ms
             # 어퍼(60ms) - 어파스(330ms) -      어퍼(900ms) -          어파스(1350ms) -            어퍼(1920ms)    - 어파스(2370ms)               - 2940ms -   3330ms
             # 2940ms: 어파스 딜레이 종료
@@ -321,23 +329,33 @@ class JobGenerator(ck.JobGenerator):
                           MoonStrikeLink, UpperSlashTAG, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike,
                           MoonStrikeLink, UpperSlashTAG, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike,
                           MoonStrike]
-        elif DEALCYCLE == "alpha_legacy":
+        elif DEALCYCLE == "advanced_power_stomp":
             # 윈커(0ms) - 윈스(420ms) - 스톰(900ms) - 문스(1590ms) - 피어싱(1920ms) - 문스(2430ms) - 피어싱(2760ms) - 3270ms
             # 기가(60ms) -       점핑(690ms) -   어스(1260ms) - 어퍼 씹힘 -   어파스(2340ms)   어퍼, 어파스 씹힘  - 2970ms
             AlphaCombo = [SetAlpha, WindCutter, GigaCrashTAG, WindStrike, JumpingCrashTAG, AdvancedStormBreak, AdvancedEarthBreakTAG,
                           MoonStrikeLink, PierceStrike, AdvancedPowerStompTAG, MoonStrikeLink, PierceStrike]
-        elif DEALCYCLE == "alpha_legacy2":
-            # 윈커-윈스-문스-피어싱-쉐스-문스-피어싱-쉐스
+        elif DEALCYCLE == "wind_pierce_shadow":
+            # 윈커-윈스-스톰-문스-피어싱-쉐스-문스-피어싱-쉐스
             # 어시 목록은 동일
             AlphaCombo = [SetAlpha, WindCutter, GigaCrashTAG, WindStrike, JumpingCrashTAG, AdvancedStormBreak, AdvancedEarthBreakTAG,
                           MoonStrikeLink, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike, MoonStrikeLink, PierceStrikeLink, ShadowStrike]
+        elif DEALCYCLE == "advanced_earth_break":
+            # 국콤
+            AlphaCombo = [SetAlpha, WindCutter, GigaCrashTAG, WindStrike, JumpingCrashTAG, AdvancedStormBreak, AdvancedEarthBreakTAG,
+                          AdvancedRollingCurve, TurningDriveTAG, AdvancedRollingAssulter]
         else:
             raise ValueError(DEALCYCLE)
 
-        # 터닝(0ms) - 휠윈(360ms) - 프런트(1260ms) - 스로잉(1710ms) - 어퍼(2190ms) - 어파스(2580ms) - 3150ms
-        # 롤커(60ms) -        롤어(1020ms) - 플래시 씹힘 - 스핀(1710ms) - 문스(2190ms)  -  2640ms
-        BetaCombo = [SetBeta, TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind, AdvancedRollingAssulterTAG,
-                     FrontSlash, ThrowingWeapon, AdvancedSpinCutterTAG, UpperSlash, MoonStrikeTAG, AdvancedPowerStomp]
+        
+        if DEALCYCLE != "advanced_earth_break": # 문피쉐, 어파스, 윈피쉐
+            # 터닝(0ms) - 휠윈(360ms) - 프런트(1260ms) - 스로잉(1710ms) - 어퍼(2190ms) - 어파스(2580ms) - 3150ms
+            # 롤커(60ms) -        롤어(1020ms) - 플래시 씹힘 - 스핀(1710ms) - 문스(2190ms)  -  2640ms
+            BetaCombo = [SetBeta, TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind, AdvancedRollingAssulterTAG,
+                         FrontSlash, ThrowingWeapon, AdvancedSpinCutterTAG, UpperSlash, MoonStrikeTAG, AdvancedPowerStomp]
+        else: # 국콤
+            BetaCombo = [SetBeta, TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind, AdvancedRollingAssulterTAG,
+                         GigaCrash, JumpingCrash, WindStrikeTAG, AdvancedEarthBreak, AdvancedStormBreakTAG]
+
         ComboHolder = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
         for sk in AlphaCombo + BetaCombo:
             ComboHolder.onAfter(sk)
