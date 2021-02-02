@@ -282,8 +282,12 @@ class JobGenerator(ck.JobGenerator):
         AdvancedRollingAssulterTAG.onAfter(AdvancedRollingAssulterAuraTAG)
 
         WindCutter.onAfter(WindCutterSummon)
+        WindCutterTAG.onAfter(WindCutterSummon)
+
         AdvancedStormBreak.onAfter(AdvancedStormBreakElectric)
         AdvancedStormBreak.onAfter(AdvancedStormBreakSummon)
+        AdvancedStormBreakTAG.onAfter(AdvancedStormBreakElectric)
+        AdvancedStormBreakTAG.onAfter(AdvancedStormBreakSummon)
 
         ### 베타 ###
         AdvancedPowerStomp.onAfter(AdvancedPowerStompWave)
