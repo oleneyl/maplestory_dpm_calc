@@ -1,12 +1,19 @@
+from enum import Enum
+
 from ...kernel import core
 from ...kernel.core import VSkillModifier as V
 from ...kernel.core import CharacterModifier as MDF
 from ...character import characterKernel as ck
 from functools import partial
 
+
+class HeroesSkills(Enum):
+    FreudsWisdom = 'Freud\'s Wisdom | 프리드의 가호'  # Taken from https://maplestory.fandom.com/wiki/Freud%27s_Wisdom
+
+
 class FridWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, num1, num2):
-        super(FridWrapper, self).__init__(core.BuffSkill("프리드의 가호(더미)", 810, 30*1000, red=True).isV(vEhc, num1, num2))
+        super(FridWrapper, self).__init__(core.BuffSkill(f"{HeroesSkills.FreudsWisdom.value}(?? | 더미)", 810, 30*1000, red=True).isV(vEhc, num1, num2))
         vlevel = vEhc.getV(num1, num2)
         self.modifierList = [
             core.CharacterModifier(),
