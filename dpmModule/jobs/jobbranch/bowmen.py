@@ -1,6 +1,12 @@
+from enum import Enum
+
 from dpmModule.kernel import core
 from dpmModule.character import characterKernel as ck
 
+
+class ArcherSkills(Enum):
+    ViciousShot = 'Vicious Shot | 크리티컬 리인포스'  # Taken from https://maplestory.fandom.com/wiki/Vicious_Shot
+    GuidedArrow = 'Guided Arrow | 가이디드 애로우'  # Taken from https://maplestory.fandom.com/wiki/Guided_Arrow
 
 # ?? | 보마 = 22.5 (Sharp Eyes + Sharp Eyes-Critical Rate) | (샤프 아이즈 + 샤프 아이즈-크리티컬 레이트)
 # ?? | 메르 = 10 (Useful Sharp Eyes) | (쓸만한 샤프 아이즈)
@@ -12,7 +18,7 @@ from dpmModule.character import characterKernel as ck
 class CriticalReinforceWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, character: ck.AbstractCharacter, num1, num2, bonus):
         skill = core.BuffSkill(
-            "크리티컬 리인포스",  # Critical Reinforcement
+            ArcherSkills.ViciousShot.value,  # Critical Reinforcement
             delay=600,
             remain=30 * 1000,
             cooltime=120 * 1000,
@@ -36,7 +42,7 @@ class CriticalReinforceWrapper(core.BuffSkillWrapper):
 class GuidedArrowWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, modifier=core.CharacterModifier()):
         skill = core.SummonSkill(
-            "가이디드 애로우",  # Guided Arrow
+            ArcherSkills.GuidedArrow.value,  # Guided Arrow
             summondelay=720,
             delay=510,
             damage=400 + 16 * vEhc.getV(num1, num2),
