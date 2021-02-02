@@ -274,13 +274,13 @@ class GearBuilder:
                     self.gear.star_stat[att_type] += att_data[star] + att_bonus
                     if is_weapon:
                         self.gear.star_stat[att_type] += att // 50 + 1
-            pdd = (self.gear.base_stat[GearPropType.incPDD] +
-                   self.gear.additional_stat[GearPropType.incPDD] +
-                   self.gear.scroll_stat[GearPropType.incPDD] +
-                   self.gear.star_stat[GearPropType.incPDD])
-            self.gear.star_stat[GearPropType.incPDD] += pdd // 20 + 1
-            if bonus and Gear.is_armor(self.gear.type):
-                self.gear.star_stat[GearPropType.incPDD] += 50
+            # pdd = (self.gear.base_stat[GearPropType.incPDD] +
+            #        self.gear.additional_stat[GearPropType.incPDD] +
+            #        self.gear.scroll_stat[GearPropType.incPDD] +
+            #        self.gear.star_stat[GearPropType.incPDD])
+            # self.gear.star_stat[GearPropType.incPDD] += pdd // 20 + 1
+            # if bonus and Gear.is_armor(self.gear.type):
+            #     self.gear.star_stat[GearPropType.incPDD] += 50
             self.gear.amazing_scroll = True
         return True
 
