@@ -1,3 +1,6 @@
+from enum import Enum
+
+from .globalSkill import GlobalSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial, reduce
@@ -8,6 +11,54 @@ from .jobclass import resistance
 from .jobbranch import bowmen
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Wild Hunter here https://maplestory.fandom.com/wiki/Wild_Hunter/Skills
+class WildHunterSkills(Enum):
+    # 1st Job
+    AnotherBite = 'Another Bite | 어나더 바이트'
+    DoubleShot = 'Double Shot | 더블 샷'
+    SummonJaguar = 'Summon Jaguar | 서먼 재규어'
+    Swipe = 'Swipe | 클로우 컷'
+    ResistanceAutoCrank = 'Resistance Auto Crank | 오토매팅 슈팅 디바이스'
+    NaturesWrath = 'Nature\'s Wrath | 네이처스 래쓰'
+    # 2nd Job
+    TripleShot = 'Triple Shot | 트리플 샷'
+    DashnSlash = 'Dash \'n Slash | 크로스 로드'
+    CrossbowMastery = 'Crossbow Mastery | 크로스보우 마스터리'
+    SoulArrow = 'Soul Arrow | 소울 애로우'
+    CalloftheWild = 'Call of the Wild | 하울링'
+    FinalAttack = 'Final Attack | 파이널 어택'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    CrossbowBooster = 'Crossbow Booster | 부스터'
+    # 3rd Job
+    EnduringFire = 'Enduring Fire | 와일드 샷'
+    SonicRoar = 'Sonic Roar | 소닉 붐'
+    WhiteHeatRush = 'White Heat Rush | 화이트 히트 러쉬'
+    HuntingAssistantUnit = 'Hunting Assistant Unit | 어시스턴트 헌팅 유닛'
+    FelineBerserk = 'Feline Berserk | 비스트 폼'
+    Flurry = 'Flurry | 플러리'
+    JaguarLink = 'JaguarLink | 재규어 링크'
+    # 4th Job
+    WildArrowBlast = 'Wild Arrow Blast | 와일드 발칸'
+    JaguarSoul = 'Jaguar Soul | 재규어 소울'
+    DrillSalvo = 'Drill Salvo | 드릴 컨테이너'
+    CrossbowExpert = 'Crossbow Expert | '
+    SharpEyes = 'Sharp Eyes | 샤프 아이즈'
+    WildInstinct = 'Wild Instinct | 와일드 인스팅트'
+    AdvancedFinalAttack = 'Advanced Final Attack | 어드밴스드 파이널 어택'
+    ExtendedMagazine = 'Extended Magazine | 익스텐드 매거진'
+    # Hypers
+    ExplodingArrows = 'Exploding Arrows | 플래쉬 레인'
+    JaguarRampage = 'Jaguar Rampage | 램피지 애즈 원'
+    ForLiberty = 'For Liberty | 윌 오브 리버티'
+    SilentRampage = 'Silent Rampage | 사일런트 램피지'
+    # 5th Job
+    JaguarStorm = 'Jaguar Storm | 재규어 스톰'
+    PrimalFury = 'Primal Fury | 재규어 맥시멈'
+    PrimalGrenade = 'Primal Grenade | 와일드 그레네이드'
+    WildArrowBlastTypeX = 'Wild Arrow Blast Type X | 와일드 발칸 Type X'
+
 
 class JaguerStack(core.DamageSkillWrapper):
     def __init__(self, level, vEhc):
