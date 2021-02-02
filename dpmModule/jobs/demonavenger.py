@@ -138,7 +138,7 @@ class JobGenerator(ck.JobGenerator):
         if BATS_HIT > 0:  # avoid dividing by zero
             BatSwarm = core.SummonSkill("배츠 스웜", 840, 330/(BATS_HIT/24), 200, 1, 24*330).setV(vEhc, 3, 5, True).wrap(core.SummonSkillWrapper)
         else:
-            BatSwarm = core.SummonSkill("배츠 스웜(미사용)", 0, 0, 0, 0, 0, cooltime=-1).wrap(core.SummonSkillWrapper)
+            BatSwarm = None
 
         # BloodImprison = core.DamageSkill("블러디 임프리즌", 0, 800, 3, cooltime = 120*1000)
 
