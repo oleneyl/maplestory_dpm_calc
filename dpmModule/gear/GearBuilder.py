@@ -147,6 +147,8 @@ class GearBuilder:
         """
         if self.gear.tuc <= 0:
             return False
+        if self.gear.block_hammer:
+            return False
         if self.gear.hammer == 0:
             self.gear.hammer = 1
             return True
