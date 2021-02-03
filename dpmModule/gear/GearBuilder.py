@@ -258,15 +258,15 @@ class GearBuilder:
                 # self.gear.star_stat[GearPropType.incSpeed] += speed_jump_data[star]
                 # self.gear.star_stat[GearPropType.incJump] += speed_jump_data[star]
         else:
-            stat_bonus = (2 if star > 5 else 1) if bonus else 0
+            stat_bonus = (2 if star > 5 else 1) if bonus and Gear.is_accessory(self.gear.type) else 0
             for prop_type in (GearPropType.STR, GearPropType.DEX, GearPropType.INT, GearPropType.LUK):
-                if (self.gear.base_stat[prop_type] >= 0 or
-                        self.gear.additional_stat[prop_type] >= 0 or
-                        self.gear.scroll_stat[prop_type] >= 0 or
-                        self.gear.star_stat[prop_type] >= 0):
-                    self.gear.star_stat[prop_type] += stat_data[prop_type] + stat_bonus
-            att_bonus = 1 if bonus and (is_weapon or self.gear.type == GearType.shield) else 0
+                if (self.gear.base_stat[prop_type] +
+                        self.gear.additional_stat[prop_type] +
+                        self.gear.scroll_stat[prop_type] +
+                        self.gear.star_stat[prop_type] > 0):
+                    self.gear.star_stat[prop_type] += stat_data[star] + stat_bonus
 
+            att_bonus = 1 if bonus and (is_weapon or self.gear.type == GearType.shield) else 0
             for att_type in (GearPropType.att, GearPropType.matt):
                 att = (self.gear.base_stat[att_type] +
                        self.gear.additional_stat[att_type] +
