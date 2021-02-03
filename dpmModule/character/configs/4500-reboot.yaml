@@ -8,7 +8,7 @@ summary:
   - 방어구/악세 에픽12%
   - 아케인심볼 고정주스탯 9600
   - 블랙라벨 무기
-  - 리부트 패시브는 무기 에디셔널에 삽입
+  - 리부트 패시브는 엠블 에디셔널에 삽입
 
 anchors:
   armor: &armor
@@ -142,13 +142,13 @@ default:
     bonus:
       att_grade: 6
     star: 12
-    add_potential:
-      att: 5
-      pdamage: 120
   subweapon:
     id: 보조무기
   emblem:
     id: 엠블렘
+    add_potential:
+      att: 5
+      pdamage: 120
   title:
     id: 핑아일체
   heart:
@@ -285,11 +285,8 @@ default:
     bonus:
       stat_main: 2520
       att: 3
-  weapon:
-    id: 앱솔랩스
-    bonus:
-      att_grade: 6
-    star: 12
+  emblem:
+    id: 엠블렘
     add_potential:
       att: 5
       pdamage: 120
