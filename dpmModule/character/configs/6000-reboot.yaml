@@ -8,7 +8,7 @@ summary:
   - 방어구/악세 유닠15%
   - 장갑 크뎀1줄
   - 아케인심볼 고정주스탯 11200
-  - 마라벨 무기, 펫공작
+  - 마라벨 무기
   - 리부트 패시브는 엠블 에디셔널에 삽입
 
 anchors:
@@ -58,8 +58,8 @@ anchors:
 default:
   level: 250
   arcane_symbol_force: 1120 # 모라스, 에스페라 10레벨
-  pet_equip: 85 # 펫공, 루나 드림 2세트(5+2.5*9)*2, 루나 쁘띠 1세트(10+2.5*8)
-  pet_set: 24 # 루나 드림 2세트(7+9), 루나 쁘띠 1세트(6)
+  pet_equip: 0
+  pet_set: 0
   cash:
     att: 30
   weapon_stat:

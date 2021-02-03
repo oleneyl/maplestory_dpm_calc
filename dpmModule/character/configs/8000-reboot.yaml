@@ -10,7 +10,7 @@ summary:
   - 장갑 크뎀2줄
   - 아케인심볼 고정주스탯 13200
   - 어센틱심볼 고정주스탯 900
-  - 마라벨 풀셋, 프펫공작
+  - 마라벨 풀셋, 원더 블랙 펫
   - 리부트 패시브는 엠블 에디셔널에 삽입
 
 anchors:
@@ -79,8 +79,8 @@ default:
   arcane_symbol_force: 1320
   authentic_symbol_level:
     - 3
-  pet_equip: 124 # 프펫공, 루나 드림 2세트(5+4*9)*2, 루나 쁘띠 1세트(10+4*8)
-  pet_set: 24 # 루나 드림 2세트(7+9), 루나 쁘띠 1세트(6)
+  pet_equip: 0
+  pet_set: 21 # 원더 블랙 펫 3마리
   cash:
     stat_main: 75
     stat_sub: 75
