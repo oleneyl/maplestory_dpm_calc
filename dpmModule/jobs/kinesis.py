@@ -274,7 +274,8 @@ class JobGenerator(ck.JobGenerator):
             UltimatePsychic.protect_from_running()
             Ultimate_Material.onConstraint(TrainConstraint)
         elif DEALCYCLE == "shot":
-            Ultimate_Material.protect_from_running()
+            Ultimate_Material.onConstraint(core.ConstraintElement("오버", PsychicOver, PsychicOver.is_active))
+            Ultimate_Material.onConstraint(TrainConstraint)
             UltimatePsychic.onConstraint(TrainConstraint)
         else:
             raise ValueError(DEALCYCLE)
