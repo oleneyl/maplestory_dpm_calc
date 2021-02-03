@@ -122,7 +122,7 @@ class GearedCharacter(AbstractCharacter):
         self.jobname: str = gen.jobname
         self.jobtype: str = gen.jobtype
         if self.jobtype == "HP":
-            self.base_modifier = ExMDF(stat_main=545 + level * 90, stat_sub=4, crit=5)
+            self.base_modifier = ExMDF(stat_main=629 + level * 90, stat_sub=4, crit=5)
         elif self.jobtype == "xenon":
             self.base_modifier = ExMDF(stat_main=26 + level * 5, crit=5)
         else:
@@ -167,7 +167,8 @@ class GearedCharacter(AbstractCharacter):
             self.add_gear_modifier(gear_dict[key])
 
     def get_weapon_base_att(self) -> int:
-        return self.gear_list["weapon"].base_stat[GearPropType.att]
+        weapon_base_stat = self.gear_list["weapon"].base_stat
+        return max(weapon_base_stat[GearPropType.att], weapon_base_stat[GearPropType.matt])
 
     def get_starforce_count(self) -> int:
         count = 0
@@ -461,7 +462,7 @@ class JobGenerator:
         chtr.apply_modifiers([self.get_passive_skill_modifier()])
 
         # 성향 적용
-        personality = Personality.get_personality(100)
+        personality = Personality.get_personality(100, self.jobtype)
         chtr.apply_modifiers([personality])
 
         graph = self.build(vEhc, chtr, options, storage_handler=storage_handler)
@@ -507,7 +508,7 @@ class JobGenerator:
         log_buffed_character(chtr)
 
         # 도핑
-        doping = Doping.get_full_doping()
+        doping = Doping.get_full_doping(self.jobtype)
         log_modifier(doping, "doping")
         chtr.apply_modifiers([doping])
         log_buffed_character(chtr)
@@ -529,6 +530,7 @@ class JobGenerator:
         refMDF = get_reference_modifier(chtr)
         hyperstat = HyperStat.get_hyper_modifier(
             refMDF,
+            self.jobname,
             chtr.level,
             self.hyperStatPrefixed,
             critical_reinforce=self._use_critical_reinforce,
@@ -541,6 +543,7 @@ class JobGenerator:
         refMDF = get_reference_modifier(chtr)
         union = Union.get_union(
             refMDF,
+            self.jobname,
             ulevel,
             buffrem=self.buffrem,
             critical_reinforce=self._use_critical_reinforce,

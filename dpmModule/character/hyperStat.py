@@ -38,6 +38,7 @@ class HyperStat:
     @staticmethod
     def get_hyper_index(
         mdf: ExMDF,
+        jobname: str,
         level: int,
         prefixed: int,
         isIndex: bool = True,
@@ -48,6 +49,9 @@ class HyperStat:
         idxList = [0 for i in range(hyper_size)]
         point_left = HyperStat.get_point(level) - prefixed
         mdfSum = ExMDF()
+
+        if jobname == "데몬어벤져":
+            HyperStat.enhancement[0] = [ExMDF(pstat_main=i*2) for i in range(16)]
         while True:
             not_enough = True
             fix_enhance = (mdf + mdfSum).get_damage_factor()
@@ -88,15 +92,15 @@ class HyperStat:
 
     @staticmethod
     def get_hyper_object(
-        mdf: ExMDF, level: int, prefixed: int, critical_reinforce: bool = False
+        mdf: ExMDF, jobname: str, level: int, prefixed: int, critical_reinforce: bool = False
     ):
-        mdf = HyperStat.get_hyper_modifier(mdf, level, prefixed, critical_reinforce)
+        mdf = HyperStat.get_hyper_modifier(mdf, jobname, level, prefixed, critical_reinforce)
         return HyperStat(mdf, level)
 
     @staticmethod
     def get_hyper_modifier(
-        mdf: ExMDF, level: int, prefixed: int, critical_reinforce: bool = False
+        mdf: ExMDF, jobname: str, level: int, prefixed: int, critical_reinforce: bool = False
     ) -> Union[List[int], ExMDF]:
         return HyperStat.get_hyper_index(
-            mdf, level, prefixed, isIndex=False, critical_reinforce=critical_reinforce
+            mdf, jobname, level, prefixed, isIndex=False, critical_reinforce=critical_reinforce
         )

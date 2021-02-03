@@ -66,19 +66,21 @@ class Union:
     @staticmethod
     def get_union_object(
         mdf: ExMDF,
+        jobname: str,
         ulevel: int,
         buffrem: Tuple[int, int],
         asIndex: bool = False,
         slot=None,
     ) -> Union:
         mdf, buffrem = Union.get_union(
-            mdf, ulevel, buffrem=buffrem, asIndex=asIndex, slot=slot
+            mdf, jobname, ulevel, buffrem=buffrem, asIndex=asIndex, slot=slot
         )
         return Union(mdf, buffrem, -1, ulevel)
 
     @staticmethod
     def get_union(
         mdf: ExMDF,
+        jobname: str,
         ulevel: int,
         buffrem: Tuple[int, int],
         asIndex: bool = False,
@@ -110,20 +112,20 @@ class Union:
                 _state = [j for j in state]
                 _state[i] = min(_state[i] + 1, maxvalue)
                 _eff = Union._get_union_increment_from_state(
-                    mdf, _state, critical_reinforce=critical_reinforce
+                    mdf, jobname, _state, critical_reinforce=critical_reinforce
                 )
                 if _eff > eff:
                     idx = i
                     eff = _eff
             if idx == -1:
-                if (Union._get_union_from_state(state) + mdf).armor_ignore < 66.7:
+                if (Union._get_union_from_state(state, jobname) + mdf).armor_ignore < 66.7:
                     idx = 3
                 else:
                     for i in range(6):
                         _state = [j for j in state]
                         _state[i] = min(_state[i] + 1, maxvalue)
                         _eff = Union._get_union_increment_from_state(
-                            mdf, _state, critical_reinforce=critical_reinforce
+                            mdf, jobname, _state, critical_reinforce=critical_reinforce
                         )
                         print(_state, _eff)
                         if _eff > eff:
@@ -148,22 +150,22 @@ class Union:
             if state[3] > 100:
                 print(state)
                 raise ValueError("something gonna wrong")
-            return Union._get_union_from_state(state)
+            return Union._get_union_from_state(state, jobname)
 
     @staticmethod
     def _get_union_increment_from_state(
-        mdf: ExMDF, state: List[int], critical_reinforce: bool = False
+        mdf: ExMDF, jobname: str, state: List[int], critical_reinforce: bool = False
     ):
-        mdfCopy = mdf + Union._get_union_from_state(state)
+        mdfCopy = mdf + Union._get_union_from_state(state, jobname)
         if critical_reinforce:
             mdfCopy += ExMDF(crit_damage=max(0, mdfCopy.crit) * 0.125)
         return mdfCopy.get_damage_factor()
 
     @staticmethod
-    def _get_union_from_state(state: List[int]) -> ExMDF:
+    def _get_union_from_state(state: List[int], jobname: str) -> ExMDF:
         return (
             ExMDF(att=state[0])
-            + ExMDF(stat_main=5 * state[1])
+            + (ExMDF(stat_main=250 * state[1]) if jobname == "데몬어벤져" else ExMDF(stat_main=5 * state[1]))
             + ExMDF(boss_pdamage=state[2])
             + ExMDF(armor_ignore=state[3])
             + ExMDF(crit=state[4])
@@ -210,6 +212,9 @@ class Card:
     제논 : 힘덱럭 5/10/20/40/50
 
     제로 : 경치
+
+    닼나 : 체력% 2/3/4/5/6
+    소마/미하일 : 체력 250/500/1000/2000/2500
     """
 
     # 주스텟 / 부스텟 / 크리 / 공마 / 크뎀 / 보공 / 방무 / 총뎀 / 제논 / 쿨감 / 벞지
@@ -226,32 +231,38 @@ class Card:
         [ExMDF(pcooltime_reduce=i) for i in [2, 3, 4, 5, 6]],
         [ExMDF(buff_rem=i) for i in [5, 10, 15, 20, 25]],
         [ExMDF(stat_main_fixed=i * 3) for i in [5, 10, 20, 40, 50]],  # 제논 전용 제논 공격대원
+        [ExMDF(stat_main_fixed=i) for i in [250, 500, 1000, 2000, 2500]],  # 데벤 전용 고정HP
+        [ExMDF(pstat_main=i) for i in [2, 3, 4, 5, 6]],  # 데벤 전용 HP%
     ]
 
     priority = {
         "STR": {  # 크확, 크뎀, 방무, 보공, 뎀퍼, 쿨감, 벞지, 주스탯, 제논, 부스탯
             "order": [2, 4, 5, 6, 7, 9, 10, 0, 8, 1],
-            "max": [8, 5, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            "max": [8, 5, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
         },
         "DEX": {
             "order": [2, 4, 5, 6, 7, 9, 10, 0, 8, 1],
-            "max": [5, 8, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            "max": [5, 8, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
         },
         "INT": {
             "order": [2, 4, 5, 6, 7, 9, 10, 0, 8, 1],
-            "max": [7, 5, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            "max": [7, 5, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
         },
         "LUK": {
             "order": [2, 4, 5, 6, 7, 9, 10, 0, 8, 1],
-            "max": [5, 5, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            "max": [5, 5, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
         },
         "LUK2": {
             "order": [2, 4, 5, 6, 7, 9, 10, 0, 8, 1],
-            "max": [5, 13, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            "max": [5, 13, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+        },
+        "HP": {  # 크확, 크뎀, 방무, 보공, 뎀퍼, 쿨감, 벞지, 체력%, 체력, 힘
+            "order": [2, 4, 5, 6, 7, 9, 10, 12, 13, 1],
+            "max": [0, 8, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1],
         },
         "xenon": {  # 크확, 크뎀, 방무, 보공, 뎀퍼, 쿨감, 벞지, 제논, 주스탯
             "order": [2, 4, 5, 6, 7, 9, 10, 11, 0],
-            "max": [18, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            "max": [18, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
         },
     }
 
@@ -277,9 +288,7 @@ class Card:
         리턴 형태 : Modifier
         """
         # TODO: 실행을 위해 임시로 변환
-        if jobtype == "HP":
-            jobtype = "STR"
-        if jobtype not in ["STR", "DEX", "INT", "LUK", "LUK2", "xenon"]:
+        if jobtype not in ["STR", "DEX", "INT", "LUK", "LUK2", "HP", "xenon"]:
             raise TypeError("jobtype must str, dex, int or luk, get:" + str(jobtype))
         retmdf = ExMDF()
         card_4, card_3 = Card.get_apt_slot(ulevel, maplem=maplem)

@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 
 from .loader import load_data
-from .preset import get_preset
+from .preset import get_preset, get_preset_list
 from .saver import save_data
 
 try:
@@ -18,11 +18,13 @@ def get_args():
     parser.add_argument(
         "--id", type=str, help="Target preset id to calculate statistics"
     )
+    parser.add_argument("--graph", action="store_true")
     parser.add_argument("--ulevel", type=int, default=8000)
     parser.add_argument("--cdr", type=int, default=0)
     parser.add_argument("--task", default="dpm")
     parser.add_argument("--time", type=int, default=1800)
     parser.add_argument("--calc", action="store_true")
+    parser.add_argument("--all", action="store_true")
 
     return parser.parse_args()
 
@@ -78,9 +80,32 @@ def write_sheet(args, df: pd.DataFrame, writer: xlsxwriter):
     worksheet.write("C2", "분당 타수")
     worksheet.write("D2", hit_total / (time / 60), num_format)
 
+    if args.graph:
+        worksheet.insert_image(f"B{len(grouped)+6}", f"data/graph/{args.task}_{args.id}_{args.ulevel}_{args.cdr}.png")
+
+
+def save_all(args):
+    presets = get_preset_list()
+    tasks = [
+        argparse.Namespace(
+            id=id, graph=args.graph, ulevel=args.ulevel, cdr=cdr, time=args.time, task=args.task
+        )
+        for id, *_ in presets for cdr in [0, 2, 4]
+    ]
+    Path("data/detail_sheet/").mkdir(parents=True, exist_ok=True)
+    writer = pd.ExcelWriter("data/detail_sheet/detail_sheet.xlsx", engine="xlsxwriter")
+    for task in tasks:
+        data = load_data(task)
+        write_sheet(task, data, writer)
+    writer.close()
+
 
 if __name__ == "__main__":
     args = get_args()
+    if args.all:
+        save_all(args)
+        exit()
+
     if args.calc:
         data = save_data(args)
     else:

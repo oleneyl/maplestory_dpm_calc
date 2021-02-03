@@ -66,12 +66,13 @@ class JobGenerator(ck.JobGenerator):
         GuntletMastery = core.InformedCharacterModifier("건틀렛 마스터리", crit= 30, att = 20)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
         ChargeMastery= core.InformedCharacterModifier("차지 마스터리", pdamage = 20)
+        CombinationTraining = core.InformedCharacterModifier("콤비네이션 트레이닝", patt=15)
         GuntletExpert = core.InformedCharacterModifier("건틀렛 엑스퍼트",
             crit_damage = 15 + ceil(passive_level / 2),
             boss_pdamage = 15 + ceil(passive_level / 2)
         )
         AdvancedChargeMastery= core.InformedCharacterModifier("어드밴스드 차지 마스터리", armor_ignore = 35 + 3 * passive_level)
-        CombinationTraining = core.InformedCharacterModifier("콤비네이션 트레이닝II", att = 40 + 2 * passive_level)
+        CombinationTraining2 = core.InformedCharacterModifier("콤비네이션 트레이닝II", att = 40 + 2 * passive_level)
         return [GuntletMastery, PhisicalTraining, ChargeMastery, 
                         GuntletExpert, AdvancedChargeMastery, CombinationTraining]
 

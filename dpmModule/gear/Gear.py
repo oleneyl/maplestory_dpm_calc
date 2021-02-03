@@ -17,9 +17,11 @@ with open(os.path.join(os.path.dirname(__file__), 'resources', 'titledata.json')
 
 class Gear:
     __slots__ = (
-        "item_id", "name", "type", "req_level", "req_job", "set_item_id", "boss_reward", "superior_eqp",
-        "joker_to_set_item", "amazing_scroll", "star", "max_star", "tuc", "scroll_up", "scroll_fail",
-        "hammer", "base_stat", "additional_stat", "scroll_stat", "star_stat", "potential", "additional_potential")
+        "item_id", "name", "type", "req_level", "req_job", "set_item_id", "boss_reward",
+        "superior_eqp", "joker_to_set_item", "amazing_scroll", "star", "max_star",
+        "tuc", "scroll_up", "scroll_fail", "hammer", "block_hammer",
+        "base_stat", "additional_stat", "scroll_stat", "star_stat", "potential", "additional_potential")
+
     def __init__(self):
         self.item_id: int = 0
         self.name: str = "Default name!"
@@ -41,6 +43,7 @@ class Gear:
         self.scroll_up: int = 0
         self.scroll_fail: int = 0
         self.hammer: int = 0
+        self.block_hammer: bool = False
 
         self.base_stat: PropMap = defaultdict(int)
         self.additional_stat: PropMap = defaultdict(int)
@@ -68,8 +71,8 @@ class Gear:
         keys = sorted(stats)
         for propType in keys:
             stat_str += "%s: %d (%d +%d +%d +%d)\n" % (propType.name, sum(stats[propType]),
-                                                      stats[propType][0], stats[propType][1],
-                                                      stats[propType][2], stats[propType][3])
+                                                       stats[propType][0], stats[propType][1],
+                                                       stats[propType][2], stats[propType][3])
         return ("= ID: " + str(self.item_id) + '\n' +
                 "= 이름: " + self.name + '\n' +
                 "= 분류: " + self.type.name + '\n' +
@@ -238,6 +241,8 @@ class Gear:
                 prop_type = GearPropType[key]
                 gear.base_stat[prop_type] = value
             else:
+                if isinstance(getattr(gear, key), bool):
+                    value = bool(value)
                 setattr(gear, key, value)
         gear.max_star = gear.get_max_star()
         return gear

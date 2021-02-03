@@ -11,6 +11,8 @@ class Doping:
     }
 
     dopingListStat = {"향상된 10단계 물약": ExMDF(stat_main=30)}
+    dopingListXenon = {"향상된 10단계 물약": ExMDF(stat_main=30*3)}
+    dopingListHP = {"익스트림 레드": ExMDF(stat_main=2000)}
 
     dopingListDamage = {
         "노블레스(뎀퍼)": ExMDF(pdamage=30),
@@ -23,13 +25,20 @@ class Doping:
     dopingListCritDamage = {"노블레스(크뎀)": ExMDF(crit_damage=30)}
 
     @staticmethod
-    def get_full_doping() -> ExMDF:
+    def get_full_doping(jobtype: str) -> ExMDF:
         retMdf = ExMDF()
 
         for name in Doping.dopingListAtt:
             retMdf = retMdf + Doping.dopingListAtt[name]
-        for name in Doping.dopingListStat:
-            retMdf = retMdf + Doping.dopingListStat[name]
+        if jobtype == "xenon":
+            for name in Doping.dopingListXenon:
+                retMdf = retMdf + Doping.dopingListXenon[name]
+        elif jobtype == "HP":
+            for name in Doping.dopingListHP:
+                retMdf = retMdf + Doping.dopingListHP[name]
+        else:
+            for name in Doping.dopingListStat:
+                retMdf = retMdf + Doping.dopingListStat[name]
         for name in Doping.dopingListDamage:
             retMdf = retMdf + Doping.dopingListDamage[name]
         for name in Doping.dopingListArmor:

@@ -50,7 +50,8 @@ class DivineAuraWrapper(core.BuffSkillWrapper):
 
 
 class JobGenerator(ck.JobGenerator):
-    # 제로는 쓸컴뱃 미적용, 패시브 레벨 +1 어빌 사용 불가능
+    # 제로는 쓸컴뱃 효율이 낮으나 일단 딜이 증가하므로 사용
+    # 패시브 레벨 +1 어빌 사용 불가능
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.vSkillNum = 5
@@ -59,7 +60,6 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "제로"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
-        self.combat = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -395,7 +395,7 @@ class JobGenerator(ck.JobGenerator):
         EgoWeaponBeta.protect_from_running()
 
         return(ComboHolder,
-               [globalSkill.maple_heros(chtr.level, name="륀느의 가호", combat_level=0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+               [globalSkill.maple_heros(chtr.level, name="륀느의 가호", combat_level=0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
                 DivineAura, AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, RhinneBless,
                 DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, LimitBreakFinal, CriticalBind,
                 SoulContract] +
