@@ -46,6 +46,7 @@ def get_modifier(args) -> core.CharacterModifier:
         ulevel=args.ulevel,
         weaponstat=weapon_stat,
         ability_grade=Ability_grade(4, 1),
+        farm=False,
     )
     return graph.get_default_buff_modifier()
 
