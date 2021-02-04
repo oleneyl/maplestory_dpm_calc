@@ -263,7 +263,8 @@ class TemplateGenerator:
                 elif type == "혼돈의 주문서" or "혼줌":
                     stat = {}
                     for stat_key in scroll['option']:
-                        stat[stat_type[stat_key]] = scroll['option'][stat_key]
+                        if stat_type[stat_key] is not None:
+                            stat[stat_type[stat_key]] = scroll['option'][stat_key]
                     gb.apply_scroll(Scroll.create_from_dict(stat), count)
                 else:
                     raise TypeError('Invalid upgrade type: ' + type)
