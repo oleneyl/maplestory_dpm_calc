@@ -10,6 +10,7 @@ from .doping import Doping
 from .hyperStat import HyperStat
 from .linkSkill import LinkSkill
 from .personality import Personality
+from .farm import Farm
 from .union import Card, Union
 from .weaponPotential import WeaponPotential
 from ..execution.rules import RuleSet
@@ -441,6 +442,7 @@ class JobGenerator:
         ulevel: int,
         weaponstat: Tuple[int, int],
         ability_grade: Ability_grade,
+        farm: bool,
         log: bool = False,
         storage_handler=None,
     ) -> policy.StorageLinkedGraph:
@@ -464,6 +466,10 @@ class JobGenerator:
         # 성향 적용
         personality = Personality.get_personality(100, self.jobtype)
         chtr.apply_modifiers([personality])
+
+        # 농장 적용
+        if farm:
+            chtr.apply_modifiers([Farm.get_farm(self.jobtype)])
 
         graph = self.build(vEhc, chtr, options, storage_handler=storage_handler)
 
