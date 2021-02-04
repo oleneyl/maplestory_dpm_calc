@@ -9,7 +9,7 @@ summary:
   - 장갑 크뎀1줄+주탯1줄
   - 아케인심볼 고정주스탯 13200
   - 마라벨 무기
-  - 리부트 패시브는 엠블 에디셔널에 삽입
+  - 리부트 패시브는 코드 내에서 처리
 
 anchors:
   armor: &armor
@@ -160,9 +160,6 @@ default:
     id: 보조무기
   emblem:
     id: 엠블렘
-    add_potential:
-      att: 5
-      pdamage: 127.5
   heart:
     id: 티타늄 하트
     star: 8
@@ -303,12 +300,6 @@ default:
     bonus:
       stat_main: 2520
       att: 5
-  emblem:
-    id: 엠블렘
-    add_potential:
-      att: 5
-      pdamage: 127.5
-      stat_main: 200
   heart:
     id: 티타늄 하트
     star: 8
