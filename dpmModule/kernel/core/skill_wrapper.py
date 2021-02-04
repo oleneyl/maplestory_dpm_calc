@@ -417,6 +417,9 @@ class BuffSkillWrapper(AbstractSkillWrapper):
     def get_modifier_forced(self) -> CharacterModifier:
         return self.skill.get_modifier()
 
+    def prevent_from_caching(self) -> None:
+        self.modifierInvariantFlag = False
+
 
 class StackSkillWrapper(BuffSkillWrapper):
     def __init__(self, skill: BuffSkill, max_: int, name: str = None) -> None:
