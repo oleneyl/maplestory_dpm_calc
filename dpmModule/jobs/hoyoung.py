@@ -111,7 +111,7 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.jobtype = "LUK"
         self.jobname = "호영"
-        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'buff_rem', 'mess')
+        self.ability_list = Ability_tool.get_ability_set('passive_level', 'buff_rem', 'mess')
         self.preEmptiveSkills = 1
 
     def get_modifier_optimization_hint(self):
