@@ -178,14 +178,14 @@ default:
 에반:
   type: override
   job_specific_item:
-    stat_main: 46
-    stat_sub: 46
+    stat_main: 14
+    stat_sub: 14
 메카닉:
   type: override
   job_specific_item:
-    stat_main: 18
-    stat_sub: 18
-    att: 16
+    stat_main: 10
+    stat_sub: 10
+    att: 8
 듀얼블레이드:
   type: override
   subweapon:
