@@ -2,7 +2,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
 from ..execution.rules import ConcurrentRunRule, RuleSet, SynchronizeRule, InactiveRule, DisableRule
-from . import globalSkill
+from . import globalSkill, jobutils
 from functools import partial
 from .jobclass import adventurer
 from .jobbranch import magicians
@@ -69,7 +69,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5)       
+        Mastery = jobutils.get_mastery_mdf(95)
         BlessingEnsemble = core.InformedCharacterModifier("블레싱 앙상블",pdamage_indep = 3)
 
         ArcaneAim = core.InformedCharacterModifier("아케인 에임",pdamage = 40 + ceil(passive_level / 2))

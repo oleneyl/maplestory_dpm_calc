@@ -2,7 +2,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, MutualRule
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobbranch import warriors
 from math import ceil
 from typing import Any, Dict
@@ -68,7 +68,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-5)
+        Mastery = jobutils.get_mastery_mdf(90)
         ResolutionTime = core.InformedCharacterModifier("리졸브 타임", pdamage_indep=25, stat_main=50)
 
         return [Mastery, ResolutionTime]

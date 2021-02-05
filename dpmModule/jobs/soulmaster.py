@@ -3,7 +3,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import ConditionRule, RuleSet, InactiveRule
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobclass import cygnus
 from .jobbranch import warriors
 from math import ceil
@@ -50,7 +50,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5+0.5*ceil(passive_level/2))
+        Mastery = jobutils.get_mastery_mdf(90+ceil(passive_level/2))
         TrueSightHyper = core.InformedCharacterModifier("트루 사이트(하이퍼)", prop_ignore = 10)
         
         return [WeaponConstant, Mastery, TrueSightHyper]
