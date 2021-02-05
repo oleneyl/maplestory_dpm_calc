@@ -44,3 +44,8 @@ def reboot_passive(level=-1):
     if level == -1:
         raise ValueError
     return core.InformedCharacterModifier("리부트", att=5, pdamage=level // 2)
+
+
+# 숙련도 계산
+def get_mastery_mdf(mastery=90):
+    return core.InformedCharacterModifier("숙련도", pdamage_indep=-(100 - min(mastery, 95))/2)
