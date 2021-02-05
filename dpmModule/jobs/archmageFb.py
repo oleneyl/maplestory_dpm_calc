@@ -2,13 +2,14 @@ import os
 
 from typing import Any, Dict
 
-from . import globalSkill
+from . import globalSkill, jobutils
 from ..kernel import core
 from .jobclass import adventurer
 from .jobbranch import magicians
 from ..status.ability import Ability_tool
 from ..character import characterKernel as ck
 from ..execution.rules import RuleSet, MutualRule, InactiveRule
+from math import ceil
 
 
 class PoisonChainToxicWrapper(core.SummonSkillWrapper):
@@ -55,7 +56,8 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         default_list = super(JobGenerator, self).get_passive_skill_list(vEhc, chtr, options)
         UnstableMemorizePassive = adventurer.UnstableMemorizePassiveWrapper(vEhc, 4, 4)
-        default_list += [UnstableMemorizePassive]
+        Mastery = jobutils.get_mastery_mdf(95+ceil(self.combat / 2))
+        default_list += [UnstableMemorizePassive, Mastery]
 
         return default_list
 

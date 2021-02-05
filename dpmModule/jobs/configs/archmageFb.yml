@@ -26,8 +26,6 @@ passive_skill_list:
 not_implied_skill_list:
 - name: 무기상수
   pdamage_indep: 20
-- name: 숙련도
-  pdamage_indep: "-2.5 + 0.5 * math.ceil(combat / 2)"
 - name: 익스트림 매직
   pdamage_indep: 20
 - name: 아케인 (실시간)
