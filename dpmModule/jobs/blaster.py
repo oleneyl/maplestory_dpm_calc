@@ -1,3 +1,5 @@
+from enum import Enum
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -8,6 +10,55 @@ from .jobbranch import warriors
 from .jobclass import resistance
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Blaster here https://maplestory.fandom.com/wiki/Blaster/Skills
+class BlasterSkills(Enum):
+    # 1st Job
+    MagnumPunch = 'Magnum Punch | 매그넘 펀치'
+    RevolvingCannon = 'Revolving Cannon | 리볼빙 캐논'
+    BunkerBusterExplosion = 'Bunker Buster Explosion | 릴리즈 파일 벙커'
+    DoubleJump = 'Double Jump | 더블 점프'
+    Detonate = 'Detonate | 익스플로젼 무브'
+    BlastShield = 'Blast Shield | 인듀어런스 실드'
+    RevolvingCannonMastery = 'Revolving Cannon Mastery | 리볼빙 캐논 마스터리'
+    #2nd Job
+    DoubleBlast = 'Double Blast | 더블 팡'
+    Bobbing = 'Bobbing | 더킹'
+    ArmCannonBoost = 'Arm Cannon Boost | 건틀렛 부스터'
+    ArmCannonMastery = 'Arm Cannon Mastery | 건틀렛 마스터리'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    ChargeMastery = 'Charge Mastery | 차지 마스터리'
+    RevolvingCannonPlus = 'Revolving Cannon Plus | 리볼빙 캐논 업그레이드'
+    # 3rd Job
+    HammerSmash = 'Hammer Smash | 해머 스매시'
+    Weaving = 'Weaving | 스웨이'
+    RocketRush = 'Rocket Rush | 리프트 프레스'
+    MagnumLaunch = 'Magnum Launch | 리프트 매그넘'
+    RevolvingCannonPlusII = 'Revolving Cannon Plus II | 리볼빙 캐논 업그레이드II'
+    ShieldTraining = 'Shield Training | 인듀어런스 트레이닝'
+    ComboTraining = 'Combo Training | 콤비네이션 트레이닝'
+    # 4th Job
+    ShotgunPunch = 'Shotgun Punch | 쇼크 웨이브 펀치'
+    MuzzleFlash = 'Muzzle Flash | 플래시 무브'
+    BallisticHurricane = 'Ballistic Hurricane | 허리케인 믹서'
+    RevolvingBlast = 'Revolving Blast | 리볼빙 벙커'
+    VitalityShield = 'Vitality Shield | 슈퍼 인듀어런스'
+    RevolvingCannonPlusIII = 'Revolving Cannon Plus III | 리볼빙 캐논 업그레이드III'
+    ShieldTrainingII = 'Shield Training II | 인듀어런스 트레이닝II'
+    GauntletExpert = 'Gauntlet Expert | 건틀렛 엑스퍼트'
+    AdvancedChargeMastery = 'Advanced Charge Mastery | 어드밴스드 차지 마스터리'
+    ComboTrainingII = 'Combo Training II | 콤비네이션 트레이닝II'
+    # Hypers
+    HyperMagnumPunch = 'Hyper Magnum Punch | 하이퍼 매그넘 펀치'
+    ForLiberty = 'For Liberty | 윌 오브 리버티'
+    CannonOverdrive = 'Cannon Overdrive | 맥시마이즈 캐논'
+    # 5th Job
+    RocketPunch = 'Rocket Punch | 벙커 버스터'
+    GatlingPunch = 'Gatling Punch | 발칸 펀치'
+    BulletBlast = 'Bullet Blast | 버닝 브레이커'
+    AfterimageShock = 'Afterimage Shock | 애프터이미지 쇼크'
+
 
 
 class RevolvingCannonMasteryWrapper(core.DamageSkillWrapper):
