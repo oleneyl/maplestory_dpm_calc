@@ -1,3 +1,7 @@
+from enum import Enum
+
+from dpmModule.jobs.globalSkill import GlobalSkills
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -8,6 +12,59 @@ from .jobclass import cygnus
 from .jobbranch import magicians
 from typing import Any, Dict
 
+
+# English skill information for Blaze Wizard here https://maplestory.fandom.com/wiki/Blaze_Wizard/Skills
+class BlazeWizardSkills(Enum):
+    # Link skill
+    CygnusBlessing = 'Cygnus Blessing | 시그너스 블레스'
+    # Beginner
+    ElementalHarmony = 'Elemental Harmony | 엘리멘탈 하모니'
+    ElementalExpert = 'Elemental Expert | 엘리멘탈 엑스퍼트'
+    # 1st Job
+    OrbitalFlame = 'Orbital Flame | 오비탈 플레임'
+    FlameBite = 'Flame Bite | 플레임 바이트'
+    FlameElemental = 'Flame Elemental | 엘리멘트: 플레임'
+    Firewalk = 'Firewalk | 파이어워크'
+    FireRepulsion = 'Fire Repulsion | 불의 반발력'
+    NaturalTalent = 'Natural Talent | 타고난 재능'
+    # 2nd Job
+    GreaterOrbitalFlame = 'Greater Orbital Flame | 오비탈 플레임 II'
+    FlameVortex = 'Flame Vortex | 플레임 볼텍스'
+    Ignition = 'Ignition | 이그니션'
+    Flashfire = 'Flashfire | '
+    WordofFire = 'Word of Fire | 북 오브 파이어'
+    ControlledBurn = 'Controlled Burn | 번 앤 레스트'
+    GreaterFlameElemental = 'Greater Flame Elemental | 엘리멘트: 플레임 II'
+    SpellControl = 'Spell Control | 주문 연마'
+    # 3rd Job
+    GrandOrbitalFlame = 'Grand Orbital Flame | 오비탈 플레임 III'
+    FlameTempest = 'Flame Tempest | 플레임 템페스타'
+    CinderMaelstrom = 'Cinder Maelstrom | 마엘스트롬'
+    PhoenixRun = 'Phoenix Run | 본 피닉스'
+    GrandFlameElemental = 'Grand Flame Elemental | 엘리멘트: 플레임 III'
+    LiberatedMagic = 'Liberated Magic | 해방된 마력'
+    BurningFocus = 'Burning Focus | 약점 분석'
+    BrilliantEnlightenment = 'Brilliant Enlightenment | 번뜩이는 깨달음'
+    # 4th Job
+    CallofCygnus = 'Call of Cygnus | 시그너스 나이츠'
+    FinalOrbitalFlame = 'Final Orbital Flame | 오비탈 플레임 IV'
+    BlazingExtinction = 'Blazing Extinction | 블레이징 익스팅션'
+    ToweringInferno = 'Towering Inferno | 인페르노라이즈'
+    FiresofCreation = 'Fires of Creation | 스피릿 오브 플레임'
+    BurningConduit = 'Burning Conduit | 버닝 리전'
+    FlameBarrier = 'Flame Barrier | 플레임 배리어'
+    FinalFlameElemental = 'Final Flame Elemental | 엘리멘트: 플레임 IV'
+    PureMagic = 'Pure Magic | 마법의 진리'
+    WildBlaze = 'Wild Blaze | 꺼지지 않는 화염'
+    # Hypers
+    Cataclysm = 'Cataclysm | 카타클리즘'
+    GloryoftheGuardians = 'Glory of the Guardians | 글로리 오브 가디언즈'
+    DragonBlaze = 'Dragon Blaze | 드래곤 슬레이브'
+    # 5th Job
+    OrbitalInferno = 'Orbital Inferno | 블레이징 오비탈 플레임'
+    SavageFlame = 'Savage Flame | 플레임 디스차지'
+    InfernoSphere = 'Inferno Sphere | 인피니티 플레임 서클'
+    SalamanderMischief = 'Salamander Mischief | 샐리맨더 미스칩'
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
