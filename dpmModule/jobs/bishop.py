@@ -1,3 +1,7 @@
+from enum import Enum
+
+from dpmModule.jobs.jobclass.adventurer import AdventurerSkills
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
@@ -8,6 +12,59 @@ from .jobclass import adventurer
 from .jobbranch import magicians
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Bishop here https://maplestory.fandom.com/wiki/Bishop/Skills
+class BishopSkills(Enum):
+    # Link SKill
+    EmpiricalKnowledge = 'Empirical Knowledge | 임피리컬 널리지'
+    # 1st Job
+    EnergyBolt = 'Energy Bolt | 에너지 볼트'
+    MagicGuard = 'Magic Guard | 매직 가드'
+    Teleport = 'Teleport | 텔레포트'
+    MagicArmor = 'Magic Armor | 매직 아머'
+    MPBoost = 'MP Boost | MP 증가'
+    # 2nd Job
+    HolyArrow = 'Holy Arrow | 홀리 애로우'
+    BlessedEnsemble = 'Blessed Ensemble | 블레싱 앙상블'
+    Heal = 'Heal | 힐'
+    Bless = 'Bless | 블레스'
+    MagicBooster = 'Magic Booster | 매직 부스터'
+    Invincible = 'Invincible | 인빈서블'
+    SpellMastery = 'Spell Mastery | 스펠 마스터리'
+    HighWisdom = 'High Wisdom | 하이 위즈덤'
+    MPEater = 'MP Eater | MP 이터'
+    # 3rd Job
+    ShiningRay = 'Shining Ray | 샤이닝 레이'
+    HolyFountain = 'Holy Fountain | 홀리 파운틴'
+    DivineProtection = 'Divine Protection | 디바인 프로텍션'
+    MysticDoor = 'Mystic Door | 미스틱 도어'
+    Dispel = 'Dispel | 디스펠'
+    HolySymbol = 'Holy Symbol | 홀리 심볼'
+    TeleportMastery = 'Teleport Mastery | 텔레포트 마스터리'
+    HolyMagicShell = 'Holy Magic Shell | 홀리 매직쉘'
+    ArcaneOverdrive = 'Arcane Overdrive | 매직 크리티컬'
+    HolyFocus = 'Holy Focus | 홀리 포커스'
+    # 4th Job
+    AngelRay = 'Angel Ray | 엔젤레이'
+    Genesis = 'Genesis | 제네시스'
+    BigBang = 'Big Bang | 빅뱅'
+    BlessedHarmony = 'Blessed Harmony | 블레싱 하모니'
+    Resurrection = 'Resurrection | 리저렉션'
+    Bahamut = 'Bahamut | 바하뮤트'
+    AdvancedBlessing = 'Advanced Blessing | 어드밴스드 블레스'
+    BuffMastery = 'Buff Mastery | 마스터 매직'
+    ArcaneAim = 'Arcane Aim | 아케인 에임'
+    # Hypers
+    HeavensDoor = 'Heaven\'s Door | 헤븐즈도어'
+    EpicAdventure = 'Epic Adventure | 에픽 어드벤쳐'
+    RighteouslyIndignant = 'Righteously Indignant | 벤전스 오브 엔젤'
+    # 5th Job
+    Benediction = 'Benediction | 프레이'
+    AngelofBalance = 'Angel of Balance | 엔젤 오브 리브라'
+    Peacemaker = 'Peacemaker | 피스메이커'
+    DivinePunishment = 'Divine Punishment | 디바인 퍼니시먼트'
+
 
 class PrayWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, num1, num2):
