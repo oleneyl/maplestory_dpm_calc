@@ -1,3 +1,5 @@
+from enum import Enum
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -8,6 +10,53 @@ from .jobclass import resistance
 from .jobbranch import magicians
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Battle Mage here https://maplestory.fandom.com/wiki/Battle_Mage/Skills
+class BattleMageSkills(Enum):
+    # 1st Job
+    TripleBlow = 'Triple Blow | 트리플 블로우'
+    CombatTeleport = 'Combat Teleport | 텔레포트'
+    HastyAura = 'Hasty Aura | 옐로우 오라'
+    Condemnation = 'Condemnation | 데스'
+    StaffArtist = 'Staff Artist | 아트 오브 스태프'
+    # 2nd Job
+    QuadBlow = 'Quad Blow | 쿼드 블로우'
+    DarkChain = 'Dark Chain | 다크 체인'
+    DrainingAura = 'Draining Aura | 드레인 오라'
+    StaffBoost = 'Staff Boost | 스태프 부스터'
+    StaffMastery = 'Staff Mastery | 스태프 마스터리'
+    HighWisdom = 'High Wisdom | 하이 위즈덤'
+    OrdinaryConversion = 'Ordinary Conversion | 오디너리 컨버전'
+    GrimContract = 'Grim Contract | 데스 컨트랙트'
+    # 3rd Job
+    QuintupleBlow = 'Quintuple Blow | 데스 블로우'
+    BattleBurst = 'Battle Burst | 배틀 스퍼트'
+    BlueAura = 'Blue Aura | 블루 오라'
+    DarkShock = 'Dark Shock | 다크 라이트닝'
+    BattleMastery = 'Battle Mastery | 배틀 마스터리'
+    PowerStance = 'Power Stance | 스탠스'
+    DarkConditioning = 'Dark Conditioning | 너브 스티뮬레이션'
+    GrimContractII = 'Grim Contract II | 데스 컨트랙트2'
+    # 4th Job
+    FinishingBlow = 'Finishing Blow | 피니쉬 블로우'
+    DarkGenesis = 'Dark Genesis | 다크 제네시스'
+    DarkAura = 'Dark Aura | 다크 오라'
+    WeakeningAura = 'Weakening Aura | 디버프 오라'
+    BattleRage = 'Battle Rage | 배틀 레이지'
+    PartyShield = 'Party Shield | 쉘터'
+    StaffExpert = 'Staff Expert | 스태프 엑스퍼트'
+    SpellBoost = 'Spell Boost | 스펠 부스트'
+    GrimContractIII = 'Grim Contract III | 데스 컨트랙트3'
+    # Hypers
+    SweepingStaff = 'Sweeping Staff | 배틀킹 바'
+    ForLiberty = 'For Liberty | 윌 오브 리버티'
+    MasterofDeath = 'Master of Death | 마스터 오브 데스'
+    # 5th Job
+    AuraScythe = 'Aura Scythe | 유니온 오라'
+    AltarofAnnihilation = 'Altar of Annihilation | 블랙 매직 알터'
+    GrimHarvest = 'Grim Harvest | 그림 리퍼'
+    AbyssalLightning = 'Abyssal Lightning | 어비셜 라이트닝'
 
 class GrimReaperWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, masterOfDeath):
