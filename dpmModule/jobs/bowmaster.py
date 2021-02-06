@@ -1,3 +1,7 @@
+from enum import Enum
+
+from dpmModule.jobs.globalSkill import GlobalSkills
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
@@ -12,6 +16,53 @@ from typing import Any, Dict
 Advisor : Sniper range (red). 저격장(레드).
 https://github.com/oleneyl/maplestory_dpm_calc/issues/247
 """
+# English skill information for Bowmaster here https://maplestory.fandom.com/wiki/Bowmaster/Skills
+class BowmasterSkills(Enum):
+    # Link Skill
+    AdventurersCuriosity = 'Adventurer\'s Curiosity | '
+    # 1st Job
+    ArrowBlow = 'Arrow Blow | 애로우 블로우'
+    DoubleJump = 'Double Jump | 더블 점프'
+    CriticalShot = 'Critical Shot | 크리티컬 샷'
+    ArcheryMastery = 'Archery Mastery | 아처 마스터리'
+    # 2nd Job
+    ArrowBomb = 'Arrow Bomb | 애로우 봄'
+    CoveringFire = 'Covering Fire | 리트리트 샷'
+    BowBooster = 'Bow Booster | 보우 부스터'
+    SoulArrowBow = 'Soul Arrow: Bow | 소울 애로우: 활'
+    QuiverCartridge = 'Quiver Cartridge | 퀴버 카트리지'
+    BowMastery = 'Bow Mastery | 보우 마스터리'
+    FinalAttackBow = 'Final Attack: Bow | 파이널 어택: 활'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    # 3rd Job
+    FlameSurge = 'Flame Surge | 플레임 샷'
+    Phoenix = 'Phoenix | 피닉스'
+    Hookshot = 'Hookshot | 슈타이크 아이젠'
+    RecklessHuntBow = 'Reckless Hunt: Bow | 익스트림 아처리'
+    MortalBlow = 'Mortal Blow | 모탈 블로우'
+    FocusedFury = 'Focused Fury | 컨센트레이션'
+    EvasionBoost = 'Evasion Boost | 닷지'
+    Marksmanship = 'Marksmanship | 마크맨쉽'
+    ArrowBlaster = 'Arrow Blaster | 애로우 플래터'
+    # 4th Job
+    Hurricane = 'Hurricane | 폭풍의 시'
+    BindingShot = 'Binding Shot | 운즈 샷'
+    ArrowStream = 'Arrow Stream | 언카운터블 애로우'
+    SharpEyes = 'Sharp Eyes | 샤프 아이즈'
+    IllusionStep = 'Illusion Step | 일루젼 스탭'
+    EnchantedQuiver = 'Enchanted Quiver | 어드밴스드 퀴버'
+    BowExpert = 'Bow Expert | 보우 엑스퍼트'
+    AdvancedFinalAttack = 'Advanced Final Attack | 어드밴스드 파이널 어택'
+    ArmorBreak = 'Armor Break | 아머 피어싱'
+    # Hypers
+    GrittyGust = 'Gritty Gust | 윈드 오브 프레이'
+    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
+    Concentration = 'Concentration | 프리퍼레이션'
+    # 5th Job
+    StormofArrows = 'Storm of Arrows | 애로우 레인'
+    InhumanSpeed = 'Inhuman Speed | 잔영의 시'
+    QuiverBarrage = 'Quiver Barrage | 퀴버 풀버스트'
+    SilhouetteMirage = 'Silhouette Mirage | 실루엣 미라주'
 
 
 class ArmorPiercingWrapper(core.BuffSkillWrapper):
