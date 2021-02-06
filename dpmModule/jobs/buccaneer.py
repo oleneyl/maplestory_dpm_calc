@@ -1,3 +1,8 @@
+from enum import Enum
+
+from dpmModule.jobs.globalSkill import GlobalSkills
+from dpmModule.jobs.jobbranch.pirates import PirateSkills
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -9,6 +14,66 @@ from .jobclass import adventurer
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Buccaneer here https://maplestory.fandom.com/wiki/Buccaneer/Skills
+class BuccaneerSkills(Enum):
+    # link Skill
+    PirateBlessing = 'Pirate Blessing | 파이렛 블레스'
+    # Beginner
+    SuperTransformation = 'Super Transformation | 슈퍼 트랜스폼'
+    # 1st Job
+    SommersaultKick = 'Sommersault Kick | 써머솔트 킥'
+    DoubleShot = 'Double Shot | 더블 파이어'
+    Octopush = 'Octopush | 옥토푸시'
+    Dash = 'Dash | 대쉬'
+    ShadowHeart = 'Shadow Heart | 크리티컬 로어'
+    BulletTime = 'Bullet Time | 퀵모션'
+    # 2nd Job
+    TornadoUppercut = 'Tornado Uppercut | 토네이도 어퍼'
+    EnergyVortex = 'Energy Vortex | 에너지 토네이도'
+    EnergyCharge = 'Energy Charge | 에너지 차지'
+    CorkscrewBlow = 'Corkscrew Blow | 스크류 펀치'
+    DarkClarity = 'Dark Clarity | 멘탈 클리어리티'
+    KnuckleBooster = 'Knuckle Booster | 너클 부스터'
+    AdvancedDash = 'Advanced Dash | 어드밴스드 대쉬'
+    KnuckleMastery = 'Knuckle Mastery | 너클 마스터리'
+    HPBoost = 'HP Boost | HP 증가'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    Perseverance = 'Perseverance | 인듀어런스'
+    # 3rd Job
+    SpiralAssault = 'Spiral Assault | 더블 스파이럴'
+    EnergyBurst = 'Energy Burst | 에너지 버스터'
+    HedgehogBuster = 'Hedgehog Buster | 헤지호그 버스터'
+    Supercharge = 'Supercharge | 슈퍼 차지'
+    StaticThumper = 'Static Thumper | 쇼크웨이브'
+    RolloftheDice = 'Roll of the Dice | 럭키 다이스'
+    AdmiralsWings = 'Admiral\'s Wings | 윌로우 디펜시브'
+    PrecisionStrikes = 'Precision Strikes | 크리티컬 레이지'
+    StunMastery = 'Stun Mastery | 스턴 마스터리'
+    # 4th Job
+    Octopunch = 'Octopunch | 피스트 인레이지'
+    DragonStrike = 'Dragon Strike | 드래곤 스트라이크'
+    NautilusStrike = 'Nautilus Strike | 전함 노틸러스'
+    BuccaneerBlast = 'Buccaneer Blast | 에너지 블라스트'
+    DoubleBlast = 'Double Blast | 더블 블라스트'
+    Crossbones = 'Crossbones | 바이퍼지션'
+    TimeLeap = 'Time Leap | 타임 리프'
+    SpeedInfusion = 'Speed Infusion | 윈드 부스터'
+    DoubleDown = 'Double Down | 더블 럭키 다이스'
+    UltraCharge = 'Ultra Charge | 울트라 차지'
+    PiratesRevenge = 'Pirate\'s Revenge | 카운터 어택'
+    TyphoonCrush = 'Typhoon Crush | 가드 크러시'
+    # Hypers
+    PowerUnity = 'Power Unity | 유니티 오브 파워'
+    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
+    StimulatingConversation = 'Stimulating Conversation | 스티뮬레이트'
+    # 5th Job
+    Meltdown = 'Meltdown | 트랜스 폼'
+    LordoftheDeep = 'Lord of the Deep | 서펜트 스크류'
+    SerpentVortex = 'Serpent Vortex | 퓨리어스 차지'
+    HowlingFist = 'Howling Fist | 하울링 피스트'
+
 
 class EnergyChargeWrapper(core.StackSkillWrapper):
     def __init__(self, combat):
