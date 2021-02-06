@@ -1,6 +1,9 @@
 import os
+from enum import Enum
 
 from typing import Any, Dict
+
+from dpmModule.jobs.jobclass.adventurer import AdventurerSkills
 
 from . import globalSkill
 from ..kernel import core
@@ -9,6 +12,56 @@ from .jobbranch import magicians
 from ..status.ability import Ability_tool
 from ..character import characterKernel as ck
 from ..execution.rules import RuleSet, MutualRule, InactiveRule
+
+
+# English skill information for Fire/Poison Mage here https://maplestory.fandom.com/wiki/Magician_(Fire,_Poison)/Skills
+class ArchmageFirePoisonSkills(Enum):
+    # Link Skill
+    EmpiricalKnowledge = 'Empirical Knowledge | 임피리컬 널리지'
+    # 1st Job
+    EnergyBolt = 'Energy Bolt | 에너지 볼트'
+    MagicGuard = 'Magic Guard | 매직 가드'
+    Teleport = 'Teleport | 텔레포트'
+    # 2nd Job
+    FlameOrb = 'Flame Orb | 플레임 오브'
+    ElementalDrain = 'Elemental Drain | 엘리멘탈 드레인'
+    PoisonBreath = 'Poison Breath | 포이즌 브레스'
+    Meditation = 'Meditation | 메디테이션'
+    MagicBooster = 'Magic Booster | 매직 부스터'
+    Ignite = 'Ignite | 이그나이트'
+    SpellMastery = 'Spell Mastery | 스펠 마스터리'
+    HighWisdom = 'High Wisdom | 하이 위즈덤'
+    MPEater = 'MP Eater | MP 이터'
+    # 3rd Job
+    Explosion = 'Explosion | 익스플로젼'
+    PoisonMist = 'Poison Mist | 포이즌 미스트'
+    ViralSlime = 'Viral Slime | 슬라임 바이러스'
+    ElementalAdaptationFirePoison = 'Elemental Adaptation (Fire, Poison) | 엘리멘탈 어뎁팅(불,독)'
+    ElementalDecrease = 'Elemental Decrease | 엘리멘탈 리셋'
+    TeleportMastery = 'Teleport Mastery | 텔레포트 마스터리'
+    ManaBurn = 'Mana Burn | 마나 번'
+    ElementAmplification = 'Element Amplification | 엘리먼트 엠플리피케이션'
+    ArcaneOverdrive = 'Arcane Overdrive | 매직 크리티컬'
+    BurningMagic = 'Burning Magic | 익스트림 매직(불,독)'
+    # 4th Job
+    Paralyze = 'Paralyze | 페럴라이즈'
+    MistEruption = 'Mist Eruption | 미스트 이럽션'
+    FerventDrain = 'Fervent Drain | 퍼번트 드레인'
+    MeteorShower = 'Meteor Shower | 메테오'
+    FlameHaze = 'Flame Haze | 플레임 헤이즈'
+    Ifrit = 'Ifrit | 이프리트'
+    ArcaneAim = 'Arcane Aim | 아케인 에임'
+    BuffMastery = 'Buff Mastery | 마스터 매직'
+    # Hypers
+    MegiddoFlame = 'Megiddo Flame | 메기도 플레임'
+    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
+    InfernoAura = 'Inferno Aura | 파이어 오라'
+    # 5th Job
+    DoTPunisher = 'DoT Punisher | 도트 퍼니셔'
+    PoisonNova = 'Poison Nova | 포이즌 노바'
+    ElementalFury = 'Elemental Fury | 퓨리 오브 이프리트'
+    PoisonChain = 'Poison Chain | 포이즌 체인'
+
 
 
 class PoisonChainToxicWrapper(core.SummonSkillWrapper):
