@@ -95,7 +95,7 @@ default:
   level: 240
   arcane_symbol_force: 960
   pet_equip: 20 # 노작, 루나 드림 2세트(5*2), 루나 쁘띠 1세트(10)
-  pet_set: 24 # 루나 드림 2세트(7+9), 루나 쁘띠 1세트(6)
+  pet_set: 24 # 루나 드림 2세트(7+9), 루나 쁘띠 1세트(8)
   cash:
     att: 25
   weapon_stat:

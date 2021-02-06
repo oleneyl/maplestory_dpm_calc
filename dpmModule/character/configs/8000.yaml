@@ -122,7 +122,7 @@ default:
   authentic_symbol_level:
     - 3
   pet_equip: 124 # 프펫공, 루나 드림 2세트(5+4*9)*2, 루나 쁘띠 1세트(10+4*8)
-  pet_set: 24 # 루나 드림 2세트(7+9), 루나 쁘띠 1세트(6)
+  pet_set: 24 # 루나 드림 2세트(7+9), 루나 쁘띠 1세트(8)
   cash:
     stat_main: 75
     stat_sub: 75
