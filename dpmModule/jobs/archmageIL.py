@@ -1,3 +1,7 @@
+from enum import Enum
+
+from dpmModule.jobs.jobclass.adventurer import AdventurerSkills
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -8,6 +12,57 @@ from .jobclass import adventurer
 from .jobbranch import magicians
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Ice/Lightning Mage here https://maplestory.fandom.com/wiki/Magician_(Ice,_Lightning)/Skills
+class ArchmageIceLightningSkills(Enum):
+    # Link Skill
+    EmpiricalKnowledge = 'Empirical Knowledge | 임피리컬 널리지'
+    # 1st Job
+    EnergyBolt = 'Energy Bolt | 에너지 볼트'
+    MagicGuard = 'Magic Guard | 매직 가드'
+    Teleport = 'Teleport | 텔레포트'
+    MagicArmor = 'Magic Armor | 매직 아머'
+    MPBoost = 'MP Boost | MP 증가'
+    # 2nd Job
+    ColdBeam = 'Cold Beam | 콜드 빔'
+    FreezingCrush = 'Freezing Crush | 프리징 이펙트'
+    ThunderBolt = 'Thunder Bolt | 선더 볼트'
+    ChillingStep = 'Chilling Step | 칠링 스텝'
+    Meditation = 'Meditation | 메디테이션'
+    MagicBooster = 'Magic Booster | 매직 부스터'
+    SpellMastery = 'Spell Mastery | 스펠 마스터리'
+    HighWisdom = 'High Wisdom | 하이 위즈덤'
+    MPEater = 'MP Eater | MP 이터'
+    # 3rd Job
+    IceStrike = 'Ice Strike | 아이스 스트라이크'
+    GlacierChain = 'Glacier Chain | 글레이셜 체인'
+    Thunderstorm = 'Thunderstorm | 선더 스톰'
+    ElementalAdaptationIceLightning = 'Elemental Adaptation (Ice, Lightning) | 엘리멘탈 어뎁팅(썬,콜)'
+    ElementalDecrease = 'Elemental Decrease | 엘리멘탈 리셋'
+    TeleportMastery = 'Teleport Mastery | 텔레포트 마스터리'
+    ArcaneOverdrive = 'Arcane Overdrive | 매직 크리티컬'
+    StormMagic = 'Storm Magic | 익스트림 매직(썬,콜)'
+    ElementAmplification = 'Element Amplification | 엘리멘트 엠플리피케이션'
+    Shatter = 'Shatter | 프로즌 브레이크'
+    # 4th Job
+    ChainLightning = 'Chain Lightning | 체인 라이트닝'
+    FreezingBreath = 'Freezing Breath | 프리징 브레스'
+    Blizzard = 'Blizzard | 블리자드'
+    FrozenOrb = 'Frozen Orb | 프로즌 오브'
+    Elquines = 'Elquines | 엘퀴네스'
+    BuffMastery = 'Buff Mastery | 마스터 매직'
+    ArcaneAim = 'Arcane Aim | 아케인 에임'
+    FrostClutch = 'Frost Clutch | 프로스트 이펙트'
+    LightningOrb = 'Lightning Orb | 라이트닝 스피어'
+    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
+    AbsoluteZeroAura = 'Absolute Zero Aura | 아이스 오라'
+    # 5th Job
+    IceAge = 'Ice Age | 아이스 에이지'
+    BoltBarrage = 'Bolt Barrage | 썬더 브레이크'
+    SpiritofSnow = 'Spirit of Snow | 스피릿 오브 스노우'
+    JupiterThunder = 'Jupiter Thunder | 주피터 썬더'
+
 
 class FrostEffectWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
