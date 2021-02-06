@@ -1,3 +1,7 @@
+from enum import Enum
+
+from dpmModule.jobs.jobbranch.thieves import ThiefSkills
+
 from ..kernel.graph import DynamicVariableOperation
 from ..kernel import core
 from ..character import characterKernel as ck
@@ -9,6 +13,57 @@ from .jobclass import nova
 from math import ceil
 from typing import Any, Dict
 
+
+# English skill information for Cadena here https://maplestory.fandom.com/wiki/Cadena/Skills
+class CadenaSkills(Enum):
+    # Link Skill
+    UnfairAdvantage = 'Unfair Advantage | 인텐시브 인썰트'
+    # 1st Job
+    ChainArtsPursuit = 'Chain Arts: Pursuit | 체인아츠:체이스'
+    ChainArtsThrash = 'Chain Arts: Thrash | 체인아츠:'
+    SummonScimitar = 'Summon Scimitar | 서먼 커팅 시미터'
+    Shadowstep = 'Shadowstep | 에이전트 시프트'
+    TheWayofShadows = 'The Way of Shadows | 에이전트 스텝'
+    UncannyLuck = 'Uncanny Luck | 콜렉팅 포리프'
+    # 2nd Job
+    ChainArtsThrashII = 'Chain Arts: Thrash II | 체인아츠:스트로크 1차 강화'
+    SummonClaw = 'Summon Claw | 서먼 스크래칭 클로'
+    SummonShuriken = 'Summon Shuriken | 서먼 스로잉 윙대거'
+    WeaponBooster = 'Weapon Booster | 웨폰 부스터'
+    MuscleMemory = 'Muscle Memory | 웨폰 버라이어티 I'
+    WeaponMastery = 'Weapon Mastery | 웨폰 마스터리'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    WisdomofShadows = 'Wisdom of Shadows | 퀵서비스 마인드 I'
+    # 3rd Job
+    ChainArtsThrashIII = 'Chain Arts: Thrash III | 체인아츠:스트로크 2차 강화'
+    SummonShotgun = 'Summon Shotgun | 서먼 슈팅 샷건'
+    SummonDaggers = 'Summon Daggers | 서먼 슬래싱 나이프'
+    SummonDecoyBomb = 'Summon Decoy Bomb | 서먼 릴리징 봄'
+    MuscleMemoryII = 'Muscle Memory II | 웨폰 버라이어티 II'
+    Determination = 'Determination | 템퍼'
+    CheapShot = 'Cheap Shot | 위크포인트 어택'
+    KeenEye = 'Keen Eye | 베이직 디텍션'
+    # 4th Job
+    ChainArtsThrashIV = 'Chain Arts: Thrash IV | 체인아츠:스트로크 최종 강화'
+    SummonBrick = 'Summon Brick | 서먼 스트라이킹 브릭'
+    SummonSpikedBat = 'Summon Spiked Bat | 서먼 비팅 니들배트'
+    ChainArtsReignofChains = 'Chain Arts: Reign of Chains | 체인아츠:터프 허슬'
+    ChainArtsBeatdown = 'Chain Arts: Beatdown | 체인아츠:테이크다운'
+    NovaWarrior = 'Nova Warrior | 노바의 용사'
+    MuscleMemoryIII = 'Muscle Memory III | 웨폰 버라이어티 III'
+    CheapShotII = 'Cheap Shot II | 위크포인트 컨버징 어택'
+    WeaponsExpert = 'Weapons Expert | 웨폰 엑스퍼트'
+    WisdomofShadowsII = 'Wisdom of Shadows II | 퀵서비스 마인드 Ⅱ'
+    # Hypers
+    ChainArtsCrush = ' Chain Arts: Crush | 체인아츠:크러시'
+    ShadowdealersElixir = ' Shadowdealer\'s Elixir | 상인단 특제 비약'
+    VeteranShadowdealer = ' Veteran Shadowdealer | 프로페셔널 에이전트'
+    # 5th Job
+    VenomBurst = 'Venom Burst | 베놈 버스트'
+    ChainArtsVoidStrike = 'Chain Arts: Void Strike | 체인아츠:퓨리'
+    ApocalypseCannon = 'Apocalypse Cannon | A.D 오드넌스'
+    ChainArtsMaelstrom = 'Chain Arts: Maelstrom | 체인아츠:메일스트롬'
+    MuscleMemoryFinale = 'Muscle Memory Finale | 웨폰 버라이어티 피날레'
 
 ######   Passive Skill   ######
 

@@ -7,6 +7,7 @@ from ...kernel import core
 class ThiefSkills(Enum):
     LastResort = 'Last Resort | 레디 투 다이'  # Taken from https://maplestory.fandom.com/wiki/Last_Resort
     ShadowWalker = 'Shadow Walker | 얼티밋 다크 사이트'  # Taken from https://maplestory.fandom.com/wiki/Shadow_Walker
+    VenomBurst = 'Venom Burst | 베놈 버스트'
 
 # Need to integrate once job-specific scripts are fully understood. 직업별 스크립트 완전히 파악되면 통합 필요.
 def ReadyToDieWrapper(vEhc, num1, num2):
