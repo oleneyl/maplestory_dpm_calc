@@ -129,7 +129,7 @@ class OrderWrapper(core.SummonSkillWrapper):
 
 class StormWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, order: OrderWrapper, serverlag=0):  # TODO: Measure the average number of seconds of server rack. 서버렉 평균 몇초인지 측정할것
-        skill = core.SummonSkill("스톰", 780, 330, 250 + 10 * vEhc.getV(num1, num2), 2, 14000 + serverlag, cooltime=90 * 1000, red=True).isV(vEhc, num1, num2)
+        skill = core.SummonSkill(AdeleSkills.Storm.value, 780, 330, 250 + 10 * vEhc.getV(num1, num2), 2, 14000 + serverlag, cooltime=90 * 1000, red=True).isV(vEhc, num1, num2)
         super(StormWrapper, self).__init__(skill)
         self.order = order
         self.consumed_order = 0
@@ -163,15 +163,15 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.get_weapon_att(chtr)
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        MagicCircuit = core.InformedCharacterModifier("매직 서킷", att=WEAPON_ATT * 0.15)  # 15% of weapon attack power, assumed maximum. 무기 공격력의 15%, 최대치 가정.
-        Pace = core.InformedCharacterModifier("패이스", crit_damage=10, patt=10)
-        Rudiment = core.InformedCharacterModifier("루디먼트", att=30)
-        Mastery = core.InformedCharacterModifier("마스터리", att=30)
-        Train = core.InformedCharacterModifier("트레인", stat_main=60)
-        Accent = core.InformedCharacterModifier("어센트", att=30, pdamage_indep=15, crit=20)
-        Expert = core.InformedCharacterModifier("엑스퍼트", att=30)
-        Demolition = core.InformedCharacterModifier("데몰리션", pdamage_indep=30 + passive_level, armor_ignore=20 + passive_level)
-        Attain = core.InformedCharacterModifier("어테인", att=30 + passive_level, boss_pdamage=10 + ceil(passive_level / 2), crit=20 + passive_level)
+        MagicCircuit = core.InformedCharacterModifier(AdeleSkills.MagicConversion.value, att=WEAPON_ATT * 0.15)  # 15% of weapon attack power, assumed maximum. 무기 공격력의 15%, 최대치 가정.
+        Pace = core.InformedCharacterModifier(AdeleSkills.RecallingGreatness.value, crit_damage=10, patt=10)
+        Rudiment = core.InformedCharacterModifier(AdeleSkills.MartialDiscipline.value, att=30)
+        Mastery = core.InformedCharacterModifier(AdeleSkills.BladecasterControl.value, att=30)
+        Train = core.InformedCharacterModifier(AdeleSkills.EliteTraining.value, stat_main=60)
+        Accent = core.InformedCharacterModifier(AdeleSkills.Ascent.value, att=30, pdamage_indep=15, crit=20)
+        Expert = core.InformedCharacterModifier(AdeleSkills.BladecasterExpertise.value, att=30)
+        Demolition = core.InformedCharacterModifier(AdeleSkills.Ruination.value, pdamage_indep=30 + passive_level, armor_ignore=20 + passive_level)
+        Attain = core.InformedCharacterModifier(AdeleSkills.Strive.value, att=30 + passive_level, boss_pdamage=10 + ceil(passive_level / 2), crit=20 + passive_level)
 
         return [MagicCircuit, Pace, Rudiment, Mastery, Train, Accent, Expert, Demolition, Attain]
 
@@ -224,56 +224,57 @@ class JobGenerator(ck.JobGenerator):
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        Shard = core.DamageSkill("샤드", 630, 80 + 30 + 115 + 225 + passive_level * 3, 3 * 5, cooltime=6000, red=True).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)  # 5 450*3 projectiles. 450*3의 투사체 5개.
-        Wonder = core.DamageSkill("샤드(원더)", 0, 80 + 30 + 115 + 225 + passive_level * 3, 3 * 5, cooltime=8000).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)  # Trigger skill hit every 8 seconds. 8초마다 트리거 스킬 적중시 시전.
+        Shard = core.DamageSkill(AdeleSkills.MagicDispatch.value, 630, 80 + 30 + 115 + 225 + passive_level * 3, 3 * 5, cooltime=6000, red=True).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)  # 5 450*3 projectiles. 450*3의 투사체 5개.
+        Wonder = core.DamageSkill(f"{AdeleSkills.MagicDispatch.value}(Aetherial Arms | 원더)", 0, 80 + 30 + 115 + 225 + passive_level * 3, 3 * 5, cooltime=8000).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)  # Trigger skill hit every 8 seconds. 8초마다 트리거 스킬 적중시 시전.
 
-        Ether = core.StackSkillWrapper(core.BuffSkill('에테르', 0, 9999999), 400)
-        EtherTick = core.SummonSkill('에테르(자연 회복)', 0, 10020, 0, 0, 9999999).wrap(core.SummonSkillWrapper)
+        Ether = core.StackSkillWrapper(core.BuffSkill(AdeleSkills.AetherWeaving.value, 0, 9999999), 400)
+        EtherTick = core.SummonSkill(f'{AdeleSkills.AetherWeaving.value}(Natural Recovery | 자연 회복)', 0, 10020, 0, 0, 9999999).wrap(core.SummonSkillWrapper)
 
-        Resonance = core.DamageSkill("레조넌스", 690, (120 + 125 + 265 + passive_level * 3) * (1.15 ** 5), 6, cooltime=10 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  # 900ms clack speed, used every 10 seconds to maintain the stack. 클라공속 900ms, 스택 유지를 위해 10초마다 사용함.
+        Resonance = core.DamageSkill(AdeleSkills.ResonanceRush.value, 690, (120 + 125 + 265 + passive_level * 3) * (1.15 ** 5), 6, cooltime=10 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  # 900ms clack speed, used every 10 seconds to maintain the stack. 클라공속 900ms, 스택 유지를 위해 10초마다 사용함.
 
-        ResonanceStack = core.BuffSkill('레조넌스(스택)', 0, 30 * 1000, cooltime=-1, pdamage_indep=10, armor_ignore=10).wrap(core.BuffSkillWrapper)  # Final damage 5, ?? 5, Max 2 times. Assume always overlapping. 최종뎀 5, 방무 5, 최대2회. 상시 중첩으로 가정.
+        ResonanceStack = core.BuffSkill(f'{AdeleSkills.ResonanceRush.value}(stack | 스택)', 0, 30 * 1000, cooltime=-1, pdamage_indep=10, armor_ignore=10).wrap(core.BuffSkillWrapper)  # Final damage 5, ?? 5, Max 2 times. Assume always overlapping. 최종뎀 5, 방무 5, 최대2회. 상시 중첩으로 가정.
 
-        Creation = core.StackDamageSkillWrapper(core.DamageSkill('크리에이션', 0, 200 + 240 + 270 + passive_level * 3, 1, cooltime=1500, red=True).setV(vEhc, 5, 2, False),
+        Creation = core.StackDamageSkillWrapper(core.DamageSkill(AdeleSkills.AetherForge.value, 0, 200 + 240 + 270 + passive_level * 3, 1, cooltime=1500, red=True).setV(vEhc, 5, 2, False),
             Ether,
             lambda ether: min(ether.stack // 100, 3) * 2)  # 270ms basic attack speed for direct casting. 직접시전시 270ms 기본공속
 
-        Territory = core.SummonSkill('테리토리', 420, 405, 100 + 300 + passive_level * 5, 4, 7000 + 4000, rem=False, cooltime=30 * 1000, red=True).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)  # 27 hits, clack 540 ms. 27회 타격, 클라공속540ms.
-        TerritoryEnd = core.DamageSkill('테리토리(종료)', 0, 550 + 300 + passive_level * 5, 12, cooltime=-1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        Territory = core.SummonSkill(AdeleSkills.ReignofDestruction.value, 420, 405, 100 + 300 + passive_level * 5, 4, 7000 + 4000, rem=False, cooltime=30 * 1000, red=True).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)  # 27 hits, clack 540 ms. 27회 타격, 클라공속540ms.
+        TerritoryEnd = core.DamageSkill(f'{AdeleSkills.ReignofDestruction.value}(end | 종료)', 0, 550 + 300 + passive_level * 5, 12, cooltime=-1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        Order = OrderWrapper(core.SummonSkill('오더', 0, 1020, 240 + 120 + passive_level * 3, 2, 99999999).setV(vEhc, 1, 2, False), Ether)  # 15% ether crystal, assuming no casting delay, attack period 1020ms. 15% 에테르 결정, 시전딜레이 없음으로 가정, 공격주기 1020ms.
+        Order = OrderWrapper(core.SummonSkill(AdeleSkills.HuntingDecree.value, 0, 1020, 240 + 120 + passive_level * 3, 2, 99999999).setV(vEhc, 1, 2, False), Ether)  # 15% ether crystal, assuming no casting delay, attack period 1020ms. 15% 에테르 결정, 시전딜레이 없음으로 가정, 공격주기 1020ms.
 
-        Gathering = core.StackDamageSkillWrapper(core.DamageSkill('게더링', 630, 260 + 300 + passive_level * 3, 4, cooltime=12 * 1000, red=True).setV(vEhc, 5, 2, False),
+        Gathering = core.StackDamageSkillWrapper(core.DamageSkill(AdeleSkills.NobleSummons.value, 630, 260 + 300 + passive_level * 3, 4, cooltime=12 * 1000, red=True).setV(vEhc, 5, 2, False),
             Order,
             lambda order: order.get_stack() * 0.8
         )  # Bring up the knife. Linked to Blossom, assuming about 600ms to gather. 칼 불러오기. 블라섬과 연계됨, 모이는데 약 600ms 가정
 
-        Divide = core.DamageSkill('디바이드', 600, 375 + self.combat * 3, 6, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  # Trigger skill, claw speed 780ms. 트리거 스킬, 클라공속 780ms.
+        Divide = core.DamageSkill(AdeleSkills.Cleave.value, 600, 375 + self.combat * 3, 6, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  # Trigger skill, claw speed 780ms. 트리거 스킬, 클라공속 780ms.
 
-        Grave = core.DamageSkill('그레이브', 630, 800 + self.combat * 20, 10, cooltime=90000, red=True).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  # 840ms. 클라공속 840ms.
-        GraveDebuff = core.BuffSkill('그레이브(디버프)', 0, 999999999, pdamage=20, armor_ignore=10, cooltime=-1).wrap(core.BuffSkillWrapper)
+        Grave = core.DamageSkill(AdeleSkills.GraveProclamation.value, 630, 800 + self.combat * 20, 10, cooltime=90000, red=True).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  # 840ms. 클라공속 840ms.
+        GraveDebuff = core.BuffSkill(f'{AdeleSkills.GraveProclamation.value}(debuff | 디버프)', 0, 999999999, pdamage=20, armor_ignore=10, cooltime=-1).wrap(core.BuffSkillWrapper)
 
-        Blossom = core.DamageSkill('블로섬', 420, 650 + self.combat * 6, 8, cooltime=20 * 1000 * 0.75, red=True).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # 50% decision. 420 ms, no attack speed. 50%결정. 클라공속 420ms, 공속 안받음
-        BlossomExceed = core.StackDamageSkillWrapper(core.DamageSkill('블로섬(초과)', 0, 650 + self.combat * 6, 8, cooltime=-1, modifier=core.CharacterModifier(pdamage_indep=-25)).setV(vEhc, 3, 2, False),
+        Blossom = core.DamageSkill(AdeleSkills.AetherBloom.value, 420, 650 + self.combat * 6, 8, cooltime=20 * 1000 * 0.75, red=True).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # 50% decision. 420 ms, no attack speed. 50%결정. 클라공속 420ms, 공속 안받음
+        BlossomExceed = core.StackDamageSkillWrapper(core.DamageSkill(f'{AdeleSkills.AetherBloom.value}(Exceed | 초과)', 0, 650 + self.combat * 6, 8, cooltime=-1, modifier=core.CharacterModifier(pdamage_indep=-25)).setV(vEhc, 3, 2, False),
             Order,
             lambda order: max(order.get_stack() - 1, 0)
         )
 
-        Marker = core.DamageSkill('마커', 690, 500, 6 * 2, cooltime=60 * 1000, modifier=core.CharacterModifier(pdamage_indep=300)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  # 300% increase in final damage, 5 random location pieces, 1 hit, 5 crystals, each attack with spawn/shredding, clack speed 900ms. 최종뎀 300% 증가, 임의위치 조각 5개, 1히트, 결정 5개, 생성/파쇄 각각 공격, 클라공속 900ms
-        Scool = core.DamageSkill('스콜', 690, 1000, 12, cooltime=180 * 1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # Bind. Clutch speed 900ms. 바인드. 클라공속 900ms.
-        WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60 * 1000, pdamage=10, cooltime=120 * 1000).wrap(core.BuffSkillWrapper)
+        # Hypers
+        Marker = core.DamageSkill(AdeleSkills.Shardbreaker.value, 690, 500, 6 * 2, cooltime=60 * 1000, modifier=core.CharacterModifier(pdamage_indep=300)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  # 300% increase in final damage, 5 random location pieces, 1 hit, 5 crystals, each attack with spawn/shredding, clack speed 900ms. 최종뎀 300% 증가, 임의위치 조각 5개, 1히트, 결정 5개, 생성/파쇄 각각 공격, 클라공속 900ms
+        Scool = core.DamageSkill(AdeleSkills.BladeTorrent.value, 690, 1000, 12, cooltime=180 * 1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # Bind. Clutch speed 900ms. 바인드. 클라공속 900ms.
+        WraithOfGod = core.BuffSkill(AdeleSkills.DivineWrath.value, 0, 60 * 1000, pdamage=10, cooltime=120 * 1000).wrap(core.BuffSkillWrapper)
 
         # 5차
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att(chtr))
 
-        Ruin = core.DamageSkill('루인(시전)', 600, 0, 0, cooltime=60 * 1000, red=True).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)  # Assumed to be cast in 4 seconds. 4초에 나누어서 시전되는 것으로 가정
-        RuinFirstTick = core.SummonSkill('루인(소환)', 0, 160, 250 + vEhc.getV(2, 2) * 10, 6, 2000, cooltime=-1).isV(vEhc, 2, 2).wrap(core.SummonSkillWrapper)  # 12 times, assumed to be used in 2 seconds. 12번, 2초에 나누어 사용으로 가정.
-        RuinSecondTick = core.SummonSkill('루인(공격)', 0, 250, 450 + vEhc.getV(2, 2) * 18, 9, 2000, cooltime=-1).isV(vEhc, 2, 2).wrap(core.SummonSkillWrapper)  # Assume that the use is divided into 8 times and 2 seconds. 8번, 2초에 나누어 사용으로 가정.
+        Ruin = core.DamageSkill(f'{AdeleSkills.Ruin.value}(cast | 시전)', 600, 0, 0, cooltime=60 * 1000, red=True).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)  # Assumed to be cast in 4 seconds. 4초에 나누어서 시전되는 것으로 가정
+        RuinFirstTick = core.SummonSkill(f'{AdeleSkills.Ruin.value}(summons | 소환)', 0, 160, 250 + vEhc.getV(2, 2) * 10, 6, 2000, cooltime=-1).isV(vEhc, 2, 2).wrap(core.SummonSkillWrapper)  # 12 times, assumed to be used in 2 seconds. 12번, 2초에 나누어 사용으로 가정.
+        RuinSecondTick = core.SummonSkill(f'{AdeleSkills.Ruin.value}(attack | 공격)', 0, 250, 450 + vEhc.getV(2, 2) * 18, 9, 2000, cooltime=-1).isV(vEhc, 2, 2).wrap(core.SummonSkillWrapper)  # Assume that the use is divided into 8 times and 2 seconds. 8번, 2초에 나누어 사용으로 가정.
 
-        Infinite = core.SummonSkill('인피니트', 540, 342, 350 + vEhc.getV(0, 0) * 14, 2 * 6, 30000, cooltime=180 * 1000, red=True).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)  # 5% crystal generated for each attack. 517 hits based on starch -> 18 hits are assumed to be hit by 6 each. (30000-540)//342*6 = 516. 매 공격마다 5% 결정생성. 전분 기준 517회 타격 -> 18개를 6개씩 묶어서 타격 가정. (30000-540)//342*6 = 516.
-        Restore = core.BuffSkill('리스토어', 720, 30 * 1000, pdamage=15 + vEhc.getV(1, 1), cooltime=180 * 1000, red=True).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper)  # 2 swords increase, ether acquisition 40+d(x/2)% increase. 소드 2개 증가, 에테르획득량 40+d(x/2)%증가.
-        RestoreTick = core.SummonSkill('리스토어(주기공격)', 0, 2970, 900 + 36 * vEhc.getV(1, 1), 3, 30 * 1000, cooltime=-1).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)  # Cast 11 times. 11회 시전
+        Infinite = core.SummonSkill(AdeleSkills.InfinityBlade.value, 540, 342, 350 + vEhc.getV(0, 0) * 14, 2 * 6, 30000, cooltime=180 * 1000, red=True).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)  # 5% crystal generated for each attack. 517 hits based on starch -> 18 hits are assumed to be hit by 6 each. (30000-540)//342*6 = 516. 매 공격마다 5% 결정생성. 전분 기준 517회 타격 -> 18개를 6개씩 묶어서 타격 가정. (30000-540)//342*6 = 516.
+        Restore = core.BuffSkill(AdeleSkills.LegacyRestoration.value, 720, 30 * 1000, pdamage=15 + vEhc.getV(1, 1), cooltime=180 * 1000, red=True).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper)  # 2 swords increase, ether acquisition 40+d(x/2)% increase. 소드 2개 증가, 에테르획득량 40+d(x/2)%증가.
+        RestoreTick = core.SummonSkill(f'{AdeleSkills.LegacyRestoration.value}(periodic attack | 주기공격)', 0, 2970, 900 + 36 * vEhc.getV(1, 1), 3, 30 * 1000, cooltime=-1).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)  # Cast 11 times. 11회 시전
 
         Storm = StormWrapper(vEhc, 0, 0, Order)
 
@@ -306,7 +307,7 @@ class JobGenerator(ck.JobGenerator):
             Ether.stackController(20)
         ))
 
-        # 오더
+        # Hunting Decree. 오더.
         def use_order():
             if Ether.judge(100, -1):
                 return False
@@ -318,37 +319,37 @@ class JobGenerator(ck.JobGenerator):
 
         Order.setCondition(use_order)
 
-        # 게더링-블로섬
-        Blossom.onConstraint(core.ConstraintElement('오더가 있을 때', Order, partial(Order.judge, 1, 1)))
+        # Noble Summons - Aether Bloom. 게더링-블로섬.
+        Blossom.onConstraint(core.ConstraintElement('오더가 있을 때', Order, partial(Order.judge, 1, 1)))  # When there is a bloom?
         Blossom.onBefores([Gathering, Order.delayQueue(690 + 2010)])  # Gathering->Blossom order, _befores is executed from the end of the list. The order is stopped during Gathering (690ms) + Blossom (2010ms). 게더링->블로섬 순서, _befores는 리스트의 끝부터 실행됨. 게더링(690ms)+블로섬(2010ms)동안 오더가 멈춤.
         Blossom.onAfter(BlossomExceed)
 
         Grave.onAfter(GraveDebuff)
 
-        # 루인
+        # Ruin. 루인.
         Ruin.onAfter(RuinFirstTick)
         RuinFirstTick.onEventEnd(RuinSecondTick)
 
-        # 리스토어
+        # legacy restoration. 리스토어.
         Restore.onAfter(RestoreTick)
 
-        # 테리토리
+        # Reign of destruction. 테리토리.
         Territory.onEventEnd(TerritoryEnd)
 
-        # 레조넌스
+        # Resonance. 레조넌스.
         Resonance.onAfter(ResonanceStack)
 
-        # 크리에이션
+        # AetherForge. 크리에이션.
         Divide.onAfter(core.OptionalElement(Creation.is_available, Creation))
 
-        # 원더
+        # Aetherial Arms. 원더.
         Divide.onAfter(core.OptionalElement(Wonder.is_available, Wonder))
 
         Creation.protect_from_running()
         Wonder.protect_from_running()
 
         return (Divide,
-                [globalSkill.maple_heros(chtr.level, name="레프의 용사", combat_level=self.combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
+                [globalSkill.maple_heros(chtr.level, name=AdeleSkills.HerooftheFlora.value, combat_level=self.combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
                  AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive, FloraGoddessBless,
                  globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract()] + \
                 [EtherTick, Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider, Shard] + \
