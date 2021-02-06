@@ -266,7 +266,7 @@ class JobGenerator(ck.JobGenerator):
 
         # Overload Mana
         overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 2)
-        for sk in [LightReflection, Apocalypse, DoorOfTruth, PunishingResonator, AbsoluteKill, AbsoluteKillCooltimed, LightAndDarkness]:
+        for sk in [LightReflection, Apocalypse, DoorOfTruth, PunishingResonator, AbsoluteKill, AbsoluteKillCooltimed, LightAndDarkness, LiberationOrbActive]:
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
 
