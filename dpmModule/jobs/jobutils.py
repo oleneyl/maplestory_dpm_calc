@@ -27,6 +27,10 @@ def get_weapon_att(chtr):
     return chtr.get_weapon_base_att()
 
 
+def get_weapon_total_att(chtr):
+    return chtr.get_weapon_total_att()
+
+
 def get_starforce_count(chtr):
     return chtr.get_starforce_count()
 

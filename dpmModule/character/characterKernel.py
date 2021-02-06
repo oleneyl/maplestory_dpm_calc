@@ -171,6 +171,16 @@ class GearedCharacter(AbstractCharacter):
         weapon_base_stat = self.gear_list["weapon"].base_stat
         return max(weapon_base_stat[GearPropType.att], weapon_base_stat[GearPropType.matt])
 
+    def get_weapon_total_att(self) -> int:
+        base_stat = self.gear_list["weapon"].base_stat
+        additional_stat = self.gear_list["weapon"].additional_stat
+        scroll_stat = self.gear_list["weapon"].scroll_stat
+        star_stat = self.gear_list["weapon"].star_stat
+        return max(
+            base_stat[GearPropType.att] + additional_stat[GearPropType.att] + scroll_stat[GearPropType.att] + star_stat[GearPropType.att],
+            base_stat[GearPropType.matt] + additional_stat[GearPropType.matt] + scroll_stat[GearPropType.matt] + star_stat[GearPropType.matt],
+        )
+
     def get_starforce_count(self) -> int:
         count = 0
         for gear in self.gear_list.values():
