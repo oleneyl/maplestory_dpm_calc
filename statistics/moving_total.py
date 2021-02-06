@@ -28,7 +28,7 @@ def get_args():
     return parser.parse_args()
 
 
-def gini(args, df: pd.DataFrame):
+def moving_total(args, df: pd.DataFrame):
     df = df.drop(["name", "loss", "hit", "mdf", "spec"], axis=1)
     df = df[df["time"] <= args.xlim*1000]
     df["time"] = df["time"].astype("timedelta64[ms]")
@@ -56,4 +56,4 @@ if __name__ == "__main__":
         data = save_data(args)
     else:
         data = load_data(args)
-    gini(args, data)
+    moving_total(args, data)
