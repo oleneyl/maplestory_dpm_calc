@@ -1,5 +1,7 @@
 from enum import Enum
 
+from dpmModule.jobs.globalSkill import GlobalSkills
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -116,8 +118,8 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
         ruleset.add_rule(ConcurrentRunRule(BattleMageSkills.MasterofDeath.value, BattleMageSkills.GrimHarvest.value), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', BattleMageSkills.AuraScythe.value), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule('메이플월드 여신의 축복', BattleMageSkills.AuraScythe.value), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(GlobalSkills.TermsAndConditions.value, BattleMageSkills.AuraScythe.value), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(GlobalSkills.MapleWorldGoddessBlessing.value, BattleMageSkills.AuraScythe.value), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule(BattleMageSkills.AbyssalLightning.value, BattleMageSkills.AuraScythe.value), RuleSet.BASE)
         return ruleset
 
@@ -188,7 +190,7 @@ class JobGenerator(ck.JobGenerator):
 
         # Buff skills
         Booster = core.BuffSkill(BattleMageSkills.StaffBoost.value, 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)
-        MarkStack = core.StackSkillWrapper(core.BuffSkill("징표 스택", 0, 99999*10000), 1)
+        MarkStack = core.StackSkillWrapper(core.BuffSkill("Mark Stack | 징표 스택", 0, 99999*10000), 1)
 
         # Damage Skills
         DarkLightning = core.DamageSkill(BattleMageSkills.DarkShock.value, 0, 225, 4, modifier = core.CharacterModifier(pdamage = 60 + self.combat)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  # Cancel. 캔슬.

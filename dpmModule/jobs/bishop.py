@@ -1,5 +1,6 @@
 from enum import Enum
 
+from dpmModule.jobs.globalSkill import GlobalSkills
 from dpmModule.jobs.jobclass.adventurer import AdventurerSkills
 
 from ..kernel import core
@@ -95,7 +96,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(SynchronizeRule('소울 컨트랙트', AdventurerSkills.Infinity.value, 35000, -1), RuleSet.BASE)
+        ruleset.add_rule(SynchronizeRule(GlobalSkills.TermsAndConditions.value, AdventurerSkills.Infinity.value, 35000, -1), RuleSet.BASE)
         ruleset.add_rule(SynchronizeRule(BishopSkills.Benediction.value, AdventurerSkills.Infinity.value, 45000, -1), RuleSet.BASE)
         ruleset.add_rule(InactiveRule(AdventurerSkills.UnreliableMemory.value, AdventurerSkills.Infinity.value), RuleSet.BASE)
         ruleset.add_rule(DisableRule(BishopSkills.Heal.value), RuleSet.BASE)
