@@ -1,3 +1,5 @@
+from enum import Enum
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -9,6 +11,56 @@ from .jobclass import flora
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Adele here https://maplestory.fandom.com/wiki/Adele/Skills
+class AdeleSkills(Enum):
+    # Link SKill
+    NobleFire = 'Noble Fire | 노블레스'
+    # Beginner Skills
+    MagicConversion = 'Magic Conversion | 매직 서킷'
+    RecallingGreatness = 'Recalling Greatness | 패이스'
+    # 1st Job
+    BladeofWill = 'Blade of Will | 플레인'
+    MagicDispatch = 'Magic Dispatch | 샤드'
+    MartialDiscipline = 'Martial Discipline | 루디먼트'
+    # 2nd Job
+    AetherWeaving = 'Aether Weaving | 에테르'
+    AetherCrystal = 'Aether Crystal | 에테르 결정'
+    Skewering = 'Skewering | 펀토'
+    AetherForge = 'Aether Forge | 크리에이션'
+    Impale = 'Impale | ??'
+    ResonanceRush = 'Resonance Rush | 레조넌스'
+    AetherialArms = 'Aetherial Arms | 원더'
+    WeaveInfusion = 'Weave Infusion | 부채 가속'
+    BladecasterControl = 'Bladecaster Control | 마스터리'
+    EliteTraining = 'Elite Training | 트레인'
+    # 3rd Job
+    Eviscerate = 'Eviscerate | 크로스'
+    HuntingDecree = 'Hunting Decree | 오더'
+    NobleSummons = 'Noble Summons | 게더링'
+    ReignofDestruction = 'Reign of Destruction | 테리토리'
+    TrueNobility = 'True Nobility | 노빌리티'
+    Ascent = 'Ascent | 어센트'
+    # 4th Job
+    AetherMastery = 'Aether Mastery | 하이 에테르'
+    Cleave = 'Cleave | 디바이드'
+    AetherBloom = 'Aether Bloom | 블로섬'
+    GraveProclamation = 'Grave Proclamation | 그레이브'
+    HerooftheFlora = 'Hero of the Flora | 레프의 용사'
+    BladecasterExpertise = 'Bladecaster Expertise | 엑스퍼트'
+    Perfection = 'Perfection | 퍼펙션'
+    Ruination = 'Ruination | 데몰리션'
+    Strive = 'Strive | 어테인'
+    # Hypers
+    Shardbreaker = 'Shardbreaker | 마커'
+    BladeTorrent = 'Blade Torrent | 스콜'
+    DivineWrath = ' Divine Wrath | 레이스 오브 갓'
+    # 5th Job
+    Ruin = 'Ruin | 루인'
+    InfinityBlade = 'Infinity Blade | 인피니트'
+    LegacyRestoration = 'Legacy Restoration | 리스토어'
+    Storm = 'Storm | 스톰'
 
 
 class OrderWrapper(core.SummonSkillWrapper):
