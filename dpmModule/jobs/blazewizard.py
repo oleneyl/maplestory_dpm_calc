@@ -82,20 +82,20 @@ class JobGenerator(ck.JobGenerator):
             return (ifc.is_usable() or ifc.is_cooltime_left(90*1000, 1))
 
         ruleset = RuleSet()
-        ruleset.add_rule(ConditionRule('소울 컨트랙트', '인피니티 플레임 서클(개시)', check_ifc_time), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(GlobalSkills.TermsAndConditions.value, f'{BlazeWizardSkills.InfernoSphere.value}(cast | 개시)', check_ifc_time), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         ######   Skill   ######
-        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트", patt = 10)
-        ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니", stat_main = chtr.level // 2)
+        ElementalExpert = core.InformedCharacterModifier(BlazeWizardSkills.ElementalExpert.value, patt = 10)
+        ElementalHarmony = core.InformedCharacterModifier(BlazeWizardSkills.ElementalHarmony.value, stat_main = chtr.level // 2)
         
-        SpellControl = core.InformedCharacterModifier("주문 연마",att = 10)
-        LiberatedMagic = core.InformedCharacterModifier("해방된 마력",pdamage_indep = 30)
-        BurningFocus = core.InformedCharacterModifier("약점 분석",crit = 30, crit_damage = 15)
-        BriliantEnlightenment = core.InformedCharacterModifier("번뜩이는 깨달음",stat_main = 60)
-        PureMagic = core.InformedCharacterModifier("마법의 진리", att = 20 + passive_level, pdamage_indep = 50 + 3*passive_level)
+        SpellControl = core.InformedCharacterModifier(BlazeWizardSkills.SpellControl.value,att = 10)
+        LiberatedMagic = core.InformedCharacterModifier(BlazeWizardSkills.LiberatedMagic.value,pdamage_indep = 30)
+        BurningFocus = core.InformedCharacterModifier(BlazeWizardSkills.BurningFocus.value,crit = 30, crit_damage = 15)
+        BriliantEnlightenment = core.InformedCharacterModifier(BlazeWizardSkills.BrilliantEnlightenment.value,stat_main = 60)
+        PureMagic = core.InformedCharacterModifier(BlazeWizardSkills.PureMagic.value, att = 20 + passive_level, pdamage_indep = 50 + 3*passive_level)
 
         return [ElementalExpert, ElementalHarmony, SpellControl, LiberatedMagic, BurningFocus, BriliantEnlightenment, PureMagic]
 
@@ -103,7 +103,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5 + 0.5*passive_level)
-        SpiritOfFlameActive = core.InformedCharacterModifier("스피릿 오브 플레임(이그니션)", prop_ignore = 10)
+        SpiritOfFlameActive = core.InformedCharacterModifier(f"{BlazeWizardSkills.FiresofCreation.value}({BlazeWizardSkills.Ignition.value})", prop_ignore = 10)
         
         return [WeaponConstant, Mastery, SpiritOfFlameActive]
         
@@ -125,44 +125,44 @@ class JobGenerator(ck.JobGenerator):
         blazingOrbitalHit = 4
         
         #Buff skills
-        WordOfFire = core.BuffSkill("북 오브 파이어", 0, 300000, att = 20).wrap(core.BuffSkillWrapper)
-        FiresOfCreation = core.BuffSkill("스피릿 오브 플레임", 600, 300 * 1000, armor_ignore = 30+self.combat).wrap(core.BuffSkillWrapper)
-        BurningRegion = core.BuffSkill("버닝 리전", 1080, 30 * 1000, cooltime =45 * 1000, rem = True, pdamage = 60+self.combat).wrap(core.BuffSkillWrapper)
-        GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
-        Flame = core.BuffSkill("플레임", 0, 8000, att = 40 + passive_level, cooltime=-1).wrap(core.BuffSkillWrapper)  # Skills that don't always apply. 벞지 적용 안되는 스킬.
-        
+        WordOfFire = core.BuffSkill(BlazeWizardSkills.WordofFire.value, 0, 300000, att = 20).wrap(core.BuffSkillWrapper)
+        FiresOfCreation = core.BuffSkill(BlazeWizardSkills.FiresofCreation.value, 600, 300 * 1000, armor_ignore = 30+self.combat).wrap(core.BuffSkillWrapper)
+        BurningRegion = core.BuffSkill(BlazeWizardSkills.BurningConduit.value, 1080, 30 * 1000, cooltime =45 * 1000, rem = True, pdamage = 60+self.combat).wrap(core.BuffSkillWrapper)
+        GloryOfGuardians = core.BuffSkill(BlazeWizardSkills.GloryoftheGuardians.value, 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
+        Flame = core.BuffSkill(BlazeWizardSkills.FinalFlameElemental.value, 0, 8000, att = 40 + passive_level, cooltime=-1).wrap(core.BuffSkillWrapper)  # Skills that don't always apply. 벞지 적용 안되는 스킬.
+
         #Damage Skills
-        InfernoRize = core.DamageSkill("인페르노라이즈", 570, 350+3*self.combat, 10, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage_indep = 90 + self.combat), red = True).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        InfernoRize = core.DamageSkill(BlazeWizardSkills.ToweringInferno.value, 570, 350+3*self.combat, 10, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage_indep = 90 + self.combat), red = True).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         #Full speed, No Combat Orders
-        OrbitalFlame = core.DamageSkill("오비탈 플레임 IV", 210, 215 + self.combat, 3 * 2 * (210 / flamewizardDefaultSpeed), modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        # BlazingExtinction = core.SummonSkill("블레이징 익스팅션", 1020, 2500, 310+2*self.combat, 3+1, 10000, cooltime=5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+        OrbitalFlame = core.DamageSkill(BlazeWizardSkills.FinalOrbitalFlame.value, 210, 215 + self.combat, 3 * 2 * (210 / flamewizardDefaultSpeed), modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        # BlazingExtinction = core.SummonSkill(BlazeWizardSkills.BlazingExtinction.value, 1020, 2500, 310+2*self.combat, 3+1, 10000, cooltime=5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
         CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 2, 1)
-        BlazingOrbital = core.DamageSkill("블레이징 오비탈 플레임", 180, 330+13*vEhc.getV(0,0), 6 * blazingOrbitalHit, cooltime = 5000, red = True, modifier = core.CharacterModifier(armor_ignore = 50)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)    # 4 stroke assumptions. 4타 가정.
+        BlazingOrbital = core.DamageSkill(BlazeWizardSkills.OrbitalInferno.value, 180, 330+13*vEhc.getV(0,0), 6 * blazingOrbitalHit, cooltime = 5000, red = True, modifier = core.CharacterModifier(armor_ignore = 50)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)    # 4 stroke assumptions. 4타 가정.
         
-        DragonSlaveTick = core.DamageSkill("드래곤 슬레이브", 280, 500, 6).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)#x7
-        DragonSlaveInit = core.DamageSkill("드래곤 슬레이브 개시(더미)", 0, 0, 0, cooltime = 90 * 1000).wrap(core.DamageSkillWrapper)
-        DragonSlaveEnd = core.DamageSkill("드래곤 슬레이브 종결", 810, 500, 10).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        DragonSlaveTick = core.DamageSkill(f"{BlazeWizardSkills.DragonBlaze.value}(tick | )", 280, 500, 6).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)#x7
+        DragonSlaveInit = core.DamageSkill(f"{BlazeWizardSkills.DragonBlaze.value}(cast | 더미)", 0, 0, 0, cooltime = 90 * 1000).wrap(core.DamageSkillWrapper)
+        DragonSlaveEnd = core.DamageSkill(f"{BlazeWizardSkills.DragonBlaze.value}(ending | 종결)", 810, 500, 10).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
-        IgnitionDOT = core.DotSkill("이그니션", 0, 1000, 220*0.01*(100 + 60 + 2*passive_level), 1, 10*1000, cooltime=-1).wrap(core.DotSkillWrapper)
+        IgnitionDOT = core.DotSkill(f"{BlazeWizardSkills.Ignition.value}(DoT)", 0, 1000, 220*0.01*(100 + 60 + 2*passive_level), 1, 10*1000, cooltime=-1).wrap(core.DotSkillWrapper)
 
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         # Fox use. 여우 사용.
-        SavageFlameStack = core.StackSkillWrapper(core.BuffSkill("플레임 디스차지(스택)", 0, 99999999), 6)
+        SavageFlameStack = core.StackSkillWrapper(core.BuffSkill(f"{BlazeWizardSkills.SavageFlame.value}(stack | 스택)", 0, 99999999), 6)
         
         SavageFlame = core.StackDamageSkillWrapper(
-            core.DamageSkill("플레임 디스차지", 840, 250 + 10*vEhc.getV(4,4), 8, cooltime = 20*1000, red = True).isV(vEhc,4,4),
+            core.DamageSkill(BlazeWizardSkills.SavageFlame.value, 840, 250 + 10*vEhc.getV(4,4), 8, cooltime = 20*1000, red = True).isV(vEhc,4,4),
             SavageFlameStack,
             lambda sk: (8 + (sk.stack - 2) * 2)
         )
         
-        InfinityFlameCircleTick = core.DamageSkill("인피니티 플레임 서클", 180, 500+20*vEhc.getV(3,3), 7, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) # 1 tick. 1틱.
-        InfinityFlameCircleInit = core.DamageSkill("인피니티 플레임 서클(개시)", 360, 0, 0, cooltime = 15*6*1000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        InfinityFlameCircleTick = core.DamageSkill(f"{BlazeWizardSkills.InfernoSphere.value}(tick | )", 180, 500+20*vEhc.getV(3,3), 7, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) # 1 tick. 1틱.
+        InfinityFlameCircleInit = core.DamageSkill(f"{BlazeWizardSkills.InfernoSphere.value}(개시)", 360, 0, 0, cooltime = 15*6*1000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
 
         # 84 strokes. 84타.
-        SalamanderMischeif = core.SummonSkill("샐리맨더 미스칩", 750, 710, 150+6*vEhc.getV(0,0), 7, 60000, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
-        SalamanderMischeifStack = core.StackSkillWrapper(core.BuffSkill("샐리맨더 미스칩(불씨)", 0, 99999999), 15+vEhc.getV(0,0))
-        SalamanderMischeifBuff = core.BuffSkill("샐리맨더 미스칩(버프)", 0, 30000, cooltime=-1, att=15+2*(15+vEhc.getV(0,0))).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        SalamanderMischeif = core.SummonSkill(BlazeWizardSkills.SalamanderMischief.value, 750, 710, 150+6*vEhc.getV(0,0), 7, 60000, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        SalamanderMischeifStack = core.StackSkillWrapper(core.BuffSkill(f"{BlazeWizardSkills.SalamanderMischief.value}(stack | 불씨)", 0, 99999999), 15+vEhc.getV(0,0))
+        SalamanderMischeifBuff = core.BuffSkill(f"{BlazeWizardSkills.SalamanderMischief.value}(buff | 버프)", 0, 30000, cooltime=-1, att=15+2*(15+vEhc.getV(0,0))).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
         ######   Wrappers    ######
     
@@ -174,7 +174,7 @@ class JobGenerator(ck.JobGenerator):
         
         InfinityFlameCircleInit.onAfter(InfinityFlameCircle)
         
-        ApplyDOT = core.OptionalElement(IgnitionDOT.is_not_active, IgnitionDOT, name="도트 갱신")
+        ApplyDOT = core.OptionalElement(IgnitionDOT.is_not_active, IgnitionDOT, name="Update DoT | 도트 갱신")
         for sk in [OrbitalFlame, BlazingOrbital, DragonSlaveTick, InfinityFlameCircleTick]:
             sk.onAfter(Flame)
             sk.onAfter(ApplyDOT)
@@ -182,10 +182,10 @@ class JobGenerator(ck.JobGenerator):
         InfernoRize.onAfter(IgnitionDOT.controller(1))
         DragonSlaveEnd.onAfter(IgnitionDOT.controller(1))
 
-        InfernoRize.onConstraint(core.ConstraintElement("이그니션 시간 체크", IgnitionDOT, partial(IgnitionDOT.is_time_left, 9000, 1)))
+        InfernoRize.onConstraint(core.ConstraintElement("Ignition time check | 이그니션 시간 체크", IgnitionDOT, partial(IgnitionDOT.is_time_left, 9000, 1)))
 
         SavageFlame.onAfter(SavageFlameStack.stackController(-15))
-        SavageFlame.onConstraint(core.ConstraintElement("2스택 이상", SavageFlameStack, partial(SavageFlameStack.judge, 2, 1)))
+        SavageFlame.onConstraint(core.ConstraintElement("2 stacks or more | 2스택 이상", SavageFlameStack, partial(SavageFlameStack.judge, 2, 1)))
 
         SalamanderMischeif.onJustAfter(SalamanderMischeifStack.stackController(-45))
         SalamanderMischeif.onTick(SalamanderMischeifStack.stackController(1))
@@ -200,7 +200,7 @@ class JobGenerator(ck.JobGenerator):
         OverloadMana = overload_mana_builder.get_buff()
         
         return (OrbitalFlame,
-                [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                [globalSkill.maple_heros(chtr.level, name=BlazeWizardSkills.CallofCygnus.value, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                      cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level), WordOfFire, FiresOfCreation, BurningRegion, GloryOfGuardians, OverloadMana, Flame, SalamanderMischeifBuff,
                     globalSkill.soul_contract()] +\
                 [SalamanderMischeif, CygnusPhalanx, BlazingOrbital, DragonSlaveInit, SavageFlame, InfinityFlameCircleInit, 
