@@ -1,3 +1,8 @@
+from enum import Enum
+
+from dpmModule.jobs.globalSkill import GlobalSkills
+from dpmModule.jobs.jobbranch.pirates import PirateSkills
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -9,6 +14,46 @@ from .jobclass import nova
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Angelic Buster here https://maplestory.fandom.com/wiki/Angelic_Buster/Skills
+class AngelicBusterSkills(Enum):
+    # 1st Job
+    StarBubble = 'Star Bubble | 버블 스타'
+    MelodyCross = 'Melody Cross | 리리컬 크로스'
+    AffinityHeartI = 'Affinity Heart I | 어피니티 I'
+    # 2nd Job
+    LovelySting = 'Lovely Sting | 스팅 익스플로전'
+    PinkPummel = 'Pink Pummel | 핑크 스커드'
+    PowerTransfer = 'Power Transfer | 파워 트랜스퍼'
+    SoulShooterMastery = 'Soul Shooter Mastery | 소울슈터 마스터리'
+    BeautifulSoul = 'Beautiful Soul | 이너 파이어'
+    AffinityHeartII = 'Affinity Heart II | 어피니티 Ⅱ'
+    # 3rd Job
+    SoulSeeker = 'Soul Seeker | 소울 시커'
+    ShiningStarBurst = 'Shining Star Burst | 폴링 스타'
+    HeavenlyCrash = 'Heavenly Crash | 랜드 크래시'
+    DragonWhistle = 'Dragon Whistle | 콜 오브 에인션트'
+    AffinityHeartIII = 'Affinity Heart III | 어피니티 Ⅲ'
+    # 4th Job
+    CelestialRoar = 'Celestial Roar | 프라이멀 로어'
+    Trinity = 'Trinity | 트리니티'
+    FinaleRibbon = 'Finale Ribbon | 피니투라 페투치아'
+    SoulResonance = 'Soul Resonance | 소울 레조넌스'
+    StarGazer = 'Star Gazer | 소울 게이즈'
+    SoulShooterExpert = 'Soul Shooter Expert | 소울슈터 엑스퍼트'
+    AffinityHeartIV = 'Affinity Heart IV | 어피니티 Ⅳ'
+    NovaWarrior = 'Nova Warrior | 노바의 용사'
+    SoulSeekerExpert = 'Soul Seeker Expert | 소울 시커 엑스퍼트'
+    # Hypers
+    SupremeSupernova = 'Supreme Supernova | 슈퍼 노바'
+    FinalContract = 'Final Contract | 파이널 컨트랙트'
+    PrettyExaltation = 'Pretty Exaltation | 소울 익절트'
+    # 5th Job
+    SparkleBurst = 'Sparkle Burst | 에너지 버스트'
+    SuperstarSpotlight = 'Superstar Spotlight | 스포트라이트'
+    MightyMascot = 'Mighty Mascot | 마스코트 패밀리어'
+    TrinityFusion = 'Trinity Fusion | 트리니티 퓨전'
 
 
 def getAffinityIV(duration):  # TODO: Real-time calculation like wild hunter another bite. 와헌 어나더 바이트처럼 실시간 계산.
