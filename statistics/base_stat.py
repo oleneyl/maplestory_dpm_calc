@@ -8,6 +8,7 @@ from dpmModule.kernel import core
 from dpmModule.status.ability import Ability_grade
 
 from .loader import load_data
+from .saver import save_data
 from .preset import get_preset, get_preset_list
 
 
@@ -21,6 +22,7 @@ def get_args():
     parser.add_argument("--time", type=int, default=1800)
     parser.add_argument("--task", default="dpm")
     parser.add_argument("--calc", action="store_true")
+    parser.add_argument("--all", action="store_true")
 
     return parser.parse_args()
 
@@ -100,13 +102,21 @@ def optimization_hint(args, df: pd.DataFrame):
 
 if __name__ == "__main__":
     args = get_args()
-    presets = get_preset_list()
-    tasks = [
-        argparse.Namespace(
-            id=id, ulevel=args.ulevel, cdr=args.cdr, time=args.time, task=args.task
-        )
-        for id, *_ in presets
-    ]
-    for task in tasks:
-        data = load_data(task)
-        optimization_hint(task, data)
+    if args.all:
+        presets = get_preset_list()
+        tasks = [
+            argparse.Namespace(
+                id=id, ulevel=args.ulevel, cdr=args.cdr, time=args.time, task=args.task
+            )
+            for id, *_ in presets
+        ]
+        for task in tasks:
+            data = load_data(task)
+            optimization_hint(task, data)
+    else:
+        if args.calc:
+            data = save_data(args)
+            optimization_hint(args, data)
+        else:
+            data = load_data(args)
+            optimization_hint(args, data)
