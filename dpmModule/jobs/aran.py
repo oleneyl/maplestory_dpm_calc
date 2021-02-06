@@ -1,3 +1,7 @@
+from enum import Enum
+
+from dpmModule.jobs.globalSkill import GlobalSkills
+
 from ..kernel import core
 from ..kernel.graph import DynamicVariableOperation
 from ..character import characterKernel as ck
@@ -10,10 +14,60 @@ from ..execution.rules import RuleSet, InactiveRule, ConditionRule
 from math import ceil
 from typing import Any, Dict
 
+
+# English skill information for Aran here https://maplestory.fandom.com/wiki/Aran/Skills
+class AranSkills(Enum):
+    # Beginner
+    RegainedMemory = 'Regained Memory | 되찾은 기억'
+    # 1st Job
+    ComboAbility = 'Combo Ability | 콤보 어빌리티'
+    SmashSwing = 'Smash Swing | 스매시 스윙'
+    SmashWave = 'Smash Wave | 스매쉬 웨이브'
+    PolearmBooster = 'Polearm Booster | 폴암 부스터'
+    BodyPressure = 'Body Pressure | 바디 프레셔'
+    # 2nd Job
+    PolearmMastery = 'Polearm Mastery | 폴암 마스터리'
+    FinalCharge = 'Final Charge | 파이널 차지'
+    Drain = 'Drain | 드레인'
+    SnowCharge = 'Snow Charge | 스노우 차지'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    FinalAttack = 'Final Attack | 파이널 어택'
+    FinalToss = 'Final Toss | 파이널 토스'
+    RollingSpin = 'Rolling Spin | 롤링 스핀'
+    CommandMasteryI = 'Command Mastery I | 다이나믹 마스터리 Ⅰ'
+    SwingStudiesI = 'Swing Studies I | 스윙 연구 Ⅰ'
+    # 3rd Job
+    AdvancedComboAbility = 'Advanced Combo Ability | 어드밴스드 콤보 어빌리티'
+    CleavingBlows = 'Cleaving Blows | 클리빙 어택'
+    MahaBlessing = 'Maha Blessing | 블레싱 마하'
+    AeroSwing = 'Aero Swing | 에어로 스윙'
+    AdrenalineRush = 'Adrenaline Rush | 아드레날린 부스트'
+    FinalBlow = 'Final Blow | 파이널 블로우'
+    JudgmentDraw = 'Judgment Draw | 저지먼트'
+    GatheringHook = 'Gathering Hook | 게더링 캐쳐'
+    Might = 'Might | 마이트'
+    # 4th Job
+    HighMastery = 'High Mastery | 하이 마스터리'
+    SuddenStrike = 'Sudden Strike | 스위프트 무브'
+    AdvancedFinalAttack = 'Advanced Final Attack | 어드밴스드 파이널 어택'
+    BeyondBlade = 'Beyond Blade | 비욘더'
+    FinisherStormofFear = 'Finisher - Storm of Fear | 부스트 엔드-스톰 오브 피어'
+    FinisherHuntersPrey = 'Finisher - Hunter\'s Prey | 부스트 엔드-헌터즈 타겟팅'
+    CommandMasteryII = 'Command Mastery II | 다이나믹 마스터리 II'
+    SwingStudiesII = 'Swing Studies II | 스윙 연구 II'
+    # Hypers
+    MahasDomain = 'Maha\'s Domain | 마하의 영역'
+    HeroicMemories = 'Heroic Memories | 히어로즈 오쓰'
+    AdrenalineBurst = 'Adrenaline Burst | 아드레날린 제네레이터'
+    # 5th Job
+    MahasFury = 'Maha\'s Fury | 인스톨 마하'
+    MahasCarnage = 'Maha\'s Carnage | 브랜디쉬 마하'
+    FenrirCrash = 'Fenrir Crash | 펜릴 크래시'
+    BlizzardTempest = 'Blizzard Tempest | 블리자드 템페스트'
+
+
 # Advisor : Azir carry (croa). 아지르캐리(크로아)
-
 # Assumes the lowest combo count of 500. 최저 콤보 카운트 500 가정
-
 #TODO : If a skill other than Final Blow comes after the Penril Crash, a 30ms delay should be added. 펜릴 크래시 이후에 파이널 블로우가 아닌 다른 스킬이 오면 30ms 딜레이가 추가되어야 함
 #TODO : Freed and Aura weapon delays must be canceled as a gathering catcher. 게더링 캐쳐로 프리드, 오라웨폰 딜레이도 캔슬해야 함.
 
