@@ -1,3 +1,7 @@
+from enum import Enum
+
+from dpmModule.jobs.jobbranch.pirates import PirateSkills
+from dpmModule.jobs.jobclass.flora import FloraSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -9,6 +13,68 @@ from .jobclass import flora
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Ark here https://maplestory.fandom.com/wiki/Ark/Skills
+class ArkSkills(Enum):
+    # Link Skill
+    Solus = 'Solus | 무아'
+    # Beginner
+    ContactCaravan = 'Contact Caravan | 컨택트 카라반'
+    MagicConversion = 'Magic Conversion | 매직 서킷'
+    # 1st Job
+    SpecterState = 'Specter State | 스펙터 잠식'
+    OminousNightmare = 'Ominous Nightmare | 잊혀지지 않는 악몽'
+    OminousDream = 'Ominous Dream | 잊혀지지 않는 흉몽'
+    BasicChargeDrive = 'Basic Charge Drive | 플레인 차지드라이브'
+    SpellBullets = 'Spell Bullets | 스펠 불릿'
+    MysticLeap = 'Mystic Leap | 미스틱 리프'
+    InstinctualLeap = 'Instinctual Leap | 인스팅트 리프'
+    MysticArtsMastery = 'Mystic Arts Mastery | 미스틱 아츠 마스터리'
+    # 2nd Job
+    MasterCorruption = 'Master Corruption | 잠식 제어'
+    ScarletChargeDrive = 'Scarlet Charge Drive | 스칼렛 차지드라이브'
+    GrievousWound = 'Grievous Wound | 지워지지 않는 상처'
+    UnstoppableImpulse = 'Unstoppable Impulse | 멈출 수 없는 충동'
+    TenaciousInstinct = 'Tenacious Instinct | 멈출 수 없는 본능'
+    ImpendingDeath = 'Impending Death | 다가오는 죽음'
+    KnuckleBooster = 'Knuckle Booster | 너클 부스터'
+    KnuckleMastery = 'Knuckle Mastery | 너클 마스터리'
+    InitateFusion = 'Initate Fusion | 융합 개시'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    # 3rd Job
+    VividNightmare = 'Vivid Nightmare | 되살아나는 악몽'
+    VividDream = 'Vivid Dream | 되살아나는 흉몽'
+    GustChargeDrive = 'Gust Charge Drive | 거스트 차지드라이브'
+    InsatiableHunger = 'Insatiable Hunger | 채워지지 않는 굶주림'
+    CreepingTerror = 'Creeping Terror | 기어 다니는 공포'
+    VengefulHate = 'Vengeful Hate | 돌아오는 증오'
+    MysticArtsTraining = 'Mystic Arts Training | 미스틱 아츠 트레이닝'
+    InnateArtsTraining = 'Innate Arts Training | 인스팅트 아츠 트레이닝'
+    AdvancedFusion = 'Advanced Fusion | 융합 진행'
+    # 4th Job
+    EndlessNightmare = 'Endless Nightmare | 끝나지 않는 악몽'
+    EndlessDream = 'Endless Dream | 끝나지 않는 흉몽'
+    AbyssalChargeDrive = 'Abyssal Charge Drive | 어비스 차지드라이브'
+    UnbridledChaos = 'Unbridled Chaos | 걷잡을 수 없는 혼돈'
+    BlissfulRestraint = 'Blissful Restraint | 황홀한 구속'
+    HerooftheFlora = 'Hero of the Flora | 레프 용사의 의지'
+    KnuckleExpert = 'Knuckle Expert | 너클 엑스퍼트'
+    AdvancedMysticArts = 'Advanced Mystic Arts | 어드밴스드 미스틱 아츠'
+    AdvancedInnateArts = 'Advanced Innate Arts | 어드밴스드 인스팅트 아츠'
+    CompleteFusion = 'Complete Fusion | 융합 완성'
+    BattleFrenzy = 'Battle Frenzy | 전투 광란'
+    # Hypers
+    ChargeSpellAmplifier = ' Charge Spell Amplifier |  차지 스펠 앰플리피케이션'
+    EndlessAgony = ' Endless Agony |  끝없는 고통'
+    DivineWrath = ' Divine Wrath | 레이스 오브 갓'
+    # 5th Job
+    AbyssalRecall = 'Abyssal Recall | 근원의 기억'
+    InfinitySpell = 'Infinity Spell | 인피니티 스펠'
+    DeviousNightmare = 'Devious Nightmare | 새어 나오는 악몽'
+    DeviousDream = 'Devious Dream | 새어 나오는 흉몽'
+    EndlesslyStarvingBeast = 'Endlessly Starving Beast | 영원히 굶주리는 짐승'
+
 
 # TODO: Move to core, make it available with .wrap(). core쪽으로 옮길 것, .wrap()과 함께 사용 가능하게 할 것.
 class MultipleDamageSkillWrapper(core.DamageSkillWrapper):
