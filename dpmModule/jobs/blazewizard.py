@@ -82,7 +82,7 @@ class JobGenerator(ck.JobGenerator):
             return (ifc.is_usable() or ifc.is_cooltime_left(90*1000, 1))
 
         ruleset = RuleSet()
-        ruleset.add_rule(ConditionRule(GlobalSkills.TermsAndConditions.value, f'{BlazeWizardSkills.InfernoSphere.value}(cast | 개시)', check_ifc_time), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(GlobalSkills.TermsAndConditions.value, f'{BlazeWizardSkills.InfernoSphere.value}(Cast | 개시)', check_ifc_time), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -140,15 +140,15 @@ class JobGenerator(ck.JobGenerator):
         CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 2, 1)
         BlazingOrbital = core.DamageSkill(BlazeWizardSkills.OrbitalInferno.value, 180, 330+13*vEhc.getV(0,0), 6 * blazingOrbitalHit, cooltime = 5000, red = True, modifier = core.CharacterModifier(armor_ignore = 50)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)    # 4 stroke assumptions. 4타 가정.
         
-        DragonSlaveTick = core.DamageSkill(f"{BlazeWizardSkills.DragonBlaze.value}(tick | )", 280, 500, 6).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)#x7
-        DragonSlaveInit = core.DamageSkill(f"{BlazeWizardSkills.DragonBlaze.value}(cast | 더미)", 0, 0, 0, cooltime = 90 * 1000).wrap(core.DamageSkillWrapper)
-        DragonSlaveEnd = core.DamageSkill(f"{BlazeWizardSkills.DragonBlaze.value}(ending | 종결)", 810, 500, 10).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        DragonSlaveTick = core.DamageSkill(f"{BlazeWizardSkills.DragonBlaze.value}(Tick | )", 280, 500, 6).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)#x7
+        DragonSlaveInit = core.DamageSkill(f"{BlazeWizardSkills.DragonBlaze.value}(Cast | 더미)", 0, 0, 0, cooltime = 90 * 1000).wrap(core.DamageSkillWrapper)
+        DragonSlaveEnd = core.DamageSkill(f"{BlazeWizardSkills.DragonBlaze.value}(Ending | 종결)", 810, 500, 10).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         
         IgnitionDOT = core.DotSkill(f"{BlazeWizardSkills.Ignition.value}(DoT)", 0, 1000, 220*0.01*(100 + 60 + 2*passive_level), 1, 10*1000, cooltime=-1).wrap(core.DotSkillWrapper)
 
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         # Fox use. 여우 사용.
-        SavageFlameStack = core.StackSkillWrapper(core.BuffSkill(f"{BlazeWizardSkills.SavageFlame.value}(stack | 스택)", 0, 99999999), 6)
+        SavageFlameStack = core.StackSkillWrapper(core.BuffSkill(f"{BlazeWizardSkills.SavageFlame.value}(Stack | 스택)", 0, 99999999), 6)
         
         SavageFlame = core.StackDamageSkillWrapper(
             core.DamageSkill(BlazeWizardSkills.SavageFlame.value, 840, 250 + 10*vEhc.getV(4,4), 8, cooltime = 20*1000, red = True).isV(vEhc,4,4),
@@ -156,13 +156,13 @@ class JobGenerator(ck.JobGenerator):
             lambda sk: (8 + (sk.stack - 2) * 2)
         )
         
-        InfinityFlameCircleTick = core.DamageSkill(f"{BlazeWizardSkills.InfernoSphere.value}(tick | )", 180, 500+20*vEhc.getV(3,3), 7, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) # 1 tick. 1틱.
-        InfinityFlameCircleInit = core.DamageSkill(f"{BlazeWizardSkills.InfernoSphere.value}(개시)", 360, 0, 0, cooltime = 15*6*1000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        InfinityFlameCircleTick = core.DamageSkill(f"{BlazeWizardSkills.InfernoSphere.value}(Tick | )", 180, 500+20*vEhc.getV(3,3), 7, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) # 1 tick. 1틱.
+        InfinityFlameCircleInit = core.DamageSkill(f"{BlazeWizardSkills.InfernoSphere.value}(Cast | 개시)", 360, 0, 0, cooltime = 15*6*1000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
 
         # 84 strokes. 84타.
         SalamanderMischeif = core.SummonSkill(BlazeWizardSkills.SalamanderMischief.value, 750, 710, 150+6*vEhc.getV(0,0), 7, 60000, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
-        SalamanderMischeifStack = core.StackSkillWrapper(core.BuffSkill(f"{BlazeWizardSkills.SalamanderMischief.value}(stack | 불씨)", 0, 99999999), 15+vEhc.getV(0,0))
-        SalamanderMischeifBuff = core.BuffSkill(f"{BlazeWizardSkills.SalamanderMischief.value}(buff | 버프)", 0, 30000, cooltime=-1, att=15+2*(15+vEhc.getV(0,0))).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        SalamanderMischeifStack = core.StackSkillWrapper(core.BuffSkill(f"{BlazeWizardSkills.SalamanderMischief.value}(Stack | 불씨)", 0, 99999999), 15+vEhc.getV(0,0))
+        SalamanderMischeifBuff = core.BuffSkill(f"{BlazeWizardSkills.SalamanderMischief.value}(Buff | 버프)", 0, 30000, cooltime=-1, att=15+2*(15+vEhc.getV(0,0))).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
         ######   Wrappers    ######
     

@@ -129,7 +129,7 @@ class JobGenerator(ck.JobGenerator):
         StaffMastery = core.InformedCharacterModifier(BattleMageSkills.StaffMastery.value,att = 30, crit = 20)
         HighWisdom =  core.InformedCharacterModifier(BattleMageSkills.HighWisdom.value,stat_main = 40)
         BattleMastery = core.InformedCharacterModifier(BattleMageSkills.BattleMastery.value,pdamage_indep = 15, crit_damage = 20)
-        DarkAuraPassive = core.InformedCharacterModifier(f"{BattleMageSkills.DarkAura.value}(passive | 패시브)", patt=15)
+        DarkAuraPassive = core.InformedCharacterModifier(f"{BattleMageSkills.DarkAura.value}(Passive | 패시브)", patt=15)
         
         StaffExpert = core.InformedCharacterModifier(BattleMageSkills.StaffExpert.value,att = 30 + passive_level, crit_damage = 20 + ceil(passive_level / 2))
         SpellBoost = core.InformedCharacterModifier(BattleMageSkills.SpellBoost.value, patt = 25 + passive_level // 2, pdamage = 10 + ceil(passive_level / 3), armor_ignore = 30 + passive_level)

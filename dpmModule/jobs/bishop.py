@@ -117,7 +117,7 @@ class JobGenerator(ck.JobGenerator):
         MasterMagic = core.InformedCharacterModifier(BishopSkills.BuffMastery.value,att = 30 + passive_level * 3, buff_rem = 50 + passive_level * 5)
         ArcaneAim = core.InformedCharacterModifier(BishopSkills.ArcaneAim.value, armor_ignore = 20)
         
-        VengenceOfAngelOff = core.InformedCharacterModifier(f"{BishopSkills.RighteouslyIndignant.value}(off)",pdamage = 40)
+        VengenceOfAngelOff = core.InformedCharacterModifier(f"{BishopSkills.RighteouslyIndignant.value}(Off)",pdamage = 40)
 
         UnstableMemorizePassive = adventurer.UnstableMemorizePassiveWrapper(vEhc, 4, 4)
         
@@ -173,13 +173,13 @@ class JobGenerator(ck.JobGenerator):
         
         HeavensDoor = core.DamageSkill(BishopSkills.HeavensDoor.value, 270, 1000, 8, cooltime = 180 * 1000).wrap(core.DamageSkillWrapper)
 
-        PeaceMakerInit = core.DamageSkill(f"{BishopSkills.Peacemaker.value}(cast | 시전)", 750, 0, 0, cooltime = 10 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        PeaceMakerInit = core.DamageSkill(f"{BishopSkills.Peacemaker.value}(Cast | 시전)", 750, 0, 0, cooltime = 10 * 1000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         PeaceMaker = core.DamageSkill(BishopSkills.Peacemaker.value, 0, 350 + 14*vEhc.getV(0,0), 4, cooltime = -1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         PeaceMakerFinal = core.DamageSkill(f"{BishopSkills.Peacemaker.value}(Explosion | 폭발)", 0, 350 + 14*vEhc.getV(0,0), 12, cooltime = -1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        PeaceMakerFinalBuff = core.BuffSkill(f"{BishopSkills.Peacemaker.value}(buff | 버프)", 0, (8 + SERVERLAG)*1000, pdamage = (5 + vEhc.getV(0,0) // 5) + (12 - PEACEMAKER_HIT), cooltime = -1).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        PeaceMakerFinalBuff = core.BuffSkill(f"{BishopSkills.Peacemaker.value}(Buff | 버프)", 0, (8 + SERVERLAG)*1000, pdamage = (5 + vEhc.getV(0,0) // 5) + (12 - PEACEMAKER_HIT), cooltime = -1).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
 
-        DivinePunishmentInit = core.DamageSkill(f"{BishopSkills.DivinePunishment.value}(cast | 개시)", 240, 0, 0, cooltime=85000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        DivinePunishmentTick = core.DamageSkill(f"{BishopSkills.DivinePunishment.value}(tick | 키다운)", 240, 175+7*vEhc.getV(0,0), 5+5, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DivinePunishmentInit = core.DamageSkill(f"{BishopSkills.DivinePunishment.value}(Cast | 개시)", 240, 0, 0, cooltime=85000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DivinePunishmentTick = core.DamageSkill(f"{BishopSkills.DivinePunishment.value}(Tick | 키다운)", 240, 175+7*vEhc.getV(0,0), 5+5, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
     
         #Summoning skill
         Bahamutt = core.SummonSkill(BishopSkills.Bahamut.value, 0, 3030, 170+2*self.combat, 3, 90 * 1000, cooltime = 120 * 1000, rem = True).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    # Delay 0 as it is automatically summoned at the end of the final Dem 25% stack and Libra ends. 최종뎀25%스택, 리브라 종료시 자동소환 되므로 딜레이 0.
@@ -197,7 +197,7 @@ class JobGenerator(ck.JobGenerator):
         BigBang = core.DamageSkill(BishopSkills.BigBang.value, 630, 480+6*self.combat, 4).wrap(core.DamageSkillWrapper)
         Resurrection = core.DamageSkill(BishopSkills.Resurrection.value, 900, 0, 0).wrap(core.DamageSkillWrapper)
 
-        VengenceOfAngel_Delay = core.DamageSkill(f"{BishopSkills.RighteouslyIndignant.value}(delay | 딜레이)", 480, 0, 0).wrap(core.DamageSkillWrapper)
+        VengenceOfAngel_Delay = core.DamageSkill(f"{BishopSkills.RighteouslyIndignant.value}(Delay | 딜레이)", 480, 0, 0).wrap(core.DamageSkillWrapper)
         
         ######   Wrappers    ######
         #Unstable Memorize

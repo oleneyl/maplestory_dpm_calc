@@ -103,15 +103,15 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
 
-        ruleset.add_rule(InactiveRule(f'{BlasterSkills.BulletBlast.value}(ready | 준비)',BlasterSkills.RocketPunch.value), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule(f'{BlasterSkills.BulletBlast.value}(ready | 준비)',BlasterSkills.CannonOverdrive.value), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(f'{BlasterSkills.BulletBlast.value}(Ready | 준비)',BlasterSkills.RocketPunch.value), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(f'{BlasterSkills.BulletBlast.value}(Ready | 준비)',BlasterSkills.CannonOverdrive.value), RuleSet.BASE)
         ruleset.add_rule(InactiveRule(BlasterSkills.CannonOverdrive.value,BlasterSkills.RocketPunch.value), RuleSet.BASE)
         ruleset.add_rule(InactiveRule(BlasterSkills.RocketPunch.value, BlasterSkills.CannonOverdrive.value), RuleSet.BASE)
         ruleset.add_rule(InactiveRule(BlasterSkills.GatlingPunch.value, BlasterSkills.RocketPunch.value), RuleSet.BASE)
         ruleset.add_rule(InactiveRule(BlasterSkills.GatlingPunch.value, BlasterSkills.CannonOverdrive.value), RuleSet.BASE)
 
-        ruleset.add_rule(SynchronizeRule(f'{BlasterSkills.BulletBlast.value}(ready | 준비)', f'{BlasterSkills.HammerSmash.value}(debuff | 디버프)', 3420, 1), RuleSet.BASE)
-        ruleset.add_rule(SynchronizeRule(BlasterSkills.GatlingPunch.value, f'{BlasterSkills.HammerSmash.value}(debuff | 디버프)', 8000, 1), RuleSet.BASE)
+        ruleset.add_rule(SynchronizeRule(f'{BlasterSkills.BulletBlast.value}(Ready | 준비)', f'{BlasterSkills.HammerSmash.value}(Debuff | 디버프)', 3420, 1), RuleSet.BASE)
+        ruleset.add_rule(SynchronizeRule(BlasterSkills.GatlingPunch.value, f'{BlasterSkills.HammerSmash.value}(Debuff | 디버프)', 8000, 1), RuleSet.BASE)
         
         return ruleset
 
@@ -181,7 +181,7 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Booster = core.BuffSkill(BlasterSkills.ArmCannonBoost.value, 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
 
-        DuckingDelay = core.DamageSkill(f"{BlasterSkills.Bobbing.value}(delay | 딜레이)", DUCKING_DELAY, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
+        DuckingDelay = core.DamageSkill(f"{BlasterSkills.Bobbing.value}(Delay | 딜레이)", DUCKING_DELAY, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
         
         MagnumPunch = core.DamageSkill(BlasterSkills.MagnumPunch.value, 180, 430 + 2*self.combat, 3, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         MagnumPunch_Revolve = core.DamageSkill(f"{BlasterSkills.RevolvingCannon.value}({BlasterSkills.MagnumPunch.value})", 0, 180 + passive_level, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
@@ -199,8 +199,8 @@ class JobGenerator(ck.JobGenerator):
         DoublePang_Revolve = core.DamageSkill(f"{BlasterSkills.RevolvingCannon.value}({BlasterSkills.DoubleBlast.value})", 0, 180 + passive_level, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         HammerSmash = core.DamageSkill(BlasterSkills.HammerSmash.value, CANCEL_DELAY, 395 + 2*self.combat, 6, modifier = core.CharacterModifier(pdamage = 10, armor_ignore = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        HammerSmashWave = core.SummonSkill(f"{BlasterSkills.HammerSmash.value}(wave | 충격파)", 0, 1500, 150, 2+2, 5000, cooltime = -1).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
-        HammerSmashDebuff = core.BuffSkill(f"{BlasterSkills.HammerSmash.value}(debuff | 디버프)", 0, 10*1000+5000, pdamage_indep = 10, rem = False, cooltime = -1).wrap(core.BuffSkillWrapper)  # The default is 10 seconds, plus the duration of the shock wave. 기본 10초, 충격파의 지속시간 합산.
+        HammerSmashWave = core.SummonSkill(f"{BlasterSkills.HammerSmash.value}(Wave | 충격파)", 0, 1500, 150, 2+2, 5000, cooltime = -1).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
+        HammerSmashDebuff = core.BuffSkill(f"{BlasterSkills.HammerSmash.value}(Debuff | 디버프)", 0, 10*1000+5000, pdamage_indep = 10, rem = False, cooltime = -1).wrap(core.BuffSkillWrapper)  # The default is 10 seconds, plus the duration of the shock wave. 기본 10초, 충격파의 지속시간 합산.
         
         RevolvingCannonMastery = RevolvingCannonMasteryWrapper(Cylinder, Overheat, passive_level)
         
@@ -214,20 +214,20 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         BunkerBuster = core.BuffSkill(BlasterSkills.RocketPunch.value, 720, 45000, cooltime = 120000, red = True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
-        BunkerBusterAttack = core.DamageSkill(f"{BlasterSkills.RocketPunch.value}(attack | 공격)", 0, 180 + 7 * vEhc.getV(0,0), 8, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        BunkerBusterAttack = core.DamageSkill(f"{BlasterSkills.RocketPunch.value}(Attack | 공격)", 0, 180 + 7 * vEhc.getV(0,0), 8, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         
         BalkanPunch = core.DamageSkill(BlasterSkills.GatlingPunch.value, 1140, 500 + 20 * vEhc.getV(4,4), 12, cooltime = 60 * 1000, red = True).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
-        BalkanPunchTick = core.DamageSkill(f"{BlasterSkills.GatlingPunch.value}(tick | 틱)", 120, 425 + 17 * vEhc.getV(4,4), 8).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)  # 24 repetitions. 24회 반복.
-        BalkanPunchEnd = core.DamageSkill(f"{BlasterSkills.GatlingPunch.value}(ending | 후딜)", 360, 0, 0).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        BalkanPunchTick = core.DamageSkill(f"{BlasterSkills.GatlingPunch.value}(Tick | 틱)", 120, 425 + 17 * vEhc.getV(4,4), 8).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)  # 24 repetitions. 24회 반복.
+        BalkanPunchEnd = core.DamageSkill(f"{BlasterSkills.GatlingPunch.value}(Ending | 후딜)", 360, 0, 0).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
         
-        BurningBreaker = core.DamageSkill(f"{BlasterSkills.BulletBlast.value}(ready | 준비)", 120+210*5, 0, 0, cooltime = 100*1000, red = True).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)  # Revolving*3 macro use, 1->2 120ms, 2~210ms total 1170ms. 리볼빙*3 매크로 사용, 1->2 120ms, 2~ 210ms 총 1170ms.
-        BurningBreakerRush = core.DamageSkill(f"{BlasterSkills.BulletBlast.value}(rush | 돌진)", 2220, 1500 + 60*vEhc.getV(1,1), 15, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper) # 공속 적용됨, 2940ms -> 2220ms
-        BurningBreakerExplode = core.DamageSkill(f"{BlasterSkills.BulletBlast.value}(explosion | 폭발)", 0, 1200+48*vEhc.getV(1,1), 15 * 6, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        BurningBreaker = core.DamageSkill(f"{BlasterSkills.BulletBlast.value}(Ready | 준비)", 120+210*5, 0, 0, cooltime = 100*1000, red = True).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)  # Revolving*3 macro use, 1->2 120ms, 2~210ms total 1170ms. 리볼빙*3 매크로 사용, 1->2 120ms, 2~ 210ms 총 1170ms.
+        BurningBreakerRush = core.DamageSkill(f"{BlasterSkills.BulletBlast.value}(Rush | 돌진)", 2220, 1500 + 60*vEhc.getV(1,1), 15, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper) # 공속 적용됨, 2940ms -> 2220ms
+        BurningBreakerExplode = core.DamageSkill(f"{BlasterSkills.BulletBlast.value}(Explosion | 폭발)", 0, 1200+48*vEhc.getV(1,1), 15 * 6, modifier = core.CharacterModifier(armor_ignore = 100, crit = 100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
 
         AfterImageShockInit = core.BuffSkill(BlasterSkills.AfterimageShock.value, 780, 180*1000, cooltime=240*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        AfterImageShockStack = core.StackSkillWrapper(core.BuffSkill(f"{BlasterSkills.AfterimageShock.value}(stack | 스택)", 0, 99999999), 99)
-        AfterImageShockActive = core.DamageSkill(f"{BlasterSkills.AfterimageShock.value}(active | 액티브)", 0, 450+18*vEhc.getV(0,0), 5, cooltime=100).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        AfterImageShockPassive = core.DamageSkill(f"{BlasterSkills.AfterimageShock.value}(passive | 패시브)", 0, 500+20*vEhc.getV(0,0), 3, cooltime=6000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        AfterImageShockStack = core.StackSkillWrapper(core.BuffSkill(f"{BlasterSkills.AfterimageShock.value}(Stack | 스택)", 0, 99999999), 99)
+        AfterImageShockActive = core.DamageSkill(f"{BlasterSkills.AfterimageShock.value}(Active | 액티브)", 0, 450+18*vEhc.getV(0,0), 5, cooltime=100).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        AfterImageShockPassive = core.DamageSkill(f"{BlasterSkills.AfterimageShock.value}(Passive | 패시브)", 0, 500+20*vEhc.getV(0,0), 3, cooltime=6000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         # Skill basic linkage connection. 스킬 기본 연계 연결.
         ReleaseFileBunker.onAfter(Cylinder.stackController(-6))

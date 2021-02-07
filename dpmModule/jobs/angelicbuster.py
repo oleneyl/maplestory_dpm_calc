@@ -95,11 +95,11 @@ class JobGenerator(ck.JobGenerator):
         CallOfAncient = core.InformedCharacterModifier(AngelicBusterSkills.DragonWhistle.value, att=40)
         AffinityIII = core.InformedCharacterModifier(AngelicBusterSkills.AffinityHeartIII.value, stat_main=40, pdamage=20)
         AffinityIV = getAffinityIV(1272.08)  # Should be changed every time the average period of trinity changes. 1000 * time(sec) / (Trinity usage count). 트리니티 평균 주기가 바뀔 때 마다 변경해 줘야함. 1000 * time(초) / (트리니티 사용 횟수).
-        TrinityPassive = core.InformedCharacterModifier(f"{AngelicBusterSkills.Trinity.value}(passive | 패시브)", pdamage_indep=ceil((30 + self.combat) / 3), armor_ignore=ceil((30 + self.combat) / 2))
+        TrinityPassive = core.InformedCharacterModifier(f"{AngelicBusterSkills.Trinity.value}(Passive | 패시브)", pdamage_indep=ceil((30 + self.combat) / 3), armor_ignore=ceil((30 + self.combat) / 2))
         SoulShooterExpert = core.InformedCharacterModifier(AngelicBusterSkills.SoulShooterExpert.value, att=30 + passive_level, crit=30 + passive_level, crit_damage=15 + ceil(passive_level / 2))
 
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
-        TrinityFusionPassive = core.InformedCharacterModifier(f"{AngelicBusterSkills.TrinityFusion.value}(passive | 패시브)", stat_main=10 + vEhc.getV(0, 0))
+        TrinityFusionPassive = core.InformedCharacterModifier(f"{AngelicBusterSkills.TrinityFusion.value}(Passive | 패시브)", stat_main=10 + vEhc.getV(0, 0))
 
         return [SoulShooterMastery, InnerFire,
                 CallOfAncient, AffinityIII, AffinityIV, TrinityPassive, SoulShooterExpert,
@@ -199,7 +199,7 @@ class JobGenerator(ck.JobGenerator):
 
         EnergyBurst = core.DamageSkill(AngelicBusterSkills.SparkleBurst.value, 900, (450 + 18 * vEhc.getV(4, 4)) * 3, 15, red=True, cooltime=120 * 1000).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
         SpotLight = core.SummonSkill(AngelicBusterSkills.SuperstarSpotlight.value, 990, 800, 400 + 16 * vEhc.getV(0, 0), 3 * SPOTLIGHTHIT, 30000, cooltime=120 * 1000, red=True).isV(vEhc, 0,0).wrap(core.SummonSkillWrapper)
-        SpotLightBuff = core.BuffSkill(f"{AngelicBusterSkills.SuperstarSpotlight.value}(buff | 버프)", 0, 30000, cooltime=-1, crit=(10 + int(0.2 * vEhc.getV(0, 0))) * SPOTLIGHTHIT, pdamage_indep=(3 + (vEhc.getV(0, 0) // 10)) * SPOTLIGHTHIT).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
+        SpotLightBuff = core.BuffSkill(f"{AngelicBusterSkills.SuperstarSpotlight.value}(Buff | 버프)", 0, 30000, cooltime=-1, crit=(10 + int(0.2 * vEhc.getV(0, 0))) * SPOTLIGHTHIT, pdamage_indep=(3 + (vEhc.getV(0, 0) // 10)) * SPOTLIGHTHIT).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
 
         MascortFamilier = core.BuffSkill(AngelicBusterSkills.MightyMascot.value, 810, 30 + (vEhc.getV(2, 1) // 5) * 1000, red=True, cooltime=120 * 1000).isV(vEhc, 2, 1).wrap(core.BuffSkillWrapper)
         MascortFamilierAttack = core.SummonSkill("Twinkle Star/Magical Balloon | 트윙클 스타/매지컬 벌룬", 0, 2500, 1200, 5, (30 + (vEhc.getV(2, 1) // 5)) * 1000, cooltime=-1).isV(vEhc, 2, 1).wrap(core.SummonSkillWrapper)

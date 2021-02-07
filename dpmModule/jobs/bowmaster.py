@@ -176,7 +176,7 @@ class JobGenerator(ck.JobGenerator):
             BowmasterSkills.BowExpert.value, att=60 + passive_level, crit_damage=8
         )
         AdvancedFinalAttackPassive = core.InformedCharacterModifier(
-            f"{BowmasterSkills.AdvancedFinalAttack.value}(passive | 패시브)", att=20 + ceil(passive_level / 2)
+            f"{BowmasterSkills.AdvancedFinalAttack.value}(Passive | 패시브)", att=20 + ceil(passive_level / 2)
         )  # Need to apply order. 오더스 적용필요.
 
         ElusionStep = core.InformedCharacterModifier(
@@ -332,7 +332,7 @@ class JobGenerator(ck.JobGenerator):
 
         ArrowRainBuff = (
             core.BuffSkill(
-                f"{BowmasterSkills.StormofArrows.value}(buff | 버프)",
+                f"{BowmasterSkills.StormofArrows.value}(Buff | 버프)",
                 delay=810,
                 remain=(40 + vEhc.getV(0, 0)) * 1000,
                 cooltime=120 * 1000,
@@ -377,7 +377,7 @@ class JobGenerator(ck.JobGenerator):
 
         # No application of remnant poems. 잔영의시 미적용.
         QuibberFullBurstBuff = core.BuffSkill(
-            f"{BowmasterSkills.QuiverBarrage.value}(buff | 버프)",
+            f"{BowmasterSkills.QuiverBarrage.value}(Buff | 버프)",
             delay=0,
             remain=30 * 1000,
             cooltime=120 * 1000,
@@ -424,7 +424,7 @@ class JobGenerator(ck.JobGenerator):
         )
         ImageArrowPassive = (
             core.SummonSkill(
-                f"{BowmasterSkills.InhumanSpeed.value}(passive | 패시브)",
+                f"{BowmasterSkills.InhumanSpeed.value}(Passive | 패시브)",
                 summondelay=0,
                 delay=2580,
                 damage=400 + 16 * vEhc.getV(1, 1),

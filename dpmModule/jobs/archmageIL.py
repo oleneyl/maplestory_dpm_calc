@@ -27,7 +27,7 @@ class ArchmageIceLightningSkills(Enum):
     # 2nd Job
     ColdBeam = 'Cold Beam | 콜드 빔'
     FreezingCrush = 'Freezing Crush | 프리징 이펙트'
-    ThunderBolt = 'Thunder Bolt | 선더 볼트'
+    ThunderBolt = 'Thunder Bolt | 썬더 볼트'
     ChillingStep = 'Chilling Step | 칠링 스텝'
     Meditation = 'Meditation | 메디테이션'
     MagicBooster = 'Magic Booster | 매직 부스터'
@@ -37,7 +37,7 @@ class ArchmageIceLightningSkills(Enum):
     # 3rd Job
     IceStrike = 'Ice Strike | 아이스 스트라이크'
     GlacierChain = 'Glacier Chain | 글레이셜 체인'
-    Thunderstorm = 'Thunderstorm | 선더 스톰'
+    Thunderstorm = 'Thunderstorm | 썬더 스톰'
     ElementalAdaptationIceLightning = 'Elemental Adaptation (Ice, Lightning) | 엘리멘탈 어뎁팅(썬,콜)'
     ElementalDecrease = 'Elemental Decrease | 엘리멘탈 리셋'
     TeleportMastery = 'Teleport Mastery | 텔레포트 마스터리'
@@ -114,8 +114,8 @@ class JobGenerator(ck.JobGenerator):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5 + 0.5*ceil(self.combat/2))
         ExtremeMagic = core.InformedCharacterModifier(ArchmageIceLightningSkills.StormMagic.value, pdamage_indep = 20)
-        ArcaneAim = core.InformedCharacterModifier(f"{ArchmageIceLightningSkills.ArcaneAim.value}(real time | 실시간)", pdamage = 40)
-        ElementalResetActive = core.InformedCharacterModifier(f"{ArchmageIceLightningSkills.ElementalDecrease.value}(active | 사용)", prop_ignore = 10)
+        ArcaneAim = core.InformedCharacterModifier(f"{ArchmageIceLightningSkills.ArcaneAim.value}(Real time | 실시간)", pdamage = 40)
+        ElementalResetActive = core.InformedCharacterModifier(f"{ArchmageIceLightningSkills.ElementalDecrease.value}(Active | 사용)", prop_ignore = 10)
         
         return [WeaponConstant, Mastery, ExtremeMagic, ArcaneAim, ElementalResetActive]
         
@@ -169,15 +169,15 @@ class JobGenerator(ck.JobGenerator):
         FrozenOrb = core.SummonSkill(ArchmageIceLightningSkills.FrozenOrb.value, 690, 210, 220+4*self.combat, 1, 4000, cooltime = 5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
     
         LighteningSpear = core.DamageSkill(ArchmageIceLightningSkills.LightningOrb.value, 0, 0, 1, cooltime = 75 * 1000).wrap(core.DamageSkillWrapper)
-        LighteningSpearSingle = core.DamageSkill(f"{ArchmageIceLightningSkills.LightningOrb.value}(keydown | 키다운)", 267, 105, 15).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 총 8010ms
-        LighteningSpearFinalizer = core.DamageSkill(f"{ArchmageIceLightningSkills.LightningOrb.value}(final hit | 막타)", 1080, 350, 15).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        LighteningSpearSingle = core.DamageSkill(f"{ArchmageIceLightningSkills.LightningOrb.value}(Keydown | 키다운)", 267, 105, 15).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 총 8010ms
+        LighteningSpearFinalizer = core.DamageSkill(f"{ArchmageIceLightningSkills.LightningOrb.value}(Final hit | 막타)", 1080, 350, 15).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
-        IceAgeInit = core.DamageSkill(f"{ArchmageIceLightningSkills.IceAge.value}(cast | 개시)", 660, 500 + vEhc.getV(2,3)*20, 10, cooltime = 60 * 1000, red = True).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
-        IceAgeSummon = core.SummonSkill(f"{ArchmageIceLightningSkills.IceAge.value}(summon | 장판)", 0, 810, 125 + vEhc.getV(2,3)*5, 3*ICE_AGE_SUMMON_HIT, 15 * 1000, cooltime = -1).isV(vEhc,2,3).wrap(core.SummonSkillWrapper)
+        IceAgeInit = core.DamageSkill(f"{ArchmageIceLightningSkills.IceAge.value}(Cast | 개시)", 660, 500 + vEhc.getV(2,3)*20, 10, cooltime = 60 * 1000, red = True).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
+        IceAgeSummon = core.SummonSkill(f"{ArchmageIceLightningSkills.IceAge.value}(Summon | 장판)", 0, 810, 125 + vEhc.getV(2,3)*5, 3*ICE_AGE_SUMMON_HIT, 15 * 1000, cooltime = -1).isV(vEhc,2,3).wrap(core.SummonSkillWrapper)
 
         # 5% reduction per stack. 중첩당 감소량 5%.
         # TODO: ?? must implement canceling the previous skill delay. 썬브가 이전 스킬 딜레이 캔슬하는것 구현해야 함.
-        ThunderBrake = core.DamageSkill(f"{ArchmageIceLightningSkills.BoltBarrage.value}(start skill | 개시스킬)", 120, 0, 1, red = True, cooltime = 40 * 1000).wrap(core.DamageSkillWrapper)  # Awesome! -> Tandem injection treatment is required...Later. Distribute the 690 as soon as possible. Awesome! -> Tandem 사출처리 해야함...Later. 690을 일단 급한대로 분배해서 사용.
+        ThunderBrake = core.DamageSkill(f"{ArchmageIceLightningSkills.BoltBarrage.value}(Start skill | 개시스킬)", 120, 0, 1, red = True, cooltime = 40 * 1000).wrap(core.DamageSkillWrapper)  # Awesome! -> Tandem injection treatment is required...Later. Distribute the 690 as soon as possible. Awesome! -> Tandem 사출처리 해야함...Later. 690을 일단 급한대로 분배해서 사용.
         ThunderBrake1 = core.DamageSkill(f"{ArchmageIceLightningSkills.BoltBarrage.value}(1)", 120, (750 + vEhc.getV(0,0)*30), 8).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ThunderBrake2 = core.DamageSkill(f"{ArchmageIceLightningSkills.BoltBarrage.value}(2)", 120, (750 + vEhc.getV(0,0)*30)*0.95, 8).wrap(core.DamageSkillWrapper)
         ThunderBrake3 = core.DamageSkill(f"{ArchmageIceLightningSkills.BoltBarrage.value}(3)", 120, (750 + vEhc.getV(0,0)*30)*0.9, 8).wrap(core.DamageSkillWrapper)
@@ -191,7 +191,7 @@ class JobGenerator(ck.JobGenerator):
         SpiritOfSnow = core.SummonSkill(ArchmageIceLightningSkills.SpiritofSnow.value, 720, 3000, 850+34*vEhc.getV(3,1), 9, 30000, red = True, cooltime = 120*1000).isV(vEhc, 3,1).wrap(core.SummonSkillWrapper)
         
         #Summoning skill
-        ThunderStorm = core.SummonSkill("썬더 스톰", 900, 1770, 430, 1, 90000, cooltime = 30000).setV(vEhc, 5, 3, False).wrap(core.SummonSkillWrapper)
+        ThunderStorm = core.SummonSkill(ArchmageIceLightningSkills.Thunderstorm.value, 900, 1770, 430, 1, 90000, cooltime = 30000).setV(vEhc, 5, 3, False).wrap(core.SummonSkillWrapper)
         Elquiness = core.SummonSkill(ArchmageIceLightningSkills.Elquines.value, 600, 3030, 127+2*self.combat, 3, (260+5*self.combat)*1000).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         IceAura = core.SummonSkill(ArchmageIceLightningSkills.AbsoluteZeroAura.value, 0, 1200, 0, 1, 999999999).wrap(core.SummonSkillWrapper)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
@@ -199,7 +199,7 @@ class JobGenerator(ck.JobGenerator):
         
         #FinalAttack
         Blizzard = core.DamageSkill(ArchmageIceLightningSkills.Blizzard.value, 690, 301+3*self.combat, 12, cooltime = 45 * 1000, red = True).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
-        BlizzardPassive = core.DamageSkill(f"{ArchmageIceLightningSkills.Blizzard.value}(passive | 패시브)", 0, (220+4*self.combat) * (0.6+0.01*self.combat), 1).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
+        BlizzardPassive = core.DamageSkill(f"{ArchmageIceLightningSkills.Blizzard.value}(Passive | 패시브)", 0, (220+4*self.combat) * (0.6+0.01*self.combat), 1).setV(vEhc, 2, 2, True).wrap(core.DamageSkillWrapper)
         
         #special skills
         Infinity = adventurer.InfinityWrapper(self.combat)
@@ -208,7 +208,7 @@ class JobGenerator(ck.JobGenerator):
         #Unstable Memorize skills
         EnergyBolt = core.DamageSkill(ArchmageIceLightningSkills.EnergyBolt.value, 630, 309, 1).wrap(core.DamageSkillWrapper)
         ColdBeam = core.DamageSkill(ArchmageIceLightningSkills.ColdBeam.value, 630, 199, 3).wrap(core.DamageSkillWrapper)
-        ThunderBolt = core.DamageSkill("썬더 볼트", 630, 210, 3).wrap(core.DamageSkillWrapper)
+        ThunderBolt = core.DamageSkill(ArchmageIceLightningSkills.ThunderBolt.value, 630, 210, 3).wrap(core.DamageSkillWrapper)
         IceStrike = core.DamageSkill(ArchmageIceLightningSkills.IceStrike.value, 630, 335, 4).wrap(core.DamageSkillWrapper)
         GlacialChain = core.DamageSkill(ArchmageIceLightningSkills.GlacierChain.value, 630, 383, 3).wrap(core.DamageSkillWrapper)
         

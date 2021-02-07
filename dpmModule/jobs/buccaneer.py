@@ -124,7 +124,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ConditionRule('Energy Orb | 에너지 오브(dummy | 더미)', BuccaneerSkills.EnergyCharge.value, lambda sk: sk.isStateOff()), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('Energy Orb | 에너지 오브(Dummy | 더미)', BuccaneerSkills.EnergyCharge.value, lambda sk: sk.isStateOff()), RuleSet.BASE)
         ruleset.add_rule(MutualRule(BuccaneerSkills.StimulatingConversation.value, BuccaneerSkills.Meltdown.value), RuleSet.BASE)
         ruleset.add_rule(ConditionRule(BuccaneerSkills.StimulatingConversation.value, BuccaneerSkills.EnergyCharge.value, lambda sk: sk.judge(2000, -1) or sk.isStateOff()), RuleSet.BASE)
         ruleset.add_rule(ConditionRule(BuccaneerSkills.PowerUnity.value, f'{BuccaneerSkills.PowerUnity.value}(debuff | 디버프)', lambda sk: sk.is_time_left(1000, -1)), RuleSet.BASE)
@@ -141,7 +141,7 @@ class JobGenerator(ck.JobGenerator):
         MentalClearity = core.InformedCharacterModifier(BuccaneerSkills.DarkClarity.value,att = 30)
         PhisicalTraining = core.InformedCharacterModifier(BuccaneerSkills.PhysicalTraining.value,stat_main = 30, stat_sub = 30)
         CriticalRage = core.InformedCharacterModifier(BuccaneerSkills.PrecisionStrikes.value,crit = 15, crit_damage = 10)    # Boss opponent +20% Crit rate. 보스상대 추가+20% 크리율.
-        StimulatePassive = core.InformedCharacterModifier(f"{BuccaneerSkills.StimulatingConversation.value}(passive | 패시브)",boss_pdamage = 20)
+        StimulatePassive = core.InformedCharacterModifier(f"{BuccaneerSkills.StimulatingConversation.value}(Passive | 패시브)",boss_pdamage = 20)
 
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 2, 3)
         
@@ -200,7 +200,7 @@ class JobGenerator(ck.JobGenerator):
         FistInrage_T = core.DamageSkill(f"{BuccaneerSkills.Octopunch.value}(Transform | 변신)", 690, 320+4*self.combat, 8 + 1 + 2, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         DragonStrike = core.DamageSkill(BuccaneerSkills.DragonStrike.value, 690, 300 + 4*self.combat, 12, cooltime = 15 * 1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        DragonStrikeBuff = core.BuffSkill(f"{BuccaneerSkills.DragonStrike.value}(debuff | 디버프)", 0, 15 * 1000, cooltime = -1, pdamage_indep = 20 + self.combat//2).wrap(core.BuffSkillWrapper)
+        DragonStrikeBuff = core.BuffSkill(f"{BuccaneerSkills.DragonStrike.value}(Debuff | 디버프)", 0, 15 * 1000, cooltime = -1, pdamage_indep = 20 + self.combat//2).wrap(core.BuffSkillWrapper)
         
         Nautilus = core.DamageSkill(BuccaneerSkills.NautilusStrike.value, 690, 440+4*self.combat, 7, cooltime = 60 * 1000, red=True).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         NautilusFinalAttack = core.DamageSkill(f"{BuccaneerSkills.NautilusStrike.value}(Final attack | 파이널 어택)", 0, 165+2*self.combat, 2).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
@@ -212,7 +212,7 @@ class JobGenerator(ck.JobGenerator):
         Stimulate = core.BuffSkill(BuccaneerSkills.StimulatingConversation.value, 930, 120 * 1000, cooltime = 240 * 1000, pdamage = 20).wrap(core.BuffSkillWrapper)# 에너지 주기적으로 800씩 증가, 미완충시 풀완충.
         StimulateSummon = core.SummonSkill(f"{BuccaneerSkills.StimulatingConversation.value}(Guage increasing | 게이지 증가 더미)", 0, (5 + serverlag) * 1000, 0, 0, 120 * 1000, cooltime = -1).wrap(core.SummonSkillWrapper)
         UnityOfPower = core.DamageSkill(BuccaneerSkills.PowerUnity.value, 690, 650, 5, cooltime = 10000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #완충시에만 사용 가능, 에너지 1500 소모.
-        UnityOfPowerBuff = core.BuffSkill(f"{BuccaneerSkills.PowerUnity.value}(debuff | 디버프)", 0, 90 * 1000, cooltime = -1, crit_damage = 40).wrap(core.BuffSkillWrapper)   #4스택 가정.
+        UnityOfPowerBuff = core.BuffSkill(f"{BuccaneerSkills.PowerUnity.value}(Debuff | 디버프)", 0, 90 * 1000, cooltime = -1, crit_damage = 40).wrap(core.BuffSkillWrapper)   #4스택 가정.
         EpicAdventure = core.BuffSkill(BuccaneerSkills.EpicAdventure.value, 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
         # 5th
@@ -223,15 +223,15 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         Transform = core.BuffSkill(BuccaneerSkills.Meltdown.value, 450, (50+vEhc.getV(1,1))*1000, cooltime = 180 * 1000, red=True, pdamage_indep = 20 + vEhc.getV(1,1) // 5).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
-        TransformEnergyOrbDummy = core.DamageSkill("Enerygy Orb | 에너지 오브(dummy | 더미)", 0, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
+        TransformEnergyOrbDummy = core.DamageSkill("Energy Orb | 에너지 오브(Dummy | 더미)", 0, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
         TransformEnergyOrb = core.DamageSkill("Energy Orb | 에너지 오브", 780, 450 +vEhc.getV(1,1)*18, 3 * TRANSFORM_HIT, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
 
         SerpentScrew = core.SummonSkill(BuccaneerSkills.LordoftheDeep.value, 600, 260, 360 + vEhc.getV(0,0)*14, 3, 99999 * 10000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
-        SerpentScrewDummy = core.SummonSkill(f"{BuccaneerSkills.LordoftheDeep.value}(continuing | 지속)", 0, 1000, 0, 0, 99999 * 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        SerpentScrewDummy = core.SummonSkill(f"{BuccaneerSkills.LordoftheDeep.value}(Continuing | 지속)", 0, 1000, 0, 0, 99999 * 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
     
         FuriousCharge = core.DamageSkill(BuccaneerSkills.SerpentVortex.value, 420, 600+vEhc.getV(4,4)*24, 10, cooltime = 10 * 1000, modifier = core.CharacterModifier(boss_pdamage = 30)).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
 
-        HowlingFistInit = core.DamageSkill(f"{BuccaneerSkills.HowlingFist.value}(cast | 개시)", 240, 0, 0, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        HowlingFistInit = core.DamageSkill(f"{BuccaneerSkills.HowlingFist.value}(Cast | 개시)", 240, 0, 0, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         HowlingFistCharge = core.DamageSkill(f"{BuccaneerSkills.HowlingFist.value}(Charge | 충전)", 240, 425+17*vEhc.getV(0,0), 6, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         HowlingFistFinal = core.DamageSkill(f"{BuccaneerSkills.HowlingFist.value}(Final attack | 막타)", 1950, 525+21*vEhc.getV(0,0), 10*14, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 

@@ -133,7 +133,7 @@ def comboBuilder(name, skill_list):
     cnst_list = []
     for sk in skill_list:
         if DynamicVariableOperation.reveal_argument(sk.skill.cooltime) > 0:
-            cnst_list += [core.ConstraintElement(sk._id + "(cooldown | 쿨타임)", sk, partial(sk.is_cooltime_left, delaySum, -1))]
+            cnst_list += [core.ConstraintElement(sk._id + "(Cooldown | 쿨타임)", sk, partial(sk.is_cooltime_left, delaySum, -1))]
         delaySum += DynamicVariableOperation.reveal_argument(sk.skill.delay)
 
     for cnst in cnst_list:
