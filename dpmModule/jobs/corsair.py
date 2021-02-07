@@ -1,3 +1,7 @@
+from enum import Enum
+
+from .globalSkill import GlobalSkills
+from .jobbranch.pirates import PirateSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -9,6 +13,60 @@ from .jobclass import adventurer
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Corsair here https://maplestory.fandom.com/wiki/Corsair/Skills
+class CorsairSkills(Enum):
+    # Link Skill
+    PirateBlessing = 'Pirate Blessing | 파이렛 블레스'
+    # 1st Job
+    SommersaultKick = 'Sommersault Kick | 써머솔트 킥'
+    DoubleShot = 'Double Shot | 더블 파이어'
+    Octopush = 'Octopush | 옥토푸시'
+    Dash = 'Dash | 대쉬'
+    ShadowHeart = 'Shadow Heart | 크리티컬 로어'
+    BulletTime = 'Bullet Time | 퀵모션'
+    # 2nd Job
+    TripleFire = 'Triple Fire | 트리플 파이어'
+    ScurvySummons = 'Scurvy Summons | 서먼 크루'
+    RapidBlast = 'Rapid Blast | 매그넘 샷'
+    RecoilShot = 'Recoil Shot | 백스텝샷'
+    GunBooster = 'Gun Booster | 건 부스터'
+    Wings = 'Wings | 윙즈'
+    InfinityBlast = 'Infinity Blast | 인피닛 불릿'
+    GunMastery = 'Gun Mastery | 건 마스터리'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    # 3rd Job
+    Blunderbuster = 'Blunderbuster | 더블 배럴 샷'
+    BlackbootBill = 'Blackboot Bill | 불릿 스매시'
+    OctoCannon = 'Octo-Cannon | 옥타 쿼터덱'
+    RolloftheDice = 'Roll of the Dice | 럭키 다이스'
+    CrossCutBlast = 'Cross Cut Blast | 할로포인트 불릿'
+    OutlawsCode = 'Outlaw\'s Code | 발키리 페이션트'
+    FullmetalJacket = 'Fullmetal Jacket | 풀 메탈 재킷'
+    AllAboard = 'All Aboard | 어셈블 크루'
+    # 4th Job
+    RapidFire = 'Rapid Fire | 래피드 파이어'
+    Broadside = 'Broadside | 배틀쉽 봄버'
+    BrainScrambler = 'Brain Scrambler | 헤드 샷'
+    Parrotargetting = 'Parrotargetting | 컨티뉴얼 에이밍'
+    EightLegsEaston = 'Eight-Legs Easton | 퍼실레이드'
+    NautilusStrike = 'Nautilus Strike | 전함 노틸러스'
+    Quickdraw = 'Quickdraw | 퀵 드로우'
+    JollyRoger = 'Jolly Roger | 파이렛 스타일'
+    PiratesRevenge = 'Pirate\'s Revenge | 카운터 어택'
+    DoubleDown = 'Double Down | 더블 럭키 다이스'
+    AhoyMateys = 'Ahoy Mateys | 크루 커맨더쉽'
+    MajesticPresence = 'Majestic Presence | 캡틴 디그니티'
+    # Hypers
+    UglyBomb = 'Ugly Bomb | 스트레인지 봄'
+    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
+    WhalersPotion = 'Whaler\'s Potion | 언위어링 넥타'
+    # 5th Job
+    BulletBarrage = 'Bullet Barrage | 불릿 파티'
+    TargetLock = 'Target Lock | 데드아이'
+    NautilusAssault = 'Nautilus Assault | 노틸러스 어썰트'
+    DeathTrigger = 'Death Trigger | 데스 트리거'
 
 
 class JobGenerator(ck.JobGenerator):
