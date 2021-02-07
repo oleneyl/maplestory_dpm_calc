@@ -1,3 +1,7 @@
+from enum import Enum
+
+from .globalSkill import GlobalSkills
+from .jobbranch.thieves import ThiefSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -10,6 +14,61 @@ from math import ceil
 from typing import Any, Dict
 
 # TODO: Why is Retouda 5th order value 1,1, but Retouda passive is 2,2? 왜 레투다는 5차값이 1,1인데 레투다 패시브는 2,2일까?
+
+
+# English skill information for Dual Blade here https://maplestory.fandom.com/wiki/Dual_Blade/Skills
+class DualBladeSkills(Enum):
+    # Link Skill
+    ThiefsCunning = 'Thief\'s Cunning | 시프 커닝'
+    # Rogue
+    DarkSight = 'Dark Sight | 다크 사이트'
+    FlashJump = 'Flash Jump | 플래시 점프'
+    SideStep = 'Side Step | 사이드 스텝'
+    BanditSlash = 'Bandit Slash | 샤프 슬래시'
+    # Blade Recruit
+    KataraMastery = 'Katara Mastery | 이도류 마스터리'
+    SelfHaste = 'Self Haste | 셀프 헤이스트'
+    TornadoSpin = 'Tornado Spin | 토네이도 스핀'
+    # Blade Acolyte
+    FatalBlow = 'Fatal Blow | 페이탈 블로우'
+    SlashStorm = 'Slash Storm | 슬래시 스톰'
+    ChannelKarma = 'Channel Karma | 카르마'
+    KataraBooster = 'Katara Booster | 이도 부스터'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    # Blade Specialist
+    FlyingAssaulter = 'Flying Assaulter | 플라잉 어썰터'
+    UpperStab = 'Upper Stab | 어퍼 스탭'
+    Flashbang = 'Flashbang | 플래시 뱅'
+    Venom = 'Venom | 베놈'
+    # Blade Lord
+    BloodyStorm = 'Bloody Storm | 블러디 스톰'
+    BladeAscension = 'Blade Ascension | 블레이드 어센션'
+    ChainsofHell = 'Chains of Hell | 사슬지옥'
+    MirrorImage = 'Mirror Image | 미러이미징'
+    AdvancedDarkSight = 'Advanced Dark Sight | 어드밴스드 다크 사이트'
+    LifeDrain = 'Life Drain | 바이탈 스틸'
+    EnvelopingDarkness = 'Enveloping Darkness | 래디컬 다크니스'
+    ShadowMeld = 'Shadow Meld | 섀도우 이베이젼'
+    # Blade Master
+    BladeFury = 'Blade Fury | 블레이드 퓨리'
+    PhantomBlow = 'Phantom Blow | 팬텀 블로우'
+    FinalCut = 'Final Cut | 파이널 컷'
+    SuddenRaid = 'Sudden Raid | 써든레이드'
+    MirroredTarget = 'Mirrored Target | 더미 이펙트'
+    Thorns = 'Thorns | 쏜즈 이펙트'
+    Sharpness = 'Sharpness | 샤프니스'
+    ToxicVenom = 'Toxic Venom | 페이탈 베놈'
+    KataraExpert = 'Katara Expert | 이도류 엑스퍼트'
+    # Hypers
+    AsurasAnger = 'Asura\'s Anger | 아수라'
+    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
+    BladeClone = 'Blade Clone | 히든 블레이드'
+    # 5th Job
+    BladeTempest = 'Blade Tempest | 블레이드 스톰'
+    BladesofDestiny = 'Blades of Destiny | 카르마 퓨리'
+    BladeTornado = 'Blade Tornado | 블레이드 토네이도'
+    HauntedEdge = 'Haunted Edge | 헌티드 엣지'
+
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
