@@ -1,3 +1,5 @@
+from enum import Enum
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
@@ -9,7 +11,64 @@ from . import jobutils
 from math import ceil
 from typing import Any, Dict
 
-# TODO: Assuming 100% Bulble Bble duration simulation reflecting force usage (it seems very difficult). 블블 100% 가정하는 중. 포스 사용을 반영해서 블블 지속시간 시뮬레이션(엄청 어려울듯).
+# TODO: Assuming 100% Blue Blood duration simulation reflecting force usage (it seems very difficult). 블블 100% 가정하는 중. 포스 사용을 반영해서 블블 지속시간 시뮬레이션(엄청 어려울듯).
+
+
+# English skill information for Demon Slayer here https://maplestory.fandom.com/wiki/Demon_Slayer/Skills
+class DemonSlayerSkills(Enum):
+    # Link Skill
+    FuryUnleashed = 'Fury Unleashed | 데몬스 퓨리'
+    # Beginner
+    DarkWinds = 'Dark Winds | 데몬 점프'
+    DemonicBlood = 'Demonic Blood | 데모닉 블러드'
+    DemonWings = 'Demon Wings | 데빌 윙즈'
+    CurseofFury = 'Curse of Fury | 데스 커스'
+    # 1st Job
+    DemonLash = 'Demon Lash | 데몬 슬래시'
+    GrimScythe = 'Grim Scythe | 데빌 사이더'
+    BattlePact = 'Battle Pact | 데몬 부스터'
+    ShadowSwiftness = 'Shadow Swiftness | 다크 어질리티'
+    HPBoost = 'HP Boost | HP증가'
+    # 2nd Job
+    BarbedLash = 'Barbed Lash | 데몬 슬래시 1차 강화'
+    SoulEater = 'Soul Eater | 소울 이터'
+    DarkThrust = 'Dark Thrust | 다크 쓰러스트'
+    ChaosLock = 'Chaos Lock | 데몬 트레이스'
+    Vengeance = 'Vengeance | 다크 리벤지'
+    WeaponMastery = 'Weapon Mastery | 웨폰 마스터리'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    Outrage = 'Outrage | 아웃레이지'
+    # 3rd Job
+    DemonLashArch = 'Demon Lash Arch | 데몬 슬래시 2차 강화'
+    Judgment = 'Judgment | 다크 저지먼트'
+    VortexofDoom = 'Vortex of Doom | 데쓰 드로우'
+    RavenStorm = 'Raven Storm | 블러디 레이븐'
+    CarrionBreath = 'Carrion Breath | 데모닉 브레스'
+    BlackHeartedStrength = 'Black-Hearted Strength | 다크 인듀어'
+    InsulttoInjury = 'Insult to Injury | 이블 토쳐'
+    FocusedFury = 'Focused Fury | 컨센트레이션'
+    PossessedAegis = 'Possessed Aegis | 포스 가드'
+    MaxFury = 'Max Fury | 맥스 포스'
+    # 4th Job
+    DemonThrash = 'Demon Thrash | 데몬 슬래시 최종 강화'
+    InfernalConcussion = 'Infernal Concussion | 데몬 익스플로젼'
+    DemonImpact = 'Demon Impact | 데몬 임팩트'
+    DemonCry = 'Demon Cry | 데빌 크라이'
+    BindingDarkness = 'Binding Darkness | 다크 바인드'
+    DarkMetamorphosis = 'Dark Metamorphosis | 메타모포시스'
+    BoundlessRage = 'Boundless Rage | 인피니티 포스'
+    LeechAura = 'Leech Aura | 뱀피릭 터치'
+    BarricadeMastery = 'Barricade Mastery | 어드밴스드 웨폰 마스터리'
+    ObsidianSkin = 'Obsidian Skin | 하드 스킨'
+    # Hypers
+    CerberusChomp = 'Cerberus Chomp | 서버러스'
+    DemonicFortitude = 'Demonic Fortitude | 데몬 포티튜드'
+    BlueBlood = 'Blue Blood | 블루 블러드'
+    # 5th Job
+    DemonAwakening = 'Demon Awakening | 데몬 어웨이크닝'
+    SpiritofRage = 'Spirit of Rage | 요르문간드'
+    Orthrus = 'Orthrus | 오르트로스'
+    DemonBane = 'Demon Bane | 데몬 베인'
 
 
 class JobGenerator(ck.JobGenerator):
