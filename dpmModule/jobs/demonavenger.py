@@ -129,8 +129,9 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=30)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-5+0.5*ceil(passive_level/2))
+        DiabolicRecoveryActive = core.InformedCharacterModifier("디아볼릭 리커버리", pstat_main=25)
 
-        return [WeaponConstant, Mastery]
+        return [WeaponConstant, Mastery, DiabolicRecoveryActive]
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         """
@@ -155,7 +156,8 @@ class JobGenerator(ck.JobGenerator):
 
         # 펫버프
         Booster = core.BuffSkill("데몬 부스터", 0, 180*1000).wrap(core.BuffSkillWrapper)
-        DiabolicRecovery = core.BuffSkill("디아볼릭 리커버리", 0, 180*1000, pstat_main=25).wrap(core.BuffSkillWrapper)
+        # DiabolicRecovery = core.BuffSkill("디아볼릭 리커버리", 0, 180*1000, pstat_main=25).wrap(core.BuffSkillWrapper)
+        DiabolicRecovery = core.SummonSkill("디아볼릭 리커버리(HP 회복)", 0, 4000, 0, 0, 99999999).wrap(core.SummonSkillWrapper)  # 자체 효과는 get_not_implied_skill_list()로 이동
         WardEvil = core.BuffSkill("리프랙트 이블", 0, 180*1000).wrap(core.BuffSkillWrapper)
 
         ForbiddenContract = core.BuffSkill("포비든 컨트랙트", 1020, 30*1000, cooltime=75*1000, pdamage=10).wrap(core.BuffSkillWrapper)
@@ -197,7 +199,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 초당 10.8타 가정
         # http://www.inven.co.kr/board/maple/2304/23974
-        FrenzyBuff = FrenzyBuffWrapper(core.BuffSkill("데몬 프렌지(버프)", 720, 999999999), vEhc.getV(0, 0), 500000)
+        FrenzyBuff = FrenzyBuffWrapper(core.BuffSkill("데몬 프렌지(버프)", 720, 999999999), vEhc.getV(0, 0), 500000)  # TODO: 500000 대신 현재 스탯 수치를 넣어야 함
         DemonFrenzy = core.SummonSkill("데몬 프렌지", 0, 1000/10.8, 300+8*vEhc.getV(0, 0), FRENZY_STACK, 99999999).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         # 블피 (3중첩)
@@ -282,11 +284,13 @@ class JobGenerator(ck.JobGenerator):
         ExecutionExceed.onAfter(FrenzyBuff.consumeController(4))
 
         # HP 회복
+        DemonFrenzy.onTick(FrenzyBuff.chargeController(FRENZY_STACK * (1 + FrenzyBuff.level // 30), True))  # 중첩 수만큼 한번에 회복
         ReleaseOverload.onAfter(FrenzyBuff.chargeController(100))
         DemonicBlast.onAfter(FrenzyBuff.chargeController(25, True))
+        DiabolicRecovery.onTick(FrenzyBuff.chargeController(5))
+
         # 회복의 축복 (임시로 이계의 공허에 연동)
         AnotherVoid.onAfter(FrenzyBuff.chargeController(15+vEhc.getV(0,0)//2, True))
-
 
         # TODO: 이하 정확한 수치 확인필요
         # 앱졸브 라이프: 익시드 스택이 2씩 쌓일수록 체력 회복량 1%씩 감소
@@ -300,7 +304,6 @@ class JobGenerator(ck.JobGenerator):
         ArmorBreak.onAfter(FrenzyBuff.chargeController(2))
 
         # TODO: 쓸만한 스킬들 HP 코스트 적용 필요 (각각 5%)
-        # TODO: 디아볼릭 리커버리의 4초당 HP 회복
         # TODO: 프렌지 미사용시 예외처리 필요
 
 
