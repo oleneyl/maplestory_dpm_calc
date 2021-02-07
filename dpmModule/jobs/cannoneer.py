@@ -1,3 +1,7 @@
+from enum import Enum
+
+from .globalSkill import GlobalSkills
+from .jobbranch.pirates import PirateSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
@@ -8,6 +12,55 @@ from .jobclass import adventurer
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Cannoneer here https://maplestory.fandom.com/wiki/Cannoneer/Skills
+class CannoneerSkills(Enum):
+    # Link SKill
+    PirateBlessing = 'Pirate Blessing | 파이렛 블레스'
+    # 1st Job
+    CannonBlaster = 'Cannon Blaster | 캐논 스플래셔'
+    CannonStrike = 'Cannon Strike | 펀칭 캐논'
+    BlastBack = 'Blast Back | 기간틱 백스탭'
+    MonkeyPush = 'Monkey Push | 몽키푸시'
+    CannonBoost = 'Cannon Boost | 빌드업 캐논'
+    # 2nd Job
+    ScatterShot = 'Scatter Shot | 슬러그 샷'
+    BarrelBomb = 'Barrel Bomb | 몽키 러쉬붐'
+    CannonBooster = 'Cannon Booster | 캐논 부스터'
+    MonkeyMagic = 'Monkey Magic | 몽키 매직'
+    CriticalFire = 'Critical Fire | 크리티컬 파이어'
+    CannonMastery = 'Cannon Mastery | 캐논 마스터리'
+    PirateTraining = 'Pirate Training | 파이렛 트레이닝'
+    # 3rd job
+    CannonSpike = 'Cannon Spike | 캐논 스파이크'
+    MonkeyFury = 'Monkey Fury | 몽키 퓨리어스'
+    MonkeyWave = 'Monkey Wave | 몽키 웨이브'
+    CannonJump = 'Cannon Jump | 캐논 점프'
+    BarrelRoulette = 'Barrel Roulette | 오크통 룰렛'
+    RolloftheDice = 'Roll of the Dice | 럭키 다이스'
+    ReinforcedCannon = 'Reinforced Cannon | 리인포스 캐논'
+    PirateRush = 'Pirate Rush | 바이탈 익스트림'
+    CounterCrush = 'Counter Crush | 반격의 슈터'
+    # 4th Job
+    CannonBazooka = 'Cannon Bazooka | 캐논 바주카'
+    CannonBarrage = 'Cannon Barrage | 캐논 버스터'
+    AnchorsAweigh = 'Anchors Aweigh | 마그네틱 앵커'
+    MonkeyMilitia = 'Monkey Militia | 서포트 몽키 트윈스'
+    NautilusStrike = 'Nautilus Strike | 전함 노틸러스'
+    PiratesSpirit = 'Pirate\'s Spirit | 파이렛 스피릿'
+    CannonOverload = 'Cannon Overload | 오버버닝 캐논'
+    MegaMonkeyMagic = 'Mega Monkey Magic | 하이퍼 몽키 스펠'
+    DoubleDown = 'Double Down | 더블 럭키 다이스'
+    # Hypers
+    RollingRainbow = 'Rolling Rainbow | 롤링 캐논 레인보우'
+    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
+    Buckshot = 'Buckshot | 벅 샷'
+    # 5th Job
+    CannonofMassDestruction = 'Cannon of Mass Destruction | 빅 휴즈 기간틱 캐논볼'
+    TheNuclearOption = 'The Nuclear Option | ICBM'
+    MonkeyBusiness = 'Monkey Business | 스페셜 몽키 에스코트'
+    Poolmaker = 'Poolmaker | 풀 메이커'
 
 
 class JobGenerator(ck.JobGenerator):
