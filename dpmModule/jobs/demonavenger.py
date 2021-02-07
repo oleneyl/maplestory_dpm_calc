@@ -249,7 +249,60 @@ class JobGenerator(ck.JobGenerator):
 
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
+        ### 데몬 프렌지 HP% 구현 ###
         FrenzyBuff.onAfter(DemonFrenzy)
+
+        # 포비든 컨트랙트
+        ForbiddenContract.onAfter(FrenzyBuff.beginForbiddenContract())
+        ForbiddenContract.onEventEnd(FrenzyBuff.endForbiddenContract())
+
+        # HP 소모
+        FrenzyBuff.onAfter(FrenzyBuff.consumeController(20))
+        BatSwarm.onAfter(FrenzyBuff.consumeController(1))
+        Booster.onAfter(FrenzyBuff.consumeController(200, True))
+        WardEvil.onAfter(FrenzyBuff.consumeController(900, True))
+        DiabolicRecovery.onAfter(FrenzyBuff.consumeController(900, True))
+        ArmorBreak.onAfter(FrenzyBuff.consumeController(1000, True))
+        ShieldChasing.onAfter(FrenzyBuff.consumeController(8))
+        ForbiddenContract.onAfter(FrenzyBuff.consumeController(5000, True))
+        DemonicFortitude.onAfter(FrenzyBuff.consumeController(100, True))
+        AuraWeapon.onAfter(FrenzyBuff.consumeController(10))
+        CallMastema.onAfter(FrenzyBuff.consumeController(5))
+        AnotherGoddessBuff.onAfter(FrenzyBuff.consumeController(5))
+        DimensionSword.onAfter(FrenzyBuff.consumeController(20))
+        Revenant.onAfter(FrenzyBuff.consumeController(25))
+        MirrorBreak.onAfter(FrenzyBuff.consumeController(15))
+        
+        # TODO: 블러드 피스트 (시전시 1%, 이후 7초간 초당 3%)
+        # DemonicBlast.onBefore(FrenzyBuff.consumeController(1))
+
+        # TODO: 이하 정확한 수치 확인필요
+        Execution_2.onAfter(FrenzyBuff.consumeController(4))
+        Execution_3.onAfter(FrenzyBuff.consumeController(4))
+        ExecutionExceed.onAfter(FrenzyBuff.consumeController(4))
+
+        # HP 회복
+        ReleaseOverload.onAfter(FrenzyBuff.chargeController(100))
+        DemonicBlast.onAfter(FrenzyBuff.chargeController(25, True))
+        # 회복의 축복 (임시로 이계의 공허에 연동)
+        AnotherVoid.onAfter(FrenzyBuff.chargeController(15+vEhc.getV(0,0)//2, True))
+
+
+        # TODO: 이하 정확한 수치 확인필요
+        # 앱졸브 라이프: 익시드 스택이 2씩 쌓일수록 체력 회복량 1%씩 감소
+        # 이즈 익시드 페인: 영구적으로 익시드 오버로드 수치로 인해 감소되는 HP 흡수량 2% 감소
+        BatSwarm.onTick(FrenzyBuff.chargeController(2))
+        Execution_2.onAfter(FrenzyBuff.chargeController(2))
+        Execution_3.onAfter(FrenzyBuff.chargeController(2))
+        ExecutionExceed.onAfter(FrenzyBuff.chargeController(2))
+        # ShieldChasing.onTick(FrenzyBuff.chargeController(2))
+        ShieldChasing.onAfter(FrenzyBuff.chargeController(2))
+        ArmorBreak.onAfter(FrenzyBuff.chargeController(2))
+
+        # TODO: 쓸만한 스킬들 HP 코스트 적용 필요 (각각 5%)
+        # TODO: 디아볼릭 리커버리의 4초당 HP 회복
+        # TODO: 프렌지 미사용시 예외처리 필요
+
 
         return(BasicAttack,
                [FrenzyBuff, globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_hyper_body_demonavenger(),
