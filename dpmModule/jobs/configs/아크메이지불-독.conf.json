@@ -1,17 +1,17 @@
 {
-    "메디테이션": {
+    "Meditation | 메디테이션": {
         "cooltime": 0,
         "delay": 0,
-        "name": "메디테이션",
+        "name": "Meditation | 메디테이션",
         "red": true,
         "rem": true,
         "remain": 240000,
         "type": "DamageSkill"
     },
-    "에픽 어드벤처": {
+    "Epic Adventure | 에픽 어드벤처": {
         "cooltime": 120000,
         "delay": 0,
-        "name": "에픽 어드벤처",
+        "name": "Epic Adventure | 에픽 어드벤처",
         "red": false,
         "rem": false,
         "remain": 60000,
@@ -26,10 +26,10 @@
         "remain": 41000,
         "type": "DamageSkill"
     },
-    "페럴라이즈": {
+    "Paralyze | 페럴라이즈": {
         "cooltime": 0,
         "delay": 600,
-        "name": "페럴라이즈",
+        "name": "Paralyze | 페럴라이즈",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {
@@ -45,10 +45,10 @@
         "hit": 8,
         "type": "DamageSkill"
     },
-    "텔레포트 마스터리": {
+    "Teleport Mastery | 텔레포트 마스터리": {
         "cooltime": -1,
         "delay": 0,
-        "name": "텔레포트 마스터리",
+        "name": "Teleport Mastery | 텔레포트 마스터리",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {
@@ -63,10 +63,10 @@
         "hit": 1,
         "type": "DamageSkill"
     },
-    "플레임 헤이즈": {
+    "Flame Haze | 플레임 헤이즈": {
         "cooltime": 10000,
         "delay": 1080,
-        "name": "플레임 헤이즈",
+        "name": "Flame Haze | 플레임 헤이즈",
         "red": true,
         "rem": false,
         "_static_skill_modifier": {
@@ -81,10 +81,10 @@
         "hit": 15,
         "type": "DamageSkill"
     },
-    "미스트 이럽션": {
+    "Mist Eruption | 미스트 이럽션": {
         "cooltime": 4000,
         "delay": 720,
-        "name": "미스트 이럽션",
+        "name": "Mist Eruption | 미스트 이럽션",
         "red": true,
         "rem": false,
         "_static_skill_modifier": {
@@ -102,10 +102,10 @@
         "hit": 60,
         "type": "DamageSkill"
     },
-    "도트 퍼니셔": {
+    "DoT Punisher | 도트 퍼니셔": {
         "cooltime": 25000,
         "delay": 690,
-        "name": "도트 퍼니셔",
+        "name": "DoT Punisher | 도트 퍼니셔",
         "red": true,
         "rem": false,
         "_static_skill_modifier": {},
@@ -113,10 +113,10 @@
         "hit": 5,
         "type": "DamageSkill"
     },
-    "도트 퍼니셔(초과)": {
+    "DoT Punisher | 도트 퍼니셔(Exceed | 초과)": {
         "cooltime": 0,
         "delay": 0,
-        "name": "도트 퍼니셔(초과)",
+        "name": "DoT Punisher | 도트 퍼니셔(Exceed | 초과)",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {
@@ -126,10 +126,10 @@
         "hit": 105,
         "type": "DamageSkill"
     },
-    "포이즌 노바": {
+    "Poison Nova | 포이즌 노바": {
         "cooltime": 25000,
         "delay": 570,
-        "name": "포이즌 노바",
+        "name": "Poison Nova | 포이즌 노바",
         "red": true,
         "rem": false,
         "_static_skill_modifier": {},
@@ -137,10 +137,10 @@
         "hit": 12,
         "type": "DamageSkill"
     },
-    "포이즌 노바(폭발)": {
+    "Poison Nova | 포이즌 노바(Erupt | 폭발)": {
         "cooltime": 0,
         "delay": 0,
-        "name": "포이즌 노바(폭발)",
+        "name": "Poison Nova | 포이즌 노바(Erupt | 폭발)",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -148,10 +148,10 @@
         "hit": 36,
         "type": "DamageSkill"
     },
-    "포이즌 노바(폭발)(초과)": {
+    "Poison Nova | 포이즌 노바(Erupt | 폭발)(Exceed | 초과)": {
         "cooltime": 0,
         "delay": 0,
-        "name": "포이즌 노바(폭발)(초과)",
+        "name": "Poison Nova | 포이즌 노바(Erupt | 폭발)(Exceed | 초과)",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {
@@ -161,10 +161,10 @@
         "hit": 12,
         "type": "DamageSkill"
     },
-    "포이즌 체인": {
+    "Poison Chain | 포이즌 체인": {
         "cooltime": 30000,
         "delay": 600,
-        "name": "포이즌 체인",
+        "name": "Poison Chain | 포이즌 체인",
         "red": true,
         "rem": false,
         "_static_skill_modifier": {},
@@ -172,10 +172,10 @@
         "hit": 4,
         "type": "DamageSkill"
     },
-    "포이즌 체인(중독)": {
+    "Poison Chain | 포이즌 체인(Addition | 중독)": {
         "cooltime": -1,
         "delay": 1800,
-        "name": "포이즌 체인(중독)",
+        "name": "Poison Chain | 포이즌 체인(Addition | 중독)",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -185,10 +185,10 @@
         "summondelay": 0,
         "type": "SummonSkill"
     },
-    "메테오": {
+    "Meteor Shower | 메테오": {
         "cooltime": 45000,
         "delay": 690,
-        "name": "메테오",
+        "name": "Meteor Shower | 메테오",
         "red": true,
         "rem": false,
         "_static_skill_modifier": {
@@ -203,10 +203,10 @@
         "hit": 12,
         "type": "DamageSkill"
     },
-    "메기도 플레임": {
+    "Megiddo Flame | 메기도 플레임": {
         "cooltime": 50000,
         "delay": 690,
-        "name": "메기도 플레임",
+        "name": "Megiddo Flame | 메기도 플레임",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {
@@ -221,10 +221,10 @@
         "hit": 15,
         "type": "DamageSkill"
     },
-    "이프리트": {
+    "Ifrit | 이프리트": {
         "cooltime": 0,
         "delay": 3030,
-        "name": "이프리트",
+        "name": "Ifrit | 이프리트",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {
@@ -240,10 +240,10 @@
         "summondelay": 600,
         "type": "SummonSkill"
     },
-    "파이어 오라": {
+    "Inferno Aura | 파이어 오라": {
         "cooltime": 0,
         "delay": 3000,
-        "name": "파이어 오라",
+        "name": "Inferno Aura | 파이어 오라",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {
@@ -262,10 +262,10 @@
         "summondelay": 0,
         "type": "SummonSkill"
     },
-    "퓨리 오브 이프리트": {
+    "Elemental Fury | 퓨리 오브 이프리트": {
         "cooltime": 75000,
         "delay": 240.0,
-        "name": "퓨리 오브 이프리트",
+        "name": "Elemental Fury | 퓨리 오브 이프리트",
         "red": true,
         "rem": false,
         "_static_skill_modifier": {},
@@ -299,10 +299,10 @@
         "summondelay": 0,
         "type": "SummonSkill"
     },
-    "메테오(패시브)": {
+    "Meteor Shower | 메테오(Passive | 패시브)": {
         "cooltime": 0,
         "delay": 0,
-        "name": "메테오(패시브)",
+        "name": "Meteor Shower | 메테오(Passive | 패시브)",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {
@@ -317,10 +317,10 @@
         "hit": 0.62,
         "type": "DamageSkill"
     },
-    "이그나이트": {
+    "Ignite | 이그나이트": {
         "cooltime": 0,
         "delay": 0,
-        "name": "이그나이트",
+        "name": "Ignite | 이그나이트",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {
@@ -334,10 +334,10 @@
         "hit": 4.5,
         "type": "DamageSkill"
     },
-    "이그나이트(메테오)": {
+    "Ignite | 이그나이트(Meteor Shower | 메테오)": {
         "cooltime": 0,
         "delay": 0,
-        "name": "이그나이트(메테오)",
+        "name": "Ignite | 이그나이트(Meteor Shower | 메테오)",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {
@@ -351,10 +351,10 @@
         "hit": 2.79,
         "type": "DamageSkill"
     },
-    "페럴라이즈(도트)": {
+    "Paralyze | 페럴라이즈(DoT | 도트)": {
         "cooltime": -1,
         "delay": 1000,
-        "name": "페럴라이즈(도트)",
+        "name": "Paralyze | 페럴라이즈(DoT | 도트)",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -364,10 +364,10 @@
         "summondelay": 0,
         "type": "SummonSkill"
     },
-    "포이즌 미스트(도트)": {
+    "Poison Mist | 포이즌 미스트(DoT | 도트)": {
         "cooltime": -1,
         "delay": 1000,
-        "name": "포이즌 미스트(도트)",
+        "name": "Poison Mist | 포이즌 미스트(DoT | 도트)",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -377,10 +377,10 @@
         "summondelay": 0,
         "type": "SummonSkill"
     },
-    "이프리트(도트)": {
+    "Ifrit | 이프리트(DoT | 도트)": {
         "cooltime": -1,
         "delay": 1000,
-        "name": "이프리트(도트)",
+        "name": "Ifrit | 이프리트(DoT | 도트)",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -390,10 +390,10 @@
         "summondelay": 0,
         "type": "SummonSkill"
     },
-    "플레임 헤이즈(도트)": {
+    "Flame Haze | 플레임 헤이즈(DoT | 도트)": {
         "cooltime": -1,
         "delay": 1000,
-        "name": "플레임 헤이즈(도트)",
+        "name": "Flame Haze | 플레임 헤이즈(DoT | 도트)",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -403,10 +403,10 @@
         "summondelay": 0,
         "type": "SummonSkill"
     },
-    "텔레포트 마스터리(도트)": {
+    "Teleport Mastery | 텔레포트 마스터리(DoT | 도트)": {
         "cooltime": -1,
         "delay": 1000,
-        "name": "텔레포트 마스터리(도트)",
+        "name": "Teleport Mastery | 텔레포트 마스터리(DoT | 도트)",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -416,10 +416,10 @@
         "summondelay": 0,
         "type": "SummonSkill"
     },
-    "포이즌 브레스(도트)": {
+    "Poison Breath | 포이즌 브레스(DoT | 도트)": {
         "cooltime": -1,
         "delay": 1000,
-        "name": "포이즌 브레스(도트)",
+        "name": "Poison Breath | 포이즌 브레스(DoT | 도트)",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -429,10 +429,10 @@
         "summondelay": 0,
         "type": "SummonSkill"
     },
-    "메기도 플레임(도트)": {
+    "Megiddo Flame | 메기도 플레임(DoT | 도트)": {
         "cooltime": -1,
         "delay": 1000,
-        "name": "메기도 플레임(도트)",
+        "name": "Megiddo Flame | 메기도 플레임(DoT | 도트)",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -442,10 +442,10 @@
         "summondelay": 0,
         "type": "SummonSkill"
     },
-    "도트 퍼니셔(도트)": {
+    "DoT Punisher | 도트 퍼니셔(DoT | 도트)": {
         "cooltime": -1,
         "delay": 1000,
-        "name": "도트 퍼니셔(도트)",
+        "name": "DoT Punisher | 도트 퍼니셔(DoT | 도트)",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -455,10 +455,10 @@
         "summondelay": 0,
         "type": "SummonSkill"
     },
-    "포이즌 노바(도트)": {
+    "Poison Nova | 포이즌 노바(DoT | 도트)": {
         "cooltime": -1,
         "delay": 1000,
-        "name": "포이즌 노바(도트)",
+        "name": "Poison Nova | 포이즌 노바(DoT | 도트)",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -468,10 +468,10 @@
         "summondelay": 0,
         "type": "SummonSkill"
     },
-    "에너지 볼트": {
+    "Energy Bolt | 에너지 볼트": {
         "cooltime": 0,
         "delay": 630,
-        "name": "에너지 볼트",
+        "name": "Energy Bolt | 에너지 볼트",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -479,10 +479,10 @@
         "hit": 1,
         "type": "DamageSkill"
     },
-    "플레임 오브": {
+    "Flame Orb | 플레임 오브": {
         "cooltime": 0,
         "delay": 630,
-        "name": "플레임 오브",
+        "name": "Flame Orb | 플레임 오브",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -490,10 +490,10 @@
         "hit": 2,
         "type": "DamageSkill"
     },
-    "포이즌 브레스": {
+    "Poison Breath | 포이즌 브레스": {
         "cooltime": 0,
         "delay": 600,
-        "name": "포이즌 브레스",
+        "name": "Poison Breath | 포이즌 브레스",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -501,10 +501,10 @@
         "hit": 1,
         "type": "DamageSkill"
     },
-    "익스플로젼": {
+    "Explosion | 익스플로젼": {
         "cooltime": 0,
         "delay": 690,
-        "name": "익스플로젼",
+        "name": "Explosion | 익스플로젼",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -512,10 +512,10 @@
         "hit": 2,
         "type": "DamageSkill"
     },
-    "포이즌 미스트": {
+    "Poison Mist | 포이즌 미스트": {
         "cooltime": 0,
         "delay": 1140,
-        "name": "포이즌 미스트",
+        "name": "Poison Mist | 포이즌 미스트",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -523,10 +523,10 @@
         "hit": 1,
         "type": "DamageSkill"
     },
-    "슬라임 바이러스": {
+    "Viral Slime | 슬라임 바이러스": {
         "cooltime": -1,
         "delay": 1000,
-        "name": "슬라임 바이러스",
+        "name": "Viral Slime | 슬라임 바이러스",
         "red": false,
         "rem": false,
         "_static_skill_modifier": {},
@@ -536,10 +536,10 @@
         "summondelay": 1680,
         "type": "SummonSkill"
     },
-    "언스테이블 메모라이즈": {
+    "Unreliable Memory | 언스테이블 메모라이즈": {
         "cooltime": 9000,
         "delay": 870,
-        "name": "언스테이블 메모라이즈",
+        "name": "Unreliable Memory | 언스테이블 메모라이즈",
         "red": true,
         "rem": false,
         "_static_skill_modifier": {},
@@ -547,52 +547,52 @@
         "hit": 0,
         "type": "DamageSkill"
     },
-    "오버로드 마나": {
+    "Mana Overload | 오버로드 마나": {
         "cooltime": 0,
         "delay": 0,
-        "name": "오버로드 마나",
+        "name": "Mana Overload | 오버로드 마나",
         "red": false,
         "rem": false,
         "remain": 999990000,
         "type": "DamageSkill"
     },
-    "메이플 용사": {
+    "Maple Warrior | 메이플 용사": {
         "cooltime": 0,
         "delay": 0,
-        "name": "메이플 용사",
+        "name": "Maple Warrior | 메이플 용사",
         "red": false,
         "rem": true,
         "remain": 915000,
         "type": "DamageSkill"
     },
-    "쓸만한 샤프 아이즈": {
+    "Decent Sharp Eyes | 쓸만한 샤프 아이즈": {
         "cooltime": 0,
         "delay": 900,
-        "name": "쓸만한 샤프 아이즈",
+        "name": "Decent Sharp Eyes | 쓸만한 샤프 아이즈",
         "red": false,
         "rem": false,
         "remain": 183000,
         "type": "DamageSkill"
     },
-    "쓸만한 컴뱃 오더스": {
+    "Decent Combat Orders | 쓸만한 컴뱃 오더스": {
         "cooltime": 0,
         "delay": 1500,
-        "name": "쓸만한 컴뱃 오더스",
+        "name": "Decent Combat Orders | 쓸만한 컴뱃 오더스",
         "red": false,
         "rem": false,
         "remain": 183000,
         "type": "DamageSkill"
     },
-    "쓸만한 윈드 부스터": {
+    "Decent Speed Infusion | 쓸만한 윈드 부스터": {
         "cooltime": 0,
         "delay": 900,
-        "name": "쓸만한 윈드 부스터",
+        "name": "Decent Speed Infusion | 쓸만한 윈드 부스터",
         "red": false,
         "rem": false,
         "remain": 183000,
         "type": "DamageSkill"
     },
-    "메이플월드 여신의 축복": {
+    "Maple World Goddess' Blessing | 메이플월드 여신의 축복": {
         "cooltime": 180000,
         "delay": 450,
         "name": "메이플월드 여신의 축복",
@@ -601,7 +601,7 @@
         "remain": 60000,
         "type": "DamageSkill"
     },
-    "소울 컨트랙트": {
+    "Terms and Conditions | 소울 컨트랙트": {
         "cooltime": 90000,
         "delay": 900,
         "name": "소울 컨트랙트",

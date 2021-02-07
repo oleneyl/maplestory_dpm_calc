@@ -7,34 +7,34 @@ jobname: 아크메이지불/독
 vEnhanceNum: 13
 preEmptiveSkills: 2
 passive_skill_list:
-- name: 하이 위즈덤
+- name: High Wisdom | 하이 위즈덤
   stat_main: 40
-- name: 스펠 마스터리
+- name: Spell Mastery | 스펠 마스터리
   att: 10
-- name: 매직 크리티컬
+- name: Arcane Overdrive | 매직 크리티컬
   crit: 30
   crit_damage: 13
-- name: 엘리멘트 엠플리피케이션
+- name: Element Amplification | 엘리멘트 엠플리피케이션
   pdamage: 50
-- name: 엘리멘탈 리셋
+- name: Elemental Decrease | 엘리멘탈 리셋
   pdamage_indep: 40
-- name: 마스터 매직
+- name: Buff Mastery | 마스터 매직
   att: 30 + 3 * passive_level
   buff_rem: 50 + 5 * passive_level
-- name: 아케인 에임
+- name: Arcane Aim | 아케인 에임
   armor_ignore: 20 + math.ceil(passive_level / 2)
 not_implied_skill_list:
-- name: 무기상수
+- name: Ignore Constant | 무기상수
   pdamage_indep: 20
-- name: 숙련도
+- name: Mastery | 숙련도익스트림 매직
   pdamage_indep: "-2.5 + 0.5 * math.ceil(combat / 2)"
-- name: 익스트림 매직
+- name: Burning Magic | 익스트림 매직
   pdamage_indep: 20
-- name: 아케인 (실시간)
+- name: Arcane Aim | 아케인 에임(Real Time | 실시간)
   pdamage: 40
-- name: 퍼번트 드레인
+- name: Fervent Drain | 퍼번트 드레인
   pdamage_indep: 25
-- name: 엘리멘탈 리셋(사용)
+- name: Elemental Decrease | 엘리멘탈 리셋(Use | 사용)
   prop_ignore: 10
 constant:
   DOT_PUNISHER_HIT: 22
@@ -46,7 +46,7 @@ constant:
   - 80
   - 125
 skills:
-  도트 퍼니셔:
+  DoT Punisher | 도트 퍼니셔:
     type: DamageSkill
     delay: 690
     damage: 400 + 15 * lv
@@ -56,14 +56,14 @@ skills:
     hit: 5
     cooltime: 25000
     red: true
-  메디테이션:
+  Meditation | 메디테이션:
     type: BuffSkill
     delay: 0
     remain: 240000
     att: 30
     rem: true
     red: true
-  에픽 어드벤처:
+  Epic Adventure | 에픽 어드벤처:
     type: BuffSkill
     cooltime: 120000
     delay: 0
@@ -71,7 +71,7 @@ skills:
     rem: false
     remain: 60000
     pdamage: 10
-  페럴라이즈:
+  Paralyze | 페럴라이즈:
     type: DamageSkill
     delay: 600
     damage: 220 + 3 * combat
@@ -82,7 +82,7 @@ skills:
     upgrade_priority: 1
     v_increment: 2
     v_crit: false
-  텔레포트 마스터리:
+  Teleport Mastery | 텔레포트 마스터리:
     cooltime: -1
     delay: 0
     red: false
@@ -94,7 +94,7 @@ skills:
     damage: 272
     hit: 1
     type: DamageSkill
-  플레임 헤이즈:
+  Flame Haze | 플레임 헤이즈:
     cooltime: 10000
     delay: 1080
     red: true
@@ -106,7 +106,7 @@ skills:
     upgrade_priority: 2
     v_increment: 2
     v_crit: true
-  미스트 이럽션:
+  Mist Eruption | 미스트 이럽션:
     cooltime: 4000
     delay: 720
     red: true
@@ -122,7 +122,7 @@ skills:
     upgrade_priority: 0
     v_increment: 2
     v_crit: false
-  도트 퍼니셔(초과):
+  DoT Punisher | 도트 퍼니셔(Exceed | 초과):
     cooltime: 0
     delay: 0
     red: false
@@ -135,7 +135,7 @@ skills:
     damage: 400 + 15 * lv
     hit: 5 * (DOT_PUNISHER_HIT - 1)
     type: DamageSkill
-  포이즌 노바:
+  Poison Nova | 포이즌 노바:
     cooltime: 25000
     delay: 570
     red: true
@@ -146,7 +146,7 @@ skills:
     tier: 5
     use_priority: 2
     upgrade_priority: 1
-  포이즌 노바(폭발):
+  Poison Nova | 포이즌 노바(Erupt | 폭발):
     cooltime: 0
     delay: 0
     red: false
@@ -157,10 +157,10 @@ skills:
     tier: 5
     use_priority: 2
     upgrade_priority: 1
-  포이즌 노바(폭발)(초과):
+  Poison Nova | 포이즌 노바(Erupt | 폭발)(Exceed | 초과):
     cooltime: 0
     delay: 0
-    name: 포이즌 노바(폭발)(초과)
+    name: Poison Nova | 포이즌 노바(Erupt | 폭발)(Exceed | 초과)
     red: false
     rem: false
     modifier:
@@ -171,7 +171,7 @@ skills:
     tier: 5
     use_priority: 2
     upgrade_priority: 1
-  포이즌 체인:
+  Poison Chain | 포이즌 체인:
     cooltime: 30000
     delay: 600
     red: true
@@ -182,7 +182,7 @@ skills:
     tier: 5
     use_priority: 0
     upgrade_priority: 0
-  포이즌 체인(중독):
+  Poison Chain | 포이즌 체인(Addition | 중독):
     cooltime: -1
     delay: 1800
     red: false
@@ -195,7 +195,7 @@ skills:
     tier: 5
     use_priority: 0
     upgrade_priority: 0
-  메테오:
+  Meteor Shower | 메테오:
     cooltime: 45000
     delay: 690
     red: true
@@ -207,7 +207,7 @@ skills:
     upgrade_priority: 5
     v_increment: 2
     v_crit: true
-  메기도 플레임:
+  Megiddo Flame | 메기도 플레임:
     cooltime: 50000
     delay: 690
     red: false
@@ -219,7 +219,7 @@ skills:
     upgrade_priority: 8
     v_increment: 2
     v_crit: true
-  이프리트:
+  Ifrit | 이프리트:
     cooltime: 0
     delay: 3030
     red: false
@@ -233,7 +233,7 @@ skills:
     upgrade_priority: 6
     v_increment: 2
     v_crit: false
-  파이어 오라:
+  Inferno Aura | 파이어 오라:
     cooltime: 0
     delay: 3000
     red: false
@@ -249,7 +249,7 @@ skills:
     upgrade_priority: 4
     v_increment: 2
     v_crit: true
-  퓨리 오브 이프리트:
+  Elemental Fury | 퓨리 오브 이프리트:
     cooltime: 75000
     delay: 240
     red: true
@@ -262,7 +262,7 @@ skills:
     tier: 5
     use_priority: 3
     upgrade_priority: 2
-  메테오(패시브):
+  Meteor Shower | 메테오(Passive | 패시브):
     cooltime: 0
     delay: 0
     red: false
@@ -274,7 +274,7 @@ skills:
     upgrade_priority: 5
     v_increment: 2
     v_crit: true
-  이그나이트:
+  Ignite | 이그나이트:
     cooltime: 0
     delay: 0
     red: false
@@ -286,7 +286,7 @@ skills:
     upgrade_priority: 3
     v_increment: 4
     v_crit: false
-  이그나이트(메테오):
+  Ignite | 이그나이트(Meteor Shower | 메테오):
     cooltime: 0
     delay: 0
     red: false
@@ -298,7 +298,7 @@ skills:
     upgrade_priority: 3
     v_increment: 4
     v_crit: false
-  페럴라이즈(도트):
+  Paralyze | 페럴라이즈(DoT | 도트):
     cooltime: -1
     delay: 1000
     red: false
@@ -308,7 +308,7 @@ skills:
     remain: 10000
     summondelay: 0
     type: DotSkill
-  포이즌 미스트(도트):
+  Poison Mist | 포이즌 미스트(DoT | 도트):
     cooltime: -1
     delay: 1000
     red: false
@@ -318,7 +318,7 @@ skills:
     remain: 12000
     summondelay: 0
     type: DotSkill
-  이프리트(도트):
+  Ifrit | 이프리트(DoT | 도트):
     cooltime: -1
     delay: 1000
     red: false
@@ -328,7 +328,7 @@ skills:
     remain: 4000
     summondelay: 0
     type: DotSkill
-  플레임 헤이즈(도트):
+  Flame Haze | 플레임 헤이즈(DoT | 도트):
     cooltime: -1
     delay: 1000
     red: false
@@ -338,7 +338,7 @@ skills:
     remain: 20000
     summondelay: 0
     type: DotSkill
-  텔레포트 마스터리(도트):
+  Teleport Mastery | 텔레포트 마스터리(DoT | 도트):
     cooltime: -1
     delay: 1000
     red: false
@@ -348,7 +348,7 @@ skills:
     remain: 8000
     summondelay: 0
     type: DotSkill
-  포이즌 브레스(도트):
+  Poison Breath | 포이즌 브레스(DoT | 도트):
     cooltime: -1
     delay: 1000
     red: false
@@ -358,7 +358,7 @@ skills:
     remain: 20000
     summondelay: 0
     type: DotSkill
-  메기도 플레임(도트):
+  Megiddo Flame | 메기도 플레임(DoT | 도트):
     cooltime: -1
     delay: 1000
     red: false
@@ -368,7 +368,7 @@ skills:
     remain: 60000
     summondelay: 0
     type: DotSkill
-  도트 퍼니셔(도트):
+  DoT Punisher | 도트 퍼니셔(DoT | 도트):
     cooltime: -1
     delay: 1000
     red: false
@@ -381,7 +381,7 @@ skills:
     tier: 5
     use_priority: 0
     upgrade_priority: 0
-  포이즌 노바(도트):
+  Poison Nova | 포이즌 노바(DoT | 도트):
     cooltime: -1
     delay: 1000
     red: false
@@ -394,7 +394,7 @@ skills:
     tier: 5
     use_priority: 2
     upgrade_priority: 1
-  에너지 볼트:
+  Energy Bolt | 에너지 볼트:
     cooltime: 0
     delay: 630
     red: false
@@ -402,7 +402,7 @@ skills:
     damage: 309
     hit: 1
     type: DamageSkill
-  플레임 오브:
+  Flame Orb | 플레임 오브:
     cooltime: 0
     delay: 630
     red: false
@@ -410,7 +410,7 @@ skills:
     damage: 301
     hit: 2
     type: DamageSkill
-  포이즌 브레스:
+  Poison Breath | 포이즌 브레스:
     cooltime: 0
     delay: 600
     red: false
@@ -418,7 +418,7 @@ skills:
     damage: 180
     hit: 1
     type: DamageSkill
-  익스플로젼:
+  Explosion | 익스플로젼:
     cooltime: 0
     delay: 690
     red: false
@@ -426,7 +426,7 @@ skills:
     damage: 405
     hit: 2
     type: DamageSkill
-  포이즌 미스트:
+  Poison Mist | 포이즌 미스트:
     cooltime: 0
     delay: 1140
     red: false
@@ -434,7 +434,7 @@ skills:
     damage: 270
     hit: 1
     type: DamageSkill
-  슬라임 바이러스:
+  Viral Slime | 슬라임 바이러스:
     cooltime: -1
     delay: 1000
     red: false

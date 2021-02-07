@@ -40,9 +40,9 @@ class ArchmageFirePoisonSkills(Enum):
     ElementalDecrease = 'Elemental Decrease | 엘리멘탈 리셋'
     TeleportMastery = 'Teleport Mastery | 텔레포트 마스터리'
     ManaBurn = 'Mana Burn | 마나 번'
-    ElementAmplification = 'Element Amplification | 엘리먼트 엠플리피케이션'
+    ElementAmplification = 'Element Amplification | 엘리멘트 엠플리피케이션'
     ArcaneOverdrive = 'Arcane Overdrive | 매직 크리티컬'
-    BurningMagic = 'Burning Magic | 익스트림 매직(불,독)'
+    BurningMagic = 'Burning Magic | 익스트림 매직'
     # 4th Job
     Paralyze = 'Paralyze | 페럴라이즈'
     MistEruption = 'Mist Eruption | 미스트 이럽션'
@@ -67,7 +67,7 @@ class ArchmageFirePoisonSkills(Enum):
 class PoisonChainToxicWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2):
         skill = core.SummonSkill(
-            f"{ArchmageFirePoisonSkills.PoisonChain.value}(addition | 중독)",  # Poison chain (addition)
+            f"{ArchmageFirePoisonSkills.PoisonChain.value}(Addition | 중독)",  # Poison chain (addition)
             0,
             1800,
             150 + 6 * vEhc.getV(3, 2),
@@ -149,10 +149,10 @@ class JobGenerator(ck.JobGenerator):
         MistEruption = self.load_skill_wrapper(ArchmageFirePoisonSkills.MistEruption.value, vEhc)
 
         DotPunisher = self.load_skill_wrapper(ArchmageFirePoisonSkills.DoTPunisher.value, vEhc)
-        DotPunisherExceed = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.DoTPunisher.value}(exceed | 초과)", vEhc)
+        DotPunisherExceed = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.DoTPunisher.value}(Exceed | 초과)", vEhc)
         PoisonNova = self.load_skill_wrapper(ArchmageFirePoisonSkills.PoisonNova.value, vEhc)
-        PoisonNovaErupt = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.PoisonNova.value}(erupt | 폭발)", vEhc)
-        PoisonNovaEruptExceed = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.PoisonNova.value}(erupt | 폭발)(exceed | 초과)", vEhc)
+        PoisonNovaErupt = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.PoisonNova.value}(Erupt | 폭발)", vEhc)
+        PoisonNovaEruptExceed = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.PoisonNova.value}(Erupt | 폭발)(Exceed | 초과)", vEhc)
         PoisonChain = self.load_skill_wrapper(ArchmageFirePoisonSkills.PoisonChain.value, vEhc)
         PoisonChainToxic = PoisonChainToxicWrapper(vEhc, 0, 0)
 
@@ -166,7 +166,7 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         # Final Attack
-        MeteorPassive = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.MeteorShower.value}(passive | 패시브)", vEhc)
+        MeteorPassive = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.MeteorShower.value}(Passive | 패시브)", vEhc)
         Ignite = self.load_skill_wrapper(ArchmageFirePoisonSkills.Ignite.value, vEhc)
         IgniteMeteor = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.Ignite.value}({ArchmageFirePoisonSkills.MeteorShower.value})", vEhc)
         # Ignite : Need Wrapper
