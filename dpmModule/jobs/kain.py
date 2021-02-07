@@ -1,4 +1,6 @@
 from functools import partial
+
+from .jobbranch.bowmen import ArcherSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
@@ -674,7 +676,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ConcurrentRunRule("크리티컬 리인포스", "타나토스 디센트"), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(ArcherSkills.ViciousShot.value, "타나토스 디센트"), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(
