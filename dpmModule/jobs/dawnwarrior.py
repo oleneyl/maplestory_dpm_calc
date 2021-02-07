@@ -1,3 +1,5 @@
+from enum import Enum
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -8,6 +10,62 @@ from .jobclass import cygnus
 from .jobbranch import warriors
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Dawn Warrior here https://maplestory.fandom.com/wiki/Dawn_Warrior/Skills
+class DawnWarriorSkills(Enum):
+    # Link SKill
+    CygnusBlessing = 'Cygnus Blessing | 시그너스 블레스'
+    # Beginner
+    ElementalHarmony = 'Elemental Harmony | 엘리멘탈 하모니'
+    ElementalExpert = 'Elemental Expert | 엘리멘탈 엑스퍼트'
+    # 1st Job
+    TripleSlash = 'Triple Slash | 트리플 슬래시'
+    SoulElement = 'Soul Element | 엘리멘트: 소울'
+    HandofLight = 'Hand of Light | 소드 오브 라이트'
+    # 2nd Job
+    Flicker = 'Flicker | 사일런트 무브'
+    Bluster = 'Bluster | 라우드 러쉬'
+    TraceCut = 'Trace Cut | 트레이스 컷'
+    ShadowTackle = 'Shadow Tackle | 섀도우 번'
+    FallingMoon = 'Falling Moon | 폴링 문'
+    SoulSpeed = 'Soul Speed | 님블 핑거'
+    DivineHand = 'Divine Hand | 이너 트러스트'
+    SwordMastery = 'Sword Mastery | 소드 마스터리'
+    InnerHarmony = 'Inner Harmony | 바디 앤 소울'
+    # 3rd Job
+    LightMerger = 'Light Merger | 라이트 플럭스'
+    MoonShadow = 'Moon Shadow | 문 섀도우'
+    SunCross = 'Sun Cross | 선크로스'
+    MoonCross = 'Moon Cross | 문크로스'
+    RisingSun = 'Rising Sun | 라이징 선'
+    TrueSight = 'True Sight | 트루 사이트'
+    SouloftheGuardian = 'Soul of the Guardian | 소울 가디언'
+    WillofSteel = 'Will of Steel | 윌 오브 스틸'
+    InnerVoice = 'Inner Voice | 이너 샤우트'
+    # 4th Job
+    CallofCygnus = 'Call of Cygnus | 시그너스 나이츠'
+    MoonDancer = 'Moon Dancer | 댄스오브 문'
+    SpeedingSunset = 'Speeding Sunset | 스피딩 선셋'
+    SolarPierce = 'Solar Pierce | 솔라 피어스'
+    CrescentDivide = 'Crescent Divide | 크레센트 디바이드'
+    ImpalingRays = 'Impaling Rays | 소울 페네트레이션'
+    EquinoxCycle = 'Equinox Cycle | 솔루나 타임'
+    EquinoxSlash = 'Equinox Slash | 솔루나 슬래시'
+    SoulPledge = 'Soul Pledge | 소울 플레지'
+    StudentoftheBlade = 'Student of the Blade | 소드 엑스퍼트'
+    Unpredictable = 'Unpredictable | 언포시어블'
+    MasteroftheSword = 'Master of the Sword | 마스터 오브 더 소드'
+    # Hypers
+    StyxCrossing = 'Styx Crossing | 크로스 더 스틱스'
+    GloryoftheGuardians = 'Glory of the Guardians | 글로리 오브 가디언즈'
+    SoulForge = 'Soul Forge | 소울 포지'
+    # 5th Job
+    CelestialDance = 'Celestial Dance | 셀레스티얼 댄스'
+    RiftofDamnation = 'Rift of Damnation | 엘리시온'
+    SoulEclipse = 'Soul Eclipse | 소울 이클립스'
+    FlareSlash = 'Flare Slash | 플레어 슬래시'
+
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
