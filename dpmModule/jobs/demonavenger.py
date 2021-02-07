@@ -1,3 +1,7 @@
+from enum import Enum
+
+from dpmModule.jobs.globalSkill import GlobalSkills
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
@@ -15,6 +19,59 @@ from typing import Any, Dict
 Advisor:
 연어먹던곰, 키카이, 능이조아
 '''
+
+
+# English skill information for Demon Avenger here https://maplestory.fandom.com/wiki/Demon_Avenger/Skills
+class DemonAvengerSkills(Enum):
+    # Link Skill
+    WildRage = 'Wild Rage | 와일드 레이지'
+    # Beginner
+    DarkWinds = 'Dark Winds | 데몬 점프'
+    DemonicBlood = 'Demonic Blood | 데모닉 블러드'
+    DemonWings = 'Demon Wings | 데빌 윙즈'
+    Exceed = 'Exceed | 익시드'
+    HyperPotionMastery = 'Hyper Potion Mastery | 하이 이피션시'
+    StarForceConversion = 'Star Force Conversion | 컨버전 스타포스'
+    BloodPact = 'Blood Pact | 블러드 컨트랙트'
+    # 1st Job
+    ExceedDoubleSlash = 'Exceed: Double Slash | 익시드: 더블 슬래시'
+    OverloadRelease = 'Overload Release | 릴리즈 오버로드'
+    LifeSap = 'Life Sap | 앱졸브 라이프'
+    DemonicVeracity = 'Demonic Veracity | 데모닉 샤프니스'
+    # 2nd Job
+    ExceedDemonStrike = 'Exceed: Demon Strike | 익시드: 데몬 스트라이크'
+    BatSwarm = 'Bat Swarm | 배츠 스웜'
+    BattlePact = 'Battle Pact | 데몬 부스터'
+    AbyssalConnection = 'Abyssal Connection | 어비셜 레이지'
+    UnbreakableSteel = 'Unbreakable Steel | 솔리드 윌'
+    DesperadoMastery = 'Desperado Mastery | 데스페라도 마스터리'
+    RageWithin = 'Rage Within | 이너 스트렝스'
+    # 3rd Job
+    ExceedLunarSlash = 'Exceed: Lunar Slash | 익시드: 문라이트 슬래시'
+    VitalityVeil = 'Vitality Veil | 인헤일 바이탈러티'
+    ShieldCharge = 'Shield Charge | 쉴드 차지'
+    WardEvil = 'Ward Evil | 리프랙트 이블'
+    DiabolicRecovery = 'Diabolic Recovery | 디아볼릭 리커버리'
+    PainDampener = 'Pain Dampener | 이즈 익시드 페인'
+    AdvancedLifeSap = 'Advanced Life Sap | 어드밴스드 앱졸브 라이프'
+    # 4th Job
+    ExceedExecution = 'Exceed: Execution | 익시드: 엑스큐션'
+    NetherShield = 'Nether Shield | 실드 체이싱'
+    NetherSlice = 'Nether Slice | 아머 브레이크'
+    BloodPrison = 'Blood Prison | 블러디 임프리즌'
+    OverwhelmingPower = 'Overwhelming Power | 오버휄밍 파워'
+    DefenseExpertise = 'Defense Expertise | 디펜스 엑스퍼타이즈'
+    AdvancedDesperadoMastery = 'Advanced Desperado Mastery | 어드밴스드 데스페라도 마스터리'
+    InfernalExceed = 'Infernal Exceed | 인핸스드 익시드'
+    # Hypers
+    ThousandSwords = 'Thousand Swords | 사우전드 소드'
+    DemonicFortitude = 'Demonic Fortitude | 데모닉 포티튜드'
+    ForbiddenContract = 'Forbidden Contract | 포비든 컨트랙트'
+    # 5th Job
+    DemonicFrenzy = 'Demonic Frenzy | 데몬 프렌지'
+    DemonicBlast = 'Demonic Blast | 블러드 피스트'
+    DimensionalSword = 'Dimensional Sword | 디멘션 소드'
+    Revenant = 'Revenant | 레버넌트'
 
 
 class JobGenerator(ck.JobGenerator):
