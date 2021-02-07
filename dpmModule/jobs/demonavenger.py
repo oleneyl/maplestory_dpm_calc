@@ -38,8 +38,8 @@ class FrenzyBuffWrapper(core.StackSkillWrapper):
     #   - True: HP% 소모
     #   - False: 고정 HP 소모
     def consumeController(self, d, fixed=False):
-        if fixed:
-            d /= self._max
+        if not fixed:
+            d *= (0.01 * self._max)
         return core.TaskHolder(core.Task(self, partial(self.consume, d)), name=f"HP -{d}")
 
     def charge(self, d):
@@ -253,6 +253,7 @@ class JobGenerator(ck.JobGenerator):
 
         ### 데몬 프렌지 HP% 구현 ###
         FrenzyBuff.onAfter(DemonFrenzy)
+        FrenzyConsume = core.SummonSkill("데몬 프렌지(HP 소모)", 0, 1000, 0, 0, 99999999).wrap(core.SummonSkillWrapper)
 
         # 포비든 컨트랙트
         ForbiddenContract.onAfter(FrenzyBuff.beginForbiddenContract())
@@ -260,6 +261,7 @@ class JobGenerator(ck.JobGenerator):
 
         # HP 소모
         FrenzyBuff.onAfter(FrenzyBuff.consumeController(20))
+        FrenzyConsume.onTick(FrenzyBuff.consumeController(6000, True))
         BatSwarm.onAfter(FrenzyBuff.consumeController(1))
         Booster.onAfter(FrenzyBuff.consumeController(200, True))
         WardEvil.onAfter(FrenzyBuff.consumeController(900, True))
@@ -276,7 +278,7 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak.onAfter(FrenzyBuff.consumeController(15))
         
         # TODO: 블러드 피스트 (시전시 1%, 이후 7초간 초당 3%)
-        # DemonicBlast.onBefore(FrenzyBuff.consumeController(1))
+        DemonicBlast.onBefore(FrenzyBuff.consumeController(1))
 
         # TODO: 이하 정확한 수치 확인필요
         Execution_2.onAfter(FrenzyBuff.consumeController(4))
@@ -311,6 +313,6 @@ class JobGenerator(ck.JobGenerator):
                [FrenzyBuff, globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_hyper_body_demonavenger(),
                 Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
                 globalSkill.soul_contract(), Revenant, RevenantHit, CallMastema, AnotherGoddessBuff, AnotherVoid] +
-               [DemonFrenzy, ShieldChasing, ArmorBreakBuff] +
+               [DemonFrenzy, FrenzyConsume, ShieldChasing, ArmorBreakBuff] +
                [BatSwarm, MirrorBreak, MirrorSpider, DimensionSword, DemonicBlast] +
                [BasicAttack])
