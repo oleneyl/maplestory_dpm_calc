@@ -1,3 +1,5 @@
+from enum import Enum
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -6,6 +8,58 @@ from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Darkknight here https://maplestory.fandom.com/wiki/Dark_Knight/Skills
+class DarkKnightSkills(Enum):
+    # Link Skill
+    InvincibleBelief = 'Invincible Belief | 인빈서블 빌리프'
+    # 1st Job
+    SlashBlast = 'Slash Blast | 슬래시 블러스트'
+    WarLeap = 'War Leap | 워리어 리프'
+    LeapAttack = 'Leap Attack | 리프 어택'
+    IronBody = 'Iron Body | 아이언 바디'
+    WarriorMastery = 'Warrior Mastery | 워리어 마스터리'
+    # 2nd Job
+    PiercingDrive = 'Piercing Drive | 피어싱 쓰루'
+    EvilEye = 'Evil Eye | 비홀더'
+    SpearSweep = 'Spear Sweep | 스피어 풀링'
+    WeaponBooster = 'Weapon Booster | 웨폰 부스터'
+    IronWill = 'Iron Will | 아이언 월'
+    HyperBody = 'Hyper Body | 하이퍼 바디'
+    WeaponMastery = 'Weapon Mastery | 웨폰 마스터리'
+    FinalAttack = 'Final Attack | 파이널 어택'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    # 3rd Job
+    LaManchaSpear = 'La Mancha Spear | 라만차 스피어'
+    Rush = 'Rush | 돌진'
+    EvilEyeofDomination = 'Evil Eye of Domination | 비홀더 도미넌트'
+    EvilEyeShock = 'Evil Eye Shock | 비홀더 쇼크'
+    UpwardCharge = 'Upward Charge | 어퍼 차지'
+    CrossSurge = 'Cross Surge | 크로스 오버 체인'
+    LordofDarkness = 'Lord of Darkness | 로드 오브 다크니스'
+    Endure = 'Endure | 인듀어'
+    HexoftheEvilEye = 'Hex of the Evil Eye | 비홀더스 버프'
+    # 4th Job
+    GungnirsDescent = 'Gungnir\'s Descent | 궁그닐 디센트'
+    MagicCrash = 'Magic Crash | 매직 크래쉬'
+    DarkImpale = 'Dark Impale | 다크 임페일'
+    PowerStance = 'Power Stance | 스탠스'
+    Sacrifice = 'Sacrifice | 새크리파이스'
+    FinalPact = 'Final Pact | 리인카네이션'
+    BarricadeMastery = 'Barricade Mastery | 어드밴스드 웨폰 마스터리'
+    RevengeoftheEvilEye = 'Revenge of the Evil Eye | 비홀더스 리벤지'
+    # Hypers
+    FinalPactCriticalChance = 'Final Pact - Critical Chance | 리인카네이션-크리티컬 레이트'
+    NightshadeExplosion = 'Nightshade Explosion | 다크 신서시스'
+    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
+    DarkThirst = 'Dark Thirst | 다크 서스트'
+    # 5th Job
+    SpearofDarkness = 'Spear of Darkness | 다크 스피어'
+    RadiantEvil = 'Radiant Evil | 비홀더 임팩트'
+    CalamitousCyclone = 'Calamitous Cyclone | 피어스 사이클론'
+    DarknessAura = 'Darkness Aura | 다크니스 오라'
+
 
 #TODO: Beholder's Revenge main effect added. 비홀더스 리벤지 메인 효과 추가.
 
