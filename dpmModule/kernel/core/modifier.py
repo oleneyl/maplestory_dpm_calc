@@ -280,7 +280,7 @@ class CharacterModifier:
         expert_max = 100 / 95
         expert_min = 90 / 95
 
-        if spec == "dot":
+        if spec.startswith("dot"):
             real_crit = 0
             factor_crit_removed = 1
             ignorance = 1

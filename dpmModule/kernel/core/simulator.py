@@ -444,7 +444,7 @@ class StatAnalytics:
         self.total_loss += loss
         self.total_hit += result.hit
 
-        if deal > 0:
+        if result.spec != "graph control":
             self.logList.append(
                 {
                     "time": result.time,
