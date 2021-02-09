@@ -20,6 +20,8 @@ def create_auxilary_attack(skill_wrapper: core.DamageSkillWrapper, ratio=1, name
         modifier=original_skill._static_skill_modifier,
     ).wrap(core.DamageSkillWrapper)
 
+    copial_skill._runtime_modifier_list = skill_wrapper._runtime_modifier_list
+
     skill_wrapper.onJustAfter(copial_skill)
 
 
