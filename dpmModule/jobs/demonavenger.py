@@ -10,8 +10,6 @@ from . import jobutils
 from math import ceil
 from typing import Any, Dict
 
-from dpmModule import character
-
 
 """
 Advisor:
@@ -78,7 +76,6 @@ class JobGenerator(ck.JobGenerator):
         self.jobtype = "HP"
         self.jobname = "데몬어벤져"
         self.vEnhanceNum = 12
-        # 쓸샾, 쓸뻥, 쓸오더(아직 미구현)
         self.preEmptiveSkills = 3
 
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'reuse')
@@ -200,7 +197,7 @@ class JobGenerator(ck.JobGenerator):
         # 초당 10.8타 가정
         # http://www.inven.co.kr/board/maple/2304/23974
         FrenzyBuff = FrenzyBuffWrapper(core.BuffSkill("데몬 프렌지(버프)", 720, 999999999), vEhc.getV(0, 0), 500000)  # TODO: 500000 대신 현재 스탯 수치를 넣어야 함
-        DemonFrenzy = core.SummonSkill("데몬 프렌지", 0, 1000/10.8, 300+8*vEhc.getV(0, 0), FRENZY_STACK, 99999999).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        DemonFrenzy = core.SummonSkill("데몬 프렌지", 0, 1000/10.8, 300+8*vEhc.getV(0, 0), FRENZY_STACK, 99999999, cooltime=-1).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         # 블피 (3중첩)
         # TODO: 블피캔슬 구현 (다른스킬 시전중에 블피사용시 그 전에 사용한 스킬 딜레이가 캔슬되고 즉시 블피가 발동)
@@ -210,8 +207,10 @@ class JobGenerator(ck.JobGenerator):
         # 참고자료: https://blog.naver.com/oe135/221372243858
         if DIMENSION_PHASE == 1:
             DimensionSword = core.SummonSkill("디멘션 소드", 510, 3000, 850+34*vEhc.getV(0, 0), 8, 40*1000, cooltime=120*1000, red=True, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
-        else:
+        elif DIMENSION_PHASE == 2:
             DimensionSword = core.SummonSkill("디멘션 소드", 510, 210, 300+12*vEhc.getV(0, 0), 6, (40*1000-510)*0.2, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100), red=True).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        else:
+            raise ValueError
 
         # 기본 4000ms
         # 엑큐 2번당 발동하도록 조정
@@ -253,7 +252,8 @@ class JobGenerator(ck.JobGenerator):
 
         ### 데몬 프렌지 HP% 구현 ###
         FrenzyBuff.onAfter(DemonFrenzy)
-        FrenzyConsume = core.SummonSkill("데몬 프렌지(HP 소모)", 0, 1000, 0, 0, 99999999).wrap(core.SummonSkillWrapper)
+        FrenzyConsume = core.SummonSkill("데몬 프렌지(HP 소모)", 0, 1000, 0, 0, 99999999, cooltime=-1).wrap(core.SummonSkillWrapper)
+        DemonFrenzy.onAfter(FrenzyConsume)
 
         # 포비든 컨트랙트
         ForbiddenContract.onAfter(FrenzyBuff.beginForbiddenContract())
@@ -286,7 +286,7 @@ class JobGenerator(ck.JobGenerator):
         ExecutionExceed.onAfter(FrenzyBuff.consumeController(4))
 
         # HP 회복
-        DemonFrenzy.onTick(FrenzyBuff.chargeController(FRENZY_STACK * (1 + FrenzyBuff.level // 30), True))  # 중첩 수만큼 한번에 회복
+        DemonFrenzy.onTick(FrenzyBuff.chargeController(FRENZY_STACK * (1 + FrenzyBuff.level // 30), True))  # 중첩 수 * 회복 제한만큼 회복
         ReleaseOverload.onAfter(FrenzyBuff.chargeController(100))
         DemonicBlast.onAfter(FrenzyBuff.chargeController(25, True))
         DiabolicRecovery.onTick(FrenzyBuff.chargeController(5))
@@ -301,16 +301,24 @@ class JobGenerator(ck.JobGenerator):
         Execution_2.onAfter(FrenzyBuff.chargeController(2))
         Execution_3.onAfter(FrenzyBuff.chargeController(2))
         ExecutionExceed.onAfter(FrenzyBuff.chargeController(2))
-        # ShieldChasing.onTick(FrenzyBuff.chargeController(2))
+        # ShieldChasing.onTick(FrenzyBuff.chargeController(2))  # TODO: 틱 단위당 HP 회복 구현
         ShieldChasing.onAfter(FrenzyBuff.chargeController(2))
         ArmorBreak.onAfter(FrenzyBuff.chargeController(2))
 
-        # TODO: 쓸만한 스킬들 HP 코스트 적용 필요 (각각 5%)
-        # TODO: 프렌지 미사용시 예외처리 필요
+        # TODO: 레버넌트 종료 후 패널티
 
+        UsefulSharpEyes = globalSkill.useful_sharp_eyes()
+        UsefulCombatOrders = globalSkill.useful_combat_orders()
+        UsefulHyperBody = globalSkill.useful_hyper_body_demonavenger()
+
+        for sk in [UsefulSharpEyes, UsefulCombatOrders, UsefulHyperBody]:
+            sk.onAfter(FrenzyBuff.consumeController(5))
+
+        if FRENZY_STACK == 0:
+            FrenzyBuff.protect_from_running()  # 0스택일 때 프렌지 실행 금지
 
         return(BasicAttack,
-               [FrenzyBuff, globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_hyper_body_demonavenger(),
+               [FrenzyBuff, UsefulSharpEyes, UsefulCombatOrders, UsefulHyperBody,
                 Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
                 globalSkill.soul_contract(), Revenant, RevenantHit, CallMastema, AnotherGoddessBuff, AnotherVoid] +
                [DemonFrenzy, FrenzyConsume, ShieldChasing, ArmorBreakBuff] +
