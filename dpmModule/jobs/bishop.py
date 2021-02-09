@@ -32,14 +32,7 @@ class PrayWrapper(core.BuffSkillWrapper):
 class JobGenerator(characterKernel.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-<<<<<<< HEAD
-        self.buffrem = (0, 40)
-        self.jobtype = "INT"
-        self.jobname = "비숍"
-        self.vEnhanceNum = 8
-=======
-        self.load(os.path.join(os.path.dirname(__file__), 'configs', 'bishop.json'))
->>>>>>> Migrate to json
+        self.load(os.path.join(os.path.dirname(__file__), 'configs', 'bishop.yml'))
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
 
     def get_ruleset(self):
