@@ -447,7 +447,7 @@ class DotSkill(SummonSkill):
 
 
 def _map_background_information(conf, **kwargs):
-    global_variables = {k:v for k, v in globals().items()}
+    global_variables = {k: v for k, v in globals().items()}
     global_variables.update(kwargs)
     exported_conf = {}
     for k, v in conf.items():
