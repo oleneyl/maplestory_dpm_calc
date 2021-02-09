@@ -97,13 +97,10 @@ class LightAndDarknessWrapper(core.DamageSkillWrapper):
         super(LightAndDarknessWrapper, self).__init__(skill)
         self.stack = 12
 
-    def _use(self, skill_modifier):
-        self.stack = 12
-        return super(LightAndDarknessWrapper, self)._use(skill_modifier)
-
     def reduceStack(self):
         self.stack -= 1
         if self.stack <= 0:
+            self.stack = 12
             self.cooltimeLeft = 0
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = '빛과 어둠의 세례 스택 증가', spec = 'graph control')
 
