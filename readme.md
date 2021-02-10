@@ -24,6 +24,9 @@ About
   dpmModule은 메이플스토리에서 데미지와 관련된 계산(기댓값, DPM, 최적잠재 등) 을 쉽게 계산하기
   위한 라이브러리입니다. 전체 43개 직업군중 데벤, 제논을 제외한 41개 직업군의 데미지 시뮬레이션을 지원합니다.
 
+Introduction
+--------------
+- [설명 동영상](https://www.youtube.com/watch?v=Jwbmalo1XJQ)
 
 Document
 --------------
