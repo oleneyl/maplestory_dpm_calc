@@ -1,3 +1,4 @@
+from functools import partial
 from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
@@ -16,13 +17,65 @@ Advisor:
 """
 
 
+# 아란 유니온, 모전 링크 등 부수적인 효과는 반영하지 않음
+class FrenzyBuffWrapper(core.StackSkillWrapper):
+    def __init__(self, skill: core.BuffSkill, slevel: int=30, maxHP: int=500000):
+        super(FrenzyBuffWrapper, self).__init__(skill, maxHP)
+        self.stack = self._max
+        self.level = slevel
+        self.forbidden_contract = False
+
+    def consume(self, d):
+        # 1% 미만으로 감소하지 않음, 포비든 컨트랙트 활성화시 HP 소모 없음
+        if not self.forbidden_contract:
+            self.stack = max(self.stack - d, 0.01*self._max)
+        return core.ResultObject(
+            0, core.CharacterModifier(), 0, 0, sname=self.skill.name, spec="graph control"
+        )
+    # fixed
+    #   - True: HP% 소모
+    #   - False: 고정 HP 소모
+    def consumeController(self, d, fixed=False):
+        if not fixed:
+            d *= (0.01 * self._max)
+        return core.TaskHolder(core.Task(self, partial(self.consume, d)), name=f"HP -{d}")
+
+    def charge(self, d):
+        self.stack = min(self.stack + self._max * 0.01 * d, self._max)
+        return core.ResultObject(
+            0, core.CharacterModifier(), 0, 0, sname=self.skill.name, spec="graph control"
+        )
+
+    # the argument d is HP% only
+    def chargeController(self, d, ignore_limit=False):
+        if not ignore_limit:
+            d = min(d, 1 + self.level // 30)
+        return core.TaskHolder(core.Task(self, partial(self.charge, d)), name=f"HP +{d}")
+
+    def get_modifier(self):
+        return core.CharacterModifier(pdamage_indep=100*(1 - self.stack / self._max) // (4 - (self.level // 25)))
+
+    def begin_forbidden_contract(self):
+        self.forbidden_contract = True
+        return self._result_object_cache
+
+    def beginForbiddenContract(self):
+        return core.TaskHolder(core.Task(self, self.begin_forbidden_contract), name="포비든 컨트랙트 시작")
+
+    def end_forbidden_contract(self):
+        self.forbidden_contract = False
+        return self._result_object_cache
+
+    def endForbiddenContract(self):
+        return core.TaskHolder(core.Task(self, self.end_forbidden_contract), name="포비든 컨트랙트 종료")
+
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.jobtype = "HP"
         self.jobname = "데몬어벤져"
         self.vEnhanceNum = 12
-        # 쓸샾, 쓸뻥, 쓸오더(아직 미구현)
         self.preEmptiveSkills = 3
 
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'reuse')
@@ -73,13 +126,9 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=30)
         Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-5+0.5*ceil(passive_level/2))
+        DiabolicRecoveryActive = core.InformedCharacterModifier("디아볼릭 리커버리", pstat_main=25)
 
-        HP_RATE = options.get('hp_rate', 100)
-
-        # 최대 HP 대비 소모된 HP 3%(24레벨가지는 4%)당 최종 데미지 1% 증가
-        FrenzyPassive = core.InformedCharacterModifier("데몬 프렌지 (최종 데미지)", pdamage_indep=(100-HP_RATE)//(4-(vEhc.getV(0, 0)//25)))
-
-        return [WeaponConstant, Mastery, FrenzyPassive]
+        return [WeaponConstant, Mastery, DiabolicRecoveryActive]
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         """
@@ -104,7 +153,8 @@ class JobGenerator(ck.JobGenerator):
 
         # 펫버프
         Booster = core.BuffSkill("데몬 부스터", 0, 180*1000).wrap(core.BuffSkillWrapper)
-        DiabolicRecovery = core.BuffSkill("디아볼릭 리커버리", 0, 180*1000, pstat_main=25).wrap(core.BuffSkillWrapper)
+        # DiabolicRecovery = core.BuffSkill("디아볼릭 리커버리", 0, 180*1000, pstat_main=25).wrap(core.BuffSkillWrapper)
+        DiabolicRecovery = core.SummonSkill("디아볼릭 리커버리(HP 회복)", 0, 4000, 0, 0, 99999999).wrap(core.SummonSkillWrapper)  # 자체 효과는 get_not_implied_skill_list()로 이동
         WardEvil = core.BuffSkill("리프랙트 이블", 0, 180*1000).wrap(core.BuffSkillWrapper)
 
         ForbiddenContract = core.BuffSkill("포비든 컨트랙트", 1020, 30*1000, cooltime=75*1000, pdamage=10).wrap(core.BuffSkillWrapper)
@@ -146,7 +196,8 @@ class JobGenerator(ck.JobGenerator):
 
         # 초당 10.8타 가정
         # http://www.inven.co.kr/board/maple/2304/23974
-        DemonFrenzy = core.SummonSkill("데몬 프렌지", 0, 1000/10.8, 300+8*vEhc.getV(0, 0), FRENZY_STACK, 99999999).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        FrenzyBuff = FrenzyBuffWrapper(core.BuffSkill("데몬 프렌지(버프)", 720, 999999999), vEhc.getV(0, 0), 500000)  # TODO: 500000 대신 현재 스탯 수치를 넣어야 함
+        DemonFrenzy = core.SummonSkill("데몬 프렌지", 0, 1000/10.8, 300+8*vEhc.getV(0, 0), FRENZY_STACK, 99999999, cooltime=-1).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         # 블피 (3중첩)
         # TODO: 블피캔슬 구현 (다른스킬 시전중에 블피사용시 그 전에 사용한 스킬 딜레이가 캔슬되고 즉시 블피가 발동)
@@ -156,8 +207,10 @@ class JobGenerator(ck.JobGenerator):
         # 참고자료: https://blog.naver.com/oe135/221372243858
         if DIMENSION_PHASE == 1:
             DimensionSword = core.SummonSkill("디멘션 소드", 510, 3000, 850+34*vEhc.getV(0, 0), 8, 40*1000, cooltime=120*1000, red=True, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
-        else:
+        elif DIMENSION_PHASE == 2:
             DimensionSword = core.SummonSkill("디멘션 소드", 510, 210, 300+12*vEhc.getV(0, 0), 6, (40*1000-510)*0.2, cooltime=120*1000, modifier=core.CharacterModifier(armor_ignore=100), red=True).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        else:
+            raise ValueError
 
         # 기본 4000ms
         # 엑큐 2번당 발동하도록 조정
@@ -197,19 +250,77 @@ class JobGenerator(ck.JobGenerator):
 
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
-        """
-        프렌지 발동 타이밍을 앞당기기 위한 initializer입니다.
-        일반적으로 SummonSkill이 BuffSkill보다 실행 순위가 밀리기 때문에 이 코드가 없으면 프렌지가 7~8초 후에서야 실행됩니다.
-        """
+        ### 데몬 프렌지 HP% 구현 ###
+        FrenzyBuff.onAfter(DemonFrenzy)
+        FrenzyConsume = core.SummonSkill("데몬 프렌지(HP 소모)", 0, 1000, 0, 0, 99999999, cooltime=-1).wrap(core.SummonSkillWrapper)
+        DemonFrenzy.onAfter(FrenzyConsume)
 
-        FrenzyInit = core.BuffSkill("데몬 프렌지(개시)", 0, 999999999).wrap(core.BuffSkillWrapper)
-        FrenzyInit.onAfter(DemonFrenzy)
-        DemonFrenzy.protect_from_running()
+        # 포비든 컨트랙트
+        ForbiddenContract.onAfter(FrenzyBuff.beginForbiddenContract())
+        ForbiddenContract.onEventEnd(FrenzyBuff.endForbiddenContract())
+
+        # HP 소모
+        FrenzyBuff.onAfter(FrenzyBuff.consumeController(20))
+        FrenzyConsume.onTick(FrenzyBuff.consumeController(6000, True))
+        BatSwarm.onAfter(FrenzyBuff.consumeController(1))
+        Booster.onAfter(FrenzyBuff.consumeController(200, True))
+        WardEvil.onAfter(FrenzyBuff.consumeController(900, True))
+        DiabolicRecovery.onAfter(FrenzyBuff.consumeController(900, True))
+        ArmorBreak.onAfter(FrenzyBuff.consumeController(1000, True))
+        ShieldChasing.onAfter(FrenzyBuff.consumeController(8))
+        ForbiddenContract.onAfter(FrenzyBuff.consumeController(5000, True))
+        DemonicFortitude.onAfter(FrenzyBuff.consumeController(100, True))
+        AuraWeapon.onAfter(FrenzyBuff.consumeController(10))
+        CallMastema.onAfter(FrenzyBuff.consumeController(5))
+        AnotherGoddessBuff.onAfter(FrenzyBuff.consumeController(5))
+        DimensionSword.onAfter(FrenzyBuff.consumeController(20))
+        Revenant.onAfter(FrenzyBuff.consumeController(25))
+        MirrorBreak.onAfter(FrenzyBuff.consumeController(15))
+        
+        # TODO: 블러드 피스트 (시전시 1%, 이후 7초간 초당 3%)
+        DemonicBlast.onBefore(FrenzyBuff.consumeController(1))
+
+        # TODO: 이하 정확한 수치 확인필요
+        Execution_2.onAfter(FrenzyBuff.consumeController(4))
+        Execution_3.onAfter(FrenzyBuff.consumeController(4))
+        ExecutionExceed.onAfter(FrenzyBuff.consumeController(4))
+
+        # HP 회복
+        DemonFrenzy.onTick(FrenzyBuff.chargeController(FRENZY_STACK * (1 + FrenzyBuff.level // 30), True))  # 중첩 수 * 회복 제한만큼 회복
+        ReleaseOverload.onAfter(FrenzyBuff.chargeController(100))
+        DemonicBlast.onAfter(FrenzyBuff.chargeController(25, True))
+        DiabolicRecovery.onTick(FrenzyBuff.chargeController(5))
+
+        # 회복의 축복 (임시로 이계의 공허에 연동)
+        AnotherVoid.onAfter(FrenzyBuff.chargeController(15+vEhc.getV(0,0)//2, True))
+
+        # TODO: 이하 정확한 수치 확인필요
+        # 앱졸브 라이프: 익시드 스택이 2씩 쌓일수록 체력 회복량 1%씩 감소
+        # 이즈 익시드 페인: 영구적으로 익시드 오버로드 수치로 인해 감소되는 HP 흡수량 2% 감소
+        BatSwarm.onTick(FrenzyBuff.chargeController(2))
+        Execution_2.onAfter(FrenzyBuff.chargeController(2))
+        Execution_3.onAfter(FrenzyBuff.chargeController(2))
+        ExecutionExceed.onAfter(FrenzyBuff.chargeController(2))
+        # ShieldChasing.onTick(FrenzyBuff.chargeController(2))  # TODO: 틱 단위당 HP 회복 구현
+        ShieldChasing.onAfter(FrenzyBuff.chargeController(2))
+        ArmorBreak.onAfter(FrenzyBuff.chargeController(2))
+
+        # TODO: 레버넌트 종료 후 패널티
+
+        UsefulSharpEyes = globalSkill.useful_sharp_eyes()
+        UsefulCombatOrders = globalSkill.useful_combat_orders()
+        UsefulHyperBody = globalSkill.useful_hyper_body_demonavenger()
+
+        for sk in [UsefulSharpEyes, UsefulCombatOrders, UsefulHyperBody]:
+            sk.onAfter(FrenzyBuff.consumeController(5))
+
+        if FRENZY_STACK == 0:
+            FrenzyBuff.protect_from_running()  # 0스택일 때 프렌지 실행 금지
 
         return(BasicAttack,
-               [FrenzyInit, globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_hyper_body_demonavenger(),
+               [FrenzyBuff, UsefulSharpEyes, UsefulCombatOrders, UsefulHyperBody,
                 Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
                 globalSkill.soul_contract(), Revenant, RevenantHit, CallMastema, AnotherGoddessBuff, AnotherVoid] +
-               [DemonFrenzy, ShieldChasing, ArmorBreakBuff] +
+               [DemonFrenzy, FrenzyConsume, ShieldChasing, ArmorBreakBuff] +
                [BatSwarm, MirrorBreak, MirrorSpider, DimensionSword, DemonicBlast] +
                [BasicAttack])
