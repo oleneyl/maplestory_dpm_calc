@@ -6,6 +6,8 @@ from .constant import NOTWANTTOEXECUTE
 from .modifier import CharacterModifier
 from ..graph import EvaluativeGraphElement
 
+import math
+
 if TYPE_CHECKING:
     from ..abstract import AbstractVEnhancer
     from .skill_wrapper import AbstractSkillWrapper
