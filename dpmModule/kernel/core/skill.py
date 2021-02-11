@@ -451,6 +451,7 @@ class DotSkill(SummonSkill):
 def _map_background_information(conf, **kwargs):
     global_variables = {k: v for k, v in globals().items()}
     global_variables.update(kwargs)
+    assert global_variables['math'] == math
     exported_conf = {}
     for k, v in conf.items():
         if isinstance(v, str) and k != 'name':
