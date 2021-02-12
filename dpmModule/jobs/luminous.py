@@ -163,7 +163,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = jobutils.get_mastery_mdf(95+ceil(passive_level / 2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=95+ceil(passive_level / 2))
         
         BlessOfDarkness =  core.InformedCharacterModifier("블레스 오브 다크니스",att = 30)   #15 -> 24 -> 30
         DarknessSoceryActive = core.InformedCharacterModifier("다크니스 소서리(사용)", prop_ignore = 10)

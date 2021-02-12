@@ -44,7 +44,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         PARTYPEOPLE = 1        
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = jobutils.get_mastery_mdf(90+ceil(passive_level/2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(passive_level/2))
         
         SoulLink = core.InformedCharacterModifier("소울 링크",pdamage = 5*PARTYPEOPLE)
         SoulRage = core.InformedCharacterModifier("소울 레이지", pdamage_indep = 30+self.combat, crit_damage = 8)

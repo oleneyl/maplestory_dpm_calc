@@ -68,7 +68,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
-        Mastery = jobutils.get_mastery_mdf(90)
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90)
         ResolutionTime = core.InformedCharacterModifier("리졸브 타임", pdamage_indep=25, stat_main=50)
 
         return [Mastery, ResolutionTime]

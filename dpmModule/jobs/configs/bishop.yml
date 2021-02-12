@@ -26,7 +26,7 @@ not_implied_skill_list:
 - name: 무기상수
   pdamage_indep: 20
 - name: 숙련도
-  pdamage_indep: -2.5
+  mastery: 95
 - name: 블레싱 앙상블
   pdamage_indep: 3
 - name: 아케인 에임

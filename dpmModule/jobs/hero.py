@@ -87,7 +87,7 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 44)
-        Mastery = jobutils.get_mastery_mdf(90+(passive_level // 2))        
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+(passive_level // 2))
         Enrage = core.InformedCharacterModifier("인레이지",pdamage_indep = 25 + self.combat // 2, crit_damage = 20 + self.combat // 3)
         
         return [WeaponConstant, Mastery, Enrage]

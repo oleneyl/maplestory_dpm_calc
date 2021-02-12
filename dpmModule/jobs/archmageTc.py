@@ -58,7 +58,7 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         
-        Mastery = jobutils.get_mastery_mdf(95+ceil(self.combat/2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=95+ceil(self.combat/2))
         ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", pdamage_indep = 20)
         ArcaneAim = core.InformedCharacterModifier("아케인 에임(실시간)", pdamage = 40)
         ElementalResetActive = core.InformedCharacterModifier("엘리멘탈 리셋(사용)", prop_ignore = 10)

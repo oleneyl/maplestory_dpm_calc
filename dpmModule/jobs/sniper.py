@@ -70,9 +70,7 @@ class JobGenerator(ck.JobGenerator):
     ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=35)
-        Mastery = jobutils.get_mastery_mdf(
-            85+ceil(passive_level / 2)
-        )
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=85+ceil(passive_level / 2))
 
         MortalBlow = core.InformedCharacterModifier("모탈 블로우", pdamage=2)
         ExtremeArchery = core.InformedCharacterModifier("익스트림 아처리:석궁", crit_damage=20)

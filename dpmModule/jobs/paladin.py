@@ -60,7 +60,7 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=34)
-        Mastery = jobutils.get_mastery_mdf(90+1+ceil(passive_level/2))  # 오더스 기본적용!
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+1+ceil(passive_level/2))  # 오더스 기본적용!
 
         ElementalCharge = core.InformedCharacterModifier("엘리멘탈 차지", pdamage=25, att=60)  # 조건부 적용 여부는 추후검토.
         ParashockGuard = core.InformedCharacterModifier("파라쇼크 가드", att=20)

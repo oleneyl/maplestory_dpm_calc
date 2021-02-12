@@ -169,7 +169,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 0)
-        Mastery = jobutils.get_mastery_mdf(95+passive_level)  
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=95+passive_level)  
         Interaction = core.InformedCharacterModifier("교감",pdamage = 20)
         ElementalResetActive = core.InformedCharacterModifier("엘리멘탈 리셋(사용)", prop_ignore = 10)
         
