@@ -81,7 +81,7 @@ class JobGenerator(ck.JobGenerator):
         LoyalGuard_3 = core.DamageSkill("로얄 가드(3)", 630, 440+chtr.level, 6, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         LoyalGuard_4 = core.DamageSkill("로얄 가드(4)", 630, 480+chtr.level, 7, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         LoyalGuard_5 = core.DamageSkill("로얄 가드(5)", 630, 565+chtr.level, 9, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        LoyalGuardBuff = core.BuffSkill("로얄 가드", 0, 12000, att = 45).wrap(core.BuffSkillWrapper)  #10->15->20->30->45
+        LoyalGuardBuff = core.BuffSkill("로얄 가드(버프)", 0, 12000, att = 45).wrap(core.BuffSkillWrapper)  #10->15->20->30->45
         
         SoulAssult = core.DamageSkill("소울 어썰트", 600, 210+3*self.combat, 11+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   #암흑 20%
         

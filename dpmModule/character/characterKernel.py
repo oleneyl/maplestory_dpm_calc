@@ -10,6 +10,7 @@ from .doping import Doping
 from .hyperStat import HyperStat
 from .linkSkill import LinkSkill
 from .personality import Personality
+from .farm import Farm
 from .union import Card, Union
 from .weaponPotential import WeaponPotential
 from ..execution.rules import RuleSet
@@ -170,6 +171,16 @@ class GearedCharacter(AbstractCharacter):
         weapon_base_stat = self.gear_list["weapon"].base_stat
         return max(weapon_base_stat[GearPropType.att], weapon_base_stat[GearPropType.matt])
 
+    def get_weapon_total_att(self) -> int:
+        base_stat = self.gear_list["weapon"].base_stat
+        additional_stat = self.gear_list["weapon"].additional_stat
+        scroll_stat = self.gear_list["weapon"].scroll_stat
+        star_stat = self.gear_list["weapon"].star_stat
+        return max(
+            base_stat[GearPropType.att] + additional_stat[GearPropType.att] + scroll_stat[GearPropType.att] + star_stat[GearPropType.att],
+            base_stat[GearPropType.matt] + additional_stat[GearPropType.matt] + scroll_stat[GearPropType.matt] + star_stat[GearPropType.matt],
+        )
+
     def get_starforce_count(self) -> int:
         count = 0
         for gear in self.gear_list.values():
@@ -281,7 +292,7 @@ class JobGenerator:
         return skill
 
     def load_skill_wrapper(self, skill_name, vEhc=None):
-        background_information = self.conf.get('constant', {})
+        background_information = {k: v for k, v in self.conf.get('constant', {}).items()}
         background_information['combat'] = self.combat
         skill = self._load_skill(skill_name, vEhc, background_information=background_information)
         if isinstance(skill, DamageSkill):
@@ -441,6 +452,7 @@ class JobGenerator:
         ulevel: int,
         weaponstat: Tuple[int, int],
         ability_grade: Ability_grade,
+        farm: bool,
         log: bool = False,
         storage_handler=None,
     ) -> policy.StorageLinkedGraph:
@@ -464,6 +476,10 @@ class JobGenerator:
         # 성향 적용
         personality = Personality.get_personality(100, self.jobtype)
         chtr.apply_modifiers([personality])
+
+        # 농장 적용
+        if farm:
+            chtr.apply_modifiers([Farm.get_farm(self.jobtype)])
 
         graph = self.build(vEhc, chtr, options, storage_handler=storage_handler)
 

@@ -272,6 +272,7 @@ class JobGenerator(ck.JobGenerator):
 
         CrystalGate.onAfter(CrystalGateBuff)
         CrystalGateBuff.onConstraint(core.ConstraintElement("크리스탈 게이트 ON", CrystalGate, CrystalGate.is_active))
+        CrystalGateBuff.prevent_from_caching()
         UseCrystalGateAttack = core.OptionalElement(lambda: CrystalGate.is_active() and CrystalGateAttack.is_available(), CrystalGateAttack, name="폭격 조건 체크")
         for sk in [Craft_Javelin, Craft_Javelin_AfterOrb, Craft_Orb, Craft_Longinus,
                     GloryWing_Craft_Javelin, GloryWing_MortalWingbit, CrystalSkill_MortalSwing, CrystalIgnition]:

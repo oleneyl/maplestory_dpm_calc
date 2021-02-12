@@ -3,11 +3,14 @@ from ..kernel.core import ExtendedCharacterModifier as ExMDF
 
 class Doping:
     dopingListAtt = {
-        "길드의 축복": ExMDF(att=20),
+        "길드의 더 큰 축복": ExMDF(att=30),
         "우뿌": ExMDF(att=30),
+        "붕뿌": ExMDF(att=30),
+        "유니온의 힘": ExMDF(att=30),
         "익스레드/블루": ExMDF(att=30),
         "MVP 버프": ExMDF(att=30),
         "영웅의 메아리": ExMDF(patt=4),
+        # "이벤트 버프": ExMDF(att=20, armor_ignore=30, boss_pdamage=30, stat_main=40, stat_sub=40)
     }
 
     dopingListStat = {"향상된 10단계 물약": ExMDF(stat_main=30)}

@@ -109,6 +109,7 @@ class JobGenerator(ck.JobGenerator):
         # 블루블러드는 소환수 적용이 안됨.
         BlueBlood = core.BuffSkill("블루 블러드", 1020, 60000, cooltime=120000-60000).wrap(core.BuffSkillWrapper)  # 모든 공격에 최종데미지의 90%로 추가타 발생. 포스50수급시 -3초, 인피니티 포스시 4초마다 2초 감소, 모든 스킬 포스소모량 20%감소.
         Cerberus = core.DamageSkill("서버러스", 690, 450, 6, cooltime=5000, modifier=core.CharacterModifier(boss_pdamage=50, armor_ignore=50)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 포스50 추가흡수
+        CerberusAuto = core.DamageSkill("서버러스(자동)", 0, 450, 6, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=50, armor_ignore=50)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 포스50 추가흡수
         DemonFortitude = core.BuffSkill("데몬 포티튜드", 0, 60000, cooltime=120000).wrap(core.BuffSkillWrapper)
 
         CallMastema = demon.CallMastemaWrapper(vEhc, 4, 4)
@@ -141,7 +142,7 @@ class JobGenerator(ck.JobGenerator):
         DevilCry.onAfter(DevilCryBuff)
 
         DemonAwakning.onAfter(DemonAwakningSummon)
-        DemonAwakningSummon.onTick(Cerberus)
+        DemonAwakningSummon.onTick(CerberusAuto)
 
         SpiritOfRage.onEventEnd(SpiritOfRageEnd)
         Orthros.onAfter(Orthros_)
@@ -166,7 +167,7 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         # 블블 추가타 적용
-        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DemonBaneTick, DemonBane2Tick, DevilCry, Cerberus, AuraWeapon]:
+        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DemonBaneTick, DemonBane2Tick, DevilCry, Cerberus, CerberusAuto, AuraWeapon]:
             jobutils.create_auxilary_attack(sk, 0.9, nametag='(블루 블러드)')
 
         return(BasicAttackWrapper,

@@ -34,7 +34,7 @@ def crisis_hm_ring(level: int):
 
 def risktaker_ring(level: int):
     return core.BuffSkill(
-        "리스트테이커 링",
+        "리스크테이커 링",
         delay=60,
         remain=(6+6*level)*1000,
         cooltime=180000,
