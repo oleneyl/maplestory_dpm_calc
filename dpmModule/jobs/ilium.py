@@ -161,7 +161,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5)
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90)
         
         return [WeaponConstant, Mastery]
         

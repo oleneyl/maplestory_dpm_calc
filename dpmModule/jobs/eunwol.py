@@ -74,7 +74,7 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5 * 2 * (passive_level // 3))   
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+2 * (passive_level // 3))   
         Weakness = core.InformedCharacterModifier("약화",pdamage = 20) #디버프지만 상시발동가정
 
         # 약점 간파: 체력 (50 + passive_level)% 이하일 때 발동

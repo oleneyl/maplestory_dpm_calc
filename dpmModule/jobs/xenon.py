@@ -175,7 +175,7 @@ class JobGenerator(ck.JobGenerator):
 
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=50)
         JobConstant = core.InformedCharacterModifier("직업상수", pdamage_indep=-12.5)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-5+0.5*ceil(passive_level/2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(passive_level/2))
 
         return [WeaponConstant, JobConstant, Mastery]
 
