@@ -40,7 +40,6 @@ skills:
   메디테이션:
     cooltime: 0
     delay: 0
-    red: true
     rem: true
     remain: 240000
     type: BuffSkill
@@ -225,6 +224,7 @@ skills:
     damage: 430
     hit: 1
     remain: 90000
+    rem: true
     summondelay: 900
     type: SummonSkill
     enhanced_by_v: true
@@ -237,6 +237,7 @@ skills:
     damage: 127 + 2 * combat
     hit: 3
     remain: "(260 + 5 * combat) * 1000"
+    rem: true
     summondelay: 600
     type: SummonSkill
     enhanced_by_v: true
