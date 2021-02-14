@@ -9,6 +9,7 @@ from .jobclass import flora
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+import os
 
 class OrderWrapper(core.SummonSkillWrapper):
     def __init__(self, skill, ether: core.StackSkillWrapper):
@@ -90,11 +91,8 @@ class StormWrapper(core.SummonSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.vEnhanceNum = 10
-        self.jobtype = "STR"
-        self.jobname = "아델"
+        self.load(os.path.join(os.path.dirname(__file__), 'configs', 'adele.yml'))        
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
-        self.preEmptiveSkills = 1
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -102,31 +100,6 @@ class JobGenerator(ck.JobGenerator):
 
     def get_modifier_optimization_hint(self) -> core.CharacterModifier:
         return core.CharacterModifier(pdamage=66, armor_ignore=25)
-
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
-        # 매직 서킷: 앱솔 기준 15.4
-        WEAPON_ATT = jobutils.get_weapon_att(chtr)
-        passive_level = chtr.get_base_modifier().passive_level + self.combat
-        
-        MagicCircuit = core.InformedCharacterModifier("매직 서킷", att=WEAPON_ATT * 0.15)  #무기 공격력의 15%, 최대치 가정.
-        Pace = core.InformedCharacterModifier("패이스", crit_damage=10, patt=10)
-        Rudiment = core.InformedCharacterModifier("루디먼트", att=30)
-        Mastery = core.InformedCharacterModifier("마스터리", att=30)
-        Train = core.InformedCharacterModifier("트레인", stat_main=60)
-        Accent = core.InformedCharacterModifier("어센트", att=30, pdamage_indep=15, crit=20)
-        Expert = core.InformedCharacterModifier("엑스퍼트", att=30)
-        Demolition = core.InformedCharacterModifier("데몰리션", pdamage_indep=30+passive_level, armor_ignore=20+passive_level)
-        Attain = core.InformedCharacterModifier("어테인", att=30+passive_level, boss_pdamage=10+ceil(passive_level/2), crit=20+passive_level)
-
-        return [MagicCircuit, Pace, Rudiment, Mastery, Train, Accent, Expert, Demolition, Attain]
-
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
-        passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
-        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(passive_level / 2))
-
-        return [WeaponConstant, Mastery]
-
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''하이퍼스킬
@@ -151,15 +124,15 @@ class JobGenerator(ck.JobGenerator):
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        Shard = core.DamageSkill("샤드", 630, 80+30+115+225+passive_level*3, 3 * 5, cooltime=6000, red=True).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) # 450*3의 투사체 5개
-        Wonder = core.DamageSkill("샤드(원더)", 0, 80+30+115+225+passive_level*3, 3 * 5, cooltime=8000).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) # 8초마다 트리거 스킬 적중시 시전
+        Shard = self.load_skill_wrapper("샤드", vEhc, passive_level=passive_level)
+        Wonder = self.load_skill_wrapper("샤드(원더)", vEhc, passive_level=passive_level)
 
         Ether = core.StackSkillWrapper(core.BuffSkill('에테르', 0, 9999999), 400)
-        EtherTick = core.SummonSkill('에테르(자연 회복)', 0, 10020, 0, 0, 9999999).wrap(core.SummonSkillWrapper)
+        EtherTick = self.load_skill_wrapper("에테르(자연 회복)")
 
-        Resonance = core.DamageSkill("레조넌스", 690, (120+125+265+passive_level*3) * (1.15**5), 6, cooltime=10*1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 900ms, 스택 유지를 위해 10초마다 사용함
+        Resonance = self.load_skill_wrapper("레조넌스", vEhc, passive_level=passive_level)
 
-        ResonanceStack = core.BuffSkill('레조넌스(스택)', 0, 30*1000, cooltime=-1, pdamage_indep=10, armor_ignore=10).wrap(core.BuffSkillWrapper) # 최종뎀 5, 방무 5, 최대2회. 상시 중첩으로 가정
+        ResonanceStack = self.load_skill_wrapper("레조넌스(스택)", vEhc)
 
         Creation = core.StackDamageSkillWrapper(
             core.DamageSkill('크리에이션', 0, 200+240+270+passive_level*3, 1, cooltime = 1500, red=True).setV(vEhc, 5, 2, False),
@@ -167,8 +140,8 @@ class JobGenerator(ck.JobGenerator):
             lambda ether: min(ether.stack // 100, 3) * 2
         ) # 직접시전시 270ms 기본공속
 
-        Territory = core.SummonSkill('테리토리', 420, 405, 100+300+passive_level*5, 4, 7000+4000, rem=False, cooltime=30*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper) # 27회 타격, 클라공속540ms
-        TerritoryEnd = core.DamageSkill('테리토리(종료)', 0, 550+300+passive_level*5, 12, cooltime=-1).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        Territory = self.load_skill_wrapper("테리토리", vEhc, passive_level=passive_level)
+        TerritoryEnd = self.load_skill_wrapper("테리토리(종료)", vEhc, passive_level=passive_level)
 
         Order = OrderWrapper(core.SummonSkill('오더', 0, 1020, 240+120+passive_level*3, 2, 99999999).setV(vEhc, 1, 2, False), Ether) # 15% 에테르 결정, 시전딜레이 없음으로 가정, 공격주기 1020ms
 
@@ -178,33 +151,33 @@ class JobGenerator(ck.JobGenerator):
             lambda order: order.get_stack() * 0.8
         ) # 칼 불러오기. 블라섬과 연계됨, 모이는데 약 600ms 가정
 
-        Divide = core.DamageSkill('디바이드', 600, 375+self.combat*3, 6, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #트리거 스킬, 클라공속 780ms
+        Divide = self.load_skill_wrapper("디바이드", vEhc)
 
-        Grave = core.DamageSkill('그레이브', 630, 800+self.combat*20, 10, cooltime=90000, red=True).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 840ms
-        GraveDebuff = core.BuffSkill('그레이브(디버프)', 0, 999999999, pdamage=20, armor_ignore=10, cooltime=-1).wrap(core.BuffSkillWrapper)
+        Grave = self.load_skill_wrapper("그레이브", vEhc)
+        GraveDebuff = self.load_skill_wrapper("그레이브(디버프)")
 
-        Blossom = core.DamageSkill('블로섬', 420, 650+self.combat*6, 8, cooltime=20*1000*0.75, red=True).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) # 50%결정. 클라공속 420ms, 공속 안받음
+        Blossom = self.load_skill_wrapper("블로섬", vEhc)
         BlossomExceed = core.StackDamageSkillWrapper(
             core.DamageSkill('블로섬(초과)', 0, 650+self.combat*6, 8, cooltime=-1, modifier=core.CharacterModifier(pdamage_indep=-25)).setV(vEhc, 3, 2, False),
             Order,
             lambda order: max(order.get_stack() - 1, 0)
         )
 
-        Marker = core.DamageSkill('마커', 690, 500, 6*2, cooltime=60*1000, modifier=core.CharacterModifier(pdamage_indep=300)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 최종뎀 300% 증가, 임의위치 조각 5개, 1히트, 결정 5개, 생성/파쇄 각각 공격, 클라공속 900ms
-        Scool = core.DamageSkill('스콜', 690, 1000, 12, cooltime=180*1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) #바인드. 클라공속 900ms
-        WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60*1000, pdamage = 10, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
+        Marker = self.load_skill_wrapper("마커", vEhc)
+        Scool = self.load_skill_wrapper("스콜", vEhc)
+        WraithOfGod = self.load_skill_wrapper("레이스 오브 갓")
 
         # 5차
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att(chtr))
 
-        Ruin = core.DamageSkill('루인(시전)', 600, 0, 0, cooltime=60*1000, red=True).isV(vEhc,2,2).wrap(core.DamageSkillWrapper) # 4초에 나누어서 시전되는 것으로 가정
-        RuinFirstTick = core.SummonSkill('루인(소환)', 0, 160, 250 + vEhc.getV(2,2)*10, 6, 2000, cooltime=-1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 12번, 2초에 나누어 사용으로 가정
-        RuinSecondTick = core.SummonSkill('루인(공격)', 0, 250, 450 + vEhc.getV(2,2)*18, 9, 2000, cooltime=-1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper) # 8번, 2초에 나누어 사용으로 가정
+        Ruin = self.load_skill_wrapper("루인(시전)", vEhc)
+        RuinFirstTick = self.load_skill_wrapper("루인(소환)", vEhc)
+        RuinSecondTick = self.load_skill_wrapper("루인(공격)", vEhc)
 
-        Infinite = core.SummonSkill('인피니트', 540, 342, 350 + vEhc.getV(0,0) * 14, 2 * 6, 30000, cooltime=180*1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) #매 공격마다 5% 결정생성. 전분 기준 517회 타격 -> 18개를 6개씩 묶어서 타격 가정. (30000-540)//342*6 = 516.
-        Restore = core.BuffSkill('리스토어', 720, 30*1000, pdamage=15+vEhc.getV(1,1), cooltime=180*1000, red=True).isV(vEhc,1,1).wrap(core.BuffSkillWrapper) #소드 2개 증가, 에테르획득량 40+d(x/2)%증가
-        RestoreTick = core.SummonSkill('리스토어(주기공격)', 0, 2970, 900+36*vEhc.getV(1,1), 3, 30*1000, cooltime=-1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper) # 11회 시전
+        Infinite = self.load_skill_wrapper("인피니트", vEhc)
+        Restore = self.load_skill_wrapper("리스토어", vEhc)
+        RestoreTick = self.load_skill_wrapper("리스토어(주기공격)", vEhc)
 
         Storm = StormWrapper(vEhc, 0, 0, Order)
 
