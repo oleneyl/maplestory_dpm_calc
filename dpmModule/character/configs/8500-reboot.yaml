@@ -1,5 +1,16 @@
 ---
 summary:
+  - 제네시스 / 4카5아 / 7칠흑 / 칠요(훈장)
+  - 방패 착용가능한 직업은 방패 착용 (20성)
+  - 스타포스 - 무기 22성 / 방어구 22성
+  - 추옵 - 무기 공1추 / 방어구, 악세 추옵 130급
+  - 잠재능력
+  - 무기류 윗잠 9줄유효
+  - 방어구, 악세 레전33%
+  - 장갑 크뎀2줄
+  - 아케인심볼 고정주스탯 13200
+  - 어센틱심볼 고정주스탯 900
+  - 마라벨 풀셋
   - '칠요의 뱃지 -> 창세의 뱃지'
   - '스칼렛 링 -> 이터널 플레임 링'
   - 'TODO: 리부트 유저들의 리뷰 필요'
@@ -64,7 +75,9 @@ anchors:
   xenon_acc_potential: &xenon_acc_potential
     potential:
       allstat_rate: 24
-
+  magician_shield: &magician_shield
+    id: 데이모스 세이지 실드
+    star: 20
 default:
   level: 275
   arcane_symbol_force: 1320
@@ -175,22 +188,53 @@ default:
       armor_ignore: 30
   title:
     id: 핑아일체
+아크메이지불/독:
+  type: override
+  subweapon:
+    << : *magician_shield
+아크메이지썬/콜:
+  type: override
+  subweapon:
+    << : *magician_shield
+비숍:
+  type: override
+  subweapon:
+    << : *magician_shield
+플레임위자드:
+  type: override
+  subweapon:
+    << : *magician_shield
+배틀메이지:
+  type: override
+  subweapon:
+    << : *magician_shield
 에반:
   type: override
   job_specific_item:
     stat_main: 14
     stat_sub: 14
+  subweapon:
+    << : *magician_shield
 메카닉:
   type: override
   job_specific_item:
     stat_main: 10
     stat_sub: 10
     att: 8
+섀도어:
+  type: override
+  subweapon:
+    id: 데이모스 다크니스 실드
+    star: 20
 듀얼블레이드:
   type: override
   subweapon:
     id: 아케인셰이드
     star: 22
+데몬슬레이어:
+  type: override
+  subweapon:
+    id: 루인 포스실드
 데몬어벤져:
   type: override
   head:
@@ -298,6 +342,8 @@ default:
     bonus:
       stat_main: 2880
       att: 5
+  subweapon:
+    id: 루인 포스실드
   heart:
     id: 블랙 하트
     star: 15
