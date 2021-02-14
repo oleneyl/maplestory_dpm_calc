@@ -1,0 +1,371 @@
+---
+summary:
+  - 1아2카5앱 / 9보장(블빈마) / 탈벨7성 / 카벨킬러
+  - 스타포스 - 무기 17성 / 방어구 17성
+  - 추옵 - 무기 공2추 / 방어구, 악세 추옵 100급
+  - 잠재능력
+  - 무기류 윗잠 9줄유효
+  - 방어구/악세 유닠15%
+  - 장갑 크뎀1줄
+  - 아케인심볼 고정주스탯 11200
+  - 마라벨 무기
+  - 리부트 패시브는 코드 내에서 처리
+
+anchors:
+  armor: &armor
+    bonus:
+      stat_main: 100
+      stat_sub: 15
+      stat_sub2: 15
+    star: 17
+    potential:
+      pstat_main: 15
+  acc_bonus: &acc_bonus
+    stat_main: 50
+    stat_sub: 15
+    stat_sub2: 15
+    allstat_rate: 5
+  acc_potential: &acc_potential
+    potential:
+      pstat_main: 15
+
+  demon_armor: &demon_armor
+    star: 17
+    potential:
+      pstat_main: 15
+  demon_acc_potential: &demon_acc_potential
+    potential:
+      pstat_main: 15
+
+  xenon_armor: &xenon_armor
+    bonus:
+      stat_main: 40
+      stat_sub: 40
+      stat_sub2: 40
+      allstat_rate: 4
+    star: 17
+    potential:
+      allstat_rate: 7
+  xenon_acc_bonus: &xenon_acc_bonus
+    stat_main: 40
+    stat_sub: 40
+    stat_sub2: 40
+    allstat_rate: 4
+  xenon_acc_potential: &xenon_acc_potential
+    potential:
+      allstat_rate: 7
+
+default:
+  level: 250
+  arcane_symbol_force: 1120 # 모라스, 에스페라 10레벨
+  pet_equip: 0
+  pet_set: 0
+  cash:
+    att: 30
+  weapon_stat:
+    - 4
+    - 9
+  head:
+    id: 앱솔랩스
+    <<: *armor
+  top:
+    id: 카루타
+    <<: *armor
+  bottom:
+    id: 카루타
+    <<: *armor
+  shoes:
+    id: 앱솔랩스
+    <<: *armor
+  glove:
+    id: 앱솔랩스
+    <<: *armor
+    potential:
+      crit_damage: 8
+  cape:
+    id: 앱솔랩스
+    <<: *armor
+  shoulder:
+    id: 앱솔랩스
+    star: 17
+    <<: *acc_potential
+  face:
+    id: 응축된 힘의 결정석
+    bonus: *acc_bonus
+    star: 10
+    <<: *acc_potential
+  eye:
+    id: 블랙빈 마크
+    bonus: *acc_bonus
+    star: 17
+    <<: *acc_potential
+  ear:
+    id: 데아 시두스 이어링
+    bonus: *acc_bonus
+    star: 17
+    <<: *acc_potential
+  belt:
+    id: 타일런트
+    bonus: *acc_bonus
+    star: 8
+    <<: *acc_potential
+  ring1:
+    id: 고귀한 이피아의 반지
+    star: 15
+    <<: *acc_potential
+  ring2:
+    id: 실버블라썸 링
+    star: 10
+    <<: *acc_potential
+  ring3:
+    id: 마이스터링
+    star: 17
+    <<: *demon_acc_potential
+  ring4:
+    id: 이터널 플레임 링
+    <<: *acc_potential
+  pendant1:
+    id: 매커네이터 펜던트
+    bonus: *acc_bonus
+    star: 15
+    <<: *acc_potential
+  pendant2:
+    id: 도미네이터 펜던트
+    bonus: *acc_bonus
+    star: 17
+    <<: *acc_potential
+  pocket:
+    id: 핑크빛 성배
+    bonus: *acc_bonus
+  badge:
+    id: 크리스탈 웬투스 뱃지
+  medal:
+    id: 카오스 벨룸 킬러
+  weapon:
+    id: 아케인셰이드
+    bonus:
+      att_grade: 6
+    star: 17
+  subweapon:
+    id: 보조무기
+  emblem:
+    id: 엠블렘
+  heart:
+    id: 티타늄 하트
+    star: 8
+    <<: *acc_potential
+  title:
+    id: 핑아일체
+에반:
+  type: override
+  job_specific_item:
+    stat_main: 14
+    stat_sub: 14
+메카닉:
+  type: override
+  job_specific_item:
+    stat_main: 10
+    stat_sub: 10
+    att: 8
+듀얼블레이드:
+  type: override
+  subweapon:
+    id: 아케인셰이드
+    star: 17
+제로:
+  type: override
+  head:
+    id: 카오스 벨룸의 헬름
+    <<: *armor
+    bonus:
+      stat_main: 15
+      allstat_rate: 3
+  zero_weapon_set_name: 카루타
+데몬어벤져:
+  type: override
+  head:
+    id: 앱솔랩스
+    bonus:
+      stat_main: 2880
+      att: 4
+    <<: *demon_armor
+  top:
+    id: 카루타
+    bonus:
+      stat_main: 2700
+      att: 4
+    <<: *demon_armor
+  bottom:
+    id: 카루타
+    bonus:
+      stat_main: 2700
+      att: 4
+    <<: *demon_armor
+  shoes:
+    id: 앱솔랩스
+    bonus:
+      stat_main: 2880
+      att: 4
+    <<: *demon_armor
+  glove:
+    id: 앱솔랩스
+    bonus:
+      stat_main: 2880
+      att: 4
+    <<: *demon_armor
+    potential:
+      crit_damage: 8
+  cape:
+    id: 앱솔랩스
+    bonus:
+      stat_main: 2880
+      att: 4
+    <<: *demon_armor
+  shoulder:
+    id: 앱솔랩스
+    star: 17
+    <<: *demon_acc_potential
+  face:
+    id: 응축된 힘의 결정석
+    bonus:
+      stat_main: 1980
+      att: 4
+    star: 10
+    <<: *demon_acc_potential
+  eye:
+    id: 블랙빈 마크
+    bonus:
+      stat_main: 2340
+      att: 4
+    star: 17
+    <<: *demon_acc_potential
+  ear:
+    id: 마이스터 이어링
+    bonus:
+      stat_main: 2520
+      att: 4
+    star: 17
+    <<: *demon_acc_potential
+  belt:
+    id: 분노한 자쿰의 벨트
+    bonus:
+      stat_main: 2700
+      att: 4
+    star: 17
+    <<: *demon_acc_potential
+  ring1:
+    id: 고귀한 이피아의 반지
+    star: 15
+    <<: *demon_acc_potential
+  ring2:
+    id: 실버블라썸 링
+    star: 10
+    <<: *demon_acc_potential
+  ring3:
+    id: 마이스터링
+    star: 17
+    <<: *demon_acc_potential
+  ring4:
+    id: 이터널 플레임 링
+    <<: *demon_acc_potential
+  pendant1:
+    id: 카오스 혼테일의 목걸이
+    bonus:
+      stat_main: 1800
+      att: 1
+    star: 15
+    <<: *demon_acc_potential
+  pendant2:
+    id: 도미네이터 펜던트
+    bonus:
+      stat_main: 2520
+      att: 4
+    star: 17
+    <<: *demon_acc_potential
+  pocket:
+    id: 핑크빛 성배
+    bonus:
+      stat_main: 2520
+      att: 4
+  heart:
+    id: 티타늄 하트
+    star: 8
+    <<: *demon_acc_potential
+제논:
+  type: override
+  head:
+    id: 앱솔랩스
+    <<: *xenon_armor
+  top:
+    id: 카루타
+    <<: *xenon_armor
+  bottom:
+    id: 카루타
+    <<: *xenon_armor
+  shoes:
+    id: 앱솔랩스
+    <<: *xenon_armor
+  glove:
+    id: 앱솔랩스
+    <<: *xenon_armor
+    potential:
+      crit_damage: 8
+  cape:
+    id: 앱솔랩스
+    <<: *xenon_armor
+  shoulder:
+    id: 앱솔랩스
+    star: 17
+    <<: *xenon_acc_potential
+  face:
+    id: 응축된 힘의 결정석
+    bonus: *xenon_acc_bonus
+    star: 10
+    <<: *xenon_acc_potential
+  eye:
+    id: 블랙빈 마크
+    bonus: *xenon_acc_bonus
+    star: 17
+    <<: *xenon_acc_potential
+  ear:
+    id: 데아 시두스 이어링
+    bonus: *xenon_acc_bonus
+    star: 17
+    <<: *xenon_acc_potential
+  belt:
+    id: 분노한 자쿰의 벨트
+    bonus: *xenon_acc_bonus
+    star: 17
+    <<: *xenon_acc_potential
+  ring1:
+    id: 고귀한 이피아의 반지
+    star: 15
+    <<: *xenon_acc_potential
+  ring2:
+    id: 실버블라썸 링
+    star: 10
+    <<: *xenon_acc_potential
+  ring3:
+    id: 마이스터링
+    star: 17
+    <<: *demon_acc_potential
+  ring4:
+    id: 이터널 플레임 링
+    <<: *xenon_acc_potential
+  pendant1:
+    id: 매커네이터 펜던트
+    bonus: *xenon_acc_bonus
+    star: 15
+    <<: *xenon_acc_potential
+  pendant2:
+    id: 도미네이터 펜던트
+    bonus: *xenon_acc_bonus
+    star: 17
+    <<: *xenon_acc_potential
+  pocket:
+    id: 핑크빛 성배
+    bonus: *xenon_acc_bonus
+  heart:
+    id: 티타늄 하트
+    star: 8
+    <<: *xenon_acc_potential

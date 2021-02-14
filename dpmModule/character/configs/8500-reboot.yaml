@@ -1,0 +1,403 @@
+---
+summary:
+  - '칠요의 뱃지 -> 창세의 뱃지'
+  - '스칼렛 링 -> 이터널 플레임 링'
+  - 'TODO: 리부트 유저들의 리뷰 필요'
+
+anchors:
+  armor: &armor
+    bonus:
+      stat_main: 130
+      stat_sub: 20
+      stat_sub2: 20
+    star: 22
+    potential:
+      pstat_main: 33
+  head_cdr: &head_cdr
+    '1':
+      potential:
+        cooltime_reduce: 1
+        pstat_main: 24
+    '2':
+      potential:
+        cooltime_reduce: 2
+        pstat_main: 21
+    '3':
+      potential:
+        cooltime_reduce: 3
+        pstat_main: 12
+    '4':
+      potential:
+        cooltime_reduce: 4
+        pstat_main: 3
+  acc_bonus: &acc_bonus
+    stat_main: 70
+    stat_sub: 20
+    stat_sub2: 20
+    allstat_rate: 6
+  acc_potential: &acc_potential
+    potential:
+      pstat_main: 33
+
+  demon_armor: &demon_armor
+    star: 22
+    potential:
+      pstat_main: 33
+  demon_acc_potential: &demon_acc_potential
+    potential:
+      pstat_main: 33
+
+  xenon_armor: &xenon_armor
+    bonus:
+      stat_main: 40
+      stat_sub: 40
+      stat_sub2: 40
+      allstat_rate: 7
+    star: 22
+    potential:
+      allstat_rate: 24
+  xenon_acc_bonus: &xenon_acc_bonus
+    stat_main: 40
+    stat_sub: 40
+    stat_sub2: 40
+    allstat_rate: 7
+  xenon_acc_potential: &xenon_acc_potential
+    potential:
+      allstat_rate: 24
+
+default:
+  level: 275
+  arcane_symbol_force: 1320
+  authentic_symbol_level:
+    - 3
+    - 1
+  pet_equip: 0
+  pet_set: 21 # 원더 블랙 펫 3마리
+  cash:
+    stat_main: 75
+    stat_sub: 75
+    stat_sub2: 75
+    att: 40
+  weapon_stat:
+    - 4
+    - 9
+  head:
+    id: 카루타
+    <<: *armor
+    cdr: *head_cdr
+  top:
+    id: 카루타
+    <<: *armor
+  bottom:
+    id: 카루타
+    <<: *armor
+  shoes:
+    id: 아케인셰이드
+    <<: *armor
+  glove:
+    id: 아케인셰이드
+    <<: *armor
+    potential:
+      crit_damage: 16
+      pstat_main: 9
+  cape:
+    id: 아케인셰이드
+    <<: *armor
+  shoulder:
+    id: 아케인셰이드
+    star: 22
+    <<: *acc_potential
+  face:
+    id: 루즈 컨트롤 머신 마크
+    bonus: *acc_bonus
+    star: 22
+    <<: *acc_potential
+  eye:
+    id: 마력이 깃든 안대
+    bonus: *acc_bonus
+    star: 22
+    <<: *acc_potential
+  ear:
+    id: 커맨더 포스 이어링
+    bonus: *acc_bonus
+    star: 22
+    <<: *acc_potential
+  belt:
+    id: 몽환의 벨트
+    bonus: *acc_bonus
+    star: 22
+    <<: *acc_potential
+  ring1:
+    id: 거대한 공포
+    star: 22
+    <<: *acc_potential
+  ring2:
+    id: 마이스터링
+    star: 22
+    <<: *acc_potential
+  ring3:
+    id: 이터널 플레임 링
+    <<: *acc_potential
+  ring4:
+    id: '글로리온 링 : 슈프림'
+    <<: *acc_potential
+  pendant1:
+    id: 고통의 근원
+    bonus: *acc_bonus
+    star: 22
+    <<: *acc_potential
+  pendant2:
+    id: 도미네이터 펜던트
+    bonus: *acc_bonus
+    star: 22
+    <<: *acc_potential
+  pocket:
+    id: 마도서
+    bonus: *acc_bonus
+  badge:
+    id: 창세의 뱃지
+  medal:
+    id: 칠요의 몬스터파커
+  weapon:
+    id: 제네시스
+    bonus:
+      att_grade: 7
+    star: 22
+  subweapon:
+    id: 보조무기
+  emblem:
+    id: 엠블렘
+  heart:
+    id: 블랙 하트
+    star: 15
+    potential:
+      boss_pdamage: 30
+      armor_ignore: 30
+  title:
+    id: 핑아일체
+에반:
+  type: override
+  job_specific_item:
+    stat_main: 14
+    stat_sub: 14
+메카닉:
+  type: override
+  job_specific_item:
+    stat_main: 10
+    stat_sub: 10
+    att: 8
+듀얼블레이드:
+  type: override
+  subweapon:
+    id: 아케인셰이드
+    star: 22
+데몬어벤져:
+  type: override
+  head:
+    id: 카루타
+    bonus:
+      stat_main: 2700
+      att: 5
+    <<: *demon_armor
+    cdr: *head_cdr
+  top:
+    id: 카루타
+    bonus:
+      stat_main: 2700
+      att: 5
+    <<: *demon_armor
+  bottom:
+    id: 카루타
+    bonus:
+      stat_main: 2700
+      att: 5
+    <<: *demon_armor
+  shoes:
+    id: 아케인셰이드
+    bonus:
+      stat_main: 3600
+      att: 5
+    <<: *demon_armor
+  glove:
+    id: 아케인셰이드
+    bonus:
+      stat_main: 3600
+      att: 5
+    <<: *demon_armor
+    potential:
+      crit_damage: 16
+      pstat_main: 9
+  cape:
+    id: 아케인셰이드
+    bonus:
+      stat_main: 3600
+      att: 5
+    <<: *demon_armor
+  shoulder:
+    id: 아케인셰이드
+    star: 22
+    <<: *demon_acc_potential
+  face:
+    id: 루즈 컨트롤 머신 마크
+    bonus:
+      stat_main: 2880
+      att: 5
+    star: 22
+    <<: *demon_acc_potential
+  eye:
+    id: 마력이 깃든 안대
+    bonus:
+      stat_main: 2880
+      att: 5
+    star: 22
+    <<: *demon_acc_potential
+  ear:
+    id: 커맨더 포스 이어링
+    bonus:
+      stat_main: 3600
+      att: 5
+    star: 22
+    <<: *demon_acc_potential
+  belt:
+    id: 몽환의 벨트
+    bonus:
+      stat_main: 3600
+      att: 5
+    star: 22
+    <<: *demon_acc_potential
+  ring1:
+    id: 거대한 공포
+    star: 22
+    <<: *demon_acc_potential
+  ring2:
+    id: 마이스터링
+    star: 22
+    <<: *demon_acc_potential
+  ring3:
+    id: 이터널 플레임 링
+    <<: *demon_acc_potential
+  ring4:
+    id: '글로리온 링 : 슈프림'
+    <<: *demon_acc_potential
+  pendant1:
+    id: 고통의 근원
+    bonus:
+      stat_main: 2880
+      att: 5
+    star: 22
+    <<: *demon_acc_potential
+  pendant2:
+    id: 도미네이터 펜던트
+    bonus:
+      stat_main: 2520
+      att: 5
+    star: 22
+    <<: *demon_acc_potential
+  pocket:
+    id: 마도서
+    bonus:
+      stat_main: 2880
+      att: 5
+  heart:
+    id: 블랙 하트
+    star: 15
+    potential:
+      boss_pdamage: 30
+      armor_ignore: 30
+제논:
+  type: override
+  head:
+    id: 카루타
+    <<: *xenon_armor
+    cdr:
+      '1':
+        potential:
+          cooltime_reduce: 1
+          allstat_rate: 18
+      '2':
+        potential:
+          cooltime_reduce: 2
+          allstat_rate: 15
+      '3':
+        potential:
+          cooltime_reduce: 3
+          allstat_rate: 9
+      '4':
+        potential:
+          cooltime_reduce: 4
+          allstat_rate: 3
+  top:
+    id: 카루타
+    <<: *xenon_armor
+  bottom:
+    id: 카루타
+    <<: *xenon_armor
+  shoes:
+    id: 아케인셰이드
+    <<: *xenon_armor
+  glove:
+    id: 아케인셰이드
+    <<: *xenon_armor
+    potential:
+      crit_damage: 16
+      allstat_rate: 6
+  cape:
+    id: 아케인셰이드
+    <<: *xenon_armor
+  shoulder:
+    id: 아케인셰이드
+    star: 22
+    <<: *xenon_acc_potential
+  face:
+    id: 루즈 컨트롤 머신 마크
+    bonus: *xenon_acc_bonus
+    star: 22
+    <<: *xenon_acc_potential
+  eye:
+    id: 마력이 깃든 안대
+    bonus: *xenon_acc_bonus
+    star: 22
+    <<: *xenon_acc_potential
+  ear:
+    id: 커맨더 포스 이어링
+    bonus: *xenon_acc_bonus
+    star: 22
+    <<: *xenon_acc_potential
+  belt:
+    id: 몽환의 벨트
+    bonus: *xenon_acc_bonus
+    star: 22
+    <<: *xenon_acc_potential
+  ring1:
+    id: 거대한 공포
+    star: 22
+    <<: *xenon_acc_potential
+  ring2:
+    id: 마이스터링
+    star: 22
+    <<: *xenon_acc_potential
+  ring3:
+    id: 이터널 플레임 링
+    <<: *xenon_acc_potential
+  ring4:
+    id: '글로리온 링 : 슈프림'
+    <<: *xenon_acc_potential
+  pendant1:
+    id: 고통의 근원
+    bonus: *xenon_acc_bonus
+    star: 22
+    <<: *xenon_acc_potential
+  pendant2:
+    id: 도미네이터 펜던트
+    bonus: *xenon_acc_bonus
+    star: 22
+    <<: *xenon_acc_potential
+  pocket:
+    id: 마도서
+    bonus: *xenon_acc_bonus
+  heart:
+    id: 블랙 하트
+    star: 15
+    potential:
+      boss_pdamage: 30
+      armor_ignore: 30
