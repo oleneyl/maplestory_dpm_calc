@@ -291,9 +291,12 @@ class JobGenerator:
 
         return skill
 
-    def load_skill_wrapper(self, skill_name, vEhc=None):
+    def load_skill_wrapper(self, skill_name, vEhc=None, **kwargs):
         background_information = {k: v for k, v in self.conf.get('constant', {}).items()}
         background_information['combat'] = self.combat
+        for k, v in kwargs.items():
+            background_information[k] = v
+
         skill = self._load_skill(skill_name, vEhc, background_information=background_information)
         if isinstance(skill, DamageSkill):
             return skill.wrap(DamageSkillWrapper)
@@ -394,6 +397,7 @@ class JobGenerator:
                 InformedCharacterModifier,
                 passive_level=passive_level,
                 combat=self.combat,
+                weapon_att=chtr.get_weapon_base_att()
             )
             for opt
             in self.conf['passive_skill_list']
