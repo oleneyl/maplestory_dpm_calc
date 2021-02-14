@@ -87,7 +87,7 @@ def MapleHeroes2Wrapper(vEhc, num1, num2, level, combat_level):
 
 class TandadianRuinWrapper(core.BuffSkillWrapper):
     def __init__(self) -> None:
-        skill = core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime=90000, pdamage_indep=15, rem=False, red=True)
+        skill = core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime=90000, pdamage_indep=15, rem=False, red=False)
         super(TandadianRuinWrapper, self).__init__(skill)
 
     def ensure(self, chtr: AbstractCharacter) -> bool:
@@ -115,6 +115,7 @@ class MitraFlameWrapper(core.DamageSkillWrapper):
     def ensure(self, chtr: AbstractCharacter) -> bool:
         return chtr.level >= 265
 
+
 class FlamePatternWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, modifier) -> None:
         skill = core.SummonSkill("크레스트 오브 더 솔라(불꽃의 문양)", 0, 2100, 275+11*vEhc.getV(num1, num2), 6, 51*1000, cooltime=-1, modifier=modifier).isV(vEhc, num1, num2)
@@ -122,6 +123,7 @@ class FlamePatternWrapper(core.SummonSkillWrapper):
 
     def ensure(self, chtr: AbstractCharacter) -> bool:
         return chtr.level >= 265
+
 
 def CrestOfTheSolarBuilder(enhancer, skill_importance, enhance_importance, modifier=core.CharacterModifier()):
     MitraFlame = MitraFlameWrapper(enhancer, skill_importance, enhance_importance, modifier)
