@@ -65,7 +65,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobtype = "DEX"
         self.jobname = "패스파인더"
         self.vEnhanceNum = 11
-        self.ability_list = Ability_tool.get_ability_set('passive_level', 'crit', 'buff_rem')
+        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
     def get_ruleset(self):
