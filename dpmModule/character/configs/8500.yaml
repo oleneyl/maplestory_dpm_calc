@@ -5,7 +5,7 @@ summary:
   - 스타포스 - 무기 22성 / 방어구 22성
   - 추옵 - 무기 공1추 / 방어구, 악세 추옵 130급
   - 잠재능력
-  - 무기류 윗잠 9줄유효 에디 공24%
+  - 무기류 윗잠 9줄유효 에디 공30%
   - 방어구, 악세 레전33% / 에디 레전 3줄
   - 장갑 크뎀2줄
   - 아케인심볼 고정주스탯 13200
@@ -129,6 +129,9 @@ anchors:
   magician_shield: &magician_shield
     id: 데이모스 세이지 실드
     upgrade:
+      - type: 방공
+        value: 3
+        count: 1
       - type: 혼줌
         option:
           att: 5
@@ -315,8 +318,11 @@ default:
 섀도어:
   type: override
   subweapon:
-    id: 데이모스 세이지 실드
+    id: 데이모스 다크니스 실드
     upgrade:
+      - type: 방공
+        value: 3
+        count: 1
       - type: 혼줌
         option:
           att: 5
