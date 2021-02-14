@@ -87,20 +87,20 @@ def MapleHeroes2Wrapper(vEhc, num1, num2, level, combat_level):
 
 class TandadianRuinWrapper(core.BuffSkillWrapper):
     def __init__(self) -> None:
-        skill = core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime=90000, pdamage_indep=15, rem=False, red=False)
+        skill = core.BuffSkill("파괴의 얄다바오트", 0, 30000, cooltime=90000, pdamage_indep=15, rem=False, red=True)
         super(TandadianRuinWrapper, self).__init__(skill)
 
     def ensure(self, chtr: AbstractCharacter) -> bool:
-        return False
+        return chtr.gear_list["weapon"].name.startswith("제네시스")
 
 
 class AeonianRiseWrapper(core.DamageSkillWrapper):
     def __init__(self) -> None:
-        skill = core.DamageSkill("창조의 아이온", 0, 1500, 7, cooltime=180000, red=False)
+        skill = core.DamageSkill("창조의 아이온", 0, 1500, 7, cooltime=180000, red=True)
         super(AeonianRiseWrapper, self).__init__(skill)
 
     def ensure(self, chtr: AbstractCharacter) -> bool:
-        return False
+        return chtr.gear_list["weapon"].name.startswith("제네시스")
 
 
 def GenesisSkillBuilder():
