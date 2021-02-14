@@ -1,22 +1,24 @@
-from ..kernel import core
-from ..character import characterKernel as ck
-from functools import partial
-from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
-from . import globalSkill
-from .jobbranch import warriors
-from .jobclass import flora
-from . import jobutils
-from math import ceil
-from typing import Any, Dict
 import os
+from functools import partial
+
+from typing import Any, Dict
+
+from . import jobutils
+from . import globalSkill
+from ..kernel import core
+from .jobclass import flora
+from .jobbranch import warriors
+from ..execution.rules import RuleSet
+from ..status.ability import Ability_tool
+from ..character import characterKernel as ck
+
 
 class OrderWrapper(core.SummonSkillWrapper):
     def __init__(self, skill, ether: core.StackSkillWrapper):
         super(OrderWrapper, self).__init__(skill)
         self.ether = ether
         self.condition = None
-        self.queue = [] # (공격 시작 시간, 종료 시간)
+        self.queue = []  # (공격 시작 시간, 종료 시간)
         self.summonCooltime = 0
         self.currentTime = 0
         self.REMAIN_TIME = 40000
@@ -52,31 +54,32 @@ class OrderWrapper(core.SummonSkillWrapper):
 
         if self.summonCooltime <= 0 and self.condition():
             self.add()
-        
+
         super(OrderWrapper, self).spend_time(time)
 
-    def _delayQueue(self, time): # 게더링/블로섬 도중에는 오더의 지속시간이 흐르지 않음
+    def _delayQueue(self, time):  # 게더링/블로섬 도중에는 오더의 지속시간이 흐르지 않음
         self.set_disabled_and_time_left(time)
         self.queue = [(self.currentTime + time + self.skill.delay, end + time) for start, end in self.queue]
-        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = self.skill.name, spec = 'graph control')
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname=self.skill.name, spec='graph control')
 
     def delayQueue(self, time):
         task = core.Task(self, partial(self._delayQueue, time))
-        return core.TaskHolder(task, name = "오더 지속시간 지연")
+        return core.TaskHolder(task, name="오더 지속시간 지연")
 
     def get_stack(self):
         return len(self.queue) * 2
-        
+
     def judge(self, stack, direction):
-        return (self.get_stack()-stack)*direction>=0
+        return (self.get_stack() - stack) * direction >= 0
 
     def get_hit(self):
         attackable = sum(1 for start, end in self.queue if self.currentTime >= start) * 2
         return attackable * self.skill.hit
 
+
 class StormWrapper(core.SummonSkillWrapper):
-    def __init__(self, vEhc, num1, num2, order: OrderWrapper, serverlag = 0): # TODO: 서버렉 평균 몇초인지 측정할것
-        skill = core.SummonSkill("스톰", 780, 330, 250+10*vEhc.getV(num1,num2), 2, 14000+serverlag, cooltime = 90*1000, red=True).isV(vEhc,num1,num2)
+    def __init__(self, vEhc, num1, num2, order: OrderWrapper, serverlag=0):  # TODO: 서버렉 평균 몇초인지 측정할것
+        skill = core.SummonSkill("스톰", 780, 330, 250 + 10 * vEhc.getV(num1, num2), 2, 14000 + serverlag, cooltime=90 * 1000, red=True).isV(vEhc, num1, num2)
         super(StormWrapper, self).__init__(skill)
         self.order = order
         self.consumed_order = 0
@@ -88,10 +91,11 @@ class StormWrapper(core.SummonSkillWrapper):
     def get_hit(self):
         return self.skill.hit + max(self.consumed_order - 1, 0) * 2
 
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.load(os.path.join(os.path.dirname(__file__), 'configs', 'adele.yml'))        
+        self.load(os.path.join(os.path.dirname(__file__), 'configs', 'adele.yml'))
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
 
     def get_ruleset(self):
@@ -135,21 +139,21 @@ class JobGenerator(ck.JobGenerator):
         ResonanceStack = self.load_skill_wrapper("레조넌스(스택)", vEhc)
 
         Creation = core.StackDamageSkillWrapper(
-            core.DamageSkill('크리에이션', 0, 200+240+270+passive_level*3, 1, cooltime = 1500, red=True).setV(vEhc, 5, 2, False),
+            core.DamageSkill('크리에이션', 0, 200+240+270+passive_level*3, 1, cooltime=1500, red=True).setV(vEhc, 5, 2, False),
             Ether,
             lambda ether: min(ether.stack // 100, 3) * 2
-        ) # 직접시전시 270ms 기본공속
+        )  # 직접시전시 270ms 기본공속
 
         Territory = self.load_skill_wrapper("테리토리", vEhc, passive_level=passive_level)
         TerritoryEnd = self.load_skill_wrapper("테리토리(종료)", vEhc, passive_level=passive_level)
 
-        Order = OrderWrapper(core.SummonSkill('오더', 0, 1020, 240+120+passive_level*3, 2, 99999999).setV(vEhc, 1, 2, False), Ether) # 15% 에테르 결정, 시전딜레이 없음으로 가정, 공격주기 1020ms
+        Order = OrderWrapper(core.SummonSkill('오더', 0, 1020, 240+120+passive_level*3, 2, 99999999).setV(vEhc, 1, 2, False), Ether)  # 15% 에테르 결정, 시전딜레이 없음으로 가정, 공격주기 1020ms
 
         Gathering = core.StackDamageSkillWrapper(
             core.DamageSkill('게더링', 630, 260+300+passive_level*3, 4, cooltime=12*1000, red=True).setV(vEhc, 5, 2, False),
             Order,
             lambda order: order.get_stack() * 0.8
-        ) # 칼 불러오기. 블라섬과 연계됨, 모이는데 약 600ms 가정
+        )  # 칼 불러오기. 블라섬과 연계됨, 모이는데 약 600ms 가정
 
         Divide = self.load_skill_wrapper("디바이드", vEhc)
 
@@ -193,7 +197,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 에테르
         Ether.set_stack(400)
-        RESTORE_MULTIPLIER = 1 + (50 + vEhc.getV(1,1)) / 100
+        RESTORE_MULTIPLIER = 1 + (50 + vEhc.getV(1, 1)) / 100
         EtherTick.onTick(core.OptionalElement(
             Restore.is_active,
             Ether.stackController(5*RESTORE_MULTIPLIER),
@@ -204,7 +208,7 @@ class JobGenerator(ck.JobGenerator):
             Ether.stackController(12*RESTORE_MULTIPLIER),
             Ether.stackController(12)
         ))
-        Resonance.onAfter(core.OptionalElement( # 레조넌스-엑스트라 힐링
+        Resonance.onAfter(core.OptionalElement(  # 레조넌스-엑스트라 힐링
             Restore.is_active,
             Ether.stackController(20*RESTORE_MULTIPLIER),
             Ether.stackController(20)
@@ -214,16 +218,16 @@ class JobGenerator(ck.JobGenerator):
         def use_order():
             if Ether.judge(100, -1):
                 return False
-            if Order.judge(4, -1): # 2쌍 이하면 사용
+            if Order.judge(4, -1):  # 2쌍 이하면 사용
                 return True
-            if Restore.is_active() and Order.judge(6, -1): # 리스토어중 3쌍 이하면 사용
+            if Restore.is_active() and Order.judge(6, -1):  # 리스토어중 3쌍 이하면 사용
                 return True
             return False
         Order.setCondition(use_order)
 
         # 게더링-블로섬
         Blossom.onConstraint(core.ConstraintElement('오더가 있을 때', Order, partial(Order.judge, 1, 1)))
-        Blossom.onBefores([Gathering, Order.delayQueue(690+2010)]) # 게더링->블로섬 순서, _befores는 리스트의 끝부터 실행됨. 게더링(690ms)+블로섬(2010ms)동안 오더가 멈춤.
+        Blossom.onBefores([Gathering, Order.delayQueue(690+2010)])  # 게더링->블로섬 순서, _befores는 리스트의 끝부터 실행됨. 게더링(690ms)+블로섬(2010ms)동안 오더가 멈춤.
         Blossom.onAfter(BlossomExceed)
 
         Grave.onAfter(GraveDebuff)
@@ -251,10 +255,10 @@ class JobGenerator(ck.JobGenerator):
         Wonder.protect_from_running()
 
         return(Divide,
-                [globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
-                    AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive, FloraGoddessBless,
-                    globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract()] +\
-                [EtherTick, Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider, Shard] +\
-                [Order, Wonder, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, Scool, ManaStorm] +\
-                [] +\
-                [Divide])
+               [globalSkill.maple_heros(chtr.level, name="레프의 용사", combat_level=self.combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
+                AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive, FloraGoddessBless,
+                globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract()] +
+               [EtherTick, Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider, Shard] +
+               [Order, Wonder, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, Scool, ManaStorm] +
+               [] +
+               [Divide])
