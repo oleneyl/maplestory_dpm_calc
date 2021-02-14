@@ -1,5 +1,5 @@
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
-from dpmModule.util.configurations import export_configuration
+from dpmModule.util.configurations import export_configuration, export_enhancer_configuration
 
 import json
 
@@ -32,6 +32,7 @@ def conf(args):
     job_real = args.job[:].replace("-", "/")
 
     configuration = export_configuration(job_real)
+    vEhc = export_enhancer_configuration(job_real)
 
     regularized_configuration = {}
     for k_name, v in configuration.items():
@@ -65,6 +66,35 @@ def conf(args):
                     new_v['_static_skill_modifier'].pop(k2)
         regularized_configuration[k_name] = v
 
+    for idx, wrps in enumerate(vEhc.enhancer_priority):
+        for wrp in wrps:
+            skill_name = wrp.name
+
+            static_modifier_pos = sorted(regularized_configuration[skill_name]["_static_skill_modifier"].keys())[-1]
+            v_increment = regularized_configuration[skill_name]["_static_skill_modifier"][static_modifier_pos]['pdamage_indep'] // 60
+            regularized_configuration[wrp.name]["enhanced_by_v"] = True
+            regularized_configuration[wrp.name]["upgrade_priority"] = idx
+            regularized_configuration[wrp.name]["v_increment"] = v_increment
+            regularized_configuration[wrp.name]["v_crit"] = regularized_configuration[skill_name]["_static_skill_modifier"][static_modifier_pos].get("crit", False)
+
+    for v_priority in vEhc.v_skill_priority:
+        skill_name = v_priority['target'].name
+        regularized_configuration[skill_name]['tier'] = 5
+        regularized_configuration[skill_name]['use_priority'] = v_priority['useIdx']
+        regularized_configuration[skill_name]['upgrade_priority'] = v_priority['upgIdx']
+
+    for k_name in regularized_configuration:
+        if '_static_skill_modifier' in regularized_configuration[k_name]:
+            if "0" in regularized_configuration[k_name]['_static_skill_modifier']:
+                regularized_configuration[k_name]['modifier'] = regularized_configuration[k_name]['_static_skill_modifier']["0"]
+                regularized_configuration[k_name].pop('_static_skill_modifier')
+            else:
+                regularized_configuration[k_name]['modifier'] = regularized_configuration[k_name]['_static_skill_modifier']
+                regularized_configuration[k_name].pop('_static_skill_modifier')
+
+            if len(regularized_configuration[k_name]['modifier']) == 0:
+                regularized_configuration[k_name].pop('modifier')
+            
     with open(f"{args.job}.conf.json", "w", encoding="utf8") as f:
         json.dump(regularized_configuration, f, ensure_ascii=False, indent=4)
 
