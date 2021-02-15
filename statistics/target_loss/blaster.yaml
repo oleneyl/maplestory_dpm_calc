@@ -1,0 +1,57 @@
+리볼빙 캐논 마스터리:
+  type: random
+  target: 15
+리볼빙 캐논(더블 팡):
+  type: random
+  target: 2
+리볼빙 캐논(매그넘 펀치):
+  type: random
+  target: 2
+릴리즈 파일 벙커:
+  type: random
+  target: 11
+릴리즈 파일 벙커(A):
+  type: random
+  target: 11
+릴리즈 파일 벙커(B):
+  type: random
+  target: 11
+릴리즈 파일 벙커(C):
+  type: random
+  target: 11
+릴리즈 파일 벙커(D):
+  type: random
+  target: 11
+매그넘 펀치:
+  type: random
+  target: 5
+더블 팡:
+  type: random
+  target: 5
+발칸 펀치:
+  type: random
+  target: 10
+발칸 펀치(틱):
+  type: random
+  target: 10
+버닝 브레이커(돌진):
+  type: random
+  target: 12
+버닝 브레이커(폭발):
+  type: random
+  target: 12
+벙커 버스터(공격):
+  type: random
+  target: 10
+애프터이미지 쇼크(액티브):
+  type: random
+  target: 15
+애프터이미지 쇼크(패시브):
+  type: random
+  target: 7
+해머 스매시:
+  type: random
+  target: 8
+해머 스매시(충격파):
+  type: random
+  target: 8

@@ -84,6 +84,7 @@ class JobGenerator(ck.JobGenerator):
         스나, 피어싱, 롱레트, 프리저
         """
         DISTANCE = options.get("distance", 400)
+        ENEMY_COUNT = options.get("enemy_count", 1)
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         def weakness_finding(distance: float):
@@ -105,7 +106,7 @@ class JobGenerator(ck.JobGenerator):
                 ),
             )
 
-        LASTMAN_STANDING = core.CharacterModifier(pdamage_indep=20 + 2 * passive_level)
+        LASTMAN_STANDING = core.CharacterModifier(pdamage_indep=(20 + 2 * passive_level) * (ENEMY_COUNT == 1))
         PASSIVE_MODIFIER = (
             weakness_finding(DISTANCE) + distancing_sense(DISTANCE) + LASTMAN_STANDING
         )

@@ -1,0 +1,36 @@
+레이지 업라이징:
+  type: random
+  target: 3
+레이징 블로우(인레이지):
+  type: random
+  target: 3
+레이징 블로우(인레이지)(최종타):
+  type: random
+  target: 3
+소드 오브 버닝 소울:
+  type: random
+  target: 2
+소드 일루전:
+  type: random
+  target: 2
+소드 일루전(최종):
+  type: random
+  target: 2
+어드밴스드 파이널 어택:
+  type: random
+  target: 1
+인사이징:
+  type: random
+  target: 3
+인사이징(도트):
+  type: random
+  target: 3
+콤보 데스폴트:
+  type: random
+  target: 5
+콤보 인스팅트 균열:
+  type: random
+  target: 2
+패닉:
+  type: random
+  target: 2

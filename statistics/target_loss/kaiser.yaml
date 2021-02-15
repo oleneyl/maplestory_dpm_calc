@@ -1,0 +1,54 @@
+가디언 오브 노바(1):
+  type: random
+  target: 10
+가디언 오브 노바(2):
+  type: random
+  target: 10
+가디언 오브 노바(3):
+  type: random
+  target: 10
+기가 슬래셔:
+  type: random
+  target: 2
+드라코 슬래셔:
+  type: random
+  target: 8
+드라코 슬래셔(발사):
+  type: nearest
+  target: 8
+드래곤 블레이즈:
+  type: random
+  target: 8
+드래곤 블레이즈(불의 기운):
+  type: random
+  target: 10
+드래곤 블레이즈(화염구):
+  type: random
+  target: 1
+어드밴스드 윌 오브 소드:
+  type: random
+  target: 1
+'윌 오브 소드: 스트라이크':
+  type: random
+  target: 1
+'윌 오브 소드: 스트라이크(폭발)':
+  type: random
+  target: 12
+윙비트:
+  type: nearest
+  target: 1
+윙비트(2):
+  type: nearest
+  target: 1
+인퍼널 브레스:
+  type: random
+  target: 15
+인퍼널 브레스(바닥):
+  type: random
+  target: 15
+페트리파이드:
+  type: random
+  target: 9
+프로미넌스:
+  type: random
+  target: 15

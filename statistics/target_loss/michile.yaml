@@ -1,0 +1,36 @@
+데들리 차지:
+  type: random
+  target: 15
+라이트 오브 커리지(빛의 검):
+  type: random
+  target: 4
+라이트 오브 커리지(용기의 빛):
+  type: random
+  target: 4
+라이트 오브 커리지(용기의 빛)(종료):
+  type: random
+  target: 4
+로얄 가드(5):
+  type: random
+  target: 15
+샤이닝 크로스:
+  type: random
+  target: 8
+샤이닝 크로스-인스톨:
+  type: random
+  target: 6
+소울 라이트 슬래시:
+  type: random
+  target: 8
+소울 어썰트:
+  type: random
+  target: 3
+클라우 솔라스:
+  type: random
+  target: 12
+클라우 솔라스(소환):
+  type: random
+  target: 12
+파이널 어택:
+  type: random
+  target: 1

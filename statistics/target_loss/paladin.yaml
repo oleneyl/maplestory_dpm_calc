@@ -1,0 +1,36 @@
+그랜드 크로스(강화):
+  type: random
+  target: 12
+그랜드 크로스(작은):
+  type: random
+  target: 12
+디바인 차지:
+  type: random
+  target: 7
+라이트닝 차지:
+  type: random
+  target: 7
+라이트닝 차지(도트):
+  type: random
+  target: 7
+마이티 묠니르:
+  type: homing
+  target: 1
+마이티 묠니르(충격파):
+  type: homing
+  target: 6
+블래스드 해머:
+  type: random
+  target: 4
+블레스드 해머(활성화):
+  type: random
+  target: 8
+블래스트:
+  type: random
+  target: 2
+생츄어리:
+  type: random
+  target: 15
+파이널 어택:
+  type: random
+  target: 1

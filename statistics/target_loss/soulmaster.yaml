@@ -1,0 +1,24 @@
+댄스오브 문/스피딩 선셋:
+  type: random
+  target: 2
+댄스오브 문/스피딩 선셋(셀레스티얼):
+  type: random
+  target: 2
+셀레스티얼 댄스(추가타):
+  type: random
+  target: 10
+소울 이클립스:
+  type: random
+  target: 15
+솔루나 디바이드:
+  type: random
+  target: 15
+엘리시온(균열):
+  type: random
+  target: 15
+크로스 더 스틱스(엘리시온):
+  type: random
+  target: 15
+플레어 슬래시:
+  type: random
+  target: 10

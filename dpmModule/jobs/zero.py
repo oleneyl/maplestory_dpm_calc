@@ -102,7 +102,8 @@ class JobGenerator(ck.JobGenerator):
 
         어파스 기준
         '''
-        DEALCYCLE = options.get('dealcycle', 'alpha_new')
+        DEALCYCLE = options.get("dealcycle", "alpha_new")
+        ENEMY_COUNT = options.get("enemy_count", 1)
 
         #### 마스터리 ####
         # 베타 마스터리의 공격력 +4는 무기 기본 공격력 차이
@@ -131,7 +132,7 @@ class JobGenerator(ck.JobGenerator):
         # extra_damage(x): 대검 마스터리의 타겟수 감소에 따른 보너스 뎀퍼 (x = 타겟 수)
         # 코강으로 인한 타겟수 증가는 뎀퍼 증가에 영향을 주지 않음
         def extra_damage(x):
-            return core.CharacterModifier(pdamage=8*(x-1))
+            return core.CharacterModifier(pdamage=8*(x-ENEMY_COUNT))
 
         #### 알파 ####
         MoonStrike = core.DamageSkill("문 스트라이크", 390, 120, 6).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
