@@ -8,7 +8,7 @@ import argparse
 
 def get_args():
     parser = argparse.ArgumentParser("DPM Test argument")
-    parser.add_argument("--job", type=str, help="Target class' Korean name to test DPM")
+    parser.add_argument("--job", type=str, help="Target job name to test DPM")
     parser.add_argument("--level", type=int, default=None, help="Character's level, default depends on ulevel")
     parser.add_argument("--ulevel", type=int, default=6000, help="Union level, default is 6000")
     parser.add_argument("--time", type=int, default=1800, help="Test time in seconds, default is 1800(30 min)")
@@ -94,7 +94,7 @@ def conf(args):
 
             if len(regularized_configuration[k_name]['modifier']) == 0:
                 regularized_configuration[k_name].pop('modifier')
-            
+
     with open(f"{args.job}.conf.json", "w", encoding="utf8") as f:
         json.dump(regularized_configuration, f, ensure_ascii=False, indent=4)
 

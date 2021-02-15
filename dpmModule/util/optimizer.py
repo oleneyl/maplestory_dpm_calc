@@ -81,10 +81,10 @@ def get_instant_dpm(
     if koJobFlag:
         koJob = job
     else:
-        koJob = maplejobs.getKoJobName(job)
+        koJob = maplejobs.get_ko_jobname(job)
     if koJob is not None:
         try:
-            gen = maplejobs.getGenerator(koJob).JobGenerator()
+            gen = maplejobs.get_generator(koJob).JobGenerator()
         except Exception as e:
             raise TypeError("Unsupported job type: " + str(job))
     else:
