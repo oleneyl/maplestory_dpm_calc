@@ -65,7 +65,7 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         WordOfFire = core.BuffSkill("북 오브 파이어", 0, 300000, att = 20).wrap(core.BuffSkillWrapper)
         FiresOfCreation = core.BuffSkill("스피릿 오브 플레임", 600, 300 * 1000, armor_ignore = 30+self.combat).wrap(core.BuffSkillWrapper)
-        BurningRegion = core.BuffSkill("버닝 리전", 1080, 30 * 1000, cooltime =45 * 1000, rem = True, pdamage = 60+self.combat).wrap(core.BuffSkillWrapper)
+        BurningRegion = core.BuffSkill("버닝 리전", 1080, 30 * 1000, cooltime =45 * 1000, rem = True, red=True, pdamage = 60+self.combat).wrap(core.BuffSkillWrapper)
         GloryOfGuardians = core.BuffSkill("글로리 오브 가디언즈", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         Flame = core.BuffSkill("플레임", 0, 8000, att = 40 + passive_level, cooltime=-1).wrap(core.BuffSkillWrapper) # 벞지 적용 안되는 스킬
         
