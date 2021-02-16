@@ -2,8 +2,8 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ConditionRule
-from . import globalSkill, jobutils
+from ..execution.rules import ComplexConditionRule, ConcurrentRunRule, RuleSet
+from . import globalSkill
 from .jobclass import cygnus
 from .jobbranch import magicians
 from typing import Any, Dict
@@ -21,11 +21,12 @@ class JobGenerator(ck.JobGenerator):
         return core.CharacterModifier(armor_ignore=10, pdamage=50, att=35)
 
     def get_ruleset(self):
-        def check_ifc_time(ifc):
-            return (ifc.is_usable() or ifc.is_cooltime_left(90*1000, 1))
+        def soul_contract_rule(soul_contract, ifc, burning_region):
+            return (ifc.is_usable() or ifc.is_cooltime_left(90*1000, 1)) and burning_region.is_active()
 
         ruleset = RuleSet()
-        ruleset.add_rule(ConditionRule('소울 컨트랙트', '인피니티 플레임 서클(개시)', check_ifc_time), RuleSet.BASE)
+        ruleset.add_rule(ComplexConditionRule('소울 컨트랙트', ['인피니티 플레임 서클(개시)', '버닝 리전'], soul_contract_rule), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('인피니티 플레임 서클(개시)', '버닝 리전'), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
