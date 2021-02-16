@@ -141,7 +141,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                      cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level), WordOfFire, FiresOfCreation, BurningRegion, GloryOfGuardians, OverloadMana, Flame, SalamanderMischeifBuff,
                     globalSkill.soul_contract()] +\
-                [SalamanderMischeif, CygnusPhalanx, BlazingOrbital, DragonSlaveInit, SavageFlame, InfinityFlameCircleInit, 
+                [SalamanderMischeif, CygnusPhalanx, BlazingOrbital, InfinityFlameCircleInit, DragonSlaveInit, SavageFlame,
                     InfernoRize, MirrorBreak, MirrorSpider] +\
                 [IgnitionDOT] +\
                 [] +\
