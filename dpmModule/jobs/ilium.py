@@ -141,7 +141,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_modifier_optimization_hint(self) -> core.CharacterModifier:
-        return core.CharacterModifier(boss_pdamage=108)
+        return core.CharacterModifier(boss_pdamage=106, armor_ignore=-5.4)
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         # 앱솔 무기 마력 241

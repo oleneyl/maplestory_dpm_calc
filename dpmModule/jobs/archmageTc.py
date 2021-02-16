@@ -28,7 +28,7 @@ class JobGenerator(ck.JobGenerator):
         self.ability_list = Ability_tool.get_ability_set('buff_rem', 'crit', 'boss_pdamage')
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore=20, pdamage=60, crit_damage=15)
+        return core.CharacterModifier(armor_ignore=5, pdamage=60, crit_damage=15)
 
     def get_ruleset(self):
         ruleset = RuleSet()
