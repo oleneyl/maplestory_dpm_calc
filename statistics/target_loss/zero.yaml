@@ -1,0 +1,165 @@
+디바인 리어:
+  type: random
+  target: 15
+리미트 브레이크:
+  type: random
+  target: 15
+리미트 브레이크(막타):
+  type: random
+  target: 15
+문 스트라이크:
+  type: random
+  target: 9
+문 스트라이크(연계):
+  type: random
+  target: 9
+문 스트라이크(태그):
+  type: random
+  target: 9
+피어스 쓰러스트:
+  type: random
+  target: 9
+피어스 쓰러스트(연계):
+  type: random
+  target: 9
+쉐도우 스트라이크:
+  type: random
+  target: 9
+쉐도우 스트라이크(오라):
+  type: nearest
+  target: 9
+어드밴스드 롤링 어썰터(태그):
+  type: random
+  target: 9
+어드밴스드 롤링 어썰터(오라)(태그):
+  type: nearest
+  target: 9
+어드밴스드 롤링 커브(태그):
+  type: random
+  target: 9
+어드밴스드 롤링 커브(오라)(태그):
+  type: nearest
+  target: 9
+어드밴스드 스핀 커터(태그):
+  type: random
+  target: 9
+어드밴스드 스핀 커터(오라)(태그):
+  type: nearest
+  target: 9
+윈드 커터:
+  type: random
+  target: 9
+윈드 커터(소용돌이):
+  type: nearest
+  target: 9
+윈드 스트라이크:
+  type: random
+  target: 9
+어드밴스드 스톰 브레이크:
+  type: random
+  target: 9
+어드밴스드 스톰 브레이크(소용돌이):
+  type: nearest
+  target: 9
+어드밴스드 스톰 브레이크(전기):
+  type: random
+  target: 9
+어퍼 슬래시:  # need to change ENEMY_COUNT for all beta skills
+  type: random
+  target: 7
+어퍼 슬래시(태그):
+  type: random
+  target: 7
+어드밴스드 파워 스텀프:
+  type: random
+  target: 7
+어드밴스드 파워 스텀프(태그):
+  type: random
+  target: 7
+어드밴스드 파워 스텀프(파동):
+  type: random
+  target: 7
+어드밴스드 파워 스텀프(파동)(태그):
+  type: random
+  target: 7
+터닝 드라이브:
+  type: random
+  target: 7
+어드밴스드 휠 윈드:
+  type: random
+  target: 7
+프론트 슬래시:
+  type: random
+  target: 7
+어드밴스드 스로잉 웨폰:
+  type: random
+  target: 7
+기가 크래시:
+  type: random
+  target: 7
+기가 크래시(태그):
+  type: random
+  target: 7
+점핑 크래시:
+  type: random
+  target: 7
+점핑 크래시(태그):
+  type: random
+  target: 7
+점핑 크래시(충격파):
+  type: random
+  target: 7
+어드밴스드 어스 브레이크:
+  type: random
+  target: 7
+어드밴스드 어스 브레이크(태그):
+  type: random
+  target: 7
+어드밴스드 어스 브레이크(파동):
+  type: random
+  target: 7
+어드밴스드 어스 브레이크(전기):
+  type: random
+  target: 7
+에고 웨폰(베타):
+  type: homing
+  target: 1
+에고 웨폰(알파):
+  type: homing
+  target: 1
+쉐도우 플래시(알파):
+  type: random
+  target: 8
+쉐도우 플래시(알파)(종료):
+  type: random
+  target: 15
+쉐도우 플래시(베타):
+  type: random
+  target: 8
+쉐도우 플래시(베타)(종료):
+  type: random
+  target: 15
+조인트 어택(베타)(1):
+  type: random
+  target: 12
+조인트 어택(베타)(2):
+  type: random
+  target: 12
+조인트 어택(베타)(3):
+  type: random
+  target: 12
+조인트 어택(알파)(1):
+  type: random
+  target: 12
+조인트 어택(알파)(2):
+  type: random
+  target: 12
+조인트 어택(알파)(3):
+  type: random
+  target: 12
+조인트 어택(4):
+  type: random
+  target: 12
+초월자 륀느의 기원(타격):
+  type: random
+  target: 15

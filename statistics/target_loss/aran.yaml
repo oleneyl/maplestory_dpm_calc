@@ -1,0 +1,57 @@
+게더링 캐쳐(캔슬):
+  type: random
+  target: 11
+마하의 영역:
+  type: random
+  target: 15
+마하의 영역(시전):
+  type: random
+  target: 15
+부스트 엔드-헌터즈 타겟팅:
+  type: homing
+  target: 1
+브랜디쉬 마하:
+  type: random
+  target: 15
+블리자드 템페스트:
+  type: random
+  target: 12
+블리자드 템페스트(저주):
+  type: random
+  target: 10
+비욘더(1타):  # need to change ENEMY_COUNT
+  type: random
+  target: 7
+비욘더(2타):  # need to change ENEMY_COUNT
+  type: random
+  target: 7
+비욘더(3타):  # need to change ENEMY_COUNT
+  type: random
+  target: 7
+비욘더(파동):
+  type: nearest
+  target: 7
+스매시 스윙:
+  type: random
+  target: 7
+스윙 연구 II:
+  type: random
+  target: 6
+어드밴스드 파이널 어택:
+  type: random
+  target: 1
+인스톨 마하(눈보라):
+  type: random
+  target: 10
+파이널 블로우:
+  type: random
+  target: 7
+파이널 블로우(파동):
+  type: nearest
+  target: 7
+펜릴 크래시:  # need to change ENEMY_COUNT
+  type: random
+  target: 10
+펜릴 크래시(빙산):
+  type: random
+  target: 10

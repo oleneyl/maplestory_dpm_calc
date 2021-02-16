@@ -1,0 +1,36 @@
+트리니티:
+  type: homing
+  target: 1
+트리니티(2타):
+  type: homing
+  target: 1
+트리니티(3타):
+  type: homing
+  target: 1
+소울 시커:
+  type: random
+  target: 1
+소울 시커(소울 익절트):
+  type: random
+  target: 1
+슈퍼 노바:
+  type: random
+  target: 15
+피니투라 페투치아:
+  type: random
+  target: 11
+스포트라이트:
+  type: random
+  target: 15
+에너지 버스트:
+  type: random
+  target: 15
+트윙클 스타/매지컬 벌룬:
+  type: random
+  target: 6
+샤이니 버블 브레스:
+  type: random
+  target: 10
+트리니티 퓨전:
+  type: random
+  target: 8

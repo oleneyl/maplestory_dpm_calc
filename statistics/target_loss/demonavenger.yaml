@@ -1,0 +1,33 @@
+데몬 프렌지:
+  type: random
+  target: 10
+디멘션 소드:
+  type: random
+  target: 8
+레버넌트(분노의 가시):
+  type: random
+  target: 5
+블러드 피스트:
+  type: random
+  target: 8
+실드 체이싱:
+  type: random
+  target: 1
+아머 브레이크:
+  type: random
+  target: 13
+배츠 스웜:
+  type: random
+  target: 2
+'익시드: 엑스큐션(2스택)':
+  type: random
+  target: 3
+'익시드: 엑스큐션(3스택)':
+  type: random
+  target: 3
+'익시드: 엑스큐션(강화)':
+  type: random
+  target: 3
+인핸스드 익시드:
+  type: random
+  target: 3

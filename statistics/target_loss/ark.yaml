@@ -1,0 +1,96 @@
+플레인 차지드라이브:
+  type: random
+  target: 7
+플레인 차지드라이브(연계):
+  type: random
+  target: 7
+플레인 스펠:
+  type: random
+  target: 2
+끝나지 않는 악몽(연계):
+  type: random
+  target: 7
+스칼렛 차지드라이브(연계):
+  type: random
+  target: 7
+스칼렛 차지드라이브(후속타):
+  type: random
+  target: 7
+스칼렛 스펠:
+  type: random
+  target: 9
+거스트 차지드라이브(연계):
+  type: random
+  target: 7
+거스트 스펠:
+  type: random
+  target: 13
+어비스 차지드라이브(연계):
+  type: random
+  target: 9
+어비스 차지드라이브(후속타):
+  type: random
+  target: 9
+어비스 스펠:
+  type: random
+  target: 9
+멈출 수 없는 충동(연계):
+  type: random
+  target: 7
+끝나지 않는 흉몽:
+  type: random
+  target: 7
+끝나지 않는 흉몽(연계):
+  type: random
+  target: 7
+멈출 수 없는 본능(연계):
+  type: random
+  target: 7
+지워지지 않는 상처(연계):
+  type: random
+  target: 7
+채워지지 않는 굶주림(연계):
+  type: random
+  target: 9
+걷잡을 수 없는 혼돈(연계):
+  type: random
+  target: 13
+기어 다니는 공포(연계):
+  type: random
+  target: 13
+다가오는 죽음:
+  type: random
+  target: 1
+돌아오는 증오:
+  type: random
+  target: 8
+황홀한 구속:
+  type: homing
+  target: 2
+황홀한 구속(소환):
+  type: random
+  target: 13
+황홀한 구속(종결):
+  type: random
+  target: 13
+끝없는 고통(틱):
+  type: random
+  target: 6
+끝없는 고통(종결,연계):
+  type: random
+  target: 13
+근원의 기억(틱):
+  type: random
+  target: 10
+근원의 기억(종결):
+  type: random
+  target: 15
+새어 나오는 악몽:
+  type: random
+  target: 10
+새어 나오는 흉몽:
+  type: random
+  target: 12
+영원히 굶주리는 짐승:
+  type: random
+  target: 12

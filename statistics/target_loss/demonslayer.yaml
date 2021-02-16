@@ -1,0 +1,87 @@
+데몬 베인(1):
+  type: random
+  target: 5
+데몬 베인(1)(블루 블러드):
+  type: random
+  target: 5
+데몬 베인(2):
+  type: random
+  target: 12
+데몬 베인(2)(블루 블러드):
+  type: random
+  target: 12
+데몬 슬래시 강화(1타):
+  type: random
+  target: 7
+데몬 슬래시 강화(1타)(블루 블러드):
+  type: random
+  target: 7
+데몬 슬래시 강화(2타):
+  type: random
+  target: 7
+데몬 슬래시 강화(2타)(블루 블러드):
+  type: random
+  target: 7
+데몬 슬래시 강화(3타):
+  type: random
+  target: 7
+데몬 슬래시 강화(3타)(블루 블러드):
+  type: random
+  target: 7
+데몬 슬래시 강화(4타):
+  type: random
+  target: 7
+데몬 슬래시 강화(4타)(블루 블러드):
+  type: random
+  target: 7
+데몬 슬래시(1타):
+  type: random
+  target: 7
+데몬 임팩트:
+  type: random
+  target: 5
+데몬 임팩트(블루 블러드):
+  type: random
+  target: 5
+데빌 크라이:
+  type: random
+  target: 15
+데빌 크라이(블루 블러드):
+  type: random
+  target: 15
+메타모포시스(블블):
+  type: random
+  target: 15
+메타모포시스(소환):
+  type: random
+  target: 15
+서버러스:
+  type: random
+  target: 9
+서버러스(블루 블러드):
+  type: random
+  target: 9
+서버러스(자동):
+  type: random
+  target: 9
+서버러스(자동)(블루 블러드):
+  type: random
+  target: 9
+오라 웨폰(파동):
+  type: nearest
+  target: 10
+오라 웨폰(파동)(블루 블러드):
+  type: nearest
+  target: 10
+오르트로스(게리온):
+  type: random
+  target: 10
+오르트로스(네메아):
+  type: random
+  target: 10
+요르문간드:
+  type: random
+  target: 12
+요르문간드(종료):
+  type: random
+  target: 12

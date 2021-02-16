@@ -206,7 +206,7 @@ class Analytics:
 
         print("\n===Summon/DoT Skills===")
         summonList = list(
-            filter(lambda log: log["result"].spec in ["summon", "dot"], self.logList)
+            filter(lambda log: log["result"].spec.split(":")[0] in ["summon", "dot"], self.logList)
         )
         names = getSkillNames(summonList)
         for name in names:
@@ -444,7 +444,7 @@ class StatAnalytics:
         self.total_loss += loss
         self.total_hit += result.hit
 
-        if deal > 0:
+        if result.spec != "graph control":
             self.logList.append(
                 {
                     "time": result.time,

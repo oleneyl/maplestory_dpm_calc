@@ -674,7 +674,7 @@ class SummonSkillWrapper(AbstractSkillWrapper):
             self.get_damage(),
             self.get_hit(),
             sname=self.skill.name,
-            spec=self.skill.spec,
+            spec=self.skill.spec + ":tick",
         )
 
     def build_periodic_task(self, skill_modifier: SkillModifier) -> Task:

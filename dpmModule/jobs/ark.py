@@ -218,6 +218,7 @@ class JobGenerator(ck.JobGenerator):
         
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
+        ENEMY_COUNT = options.get("enemy_count", 1)
         LINK_DELAY = 30
         BattleArtsHyper = core.CharacterModifier(pdamage=20, boss_pdamage=20, armor_ignore=20)  # 하이퍼 - 배틀아츠 modifier
 
@@ -336,7 +337,12 @@ class JobGenerator(ck.JobGenerator):
             skill.onBefore(core.OptionalElement(SpecterState.is_active, EndlessBadDream_Link, PlainChargeDrive_Link))
   
         # 보스 1:1 시 공격 1회 당 다가오는 죽음 1개 생성, 인피니티 스펠 상태 시 강화레벨에 따라 총 3 ~ 4개 생성
-        UpcomingDeath_Connected = core.OptionalElement(InfinitySpell.is_active, core.RepeatElement(UpcomingDeath, 3 + vEhc.getV(0,0) // 25), UpcomingDeath)
+        UpcomingDeath_Connected = core.OptionalElement(
+            InfinitySpell.is_active,
+            core.RepeatElement(UpcomingDeath, ENEMY_COUNT + 2 + vEhc.getV(0,0) // 25),
+            core.RepeatElement(UpcomingDeath, ENEMY_COUNT)
+        )
+        UpcomingDeath.onAfter(ReturningHateStack.stackController(0.2))
         UpcomingDeath.onAfter(ReturningHateStack.stackController(0.2))
         ReturningHate.onJustAfter(ReturningHateStack.stackController(-15))
         

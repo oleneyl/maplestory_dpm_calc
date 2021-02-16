@@ -1,0 +1,36 @@
+궁그닐 디센트:
+  type: random
+  target: 2
+궁그닐 디센트(무한):
+  type: random
+  target: 2
+다크 스피어:
+  type: nearest
+  target: 12
+다크 임페일:
+  type: random
+  target: 8
+다크니스 오라:
+  type: random
+  target: 6
+다크니스 오라(폭발):
+  type: random
+  target: 8
+비홀더 도미넌트:
+  type: random
+  target: 2
+비홀더 쇼크:
+  type: random
+  target: 11
+비홀더 임팩트:
+  type: random
+  target: 11
+파이널 어택:
+  type: random
+  target: 1
+피어스 사이클론:
+  type: random
+  target: 12
+피어스 사이클론(종료):
+  type: random
+  target: 12

@@ -1,0 +1,42 @@
+노틸러스:
+  type: random
+  target: 15
+노틸러스 어썰트:
+  type: random
+  target: 15
+노틸러스 어썰트(일제 사격):
+  type: random
+  target: 15
+데드아이:
+  type: random
+  target: 12
+데스 트리거:
+  type: random
+  target: 7
+래피드 파이어:
+  type: homing
+  target: 1
+배틀쉽 봄버(소환,1):
+  type: nearest
+  target: 7
+배틀쉽 봄버(소환,2):
+  type: nearest
+  target: 7
+불릿 파티(틱):
+  type: random
+  target: 15
+서먼 크루:
+  type: nearest
+  target: 2
+스트레인지 봄:
+  type: random
+  target: 15
+옥타 쿼터덱:
+  type: nearest
+  target: 2
+캡틴 디그니티:
+  type: homing
+  target: 1
+헤드 샷:
+  type: homing
+  target: 1

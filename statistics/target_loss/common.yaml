@@ -1,0 +1,30 @@
+오라 웨폰(파동):
+  type: nearest
+  target: 10
+스파이더 인 미러(거울 속의 거미):
+  type: random
+  target: 1
+스파이더 인 미러(공간 붕괴):
+  type: random
+  target: 15
+시그너스 팔랑크스:
+  type: nearest
+  target: 1
+레지스탕스 라인 인팬트리:
+  type: random
+  target: 12
+이계의 공허:
+  type: random
+  target: 12
+콜 마스테마:
+  type: random
+  target: 8
+판테온:
+  type: random
+  target: 15
+매직 서킷 풀드라이브(마력 폭풍):
+  type: random
+  target: 6
+이볼브:
+  type: random
+  target: 10

@@ -1,0 +1,57 @@
+게더링:
+  type: random
+  target: 11
+그레이브:
+  type: homing
+  target: 1
+디바이드:
+  type: random
+  target: 8
+레조넌스:  # need to change ENEMY_COUNT
+  type: random
+  target: 7
+루인(공격):
+  type: random
+  target: 15
+루인(소환):
+  type: random
+  target: 15
+리스토어(주기공격):
+  type: random
+  target: 6
+마커:  # need to change ENEMY_COUNT
+  type: random
+  target: 8
+블로섬:
+  type: random
+  target: 9
+블로섬(초과):
+  type: random
+  target: 9
+샤드:
+  type: random
+  target: 1
+샤드(원더):
+  type: random
+  target: 1
+스콜:
+  type: random
+  target: 7
+스톰:
+  type: random
+  target: 7
+오더:
+  type: homing
+  target: 1
+인피니트:
+  type: homing
+  target: 1
+크리에이션:
+  type: random
+  target: 11
+테리토리:
+  type: random
+  target: 9
+테리토리(종료):
+  type: random
+  target: 13

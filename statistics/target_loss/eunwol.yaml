@@ -1,0 +1,39 @@
+귀문진 공격:
+  type: random
+  target: 1
+귀참:
+  type: random
+  target: 4
+분혼 격참(공격):
+  type: random
+  target: 7
+소혼 장막:
+  type: random
+  target: 11
+수호 정령(간간 수월래):
+  type: random
+  target: 6
+수호 정령(소혼 장막):
+  type: random
+  target: 10
+여우령:
+  type: random
+  target: 1
+여우령(100%):
+  type: random
+  target: 1
+정령 집속(무작위):
+  type: random
+  target: 4
+진 귀참:
+  type: random
+  target: 11
+파쇄 연권(키다운):
+  type: random
+  target: 10
+파쇄 연권(막타):
+  type: random
+  target: 10
+파쇄철조-회:
+  type: random
+  target: 7

@@ -1,0 +1,39 @@
+ICBM:
+  type: random
+  target: 15
+ICBM(장판):
+  type: random
+  target: 15
+롤링 캐논 레인보우:
+  type: random
+  target: 10
+몽키 웨이브:
+  type: random
+  target: 8
+몽키 퓨리어스:
+  type: nearest
+  target: 11
+몽키 퓨리어스(도트):
+  type: nearest
+  target: 11
+빅 휴즈 기간틱 캐논볼:
+  type: random
+  target: 15
+서포트 몽키 트윈스:
+  type: nearest
+  target: 2
+스페셜 몽키 에스코트:
+  type: nearest
+  target: 3
+스페셜 몽키 에스코트(폭탄):
+  type: random
+  target: 12
+오크통 룰렛(도트):
+  type: random
+  target: 15
+캐논 버스터:
+  type: nearest
+  target: 1
+풀 메이커:
+  type: random
+  target: 8

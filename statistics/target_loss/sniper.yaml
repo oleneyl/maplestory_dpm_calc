@@ -1,0 +1,21 @@
+가이디드 애로우:
+  type: random
+  target: 1
+스나이핑:
+  type: nearest
+  target: 1
+스플릿 애로우(공격):
+  type: random
+  target: 10
+차지드 애로우:
+  type: nearest
+  target: 10
+트루 스나이핑(타격):
+  type: homing
+  target: 12
+파이널 어택:
+  type: random
+  target: 1
+풀버스트 샷:
+  type: nearest
+  target: 1

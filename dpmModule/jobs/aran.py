@@ -176,6 +176,7 @@ class JobGenerator(ck.JobGenerator):
         소울 컨트랙트는 아드레날린 부스트가 10초 이상 남았다면 사용함
 
         """
+        ENEMY_COUNT = options.get("enemy_count", 1)
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         BOOST_END_HUNTERS_TARGETING_DELAY = 600
         ADRENALINE_BOOST_REMAIN = (20 + 3) * 1000
@@ -184,11 +185,11 @@ class JobGenerator(ck.JobGenerator):
         DYNAMIC_MASTERY = 20 + passive_level
 
         # reinforce: hyper skill reinforce
-        def get_beyonder_pdamage(excess_target, reinforce=True):
-            return (1.06 ** excess_target - 1) * 100 + reinforce * 20
+        def get_beyonder_pdamage(target_count, reinforce=True):
+            return (1.06 ** (target_count - ENEMY_COUNT) - 1) * 100 + reinforce * 20
 
-        BEYONDER_PDAMAGE = get_beyonder_pdamage(5)
-        PENRIL_PDAMAGE = get_beyonder_pdamage(9)
+        BEYONDER_PDAMAGE = get_beyonder_pdamage(6)
+        PENRIL_PDAMAGE = get_beyonder_pdamage(10)
 
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem=True).wrap(
             core.BuffSkillWrapper

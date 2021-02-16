@@ -111,6 +111,7 @@ class JobGenerator(ck.JobGenerator):
         서먼크루 / 스트봄 / 노틸러스
         """
         passive_level = chtr.get_base_modifier().passive_level + self.combat
+        ENEMY_COUNT = options.get("enemy_count", 1)
         DEADEYEACC = 3
         DEADEYEAIM = 3480
         BULLET_PARTY_TICK = 150
@@ -339,7 +340,7 @@ class JobGenerator(ck.JobGenerator):
                 hit=15,
                 cooltime=30000 + DEADEYEAIM,  # TODO: 조준시간은 쿨감 안받아야함
                 red=True,
-                modifier=core.CharacterModifier(crit=100, pdamage_indep=4 * 11)
+                modifier=core.CharacterModifier(crit=100, pdamage_indep=4 * (12 - ENEMY_COUNT))
                 + CONTINUAL_AIMING
                 + BULLET_ATT,
             )

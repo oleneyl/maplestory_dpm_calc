@@ -1,0 +1,72 @@
+교아탄:
+  type: nearest
+  target: 15
+교아탄(축뢰):
+  type: nearest
+  target: 15
+뇌신창격:
+  type: random
+  target: 8
+뇌신창격(축뢰):
+  type: random
+  target: 8
+뇌신창격(후속타):
+  type: random
+  target: 8
+뇌신창격(후속타)(축뢰):
+  type: random
+  target: 8
+섬멸(연계):
+  type: random
+  target: 2
+섬멸(연계)(축뢰):
+  type: random
+  target: 2
+신뇌합일(공격):  # 번개 전이 확인 필요
+  type: random
+  target: 5
+신뇌합일(축뢰):
+  type: random
+  target: 5
+창뇌연격:
+  type: random
+  target: 4
+창뇌연격(축뢰):
+  type: random
+  target: 4
+창뇌연격(번개):
+  type: random
+  target: 3
+창뇌연격(번개)(축뢰):
+  type: random
+  target: 3
+창뇌연격(막타):
+  type: random
+  target: 7
+창뇌연격(막타)(축뢰):
+  type: random
+  target: 7
+창뇌연격(막타)(번개):
+  type: random
+  target: 8
+창뇌연격(막타)(번개)(축뢰):
+  type: random
+  target: 8
+태풍(연계):
+  type: random
+  target: 9
+태풍(연계)(축뢰):
+  type: random
+  target: 9
+파도(연계):
+  type: random
+  target: 9
+파도(연계)(축뢰):
+  type: random
+  target: 9
+벽력(연계):
+  type: random
+  target: 9
+벽력(연계)(축뢰):
+  type: random
+  target: 9

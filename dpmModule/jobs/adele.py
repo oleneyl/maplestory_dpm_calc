@@ -149,6 +149,7 @@ class JobGenerator(ck.JobGenerator):
         인피니트 - 리스토어 - 루인 - 매서풀 - 오라웨폰 - (바오스)
 
         '''
+        ENEMY_COUNT = options.get("enemy_count", 1)
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         Shard = core.DamageSkill("샤드", 630, 80+30+115+225+passive_level*3, 3 * 5, cooltime=6000, red=True).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper) # 450*3의 투사체 5개
@@ -157,7 +158,7 @@ class JobGenerator(ck.JobGenerator):
         Ether = core.StackSkillWrapper(core.BuffSkill('에테르', 0, 9999999), 400)
         EtherTick = core.SummonSkill('에테르(자연 회복)', 0, 10020, 0, 0, 9999999).wrap(core.SummonSkillWrapper)
 
-        Resonance = core.DamageSkill("레조넌스", 690, (120+125+265+passive_level*3) * (1.15**5), 6, cooltime=10*1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 900ms, 스택 유지를 위해 10초마다 사용함
+        Resonance = core.DamageSkill("레조넌스", 690, (120+125+265+passive_level*3) * (1.15**(6-ENEMY_COUNT)), 6, cooltime=10*1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 900ms, 스택 유지를 위해 10초마다 사용함
 
         ResonanceStack = core.BuffSkill('레조넌스(스택)', 0, 30*1000, cooltime=-1, pdamage_indep=10, armor_ignore=10).wrap(core.BuffSkillWrapper) # 최종뎀 5, 방무 5, 최대2회. 상시 중첩으로 가정
 
@@ -190,7 +191,7 @@ class JobGenerator(ck.JobGenerator):
             lambda order: max(order.get_stack() - 1, 0)
         )
 
-        Marker = core.DamageSkill('마커', 690, 500, 6*2, cooltime=60*1000, modifier=core.CharacterModifier(pdamage_indep=300)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 최종뎀 300% 증가, 임의위치 조각 5개, 1히트, 결정 5개, 생성/파쇄 각각 공격, 클라공속 900ms
+        Marker = core.DamageSkill('마커', 690, 500, 6*2, cooltime=60*1000, modifier=core.CharacterModifier(pdamage_indep=300 * (ENEMY_COUNT == 1))).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 최종뎀 300% 증가, 임의위치 조각 5개, 1히트, 결정 5개, 생성/파쇄 각각 공격, 클라공속 900ms
         Scool = core.DamageSkill('스콜', 690, 1000, 12, cooltime=180*1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper) #바인드. 클라공속 900ms
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60*1000, pdamage = 10, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
 

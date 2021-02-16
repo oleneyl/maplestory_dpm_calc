@@ -1,0 +1,33 @@
+노틸러스:
+  type: random
+  target: 15
+노틸러스(파이널 어택):
+  type: random
+  target: 1
+드래곤 스트라이크:
+  type: random
+  target: 11
+서펜트 스크류:
+  type: random
+  target: 10
+에너지 오브:
+  type: random
+  target: 10
+유니티 오브 파워:
+  type: random
+  target: 9
+퓨리어스 차지:
+  type: random
+  target: 8
+피스트 인레이지:
+  type: homing
+  target: 1
+피스트 인레이지(변신):
+  type: homing
+  target: 1
+하울링 피스트(충전):
+  type: random
+  target: 8
+하울링 피스트(막타):
+  type: random
+  target: 15
