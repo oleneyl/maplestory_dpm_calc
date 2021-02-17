@@ -1,6 +1,10 @@
 """Advisor : 아니마님아
 """
+from enum import Enum
 from typing import List
+
+from .globalSkill import GlobalSkills
+from .jobbranch.thieves import ThiefSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -13,6 +17,67 @@ from typing import Any, Dict
 '''
 TODO: Reorder in a similar style to other professions. 다른 직업들과 비슷한 스타일로 순서 재정리.
 '''
+
+
+# English skill information for Hoyoung here https://maplestory.fandom.com/wiki/Hoyoung/Skills
+class HoyoungSkills(Enum):
+    # Link Skill
+    Bravado = 'Bravado | 자신감'
+    # Beginner
+    ExclusiveSpell = 'Exclusive Spell | 익스클루시브 스펠'
+    SpiritAffinity = 'Spirit Affinity | 정령친화'
+    FiendSeal = 'Fiend Seal | 괴이봉인'
+    # 1st Job
+    TalismanEnergy = 'Talisman Energy | 부적 도력'
+    HumanityAsYouWillFan = 'Humanity: As-You-Will Fan | 여의선 : 인'
+    TalismanEvilSealingGourd = 'Talisman: Evil-Sealing Gourd | 마봉 호로부'
+    GracefulFlight = 'Graceful Flight | 초상비'
+    NimbusCloud = 'Nimbus Cloud | 근두운'
+    LightSteps = 'Light Steps | 경공'
+    ShroudingMist = 'Shrouding Mist | 무중'
+    # 2nd Job
+    EarthGroundShatteringWave = 'Earth: Ground-Shattering Wave | 토파류 : 지'
+    GroundShatteringWaveCloneTrue = 'Ground-Shattering Wave (Clone/True) | 토파류 : 허/실'
+    TalismanClone = 'Talisman: Clone | 환영 분신부'
+    RitualFanAcceleration = 'Ritual Fan Acceleration | 부채 가속'
+    RitualFanMastery = 'Ritual Fan Mastery | 부채 숙련'
+    OutofSight = 'Out of Sight | 암행'
+    ThirdEye = 'Third Eye | 심안'
+    HeavenlyBody = 'Heavenly Body | 운신'
+    FortuneFitness = 'Fortune Fitness | 신체 단련'
+    # 3rd Job
+    ScrollEnergy = 'Scroll Energy | 두루마리 도력'
+    HeavenIronFanGale = 'Heaven: Iron Fan Gale | 파초풍 : 천'
+    IronFanGaleCloneTrue = 'Iron Fan Gale (Clone/True) | 파초풍 : 허/실'
+    EarthStoneTremor = 'Earth: Stone Tremor | 지진쇄 : 지'
+    StoneTremorCloneTrue = 'Stone Tremor (Clone／True) | 지진쇄 : 허/실'
+    TalismanSeekingGhostFlame = 'Talisman: Seeking Ghost Flame | 추적 귀화부'
+    ScrollDegeneration = 'Scroll: Degeneration | 권술 : 미생강변'
+    Attainment = 'Attainment | 득의'
+    Asura = 'Asura | 수라'
+    DiamondBody = 'Diamond Body | 금강'
+    BalancedBreath = 'Balanced Breath | 조식'
+    # 4th Job
+    HeavenConsumingFlames = 'Heaven: Consuming Flames | 멸화염 : 천'
+    ConsumingFlamesCloneTrue = 'Consuming Flames (Clone/True) | 멸화염 : 허/실'
+    HumanityGoldBandedCudgel = 'Humanity: Gold-Banded Cudgel | 금고봉 : 인'
+    ThousandTonStone = 'Thousand-Ton Stone | 둔갑 천근석'
+    TalismanWarpGate = 'Talisman: Warp Gate | 왜곡 축지부'
+    ScrollStarVortex = 'Scroll: Star Vortex | 권술 : 흡성와류'
+    ScrollButterflyDream = 'Scroll: Butterfly Dream | 권술 : 호접지몽'
+    AnimaWarrior = 'Anima Warrior | 아니마의 용사'
+    AdvancedRitualFanMastery = 'Advanced Ritual Fan Mastery | 고급 부채 숙련'
+    Enlightenment = 'Enlightenment | 득도'
+    DragonsEye = 'Dragon\'s Eye | 점정'
+    # Hypers
+    SageTaiYusMiracleTonic = 'Sage: Tai Yu\'s Miracle Tonic | 선기 : 영약 태을선단'
+    SageDreamofShangriLa = 'Sage: Dream of Shangri-La | 선기 : 몽유도원'
+    SageTaiYuClone = 'Sage: Tai Yu Clone | 선기 : 분신 둔갑 태을선인'
+    # 5th Job
+    SageCloneRampage = 'Sage: Clone Rampage | 선기 : 극대 분신난무'
+    ScrollTigerofSongyu = 'Scroll: Tiger of Songyu | 권술 : 산령소환'
+    SageWrathofGods = 'Sage: Wrath of Gods | 선기 : 강림 괴력난신'
+    SageThreePathsApparition = 'Sage: Three Paths Apparition | 선기 : 천지인 환영'
 
 
 class ChunJiInWrapper(core.GraphElement):
