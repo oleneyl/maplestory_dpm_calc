@@ -81,7 +81,7 @@ class EvanSkills(Enum):
 
 class MagicParticleWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc, upgrade_index, passive_level):
-        skill = core.DamageSkill("마법 잔해", 0, 110, 1).setV(vEhc, upgrade_index, 2, True)
+        skill = core.DamageSkill(EvanSkills.MagicDebris.value, 0, 110, 1).setV(vEhc, upgrade_index, 2, True)
         super(MagicParticleWrapper, self).__init__(skill)
         self.stack = 0
         self.passive_level = passive_level
@@ -99,7 +99,7 @@ class MagicParticleWrapper(core.DamageSkillWrapper):
 
     def add_stack(self):
         task = core.Task(self, self._add_stack)
-        return core.TaskHolder(task, name="마법 잔해 추가")
+        return core.TaskHolder(task, name=f"{EvanSkills.MagicDebris.value}(Add | 추가)")
 
     def _use(self, skill_modifier):
         result = super(MagicParticleWrapper, self)._use(skill_modifier)
@@ -117,7 +117,7 @@ class MagicParticleWrapper(core.DamageSkillWrapper):
 
 class ZodiacRayWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2):
-        skill = core.SummonSkill("조디악 레이", 780, 180, 400+16*vEhc.getV(num1,num2), 6, (14+vEhc.getV(num1,num2)//10)*1000+240, cooltime = 180*1000, red=True, modifier = MDF(armor_ignore = 100)).isV(vEhc,num1,num2)
+        skill = core.SummonSkill(EvanSkills.ElementalRadiance.value, 780, 180, 400+16*vEhc.getV(num1,num2), 6, (14+vEhc.getV(num1,num2)//10)*1000+240, cooltime = 180*1000, red=True, modifier = MDF(armor_ignore = 100)).isV(vEhc,num1,num2)
         self.mana = 0
         self.open = False
         super(ZodiacRayWrapper, self).__init__(skill)
@@ -138,13 +138,13 @@ class ZodiacRayWrapper(core.SummonSkillWrapper):
 
     def add_mana(self, count):
         task = core.Task(self, partial(self._add_mana, count))
-        return core.TaskHolder(task, name=f"마력{count:+d}")
+        return core.TaskHolder(task, name=f"Magic Attack | 마력{count:+d}")
 
 class SpiralOfManaWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2):
         self.penaltyTime = 0
         skill = core.SummonSkill(
-            "스파이럴 오브 마나", 360, 420, 235+vEhc.getV(num1,num2), 6, 7000, cooltime=5000-50*vEhc.getV(num1,num2), red=True
+            EvanSkills.SpiralofMana.value, 360, 420, 235+vEhc.getV(num1,num2), 6, 7000, cooltime=5000-50*vEhc.getV(num1,num2), red=True
         ).setV(vEhc, 0, 2, False).isV(vEhc, num1, num2)
         super(SpiralOfManaWrapper, self).__init__(skill)
 
@@ -165,7 +165,7 @@ class SpiralOfManaWrapper(core.SummonSkillWrapper):
 
     def setPenalty(self):
         task = core.Task(self, self._setPenalty)
-        return core.TaskHolder(task, name="스오마 타수 감소")
+        return core.TaskHolder(task, name="Mana Burst reduction | 스오마 타수 감소")
 
     def get_hit(self): # 서오마 사용후 1초간 3타, 미사용시 6타
         if self.penaltyTime > 0:
@@ -199,7 +199,7 @@ class MirSkillWrapper(core.SummonSkillWrapper):
 
     def end(self):
         task = core.Task(self, self._end)
-        return core.TaskHolder(task, name="종료")
+        return core.TaskHolder(task, name="Ending | 종료")
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -215,23 +215,23 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        InheritWill = core.InformedCharacterModifier("계승된 의지",att = 10, stat_main = 10, stat_sub = 10)
-        LinkedMagic = core.InformedCharacterModifier("링크드 매직",att = 20)
+        InheritWill = core.InformedCharacterModifier(EvanSkills.InheritedWill.value,att = 10, stat_main = 10, stat_sub = 10)
+        LinkedMagic = core.InformedCharacterModifier(EvanSkills.MagicLink.value,att = 20)
         
-        HighWisdom =  core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
+        HighWisdom =  core.InformedCharacterModifier(EvanSkills.HighWisdom.value,stat_main = 40)
 
-        SpellMastery = core.InformedCharacterModifier("스펠 마스터리",crit = 15, att = 10)
+        SpellMastery = core.InformedCharacterModifier(EvanSkills.SpellMastery.value,crit = 15, att = 10)
         
-        ElementalReset = core.InformedCharacterModifier("엘리멘탈 리셋",pdamage_indep = 15)
-        CriticalMagic = core.InformedCharacterModifier("크리티컬 매직",crit = 30, crit_damage = 20)
-        MagicAmplification = core.InformedCharacterModifier("매직 엠플리피케이션",pdamage_indep = 30)
-        DragonPotential = core.InformedCharacterModifier("드래곤 포텐셜",armor_ignore = 20)
+        ElementalReset = core.InformedCharacterModifier(EvanSkills.ElementalDecrease.value,pdamage_indep = 15)
+        CriticalMagic = core.InformedCharacterModifier(EvanSkills.CriticalMagic.value,crit = 30, crit_damage = 20)
+        MagicAmplification = core.InformedCharacterModifier(EvanSkills.MagicAmplification.value,pdamage_indep = 30)
+        DragonPotential = core.InformedCharacterModifier(EvanSkills.DragonPotential.value,armor_ignore = 20)
         
-        MagicMastery = core.InformedCharacterModifier("매직 마스터리",att = 30 + passive_level, crit_damage = 20 + passive_level//2)
-        DragonFury = core.InformedCharacterModifier("드래곤 퓨리",patt = 35 + passive_level)
-        HighDragonPotential = core.InformedCharacterModifier("하이 드래곤 포텐셜",boss_pdamage = 20+passive_level)
+        MagicMastery = core.InformedCharacterModifier(EvanSkills.MagicMastery.value,att = 30 + passive_level, crit_damage = 20 + passive_level//2)
+        DragonFury = core.InformedCharacterModifier(EvanSkills.DragonFury.value,patt = 35 + passive_level)
+        HighDragonPotential = core.InformedCharacterModifier(EvanSkills.HighDragonPotential.value,boss_pdamage = 20+passive_level)
 
-        SpiralOfManaPassive = core.InformedCharacterModifier("스파이럴 오브 마나(패시브)", att=5+vEhc.getV(0,0))
+        SpiralOfManaPassive = core.InformedCharacterModifier(f"{EvanSkills.SpiralofMana.value}(Passive | 패시브)", att=5+vEhc.getV(0,0))
         
         return [InheritWill, LinkedMagic,
             HighWisdom, SpellMastery, ElementalReset, CriticalMagic, MagicAmplification, DragonPotential,
@@ -242,8 +242,8 @@ class JobGenerator(ck.JobGenerator):
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 0)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5 + 0.5*passive_level)  
-        Interaction = core.InformedCharacterModifier("교감",pdamage = 20)
-        ElementalResetActive = core.InformedCharacterModifier("엘리멘탈 리셋(사용)", prop_ignore = 10)
+        Interaction = core.InformedCharacterModifier(EvanSkills.Partners.value,pdamage = 20)
+        ElementalResetActive = core.InformedCharacterModifier(f"{EvanSkills.ElementalDecrease.value}(Use | 사용)", prop_ignore = 10)
         
         return [WeaponConstant, Mastery, Interaction, ElementalResetActive]
         
@@ -287,55 +287,55 @@ class JobGenerator(ck.JobGenerator):
 
         ######   Skill   ######
         #Buff skills
-        Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)
-        OnixBless = core.BuffSkill("오닉스의 축복", 0, (180+2*self.combat)*1000, rem = True, att = 80+2*self.combat).wrap(core.BuffSkillWrapper)
+        Booster = core.BuffSkill(EvanSkills.MagicBooster.value, 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)
+        OnixBless = core.BuffSkill(EvanSkills.BlessingoftheOnyx.value, 0, (180+2*self.combat)*1000, rem = True, att = 80+2*self.combat).wrap(core.BuffSkillWrapper)
 
         ### Fusion skill. 에반 스킬.
-        CircleOfMana1 = core.DamageSkill("서클 오브 마나 IV(1타)", 180, 290 + self.combat, 4).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        CircleOfMana2 = core.DamageSkill("서클 오브 마나 IV(2타)", 390, 330 + self.combat, 4).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DragonSparking = core.DamageSkill("드래곤 스파킹", 0, 150, 1).setV(vEhc, 7, 3, True).wrap(core.DamageSkillWrapper)
+        CircleOfMana1 = core.DamageSkill(f"{EvanSkills.ManaBurstIV.value}(1st hit | 1타)", 180, 290 + self.combat, 4).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        CircleOfMana2 = core.DamageSkill(f"{EvanSkills.ManaBurstIV.value}(2nd hit | 2타)", 390, 330 + self.combat, 4).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DragonSparking = core.DamageSkill(EvanSkills.DragonSpark.value, 0, 150, 1).setV(vEhc, 7, 3, True).wrap(core.DamageSkillWrapper)
         MagicParticle = MagicParticleWrapper(vEhc, 6, passive_level)
         
-        CircleOfWind = core.DamageSkill("서클 오브 윈드", 660, 320+self.combat, 5).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        CircleOfThunder = core.DamageSkill("서클 오브 썬더", 660, 320+self.combat, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        CircleOfEarth = core.DamageSkill("서클 오브 어스", 660, 320+self.combat, 5).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        DarkFog = core.DamageSkill("다크 포그", 870, 400+2*self.combat, 6, cooltime = 40000, red=True).wrap(core.DamageSkillWrapper)
+        CircleOfWind = core.DamageSkill(EvanSkills.WindCircle.value, 660, 320+self.combat, 5).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        CircleOfThunder = core.DamageSkill(EvanSkills.ThunderCircle.value, 660, 320+self.combat, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        CircleOfEarth = core.DamageSkill(EvanSkills.EarthCircle.value, 660, 320+self.combat, 5).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        DarkFog = core.DamageSkill(EvanSkills.DarkFog.value, 870, 400+2*self.combat, 6, cooltime = 40000, red=True).wrap(core.DamageSkillWrapper)
         
         ### Mir skill. 미르 스킬.
-        Mir = core.BuffSkill("미르(공격중)", 0, 0, cooltime=-1).wrap(core.BuffSkillWrapper)
-        DragonSwift = core.SummonSkill("드래곤 스위프트", 0, 540, 415 + 2*self.combat, 4, 3360, cooltime = 6000, red=True).setV(vEhc, 8, 2, False).wrap(MirSkillWrapper)
-        DragonDive = core.SummonSkill("드래곤 다이브", 0, 360, 325 + self.combat, 3, 3480, cooltime = 6000, red=True).wrap(MirSkillWrapper)
-        DragonBreath = core.SummonSkill("드래곤 브레스", 0, 360, 240 + self.combat, 5, 2880, cooltime = 7500, red=True).setV(vEhc, 2, 2, False).wrap(MirSkillWrapper)
+        Mir = core.BuffSkill("Mir | 미르(Attacking | 공격중)", 0, 0, cooltime=-1).wrap(core.BuffSkillWrapper)
+        DragonSwift = core.SummonSkill(EvanSkills.DragonFlash.value, 0, 540, 415 + 2*self.combat, 4, 3360, cooltime = 6000, red=True).setV(vEhc, 8, 2, False).wrap(MirSkillWrapper)
+        DragonDive = core.SummonSkill(EvanSkills.DragonDive.value, 0, 360, 325 + self.combat, 3, 3480, cooltime = 6000, red=True).wrap(MirSkillWrapper)
+        DragonBreath = core.SummonSkill(EvanSkills.DragonBreath.value, 0, 360, 240 + self.combat, 5, 2880, cooltime = 7500, red=True).setV(vEhc, 2, 2, False).wrap(MirSkillWrapper)
 
         ## Fusion skill. 융합 스킬.
-        SwiftOfWind = core.SummonSkill("스위프트 오브 윈드", 0, 360, 215 + self.combat, 2*3, 3360, cooltime=-1, modifier=MDF(pdamage_indep=-35)).setV(vEhc, 3, 2, False).wrap(MirSkillWrapper)
-        SwiftOfThunder = core.SummonSkill("스위프트 오브 썬더", 0, 2280/SWIFT_OF_THUNDER_HIT, 450 + self.combat, 6, 2280, cooltime=-1).setV(vEhc, 4, 2, False).wrap(MirSkillWrapper)
+        SwiftOfWind = core.SummonSkill(EvanSkills.WindFlash.value, 0, 360, 215 + self.combat, 2*3, 3360, cooltime=-1, modifier=MDF(pdamage_indep=-35)).setV(vEhc, 3, 2, False).wrap(MirSkillWrapper)
+        SwiftOfThunder = core.SummonSkill(EvanSkills.ThunderFlash.value, 0, 2280/SWIFT_OF_THUNDER_HIT, 450 + self.combat, 6, 2280, cooltime=-1).setV(vEhc, 4, 2, False).wrap(MirSkillWrapper)
         # DiveOfThunder - 안씀.
-        DiveOfEarth = core.SummonSkill("다이브 오브 어스", 0, 2310/DIVE_OF_EARTH_HIT, 190 + 420, 6, 2310, cooltime=-1, modifier = MDF(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(MirSkillWrapper) # 컴뱃오더스: 위컴알 기준 적용이나 인게임에서 미적용
-        BreathOfWind = core.SummonSkill("브레스 오브 윈드", 0, 450, 215+self.combat+BREATH_OF_WIND_BONUS*(65+self.combat+85), 5, 3510, cooltime=-1).setV(vEhc, 3, 2, False).wrap(MirSkillWrapper)
-        BreathOfEarth = core.SummonSkill("브레스 오브 어스", 0, 450, 280+self.combat, 5, 3510, cooltime=-1).setV(vEhc, 1, 2, False).wrap(MirSkillWrapper)
+        DiveOfEarth = core.SummonSkill(EvanSkills.EarthDive.value, 0, 2310/DIVE_OF_EARTH_HIT, 190 + 420, 6, 2310, cooltime=-1, modifier = MDF(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(MirSkillWrapper) # 컴뱃오더스: 위컴알 기준 적용이나 인게임에서 미적용
+        BreathOfWind = core.SummonSkill(EvanSkills.WindBreath.value, 0, 450, 215+self.combat+BREATH_OF_WIND_BONUS*(65+self.combat+85), 5, 3510, cooltime=-1).setV(vEhc, 3, 2, False).wrap(MirSkillWrapper)
+        BreathOfEarth = core.SummonSkill(EvanSkills.EarthBreath.value, 0, 450, 280+self.combat, 5, 3510, cooltime=-1).setV(vEhc, 1, 2, False).wrap(MirSkillWrapper)
         
         ### Come back! 돌아와!
-        SwiftBack = core.BuffSkill("스위프트-돌아와!", 30, 60000, cooltime=-1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
-        DiveBack = core.BuffSkill("다이브-돌아와!", 30, 60000, cooltime=-1, rem=True).wrap(core.BuffSkillWrapper)
-        BreathBack = core.SummonSkill("브레스-돌아와!", 30, 450, 150+self.combat, 1, (30+self.combat // 2)*1000, cooltime=-1).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
+        SwiftBack = core.BuffSkill(EvanSkills.ReturnFlash.value, 30, 60000, cooltime=-1, pdamage_indep = 10).wrap(core.BuffSkillWrapper)
+        DiveBack = core.BuffSkill(EvanSkills.ReturnDive.value, 30, 60000, cooltime=-1, rem=True).wrap(core.BuffSkillWrapper)
+        BreathBack = core.SummonSkill(EvanSkills.ReturnFlame.value, 30, 450, 150+self.combat, 1, (30+self.combat // 2)*1000, cooltime=-1).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
         
         # Hyper. 하이퍼.
-        SummonOnixDragon = core.SummonSkill("서먼 오닉스 드래곤", 900, 3030, 550, 2, 40000, cooltime = 80000).wrap(core.SummonSkillWrapper)
+        SummonOnixDragon = core.SummonSkill(EvanSkills.SummonOnyxDragon.value, 900, 3030, 550, 2, 40000, cooltime = 80000).wrap(core.SummonSkillWrapper)
         
         # Dragon Master-Unused. 드래곤 마스터 - 미사용.
-        HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
+        HerosOath = core.BuffSkill(EvanSkills.HeroicMemories.value, 0, 60000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
         # 5th. 5차.
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         # The final damage stack is applied for each hit. 1 stroke (0%) -2 stroke (5%) -3 stroke (10%) -4 stroke (15%) = 7.5% average. 각 타마다 최종뎀 스택이 적용됨. 1타(0%)-2타(5%)-3타(10%)-4타(15%) = 평균 7.5%.
-        ElementalBlast = core.DamageSkill("엘리멘탈 블래스트", 600, 750+30*vEhc.getV(2,3), 6 * 4, cooltime = 60000, red = True, modifier = MDF(crit = 100, pdamage_indep = 7.5)).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
-        ElementalBlastBuff = core.BuffSkill("엘리멘탈 블래스트(버프)", 0, 10000, pdamage_indep = 20, cooltime=-1).isV(vEhc,2,3).wrap(core.BuffSkillWrapper)
+        ElementalBlast = core.DamageSkill(EvanSkills.ElementalBarrage.value, 600, 750+30*vEhc.getV(2,3), 6 * 4, cooltime = 60000, red = True, modifier = MDF(crit = 100, pdamage_indep = 7.5)).isV(vEhc,2,3).wrap(core.DamageSkillWrapper)
+        ElementalBlastBuff = core.BuffSkill(f"{EvanSkills.ElementalBarrage.value}(Buff | 버프)", 0, 10000, pdamage_indep = 20, cooltime=-1).isV(vEhc,2,3).wrap(core.BuffSkillWrapper)
 
-        DragonBreak = core.SummonSkill("드래곤 브레이크", 0, 360, 450+18*vEhc.getV(5,5), 7, 2500, cooltime = 20000, red=True).isV(vEhc,5,5).wrap(MirSkillWrapper)
-        DragonBreakBack = core.SummonSkill("드래곤 브레이크-돌아와!", 30, 510, 150+6*vEhc.getV(5,5), 3 * BREAK_BACK_HIT_RATE, 5000, cooltime=-1).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
-        ImperialBreath = core.SummonSkill("임페리얼 브레스", 0, 240, 500+20*vEhc.getV(5,5), 7, 4000, cooltime=-1).isV(vEhc,5,5).wrap(MirSkillWrapper)
+        DragonBreak = core.SummonSkill(EvanSkills.DragonSlam.value, 0, 360, 450+18*vEhc.getV(5,5), 7, 2500, cooltime = 20000, red=True).isV(vEhc,5,5).wrap(MirSkillWrapper)
+        DragonBreakBack = core.SummonSkill(EvanSkills.LudicrousSpeed.value, 30, 510, 150+6*vEhc.getV(5,5), 3 * BREAK_BACK_HIT_RATE, 5000, cooltime=-1).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
+        ImperialBreath = core.SummonSkill(EvanSkills.WyrmkingsBreath.value, 0, 240, 500+20*vEhc.getV(5,5), 7, 4000, cooltime=-1).isV(vEhc,5,5).wrap(MirSkillWrapper)
 
         ZodiacRay = ZodiacRayWrapper(vEhc, 4, 2)
 
@@ -355,7 +355,7 @@ class JobGenerator(ck.JobGenerator):
         SwiftOfWind.onTick(AddParticle)
         
         # Mir constraint. 미르 제한조건.
-        MirConstraint = core.ConstraintElement("미르(사용중)", Mir, Mir.is_not_active)
+        MirConstraint = core.ConstraintElement("Mir | 미르(In use | 사용중)", Mir, Mir.is_not_active)
 
         for sk in [DragonSwift, DragonDive, DragonBreath, DragonBreak]:
             sk.onConstraint(MirConstraint)
@@ -371,7 +371,7 @@ class JobGenerator(ck.JobGenerator):
             back.onAfter(Mir.controller(1))
 
         # Brake/Elble/Imb. 브레이크/엘블/임브.
-        ElementalBlast.onConstraint(core.ConstraintElement("엘리멘탈 블래스트 실행조건", Mir, lambda: DragonBreak.endSoon(1000)))
+        ElementalBlast.onConstraint(core.ConstraintElement(f"{EvanSkills.ElementalBarrage.value}(Execution condition | 실행조건)", Mir, lambda: DragonBreak.endSoon(1000)))
         ElementalBlast.onAfter(ElementalBlastBuff)
         ElementalBlast.onAfter(ImperialBreath)
         
@@ -379,18 +379,18 @@ class JobGenerator(ck.JobGenerator):
 
         DragonBreak.onAfter(DragonBreakBack.controller(1))
         ImperialBreath.onAfter(DragonBreakBack.controller(1))
-        DragonBreakBack.onConstraint(core.ConstraintElement("드래곤 브레이크-돌아와! 실행조건", Mir,
+        DragonBreakBack.onConstraint(core.ConstraintElement(f"{EvanSkills.LudicrousSpeed.value}(Execution condition | 실행조건)", Mir,
             lambda: ImperialBreath.endSoon(1000) or (DragonBreak.endSoon(1000) and not ElementalBlast.is_available())
         ))
 
         # Breath. 브레스.
         DragonBreath.onAfter(BreathOfEarth.controller(1))
-        BreathOfEarth.onConstraint(core.ConstraintElement("브오어 실행조건", Mir, lambda: DragonBreath.endSoon(1000)))
+        BreathOfEarth.onConstraint(core.ConstraintElement("브오어 (Execution condition | 실행조건)", Mir, lambda: DragonBreath.endSoon(1000)))
         BreathOfEarth.onAfter(CircleOfMana1)  # 마나캔슬.
         BreathOfEarth.onAfter(DragonBreath.end())
         
         BreathOfEarth.onAfter(BreathBack.controller(1))
-        BreathBack.onConstraint(core.ConstraintElement("브레스-돌아와! 실행조건", Mir, lambda: BreathOfEarth.endSoon(1000)))
+        BreathBack.onConstraint(core.ConstraintElement(f"{EvanSkills.ReturnFlame.value}(Execution condition | 실행조건)", Mir, lambda: BreathOfEarth.endSoon(1000)))
 
         # Dive. 다이브.
         DragonDive.onAfter(DiveOfEarth.controller(1))
@@ -399,7 +399,7 @@ class JobGenerator(ck.JobGenerator):
         DiveOfEarth.onAfter(DragonDive.end())
 
         DiveOfEarth.onAfter(core.OptionalElement(lambda: DiveBack.is_time_left(8500, -1), DiveBack.controller(1)))
-        DiveBack.onConstraint(core.ConstraintElement("다이브-돌아와! 실행조건", Mir, lambda: DiveOfEarth.endSoon(1000)))
+        DiveBack.onConstraint(core.ConstraintElement(f"{EvanSkills.ReturnDive.value}(Execution condition | 실행조건)", Mir, lambda: DiveOfEarth.endSoon(1000)))
 
         # Swift. 스위프트.
         DragonSwift.onConstraint(core.ConstraintElement("스위프트 실행조건", Mir, lambda: SwiftBack.is_time_left(5000, -1))) # 버프 없을때만 사용
@@ -407,7 +407,7 @@ class JobGenerator(ck.JobGenerator):
 
         DragonSwift.onAfter(SwiftBack.controller(1))
         SwiftOfWind.onAfter(SwiftBack.controller(1))
-        SwiftBack.onConstraint(core.ConstraintElement("스위프트-돌아와! 실행조건", Mir, lambda: SwiftOfWind.is_active() or DragonSwift.is_active())) # 스위프트 즉시 종료
+        SwiftBack.onConstraint(core.ConstraintElement(f"{EvanSkills.ReturnFlash.value}(Execution condition | 실행조건)", Mir, lambda: SwiftOfWind.is_active() or DragonSwift.is_active())) # 스위프트 즉시 종료
 
         # Swift Zodiac Ray. 조디악 레이.
         ZodiacStack3 = ZodiacRay.add_mana(3)
