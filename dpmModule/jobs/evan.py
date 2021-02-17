@@ -1,3 +1,5 @@
+from enum import Enum
+
 from ..kernel.graph import DynamicVariableOperation
 from ..kernel import core
 from ..kernel.core import CharacterModifier as MDF
@@ -8,6 +10,73 @@ from . import globalSkill
 from .jobclass import heroes
 from .jobbranch import magicians
 from typing import Any, Dict
+
+
+# English skill information for Evan here https://maplestory.fandom.com/wiki/Evan/Skills
+class EvanSkills(Enum):
+    # Link Skill
+    RunePersistence = 'Rune Persistence | 룬 퍼시스턴스'
+    # Beginner
+    InheritedWill = 'Inherited Will | 계승된 의지'
+    # 1st Job
+    ManaBurstI = 'Mana Burst I | 서클 오브 마나Ⅰ'
+    Teleport = 'Teleport | 텔레포트'
+    MagicGuard = 'Magic Guard | 매직 가드'
+    DragonSoul = 'Dragon Soul | 드래곤 소울'
+    MagicLink = 'Magic Link | 링크드 매직'
+    DragonSpark = 'Dragon Spark | 드래곤 스파킹'
+    # 2nd Job
+    ManaBurstII = 'Mana Burst II | 서클 오브 마나II'
+    WindCircle = 'Wind Circle | 서클 오브 윈드'
+    DragonFlash = 'Dragon Flash | 드래곤 스위프트'
+    WindFlash = 'Wind Flash | 스위프트 오브 윈드'
+    ReturnFlash = 'Return Flash | 스위프트-돌아와!'
+    Return = 'Return! | 돌아와!'
+    MagicBooster = 'Magic Booster | 매직 부스터'
+    SupportJump = 'Support Jump | 서포트 점프'
+    HighWisdom = 'High Wisdom | 하이 위즈덤'
+    Partners = 'Partners | 교감'
+    SpellMastery = 'Spell Mastery | 스펠 마스터리'
+    AdvancedDragonSpark = 'Advanced Dragon Spark | 어드밴스 드래곤 스파킹'
+    # 3rd Job
+    ManaBurstIII = 'Mana Burst III | 서클 오브 마나III'
+    ThunderCircle = 'Thunder Circle | 서클 오브 썬더'
+    DragonDive = 'Dragon Dive | 드래곤 다이브'
+    ReturnDive = 'Return Dive | 다이브-돌아와!'
+    ThunderDive = 'Thunder Dive | 다이브 오브 썬더'
+    ThunderFlash = 'Thunder Flash | 스위프트 오브 썬더'
+    MagicDebris = 'Magic Debris | 마법 잔해'
+    ElementalDecrease = 'Elemental Decrease | 엘리멘탈 리셋'
+    CriticalMagic = 'Critical Magic | 크리티컬 매직'
+    MagicResistance = 'Magic Resistance | 매직 레지스턴스'
+    MagicAmplification = 'Magic Amplification | 매직 엠플리피케이션'
+    DragonPotential = 'Dragon Potential | 드래곤 포텐셜'
+    # 4th Job
+    ManaBurstIV = 'Mana Burst IV | 서클 오브 마나IV'
+    EarthCircle = 'Earth Circle | 서클 오브 어스'
+    DragonBreath = 'Dragon Breath | 드래곤 브레스'
+    WindBreath = 'Wind Breath | 브레스 오브 윈드'
+    EarthBreath = 'Earth Breath | 브레스 오브 어스'
+    ReturnFlame = 'Return Flame | 브레스-돌아와!'
+    EarthDive = 'Earth Dive | 다이브 오브 어스'
+    DarkFog = 'Dark Fog | 다크 포그'
+    BlessingoftheOnyx = 'Blessing of the Onyx | 오닉스의 축복'
+    EnhancedMagicDebris = 'Enhanced Magic Debris | 강화된 마법 잔해'
+    MagicMastery = 'Magic Mastery | 매직 마스터리'
+    OnyxWill = 'Onyx Will | 오닉스의 의지'
+    DragonFury = 'Dragon Fury | 드래곤 퓨리'
+    HighDragonPotential = 'High Dragon Potential | 하이 드래곤 포텐셜'
+    # Hypers
+    DragonMaster = 'Dragon Master | 드래곤 마스터'
+    SummonOnyxDragon = 'Summon Onyx Dragon | 서먼 오닉스 드래곤'
+    HeroicMemories = 'Heroic Memories | 히어로즈 오쓰'
+    # 5th Job
+    ElementalBarrage = 'Elemental Barrage | 엘리멘탈 블래스트'
+    DragonSlam = 'Dragon Slam | 드래곤 브레이크'
+    WyrmkingsBreath = 'Wyrmking\'s Breath | 임페리얼 브레스'
+    LudicrousSpeed = 'Ludicrous Speed | 드래곤 브레이크-돌아와!'
+    ElementalRadiance = 'Elemental Radiance | 조디악 레이'
+    SpiralofMana = 'Spiral of Mana | 스파이럴 오브 마나'
 
 
 class MagicParticleWrapper(core.DamageSkillWrapper):
