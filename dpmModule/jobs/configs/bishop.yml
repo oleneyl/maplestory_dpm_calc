@@ -86,7 +86,7 @@ skills:
     hit: 14
     type: DamageSkill
   헤븐즈도어:
-    cooltime: 180000
+    cooltime: 90000
     delay: 270
     damage: 1000
     hit: 8
@@ -137,7 +137,7 @@ skills:
   디바인 퍼니시먼트(키다운):
     cooltime: -1
     delay: 240
-    damage: " 175 + 7 * lv"
+    damage: "225 + 9 * lv"
     hit: 10
     type: DamageSkill
     tier: 5
@@ -211,7 +211,7 @@ skills:
     hit: 4
     type: DamageSkill
   리저렉션:
-    delay: 900
+    delay: 750
     damage: 0
     hit: 0
     type: DamageSkill
