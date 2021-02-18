@@ -15,11 +15,11 @@ class PoisonChainToxicWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2):
         skill = core.SummonSkill(
             "포이즌 체인(중독)",
-            0,
-            1800,
-            150 + 6 * vEhc.getV(3, 2),
-            6,
-            9 * 1800 - 1,
+            summondelay=0,
+            delay=1800,
+            damage=150 + 6 * vEhc.getV(3, 2),
+            hit=5,
+            remain=9 * 1800 - 1,
             cooltime=-1
         ).isV(vEhc, num1, num2)  # 9회 폭발, 1800ms 간격
         super(PoisonChainToxicWrapper, self).__init__(skill)
