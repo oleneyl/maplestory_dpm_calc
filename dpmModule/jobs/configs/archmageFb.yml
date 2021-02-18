@@ -105,8 +105,8 @@ skills:
       pdamage: 10
       pdamage_indep: ERUPTION_RATE[5]
       armor_ignore: 52.8
-    damage: 45 + combat
-    hit: 60
+    damage: 125 + combat
+    hit: 20
     type: DamageSkill
     enhanced_by_v: true
     upgrade_priority: 0
@@ -172,11 +172,11 @@ skills:
     use_priority: 2
     upgrade_priority: 1
   포이즌 체인:
-    cooltime: 30000
+    cooltime: 25000
     delay: 600
     red: true
     rem: false
-    damage: 300 + 12 * lv
+    damage: 250 + 10 * lv
     hit: 4
     type: DamageSkill
     tier: 5
