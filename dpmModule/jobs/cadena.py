@@ -160,7 +160,7 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 200000).wrap(core.BuffSkillWrapper)
         SpecialPotion = core.BuffSkill("상인단 특제 비약", 570, 60*1000, pdamage=10, crit=10, cooltime=120*1000).wrap(core.BuffSkillWrapper)  # 카데나만 딜레이있음
 
-        ProfessionalAgent = core.BuffSkill("프로페셔널 에이전트", 570, 30000, cooltime=200000).wrap(core.BuffSkillWrapper)
+        ProfessionalAgent = core.BuffSkill("프로페셔널 에이전트", 570, 30000, cooltime=180000).wrap(core.BuffSkillWrapper)
         ProfessionalAgentAdditionalDamage = core.DamageSkill("프로페셔널 에이전트(공격)", 0, 255, 2).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         ProfessionalAgent_Attack = core.OptionalElement(ProfessionalAgent.is_active, ProfessionalAgentAdditionalDamage, name="프로페셔널 에이전트 추가타")
 
