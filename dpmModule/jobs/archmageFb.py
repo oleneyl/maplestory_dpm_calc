@@ -9,7 +9,7 @@ from .jobbranch import magicians
 from ..status.ability import Ability_tool
 from ..character import characterKernel as ck
 from ..execution.rules import RuleSet, MutualRule, InactiveRule
-from math import ceil
+from ..kernel.loader import SkillConfigLoader
 
 
 class PoisonChainToxicWrapper(core.SummonSkillWrapper):
@@ -72,61 +72,63 @@ class JobGenerator(ck.JobGenerator):
         극딜형 스킬은 쿨마다 사용함
         언스테이블 메모라이즈는 인피니티가 꺼져있을때 사용
         '''
-        DOT_PUNISHER_HIT = self.conf["constant"]["DOT_PUNISHER_HIT"]  # TODO: 현재 도트 개수를 참조해 타수 결정
-
+        skill_loader = SkillConfigLoader(os.path.join(os.path.dirname(__file__), 'configs', 'archmageFb.yml'))
+        skill_loader.register_default_skill_info(self.combat, chtr, vEhc)
+        #DOT_PUNISHER_HIT = self.conf["constant"]["DOT_PUNISHER_HIT"]  # TODO: 현재 도트 개수를 참조해 타수 결정
+        DOT_PUNISHER_HIT = skill_loader.get_constant("DOT_PUNISHER_HIT")
         # Buff Skills
-        Meditation = self.load_skill_wrapper("메디테이션")
-        EpicAdventure = self.load_skill_wrapper("에픽 어드벤처")
+        Meditation = skill_loader.load_skill_wrapper("메디테이션")
+        EpicAdventure = skill_loader.load_skill_wrapper("에픽 어드벤처")
         Infinity = adventurer.InfinityWrapper(self.combat)
 
         # Damage Skills
-        Paralyze = self.load_skill_wrapper("페럴라이즈", vEhc)
-        TeleportMastery = self.load_skill_wrapper("텔레포트 마스터리", vEhc)
+        Paralyze = skill_loader.load_skill_wrapper("페럴라이즈")
+        TeleportMastery = skill_loader.load_skill_wrapper("텔레포트 마스터리")
 
-        FlameHeize = self.load_skill_wrapper("플레임 헤이즈", vEhc)
-        MistEruption = self.load_skill_wrapper("미스트 이럽션", vEhc)
+        FlameHeize = skill_loader.load_skill_wrapper("플레임 헤이즈")
+        MistEruption = skill_loader.load_skill_wrapper("미스트 이럽션")
 
-        DotPunisher = self.load_skill_wrapper("도트 퍼니셔", vEhc)
-        DotPunisherExceed = self.load_skill_wrapper("도트 퍼니셔(초과)", vEhc)
-        PoisonNova = self.load_skill_wrapper("포이즌 노바", vEhc)
-        PoisonNovaErupt = self.load_skill_wrapper("포이즌 노바(폭발)", vEhc)
-        PoisonNovaEruptExceed = self.load_skill_wrapper("포이즌 노바(폭발)(초과)", vEhc)
-        PoisonChain = self.load_skill_wrapper("포이즌 체인", vEhc)
+        DotPunisher = skill_loader.load_skill_wrapper("도트 퍼니셔")
+        DotPunisherExceed = skill_loader.load_skill_wrapper("도트 퍼니셔(초과)")
+        PoisonNova = skill_loader.load_skill_wrapper("포이즌 노바")
+        PoisonNovaErupt = skill_loader.load_skill_wrapper("포이즌 노바(폭발)")
+        PoisonNovaEruptExceed = skill_loader.load_skill_wrapper("포이즌 노바(폭발)(초과)")
+        PoisonChain = skill_loader.load_skill_wrapper("포이즌 체인")
         PoisonChainToxic = PoisonChainToxicWrapper(vEhc, 0, 0)
 
-        Meteor = self.load_skill_wrapper("메테오", vEhc)
-        MegidoFlame = self.load_skill_wrapper("메기도 플레임", vEhc)
+        Meteor = skill_loader.load_skill_wrapper("메테오")
+        MegidoFlame = skill_loader.load_skill_wrapper("메기도 플레임")
 
         # Summoning Skills
-        Ifritt = self.load_skill_wrapper("이프리트", vEhc)
-        FireAura = self.load_skill_wrapper("파이어 오라", vEhc)
-        FuryOfIfritt = self.load_skill_wrapper("퓨리 오브 이프리트", vEhc)
+        Ifritt = skill_loader.load_skill_wrapper("이프리트")
+        FireAura = skill_loader.load_skill_wrapper("파이어 오라")
+        FuryOfIfritt = skill_loader.load_skill_wrapper("퓨리 오브 이프리트")
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         # Final Attack
-        MeteorPassive = self.load_skill_wrapper("메테오(패시브)", vEhc)
-        Ignite = self.load_skill_wrapper("이그나이트", vEhc)
-        IgniteMeteor = self.load_skill_wrapper("이그나이트(메테오)", vEhc)
+        MeteorPassive = skill_loader.load_skill_wrapper("메테오(패시브)")
+        Ignite = skill_loader.load_skill_wrapper("이그나이트")
+        IgniteMeteor = skill_loader.load_skill_wrapper("이그나이트(메테오)")
         # Ignite : Need Wrapper
 
         # DoT Skills
-        ParalyzeDOT = self.load_skill_wrapper("페럴라이즈(도트)")
-        MistDOT = self.load_skill_wrapper("포이즌 미스트(도트)")
-        IfrittDot = self.load_skill_wrapper("이프리트(도트)")
-        HeizeFlameDOT = self.load_skill_wrapper("플레임 헤이즈(도트)")
-        TeleportMasteryDOT = self.load_skill_wrapper("텔레포트 마스터리(도트)")
-        PoisonBreathDOT = self.load_skill_wrapper("포이즌 브레스(도트)")
-        MegidoFlameDOT = self.load_skill_wrapper("메기도 플레임(도트)")
-        DotPunisherDOT = self.load_skill_wrapper("도트 퍼니셔(도트)", vEhc)
-        PoisonNovaDOT = self.load_skill_wrapper("포이즌 노바(도트)", vEhc)
+        ParalyzeDOT = skill_loader.load_skill_wrapper("페럴라이즈(도트)")
+        MistDOT = skill_loader.load_skill_wrapper("포이즌 미스트(도트)")
+        IfrittDot = skill_loader.load_skill_wrapper("이프리트(도트)")
+        HeizeFlameDOT = skill_loader.load_skill_wrapper("플레임 헤이즈(도트)")
+        TeleportMasteryDOT = skill_loader.load_skill_wrapper("텔레포트 마스터리(도트)")
+        PoisonBreathDOT = skill_loader.load_skill_wrapper("포이즌 브레스(도트)")
+        MegidoFlameDOT = skill_loader.load_skill_wrapper("메기도 플레임(도트)")
+        DotPunisherDOT = skill_loader.load_skill_wrapper("도트 퍼니셔(도트)")
+        PoisonNovaDOT = skill_loader.load_skill_wrapper("포이즌 노바(도트)")
 
         # Unstable Memorize Skills
-        EnergyBolt = self.load_skill_wrapper("에너지 볼트")
-        FlameOrb = self.load_skill_wrapper("플레임 오브")
-        PoisonBreath = self.load_skill_wrapper("포이즌 브레스")
-        Explosion = self.load_skill_wrapper("익스플로젼")  # magic6(720) -> explosion(180). 둘 다 공속 적용되어 540+150.
-        PoisonMist = self.load_skill_wrapper("포이즌 미스트")
-        SlimeVirus = self.load_skill_wrapper("슬라임 바이러스")
+        EnergyBolt = skill_loader.load_skill_wrapper("에너지 볼트")
+        FlameOrb = skill_loader.load_skill_wrapper("플레임 오브")
+        PoisonBreath = skill_loader.load_skill_wrapper("포이즌 브레스")
+        Explosion = skill_loader.load_skill_wrapper("익스플로젼")  # magic6(720) -> explosion(180). 둘 다 공속 적용되어 540+150.
+        PoisonMist = skill_loader.load_skill_wrapper("포이즌 미스트")
+        SlimeVirus = skill_loader.load_skill_wrapper("슬라임 바이러스")
 
         # Unstable Memorize
         UnstableMemorize = adventurer.UnstableMemorizeWrapper(vEhc, 4, 4, chtr.get_skill_modifier())
