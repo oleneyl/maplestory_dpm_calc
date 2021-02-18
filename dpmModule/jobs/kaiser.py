@@ -222,9 +222,9 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(InactiveRule('인퍼널 브레스', '파이널 피규레이션'), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule('마제스티 오브 카이저', '파이널 피규레이션'), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule('어드밴스드 윌 오브 소드', '윌 오브 소드: 스트라이크', lambda sk: sk.is_cooltime_left(10000, 1)), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(KaiserSkills.InfernoBreath.value, KaiserSkills.FinalForm.value), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(KaiserSkills.KaisersMajesty.value, KaiserSkills.FinalForm.value), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(KaiserSkills.AdvancedTempestBlades.value, KaiserSkills.Bladefall.value, lambda sk: sk.is_cooltime_left(10000, 1)), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self) -> core.CharacterModifier:
@@ -233,12 +233,12 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        InnerBlaze = core.InformedCharacterModifier("이너 블레이즈",stat_main = 20)
-        AdvancedInnerBlaze = core.InformedCharacterModifier("어드밴스드 이너 블레이즈",stat_main = 30)
-        Catalyze = core.InformedCharacterModifier("카탈라이즈", patt=30, crit=20, pdamage_indep=20)
-        AdvancedWillOfSwordPassive = core.InformedCharacterModifier("어드밴스드 윌 오브 소드(패시브)",att = 20 + 2*ceil(passive_level/3))
-        UnflinchingCourage = core.InformedCharacterModifier("언플린칭 커리지",armor_ignore = 40 + passive_level)
-        AdvancedSwordMastery = core.InformedCharacterModifier("어드밴스드 소드 마스터리", att = 30 + passive_level, crit_damage = 15 + passive_level//3, crit=20 + passive_level//2)
+        InnerBlaze = core.InformedCharacterModifier(KaiserSkills.InnerBlaze.value,stat_main = 20)
+        AdvancedInnerBlaze = core.InformedCharacterModifier(KaiserSkills.AdvancedInnerBlaze.value,stat_main = 30)
+        Catalyze = core.InformedCharacterModifier(KaiserSkills.Catalyze.value, patt=30, crit=20, pdamage_indep=20)
+        AdvancedWillOfSwordPassive = core.InformedCharacterModifier(f"{KaiserSkills.AdvancedTempestBlades.value}(Passive | 패시브)",att = 20 + 2*ceil(passive_level/3))
+        UnflinchingCourage = core.InformedCharacterModifier(KaiserSkills.UnbreakableWill.value,armor_ignore = 40 + passive_level)
+        AdvancedSwordMastery = core.InformedCharacterModifier(KaiserSkills.ExpertSwordMastery.value, att = 30 + passive_level, crit_damage = 15 + passive_level//3, crit=20 + passive_level//2)
     
         return [InnerBlaze, AdvancedInnerBlaze, Catalyze, 
                 AdvancedWillOfSwordPassive, UnflinchingCourage, AdvancedSwordMastery]
@@ -249,7 +249,7 @@ class JobGenerator(ck.JobGenerator):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level / 2))
         
-        ReshuffleSwitchAttack = core.InformedCharacterModifier("리셔플스위치:공격",att = 45, crit = 20, boss_pdamage = 18)
+        ReshuffleSwitchAttack = core.InformedCharacterModifier(KaiserSkills.RealignAttackerMode.value,att = 45, crit = 20, boss_pdamage = 18)
         
         return [WeaponConstant, Mastery, ReshuffleSwitchAttack]
         
@@ -286,49 +286,49 @@ class JobGenerator(ck.JobGenerator):
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         # Buff skills
-        RegainStrenth = core.BuffSkill("리게인 스트렝스", 0, 240000, rem = True, pdamage_indep = 15).wrap(core.BuffSkillWrapper)
-        BlazeUp = core.BuffSkill("블레이즈 업", 0, 240000, att = 20, rem = True).wrap(core.BuffSkillWrapper)
+        RegainStrenth = core.BuffSkill(KaiserSkills.Cursebite.value, 0, 240000, rem = True, pdamage_indep = 15).wrap(core.BuffSkillWrapper)
+        BlazeUp = core.BuffSkill(KaiserSkills.BlazeOn.value, 0, 240000, att = 20, rem = True).wrap(core.BuffSkillWrapper)
         SoulContract = globalSkill.soul_contract()
     
-        FinalFiguration = core.BuffSkill("파이널 피규레이션", 0, 60000, pdamage_indep = 15, boss_pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
-        MorphGauge = MorphGaugeWrapper(core.BuffSkill("모프 게이지", 0, 9999999), FinalFiguration)
+        FinalFiguration = core.BuffSkill(KaiserSkills.FinalForm.value, 0, 60000, pdamage_indep = 15, boss_pdamage = 10, rem = True).wrap(core.BuffSkillWrapper)
+        MorphGauge = MorphGaugeWrapper(core.BuffSkill("Morph Gauge | 모프 게이지", 0, 9999999), FinalFiguration)
 
-        Wingbit_1 = WingbitWrapper(core.SummonSkill("윙비트", 0, 330, 200, 1, 15900, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, True), FinalFiguration) # 48 strokes. 48타.
-        Wingbit_2 = WingbitWrapper(core.SummonSkill("윙비트(2)", 0, 330, 200, 1, 15900, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, True), FinalFiguration) # 48 strokes. 48타.
+        Wingbit_1 = WingbitWrapper(core.SummonSkill(KaiserSkills.WingBeat.value, 0, 330, 200, 1, 15900, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, True), FinalFiguration) # 48 strokes. 48타.
+        Wingbit_2 = WingbitWrapper(core.SummonSkill(f"{KaiserSkills.WingBeat.value}(2)", 0, 330, 200, 1, 15900, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, True), FinalFiguration) # 48 strokes. 48타.
         
-        GigaSlasher = GigaSlasherWrapper(core.DamageSkill("기가 슬래셔", 540, 330 + 2*self.combat, 9+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False), FinalFiguration)
+        GigaSlasher = GigaSlasherWrapper(core.DamageSkill(KaiserSkills.GigasWave.value, 540, 330 + 2*self.combat, 9+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False), FinalFiguration)
     
-        AdvancedWillOfSword_Summon = WillOfSwordSummonWrapper(core.BuffSkill("어드밴스드 윌 오브 소드(소환)", 0, 9999999, cooltime = 10000, red=True), FinalFiguration)
-        AdvancedWillOfSword = WillOfSwordWrapper(core.DamageSkill("어드밴스드 윌 오브 소드", 0, 400+3*passive_level, 4*5).setV(vEhc, 3, 2, True), FinalFiguration)
+        AdvancedWillOfSword_Summon = WillOfSwordSummonWrapper(core.BuffSkill(f"{KaiserSkills.AdvancedTempestBlades.value}(Summon | 소환)", 0, 9999999, cooltime = 10000, red=True), FinalFiguration)
+        AdvancedWillOfSword = WillOfSwordWrapper(core.DamageSkill(KaiserSkills.AdvancedTempestBlades.value, 0, 400+3*passive_level, 4*5).setV(vEhc, 3, 2, True), FinalFiguration)
 
-        InfernalBreath = core.DamageSkill("인퍼널 브레스", 780, 300 + 4*self.combat, 8, cooltime = (20-self.combat)*1000, red=True).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
-        InfernalBreath_Tile = core.SummonSkill("인퍼널 브레스(바닥)", 0, 1200, 200 + 3*self.combat, 2, 20000, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
+        InfernalBreath = core.DamageSkill(KaiserSkills.InfernoBreath.value, 780, 300 + 4*self.combat, 8, cooltime = (20-self.combat)*1000, red=True).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
+        InfernalBreath_Tile = core.SummonSkill(f"{KaiserSkills.InfernoBreath.value}(Fire | 바닥)", 0, 1200, 200 + 3*self.combat, 2, 20000, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
 
-        Petrified = core.SummonSkill("페트리파이드", 450, 3030, 400, 1, 60000).setV(vEhc, 5, 3, False).wrap(core.SummonSkillWrapper)
+        Petrified = core.SummonSkill(KaiserSkills.StoneDragon.value, 450, 3030, 400, 1, 60000).setV(vEhc, 5, 3, False).wrap(core.SummonSkillWrapper)
     
         # Hyper. 하이퍼.
-        MajestyOfKaiser = core.BuffSkill("마제스티 오브 카이저", 900, 30000, att = 30, cooltime = 90000).wrap(core.BuffSkillWrapper)
-        FinalTrance = core.BuffSkill("파이널 트랜스", 0, 60000, cooltime = 300000).wrap(core.BuffSkillWrapper) # I don't know the delay. 딜레이 모름.
-        Prominence = ProminenceWrapper(core.DamageSkill("프로미넌스", 2220, 1000, 15, cooltime = 60000).setV(vEhc, 6, 2, True), FinalFiguration)
+        MajestyOfKaiser = core.BuffSkill(KaiserSkills.KaisersMajesty.value, 900, 30000, att = 30, cooltime = 90000).wrap(core.BuffSkillWrapper)
+        FinalTrance = core.BuffSkill(KaiserSkills.FinalTrance.value, 0, 60000, cooltime = 300000).wrap(core.BuffSkillWrapper) # I don't know the delay. 딜레이 모름.
+        Prominence = ProminenceWrapper(core.DamageSkill(KaiserSkills.NovaTemperance.value, 2220, 1000, 15, cooltime = 60000).setV(vEhc, 6, 2, True), FinalFiguration)
 
         # 5th. 5차.
         Phanteon = nova.PantheonWrapper(vEhc, 4, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         NovaGoddessBless = nova.NovaGoddessBlessWrapper(vEhc, 0, 0, MorphGauge)
 
-        GuardianOfNova_1 = core.SummonSkill("가디언 오브 노바(1)", 600, 45000/46, 450+15*vEhc.getV(2,2), 4, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = 120000, red=True).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)  # 46*4 strokes. 46*4타.
-        GuardianOfNova_2 = core.SummonSkill("가디언 오브 노바(2)", 0, 45000/34, 250+10*vEhc.getV(2,2), 6, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)  # 34*6 strokes. 34*6타.
-        GuardianOfNova_3 = core.SummonSkill("가디언 오브 노바(3)", 0, 45000/26, 900+35*vEhc.getV(2,2), 2, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)  # 26*2 strokes. 26*2타.
+        GuardianOfNova_1 = core.SummonSkill(f"{KaiserSkills.NovaGuardians.value}(1)", 600, 45000/46, 450+15*vEhc.getV(2,2), 4, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = 120000, red=True).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)  # 46*4 strokes. 46*4타.
+        GuardianOfNova_2 = core.SummonSkill(f"{KaiserSkills.NovaGuardians.value}(2)", 0, 45000/34, 250+10*vEhc.getV(2,2), 6, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)  # 34*6 strokes. 34*6타.
+        GuardianOfNova_3 = core.SummonSkill(f"{KaiserSkills.NovaGuardians.value}(3)", 0, 45000/26, 900+35*vEhc.getV(2,2), 2, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)  # 26*2 strokes. 26*2타.
 
-        WillOfSwordStrike = WillOfSwordStrikeWrapper(core.DamageSkill("윌 오브 소드: 스트라이크", 150, 500+20*vEhc.getV(3,3), 4*5, cooltime = 30000, red=True).isV(vEhc,3,3), FinalFiguration)
-        WillOfSwordStrike_Explode = WillOfSwordStrikeExplodeWrapper(core.DamageSkill("윌 오브 소드: 스트라이크(폭발)", 0, 1000+40*vEhc.getV(3,3), 6*5).isV(vEhc,3,3), FinalFiguration)
+        WillOfSwordStrike = WillOfSwordStrikeWrapper(core.DamageSkill(KaiserSkills.Bladefall.value, 150, 500+20*vEhc.getV(3,3), 4*5, cooltime = 30000, red=True).isV(vEhc,3,3), FinalFiguration)
+        WillOfSwordStrike_Explode = WillOfSwordStrikeExplodeWrapper(core.DamageSkill(f"{KaiserSkills.Bladefall.value}(Explosion | 폭발)", 0, 1000+40*vEhc.getV(3,3), 6*5).isV(vEhc,3,3), FinalFiguration)
         
-        DrakeSlasher = DrakeSlasherWrapper(core.DamageSkill("드라코 슬래셔", 540, 500+5*vEhc.getV(0,0), 10+1, cooltime = (7-(vEhc.getV(0,0)//15))*1000, red=True, modifier = core.CharacterModifier(crit=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0), FinalFiguration)
-        DrakeSlasher_Projectile = DrakeSlasherProjectileWrapper(core.DamageSkill("드라코 슬래셔(발사)", 0, 500+5*vEhc.getV(0,0), 6+1, cooltime = -1, modifier = core.CharacterModifier(crit=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0), FinalFiguration)
+        DrakeSlasher = DrakeSlasherWrapper(core.DamageSkill(KaiserSkills.DracoSurge.value, 540, 500+5*vEhc.getV(0,0), 10+1, cooltime = (7-(vEhc.getV(0,0)//15))*1000, red=True, modifier = core.CharacterModifier(crit=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0), FinalFiguration)
+        DrakeSlasher_Projectile = DrakeSlasherProjectileWrapper(core.DamageSkill(f"{KaiserSkills.DracoSurge.value}(Projectile | 발사)", 0, 500+5*vEhc.getV(0,0), 6+1, cooltime = -1, modifier = core.CharacterModifier(crit=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0), FinalFiguration)
 
-        DragonBlaze = core.SummonSkill("드래곤 블레이즈", 900, 240, 250+10*vEhc.getV(0,0), 6, 20000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
-        DragonBlazeAura = core.DamageSkill("드래곤 블레이즈(불의 기운)", 0, 375+15*vEhc.getV(0,0), 5, cooltime=3600).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        DragonBlazeFireball = core.DamageSkill("드래곤 블레이즈(화염구)", 0, 350+14*vEhc.getV(0,0), 3*6, cooltime=10000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DragonBlaze = core.SummonSkill(KaiserSkills.DragonBlaze.value, 900, 240, 250+10*vEhc.getV(0,0), 6, 20000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        DragonBlazeAura = core.DamageSkill(f"{KaiserSkills.DragonBlaze.value}(Aura | 불의 기운)", 0, 375+15*vEhc.getV(0,0), 5, cooltime=3600).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DragonBlazeFireball = core.DamageSkill(f"{KaiserSkills.DragonBlaze.value}(Fireball | 화염구)", 0, 350+14*vEhc.getV(0,0), 3*6, cooltime=10000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
         
@@ -365,7 +365,7 @@ class JobGenerator(ck.JobGenerator):
         WillOfSwordStrike.onAfter(WillOfSwordStrike_Explode)
         
         DrakeSlasherReset = DrakeSlasher.controller(1.0, 'reduce_cooltime_p')
-        DrakeSlasherResetStack = core.StackSkillWrapper(core.BuffSkill('드라코 슬래셔 - 재사용 초기화', 0, 0), 3)
+        DrakeSlasherResetStack = core.StackSkillWrapper(core.BuffSkill(f'{KaiserSkills.DracoSurge.value} - 재사용 초기화', 0, 0), 3)
         DrakeSlasher.onAfter(core.OptionalElement(partial(DrakeSlasherResetStack.judge, 1, 1), DrakeSlasherReset))
         DrakeSlasher.onAfter(DrakeSlasherResetStack.stackController(-1))
         WillOfSwordStrike_Explode.onAfter(DrakeSlasherResetStack.stackController(3))
@@ -407,7 +407,7 @@ class JobGenerator(ck.JobGenerator):
         DrakeSlasher.protect_from_running()
     
         return(BasicAttack,
-                [globalSkill.maple_heros(chtr.level, name = "노바의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), MorphGauge,
+                [globalSkill.maple_heros(chtr.level, name=KaiserSkills.NovaWarrior.value, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), MorphGauge,
                     RegainStrenth, BlazeUp, FinalFiguration, MajestyOfKaiser, FinalTrance, AuraWeaponBuff, AuraWeapon, NovaGoddessBless,
                     SoulContract] +\
                 [AdvancedWillOfSword_Summon, WillOfSwordStrike, AdvancedWillOfSword] +\
