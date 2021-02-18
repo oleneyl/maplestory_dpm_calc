@@ -96,7 +96,7 @@ class JobGenerator(ck.JobGenerator):
         PsychicForce3Passive = core.InformedCharacterModifier("사이킥 포스 3(패시브)",att = 10)
         
         ESPBattleOrder = core.InformedCharacterModifier("ESP 배틀오더",att = 50 + 2*passive_level, pdamage = 20 + passive_level)
-        Transcendence = core.InformedCharacterModifier("각성",pdamage_indep = 25 + passive_level)
+        Transcendence = core.InformedCharacterModifier("각성",pdamage_indep = 30 + passive_level)
         SupremeConcentration = core.InformedCharacterModifier("정신집중-유지", buff_rem = 20+passive_level)
         Transport = core.InformedCharacterModifier("전달",armor_ignore = 25 + passive_level)
         Mastery = core.InformedCharacterModifier("숙달",crit_damage = 10 + passive_level)
@@ -146,7 +146,7 @@ class JobGenerator(ck.JobGenerator):
         PsychicForce3Dot = core.DotSkill("싸이킥 포스3(도트)", 0, 1000, 403.125, 1, 30000, cooltime = -1).wrap(core.DotSkillWrapper) # ~20초 평균 퍼뎀
         PsychicGround = core.BuffSkill("싸이킥 그라운드2", 270, 30000 + 15000, rem = False, armor_ignore = 10 + 6*1, pdamage_indep = 10 + 3*1).wrap(core.BuffSkillWrapper)
         PsychicGroundDamage = core.DamageSkill("싸이킥 그라운드2(공격)", 0, 500+10*self.combat, 1).wrap(core.DamageSkillWrapper) # +1
-        PsycoBreak = core.BuffSkill("싸이코 브레이크", 720, 30000, pdamage_indep = 5 * 2, rem = False).wrap(core.BuffSkillWrapper) #+1
+        PsycoBreak = core.BuffSkill("싸이코 브레이크", 630, 30000, pdamage_indep = min(5 * 2 * 2, 15), rem = False).wrap(core.BuffSkillWrapper) #+1
         PsycoBreakDamage = core.DamageSkill("싸이코 브레이크(공격)", 0, 1000 +7*self.combat, 4).wrap(core.DamageSkillWrapper)
         
         TeleKinesis = core.DamageSkill("텔레키네시스", 0, 350, 0.7).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
