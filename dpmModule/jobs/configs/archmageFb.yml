@@ -165,7 +165,7 @@ skills:
     rem: false
     modifier:
       pdamage_indep: -50
-    damage: 495
+    damage: 225 + 9 * lv
     hit: 12
     type: DamageSkill
     tier: 5
