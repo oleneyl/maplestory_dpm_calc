@@ -150,14 +150,13 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         PowerOfLight = core.InformedCharacterModifier("파워 오브 라이트",stat_main = 20)
-        SpellMastery = core.InformedCharacterModifier("스펠 마스터리",att = 10)
+        SpellMastery = core.InformedCharacterModifier("스펠 마스터리",att = 10, crit=15, pdamage=15)
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
-        LifeTidal = core.InformedCharacterModifier("라이프 타이달",crit = 30) #OR pdamage = 20
         MagicMastery = core.InformedCharacterModifier("매직 마스터리",att = 30 + passive_level, crit_damage = 15 + passive_level // 3, crit = 15 + passive_level // 3)
         DarknessSocery = core.InformedCharacterModifier("다크니스 소서리", pdamage_indep = 40 + self.combat, armor_ignore = 40 + self.combat)
         MorningStarfall = core.InformedCharacterModifier("모닝 스타폴(패시브)",pdamage_indep = 30 + self.combat)
         
-        return [PowerOfLight, SpellMastery, HighWisdom, LifeTidal, MagicMastery, MorningStarfall, DarknessSocery]
+        return [PowerOfLight, SpellMastery, HighWisdom, MagicMastery, MorningStarfall, DarknessSocery]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]): 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
