@@ -129,6 +129,7 @@ class JobGenerator(ck.JobGenerator):
         ShinNoiHapL = core.BuffSkill("신뇌합일", 540, (30+vEhc.getV(3,2)//2) * 1000, red = True, cooltime = (120-vEhc.getV(3,2)//2)*1000, pdamage_indep=5+vEhc.getV(3,2)//6).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
         ShinNoiHapLAttack = core.SummonSkill("신뇌합일(공격)", 0, 3000, 16*vEhc.getV(3,2) + 400, 7, (30+vEhc.getV(3,2)//2) * 1000, cooltime = -1).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
         ShinNoiHapLAttack_ChookRoi = core.DamageSkill('신뇌합일(축뢰)', 0, (16*vEhc.getV(3,2) + 400) * CHOOKROI, 7 ).wrap(core.DamageSkillWrapper)
+        ShinNoiHapLPassive = core.DamageSkill("신뇌합일(패시브)", 0, 16*vEhc.getV(3,2) + 400, 7, cooltime=6000).wrap(core.DamageSkillWrapper)
         GioaTan = core.DamageSkill("교아탄", 360, 1000+40*vEhc.getV(2,1), 7, cooltime = 8000, red = True, modifier = LINK_MASTERY).isV(vEhc,2,1).wrap(core.DamageSkillWrapper) #  교아탄-벽력 콤보 사용함
 
         NoiShinChanGeuk = core.DamageSkill("뇌신창격", 0, 150+6*vEhc.getV(0,0), 6, cooltime = 7000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
@@ -175,7 +176,7 @@ class JobGenerator(ck.JobGenerator):
             jobutils.create_auxilary_attack(skill, CHOOKROI, nametag='(축뢰)')
 
         for skill in [Thunder, ThunderConcat, WaterWave, WaterWaveConcat, NoiShinChanGeuk,
-                        SpearLightningAttack, SpearLightningAttack_Final]:
+                        ShinNoiHapLPassive, SpearLightningAttack, SpearLightningAttack_Final]:
             skill.onAfter(LightningStack.stackController(1))
 
         for skill in [ShinNoiHapLAttack, CygnusPhalanx, NoiShinChanGeukAttack]:
@@ -191,16 +192,18 @@ class JobGenerator(ck.JobGenerator):
         NoiShinChanGeuk.onAfter(NoiShinChanGeukAttack)
 
         SpearLightningAttack.onAfter(SpearLightningAttack_Lightning)
-        SpearLightningAttack_Final.onAfter(SpearLightningAttack_Final_Lightning)
+        SpearLightningAttack_Final.onAfter(core.RepeatElement(SpearLightningAttack_Final_Lightning, 3))
         SpearLightningAttackInit.onAfter(core.RepeatElement(SpearLightningAttack, 11))
         SpearLightningAttackInit.onAfter(SpearLightningAttack_Final)
+
+        ShinNoiHapLPassive.onConstraint(core.ConstraintElement("신뇌합일 OFF", ShinNoiHapL, ShinNoiHapL.is_not_active))
 
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     LightningStack, Booster, ChookRoi, WindBooster, LuckyDice,
                     HurricaneBuff, GloryOfGuardians, SkyOpen, Overdrive, ShinNoiHapL, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                     globalSkill.soul_contract()] +\
-                [GioaTan, CygnusPhalanx, NoiShinChanGeuk, SpearLightningAttackInit, MirrorBreak, MirrorSpider] +\
+                [GioaTan, CygnusPhalanx, NoiShinChanGeuk, ShinNoiHapLPassive, SpearLightningAttackInit, MirrorBreak, MirrorSpider] +\
                 [ShinNoiHapLAttack, NoiShinChanGeukAttack] +\
                 [] +\
                 [BasicAttackWrapper])
