@@ -251,7 +251,7 @@ class JobGenerator(ck.JobGenerator):
         AbyssChargeDrive_Link = core.DamageSkill("어비스 차지드라이브(연계)", 630, 340 + 3*self.combat, 4, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         AbyssChargeDrive_After = core.DamageSkill("어비스 차지드라이브(후속타)", 0, 410 + 3*self.combat, 6, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         AbyssSpell = core.DamageSkill('어비스 스펠(접촉)', 0, 1, 1).wrap(core.DamageSkillWrapper)
-        AbyssSpellSummon = core.SummonSkill("어비스 스펠", 0, 300, 70 + 2*self.combat, 2, 3900, cooltime = -1).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
+        AbyssSpellSummon = core.SummonSkill("어비스 스펠", 0, 300, 70 + 2*self.combat, 2, 3900, cooltime = -1).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)  # 13 hit
         AbyssBuff = core.BuffSkill("어비스 버프", 0, 60*1000, cooltime = -1, rem=True, pdamage = 20 + self.combat//2, boss_pdamage = 30 + self.combat, armor_ignore = 20 + self.combat//2).wrap(core.BuffSkillWrapper)
 
         HUMAN_SKILLS_MCF = [EndlessNightmare_Link, PlainChargeDrive, PlainChargeDrive_Link, ScarletChargeDrive, ScarletChargeDrive_Link, UnstoppableImpulse_Link,
@@ -521,16 +521,22 @@ class JobGenerator(ck.JobGenerator):
         DeviousNightmare.protect_from_running()
         DeviousDream.protect_from_running()
 
-        return(PlainAttack, 
-                [globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    ContactCaravan, Booster, LuckyDice, ScarletBuff, AbyssBuff, SpecterState, ScarletBuff2, AbyssBuff2,
-                    ChargeSpellAmplification, WraithOfGod, InfinitySpell, MagicCircuitFullDrive, FloraGoddessBless, Overdrive, 
-                    MemoryOfSourceBuff, EndlessPainBuff,
-                    globalSkill.soul_contract()] +\
-                [RaptRestrictionEnd, ForeverHungryBeastTrigger,
-                    MemoryOfSource, RaptRestriction, ReturningHate, ForeverHungryBeastInit, CrawlingFear_Link, 
-                    EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, 
-                    UncurableHurt_Link, UnfulfilledHunger_Link, Impulse_Connected, UncontrollableChaos_Link, EndlessPain, 
-                    GustSpellAttack, AbyssSpellSummon, RaptRestrictionSummon, DeviousNightmare, DeviousDream, MirrorBreak, MirrorSpider] +\
-                [MagicCircuitFullDriveStorm] +\
-                [PlainAttack])
+        return(
+            PlainAttack, 
+            [
+                globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                ContactCaravan, Booster, LuckyDice, ScarletBuff, AbyssBuff, SpecterState, ScarletBuff2, AbyssBuff2,
+                ChargeSpellAmplification, WraithOfGod, InfinitySpell, MagicCircuitFullDrive, FloraGoddessBless, Overdrive, 
+                MemoryOfSourceBuff, EndlessPainBuff,
+                globalSkill.soul_contract()
+            ]
+            + [RaptRestrictionEnd, ForeverHungryBeastTrigger]  # reserved task, use as early as possible
+            + [
+                MemoryOfSource, RaptRestriction, ReturningHate, ForeverHungryBeastInit, CrawlingFear_Link, 
+                EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, 
+                UncurableHurt_Link, UnfulfilledHunger_Link, Impulse_Connected, UncontrollableChaos_Link, EndlessPain, 
+                GustSpellAttack, AbyssSpellSummon, RaptRestrictionSummon, DeviousNightmare, DeviousDream, MirrorBreak, MirrorSpider
+            ]
+            + [MagicCircuitFullDriveStorm]
+            + [PlainAttack]
+        )
