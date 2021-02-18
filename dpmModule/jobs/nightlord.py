@@ -1,7 +1,7 @@
 from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
-from ..execution.rules import ComplexConditionRule, ConditionRule, RuleSet, ConcurrentRunRule, InactiveRule
+from ..execution.rules import ComplexConditionRule, ReservationRule, RuleSet, ConcurrentRunRule, InactiveRule
 from . import globalSkill
 from .jobbranch import thieves
 from . import jobutils
@@ -19,19 +19,22 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 1
 
     def get_ruleset(self):
-        def use_uds(uds, spread, blasting):
-            if spread.is_active():
-                return spread.is_time_left(10000, 1)
-            elif blasting.is_active() and blasting.is_time_left(50000, 1):
-                return spread.is_cooltime_left(50000, 1)
-            else:
+        def ready_to_die_rule(rtd, uds, soul_contract):
+            if uds.is_active():
+                return True
+            if uds.is_cooltime_left(80000, -1):
                 return False
+            if soul_contract.is_usable():
+                return True
+            return False
 
         ruleset = RuleSet()
-        ruleset.add_rule(ComplexConditionRule('얼티밋 다크 사이트', ['스프레드 스로우', '스로우 블래스팅(액티브)'], use_uds), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule('메이플월드 여신의 축복', '스프레드 스로우', lambda sk: sk.is_active() or sk.is_usable()), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '스로우 블래스팅(액티브)'), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule('레디 투 다이', '소울 컨트랙트'), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule('에픽 어드벤처', '얼티밋 다크 사이트'), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule('메이플월드 여신의 축복', '얼티밋 다크 사이트'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('스로우 블래스팅(액티브)', '얼티밋 다크 사이트'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('스프레드 스로우', '스로우 블래스팅(액티브)'), RuleSet.BASE)
+        ruleset.add_rule(ComplexConditionRule('레디 투 다이', ['얼티밋 다크 사이트', '소울 컨트랙트'], ready_to_die_rule), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '레디 투 다이'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('써든레이드', '스프레드 스로우'), RuleSet.BASE)
         ruleset.add_rule(InactiveRule('다크 플레어', '스프레드 스로우'), RuleSet.BASE)
         return ruleset
@@ -71,8 +74,8 @@ class JobGenerator(ck.JobGenerator):
 
         스프 3줄 히트
 
-        얼닼사는 스프 사용중에만 사용
-        레투다를 2번에 한번씩 스프에 맞춰 사용
+        얼닼사에 모든 버프를 맞춰 사용
+        레디 투 다이, 소울 컨트랙트는 얼닼사 쿨타임 절반마다 함께 사용
         '''
         SPREAD_HIT = 3 - options.get("spread_loss", 0)
         JAVELIN_ATT = core.CharacterModifier(att=29)  # 플레임 표창
@@ -115,8 +118,8 @@ class JobGenerator(ck.JobGenerator):
         ArcaneOfDarklord = core.SummonSkill("다크로드의 비전서", 360, 1020, 350+14*vEhc.getV(2, 2), 7 + 5, 11990, cooltime=60*1000, red=True, modifier=core.CharacterModifier(boss_pdamage=30) + JAVELIN_ATT).isV(vEhc, 2, 2).wrap(core.SummonSkillWrapper)  # 132타
         ArcaneOfDarklordFinal = core.DamageSkill("다크로드의 비전서(막타)", 0, 900+36*vEhc.getV(2, 2), 10, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=30) + JAVELIN_ATT).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
         ThrowBlasting = core.DamageSkill("스로우 블래스팅(폭발 부적)", 0, 475+19*vEhc.getV(0, 0), 5, cooltime=-1, modifier=JAVELIN_ATT).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        ThrowBlastingStack = core.StackSkillWrapper(core.BuffSkill("스로우 블래스팅(부적 스택)", 0, 99999999), 45)
-        ThrowBlastingActive = core.BuffSkill("스로우 블래스팅(액티브)", 720, 60000, cooltime=120*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
+        ThrowBlastingStack = core.StackSkillWrapper(core.BuffSkill("스로우 블래스팅(부적 스택)", 0, 99999999), 68)
+        ThrowBlastingActive = core.BuffSkill("스로우 블래스팅(액티브)", 720, 60000, cooltime=180*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
         ThrowBlastingPassive = core.DamageSkill("스로우 블래스팅(패시브)", 0, 0, 0, cooltime=10000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
@@ -143,7 +146,7 @@ class JobGenerator(ck.JobGenerator):
         BleedingToxin.onAfter(BleedingToxinDot)
 
         # 스로우 블래스팅
-        ThrowBlastingActive.onAfter(ThrowBlastingStack.stackController(45))
+        ThrowBlastingActive.onAfter(ThrowBlastingStack.stackController(68))
         ThrowBlasting.onAfter(ThrowBlastingStack.stackController(-1))
         ThrowBlastingPassive.onAfter(ThrowBlasting)
         ThrowBlastingPassive.protect_from_running()
