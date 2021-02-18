@@ -51,8 +51,7 @@ class RelicChargeStack(core.StackSkillWrapper):
     def vary(self, d):
         stack_before = self.stack
         res = super(RelicChargeStack, self).vary(d)
-        if(self.ancient_guidance_buff.is_not_active()):
-            self.ancient_guidance_stack += max(self.stack - stack_before, 0)
+        self.ancient_guidance_stack += max(self.stack - stack_before, 0)
         if self.ancient_guidance_stack >= 1000:
             self.ancient_guidance_stack = 0
             res.cascade = [self.ancient_guidance_task]  # For stability
