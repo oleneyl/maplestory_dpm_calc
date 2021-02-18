@@ -1,3 +1,5 @@
+from enum import Enum
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -8,6 +10,67 @@ from .jobbranch import warriors
 from .jobclass import nova
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Kaiser here https://maplestory.fandom.com/wiki/Kaiser/Skills
+class KaiserSkills(Enum):
+    # Link Skill
+    DragonLink = 'Dragon Link | 커맨드'
+    # Beginner
+    RealignDefenderMode = 'Realign: Defender Mode | 리셔플스위치: 방어모드'
+    RealignAttackerMode = 'Realign: Attacker Mode | 리셔플스위치: 공격모드'
+    Transfiguration = 'Transfiguration | 트랜스피규레이션'
+    # 1st Job
+    DragonSlash = 'Dragon Slash | 드래곤슬래시'
+    FlameSurge = 'Flame Surge | 플레임 샷'
+    AirLift = 'Air Lift | 더블 리프'
+    ScaleSkin = 'Scale Skin | 스킨 프로텍션'
+    # 2nd Job
+    DragonSlashI = 'Dragon Slash I | 드래곤슬래시 1차 강화'
+    ImpactWave = 'Impact Wave | 임팩트 웨이브'
+    PiercingBlaze = 'Piercing Blaze | 피어스 러쉬'
+    TempestBlades = 'Tempest Blades | 윌 오브 소드'
+    BlazeOn = 'Blaze On | 블레이즈 업'
+    SwordMastery = 'Sword Mastery | 소드 마스터리'
+    InnerBlaze = 'Inner Blaze | 이너 블레이즈'
+    DefenderModeI = 'Defender Mode I | 방어모드 1차 강화'
+    AttackerModeI = 'Attacker Mode I | 공격모드 1차 강화'
+    # 3rd Job
+    DragonSlashII = 'Dragon Slash II | 드래곤슬래시 2차 강화'
+    WingBeat = 'Wing Beat | 윙비트'
+    PressureChain = 'Pressure Chain | 체인풀링'
+    FinalForm = 'Final Form | 파이널 피규레이션'
+    StoneDragon = 'Stone Dragon | 페트리파이드'
+    Cursebite = 'Cursebite | 리게인 스트렝스'
+    Catalyze = 'Catalyze | 카탈라이즈'
+    SelfRecovery = 'Self Recovery | 셀프 리커버리'
+    AdvancedInnerBlaze = 'Advanced Inner Blaze | 어드밴스드 이너 블레이즈'
+    DefenderModeII = 'Defender Mode II | 방어모드 2차 강화'
+    AttackerModeII = 'Attacker Mode II | 공격모드 2차 강화'
+    # 4th Job
+    DragonSlashIII = 'Dragon Slash III | 드래곤슬래시 3차 강화'
+    GigasWave = 'Gigas Wave | 기가 슬래셔'
+    DragonBarrage = 'Dragon Barrage | 블루 스트릭'
+    BladeBurst = 'Blade Burst | 소드 스트라이크'
+    InfernoBreath = 'Inferno Breath | 인퍼널 브레스'
+    AdvancedTempestBlades = 'Advanced Tempest Blades | 어드밴스드 윌 오브 소드'
+    GrandArmor = 'Grand Armor | 로버스트 아머'
+    UnbreakableWill = 'Unbreakable Will | 언플린칭 커리지'
+    ExpertSwordMastery = 'Expert Sword Mastery | 어드밴스드 소드 마스터리'
+    NovaWarrior = 'Nova Warrior | 노바의 용사'
+    NovaTemperance = 'Nova Temperance | 노바 용사의 의지'
+    DefenderModeIII = 'Defender Mode III | 방어모드 3차 강화'
+    AttackerModeIII = 'Attacker Mode III | 공격모드 3차 강화'
+    # Hypers
+    AncestralProminence = 'Ancestral Prominence | 프로미넌스'
+    FinalTrance = 'Final Trance | 파이널 트랜스'
+    KaisersMajesty = 'Kaiser\'s Majesty | 마제스티 오브 카이저'
+    # 5th Job
+    NovaGuardians = 'Nova Guardians | 가디언 오브 노바'
+    Bladefall = 'Bladefall | 윌 오브 소드: 스트라이크'
+    DracoSurge = 'Draco Surge | 드라코 슬래셔'
+    DragonBlaze = 'Dragon Blaze | 드래곤 블레이즈'
+
 
 ######   Passive Skill   ######
 class MorphGaugeWrapper(core.StackSkillWrapper):
