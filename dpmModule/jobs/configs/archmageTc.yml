@@ -78,15 +78,15 @@ skills:
     v_increment: 2
     v_crit: false
   라이트닝 스피어:
-    cooltime: 75000
+    cooltime: 60000
     delay: 0
     damage: 0
     hit: 1
     type: DamageSkill
   라이트닝 스피어(키다운):
     cooltime: 0
-    delay: 267
-    damage: 105
+    delay: 257
+    damage: 150
     hit: 15
     type: DamageSkill
     enhanced_by_v: true
@@ -96,7 +96,7 @@ skills:
   라이트닝 스피어(막타):
     cooltime: 0
     delay: 1080
-    damage: 350
+    damage: 780
     hit: 15
     type: DamageSkill
     enhanced_by_v: true
@@ -137,8 +137,8 @@ skills:
   썬더 브레이크(1):
     cooltime: 0
     delay: 120
-    damage: "(750 + lv * 30)"
-    hit: 8
+    damage: "(875 + lv * 35)"
+    hit: 15
     type: DamageSkill
     tier: 5
     use_priority: 0
@@ -146,8 +146,8 @@ skills:
   썬더 브레이크(2):
     cooltime: 0
     delay: 120
-    damage: "(750 + lv * 30) * 0.95"
-    hit: 8
+    damage: "(875 + lv * 35) * 0.7"
+    hit: 15
     type: DamageSkill
     tier: 5
     use_priority: 0
@@ -155,8 +155,8 @@ skills:
   썬더 브레이크(3):
     cooltime: 0
     delay: 120
-    damage: "(750 + lv * 30) * 0.9"
-    hit: 8
+    damage: "(875 + lv * 35) * 0.4"
+    hit: 15
     type: DamageSkill
     tier: 5
     use_priority: 0
@@ -164,8 +164,8 @@ skills:
   썬더 브레이크(4):
     cooltime: 0
     delay: 120
-    damage: "(750 + lv * 30) * 0.85"
-    hit: 8
+    damage: "(875 + lv * 35) * 0.1"
+    hit: 15
     type: DamageSkill
     tier: 5
     use_priority: 0
@@ -173,8 +173,8 @@ skills:
   썬더 브레이크(5):
     cooltime: 0
     delay: 120
-    damage: "(750 + lv * 30) * 0.8"
-    hit: 8
+    damage: "(875 + lv * 35) * 0"
+    hit: 15
     type: DamageSkill
     tier: 5
     use_priority: 0
@@ -182,8 +182,8 @@ skills:
   썬더 브레이크(6):
     cooltime: 0
     delay: 120
-    damage: "(750 + lv * 30) * 0.75"
-    hit: 8
+    damage: "(875 + lv * 35) * 0"
+    hit: 15
     type: DamageSkill
     tier: 5
     use_priority: 0
@@ -191,8 +191,8 @@ skills:
   썬더 브레이크(7):
     cooltime: 0
     delay: 120
-    damage: "(750 + lv * 30) * 0.7"
-    hit: 8
+    damage: "(875 + lv * 35) * 0"
+    hit: 15
     type: DamageSkill
     tier: 5
     use_priority: 0
@@ -200,8 +200,8 @@ skills:
   썬더 브레이크(8):
     cooltime: 0
     delay: 120
-    damage: "(750 + lv * 30) * 0.65"
-    hit: 8
+    damage: "(875 + lv * 35) * 0"
+    hit: 15
     type: DamageSkill
     tier: 5
     use_priority: 0
@@ -253,12 +253,12 @@ skills:
     summondelay: 0
     type: SummonSkill
   주피터 썬더:
-    cooltime: 75000
+    cooltime: 120000
     delay: 330
     red: true
     damage: 300 + 12 * lv
-    hit: 5
-    remain: 9899
+    hit: 8
+    remain: 330 * 30 - 1
     summondelay: 630
     type: SummonSkill
     tier: 5
