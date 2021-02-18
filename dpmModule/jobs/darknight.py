@@ -66,10 +66,11 @@ class JobGenerator(ck.JobGenerator):
 
         '''
         passive_level = chtr.get_base_modifier().passive_level + self.combat
+        HP_RATE = options.get("hp_rate", 100)
 
         # Buff skills
         Booster = core.BuffSkill("부스터", 0, 180*1000, rem=True).wrap(core.BuffSkillWrapper)  # 펫버프
-        CrossoverChain = core.BuffSkill("크로스 오버 체인", 0, 200*1000, pdamage_indep=20).wrap(core.BuffSkillWrapper)  # 펫버프
+        CrossoverChain = core.BuffSkill("크로스 오버 체인", 0, 200*1000, pdamage_indep=20 * min(HP_RATE, 50) / 50).wrap(core.BuffSkillWrapper)  # 펫버프
         FinalAttack = core.DamageSkill("파이널 어택", 0, 80, 2*0.4).setV(vEhc, 3, 4, True).wrap(core.DamageSkillWrapper)
         BiholderDominant = core.SummonSkill("비홀더 도미넌트", 0, 10000, 210, 1, 99999*10000, modifier=core.CharacterModifier(pdamage=150)).setV(vEhc, 2, 3, False).wrap(core.SummonSkillWrapper)
         BiholderShock = core.DamageSkill("비홀더 쇼크", 0, 215+300 + 5 * passive_level, 6, cooltime=12000, red=True, modifier=core.CharacterModifier(pdamage=150)).setV(vEhc, 2, 3, False).wrap(core.DamageSkillWrapper)
@@ -95,7 +96,7 @@ class JobGenerator(ck.JobGenerator):
         PierceCycloneTick = core.DamageSkill("피어스 사이클론", 360, 400+16*vEhc.getV(3, 3), 12, modifier=core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)  # 25타
         PierceCycloneEnd = core.DamageSkill("피어스 사이클론(종료)", 900, 300+12*vEhc.getV(3, 3), 15*5, modifier=core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
         DarknessAura = core.SummonSkill("다크니스 오라", 600, 1530, 400+16*vEhc.getV(0, 0), 5, 40000, cooltime=180*1000, red=True).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
-        DarknessAuraFinal = core.DamageSkill("다크니스 오라(폭발)", 0, 650+25*vEhc.getV(0, 0), 13*(1+15//3), cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)  # 생명력 3마다 폭발 1회 추가, 생명력 최대 15
+        DarknessAuraFinal = core.DamageSkill("다크니스 오라(폭발)", 0, 675+26*vEhc.getV(0, 0), 13*(1+15//3), cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)  # 생명력 3마다 폭발 1회 추가, 생명력 최대 15
 
         ######   Skill Wrapper   ######
 
