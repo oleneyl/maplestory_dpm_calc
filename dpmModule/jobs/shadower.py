@@ -123,8 +123,8 @@ class JobGenerator(ck.JobGenerator):
         SonicBlow = core.DamageSkill("소닉 블로우", 900, 0, 0, cooltime=80 * 1000, red=True).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
         SonicBlowTick = core.DamageSkill("소닉 블로우(틱)", 107, 500+20*vEhc.getV(1, 1), 7, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper, name="소닉 블로우(사용)")  # 7 * 15
 
-        ShadowFormation = core.SummonSkill("멸귀참영진", 0, 8000/12, 425+17*vEhc.getV(0, 0), 8, 8000-1, cooltime=90000, red=True).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
-        ShadowFormationFinal = core.DamageSkill("멸귀참영진(우두머리)", 0, 625+25*vEhc.getV(0, 0), 15*4, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        ShadowFormation = core.SummonSkill("멸귀참영진", 0, 8000/12, 425+17*vEhc.getV(0, 0), 8, 8000-1, cooltime=90000, red=True, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        ShadowFormationFinal = core.DamageSkill("멸귀참영진(우두머리)", 0, 625+25*vEhc.getV(0, 0), 15*4, cooltime=-1, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         ### build graph relationships
         def isNotDarkSight():
