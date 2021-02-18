@@ -2,14 +2,13 @@ import os
 
 from typing import Any, Dict
 
-from . import globalSkill, jobutils
+from . import globalSkill
 from ..kernel import core
 from .jobclass import adventurer
 from .jobbranch import magicians
 from ..status.ability import Ability_tool
 from ..character import characterKernel as ck
 from ..execution.rules import RuleSet, MutualRule, InactiveRule
-from math import ceil
 
 
 class PoisonChainToxicWrapper(core.SummonSkillWrapper):
