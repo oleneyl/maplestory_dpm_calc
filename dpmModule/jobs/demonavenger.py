@@ -77,7 +77,10 @@ class JobGenerator(ck.JobGenerator):
         HP_RATE = options.get('hp_rate', 100)
 
         # 최대 HP 대비 소모된 HP 3%(24레벨가지는 4%)당 최종 데미지 1% 증가
-        FrenzyPassive = core.InformedCharacterModifier("데몬 프렌지 (최종 데미지)", pdamage_indep=(100-HP_RATE)//(4-(vEhc.getV(0, 0)//25)))
+        FrenzyPassive = core.InformedCharacterModifier(
+            "데몬 프렌지 (최종 데미지)",
+            pdamage_indep=min((100 - HP_RATE) // (3 - (vEhc.getV(0, 0) // 25)), 35)
+        )
 
         return [WeaponConstant, Mastery, FrenzyPassive]
 
@@ -127,7 +130,7 @@ class JobGenerator(ck.JobGenerator):
         # 최대 10회 공격
         ShieldChasing = core.DamageSkill("실드 체이싱", 720, 500+10*self.combat, 2*2*(8+2), cooltime=6000, modifier=core.CharacterModifier(armor_ignore=30+passive_level, pdamage=20+20), red=True).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
 
-        ArmorBreak = core.DamageSkill("아머 브레이크", 720, 350+5*self.combat, 4, cooltime=-1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        ArmorBreak = core.DamageSkill("아머 브레이크", 660, 350+5*self.combat, 4, cooltime=-1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         ArmorBreakBuff = core.BuffSkill("아머 브레이크(디버프)", 0, (30+self.combat)*1000, armor_ignore=30+self.combat).wrap(core.BuffSkillWrapper)
 
         # ThousandSword = core.Damageskill("사우전드 소드", 0, 500, 8, cooltime = 8*1000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
@@ -162,7 +165,7 @@ class JobGenerator(ck.JobGenerator):
         # 기본 4000ms
         # 엑큐 2번당 발동하도록 조정
         REVENANT_COOLTIME = 1080
-        Revenant = core.BuffSkill("레버넌트", 1530, (30+vEhc.getV(0, 0)//5)*1000, cooltime=300*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
+        Revenant = core.BuffSkill("레버넌트", 1530, 30*1000, cooltime=240*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
         RevenantHit = core.DamageSkill("레버넌트(분노의 가시)", 0, 300+vEhc.getV(0, 0)*12, 9, cooltime=REVENANT_COOLTIME, modifier=core.CharacterModifier(armor_ignore=30), red=False).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         # 데몬 5차 공용
