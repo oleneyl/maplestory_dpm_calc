@@ -397,13 +397,16 @@ class JobGenerator(ck.JobGenerator):
         # Armor Piercing
         for sk in [
             ArrowOfStorm,
+            MirrorBreak,
+        ]:
+            sk.onBefore(ArmorPiercing.cooltime_skip())
+        for sk in [
             ArrowRain,
             QuibberFullBurst,
             OpticalIllusion,
             GuidedArrow,
-            MirrorBreak,
         ]:
-            sk.onBefore(ArmorPiercing.cooltime_skip())
+            sk.onTick(ArmorPiercing.cooltime_skip())
         ArrowOfStorm.add_runtime_modifier(
             ArmorPiercing,
             lambda armor_piercing: armor_piercing.check_modifier(),
