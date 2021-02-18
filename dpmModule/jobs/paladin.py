@@ -80,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
         buff_rem = chtr.get_base_modifier().buff_rem
 
         # Buff skills
-        Threat = core.BuffSkill("위협", 1440, 80 * 1000, armor_ignore=30 + 20).wrap(core.BuffSkillWrapper)  # 기본 1080, 75% 확률 반영 딜레이
+        Threat = core.BuffSkill("위협", 720 / 0.75, 80 * 1000, armor_ignore=30 + 20).wrap(core.BuffSkillWrapper)  # 기본 720, 75% 확률 반영 딜레이
         # BlessingArmor = core.BuffSkill("블레싱 아머", 0, 30 * 1000, cooltime=90 * 1000, att=20, rem=True).wrap(core.BuffSkillWrapper)
         ElementalForce = core.BuffSkill("엘리멘탈 포스", 0, 206 * 1000, pdamage_indep=21, rem=True).wrap(core.BuffSkillWrapper)  # 펫버프
 
