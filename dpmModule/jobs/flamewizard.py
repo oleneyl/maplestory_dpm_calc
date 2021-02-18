@@ -37,7 +37,7 @@ class JobGenerator(ck.JobGenerator):
         
         SpellControl = core.InformedCharacterModifier("주문 연마",att = 10)
         LiberatedMagic = core.InformedCharacterModifier("해방된 마력",pdamage_indep = 30)
-        BurningFocus = core.InformedCharacterModifier("약점 분석",crit = 30, crit_damage = 15)
+        BurningFocus = core.InformedCharacterModifier("약점 분석",crit = 30, crit_damage = 20)
         BriliantEnlightenment = core.InformedCharacterModifier("번뜩이는 깨달음",stat_main = 60)
         PureMagic = core.InformedCharacterModifier("마법의 진리", att = 20 + passive_level, pdamage_indep = 50 + 3*passive_level)
 
@@ -75,7 +75,7 @@ class JobGenerator(ck.JobGenerator):
         
         #Full speed, No Combat Orders
         OrbitalFlame = core.DamageSkill("오비탈 플레임 IV", 210, 215 + self.combat, 3 * 2 * (210 / flamewizardDefaultSpeed), modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        # BlazingExtinction = core.SummonSkill("블레이징 익스팅션", 1020, 2500, 310+2*self.combat, 3+1, 10000, cooltime=5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+        # BlazingExtinction = core.SummonSkill("블레이징 익스팅션", 660, 2500, 310+2*self.combat, 3+1, 10000, cooltime=5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
         CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 2, 1)
         BlazingOrbital = core.DamageSkill("블레이징 오비탈 플레임", 180, 330+13*vEhc.getV(0,0), 6 * blazingOrbitalHit, cooltime = 5000, red = True, modifier = core.CharacterModifier(armor_ignore = 50)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)    #4타 가정
         
