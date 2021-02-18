@@ -5,7 +5,6 @@ from ..execution.rules import RuleSet, ConditionRule
 from . import globalSkill, jobutils
 from .jobbranch import pirates
 from .jobclass import adventurer
-from . import jobutils
 from math import ceil
 from typing import Any, Dict
 
@@ -125,12 +124,12 @@ class JobGenerator(ck.JobGenerator):
             delay=810,
             damage=860,
             hit=1,
-            cooltime=30 * 1000,
+            cooltime=60 * 1000,
         ).wrap(core.DamageSkillWrapper)
         MonkeyWaveBuff = core.BuffSkill(
             "몽키 웨이브(버프)",
             delay=0,
-            remain=30000,
+            remain=60000,
             cooltime=-1,
             crit_damage=5,
         ).wrap(core.BuffSkillWrapper)
