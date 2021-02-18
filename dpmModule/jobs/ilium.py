@@ -1,3 +1,5 @@
+from enum import Enum
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -8,6 +10,66 @@ from .jobbranch import magicians
 from .jobclass import flora
 from . import jobutils
 from typing import Any, Dict
+
+
+# English skill information for Illium here https://maplestory.fandom.com/wiki/Illium/Skills
+class IlliumSkills(Enum):
+    # Link SKill
+    TideofBattle = 'Tide of Battle | 전투의 흐름'
+    # Beginner
+    MagicConversion = 'Magic Conversion | 매직 서킷'
+    ExclusiveSpell = 'Exclusive Spell | 익스클루시브 스펠'
+    # 1st Job
+    RadiantJavelin = 'Radiant Javelin | 크래프트:자벨린'
+    RadiantOrb = 'Radiant Orb | 크래프트:오브'
+    Ex = 'Ex | 리요'
+    CrystallineWings = 'Crystalline Wings | 크리스탈 포탈'
+    LucentGauntletMastery = 'Lucent Gauntlet Mastery | 매직 건틀렛 마스터리'
+    LucentBrand = 'Lucent Brand | 블레스 마크'
+    # 2nd Job
+    CrystalBattery = 'Crystal Battery | 크리스탈 차지'
+    DeployCrystal = 'Deploy Crystal | 크리스탈 컨트롤'
+    ReactionDestruction = 'Reaction - Destruction | 리액션:디스트럭션'
+    ReactionDomination = 'Reaction - Domination | 리액션:도미네이션'
+    CrystalSkillVortexofLight = 'Crystal Skill - Vortex of Light | 크리스탈 스킬:모탈스윙'
+    GauntletFrenzy = 'Gauntlet Frenzy | 매직 건틀렛 부스터'
+    Machina = 'Machina | 마키나'
+    AegisofLight = 'Aegis of Light | 디바인 실드'
+    UmbralBrand = 'Umbral Brand | 커스 마크'
+    # 3rd Job
+    CrystalBatteryII = 'Crystal Battery II | 크리스탈 차지 숙련'
+    ReactionDestructionII = 'Reaction - Destruction II | 리액션:디스트럭션II'
+    ReactionDominationII = 'Reaction - Domination II | 리액션:도미네이션II'
+    CrystalSkillWingsofGlory = 'Crystal Skill - Wings of Glory | 크리스탈 스킬:글로리 윙'
+    CrystalSkillResonance = 'Crystal Skill - Resonance | 크리스탈 스킬:하모니 링크'
+    LucentBrandII = 'Lucent Brand II | 블레스 마크 숙련'
+    UmbralBrandII = 'Umbral Brand II | 커스 마크 숙련'
+    MightoftheFlora = 'Might of the Flora | 레프 마스터리'
+    Tenacity = 'Tenacity | 운명 개척'
+    EndlessResearch = 'Endless Research | 끊임없는 연구'
+    # 4th Job
+    CrystalBatteryIII = 'Crystal Battery III | 크리스탈 차지 완성'
+    RadiantJavelinII = 'Radiant Javelin II | 크래프트:자벨린II'
+    RadiantOrbII = 'Radiant Orb II | 크래프트:오브II'
+    LonginusSpear = 'Longinus Spear | 크래프트:롱기누스'
+    CrystalSkillDeus = 'Crystal Skill - Deus | 크리스탈 스킬:데우스'
+    VortexWings = 'Vortex Wings | 글로리 윙:모탈 윙비트'
+    ResonantWings = 'Resonant Wings | 글로리 윙:하모니 윙비트'
+    HerooftheFlora = 'Hero of the Flora | 레프 용사의 의지'
+    FlashCrystalBattery = 'Flash Crystal Battery | 패스트 차지'
+    LucentBrandIII = 'Lucent Brand III | 블레스 마크 완성'
+    UmbralBrandIII = 'Umbral Brand III | 커스 마크 완성'
+    WisdomoftheCrystal = 'Wisdom of the Crystal | 크리스탈의 비밀'
+    # Hypers
+    CrystallineBulwark = ' Crystalline Bulwark | 프라이멀 프로텍션'
+    LonginusZone = ' Longinus Zone | 롱기누스 존'
+    DivineWrath = ' Divine Wrath | 레이스 오브 갓'
+    # 5th Job
+    CrystalIgnition = 'Crystal Ignition | 크리스탈 이그니션'
+    ReactionSpectralBlast = 'Reaction - Spectral Blast | 리액션:스펙트럼'
+    TemplarKnight = 'Templar Knight | 그람홀더'
+    CrystallineSpirit = 'Crystalline Spirit | 소울 오브 크리스탈'
+    CrystalGate = 'Crystal Gate | 크리스탈 게이트'
 
 
 class IliumStackWrapper(core.StackSkillWrapper):
