@@ -202,7 +202,7 @@ class JobGenerator(ck.JobGenerator):
         Robolauncher.onEventEnd(RobolauncherFinal)
         Robolauncher.onAfter(RobolauncherBuff)
 
-        MagneticField.onBefore(core.RepeatElement(MagneticFieldInstall, 3))
+        MagneticField.onBefore(MagneticFieldInstall)
         MagneticField.onAfter(MagneticFieldBuff)
 
         SupportWaver.onEventEnd(SupportWaverFinal)
