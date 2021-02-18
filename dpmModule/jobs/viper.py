@@ -196,7 +196,7 @@ class JobGenerator(ck.JobGenerator):
         FistInrage = (
             core.DamageSkill(
                 "피스트 인레이지",
-                delay=690,
+                delay=600,
                 damage=320 + 4 * self.combat,
                 hit=8 + 1,
                 modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20),
@@ -207,7 +207,7 @@ class JobGenerator(ck.JobGenerator):
         FistInrage_T = (
             core.DamageSkill(
                 "피스트 인레이지(변신)",
-                delay=690,
+                delay=600,
                 damage=320 + 4 * self.combat,
                 hit=8 + 1 + 2,
                 modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20),
