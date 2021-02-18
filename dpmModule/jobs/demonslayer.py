@@ -98,7 +98,7 @@ class JobGenerator(ck.JobGenerator):
 
         DemonImpact = core.DamageSkill("데몬 임팩트", 660, 460+4*self.combat, 6+1, modifier=core.CharacterModifier(crit=100, armor_ignore=30+ceil(self.combat/3), boss_pdamage=40+self.combat, pdamage=20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
-        DevilCry = core.DamageSkill("데빌 크라이", 1260, 515+5*self.combat, 7, cooltime=20*1000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)   # 이블 토쳐 위해 사용필수.
+        DevilCry = core.DamageSkill("데빌 크라이", 990, 515+5*self.combat, 7, cooltime=20*1000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)   # 이블 토쳐 위해 사용필수.
         DevilCryBuff = core.BuffSkill("데빌 크라이(위협)", 0, 20000, cooltime=-1, armor_ignore=15+self.combat//3).wrap(core.BuffSkillWrapper)
 
         InfinityForce = core.BuffSkill("인피니티 포스", 990, (50+10*(self.combat//5))*1000, cooltime=(200-self.combat)*1000, rem=True, red=True).wrap(core.BuffSkillWrapper)
@@ -107,7 +107,7 @@ class JobGenerator(ck.JobGenerator):
         MetamorphosisSummon_BB = core.DamageSkill("메타모포시스(블블)", 0, (250+5*self.combat)*0.9, 1, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
         # 블루블러드는 소환수 적용이 안됨.
-        BlueBlood = core.BuffSkill("블루 블러드", 1020, 60000, cooltime=120000-60000).wrap(core.BuffSkillWrapper)  # 모든 공격에 최종데미지의 90%로 추가타 발생. 포스50수급시 -3초, 인피니티 포스시 4초마다 2초 감소, 모든 스킬 포스소모량 20%감소.
+        BlueBlood = core.BuffSkill("블루 블러드", 750, 60000, cooltime=120000-60000).wrap(core.BuffSkillWrapper)  # 모든 공격에 최종데미지의 90%로 추가타 발생. 포스50수급시 -3초, 인피니티 포스시 4초마다 2초 감소, 모든 스킬 포스소모량 20%감소.
         Cerberus = core.DamageSkill("서버러스", 690, 450, 6, cooltime=5000, modifier=core.CharacterModifier(boss_pdamage=50, armor_ignore=50)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 포스50 추가흡수
         CerberusAuto = core.DamageSkill("서버러스(자동)", 0, 450, 6, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=50, armor_ignore=50)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 포스50 추가흡수
         DemonFortitude = core.BuffSkill("데몬 포티튜드", 0, 60000, cooltime=120000).wrap(core.BuffSkillWrapper)
@@ -115,7 +115,7 @@ class JobGenerator(ck.JobGenerator):
         CallMastema = demon.CallMastemaWrapper(vEhc, 4, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
-        DemonAwakning = core.BuffSkill("데몬 어웨이크닝", 1110, (35+vEhc.getV(0, 0))*1000, cooltime=120*1000, red=True, crit=(50+vEhc.getV(0, 0)//2)).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
+        DemonAwakning = core.BuffSkill("데몬 어웨이크닝", 870, (35+vEhc.getV(0, 0))*1000, cooltime=120*1000, red=True, crit=(50+vEhc.getV(0, 0)//2)).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
         DemonAwakningSummon = core.SummonSkill("데몬 어웨이크닝(더미)", 0, 8000, 0, 0, (35+vEhc.getV(0, 0))*1000, cooltime=-1).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         SpiritOfRage = core.SummonSkill("요르문간드", 810, 1080, (850+34*vEhc.getV(3, 3)), 12, (10+vEhc.getV(3, 3)//5)*1000, cooltime=(120-vEhc.getV(3, 3)//2)*1000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc, 3, 3).wrap(core.SummonSkillWrapper)
