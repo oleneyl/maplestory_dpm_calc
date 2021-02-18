@@ -313,7 +313,7 @@ def chain_sickle(vEhc, combat: int):
         core.DamageSkill(
             name="[처형] 체인 시클(마무리 일격)",
             delay=390,  # base delay 510
-            damage=200 + 2 * combat,
+            damage=220 + 2 * combat,
             hit=12,
             cooltime=-1,
             modifier=EXECUTION_HYPER,
@@ -331,7 +331,7 @@ def poison_needle(vEhc, combat: int):
         core.DamageSkill(
             name="[처형] 포이즌 니들",
             delay=330,  # prepare.time 330
-            damage=235 + 3 * combat,
+            damage=250 + 3 * combat,
             hit=8,
             cooltime=15000,
             red=True,
@@ -762,7 +762,7 @@ class JobGenerator(ck.JobGenerator):
             core.DamageSkill(
                 name="[처형] 팬텀 블레이드",
                 delay=510,  # base delay 660
-                damage=155 + 75 + passive_level,
+                damage=155 + 35 + passive_level,
                 hit=6,
                 modifier=EXECUTION_HYPER,
             )
