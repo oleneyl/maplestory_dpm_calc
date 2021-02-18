@@ -81,7 +81,7 @@ class JobGenerator(ck.JobGenerator):
 
         WEAKNESS_BONUS = options.get("hp_rate", False)
 
-        WeaknessFinding_Bonus = core.InformedCharacterModifier("약점 간파(보너스)", crit_damage = (20+passive_level//3) * WEAKNESS_BONUS)
+        WeaknessFinding_Bonus = core.InformedCharacterModifier("약점 간파(보너스)", crit_damage = (25+passive_level//3) * WEAKNESS_BONUS)
         
         return [WeaponConstant, Mastery, Weakness, WeaknessFinding_Bonus]
 
