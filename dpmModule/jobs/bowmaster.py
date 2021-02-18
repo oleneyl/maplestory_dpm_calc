@@ -7,6 +7,7 @@ from .jobbranch import bowmen
 from .jobclass import adventurer
 from math import ceil
 from typing import Any, Dict
+from functools import partial
 
 """
 Advisor : 저격장(레드)
@@ -21,7 +22,7 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
 
     def __init__(self, combat, chtr):
         self.piercing_modifier = core.CharacterModifier(
-            pdamage_indep=core.constant.ARMOR_RATE * (1 + combat * 0.05),
+            pdamage_indep=min(core.constant.ARMOR_RATE * (1 + combat * 0.05), 400),
             armor_ignore=50 * (1 + combat * 0.02),
         )
         self.empty_modifier = core.CharacterModifier()
@@ -35,6 +36,7 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
             self.cooltimeLeft = self.calculate_cooltime(self.skill_modifier)
             return self.piercing_modifier
         else:
+            self._cooltime_skip()
             return self.empty_modifier
 
     def _cooltime_skip(self) -> None:
@@ -118,7 +120,9 @@ class JobGenerator(ck.JobGenerator):
     ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=30)
-        Mastery = core.InformedCharacterModifier("숙련도", mastery=85+ceil(passive_level / 2))
+        Mastery = core.InformedCharacterModifier(
+            "숙련도", mastery=85 + ceil(passive_level / 2)
+        )
         ExtremeArchery = core.InformedCharacterModifier(
             "익스트림 아처리", att=40, pdamage_indep=30
         )
@@ -138,9 +142,6 @@ class JobGenerator(ck.JobGenerator):
         프리퍼레이션, 엔버링크를 120초 주기에 맞춰 사용
         """
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        MortalBlow = core.CharacterModifier(
-            pdamage=80 / 10
-        )  # 반응하는 스킬이 정해져있음. Issue # 247 참고.
 
         ######   Skill   ######
         # Buff skills
@@ -157,7 +158,7 @@ class JobGenerator(ck.JobGenerator):
         ).wrap(core.BuffSkillWrapper)
         Preparation = core.BuffSkill(
             "프리퍼레이션",
-            delay=900,
+            delay=540,
             remain=30 * 1000,
             cooltime=90 * 1000,
             att=50,
@@ -168,6 +169,16 @@ class JobGenerator(ck.JobGenerator):
         ).wrap(core.BuffSkillWrapper)
 
         ArmorPiercing = ArmorPiercingWrapper(passive_level, chtr)
+        MortalBlow = core.BuffSkill(
+            "모탈 블로우",
+            delay=0,
+            remain=5000,
+            cooltime=-1,
+            pdamage=35,
+        ).wrap(core.BuffSkillWrapper)
+        MortalBlowStack = core.StackSkillWrapper(
+            core.BuffSkill("모탈 블로우(스택)", 0, 99999999), 30
+        )
 
         # Damage Skills
         MagicArrow = (
@@ -197,8 +208,7 @@ class JobGenerator(ck.JobGenerator):
                 delay=120,
                 damage=(350 + self.combat * 3) * 0.75,
                 hit=1 + 1,
-                modifier=core.CharacterModifier(pdamage=30, boss_pdamage=10)
-                + MortalBlow,
+                modifier=core.CharacterModifier(pdamage=30, boss_pdamage=10),
             )
             .setV(vEhc, 0, 2, True)
             .wrap(core.DamageSkillWrapper)
@@ -224,7 +234,6 @@ class JobGenerator(ck.JobGenerator):
                 damage=335,
                 hit=12,
                 cooltime=15 * 1000,
-                modifier=MortalBlow,
             )
             .setV(vEhc, 6, 2, True)
             .wrap(core.DamageSkillWrapper)
@@ -242,7 +251,7 @@ class JobGenerator(ck.JobGenerator):
         ArrowRainBuff = (
             core.BuffSkill(
                 "애로우 레인(버프)",
-                delay=810,
+                delay=510,
                 remain=(40 + vEhc.getV(0, 0)) * 1000,
                 cooltime=120 * 1000,
                 red=True,
@@ -256,11 +265,10 @@ class JobGenerator(ck.JobGenerator):
                 "애로우 레인",
                 summondelay=0,
                 delay=-1,
-                damage=600 + vEhc.getV(0, 0) * 24,
-                hit=8,
+                damage=700 + vEhc.getV(0, 0) * 28,
+                hit=7,
                 remain=(40 + vEhc.getV(0, 0)) * 1000,
                 cooltime=-1,
-                modifier=MortalBlow,
             ).isV(vEhc, 0, 0),
             delays=[1000, 1000, 1000, (5000 - 3000), 1000, 1000, (5000 - 2000)],
         )  # 1초마다 떨어지고, 평균 3.5히트가 나오도록.
@@ -280,9 +288,7 @@ class JobGenerator(ck.JobGenerator):
         )
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         Evolve = adventurer.EvolveWrapper(vEhc, 5, 5, Pheonix)
-        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(
-            vEhc, 0, 0, break_modifier=MortalBlow
-        )
+        MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         # 잔영의시 미적용
         QuibberFullBurstBuff = core.BuffSkill(
@@ -297,13 +303,12 @@ class JobGenerator(ck.JobGenerator):
         QuibberFullBurst = DelayVaryingSummonSkillWrapper(
             core.SummonSkill(
                 "퀴버 풀버스트",
-                summondelay=780,
+                summondelay=630,
                 delay=-1,
                 damage=250 + 10 * vEhc.getV(2, 2),
                 hit=9,
                 remain=30 * 1000,
                 cooltime=-1,
-                modifier=MortalBlow,
             ).isV(vEhc, 2, 2),
             delays=[90, 90, 90, 90, 90, 90 + (2000 - 90 * 6)],
         )  # 2초에 한번씩 90ms 간격으로 6회 발사
@@ -353,7 +358,6 @@ class JobGenerator(ck.JobGenerator):
                 hit=3,
                 remain=210 * 5,
                 cooltime=7500,
-                modifier=MortalBlow,
             )
             .isV(vEhc, 0, 0)
             .wrap(core.SummonSkillWrapper)
@@ -394,12 +398,18 @@ class JobGenerator(ck.JobGenerator):
         OpticalIllusion.protect_from_running()
         OpticalIllusion.onAfter(MagicArrow)
 
+        # Mortal Blow
+        AddMortalStack = core.OptionalElement(
+            MortalBlow.is_not_active, MortalBlowStack.stackController(1)
+        )
+        AddMortalStack.onJustAfter(
+            core.OptionalElement(partial(MortalBlowStack.judge, 30, 1), MortalBlow)
+        )
+        MortalBlow.onJustAfter(MortalBlowStack.stackController(-30))
+        ArrowOfStorm.onJustAfter(AddMortalStack)
+        ImageArrow.onTick(AddMortalStack)
+
         # Armor Piercing
-        for sk in [
-            ArrowOfStorm,
-            MirrorBreak,
-        ]:
-            sk.onBefore(ArmorPiercing.cooltime_skip())
         for sk in [
             ArrowRain,
             QuibberFullBurst,
@@ -407,10 +417,11 @@ class JobGenerator(ck.JobGenerator):
             GuidedArrow,
         ]:
             sk.onTick(ArmorPiercing.cooltime_skip())
-        ArrowOfStorm.add_runtime_modifier(
-            ArmorPiercing,
-            lambda armor_piercing: armor_piercing.check_modifier(),
-        )
+        for sk in [ArrowOfStorm, ImageArrow]:
+            sk.add_runtime_modifier(
+                ArmorPiercing,
+                lambda armor_piercing: armor_piercing.check_modifier(),
+            )
         ArmorPiercing.protect_from_running()
 
         ### Exports ###
@@ -445,6 +456,6 @@ class JobGenerator(ck.JobGenerator):
                 MirrorSpider,
                 OpticalIllusion,
             ]
-            + []
+            + [MortalBlow]
             + [ArrowOfStorm],
         )
