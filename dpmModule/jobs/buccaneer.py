@@ -127,7 +127,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConditionRule('Energy Orb | 에너지 오브(Dummy | 더미)', BuccaneerSkills.EnergyCharge.value, lambda sk: sk.isStateOff()), RuleSet.BASE)
         ruleset.add_rule(MutualRule(BuccaneerSkills.StimulatingConversation.value, BuccaneerSkills.Meltdown.value), RuleSet.BASE)
         ruleset.add_rule(ConditionRule(BuccaneerSkills.StimulatingConversation.value, BuccaneerSkills.EnergyCharge.value, lambda sk: sk.judge(2000, -1) or sk.isStateOff()), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(BuccaneerSkills.PowerUnity.value, f'{BuccaneerSkills.PowerUnity.value}(debuff | 디버프)', lambda sk: sk.is_time_left(1000, -1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(BuccaneerSkills.PowerUnity.value, f'{BuccaneerSkills.PowerUnity.value}(Debuff | 디버프)', lambda sk: sk.is_time_left(1000, -1)), RuleSet.BASE)
         # ruleset.add_rule(MutualRule(BuccaneerSkills.TimeLeap.value, GlobalSkills.TermsAndConditions.value), RuleSet.BASE)
         # ruleset.add_rule(InactiveRule(BuccaneerSkills.TimeLeap.value, GlobalSkills.TermsAndConditions.value), RuleSet.BASE)
         ruleset.add_rule(DisableRule(BuccaneerSkills.TimeLeap.value), RuleSet.BASE)
@@ -212,7 +212,7 @@ class JobGenerator(ck.JobGenerator):
         Stimulate = core.BuffSkill(BuccaneerSkills.StimulatingConversation.value, 930, 120 * 1000, cooltime = 240 * 1000, pdamage = 20).wrap(core.BuffSkillWrapper)# 에너지 주기적으로 800씩 증가, 미완충시 풀완충.
         StimulateSummon = core.SummonSkill(f"{BuccaneerSkills.StimulatingConversation.value}(Guage increasing | 게이지 증가 더미)", 0, (5 + serverlag) * 1000, 0, 0, 120 * 1000, cooltime = -1).wrap(core.SummonSkillWrapper)
         UnityOfPower = core.DamageSkill(BuccaneerSkills.PowerUnity.value, 690, 650, 5, cooltime = 10000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #완충시에만 사용 가능, 에너지 1500 소모.
-        UnityOfPowerBuff = core.BuffSkill(f"{BuccaneerSkills.PowerUnity.value}(Debuff | 디버프)", 0, 90 * 1000, cooltime = -1, crit_damage = 40).wrap(core.BuffSkillWrapper)   #4스택 가정.
+        UnityOfPowerBuff = core.BuffSkill(f'{BuccaneerSkills.PowerUnity.value}(Debuff | 디버프)', 0, 90 * 1000, cooltime = -1, crit_damage = 40).wrap(core.BuffSkillWrapper)   #4스택 가정.
         EpicAdventure = core.BuffSkill(BuccaneerSkills.EpicAdventure.value, 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
         # 5th
