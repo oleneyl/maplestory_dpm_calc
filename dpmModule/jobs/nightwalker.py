@@ -1,3 +1,5 @@
+from enum import Enum
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -7,6 +9,62 @@ from .jobclass import cygnus
 from .jobbranch import thieves
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Night Walker here https://maplestory.fandom.com/wiki/Night_Walker/Skills
+class NightWalkerSkills(Enum):
+    # Link Skill
+    CygnusBlessing = 'Cygnus Blessing | 시그너스 블레스'
+    # Beginner
+    ElementalHarmony = 'Elemental Harmony | 엘리멘탈 하모니'
+    ElementalExpert = 'Elemental Expert | 엘리멘탈 엑스퍼트'
+    # 1st Job
+    LuckySeven = 'Lucky Seven | 럭키 세븐'
+    DarkElemental = 'Dark Elemental | 엘리멘탈 : 다크니스'
+    Haste = 'Haste | 헤이스트'
+    DarkSight = 'Dark Sight | 다크 사이트'
+    ShadowDodge = 'Shadow Dodge | 래피드 이베이전'
+    ShadowJump = 'Shadow Jump | 쉐도우 점프'
+    ShadowBat = 'Shadow Bat | 쉐도우 배트'
+    # 2nd Job
+    TripleThrow = 'Triple Throw | 트리플 스로우'
+    ThrowingBooster = 'Throwing Booster | 스로잉 부스터'
+    ThrowingMastery = 'Throwing Mastery | 스로잉 마스터리'
+    CriticalThrow = 'Critical Throw | 크리티컬 스로잉'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    AdaptiveDarkness = 'Adaptive Darkness | 다크니스 어뎁팅'
+    BatAffinity = 'Bat Affinity | 배트 커뮤니온'
+    # 3rd Job
+    QuadStar = 'Quad Star | 쿼드러플 스로우'
+    ShadowSpark = 'Shadow Spark | 스타더스트'
+    DarkServant = 'Dark Servant | 쉐도우 서번트'
+    SpiritProjection = 'Spirit Projection | 스피릿 스로잉'
+    EnvelopingDarkness = 'Enveloping Darkness | 래디컬 다크니스'
+    AlchemicAdrenaline = 'Alchemic Adrenaline | 아드레날린'
+    AdaptiveDarknessII = 'Adaptive Darkness II | 다크니스 어뎁팅II'
+    BatAffinityII = 'Bat Affinity II | 배트 커뮤니온II'
+    DarknessAscending = 'Darkness Ascending | 다크니스 어센션'
+    # 4th Job
+    CallofCygnus = 'Call of Cygnus | 시그너스 나이츠'
+    QuintupleStar = 'Quintuple Star | 퀸터플 스로우'
+    DarkOmen = 'Dark Omen | 다크니스 오멘'
+    ShadowStitch = 'Shadow Stitch | 쉐도우 스티치'
+    ThrowingExpert = 'Throwing Expert | 스로잉 엑스퍼트'
+    DarkBlessing = 'Dark Blessing | 다크니스 블레싱'
+    AdaptiveDarknessIII = 'Adaptive Darkness III | 다크니스 어뎁팅III'
+    BatAffinityIII = 'Bat Affinity III | 배트 커뮤니온III'
+    VitalitySiphon = 'Vitality Siphon | '
+    ShadowSlip = 'Shadow Slip | 쉐도우 어시밀레이션'
+    # Hypers
+    Dominion = 'Dominion | 도미니언'
+    GloryoftheGuardians = 'Glory of the Guardians | 글로리 오브 가디언즈'
+    ShadowIllusion = 'Shadow Illusion | 쉐도우 일루전'
+    # 5th Job
+    ShadowSpear = 'Shadow Spear | 쉐도우 스피어'
+    GreaterDarkServant = 'Greater Dark Servant | 쉐도우 서번트 익스텐드'
+    ShadowBite = 'Shadow Bite | 쉐도우 바이트'
+    RapidThrow = 'Rapid Throw | 래피드 스로우'
+
 
 class ShadowBatStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
