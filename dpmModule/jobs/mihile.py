@@ -1,3 +1,5 @@
+from enum import Enum
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -8,6 +10,59 @@ from .jobbranch import warriors
 from math import ceil
 from typing import Any, Dict
 # It is necessary to consider whether to apply Mihile Youngme. 미하일 영메 적용여부에 대해 고민해볼 필요 있음.
+
+
+# English skill information for Mihile here https://maplestory.fandom.com/wiki/Mihile/Skills
+class MihileSkills(Enum):
+    # Link Skill
+    KnightsWatch = 'Knight\'s Watch | 빛의 수호'
+    # Beginner
+    ElementalExpert = 'Elemental Expert | 엘리멘탈 엑스퍼트'
+    # 1st Job
+    SoulShield = 'Soul Shield | 소울 실드'
+    RoyalGuard = 'Royal Guard | 로얄 가드'
+    SoulBlade = 'Soul Blade | 소울 블레이드'
+    WeightlessHeart = 'Weightless Heart | 소울 점프'
+    SoulDevotion = 'Soul Devotion | 소울 어질리티'
+    HPBoost = 'HP Boost | HP 증가'
+    # 2nd Job
+    SwordMastery = 'Sword Mastery | 소드 마스터리'
+    FinalAttack = 'Final Attack | 파이널 어택'
+    SwordBooster = 'Sword Booster | 소드 부스터'
+    Rally = 'Rally | 격려'
+    SoulDriver = 'Soul Driver | 소울 드라이버'
+    RadiantDriver = 'Radiant Driver | 샤이닝 체이스'
+    VerticalRadiantDriver = 'Vertical Radiant Driver | 버티컬 샤이닝 체이스'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    # 3rd Job
+    SelfRecovery = 'Self Recovery | 셀프 리커버리'
+    IntenseFocus = 'Intense Focus | 인텐션'
+    RighteousIndignation = 'Righteous Indignation | 소울 어택'
+    AdvancedRoyalGuard = 'Advanced Royal Guard | 어드밴스드 로얄 가드'
+    RadiantCharge = 'Radiant Charge | 샤이닝 차지'
+    EnduringSpirit = 'Enduring Spirit | 소울 인듀어'
+    SoulLink = 'Soul Link | 소울 링크'
+    MagicCrash = 'Magic Crash | 매직 크래쉬'
+    TrinityAttack = 'Trinity Attack | 소울 슬래시'
+    # 4th job
+    SoulAsylum = 'Soul Asylum | 어드밴스드 소울 실드'
+    ExpertSwordMastery = 'Expert Sword Mastery | 어드밴스드 소드 마스터리'
+    AdvancedFinalAttack = 'Advanced Final Attack | 어드밴스드 파이널 어택'
+    FourPointAssault = 'Four-Point Assault | 소울 어썰트'
+    RadiantCross = 'Radiant Cross | 샤이닝 크로스'
+    RoilingSoul = 'Roiling Soul | 소울 레이지'
+    CombatMastery = 'Combat Mastery | 컴뱃 마스터리'
+    PowerStance = 'Power Stance | 스탠스'
+    CallofCygnus = 'Call of Cygnus | 시그너스 나이츠'
+    # Hypers
+    ChargingLight = 'Charging Light | 데들리 차지'
+    QueenofTomorrow = 'Queen of Tomorrow | 퀸 오브 투모로우'
+    SacredCube = 'Sacred Cube | 세이크리드 큐브'
+    # 5th Job
+    ShieldofLight = 'Shield of Light | 로 아이아스'
+    SwordofLight = 'Sword of Light | 클라우 솔라스'
+    RadiantSoul = 'Radiant Soul | 소드 오브 소울 라이트'
+    LightofCourage = 'Light of Courage | 라이트 오브 커리지'
 
 
 class JobGenerator(ck.JobGenerator):
