@@ -1,3 +1,7 @@
+from enum import Enum
+
+from .globalSkill import GlobalSkills
+from .jobbranch.bowmen import ArcherSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -8,6 +12,56 @@ from .jobbranch import bowmen
 from .jobclass import adventurer
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Marksman here https://maplestory.fandom.com/wiki/Marksman/Skills
+class MarksmanSkills(Enum):
+    # Link Skill
+    AdventurersCuriosity = 'Adventurer\'s Curiosity | '
+    # 1st Job
+    ArrowBlow = 'Arrow Blow | 애로우 블로우'
+    DoubleJump = 'Double Jump | 더블 점프'
+    CriticalShot = 'Critical Shot | 크리티컬 샷'
+    ArcheryMastery = 'Archery Mastery | 아처 마스터리'
+    # 2nd Job
+    IronArrow = 'Iron Arrow | 아이언 애로우'
+    Rangefinder = 'Rangefinder | 디스턴싱 센스'
+    NetToss = 'Net Toss | 네트 쓰로잉'
+    CrossbowBooster = 'Crossbow Booster | 크로스보우 부스터'
+    SoulArrowCrossbow = 'Soul Arrow: Crossbow | 소울 애로우:석궁'
+    CrossbowMastery = 'Crossbow Mastery | 크로스보우 마스터리'
+    FinalAttackCrossbow = 'Final Attack: Crossbow | 파이널 어택:석궁'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    # 3rd Job
+    ExplosiveBolt = 'Explosive Bolt | 볼트 럽쳐'
+    DragonsBreath = 'Dragon\'s Breath | 드래곤 펄스'
+    Freezer = 'Freezer | 프리저'
+    Hookshot = 'Hookshot | 슈타이크 아이젠'
+    PainKiller = 'Pain Killer | 페인 킬러'
+    RecklessHuntCrossbow = 'Reckless Hunt: Crossbow | 익스트림 아처리:석궁'
+    MortalBlow = 'Mortal Blow | 모탈 블로우'
+    AggressiveResistance = 'Aggressive Resistance | 데미지 리버싱'
+    EvasionBoost = 'Evasion Boost | 닷지'
+    Marksmanship = 'Marksmanship | 마크맨쉽'
+    # 4th Job
+    PiercingArrow = 'Piercing Arrow | 피어싱'
+    Snipe = 'Snipe | 스나이핑'
+    ArrowIllusion = 'Arrow Illusion | 애로우 일루전'
+    SharpEyes = 'Sharp Eyes | 샤프 아이즈'
+    IllusionStep = 'Illusion Step | 일루젼 스탭'
+    CrossbowExpert = 'Crossbow Expert | 크로스보우 엑스퍼트'
+    BoltSurplus = 'Bolt Surplus | 어디셔널 볼트'
+    LastManStanding = 'Last Man Standing | 라스트맨 스탠딩'
+    VitalHunter = 'Vital Hunter | 위크니스 파인딩'
+    # Hypers
+    HighSpeedShot = 'High Speed Shot | 롱 레인지 트루샷'
+    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
+    BullseyeShot = 'Bullseye Shot | 불스아이'
+    # 5th Job
+    PerfectShot = 'Perfect Shot | 트루 스나이핑'
+    SplitShot = 'Split Shot | 스플릿 애로우'
+    SurgeBolt = 'Surge Bolt | 차지드 애로우'
+    RepeatingCrossbowCartridge = 'Repeating Crossbow Cartridge | 리피팅 크로스보우 카트리지'
 
 
 class JobGenerator(ck.JobGenerator):
