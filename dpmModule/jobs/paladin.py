@@ -1,3 +1,6 @@
+from enum import Enum
+
+from .globalSkill import GlobalSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
@@ -6,6 +9,57 @@ from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Paladin here https://maplestory.fandom.com/wiki/Paladin/Skills
+class PaladinSkills(Enum):
+    # Link Skill
+    InvincibleBelief = 'Invincible Belief | 인빈서블 빌리프'
+    # 1st Job
+    SlashBlast = 'Slash Blast | 슬래시 블러스트'
+    WarLeap = 'War Leap | 워리어 리프'
+    LeapAttack = 'Leap Attack | 리프 어택'
+    IronBody = 'Iron Body | 아이언 바디'
+    WarriorMastery = 'Warrior Mastery | 워리어 마스터리'
+    # 2nd Job
+    FlameCharge = 'Flame Charge | 플레임 차지'
+    BlizzardCharge = 'Blizzard Charge | 블리자드 차지'
+    ElementalCharge = 'Elemental Charge | 엘리멘탈 차지'
+    CloseCombat = 'Close Combat | 페이지 오더'
+    WeaponBooster = 'Weapon Booster | 웨폰 부스터'
+    WeaponMastery = 'Weapon Mastery | 웨폰 마스터리'
+    FinalAttack = 'Final Attack | 파이널 어택'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    # 3rd Job
+    LightningCharge = 'Lightning Charge | 라이트닝 차지'
+    HPRecovery = 'HP Recovery | 리스토네이션'
+    Rush = 'Rush | 돌진'
+    Threaten = 'Threaten | 위협'
+    UpwardCharge = 'Upward Charge | 어퍼 차지'
+    ParashockGuard = 'Parashock Guard | 파라쇼크 가드'
+    CombatOrders = 'Combat Orders | 컴뱃 오더스'
+    ShieldMastery = 'Shield Mastery | 실드 마스터리'
+    Achilles = 'Achilles | 아킬레스'
+    DivineShield = 'Divine Shield | 블래싱 아머'
+    # 4th Job
+    Blast = 'Blast | 블래스트'
+    DivineCharge = 'Divine Charge | 디바인 차지'
+    MagicCrash = 'Magic Crash | 매직 크래쉬'
+    HeavensHammer = 'Heaven\'s Hammer | 생츄어리'
+    ElementalForce = 'Elemental Force | 엘리멘탈 포스'
+    PowerStance = 'Power Stance | 스탠스'
+    Guardian = 'Guardian | 가디언 스피릿'
+    HighPaladin = 'High Paladin | 팔라딘 엑스퍼트'
+    AdvancedCharge = 'Advanced Charge | 어드밴스드 차지'
+    # Hypers
+    SmiteShield = 'Smite Shield | 스마이트'
+    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
+    Sacrosanctity = 'Sacrosanctity | 새크로생티티'
+    # 5th Job
+    DivineEcho = 'Divine Echo | 홀리 유니티'
+    HammersoftheRighteous = 'Hammers of the Righteous | 블래스드 해머'
+    GrandGuardian = 'Grand Guardian | 그랜드 크로스'
+    MightyMjolnir = 'Mighty Mjolnir | 마이티 묠니르'
 
 
 # The 4th skill should be written based on Combat Orders. 4차 스킬은 컴뱃오더스 적용 기준으로 작성해야 함.
