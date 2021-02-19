@@ -1,3 +1,6 @@
+from enum import Enum
+
+from .globalSkill import GlobalSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -8,6 +11,62 @@ from .jobclass import heroes
 from .jobbranch import magicians
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Luminous here https://maplestory.fandom.com/wiki/Luminous/Skills
+class LuminousSkills(Enum):
+    # Link Skill
+    LightWash = 'Light Wash | 퍼미에이트'
+    # Beginner
+    Sunfire = 'Sunfire | 선파이어'
+    Eclipse = 'Eclipse | 이클립스'
+    Equilibrium = 'Equilibrium | 이퀄리브리엄'
+    InnerLight = 'Inner Light | 파워 오브 라이트'
+    FlashBlink = 'Flash Blink | 라이트 블링크'
+    # 1st Job
+    FlashShower = 'Flash Shower | 트윙클 플래쉬'
+    AbyssalDrop = 'Abyssal Drop | 다크 폴링'
+    LightSpeed = 'Light Speed | 라이트랜스포밍'
+    StandardMagicGuard = 'Standard Magic Guard | 오디너리 매직가드'
+    ManaWell = 'Mana Well | 익스텐드 마나'
+    LightAffinity = 'Light Affinity | 빛 마법 강화'
+    DarkAffinity = 'Dark Affinity | 어둠 마법 강화'
+    # 2nd Job
+    SylvanLance = 'Sylvan Lance | 실피드 랜서'
+    BlindingPillar = 'Blinding Pillar | 인바이러빌러티'
+    PressureVoid = 'Pressure Void | 보이드 프레셔'
+    BlackBlessing = 'Black Blessing | 블레스 오브 다크니스'
+    MagicBooster = 'Magic Booster | 매직 부스터'
+    SpellMastery = 'Spell Mastery | 스펠 마스터리'
+    HighWisdom = 'High Wisdom | 하이 위즈덤'
+    # 3rd Job
+    SpectralLight = 'Spectral Light | 스펙트럴 라이트'
+    RayofRedemption = 'Ray of Redemption | 샤인 리뎀션'
+    MoonlightSpear = 'Moonlight Spear | 녹스피어'
+    DeathScythe = 'Death Scythe | 데스 사이드'
+    ShadowShell = 'Shadow Shell | 안티 매직쉘'
+    DuskGuard = 'Dusk Guard | 라이트쉐도우 가드'
+    PhoticMeditation = 'Photic Meditation | 포틱 메디테이션'
+    LunarTide = 'Lunar Tide | 라이프 타이달'
+    # 4th Job
+    Reflection = 'Reflection | 라이트 리플렉션'
+    MorningStar = 'Morning Star | 모닝 스타폴'
+    Apocalypse = 'Apocalypse | 아포칼립스'
+    Ender = 'Ender | 앱솔루트 킬'
+    DarkCrescendo = 'Dark Crescendo | 다크 크레센도'
+    ArcanePitch = 'Arcane Pitch | 다크니스 소서리'
+    MagicMastery = 'Magic Mastery | 매직 마스터리'
+    DarknessMastery = 'Darkness Mastery | 다크라이트 마스터리'
+    # Hypers
+    Armageddon = 'Armageddon | 아마겟돈'
+    HeroicMemories = 'Heroic Memories | 히어로즈 오쓰'
+    Equalize = 'Equalize | 메모라이즈'
+    # 5th Job
+    GateofLight = 'Gate of Light | 진리의 문'
+    AetherConduit = 'Aether Conduit | 퍼니싱 리소네이터'
+    BaptismofLightandDarkness = 'Baptism of Light and Darkness | 빛과 어둠의 세례'
+    LiberationOrb = 'Liberation Orb | 리버레이션 오브'
+
 
 class LuminousStateController(core.BuffSkillWrapper):
     DARK = 0
