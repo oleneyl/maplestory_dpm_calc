@@ -56,7 +56,7 @@ class NightLordSkills(Enum):
     ClawExpert = 'Claw Expert | 자벨린 엑스퍼트'
     # Hypers
     DeathStar = 'Death Star | 포 시즌'
-    EpicAdventure = 'Epic Adventure | 에픽 어드벤쳐'
+    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
     BleedDart = 'Bleed Dart | 블리딩 톡신'
     # 5th Job
     ThrowingStarBarrage = 'Throwing Star Barrage | 스프레드 스로우'
@@ -147,7 +147,7 @@ class JobGenerator(ck.JobGenerator):
         PurgeArea = core.BuffSkill(NightLordSkills.FrailtyCurse.value, 600, (40+self.combat) * 1000, armor_ignore=30+self.combat).wrap(core.BuffSkillWrapper)
         BleedingToxin = core.BuffSkill(NightLordSkills.BleedDart.value, 780, 80*1000, cooltime = 180 * 1000, att = 60).wrap(core.BuffSkillWrapper)
         BleedingToxinDot = core.DotSkill(f"{NightLordSkills.BleedDart.value}(DoT | 도트)", 0, 1000, 1000, 1, 90*1000, cooltime = -1).wrap(core.DotSkillWrapper)
-        EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
+        EpicAdventure = core.BuffSkill(NightLordSkills.EpicAdventure.value, 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
         QuarupleThrow = core.DamageSkill(NightLordSkills.QuadStar.value, 600, 378 + 4 * self.combat, 5, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20) + JAVELIN_ATT).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)    #쉐도우 파트너 적용
 
