@@ -80,36 +80,23 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(MutualRule("스플릿 애로우", "트루 스나이핑"), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule("에픽 어드벤처", "크리티컬 리인포스"), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule("불스아이", "크리티컬 리인포스"), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule("소울 컨트랙트", "크리티컬 리인포스"), RuleSet.BASE)
-        ruleset.add_rule(ReservationRule("크리티컬 리인포스", "스플릿 애로우"), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule("스플릿 애로우", "소울 컨트랙트"), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule("리피팅 크로스보우 카트리지", "소울 컨트랙트"), RuleSet.BASE)
+        ruleset.add_rule(MutualRule(MarksmanSkills.SplitShot.value, MarksmanSkills.PerfectShot.value), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(MarksmanSkills.EpicAdventure.value, ArcherSkills.ViciousShot.value), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(MarksmanSkills.BullseyeShot.value, ArcherSkills.ViciousShot.value), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(GlobalSkills.TermsAndConditions.value, ArcherSkills.ViciousShot.value), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule(ArcherSkills.ViciousShot.value, MarksmanSkills.SplitShot.value), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(MarksmanSkills.SplitShot.value, GlobalSkills.TermsAndConditions.value), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(MarksmanSkills.RepeatingCrossbowCartridge.value, GlobalSkills.TermsAndConditions.value), RuleSet.BASE)
 
         return ruleset
 
-    def get_passive_skill_list(
-        self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
-    ):
+    def get_passive_skill_list(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        CriticalShot = core.InformedCharacterModifier("크리티컬 샷", crit=40)
-        PhisicalTraining = core.InformedCharacterModifier(
-            "피지컬 트레이닝", stat_main=30, stat_sub=30
-        )
-
-        MarkmanShip = core.InformedCharacterModifier(
-            "마크맨쉽", armor_ignore=25, pdamage=15
-        )
-
-        CrossBowExpert = core.InformedCharacterModifier(
-            "크로스보우 엑스퍼트", att=30 + passive_level, crit_damage=8
-        )
-
-        ElusionStep = core.InformedCharacterModifier(
-            "일루젼 스탭", stat_main=40 + passive_level
-        )
+        CriticalShot = core.InformedCharacterModifier(MarksmanSkills.CriticalShot.value, crit=40)
+        PhisicalTraining = core.InformedCharacterModifier(MarksmanSkills.PhysicalTraining.value, stat_main=30, stat_sub=30)
+        MarkmanShip = core.InformedCharacterModifier(MarksmanSkills.Marksmanship.value, armor_ignore=25, pdamage=15)
+        CrossBowExpert = core.InformedCharacterModifier(MarksmanSkills.CrossbowExpert.value, att=30 + passive_level, crit_damage=8)
+        ElusionStep = core.InformedCharacterModifier(MarksmanSkills.IllusionStep.value, stat_main=40 + passive_level)
 
         return [
             CriticalShot,
@@ -119,17 +106,13 @@ class JobGenerator(ck.JobGenerator):
             ElusionStep,
         ]
 
-    def get_not_implied_skill_list(
-        self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
-    ):
+    def get_not_implied_skill_list(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=35)
-        Mastery = core.InformedCharacterModifier(
-            "숙련도", pdamage_indep=-7.5 + 0.5 * ceil(passive_level / 2)
-        )
+        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-7.5 + 0.5 * ceil(passive_level / 2))
 
-        MortalBlow = core.InformedCharacterModifier("모탈 블로우", pdamage=2)
-        ExtremeArchery = core.InformedCharacterModifier("익스트림 아처리:석궁", crit_damage=20)
+        MortalBlow = core.InformedCharacterModifier(MarksmanSkills.MortalBlow.value, pdamage=2)
+        ExtremeArchery = core.InformedCharacterModifier(MarksmanSkills.RecklessHuntCrossbow.value, crit_damage=20)
 
         return [WeaponConstant, Mastery, MortalBlow, ExtremeArchery]
 
@@ -174,14 +157,14 @@ class JobGenerator(ck.JobGenerator):
 
         # Buff skills
         SoulArrow = core.BuffSkill(
-            name="소울 애로우",
+            name=MarksmanSkills.SoulArrowCrossbow.value,
             delay=0,
             remain=300 * 1000,
             att=30,
             rem=True,
         ).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill(
-            name="샤프 아이즈",
+            name=MarksmanSkills.SharpEyes.value,
             delay=660,
             remain=(300 + 10 * self.combat) * 1000,
             crit=20 + ceil(self.combat / 2),
@@ -190,7 +173,7 @@ class JobGenerator(ck.JobGenerator):
         ).wrap(core.BuffSkillWrapper)
 
         BoolsEye = core.BuffSkill(
-            name="불스아이",
+            name=MarksmanSkills.BullseyeShot.value,
             delay=960,
             remain=30 * 1000,
             cooltime=90 * 1000,
@@ -200,7 +183,7 @@ class JobGenerator(ck.JobGenerator):
             pdamage=20,
         ).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill(
-            name="에픽 어드벤처",
+            name=MarksmanSkills.EpicAdventure.value,
             delay=0,
             remain=60 * 1000,
             cooltime=120 * 1000,
@@ -211,7 +194,7 @@ class JobGenerator(ck.JobGenerator):
         # 롱레인지 트루샷: 나무위키피셜 DPM 떨어지므로 보류
         Snipping = (
             core.DamageSkill(
-                name="스나이핑",
+                name=MarksmanSkills.Snipe.value,
                 delay=630,
                 damage=465 + self.combat * 5,
                 hit=9 + 1,
@@ -230,7 +213,7 @@ class JobGenerator(ck.JobGenerator):
 
         TrueSnippingTick = (
             core.DamageSkill(
-                name="트루 스나이핑(타격)",
+                name=f"{MarksmanSkills.PerfectShot.value}(Tick | 타격)",
                 delay=690,
                 damage=950 + vEhc.getV(2, 2) * 30,
                 hit=14 + 1,
@@ -242,14 +225,14 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
         TrueSnipping = (
-            core.DamageSkill("트루 스나이핑", 120, 0, 0, cooltime=180 * 1000, red=True)
+            core.DamageSkill(MarksmanSkills.PerfectShot.value, 120, 0, 0, cooltime=180 * 1000, red=True)
             .isV(vEhc, 2, 2)
             .wrap(core.DamageSkillWrapper)
         )
 
         ChargedArrow = (
             core.DamageSkill(
-                name="차지드 애로우",
+                name=MarksmanSkills.SurgeBolt.value,
                 delay=0,
                 damage=750 + vEhc.getV(1, 1) * 30,
                 hit=10 + 1,
@@ -260,7 +243,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
         ChargedArrowHold = (
-            core.SummonSkill("차지드 애로우(더미)", 0, 10000, 0, 0, 9999999, cooltime=-1)
+            core.SummonSkill(f"{MarksmanSkills.SurgeBolt.value}(Dummy | 더미)", 0, 10000, 0, 0, 9999999, cooltime=-1)
             .isV(vEhc, 1, 1)
             .wrap(core.SummonSkillWrapper)
         )  # TODO: Cool feeling should be applied to the attack cycle. 공격 주기에 쿨감 적용해야 함.
@@ -268,7 +251,7 @@ class JobGenerator(ck.JobGenerator):
         # Summon Skills
         Freezer = (
             core.SummonSkill(
-                name="프리저",
+                name=MarksmanSkills.Freezer.value,
                 summondelay=0,
                 delay=1710,
                 damage=390 if DISTANCE <= 280 else 0,
@@ -296,7 +279,7 @@ class JobGenerator(ck.JobGenerator):
 
         SplitArrow = (
             core.DamageSkill(
-                name="스플릿 애로우(공격)",
+                name=f"{MarksmanSkills.SplitShot.value}(Attack | 공격)",
                 delay=0,
                 damage=600 + vEhc.getV(0, 0) * 24,
                 hit=5 + 1,
@@ -307,7 +290,7 @@ class JobGenerator(ck.JobGenerator):
         )
         SplitArrowBuff = (
             core.BuffSkill(
-                name="스플릿 애로우",
+                name=MarksmanSkills.SplitShot.value,
                 delay=810,
                 remain=60 * 1000,
                 cooltime=120 * 1000,
@@ -320,7 +303,7 @@ class JobGenerator(ck.JobGenerator):
 
         RepeatingCartrige = (
             core.BuffSkill(
-                name="리피팅 크로스보우 카트리지",
+                name=MarksmanSkills.RepeatingCrossbowCartridge.value,
                 delay=510,
                 remain=60000,
                 cooltime=120 * 1000,
@@ -329,10 +312,10 @@ class JobGenerator(ck.JobGenerator):
             .isV(vEhc, 0, 0)
             .wrap(core.BuffSkillWrapper)
         )
-        CartrigeStack = core.StackSkillWrapper(core.BuffSkill("카트리지", 0, 99999999), 8)
+        CartrigeStack = core.StackSkillWrapper(core.BuffSkill("Cartridge | 카트리지", 0, 99999999), 8)
         FullBurstShot = (
             core.DamageSkill(
-                name="풀버스트 샷",
+                name="Full Burst Shot | 풀버스트 샷",
                 delay=810,
                 damage=300 + 12 * vEhc.getV(0, 0),
                 hit=(9 + 1) * 4,
@@ -345,7 +328,7 @@ class JobGenerator(ck.JobGenerator):
 
         FinalAttack = (
             core.DamageSkill(
-                name="파이널 어택",
+                name=MarksmanSkills.FinalAttackCrossbow.value,
                 delay=0,
                 damage=150,
                 hit=0.4,
@@ -362,13 +345,13 @@ class JobGenerator(ck.JobGenerator):
         )  # Sharp Eyes 20 + Bull's Eye 20. Considering the utilization rate as Bull's Eye is always used according to Cree X. 샤프 아이즈 20 + 불스아이 20. 불스아이를 항상 크리인에 맞춰쓰므로 가동률 고려 X.
 
         SplitArrowOption = core.OptionalElement(
-            SplitArrowBuff.is_active, SplitArrow, name="스플릿 애로우 여부 확인"
+            SplitArrowBuff.is_active, SplitArrow, name=f"Check {MarksmanSkills.SplitShot.value} 여부 확인"
         )
         Snipping.onAfter(SplitArrowOption)
         FullBurstShot.onAfter(core.RepeatElement(SplitArrowOption, 4))
 
         TrueSnippingDeal = core.RepeatElement(TrueSnippingTick, 7)
-        TrueSnipping.onBefore(ChargedArrowHold.controller(10000, name="차징 유예"))
+        TrueSnipping.onBefore(ChargedArrowHold.controller(10000, name="End of charging | 차징 유예"))
         TrueSnipping.onAfter(TrueSnippingDeal)
 
         # TODO: Implementing charged cancel / Difficulty stopping mid-delay until it is implemented. 차지드 캔슬 구현할것 / 딜레이 중간에 끊는게 구현되기 전까지 어려움.
