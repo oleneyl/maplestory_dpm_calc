@@ -3,6 +3,8 @@ Kinesis.py
 
 Advisor : Gwang-jun
 """
+from enum import Enum
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -11,6 +13,66 @@ from . import globalSkill
 from .jobbranch import magicians
 from .jobclass import demon
 from typing import Any, Dict
+
+
+# English skill information for Kinesis here https://maplestory.fandom.com/wiki/Kinesis/Skills
+class KinesisSkills(Enum):
+    # Link Skill
+    Judgment = 'Judgment | 판단'
+    # Beginner
+    ESP = 'ESP | 초감각'
+    # 1st Job
+    MentalFortitude = 'Mental Fortitude | 내재 1'
+    KineticCrash = 'Kinetic Crash | 크래시'
+    PsychicForce = 'Psychic Force | 싸이킥 포스'
+    UltimateMetalPress = 'Ultimate - Metal Press | 얼티메이트-메테리얼'
+    MentalShield = 'Mental Shield | 사이킥 실드'
+    ESPBooster = 'ESP Booster | ESP 부스터'
+    KineticStep = 'Kinetic Step | 싸이킥 워크'
+    # 2nd Job
+    KineticPiledriver = 'Kinetic Piledriver | 매드 크래시'
+    ESPMastery = 'ESP Mastery | ESP 마스터리'
+    PsychicBlast = 'Psychic Blast | 싸이킥 포스2'
+    PsychicDrain = 'Psychic Drain | 싸이킥 드레인'
+    UltimateDeepImpact = 'Ultimate - Deep Impact | 얼티메이트-딥 임팩트'
+    PsychicArmor = 'Psychic Armor | 싸이킥 실드'
+    PurePower = 'Pure Power | 순수한 힘'
+    MentalStrength = 'Mental Strength | 내재 2'
+    # 3rd Job
+    PsychicGrab = 'Psychic Grab | 싸이킥 그랩'
+    PsychicAssault = 'Psychic Assault | 싸이킥 포스3'
+    MindTremor = 'Mind Tremor | 싸이킥 그라운드'
+    UltimateTrainwreck = 'Ultimate - Trainwreck | 얼티메이트-트레인'
+    KineticCombo = 'Kinetic Combo | 텔레키네시스'
+    PsychicBulwark = 'Psychic Bulwark | 싸이킥 실드2(왜곡)'
+    PsychicReinforcement = 'Psychic Reinforcement | 정신 강화'
+    KineticJaunt = 'Kinetic Jaunt | 정신강화'
+    ThirdEye = 'Third Eye | 정밀'
+    Transcendence = 'Transcendence | 초월'
+    # 4th Job
+    PsychicClutch = 'Psychic Clutch | 싸이킥 그랩2'
+    UltimatePsychicShot = 'Ultimate - Psychic Shot | 얼티메이트-싸이킥 샷'
+    UltimateBPM = 'Ultimate - B.P.M. | 얼티메이트-B.P.M'
+    MindQuake = 'Mind Quake | 싸이킥 그라운드2'
+    MindBreak = 'Mind Break | 싸이코 브레이크'
+    PresidentsOrders = 'President\'s Orders | 이계의 용사'
+    PsychicCharger = 'Psychic Charger | 싸이킥 차징'
+    ClearMind = 'Clear Mind | 정신정화'
+    TelepathTactics = 'Telepath Tactics | ESP 배틀오더'
+    Awakening = 'Awakening | 각성'
+    SupremeConcentration = 'Supreme Concentration | 정신집중-유지'
+    CriticalRush = 'Critical Rush | 임계'
+    MindScrambler = 'Mind Scrambler | 전달'
+    Mastery = 'Mastery | 숙달'
+    # Hypers
+    MentalTempest = 'Mental Tempest | 에버 싸이킥'
+    MentalShock = 'Mental Shock | 싸이코 메트리'
+    MentalOverdrive = 'Mental Overdrive | 싸이킥 오버'
+    # 5th Job
+    PsychicTornado = 'Psychic Tornado | 싸이킥 토네이도'
+    UltimateMindOverMatter = 'Ultimate - Mind Over Matter | 얼티메이트-무빙 매터'
+    UltimatePsychicShockwave = 'Ultimate - Psychic Shockwave | 얼티메이트-싸이킥 불릿'
+    LawofGravity = 'Law of Gravity | 로 오브 그래비티'
 
 
 class KinesisStackWrapper(core.StackSkillWrapper):
