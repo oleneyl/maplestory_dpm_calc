@@ -26,7 +26,7 @@ def FloraGoddessBlessWrapper(vEhc, num1, num2, WEAPON_ATT):
 class MagicCircuitFullDriveBuilder():
     def __init__(self, vEhc, num1, num2, mana = 100):
         self.MANA = mana
-        self.MagicCircuitFullDriveBuff = core.BuffSkill(f"{FloraSkills.ConversionOverdrive.value}(buff | 버프)", 540, (30+vEhc.getV(num1, num2))*1000, cooltime=200*1000, red=True, pdamage=(20+vEhc.getV(num1, num2)) * (self.MANA/100)).wrap(core.BuffSkillWrapper)
+        self.MagicCircuitFullDriveBuff = core.BuffSkill(f"{FloraSkills.ConversionOverdrive.value}(Buff | 버프)", 540, (30+vEhc.getV(num1, num2))*1000, cooltime=200*1000, red=True, pdamage=(20+vEhc.getV(num1, num2)) * (self.MANA/100)).wrap(core.BuffSkillWrapper)
         self.ManaStorm = core.DamageSkill(f"{FloraSkills.ConversionOverdrive.value}(Mana Storm | 마력 폭풍)", 0, 500+20*vEhc.getV(num1, num2), 3, cooltime = 4000).wrap(core.DamageSkillWrapper)
         self.UseManaStorm = core.OptionalElement(lambda: self.MagicCircuitFullDriveBuff.is_active() and self.ManaStorm.is_available(), self.ManaStorm)
         self.ManaStorm.protect_from_running()
