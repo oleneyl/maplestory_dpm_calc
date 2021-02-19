@@ -1,3 +1,7 @@
+from enum import Enum
+
+from .globalSkill import GlobalSkills
+from .jobbranch.thieves import ThiefSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -8,6 +12,58 @@ from .jobbranch import thieves
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Night Lord here https://maplestory.fandom.com/wiki/Night_Lord/Skills
+class NightLordSkills(Enum):
+    # Link Skill
+    ThiefsCunning = 'Thief\'s Cunning | 시프 커닝'
+    # 1st Job
+    DoubleStab = 'Double Stab | 더블 스탭'
+    LuckySeven = 'Lucky Seven | 럭키 세븐'
+    Haste = 'Haste | 헤이스트'
+    DarkSight = 'Dark Sight | 다크 사이트'
+    FlashJump = 'Flash Jump | 플래시 점프'
+    NimbleBody = 'Nimble Body | 님블 바디'
+    # 2nd Job
+    ShurikenBurst = 'Shuriken Burst | 슈리켄 버스트'
+    AssassinsMark = 'Assassin\'s Mark | 마크 오브 어쌔신'
+    GustCharm = 'Gust Charm | 윈드 탈리스만'
+    ClawBooster = 'Claw Booster | 자벨린 부스터'
+    ClawMastery = 'Claw Mastery | 자벨린 마스터리'
+    CriticalThrow = 'Critical Throw | 크리티컬 스로우'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    # 3rd Job
+    TripleThrow = 'Triple Throw | 트리플 스로우'
+    ShadeSplitter = 'Shade Splitter | 쉐이드 스플릿'
+    DarkFlare = 'Dark Flare | 다크 플레어'
+    ShadowWeb = 'Shadow Web | 쉐도우 웹'
+    ShadowPartner = 'Shadow Partner | 쉐도우 파트너'
+    ShadowStars = 'Shadow Stars | 스피릿 자벨린'
+    EnvelopingDarkness = 'Enveloping Darkness | 래디컬 다크니스'
+    Venom = 'Venom | 베놈'
+    ExpertThrowingStarHandling = 'Expert Throwing Star Handling | 숙련된 표창술'
+    AlchemicAdrenaline = 'Alchemic Adrenaline | 아드레날린'
+    # 4th Job
+    QuadStar = 'Quad Star | 쿼드러플 스로우'
+    Showdown = 'Showdown | 쇼다운 챌린지'
+    NightLordsMark = 'Night Lord\'s Mark | 마크 오브 나이트로드'
+    SuddenRaid = 'Sudden Raid | 써든레이드'
+    FrailtyCurse = 'Frailty Curse | 퍼지 에어리어'
+    DarkHarmony = 'Dark Harmony | 다크 세레니티'
+    ShadowShifter = 'Shadow Shifter | 페이크'
+    ToxicVenom = 'Toxic Venom | 페이탈 베놈'
+    ClawExpert = 'Claw Expert | 자벨린 엑스퍼트'
+    # Hypers
+    DeathStar = 'Death Star | 포 시즌'
+    EpicAdventure = 'Epic Adventure | 에픽 어드벤쳐'
+    BleedDart = 'Bleed Dart | 블리딩 톡신'
+    # 5th Job
+    ThrowingStarBarrage = 'Throwing Star Barrage | 스프레드 스로우'
+    Shurrikane = 'Shurrikane | 풍마수리검'
+    DarkLordsOmen = 'Dark Lord\'s Omen | 다크로드의 비전서'
+    ThrowBlasting = 'Throw Blasting | 스로우 블래스팅'
+
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
