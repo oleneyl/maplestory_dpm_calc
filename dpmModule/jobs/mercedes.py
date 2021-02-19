@@ -68,7 +68,7 @@ class MercedesSkills(Enum):
 
 class ElementalGhostWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, num1, num2, sylphidia: core.BuffSkillWrapper):
-        skill = core.BuffSkill("엘리멘탈 고스트", 720, (40+vEhc.getV(num1, num2))*1000, cooltime=150*1000, red=True)
+        skill = core.BuffSkill(MercedesSkills.SpiritofElluel.value, 720, (40+vEhc.getV(num1, num2))*1000, cooltime=150*1000, red=True)
         super(ElementalGhostWrapper, self).__init__(skill)
         self.ratio = (30 + vEhc.getV(num1, num2)) * 0.01
         self.prob_slow = 0.9 * (1 + 0.7 * (1 + 0.5))
@@ -134,29 +134,29 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ConcurrentRunRule('크리티컬 리인포스', '엘리멘탈 고스트'), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule('이르칼라의 숨결', '엘리멘탈 고스트'), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '엘리멘탈 고스트'), RuleSet.BASE)
-        ruleset.add_rule(ReservationRule('엘비시 블레싱', '엘리멘탈 고스트'), RuleSet.BASE)
-        ruleset.add_rule(ReservationRule('히어로즈 오쓰', '엘리멘탈 고스트'), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule('실피디아', '엘리멘탈 고스트'), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule('실피디아', '엘리멘탈 고스트', lambda sk: sk.is_cooltime_left(30000, -1)), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(ArcherSkills.ViciousShot.value, MercedesSkills.SpiritofElluel.value), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(MercedesSkills.IrkallasWrath.value, MercedesSkills.SpiritofElluel.value), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(GlobalSkills.TermsAndConditions.value, MercedesSkills.SpiritofElluel.value), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule(MercedesSkills.ElvishBlessing.value, MercedesSkills.SpiritofElluel.value), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule(MercedesSkills.HeroicMemories.value, MercedesSkills.SpiritofElluel.value), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(MercedesSkills.SylvidiasFlight.value, MercedesSkills.SpiritofElluel.value), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(MercedesSkills.SylvidiasFlight.value, MercedesSkills.SpiritofElluel.value, lambda sk: sk.is_cooltime_left(30000, -1)), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        PotentialPower = core.InformedCharacterModifier("포텐셜 파워",pdamage = 20)
-        SharpAiming = core.InformedCharacterModifier("샤프 에이밍",crit = 40)
+        PotentialPower = core.InformedCharacterModifier(MercedesSkills.PotentialPower.value,pdamage = 20)
+        SharpAiming = core.InformedCharacterModifier(MercedesSkills.SharpAim.value,crit = 40)
         
-        SpiritInfusion = core.InformedCharacterModifier("스피릿 인퓨전",pdamage = 30, crit=15)
-        PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝",stat_main = 30, stat_sub = 30)
+        SpiritInfusion = core.InformedCharacterModifier(MercedesSkills.SpiritSurge.value,pdamage = 30, crit=15)
+        PhisicalTraining = core.InformedCharacterModifier(MercedesSkills.PhysicalTraining.value,stat_main = 30, stat_sub = 30)
         
-        IgnisRoar = core.InformedCharacterModifier("이그니스 로어",pdamage_indep = 15, att = 40)
+        IgnisRoar = core.InformedCharacterModifier(MercedesSkills.IgnisRoar.value,pdamage_indep = 15, att = 40)
 
-        DualbowgunExpert = core.InformedCharacterModifier("듀얼보우건 엑스퍼트",att = 30+passive_level, crit_damage= 10+ceil(passive_level/3))
-        DefenceBreak = core.InformedCharacterModifier("디펜스 브레이크",armor_ignore= 25+passive_level, pdamage_indep= 20+passive_level, boss_pdamage = 20+3*(passive_level//4), crit_damage = 20+3*(passive_level//4))
-        AdvancedFinalAttack = core.InformedCharacterModifier("어드밴스드 파이널 어택",att = 20 + ceil(passive_level / 2))
+        DualbowgunExpert = core.InformedCharacterModifier(MercedesSkills.DualBowgunsExpert.value,att = 30+passive_level, crit_damage= 10+ceil(passive_level/3))
+        DefenceBreak = core.InformedCharacterModifier(MercedesSkills.DefenseBreak.value,armor_ignore= 25+passive_level, pdamage_indep= 20+passive_level, boss_pdamage = 20+3*(passive_level//4), crit_damage = 20+3*(passive_level//4))
+        AdvancedFinalAttack = core.InformedCharacterModifier(MercedesSkills.AdvancedFinalAttack.value,att = 20 + ceil(passive_level / 2))
         
         return [PotentialPower, SharpAiming, SpiritInfusion, 
                 PhisicalTraining, IgnisRoar, DualbowgunExpert, DefenceBreak, AdvancedFinalAttack]
@@ -166,7 +166,7 @@ class JobGenerator(ck.JobGenerator):
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -7.5+0.5*ceil(passive_level/2))        
 
-        IgnisRoarStack = core.InformedCharacterModifier("이그니스 로어(스택)",pdamage_indep = 2*10)
+        IgnisRoarStack = core.InformedCharacterModifier(f"{MercedesSkills.IgnisRoar.value}(Stack | 스택)",pdamage_indep = 2*10)
         
         return [WeaponConstant, Mastery, IgnisRoarStack]
         
@@ -207,59 +207,58 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         # Buff skill
-        Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
-        AncientSpirit = core.BuffSkill("엔시언트 스피릿", 0, (200+5*self.combat) * 1000, patt = 30+self.combat, rem=True).wrap(core.BuffSkillWrapper)
+        Booster = core.BuffSkill(MercedesSkills.DualBowgunsBoost.value, 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
+        AncientSpirit = core.BuffSkill(MercedesSkills.AncientWarding.value, 0, (200+5*self.combat) * 1000, patt = 30+self.combat, rem=True).wrap(core.BuffSkillWrapper)
 
         # Summon skill
-        ElementalKnights = core.DamageSkill("엘리멘탈 나이트", 0, 0, 0, cooltime=120*1000, red=True).setV(vEhc, 2, 3, False).wrap(core.DamageSkillWrapper) # Dot reflection required. 도트 반영필요.
-        ElementalKnights_1 = core.SummonSkill("엘리멘탈 나이트(1)", 0, 1470, (385+385+485)/3, 1, 210 * 1000, cooltime=-1, rem=True).setV(vEhc, 2, 3, False).wrap(core.SummonSkillWrapper)
-        ElementalKnights_2 = core.SummonSkill("엘리멘탈 나이트(2)", 0, 1470, (385+385+485)/3, 1, 210 * 1000, cooltime=-1, rem=True).setV(vEhc, 2, 3, False).wrap(core.SummonSkillWrapper)
+        ElementalKnights = core.DamageSkill(MercedesSkills.ElementalKnights.value, 0, 0, 0, cooltime=120*1000, red=True).setV(vEhc, 2, 3, False).wrap(core.DamageSkillWrapper) # Dot reflection required. 도트 반영필요.
+        ElementalKnights_1 = core.SummonSkill(f"{MercedesSkills.ElementalKnights.value}(1)", 0, 1470, (385+385+485)/3, 1, 210 * 1000, cooltime=-1, rem=True).setV(vEhc, 2, 3, False).wrap(core.SummonSkillWrapper)
+        ElementalKnights_2 = core.SummonSkill(f"{MercedesSkills.ElementalKnights.value}(2)", 0, 1470, (385+385+485)/3, 1, 210 * 1000, cooltime=-1, rem=True).setV(vEhc, 2, 3, False).wrap(core.SummonSkillWrapper)
         
         # Damage skill
-        IshtarRing = core.DamageSkill("이슈타르의 링", 120, 220 + self.combat, 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        
-        
-        AdvanceStrikeDualShot = core.DamageSkill("어드밴스드 스트라이크 듀얼샷", 480, 380, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AdvanceStrikeDualShot_Link = core.DamageSkill("어드밴스드 스트라이크 듀얼샷(연계)", 360, 380, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        IshtarRing = core.DamageSkill(MercedesSkills.IshtarsRing.value, 120, 220 + self.combat, 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
-        AdvancedFinalAttackFast = core.DamageSkill("어드밴스드 파이널 어택(속사)", 0, 120 + passive_level, 2*0.01*(75 + passive_level)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedFinalAttackSlow = core.DamageSkill("어드밴스드 파이널 어택(일반)", 0, 120 + passive_level, 2*0.01*(75 + passive_level)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvanceStrikeDualShot = core.DamageSkill(MercedesSkills.StaggeringStrikes.value, 480, 380, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvanceStrikeDualShot_Link = core.DamageSkill(f"{MercedesSkills.StaggeringStrikes.value}(Link | 연계)", 360, 380, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+
+        AdvancedFinalAttackFast = core.DamageSkill(f"{MercedesSkills.AdvancedFinalAttack.value}(Fast | 속사)", 0, 120 + passive_level, 2*0.01*(75 + passive_level)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedFinalAttackSlow = core.DamageSkill(f"{MercedesSkills.AdvancedFinalAttack.value}(Slow | 일반)", 0, 120 + passive_level, 2*0.01*(75 + passive_level)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
     
         # Hyper
-        ElvishBlessing = core.BuffSkill("엘비시 블레싱", 900, 60 * 1000, cooltime = 90 * 1000, att = 80).wrap(core.BuffSkillWrapper)
-        HerosOath = core.BuffSkill("히어로즈 오쓰", 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
+        ElvishBlessing = core.BuffSkill(MercedesSkills.ElvishBlessing.value, 900, 60 * 1000, cooltime = 90 * 1000, att = 80).wrap(core.BuffSkillWrapper)
+        HerosOath = core.BuffSkill(MercedesSkills.HeroicMemories.value, 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
         # 5th
-        Sylphidia = core.BuffSkill("실피디아", 0, (30 + vEhc.getV(5,5)//2) * 1000, cooltime = 150 * 1000, red=True, patt = (5+vEhc.getV(5,5)//2)).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) # No information. 정보 없음.
+        Sylphidia = core.BuffSkill(MercedesSkills.SylvidiasFlight.value, 0, (30 + vEhc.getV(5,5)//2) * 1000, cooltime = 150 * 1000, red=True, patt = (5+vEhc.getV(5,5)//2)).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) # No information. 정보 없음.
         ElementalGhost = ElementalGhostWrapper(vEhc, 0, 0, sylphidia=Sylphidia)
-        ElementalGhostSpirit = core.DamageSkill("엘리멘탈 고스트(정령의 기운)", 0, 450+15*vEhc.getV(0,0), 8, cooltime=10*1000).wrap(core.DamageSkillWrapper)
-        IrkilaBreathInit = core.DamageSkill("이르칼라의 숨결", 900, 0, 0, cooltime = 150 * 1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        IrkilaBreathTick = core.DamageSkill("이르칼라의 숨결(틱)", 150, 400+16*vEhc.getV(1,1), 8).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        RoyalKnights = core.BuffSkill("로얄 나이츠", 1260, 30000, cooltime=150*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        RoyalKnightsAttack = core.DamageSkill("로얄 나이츠(공격)", 0, 325+13*vEhc.getV(0,0), 4*4, cooltime=1410).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        ElementalGhostSpirit = core.DamageSkill(f"{MercedesSkills.SpiritofElluel.value}(Spirit Energy | 정령의 기운)", 0, 450+15*vEhc.getV(0,0), 8, cooltime=10*1000).wrap(core.DamageSkillWrapper)
+        IrkilaBreathInit = core.DamageSkill(MercedesSkills.IrkallasWrath.value, 900, 0, 0, cooltime = 150 * 1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        IrkilaBreathTick = core.DamageSkill(f"{MercedesSkills.IrkallasWrath.value}(Tick | 틱)", 150, 400+16*vEhc.getV(1,1), 8).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        RoyalKnights = core.BuffSkill(MercedesSkills.RoyalKnights.value, 1260, 30000, cooltime=150*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        RoyalKnightsAttack = core.DamageSkill(f"{MercedesSkills.RoyalKnights.value}(Attack | 공격)", 0, 325+13*vEhc.getV(0,0), 4*4, cooltime=1410).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         # Linked skills-Write as a delay when linking. 연계 스킬들 - 연계시 딜레이로 작성.
         UnicornSpike = SylphidiaDamageSkill(
-            core.DamageSkill("유니콘 스파이크", 450, 315+100 + 2*self.combat, 5, modifier = core.CharacterModifier(crit=100), cooltime = 10 * 1000, red=True).setV(vEhc, 5, 3, False),
+            core.DamageSkill(MercedesSkills.UnicornSpike.value, 450, 315+100 + 2*self.combat, 5, modifier = core.CharacterModifier(crit=100), cooltime = 10 * 1000, red=True).setV(vEhc, 5, 3, False),
             Sylphidia,
             540
         )
-        UnicornSpikeBuff = core.BuffSkill("유니콘 스파이크(버프)", 0, 30 * 1000, pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper)  # No direct casting. 직접시전 금지.
+        UnicornSpikeBuff = core.BuffSkill(f"{MercedesSkills.UnicornSpike.value}(Buff | 버프)", 0, 30 * 1000, pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper)  # No direct casting. 직접시전 금지.
         RegendrySpear = SylphidiaDamageSkill(
-            core.DamageSkill("레전드리 스피어", 690, 700 + 10*self.combat, 3, cooltime = 5 * 1000, red=True, modifier = core.CharacterModifier(crit=100)).setV(vEhc, 4, 2, False),
+            core.DamageSkill(MercedesSkills.SpikesRoyale.value, 690, 700 + 10*self.combat, 3, cooltime = 5 * 1000, red=True, modifier = core.CharacterModifier(crit=100)).setV(vEhc, 4, 2, False),
             Sylphidia,
             540
         )
-        RegendrySpearBuff = core.BuffSkill("레전드리 스피어(버프)", 0, (30+self.combat) * 1000, armor_ignore = 30+20+self.combat, cooltime = -1).wrap(core.BuffSkillWrapper) # No direct casting. 직접시전 금지.
-        LightningEdge = core.DamageSkill("라이트닝 엣지", 630, 420 + 5*self.combat, 3).wrap(core.DamageSkillWrapper)
-        LightningEdgeBuff = core.BuffSkill("라이트닝 엣지(버프)", 0, 30000, cooltime=-1).wrap(core.BuffSkillWrapper)
-        LeapTornado = core.DamageSkill("리프 토네이도", 390, 390+30+3*self.combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
-        GustDive = core.DamageSkill("거스트 다이브", 480, 430 + 3*self.combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        RegendrySpearBuff = core.BuffSkill(f"{MercedesSkills.SpikesRoyale.value}(Buff | 버프)", 0, (30+self.combat) * 1000, armor_ignore = 30+20+self.combat, cooltime = -1).wrap(core.BuffSkillWrapper) # No direct casting. 직접시전 금지.
+        LightningEdge = core.DamageSkill(MercedesSkills.LightningEdge.value, 630, 420 + 5*self.combat, 3).wrap(core.DamageSkillWrapper)
+        LightningEdgeBuff = core.BuffSkill(f"{MercedesSkills.LightningEdge.value}(Buff | 버프)", 0, 30000, cooltime=-1).wrap(core.BuffSkillWrapper)
+        LeapTornado = core.DamageSkill(MercedesSkills.LeapTornado.value, 390, 390+30+3*self.combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        GustDive = core.DamageSkill(MercedesSkills.GustDive.value, 480, 430 + 3*self.combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         WrathOfEllil = SylphidiaDamageSkill(
-            core.DamageSkill("래쓰 오브 엔릴", 210, 400, 10, cooltime = 8 * 1000).setV(vEhc, 3, 2, False),
+            core.DamageSkill(MercedesSkills.WrathofEnlil.value, 210, 400, 10, cooltime = 8 * 1000).setV(vEhc, 3, 2, False),
             Sylphidia,
             540
         )
@@ -281,14 +280,14 @@ class JobGenerator(ck.JobGenerator):
         IrkilaBreathInit.onAfter(IrkilaBreath)
 
         #Cooldown
-        LinkAttack = core.GraphElement("연계")
+        LinkAttack = core.GraphElement("Link | 연계")
         LinkAttack.onAfter(WrathOfEllil.controller(1000, "reduce_cooltime"))
         LinkAttack.onAfter(UnicornSpike.controller(1000, "reduce_cooltime"))
         LinkAttack.onAfter(RegendrySpear.controller(1000, "reduce_cooltime"))
         LinkAttack.onAfter(ElementalGhostSpirit.controller(1000, "reduce_cooltime"))
         
         # Damage Cycle
-        DebuffCombo = core.DamageSkill("디버프 콤보", 0, 0, 0).wrap(core.DamageSkillWrapper)
+        DebuffCombo = core.DamageSkill("Debuff combo | 디버프 콤보", 0, 0, 0).wrap(core.DamageSkillWrapper)
         DebuffComboList = [AdvanceStrikeDualShot_Link, WrathOfEllil, AdvanceStrikeDualShot_Link,
                             UnicornSpike, AdvanceStrikeDualShot_Link, LightningEdge, AdvanceStrikeDualShot_Link,
                             RegendrySpear, WrathOfEllil, AdvanceStrikeDualShot]
@@ -296,10 +295,10 @@ class JobGenerator(ck.JobGenerator):
         for sk in DebuffComboList[1:]:
             DebuffCombo.onAfter(sk)
             DebuffCombo.onAfter(LinkAttack)
-        DebuffCombo.onConstraint(core.ConstraintElement("디버프 없을시", UnicornSpikeBuff, UnicornSpikeBuff.is_not_active))
-        DebuffCombo.onConstraint(core.ConstraintElement("실피디아 아닐시", Sylphidia, Sylphidia.is_not_active))
+        DebuffCombo.onConstraint(core.ConstraintElement("Without debuff | 디버프 없을시", UnicornSpikeBuff, UnicornSpikeBuff.is_not_active))
+        DebuffCombo.onConstraint(core.ConstraintElement(f"If not {MercedesSkills.SylvidiasFlight.value} 아닐시", Sylphidia, Sylphidia.is_not_active))
 
-        ElementalGhostCombo = core.DamageSkill("엘고 콤보", 0, 0, 0).wrap(core.DamageSkillWrapper)
+        ElementalGhostCombo = core.DamageSkill("Afterimage combo | 엘고 콤보", 0, 0, 0).wrap(core.DamageSkillWrapper)
         ElementalGhostComboList = [AdvanceStrikeDualShot_Link, WrathOfEllil, AdvanceStrikeDualShot_Link,
                                     UnicornSpike, AdvanceStrikeDualShot_Link, RegendrySpear, GustDive]
         ElementalGhostCombo.onAfter(ElementalGhostComboList[0])
@@ -319,9 +318,9 @@ class JobGenerator(ck.JobGenerator):
 
         #Final Attack, Elemental Ghost
         UseElementalGhostSpirit = core.OptionalElement(
-            lambda: ElementalGhost.is_active() and ElementalGhostSpirit.is_available(), ElementalGhostSpirit, name="정령의 기운 조건")
+            lambda: ElementalGhost.is_active() and ElementalGhostSpirit.is_available(), ElementalGhostSpirit, name="Spirit energy condition | 정령의 기운 조건")
         UseRoyalNightsAttack = core.OptionalElement(
-            lambda: RoyalKnights.is_active() and RoyalKnightsAttack.is_available(), RoyalKnightsAttack, name="로얄 나이츠 조건")
+            lambda: RoyalKnights.is_active() and RoyalKnightsAttack.is_available(), RoyalKnightsAttack, name=f"{MercedesSkills.RoyalKnights.value}(Condition | 조건)")
 
         for wrp in [UnicornSpike, RegendrySpear, LightningEdge, LeapTornado,
                     AdvanceStrikeDualShot, AdvanceStrikeDualShot_Link, WrathOfEllil]:
@@ -345,7 +344,7 @@ class JobGenerator(ck.JobGenerator):
 
         GuidedArrow.onTick(UseRoyalNightsAttack)
 
-        IsSylphidia = core.ConstraintElement("실피디아 탑승중", Sylphidia, Sylphidia.is_active)
+        IsSylphidia = core.ConstraintElement(f"On {MercedesSkills.SylvidiasFlight.value} 탑승중", Sylphidia, Sylphidia.is_active)
         for sk in [UnicornSpike, RegendrySpear, WrathOfEllil]:  # When boarding Silphidia, use it separately without going through DebuffCombo. 실피디아 탑승시에는 DebuffCombo를 통하지 않고 따로 사용.
             sk.onConstraint(IsSylphidia)
 
