@@ -1,6 +1,9 @@
 """Advisor : 새틀라이트(유니온)
 """
+from enum import Enum
 
+from .globalSkill import GlobalSkills
+from .jobbranch.pirates import PirateSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
@@ -11,6 +14,62 @@ from .jobbranch import pirates
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Mechanic here https://maplestory.fandom.com/wiki/Mechanic/Skills
+class MechanicSkills(Enum):
+    # Link Skill
+    SpiritofFreedom = 'Spirit of Freedom | 스피릿 오브 프리덤'
+    # Beginner
+    MechanicDash = 'Mechanic Dash | 메카닉 대쉬'
+    HiddenPeace = 'Hidden Peace | 히든 피스'
+    SecretAssembly = 'Secret Assembly | 비밀광장 긴급집결'
+    # 1st Job
+    HumanoidMech = 'Humanoid Mech | 메탈아머:휴먼'
+    GatlingGun = 'Gatling Gun | 개틀링 샷'
+    ME07Drillhands = 'ME-07 Drillhands | 드릴 러쉬'
+    RocketBooster = 'Rocket Booster | 로켓 부스터'
+    # 2nd Job
+    HeavyGatlingGun = 'Heavy Gatling Gun | 어드밴스드 개틀링 샷'
+    HomingBeacon = 'Homing Beacon | 호밍 미사일'
+    MechanicMastery = 'Mechanic Mastery | 메카닉 마스터리'
+    MechanicRage = 'Mechanic Rage | 메카닉 부스터'
+    OpenPortalGX9 = 'Open Portal: GX-9 | 오픈 게이트:GX-9'
+    PerfectArmor = 'Perfect Armor | 퍼펙트 아머'
+    RoboLauncherRM7 = 'Robo Launcher RM7 | 로봇 런처:RM7'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    # 3rd Job
+    TankMech = 'Tank Mech | 메탈아머:탱크'
+    HeavySalvo = 'Heavy Salvo | 매시브 파이어:SPLASH'
+    APSalvo = 'AP Salvo | 매시브 파이어:IRON'
+    SupportUnitHEX = 'Support Unit: H-EX | 서포트 웨이버:H-EX'
+    PunchLauncher = 'Punch Launcher | 로켓 펀치'
+    RocknShock = 'Rock \'n Shock | 마그네틱 필드'
+    AdvancedHomingBeacon = 'Advanced Homing Beacon | 어드밴스드 호밍 미사일'
+    MechanizedDefenseSystem = 'Mechanized Defense System | 메카닉 디펜스 시스템'
+    BattleProgram = 'Battle Program | 전투 프로그램 셋업'
+    RolloftheDice = 'Roll of the Dice | 럭키 다이스'
+    Overclock = 'Overclock | 오버 튜닝'
+    # 4th Job
+    HeavySalvoPlus = 'Heavy Salvo Plus | 매시브 파이어:SPLASH-F'
+    APSalvoPlus = 'AP Salvo Plus | 매시브 파이어:IRON-B'
+    ExtremeMech = 'Extreme Mech | 메탈아머 익스트림'
+    GiantRobotSG88 = 'Giant Robot SG-88 | 워머신:타이탄'
+    EnhancedSupportUnit = 'Enhanced Support Unit | 서포트 웨이버 강화'
+    BotsnTots = 'Bots \'n Tots | 로봇 팩토리:RM1'
+    RobotMastery = 'Robot Mastery | 로봇 마스터리'
+    HomingBeaconResearch = 'Homing Beacon Research | 호밍 미사일 시스템 연구'
+    DoubleDown = 'Double Down | 더블 럭키 다이스'
+    MechAlloyResearch = 'Mech Alloy Research | 메탈아머 합금 연구'
+    # Hypers
+    DistortionBomb = 'Distortion Bomb | 디스토션 필드'
+    ForLiberty = 'For Liberty | 윌 오브 리버티'
+    FullSpread = 'Full Spread | 봄버 타임'
+    # 5th Job
+    DoomsdayDevice = 'Doomsday Device | 멀티플 옵션:M-FL'
+    MobileMissileBattery = 'Mobile Missile Battery | 마이크로 미사일 컨테이너'
+    FullMetalBarrage = 'Full Metal Barrage | 메탈아머 전탄발사'
+    MechaCarrier = 'Mecha Carrier | 메카 캐리어'
 
 
 class MultipleOptionWrapper(core.SummonSkillWrapper):
