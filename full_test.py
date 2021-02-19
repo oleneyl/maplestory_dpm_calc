@@ -1,5 +1,5 @@
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
-from dpmModule.jobs import jobMap
+from dpmModule.jobs import jobList
 from concurrent.futures import ProcessPoolExecutor
 from itertools import product, groupby
 from operator import itemgetter
@@ -19,23 +19,23 @@ def get_args():
 
 
 def test(args):
-    jobname, ulevel, runtime, cdr = args
+    job_tuple, ulevel, runtime, cdr = args
     start = time.time()
-    print(f"{jobname} {ulevel} Calculating | 계산중")
+    print(f"{job_tuple[0]} | {job_tuple[1]} {ulevel} Calculating | 계산중")
 
-    parser = IndividualDPMGenerator(jobname)
+    parser = IndividualDPMGenerator(job_tuple[1])
     parser.set_runtime(runtime * 1000)
     dpm = parser.get_dpm(spec_name=str(ulevel), ulevel=ulevel, cdr=cdr)
 
     end = time.time()
-    print(f"{jobname} {ulevel} Calculation Completed | 계산완료, {end - start:.3f} seconds | 초")
-    return jobname, ulevel, dpm
+    print(f"{job_tuple[0]} | {job_tuple[1]} {ulevel} Calculation Completed | 계산완료, {end - start:.3f} seconds | 초")
+    return job_tuple, ulevel, dpm
 
 
 def write_results(results):
     dpm_output = open("dpm_output.txt", "w", encoding="utf-8")
-    for jobname, result in groupby(results, key=itemgetter(0)):
-        dpm_output.write(jobname)
+    for job_tuple, result in groupby(results, key=itemgetter(0)):
+        dpm_output.write(f'{job_tuple[0]} | {job_tuple[1]}')
         for dpm in map(itemgetter(2), result):
             dpm_output.write(" ")
             dpm_output.write(str(dpm))
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     args = get_args()
     start = time.time()
     ulevels = args.ulevel
-    tasks = product(jobMap.keys(), ulevels, [args.time], [args.cdr])
+    tasks = product(jobList.items(), ulevels, [args.time], [args.cdr])
     pool = ProcessPoolExecutor(max_workers=args.thread)
     results = pool.map(test, tasks)
     write_results(results)
