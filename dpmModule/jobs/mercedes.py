@@ -1,3 +1,7 @@
+from enum import Enum
+
+from .globalSkill import GlobalSkills
+from .jobbranch.bowmen import ArcherSkills
 from ..kernel.graph import DynamicVariableOperation
 from ..kernel import core
 from ..character import characterKernel as ck
@@ -7,6 +11,59 @@ from . import globalSkill
 from .jobbranch import bowmen
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Mercedes here https://maplestory.fandom.com/wiki/Mercedes/Skills
+class MercedesSkills(Enum):
+    # Link Skill
+    ElvenBlessing = 'Elven Blessing | 엘프의 축복'
+    # Beginner
+    ElvenHealing = 'Elven Healing | 엘프의 회복'
+    Updraft = 'Updraft | 스타일리쉬 무브'
+    ElvenGrace = 'Elven Grace | 왕의 자격'
+    # 1st job
+    SwiftDualShot = 'Swift Dual Shot | 스피드 듀얼샷'
+    PotentialPower = 'Potential Power | 포텐셜 파워'
+    GlideBlast = 'Glide Blast | 아크로바틱 점프'
+    SharpAim = 'Sharp Aim | 샤프 에이밍'
+    # 2nd Job
+    PiercingStorm = 'Piercing Storm | 크로스 피어싱'
+    RisingRush = 'Rising Rush | 차지 드라이브'
+    PartingShot = 'Parting Shot | 파이널 샷'
+    DualBowgunsBoost = 'Dual Bowguns Boost | 듀얼보우건 부스터'
+    SpiritSurge = 'Spirit Surge | 스피릿 인퓨전'
+    DualBowgunsMastery = 'Dual Bowguns Mastery | 듀얼보우건 마스터리'
+    FinalAttackDualBowguns = 'Final Attack: Dual Bowguns | 파이널 어택: 듀얼보우건'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    # 3rd Job
+    StunningStrikes = 'Stunning Strikes | 스트라이크 듀얼샷'
+    LeapTornado = 'Leap Tornado | 리프 토네이도'
+    UnicornSpike = 'Unicorn Spike | 유니콘 스파이크'
+    GustDive = 'Gust Dive | 거스트 다이브'
+    IgnisRoar = 'Ignis Roar | 이그니스 로어'
+    WaterShield = 'Water Shield | 워터 쉴드'
+    AerialBarrage = 'Aerial Barrage | 하이킥 데몰리션'
+    ElementalKnights = 'Elemental Knights | 엘리멘탈 나이트'
+    # 4th Job
+    IshtarsRing = 'Ishtar\'s Ring | 이슈타르의 링'
+    SpikesRoyale = 'Spikes Royale | 레전드리 스피어'
+    LightningEdge = 'Lightning Edge | 라이트닝 엣지'
+    RollingMoonsault = 'Rolling Moonsault | 롤링 문썰트'
+    AncientWarding = 'Ancient Warding | 엔시언트 스피릿'
+    DualBowgunsExpert = 'Dual Bowguns Expert | 듀얼보우건 엑스퍼트'
+    DefenseBreak = 'Defense Break | 디펜스 브레이크'
+    AdvancedFinalAttack = 'Advanced Final Attack | 어드밴스드 파이널 어택'
+    StaggeringStrikes = 'Staggering Strikes | 어드밴스드 스트라이크 듀얼샷'
+    SpiritNimbleFlight = 'Spirit Nimble Flight | 스피릿 이스케이프'
+    # Hypers
+    WrathofEnlil = 'Wrath of Enlil | 래쓰 오브 엔릴'
+    HeroicMemories = 'Heroic Memories | 히어로즈 오쓰'
+    ElvishBlessing = 'Elvish Blessing | 엘비시 블레싱'
+    # 5th Job
+    SpiritofElluel = 'Spirit of Elluel | 엘리멘탈 고스트'
+    SylvidiasFlight = 'Sylvidia\'s Flight | 실피디아'
+    IrkallasWrath = 'Irkalla\'s Wrath | 이르칼라의 숨결'
+    RoyalKnights = 'Royal Knights | 로얄 나이츠'
 
 
 class ElementalGhostWrapper(core.BuffSkillWrapper):
