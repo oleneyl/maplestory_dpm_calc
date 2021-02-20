@@ -1,3 +1,7 @@
+from enum import Enum
+
+from dpmModule.jobs.jobbranch.pirates import PirateSkills
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -9,6 +13,60 @@ from . import jobutils
 from ..execution.rules import RuleSet, InactiveRule, ConditionRule
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Shade here https://maplestory.fandom.com/wiki/Shade/Skills
+class ShadeSkills(Enum):
+    # Link Skill
+    CloseCall = 'Close Call | 구사 일생'
+    # Beginner
+    FoxTrot = 'Fox Trot | 축지'
+    SpiritBond1 = 'Spirit Bond 1 | 정령 결속 1식'
+    SpiritAffinity = 'Spirit Affinity | 정령친화'
+    # 1st Job
+    SwiftStrike = 'Swift Strike | 메가 펀치'
+    FlashFist = 'Flash Fist | '
+    VulpesLeap = 'Vulpes Leap | 도약'
+    CosmicBalance = 'Cosmic Balance | 건곤 일체'
+    # 2nd Job
+    GroundPound = 'Ground Pound | 파력권'
+    BladeImpdDownwardSlash = 'Blade Imp - Downward Slash | 파쇄철조-반'
+    BladeImpForwardSlash = 'Blade Imp - Forward Slash | 파쇄철조-前'
+    BackStep = 'Back Step | 후방 이동'
+    KnuckleMastery = 'Knuckle Mastery | 너클 마스터리'
+    SpiritBond2 = 'Spirit Bond 2 | 정령 결속 2식'
+    StrengthTraining = 'Strength Training | 피지컬 트레이닝'
+    FoxSpirits = 'Fox Spirits | 여우령'
+    FoxSpiritMastery = 'Fox Spirit Mastery | 여우령 숙련'
+    # 3rd Job
+    ShockwavePunch = 'Shockwave Punch | 통백권 충격파'
+    BladeImpSpinSlash = 'Blade Imp - Spin Slash | 파쇄철조-회'
+    SpiritFrenzy = 'Spirit Frenzy | 소혼 장막'
+    SpiritTrap = 'Spirit Trap | 속박술'
+    SpiritBond3 = 'Spirit Bond 3 | 정령 결속 3식'
+    HarmoniousDefense = 'Harmonious Defense | '
+    SummonOtherSpirit = 'Summon Other Spirit | 환령 강신'
+    Weaken = 'Weaken | 약화'
+    # 4th Job
+    BombPunch = 'Bomb Punch | 폭류권'
+    SpiritClaw = 'Spirit Claw | 귀참'
+    DeathMark = 'Death Mark | 사혼 각인'
+    SoulSplitter = 'Soul Splitter | 분혼 격참'
+    SpiritWard = 'Spirit Ward | 소혼 결계'
+    FireFoxSpiritMastery = 'Fire Fox Spirit Mastery | 불여우령'
+    SpiritBond4 = 'Spirit Bond 4 | 정령 결속 4식'
+    HighQualityKnuckleMastery = 'High Quality Knuckle Mastery | 고급 너클 숙련'
+    CriticalInsight = 'Critical Insight | 약점 간파'
+    # Hypers
+    SpiritIncarnation = 'Spirit Incarnation | 정령의 화신'
+    HeroicMemories = 'Heroic Memories | 히어로즈 오쓰'
+    SpiritBondMax = 'Spirit Bond Max | 정령 결속 극대화'
+    # 5th Job
+    SpiritFlow = 'Spirit Flow | 정령 집속'
+    Spiritgate = 'Spiritgate | 귀문진'
+    TrueSpiritClaw = 'True Spirit Claw | 진 귀참'
+    SmashingMultipunch = 'Smashing Multipunch | 파쇄 연권'
+
 
 class SoulTrapStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
