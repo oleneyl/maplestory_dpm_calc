@@ -1,3 +1,6 @@
+from enum import Enum
+
+from .globalSkill import GlobalSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -11,8 +14,56 @@ from . import jobutils
 from math import ceil
 from typing import Any, Dict
 
-#TODO : Added to the Haesin Advent damage cycle. 해신강림 딜사이클에 추가.
 
+# English skill information for Thunder Breaker here https://maplestory.fandom.com/wiki/Thunder_Breaker/Skills
+class ThunderBreakerSkills(Enum):
+    # Link Skill
+    CygnusBlessing = 'Cygnus Blessing | 시그너스 블레스'
+    # Beginner
+    ElementalHarmony = 'Elemental Harmony | 엘리멘탈 하모니'
+    ElementalExpert = 'Elemental Expert | 엘리멘탈 엑스퍼트'
+    # 1st Job
+    LightningPunch = 'Lightning Punch | 충아'
+    Flash = 'Flash | 섬광'
+    LightningElemental = 'Lightning Elemental | 엘리멘탈 : 라이트닝'
+    Electrified = 'Electrified | 뇌인'
+    # 2nd Job
+    SharkSweep = 'Shark Sweep | 회축'
+    TidalCrash = 'Tidal Crash | 파도'
+    KnuckleBooster = 'Knuckle Booster | 너클 부스터'
+    KnuckleMastery = 'Knuckle Mastery | 너클 마스터리'
+    Gains = 'Gains | 피지컬 트레이닝'
+    LightningBoost = 'Lightning Boost | 뇌백'
+    # 3rd Job
+    Ascension = 'Ascension | 승천'
+    Thunder = 'Thunder | 뇌성'
+    Gale = 'Gale | 질풍'
+    Seawall = 'Seawall | 와류'
+    Ironclad = 'Ironclad | 극갑'
+    LinkMastery = 'Link Mastery | 연쇄'
+    LightningLord = 'Lightning Lord | 뇌제'
+    # 4th Job
+    CallofCygnus = 'Call of Cygnus | 시그너스 나이츠'
+    Annihilate = 'Annihilate | 섬멸'
+    Thunderbolt = 'Thunderbolt | 벽력'
+    Typhoon = 'Typhoon | 태풍'
+    ArcCharger = 'Arc Charger | 축뢰'
+    SpeedInfusion = 'Speed Infusion | 윈드 부스터'
+    KnuckleExpert = 'Knuckle Expert | 너클 엑스퍼트'
+    Electrify = 'Electrify | 자극'
+    ThunderGod = 'Thunder God | 뇌신'
+    # Hypers
+    DeepRising = 'Deep Rising | 해신강림'
+    GloryoftheGuardians = 'Glory of the Guardians | 글로리 오브 가디언즈'
+    PrimalBolt = 'Primal Bolt | 천지개벽'
+    # 5th Job
+    LightningCascade = 'Lightning Cascade | 신뇌합일'
+    SharkTorpedo = 'Shark Torpedo | 교아탄'
+    LightningGodSpearStrike = 'Lightning God Spear Strike | 뇌신창격'
+    LightningSpearMultistrike = 'Lightning Spear Multistrike | 창뇌연격'
+
+
+# TODO : Added to the Haesin Advent damage cycle. 해신강림 딜사이클에 추가.
 class LightningWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
         super(LightningWrapper, self).__init__(skill, 5)
