@@ -40,17 +40,6 @@ class BlowSkillWrapper(core.DamageSkillWrapper):
     def registerMOD(self, skill):
         self.masterOfDeath = skill
 
-class Roulette():
-    def __init__(self, prob):
-        self.stack = 0
-        self.prob = prob
-
-    def draw(self):
-        self.stack += self.prob
-        if self.stack >= 1:
-            self.stack -= 1
-            return True
-        return False
 
 class MarkStackWrapper(core.StackSkillWrapper):
     def __init__(self, skill: core.BuffSkill):
@@ -196,7 +185,7 @@ class JobGenerator(ck.JobGenerator):
         DarkLightning.onAfter(AddMark)
 
         # 다크 제네시스
-        FinalAttackRoulette = Roulette((60 + 2 * self.combat) * 0.01)
+        FinalAttackRoulette = jobutils.Roulette((60 + 2 * self.combat) * 0.01)
         FinalAttack = core.OptionalElement(lambda: DarkGenesis.is_not_usable() and FinalAttackRoulette.draw(), DarkGenesisFinalAttack, name = "다크 제네시스 추가타 검증")
         DarkGenesis.onJustAfter(UseMark)
         DarkGenesis.onAfter(DarkLightning)
