@@ -1,3 +1,6 @@
+from enum import Enum
+
+from .jobbranch.thieves import ThiefSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -7,6 +10,60 @@ from .jobbranch import thieves
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Shadower here https://maplestory.fandom.com/wiki/Shadower/Skills
+class ShadowerSkills(Enum):
+    # Link Skill
+    ThiefsCunning = 'Thief\'s Cunning | 시프 커닝'
+    # 1st Job
+    DoubleStab = 'Double Stab | 더블 스탭'
+    LuckySeven = 'Lucky Seven | 럭키 세븐'
+    Haste = 'Haste | 헤이스트'
+    DarkSight = 'Dark Sight | 다크사이트'
+    FlashJump = 'Flash Jump | 플래시 점프'
+    NimbleBody = 'Nimble Body | 님블 바디'
+    # 2nd Job
+    SavageBlow = 'Savage Blow | 새비지 블로우'
+    CriticalGrowth = 'Critical Growth | 크리티컬 그로잉'
+    Steal = 'Steal | 스틸'
+    DaggerBooster = 'Dagger Booster | 대거 부스터'
+    Mesoguard = 'Mesoguard | 메소 가드'
+    ChannelKarma = 'Channel Karma | 카르마'
+    DaggerMastery = 'Dagger Mastery | 대거 마스터리'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    ShieldMastery = 'Shield Mastery | 실드 마스터리'
+    # 3rd Job
+    MidnightCarnival = 'Midnight Carnival | 엣지 카니발'
+    PhaseDash = 'Phase Dash | 무스펠 하임'
+    MesoExplosion = 'Meso Explosion | 메소 익스플로전'
+    DarkFlare = 'Dark Flare | 다크 플레어'
+    PickPocket = 'Pick Pocket | 픽파킷'
+    ShadowPartner = 'Shadow Partner | 섀도우 파트너'
+    Venom = 'Venom | 베놈'
+    MesoMastery = 'Meso Mastery | 그리드'
+    EnvelopingDarkness = 'Enveloping Darkness | 래디컬 다크니스'
+    AdvancedDarkSight = 'Advanced Dark Sight | 어드밴스드 다크 사이트'
+    IntoDarkness = 'Into Darkness | 인투 다크니스'
+    # 4th Job
+    Assassinate = 'Assassinate | 암살'
+    BoomerangStab = 'Boomerang Stab | 부메랑 스텝'
+    PrimeCritical = 'Prime Critical | 프리마 크리티컬'
+    SuddenRaid = 'Sudden Raid | 써든레이드'
+    Smokescreen = 'Smokescreen | 연막탄'
+    ShadowerInstinct = 'Shadower Instinct | 섀도어 인스팅트'
+    ShadowShifter = 'Shadow Shifter | 페이크'
+    ToxicVenom = 'Toxic Venom | 페이탈 베놈'
+    DaggerExpert = 'Dagger Expert | 대거 엑스퍼트'
+    # Hypers
+    ShadowVeil = 'Shadow Veil | 베일 오브 섀도우'
+    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
+    FlipoftheCoin = 'Flip of the Coin | 플립 더 코인'
+    # 5th Job
+    ShadowAssault = 'Shadow Assault | 쉐도우 어썰트'
+    Trickblade = 'Trickblade | 절개'
+    SonicBlow = 'Sonic Blow | 소닉 블로우'
+    SlashShadowFormation = 'Slash Shadow Formation | 멸귀참영진'
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
