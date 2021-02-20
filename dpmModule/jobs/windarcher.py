@@ -68,13 +68,11 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = 10
         self.jobtype = "DEX"
         self.jobname = "윈드브레이커"
-        self.ability_list = Ability_tool.get_ability_set(
-            "boss_pdamage", "crit", "buff_rem"
-        )
+        self.ability_list = Ability_tool.get_ability_set("boss_pdamage", "crit", "buff_rem")
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ConcurrentRunRule("소울 컨트랙트", "크리티컬 리인포스"), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(GlobalSkills.TermsAndConditions.value, ArcherSkills.ViciousShot.value), RuleSet.BASE)
 
         def howling_gale_rule(howling_gale, critical_reinforce):
             if critical_reinforce.is_active():
@@ -86,7 +84,7 @@ class JobGenerator(ck.JobGenerator):
             return True
 
         ruleset.add_rule(
-            ComplexConditionRule("하울링 게일", ["크리티컬 리인포스"], howling_gale_rule),
+            ComplexConditionRule(WindArcherSkills.HowlingGale.value, [ArcherSkills.ViciousShot.value], howling_gale_rule),
             RuleSet.BASE,
         )
         return ruleset
@@ -99,23 +97,19 @@ class JobGenerator(ck.JobGenerator):
     ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트", patt=10)
-        ElementalHarmony = core.InformedCharacterModifier(
-            "엘리멘탈 하모니", stat_main=chtr.level // 2
-        )
+        ElementalExpert = core.InformedCharacterModifier(WindArcherSkills.ElementalExpert.value, patt=10)
+        ElementalHarmony = core.InformedCharacterModifier(WindArcherSkills.ElementalHarmony.value, stat_main=chtr.level // 2)
 
-        WhisperOfWind = core.InformedCharacterModifier("위스퍼 오브 윈드", att=20)
-        PhisicalTraining = core.InformedCharacterModifier(
-            "피지컬 트레이닝", stat_main=30, stat_sub=30
-        )
+        WhisperOfWind = core.InformedCharacterModifier(WindArcherSkills.WhispersoftheWind.value, att=20)
+        PhisicalTraining = core.InformedCharacterModifier(WindArcherSkills.PhysicalTraining.value, stat_main=30, stat_sub=30)
 
         WindBlessingPassive = core.InformedCharacterModifier(
-            "윈드 블레싱(패시브)",
+            f"{WindArcherSkills.TouchoftheWind.value}(Passive | 패시브)",
             pstat_main=15 + passive_level // 3,
             patt=10 + ceil(passive_level / 3),
         )
         BowExpert = core.InformedCharacterModifier(
-            "보우 엑스퍼트",
+            WindArcherSkills.BowExpert.value,
             att=30 + passive_level,
             crit_damage=20 + passive_level // 2,
             pdamage_indep=25 + passive_level // 3,
@@ -136,9 +130,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=30)
-        Mastery = core.InformedCharacterModifier(
-            "숙련도", pdamage_indep=-7.5 + 0.5 * ceil(passive_level / 2)
-        )
+        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-7.5 + 0.5 * ceil(passive_level / 2))
 
         return [WeaponConstant, Mastery]
 
@@ -170,13 +162,13 @@ class JobGenerator(ck.JobGenerator):
         passive_level = base_modifier.passive_level + self.combat
         # Buff skills
         Storm = core.BuffSkill(
-            "엘리멘트(스톰)", delay=0, remain=200 * 1000, pdamage=10, rem=True
+            WindArcherSkills.StormElemental.value, delay=0, remain=200 * 1000, pdamage=10, rem=True
         ).wrap(core.BuffSkillWrapper)
         SylphsAid = core.BuffSkill(
-            "실프스 에이드", delay=0, remain=200 * 1000, att=20, crit=10, rem=True
+            WindArcherSkills.SylvanAid.value, delay=0, remain=200 * 1000, att=20, crit=10, rem=True
         ).wrap(core.BuffSkillWrapper)
         Albatross = core.BuffSkill(
-            "알바트로스 맥시멈",
+            WindArcherSkills.AlbatrossMax.value,
             delay=0,
             remain=200 * 1000,
             att=50 + passive_level,
@@ -186,7 +178,7 @@ class JobGenerator(ck.JobGenerator):
             rem=True,
         ).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill(
-            "샤프 아이즈",
+            WindArcherSkills.SharpEyes.value,
             delay=660,
             remain=(300 + 10 * self.combat) * 1000,
             crit=20 + ceil(self.combat / 2),
@@ -194,7 +186,7 @@ class JobGenerator(ck.JobGenerator):
             rem=True,
         ).wrap(core.BuffSkillWrapper)
         GloryOfGuardians = core.BuffSkill(
-            name="글로리 오브 가디언즈",
+            name=WindArcherSkills.GloryoftheGuardians.value,
             delay=0,
             remain=60 * 1000,
             cooltime=120 * 1000,
@@ -202,7 +194,7 @@ class JobGenerator(ck.JobGenerator):
         ).wrap(core.BuffSkillWrapper)
 
         StormBringerDummy = core.BuffSkill(
-            "스톰 브링어(버프)",
+            f"{WindArcherSkills.StormBringer.value}(Buff | 버프)",
             delay=0,  # Delay calculation required. 딜레이 계산 필요.
             remain=200 * 1000,
         ).wrap(core.BuffSkillWrapper)
@@ -212,7 +204,7 @@ class JobGenerator(ck.JobGenerator):
         advanced_proc = (20 + passive_level // 3) * 0.01
         TriflingWhim = (
             core.DamageSkill(
-                "트라이플링 윔",
+                WindArcherSkills.TriflingWindIII.value,
                 delay=0,
                 damage=(290 + passive_level * 3) * (1 - advanced_proc)
                 + (390 + passive_level * 3) * advanced_proc,
@@ -223,21 +215,21 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
         StormBringer = (
-            core.DamageSkill("스톰 브링어", delay=0, damage=500, hit=0.3)
+            core.DamageSkill(WindArcherSkills.StormBringer.value, delay=0, damage=500, hit=0.3)
             .setV(vEhc, 2, 2, True)
             .wrap(core.DamageSkillWrapper)
         )
 
         # Pinpoint Pierce. 핀포인트 피어스.
         PinPointPierce = core.DamageSkill(
-            "핀포인트 피어스",
+            WindArcherSkills.PinpointPierce.value,
             delay=690,
             damage=340,
             hit=2,
             cooltime=30 * 1000,
         ).wrap(core.DamageSkillWrapper)
         PinPointPierceDebuff = core.BuffSkill(
-            "핀포인트 피어스(버프)",
+            f"{WindArcherSkills.PinpointPierce.value}(Buff | 버프)",
             delay=0,
             remain=30 * 1000,
             cooltime=-1,
@@ -250,7 +242,7 @@ class JobGenerator(ck.JobGenerator):
         target_pdamage = ((120 + self.combat // 2) / 100) ** 3 * 100 - 100
         SongOfHeaven = (
             core.DamageSkill(
-                "천공의 노래",
+                WindArcherSkills.SongofHeaven.value,
                 delay=120,
                 damage=345 + self.combat * 3,
                 hit=1,
@@ -266,7 +258,7 @@ class JobGenerator(ck.JobGenerator):
 
         IdleWhim = (
             core.DamageSkill(
-                "아이들 윔",
+                WindArcherSkills.MercilessWinds.value,
                 delay=600,
                 damage=(500 + 20 * vEhc.getV(4, 4)) * 0.775,
                 hit=10 * 3,
@@ -277,7 +269,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
         MercilesswindDOT = core.DotSkill(
-            "아이들 윔(도트)",
+            f"{WindArcherSkills.MercilessWinds.value}(DoT | 도트)",
             summondelay=0,
             delay=1000,
             damage=500 + 20 * vEhc.getV(4, 4),
@@ -291,7 +283,7 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         HowlingGail = core.StackableSummonSkillWrapper(
             core.SummonSkill(
-                "하울링 게일",
+                WindArcherSkills.HowlingGale.value,
                 summondelay=630,
                 delay=150,
                 damage=250 + 10 * vEhc.getV(1, 1),
@@ -303,7 +295,7 @@ class JobGenerator(ck.JobGenerator):
         )
         WindWall = (
             core.SummonSkill(
-                "윈드 월",
+                WindArcherSkills.GaleBarrier.value,
                 summondelay=720,
                 delay=2000,
                 damage=550 + vEhc.getV(2, 2) * 22,
@@ -318,7 +310,7 @@ class JobGenerator(ck.JobGenerator):
         )
         VortexSphere = (
             core.SummonSkill(
-                "볼텍스 스피어",
+                WindArcherSkills.VortexSphere.value,
                 summondelay=720,
                 delay=180,
                 damage=400 + 16 * vEhc.getV(0, 0),
@@ -352,7 +344,7 @@ class JobGenerator(ck.JobGenerator):
             SongOfHeaven,
             [
                 globalSkill.maple_heros(
-                    chtr.level, name="시그너스 나이츠", combat_level=self.combat
+                    chtr.level, name=WindArcherSkills.CallofCygnus.value, combat_level=self.combat
                 ),
                 globalSkill.useful_combat_orders(),
                 Storm,
