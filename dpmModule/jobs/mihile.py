@@ -99,7 +99,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         PARTYPEOPLE = 1        
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level/2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(passive_level/2))
         
         SoulLink = core.InformedCharacterModifier(MihileSkills.SoulLink.value,pdamage = 5*PARTYPEOPLE)
         SoulRage = core.InformedCharacterModifier(MihileSkills.RoilingSoul.value, pdamage_indep = 30+self.combat, crit_damage = 8)
@@ -148,7 +148,7 @@ class JobGenerator(ck.JobGenerator):
         LoyalGuard_3 = core.DamageSkill(f"{MihileSkills.RoyalGuard.value}(3)", 630, 440+chtr.level, 6, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         LoyalGuard_4 = core.DamageSkill(f"{MihileSkills.RoyalGuard.value}(4)", 630, 480+chtr.level, 7, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         LoyalGuard_5 = core.DamageSkill(f"{MihileSkills.RoyalGuard.value}(5)", 630, 565+chtr.level, 9, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        LoyalGuardBuff = core.BuffSkill(MihileSkills.RoyalGuard.value, 0, 12000, att = 45).wrap(core.BuffSkillWrapper)  #10->15->20->30->45
+        LoyalGuardBuff = core.BuffSkill(f"{MihileSkills.RoyalGuard.value}(Buff | 버프)", 0, 12000, att = 45).wrap(core.BuffSkillWrapper)  #10->15->20->30->45
         
         SoulAssult = core.DamageSkill(MihileSkills.FourPointAssault.value, 600, 210+3*self.combat, 11+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   # 20% darkness. 암흑 20%.
         

@@ -156,13 +156,10 @@ class LightAndDarknessWrapper(core.DamageSkillWrapper):
         super(LightAndDarknessWrapper, self).__init__(skill)
         self.stack = 12
 
-    def _use(self, skill_modifier):
-        self.stack = 12
-        return super(LightAndDarknessWrapper, self)._use(skill_modifier)
-
     def reduceStack(self):
         self.stack -= 1
         if self.stack <= 0:
+            self.stack = 12
             self.cooltimeLeft = 0
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = f'{LuminousSkills.BaptismofLightandDarkness.value}(Stack increase | 스택 증가)', spec = 'graph control')
 
@@ -225,7 +222,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5 + 0.5 * ceil(passive_level / 2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=95+ceil(passive_level / 2))
         
         BlessOfDarkness =  core.InformedCharacterModifier(LuminousSkills.BlackBlessing.value,att = 30)   #15 -> 24 -> 30
         DarknessSoceryActive = core.InformedCharacterModifier(f"{LuminousSkills.ArcanePitch.value}(Active | 사용)", prop_ignore = 10)
@@ -332,7 +329,7 @@ class JobGenerator(ck.JobGenerator):
 
         # Overload Mana
         overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 2)
-        for sk in [LightReflection, Apocalypse, DoorOfTruth, PunishingResonator, AbsoluteKill, AbsoluteKillCooltimed, LightAndDarkness]:
+        for sk in [LightReflection, Apocalypse, DoorOfTruth, PunishingResonator, AbsoluteKill, AbsoluteKillCooltimed, LightAndDarkness, LiberationOrbActive]:
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
 

@@ -27,8 +27,8 @@ class IndividualDPMGenerator:
     def get_dpm(
         self,
         spec_name: str,
+        ulevel: int,
         cdr: int = 0,
-        ulevel: int = 8000,
         options={},
         printFlag=False,
         statistics=False,
@@ -46,6 +46,7 @@ class IndividualDPMGenerator:
             ulevel=ulevel,
             weaponstat=weapon_stat,
             ability_grade=Ability_grade(4, 1),
+            farm=False,
         )
         sche = policy.AdvancedGraphScheduler(
             graph,
@@ -72,9 +73,9 @@ class IndividualDPMGenerator:
 
     def get_detailed_dpm(
             self,
-            spec_name: str = "8000",
+            spec_name: str,
+            ulevel: int,
             cdr: int = 0,
-            ulevel: int = 6000,
             options={}
     ) -> Dict[str, Any]:
         gen: JobGenerator = self.supplier.JobGenerator()
@@ -90,6 +91,7 @@ class IndividualDPMGenerator:
             ulevel=ulevel,
             weaponstat=weapon_stat,
             ability_grade=Ability_grade(4, 1),
+            farm=False,
         )
         # 가져온 그래프를 토대로 스케줄러를 생성합니다.
         # Create a scheduler based on the imported graph.

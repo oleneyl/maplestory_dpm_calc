@@ -30,7 +30,7 @@ class LinkSkill:
     Aran = InformedCharacterModifier("링크(아란)")  # Exp
     Evan = InformedCharacterModifier("링크(에반)")  # Exp
     Eunwol = InformedCharacterModifier("링크(은월)")  # Util
-    Kaiser = InformedCharacterModifier("링크(카이저)")  # HP
+    Kaiser = InformedCharacterModifier("링크(카이저)", pstat_main=15)  # HP - Demon Avenger only
     Registance = InformedCharacterModifier("링크(레지스탕스)")  # Util
     AdventureWarrior = InformedCharacterModifier("링크(모전)")  # Skill
 
@@ -116,7 +116,7 @@ class LinkSkill:
             LinkSkill.Ark,
             LinkSkill.DemonAvenger,
             LinkSkill.AdventureRog,
-            LinkSkill.Zenon,
+            LinkSkill.Kaiser if job_name == "데몬어벤져" else LinkSkill.Zenon,
             LinkSkill.Cygnus,
             LinkSkill.Adele,
             LinkSkill.AdventurePirate,

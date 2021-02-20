@@ -4,10 +4,11 @@ summary:
   - 스타포스 - 방어구 12성 / 무기 12성
   - 추옵 - 무기 공2추 / 방어구, 악세 추옵 90급
   - 잠재능력
-  - 무기류 윗잠 8줄유효 에디 공6%
-  - 방어구/악세 에픽12% / 에디 공10
+  - 무기류 윗잠 8줄유효
+  - 방어구/악세 에픽12%
   - 아케인심볼 고정주스탯 9600
   - 블랙라벨 무기
+  - 리부트 패시브는 코드 내에서 처리
 
 anchors:
   armor: &armor
@@ -15,48 +16,25 @@ anchors:
       stat_main: 90
       stat_sub: 10
       stat_sub2: 10
-    upgrade:
-      - type: 주문의 흔적
-        prob: 30
-        stat: stat_main
-        count: -1
     star: 12
     potential:
       pstat_main: 12
-    add_potential:
-      att: 10
   acc_bonus: &acc_bonus
     stat_main: 40
     stat_sub: 10
     stat_sub2: 10
     allstat_rate: 5
-  acc_upgrade: &acc_upgrade
-    - type: 주문의 흔적
-      prob: 30
-      stat: stat_main
-      count: -1
   acc_potential: &acc_potential
     potential:
       pstat_main: 12
-    add_potential:
-      att: 10
 
   demon_armor: &demon_armor
-    upgrade:
-      - type: 주문의 흔적
-        prob: 30
-        stat: stat_main
-        count: -1
     star: 12
     potential:
       pstat_main: 12
-    add_potential:
-      att: 10
   demon_acc_potential: &demon_acc_potential
     potential:
       pstat_main: 12
-    add_potential:
-      att: 10
 
   xenon_armor: &xenon_armor
     bonus:
@@ -64,22 +42,9 @@ anchors:
       stat_sub: 20
       stat_sub2: 20
       allstat_rate: 6
-    upgrade:
-      - type: 방공
-        value: 3
-        count: 3
-      - type: 주문의 흔적
-        prob: 30
-        stat: stat_sub2
-        count: 1
-      - type: 방공
-        value: 2
-        count: -1
     star: 12
     potential:
       allstat_rate: 6
-    add_potential:
-      att: 10
   xenon_acc_bonus: &xenon_acc_bonus
       stat_main: 20
       stat_sub: 20
@@ -88,14 +53,12 @@ anchors:
   xenon_acc_potential: &xenon_acc_potential
     potential:
       allstat_rate: 6
-    add_potential:
-      att: 10
 
 default:
   level: 240
   arcane_symbol_force: 960
-  pet_equip: 20 # 노작, 루나 드림 2세트(5*2), 루나 쁘띠 1세트(10)
-  pet_set: 24 # 루나 드림 2세트(7+9), 루나 쁘띠 1세트(8)
+  pet_equip: 0
+  pet_set: 0
   cash:
     att: 25
   weapon_stat:
@@ -121,45 +84,34 @@ default:
     <<: *armor
   shoulder:
     id: 앱솔랩스
-    upgrade:
-      - type: 혼줌
-        option:
-          att: 2
-        count: -1
     star: 12
     <<: *acc_potential
   face:
     id: 응축된 힘의 결정석
     bonus: *acc_bonus
-    upgrade: *acc_upgrade
     star: 10
     <<: *acc_potential
   eye:
     id: 아쿠아틱 레터 눈장식
     bonus: *acc_bonus
-    upgrade: *acc_upgrade
     star: 8
     <<: *acc_potential
   ear:
     id: 데아 시두스 이어링
     bonus: *acc_bonus
-    upgrade: *acc_upgrade
     star: 12
     <<: *acc_potential
   belt:
     id: 골든 클로버 벨트
     bonus: *acc_bonus
-    upgrade: *acc_upgrade
     star: 12
     <<: *acc_potential
   ring1:
     id: 고귀한 이피아의 반지
-    upgrade: *acc_upgrade
     star: 12
     <<: *acc_potential
   ring2:
     id: 실버블라썸 링
-    upgrade: *acc_upgrade
     star: 10
     <<: *acc_potential
   ring3:
@@ -171,13 +123,11 @@ default:
   pendant1:
     id: 매커네이터 펜던트
     bonus: *acc_bonus
-    upgrade: *acc_upgrade
     star: 12
     <<: *acc_potential
   pendant2:
     id: 카오스 혼테일의 목걸이
     bonus: *acc_bonus
-    upgrade: *acc_upgrade
     star: 12
     <<: *acc_potential
   pocket:
@@ -191,36 +141,18 @@ default:
     id: 앱솔랩스
     bonus:
       att_grade: 6
-    upgrade:
-      - type: 주문의 흔적
-        prob: 15
-        stat: stat_main
-        count: -1
     star: 12
-    add_potential:
-      patt: 6
   subweapon:
     id: 보조무기
-    add_potential:
-      patt: 6
   emblem:
     id: 엠블렘
-    add_potential:
-      patt: 6
   title:
     id: 핑아일체
   heart:
     id: 리튬 하트
-    upgrade:
-      - type: 주문의 흔적
-        prob: 30
-        stat: stat_main
-        count: -1
     star: 5
     potential:
       pstat_main: 2
-    add_potential:
-      pstat_main: 1
 에반:
   type: override
   job_specific_item:
@@ -236,14 +168,8 @@ default:
   type: override
   subweapon:
     id: 드래고닉 용연도
-    upgrade:
-      - type: 주문의 흔적
-        stat: stat_main
-        prob: 15
-        count: -1
     star: 10
-    add_potential:
-      patt: 6
+
 제로:
   type: override
   head:
@@ -293,11 +219,6 @@ default:
     <<: *demon_armor
   shoulder:
     id: 앱솔랩스
-    upgrade:
-      - type: 혼줌
-        option:
-          att: 2
-        count: -1
     star: 12
     <<: *demon_acc_potential
   face:
@@ -305,7 +226,6 @@ default:
     bonus:
       stat_main: 1980
       att: 3
-    upgrade: *acc_upgrade
     star: 10
     <<: *demon_acc_potential
   eye:
@@ -313,7 +233,6 @@ default:
     bonus:
       stat_main: 1800
       att: 3
-    upgrade: *acc_upgrade
     star: 8
     <<: *demon_acc_potential
   ear:
@@ -321,7 +240,6 @@ default:
     bonus:
       stat_main: 2520
       att: 3
-    upgrade: *acc_upgrade
     star: 12
     <<: *demon_acc_potential
   belt:
@@ -329,17 +247,14 @@ default:
     bonus:
       stat_main: 2700
       att: 3
-    upgrade: *acc_upgrade
     star: 12
     <<: *demon_acc_potential
   ring1:
     id: 고귀한 이피아의 반지
-    upgrade: *acc_upgrade
     star: 12
     <<: *demon_acc_potential
   ring2:
     id: 실버블라썸 링
-    upgrade: *acc_upgrade
     star: 10
     <<: *demon_acc_potential
   ring4:
@@ -353,7 +268,6 @@ default:
     bonus:
       stat_main: 1800
       att: 1
-    upgrade: *acc_upgrade
     star: 12
     <<: *demon_acc_potential
   pendant2:
@@ -361,7 +275,6 @@ default:
     bonus:
       stat_main: 2340
       att: 3
-    upgrade: *acc_upgrade
     star: 12
     <<: *demon_acc_potential
   pocket:
@@ -371,16 +284,10 @@ default:
       att: 3
   heart:
     id: 리튬 하트
-    upgrade:
-      - type: 주문의 흔적
-        prob: 30
-        stat: stat_main
-        count: -1
     star: 5
     potential:
       pstat_main: 2
-    add_potential:
-      pstat_main: 1
+
 제논:
   type: override
   head:
@@ -403,45 +310,34 @@ default:
     <<: *xenon_armor
   shoulder:
     id: 앱솔랩스
-    upgrade:
-      - type: 혼줌
-        option:
-          att: 2
-        count: -1
     star: 12
     <<: *xenon_acc_potential
   face:
     id: 응축된 힘의 결정석
     bonus: *xenon_acc_bonus
-    upgrade: *acc_upgrade
     star: 10
     <<: *xenon_acc_potential
   eye:
     id: 아쿠아틱 레터 눈장식
     bonus: *xenon_acc_bonus
-    upgrade: *acc_upgrade
     star: 8
     <<: *xenon_acc_potential
   ear:
     id: 데아 시두스 이어링
     bonus: *xenon_acc_bonus
-    upgrade: *acc_upgrade
     star: 12
     <<: *xenon_acc_potential
   belt:
     id: 분노한 자쿰의 벨트
     bonus: *xenon_acc_bonus
-    upgrade: *acc_upgrade
     star: 12
     <<: *xenon_acc_potential
   ring1:
     id: 고귀한 이피아의 반지
-    upgrade: *acc_upgrade
     star: 12
     <<: *xenon_acc_potential
   ring2:
     id: 실버블라썸 링
-    upgrade: *acc_upgrade
     star: 10
     <<: *xenon_acc_potential
   ring4:
@@ -453,15 +349,11 @@ default:
   pendant1:
     id: 매커네이터 펜던트
     bonus: *xenon_acc_bonus
-    upgrade: *acc_upgrade
     star: 12
     <<: *xenon_acc_potential
   pendant2:
     id: 도미네이터 펜던트
     bonus: *xenon_acc_bonus
-    upgrade:
-      - type: 파편
-        count: -1
     star: 12
     <<: *xenon_acc_potential
   pocket:
@@ -469,13 +361,6 @@ default:
     bonus: *xenon_acc_bonus
   heart:
     id: 리튬 하트
-    upgrade:
-      - type: 주문의 흔적
-        prob: 30
-        stat: stat_main
-        count: -1
     star: 5
     potential:
       pstat_main: 2
-    add_potential:
-      pstat_main: 1

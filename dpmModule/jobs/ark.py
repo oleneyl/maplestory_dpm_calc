@@ -2,6 +2,7 @@ from enum import Enum
 
 from dpmModule.jobs.jobbranch.pirates import PirateSkills
 from dpmModule.jobs.jobclass.flora import FloraSkills
+from .globalSkill import GlobalSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -235,12 +236,12 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
 
-        ruleset.add_rule(ConditionRule(ArkSkills.AbyssalRecall.value, ArkSkills.InfinitySpell.value, lambda x:x.is_cooltime_left(10080, -1)), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule(ArkSkills.InfinitySpell.value, f'{ArkSkills.AbyssalRecall.value}(Buff | 버프)'), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(ArkSkills.InfinitySpell.value, ArkSkills.AbyssalRecall.value, lambda x:x.is_cooltime_left(0, 1)), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule(f'{FloraSkills.ConversionOverdrive.value}(Buff | 버프)', ArkSkills.InfinitySpell.value), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule(f"{FloraSkills.GrandisGoddessBlessing.value}(Lef | 레프)", f"{FloraSkills.ConversionOverdrive.value}(Buff | 버프)"), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(f'{ArkSkills.EndlesslyStarvingBeast.value}(Cast | 개시)', ArkSkills.InfinitySpell.value, lambda x:x.is_cooltime_left(100000, 1)), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(ArkSkills.EndlessAgony.value, ArkSkills.InfinitySpell.value, lambda x:x.is_cooltime_left(50000, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(f"{FloraSkills.GrandisGoddessBlessing.value}(Lef | 레프)",f"{FloraSkills.ConversionOverdrive.value}(Buff | 버프)"), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(f'{ArkSkills.EndlesslyStarvingBeast.value}(Cast | 개시)', ArkSkills.InfinitySpell.value, lambda x:x.is_cooltime_left(80000, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(ArkSkills.EndlessAgony.value, ArkSkills.InfinitySpell.value, lambda x:x.is_cooltime_left(40000, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(GlobalSkills.TermsAndConditions.value, f'{ArkSkills.EndlesslyStarvingBeast.value}(Cast | 개시)', lambda x:x.is_cooltime_left(60000, 1)), RuleSet.BASE)
 
         return ruleset
 
@@ -265,7 +266,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5*ceil((chtr.get_base_modifier().passive_level + self.combat)/2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil((chtr.get_base_modifier().passive_level + self.combat)/2))
         
         return [WeaponConstant, Mastery]        
         
@@ -330,12 +331,14 @@ class JobGenerator(ck.JobGenerator):
         UnstoppableImpulse_Link = core.DamageSkill(f"{ArkSkills.UnstoppableImpulse.value}(Link | 연계)", 540, 435 + 3*passive_level, 5, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
 
         GustChargeDrive_Link = core.DamageSkill(f"{ArkSkills.GustChargeDrive.value}(Link | 연계)", 450, 400 + 3*passive_level, 6, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
-        GustSpell = core.DamageSkill('Gust Spell | 거스트 스펠', 0, 230 + passive_level, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
-        GustBuff = core.BuffSkill("Gust Buff | 거스트 버프", 0, 60*1000, cooltime = -1).wrap(core.BuffSkillWrapper)  # Not used because it does not affect dpm. dpm에 영향을 주지 않아 미사용.
+        GustSpell = core.DamageSkill('Gust Spell | 거스트 스펠(Contact | 접촉)', 0, 1 + 30 + passive_level, 1).wrap(core.DamageSkillWrapper)
+        GustSpellAttack = core.DamageSkill('Gust Spell | 거스트 스펠', 0, 230 + passive_level, 4, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        GustBuff = core.BuffSkill("Gust Buff | 거스트 버프", 0, 60*1000, cooltime = -1).wrap(core.BuffSkillWrapper) # dpm에 영향을 주지 않아 미사용
         
         AbyssChargeDrive_Link = core.DamageSkill(f"{ArkSkills.AbyssalChargeDrive.value}(Link | 연계)", 630, 340 + 3*self.combat, 4, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         AbyssChargeDrive_After = core.DamageSkill(f"{ArkSkills.AbyssalChargeDrive.value}(Follow up | 후속타)", 0, 410 + 3*self.combat, 6, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        AbyssSpell = core.SummonSkill("Abyss Spell | 어비스 스펠", 0, 300*0.75, 70 + 2*self.combat, 2, 3000, cooltime = -1).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
+        AbyssSpell = core.DamageSkill('Abyss Spell | 어비스 스펠(Contact | 접촉)', 0, 1, 1).wrap(core.DamageSkillWrapper)
+        AbyssSpellSummon = core.SummonSkill("Abyss Spell | 어비스 스펠", 0, 300, 70 + 2*self.combat, 2, 3900, cooltime = -1).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)  # 13 hit
         AbyssBuff = core.BuffSkill("Abyss Buff | 어비스 버프", 0, 60*1000, cooltime = -1, rem=True, pdamage = 20 + self.combat//2, boss_pdamage = 30 + self.combat, armor_ignore = 20 + self.combat//2).wrap(core.BuffSkillWrapper)
 
         HUMAN_SKILLS_MCF = [EndlessNightmare_Link, PlainChargeDrive, PlainChargeDrive_Link, ScarletChargeDrive, ScarletChargeDrive_Link, UnstoppableImpulse_Link,
@@ -436,7 +439,7 @@ class JobGenerator(ck.JobGenerator):
         for skill in [ScarletSpell, GustSpell, AbyssSpell]:
             skill.onAfter(core.OptionalElement(InfinitySpell.is_active, core.RepeatElement(PlainSpell, 4)))
 
-        for spell in [PlainSpell, ScarletSpell, GustSpell, AbyssSpell]:
+        for spell in [PlainSpell, ScarletSpell, GustSpellAttack, AbyssSpellSummon]:
             spell.add_runtime_modifier(InfinitySpell, lambda sk: core.CharacterModifier(pdamage = 20*sk.is_active()))
 
         PlainChargeDrive.onAfter(PlainSpell_Connected)
@@ -450,8 +453,10 @@ class JobGenerator(ck.JobGenerator):
         ScarletChargeDrive_Link.onAfter(ScarletChargeDrive_After)
 
         GustChargeDrive_Link.onAfter(GustSpell)
+        GustSpell.onAfter(GustSpellAttack)
         
         AbyssSpell.onAfter(AbyssBuff)
+        AbyssSpell.onAfter(AbyssSpellSummon)
         AbyssSpell.onAfter(core.OptionalElement(ChargeSpellAmplification.is_active, AbyssBuff2))
         AbyssChargeDrive_Link.onAfter(AbyssSpell)
         AbyssChargeDrive_Link.onAfter(AbyssChargeDrive_After)
@@ -563,24 +568,22 @@ class JobGenerator(ck.JobGenerator):
             스펙터 <-> 레프 상태 스케쥴링을 담당합니다.
             True를 리턴하면 스펙터, False를 리턴하면 레프 상태로 변환합니다.
             """
-            if ChargeSpellAmplification.is_active() and (ScarletBuff2.is_not_active() or AbyssBuff2.is_not_active()):
+            if (ChargeSpellAmplification.is_active() and (ScarletBuff2.is_not_active() or AbyssBuff2.is_not_active()))\
+                or (AbyssBuff.is_not_active() and AbyssChargeDrive_Link.is_available())\
+                or (ScarletBuff.is_not_active() and ScarletChargeDrive_Link.is_available()):
                 return False
-            if MemoryOfSourceBuff.is_active():
-                return True
             if ForeverHungryBeastInit.is_available() and gauge < 300:
                 return False
             if ForeverHungryBeastTrigger.is_cooltime_left(6001, -1):
                 return True
-            if AbyssBuff.is_not_active() and AbyssChargeDrive_Link.is_available():
-                return False
-            if ScarletBuff.is_not_active() and ScarletChargeDrive_Link.is_available():
-                return False
+            if MemoryOfSourceBuff.is_active():
+                return True
 
             # Gauge consumption is given priority while infinity spell is ongoing. 인피니티 스펠 지속 중일 때 게이지 소모를 우선.
             if InfinitySpell.is_active():
                 if gauge <= 200:
                     return False
-                elif gauge <= 400:
+                elif gauge <= 500:
                     if SpecterState.is_active() and stopwatch >= 4680:
                         return False
                 else:
@@ -607,16 +610,22 @@ class JobGenerator(ck.JobGenerator):
         DeviousNightmare.protect_from_running()
         DeviousDream.protect_from_running()
 
-        return(PlainAttack, 
-                [globalSkill.maple_heros(chtr.level, name = ArkSkills.HerooftheFlora.value, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    ContactCaravan, Booster, LuckyDice, ScarletBuff, AbyssBuff, SpecterState, ScarletBuff2, AbyssBuff2,
-                    ChargeSpellAmplification, WraithOfGod, InfinitySpell, MagicCircuitFullDrive, FloraGoddessBless, Overdrive, 
-                    MemoryOfSourceBuff, EndlessPainBuff,
-                    globalSkill.soul_contract()] +\
-                [MemoryOfSource, RaptRestriction, RaptRestrictionEnd, UpcomingDeath, ReturningHate,
-                    ForeverHungryBeastInit, ForeverHungryBeastTrigger, CrawlingFear_Link, EndlessPain, 
-                    EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, 
-                    UncurableHurt_Link, UnfulfilledHunger_Link, Impulse_Connected, UncontrollableChaos_Link, 
-                    AbyssSpell, RaptRestrictionSummon, DeviousNightmare, DeviousDream, MirrorBreak, MirrorSpider] +\
-                [MagicCircuitFullDriveStorm] +\
-                [PlainAttack])
+        return(
+            PlainAttack, 
+            [
+                globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                ContactCaravan, Booster, LuckyDice, ScarletBuff, AbyssBuff, SpecterState, ScarletBuff2, AbyssBuff2,
+                ChargeSpellAmplification, WraithOfGod, InfinitySpell, MagicCircuitFullDrive, FloraGoddessBless, Overdrive, 
+                MemoryOfSourceBuff, EndlessPainBuff,
+                globalSkill.soul_contract()
+            ]
+            + [RaptRestrictionEnd, ForeverHungryBeastTrigger]  # reserved task, use as early as possible
+            + [
+                MemoryOfSource, RaptRestriction, ReturningHate, ForeverHungryBeastInit, CrawlingFear_Link, 
+                EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, 
+                UncurableHurt_Link, UnfulfilledHunger_Link, Impulse_Connected, UncontrollableChaos_Link, EndlessPain, 
+                GustSpellAttack, AbyssSpellSummon, RaptRestrictionSummon, DeviousNightmare, DeviousDream, MirrorBreak, MirrorSpider
+            ]
+            + [MagicCircuitFullDriveStorm]
+            + [PlainAttack]
+        )

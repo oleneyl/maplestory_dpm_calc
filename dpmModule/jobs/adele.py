@@ -4,7 +4,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
+from ..execution.rules import ReservationRule, RuleSet
 from . import globalSkill
 from .jobbranch import warriors
 from .jobclass import flora
@@ -153,6 +153,8 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
+        ruleset.add_rule(ReservationRule("그란디스 여신의 축복(레프)", "인피니트"), RuleSet.BASE)
+        # ruleset.add_rule(ReservationRule("매직 서킷 풀드라이브(버프)", "인피니트"), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self) -> core.CharacterModifier:
@@ -177,8 +179,8 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=34)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-5 + 0.5 * ceil(passive_level / 2))
+        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(passive_level / 2))
 
         return [WeaponConstant, Mastery]
 
@@ -230,7 +232,7 @@ class JobGenerator(ck.JobGenerator):
         Ether = core.StackSkillWrapper(core.BuffSkill(AdeleSkills.AetherWeaving.value, 0, 9999999), 400)
         EtherTick = core.SummonSkill(f'{AdeleSkills.AetherWeaving.value}(Natural Recovery | 자연 회복)', 0, 10020, 0, 0, 9999999).wrap(core.SummonSkillWrapper)
 
-        Resonance = core.DamageSkill(AdeleSkills.ResonanceRush.value, 690, (120 + 125 + 265 + passive_level * 3) * (1.15 ** 5), 6, cooltime=10 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  # 900ms clack speed, used every 10 seconds to maintain the stack. 클라공속 900ms, 스택 유지를 위해 10초마다 사용함.
+        Resonance = core.DamageSkill(AdeleSkills.ResonanceRush.value, 690, (120+125+265+passive_level*3), 6, cooltime=10*1000, modifier=core.CharacterModifier(pdamage_indep=15*5)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 900ms, 스택 유지를 위해 10초마다 사용함
 
         ResonanceStack = core.BuffSkill(f'{AdeleSkills.ResonanceRush.value}(Stack | 스택)', 0, 30 * 1000, cooltime=-1, pdamage_indep=10, armor_ignore=10).wrap(core.BuffSkillWrapper)  # Final damage 5, ?? 5, Max 2 times. Assume always overlapping. 최종뎀 5, 방무 5, 최대2회. 상시 중첩으로 가정.
 
@@ -348,11 +350,11 @@ class JobGenerator(ck.JobGenerator):
         Creation.protect_from_running()
         Wonder.protect_from_running()
 
-        return (Divide,
-                [globalSkill.maple_heros(chtr.level, name=AdeleSkills.HerooftheFlora.value, combat_level=self.combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
-                 AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive, FloraGoddessBless,
-                 globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract()] + \
-                [EtherTick, Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider, Shard] + \
-                [Order, Wonder, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, Scool, ManaStorm] + \
-                [] + \
+        return(Divide,
+                [globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
+                    AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive, FloraGoddessBless,
+                    globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract()] +\
+                [EtherTick, Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider, Shard] +\
+                [Order, Wonder, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, Scool, ManaStorm] +\
+                [] +\
                 [Divide])

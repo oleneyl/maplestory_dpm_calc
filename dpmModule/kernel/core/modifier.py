@@ -507,6 +507,7 @@ class ExtendedCharacterModifier(CharacterModifier):
         prop_ignore: float = 0,
         additional_target: int = 0,
         passive_level: int = 0,
+        mastery: int = 0,
         **kwargs
     ) -> None:
         super(ExtendedCharacterModifier, self).__init__(**kwargs)
@@ -518,6 +519,7 @@ class ExtendedCharacterModifier(CharacterModifier):
         self.prop_ignore: float = prop_ignore
         self.additional_target: int = additional_target
         self.passive_level: int = passive_level
+        self.mastery: int = mastery
 
     def log(self) -> str:
         txt = super(ExtendedCharacterModifier, self).log()
@@ -534,6 +536,7 @@ class ExtendedCharacterModifier(CharacterModifier):
             self.additional_target,
             self.passive_level,
         )
+        txt += "mastery : %d\n" % (self.mastery)
         return txt
 
     def copy(self) -> ExtendedCharacterModifier:
@@ -546,6 +549,7 @@ class ExtendedCharacterModifier(CharacterModifier):
             prop_ignore=self.prop_ignore,
             additional_target=self.additional_target,
             passive_level=self.passive_level,
+            mastery=self.mastery,
             crit=self.crit,
             crit_damage=self.crit_damage,
             pdamage=self.pdamage,
@@ -563,7 +567,11 @@ class ExtendedCharacterModifier(CharacterModifier):
         )
 
     def degenerate(self) -> CharacterModifier:
-        return super(ExtendedCharacterModifier, self).copy()
+        mdf = super(ExtendedCharacterModifier, self).copy()
+        mastery_mdf = CharacterModifier(  # transform mastery (95% cap) to pdamage_indep
+            pdamage_indep=-(100 - min(self.mastery, 95)) / 2
+        )
+        return mdf + mastery_mdf
 
     def to_skill_modifier(self) -> SkillModifier:
         return SkillModifier(
@@ -586,6 +594,7 @@ class ExtendedCharacterModifier(CharacterModifier):
             "prop_ignore": self.prop_ignore,
             "additional_target": self.additional_target,
             "passive_level": self.passive_level,
+            "mastery": self.mastery,
         }
 
     def __iadd__(self, arg: ExtendedCharacterModifier) -> ExtendedCharacterModifier:
@@ -597,6 +606,7 @@ class ExtendedCharacterModifier(CharacterModifier):
         self.prop_ignore += arg.prop_ignore
         self.additional_target += arg.additional_target
         self.passive_level += arg.passive_level
+        self.mastery += arg.mastery
         self.crit += arg.crit
         self.crit_damage += arg.crit_damage
         self.pdamage += arg.pdamage
@@ -627,6 +637,7 @@ class ExtendedCharacterModifier(CharacterModifier):
             prop_ignore=(self.prop_ignore + arg.prop_ignore),
             additional_target=(self.additional_target + arg.additional_target),
             passive_level=(self.passive_level + arg.passive_level),
+            mastery=(self.mastery + arg.mastery),
             crit=(self.crit + arg.crit),
             crit_damage=(self.crit_damage + arg.crit_damage),
             pdamage=(self.pdamage + arg.pdamage),
@@ -658,6 +669,7 @@ class ExtendedCharacterModifier(CharacterModifier):
             prop_ignore=(self.prop_ignore - arg.prop_ignore),
             additional_target=(self.additional_target - arg.additional_target),
             passive_level=(self.passive_level - arg.passive_level),
+            mastery=(self.mastery - arg.mastery),
             crit=(self.crit - arg.crit),
             crit_damage=(self.crit_damage - arg.crit_damage),
             pdamage=(self.pdamage - arg.pdamage),
@@ -703,6 +715,7 @@ class InformedCharacterModifier(ExtendedCharacterModifier):
             prop_ignore=extended_modifier.prop_ignore,
             additional_target=extended_modifier.additional_target,
             passive_level=extended_modifier.passive_level,
+            mastery=extended_modifier.mastery,
             crit=extended_modifier.crit,
             crit_damage=extended_modifier.crit_damage,
             pdamage=extended_modifier.pdamage,
@@ -721,8 +734,8 @@ class InformedCharacterModifier(ExtendedCharacterModifier):
 
     @classmethod
     def load(cls, conf):
-        name = conf['name']
-        value_conf = {k: v for k, v in conf.items() if k != 'name'}
+        name = conf["name"]
+        value_conf = {k: v for k, v in conf.items() if k != "name"}
         return InformedCharacterModifier(name, **value_conf)
 
 

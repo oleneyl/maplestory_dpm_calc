@@ -119,7 +119,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level/2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(passive_level/2))
         
         return [WeaponConstant, Mastery]
         
@@ -194,7 +194,7 @@ class JobGenerator(ck.JobGenerator):
         ShinNoiHapL = core.BuffSkill(ThunderBreakerSkills.LightningCascade.value, 540, (30+vEhc.getV(3,2)//2) * 1000, red = True, cooltime = (120-vEhc.getV(3,2)//2)*1000, pdamage_indep=5+vEhc.getV(3,2)//6).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
         ShinNoiHapLAttack = core.SummonSkill(f"{ThunderBreakerSkills.LightningCascade.value}(Attack | 공격)", 0, 3000, 16*vEhc.getV(3,2) + 400, 7, (30+vEhc.getV(3,2)//2) * 1000, cooltime = -1).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
         ShinNoiHapLAttack_ChookRoi = core.DamageSkill(f'{ThunderBreakerSkills.LightningCascade.value}({ThunderBreakerSkills.ArcCharger.value})', 0, (16*vEhc.getV(3,2) + 400) * CHOOKROI, 7 ).wrap(core.DamageSkillWrapper)
-        GioaTan = core.DamageSkill(ThunderBreakerSkills.SharkTorpedo.value, 480, 1000+40*vEhc.getV(2,1), 7, cooltime = 8000, red = True, modifier = LINK_MASTERY).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)  # Uses the Kyo-Atan-Break Power combo. 교아탄-벽력 콤보 사용함.
+        GioaTan = core.DamageSkill(ThunderBreakerSkills.SharkTorpedo.value, 360, 1000+40*vEhc.getV(2,1), 7, cooltime = 8000, red = True, modifier = LINK_MASTERY).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)  # Uses the Kyo-Atan-Break Power combo. 교아탄-벽력 콤보 사용함.
 
         NoiShinChanGeuk = core.DamageSkill(ThunderBreakerSkills.LightningGodSpearStrike.value, 0, 150+6*vEhc.getV(0,0), 6, cooltime = 7000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         NoiShinChanGeukAttack = core.SummonSkill(f"{ThunderBreakerSkills.LightningGodSpearStrike.value}(Follow-up | 후속타)", 0, 1000, 200 + 8*vEhc.getV(0,0), 7, 3999, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)    # Act 4 times. 4번 발동.
@@ -240,7 +240,7 @@ class JobGenerator(ck.JobGenerator):
             jobutils.create_auxilary_attack(skill, CHOOKROI, nametag=f'({ThunderBreakerSkills.ArcCharger.value})')
 
         for skill in [Thunder, ThunderConcat, WaterWave, WaterWaveConcat, NoiShinChanGeuk,
-                        SpearLightningAttack, SpearLightningAttack_Lightning, SpearLightningAttack_Final, SpearLightningAttack_Final_Lightning]:
+                        SpearLightningAttack, SpearLightningAttack_Final]:
             skill.onAfter(LightningStack.stackController(1))
 
         for skill in [ShinNoiHapLAttack, CygnusPhalanx, NoiShinChanGeukAttack]:

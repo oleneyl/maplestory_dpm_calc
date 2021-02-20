@@ -2,7 +2,7 @@ import argparse
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
-from dpmModule.character.characterKernel import GearedCharacter, JobGenerator
+from dpmModule.character.characterKernel import JobGenerator
 from dpmModule.character.characterTemplate import TemplateGenerator
 from dpmModule.execution import rules
 from dpmModule.jobs import jobMap
@@ -43,6 +43,7 @@ def dpm(args):
         ulevel=args.ulevel,
         weaponstat=weapon_stat,
         ability_grade=Ability_grade(4, 1),
+        farm=False,
     )
     sche = policy.AdvancedGraphScheduler(
         graph,
@@ -76,6 +77,7 @@ def burst10(args):
         ulevel=args.ulevel,
         weaponstat=weapon_stat,
         ability_grade=Ability_grade(4, 1),
+        farm=False,
     )
     sche = policy.AdvancedGraphScheduler(
         graph,

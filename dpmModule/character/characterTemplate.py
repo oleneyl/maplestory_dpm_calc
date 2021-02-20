@@ -42,10 +42,6 @@ class TemplateGenerator:
         # "데몬어벤져": 1099009,  # 성장으로 STR 9, HP 200, 방어력 20 상승
         # "Mihile": 1098003, # Increases STR 9, DEX 9, HP 200, DEF 20 by growth
         # "미하일": 1098003,  # 성장으로 STR 9, DEX 9, HP 200, 방어력 20 상승
-        # TODO: Maybe use 'inherit: true' keyword to inherit from 'armor', 'acc', etc... ?
-        # ex 1) eye: { "inherit": "true", "bonus": { ... }, ... } # inherit everything
-        # ex 2) eye: { "bonus": "inherit" or { ... }, ... } # inherit single attribute
-        # Or create gear factory json and load by key (maybe simpler to implement)
 
         self.parts = ("head", "top", "bottom", "shoes", "glove", "cape", "shoulder", "face", "eye", "ear", "belt",
                       "ring1", "ring2", "ring3", "ring4", "pendant1", "pendant2",
@@ -238,7 +234,7 @@ class TemplateGenerator:
                     gb.apply_additional_stat(att, bonus_node[bonus_type])
                 elif bonus_type == "allstat_rate":
                     gb.apply_additional_stat(GearPropType.allstat, bonus_node[bonus_type])
-                else:
+                elif stat_type[bonus_type] is not None:
                     gear.additional_stat[stat_type[bonus_type]] = bonus_node[bonus_type]
 
         def _apply_upgrade(upgrade_node):
@@ -270,7 +266,8 @@ class TemplateGenerator:
                 elif type == "혼돈의 주문서" or "혼줌":
                     stat = {}
                     for stat_key in scroll['option']:
-                        stat[stat_type[stat_key]] = scroll['option'][stat_key]
+                        if stat_type[stat_key] is not None:
+                            stat[stat_type[stat_key]] = scroll['option'][stat_key]
                     gb.apply_scroll(Scroll.create_from_dict(stat), count)
                 else:
                     raise TypeError('Invalid upgrade type: ' + type)
@@ -286,8 +283,8 @@ class TemplateGenerator:
                 bonus = 0
                 if 'surprise_bonus' in gear_node:
                     bonus = gear_node['surprise_bonus']
-                bonus_count = star * bonus // 100
-                gb.apply_stars(star - bonus_count, True, False)
+                bonus_count = abs(star) * bonus // 100
+                gb.apply_stars(abs(star) - bonus_count, True, False)
                 gb.apply_stars(bonus_count, True, True)
 
         def _apply_potential(potential_node, gear_potential_dict):
@@ -303,7 +300,7 @@ class TemplateGenerator:
                     gear_potential_dict[pstat_main] += potential_node[stat_key]
                     gear_potential_dict[pstat_sub] += potential_node[stat_key]
                     gear_potential_dict[pstat_sub2] += potential_node[stat_key]
-                else:
+                elif stat_type[stat_key] is not None:
                     gear_potential_dict[stat_type[stat_key]] += potential_node[stat_key]
 
         stat_main, pstat_main, stat_sub, pstat_sub, stat_sub2, pstat_sub2, att, patt = _get_stat_type(jobtype)

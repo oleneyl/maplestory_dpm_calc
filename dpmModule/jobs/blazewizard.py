@@ -6,7 +6,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ConditionRule
+from ..execution.rules import ComplexConditionRule, ConcurrentRunRule, RuleSet
 from . import globalSkill
 from .jobclass import cygnus
 from .jobbranch import magicians
@@ -78,11 +78,12 @@ class JobGenerator(ck.JobGenerator):
         return core.CharacterModifier(armor_ignore=10, pdamage=50, att=35)
 
     def get_ruleset(self):
-        def check_ifc_time(ifc):
-            return (ifc.is_usable() or ifc.is_cooltime_left(90*1000, 1))
+        def soul_contract_rule(soul_contract, ifc, burning_region):
+            return (ifc.is_usable() or ifc.is_cooltime_left(90*1000, 1)) and burning_region.is_active()
 
         ruleset = RuleSet()
-        ruleset.add_rule(ConditionRule(GlobalSkills.TermsAndConditions.value, f'{BlazeWizardSkills.InfernoSphere.value}(Cast | 개시)', check_ifc_time), RuleSet.BASE)
+        ruleset.add_rule(ComplexConditionRule(GlobalSkills.TermsAndConditions.value, [f'{BlazeWizardSkills.InfernoSphere.value}(Cast | 개시)', BlazeWizardSkills.BurningConduit.value], soul_contract_rule), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(f'{BlazeWizardSkills.InfernoSphere.value}(Cast | 개시)', BlazeWizardSkills.BurningConduit.value), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -102,7 +103,7 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5 + 0.5*passive_level)
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=95+passive_level)
         SpiritOfFlameActive = core.InformedCharacterModifier(f"{BlazeWizardSkills.FiresofCreation.value}({BlazeWizardSkills.Ignition.value})", prop_ignore = 10)
         
         return [WeaponConstant, Mastery, SpiritOfFlameActive]
@@ -127,7 +128,7 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         WordOfFire = core.BuffSkill(BlazeWizardSkills.WordofFire.value, 0, 300000, att = 20).wrap(core.BuffSkillWrapper)
         FiresOfCreation = core.BuffSkill(BlazeWizardSkills.FiresofCreation.value, 600, 300 * 1000, armor_ignore = 30+self.combat).wrap(core.BuffSkillWrapper)
-        BurningRegion = core.BuffSkill(BlazeWizardSkills.BurningConduit.value, 1080, 30 * 1000, cooltime =45 * 1000, rem = True, pdamage = 60+self.combat).wrap(core.BuffSkillWrapper)
+        BurningRegion = core.BuffSkill(BlazeWizardSkills.BurningConduit.value, 1080, 30 * 1000, cooltime =45 * 1000, rem = True, red=True, pdamage = 60+self.combat).wrap(core.BuffSkillWrapper)
         GloryOfGuardians = core.BuffSkill(BlazeWizardSkills.GloryoftheGuardians.value, 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         Flame = core.BuffSkill(BlazeWizardSkills.FinalFlameElemental.value, 0, 8000, att = 40 + passive_level, cooltime=-1).wrap(core.BuffSkillWrapper)  # Skills that don't always apply. 벞지 적용 안되는 스킬.
 
@@ -203,7 +204,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, name=BlazeWizardSkills.CallofCygnus.value, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                      cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level), WordOfFire, FiresOfCreation, BurningRegion, GloryOfGuardians, OverloadMana, Flame, SalamanderMischeifBuff,
                     globalSkill.soul_contract()] +\
-                [SalamanderMischeif, CygnusPhalanx, BlazingOrbital, DragonSlaveInit, SavageFlame, InfinityFlameCircleInit, 
+                [SalamanderMischeif, CygnusPhalanx, BlazingOrbital, InfinityFlameCircleInit, DragonSlaveInit, SavageFlame,
                     InfernoRize, MirrorBreak, MirrorSpider] +\
                 [IgnitionDOT] +\
                 [] +\

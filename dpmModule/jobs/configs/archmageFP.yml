@@ -26,8 +26,8 @@ passive_skill_list:
 not_implied_skill_list:
 - name: Ignore Constant | 무기상수
   pdamage_indep: 20
-- name: Mastery | 숙련도익스트림 매직
-  pdamage_indep: "-2.5 + 0.5 * math.ceil(combat / 2)"
+- name: Mastery | 숙련도
+  mastery: 95
 - name: Burning Magic | 익스트림 매직
   pdamage_indep: 20
 - name: Arcane Aim | 아케인 에임(Real Time | 실시간)

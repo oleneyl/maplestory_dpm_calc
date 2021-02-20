@@ -5,7 +5,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
 from ..execution.rules import ComplexConditionRule, ConditionRule, RuleSet
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobbranch import warriors
 from math import ceil
 from typing import Any, Dict
@@ -114,7 +114,7 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=34)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-4.5 + 0.5*ceil(passive_level/2))  # Basic application of orders! 오더스 기본적용!
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+1+ceil(passive_level/2))  # Basic application of orders! 오더스 기본적용!
 
         ElementalCharge = core.InformedCharacterModifier(PaladinSkills.ElementalCharge.value, pdamage=25, att=60)  # The conditional application is reviewed later. 조건부 적용 여부는 추후검토.
         ParashockGuard = core.InformedCharacterModifier(PaladinSkills.ParashockGuard.value, att=20)
@@ -224,7 +224,7 @@ class JobGenerator(ck.JobGenerator):
                 HolyUnity,
                 AuraWeaponBuff,
                 AuraWeapon,
-                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
+                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, combat_level=2),
                 globalSkill.soul_contract()
             ] +
             [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, MightyMjollnirInit, GrandCross, MirrorBreak, MirrorSpider] +

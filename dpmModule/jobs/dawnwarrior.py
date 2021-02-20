@@ -108,7 +108,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5+0.5*ceil(passive_level/2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(passive_level/2))
         TrueSightHyper = core.InformedCharacterModifier(f"{DawnWarriorSkills.TrueSight.value}(Hyper | 하이퍼)", prop_ignore = 10)
         
         return [WeaponConstant, Mastery, TrueSightHyper]
@@ -134,7 +134,7 @@ class JobGenerator(ck.JobGenerator):
         GloryOfGuardians = core.BuffSkill(DawnWarriorSkills.GloryoftheGuardians.value, 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
         #Damage Skills
-        SpeedingDance = core.DamageSkill(f"{DawnWarriorSkills.MoonDancer.value}/{DawnWarriorSkills.SpeedingSunset.value}", (360+270)/2, 400+4*self.combat, 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + FallingMoon).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        SpeedingDance = core.DamageSkill(f"{DawnWarriorSkills.MoonDancer.value}/{DawnWarriorSkills.SpeedingSunset.value}", (360+330+270+270)/4, 400+4*self.combat, 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + FallingMoon).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 4, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
@@ -146,7 +146,7 @@ class JobGenerator(ck.JobGenerator):
         # Elysion 38 hits / 3 hits. 엘리시온 38타 / 3타.
         Elision = core.BuffSkill(DawnWarriorSkills.RiftofDamnation.value, 750, 30 * 1000, cooltime = 180 * 1000, red=True).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)    # Cast delay 750ms. 시전딜레이 750ms.
         ElisionBreak = core.SummonSkill(f"{DawnWarriorSkills.RiftofDamnation.value}(Crack | 균열)", 0, 10000, 520 + 21*vEhc.getV(1,1), 5 * 12, 30000, cooltime=-1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)    # Triggers 3 times. 3회 발동.
-        ElisionStyx = core.DamageSkill(f"{DawnWarriorSkills.StyxCrossing.value}({DawnWarriorSkills.RiftofDamnation.value})", 30 * 1000 / 40, 580/2, 5 * 5 * 2, modifier = FallingMoon).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 40 reps. 40회 반복.
+        ElisionStyx = core.DamageSkill(f"{DawnWarriorSkills.StyxCrossing.value}({DawnWarriorSkills.RiftofDamnation.value})", 750, 580/2, 5 * 5 * 2, modifier = FallingMoon).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 40 reps. 40회 반복.
         
         # Soul Eclipse. 소울 이클립스.
         SoulEclipse = core.SummonSkill(DawnWarriorSkills.SoulEclipse.value, 630, 1000, 450 + 18 * vEhc.getV(3,3), 7, 30 * 1000, cooltime = 180 * 1000, red=True).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
@@ -189,7 +189,7 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         return(BasicAttackWrapper,
-                [globalSkill.maple_heros(chtr.level, name = DawnWarriorSkills.CallofCygnus.value, combat_level=self.combat), globalSkill.useful_sharp_eyes(),
+                [globalSkill.maple_heros(chtr.level, name = DawnWarriorSkills.CallofCygnus.value, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     NimbleFinger, TrueSight, SolunaTime, SoulForge, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                     GloryOfGuardians, AuraWeaponBuff, AuraWeapon, globalSkill.soul_contract(), SelestialDanceInit, Elision, ElisionBreak,
                     ] +\

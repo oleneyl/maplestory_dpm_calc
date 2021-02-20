@@ -14,7 +14,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import ConditionRule, RuleSet, ReservationRule
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobbranch import thieves
 from math import ceil
 from typing import Any, Dict
@@ -102,7 +102,7 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=30)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-5 + 0.5*ceil(passive_level / 2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(passive_level / 2))
 
         return [WeaponConstant, Mastery]
 

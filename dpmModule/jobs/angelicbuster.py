@@ -107,15 +107,15 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=70)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-2.5 + 0.5 * ceil(passive_level / 2))
-
-        return [WeaponConstant, Mastery]
+        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 70)
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=95+ceil(passive_level / 2))
+        
+        return [WeaponConstant, Mastery]        
 
     def get_modifier_optimization_hint(self) -> core.CharacterModifier:
-        return core.CharacterModifier(boss_pdamage=60, armor_ignore=18.4)
-
-    def generate(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
+        return core.CharacterModifier(boss_pdamage=55, armor_ignore=17)
+        
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         Affinity IV utilization rate 94.18%
         Trinity buff duration non-renewable applied

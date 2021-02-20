@@ -30,7 +30,7 @@ class OzRings(Enum):
     WeaponJumpRing = 'Weapon Jump Ring | 웨폰퍼프 링'
     CriticalDamageRing = 'Critical Damage Ring | 크리데미지 링'
     CriticalDefenseRing = 'Critical Defense Ring | 크리디펜스 링'
-    LevelJumpRing = 'Level Jump Ring | '
+    LevelJumpRing = 'Level Jump Ring | 레벨퍼프 링'
     RiskTakerRing = 'Risk Taker Ring | 리스트테이커 링'
     CrisisHMRing = 'Crisis HM Ring | 크라이시스 H/M 링'
 
@@ -80,11 +80,22 @@ def crisis_ring(level: int):
 
 def weaponpuff_ring(level: int, weapon_att: int):
     return core.BuffSkill(
-        "웨폰퍼프 링",
+        OzRings.WeaponJumpRing.value,
         delay=60,
         remain=(7+2*level)*1000,
         cooltime=180000,
         stat_main=level * weapon_att,
+        red=True
+    ).wrap(core.BuffSkillWrapper)
+
+
+def demonavenger_weaponpuff_ring(level: int, weapon_att: int):
+    return core.BuffSkill(
+        f"{OzRings.WeaponJumpRing.value}(Demon Avenger | 데몬어벤져)",
+        delay=60,
+        remain=(7+2*level)*1000,
+        cooltime=180000,
+        stat_main=level * weapon_att * 17.5,
         red=True
     ).wrap(core.BuffSkillWrapper)
 
@@ -96,6 +107,17 @@ def levelpuff_ring(level: int, chtr_level: int):
         remain=(7+2*level)*1000,
         cooltime=180000,
         stat_main=(2+7*level)*0.1*chtr_level,
+        red=True
+    ).wrap(core.BuffSkillWrapper)
+
+
+def demonavenger_levelpuff_ring(level: int, chtr_level: int):
+    return core.BuffSkill(
+        f"{OzRings.LevelJumpRing.value}(Demon Avenger | 데몬어벤져)",
+        delay=60,
+        remain=(7+2*level)*1000,
+        cooltime=180000,
+        stat_main=(2+7*level)*0.1*chtr_level*17.5,
         red=True
     ).wrap(core.BuffSkillWrapper)
 

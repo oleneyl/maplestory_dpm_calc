@@ -1,4 +1,6 @@
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
+from itertools import filterfalse, product, combinations_with_replacement
+from functools import reduce
 
 from dpmModule.kernel.core import ExtendedCharacterModifier as ExMDF
 
@@ -39,30 +41,29 @@ class WeaponPotential:
     ]
 
     @staticmethod
-    def get_single_potential(
-        refMDF: ExMDF, tier: int, number: int, sto: List[List[Optional[List[ExMDF]]]]
-    ) -> Tuple[List[ExMDF], ExMDF]:
-        retli = []
-        enhancement = ExMDF()
-        for i in range(number):
-            is_first = 0 if i == 0 else 1
-            cand = ExMDF()
-            ehc = 0
-            for mdfCandidate in sto[tier][is_first]:
-                if (
-                    i >= 2
-                    and retli[0].boss_pdamage > 0
-                    and retli[1].boss_pdamage > 0
-                    and mdfCandidate.boss_pdamage > 0
-                ):
-                    continue
-                _ehc = (refMDF + enhancement + mdfCandidate).get_damage_factor()
-                if _ehc > ehc:
-                    cand = mdfCandidate
-                    ehc = _ehc
-            retli.append(cand.copy())
-            enhancement = enhancement + cand
-        return retli, enhancement
+    def get_potential_list(
+        tier: int, number: int, sto: List[List[Optional[List[ExMDF]]]]
+    ) -> List[ExMDF]:
+        if number <= 0:
+            return []
+        first_line = sto[tier][0]
+        if number == 1:
+            return first_line
+
+        other_lines = combinations_with_replacement(sto[tier][1], number - 1)
+        combinations = [
+            [first, *other] for first, other in list(product(first_line, other_lines))
+        ]
+        combinations = filterfalse(
+            lambda li: all([x.boss_pdamage > 0 for x in li]), combinations
+        )
+        combinations = filterfalse(
+            lambda li: all([x.armor_ignore > 0 for x in li]), combinations
+        )
+
+        return [
+            {"sum": reduce(lambda x, y: x + y, li), "list": li} for li in combinations
+        ]
 
     @staticmethod
     def get_weapon_pontential(
@@ -81,30 +82,30 @@ class WeaponPotential:
             raise TypeError("Tier must be 2, 3 or 4.")
 
         target = mdf.copy()
-        result = {
-            "weapon": [],
-            "subweapon": [],
-            "emblem": [],
-        }
         emblem_count = number // 3
         subweapon_count = (number - emblem_count) // 2
         weapon_count = number - subweapon_count - emblem_count
 
-        potential_list, potential_sum = WeaponPotential.get_single_potential(
-            target, tier, emblem_count, WeaponPotential.storageEmblem
+        emblem_cand = WeaponPotential.get_potential_list(
+            tier, emblem_count, WeaponPotential.storageEmblem
         )
-        result["emblem"] = potential_list
-        target += potential_sum
-
-        potential_list, potential_sum = WeaponPotential.get_single_potential(
-            target, tier, subweapon_count, WeaponPotential.storageWeapon
+        subweapon_cand = WeaponPotential.get_potential_list(
+            tier, subweapon_count, WeaponPotential.storageWeapon
         )
-        result["subweapon"] = potential_list
-        target += potential_sum
-
-        potential_list, potential_sum = WeaponPotential.get_single_potential(
-            target, tier, weapon_count, WeaponPotential.storageWeapon
+        weapon_cand = WeaponPotential.get_potential_list(
+            tier, weapon_count, WeaponPotential.storageWeapon
         )
-        result["weapon"] = potential_list
 
-        return result
+        combinations = product(emblem_cand, subweapon_cand, weapon_cand)
+        best = max(
+            combinations,
+            key=lambda x: (
+                target + x[0]["sum"] + x[1]["sum"] + x[2]["sum"]
+            ).get_damage_factor(),
+        )
+
+        return {
+            "emblem": best[0]["list"],
+            "subweapon": best[1]["list"],
+            "weapon": best[2]["list"],
+        }

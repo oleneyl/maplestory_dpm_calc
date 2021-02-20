@@ -8,9 +8,8 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from . import globalSkill
-from .jobclass import heroes
 from .jobbranch import warriors
-from ..execution.rules import RuleSet, InactiveRule, ConditionRule
+from ..execution.rules import ComplexConditionRule, RuleSet, InactiveRule, ConditionRule
 from math import ceil
 from typing import Any, Dict
 
@@ -68,8 +67,54 @@ class AranSkills(Enum):
 
 # Advisor : Azir carry (croa). 아지르캐리(크로아)
 # Assumes the lowest combo count of 500. 최저 콤보 카운트 500 가정
-#TODO : If a skill other than Final Blow comes after the Penril Crash, a 30ms delay should be added. 펜릴 크래시 이후에 파이널 블로우가 아닌 다른 스킬이 오면 30ms 딜레이가 추가되어야 함
-#TODO : Freed and Aura weapon delays must be canceled as a gathering catcher. 게더링 캐쳐로 프리드, 오라웨폰 딜레이도 캔슬해야 함.
+# TODO : If a skill other than Final Blow comes after the Penril Crash, a 30ms delay should be added. 펜릴 크래시 이후에 파이널 블로우가 아닌 다른 스킬이 오면 30ms 딜레이가 추가되어야 함
+# TODO : Freed and Aura weapon delays must be canceled as a gathering catcher. 게더링 캐쳐로 프리드, 오라웨폰 딜레이도 캔슬해야 함.
+class AdrenalineDamageWrapper(core.DamageSkillWrapper):
+    def __init__(
+        self,
+        skill: core.DamageSkill,
+        adrenaline: core.BuffSkillWrapper,
+        activation: int = 1,  # handle random hit (final attack)
+    ):
+        super(AdrenalineDamageWrapper, self).__init__(skill)
+        self.adrenaline = adrenaline
+        self.activation = activation
+
+    def get_hit(self) -> float:
+        return (
+            min(
+                super(AdrenalineDamageWrapper, self).get_hit()
+                + 2 * self.adrenaline.is_active(),
+                15,
+            )
+            * self.activation
+        )
+
+    def get_damage(self) -> float:
+        return (
+            super(AdrenalineDamageWrapper, self).get_damage()
+            + 150 * self.adrenaline.is_active()
+        )
+
+    def onAdrenalineAfter(self, skill: core.AbstractSkillWrapper):
+        self.onAfter(core.OptionalElement(self.adrenaline.is_active, skill))
+
+
+class AdrenalineSummonWrapper(core.SummonSkillWrapper):
+    def __init__(
+        self,
+        skill: core.DamageSkill,
+        adrenaline: core.BuffSkillWrapper,
+    ):
+        super(AdrenalineSummonWrapper, self).__init__(skill)
+        self.adrenaline = adrenaline
+
+    def get_damage(self) -> float:
+        return (
+            super(AdrenalineSummonWrapper, self).get_damage()
+            + 150 * self.adrenaline.is_active()
+        )
+
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -77,46 +122,64 @@ class JobGenerator(ck.JobGenerator):
         self.jobtype = "STR"
         self.jobname = "아란"
         self.vEnhanceNum = 13
-        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
+        self.ability_list = Ability_tool.get_ability_set(
+            "boss_pdamage", "crit", "buff_rem"
+        )
         self.preEmptiveSkills = 2
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(pdamage=50, armor_ignore=20, patt=15)
 
-    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
+    def get_passive_skill_list(
+        self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
+    ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         RetrievedMemory = core.InformedCharacterModifier(AranSkills.RegainedMemory.value, patt=5)
         SnowChargePassive = core.InformedCharacterModifier(f"{AranSkills.SnowCharge.value}(Passive | 패시브)", pdamage=10)
-        PhisicalTraining = core.InformedCharacterModifier(AranSkills.PhysicalTraining.value,stat_main = 30, stat_sub = 30)
+        PhisicalTraining = core.InformedCharacterModifier(AranSkills.PhysicalTraining.value, stat_main=30, stat_sub=30)
         AdvancedComboAbilityPassive = core.InformedCharacterModifier(AranSkills.AdvancedComboAbility.value, att=10, crit=20, crit_damage=10)
         CleavingAttack = core.InformedCharacterModifier(AranSkills.CleavingBlows.value, armor_ignore=40, pdamage=10)
         Might = core.InformedCharacterModifier(AranSkills.Might.value, att=40)
-        HighMastery = core.InformedCharacterModifier(AranSkills.HighMastery.value, att=30, crit_damage=8)
+        HighMastery = core.InformedCharacterModifier(AranSkills.HighMastery.value, att=30 + passive_level, crit_damage=8)
         AdvancedFinalAttackPassive = core.InformedCharacterModifier(f"{AranSkills.AdvancedFinalAttack.value}(Passive | 패시브)", att=30 + passive_level)
 
-        return [RetrievedMemory, SnowChargePassive, PhisicalTraining,
-            AdvancedComboAbilityPassive, CleavingAttack, Might, HighMastery, AdvancedFinalAttackPassive]
+        return [
+            RetrievedMemory,
+            SnowChargePassive,
+            PhisicalTraining,
+            AdvancedComboAbilityPassive,
+            CleavingAttack,
+            Might,
+            HighMastery,
+            AdvancedFinalAttackPassive,
+        ]
 
-    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
+    def get_not_implied_skill_list(
+        self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
+    ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 49)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level / 2))
-        return [WeaponConstant, Mastery]
+        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=49)
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(passive_level / 2))
+        ComboAbility = core.InformedCharacterModifier(f"{AranSkills.ComboAbility.value}(Combo | 콤보)", att=2 * 10)
+        AdvancedComboAbility = core.InformedCharacterModifier(f"{AranSkills.AdvancedComboAbility.value}(Combo | 콤보)", att=2 * 10, crit=3 * 10)
+        return [WeaponConstant, Mastery, ComboAbility, AdvancedComboAbility]
 
     def get_ruleset(self):
-        def check_soul_contract_time(adrenaline_el):
-            return (adrenaline_el.is_not_active() or (adrenaline_el.is_time_left(10*1000, 1)))
+        def hunters_targeting_rule(hunters, adrenaline, soul_contract):
+            if soul_contract.is_active():
+                return True
+            if soul_contract.cooltimeLeft < adrenaline.timeLeft:
+                return False
+            return True
 
         ruleset = RuleSet()
         ruleset.add_rule(InactiveRule(f'{AranSkills.MahasCarnage.value}(Holder | 홀더)', AranSkills.AdrenalineRush.value), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule(AranSkills.HeroicMemories.value, AranSkills.AdrenalineRush.value), RuleSet.BASE)
         ruleset.add_rule(InactiveRule(GlobalSkills.DecentSharpEyes.value, AranSkills.AdrenalineRush.value), RuleSet.BASE)
         ruleset.add_rule(InactiveRule(GlobalSkills.DecentCombatOrders.value, AranSkills.AdrenalineRush.value), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(GlobalSkills.TermsAndConditions.value, AranSkills.AdrenalineRush.value, check_soul_contract_time), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(f'{AranSkills.FinisherHuntersPrey.value}(Holder | 홀더)', AranSkills.AdrenalineRush.value, lambda x:x.is_time_left(10*1000, -1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(GlobalSkills.TermsAndConditions.value, AranSkills.AdrenalineRush.value, lambda sk: sk.is_time_left(10 * 1000, 1)),RuleSet.BASE)
+        ruleset.add_rule(ComplexConditionRule(f"{AranSkills.FinisherHuntersPrey.value}(Holder | 홀더)", [AranSkills.AdrenalineRush.value, GlobalSkills.TermsAndConditions.value],hunters_targeting_rule), RuleSet.BASE)
 
         return ruleset
-
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
@@ -136,82 +199,316 @@ class JobGenerator(ck.JobGenerator):
 
         코어강화 순서 어파-파블-비욘더-헌터즈타겟팅-스매시스윙
 
-        브랜디쉬 마하 / 인스톨 마하 / 마하의 영역 : 게더링 캐쳐로 캔슬(600ms)
-        아드레날린 부스트 도중에 다음을 사용하지 않음 : 브랜디쉬 마하, 히어로즈 오쓰, 쓸만한 샤프 아이즈
+        브랜디쉬 마하 / 인스톨 마하 / 마하의 영역 : 게더링 캐쳐로 캔슬(30ms + 570ms)
+        아드레날린 부스트 도중에 다음을 사용하지 않음 : 브랜디쉬 마하, 쓸만한 샤프 아이즈
         소울 컨트랙트는 아드레날린 부스트가 10초 이상 남았다면 사용함
         '''
-        BOOST_END_HUNTERS_TARGETING_DELAY=1100
-        ADRENALINE_GENERATOR_DELAY=600
-        ADRENALINE_BOOST_REMAIN = (20+3)*1000
         passive_level = chtr.get_base_modifier().passive_level + self.combat
+        BOOST_END_HUNTERS_TARGETING_DELAY = 600
+        ADRENALINE_BOOST_REMAIN = (20 + 3) * 1000
+        ADRENALINE_BOOST_PASSIVE = 100
+        SWIFT_MOVE = 60 + 2 * passive_level
+        DYNAMIC_MASTERY = 20 + passive_level
 
         # reinforce: hyper skill reinforce
-        def get_beyonder_pdamage(excess_target, reinforce = True):
+        def get_beyonder_pdamage(excess_target, reinforce=True):
             return (1.06 ** excess_target - 1) * 100 + reinforce * 20
 
         BEYONDER_PDAMAGE = get_beyonder_pdamage(5)
-        BEYONDER_ADRENALINE_PDAMAGE = get_beyonder_pdamage(10)
         PENRIL_PDAMAGE = get_beyonder_pdamage(9)
-        PENRIL_ADRENALINE_PDAMAGE = get_beyonder_pdamage(14)
 
-        SmashSwing = core.DamageSkill(AranSkills.SmashSwing.value, 360, 800 + 50 * passive_level, 2).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        SmashSwingIncr = core.BuffSkill(f"{AranSkills.SmashSwing.value}(Final damage | 최종데미지)", 0, 5000+3000, pdamage_indep=15 + passive_level, pdamage=20, cooltime=-1).wrap(core.BuffSkillWrapper)
-        SmashSwingIllusion = core.DamageSkill(f"{AranSkills.SmashSwing.value}(Afterimage | 잔상)", 0, 280, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        # Pet buff. 펫버프
+        Booster = core.BuffSkill(AranSkills.PolearmBooster.value, 0, 180 * 1000, rem=True).wrap(core.BuffSkillWrapper)
+        SnowCharge = core.BuffSkill(AranSkills.SnowCharge.value, 0, 200 * 1000, pdamage=10).wrap(core.BuffSkillWrapper)
+        BlessingMaha = core.BuffSkill(AranSkills.MahaBlessing.value, 0, 200 * 1000, att=30).wrap(core.BuffSkillWrapper)
 
-        FinalBlow = core.DamageSkill(AranSkills.FinalBlow.value, 420, 285 + 100 + (60 + 2 * passive_level) + (20 + passive_level), 5, modifier=core.CharacterModifier(armor_ignore=15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdrenalineBoost = core.BuffSkill(AranSkills.AdrenalineRush.value, delay=0, remain=ADRENALINE_BOOST_REMAIN).wrap(core.BuffSkillWrapper)
 
-        Booster = core.BuffSkill(AranSkills.PolearmBooster.value, 0, 180*1000, rem = True).wrap(core.BuffSkillWrapper)
-        SnowCharge = core.BuffSkill(AranSkills.SnowCharge.value, 0, 200*1000, pdamage=10).wrap(core.BuffSkillWrapper)  # Pet Buff. 펫버프.
+        SmashSwing = AdrenalineDamageWrapper(
+            core.DamageSkill(
+                AranSkills.SmashSwing.value,
+                delay=360,
+                damage=150
+                + 200
+                + 100
+                + (250 + 50 * passive_level)
+                + ADRENALINE_BOOST_PASSIVE
+                + DYNAMIC_MASTERY,
+                hit=2,
+            ).setV(vEhc, 4, 2, False),
+            AdrenalineBoost,
+        )
+        SmashSwingIncr = core.BuffSkill(
+            f"{AranSkills.SwingStudiesII.value}(Buff | 버프)",
+            delay=0,
+            remain=5000 + 3000,
+            pdamage_indep=15 + passive_level,
+            pdamage=20,
+            cooltime=-1,
+        ).wrap(core.BuffSkillWrapper)
+        SmashSwingIllusion = AdrenalineDamageWrapper(
+            core.DamageSkill(
+                AranSkills.SwingStudiesII.value,
+                delay=0,
+                damage=280 + 40 * passive_level + ADRENALINE_BOOST_PASSIVE,
+                hit=5,
+            ),  # No core enhancement. 코어 강화 받지 않음
+            AdrenalineBoost,
+        )
 
-        FinalAttack = core.DamageSkill(AranSkills.FinalAttack.value, 0, 85+passive_level+100, 3*0.01*(60+passive_level)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)  # Adrenaline boost perdem, at-bat effects applied. 아드레날린 부스트의 퍼뎀, 타수 효과 적용됨.
-        FinalAttackAdrenaline = core.DamageSkill(f"{AranSkills.FinalAttack.value}(Adrenaline | 아드레날린)", 0, 85+passive_level+100+150, (3+2)*0.01*(60+passive_level)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        FinalAttackHolder = core.DamageSkill(f"{AranSkills.FinalAttack.value}(Holder | 홀더)", 0, 0, 0).wrap(core.DamageSkillWrapper)
+        FinalBlow = AdrenalineDamageWrapper(
+            core.DamageSkill(
+                AranSkills.FinalBlow.value,
+                delay=420,
+                damage=285 + ADRENALINE_BOOST_PASSIVE + SWIFT_MOVE + DYNAMIC_MASTERY,
+                hit=5,
+                modifier=core.CharacterModifier(armor_ignore=15),
+            ).setV(vEhc, 1, 2, False),
+            AdrenalineBoost,
+        )
+        AdrenalineFinalBlowWave = (
+            core.DamageSkill(
+                f"{AranSkills.FinalBlow.value}(Wave | 파동)",
+                delay=0,
+                damage=350 + ADRENALINE_BOOST_PASSIVE,
+                hit=4,
+                cooltime=-1,
+            )
+            .setV(vEhc, 1, 2, False)
+            .wrap(core.DamageSkillWrapper)
+        )
 
-        AdvancedComboAbility = core.BuffSkill(AranSkills.AdvancedComboAbility.value, 0, 9999*9999, att=2*10, crit=3*10).wrap(core.BuffSkillWrapper)
-        ComboAbility = core.BuffSkill(AranSkills.ComboAbility.value, 0, 9999*9999, att=2*10).wrap(core.BuffSkillWrapper)
+        FinalAttack = AdrenalineDamageWrapper(  # Adrenaline boost perdem, at-bat effects applied. 아드레날린 부스트의 퍼뎀, 타수 효과 적용됨
+            core.DamageSkill(
+                AranSkills.AdvancedFinalAttack.value,
+                delay=0,
+                damage=85 + passive_level + ADRENALINE_BOOST_PASSIVE,
+                hit=3,
+            ).setV(vEhc, 0, 2, True),
+            AdrenalineBoost,
+            activation=0.01 * (60 + passive_level),
+        )
 
-        BlessingMaha = core.BuffSkill(AranSkills.MahaBlessing.value, 0, 200*1000, att=30).wrap(core.BuffSkillWrapper)   # Pet Buff. 펫버프.
+        BeyonderFirst = AdrenalineDamageWrapper(
+            core.DamageSkill(
+                f"{AranSkills.BeyondBlade.value}(1st hit | 1타)",
+                delay=420,
+                damage=285 + 10 * ceil(self.combat / 3) + ADRENALINE_BOOST_PASSIVE,
+                hit=5 + 1,
+                modifier=core.CharacterModifier(
+                    pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit=100
+                ),
+            ).setV(vEhc, 2, 2, False),
+            AdrenalineBoost,
+        )
+        BeyonderSecond = AdrenalineDamageWrapper(
+            core.DamageSkill(
+                f"{AranSkills.BeyondBlade.value}(2nd hit | 2타)",
+                delay=360,
+                damage=300 + 10 * ceil(self.combat / 3) + ADRENALINE_BOOST_PASSIVE,
+                hit=5 + 1,
+                modifier=core.CharacterModifier(
+                    pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit=100
+                ),
+            ).setV(vEhc, 2, 2, False),
+            AdrenalineBoost,
+        )
+        BeyonderThird = AdrenalineDamageWrapper(
+            core.DamageSkill(
+                f"{AranSkills.BeyondBlade.value}(3rd hit | 3타)",
+                delay=420,
+                damage=315 + 10 * ceil(self.combat / 3) + ADRENALINE_BOOST_PASSIVE,
+                hit=5 + 1,
+                modifier=core.CharacterModifier(
+                    pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit=100
+                ),
+            ).setV(vEhc, 2, 2, False),
+            AdrenalineBoost,
+        )
+        AdrenalineBeyonderWave = (
+            core.DamageSkill(
+                f"{AranSkills.BeyondBlade.value}(Wave | 파동)",
+                delay=0,
+                damage=400 + ADRENALINE_BOOST_PASSIVE,
+                hit=5,
+                cooltime=-1,
+            )
+            .setV(vEhc, 2, 2, False)
+            .wrap(core.DamageSkillWrapper)
+        )
 
-        BeyonderFirst = core.DamageSkill(f"{AranSkills.BeyondBlade.value}(1st hit | 1타)", 420, 385 + 10 * ceil(self.combat / 3), 6, modifier=core.CharacterModifier(pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        BeyonderSecond = core.DamageSkill(f"{AranSkills.BeyondBlade.value}(2nd hit | 2타)", 360, 400 + 10 * ceil(self.combat / 3), 6, modifier=core.CharacterModifier(pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        BeyonderThird = core.DamageSkill(f"{AranSkills.BeyondBlade.value}(3rd hit | 3타)", 420, 415 + 10 * ceil(self.combat / 3), 6, modifier=core.CharacterModifier(pdamage=BEYONDER_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        BoostEndHuntersTargetingHolder = core.DamageSkill(
+            f"{AranSkills.FinisherHuntersPrey.value}(Holder | 홀더)", BOOST_END_HUNTERS_TARGETING_DELAY, 0, 0, cooltime=-1
+        ).wrap(core.DamageSkillWrapper)
+        BoostEndHuntersTargeting = (
+            core.DamageSkill(
+                AranSkills.FinisherHuntersPrey.value,
+                delay=0,
+                damage=1070
+                + 10 * self.combat
+                + ADRENALINE_BOOST_PASSIVE
+                + DYNAMIC_MASTERY,
+                hit=15,
+                cooltime=-1,
+            )
+            .setV(vEhc, 3, 2, False)
+            .wrap(core.DamageSkillWrapper)
+        )
 
-        AdrenalineBoost = core.BuffSkill(AranSkills.AdrenalineRush.value, 0, ADRENALINE_BOOST_REMAIN).wrap(core.BuffSkillWrapper)
+        GatheringCatcher = (
+            core.DamageSkill(
+                "게더링 캐쳐(캔슬)",
+                delay=570,
+                damage=170 + DYNAMIC_MASTERY + ADRENALINE_BOOST_PASSIVE,
+                hit=2,
+            )
+            .setV(vEhc, 5, 3, False)
+            .wrap(core.DamageSkillWrapper)
+        )
 
-        AdrenalineSmashSwing = core.DamageSkill(f"{AranSkills.SmashSwing.value}(Adrenaline | 아드레날린)", 360, 950, 4).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        AdrenalineFinalBlow = core.DamageSkill(f"{AranSkills.FinalBlow.value}(Adrenaline | 아드레날린)", 420, 285 + 100 + (60 + 2 * passive_level) + (20 + passive_level) + 150, 7, modifier=core.CharacterModifier(armor_ignore=15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        FinalBlowWaveAdrenaline = core.DamageSkill(f"{AranSkills.FinalBlow.value}(파동)", 0, 350, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        # Hyper Skills
+        AdrenalineGenerator = core.BuffSkill(
+            AranSkills.AdrenalineBurst.value, 0, 0, cooltime=240 * 1000
+        ).wrap(core.BuffSkillWrapper)
 
-        AdrenalineBeyonderFirst = core.DamageSkill(f"{AranSkills.BeyondBlade.value}(1st hit | 1타)(Adrenaline | 아드레날린)", 420, 535 + 10 * ceil(self.combat / 3), 8, modifier=core.CharacterModifier(pdamage=BEYONDER_ADRENALINE_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdrenalineBeyonderSecond = core.DamageSkill(f"{AranSkills.BeyondBlade.value}(2nd hit | 2타)(Adrenaline | 아드레날린)", 360, 550 + 10 * ceil(self.combat / 3), 8, modifier=core.CharacterModifier(pdamage=BEYONDER_ADRENALINE_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdrenalineBeyonderThird = core.DamageSkill(f"{AranSkills.BeyondBlade.value}(3rd hit | 3타)(Adrenaline | 아드레날린)", 420, 565 + 10 * ceil(self.combat / 3), 8, modifier=core.CharacterModifier(pdamage=BEYONDER_ADRENALINE_PDAMAGE, armor_ignore=44, crit=100)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdrenalineBeyonderWave = core.DamageSkill(f"{AranSkills.BeyondBlade.value}(Wave | 파동)", 0, 400, 5).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        MahaRegionInit = AdrenalineDamageWrapper(
+            core.DamageSkill(
+                f"{AranSkills.MahasDomain.value}(Cast | 시전)",
+                delay=30,  # Gathering Catcher Cancel: 1680 -> 30. 게더링캐쳐 캔슬 : 1680 -> 30
+                damage=800 + ADRENALINE_BOOST_PASSIVE,
+                hit=5,
+                cooltime=150 * 1000,
+            ).setV(vEhc, 5, 2, True),
+            AdrenalineBoost,
+        )
+        MahaRegion = AdrenalineSummonWrapper(
+            core.SummonSkill(
+                AranSkills.MahasDomain.value,
+                summondelay=0,
+                delay=1000,
+                damage=500 + ADRENALINE_BOOST_PASSIVE,
+                hit=3,
+                remain=10 * 1000,
+                cooltime=-1,
+            ).setV(vEhc, 5, 2, True),
+            AdrenalineBoost,
+        )
 
-        BoostEndHuntersTargetingHolder = core.DamageSkill(f"{AranSkills.FinisherHuntersPrey.value}(Holder | 홀더)", BOOST_END_HUNTERS_TARGETING_DELAY, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
-        BoostEndHuntersTargeting = core.DamageSkill(AranSkills.FinisherHuntersPrey.value, 0, 1070 + 10 * self.combat + (20 + passive_level), 15, cooltime=-1).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        HerosOath = core.BuffSkill(
+            AranSkills.HeroicMemories.value,
+            delay=0,
+            remain=60 * 1000,
+            cooltime=120 * 1000,
+            pdamage=10,
+        ).wrap(core.BuffSkillWrapper)
 
-        AdrenalineGenerator = core.BuffSkill(AranSkills.AdrenalineBurst.value, ADRENALINE_GENERATOR_DELAY, 0, cooltime=240*1000).wrap(core.BuffSkillWrapper)
-        MahaRegion = core.SummonSkill(AranSkills.MahasDomain.value, 600, 1000, 500, 3, 10*1000, cooltime=150*1000).wrap(core.SummonSkillWrapper)  # Gathering Catcher Cancel: 1680 -> 600. 게더링캐쳐 캔슬 : 1680 -> 600.
-        MahaRegionInit = core.DamageSkill(f"{AranSkills.MahasDomain.value}(Cast | 시전)", 0, 800, 5).wrap(core.DamageSkillWrapper)
-        HerosOath = core.BuffSkill(AranSkills.HeroicMemories.value, 0, 60*1000, cooltime=120*1000, pdamage=10).wrap(core.BuffSkillWrapper)
+        # V Skills
+        InstallMaha = (
+            core.BuffSkill(
+                AranSkills.MahasFury.value,
+                delay=30,  # Gathering Catcher Cancel: 960 -> 30. 게더링캐쳐 캔슬 : 960 -> 30
+                remain=(30 + vEhc.getV(1, 1)) * 1000,
+                patt=5 + vEhc.getV(1, 1),
+                cooltime=150 * 1000,
+                red=True,
+            )
+            .isV(vEhc, 1, 1)
+            .wrap(core.BuffSkillWrapper)
+        )
+        InstallMahaBlizzard = (
+            core.SummonSkill(
+                f"{AranSkills.MahasFury.value}(Blizzard | 눈보라)",
+                summondelay=0,
+                delay=3000,
+                damage=450 + 18 * vEhc.getV(1, 1) + ADRENALINE_BOOST_PASSIVE,
+                hit=5,
+                remain=(30 + vEhc.getV(1, 1)) * 1000,
+                cooltime=-1,
+            )
+            .isV(vEhc, 1, 1)
+            .wrap(core.SummonSkillWrapper)
+        )
 
-        InstallMaha = core.BuffSkill(AranSkills.MahasFury.value, 600, (30+vEhc.getV(1,1))*1000, patt=5+vEhc.getV(1,1), cooltime=150*1000, red=True).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper)  # Gathering Catcher Cancel: 960 -> 600. 게더링캐쳐 캔슬 : 960 -> 600.
-        InstallMahaBlizzard = core.SummonSkill(f"{AranSkills.MahasFury.value}(Blizzard | 눈보라)", 0, 3000, 450+18*vEhc.getV(1,1), 5, 60*1000, cooltime=-1).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)
+        BrandishMahaHolder = (
+            core.DamageSkill(
+                f"{AranSkills.MahasCarnage.value}(Holder | 홀더)",
+                delay=30,  # Gathering Catcher Cancel: 720 -> 30. 게더링캐쳐 캔슬 : 720 -> 30
+                damage=0,
+                hit=0,
+                cooltime=20 * 1000,
+                red=True,
+            )
+            .isV(vEhc, 2, 2)
+            .wrap(core.DamageSkillWrapper)
+        )
+        BrandishMaha = AdrenalineDamageWrapper(
+            core.DamageSkill(
+                AranSkills.MahasCarnage.value,
+                delay=0,
+                damage=600
+                + vEhc.getV(2, 2) * 24
+                + DYNAMIC_MASTERY
+                + ADRENALINE_BOOST_PASSIVE,
+                hit=15,
+                cooltime=-1,
+                modifier=core.CharacterModifier(boss_pdamage=20),
+            ).isV(vEhc, 2, 2),
+            AdrenalineBoost,
+        )
 
-        BrandishMaha = core.DamageSkill(f'{AranSkills.MahasCarnage.value}(Holder | 홀더)', 0, 0, 0, cooltime=20*1000, red=True, modifier=core.CharacterModifier(boss_pdamage=20)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
-        BrandishMahaNormal = core.DamageSkill(AranSkills.MahasCarnage.value, 600, 600+vEhc.getV(2,2)*24 + (20 + passive_level) +100, 15, cooltime=-1, red=True, modifier=core.CharacterModifier(boss_pdamage=20)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)  # Gathering Catcher Cancel: 960 -> 600. 게더링캐쳐 캔슬 : 960 -> 600
-        BrandishMahaAdrenaline = core.DamageSkill(f'{AranSkills.MahasCarnage.value}(Adrenaline | 아드레날린)', 600, 600+vEhc.getV(2,2)*24+(20 + passive_level)+100+150, 15, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=20)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
+        PenrilCrash = AdrenalineDamageWrapper(
+            core.DamageSkill(
+                AranSkills.FenrirCrash.value,
+                delay=420,
+                damage=500 + vEhc.getV(3, 3) * 5 + ADRENALINE_BOOST_PASSIVE,
+                hit=6 + vEhc.getV(3, 3) // 30 + 1,
+                modifier=core.CharacterModifier(
+                    crit=100, armor_ignore=60, pdamage=PENRIL_PDAMAGE
+                ),
+            )
+            .setV(vEhc, 2, 2, False)
+            .isV(vEhc, 3, 3),
+            AdrenalineBoost,
+        )
+        PenrilCrashIceburg = (
+            core.DamageSkill(
+                f"{AranSkills.FenrirCrash.value}(Iceburg | 빙산)",
+                delay=0,
+                damage=500 + vEhc.getV(3, 3) * 5 + ADRENALINE_BOOST_PASSIVE,
+                hit=6,
+                cooltime=-1,
+            )
+            .setV(vEhc, 2, 2, False)
+            .isV(vEhc, 3, 3)
+            .wrap(core.DamageSkillWrapper)
+        )
 
-        GatheringCatcher = core.DamageSkill(f'{AranSkills.GatheringHook.value}(Cancel | 캔슬)', 0, 170+(20 + passive_level), 2).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-
-        PenrilCrashHit = 6 + vEhc.getV(3,3) // 30 + 1
-        PenrilCrash = core.DamageSkill(AranSkills.FenrirCrash.value, 420, 100+500+vEhc.getV(3,3)*5, PenrilCrashHit, modifier=core.CharacterModifier(crit=100, armor_ignore=60,pdamage=PENRIL_PDAMAGE)).setV(vEhc, 2, 2, False).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
-        AdrenalinePenrilCrash = core.DamageSkill(f'{AranSkills.FenrirCrash.value}(Adrenaline | 아드레날린)', 420, 150+100+500+vEhc.getV(3,3)*5, PenrilCrashHit + 2, modifier=core.CharacterModifier(crit=100, armor_ignore=60,pdamage=PENRIL_ADRENALINE_PDAMAGE)).setV(vEhc, 2, 2, False).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
-        PenrilCrashIceburg = core.DamageSkill(f'{AranSkills.FenrirCrash.value}(Iceburg | 빙산)', 0, 500+vEhc.getV(3,3)*5, 6).setV(vEhc, 2, 2, False).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
-
-        # TODO: It operates as a final attack that increases the number of strokes, but the list of skills that increase the stack is not revealed. 타수가 늘어나는 파이널 어택으로 동작하지만, 스택을 늘리는 스킬 목록이 밝혀지지 않아 일단 총 423타가 나오게 평균으로 해둠.
-        BlizzardTempest = core.DamageSkill(AranSkills.BlizzardTempest.value, 750, 800+32*vEhc.getV(0,0), 8, cooltime=180*1000, red=True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        BlizzardTempestAura = core.SummonSkill(f'{AranSkills.BlizzardTempest.value}(Aura | 저주)', 0, 425, 475+19*vEhc.getV(0,0), 9, 20000, cooltime=-1).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        # TODO: It operates as a final attack that increases the number of strokes, but the list of skills that increase the stack is not revealed. 타수가 늘어나는 파이널 어택으로 동작하지만, 스택을 늘리는 스킬 목록이 밝혀지지 않아 일단 총 423타가 나오게 평균으로 해둠
+        BlizzardTempest = (
+            core.DamageSkill(
+                AranSkills.BlizzardTempest.value,
+                delay=750,
+                damage=800 + 32 * vEhc.getV(0, 0) + ADRENALINE_BOOST_PASSIVE,
+                hit=8,
+                cooltime=180 * 1000,
+                red=True,
+            )
+            .isV(vEhc, 0, 0)
+            .wrap(core.DamageSkillWrapper)
+        )
+        BlizzardTempestAura = (
+            core.SummonSkill(
+                f"{AranSkills.BlizzardTempest.value}(Aura | 저주)",
+                summondelay=0,
+                delay=425,
+                damage=475 + 19 * vEhc.getV(0, 0) + ADRENALINE_BOOST_PASSIVE,
+                hit=9,
+                remain=20000,
+                cooltime=-1,
+            )
+            .isV(vEhc, 0, 0)
+            .wrap(core.SummonSkillWrapper)
+        )
 
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
@@ -221,97 +518,146 @@ class JobGenerator(ck.JobGenerator):
         Combo = core.StackSkillWrapper(Combo, 1000)
         Combo.set_name_style("Increase Combo by | 콤보 %d만큼 증가")
 
-        # Hunters targeting. 헌터즈 타게팅.
+
+        # 헌터즈 타게팅
         BoostEndHuntersTargetingHolder.onAfter(core.RepeatElement(BoostEndHuntersTargeting, 7))
+
+        # Mahas Domain. 마하의 영역
+        MahaRegionInit.onAfter(MahaRegion)
 
         # Install Maha. 인스톨 마하.
         InstallMaha.onAfter(InstallMahaBlizzard)
         InstallMaha.onAfter(Combo.stackController(100))
 
-        # Brandish Maha. 브랜디쉬 마하.
-        BrandishMaha.onAfter(core.RepeatElement(core.OptionalElement(AdrenalineBoost.is_active, BrandishMahaAdrenaline, BrandishMahaNormal), 2))
-        BrandishMaha.onAfter(core.OptionalElement(InstallMaha.is_active, BrandishMaha.controller(0.5, 'reduce_cooltime_p')))
+        # Mahas Carnage. 브랜디쉬 마하
+        BrandishMahaHolder.onAfter(core.RepeatElement(BrandishMaha, 2))
+        BrandishMahaHolder.onJustAfter(core.OptionalElement(InstallMaha.is_active, BrandishMahaHolder.controller(0.5, "reduce_cooltime_p")))
 
         # Combo calculation, weapon aura. 콤보 계산, 오라 웨폰.
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 1)
-        for sk in [SmashSwing, AdrenalineSmashSwing, FinalBlow, AdrenalineFinalBlow,
-                MahaRegionInit, GatheringCatcher,
-                BeyonderFirst, BeyonderSecond, BeyonderThird,
-                AdrenalineBeyonderFirst, AdrenalineBeyonderSecond, AdrenalineBeyonderThird,
-                PenrilCrash, AdrenalinePenrilCrash, BrandishMahaNormal, BrandishMahaAdrenaline, BoostEndHuntersTargeting]:
-            sk.onAfter(Combo.stackController(DynamicVariableOperation.reveal_argument(sk.skill.hit)))
+        for sk in [
+            SmashSwing,
+            FinalBlow,
+            MahaRegionInit,
+            GatheringCatcher,
+            BeyonderFirst,
+            BeyonderSecond,
+            BeyonderThird,
+            PenrilCrash,
+            BrandishMaha,
+            BoostEndHuntersTargeting,
+        ]:
+            sk.onAfter(
+                Combo.stackController(
+                    DynamicVariableOperation.reveal_argument(sk.skill.hit)
+                )
+            )
             auraweapon_builder.add_aura_weapon(sk)
 
-        MahaRegion.onTick(Combo.stackController(DynamicVariableOperation.reveal_argument(MahaRegion.skill.hit)))
+        MahaRegion.onTick(
+            Combo.stackController(
+                DynamicVariableOperation.reveal_argument(MahaRegion.skill.hit)
+            )
+        )
 
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
-        # Final Attack. 파이널 어택.
-        FinalAttackHolder.onAfter(core.OptionalElement(AdrenalineBoost.is_active, FinalAttackAdrenaline, FinalAttack))
-        for sk in [SmashSwing, AdrenalineSmashSwing, FinalBlow, AdrenalineFinalBlow,
-                BrandishMahaNormal, BrandishMahaAdrenaline,
-                BeyonderFirst, BeyonderSecond, BeyonderThird,
-                AdrenalineBeyonderFirst, AdrenalineBeyonderSecond, AdrenalineBeyonderThird,
-                PenrilCrash, AdrenalinePenrilCrash, BoostEndHuntersTargeting]:
-            sk.onAfter(FinalAttackHolder)
+        # Final Attack. 파이널 어택
+        for sk in [
+            SmashSwing,
+            FinalBlow,
+            BeyonderFirst,
+            BeyonderSecond,
+            BeyonderThird,
+            BoostEndHuntersTargetingHolder,
+            BrandishMahaHolder,
+            PenrilCrash,
+        ]:
+            sk.onJustAfter(FinalAttack)
+
 
         # Blizzard Tempest. 블리자드 템페스트.
         BlizzardTempest.onAfter(BlizzardTempestAura)
 
-        # Basic attack. 기본 공격
-        BasicAttack = core.DamageSkill("Basic Attack | 기본 공격", 0,0,0).wrap(core.DamageSkillWrapper)
-
+        # 기본 공격
+        FinalBlow.onAdrenalineAfter(AdrenalineFinalBlowWave)
         FinalBlow.onAfter(BeyonderFirst)
+
+        BeyonderFirst.onAdrenalineAfter(AdrenalineBeyonderWave)
+        BeyonderSecond.onAdrenalineAfter(AdrenalineBeyonderWave)
+        BeyonderThird.onAdrenalineAfter(AdrenalineBeyonderWave)
         BeyonderFirst.onAfter(BeyonderSecond)
         BeyonderSecond.onAfter(BeyonderThird)
         BeyonderThird.onAfter(PenrilCrash)
 
-        AdrenalineFinalBlow.onAfter(AdrenalineBeyonderFirst)
-        AdrenalineFinalBlow.onAfter(FinalBlowWaveAdrenaline)
-        AdrenalineBeyonderFirst.onAfter(AdrenalineBeyonderSecond)
-        AdrenalineBeyonderSecond.onAfter(AdrenalineBeyonderThird)
-        AdrenalineBeyonderThird.onAfter(AdrenalinePenrilCrash)
+        PenrilCrash.onAdrenalineAfter(PenrilCrashIceburg)
 
-        AdrenalineBeyonderFirst.onAfter(AdrenalineBeyonderWave)
-        AdrenalineBeyonderSecond.onAfter(AdrenalineBeyonderWave)
-        AdrenalineBeyonderThird.onAfter(AdrenalineBeyonderWave)
-
-        AdrenalinePenrilCrash.onAfter(PenrilCrashIceburg)
-
-        BasicAttack.onAfter(core.OptionalElement(AdrenalineBoost.is_active, AdrenalineFinalBlow, FinalBlow))
-
-        # SmashSwing. 스매시 스윙
+        # Smash Swing. 스매시 스윙
         SmashSwing.onAfter(SmashSwingIncr)
         SmashSwing.onAfter(SmashSwingIllusion)
+        SmashSwing.onConstraint(
+            core.ConstraintElement(
+                "When there is no swing study | 스윙 연구가 없을때", SmashSwingIncr, SmashSwingIncr.is_not_active
+            )
+        )
 
-        AdrenalineSmashSwing.onAfter(SmashSwingIncr)
-        AdrenalineSmashSwing.onAfter(SmashSwingIllusion)
-
-        SmashSwingHolder = core.DamageSkill(AranSkills.SmashSwing.value, 0,0,0).wrap(core.DamageSkillWrapper)
-        SmashSwingHolder.onAfter(core.OptionalElement(AdrenalineBoost.is_active, AdrenalineSmashSwing, SmashSwing))
-        SmashSwingHolder.onConstraint(core.ConstraintElement('No Smash Swing | 스매시 스윙이 없을때', SmashSwingIncr, SmashSwingIncr.is_not_active))
-
-        # ?? cancel. 게캐 캔슬.
-        BrandishMaha.onAfter(GatheringCatcher)
-        MahaRegion.onAfter(GatheringCatcher)
+        # 게캐 캔슬
+        BrandishMahaHolder.onAfter(GatheringCatcher)
+        MahaRegionInit.onAfter(GatheringCatcher)
         InstallMaha.onAfter(GatheringCatcher)
 
         Combo.set_stack(0)
 
-        # Adrenaline. 아드레날린.
-        AdrenalineBoost.onConstraint(core.ConstraintElement('1000 Combo or more | 콤보가 1000이상', Combo, partial(Combo.judge,1000,1) ))
-        AdrenalineBoost.onAfter(Combo.stackController(-999999999, dtype='set'))
+        # Adrenaline. 아드레날린
+        AdrenalineBoost.onConstraint(
+            core.ConstraintElement("콤보가 1000이상", Combo, partial(Combo.judge, 1000, 1))
+        )
+        AdrenalineBoost.onAfter(Combo.stackController(-999999999, dtype="set"))
         AdrenalineBoost.onAfter(BoostEndHuntersTargetingHolder.controller(1))
-        AdrenalineBoost.onEventEnd(Combo.stackController(500, dtype='set'))
-        AdrenalineGenerator.onConstraint(core.ConstraintElement('When Adrenaline Boost is impossible | 아드레날린부스트가 불가능할때', AdrenalineBoost, AdrenalineBoost.is_not_active))
+        AdrenalineBoost.onEventEnd(Combo.stackController(500, dtype="set"))
+        AdrenalineGenerator.onConstraint(
+            core.ConstraintElement(
+                "When adrenaline boost is impossible | 아드레날린 부스트가 불가능할때", AdrenalineBoost, AdrenalineBoost.is_not_active
+            )
+        )
         AdrenalineGenerator.onAfter(AdrenalineBoost)
-        return(BasicAttack,
-                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), HerosOath,
-                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), Booster, SmashSwingIncr, SnowCharge, AdvancedComboAbility, ComboAbility,
-                    BlessingMaha, AdrenalineBoost,
-                    AdrenalineGenerator,
-                    InstallMaha, InstallMahaBlizzard, Combo, AuraWeaponBuff, AuraWeapon, BlizzardTempestAura,
-                    globalSkill.soul_contract()] +\
-                [SmashSwingHolder, BrandishMaha, BoostEndHuntersTargetingHolder, BlizzardTempest, MirrorBreak, MirrorSpider] +\
-                [MahaRegion] +\
-                [BasicAttack])
+
+        # Scheduling
+        Combo.set_stack(900)  # start with 900 combo
+
+        return (
+            FinalBlow,
+            [
+                Combo,
+                globalSkill.maple_heros(chtr.level, combat_level=self.combat),
+                globalSkill.useful_sharp_eyes(),
+                globalSkill.useful_combat_orders(),
+                Booster,
+                SnowCharge,
+                BlessingMaha,
+                HerosOath,
+                AuraWeaponBuff,
+                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
+                InstallMaha,
+                AdrenalineBoost,
+                AdrenalineGenerator,
+                globalSkill.soul_contract(),
+            ]
+            + [
+                MahaRegionInit,
+                SmashSwing,
+                BrandishMahaHolder,
+                BoostEndHuntersTargetingHolder,
+                BlizzardTempest,
+                MirrorBreak,
+            ]
+            + [
+                MahaRegion,
+                SmashSwingIncr,
+                AuraWeapon,
+                InstallMahaBlizzard,
+                BlizzardTempestAura,
+                MirrorSpider,
+            ]  # Not used from scheduler
+            + [FinalBlow],
+        )

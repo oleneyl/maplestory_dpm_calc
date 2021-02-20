@@ -151,7 +151,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(self.combat/2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(self.combat/2))
 
         CriticalRage = core.InformedCharacterModifier(f"{BuccaneerSkills.PrecisionStrikes.value}(Boss | 보스)",crit = 20)    # Boss opponent +20% Crit rate. 보스상대 추가+20% 크리율.
         GuardCrush = core.InformedCharacterModifier(BuccaneerSkills.TyphoonCrush.value,armor_ignore = 40 + 2*passive_level)  # 40% chance of ignoring 100% of defence. 40% 확률로 방무 100% 무시.

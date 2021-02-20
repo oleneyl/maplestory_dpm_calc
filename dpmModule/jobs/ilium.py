@@ -210,7 +210,7 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_modifier_optimization_hint(self) -> core.CharacterModifier:
-        return core.CharacterModifier(boss_pdamage=108)
+        return core.CharacterModifier(boss_pdamage=106, armor_ignore=-5.4)
         
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         # Absolab weapon magic attack 241. 앱솔 무기 마력 241.
@@ -230,7 +230,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5)
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90)
         
         return [WeaponConstant, Mastery]
         
@@ -344,6 +344,8 @@ class JobGenerator(ck.JobGenerator):
 
         CrystalGate.onAfter(CrystalGateBuff)
         CrystalGateBuff.onConstraint(core.ConstraintElement(f"{IlliumSkills.CrystalGate.value} ON", CrystalGate, CrystalGate.is_active))
+        CrystalGateBuff.prevent_from_caching()
+
         UseCrystalGateAttack = core.OptionalElement(lambda: CrystalGate.is_active() and CrystalGateAttack.is_available(), CrystalGateAttack, name="폭격 조건 체크")
         for sk in [Craft_Javelin, Craft_Javelin_AfterOrb, Craft_Orb, Craft_Longinus,
                     GloryWing_Craft_Javelin, GloryWing_MortalWingbit, CrystalSkill_MortalSwing, CrystalIgnition]:

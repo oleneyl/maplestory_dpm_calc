@@ -132,7 +132,7 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -5 + 0.5 * 2 * (passive_level // 3))   
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+2 * (passive_level // 3))
         Weakness = core.InformedCharacterModifier(ShadeSkills.Weaken.value,pdamage = 20)  # It is debuff, but it is always activated. 디버프지만 상시발동가정.
 
         # Weakness Detection: Triggers when HP is below (50 + passive_level)%. 약점 간파: 체력 (50 + passive_level)% 이하일 때 발동.
@@ -288,7 +288,7 @@ class JobGenerator(ck.JobGenerator):
         SpiritFrenzy.onConstraint(SpiritFrenzyConstraint)
 
         return(BasicAttackWrapper, 
-                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     EnhanceSpiritLink, LuckyDice, HerosOath,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), Overdrive, SoulConcentrate, DoubleBody, SoulTrapStack,
                     globalSkill.soul_contract()] +\

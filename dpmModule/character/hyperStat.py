@@ -38,6 +38,7 @@ class HyperStat:
     @staticmethod
     def get_hyper_index(
         mdf: ExMDF,
+        jobname: str,
         level: int,
         prefixed: int,
         isIndex: bool = True,
@@ -48,6 +49,11 @@ class HyperStat:
         idxList = [0 for i in range(hyper_size)]
         point_left = HyperStat.get_point(level) - prefixed
         mdfSum = ExMDF()
+        requirement = HyperStat.requirement.copy()
+        enhancement = HyperStat.enhancement.copy()
+
+        if jobname == "데몬어벤져":
+            enhancement[0] = [ExMDF(pstat_main=i*2) for i in range(16)]
         while True:
             not_enough = True
             fix_enhance = (mdf + mdfSum).get_damage_factor()
@@ -55,16 +61,16 @@ class HyperStat:
             val = -1
             ehc = 0
             for i in range(hyper_size):
-                enhanced_mdf = HyperStat.enhancement[i][idxList[i]] + mdf + mdfSum
+                enhanced_mdf = enhancement[i][idxList[i]] + mdf + mdfSum
                 if critical_reinforce:
                     enhanced_mdf += ExMDF(crit_damage=max(0, enhanced_mdf.crit) * 0.125)
                 _ehc = (
                     enhanced_mdf.get_damage_factor() - fix_enhance
-                ) / HyperStat.requirement[idxList[i]]
-                if _ehc >= ehc and HyperStat.requirement[idxList[i]] < point_left:
+                ) / requirement[idxList[i]]
+                if _ehc >= ehc and requirement[idxList[i]] < point_left:
                     ehc = _ehc
                     val = i
-                if HyperStat.requirement[idxList[i]] < point_left:
+                if requirement[idxList[i]] < point_left:
                     not_enough = False
             if not_enough:
                 break
@@ -77,8 +83,8 @@ class HyperStat:
                     print((mdf + mdfSum).log())
                     raise TypeError("Something gonna wrong")
 
-            point_left -= HyperStat.requirement[idxList[val]]
-            mdfSum = mdfSum + HyperStat.enhancement[val][idxList[val]]
+            point_left -= requirement[idxList[val]]
+            mdfSum = mdfSum + enhancement[val][idxList[val]]
             idxList[val] += 1
 
         if isIndex:
@@ -88,15 +94,15 @@ class HyperStat:
 
     @staticmethod
     def get_hyper_object(
-        mdf: ExMDF, level: int, prefixed: int, critical_reinforce: bool = False
+        mdf: ExMDF, jobname: str, level: int, prefixed: int, critical_reinforce: bool = False
     ):
-        mdf = HyperStat.get_hyper_modifier(mdf, level, prefixed, critical_reinforce)
+        mdf = HyperStat.get_hyper_modifier(mdf, jobname, level, prefixed, critical_reinforce)
         return HyperStat(mdf, level)
 
     @staticmethod
     def get_hyper_modifier(
-        mdf: ExMDF, level: int, prefixed: int, critical_reinforce: bool = False
+        mdf: ExMDF, jobname: str, level: int, prefixed: int, critical_reinforce: bool = False
     ) -> Union[List[int], ExMDF]:
         return HyperStat.get_hyper_index(
-            mdf, level, prefixed, isIndex=False, critical_reinforce=critical_reinforce
+            mdf, jobname, level, prefixed, isIndex=False, critical_reinforce=critical_reinforce
         )

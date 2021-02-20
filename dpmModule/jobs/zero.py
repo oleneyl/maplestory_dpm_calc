@@ -6,7 +6,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, MutualRule
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobbranch import warriors
 from math import ceil
 from typing import Any, Dict
@@ -122,7 +122,8 @@ class DivineAuraWrapper(core.BuffSkillWrapper):
 
 
 class JobGenerator(ck.JobGenerator):
-    # 제로는 쓸컴뱃 미적용, 패시브 레벨 +1 어빌 사용 불가능
+    # 제로는 쓸컴뱃 효율이 낮으나 일단 딜이 증가하므로 사용
+    # 패시브 레벨 +1 어빌 사용 불가능
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.vSkillNum = 5
@@ -131,7 +132,6 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "제로"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
-        self.combat = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -140,8 +140,8 @@ class JobGenerator(ck.JobGenerator):
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
-        Mastery = core.InformedCharacterModifier("Mastery | 숙련도", pdamage_indep=-5)
-        ResolutionTime = core.InformedCharacterModifier(ZeroSkills.ResolutionTime.value, pdamage_indep=25, stat_main=50)
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90)
+        ResolutionTime = core.InformedCharacterModifier("리졸브 타임", pdamage_indep=25, stat_main=50)
 
         return [Mastery, ResolutionTime]
 
@@ -502,7 +502,8 @@ class JobGenerator(ck.JobGenerator):
         EgoWeaponBeta.protect_from_running()
 
         return(ComboHolder,
-               [globalSkill.maple_heros(chtr.level, name=ZeroSkills.RhinnesProtection.value, combat_level=0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(),
+
+               [globalSkill.maple_heros(chtr.level, name=ZeroSkills.RhinnesProtection.value, combat_level=0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
                 DivineAura, AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, RhinneBless,
                 DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, LimitBreakFinal, CriticalBind,
                 SoulContract] +

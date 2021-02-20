@@ -5,13 +5,14 @@ from typing import Any, Dict
 
 from dpmModule.jobs.jobclass.adventurer import AdventurerSkills
 
-from . import globalSkill
+from . import globalSkill, jobutils
 from ..kernel import core
 from .jobclass import adventurer
 from .jobbranch import magicians
 from ..status.ability import Ability_tool
 from ..character import characterKernel as ck
 from ..execution.rules import RuleSet, MutualRule, InactiveRule
+from math import ceil
 
 
 # English skill information for Fire/Poison Mage here https://maplestory.fandom.com/wiki/Magician_(Fire,_Poison)/Skills

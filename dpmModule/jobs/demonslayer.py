@@ -4,7 +4,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobbranch import warriors
 from .jobclass import demon
 from . import jobutils
@@ -128,7 +128,7 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=20)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-5+0.5*ceil(passive_level/2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(passive_level/2))
 
         EvilTorture = core.InformedCharacterModifier(DemonSlayerSkills.InsulttoInjury.value, pdamage_indep=15, crit=15)  # Only when you have a condition abnormality. 상태이상에 걸렸을때만.
 
@@ -186,6 +186,7 @@ class JobGenerator(ck.JobGenerator):
         # Blue Blood cannot be applied to a pet. 블루블러드는 소환수 적용이 안됨.
         BlueBlood = core.BuffSkill(DemonSlayerSkills.BlueBlood.value, 1020, 60000, cooltime=120000-60000).wrap(core.BuffSkillWrapper)  # In all attacks, an additional hit occurs at 90% of the final damage -3 seconds when receiving 50 Force, 2 seconds every 4 seconds when receiving Infinity Force, reducing all skill force consumption by 20%. 모든 공격에 최종데미지의 90%로 추가타 발생. 포스50수급시 -3초, 인피니티 포스시 4초마다 2초 감소, 모든 스킬 포스소모량 20%감소.
         Cerberus = core.DamageSkill(DemonSlayerSkills.CerberusChomp.value, 690, 450, 6, cooltime=5000, modifier=core.CharacterModifier(boss_pdamage=50, armor_ignore=50)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 포스50 추가흡수
+        CerberusAuto = core.DamageSkill(f"{DemonSlayerSkills.CerberusChomp.value}(Auto | 자동)", 0, 450, 6, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=50, armor_ignore=50)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 포스50 추가흡수
         DemonFortitude = core.BuffSkill(DemonSlayerSkills.DemonicFortitude.value, 0, 60000, cooltime=120000).wrap(core.BuffSkillWrapper)
 
         CallMastema = demon.CallMastemaWrapper(vEhc, 4, 4)
@@ -218,7 +219,7 @@ class JobGenerator(ck.JobGenerator):
         DevilCry.onAfter(DevilCryBuff)
 
         DemonAwakning.onAfter(DemonAwakningSummon)
-        DemonAwakningSummon.onTick(Cerberus)
+        DemonAwakningSummon.onTick(CerberusAuto)
 
         SpiritOfRage.onEventEnd(SpiritOfRageEnd)
         Orthros.onAfter(Orthros_)
@@ -243,7 +244,7 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
         # Apply extra hit. 블블 추가타 적용.
-        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DemonBaneTick, DemonBane2Tick, DevilCry, Cerberus, AuraWeapon]:
+        for sk in [DemonSlashAW1, DemonSlashAW2, DemonSlashAW3, DemonSlashAW4, DemonImpact, DemonBaneTick, DemonBane2Tick, DevilCry, Cerberus, CerberusAuto, AuraWeapon]:
             jobutils.create_auxilary_attack(sk, 0.9, nametag=f'({DemonSlayerSkills.BlueBlood.value})')
 
         return(BasicAttackWrapper,

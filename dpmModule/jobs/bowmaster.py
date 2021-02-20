@@ -98,35 +98,6 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
         return self.cooltime_skip_task
 
 
-class ArrowOfStormWrapper(core.DamageSkillWrapper):
-    def __init__(self, skill: core.DamageSkill):
-        super(ArrowOfStormWrapper, self).__init__(skill)
-        self.lastUsed = -9999
-        self.currentTime = 0
-
-    def spend_time(self, time: float) -> None:
-        self.currentTime += time
-        super(ArrowOfStormWrapper, self).spend_time(time)
-
-    def _use(self, skill_modifier: core.SkillModifier) -> core.ResultObject:
-        result = super(ArrowOfStormWrapper, self)._use(skill_modifier)
-        self.lastUsed = self.currentTime + result.delay
-        return result
-
-    def get_delay(self) -> float:
-        """
-        In case of current time> last cast time + delay, add a sun deal.
-        This is not an accurate implementation because a buff with a delay of 0 can be interrupted.
-
-        현재 시간 > 마지막 시전 시간 + 딜레이 인 경우에 선딜을 추가함.
-        딜레이가 0인 버프가 끼어들 수 있기에 정확한 구현은 아님.
-        """
-        delay = super().get_delay()
-        if self.currentTime > self.lastUsed:
-            delay += 540
-        return delay
-
-
 class DelayVaryingSummonSkillWrapper(core.SummonSkillWrapper):
     # TODO: temporal fix... move to kernel/core, make DelayVaryingSummonSkill and use self.skill.delays
     def __init__(self, skill, delays) -> None:
@@ -197,9 +168,7 @@ class JobGenerator(ck.JobGenerator):
     ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=30)
-        Mastery = core.InformedCharacterModifier(
-            BowmasterSkills.BowMastery.value, pdamage_indep=-7.5 + 0.5 * ceil(passive_level / 2)
-        )
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=85+ceil(passive_level / 2))
         ExtremeArchery = core.InformedCharacterModifier(
             BowmasterSkills.RecklessHuntBow.value, att=40, pdamage_indep=30
         )
@@ -292,7 +261,7 @@ class JobGenerator(ck.JobGenerator):
                 + MortalBlow,
             )
             .setV(vEhc, 0, 2, True)
-            .wrap(ArrowOfStormWrapper)
+            .wrap(core.DamageSkillWrapper)
         )
         ArrowFlatter = (
             core.SummonSkill(
@@ -488,13 +457,16 @@ class JobGenerator(ck.JobGenerator):
         # Armor Piercing
         for sk in [
             ArrowOfStorm,
+            MirrorBreak,
+        ]:
+            sk.onBefore(ArmorPiercing.cooltime_skip())
+        for sk in [
             ArrowRain,
             QuibberFullBurst,
             OpticalIllusion,
             GuidedArrow,
-            MirrorBreak,
         ]:
-            sk.onBefore(ArmorPiercing.cooltime_skip())
+            sk.onTick(ArmorPiercing.cooltime_skip())
         ArrowOfStorm.add_runtime_modifier(
             ArmorPiercing,
             lambda armor_piercing: armor_piercing.check_modifier(),

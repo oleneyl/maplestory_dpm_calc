@@ -9,7 +9,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobbranch import magicians
 from .jobclass import demon
 from typing import Any, Dict
@@ -171,7 +171,7 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat     
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + passive_level)
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+2*passive_level)
         PsychicForce3Passive = core.InformedCharacterModifier(f"{KinesisSkills.PsychicAssault.value}(Passive | 패시브)", pdamage_indep = 20)
         return [WeaponConstant, Mastery, PsychicForce3Passive]
         
@@ -347,7 +347,8 @@ class JobGenerator(ck.JobGenerator):
             UltimatePsychic.protect_from_running()
             Ultimate_Material.onConstraint(TrainConstraint)
         elif DEALCYCLE == "shot":
-            Ultimate_Material.protect_from_running()
+            Ultimate_Material.onConstraint(core.ConstraintElement("오버", PsychicOver, PsychicOver.is_active))
+            Ultimate_Material.onConstraint(TrainConstraint)
             UltimatePsychic.onConstraint(TrainConstraint)
         else:
             raise ValueError(DEALCYCLE)
