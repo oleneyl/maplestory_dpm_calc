@@ -1,3 +1,14 @@
+from enum import Enum
+
+from .hero import HeroSkills
+from .pathfinder import PathfinderSkills
+from .bishop import BishopSkills
+from .dualblade import DualBladeSkills
+from .darknight import DarkKnightSkills
+from .bowmaster import BowmasterSkills
+from .marksman import MarksmanSkills
+
+from .globalSkill import GlobalSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -7,6 +18,59 @@ from . import globalSkill
 from .jobbranch import thieves
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Phantom here https://maplestory.fandom.com/wiki/Phantom/Skills
+class PhantomSkills(Enum):
+    # Link Skill
+    PhantomInstinct = 'Phantom Instinct | 데들리 인스팅트'
+    # Beginner
+    ShroudWalk = 'Shroud Walk | 팬텀 슈라우드'
+    DexterousTraining = 'Dexterous Training | 하이 덱스터리티'
+    SkillSwipe = 'Skill Swipe | 스틸 스킬'
+    Loadout = 'Loadout | 스킬 매니지먼트'
+    JudgmentDraw = 'Judgment Draw | 저지먼트'
+    Ghostwalk = 'Ghostwalk | 스니킹 무브먼트'
+    # 1st Job
+    DoubleEntendre = 'Double Entendre | 더블 피어싱'
+    ImpeccableMemoryI = 'Impeccable Memory I | 탤런트 오브 팬텀시프 Ⅰ'
+    PhantomSwiftness = 'Phantom Swiftness | 스위프트 팬텀'
+    FeatherFoot = 'Feather Foot | 퀵 이베이젼'
+    # 2nd Job
+    CallingCard = 'Calling Card | 콜 오브 페이트'
+    ImpeccableMemoryII = 'Impeccable Memory II | 탤런트 오브 팬텀시프 II'
+    MilleCartes = 'Mille Cartes | 브리즈 카르트'
+    CarteBlanche = 'Carte Blanche | 블랑 카르트'
+    CaneMastery = 'Cane Mastery | 케인 마스터리'
+    CaneBooster = 'Cane Booster | 케인 부스터'
+    DevilsLuck = 'Devil\'s Luck | 럭 모노폴리'
+    # 3rd Job
+    Blason = 'Blason | 코트 오브 암즈'
+    ImpeccableMemoryIII = 'Impeccable Memory III | 탤런트 오브 팬텀시프 Ⅲ'
+    FinalFeint = 'Final Feint | 럭오브팬텀시프'
+    BadLuckWard = 'Bad Luck Ward | 미스포츈 프로텍션'
+    MistMask = 'Mist Mask | 플래시 앤 플리'
+    Lune = 'Lune | 문 라이트'
+    RapierWit = 'Rapier Wit | 팬텀 차지'
+    PiercingVision = 'Piercing Vision | 어큐트 센스'
+    # 4th Job
+    MilleAiguilles = 'Mille Aiguilles | 얼티밋 드라이브'
+    ImpeccableMemoryIV = 'Impeccable Memory IV | 탤런트 오브 팬텀시프 Ⅳ'
+    CarteNoir = 'Carte Noir | 느와르 카르트'
+    Penombre = 'Penombre | 트와일라이트'
+    PriereDAria = 'Priere D\'Aria | 프레이 오브 아리아'
+    Tempest = 'Tempest | 템페스트 오브 카드'
+    CaneExpert = 'Cane Expert | 케인 엑스퍼트'
+    VolDAme = 'Vol D\'Ame | 소울 스틸'
+    # Hypers
+    CarteRoseFinale = 'Carte Rose Finale | 로즈 카르트 피날레'
+    HeroicMemories = 'Heroic Memories | 히어로즈 오쓰'
+    ImpeccableMemoryH = 'Impeccable Memory H | 탤런트 오브 팬텀시프 H'
+    # 5th Job
+    LuckoftheDraw = 'Luck of the Draw | 조커'
+    AceintheHole = 'Ace in the Hole | 블랙잭'
+    PhantomsMark = 'Phantom\'s Mark | 마크 오브 팬텀'
+    RiftBreak = 'Rift Break | 리프트 브레이크'
 
 
 class JobGenerator(ck.JobGenerator):
