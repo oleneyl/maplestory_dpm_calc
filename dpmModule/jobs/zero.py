@@ -1,3 +1,7 @@
+from enum import Enum
+
+from dpmModule.jobs.globalSkill import GlobalSkills
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
@@ -6,6 +10,69 @@ from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Zero here https://maplestory.fandom.com/wiki/Zero/Skills
+class ZeroSkills(Enum):
+    # Link Skill
+    RhinnesBlessing = 'Rhinne\'s Blessing | 륀느의 축복'
+    # Shared Skills
+    DualCombat = 'Dual Combat | 듀얼 컴뱃'
+    ResolutionTime = 'Resolution Time | 리졸브 타임'
+    DivineForce = 'Divine Force | 디바인 포스'
+    DivineSpeed = 'Divine Speed | 디바인 스위프트'
+    RhinnesProtection = 'Rhinne\'s Protection | 륀느의 가호'
+    Doubletime = 'Doubletime | 래피드 타임'
+    TimeDistortion = 'Time Distortion | 타임 디스토션'
+    TimeHolding = 'Time Holding | 타임 홀딩'
+    Rewind = 'Rewind | 타임 리와인드'
+    ShadowRain = 'Shadow Rain | '
+    FocusedTime = 'Focused Time | 인탠시브 타임'
+    # Alpha's Skills
+    MoonStrike = 'Moon Strike | 문 스트라이크'
+    PiercingThrust = 'Piercing Thrust | 피어스 쓰러스트'
+    ShadowStrike = 'Shadow Strike | 쉐도우 스트라이크'
+    FlashAssault = 'Flash Assault | 플래시 어썰터'
+    SpinCutter = 'Spin Cutter | 스핀 커터'
+    AdvancedSpinCutter = 'Advanced Spin Cutter | 어드밴스드 스핀 커터'
+    RollingCross = 'Rolling Cross | 롤링 커브'
+    GrandRollingCross = 'Grand Rolling Cross | 어드밴스드 롤링 커브'
+    RollingAssault = 'Rolling Assault | 롤링 어썰터'
+    AdvancedRollingAssault = 'Advanced Rolling Assault | 어드밴스드 롤링 어썰터'
+    WindCutter = 'Wind Cutter | 윈드 커터'
+    WindStriker = 'Wind Striker | 윈드 스트라이크'
+    StormBreak = 'Storm Break | 스톰 브레이크'
+    AdvancedStormBreak = 'Advanced Storm Break | 어드밴스드 스톰 브레이크'
+    LongSwordMastery = 'Long Sword Mastery | 태도 마스터리'
+    TimeGenerator = 'Time Generator | 컴뱃 리커버리'
+    ReinforceBody = 'Reinforce Body | 리인포스 바디'
+    DivineLeer = 'Divine Leer | 디바인 리어'
+    # Beta's Skills
+    RisingSlash = 'Rising Slash | 어퍼 슬래시'
+    AirRaid = 'Air Raid | 파워 스텀프'
+    AirRiot = 'Air Riot | 어드밴스드 파워 스텀프'
+    FlashCut = 'Flash Cut | 프론트 슬래시'
+    ThrowingWeapon = 'Throwing Weapon | 스로잉 웨폰'
+    AdvancedThrowingWeapon = 'Advanced Throwing Weapon | 어드밴스드 스로잉 웨폰'
+    SpinDriver = 'Spin Driver | 터닝 드라이브'
+    WheelWind = 'Wheel Wind | 휠 윈드'
+    AdvancedWheelWind = 'Advanced Wheel Wind | 어드밴스드 휠 윈드'
+    GigaCrash = 'Giga Crash | 기가 크래시'
+    FallingStar = 'Falling Star | 점핑 크래시'
+    EarthBreak = 'Earth Break | 어스 브레이크'
+    AdvancedEarthBreak = 'Advanced Earth Break | 어드밴스드 어스 브레이크'
+    HeavySwordMastery = 'Heavy Sword Mastery | 대검 마스터리'
+    SolidBody = 'Solid Body | 솔리드 바디'
+    ArmorSplit = 'Armor Split | 아머 스플릿'
+    ImmuneBarrier = 'Immune Barrier | 이뮨 배리어'
+    CriticalBind = 'Critical Bind | 크리티컬 바인드'
+    # 5th Job
+    TranscendentRhinnesPrayer = 'Transcendent Rhinne\'s Prayer | 초월자 륀느의 기원'
+    ChronoBreak = 'Chrono Break | 리미트 브레이크'
+    TwinBladesofTime = 'Twin Blades of Time | 조인트 어택'
+    ShadowFlash = 'Shadow Flash | 쉐도우 플래시'
+    EgoWeapon = 'Ego Weapon | 에고 웨폰'
+
 
 '''
 Assist mechanism summary
