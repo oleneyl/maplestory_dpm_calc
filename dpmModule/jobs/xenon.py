@@ -161,7 +161,7 @@ class SupplyStackWrapper(core.StackSkillWrapper):
         return self._result_object_cache
 
     def beginOverloadMode(self):
-        return core.TaskHolder(core.Task(self, self.begin_overload), name="오버로드 모드 시작")
+        return core.TaskHolder(core.Task(self, self.begin_overload), name=f"Start {XenonSkills.CoreOverload.value} 시작")
 
     def end_overload(self):
         self.overload_mode = False
@@ -171,21 +171,21 @@ class SupplyStackWrapper(core.StackSkillWrapper):
         return self._result_object_cache
 
     def endOverloadMode(self):
-        return core.TaskHolder(core.Task(self, self.end_overload), name="오버로드 모드 종료")
+        return core.TaskHolder(core.Task(self, self.end_overload), name=f"End {XenonSkills.CoreOverload.value} 종료")
 
     def begin_amaranth(self):
         self.amaranth_generator = True
         return self._result_object_cache
 
     def beginAmaranthGenerator(self):
-        return core.TaskHolder(core.Task(self, self.begin_amaranth), name="아마란스 제너레이터 시작")
+        return core.TaskHolder(core.Task(self, self.begin_amaranth), name=f"Start {XenonSkills.AmaranthGenerator.value} 시작")
 
     def end_amaranth(self):
         self.amaranth_generator = False
         return self._result_object_cache
 
     def endAmaranthGenerator(self):
-        return core.TaskHolder(core.Task(self, self.end_amaranth), name="아마란스 제너레이터 종료")
+        return core.TaskHolder(core.Task(self, self.end_amaranth), name=f"End {XenonSkills.AmaranthGenerator.value} 종료")
 
 
 class JobGenerator(ck.JobGenerator):
@@ -203,18 +203,18 @@ class JobGenerator(ck.JobGenerator):
     def get_ruleset(self):
         ruleset = RuleSet()
 
-        ruleset.add_rule(ConditionRule("엑스트라 서플라이", "서플러스 서플라이", lambda sk : sk.stack < 20), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule("아마란스 제네레이터", "오버로드 모드"), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule("아마란스 제네레이터", "서플러스 서플라이", lambda sk : sk.stack <= 1), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(XenonSkills.EmergencyResupply.value, XenonSkills.SupplySurplus.value, lambda sk : sk.stack < 20), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(XenonSkills.AmaranthGenerator.value, XenonSkills.CoreOverload.value), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(XenonSkills.AmaranthGenerator.value, XenonSkills.SupplySurplus.value, lambda sk : sk.stack <= 1), RuleSet.BASE)
 
-        for skill in ["메가 스매셔(개시)", "소울 컨트랙트", "레디 투 다이", "오버 드라이브"]:
-            ruleset.add_rule(ConcurrentRunRule(skill, "홀로그램 그래피티 : 융합"), RuleSet.BASE)
+        for skill in [f"{XenonSkills.OmegaBlaster.value}(Cast | 개시)", GlobalSkills.TermsAndConditions.value, ThiefSkills.LastResort.value, PirateSkills.Overdrive.value]:
+            ruleset.add_rule(ConcurrentRunRule(skill, XenonSkills.HypogramFieldFusion.value), RuleSet.BASE)
 
-        ruleset.add_rule(ConditionRule("홀로그램 그래피티 : 융합", "오버로드 모드", lambda sk: sk.is_time_left(40000, -1)), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule("오버로드 모드", "홀로그램 그래피티 : 융합", lambda sk: sk.is_cooltime_left(70000-40000, -1)), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule("메이플월드 여신의 축복", "오버로드 모드", lambda sk: sk.is_active() and sk.is_time_left(60000, -1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(XenonSkills.HypogramFieldFusion.value, XenonSkills.CoreOverload.value, lambda sk: sk.is_time_left(40000, -1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(XenonSkills.CoreOverload.value, XenonSkills.HypogramFieldFusion.value, lambda sk: sk.is_cooltime_left(70000-40000, -1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(GlobalSkills.MapleWorldGoddessBlessing.value, XenonSkills.CoreOverload.value, lambda sk: sk.is_active() and sk.is_time_left(60000, -1)), RuleSet.BASE)
 
-        ruleset.add_rule(DisableRule("멜트다운 익스플로전"), RuleSet.BASE)
+        ruleset.add_rule(DisableRule(XenonSkills.OrbitalCataclysm.value), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self):
@@ -223,21 +223,21 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        Multilateral1 = core.InformedCharacterModifier("멀티래터럴 I", pdamage=3)
-        Multilateral2 = core.InformedCharacterModifier("멀티래터럴 II", pdamage=5)
-        Multilateral3 = core.InformedCharacterModifier("멀티래터럴 III", pdamage=7)
-        Multilateral4 = core.InformedCharacterModifier("멀티래터럴 IV", pdamage=10)
-        Multilateral5 = core.InformedCharacterModifier("멀티래터럴 V", pdamage=10)
-        Multilateral6 = core.InformedCharacterModifier("멀티래터럴 VI", pdamage=5)
+        Multilateral1 = core.InformedCharacterModifier(XenonSkills.MultilateralI.value, pdamage=3)
+        Multilateral2 = core.InformedCharacterModifier(XenonSkills.MultilateralII.value, pdamage=5)
+        Multilateral3 = core.InformedCharacterModifier(XenonSkills.MultilateralIII.value, pdamage=7)
+        Multilateral4 = core.InformedCharacterModifier(XenonSkills.MultilateralIV.value, pdamage=10)
+        Multilateral5 = core.InformedCharacterModifier(XenonSkills.MultilateralV.value, pdamage=10)
+        Multilateral6 = core.InformedCharacterModifier(XenonSkills.MultilateralVI.value, pdamage=5)
 
         Multilateral = [Multilateral1, Multilateral2, Multilateral3, Multilateral4, Multilateral5, Multilateral6]
 
-        LinearPerspective = core.InformedCharacterModifier("리니어 퍼스펙티브", crit=40)
-        MinoritySupport = core.InformedCharacterModifier("마이너리티 서포트", stat_main=60)  # Strength deck 20 each. 힘덱럭 20씩.
-        XenonMastery = core.InformedCharacterModifier("제논 마스터리", att=20)
-        HybridDefensesPassive = core.InformedCharacterModifier("듀얼브리드 디펜시브(패시브)", stat_main=30)  # Strength deck 30 each. 힘덱럭 30씩.
-        XenonExpert = core.InformedCharacterModifier("제논 엑스퍼트", att=30 + passive_level, crit_damage=8)
-        OffensiveMatrix = core.InformedCharacterModifier("오펜시브 매트릭스", armor_ignore=30 + passive_level)
+        LinearPerspective = core.InformedCharacterModifier(XenonSkills.PerspectiveShift.value, crit=40)
+        MinoritySupport = core.InformedCharacterModifier(XenonSkills.StructuralIntegrity.value, stat_main=60)  # Strength deck 20 each. 힘덱럭 20씩.
+        XenonMastery = core.InformedCharacterModifier(XenonSkills.XenonMastery.value, att=20)
+        HybridDefensesPassive = core.InformedCharacterModifier(f"{XenonSkills.HybridDefenses.value}(Passive | 패시브)", stat_main=30)  # Strength deck 30 each. 힘덱럭 30씩.
+        XenonExpert = core.InformedCharacterModifier(XenonSkills.XenonExpert.value, att=30 + passive_level, crit_damage=8)
+        OffensiveMatrix = core.InformedCharacterModifier(XenonSkills.OffensiveMatrix.value, armor_ignore=30 + passive_level)
 
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 3, 4)
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 2, 2)
@@ -263,79 +263,79 @@ class JobGenerator(ck.JobGenerator):
 
         # Buff skills
         # Pet Buff: Epision City, Booster. 펫버프: 에피션시, 부스터.
-        InclinePower = core.BuffSkill("인클라인 파워", 990, 240000, att=30, rem=True).wrap(core.BuffSkillWrapper)
-        EfficiencyPipeLine = core.BuffSkill("에피션시 파이프라인", 0, 240000, rem=True).wrap(core.BuffSkillWrapper)
-        Booster = core.BuffSkill("제논 부스터", 0, 240000, rem=True).wrap(core.BuffSkillWrapper)
-        VirtualProjection = core.BuffSkill("버추얼 프로젝션", 0, 999999999).wrap(core.BuffSkillWrapper)
+        InclinePower = core.BuffSkill(XenonSkills.CircuitSurge.value, 990, 240000, att=30, rem=True).wrap(core.BuffSkillWrapper)
+        EfficiencyPipeLine = core.BuffSkill(XenonSkills.EfficiencyStreamline.value, 0, 240000, rem=True).wrap(core.BuffSkillWrapper)
+        Booster = core.BuffSkill(XenonSkills.XenonBooster.value, 0, 240000, rem=True).wrap(core.BuffSkillWrapper)
+        VirtualProjection = core.BuffSkill(XenonSkills.ManifestProjector.value, 0, 999999999).wrap(core.BuffSkillWrapper)
 
         # No delay in Wickham R. 위컴알에 딜레이 없음.
-        ExtraSupply = core.BuffSkill("엑스트라 서플라이", 0, 1, cooltime=30000, red=True).wrap(core.BuffSkillWrapper)
+        ExtraSupply = core.BuffSkill(XenonSkills.EmergencyResupply.value, 0, 1, cooltime=30000, red=True).wrap(core.BuffSkillWrapper)
 
-        OOPArtsCode = core.BuffSkill("오파츠 코드", 990, (30+self.combat//2)*1000, pdamage_indep=25+self.combat//2, boss_pdamage=30+self.combat, rem=True).wrap(core.BuffSkillWrapper)
+        OOPArtsCode = core.BuffSkill(XenonSkills.OOPArtsCode.value, 990, (30+self.combat//2)*1000, pdamage_indep=25+self.combat//2, boss_pdamage=30+self.combat, rem=True).wrap(core.BuffSkillWrapper)
 
         # Damage skills
 
         # Rocket enhancement applied. 로켓강화 적용됨.
-        PinpointRocket = core.DamageSkill("핀포인트 로켓", 0, 50+40+40+100, 4, cooltime=2000).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        PinpointRocket = core.DamageSkill(XenonSkills.PinpointSalvo.value, 0, 50+40+40+100, 4, cooltime=2000).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         # At-bats are transferred to Skill Wrapper. 타수는 Skill Wrapper 쪽으로 이관.
         # AegisSystem = core.DamageSkill("이지스 시스템", 0, 120, 1, modifier=core.CharacterModifier(pdamage=20+passive_level//3), cooltime=1500).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         # Stacks with a 30% probability, stacks 3 stacks, and then disappears when attacking. 30%확률로 중첩 쌓임, 3중첩 쌓은 후 공격시 터지면서 사라지도록.
-        Triangulation = core.DamageSkill("트라이앵글 포메이션", 0, 340, 3, cooltime=-1).setV(vEhc, 0, 3, True).wrap(core.DamageSkillWrapper)
+        Triangulation = core.DamageSkill(XenonSkills.Triangulation.value, 0, 340, 3, cooltime=-1).setV(vEhc, 0, 3, True).wrap(core.DamageSkillWrapper)
 
-        PurgeSnipe = core.DamageSkill("퍼지롭 매스커레이드 : 저격", 690, 345 + 2*self.combat, 7, modifier=core.CharacterModifier(armor_ignore=30 + self.combat) + core.CharacterModifier(pdamage=20, armor_ignore=10)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        PurgeSnipe = core.DamageSkill(XenonSkills.MechaPurgeSnipe.value, 690, 345 + 2*self.combat, 7, modifier=core.CharacterModifier(armor_ignore=30 + self.combat) + core.CharacterModifier(pdamage=20, armor_ignore=10)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         # Force field criteria. 역장 기준.
         # 3 types of hyper applied. 하이퍼 3종 적용.
-        Hologram_Penetrate = core.SummonSkill("홀로그램 그래피티 : 관통", 720, 30000/116, 213+3*self.combat, 1, 20000+10000, cooltime=30000-1000*ceil(self.combat/3), modifier=core.CharacterModifier(pdamage=10), red=True).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
-        Hologram_ForceField = core.SummonSkill("홀로그램 그래피티 : 역장", 720, 30000/64, 400+5*self.combat, 1, 20000+10000, cooltime=30000-1000*ceil(self.combat/3), modifier=core.CharacterModifier(pdamage=10), red=True).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
+        Hologram_Penetrate = core.SummonSkill(XenonSkills.HypogramFieldPenetrate.value, 720, 30000/116, 213+3*self.combat, 1, 20000+10000, cooltime=30000-1000*ceil(self.combat/3), modifier=core.CharacterModifier(pdamage=10), red=True).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
+        Hologram_ForceField = core.SummonSkill(XenonSkills.HypogramFieldForceField.value, 720, 30000/64, 400+5*self.combat, 1, 20000+10000, cooltime=30000-1000*ceil(self.combat/3), modifier=core.CharacterModifier(pdamage=10), red=True).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
 
-        '''
-        BladeDancingPrepare = core.DamageSkill("블레이드 댄싱 (준비)", 720 + 420, 0, 0).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        BladeDancing = core.DamageSkill("블레이드 댄싱", 480, 140+4*self.combat, 1).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        BladeDancingEnd = core.DamageSkill("블레이드 댄싱(종료)", 300, 0, 0).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        '''
+
+        # BladeDancingPrepare = core.DamageSkill(f"{XenonSkills.BeamDance.value}(준비)", 720 + 420, 0, 0).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        # BladeDancing = core.DamageSkill(XenonSkills.BeamDance.value, 480, 140+4*self.combat, 1).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        # BladeDancingEnd = core.DamageSkill(f"{XenonSkills.BeamDance.value}(종료)", 300, 0, 0).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+
 
         # Hyper skills
-        AmaranthGenerator = core.BuffSkill("아마란스 제네레이터", 900, 10000, cooltime=90000, rem=False).wrap(core.BuffSkillWrapper)  # 에너지 최대치, 10초간 에너지 소모 없음
-        MeltDown = core.DamageSkill("멜트다운 익스플로전", 3150, 900, 6, red=False, cooltime=50000).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        MeltDown_Armor = core.BuffSkill("멜트다운 익스플로전 (방무)", 0, 10000, armor_ignore=30, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
-        MeltDown_Damage = core.BuffSkill("멜트다운 익스플로전 (데미지)", 0, 25000, pdamage=10, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
+        AmaranthGenerator = core.BuffSkill(XenonSkills.AmaranthGenerator.value, 900, 10000, cooltime=90000, rem=False).wrap(core.BuffSkillWrapper)  # 에너지 최대치, 10초간 에너지 소모 없음
+        MeltDown = core.DamageSkill(XenonSkills.OrbitalCataclysm.value, 3150, 900, 6, red=False, cooltime=50000).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        MeltDown_Armor = core.BuffSkill(f"{XenonSkills.OrbitalCataclysm.value}(IED | 방무)", 0, 10000, armor_ignore=30, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
+        MeltDown_Damage = core.BuffSkill(f"{XenonSkills.OrbitalCataclysm.value}(Damage | 데미지)", 0, 25000, pdamage=10, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         # V skills
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
-        LuckyDice = core.BuffSkill("럭키 다이스", 0, 180*1000, pdamage=20).isV(vEhc, 3, 4).wrap(core.BuffSkillWrapper)
+        LuckyDice = core.BuffSkill(PirateSkills.LoadedDice.value, 0, 180*1000, pdamage=20).isV(vEhc, 3, 4).wrap(core.BuffSkillWrapper)
         ResistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 0, 0)
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 4, 4)
 
         WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
 
-        MegaSmasher = core.DamageSkill("메가 스매셔(개시)", 0, 0, 0, cooltime=180000, red=True).wrap(core.DamageSkillWrapper)
-        MegaSmasherTick = core.DamageSkill("메가 스매셔(틱)", 210, 300+10*vEhc.getV(4, 4), 6, cooltime=-1).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        MegaSmasher = core.DamageSkill(f"{XenonSkills.OmegaBlaster.value}(Cast | 개시)", 0, 0, 0, cooltime=180000, red=True).wrap(core.DamageSkillWrapper)
+        MegaSmasherTick = core.DamageSkill(f"{XenonSkills.OmegaBlaster.value}(Tick | 틱)", 210, 300+10*vEhc.getV(4, 4), 6, cooltime=-1).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
         OVERLOAD_TIME = 70
-        OverloadMode = core.BuffSkill("오버로드 모드", 720, OVERLOAD_TIME*1000, cooltime=180000, red=True).wrap(core.BuffSkillWrapper)
+        OverloadMode = core.BuffSkill(XenonSkills.CoreOverload.value, 720, OVERLOAD_TIME*1000, cooltime=180000, red=True).wrap(core.BuffSkillWrapper)
         # First attack always starts after 5100ms. 첫 공격은 항상 5100ms 후에 시작.
         # Attack period is random from 3600ms~10800ms. 공격 주기는 3600ms~10800ms 중 랜덤.
-        OverloadHit = core.SummonSkill("오버로드 모드(전류)", 0, (3600+10800)/2, 180+7*vEhc.getV(4, 4), 6*4, OVERLOAD_TIME*1000-5100, cooltime=-1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
-        OverloadHit_copy = core.SummonSkill("오버로드 모드(전류)(버추얼 프로젝션)", 0, (3600+10800)/2, (180+7*vEhc.getV(4, 4))*0.7, 6*4, OVERLOAD_TIME*1000-5100, cooltime=-1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
+        OverloadHit = core.SummonSkill(f"{XenonSkills.CoreOverload.value}(Electric current | 전류)", 0, (3600+10800)/2, 180+7*vEhc.getV(4, 4), 6*4, OVERLOAD_TIME*1000-5100, cooltime=-1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
+        OverloadHit_copy = core.SummonSkill(f"{XenonSkills.CoreOverload.value}(Electric current | 전류)({XenonSkills.ManifestProjector.value})", 0, (3600+10800)/2, (180+7*vEhc.getV(4, 4))*0.7, 6*4, OVERLOAD_TIME*1000-5100, cooltime=-1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
 
         # Hyper applied. 하이퍼 적용됨.
-        Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", 930, (30000+10000)/(HOLOGRAM_FUSION_HIT/5), 250+10*vEhc.getV(4, 4), 5, 30000+10000, cooltime=100000, red=True, modifier=core.CharacterModifier(pdamage=10)).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
-        Hologram_Fusion_Buff = core.BuffSkill("홀로그램 그래피티 : 융합 (버프)", 0, 30000+10000, pdamage=5+vEhc.getV(4, 4)//2, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
+        Hologram_Fusion = core.SummonSkill(XenonSkills.HypogramFieldFusion.value, 930, (30000+10000)/(HOLOGRAM_FUSION_HIT/5), 250+10*vEhc.getV(4, 4), 5, 30000+10000, cooltime=100000, red=True, modifier=core.CharacterModifier(pdamage=10)).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
+        Hologram_Fusion_Buff = core.BuffSkill(f"{XenonSkills.HypogramFieldFusion.value}(Buff | 버프)", 0, 30000+10000, pdamage=5+vEhc.getV(4, 4)//2, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         # Activates 30 times, skips firing delay, and charges with fuzzy robs. 30회 발동, 발사 딜레이 생략, 퍼지롭으로 충전.
-        PhotonRay = core.BuffSkill("포톤 레이", 0, 20000, cooltime=35000, red=True).wrap(core.BuffSkillWrapper)
-        PhotonRayHit = core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4)*14, 4*30, cooltime=-1).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        PhotonRay = core.BuffSkill(XenonSkills.PhotonRay.value, 0, 20000, cooltime=35000, red=True).wrap(core.BuffSkillWrapper)
+        PhotonRayHit = core.DamageSkill(f"{XenonSkills.PhotonRay.value}(Attack | 캐논)", 0, 350+vEhc.getV(4, 4)*14, 4*30, cooltime=-1).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
-        SupplySurplus = SupplyStackWrapper(core.BuffSkill("서플러스 서플라이", 0, 999999999))
+        SupplySurplus = SupplyStackWrapper(core.BuffSkill(XenonSkills.SupplySurplus.value, 0, 999999999))
 
         # Hologram skills cannot be used with fusion. 홀로그램 스킬들은 융합과 함께 사용불가.
         for skill in [Hologram_ForceField, Hologram_Penetrate]:
-            skill.onConstraint(core.ConstraintElement(skill._id + '(사용 제한)', Hologram_Fusion, Hologram_Fusion.is_not_active))
+            skill.onConstraint(core.ConstraintElement(skill._id + '(Restriction on use | 사용 제한)', Hologram_Fusion, Hologram_Fusion.is_not_active))
             Hologram_Fusion.onJustAfter(skill.controller(1, 'set_disabled'))
 
         PinpointRocketOpt = core.OptionalElement(PinpointRocket.is_available, PinpointRocket)
@@ -347,15 +347,15 @@ class JobGenerator(ck.JobGenerator):
         ExtraSupply.onJustAfter(SupplySurplus.chargeController(10))
         AmaranthGenerator.onJustAfter(SupplySurplus.chargeController(20))
 
-        InclinePower.onConstraint(core.ConstraintElement("에너지 3", SupplySurplus, partial(SupplySurplus.judge_energy, 3)))
+        InclinePower.onConstraint(core.ConstraintElement("3 energy | 에너지 3", SupplySurplus, partial(SupplySurplus.judge_energy, 3)))
         InclinePower.onJustAfter(SupplySurplus.consumeController(3))
-        OOPArtsCode.onConstraint(core.ConstraintElement("에너지 20", SupplySurplus, partial(SupplySurplus.judge_energy, 20)))
+        OOPArtsCode.onConstraint(core.ConstraintElement("20 energy | 에너지 20", SupplySurplus, partial(SupplySurplus.judge_energy, 20)))
         OOPArtsCode.onJustAfter(SupplySurplus.consumeController(20))
 
         AmaranthGenerator.onJustAfter(SupplySurplus.beginAmaranthGenerator())
         AmaranthGenerator.onEventEnd(SupplySurplus.endAmaranthGenerator())
 
-        TriangulationStack = core.StackSkillWrapper(core.BuffSkill("트라이앵글 스택", 0, 99999999), 3)
+        TriangulationStack = core.StackSkillWrapper(core.BuffSkill("Triangulation stack | 트라이앵글 스택", 0, 99999999), 3)
         TriangulationTrigger = core.OptionalElement(lambda : TriangulationStack.judge(3, 1), Triangulation, TriangulationStack.stackController(0.3))
         Triangulation.onJustAfter(TriangulationStack.stackController(0, dtype='set'))
 
@@ -372,7 +372,7 @@ class JobGenerator(ck.JobGenerator):
         for sk in [PurgeSnipe, MeltDown, MegaSmasherTick]:
             sk.onJustAfter(TriangulationTrigger)
             sk.onJustAfter(PinpointRocketOpt)
-            jobutils.create_auxilary_attack(sk, 0.7, nametag="(버추얼 프로젝션)")
+            jobutils.create_auxilary_attack(sk, 0.7, nametag=f"({XenonSkills.ManifestProjector.value})")
 
         MeltDown.onJustAfter(MeltDown_Armor)
         MeltDown.onJustAfter(MeltDown_Damage)
