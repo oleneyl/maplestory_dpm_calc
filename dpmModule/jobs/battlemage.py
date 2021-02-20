@@ -62,9 +62,9 @@ class MarkStackWrapper(core.StackSkillWrapper):
     
     def endAbyssalLightning(self):
         return core.TaskHolder(core.Task(self, self.end_abyssal), name="어비셜 라이트닝 종료")
-    
-    def is_full(self):
-        return self.stack == self._max
+
+    def ChargeStack(self):
+        return core.TaskHolder(core.Task(self, partial(self.set_stack, self._max)), name="징표 생성")
 
 
 class JobGenerator(ck.JobGenerator):
@@ -179,9 +179,9 @@ class JobGenerator(ck.JobGenerator):
 
         # 다크 라이트닝
 
-        AddMark = MarkStack.stackController(1, "징표 생성")
-        UseMark = core.OptionalElement(MarkStack.is_full, DarkLightningMark, name = '징표 사용여부 결정')
-        DarkLightningMark.onAfter(MarkStack.stackController(0, "징표 사용", dtype='set'))
+        AddMark = MarkStack.ChargeStack()
+        UseMark = core.OptionalElement(partial(MarkStack.judge, 1, 1), DarkLightningMark, name = '징표 사용여부 결정')
+        DarkLightningMark.onAfter(MarkStack.stackController(-1, "징표 사용"))
         DarkLightning.onAfter(AddMark)
 
         # 다크 제네시스
@@ -227,6 +227,9 @@ class JobGenerator(ck.JobGenerator):
         BlackMagicAlter.onTick(AddMark)
 
         # 어비셜 라이트닝
+        AbyssalLightning.onJustAfter(MarkStack.beginAbyssalLightning())
+        AbyssalLightning.onEventEnd(MarkStack.endAbyssalLightning())
+
         for sk in [DarkLightning, DarkLightningMark]:
             sk.onAfter(core.OptionalElement(AbyssalDarkLightning.is_available, AbyssalDarkLightning, name="어비셜 라이트닝(명계의 번개)(사용가능 여부)"))
 
