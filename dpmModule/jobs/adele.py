@@ -1,5 +1,7 @@
 from enum import Enum
 
+from .jobclass.flora import FloraSkills
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -153,7 +155,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ReservationRule("그란디스 여신의 축복(레프)", "인피니트"), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule(f"{FloraSkills.GrandisGoddessBlessing.value}(Lef | 레프)", AdeleSkills.InfinityBlade.value), RuleSet.BASE)
         # ruleset.add_rule(ReservationRule("매직 서킷 풀드라이브(버프)", "인피니트"), RuleSet.BASE)
         return ruleset
 
