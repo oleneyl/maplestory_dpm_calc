@@ -43,7 +43,7 @@ class WildHunterSkills(Enum):
     WildArrowBlast = 'Wild Arrow Blast | 와일드 발칸'
     JaguarSoul = 'Jaguar Soul | 재규어 소울'
     DrillSalvo = 'Drill Salvo | 드릴 컨테이너'
-    CrossbowExpert = 'Crossbow Expert | '
+    CrossbowExpert = 'Crossbow Expert | 크로스보우 엑스퍼트'
     SharpEyes = 'Sharp Eyes | 샤프 아이즈'
     WildInstinct = 'Wild Instinct | 와일드 인스팅트'
     AdvancedFinalAttack = 'Advanced Final Attack | 어드밴스드 파이널 어택'
@@ -96,7 +96,7 @@ class JaguerStack(core.DamageSkillWrapper):
 
 class JaguarWrapper(core.SummonSkillWrapper):
     def __init__(self):
-        skill = core.SummonSkill("재규어", 0, 0, 0, 0, 99999999)
+        skill = core.SummonSkill("Jaguar | 재규어", 0, 0, 0, 0, 99999999)
         super(JaguarWrapper, self).__init__(skill)
 
     def _set_delay(self, value):
@@ -133,11 +133,11 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier(WildHunterSkills.PhysicalTraining.value,stat_main = 30, stat_sub = 30)
         Flurry = core.InformedCharacterModifier(WildHunterSkills.Flurry.value, stat_main = 40)
         JaugarLink = core.InformedCharacterModifier(WildHunterSkills.JaguarLink.value,crit = 18, crit_damage = 12, att = 10)
-        CrossbowExpert = core.InformedCharacterModifier("크로스보우 엑스퍼트",att=30 + passive_level, crit_damage = 20 + passive_level//2)
+        CrossbowExpert = core.InformedCharacterModifier(WildHunterSkills.CrossbowExpert.value,att=30 + passive_level, crit_damage = 20 + passive_level//2)
         WildInstinct = core.InformedCharacterModifier(WildHunterSkills.WildInstinct.value,armor_ignore = 30 + 3*passive_level)
         ExtendedMagazine = core.InformedCharacterModifier(WildHunterSkills.ExtendedMagazine.value, pdamage_indep=20 + passive_level // 3, stat_main=60 + 2*passive_level, stat_sub=60 + 2*passive_level)
-        AdvancedFinalAttackPassive = core.InformedCharacterModifier(f"{WildHunterSkills.AdvancedFinalAttack.value}(passive | 패시브)", att = 20 + ceil(passive_level/2))
-        JaugerStormPassive = core.InformedCharacterModifier(f"{WildHunterSkills.JaguarStorm.value}(passive | 패시브)", att = 5+2*vEhc.getV(0,0))
+        AdvancedFinalAttackPassive = core.InformedCharacterModifier(f"{WildHunterSkills.AdvancedFinalAttack.value}(Passive | 패시브)", att = 20 + ceil(passive_level/2))
+        JaugerStormPassive = core.InformedCharacterModifier(f"{WildHunterSkills.JaguarStorm.value}(Passive | 패시브)", att = 5+2*vEhc.getV(0,0))
     
         return [Jaguer, NaturesWrath, ResistanceAutoCrank,
                             CrossbowMastery, PhisicalTraining, Flurry, JaugarLink, CrossbowExpert,
@@ -232,14 +232,14 @@ class JobGenerator(ck.JobGenerator):
         JaguerStorm = core.BuffSkill(WildHunterSkills.JaguarStorm.value, 840, 40*1000, cooltime = (150-vEhc.getV(0,0))*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
         JaguarMaximum = core.DamageSkill(WildHunterSkills.PrimalFury.value, 2160, 350+13*vEhc.getV(5,5), 12*9, cooltime = 150*1000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
-        JaguarMaximumFinal = core.DamageSkill(f"{WildHunterSkills.PrimalFury.value}(final attack | 마무리)", 630, 450+18*vEhc.getV(5,5), 15*4, cooltime=-1, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
-        RidingOff = core.DamageSkill("dismount delay | 하차 딜레이", 1800, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper) # 재규어 맥시멈 강제 탑승 해제 딜레이
+        JaguarMaximumFinal = core.DamageSkill(f"{WildHunterSkills.PrimalFury.value}(Final attack | 마무리)", 630, 450+18*vEhc.getV(5,5), 15*4, cooltime=-1, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
+        RidingOff = core.DamageSkill("Dismount delay | 하차 딜레이", 1800, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper) # 재규어 맥시멈 강제 탑승 해제 딜레이
 
         WildGrenade = core.SummonSkill(WildHunterSkills.PrimalGrenade.value, 0, 4500, 600+24*vEhc.getV(2,2), 5, 9999*10000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
 
-        WildBalkanTypeXInit = core.DamageSkill(f"{WildHunterSkills.WildArrowBlastTypeX.value}(initiate | 개시)", 540, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        WildBalkanTypeXInit = core.DamageSkill(f"{WildHunterSkills.WildArrowBlastTypeX.value}(Initiate | 개시)", 540, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         WildBalkanTypeXTick = core.DamageSkill(WildHunterSkills.WildArrowBlastTypeX.value, 120, 475+19*vEhc.getV(0,0), 4, cooltime=-1, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  # 67 reps. 67회 반복.
-        WildBalkanTypeXEnd = core.DamageSkill(f"{WildHunterSkills.WildArrowBlastTypeX.value}(delay | 후딜)", 540, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        WildBalkanTypeXEnd = core.DamageSkill(f"{WildHunterSkills.WildArrowBlastTypeX.value}(Delay | 후딜)", 540, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         #Build Graph
         FinalAttack = core.OptionalElement(SilentRampage.is_active, FinalAttack100, FinalAttack70)
