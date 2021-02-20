@@ -1,3 +1,8 @@
+from enum import Enum
+
+from .globalSkill import GlobalSkills
+from .jobbranch.bowmen import ArcherSkills
+from .jobclass.adventurer import AdventurerSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -8,6 +13,71 @@ from .jobbranch import bowmen
 from .jobclass import adventurer
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Pathfinder here https://maplestory.fandom.com/wiki/Pathfinder/Skills
+class PathfinderSkills(Enum):
+    # Link Skill
+    AdventurersCuriosity = 'Adventurer\'s Curiosity | '
+    # 1st Job
+    CurseDampeningI = 'Curse Dampening I | 커스 위크닝I'
+    CardinalDeluge = 'Cardinal Deluge | 카디널 디스차지'
+    DoubleJump = 'Double Jump | 더블 점프'
+    ArcheryMastery = 'Archery Mastery | 아처 마스터리'
+    ForcefulShot = 'Forceful Shot | 크리티컬 샷'
+    # 2nd Job
+    RelicChargeI = 'Relic Charge I | 렐릭 차지I'
+    CurseDampeningII = 'Curse Dampening II | 커스 위크닝II'
+    CardinalDelugeAmplification = 'Cardinal Deluge Amplification | 카디널 디스차지 강화'
+    CardinalBurst = 'Cardinal Burst | 카디널 블래스트'
+    SwarmShot = 'Swarm Shot | 스플릿 미스텔'
+    AncientBowBooster = 'Ancient Bow Booster | 에인션트 보우 부스터'
+    BountifulDeluge = 'Bountiful Deluge | 에디셔널 디스차지'
+    AncientBowMastery = 'Ancient Bow Mastery | 에인션트 보우 마스터리'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    # 3rd Job
+    CurseDampeningIII = 'Curse Dampening III | 커스 위크닝III'
+    CardinalBurstAmplification = 'Cardinal Burst Amplification | 카디널 블래스트 강화'
+    CardinalTorrent = 'Cardinal Torrent | 카디널 트랜지션'
+    TripleImpact = 'Triple Impact | 트리플 임팩트'
+    ShadowRaven = 'Shadow Raven | 레이븐'
+    CurseboundEndurance = 'Cursebound Endurance | 커스 톨러런스'
+    GuidanceoftheAncients = 'Guidance of the Ancients | 에인션트 가이던스'
+    BountifulBurst = 'Bountiful Burst | 에디셔널 블래스트'
+    EvasionBoost = 'Evasion Boost | 닷지'
+    # 4th Job
+    ArchersEssence = 'Archer\'s Essence | 에센스 오브 아처'
+    RelicChargeII = 'Relic Charge II | 렐릭 차지II'
+    Curseweaver = 'Curseweaver | 커스 트랜지션'
+    AdvancedCardinalForce = 'Advanced Cardinal Force | 어드밴스드 카디널 포스'
+    GlyphofImpalement = 'Glyph of Impalement | 엣지 오브 레조넌스'
+    ComboAssault = 'Combo Assault | 콤보 어썰트'
+    ComboAssaultDeluge = 'Combo Assault | 콤보 어썰트(Deluge | 디스차지)'
+    ComboAssaultBurst = 'Combo Assault | 콤보 어썰트(Burst | 블래스트)'
+    ComboAssaultTorrent = 'Combo Assault | 콤보 어썰트(Torrent | 트랜지션)'
+    SharpEyes = 'Sharp Eyes | 샤프 아이즈'
+    BountifulTorrent = 'Bountiful Torrent | 에디셔널 트랜지션'
+    AncientArchery = 'Ancient Archery | 에인션트 아처리'
+    AncientBowExpertise = 'Ancient Bow Expertise | 에인션트 보우 엑스퍼트'
+    IllusionStep = 'Illusion Step | 일루젼 스텝'
+    # Hypers
+    AncientAstra = 'Ancient Astra | 에인션트 아스트라'
+    AncientAstraDeluge = 'Ancient Astra | 에인션트 아스트라(Deluge | 디스차지)'
+    AncientAstraBurst = 'Ancient Astra | 에인션트 아스트라(Burst | 블래스트)'
+    AncientAstraTorrent = 'Ancient Astra | 에인션트 아스트라(Torrent | 트랜지션)'
+    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
+    AwakenedRelic = 'Awakened Relic | 렐릭 에볼루션'
+    # 5th Job
+    NovaBlast = 'Nova Blast | 얼티밋 블래스트'
+    RavenTempest = 'Raven Tempest | 레이븐 템페스트'
+    ObsidianBarrier = 'Obsidian Barrier | 옵시디언 배리어'
+    ObsidianBarrierDeluge = 'Obsidian Barrier | 옵시디언 배리어(Deluge | 디스차지)'
+    ObsidianBarrierBurst = 'Obsidian Barrier | 옵시디언 배리어(Burst | 블래스트)'
+    ObsidianBarrierTorrent = 'Obsidian Barrier | 옵시디언 배리어(Torrent | 트랜지션)'
+    RelicUnbound = 'Relic Unbound | 렐릭 언바운드'
+    RelicUnboundDeluge = 'Relic Unbound | 렐릭 언바운드(Deluge | 디스차지)'
+    RelicUnboundBurst = 'Relic Unbound | 렐릭 언바운드(Burst | 블래스트)'
+    RelicUnboundTorrent = 'Relic Unbound | 렐릭 언바운드(Torrent | 트랜지션)'
 
 
 class CardinalStateWrapper(core.BuffSkillWrapper):
