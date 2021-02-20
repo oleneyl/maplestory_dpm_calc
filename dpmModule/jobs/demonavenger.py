@@ -174,7 +174,7 @@ class JobGenerator(ck.JobGenerator):
         # Pet buff. 펫버프.
         Booster = core.BuffSkill(DemonAvengerSkills.BattlePact.value, 0, 180*1000).wrap(core.BuffSkillWrapper)
         DiabolicRecovery = core.BuffSkill(DemonAvengerSkills.DiabolicRecovery.value, 0, 180*1000, pstat_main=25).wrap(core.BuffSkillWrapper)
-        WardEvil = core.BuffSkill(DemonAvengerSkills.DiabolicRecovery.value, 0, 180*1000).wrap(core.BuffSkillWrapper)
+        WardEvil = core.BuffSkill(DemonAvengerSkills.WardEvil.value, 0, 180*1000).wrap(core.BuffSkillWrapper)
 
         ForbiddenContract = core.BuffSkill(DemonAvengerSkills.ForbiddenContract.value, 1020, 30*1000, cooltime=75*1000, pdamage=10).wrap(core.BuffSkillWrapper)
         DemonicFortitude = core.BuffSkill(DemonAvengerSkills.DemonicFortitude.value, 0, 60*1000, cooltime=120*1000, pdamage=10).wrap(core.BuffSkillWrapper)
