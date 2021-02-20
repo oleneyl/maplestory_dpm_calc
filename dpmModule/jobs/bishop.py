@@ -107,6 +107,8 @@ class JobGenerator(characterKernel.JobGenerator):
         UnstableMemorizePassive = adventurer.UnstableMemorizePassiveWrapper(vEhc, 4, 4)
         default_list += [UnstableMemorizePassive]
 
+        return default_list
+
     def generate(self, vEhc, chtr : characterKernel.AbstractCharacter, options: Dict[str, Any]):
         '''
         Libra ON
