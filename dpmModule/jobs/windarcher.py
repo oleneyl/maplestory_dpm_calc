@@ -1,3 +1,7 @@
+from enum import Enum
+
+from .globalSkill import GlobalSkills
+from .jobbranch.bowmen import ArcherSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
@@ -7,6 +11,55 @@ from .jobbranch import bowmen
 from .jobclass import cygnus
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Wind Archer here https://maplestory.fandom.com/wiki/Wind_Archer/Skills
+class WindArcherSkills(Enum):
+    # Link Skill
+    CygnusBlessing = 'Cygnus Blessing | 시그너스 블레스'
+    # Beginner
+    ElementalHarmony = 'Elemental Harmony | 엘리멘탈 하모니'
+    ElementalExpert = 'Elemental Expert | 엘리멘탈 엑스퍼트'
+    # 1st Job
+    BreezeArrow = 'Breeze Arrow | 브리즈 애로우'
+    WindWalk = 'Wind Walk | 윈드워크'
+    StormElemental = 'Storm Elemental | 엘리멘트 : 스톰'
+    WhispersoftheWind = 'Whispers of the Wind | 위스퍼 오브 윈드'
+    # 2nd Job
+    FairySpiral = 'Fairy Spiral | 페어리 턴'
+    GustShot = 'Gust Shot | 거스트 샷'
+    TriflingWindI = 'Trifling Wind I | 트라이플링 윔 I'
+    BowBooster = 'Bow Booster | 보우 부스터'
+    SylvanAid = 'Sylvan Aid | 실프스 에이드'
+    BowMastery = 'Bow Mastery | 보우 마스터리'
+    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    # 3rd Job
+    SentientArrow = 'Sentient Arrow | 서리바람의 군무'
+    PinpointPierce = 'Pinpoint Pierce | 핀포인트 피어스'
+    TriflingWindII = 'Trifling Wind II | 트라이플링 윔II'
+    Albatross = 'Albatross | 알바트로스'
+    EmeraldFlower = 'Emerald Flower | 에메랄드 플라워'
+    Featherweight = 'Featherweight | 페더리니스'
+    SecondWind = 'Second Wind | 세컨드 윈드'
+    # 4th Job
+    CallofCygnus = 'Call of Cygnus | 시그너스 나이츠'
+    SongofHeaven = 'Song of Heaven | 천공의 노래'
+    SpiralingVortex = 'Spiraling Vortex | 스파이럴 볼텍스'
+    TriflingWindIII = 'Trifling Wind III | 트라이플링 윔III'
+    TouchoftheWind = 'Touch of the Wind | 윈드 블레싱'
+    SharpEyes = 'Sharp Eyes | 샤프 아이즈'
+    BowExpert = 'Bow Expert | 보우 엑스퍼트'
+    EmeraldDust = 'Emerald Dust | 에메랄드 더스트'
+    AlbatrossMax = 'Albatross Max | 알바트로스 맥시멈'
+    # Hypers
+    Monsoon = ' Monsoon | 몬순'
+    GloryoftheGuardians = 'Glory of the Guardians | 글로리 오브 가디언즈'
+    StormBringer = 'Storm Bringer | 스톰 브링어'
+    # 5th Job
+    HowlingGale = 'Howling Gale | 하울링 게일'
+    MercilessWinds = 'Merciless Winds | 아이들 윔'
+    GaleBarrier = 'Gale Barrier | 윈드 월'
+    VortexSphere = 'Vortex Sphere | 볼텍스 스피어'
 
 
 class JobGenerator(ck.JobGenerator):
