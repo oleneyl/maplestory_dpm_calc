@@ -1,4 +1,9 @@
+from enum import Enum
 from functools import partial
+
+from .globalSkill import GlobalSkills
+from .jobbranch.pirates import PirateSkills
+from .jobbranch.thieves import ThiefSkills
 from ..kernel import core
 from ..character import characterKernel as ck
 from ..execution.rules import DisableRule, InactiveRule, RuleSet, ConcurrentRunRule, ConditionRule
@@ -9,6 +14,74 @@ from .jobclass import resistance
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+
+
+# English skill information for Xenon here https://maplestory.fandom.com/wiki/Xenon/Skills
+class XenonSkills(Enum):
+    # Link Skill
+    HybridLogic = 'Hybrid Logic | 하이브리드 로직'
+    # Beginner
+    SupplySurplus = 'Supply Surplus | 서플러스 서플라이'
+    MultilateralI = 'Multilateral I | 멀티래터럴 I'
+    ModalShift = 'Modal Shift | 멀티 모드 링커'
+    # 1st Job
+    BeamSpline = 'Beam Spline | 에너지 스플라인'
+    PropulsionBurst = 'Propulsion Burst | 서든 프로펠'
+    CircuitSurge = 'Circuit Surge | 인클라인 파워'
+    RadialNerve = 'Radial Nerve | 레디얼너브 리파인'
+    MultilateralII = 'Multilateral II | 멀티래터럴 II'
+    PinpointSalvo = 'Pinpoint Salvo | 핀포인트 로켓'
+    # 2nd Job
+    QuicksilverFlash = 'Quicksilver: Flash | 퀵실버 소드 : 섬광'
+    QuicksilverConcentrate = 'Quicksilver: Concentrate | 퀵실버 소드 : 집중'
+    QuicksilverTakeoff = 'Quicksilver: Takeoff | 퀵실버 소드 : 도약'
+    IonThrust = 'Ion Thrust | 이온 쓰러스터'
+    PerspectiveShift = 'Perspective Shift | 리니어 퍼스펙티브'
+    EfficiencyStreamline = 'Efficiency Streamline | 에피션시 파이프라인'
+    XenonBooster = 'Xenon Booster | 제논 부스터'
+    StructuralIntegrity = 'Structural Integrity | 마이너리티 서포트'
+    XenonMastery = 'Xenon Mastery | 제논 마스터리'
+    MultilateralIII = 'Multilateral III | 멀티래터럴 III'
+    PinpointSalvoRedesignA = 'Pinpoint Salvo Redesign A | 핀포인트 로켓 1차 강화'
+    # 3rd Job
+    CombatSwitchExplosion = 'Combat Switch: Explosion | 컴뱃 스위칭 : 폭발'
+    CombatSwitchAirWhip = 'Combat Switch: Air Whip | 컴뱃 스위칭 : 격추'
+    CombatSwitchFission = 'Combat Switch: Fission | 컴뱃 스위칭 : 분열'
+    DiagonalChase = 'Diagonal Chase | 다이아그널 체이스'
+    GravityPillar = 'Gravity Pillar | 필라 스크램블'
+    HybridDefenses = 'Hybrid Defenses | 듀얼브리드 디펜시브'
+    AegisSystem = 'Aegis System | 이지스 시스템'
+    Triangulation = 'Triangulation | 트라이앵글 포메이션'
+    ManifestProjector = 'Manifest Projector | 버추얼 프로젝션'
+    MultilateralIV = 'Multilateral IV | 멀티래터럴 IV'
+    EmergencyResupply = 'Emergency Resupply | 엑스트라 서플라이'
+    PinpointSalvoRedesignB = 'Pinpoint Salvo Redesign B | 핀포인트 로켓 2차 강화'
+    # 4th Job
+    BeamDance = 'Beam Dance | 블레이드 댄싱'
+    MechaPurgeSnipe = 'Mecha Purge: Snipe | 퍼지롭 매스커레이드 : 저격'
+    MechaPurgeBombard = 'Mecha Purge: Bombard | 퍼지롭 매스커레이드 : 포격'
+    MechaPurgeBombardment = 'Mecha Purge: Bombardment | 퍼지롭 매스커레이드 : 폭격'
+    HypogramFieldPenetrate = 'Hypogram Field: Penetrate | 홀로그램 그래피티 : 관통'
+    HypogramFieldForceField = 'Hypogram Field: Force Field | 홀로그램 그래피티 : 역장'
+    HypogramFieldSupport = 'Hypogram Field: Support | 홀로그램 그래피티 : 지원'
+    OOPArtsCode = 'OOPArts Code | 오파츠 코드'
+    OffensiveMatrix = 'Offensive Matrix | 오펜시브 매트릭스'
+    InstantShock = 'Instant Shock | 인스턴트 셔크'
+    XenonExpert = 'Xenon Expert | 제논 엑스퍼트'
+    TemporalPod = 'Temporal Pod | 타임 캡슐'
+    MultilateralV = 'Multilateral V | 멀티래터럴 V'
+    PinpointSalvoPerfectDesign = 'Pinpoint Salvo Perfect Design | 핀포인트 로켓 최종 강화'
+    MultilateralVI = 'Multilateral VI | 멀티래터럴 VI'
+    # Hypers
+    OrbitalCataclysm = 'Orbital Cataclysm | 멜트다운 익스플로전'
+    EntanglingLash = 'Entangling Lash | 컨파인 인탱글'
+    AmaranthGenerator = 'Amaranth Generator | 아마란스 제네레이터'
+    # 5th Job
+    OmegaBlaster = 'Omega Blaster | 메가 스매셔'
+    CoreOverload = 'Core Overload | 오버로드 모드'
+    HypogramFieldFusion = 'Hypogram Field: Fusion | 홀로그램 그래피티 : 융합'
+    PhotonRay = 'Photon Ray | 포톤 레이'
+
 
 '''
 Advisor: Monolith, 몰라#4508
