@@ -93,7 +93,10 @@ def save_all(args):
     Path("data/detail_sheet/").mkdir(parents=True, exist_ok=True)
     writer = pd.ExcelWriter("data/detail_sheet/detail_sheet.xlsx", engine="xlsxwriter")
     for task in tasks:
-        data = load_data(task)
+        if args.calc:
+            data = save_data(task)
+        else:
+            data = load_data(task)
         write_sheet(task, data, writer)
     writer.close()
 
