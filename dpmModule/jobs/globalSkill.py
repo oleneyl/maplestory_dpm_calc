@@ -26,31 +26,31 @@ def usefulSkillRemain(slevel=1): return (180+slevel*3)*1000
 def passiveStat(slevel=1): return (slevel+4)/5
 
 # Angelic Buster Link Skill
-def soul_contract():
-    return core.BuffSkill(GlobalSkills.TermsAndConditions.value, 900, 10 * 1000, cooltime=90000, pdamage=45, rem=True, red=True).wrap(core.BuffSkillWrapper)
+def soul_contract(lang=None):
+    return core.BuffSkill(GlobalSkills.TermsAndConditions.value, 900, 10 * 1000, cooltime=90000, pdamage=45, rem=True, red=True, lang=lang).wrap(core.BuffSkillWrapper)
 
 
 # combat_level: Zero = 0, Paladin = 2, for other jobs, enter self.combat. 제로 = 0, 팔라딘 = 2, 이외 직업은 self.combat 입력.
-def maple_heros(level, name=GlobalSkills.MapleWarrior.value, combat_level=0):
+def maple_heros(level, name=GlobalSkills.MapleWarrior.value, combat_level=0, lang=None):
     return core.BuffSkill(name, 0, (900+15*combat_level)*1000,
-                          stat_main=math.ceil(15+combat_level/2)*0.01*(25+level*5), rem=True
+                          stat_main=math.ceil(15+combat_level/2)*0.01*(25+level*5), rem=True, lang=lang
                           ).wrap(core.BuffSkillWrapper)
 
 
 # Decent Combat Orders
 # Fixed level 1 (since the bonus per level is resistant). 1레벨 고정 (레벨당 보너스가 내성이므로).
-def useful_combat_orders():
-    return core.BuffSkill(GlobalSkills.DecentCombatOrders.value, 1500, usefulSkillRemain(), rem=False).wrap(core.BuffSkillWrapper)
+def useful_combat_orders(lang=None):
+    return core.BuffSkill(GlobalSkills.DecentCombatOrders.value, 1500, usefulSkillRemain(), rem=False, lang=lang).wrap(core.BuffSkillWrapper)
 
 
-def useful_sharp_eyes(slevel=1):
+def useful_sharp_eyes(slevel=1, lang=None):
     return core.BuffSkill(GlobalSkills.DecentSharpEyes.value, 900, usefulSkillRemain(slevel), rem=False, crit=10, crit_damage=8,
-                          stat_main=passiveStat(slevel), stat_sub=passiveStat(slevel)).wrap(core.BuffSkillWrapper)
+                          stat_main=passiveStat(slevel), stat_sub=passiveStat(slevel), lang=lang).wrap(core.BuffSkillWrapper)
 
 
-def useful_wind_booster(slevel=1):
+def useful_wind_booster(slevel=1, lang=None):
     return core.BuffSkill(GlobalSkills.DecentSpeedInfusion.value, 900, usefulSkillRemain(slevel), rem=False,
-                          stat_main=passiveStat(slevel), stat_sub=passiveStat(slevel)
+                          stat_main=passiveStat(slevel), stat_sub=passiveStat(slevel), lang=lang
                           ).wrap(core.BuffSkillWrapper)
 
 
@@ -60,8 +60,8 @@ def useful_advanced_bless(slevel=1):
 
 # Will Node Cast
 class MirrorBreakWrapper(core.DamageSkillWrapper):
-    def __init__(self, vEhc, num1, num2, modifier) -> None:
-        skill = core.DamageSkill(f"{GlobalSkills.TrueArachnidReflection.value}(Space Collapse | 공간 붕괴)", 720, 450 + 18 * vEhc.getV(num1, num2), 15, cooltime=250 * 1000, red=True, modifier=modifier).isV(vEhc, num1, num2)
+    def __init__(self, vEhc, num1, num2, modifier, lang=None) -> None:
+        skill = core.DamageSkill(f"{GlobalSkills.TrueArachnidReflection.value}(Space Collapse | 공간 붕괴)", 720, 450 + 18 * vEhc.getV(num1, num2), 15, cooltime=250 * 1000, red=True, modifier=modifier, lang=lang).isV(vEhc, num1, num2)
         super(MirrorBreakWrapper, self).__init__(skill)
 
     def ensure(self, chtr: AbstractCharacter) -> bool:
@@ -70,10 +70,10 @@ class MirrorBreakWrapper(core.DamageSkillWrapper):
 # Will Node Summon
 class MirrorSpiderWrapper(core.SummonSkillWrapper):
     # Ends after 5 consecutive attacks, 3 seconds waiting time for re-entry. 5번 연속 공격 후 종료, 재돌입 대기시간 3초.
-    def __init__(self, vEhc, num1, num2, modifier) -> None:
+    def __init__(self, vEhc, num1, num2, modifier, lang=None) -> None:
         self.delays = [900, 850, 750, 650, 5730]  # 400001039. Delay taken from summonedSequenceAttack, 5730ms of open eyes after 5th attack. 400001039.summonedSequenceAttack에서 가져온 딜레이, 5회째 공격 후 눈 감고뜨는 시간 5730ms.
         self.hit_count = 0
-        skill = core.SummonSkill(f"{GlobalSkills.TrueArachnidReflection.value}(Spider Legs | 거울 속의 거미)", 0, 900, 175 + 7 * vEhc.getV(num1, num2), 8, 50 * 1000, cooltime=-1, modifier=modifier).isV(vEhc, num1, num2)
+        skill = core.SummonSkill(f"{GlobalSkills.TrueArachnidReflection.value}(Spider Legs | 거울 속의 거미)", 0, 900, 175 + 7 * vEhc.getV(num1, num2), 8, 50 * 1000, cooltime=-1, modifier=modifier, lang=lang).isV(vEhc, num1, num2)
         super(MirrorSpiderWrapper, self).__init__(skill)
 
     def _useTick(self) -> core.ResultObject:
@@ -88,18 +88,18 @@ class MirrorSpiderWrapper(core.SummonSkillWrapper):
         return chtr.level >= 235
 
 
-def SpiderInMirrorBuilder(enhancer, skill_importance, enhance_importance, break_modifier=core.CharacterModifier(), spider_modifier=core.CharacterModifier()):
-    MirrorBreak = MirrorBreakWrapper(enhancer, skill_importance, enhance_importance, break_modifier)
-    MirrorSpider = MirrorSpiderWrapper(enhancer, skill_importance, enhance_importance, spider_modifier)
+def SpiderInMirrorBuilder(enhancer, skill_importance, enhance_importance, break_modifier=core.CharacterModifier(), spider_modifier=core.CharacterModifier(), lang=None):
+    MirrorBreak = MirrorBreakWrapper(enhancer, skill_importance, enhance_importance, break_modifier, lang=lang)
+    MirrorSpider = MirrorSpiderWrapper(enhancer, skill_importance, enhance_importance, spider_modifier, lang=lang)
     MirrorBreak.onEventElapsed(MirrorSpider, 3000)
     return MirrorBreak, MirrorSpider
 
 # 5th job Maple Warrior
 # Used by adventurers, heroes, and resistance. 모험가, 영웅, 레지스탕스가 사용.
-def MapleHeroes2Wrapper(vEhc, num1, num2, level, combat_level):
+def MapleHeroes2Wrapper(vEhc, num1, num2, level, combat_level, lang=None):
     return core.BuffSkill(GlobalSkills.MapleWorldGoddessBlessing.value, 450, 60 * 1000,
                           stat_main=(2+vEhc.getV(num1, num2)/10)*math.ceil(15+combat_level/2)*0.01*(25+level*5),
-                          pdamage=5+vEhc.getV(num1, num2)//2, cooltime=180*1000, red=True
+                          pdamage=5+vEhc.getV(num1, num2)//2, cooltime=180*1000, red=True, lang=lang
                           ).isV(vEhc, num1, num2).wrap(core.BuffSkillWrapper)
 
 

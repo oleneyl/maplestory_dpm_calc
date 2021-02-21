@@ -6,6 +6,7 @@ from dpmModule.kernel.core import (
     SummonSkillWrapper,
     GraphElement,
     AbstractSkillWrapper,
+    utilities,
 )
 from dpmModule.kernel.policy import AbstractRule, NameIndexedGraph
 
@@ -101,9 +102,9 @@ class ConcurrentRunRule(AbstractRule):
     두 GraphElement A,B에 대해, A가 B를 사용중일 때만 사용하도록 강제합니다.
     """
 
-    def __init__(self, state_element: str, checking_element: str):
-        self._state_element_name: str = state_element
-        self._checking_element_name: str = checking_element
+    def __init__(self, state_element: str, checking_element: str, **kwargs):
+        self._state_element_name: str = utilities.skill_name_by_lang(state_element, kwargs.get('lang'))
+        self._checking_element_name: str = utilities.skill_name_by_lang(checking_element, kwargs.get('lang'))
 
     def get_related_elements(
         self, reference_graph: NameIndexedGraph
@@ -125,9 +126,9 @@ class ReservationRule(AbstractRule):
     두 GraphElement A,B에 대해, A가 B가 사용가능할 때만 사용하도록 강제합니다.
     """
 
-    def __init__(self, state_element: str, checking_element: str):
-        self._state_element_name: str = state_element
-        self._checking_element_name: str = checking_element
+    def __init__(self, state_element: str, checking_element: str, **kwargs):
+        self._state_element_name: str = utilities.skill_name_by_lang(state_element, kwargs.get('lang'))
+        self._checking_element_name: str = utilities.skill_name_by_lang(checking_element, kwargs.get('lang'))
 
     def get_related_elements(
         self, reference_graph: NameIndexedGraph
@@ -206,9 +207,9 @@ class InactiveRule(AbstractRule):
     A를 B가 사용되고 있을 때는 사용하지 않도록 합니다.
     """
 
-    def __init__(self, target_element: str, state_element: str):
-        self._target_element_name: str = target_element
-        self._state_element_name: str = state_element
+    def __init__(self, target_element: str, state_element: str, **kwargs):
+        self._target_element_name: str = utilities.skill_name_by_lang(target_element, kwargs.get('lang'))
+        self._state_element_name: str = utilities.skill_name_by_lang(state_element, kwargs.get('lang'))
 
     def get_related_elements(
         self, reference_graph: NameIndexedGraph

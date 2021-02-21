@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Type, TypeVar, An
 from .constant import NOTWANTTOEXECUTE
 from .modifier import CharacterModifier
 from ..graph import EvaluativeGraphElement
+from .utilities import skill_name_by_lang
 
 import math
 
@@ -33,7 +34,9 @@ class AbstractSkill(EvaluativeGraphElement):
         cooltime: float = 0,
         rem: bool = False,
         red: bool = True,
+        **kwargs
     ) -> None:
+        name = skill_name_by_lang(name, kwargs.get('lang'))
         super(AbstractSkill, self).__init__(namespace=name)
         self.spec: str = "graph control"
         with self.dynamic_range():
@@ -147,9 +150,10 @@ class BuffSkill(AbstractSkill):
         stat_sub_fixed: int = 0,
         rem: bool = False,
         red: bool = False,
+        **kwargs
     ) -> None:
         super(BuffSkill, self).__init__(
-            name, delay, cooltime=cooltime, rem=rem, red=red
+            name, delay, cooltime=cooltime, rem=rem, red=red, **kwargs
         )
         with self.dynamic_range():
             self.spec: str = "buff"
@@ -205,7 +209,34 @@ class BuffSkill(AbstractSkill):
             if expl_level < 2:
                 li = [li[3], li[7]]
         elif lang == "en":
-            li = []
+            li = [
+                ("Skill Name", self.name),
+                ("Classification", "Buff"),
+                ("Delay", "%.1f" % self.delay, "ms"),
+                (
+                    "Duration",
+                    self._change_time_into_string(self.remain / 1000, divider=1000),
+                    "s",
+                ),
+                (
+                    "Cooldown",
+                    self._change_time_into_string(self.cooltime / 1000, divider=1000),
+                    "s",
+                ),
+                ("Whether the cooldown can be reduced", self.red),
+                ("Whether the duration increases", self.rem),
+                (
+                    "Additional effect",
+                    ", ".join(
+                        [
+                            (str(i[0]) + "+" + "".join([str(j) for j in i[1:]]))
+                            for i in self.static_character_modifier.abstract_log_list()
+                        ]
+                    ).replace("+미발동%", " Not activated"),
+                ),
+            ]
+            if expl_level < 2:
+                li = [li[3], li[7]]
 
         return self._parse_list_info_into_string(li)
 
@@ -233,9 +264,10 @@ class DamageSkill(AbstractSkill):
         cooltime: float = 0,
         modifier: CharacterModifier = CharacterModifier(),
         red: bool = False,
+        **kwargs
     ) -> None:
         super(DamageSkill, self).__init__(
-            name, delay, cooltime=cooltime, rem=False, red=red
+            name, delay, cooltime=cooltime, rem=False, red=red, **kwargs
         )
         with self.dynamic_range():
             self.spec: str = "damage"
@@ -274,7 +306,31 @@ class DamageSkill(AbstractSkill):
             if expl_level < 2:
                 li = li[3:5] + [li[8]]
         elif lang == "en":
-            li = []
+            li = [
+                ("Skill Name", self.name),
+                ("Classification", "Attack"),
+                ("Hit Delay", "%.1f" % self.delay, "ms"),
+                ("Damage", "%.1f" % self.damage, "%"),
+                ("Number of Hits", self.hit),
+                (
+                    "Cooldown",
+                    self._change_time_into_string(self.cooltime / 1000, divider=1000),
+                    "s",
+                ),
+                ("Whether the cooldown can be reduced", self.red),
+                ("Whether the duration increases", self.rem),
+                (
+                    "Additional effect",
+                    ", ".join(
+                        [
+                            (str(i[0]) + "+" + "".join([str(j) for j in i[1:]]))
+                            for i in self._static_skill_modifier.abstract_log_list()
+                        ]
+                    ).replace("+미발동%", " Not activated"),
+                ),
+            ]
+            if expl_level < 2:
+                li = li[3:5] + [li[8]]
 
         return self._parse_list_info_into_string(li)
 
@@ -316,9 +372,10 @@ class SummonSkill(AbstractSkill):
         modifier: CharacterModifier = CharacterModifier(),
         rem: bool = False,
         red: bool = False,
+        **kwargs
     ) -> None:
         super(SummonSkill, self).__init__(
-            name, delay, cooltime=cooltime, rem=rem, red=red
+            name, delay, cooltime=cooltime, rem=rem, red=red, **kwargs
         )
         with self.dynamic_range():
             self.spec: str = "summon"
@@ -364,7 +421,37 @@ class SummonSkill(AbstractSkill):
             if expl_level < 2:
                 li = li[3:7] + [li[10]]
         elif lang == "en":
-            li = []
+            li = [
+                ("Skill Name", self.name),
+                ("Classification", "Summon"),
+                ("Delay", "%.1f" % self.summondelay, "ms"),
+                ("Hit Delay", "%.1f" % self.delay, "ms"),
+                ("Damage", "%.1f" % self.damage, "%"),
+                ("Number of Hits", self.hit),
+                (
+                    "Duration",
+                    self._change_time_into_string(self.remain / 1000, divider=1000),
+                    "s",
+                ),
+                (
+                    "Cooldown",
+                    self._change_time_into_string(self.cooltime / 1000, divider=1000),
+                    "s",
+                ),
+                ("Whether the cooldown can be reduced", self.red),
+                ("Whether the duration increases", self.rem),
+                (
+                    "Additional effect",
+                    ", ".join(
+                        [
+                            (str(i[0]) + "+" + "".join([str(j) for j in i[1:]]))
+                            for i in self._static_skill_modifier.abstract_log_list()
+                        ]
+                    ).replace("+미발동%", " Not activated"),
+                ),
+            ]
+            if expl_level < 2:
+                li = li[3:7] + [li[10]]
 
         return self._parse_list_info_into_string(li)
 
@@ -401,9 +488,10 @@ class DotSkill(SummonSkill):
         remain: float,
         cooltime: float = 0,
         red: bool = False,
+        **kwargs
     ) -> None:
         super(DotSkill, self).__init__(
-            name, summondelay, delay, damage, hit, remain, cooltime=cooltime, red=red
+            name, summondelay, delay, damage, hit, remain, cooltime=cooltime, red=red, **kwargs
         )
         self.spec: str = "dot"
 
@@ -443,7 +531,37 @@ class DotSkill(SummonSkill):
             if expl_level < 2:
                 li = li[3:7] + [li[10]]
         elif lang == "en":
-            li = []
+            li = [
+                ("Skill Name", self.name),
+                ("Classification", "DoT"),
+                ("Delay", "%.1f" % self.summondelay, "ms"),
+                ("Hit Delay", "%.1f" % self.delay, "ms"),
+                ("Damage", "%.1f" % self.damage, "%"),
+                ("Number of Hits", self.hit),
+                (
+                    "Duration",
+                    self._change_time_into_string(self.remain / 1000, divider=1000),
+                    "s",
+                ),
+                (
+                    "Cooldown",
+                    self._change_time_into_string(self.cooltime / 1000, divider=1000),
+                    "s",
+                ),
+                ("Whether the cooldown can be reduced", self.red),
+                ("Whether the duration increases", self.rem),
+                (
+                    "Additional effect",
+                    ", ".join(
+                        [
+                            (str(i[0]) + "+" + "".join([str(j) for j in i[1:]]))
+                            for i in self._static_skill_modifier.abstract_log_list()
+                        ]
+                    ).replace("+미발동%", " Not activated"),
+                ),
+            ]
+            if expl_level < 2:
+                li = li[3:7] + [li[10]]
 
         return self._parse_list_info_into_string(li)
 

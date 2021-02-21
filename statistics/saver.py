@@ -33,7 +33,7 @@ def get_args():
 
 def dpm(args):
     preset = get_preset(args.id)
-    gen: JobGenerator = jobMap[preset.job].JobGenerator()
+    gen: JobGenerator = jobMap[preset.job].JobGenerator(lang=args.lang)
     target, weapon_stat = TemplateGenerator().get_template_and_weapon_stat(gen, str(args.ulevel), args.cdr)
     v_builder = core.AlwaysMaximumVBuilder()
     graph = gen.package(

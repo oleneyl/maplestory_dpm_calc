@@ -254,7 +254,7 @@ class JobGenerator:
     """
 
     # TODO: vEhc is not used.
-    def __init__(self, vEhc=None) -> None:
+    def __init__(self, vEhc=None, **kwargs) -> None:
         self.buffrem: Tuple[int, int] = (0, 0)
         self.vEnhanceNum: int = 10
         self.vSkillNum: int = 3 + 3
@@ -269,6 +269,7 @@ class JobGenerator:
         self._use_critical_reinforce: bool = False
         self.hyperStatPrefixed: int = 0
         self.conf: dict = None
+        self.lang = kwargs.get('lang')
 
     def _load_skill(self, skill_name, vEhc, background_information={}):
         skill_conf = copy.deepcopy(self.conf['skills'][skill_name])
