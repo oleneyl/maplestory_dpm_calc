@@ -195,6 +195,12 @@ def getKoJobName(enJob):
         return jobList[enJob]
 
 
+def getEnJobName(koJob):
+    for en, ko in jobList.items():
+        if ko == koJob:
+            return en
+
+
 def getGenerator(koJob):
     if koJob in jobMap:
         return jobMap[koJob]
