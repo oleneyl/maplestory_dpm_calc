@@ -5,7 +5,7 @@ from pathlib import Path
 from dpmModule.character.characterKernel import JobGenerator
 from dpmModule.character.characterTemplate import TemplateGenerator
 from dpmModule.execution import rules
-from dpmModule.jobs import jobMap
+from dpmModule.jobs import jobMap, getEnJobName
 from dpmModule.kernel import core, policy
 from dpmModule.status.ability import Ability_grade
 
@@ -60,7 +60,7 @@ def dpm(args):
     control = core.Simulator(sche, target, analytics)
     control.start_simulation(args.time * 1000)
     dpm = analytics.get_dpm()
-    print(preset.job, f"{dpm:,.3f}")
+    print(f'{getEnJobName(preset.job)} | {preset.job}', f"{dpm:,.3f}")
 
     return analytics.get_log()
 
