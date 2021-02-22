@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Type, TypeVar, An
 from .constant import NOTWANTTOEXECUTE
 from .modifier import CharacterModifier
 from ..graph import EvaluativeGraphElement
-from .utilities import skill_name_by_lang
 
 import math
 
@@ -34,9 +33,7 @@ class AbstractSkill(EvaluativeGraphElement):
         cooltime: float = 0,
         rem: bool = False,
         red: bool = True,
-        **kwargs
     ) -> None:
-        name = skill_name_by_lang(name, kwargs.get('lang'))
         super(AbstractSkill, self).__init__(namespace=name)
         self.spec: str = "graph control"
         with self.dynamic_range():
@@ -150,10 +147,9 @@ class BuffSkill(AbstractSkill):
         stat_sub_fixed: int = 0,
         rem: bool = False,
         red: bool = False,
-        **kwargs
     ) -> None:
         super(BuffSkill, self).__init__(
-            name, delay, cooltime=cooltime, rem=rem, red=red, **kwargs
+            name, delay, cooltime=cooltime, rem=rem, red=red
         )
         with self.dynamic_range():
             self.spec: str = "buff"
@@ -264,10 +260,9 @@ class DamageSkill(AbstractSkill):
         cooltime: float = 0,
         modifier: CharacterModifier = CharacterModifier(),
         red: bool = False,
-        **kwargs
     ) -> None:
         super(DamageSkill, self).__init__(
-            name, delay, cooltime=cooltime, rem=False, red=red, **kwargs
+            name, delay, cooltime=cooltime, rem=False, red=red
         )
         with self.dynamic_range():
             self.spec: str = "damage"
@@ -372,10 +367,9 @@ class SummonSkill(AbstractSkill):
         modifier: CharacterModifier = CharacterModifier(),
         rem: bool = False,
         red: bool = False,
-        **kwargs
     ) -> None:
         super(SummonSkill, self).__init__(
-            name, delay, cooltime=cooltime, rem=rem, red=red, **kwargs
+            name, delay, cooltime=cooltime, rem=rem, red=red
         )
         with self.dynamic_range():
             self.spec: str = "summon"
@@ -488,10 +482,9 @@ class DotSkill(SummonSkill):
         remain: float,
         cooltime: float = 0,
         red: bool = False,
-        **kwargs
     ) -> None:
         super(DotSkill, self).__init__(
-            name, summondelay, delay, damage, hit, remain, cooltime=cooltime, red=red, **kwargs
+            name, summondelay, delay, damage, hit, remain, cooltime=cooltime, red=red
         )
         self.spec: str = "dot"
 
