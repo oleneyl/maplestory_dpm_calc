@@ -157,7 +157,7 @@ class JobGenerator(ck.JobGenerator):
                 hit=9 + 1,
                 modifier=core.CharacterModifier(
                     crit=100,
-                    armor_ignore=20 + self.combat * 1,
+                    armor_ignore=25 + ceil(self.combat // 3) * 2,
                     pdamage=20,
                     boss_pdamage=10,
                 )

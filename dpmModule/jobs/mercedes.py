@@ -170,7 +170,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 연계 스킬들 - 연계시 딜레이로 작성
         UnicornSpike = SylphidiaDamageSkill(
-            core.DamageSkill("유니콘 스파이크", 450, 315+100 + 2*self.combat, 5, modifier = core.CharacterModifier(crit=100), cooltime = 10 * 1000, red=True).setV(vEhc, 5, 3, False),
+            core.DamageSkill("유니콘 스파이크", 450, 345+100 + 2*self.combat, 5, modifier = core.CharacterModifier(crit=100), cooltime = 10 * 1000, red=True).setV(vEhc, 5, 3, False),
             Sylphidia,
             540
         )
@@ -186,7 +186,7 @@ class JobGenerator(ck.JobGenerator):
         LeapTornado = core.DamageSkill("리프 토네이도", 390, 390+30+3*self.combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         GustDive = core.DamageSkill("거스트 다이브", 480, 430 + 3*self.combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         WrathOfEllil = SylphidiaDamageSkill(
-            core.DamageSkill("래쓰 오브 엔릴", 210, 400, 10, cooltime = 8 * 1000).setV(vEhc, 3, 2, False),
+            core.DamageSkill("래쓰 오브 엔릴", 210, 460, 10, cooltime = 8 * 1000).setV(vEhc, 3, 2, False),
             Sylphidia,
             540
         )
