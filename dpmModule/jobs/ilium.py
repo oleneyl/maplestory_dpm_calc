@@ -179,14 +179,14 @@ class JobGenerator(ck.JobGenerator):
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60000, pdamage = 10, cooltime = 120000).wrap(core.BuffSkillWrapper)
         
         Craft_Orb = core.DamageSkill("크래프트:오브", 390, 300+4*self.combat, 1).wrap(core.DamageSkillWrapper)
-        Reaction_Domination = core.DamageSkill("리액션:도미네이션", 0, 550, 2, cooltime = 4000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        Reaction_Domination = core.DamageSkill("리액션:도미네이션", 0, 550 + 100 + self.combat*2, 2, cooltime = 4000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         Craft_Javelin_EnhanceBuff = core.BuffSkill("크래프트:오브(자벨린 강화버프)", 0, 2000, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         Craft_Javelin = core.DamageSkill("크래프트:자벨린", 390, 375 + 2*self.combat, 4 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Craft_Javelin_AfterOrb = core.DamageSkill("크래프트:자벨린(오브 이후)", 390, 375 + 2*self.combat, 4 * 3, modifier = core.CharacterModifier(pdamage = 20 + 15, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
         Craft_Javelin_Fragment = core.DamageSkill("크래프트:자벨린(파편)", 0, 130 + 2*self.combat, 2 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Reaction_Destruction = core.DamageSkill("리액션:디스트럭션", 0, 550, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 4000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        Reaction_Destruction = core.DamageSkill("리액션:디스트럭션", 0, 550 + 100 + self.combat*2, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 4000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         Craft_Longinus = core.DamageSkill("크래프트:롱기누스", 600+180 +10*self.combat, 950, 8, cooltime = (15-self.combat//2)*1000).wrap(core.DamageSkillWrapper) # 자체딜레이 600 + 자벨린-오브 연계 취소 180
         
@@ -225,8 +225,8 @@ class JobGenerator(ck.JobGenerator):
         SoulOfCrystal = SoulOfCrystalWrapper(core.BuffSkill("소울 오브 크리스탈", 510*2, 30*1000, cooltime=40*1000).isV(vEhc,1,0))
         SoulOfCrystalPassive = core.BuffSkill("소울 오브 크리스탈(패시브)", 0, 999999999, att = (5+vEhc.getV(1,0)*2)).isV(vEhc,1,0).wrap(core.BuffSkillWrapper)
 
-        SoulOfCrystal_Reaction_Domination = core.DamageSkill("리액션:도미네이션(소오크)", 0, 550 * 0.01 * (50 + vEhc.getV(1,0)), 2*2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        SoulOfCrystal_Reaction_Destruction = core.DamageSkill("리액션:디스트럭션(소오크)", 0, 550 * 0.01 * (50 + vEhc.getV(1,0)), 4*2*2, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SoulOfCrystal_Reaction_Domination = core.DamageSkill("리액션:도미네이션(소오크)", 0, (550 + 100 + self.combat*2) * 0.01 * (50 + vEhc.getV(1,0)), 2*2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        SoulOfCrystal_Reaction_Destruction = core.DamageSkill("리액션:디스트럭션(소오크)", 0, (550 + 100 + self.combat*2) * 0.01 * (50 + vEhc.getV(1,0)), 4*2*2, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         SoulOfCrystal_Reaction_Spectrum = core.DamageSkill("리액션:스펙트럼(소오크)", 0, 1000+40*vEhc.getV(2,1), 5*2, modifier = core.CharacterModifier(boss_pdamage = 20)).wrap(core.DamageSkillWrapper)
 
         CrystalGate = core.BuffSkill("크리스탈 게이트", 420*2, (130+vEhc.getV(0,0))*1000, cooltime=180*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)

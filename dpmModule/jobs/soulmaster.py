@@ -83,8 +83,7 @@ class JobGenerator(ck.JobGenerator):
         
         #엘리시온 38타 / 3타
         Elision = core.BuffSkill("엘리시온", 750, 30 * 1000, cooltime = 180 * 1000, red=True).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)    #시전딜레이 750ms
-        ElisionBreak = core.SummonSkill("엘리시온(균열)", 0, 10000, 520 + 21*vEhc.getV(1,1), 5 * 6 * 2, 30000, cooltime=-1, modifier = FallingMoon).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)    #3회 발동
-        ElisionBreakEnd = core.DamageSkill("엘리시온(균열)(종료)", 0, 150 + 6*vEhc.getV(1,1), 5 * 6 * 2, cooltime=-1, modifier = FallingMoon).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        ElisionBreak = core.SummonSkill("엘리시온(균열)", 0, (750 * 6 + 5000), 520 + 21*vEhc.getV(1,1), 5 * 6 * 2, (750 * 6 + 5000) * 4 - 1, cooltime=-1, modifier = FallingMoon).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)    # 엘리시온 6회마다, 총 4회 발동
         ElisionStyx = core.DamageSkill("크로스 더 스틱스(엘리시온)", 750, 580/2, 5 * 5 * 2, modifier = FallingMoon).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  #40회 반복
         
         #소울 이클립스
@@ -103,7 +102,6 @@ class JobGenerator(ck.JobGenerator):
         SpeedingDance.onAfter(SelecstialDanceOption)
         
         Elision.onAfter(ElisionBreak)
-        Elision.onEventEnd(ElisionBreakEnd)
     
         SoulEclipse.onAfter(SolunaDivide.controller(30*1000))
 

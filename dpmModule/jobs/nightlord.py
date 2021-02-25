@@ -154,10 +154,20 @@ class JobGenerator(ck.JobGenerator):
         # 쿼드러플 관련 - 스프레드, 스로우 블래스팅
         QuarupleThrow.onAfter(core.OptionalElement(SpreadThrowInit.is_active, SpreadThrowTick))
         QuarupleThrow.onAfter(core.OptionalElement(lambda: ThrowBlastingStack.judge(0, -1) and ThrowBlastingPassive.is_available(), ThrowBlastingPassive))
-        QuarupleThrow.onAfter(core.OptionalElement(
-            lambda: ThrowBlastingStack.judge(1, 1),
-            core.RepeatElement(ThrowBlasting, 3)
-        ))
+        QuarupleThrow.onAfter(
+            core.OptionalElement(
+                lambda: ThrowBlastingStack.judge(3, 1),
+                core.RepeatElement(ThrowBlasting, 3),
+                core.OptionalElement(
+                    lambda: ThrowBlastingStack.judge(2, 1),
+                    core.RepeatElement(ThrowBlasting, 2),
+                    core.OptionalElement(
+                        lambda: ThrowBlastingStack.judge(3, 1),
+                        ThrowBlasting,
+                    )
+                )
+            )
+        )
         QuarupleThrow.onAfter(MarkOfNightlord)
 
         for sk in [QuarupleThrow, SuddenRaid, Pungma, SpreadThrowTick]:

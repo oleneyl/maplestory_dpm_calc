@@ -134,7 +134,7 @@ class JobGenerator(ck.JobGenerator):
         AncientBowBooster = core.BuffSkill("에인션트 보우 부스터", 0, 300*1000, rem=True).wrap(core.BuffSkillWrapper)
         CurseTolerance = core.BuffSkill("커스 톨러런스", 0, 300*1000, rem=True).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill("샤프 아이즈", 0, (300+10*self.combat)*1000, crit=20+ceil(self.combat/2), crit_damage=15+ceil(self.combat/2), rem=True).wrap(core.BuffSkillWrapper)
-        AncientGuidance = core.BuffSkill("에인션트 가이던스(버프)", 0, 30000, pdamage_indep=15, cooltime=-1, rem=False).wrap(core.BuffSkillWrapper)
+        AncientGuidance = core.BuffSkill("에인션트 가이던스(버프)", 0, 24000, pdamage_indep=15, cooltime=-1, rem=False).wrap(core.BuffSkillWrapper)
         CurseTransition = core.BuffSkill("커스 트랜지션", 0, 15*1000, crit_damage=20, cooltime=-1).wrap(core.BuffSkillWrapper)  # 5스택 유지 가정
 
         # Summon skills

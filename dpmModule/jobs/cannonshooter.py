@@ -136,7 +136,7 @@ class JobGenerator(ck.JobGenerator):
 
         MonkeyFurious = core.DamageSkill(
             "몽키 퓨리어스",
-            delay=720,
+            delay=630,
             damage=180,
             hit=3,
             cooltime=30 * 1000,

@@ -121,7 +121,7 @@ class JobGenerator(ck.JobGenerator):
         ShadowBat = core.DamageSkill("쉐도우 배트", 0, 150 + 120 + 150 + 200 + 4*passive_level, 1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         
         #점샷기준(400ms)
-        QuintupleThrow = core.DamageSkill("퀸터플 스로우", (400 * JUMPRATE + 630 * (1-JUMPRATE)), 340+self.combat, 4, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow = core.DamageSkill("퀸터플 스로우", (400 * JUMPRATE + 510 * (1-JUMPRATE)), 340+self.combat, 4, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         QuintupleThrowFinal = core.DamageSkill("퀸터플 스로우(막타)", 0, 475+self.combat, 1, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         QuintupleThrow_Sv = core.DamageSkill("퀸터플 스로우(서번트)", 0, (340+self.combat)*0.7, 4, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)

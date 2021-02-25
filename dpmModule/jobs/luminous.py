@@ -150,7 +150,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         PowerOfLight = core.InformedCharacterModifier("파워 오브 라이트",stat_main = 20)
-        SpellMastery = core.InformedCharacterModifier("스펠 마스터리",att = 10, crit=15, pdamage=15)
+        SpellMastery = core.InformedCharacterModifier("스펠 마스터리",att = 10, crit=20, pdamage=15)
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
         MagicMastery = core.InformedCharacterModifier("매직 마스터리",att = 30 + passive_level, crit_damage = 15 + passive_level // 3, crit = 15 + passive_level // 3)
         DarknessSocery = core.InformedCharacterModifier("다크니스 소서리", pdamage_indep = 40 + self.combat, armor_ignore = 40 + self.combat)
