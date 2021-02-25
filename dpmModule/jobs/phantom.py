@@ -94,7 +94,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 하이퍼
         BoolsEye = core.BuffSkill("불스아이(탤팬H)", 960, 30 * 1000, cooltime=180 * 1000, crit=20, crit_damage=10, armor_ignore=20, pdamage=20).wrap(core.BuffSkillWrapper)
-        Preparation = core.BuffSkill("프리퍼레이션(탤팬H)", 900, 30 * 1000, cooltime=120 * 1000, att=50, boss_pdamage=20).wrap(core.BuffSkillWrapper)
+        Preparation = core.BuffSkill("프리퍼레이션(탤팬H)", 540, 30 * 1000, cooltime=120 * 1000, att=50, boss_pdamage=20).wrap(core.BuffSkillWrapper)
 
         ##### Phantom skills #####
 
