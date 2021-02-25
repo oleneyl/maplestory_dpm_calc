@@ -91,6 +91,10 @@ skills:
     damage: 1000
     hit: 8
     type: DamageSkill
+    enhanced_by_v: true
+    upgrade_priority: 3
+    v_increment: 2
+    v_crit: true
   피스메이커(시전):
     cooltime: 10000
     delay: 750
@@ -210,6 +214,10 @@ skills:
     damage: 480 + 6 * combat
     hit: 4
     type: DamageSkill
+    enhanced_by_v: true
+    upgrade_priority: 2
+    v_increment: 2
+    v_crit: false
   리저렉션:
     delay: 750
     damage: 0
