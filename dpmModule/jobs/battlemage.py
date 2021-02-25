@@ -106,7 +106,7 @@ class JobGenerator(ck.JobGenerator):
         Mastery = core.InformedCharacterModifier("숙련도", mastery=95+ceil(passive_level/2))
         
         DebuffAura = core.InformedCharacterModifier("디버프 오라", armor_ignore = 20, pdamage_indep = 10, prop_ignore = 10)
-        BattleRage = core.InformedCharacterModifier("배틀 레이지",pdamage = 40 + self.combat, crit_damage = 8 + self.combat // 6, crit=20 + ceil(self.combat / 3))
+        BattleRage = core.InformedCharacterModifier("배틀 레이지", pdamage=40+self.combat, crit_damage = 10+self.combat//6, crit=20 + ceil(self.combat / 3))
         return [WeaponConstant, Mastery, DebuffAura, BattleRage]
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
