@@ -8,6 +8,9 @@ from .loader import load_data
 from .saver import save_data
 from .preset import get_preset
 
+import gettext
+_ = gettext.gettext
+
 plt.style.use(["bmh"])
 
 
@@ -44,7 +47,7 @@ def graph(args, df: pd.DataFrame):
     plt.xticks(np.arange(0, args.xlim//5, args.xlim//40), [f"{i*5}" for i in np.arange(0, args.xlim//5, args.xlim//40)])
     plt.ylim(0, 5.5e+12)
     plt.yticks(np.arange(0, 5.5e+12, 1e+12), [f"{i/1e+12}T" for i in np.arange(0, 5.5e+12, 1e+12)])
-    plt.title(f"{preset.job} {preset.description}, 쿨감{args.cdr}초", fontsize=12)
+    plt.title(_("{} {}, 쿨감{}초").format(preset.job, preset.description, args.cdr), fontsize=12)
     if args.show:
         plt.show()
 
