@@ -8,6 +8,9 @@ from dpmModule.kernel import core
 from dpmModule.kernel import policy
 from dpmModule.status.ability import Ability_grade
 
+import gettext
+_ = gettext.gettext
+
 
 class IndividualDPMGenerator:
     """IndividualDPMGenerator는 단일 직업의 dpm을 연산합니다. 연산을 위해 인자로 job을 받습니다.
@@ -132,7 +135,7 @@ class DpmSetting:
     DpmSetting calculates dpm settings for all classes. Stores metadata required by IndividualDPMGenerator."""
 
     # Normal, Rare, Epic, Unique, Legendary
-    itemGrade = ["노말", "레어", "에픽", "유니크", "레전"]
+    itemGrade = [_("노말"), _("레어"), _("에픽"), _("유니크"), _("레전")]
 
     def __init__(
         self,
@@ -144,7 +147,7 @@ class DpmSetting:
 
     def getSettingInfo(self) -> List[str]:
         retli = []
-        retli.append("Legion | 유니온: %d" % self.ulevel)
+        retli.append(_("유니온: %d") % self.ulevel)
         # retli.append("무기상태 %s %d줄" % (self.itemGrade[self.weaponstat[0]], (self.weaponstat[1] // 3)))
         retli.append(self.detail)
         return retli
@@ -160,8 +163,7 @@ class DpmSetting:
         retDict = []
 
         for idx, _job in enumerate(jobli):
-            job = maplejobs.jobList[_job]
-            generator = IndividualDPMGenerator(job)
+            generator = IndividualDPMGenerator(_job)
             dpm = generator.get_dpm(
                 spec_name=str(self.ulevel),
                 ulevel=self.ulevel,
@@ -169,10 +171,10 @@ class DpmSetting:
                 default_modifier=default_modifier,
             )
             retli.append(dpm)
-            value = {"name": job, "dpm": dpm}
+            value = {"name": _job, "dpm": dpm}
             # print(value)
             retDict.append(value)
-            print("%s | %s done ... %d / %d ... %d" % (_job, job, idx + 1, len(jobli), value["dpm"]))
+            print("%s done ... %d / %d ... %d" % (_job, idx + 1, len(jobli), value["dpm"]))
 
         sorteddata = sorted(retDict, key=lambda d: d["dpm"])
         data = {
