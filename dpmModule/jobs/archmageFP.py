@@ -1,5 +1,4 @@
 import os
-from enum import Enum
 
 from typing import Any, Dict
 
@@ -14,61 +13,62 @@ from ..character import characterKernel as ck
 from ..execution.rules import RuleSet, MutualRule, InactiveRule
 from math import ceil
 
+import gettext
+_ = gettext.gettext
 
 # English skill information for Fire/Poison Mage here https://maplestory.fandom.com/wiki/Magician_(Fire,_Poison)/Skills
-class ArchmageFirePoisonSkills(Enum):
+class ArchmageFirePoisonSkills:
     # Link Skill
-    EmpiricalKnowledge = 'Empirical Knowledge | 임피리컬 널리지'
+    EmpiricalKnowledge = _("임피리컬 널리지")  # "Empirical Knowledge"
     # 1st Job
-    EnergyBolt = 'Energy Bolt | 에너지 볼트'
-    MagicGuard = 'Magic Guard | 매직 가드'
-    Teleport = 'Teleport | 텔레포트'
+    EnergyBolt = _("에너지 볼트")  # "Energy Bolt"
+    MagicGuard = _("매직 가드")  # "Magic Guard"
+    Teleport = _("텔레포트")  # "Teleport"
     # 2nd Job
-    FlameOrb = 'Flame Orb | 플레임 오브'
-    ElementalDrain = 'Elemental Drain | 엘리멘탈 드레인'
-    PoisonBreath = 'Poison Breath | 포이즌 브레스'
-    Meditation = 'Meditation | 메디테이션'
-    MagicBooster = 'Magic Booster | 매직 부스터'
-    Ignite = 'Ignite | 이그나이트'
-    SpellMastery = 'Spell Mastery | 스펠 마스터리'
-    HighWisdom = 'High Wisdom | 하이 위즈덤'
-    MPEater = 'MP Eater | MP 이터'
+    FlameOrb = _("플레임 오브")  # "Flame Orb"
+    ElementalDrain = _("엘리멘탈 드레인")  # "Elemental Drain"
+    PoisonBreath = _("포이즌 브레스")  # "Poison Breath"
+    Meditation = _("메디테이션")  # "Meditation"
+    MagicBooster = _("매직 부스터")  # "Magic Booster"
+    Ignite = _("이그나이트")  # "Ignite"
+    SpellMastery = _("스펠 마스터리")  # "Spell Mastery"
+    HighWisdom = _("하이 위즈덤")  # "High Wisdom"
+    MPEater = _("MP 이터")  # "MP Eater"
     # 3rd Job
-    Explosion = 'Explosion | 익스플로젼'
-    PoisonMist = 'Poison Mist | 포이즌 미스트'
-    ViralSlime = 'Viral Slime | 슬라임 바이러스'
-    ElementalAdaptationFirePoison = 'Elemental Adaptation (Fire, Poison) | 엘리멘탈 어뎁팅(불,독)'
-    ElementalDecrease = 'Elemental Decrease | 엘리멘탈 리셋'
-    TeleportMastery = 'Teleport Mastery | 텔레포트 마스터리'
-    ManaBurn = 'Mana Burn | 마나 번'
-    ElementAmplification = 'Element Amplification | 엘리멘트 엠플리피케이션'
-    ArcaneOverdrive = 'Arcane Overdrive | 매직 크리티컬'
-    BurningMagic = 'Burning Magic | 익스트림 매직'
+    Explosion = _("익스플로젼")  # "Explosion"
+    PoisonMist = _("포이즌 미스트")  # "Poison Mist"
+    ViralSlime = _("슬라임 바이러스")  # "Viral Slime"
+    ElementalAdaptationFirePoison = _("엘리멘탈 어뎁팅")  # "Elemental Adaptation"
+    ElementalDecrease = _("엘리멘탈 리셋")  # "Elemental Decrease"
+    TeleportMastery = _("텔레포트 마스터리")  # "Teleport Mastery"
+    ManaBurn = _("마나 번")  # "Mana Burn"
+    ElementAmplification = _("엘리멘트 엠플리피케이션")  # "Element Amplification"
+    ArcaneOverdrive = _("매직 크리티컬")  # "Arcane Overdrive"
+    BurningMagic = _("익스트림 매직")  # "Burning Magic"
     # 4th Job
-    Paralyze = 'Paralyze | 페럴라이즈'
-    MistEruption = 'Mist Eruption | 미스트 이럽션'
-    FerventDrain = 'Fervent Drain | 퍼번트 드레인'
-    MeteorShower = 'Meteor Shower | 메테오'
-    FlameHaze = 'Flame Haze | 플레임 헤이즈'
-    Ifrit = 'Ifrit | 이프리트'
-    ArcaneAim = 'Arcane Aim | 아케인 에임'
-    BuffMastery = 'Buff Mastery | 마스터 매직'
+    Paralyze = _("페럴라이즈")  # "Paralyze"
+    MistEruption = _("미스트 이럽션")  # "Mist Eruption"
+    FerventDrain = _("퍼번트 드레인")  # "Fervent Drain"
+    MeteorShower = _("메테오")  # "Meteor Shower"
+    FlameHaze = _("플레임 헤이즈")  # "Flame Haze"
+    Ifrit = _("이프리트")  # "Ifrit"
+    ArcaneAim = _("아케인 에임")  # "Arcane Aim"
+    BuffMastery = _("마스터 매직")  # "Buff Mastery"
     # Hypers
-    MegiddoFlame = 'Megiddo Flame | 메기도 플레임'
-    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
-    InfernoAura = 'Inferno Aura | 파이어 오라'
+    MegiddoFlame = _("메기도 플레임")  # "Megiddo Flame"
+    EpicAdventure = _("에픽 어드벤처")  # "Epic Adventure"
+    InfernoAura = _("파이어 오라")  # "Inferno Aura"
     # 5th Job
-    DoTPunisher = 'DoT Punisher | 도트 퍼니셔'
-    PoisonNova = 'Poison Nova | 포이즌 노바'
-    ElementalFury = 'Elemental Fury | 퓨리 오브 이프리트'
-    PoisonChain = 'Poison Chain | 포이즌 체인'
-
+    DoTPunisher = _("도트 퍼니셔")  # "DoT Punisher"
+    PoisonNova = _("포이즌 노바")  # "Poison Nova"
+    ElementalFury = _("퓨리 오브 이프리트")  # "Elemental Fury"
+    PoisonChain = _("포이즌 체인")  # "Poison Chain"
 
 
 class PoisonChainToxicWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2):
         skill = core.SummonSkill(
-            f"{ArchmageFirePoisonSkills.PoisonChain.value}(Addition | 중독)",  # Poison chain (addition)
+            _("{}(중독)").format(ArchmageFirePoisonSkills.PoisonChain),  # Poison chain (addition)
             0,
             1800,
             150 + 6 * vEhc.getV(3, 2),
@@ -102,8 +102,8 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(MutualRule(ArchmageFirePoisonSkills.DoTPunisher.value, ArchmageFirePoisonSkills.PoisonNova.value), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule(AdventurerSkills.UnreliableMemory.value, AdventurerSkills.Infinity.value), RuleSet.BASE)
+        ruleset.add_rule(MutualRule(ArchmageFirePoisonSkills.DoTPunisher, ArchmageFirePoisonSkills.PoisonNova), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(AdventurerSkills.UnreliableMemory, AdventurerSkills.Infinity), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -138,58 +138,58 @@ class JobGenerator(ck.JobGenerator):
         DOT_PUNISHER_HIT = self.conf["constant"]["DOT_PUNISHER_HIT"]  # TODO: The number of strokes is determined by referring to the current number of dots. 현재 도트 개수를 참조해 타수 결정.
 
         # Buff Skills
-        Meditation = self.load_skill_wrapper(ArchmageFirePoisonSkills.Meditation.value)
-        EpicAdventure = self.load_skill_wrapper(ArchmageFirePoisonSkills.EpicAdventure.value)
+        Meditation = self.load_skill_wrapper(ArchmageFirePoisonSkills.Meditation)
+        EpicAdventure = self.load_skill_wrapper(ArchmageFirePoisonSkills.EpicAdventure)
         Infinity = adventurer.InfinityWrapper(self.combat)
 
         # Damage Skills
-        Paralyze = self.load_skill_wrapper(ArchmageFirePoisonSkills.Paralyze.value, vEhc)
-        TeleportMastery = self.load_skill_wrapper(ArchmageFirePoisonSkills.TeleportMastery.value, vEhc)
+        Paralyze = self.load_skill_wrapper(ArchmageFirePoisonSkills.Paralyze, vEhc)
+        TeleportMastery = self.load_skill_wrapper(ArchmageFirePoisonSkills.TeleportMastery, vEhc)
 
-        FlameHeize = self.load_skill_wrapper(ArchmageFirePoisonSkills.FlameHaze.value, vEhc)
-        MistEruption = self.load_skill_wrapper(ArchmageFirePoisonSkills.MistEruption.value, vEhc)
+        FlameHeize = self.load_skill_wrapper(ArchmageFirePoisonSkills.FlameHaze, vEhc)
+        MistEruption = self.load_skill_wrapper(ArchmageFirePoisonSkills.MistEruption, vEhc)
 
-        DotPunisher = self.load_skill_wrapper(ArchmageFirePoisonSkills.DoTPunisher.value, vEhc)
-        DotPunisherExceed = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.DoTPunisher.value}(Exceed | 초과)", vEhc)
-        PoisonNova = self.load_skill_wrapper(ArchmageFirePoisonSkills.PoisonNova.value, vEhc)
-        PoisonNovaErupt = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.PoisonNova.value}(Erupt | 폭발)", vEhc)
-        PoisonNovaEruptExceed = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.PoisonNova.value}(Erupt | 폭발)(Exceed | 초과)", vEhc)
-        PoisonChain = self.load_skill_wrapper(ArchmageFirePoisonSkills.PoisonChain.value, vEhc)
+        DotPunisher = self.load_skill_wrapper(ArchmageFirePoisonSkills.DoTPunisher, vEhc)
+        DotPunisherExceed = self.load_skill_wrapper(_("{}(초과)").format(ArchmageFirePoisonSkills.DoTPunisher), vEhc)
+        PoisonNova = self.load_skill_wrapper(ArchmageFirePoisonSkills.PoisonNova, vEhc)
+        PoisonNovaErupt = self.load_skill_wrapper(_("{}(폭발)").format(ArchmageFirePoisonSkills.PoisonNova), vEhc)
+        PoisonNovaEruptExceed = self.load_skill_wrapper(_("{}(폭발)(초과)").format(ArchmageFirePoisonSkills.PoisonNova), vEhc)
+        PoisonChain = self.load_skill_wrapper(ArchmageFirePoisonSkills.PoisonChain, vEhc)
         PoisonChainToxic = PoisonChainToxicWrapper(vEhc, 0, 0)
 
-        Meteor = self.load_skill_wrapper(ArchmageFirePoisonSkills.MeteorShower.value, vEhc)
-        MegidoFlame = self.load_skill_wrapper(ArchmageFirePoisonSkills.MegiddoFlame.value, vEhc)
+        Meteor = self.load_skill_wrapper(ArchmageFirePoisonSkills.MeteorShower, vEhc)
+        MegidoFlame = self.load_skill_wrapper(ArchmageFirePoisonSkills.MegiddoFlame, vEhc)
 
         # Summoning Skills
-        Ifritt = self.load_skill_wrapper(ArchmageFirePoisonSkills.Ifrit.value, vEhc)
-        FireAura = self.load_skill_wrapper(ArchmageFirePoisonSkills.InfernoAura.value, vEhc)
-        FuryOfIfritt = self.load_skill_wrapper(ArchmageFirePoisonSkills.ElementalFury.value, vEhc)
+        Ifritt = self.load_skill_wrapper(ArchmageFirePoisonSkills.Ifrit, vEhc)
+        FireAura = self.load_skill_wrapper(ArchmageFirePoisonSkills.InfernoAura, vEhc)
+        FuryOfIfritt = self.load_skill_wrapper(ArchmageFirePoisonSkills.ElementalFury, vEhc)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         # Final Attack
-        MeteorPassive = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.MeteorShower.value}(Passive | 패시브)", vEhc)
-        Ignite = self.load_skill_wrapper(ArchmageFirePoisonSkills.Ignite.value, vEhc)
-        IgniteMeteor = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.Ignite.value}({ArchmageFirePoisonSkills.MeteorShower.value})", vEhc)
+        MeteorPassive = self.load_skill_wrapper(_("{}(패시브)").format(ArchmageFirePoisonSkills.MeteorShower), vEhc)
+        Ignite = self.load_skill_wrapper(ArchmageFirePoisonSkills.Ignite, vEhc)
+        IgniteMeteor = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.Ignite}({ArchmageFirePoisonSkills.MeteorShower})", vEhc)
         # Ignite : Need Wrapper
 
         # DoT Skills
-        ParalyzeDOT = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.Paralyze.value}(DoT | 도트)")
-        MistDOT = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.PoisonMist.value}(DoT | 도트)")
-        IfrittDot = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.Ifrit.value}(DoT | 도트)")
-        HeizeFlameDOT = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.FlameHaze.value}(DoT | 도트)")
-        TeleportMasteryDOT = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.TeleportMastery.value}(DoT | 도트)")
-        PoisonBreathDOT = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.PoisonBreath.value}(DoT | 도트)")
-        MegidoFlameDOT = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.MegiddoFlame.value}(DoT | 도트)")
-        DotPunisherDOT = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.DoTPunisher.value}(DoT | 도트)", vEhc)
-        PoisonNovaDOT = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.PoisonNova.value}(DoT | 도트)", vEhc)
+        ParalyzeDOT = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.Paralyze))
+        MistDOT = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.PoisonMist))
+        IfrittDot = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.Ifrit))
+        HeizeFlameDOT = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.FlameHaze))
+        TeleportMasteryDOT = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.TeleportMastery))
+        PoisonBreathDOT = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.PoisonBreath))
+        MegidoFlameDOT = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.MegiddoFlame))
+        DotPunisherDOT = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.DoTPunisher), vEhc)
+        PoisonNovaDOT = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.PoisonNova), vEhc)
 
         # Unstable Memorize Skills
-        EnergyBolt = self.load_skill_wrapper(ArchmageFirePoisonSkills.EnergyBolt.value)
-        FlameOrb = self.load_skill_wrapper(ArchmageFirePoisonSkills.FlameOrb.value)
-        PoisonBreath = self.load_skill_wrapper(ArchmageFirePoisonSkills.PoisonBreath.value)
-        Explosion = self.load_skill_wrapper(ArchmageFirePoisonSkills.Explosion.value)  # magic6(720) -> explosion(180). Both are applied at the speed of 540+150. magic6(720) -> explosion(180). 둘 다 공속 적용되어 540+150.
-        PoisonMist = self.load_skill_wrapper(ArchmageFirePoisonSkills.PoisonMist.value)
-        SlimeVirus = self.load_skill_wrapper(ArchmageFirePoisonSkills.ViralSlime.value)
+        EnergyBolt = self.load_skill_wrapper(ArchmageFirePoisonSkills.EnergyBolt)
+        FlameOrb = self.load_skill_wrapper(ArchmageFirePoisonSkills.FlameOrb)
+        PoisonBreath = self.load_skill_wrapper(ArchmageFirePoisonSkills.PoisonBreath)
+        Explosion = self.load_skill_wrapper(ArchmageFirePoisonSkills.Explosion)  # magic6(720) -> explosion(180). Both are applied at the speed of 540+150. magic6(720) -> explosion(180). 둘 다 공속 적용되어 540+150.
+        PoisonMist = self.load_skill_wrapper(ArchmageFirePoisonSkills.PoisonMist)
+        SlimeVirus = self.load_skill_wrapper(ArchmageFirePoisonSkills.ViralSlime)
 
         # Unstable Memorize
         UnstableMemorize = adventurer.UnstableMemorizeWrapper(vEhc, 4, 4, chtr.get_skill_modifier())
