@@ -11,6 +11,8 @@ from .jobclass import nova
 from math import ceil
 from typing import Any, Dict
 
+import gettext
+_ = gettext.gettext
 
 BREATH_SHOOTER_HYPER = core.CharacterModifier(
     pdamage=10, boss_pdamage=15, armor_ignore=15
@@ -18,6 +20,8 @@ BREATH_SHOOTER_HYPER = core.CharacterModifier(
 EXECUTION_HYPER = core.CharacterModifier(armor_ignore=25)  # Ignore Guard. 이그노어 가드.
 REMAIN_INCENSE_REINFORCE = core.CharacterModifier(pdamage=50)
 
+class KainSkills:
+    default = ""
 
 def strike_arrow(vEhc, passive_level: int):  # Reset when waiting for 1980ms. 1980ms 대기하면 초기화.
     class StrikeArrowStatusWrapper(core.StackSkillWrapper):
@@ -665,7 +669,7 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.vEnhanceNum = 10
         self.jobtype = "DEX"
-        self.jobname = "카인"
+        self.jobname = _("카인")
         self.ability_list = Ability_tool.get_ability_set(
             "boss_pdamage", "crit", "buff_rem"
         )
@@ -676,7 +680,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ConcurrentRunRule(ArcherSkills.ViciousShot.value, "타나토스 디센트"), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(ArcherSkills.ViciousShot, "타나토스 디센트"), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(
