@@ -1,5 +1,4 @@
 import os
-from enum import Enum
 
 from typing import Any, Dict
 
@@ -13,55 +12,58 @@ from ..status.ability import Ability_tool
 from ..character import characterKernel as ck
 from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
 
+import gettext
+_ = gettext.gettext
+
 
 # English skill information for Ice/Lightning Mage here https://maplestory.fandom.com/wiki/Magician_(Ice,_Lightning)/Skills
-class ArchmageIceLightningSkills(Enum):
+class ArchmageIceLightningSkills:
     # Link Skill
-    EmpiricalKnowledge = 'Empirical Knowledge | 임피리컬 널리지'
+    EmpiricalKnowledge = _("임피리컬 널리지")  # "Empirical Knowledge"
     # 1st Job
-    EnergyBolt = 'Energy Bolt | 에너지 볼트'
-    MagicGuard = 'Magic Guard | 매직 가드'
-    Teleport = 'Teleport | 텔레포트'
-    MagicArmor = 'Magic Armor | 매직 아머'
-    MPBoost = 'MP Boost | MP 증가'
+    EnergyBolt = _("에너지 볼트")  # "Energy Bolt"
+    MagicGuard = _("매직 가드")  # "Magic Guard"
+    Teleport = _("텔레포트")  # "Teleport"
+    MagicArmor = _("매직 아머")  # "Magic Armor"
+    MPBoost = _("MP 증가")  # "MP Boost"
     # 2nd Job
-    ColdBeam = 'Cold Beam | 콜드 빔'
-    FreezingCrush = 'Freezing Crush | 프리징 이펙트'
-    ThunderBolt = 'Thunder Bolt | 썬더 볼트'
-    ChillingStep = 'Chilling Step | 칠링 스텝'
-    Meditation = 'Meditation | 메디테이션'
-    MagicBooster = 'Magic Booster | 매직 부스터'
-    SpellMastery = 'Spell Mastery | 스펠 마스터리'
-    HighWisdom = 'High Wisdom | 하이 위즈덤'
-    MPEater = 'MP Eater | MP 이터'
+    ColdBeam = _("콜드 빔")  # "Cold Beam"
+    FreezingCrush = _("프리징 이펙트")  # "Freezing Crush"
+    ThunderBolt = _("썬더 볼트")  # "Thunder Bolt"
+    ChillingStep = _("칠링 스텝")  # "Chilling Step"
+    Meditation = _("메디테이션")  # "Meditation"
+    MagicBooster = _("매직 부스터")  # "Magic Booster"
+    SpellMastery = _("스펠 마스터리")  # "Spell Mastery"
+    HighWisdom = _("하이 위즈덤")  # "High Wisdom"
+    MPEater = _("MP 이터")  # "MP Eater"
     # 3rd Job
-    IceStrike = 'Ice Strike | 아이스 스트라이크'
-    GlacierChain = 'Glacier Chain | 글레이셜 체인'
-    Thunderstorm = 'Thunderstorm | 썬더 스톰'
-    ElementalAdaptationIceLightning = 'Elemental Adaptation (Ice, Lightning) | 엘리멘탈 어뎁팅(썬,콜)'
-    ElementalDecrease = 'Elemental Decrease | 엘리멘탈 리셋'
-    TeleportMastery = 'Teleport Mastery | 텔레포트 마스터리'
-    ArcaneOverdrive = 'Arcane Overdrive | 매직 크리티컬'
-    StormMagic = 'Storm Magic | 익스트림 매직(썬,콜)'
-    ElementAmplification = 'Element Amplification | 엘리멘트 엠플리피케이션'
-    Shatter = 'Shatter | 프로즌 브레이크'
+    IceStrike = _("아이스 스트라이크")  # "Ice Strike"
+    GlacierChain = _("글레이셜 체인")  # "Glacier Chain"
+    Thunderstorm = _("썬더 스톰")  # "Thunderstorm"
+    ElementalAdaptationIceLightning = _("엘리멘탈 어뎁팅(썬,콜)")  # "Elemental Adaptation (Ice, Lightning)"
+    ElementalDecrease = _("엘리멘탈 리셋")  # "Elemental Decrease"
+    TeleportMastery = _("텔레포트 마스터리")  # "Teleport Mastery"
+    ArcaneOverdrive = _("매직 크리티컬")  # "Arcane Overdrive"
+    StormMagic = _("익스트림 매직")  # "Storm Magic"
+    ElementAmplification = _("엘리멘트 엠플리피케이션")  # "Element Amplification"
+    Shatter = _("프로즌 브레이크")  # "Shatter"
     # 4th Job
-    ChainLightning = 'Chain Lightning | 체인 라이트닝'
-    FreezingBreath = 'Freezing Breath | 프리징 브레스'
-    Blizzard = 'Blizzard | 블리자드'
-    FrozenOrb = 'Frozen Orb | 프로즌 오브'
-    Elquines = 'Elquines | 엘퀴네스'
-    BuffMastery = 'Buff Mastery | 마스터 매직'
-    ArcaneAim = 'Arcane Aim | 아케인 에임'
-    FrostClutch = 'Frost Clutch | 프로스트 이펙트'
-    LightningOrb = 'Lightning Orb | 라이트닝 스피어'
-    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
-    AbsoluteZeroAura = 'Absolute Zero Aura | 아이스 오라'
+    ChainLightning = _("체인 라이트닝")  # "Chain Lightning"
+    FreezingBreath = _("프리징 브레스")  # "Freezing Breath"
+    Blizzard = _("블리자드")  # "Blizzard"
+    FrozenOrb = _("프로즌 오브")  # "Frozen Orb"
+    Elquines = _("엘퀴네스")  # "Elquines"
+    BuffMastery = _("마스터 매직")  # "Buff Mastery"
+    ArcaneAim = _("아케인 에임")  # "Arcane Aim"
+    FrostClutch = _("프로스트 이펙트")  # "Frost Clutch"
+    LightningOrb = _("라이트닝 스피어")  # "Lightning Orb"
+    EpicAdventure = _("에픽 어드벤처")  # "Epic Adventure"
+    AbsoluteZeroAura = _("아이스 오라")  # "Absolute Zero Aura"
     # 5th Job
-    IceAge = 'Ice Age | 아이스 에이지'
-    BoltBarrage = 'Bolt Barrage | 썬더 브레이크'
-    SpiritofSnow = 'Spirit of Snow | 스피릿 오브 스노우'
-    JupiterThunder = 'Jupiter Thunder | 주피터 썬더'
+    IceAge = _("아이스 에이지")  # "Ice Age"
+    BoltBarrage = _("썬더 브레이크")  # "Bolt Barrage"
+    SpiritofSnow = _("스피릿 오브 스노우")  # "Spirit of Snow"
+    JupiterThunder = _("주피터 썬더")  # "Jupiter Thunder"
 
 
 class FrostEffectWrapper(core.StackSkillWrapper):
@@ -85,8 +87,8 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ConcurrentRunRule(ArchmageIceLightningSkills.LightningOrb.value, AdventurerSkills.Infinity.value), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule(AdventurerSkills.UnreliableMemory.value, AdventurerSkills.Infinity.value), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(ArchmageIceLightningSkills.LightningOrb, AdventurerSkills.Infinity), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(AdventurerSkills.UnreliableMemory, AdventurerSkills.Infinity), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -137,56 +139,56 @@ class JobGenerator(ck.JobGenerator):
 
         ######   Skill   ######
         # Buff skills
-        Meditation = self.load_skill_wrapper(ArchmageIceLightningSkills.Meditation.value)
-        EpicAdventure = self.load_skill_wrapper(ArchmageIceLightningSkills.EpicAdventure.value)
+        Meditation = self.load_skill_wrapper(ArchmageIceLightningSkills.Meditation)
+        EpicAdventure = self.load_skill_wrapper(ArchmageIceLightningSkills.EpicAdventure)
 
         # Damage Skills
-        ChainLightening = self.load_skill_wrapper(ArchmageIceLightningSkills.ChainLightning.value, vEhc)
+        ChainLightening = self.load_skill_wrapper(ArchmageIceLightningSkills.ChainLightning, vEhc)
 
-        FrozenOrb = self.load_skill_wrapper(ArchmageIceLightningSkills.FrozenOrb.value, vEhc)
-        LighteningSpear = self.load_skill_wrapper(ArchmageIceLightningSkills.LightningOrb.value, vEhc)
-        LighteningSpearSingle = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.LightningOrb.value}(Key down | 키다운)", vEhc)
-        LighteningSpearFinalizer = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.LightningOrb.value}(Final attack | 막타)", vEhc)
+        FrozenOrb = self.load_skill_wrapper(ArchmageIceLightningSkills.FrozenOrb, vEhc)
+        LighteningSpear = self.load_skill_wrapper(ArchmageIceLightningSkills.LightningOrb, vEhc)
+        LighteningSpearSingle = self.load_skill_wrapper(_("{}(키다운)").format(ArchmageIceLightningSkills.LightningOrb), vEhc)
+        LighteningSpearFinalizer = self.load_skill_wrapper(_("{}(막타)").format(ArchmageIceLightningSkills.LightningOrb), vEhc)
 
-        IceAgeInit = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.IceAge.value}(Cast | 개시)", vEhc)
-        IceAgeSummon = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.IceAge.value}(Floor | 장판)", vEhc)
+        IceAgeInit = self.load_skill_wrapper(_("{}(개시)").format(ArchmageIceLightningSkills.IceAge), vEhc)
+        IceAgeSummon = self.load_skill_wrapper(_("{}(장판)").format(ArchmageIceLightningSkills.IceAge), vEhc)
 
         # 5% reduction per stack. 중첩당 감소량 5%.
         # TODO: ?? must implement canceling the previous skill delay. 썬브가 이전 스킬 딜레이 캔슬하는것 구현해야 함.
-        ThunderBrake = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage.value}(Start skill | 개시스킬)", vEhc)  # Awesome! -> Tandem 사출처리 해야함...Later. 690을 일단 급한대로 분배해서 사용.
-        ThunderBrake1 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage.value}(1)", vEhc)
-        ThunderBrake2 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage.value}(2)", vEhc)
-        ThunderBrake3 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage.value}(3)", vEhc)
-        ThunderBrake4 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage.value}(4)", vEhc)
-        ThunderBrake5 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage.value}(5)", vEhc)
-        ThunderBrake6 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage.value}(6)", vEhc)
-        ThunderBrake7 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage.value}(7)", vEhc)
-        ThunderBrake8 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage.value}(8)", vEhc)
+        ThunderBrake = self.load_skill_wrapper(_("{}(개시스킬)").format(ArchmageIceLightningSkills.BoltBarrage), vEhc)  # Awesome! -> Tandem 사출처리 해야함...Later. 690을 일단 급한대로 분배해서 사용.
+        ThunderBrake1 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage}(1)", vEhc)
+        ThunderBrake2 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage}(2)", vEhc)
+        ThunderBrake3 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage}(3)", vEhc)
+        ThunderBrake4 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage}(4)", vEhc)
+        ThunderBrake5 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage}(5)", vEhc)
+        ThunderBrake6 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage}(6)", vEhc)
+        ThunderBrake7 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage}(7)", vEhc)
+        ThunderBrake8 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage}(8)", vEhc)
 
         # Single target criteria. 단일 대상 기준.
-        SpiritOfSnow = self.load_skill_wrapper(ArchmageIceLightningSkills.SpiritofSnow.value, vEhc)
+        SpiritOfSnow = self.load_skill_wrapper(ArchmageIceLightningSkills.SpiritofSnow, vEhc)
 
         # Summoning skill
-        ThunderStorm = self.load_skill_wrapper(ArchmageIceLightningSkills.Thunderstorm.value, vEhc)
-        Elquiness = self.load_skill_wrapper(ArchmageIceLightningSkills.Elquines.value, vEhc)
-        IceAura = self.load_skill_wrapper(ArchmageIceLightningSkills.AbsoluteZeroAura.value, vEhc)
+        ThunderStorm = self.load_skill_wrapper(ArchmageIceLightningSkills.Thunderstorm, vEhc)
+        Elquiness = self.load_skill_wrapper(ArchmageIceLightningSkills.Elquines, vEhc)
+        IceAura = self.load_skill_wrapper(ArchmageIceLightningSkills.AbsoluteZeroAura, vEhc)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
-        JupyterThunder = self.load_skill_wrapper(ArchmageIceLightningSkills.JupiterThunder.value, vEhc)
+        JupyterThunder = self.load_skill_wrapper(ArchmageIceLightningSkills.JupiterThunder, vEhc)
 
         # FinalAttack
-        Blizzard = self.load_skill_wrapper(ArchmageIceLightningSkills.Blizzard.value, vEhc)
-        BlizzardPassive = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.Blizzard.value}(Passive | 패시브)", vEhc)
+        Blizzard = self.load_skill_wrapper(ArchmageIceLightningSkills.Blizzard, vEhc)
+        BlizzardPassive = self.load_skill_wrapper(_("{}(패시브)").format(ArchmageIceLightningSkills.Blizzard), vEhc)
 
         # special skills
         Infinity = adventurer.InfinityWrapper(self.combat)
-        FrostEffect = core.BuffSkill(ArchmageIceLightningSkills.FrostClutch.value, 0, 999999 * 1000).wrap(FrostEffectWrapper)
+        FrostEffect = core.BuffSkill(ArchmageIceLightningSkills.FrostClutch, 0, 999999 * 1000).wrap(FrostEffectWrapper)
 
         # Unstable Memorize skills
-        EnergyBolt = self.load_skill_wrapper(ArchmageIceLightningSkills.EnergyBolt.value)
-        ColdBeam = self.load_skill_wrapper(ArchmageIceLightningSkills.ColdBeam.value)
-        ThunderBolt = self.load_skill_wrapper(ArchmageIceLightningSkills.ThunderBolt.value)
-        IceStrike = self.load_skill_wrapper(ArchmageIceLightningSkills.IceStrike.value)
-        GlacialChain = self.load_skill_wrapper(ArchmageIceLightningSkills.GlacierChain.value)
+        EnergyBolt = self.load_skill_wrapper(ArchmageIceLightningSkills.EnergyBolt)
+        ColdBeam = self.load_skill_wrapper(ArchmageIceLightningSkills.ColdBeam)
+        ThunderBolt = self.load_skill_wrapper(ArchmageIceLightningSkills.ThunderBolt)
+        IceStrike = self.load_skill_wrapper(ArchmageIceLightningSkills.IceStrike)
+        GlacialChain = self.load_skill_wrapper(ArchmageIceLightningSkills.GlacierChain)
 
         ######   Skill Wrapper   ######
         # Unstable Memorize
