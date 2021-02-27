@@ -5,16 +5,20 @@ from pathlib import Path
 from dpmModule.character.characterKernel import JobGenerator
 from dpmModule.character.characterTemplate import TemplateGenerator
 from dpmModule.execution import rules
-from dpmModule.jobs import jobMap, getEnJobName
+from dpmModule.jobs import jobMap
 from dpmModule.kernel import core, policy
 from dpmModule.status.ability import Ability_grade
 
 from statistics.preset import get_preset, get_preset_list
 
+import gettext
+_ = gettext.gettext
+
+
 try:
     import pandas as pd
 except ImportError:
-    print("pandas module is missing, please import it. 모듈을 설치해야 합니다.")
+    print(_("모듈을 설치해야 합니다"))
     exit()
 
 
@@ -33,7 +37,7 @@ def get_args():
 
 def dpm(args):
     preset = get_preset(args.id)
-    gen: JobGenerator = jobMap[preset.job].JobGenerator(lang=args.lang)
+    gen: JobGenerator = jobMap[preset.job].JobGenerator()
     target, weapon_stat = TemplateGenerator().get_template_and_weapon_stat(gen, str(args.ulevel), args.cdr)
     v_builder = core.AlwaysMaximumVBuilder()
     graph = gen.package(
@@ -60,7 +64,7 @@ def dpm(args):
     control = core.Simulator(sche, target, analytics)
     control.start_simulation(args.time * 1000)
     dpm = analytics.get_dpm()
-    print(f'{getEnJobName(preset.job)} | {preset.job}', f"{dpm:,.3f}")
+    print(f'{preset.job}', f"{dpm:,.3f}")
 
     return analytics.get_log()
 
