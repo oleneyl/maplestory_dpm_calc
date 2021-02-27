@@ -1,5 +1,3 @@
-from enum import Enum
-
 from dpmModule.jobs.globalSkill import GlobalSkills
 
 from ..kernel import core
@@ -12,57 +10,60 @@ from .jobclass import adventurer
 from math import ceil
 from typing import Any, Dict
 
+import gettext
+_ = gettext.gettext
+
 """
 Advisor : Sniper range (red). 저격장(레드).
 https://github.com/oleneyl/maplestory_dpm_calc/issues/247
 """
 # English skill information for Bowmaster here https://maplestory.fandom.com/wiki/Bowmaster/Skills
-class BowmasterSkills(Enum):
+class BowmasterSkills:
     # Link Skill
-    AdventurersCuriosity = 'Adventurer\'s Curiosity | '
+    # AdventurersCuriosity = _("")  # "Adventurer's Curiosity"
     # 1st Job
-    ArrowBlow = 'Arrow Blow | 애로우 블로우'
-    DoubleJump = 'Double Jump | 더블 점프'
-    CriticalShot = 'Critical Shot | 크리티컬 샷'
-    ArcheryMastery = 'Archery Mastery | 아처 마스터리'
+    ArrowBlow = _("애로우 블로우")  # "Arrow Blow"
+    DoubleJump = _("더블 점프")  # "Double Jump"
+    CriticalShot = _("크리티컬 샷")  # "Critical Shot"
+    ArcheryMastery = _("아처 마스터리")  # "Archery Mastery"
     # 2nd Job
-    ArrowBomb = 'Arrow Bomb | 애로우 봄'
-    CoveringFire = 'Covering Fire | 리트리트 샷'
-    BowBooster = 'Bow Booster | 보우 부스터'
-    SoulArrowBow = 'Soul Arrow: Bow | 소울 애로우: 활'
-    QuiverCartridge = 'Quiver Cartridge | 퀴버 카트리지'
-    BowMastery = 'Bow Mastery | 보우 마스터리'
-    FinalAttackBow = 'Final Attack: Bow | 파이널 어택: 활'
-    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
+    ArrowBomb = _("애로우 봄")  # "Arrow Bomb"
+    CoveringFire = _("리트리트 샷")  # "Covering Fire"
+    BowBooster = _("보우 부스터")  # "Bow Booster"
+    SoulArrowBow = _("소울 애로우: 활")  # "Soul Arrow: Bow"
+    QuiverCartridge = _("퀴버 카트리지")  # "Quiver Cartridge"
+    BowMastery = _("보우 마스터리")  # "Bow Mastery"
+    FinalAttackBow = _("파이널 어택: 활")  # "Final Attack: Bow"
+    PhysicalTraining = _("피지컬 트레이닝")  # "Physical Training"
     # 3rd Job
-    FlameSurge = 'Flame Surge | 플레임 샷'
-    Phoenix = 'Phoenix | 피닉스'
-    Hookshot = 'Hookshot | 슈타이크 아이젠'
-    RecklessHuntBow = 'Reckless Hunt: Bow | 익스트림 아처리'
-    MortalBlow = 'Mortal Blow | 모탈 블로우'
-    FocusedFury = 'Focused Fury | 컨센트레이션'
-    EvasionBoost = 'Evasion Boost | 닷지'
-    Marksmanship = 'Marksmanship | 마크맨쉽'
-    ArrowBlaster = 'Arrow Blaster | 애로우 플래터'
+    FlameSurge = _("플레임 샷")  # "Flame Surge"
+    Phoenix = _("피닉스")  # "Phoenix"
+    Hookshot = _("슈타이크 아이젠")  # "Hookshot"
+    RecklessHuntBow = _("익스트림 아처리")  # "Reckless Hunt: Bow"
+    MortalBlow = _("모탈 블로우")  # "Mortal Blow"
+    FocusedFury = _("컨센트레이션")  # "Focused Fury"
+    EvasionBoost = _("닷지")  # "Evasion Boost"
+    Marksmanship = _("마크맨쉽")  # "Marksmanship"
+    ArrowBlaster = _("애로우 플래터")  # "Arrow Blaster"
     # 4th Job
-    Hurricane = 'Hurricane | 폭풍의 시'
-    BindingShot = 'Binding Shot | 운즈 샷'
-    ArrowStream = 'Arrow Stream | 언카운터블 애로우'
-    SharpEyes = 'Sharp Eyes | 샤프 아이즈'
-    IllusionStep = 'Illusion Step | 일루젼 스탭'
-    EnchantedQuiver = 'Enchanted Quiver | 어드밴스드 퀴버'
-    BowExpert = 'Bow Expert | 보우 엑스퍼트'
-    AdvancedFinalAttack = 'Advanced Final Attack | 어드밴스드 파이널 어택'
-    ArmorBreak = 'Armor Break | 아머 피어싱'
+    Hurricane = _("폭풍의 시")  # "Hurricane"
+    BindingShot = _("운즈 샷")  # "Binding Shot"
+    ArrowStream = _("언카운터블 애로우")  # "Arrow Stream"
+    SharpEyes = _("샤프 아이즈")  # "Sharp Eyes"
+    IllusionStep = _("일루젼 스탭")  # "Illusion Step"
+    EnchantedQuiver = _("어드밴스드 퀴버")  # "Enchanted Quiver"
+    BowExpert = _("보우 엑스퍼트")  # "Bow Expert"
+    AdvancedFinalAttack = _("어드밴스드 파이널 어택")  # "Advanced Final Attack"
+    ArmorBreak = _("아머 피어싱")  # "Armor Break"
     # Hypers
-    GrittyGust = 'Gritty Gust | 윈드 오브 프레이'
-    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
-    Concentration = 'Concentration | 프리퍼레이션'
+    GrittyGust = _("윈드 오브 프레이")  # "Gritty Gust"
+    EpicAdventure = _("에픽 어드벤처")  # "Epic Adventure"
+    Concentration = _("프리퍼레이션")  # "Concentration"
     # 5th Job
-    StormofArrows = 'Storm of Arrows | 애로우 레인'
-    InhumanSpeed = 'Inhuman Speed | 잔영의 시'
-    QuiverBarrage = 'Quiver Barrage | 퀴버 풀버스트'
-    SilhouetteMirage = 'Silhouette Mirage | 실루엣 미라주'
+    StormofArrows = _("애로우 레인")  # "Storm of Arrows"
+    InhumanSpeed = _("잔영의 시")  # "Inhuman Speed"
+    QuiverBarrage = _("퀴버 풀버스트")  # "Quiver Barrage"
+    SilhouetteMirage = _("실루엣 미라주")  # "Silhouette Mirage"
 
 
 class ArmorPiercingWrapper(core.BuffSkillWrapper):
@@ -79,7 +80,7 @@ class ArmorPiercingWrapper(core.BuffSkillWrapper):
         self.empty_modifier = core.CharacterModifier()
         self.skill_modifier = chtr.get_skill_modifier()
         self.cooltime_skip_task = core.TaskHolder(core.Task(self, self._cooltime_skip))
-        skill = core.BuffSkill("아머 피어싱", delay=0, remain=0, cooltime=9000, red=True)
+        skill = core.BuffSkill(_("아머 피어싱"), delay=0, remain=0, cooltime=9000, red=True)
         super(ArmorPiercingWrapper, self).__init__(skill)
 
     def check_modifier(self) -> core.CharacterModifier:
@@ -118,7 +119,7 @@ class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.jobtype = "DEX"
-        self.jobname = "보우마스터"
+        self.jobname = _("보우마스터")
         self.vEnhanceNum = 11
         self.ability_list = Ability_tool.get_ability_set(
             "boss_pdamage", "crit", "buff_rem"
@@ -130,28 +131,28 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ConcurrentRunRule(BowmasterSkills.Concentration.value, BowmasterSkills.QuiverBarrage.value), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule(GlobalSkills.TermsAndConditions.value, BowmasterSkills.QuiverBarrage.value), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(BowmasterSkills.Concentration, BowmasterSkills.QuiverBarrage), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(GlobalSkills.TermsAndConditions, BowmasterSkills.QuiverBarrage), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(
         self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
     ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        CriticalShot = core.InformedCharacterModifier(BowmasterSkills.CriticalShot.value, crit=40)
-        PhisicalTraining = core.InformedCharacterModifier(BowmasterSkills.PhysicalTraining.value, stat_main=30, stat_sub=30)
+        CriticalShot = core.InformedCharacterModifier(BowmasterSkills.CriticalShot, crit=40)
+        PhisicalTraining = core.InformedCharacterModifier(BowmasterSkills.PhysicalTraining, stat_main=30, stat_sub=30)
 
-        MarkmanShip = core.InformedCharacterModifier(BowmasterSkills.Marksmanship.value, armor_ignore=25, patt=25)
+        MarkmanShip = core.InformedCharacterModifier(BowmasterSkills.Marksmanship, armor_ignore=25, patt=25)
 
         BowExpert = core.InformedCharacterModifier(
-            BowmasterSkills.BowExpert.value, att=60 + passive_level, crit_damage=8
+            BowmasterSkills.BowExpert, att=60 + passive_level, crit_damage=8
         )
         AdvancedFinalAttackPassive = core.InformedCharacterModifier(
-            f"{BowmasterSkills.AdvancedFinalAttack.value}(Passive | 패시브)", att=20 + ceil(passive_level / 2)
+            _("{}(패시브)").format(BowmasterSkills.AdvancedFinalAttack), att=20 + ceil(passive_level / 2)
         )  # Need to apply order. 오더스 적용필요.
 
         ElusionStep = core.InformedCharacterModifier(
-            BowmasterSkills.IllusionStep.value, stat_main=80 + 2 * passive_level
+            BowmasterSkills.IllusionStep, stat_main=80 + 2 * passive_level
         )
 
         return [
@@ -167,10 +168,10 @@ class JobGenerator(ck.JobGenerator):
         self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
     ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=30)
-        Mastery = core.InformedCharacterModifier("숙련도", mastery=85+ceil(passive_level / 2))
+        WeaponConstant = core.InformedCharacterModifier(_("무기상수"), pdamage_indep=30)
+        Mastery = core.InformedCharacterModifier(_("숙련도"), mastery=85+ceil(passive_level / 2))
         ExtremeArchery = core.InformedCharacterModifier(
-            BowmasterSkills.RecklessHuntBow.value, att=40, pdamage_indep=30
+            BowmasterSkills.RecklessHuntBow, att=40, pdamage_indep=30
         )
 
         return [WeaponConstant, Mastery, ExtremeArchery]
@@ -205,10 +206,10 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill   ######
         # Buff skills
         SoulArrow = core.BuffSkill(
-            BowmasterSkills.SoulArrowBow.value, delay=0, remain=300 * 1000, att=30  # Pet buff. 펫버프.
+            BowmasterSkills.SoulArrowBow, delay=0, remain=300 * 1000, att=30  # Pet buff. 펫버프.
         ).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill(
-            BowmasterSkills.SharpEyes.value,
+            BowmasterSkills.SharpEyes,
             delay=690,
             remain=300 * 1000,
             crit=20 + 5 + ceil(self.combat / 2),
@@ -216,7 +217,7 @@ class JobGenerator(ck.JobGenerator):
             armor_ignore=5,
         ).wrap(core.BuffSkillWrapper)
         Preparation = core.BuffSkill(
-            BowmasterSkills.Concentration.value,
+            BowmasterSkills.Concentration,
             delay=900,
             remain=30 * 1000,
             cooltime=90 * 1000,
@@ -224,25 +225,25 @@ class JobGenerator(ck.JobGenerator):
             boss_pdamage=20,
         ).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill(
-            BowmasterSkills.EpicAdventure.value, delay=0, remain=60 * 1000, cooltime=120 * 1000, pdamage=10
+            BowmasterSkills.EpicAdventure, delay=0, remain=60 * 1000, cooltime=120 * 1000, pdamage=10
         ).wrap(core.BuffSkillWrapper)
 
         ArmorPiercing = ArmorPiercingWrapper(passive_level, chtr)
 
         # Damage Skills
         MagicArrow = (
-            core.DamageSkill(BowmasterSkills.EnchantedQuiver.value, delay=0, damage=260, hit=0.6)
+            core.DamageSkill(BowmasterSkills.EnchantedQuiver, delay=0, damage=260, hit=0.6)
             .setV(vEhc, 3, 2, True)
             .wrap(core.DamageSkillWrapper)
         )
         MagicArrow_ArrowRain = (
-            core.DamageSkill(f"{BowmasterSkills.EnchantedQuiver.value}({BowmasterSkills.StormofArrows.value})", delay=0, damage=260, hit=1)
+            core.DamageSkill(f"{BowmasterSkills.EnchantedQuiver}({BowmasterSkills.StormofArrows})", delay=0, damage=260, hit=1)
             .setV(vEhc, 3, 2, True)
             .wrap(core.DamageSkillWrapper)
         )
         AdvancedFinalAttack = (
             core.DamageSkill(
-                BowmasterSkills.AdvancedFinalAttack.value,
+                BowmasterSkills.AdvancedFinalAttack,
                 delay=0,
                 damage=210 + 2 * passive_level,
                 hit=0.7 + 0.01 * passive_level,
@@ -253,7 +254,7 @@ class JobGenerator(ck.JobGenerator):
 
         ArrowOfStorm = (
             core.DamageSkill(
-                BowmasterSkills.Hurricane.value,
+                BowmasterSkills.Hurricane,
                 delay=120,
                 damage=(350 + self.combat * 3) * 0.75,
                 hit=1 + 1,
@@ -265,7 +266,7 @@ class JobGenerator(ck.JobGenerator):
         )
         ArrowFlatter = (
             core.SummonSkill(
-                BowmasterSkills.ArrowBlaster.value,
+                BowmasterSkills.ArrowBlaster,
                 summondelay=600,  # I don't know the delay. 딜레이 모름.
                 delay=210,
                 damage=85 + 90 + self.combat * 3,
@@ -279,7 +280,7 @@ class JobGenerator(ck.JobGenerator):
 
         GrittyGust = (
             core.DamageSkill(
-                BowmasterSkills.GrittyGust.value,
+                BowmasterSkills.GrittyGust,
                 delay=720,
                 damage=335,
                 hit=12,
@@ -290,7 +291,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
         GrittyGustDOT = core.DotSkill(
-            f"{BowmasterSkills.GrittyGust.value}(DoT | 도트)",
+            _("{}(도트)").format(BowmasterSkills.GrittyGust),
             summondelay=0,
             delay=1000,
             damage=200,
@@ -301,7 +302,7 @@ class JobGenerator(ck.JobGenerator):
 
         ArrowRainBuff = (
             core.BuffSkill(
-                f"{BowmasterSkills.StormofArrows.value}(Buff | 버프)",
+                _("{}(버프)").format(BowmasterSkills.StormofArrows),
                 delay=810,
                 remain=(40 + vEhc.getV(0, 0)) * 1000,
                 cooltime=120 * 1000,
@@ -313,7 +314,7 @@ class JobGenerator(ck.JobGenerator):
         )
         ArrowRain = DelayVaryingSummonSkillWrapper(
             core.SummonSkill(
-                BowmasterSkills.StormofArrows.value,
+                BowmasterSkills.StormofArrows,
                 summondelay=0,
                 delay=-1,
                 damage=600 + vEhc.getV(0, 0) * 24,
@@ -328,7 +329,7 @@ class JobGenerator(ck.JobGenerator):
         # Summon Skills
         Pheonix = (
             core.SummonSkill(
-                BowmasterSkills.Phoenix.value,
+                BowmasterSkills.Phoenix,
                 summondelay=0,  # When Evolve is over, it is automatically summoned, so the delay is 0. 이볼브가 끝나면 자동으로 소환되므로 딜레이 0.
                 delay=1710,
                 damage=390,
@@ -346,7 +347,7 @@ class JobGenerator(ck.JobGenerator):
 
         # No application of remnant poems. 잔영의시 미적용.
         QuibberFullBurstBuff = core.BuffSkill(
-            f"{BowmasterSkills.QuiverBarrage.value}(Buff | 버프)",
+            _("{}(버프)").format(BowmasterSkills.QuiverBarrage),
             delay=0,
             remain=30 * 1000,
             cooltime=120 * 1000,
@@ -356,7 +357,7 @@ class JobGenerator(ck.JobGenerator):
         ).wrap(core.BuffSkillWrapper)
         QuibberFullBurst = DelayVaryingSummonSkillWrapper(
             core.SummonSkill(
-                BowmasterSkills.QuiverBarrage.value,
+                BowmasterSkills.QuiverBarrage,
                 summondelay=780,
                 delay=-1,
                 damage=250 + 10 * vEhc.getV(2, 2),
@@ -368,7 +369,7 @@ class JobGenerator(ck.JobGenerator):
             delays=[90, 90, 90, 90, 90, 90 + (2000 - 90 * 6)],
         )  # Fires 6 times every 2 seconds at 90ms intervals. 2초에 한번씩 90ms 간격으로 6회 발사.
         QuibberFullBurstDOT = core.DotSkill(
-            "독화살",
+            _("독화살"),
             summondelay=0,
             delay=1000,
             damage=220,
@@ -379,7 +380,7 @@ class JobGenerator(ck.JobGenerator):
 
         ImageArrow = (
             core.SummonSkill(
-                BowmasterSkills.InhumanSpeed.value,
+                BowmasterSkills.InhumanSpeed,
                 summondelay=720,
                 delay=240,
                 damage=400 + 16 * vEhc.getV(1, 1),
@@ -393,7 +394,7 @@ class JobGenerator(ck.JobGenerator):
         )
         ImageArrowPassive = (
             core.SummonSkill(
-                f"{BowmasterSkills.InhumanSpeed.value}(Passive | 패시브)",
+                _("{}(패시브)").format(BowmasterSkills.InhumanSpeed),
                 summondelay=0,
                 delay=2580,
                 damage=400 + 16 * vEhc.getV(1, 1),
@@ -406,7 +407,7 @@ class JobGenerator(ck.JobGenerator):
 
         OpticalIllusion = (
             core.SummonSkill(
-                BowmasterSkills.SilhouetteMirage.value,
+                BowmasterSkills.SilhouetteMirage,
                 summondelay=0,
                 delay=210,
                 damage=400 + 16 * vEhc.getV(0, 0),
@@ -447,7 +448,7 @@ class JobGenerator(ck.JobGenerator):
         UseOpticalIllusion = core.OptionalElement(
             OpticalIllusion.is_available,
             OpticalIllusion,
-            name="Cooldown check | 쿨타임 체크",
+            name=_("쿨타임 체크"),
         )
         for sk in [ArrowOfStorm, GrittyGust]:
             sk.onAfter(UseOpticalIllusion)
