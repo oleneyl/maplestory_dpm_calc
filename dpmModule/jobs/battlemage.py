@@ -48,7 +48,7 @@ class MarkStackWrapper(core.StackSkillWrapper):
     
     def begin_abyssal(self):
         self.abyssal_lightning = True
-        self._max = 4
+        self._max = 6
         return self._result_object_cache
     
     def beginAbyssalLightning(self):
@@ -162,7 +162,7 @@ class JobGenerator(ck.JobGenerator):
         BlackMagicAlter = core.SummonSkill("블랙 매직 알터", 690, 1220, 800+32*vEhc.getV(0,0), 4, 40*1000, cooltime = 50*1000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) # 2개 충전할때 마다 사용
         GrimReaper = GrimReaperWrapper(vEhc, 2, 2, MasterOfDeath)
         AbyssalLightning = core.BuffSkill("어비셜 라이트닝", 540, 35000, cooltime=200*1000, red=True).wrap(core.BuffSkillWrapper)
-        AbyssalDarkLightning = core.DamageSkill("어비셜 라이트닝(명계의 번개)", 0, 825+33*vEhc.getV(0,0), 4, cooltime=600, modifier=core.CharacterModifier(crit=100, armor_ignore=20)).wrap(core.DamageSkillWrapper)
+        AbyssalDarkLightning = core.DamageSkill("어비셜 라이트닝(명계의 번개)", 0, 800+32*vEhc.getV(0,0), 6, cooltime=600, modifier=core.CharacterModifier(crit=100, armor_ignore=20)).wrap(core.DamageSkillWrapper)
         
         #Build Graph
         """
