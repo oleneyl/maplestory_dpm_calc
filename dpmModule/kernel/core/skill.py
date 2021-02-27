@@ -15,6 +15,9 @@ if TYPE_CHECKING:
 
     T = TypeVar("T", bound=AbstractSkillWrapper)
 
+import gettext
+_ = gettext.gettext
+
 
 class AbstractSkill(EvaluativeGraphElement):
     """Skill must have information about it's name, it's using - delay, skill using cooltime.
@@ -47,12 +50,9 @@ class AbstractSkill(EvaluativeGraphElement):
             if self.cooltime == -1:
                 self.cooltime = NOTWANTTOEXECUTE
 
-    def _change_time_into_string(
-        self, float_or_infinite: float, divider: int = 1, lang: str = "ko"
-    ) -> str:
-        lang_to_inf_dict = {"ko": "무한/자동발동불가", "en": "Infinite"}
+    def _change_time_into_string(self, float_or_infinite: float, divider: int = 1) -> str:
         if abs(float_or_infinite - NOTWANTTOEXECUTE / divider) < 10000 / divider:
-            return lang_to_inf_dict[lang]
+            return _("무한/자동발동불가")
         else:
             return "%.1f" % float_or_infinite
 
@@ -68,20 +68,15 @@ class AbstractSkill(EvaluativeGraphElement):
     def set_explanation(self, strs: str) -> None:
         self.explanation = strs
 
-    def get_explanation(self, lang: str = "ko", expl_level: int = 2) -> str:
+    def get_explanation(self, expl_level: int = 2) -> str:
         """level 0 / 1 / 2"""
         if self.explanation is not None:
             return self.explanation
         else:
-            return self._get_explanation_internal(lang=lang, expl_level=expl_level)
+            return self._get_explanation_internal(expl_level=expl_level)
 
-    def _get_explanation_internal(
-        self, detail: bool = False, lang: str = "ko", expl_level: int = 2
-    ) -> str:
-        if lang == "en":
-            li = [("skill name", self.name), ("type", "AbstractSkill(Not implemented)")]
-        elif lang == "ko":
-            li = [("스킬 이름", self.name), ("분류", "템플릿(상속되지 않음)")]
+    def _get_explanation_internal(self, detail: bool = False, expl_level: int = 2) -> str:
+        li = [(_("스킬 이름"), self.name), (_("분류"), _("템플릿(상속되지 않음)"))]
 
         return self._parse_list_info_into_string(li)
 
@@ -172,67 +167,35 @@ class BuffSkill(AbstractSkill):
                 stat_sub_fixed=stat_sub_fixed,
             )
 
-    def _get_explanation_internal(
-        self, detail: bool = False, lang: str = "ko", expl_level: int = 2
-    ) -> str:
-        if lang == "ko":
-            li = [
-                ("스킬 이름", self.name),
-                ("분류", "버프"),
-                ("딜레이", "%.1f" % self.delay, "ms"),
-                (
-                    "지속 시간",
-                    self._change_time_into_string(self.remain / 1000, divider=1000),
-                    "s",
-                ),
-                (
-                    "쿨타임",
-                    self._change_time_into_string(self.cooltime / 1000, divider=1000),
-                    "s",
-                ),
-                ("쿨타임 감소 가능 여부", self.red),
-                ("지속시간 증가 여부", self.rem),
-                (
-                    "효과",
-                    ", ".join(
-                        [
-                            (str(i[0]) + "+" + "".join([str(j) for j in i[1:]]))
-                            for i in self.static_character_modifier.abstract_log_list()
-                        ]
-                    ).replace("+미발동", " 미발동"),
-                ),
-            ]
-            if expl_level < 2:
-                li = [li[3], li[7]]
-        elif lang == "en":
-            li = [
-                ("Skill Name", self.name),
-                ("Classification", "Buff"),
-                ("Delay", "%.1f" % self.delay, "ms"),
-                (
-                    "Duration",
-                    self._change_time_into_string(self.remain / 1000, divider=1000),
-                    "s",
-                ),
-                (
-                    "Cooldown",
-                    self._change_time_into_string(self.cooltime / 1000, divider=1000),
-                    "s",
-                ),
-                ("Whether the cooldown can be reduced", self.red),
-                ("Whether the duration increases", self.rem),
-                (
-                    "Additional effect",
-                    ", ".join(
-                        [
-                            (str(i[0]) + "+" + "".join([str(j) for j in i[1:]]))
-                            for i in self.static_character_modifier.abstract_log_list()
-                        ]
-                    ).replace("+미발동%", " Not activated"),
-                ),
-            ]
-            if expl_level < 2:
-                li = [li[3], li[7]]
+    def _get_explanation_internal(self, detail: bool = False, expl_level: int = 2) -> str:
+        li = [
+            (_("스킬 이름"), self.name),
+            (_("분류"), _("버프")),
+            (_("딜레이"), "%.1f" % self.delay, "ms"),
+            (
+                _("지속 시간"),
+                self._change_time_into_string(self.remain / 1000, divider=1000),
+                "s",
+            ),
+            (
+                _("쿨타임"),
+                self._change_time_into_string(self.cooltime / 1000, divider=1000),
+                "s",
+            ),
+            (_("쿨타임 감소 가능 여부"), self.red),
+            (_("지속시간 증가 여부"), self.rem),
+            (
+                _("효과"),
+                ", ".join(
+                    [
+                        (str(i[0]) + "+" + "".join([str(j) for j in i[1:]]))
+                        for i in self.static_character_modifier.abstract_log_list()
+                    ]
+                ).replace(_("+미발동"), _(" 미발동")),
+            ),
+        ]
+        if expl_level < 2:
+            li = [li[3], li[7]]
 
         return self._parse_list_info_into_string(li)
 
@@ -271,61 +234,32 @@ class DamageSkill(AbstractSkill):
             # Issue : Will we need this option really?
             self._static_skill_modifier: CharacterModifier = modifier
 
-    def _get_explanation_internal(
-        self, detail: bool = False, lang: str = "ko", expl_level: int = 2
-    ) -> str:
-        if lang == "ko":
-            li = [
-                ("스킬 이름", self.name),
-                ("분류", "공격기"),
-                ("딜레이", "%.1f" % self.delay, "ms"),
-                ("퍼뎀", "%.1f" % self.damage, "%"),
-                ("타격수", self.hit),
-                (
-                    "쿨타임",
-                    self._change_time_into_string(self.cooltime / 1000, divider=1000),
-                    "s",
-                ),
-                ("쿨타임 감소 가능 여부", self.red),
-                ("지속시간 증가 여부", self.rem),
-                (
-                    "추가효과",
-                    ", ".join(
-                        [
-                            (str(i[0]) + "+" + "".join([str(j) for j in i[1:]]))
-                            for i in self._static_skill_modifier.abstract_log_list()
-                        ]
-                    ).replace("+미발동%", " 미발동"),
-                ),
-            ]
-            if expl_level < 2:
-                li = li[3:5] + [li[8]]
-        elif lang == "en":
-            li = [
-                ("Skill Name", self.name),
-                ("Classification", "Attack"),
-                ("Hit Delay", "%.1f" % self.delay, "ms"),
-                ("Damage", "%.1f" % self.damage, "%"),
-                ("Number of Hits", self.hit),
-                (
-                    "Cooldown",
-                    self._change_time_into_string(self.cooltime / 1000, divider=1000),
-                    "s",
-                ),
-                ("Whether the cooldown can be reduced", self.red),
-                ("Whether the duration increases", self.rem),
-                (
-                    "Additional effect",
-                    ", ".join(
-                        [
-                            (str(i[0]) + "+" + "".join([str(j) for j in i[1:]]))
-                            for i in self._static_skill_modifier.abstract_log_list()
-                        ]
-                    ).replace("+미발동%", " Not activated"),
-                ),
-            ]
-            if expl_level < 2:
-                li = li[3:5] + [li[8]]
+    def _get_explanation_internal(self, detail: bool = False, expl_level: int = 2) -> str:
+        li = [
+            (_("스킬 이름"), self.name),
+            (_("분류"), _("공격기")),
+            (_("딜레이"), "%.1f" % self.delay, "ms"),
+            (_("퍼뎀"), "%.1f" % self.damage, "%"),
+            (_("타격수"), self.hit),
+            (
+                _("쿨타임"),
+                self._change_time_into_string(self.cooltime / 1000, divider=1000),
+                "s",
+            ),
+            (_("쿨타임 감소 가능 여부"), self.red),
+            (_("지속시간 증가 여부"), self.rem),
+            (
+                _("추가효과"),
+                ", ".join(
+                    [
+                        (str(i[0]) + "+" + "".join([str(j) for j in i[1:]]))
+                        for i in self._static_skill_modifier.abstract_log_list()
+                    ]
+                ).replace(_("+미발동%"), _(" 미발동")),
+            ),
+        ]
+        if expl_level < 2:
+            li = li[3:5] + [li[8]]
 
         return self._parse_list_info_into_string(li)
 
@@ -379,73 +313,38 @@ class SummonSkill(AbstractSkill):
             self.remain: float = remain
             self._static_skill_modifier: CharacterModifier = modifier
 
-    def _get_explanation_internal(
-        self, detail: bool = False, lang: str = "ko", expl_level: int = 2
-    ) -> str:
-        if lang == "ko":
-            li = [
-                ("스킬 이름", self.name),
-                ("분류", "소환기"),
-                ("딜레이", "%.1f" % self.summondelay, "ms"),
-                ("타격주기", "%.1f" % self.delay, "ms"),
-                ("퍼뎀", "%.1f" % self.damage, "%"),
-                ("타격수", self.hit),
-                (
-                    "지속 시간",
-                    self._change_time_into_string(self.remain / 1000, divider=1000),
-                    "s",
-                ),
-                (
-                    "쿨타임",
-                    self._change_time_into_string(self.cooltime / 1000, divider=1000),
-                    "s",
-                ),
-                ("쿨타임 감소 가능 여부", self.red),
-                ("지속시간 증가 여부", self.rem),
-                (
-                    "추가효과",
-                    ", ".join(
-                        [
-                            (str(i[0]) + "+" + "".join([str(j) for j in i[1:]]))
-                            for i in self._static_skill_modifier.abstract_log_list()
-                        ]
-                    ).replace("+미발동%", " 미발동"),
-                ),
-            ]
-            if expl_level < 2:
-                li = li[3:7] + [li[10]]
-        elif lang == "en":
-            li = [
-                ("Skill Name", self.name),
-                ("Classification", "Summon"),
-                ("Delay", "%.1f" % self.summondelay, "ms"),
-                ("Hit Delay", "%.1f" % self.delay, "ms"),
-                ("Damage", "%.1f" % self.damage, "%"),
-                ("Number of Hits", self.hit),
-                (
-                    "Duration",
-                    self._change_time_into_string(self.remain / 1000, divider=1000),
-                    "s",
-                ),
-                (
-                    "Cooldown",
-                    self._change_time_into_string(self.cooltime / 1000, divider=1000),
-                    "s",
-                ),
-                ("Whether the cooldown can be reduced", self.red),
-                ("Whether the duration increases", self.rem),
-                (
-                    "Additional effect",
-                    ", ".join(
-                        [
-                            (str(i[0]) + "+" + "".join([str(j) for j in i[1:]]))
-                            for i in self._static_skill_modifier.abstract_log_list()
-                        ]
-                    ).replace("+미발동%", " Not activated"),
-                ),
-            ]
-            if expl_level < 2:
-                li = li[3:7] + [li[10]]
+    def _get_explanation_internal(self, detail: bool = False, expl_level: int = 2) -> str:
+        li = [
+            (_("스킬 이름"), self.name),
+            (_("분류"), _("소환기")),
+            (_("딜레이"), "%.1f" % self.summondelay, "ms"),
+            (_("타격주기"), "%.1f" % self.delay, "ms"),
+            (_("퍼뎀"), "%.1f" % self.damage, "%"),
+            (_("타격수"), self.hit),
+            (
+                _("지속 시간"),
+                self._change_time_into_string(self.remain / 1000, divider=1000),
+                "s",
+            ),
+            (
+                _("쿨타임"),
+                self._change_time_into_string(self.cooltime / 1000, divider=1000),
+                "s",
+            ),
+            (_("쿨타임 감소 가능 여부"), self.red),
+            (_("지속시간 증가 여부"), self.rem),
+            (
+                _("추가효과"),
+                ", ".join(
+                    [
+                        (str(i[0]) + "+" + "".join([str(j) for j in i[1:]]))
+                        for i in self._static_skill_modifier.abstract_log_list()
+                    ]
+                ).replace(_("+미발동%"), _(" 미발동")),
+            ),
+        ]
+        if expl_level < 2:
+            li = li[3:7] + [li[10]]
 
         return self._parse_list_info_into_string(li)
 
@@ -488,73 +387,38 @@ class DotSkill(SummonSkill):
         )
         self.spec: str = "dot"
 
-    def _get_explanation_internal(
-        self, detail: bool = False, lang: str = "ko", expl_level: int = 2
-    ) -> str:
-        if lang == "ko":
-            li = [
-                ("스킬 이름", self.name),
-                ("분류", "도트뎀"),
-                ("딜레이", "%.1f" % self.summondelay, "ms"),
-                ("타격주기", "%.1f" % self.delay, "ms"),
-                ("퍼뎀", "%.1f" % self.damage, "%"),
-                ("타격수", self.hit),
-                (
-                    "지속 시간",
-                    self._change_time_into_string(self.remain / 1000, divider=1000),
-                    "s",
-                ),
-                (
-                    "쿨타임",
-                    self._change_time_into_string(self.cooltime / 1000, divider=1000),
-                    "s",
-                ),
-                ("쿨타임 감소 가능 여부", self.red),
-                ("지속시간 증가 여부", self.rem),
-                (
-                    "추가효과",
-                    ", ".join(
-                        [
-                            (str(i[0]) + "+" + "".join([str(j) for j in i[1:]]))
-                            for i in self._static_skill_modifier.abstract_log_list()
-                        ]
-                    ).replace("+미발동%", " 미발동"),
-                ),
-            ]
-            if expl_level < 2:
-                li = li[3:7] + [li[10]]
-        elif lang == "en":
-            li = [
-                ("Skill Name", self.name),
-                ("Classification", "DoT"),
-                ("Delay", "%.1f" % self.summondelay, "ms"),
-                ("Hit Delay", "%.1f" % self.delay, "ms"),
-                ("Damage", "%.1f" % self.damage, "%"),
-                ("Number of Hits", self.hit),
-                (
-                    "Duration",
-                    self._change_time_into_string(self.remain / 1000, divider=1000),
-                    "s",
-                ),
-                (
-                    "Cooldown",
-                    self._change_time_into_string(self.cooltime / 1000, divider=1000),
-                    "s",
-                ),
-                ("Whether the cooldown can be reduced", self.red),
-                ("Whether the duration increases", self.rem),
-                (
-                    "Additional effect",
-                    ", ".join(
-                        [
-                            (str(i[0]) + "+" + "".join([str(j) for j in i[1:]]))
-                            for i in self._static_skill_modifier.abstract_log_list()
-                        ]
-                    ).replace("+미발동%", " Not activated"),
-                ),
-            ]
-            if expl_level < 2:
-                li = li[3:7] + [li[10]]
+    def _get_explanation_internal(self, detail: bool = False, expl_level: int = 2) -> str:
+        li = [
+            (_("스킬 이름"), self.name),
+            (_("분류"), _("도트뎀")),
+            (_("딜레이"), "%.1f" % self.summondelay, "ms"),
+            (_("타격주기"), "%.1f" % self.delay, "ms"),
+            (_("퍼뎀"), "%.1f" % self.damage, "%"),
+            (_("타격수"), self.hit),
+            (
+                _("지속 시간"),
+                self._change_time_into_string(self.remain / 1000, divider=1000),
+                "s",
+            ),
+            (
+                _("쿨타임"),
+                self._change_time_into_string(self.cooltime / 1000, divider=1000),
+                "s",
+            ),
+            (_("쿨타임 감소 가능 여부"), self.red),
+            (_("지속시간 증가 여부"), self.rem),
+            (
+                _("추가효과"),
+                ", ".join(
+                    [
+                        (str(i[0]) + "+" + "".join([str(j) for j in i[1:]]))
+                        for i in self._static_skill_modifier.abstract_log_list()
+                    ]
+                ).replace(_("+미발동%"), _(" 미발동")),
+            ),
+        ]
+        if expl_level < 2:
+            li = li[3:7] + [li[10]]
 
         return self._parse_list_info_into_string(li)
 
