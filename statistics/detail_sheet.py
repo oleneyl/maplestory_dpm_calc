@@ -5,11 +5,14 @@ from statistics.loader import load_data
 from statistics.preset import get_preset, get_preset_list
 from statistics.saver import save_data
 
+import gettext
+_ = gettext.gettext
+
 try:
     import pandas as pd
     import xlsxwriter
 except ImportError:
-    print("pandas, xlsxwriter modules are missing, please import them. 모듈을 설치해야 합니다.")
+    print(_("모듈을 설치해야 합니다"))
     exit()
 
 
@@ -23,7 +26,6 @@ def get_args():
     parser.add_argument("--time", type=int, default=1800)
     parser.add_argument("--calc", action="store_true")
     parser.add_argument("--all", action="store_true")
-    parser.add_argument("--lang", type=str, help="Language to run the framework in [ko, en]")
 
     return parser.parse_args()
 
@@ -42,27 +44,15 @@ def write_sheet(args, df: pd.DataFrame, writer: xlsxwriter):
     grouped = df.groupby(["name"])
     df = pd.DataFrame()
 
-    if args.lang == 'en':
-        df["Cumulative Damage"] = grouped["deal"].sum()
-        df["Share of Total"] = df["Cumulative Damage"] / deal_total
-        df["Average Damage (per second)"] = df["Cumulative Damage"] / time
-        df["Number of Attacks"] = grouped["hit"].sum()
-        df["Maximum Damage (in 1 hit)"] = grouped["deal_one"].max()
-        df["Average Damage (in 1 hit)"] = grouped["deal_one"].mean()
-        df["Minimum Damage (in 1 hit)"] = grouped["deal_one"].min()
+    df[_("누적 데미지")] = grouped["deal"].sum()
+    df[_("점유율")] = df[_("누적 데미지")] / deal_total
+    df[_("평균 데미지(1초당)")] = df[_("누적 데미지")] / time
+    df[_("공격 횟수")] = grouped["hit"].sum()
+    df[_("최대 데미지(1타당)")] = grouped["deal_one"].max()
+    df[_("평균 데미지(1타당)")] = grouped["deal_one"].mean()
+    df[_("최소 데미지(1타당)")] = grouped["deal_one"].min()
 
-        df = df.sort_values(by="Share of Total", axis=0, ascending=False)
-
-    else:
-        df["누적 데미지"] = grouped["deal"].sum()
-        df["점유율"] = df["누적 데미지"] / deal_total
-        df["평균 데미지(1초당)"] = df["누적 데미지"] / time
-        df["공격 횟수"] = grouped["hit"].sum()
-        df["최대 데미지(1타당)"] = grouped["deal_one"].max()
-        df["평균 데미지(1타당)"] = grouped["deal_one"].mean()
-        df["최소 데미지(1타당)"] = grouped["deal_one"].min()
-
-        df = df.sort_values(by="점유율", axis=0, ascending=False)
+    df = df.sort_values(by=_("점유율"), axis=0, ascending=False)
 
     sheet_name = jobname.replace("/", "_") + "_" + str(args.cdr) + "_" + str(alt)
     df.to_excel(writer, sheet_name=sheet_name, startrow=3)
@@ -81,23 +71,14 @@ def write_sheet(args, df: pd.DataFrame, writer: xlsxwriter):
 
     worksheet.merge_range("B3:G3", "", center_format)
 
-    if args.lang == 'en':
-        worksheet.write("A1", "Job")
-        worksheet.write("B1", id)
-        worksheet.write("A2", "CDR")
-        worksheet.write("A3", "Remarks")
-        worksheet.write("C2", "Hits per minute")
-
-    else:
-        worksheet.write("A1", "직업")
-        worksheet.write("B1", jobname)
-        worksheet.write("A2", "쿨감")
-        worksheet.write("A3", "비고")
-        worksheet.write("C1", "dpm")
-        worksheet.write("C2", "분당 타수")
-
+    worksheet.write("A1", _("직업"))
+    worksheet.write("A2", _("쿨감"))
+    worksheet.write("A3", _("비고"))
+    worksheet.write("B1", jobname)
     worksheet.write("B2", args.cdr)
     worksheet.write("B3", description)
+    worksheet.write("C1", "dpm")
+    worksheet.write("C2", _("분당 타수"))
     worksheet.write("C1", "dpm")
     worksheet.write("D1", deal_total / (time / 60), num_format)
     worksheet.write("D2", hit_total / (time / 60), num_format)
