@@ -11,6 +11,9 @@ if TYPE_CHECKING:
     from .callback import Callback
     from .modifier import SkillModifier
 
+import gettext
+_ = gettext.gettext
+
 
 class Task:
     def __init__(self, ref: GraphElement, ftn: Callable[[Any], ResultObject]) -> None:
@@ -122,7 +125,7 @@ class GraphElement:
             li.append((self, context[0], "callback"))
         return li
 
-    def get_explanation(self, lang: str = "ko") -> str:
+    def get_explanation(self) -> str:
         """
         Gets a description of the graph element.
         해당 그래프 요소에 대한 설명을 받아옵니다.
@@ -139,10 +142,7 @@ class GraphElement:
         -------
         string
         """
-        if lang == "ko":
-            return "종류:그래프 요소"
-        elif lang == "en":
-            return "Type:graph Element"
+        return _("종류:그래프 요소")
 
     def _use(self) -> ResultObject:
         """
@@ -279,15 +279,12 @@ class TaskHolder(GraphElement):
 
     def __init__(self, task: Task, name: str = None) -> None:
         if name is None:
-            name = "연결"
+            name = _("연결")
         super(TaskHolder, self).__init__(name)
         self._taskholder: Task = task
 
-    def get_explanation(self, lang: str = "ko") -> str:
-        if lang == "ko":
-            return "%s" % self._id
-        elif lang == "en":
-            return "type:task holder\nname:%s" % self._id
+    def get_explanation(self) -> str:
+        return _("%s") % self._id
 
     def build_task(self, skill_modifier: SkillModifier, **kwargs) -> Task:
         task = self._taskholder.copy()
@@ -391,11 +388,8 @@ class OptionalElement(GraphElement):
         self.fail: GraphElement = fail
         self.set_flag(self.Flag_Optional)
 
-    def get_explanation(self, lang: str = "ko") -> str:
-        if lang == "ko":
-            return "종류:조건적 실행\n%s" % self._id
-        elif lang == "en":
-            return "type:Optional Element\nname:%s" % self._id
+    def get_explanation(self) -> str:
+        return _("종류:조건적 실행\n%s") % self._id
 
     def build_task(self, skill_modifier: SkillModifier, **kwargs) -> Task:
         if self.fail is None:
@@ -448,19 +442,12 @@ class RepeatElement(GraphElement):
             0, CharacterModifier(), 0, 0, sname="Repeat Element", spec="graph control"
         )
 
-    def get_explanation(self, lang: str = "ko") -> str:
-        if lang == "ko":
-            return "종류:반복\n이름:%s\n반복대상:%s\n반복 횟수:%d" % (
-                self._id,
-                self._repeat_target._id,
-                self.itr,
-            )
-        elif lang == "en":
-            return "type:Repeat Element\nname:%s\ntarget:%s\niterations:%d" % (
-                self._id,
-                self._repeat_target._id,
-                self.itr,
-            )
+    def get_explanation(self) -> str:
+        return _("종류:반복\n이름:%s\n반복대상:%s\n반복 횟수:%d") % (
+            self._id,
+            self._repeat_target._id,
+            self.itr,
+        )
 
     def _use(self) -> ResultObject:
         return self._result_object_cache
@@ -500,11 +487,9 @@ class ConstraintElement(GraphElement):
         self._ftn: Callable[[], bool] = cnst
         self.set_flag(self.Flag_Constraint)
 
-    def get_explanation(self, lang: str = "ko") -> str:
-        if lang == "ko":
-            return "종류:제한\n이름:%s" % self._id
-        elif lang == "en":
-            return "type:Constraint Element\nname:%s" % self._id
+    def get_explanation(self) -> str:
+        return _("종류:제한\n이름:%s") % self._id
+
 
     def check(self) -> bool:
         return self._ftn()
