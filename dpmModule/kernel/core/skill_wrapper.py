@@ -20,6 +20,9 @@ if TYPE_CHECKING:
     from .modifier import SkillModifier
     from .skill import AbstractSkill, BuffSkill, DamageSkill, SummonSkill, DotSkill
 
+import gettext
+_ = gettext.gettext
+
 
 class AbstractSkillWrapper(GraphElement):
     """
@@ -75,11 +78,11 @@ class AbstractSkillWrapper(GraphElement):
         이는 ``onAfter()`` 과 같은 chaining을 통한 실행은 막지 않습니다.
         """
         # 사용 금지 = Prohibited Use
-        constraint = ConstraintElement("사용 금지", self, lambda: False)
+        constraint = ConstraintElement(_("사용 금지"), self, lambda: False)
         self.onConstraint(constraint)
 
-    def get_explanation(self, lang: str = "ko") -> str:
-        return self.skill.get_explanation(lang=lang)
+    def get_explanation(self) -> str:
+        return self.skill.get_explanation()
 
     def get_link(self) -> List[Tuple[GraphElement, GraphElement, str]]:
         li = super(AbstractSkillWrapper, self).get_link()
@@ -191,23 +194,23 @@ class AbstractSkillWrapper(GraphElement):
 
         """
         if type_ == "set_disabled":
-            _name = "사용 종료"  # End of use
+            _name = _("사용 종료")  # End of use
             task = Task(self, self.set_disabled)
         elif type_ == "set_disabled_and_time_left":
             if time == -1:
-                _name = "사용 불가"  # Can not be used
+                _name = _("사용 불가")  # Can not be used
             else:
-                _name = "%.1f초이후 시전" % (time * 1.0 / 1000)  # Cast after first
+                _name = _("%.1f초이후 시전") % (time * 1.0 / 1000)  # Cast after first
             task = Task(self, partial(self.set_disabled_and_time_left, time))
         elif type_ == "reduce_cooltime":
             calculated_time = time * 1.0 / 1000
-            _name = "reduce cooldown -%.1f seconds | 쿨-%.1f초" % (calculated_time, calculated_time)  # Reduce Cooldown -%.1f seconds
+            _name = _("쿨-%.1f초") % (calculated_time, calculated_time)  # Reduce Cooldown -%.1f seconds
             task = Task(self, partial(self.reduce_cooltime, time))
         elif type_ == "reduce_cooltime_p":
-            _name = "reduce cooldown | 쿨-" + str(int(time * 100)) + "%"
+            _name = _("쿨-") + str(int(time * 100)) + "%"
             task = Task(self, partial(self.reduce_cooltime_p, time))
         elif type_ == "set_enabled_and_time_left":
-            _name = "%.1f초간 시전" % (time * 1.0 / 1000)  # Second cast
+            _name = _("%.1f초간 시전") % (time * 1.0 / 1000)  # Second cast
             task = Task(self, partial(self.set_enabled_and_time_left, time))
         else:
             raise TypeError("You must specify control type correctly.")
