@@ -4,9 +4,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from .loader import load_data
-from .saver import save_data
-from .preset import get_preset
+from statistics.loader import load_data
+from statistics.saver import save_data
+from statistics.preset import get_preset
+
+import gettext
+_ = gettext.gettext
 
 plt.style.use(["bmh"])
 
@@ -42,7 +45,7 @@ def moving_total(args, df: pd.DataFrame):
 
     plt.plot(rolled["time"], rolled["deal"])
     plt.yticks(np.arange(0, 10e+12, 1e+12), [f"{i/1e+12}T" for i in np.arange(0, 10e+12, 1e+12)])
-    plt.title(f"{preset.job} {preset.description}, 쿨감{args.cdr}초, {args.interval//1000}초 이동합계", fontsize=12)
+    plt.title(_("{} {}, 쿨감{}초, {}초 이동합계".format(preset.job, preset.description, args.cdr, args.interval//1000)), fontsize=12)
     if args.show:
         plt.show()
     else:
