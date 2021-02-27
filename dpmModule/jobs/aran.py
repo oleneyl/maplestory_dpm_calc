@@ -1,5 +1,3 @@
-from enum import Enum
-
 from dpmModule.jobs.globalSkill import GlobalSkills
 
 from ..kernel import core
@@ -13,56 +11,59 @@ from ..execution.rules import ComplexConditionRule, RuleSet, InactiveRule, Condi
 from math import ceil
 from typing import Any, Dict
 
+import gettext
+_ = gettext.gettext
+
 
 # English skill information for Aran here https://maplestory.fandom.com/wiki/Aran/Skills
-class AranSkills(Enum):
+class AranSkills:
     # Beginner
-    RegainedMemory = 'Regained Memory | 되찾은 기억'
+    RegainedMemory = _("되찾은 기억")  # "Regained Memory"
     # 1st Job
-    ComboAbility = 'Combo Ability | 콤보 어빌리티'
-    SmashSwing = 'Smash Swing | 스매시 스윙'
-    SmashWave = 'Smash Wave | 스매쉬 웨이브'
-    PolearmBooster = 'Polearm Booster | 폴암 부스터'
-    BodyPressure = 'Body Pressure | 바디 프레셔'
+    ComboAbility = _("콤보 어빌리티")  # "Combo Ability"
+    SmashSwing = _("스매시 스윙")  # "Smash Swing"
+    SmashWave = _("스매쉬 웨이브")  # "Smash Wave"
+    PolearmBooster = _("폴암 부스터")  # "Polearm Booster"
+    BodyPressure = _("바디 프레셔")  # "Body Pressure"
     # 2nd Job
-    PolearmMastery = 'Polearm Mastery | 폴암 마스터리'
-    FinalCharge = 'Final Charge | 파이널 차지'
-    Drain = 'Drain | 드레인'
-    SnowCharge = 'Snow Charge | 스노우 차지'
-    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
-    FinalAttack = 'Final Attack | 파이널 어택'
-    FinalToss = 'Final Toss | 파이널 토스'
-    RollingSpin = 'Rolling Spin | 롤링 스핀'
-    CommandMasteryI = 'Command Mastery I | 다이나믹 마스터리 Ⅰ'
-    SwingStudiesI = 'Swing Studies I | 스윙 연구 Ⅰ'
+    PolearmMastery = _("폴암 마스터리")  # "Polearm Mastery"
+    FinalCharge = _("파이널 차지")  # "Final Charge"
+    Drain = _("드레인")  # "Drain"
+    SnowCharge = _("스노우 차지")  # "Snow Charge"
+    PhysicalTraining = _("피지컬 트레이닝")  # "Physical Training"
+    FinalAttack = _("파이널 어택")  # "Final Attack"
+    FinalToss = _("파이널 토스")  # "Final Toss"
+    RollingSpin = _("롤링 스핀")  # "Rolling Spin"
+    CommandMasteryI = _("다이나믹 마스터리 Ⅰ")  # "Command Mastery I"
+    SwingStudiesI = _("스윙 연구 Ⅰ")  # "Swing Studies I"
     # 3rd Job
-    AdvancedComboAbility = 'Advanced Combo Ability | 어드밴스드 콤보 어빌리티'
-    CleavingBlows = 'Cleaving Blows | 클리빙 어택'
-    MahaBlessing = 'Maha Blessing | 블레싱 마하'
-    AeroSwing = 'Aero Swing | 에어로 스윙'
-    AdrenalineRush = 'Adrenaline Rush | 아드레날린 부스트'
-    FinalBlow = 'Final Blow | 파이널 블로우'
-    JudgmentDraw = 'Judgment Draw | 저지먼트'
-    GatheringHook = 'Gathering Hook | 게더링 캐쳐'
-    Might = 'Might | 마이트'
+    AdvancedComboAbility = _("어드밴스드 콤보 어빌리티")  # "Advanced Combo Ability"
+    CleavingBlows = _("클리빙 어택")  # "Cleaving Blows"
+    MahaBlessing = _("블레싱 마하")  # "Maha Blessing"
+    AeroSwing = _("에어로 스윙")  # "Aero Swing"
+    AdrenalineRush = _("아드레날린 부스트")  # "Adrenaline Rush"
+    FinalBlow = _("파이널 블로우")  # "Final Blow"
+    JudgmentDraw = _("저지먼트")  # "Judgment Draw"
+    GatheringHook = _("게더링 캐쳐")  # "Gathering Hook"
+    Might = _("마이트")  # "Might"
     # 4th Job
-    HighMastery = 'High Mastery | 하이 마스터리'
-    SuddenStrike = 'Sudden Strike | 스위프트 무브'
-    AdvancedFinalAttack = 'Advanced Final Attack | 어드밴스드 파이널 어택'
-    BeyondBlade = 'Beyond Blade | 비욘더'
-    FinisherStormofFear = 'Finisher - Storm of Fear | 부스트 엔드-스톰 오브 피어'
-    FinisherHuntersPrey = 'Finisher - Hunter\'s Prey | 부스트 엔드-헌터즈 타겟팅'
-    CommandMasteryII = 'Command Mastery II | 다이나믹 마스터리 II'
-    SwingStudiesII = 'Swing Studies II | 스윙 연구 II'
+    HighMastery = _("하이 마스터리")  # "High Mastery"
+    SuddenStrike = _("스위프트 무브")  # "Sudden Strike"
+    AdvancedFinalAttack = _("어드밴스드 파이널 어택")  # "Advanced Final Attack"
+    BeyondBlade = _("비욘더")  # "Beyond Blade"
+    FinisherStormofFear = _("부스트 엔드-스톰 오브 피어")  # "Finisher - Storm of Fear"
+    FinisherHuntersPrey = _("부스트 엔드-헌터즈 타겟팅")  # "Finisher - Hunter"s Prey"
+    CommandMasteryII = _("다이나믹 마스터리 II")  # "Command Mastery II"
+    SwingStudiesII = _("스윙 연구 II")  # "Swing Studies II"
     # Hypers
-    MahasDomain = 'Maha\'s Domain | 마하의 영역'
-    HeroicMemories = 'Heroic Memories | 히어로즈 오쓰'
-    AdrenalineBurst = 'Adrenaline Burst | 아드레날린 제네레이터'
+    MahasDomain = _("마하의 영역")  # "Maha's Domain"
+    HeroicMemories = _("히어로즈 오쓰")  # "Heroic Memories"
+    AdrenalineBurst = _("아드레날린 제네레이터")  # "Adrenaline Burst"
     # 5th Job
-    MahasFury = 'Maha\'s Fury | 인스톨 마하'
-    MahasCarnage = 'Maha\'s Carnage | 브랜디쉬 마하'
-    FenrirCrash = 'Fenrir Crash | 펜릴 크래시'
-    BlizzardTempest = 'Blizzard Tempest | 블리자드 템페스트'
+    MahasFury = _("인스톨 마하")  # "Maha's Fury"
+    MahasCarnage = _("브랜디쉬 마하")  # "Maha's Carnage"
+    FenrirCrash = _("펜릴 크래시")  # "Fenrir Crash"
+    BlizzardTempest = _("블리자드 템페스트")  # "Blizzard Tempest"
 
 
 # Advisor : Azir carry (croa). 아지르캐리(크로아)
@@ -120,7 +121,7 @@ class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.jobtype = "STR"
-        self.jobname = "아란"
+        self.jobname = _("아란")
         self.vEnhanceNum = 13
         self.ability_list = Ability_tool.get_ability_set(
             "boss_pdamage", "crit", "buff_rem"
@@ -134,14 +135,14 @@ class JobGenerator(ck.JobGenerator):
         self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
     ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        RetrievedMemory = core.InformedCharacterModifier(AranSkills.RegainedMemory.value, patt=5)
-        SnowChargePassive = core.InformedCharacterModifier(f"{AranSkills.SnowCharge.value}(Passive | 패시브)", pdamage=10)
-        PhisicalTraining = core.InformedCharacterModifier(AranSkills.PhysicalTraining.value, stat_main=30, stat_sub=30)
-        AdvancedComboAbilityPassive = core.InformedCharacterModifier(AranSkills.AdvancedComboAbility.value, att=10, crit=20, crit_damage=10)
-        CleavingAttack = core.InformedCharacterModifier(AranSkills.CleavingBlows.value, armor_ignore=40, pdamage=10)
-        Might = core.InformedCharacterModifier(AranSkills.Might.value, att=40)
-        HighMastery = core.InformedCharacterModifier(AranSkills.HighMastery.value, att=30 + passive_level, crit_damage=8)
-        AdvancedFinalAttackPassive = core.InformedCharacterModifier(f"{AranSkills.AdvancedFinalAttack.value}(Passive | 패시브)", att=30 + passive_level)
+        RetrievedMemory = core.InformedCharacterModifier(AranSkills.RegainedMemory, patt=5)
+        SnowChargePassive = core.InformedCharacterModifier(_("{}(패시브)").format(AranSkills.SnowCharge), pdamage=10)
+        PhisicalTraining = core.InformedCharacterModifier(AranSkills.PhysicalTraining, stat_main=30, stat_sub=30)
+        AdvancedComboAbilityPassive = core.InformedCharacterModifier(AranSkills.AdvancedComboAbility, att=10, crit=20, crit_damage=10)
+        CleavingAttack = core.InformedCharacterModifier(AranSkills.CleavingBlows, armor_ignore=40, pdamage=10)
+        Might = core.InformedCharacterModifier(AranSkills.Might, att=40)
+        HighMastery = core.InformedCharacterModifier(AranSkills.HighMastery, att=30 + passive_level, crit_damage=8)
+        AdvancedFinalAttackPassive = core.InformedCharacterModifier(_("{}(패시브)").format(AranSkills.AdvancedFinalAttack), att=30 + passive_level)
 
         return [
             RetrievedMemory,
@@ -158,10 +159,10 @@ class JobGenerator(ck.JobGenerator):
         self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
     ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=49)
-        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(passive_level / 2))
-        ComboAbility = core.InformedCharacterModifier(f"{AranSkills.ComboAbility.value}(Combo | 콤보)", att=2 * 10)
-        AdvancedComboAbility = core.InformedCharacterModifier(f"{AranSkills.AdvancedComboAbility.value}(Combo | 콤보)", att=2 * 10, crit=3 * 10)
+        WeaponConstant = core.InformedCharacterModifier(_("무기상수"), pdamage_indep=49)
+        Mastery = core.InformedCharacterModifier(_("숙련도"), mastery=90+ceil(passive_level / 2))
+        ComboAbility = core.InformedCharacterModifier(_("{}(콤보)").format(AranSkills.ComboAbility), att=2 * 10)
+        AdvancedComboAbility = core.InformedCharacterModifier(_("{}(콤보)").format(AranSkills.AdvancedComboAbility), att=2 * 10, crit=3 * 10)
         return [WeaponConstant, Mastery, ComboAbility, AdvancedComboAbility]
 
     def get_ruleset(self):
@@ -173,11 +174,11 @@ class JobGenerator(ck.JobGenerator):
             return True
 
         ruleset = RuleSet()
-        ruleset.add_rule(InactiveRule(f'{AranSkills.MahasCarnage.value}(Holder | 홀더)', AranSkills.AdrenalineRush.value), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule(GlobalSkills.DecentSharpEyes.value, AranSkills.AdrenalineRush.value), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule(GlobalSkills.DecentCombatOrders.value, AranSkills.AdrenalineRush.value), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(GlobalSkills.TermsAndConditions.value, AranSkills.AdrenalineRush.value, lambda sk: sk.is_time_left(10 * 1000, 1)),RuleSet.BASE)
-        ruleset.add_rule(ComplexConditionRule(f"{AranSkills.FinisherHuntersPrey.value}(Holder | 홀더)", [AranSkills.AdrenalineRush.value, GlobalSkills.TermsAndConditions.value],hunters_targeting_rule), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(_("{}(홀더)").format(AranSkills.MahasCarnage), AranSkills.AdrenalineRush), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(GlobalSkills.DecentSharpEyes, AranSkills.AdrenalineRush), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(GlobalSkills.DecentCombatOrders, AranSkills.AdrenalineRush), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(GlobalSkills.TermsAndConditions, AranSkills.AdrenalineRush, lambda sk: sk.is_time_left(10 * 1000, 1)),RuleSet.BASE)
+        ruleset.add_rule(ComplexConditionRule(_("{}(홀더)").format(AranSkills.FinisherHuntersPrey), [AranSkills.AdrenalineRush, GlobalSkills.TermsAndConditions],hunters_targeting_rule), RuleSet.BASE)
 
         return ruleset
 
@@ -218,15 +219,15 @@ class JobGenerator(ck.JobGenerator):
         PENRIL_PDAMAGE = get_beyonder_pdamage(9)
 
         # Pet buff. 펫버프
-        Booster = core.BuffSkill(AranSkills.PolearmBooster.value, 0, 180 * 1000, rem=True).wrap(core.BuffSkillWrapper)
-        SnowCharge = core.BuffSkill(AranSkills.SnowCharge.value, 0, 200 * 1000, pdamage=10).wrap(core.BuffSkillWrapper)
-        BlessingMaha = core.BuffSkill(AranSkills.MahaBlessing.value, 0, 200 * 1000, att=30).wrap(core.BuffSkillWrapper)
+        Booster = core.BuffSkill(AranSkills.PolearmBooster, 0, 180 * 1000, rem=True).wrap(core.BuffSkillWrapper)
+        SnowCharge = core.BuffSkill(AranSkills.SnowCharge, 0, 200 * 1000, pdamage=10).wrap(core.BuffSkillWrapper)
+        BlessingMaha = core.BuffSkill(AranSkills.MahaBlessing, 0, 200 * 1000, att=30).wrap(core.BuffSkillWrapper)
 
-        AdrenalineBoost = core.BuffSkill(AranSkills.AdrenalineRush.value, delay=0, remain=ADRENALINE_BOOST_REMAIN).wrap(core.BuffSkillWrapper)
+        AdrenalineBoost = core.BuffSkill(AranSkills.AdrenalineRush, delay=0, remain=ADRENALINE_BOOST_REMAIN).wrap(core.BuffSkillWrapper)
 
         SmashSwing = AdrenalineDamageWrapper(
             core.DamageSkill(
-                AranSkills.SmashSwing.value,
+                AranSkills.SmashSwing,
                 delay=360,
                 damage=150
                 + 200
@@ -239,7 +240,7 @@ class JobGenerator(ck.JobGenerator):
             AdrenalineBoost,
         )
         SmashSwingIncr = core.BuffSkill(
-            f"{AranSkills.SwingStudiesII.value}(Buff | 버프)",
+            _("{}(버프)").format(AranSkills.SwingStudiesII),
             delay=0,
             remain=5000 + 3000,
             pdamage_indep=15 + passive_level,
@@ -248,7 +249,7 @@ class JobGenerator(ck.JobGenerator):
         ).wrap(core.BuffSkillWrapper)
         SmashSwingIllusion = AdrenalineDamageWrapper(
             core.DamageSkill(
-                AranSkills.SwingStudiesII.value,
+                AranSkills.SwingStudiesII,
                 delay=0,
                 damage=280 + 40 * passive_level + ADRENALINE_BOOST_PASSIVE,
                 hit=5,
@@ -258,7 +259,7 @@ class JobGenerator(ck.JobGenerator):
 
         FinalBlow = AdrenalineDamageWrapper(
             core.DamageSkill(
-                AranSkills.FinalBlow.value,
+                AranSkills.FinalBlow,
                 delay=420,
                 damage=285 + ADRENALINE_BOOST_PASSIVE + SWIFT_MOVE + DYNAMIC_MASTERY,
                 hit=5,
@@ -268,7 +269,7 @@ class JobGenerator(ck.JobGenerator):
         )
         AdrenalineFinalBlowWave = (
             core.DamageSkill(
-                f"{AranSkills.FinalBlow.value}(Wave | 파동)",
+                _("{}(파동)").format(AranSkills.FinalBlow),
                 delay=0,
                 damage=350 + ADRENALINE_BOOST_PASSIVE,
                 hit=4,
@@ -280,7 +281,7 @@ class JobGenerator(ck.JobGenerator):
 
         FinalAttack = AdrenalineDamageWrapper(  # Adrenaline boost perdem, at-bat effects applied. 아드레날린 부스트의 퍼뎀, 타수 효과 적용됨
             core.DamageSkill(
-                AranSkills.AdvancedFinalAttack.value,
+                AranSkills.AdvancedFinalAttack,
                 delay=0,
                 damage=85 + passive_level + ADRENALINE_BOOST_PASSIVE,
                 hit=3,
@@ -291,7 +292,7 @@ class JobGenerator(ck.JobGenerator):
 
         BeyonderFirst = AdrenalineDamageWrapper(
             core.DamageSkill(
-                f"{AranSkills.BeyondBlade.value}(1st hit | 1타)",
+                _("{}(1타)").format(AranSkills.BeyondBlade),
                 delay=420,
                 damage=285 + 10 * ceil(self.combat / 3) + ADRENALINE_BOOST_PASSIVE,
                 hit=5 + 1,
@@ -303,7 +304,7 @@ class JobGenerator(ck.JobGenerator):
         )
         BeyonderSecond = AdrenalineDamageWrapper(
             core.DamageSkill(
-                f"{AranSkills.BeyondBlade.value}(2nd hit | 2타)",
+                _("{}(2타)").format(AranSkills.BeyondBlade),
                 delay=360,
                 damage=300 + 10 * ceil(self.combat / 3) + ADRENALINE_BOOST_PASSIVE,
                 hit=5 + 1,
@@ -315,7 +316,7 @@ class JobGenerator(ck.JobGenerator):
         )
         BeyonderThird = AdrenalineDamageWrapper(
             core.DamageSkill(
-                f"{AranSkills.BeyondBlade.value}(3rd hit | 3타)",
+                _("{}(3타)").format(AranSkills.BeyondBlade),
                 delay=420,
                 damage=315 + 10 * ceil(self.combat / 3) + ADRENALINE_BOOST_PASSIVE,
                 hit=5 + 1,
@@ -327,7 +328,7 @@ class JobGenerator(ck.JobGenerator):
         )
         AdrenalineBeyonderWave = (
             core.DamageSkill(
-                f"{AranSkills.BeyondBlade.value}(Wave | 파동)",
+                _("{}(파동)").format(AranSkills.BeyondBlade),
                 delay=0,
                 damage=400 + ADRENALINE_BOOST_PASSIVE,
                 hit=5,
@@ -338,11 +339,11 @@ class JobGenerator(ck.JobGenerator):
         )
 
         BoostEndHuntersTargetingHolder = core.DamageSkill(
-            f"{AranSkills.FinisherHuntersPrey.value}(Holder | 홀더)", BOOST_END_HUNTERS_TARGETING_DELAY, 0, 0, cooltime=-1
+            _("{}(홀더)").format(AranSkills.FinisherHuntersPrey), BOOST_END_HUNTERS_TARGETING_DELAY, 0, 0, cooltime=-1
         ).wrap(core.DamageSkillWrapper)
         BoostEndHuntersTargeting = (
             core.DamageSkill(
-                AranSkills.FinisherHuntersPrey.value,
+                AranSkills.FinisherHuntersPrey,
                 delay=0,
                 damage=1070
                 + 10 * self.combat
@@ -357,7 +358,7 @@ class JobGenerator(ck.JobGenerator):
 
         GatheringCatcher = (
             core.DamageSkill(
-                "게더링 캐쳐(캔슬)",
+                _("{}(캔슬)").format(AranSkills.GatheringHook),
                 delay=570,
                 damage=170 + DYNAMIC_MASTERY + ADRENALINE_BOOST_PASSIVE,
                 hit=2,
@@ -368,12 +369,12 @@ class JobGenerator(ck.JobGenerator):
 
         # Hyper Skills
         AdrenalineGenerator = core.BuffSkill(
-            AranSkills.AdrenalineBurst.value, 0, 0, cooltime=240 * 1000
+            AranSkills.AdrenalineBurst, 0, 0, cooltime=240 * 1000
         ).wrap(core.BuffSkillWrapper)
 
         MahaRegionInit = AdrenalineDamageWrapper(
             core.DamageSkill(
-                f"{AranSkills.MahasDomain.value}(Cast | 시전)",
+                _("{}(시전)").format(AranSkills.MahasDomain),
                 delay=30,  # Gathering Catcher Cancel: 1680 -> 30. 게더링캐쳐 캔슬 : 1680 -> 30
                 damage=800 + ADRENALINE_BOOST_PASSIVE,
                 hit=5,
@@ -383,7 +384,7 @@ class JobGenerator(ck.JobGenerator):
         )
         MahaRegion = AdrenalineSummonWrapper(
             core.SummonSkill(
-                AranSkills.MahasDomain.value,
+                AranSkills.MahasDomain,
                 summondelay=0,
                 delay=1000,
                 damage=500 + ADRENALINE_BOOST_PASSIVE,
@@ -395,7 +396,7 @@ class JobGenerator(ck.JobGenerator):
         )
 
         HerosOath = core.BuffSkill(
-            AranSkills.HeroicMemories.value,
+            AranSkills.HeroicMemories,
             delay=0,
             remain=60 * 1000,
             cooltime=120 * 1000,
@@ -405,7 +406,7 @@ class JobGenerator(ck.JobGenerator):
         # V Skills
         InstallMaha = (
             core.BuffSkill(
-                AranSkills.MahasFury.value,
+                AranSkills.MahasFury,
                 delay=30,  # Gathering Catcher Cancel: 960 -> 30. 게더링캐쳐 캔슬 : 960 -> 30
                 remain=(30 + vEhc.getV(1, 1)) * 1000,
                 patt=5 + vEhc.getV(1, 1),
@@ -417,7 +418,7 @@ class JobGenerator(ck.JobGenerator):
         )
         InstallMahaBlizzard = (
             core.SummonSkill(
-                f"{AranSkills.MahasFury.value}(Blizzard | 눈보라)",
+                _("{}(눈보라)").format(AranSkills.MahasFury),
                 summondelay=0,
                 delay=3000,
                 damage=450 + 18 * vEhc.getV(1, 1) + ADRENALINE_BOOST_PASSIVE,
@@ -431,7 +432,7 @@ class JobGenerator(ck.JobGenerator):
 
         BrandishMahaHolder = (
             core.DamageSkill(
-                f"{AranSkills.MahasCarnage.value}(Holder | 홀더)",
+                _("{}(홀더)").format(AranSkills.MahasCarnage),
                 delay=30,  # Gathering Catcher Cancel: 720 -> 30. 게더링캐쳐 캔슬 : 720 -> 30
                 damage=0,
                 hit=0,
@@ -443,7 +444,7 @@ class JobGenerator(ck.JobGenerator):
         )
         BrandishMaha = AdrenalineDamageWrapper(
             core.DamageSkill(
-                AranSkills.MahasCarnage.value,
+                AranSkills.MahasCarnage,
                 delay=0,
                 damage=600
                 + vEhc.getV(2, 2) * 24
@@ -458,7 +459,7 @@ class JobGenerator(ck.JobGenerator):
 
         PenrilCrash = AdrenalineDamageWrapper(
             core.DamageSkill(
-                AranSkills.FenrirCrash.value,
+                AranSkills.FenrirCrash,
                 delay=420,
                 damage=500 + vEhc.getV(3, 3) * 5 + ADRENALINE_BOOST_PASSIVE,
                 hit=6 + vEhc.getV(3, 3) // 30 + 1,
@@ -472,7 +473,7 @@ class JobGenerator(ck.JobGenerator):
         )
         PenrilCrashIceburg = (
             core.DamageSkill(
-                f"{AranSkills.FenrirCrash.value}(Iceburg | 빙산)",
+                _("{}(빙산)").format(AranSkills.FenrirCrash),
                 delay=0,
                 damage=500 + vEhc.getV(3, 3) * 5 + ADRENALINE_BOOST_PASSIVE,
                 hit=6,
@@ -486,7 +487,7 @@ class JobGenerator(ck.JobGenerator):
         # TODO: It operates as a final attack that increases the number of strokes, but the list of skills that increase the stack is not revealed. 타수가 늘어나는 파이널 어택으로 동작하지만, 스택을 늘리는 스킬 목록이 밝혀지지 않아 일단 총 423타가 나오게 평균으로 해둠
         BlizzardTempest = (
             core.DamageSkill(
-                AranSkills.BlizzardTempest.value,
+                AranSkills.BlizzardTempest,
                 delay=750,
                 damage=800 + 32 * vEhc.getV(0, 0) + ADRENALINE_BOOST_PASSIVE,
                 hit=8,
@@ -498,7 +499,7 @@ class JobGenerator(ck.JobGenerator):
         )
         BlizzardTempestAura = (
             core.SummonSkill(
-                f"{AranSkills.BlizzardTempest.value}(Aura | 저주)",
+                _("{}(저주)").format(AranSkills.BlizzardTempest),
                 summondelay=0,
                 delay=425,
                 damage=475 + 19 * vEhc.getV(0, 0) + ADRENALINE_BOOST_PASSIVE,
@@ -514,9 +515,9 @@ class JobGenerator(ck.JobGenerator):
 
         ### Skill Wrapper ###
 
-        Combo = core.BuffSkill("Aran | 아란(Combo | 콤보)", 0, 99999999)
+        Combo = core.BuffSkill(_("아란(콤보)"), 0, 99999999)
         Combo = core.StackSkillWrapper(Combo, 1000)
-        Combo.set_name_style("Increase Combo by | 콤보 %d만큼 증가")
+        Combo.set_name_style(_("콤보 %d만큼 증가"))
 
 
         # 헌터즈 타게팅
@@ -597,7 +598,7 @@ class JobGenerator(ck.JobGenerator):
         SmashSwing.onAfter(SmashSwingIllusion)
         SmashSwing.onConstraint(
             core.ConstraintElement(
-                "When there is no swing study | 스윙 연구가 없을때", SmashSwingIncr, SmashSwingIncr.is_not_active
+                _("스윙 연구가 없을때"), SmashSwingIncr, SmashSwingIncr.is_not_active
             )
         )
 
@@ -610,14 +611,14 @@ class JobGenerator(ck.JobGenerator):
 
         # Adrenaline. 아드레날린
         AdrenalineBoost.onConstraint(
-            core.ConstraintElement("콤보가 1000이상", Combo, partial(Combo.judge, 1000, 1))
+            core.ConstraintElement(_("콤보가 1000이상"), Combo, partial(Combo.judge, 1000, 1))
         )
         AdrenalineBoost.onAfter(Combo.stackController(-999999999, dtype="set"))
         AdrenalineBoost.onAfter(BoostEndHuntersTargetingHolder.controller(1))
         AdrenalineBoost.onEventEnd(Combo.stackController(500, dtype="set"))
         AdrenalineGenerator.onConstraint(
             core.ConstraintElement(
-                "When adrenaline boost is impossible | 아드레날린 부스트가 불가능할때", AdrenalineBoost, AdrenalineBoost.is_not_active
+                _("아드레날린 부스트가 불가능할때"), AdrenalineBoost, AdrenalineBoost.is_not_active
             )
         )
         AdrenalineGenerator.onAfter(AdrenalineBoost)
