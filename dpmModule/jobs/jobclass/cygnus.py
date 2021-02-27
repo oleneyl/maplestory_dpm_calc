@@ -1,26 +1,27 @@
-from enum import Enum
-
 from ...kernel import core
 from ...kernel.core import VSkillModifier as V
 from ...kernel.core import CharacterModifier as MDF
 from ...character import characterKernel as ck
 from functools import partial
 
+import gettext
+_ = gettext.gettext
 
-class CygnusSkills(Enum):
-    EmpressCygnusBlessing = 'Empress Cygnus\'s Blessing | 여제 시그너스의 축복'  # Taken from https://maplestory.fandom.com/wiki/Empress_Cygnus%27s_Blessing
-    TranscendentCygnusBlessing = 'Transcendent Cygnus\'s Blessing | 초월자 시그너스의 축복'  # Taken form https://maplestory.fandom.com/wiki/Transcendent_Cygnus%27s_Blessing#KMS_1.2.326
-    PhalanxCharge = 'Phalanx Charge | 시그너스 팔랑크스'  # Taken from https://maplestory.fandom.com/wiki/Phalanx_Charge
+
+class CygnusSkills:
+    EmpressCygnusBlessing = _("여제 시그너스의 축복")  # "Empress Cygnus's Blessing" Taken from https://maplestory.fandom.com/wiki/Empress_Cygnus%27s_Blessing
+    TranscendentCygnusBlessing = _("초월자 시그너스의 축복")  # "Transcendent Cygnus's Blessing" Taken form https://maplestory.fandom.com/wiki/Transcendent_Cygnus%27s_Blessing#KMS_1.2.326
+    PhalanxCharge = _("시그너스 팔랑크스")  # "Phalanx Charge" Taken from https://maplestory.fandom.com/wiki/Phalanx_Charge
 
 
 def PhalanxChargeWrapper(vEhc, num1, num2, hit_rate = 1):
-    PhalanxCharge = core.SummonSkill(CygnusSkills.PhalanxCharge.value, 600, 120, 450 + 18*vEhc.getV(num1, num2), 1, 120 * (40 + vEhc.getV(num1, num2)) * hit_rate, cooltime = 30 * 1000, red=True).isV(vEhc, num1, num2).wrap(core.SummonSkillWrapper)
+    PhalanxCharge = core.SummonSkill(CygnusSkills.PhalanxCharge, 600, 120, 450 + 18*vEhc.getV(num1, num2), 1, 120 * (40 + vEhc.getV(num1, num2)) * hit_rate, cooltime = 30 * 1000, red=True).isV(vEhc, num1, num2).wrap(core.SummonSkillWrapper)
     return PhalanxCharge
 
 class CygnusBlessWrapper(core.BuffSkillWrapper):
     # Code cleanup required. 코드 정리 필요.
     def __init__(self, enhancer, skill_importance, enhance_importance, level, interval = 4):
-        skill = core.BuffSkill(CygnusSkills.TranscendentCygnusBlessing.value if level >= 245 else CygnusSkills.EmpressCygnusBlessing.value, 480, 45000, cooltime = 240*1000, red=True)
+        skill = core.BuffSkill(CygnusSkills.TranscendentCygnusBlessing if level >= 245 else CygnusSkills.EmpressCygnusBlessing, 480, 45000, cooltime = 240*1000, red=True)
         super(CygnusBlessWrapper, self).__init__(skill)
 
         self.isUpgraded = (level >= 245)
