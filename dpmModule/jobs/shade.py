@@ -1,5 +1,3 @@
-from enum import Enum
-
 from dpmModule.jobs.jobbranch.pirates import PirateSkills
 
 from ..kernel import core
@@ -14,58 +12,60 @@ from ..execution.rules import RuleSet, InactiveRule, ConditionRule
 from math import ceil
 from typing import Any, Dict
 
+import gettext
+_ = gettext.gettext
 
 # English skill information for Shade here https://maplestory.fandom.com/wiki/Shade/Skills
-class ShadeSkills(Enum):
+class ShadeSkills:
     # Link Skill
-    CloseCall = 'Close Call | 구사 일생'
+    CloseCall = _("구사 일생")  # "Close Call"
     # Beginner
-    FoxTrot = 'Fox Trot | 축지'
-    SpiritBond1 = 'Spirit Bond 1 | 정령 결속 1식'
-    SpiritAffinity = 'Spirit Affinity | 정령친화'
+    FoxTrot = _("축지")  # "Fox Trot"
+    SpiritBond1 = _("정령 결속 1식")  # "Spirit Bond 1"
+    SpiritAffinity = _("정령친화")  # "Spirit Affinity"
     # 1st Job
-    SwiftStrike = 'Swift Strike | 메가 펀치'
-    FlashFist = 'Flash Fist | '
-    VulpesLeap = 'Vulpes Leap | 도약'
-    CosmicBalance = 'Cosmic Balance | 건곤 일체'
+    SwiftStrike = _("메가 펀치")  # "Swift Strike"
+    # FlashFist = _("")  # "Flash Fist"
+    VulpesLeap = _("도약")  # "Vulpes Leap"
+    CosmicBalance = _("건곤 일체")  # "Cosmic Balance"
     # 2nd Job
-    GroundPound = 'Ground Pound | 파력권'
-    BladeImpdDownwardSlash = 'Blade Imp - Downward Slash | 파쇄철조-반'
-    BladeImpForwardSlash = 'Blade Imp - Forward Slash | 파쇄철조-前'
-    BackStep = 'Back Step | 후방 이동'
-    KnuckleMastery = 'Knuckle Mastery | 너클 마스터리'
-    SpiritBond2 = 'Spirit Bond 2 | 정령 결속 2식'
-    StrengthTraining = 'Strength Training | 피지컬 트레이닝'
-    FoxSpirits = 'Fox Spirits | 여우령'
-    FoxSpiritMastery = 'Fox Spirit Mastery | 여우령 숙련'
+    GroundPound = _("파력권")  # "Ground Pound"
+    BladeImpdDownwardSlash = _("파쇄철조-반")  # "Blade Imp - Downward Slash"
+    BladeImpForwardSlash = _("파쇄철조-前")  # "Blade Imp - Forward Slash"
+    BackStep = _("후방 이동")  # "Back Step"
+    KnuckleMastery = _("너클 마스터리")  # "Knuckle Mastery"
+    SpiritBond2 = _("정령 결속 2식")  # "Spirit Bond 2"
+    StrengthTraining = _("피지컬 트레이닝")  # "Strength Training"
+    FoxSpirits = _("여우령")  # "Fox Spirits"
+    FoxSpiritMastery = _("여우령 숙련")  # "Fox Spirit Mastery"
     # 3rd Job
-    ShockwavePunch = 'Shockwave Punch | 통백권 충격파'
-    BladeImpSpinSlash = 'Blade Imp - Spin Slash | 파쇄철조-회'
-    SpiritFrenzy = 'Spirit Frenzy | 소혼 장막'
-    SpiritTrap = 'Spirit Trap | 속박술'
-    SpiritBond3 = 'Spirit Bond 3 | 정령 결속 3식'
-    HarmoniousDefense = 'Harmonious Defense | '
-    SummonOtherSpirit = 'Summon Other Spirit | 환령 강신'
-    Weaken = 'Weaken | 약화'
+    ShockwavePunch = _("통백권 충격파")  # "Shockwave Punch"
+    BladeImpSpinSlash = _("파쇄철조-회")  # "Blade Imp - Spin Slash"
+    SpiritFrenzy = _("소혼 장막")  # "Spirit Frenzy"
+    SpiritTrap = _("속박술")  # "Spirit Trap"
+    SpiritBond3 = _("정령 결속 3식")  # "Spirit Bond 3"
+    # HarmoniousDefense = _("")  # "Harmonious Defense"
+    SummonOtherSpirit = _("환령 강신")  # "Summon Other Spirit"
+    Weaken = _("약화")  # "Weaken"
     # 4th Job
-    BombPunch = 'Bomb Punch | 폭류권'
-    SpiritClaw = 'Spirit Claw | 귀참'
-    DeathMark = 'Death Mark | 사혼 각인'
-    SoulSplitter = 'Soul Splitter | 분혼 격참'
-    SpiritWard = 'Spirit Ward | 소혼 결계'
-    FireFoxSpiritMastery = 'Fire Fox Spirit Mastery | 불여우령'
-    SpiritBond4 = 'Spirit Bond 4 | 정령 결속 4식'
-    HighQualityKnuckleMastery = 'High Quality Knuckle Mastery | 고급 너클 숙련'
-    CriticalInsight = 'Critical Insight | 약점 간파'
+    BombPunch = _("폭류권")  # "Bomb Punch"
+    SpiritClaw = _("귀참")  # "Spirit Claw"
+    DeathMark = _("사혼 각인")  # "Death Mark"
+    SoulSplitter = _("분혼 격참")  # "Soul Splitter"
+    SpiritWard = _("소혼 결계")  # "Spirit Ward"
+    FireFoxSpiritMastery = _("불여우령")  # "Fire Fox Spirit Mastery"
+    SpiritBond4 = _("정령 결속 4식")  # "Spirit Bond 4"
+    HighQualityKnuckleMastery = _("고급 너클 숙련")  # "High Quality Knuckle Mastery"
+    CriticalInsight = _("약점 간파")  # "Critical Insight"
     # Hypers
-    SpiritIncarnation = 'Spirit Incarnation | 정령의 화신'
-    HeroicMemories = 'Heroic Memories | 히어로즈 오쓰'
-    SpiritBondMax = 'Spirit Bond Max | 정령 결속 극대화'
+    SpiritIncarnation = _("정령의 화신")  # "Spirit Incarnation"
+    HeroicMemories = _("히어로즈 오쓰")  # "Heroic Memories"
+    SpiritBondMax = _("정령 결속 극대화")  # "Spirit Bond Max"
     # 5th Job
-    SpiritFlow = 'Spirit Flow | 정령 집속'
-    Spiritgate = 'Spiritgate | 귀문진'
-    TrueSpiritClaw = 'True Spirit Claw | 진 귀참'
-    SmashingMultipunch = 'Smashing Multipunch | 파쇄 연권'
+    SpiritFlow = _("정령 집속")  # "Spirit Flow"
+    Spiritgate = _("귀문진")  # "Spiritgate"
+    TrueSpiritClaw = _("진 귀참")  # "True Spirit Claw"
+    SmashingMultipunch = _("파쇄 연권")  # "Smashing Multipunch"
 
 
 class SoulTrapStackWrapper(core.StackSkillWrapper):
@@ -79,10 +79,10 @@ class SoulTrapStackWrapper(core.StackSkillWrapper):
         # Add debuff, keep up to _max(10). 디버프 추가, 최대 _max(10)개로 유지.
         self.debuffQueue = ([self.currentTime] + self.debuffQueue)[:self._max]
         self.stack = len(self.debuffQueue)
-        return core.ResultObject(0, core.CharacterModifier(), 0, 0, f'Debuff change for {ShadeSkills.Spiritgate.value} 디버프 변경', spec = 'graph control')
+        return core.ResultObject(0, core.CharacterModifier(), 0, 0, _("{} 디버프 변경").format(ShadeSkills.Spiritgate), spec = 'graph control')
 
     def add_debuff(self):
-        return core.TaskHolder(core.Task(self, self._add_debuff), name=f"Add debuff for {ShadeSkills.Spiritgate.value} 디버프 추가")
+        return core.TaskHolder(core.Task(self, self._add_debuff), name=_("{} 디버프 추가").format(ShadeSkills.Spiritgate))
 
     def spend_time(self, time):
         self.currentTime += time
@@ -99,16 +99,16 @@ class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.jobtype = "STR"
-        self.jobname = "은월"
+        self.jobname = _("은월")
         self.vEnhanceNum = 15
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'reuse', 'mess')
         self.preEmptiveSkills = 2
         
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(InactiveRule(ShadeSkills.BladeImpSpinSlash.value, ShadeSkills.BladeImpdDownwardSlash.value), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(f"{ShadeSkills.SpiritFrenzy.value}(Cast | 시전)", ShadeSkills.TrueSpiritClaw.value, lambda x: not x.is_available()), RuleSet.BASE)
-        # ruleset.add_rule(ReservationRule(GlobalSkills.TermsAndConditions.value, ShadeSkills.SpiritFlow.value), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(ShadeSkills.BladeImpSpinSlash, ShadeSkills.BladeImpdDownwardSlash), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(_("{}(시전)").format(ShadeSkills.SpiritFrenzy), ShadeSkills.TrueSpiritClaw, lambda x: not x.is_available()), RuleSet.BASE)
+        # ruleset.add_rule(ReservationRule(GlobalSkills.TermsAndConditions, ShadeSkills.SpiritFlow), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self):
@@ -116,30 +116,30 @@ class JobGenerator(ck.JobGenerator):
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        PhisicalTraining = core.InformedCharacterModifier(ShadeSkills.StrengthTraining.value,stat_main = 60)
-        SpiritLink_3 = core.InformedCharacterModifier(ShadeSkills.SpiritBond3.value,att = 20, pdamage = 20)
+        PhisicalTraining = core.InformedCharacterModifier(ShadeSkills.StrengthTraining,stat_main = 60)
+        SpiritLink_3 = core.InformedCharacterModifier(ShadeSkills.SpiritBond3,att = 20, pdamage = 20)
 
-        SpiritLink_4 = core.InformedCharacterModifier(ShadeSkills.SpiritBond4.value,armor_ignore = 30 + passive_level, boss_pdamage = 30 + passive_level, pdamage_indep = 15 + passive_level // 3)
-        AdvancedNuckleMastery = core.InformedCharacterModifier(ShadeSkills.HighQualityKnuckleMastery.value,crit_damage = 20 + 2 * ceil(passive_level/3), pdamage_indep = 10 + ceil(passive_level/3))
+        SpiritLink_4 = core.InformedCharacterModifier(ShadeSkills.SpiritBond4,armor_ignore = 30 + passive_level, boss_pdamage = 30 + passive_level, pdamage_indep = 15 + passive_level // 3)
+        AdvancedNuckleMastery = core.InformedCharacterModifier(ShadeSkills.HighQualityKnuckleMastery,crit_damage = 20 + 2 * ceil(passive_level/3), pdamage_indep = 10 + ceil(passive_level/3))
         
-        WeaknessFinding = core.InformedCharacterModifier(ShadeSkills.CriticalInsight.value,crit = 25 + ceil(passive_level/2))
+        WeaknessFinding = core.InformedCharacterModifier(ShadeSkills.CriticalInsight,crit = 25 + ceil(passive_level/2))
 
-        LoadedDicePassive = core.InformedCharacterModifier(f"{PirateSkills.LoadedDice.value}(Passive | 패시브)", att = vEhc.getV(4,4) + 10)
+        LoadedDicePassive = core.InformedCharacterModifier(_('{}(패시브)').format(PirateSkills.LoadedDice), att = vEhc.getV(4,4) + 10)
 
         return [PhisicalTraining, SpiritLink_3, 
                 SpiritLink_4, AdvancedNuckleMastery, WeaknessFinding, LoadedDicePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+2 * (passive_level // 3))
-        Weakness = core.InformedCharacterModifier(ShadeSkills.Weaken.value,pdamage = 20)  # It is debuff, but it is always activated. 디버프지만 상시발동가정.
+        WeaponConstant = core.InformedCharacterModifier(_("무기상수"),pdamage_indep = 70)
+        Mastery = core.InformedCharacterModifier(_("숙련도"), mastery=90+2 * (passive_level // 3))
+        Weakness = core.InformedCharacterModifier(ShadeSkills.Weaken,pdamage = 20)  # It is debuff, but it is always activated. 디버프지만 상시발동가정.
 
         # Weakness Detection: Triggers when HP is below (50 + passive_level)%. 약점 간파: 체력 (50 + passive_level)% 이하일 때 발동.
 
         WEAKNESS_BONUS = options.get("hp_rate", False)
 
-        WeaknessFinding_Bonus = core.InformedCharacterModifier(f"{ShadeSkills.CriticalInsight.value}(Bonus | 보너스)", crit_damage = (20+passive_level//3) * WEAKNESS_BONUS)
+        WeaknessFinding_Bonus = core.InformedCharacterModifier(_("{}(보너스)").format(ShadeSkills.CriticalInsight), crit_damage = (20+passive_level//3) * WEAKNESS_BONUS)
         
         return [WeaponConstant, Mastery, Weakness, WeaknessFinding_Bonus]
 
@@ -186,55 +186,55 @@ class JobGenerator(ck.JobGenerator):
 
         #Buff skills
 
-        FoxSoul = core.DamageSkill(ShadeSkills.FoxSpirits.value, 0, 200 + 5 * passive_level, 3 * (25 + 10 + passive_level // 2) * 0.01).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        FoxSoul_100 = core.DamageSkill(f"{ShadeSkills.FoxSpirits.value}(100%)", 0, 200 + 5 * passive_level, 3).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        FoxSoul = core.DamageSkill(ShadeSkills.FoxSpirits, 0, 200 + 5 * passive_level, 3 * (25 + 10 + passive_level // 2) * 0.01).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        FoxSoul_100 = core.DamageSkill(f"{ShadeSkills.FoxSpirits}(100%)", 0, 200 + 5 * passive_level, 3).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        SoulAttack = core.DamageSkill(ShadeSkills.SpiritClaw.value, 630, 265 + 5 * self.combat, 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        DoubleBodyAttack = core.DamageSkill(f"{ShadeSkills.SoulSplitter.value}(Attack | 공격)", 0, 2000 + 40*self.combat, 1).wrap(core.DamageSkillWrapper)
-        DoubleBody = core.BuffSkill(ShadeSkills.SoulSplitter.value, 810, 10000, cooltime = (180-6*self.combat) * 1000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
-        DoubleBodyRegistance = core.BuffSkill(f"{ShadeSkills.SoulSplitter.value}(Resistance | 저항)", 0, 90000, cooltime = -1).wrap(core.BuffSkillWrapper)
+        SoulAttack = core.DamageSkill(ShadeSkills.SpiritClaw, 630, 265 + 5 * self.combat, 12 + 1, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DoubleBodyAttack = core.DamageSkill(_("{}(공격)").format(ShadeSkills.SoulSplitter), 0, 2000 + 40*self.combat, 1).wrap(core.DamageSkillWrapper)
+        DoubleBody = core.BuffSkill(ShadeSkills.SoulSplitter, 810, 10000, cooltime = (180-6*self.combat) * 1000, red = True, pdamage_indep = 20).wrap(core.BuffSkillWrapper)
+        DoubleBodyRegistance = core.BuffSkill(_("{}(저항)").format(ShadeSkills.SoulSplitter), 0, 90000, cooltime = -1).wrap(core.BuffSkillWrapper)
 
         # Hyperkill. 하이퍼스킬.
         # 100% cleanliness retention rate. 정결극 유지율 100%.
-        EnhanceSpiritLink = core.BuffSkill(ShadeSkills.SpiritBondMax.value, 0, 120000 * (SOULENHANCEREM/100), cooltime = 120*1000, boss_pdamage = 20, pdamage = 35, att = 20, armor_ignore = 20).wrap(core.BuffSkillWrapper)
-        EnhanceSpiritLinkSummon_S = core.SummonSkill(f"{ShadeSkills.SpiritBondMax.value}(Liver Circle Dance | 간간 수월래)", 0, 3000, 275, 3, 120000 * (SOULENHANCEREM/100), cooltime = -1).wrap(core.SummonSkillWrapper)
-        EnhanceSpiritLinkSummon_J_Init = core.SummonSkill(f"{ShadeSkills.SpiritBondMax.value}({ShadeSkills.SpiritFrenzy.value})(Cast | 시전)", 0, 60 * 1000, 0, 0, 120000 * (SOULENHANCEREM/100), cooltime = -1).wrap(core.SummonSkillWrapper)
-        EnhanceSpiritLinkSummon_J = core.SummonSkill(f"{ShadeSkills.SpiritBondMax.value}({ShadeSkills.SpiritFrenzy.value})", 0, 150, 150, 1, 4800, cooltime = -1).wrap(core.SummonSkillWrapper)
+        EnhanceSpiritLink = core.BuffSkill(ShadeSkills.SpiritBondMax, 0, 120000 * (SOULENHANCEREM/100), cooltime = 120*1000, boss_pdamage = 20, pdamage = 35, att = 20, armor_ignore = 20).wrap(core.BuffSkillWrapper)
+        EnhanceSpiritLinkSummon_S = core.SummonSkill(_("{}(간간 수월래)").format(ShadeSkills.SpiritBondMax), 0, 3000, 275, 3, 120000 * (SOULENHANCEREM/100), cooltime = -1).wrap(core.SummonSkillWrapper)
+        EnhanceSpiritLinkSummon_J_Init = core.SummonSkill(_("{}({})(시전)").format(ShadeSkills.SpiritBondMax, ShadeSkills.SpiritFrenzy), 0, 60 * 1000, 0, 0, 120000 * (SOULENHANCEREM/100), cooltime = -1).wrap(core.SummonSkillWrapper)
+        EnhanceSpiritLinkSummon_J = core.SummonSkill(f"{ShadeSkills.SpiritBondMax}({ShadeSkills.SpiritFrenzy})", 0, 150, 150, 1, 4800, cooltime = -1).wrap(core.SummonSkillWrapper)
 
         # Unconditionally used with Rang (700% of final damage). 랑과 무조건 함께 사용 (최종뎀 700%).
-        SpiritFrenzy = core.DamageSkill(f"{ShadeSkills.SpiritFrenzy.value}(Cast | 시전)", 0, 0, 0, cooltime=10*1000 + 10080).wrap(core.DamageSkillWrapper)
-        SpiritFrenzy_Tick = core.DamageSkill(ShadeSkills.SpiritFrenzy.value, 180, 45, 5, cooltime = -1, modifier=core.CharacterModifier(pdamage_indep = 700)).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
+        SpiritFrenzy = core.DamageSkill(_("{}(시전)").format(ShadeSkills.SpiritFrenzy), 0, 0, 0, cooltime=10*1000 + 10080).wrap(core.DamageSkillWrapper)
+        SpiritFrenzy_Tick = core.DamageSkill(ShadeSkills.SpiritFrenzy, 180, 45, 5, cooltime = -1, modifier=core.CharacterModifier(pdamage_indep = 700)).setV(vEhc, 3, 3, False).wrap(core.DamageSkillWrapper)
 
-        LuckyDice = core.BuffSkill(PirateSkills.LoadedDice.value, 0, 180*1000, pdamage = 20).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
-        HerosOath = core.BuffSkill(ShadeSkills.HeroicMemories.value, 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
+        LuckyDice = core.BuffSkill(PirateSkills.LoadedDice, 0, 180*1000, pdamage = 20).isV(vEhc,4,4).wrap(core.BuffSkillWrapper)
+        HerosOath = core.BuffSkill(ShadeSkills.HeroicMemories, 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
         WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
-        SoulConcentrate = core.BuffSkill(ShadeSkills.SpiritFlow.value, 900, (30+vEhc.getV(2,1))*1000, cooltime = 120*1000, red=True, pdamage_indep = (5+vEhc.getV(2,1)//2)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
-        SoulConcentrateSummon = core.SummonSkill(f"{ShadeSkills.SpiritFlow.value}(Summon | 무작위)", 0, 2000, 1742, 1, (30+vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
+        SoulConcentrate = core.BuffSkill(ShadeSkills.SpiritFlow, 900, (30+vEhc.getV(2,1))*1000, cooltime = 120*1000, red=True, pdamage_indep = (5+vEhc.getV(2,1)//2)).isV(vEhc,2,1).wrap(core.BuffSkillWrapper)
+        SoulConcentrateSummon = core.SummonSkill(_("{}(무작위)").format(ShadeSkills.SpiritFlow), 0, 2000, 1742, 1, (30+vEhc.getV(2,1))*1000, cooltime = -1).isV(vEhc,2,1).wrap(core.SummonSkillWrapper)
 
         # Gwimunjin: Summons 2 spirits at once. 귀문진: 정령을 한번에 2마리 소환함.
-        SoulTrap = core.SummonSkill(ShadeSkills.Spiritgate.value, 990, 1280, 0, 3 * 2, 40000, cooltime = (120-vEhc.getV(3,2))*1000, red=True).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
-        SoulTrap_D = core.DamageSkill(f"{ShadeSkills.Spiritgate.value}(Attack | 공격)", 0, 300+12*vEhc.getV(3,2), 6 * 2, cooltime = -1).isV(vEhc,3,2).wrap(core.DamageSkillWrapper)
+        SoulTrap = core.SummonSkill(ShadeSkills.Spiritgate, 990, 1280, 0, 3 * 2, 40000, cooltime = (120-vEhc.getV(3,2))*1000, red=True).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
+        SoulTrap_D = core.DamageSkill(_("{}(공격)").format(ShadeSkills.Spiritgate), 0, 300+12*vEhc.getV(3,2), 6 * 2, cooltime = -1).isV(vEhc,3,2).wrap(core.DamageSkillWrapper)
 
-        RealSoulAttack = core.DamageSkill(ShadeSkills.TrueSpiritClaw.value, 540, 540+6*vEhc.getV(1,3), 12 + 1, cooltime=6000, red=True, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20) + core.CharacterModifier(armor_ignore=50)).setV(vEhc, 0, 2, False).isV(vEhc,1,3).wrap(core.DamageSkillWrapper)
+        RealSoulAttack = core.DamageSkill(ShadeSkills.TrueSpiritClaw, 540, 540+6*vEhc.getV(1,3), 12 + 1, cooltime=6000, red=True, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20) + core.CharacterModifier(armor_ignore=50)).setV(vEhc, 0, 2, False).isV(vEhc,1,3).wrap(core.DamageSkillWrapper)
 
-        ChainBombPunchInit = core.DamageSkill(f"{ShadeSkills.SmashingMultipunch.value}(Cast | 시전)", 390, 0, 0, cooltime=90*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        ChainBombPunchTick = core.DamageSkill(f"{ShadeSkills.SmashingMultipunch.value}(Tick | 키다운)", 930/8, 400+16*vEhc.getV(0,0), 5, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  # 8 times of 5 strokes, cast + key down 1320ms. 5타씩 8회, 시전+키다운 1320ms.
-        ChainBombPunchFinal = core.DamageSkill(f"{ShadeSkills.SmashingMultipunch.value}(Final attack | 막타)", 810, 950+38*vEhc.getV(0,0), 15*3, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  # 3 times of 15 strokes. 15타씩 3회.
+        ChainBombPunchInit = core.DamageSkill(_("{}(시전)").format(ShadeSkills.SmashingMultipunch), 390, 0, 0, cooltime=90*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        ChainBombPunchTick = core.DamageSkill(_("{}(키다운)").format(ShadeSkills.SmashingMultipunch), 930/8, 400+16*vEhc.getV(0,0), 5, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  # 8 times of 5 strokes, cast + key down 1320ms. 5타씩 8회, 시전+키다운 1320ms.
+        ChainBombPunchFinal = core.DamageSkill(_("{}(막타)").format(ShadeSkills.SmashingMultipunch), 810, 950+38*vEhc.getV(0,0), 15*3, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  # 3 times of 15 strokes. 15타씩 3회.
 
         # Shredded iron (for debuff). 파쇄철조 (디버프용).
-        BladeImp = core.DamageSkill(ShadeSkills.BladeImpSpinSlash.value, 360, 160, 4).wrap(core.DamageSkillWrapper)
-        BladeImpBuff = core.BuffSkill(ShadeSkills.BladeImpdDownwardSlash.value, 0, 15 * 1000, cooltime=-1, pdamage_indep=10).wrap(core.BuffSkillWrapper)
+        BladeImp = core.DamageSkill(ShadeSkills.BladeImpSpinSlash, 360, 160, 4).wrap(core.DamageSkillWrapper)
+        BladeImpBuff = core.BuffSkill(ShadeSkills.BladeImpdDownwardSlash, 0, 15 * 1000, cooltime=-1, pdamage_indep=10).wrap(core.BuffSkillWrapper)
 
         ######   Skill Wrapper   ######
 
         # Furious marriage. 분혼 격참.
         DoubleBody.onAfter(DoubleBodyAttack)
         DoubleBody.onAfter(DoubleBodyRegistance)
-        DoubleBodyConstraint = core.ConstraintElement(f"{ShadeSkills.SoulSplitter.value}(Resistance | 저항)(Limit | 제한)", DoubleBodyRegistance, DoubleBodyRegistance.is_not_active)
+        DoubleBodyConstraint = core.ConstraintElement(_("{}(저항)(제한)").format(ShadeSkills.SoulSplitter), DoubleBodyRegistance, DoubleBodyRegistance.is_not_active)
         DoubleBody.onConstraint(DoubleBodyConstraint)
 
         def double_body_single_target(doubleBody):
@@ -252,16 +252,16 @@ class JobGenerator(ck.JobGenerator):
         SoulConcentrate.onAfter(SoulConcentrateSummon)
 
         # Gwimunjin. 귀문진.
-        SoulTrapStack = SoulTrapStackWrapper(core.BuffSkill(f"{ShadeSkills.Spiritgate.value}(Stack | 버프)", 0, 9999999, cooltime = -1))
+        SoulTrapStack = SoulTrapStackWrapper(core.BuffSkill(_("{}(버프)").format(ShadeSkills.Spiritgate), 0, 9999999, cooltime = -1))
         SoulTrap.onTick(core.RepeatElement(SoulTrapStack.add_debuff(), 2))  # Generates two debuffs at once. 한 번에 디버프 두 개 생성.
         SoulTrap.onTick(SoulTrap_D)
         SoulTrap_D.add_runtime_modifier(DoubleBody, double_body_single_target)
 
         # True returning algorithm. 진 귀참 알고리즘.
-        BasicAttack = core.OptionalElement(RealSoulAttack.is_available, RealSoulAttack, SoulAttack, name=f"Can activate {ShadeSkills.TrueSpiritClaw.value} 발동 가능?")
+        BasicAttack = core.OptionalElement(RealSoulAttack.is_available, RealSoulAttack, SoulAttack, name=_("{} 발동 가능?").format(ShadeSkills.TrueSpiritClaw))
         RealSoulAttack.protect_from_running()
 
-        BasicAttackWrapper = core.DamageSkill('기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
+        BasicAttackWrapper = core.DamageSkill(_("기본 공격"),0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
 
         # Shredding concession. 파쇄 연권.
@@ -284,7 +284,7 @@ class JobGenerator(ck.JobGenerator):
 
         # ??. 소혼장막.
         SpiritFrenzy.onAfter(core.RepeatElement(SpiritFrenzy_Tick, 56))
-        SpiritFrenzyConstraint = core.ConstraintElement(f"{ShadeSkills.SpiritFrenzy.value}(Limit | 제한)", EnhanceSpiritLinkSummon_J, EnhanceSpiritLinkSummon_J.is_active)
+        SpiritFrenzyConstraint = core.ConstraintElement(_("{}(제한)").format(ShadeSkills.SpiritFrenzy), EnhanceSpiritLinkSummon_J, EnhanceSpiritLinkSummon_J.is_active)
         SpiritFrenzy.onConstraint(SpiritFrenzyConstraint)
 
         return(BasicAttackWrapper, 
