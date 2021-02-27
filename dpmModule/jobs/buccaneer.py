@@ -1,5 +1,3 @@
-from enum import Enum
-
 from dpmModule.jobs.globalSkill import GlobalSkills
 from dpmModule.jobs.jobbranch.pirates import PirateSkills
 
@@ -15,69 +13,71 @@ from . import jobutils
 from math import ceil
 from typing import Any, Dict
 
+import gettext
+_ = gettext.gettext
 
 # English skill information for Buccaneer here https://maplestory.fandom.com/wiki/Buccaneer/Skills
-class BuccaneerSkills(Enum):
+class BuccaneerSkills:
     # link Skill
-    PirateBlessing = 'Pirate Blessing | 파이렛 블레스'
+    PirateBlessing = _("파이렛 블레스")  # "Pirate Blessing"
     # Beginner
-    SuperTransformation = 'Super Transformation | 슈퍼 트랜스폼'
+    SuperTransformation = _("슈퍼 트랜스폼")  # "Super Transformation"
     # 1st Job
-    SommersaultKick = 'Sommersault Kick | 써머솔트 킥'
-    DoubleShot = 'Double Shot | 더블 파이어'
-    Octopush = 'Octopush | 옥토푸시'
-    Dash = 'Dash | 대쉬'
-    ShadowHeart = 'Shadow Heart | 크리티컬 로어'
-    BulletTime = 'Bullet Time | 퀵모션'
+    SommersaultKick = _("써머솔트 킥")  # "Sommersault Kick"
+    DoubleShot = _("더블 파이어")  # "Double Shot"
+    Octopush = _("옥토푸시")  # "Octopush"
+    Dash = _("대쉬")  # "Dash"
+    ShadowHeart = _("크리티컬 로어")  # "Shadow Heart"
+    BulletTime = _("퀵모션")  # "Bullet Time"
     # 2nd Job
-    TornadoUppercut = 'Tornado Uppercut | 토네이도 어퍼'
-    EnergyVortex = 'Energy Vortex | 에너지 토네이도'
-    EnergyCharge = 'Energy Charge | 에너지 차지'
-    CorkscrewBlow = 'Corkscrew Blow | 스크류 펀치'
-    DarkClarity = 'Dark Clarity | 멘탈 클리어리티'
-    KnuckleBooster = 'Knuckle Booster | 너클 부스터'
-    AdvancedDash = 'Advanced Dash | 어드밴스드 대쉬'
-    KnuckleMastery = 'Knuckle Mastery | 너클 마스터리'
-    HPBoost = 'HP Boost | HP 증가'
-    PhysicalTraining = 'Physical Training | 피지컬 트레이닝'
-    Perseverance = 'Perseverance | 인듀어런스'
+    TornadoUppercut = _("토네이도 어퍼")  # "Tornado Uppercut"
+    EnergyVortex = _("에너지 토네이도")  # "Energy Vortex"
+    EnergyCharge = _("에너지 차지")  # "Energy Charge"
+    CorkscrewBlow = _("스크류 펀치")  # "Corkscrew Blow"
+    DarkClarity = _("멘탈 클리어리티")  # "Dark Clarity"
+    KnuckleBooster = _("너클 부스터")  # "Knuckle Booster"
+    AdvancedDash = _("어드밴스드 대쉬")  # "Advanced Dash"
+    KnuckleMastery = _("너클 마스터리")  # "Knuckle Mastery"
+    HPBoost = _("HP 증가")  # "HP Boost"
+    PhysicalTraining = _("피지컬 트레이닝")  # "Physical Training"
+    Perseverance = _("인듀어런스")  # "Perseverance"
     # 3rd Job
-    SpiralAssault = 'Spiral Assault | 더블 스파이럴'
-    EnergyBurst = 'Energy Burst | 에너지 버스터'
-    HedgehogBuster = 'Hedgehog Buster | 헤지호그 버스터'
-    Supercharge = 'Supercharge | 슈퍼 차지'
-    StaticThumper = 'Static Thumper | 쇼크웨이브'
-    RolloftheDice = 'Roll of the Dice | 럭키 다이스'
-    AdmiralsWings = 'Admiral\'s Wings | 윌로우 디펜시브'
-    PrecisionStrikes = 'Precision Strikes | 크리티컬 레이지'
-    StunMastery = 'Stun Mastery | 스턴 마스터리'
+    SpiralAssault = _("더블 스파이럴")  # "Spiral Assault"
+    EnergyBurst = _("에너지 버스터")  # "Energy Burst"
+    HedgehogBuster = _("헤지호그 버스터")  # "Hedgehog Buster"
+    Supercharge = _("슈퍼 차지")  # "Supercharge"
+    StaticThumper = _("쇼크웨이브")  # "Static Thumper"
+    RolloftheDice = _("럭키 다이스")  # "Roll of the Dice"
+    AdmiralsWings = _("윌로우 디펜시브")  # "Admiral's Wings"
+    PrecisionStrikes = _("크리티컬 레이지")  # "Precision Strikes"
+    StunMastery = _("스턴 마스터리")  # "Stun Mastery"
     # 4th Job
-    Octopunch = 'Octopunch | 피스트 인레이지'
-    DragonStrike = 'Dragon Strike | 드래곤 스트라이크'
-    NautilusStrike = 'Nautilus Strike | 전함 노틸러스'
-    BuccaneerBlast = 'Buccaneer Blast | 에너지 블라스트'
-    DoubleBlast = 'Double Blast | 더블 블라스트'
-    Crossbones = 'Crossbones | 바이퍼지션'
-    TimeLeap = 'Time Leap | 타임 리프'
-    SpeedInfusion = 'Speed Infusion | 윈드 부스터'
-    DoubleDown = 'Double Down | 더블 럭키 다이스'
-    UltraCharge = 'Ultra Charge | 울트라 차지'
-    PiratesRevenge = 'Pirate\'s Revenge | 카운터 어택'
-    TyphoonCrush = 'Typhoon Crush | 가드 크러시'
+    Octopunch = _("피스트 인레이지")  # "Octopunch"
+    DragonStrike = _("드래곤 스트라이크")  # "Dragon Strike"
+    NautilusStrike = _("전함 노틸러스")  # "Nautilus Strike"
+    BuccaneerBlast = _("에너지 블라스트")  # "Buccaneer Blast"
+    DoubleBlast = _("더블 블라스트")  # "Double Blast"
+    Crossbones = _("바이퍼지션")  # "Crossbones"
+    TimeLeap = _("타임 리프")  # "Time Leap"
+    SpeedInfusion = _("윈드 부스터")  # "Speed Infusion"
+    DoubleDown = _("더블 럭키 다이스")  # "Double Down"
+    UltraCharge = _("울트라 차지")  # "Ultra Charge"
+    PiratesRevenge = _("카운터 어택")  # "Pirate's Revenge"
+    TyphoonCrush = _("가드 크러시")  # "Typhoon Crush"
     # Hypers
-    PowerUnity = 'Power Unity | 유니티 오브 파워'
-    EpicAdventure = 'Epic Adventure | 에픽 어드벤처'
-    StimulatingConversation = 'Stimulating Conversation | 스티뮬레이트'
+    PowerUnity = _("유니티 오브 파워")  # "Power Unity"
+    EpicAdventure = _("에픽 어드벤처")  # "Epic Adventure"
+    StimulatingConversation = _("스티뮬레이트")  # "Stimulating Conversation"
     # 5th Job
-    Meltdown = 'Meltdown | 트랜스 폼'
-    LordoftheDeep = 'Lord of the Deep | 서펜트 스크류'
-    SerpentVortex = 'Serpent Vortex | 퓨리어스 차지'
-    HowlingFist = 'Howling Fist | 하울링 피스트'
+    Meltdown = _("트랜스 폼")  # "Meltdown"
+    LordoftheDeep = _("서펜트 스크류")  # "Lord of the Deep"
+    SerpentVortex = _("퓨리어스 차지")  # "Serpent Vortex"
+    HowlingFist = _("하울링 피스트")  # "Howling Fist"
 
 
 class EnergyChargeWrapper(core.StackSkillWrapper):
     def __init__(self, combat):
-        skill = core.BuffSkill(BuccaneerSkills.EnergyCharge.value, 0, 999999*1000)
+        skill = core.BuffSkill(BuccaneerSkills.EnergyCharge, 0, 999999*1000)
         super(EnergyChargeWrapper, self).__init__(skill, 10000)
         self.stack = 0
         self.charged = False
@@ -99,7 +99,7 @@ class EnergyChargeWrapper(core.StackSkillWrapper):
 
     def chargeController(self, val, force = False):
         task = core.Task(self, partial(self.charge, val, force))
-        return core.TaskHolder(task, name = f"Gauge | 게이지: {val}")
+        return core.TaskHolder(task, name = _("게이지: {}").format(val))
 
     def get_modifier(self):
         if self.charged == 1:
@@ -118,30 +118,30 @@ class JobGenerator(ck.JobGenerator):
         super(JobGenerator, self).__init__()
         self.vEnhanceNum = 10
         self.jobtype = "STR"
-        self.jobname = "바이퍼"
+        self.jobname = _("바이퍼")
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ConditionRule('Energy Orb | 에너지 오브(Dummy | 더미)', BuccaneerSkills.EnergyCharge.value, lambda sk: sk.isStateOff()), RuleSet.BASE)
-        ruleset.add_rule(MutualRule(BuccaneerSkills.StimulatingConversation.value, BuccaneerSkills.Meltdown.value), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(BuccaneerSkills.StimulatingConversation.value, BuccaneerSkills.EnergyCharge.value, lambda sk: sk.judge(2000, -1) or sk.isStateOff()), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(BuccaneerSkills.PowerUnity.value, f'{BuccaneerSkills.PowerUnity.value}(Debuff | 디버프)', lambda sk: sk.is_time_left(1000, -1)), RuleSet.BASE)
-        # ruleset.add_rule(MutualRule(BuccaneerSkills.TimeLeap.value, GlobalSkills.TermsAndConditions.value), RuleSet.BASE)
-        # ruleset.add_rule(InactiveRule(BuccaneerSkills.TimeLeap.value, GlobalSkills.TermsAndConditions.value), RuleSet.BASE)
-        ruleset.add_rule(DisableRule(BuccaneerSkills.TimeLeap.value), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(_("에너지 오브(더미)"), BuccaneerSkills.EnergyCharge, lambda sk: sk.isStateOff()), RuleSet.BASE)
+        ruleset.add_rule(MutualRule(BuccaneerSkills.StimulatingConversation, BuccaneerSkills.Meltdown), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(BuccaneerSkills.StimulatingConversation, BuccaneerSkills.EnergyCharge, lambda sk: sk.judge(2000, -1) or sk.isStateOff()), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(BuccaneerSkills.PowerUnity, _("{}(디버프)").format(BuccaneerSkills.PowerUnity), lambda sk: sk.is_time_left(1000, -1)), RuleSet.BASE)
+        # ruleset.add_rule(MutualRule(BuccaneerSkills.TimeLeap, GlobalSkills.TermsAndConditions), RuleSet.BASE)
+        # ruleset.add_rule(InactiveRule(BuccaneerSkills.TimeLeap, GlobalSkills.TermsAndConditions), RuleSet.BASE)
+        ruleset.add_rule(DisableRule(BuccaneerSkills.TimeLeap), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(pdamage=49, armor_ignore=15.3, crit_damage=39, patt=2.4)
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
-        CriticalRoar = core.InformedCharacterModifier(BuccaneerSkills.ShadowHeart.value,crit = 20, crit_damage = 5)
-        MentalClearity = core.InformedCharacterModifier(BuccaneerSkills.DarkClarity.value,att = 30)
-        PhisicalTraining = core.InformedCharacterModifier(BuccaneerSkills.PhysicalTraining.value,stat_main = 30, stat_sub = 30)
-        CriticalRage = core.InformedCharacterModifier(BuccaneerSkills.PrecisionStrikes.value,crit = 15, crit_damage = 10)    # Boss opponent +20% Crit rate. 보스상대 추가+20% 크리율.
-        StimulatePassive = core.InformedCharacterModifier(f"{BuccaneerSkills.StimulatingConversation.value}(Passive | 패시브)",boss_pdamage = 20)
+        CriticalRoar = core.InformedCharacterModifier(BuccaneerSkills.ShadowHeart,crit = 20, crit_damage = 5)
+        MentalClearity = core.InformedCharacterModifier(BuccaneerSkills.DarkClarity,att = 30)
+        PhisicalTraining = core.InformedCharacterModifier(BuccaneerSkills.PhysicalTraining,stat_main = 30, stat_sub = 30)
+        CriticalRage = core.InformedCharacterModifier(BuccaneerSkills.PrecisionStrikes,crit = 15, crit_damage = 10)    # Boss opponent +20% Crit rate. 보스상대 추가+20% 크리율.
+        StimulatePassive = core.InformedCharacterModifier(_("{}(패시브)").format(BuccaneerSkills.StimulatingConversation),boss_pdamage = 20)
 
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 2, 3)
         
@@ -150,12 +150,12 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 70)
-        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(self.combat/2))
+        WeaponConstant = core.InformedCharacterModifier(_("무기상수"),pdamage_indep = 70)
+        Mastery = core.InformedCharacterModifier(_("숙련도"), mastery=90+ceil(self.combat/2))
 
-        CriticalRage = core.InformedCharacterModifier(f"{BuccaneerSkills.PrecisionStrikes.value}(Boss | 보스)",crit = 20)    # Boss opponent +20% Crit rate. 보스상대 추가+20% 크리율.
-        GuardCrush = core.InformedCharacterModifier(BuccaneerSkills.TyphoonCrush.value,armor_ignore = 40 + 2*passive_level)  # 40% chance of ignoring 100% of defence. 40% 확률로 방무 100% 무시.
-        # CounterAttack = core.InformedCharacterModifier(BuccaneerSkills.PiratesRevenge.value,pdamage = 25 + 2*passive_level) # TODO: Should decide whether to apply. 적용 여부 결정해야함.
+        CriticalRage = core.InformedCharacterModifier(_("{}(보스)").format(BuccaneerSkills.PrecisionStrikes),crit = 20)    # Boss opponent +20% Crit rate. 보스상대 추가+20% 크리율.
+        GuardCrush = core.InformedCharacterModifier(BuccaneerSkills.TyphoonCrush,armor_ignore = 40 + 2*passive_level)  # 40% chance of ignoring 100% of defence. 40% 확률로 방무 100% 무시.
+        # CounterAttack = core.InformedCharacterModifier(BuccaneerSkills.PiratesRevenge,pdamage = 25 + 2*passive_level) # TODO: Should decide whether to apply. 적용 여부 결정해야함.
         
         return [WeaponConstant, Mastery, CriticalRage, GuardCrush]
         
@@ -192,28 +192,28 @@ class JobGenerator(ck.JobGenerator):
         DICE_WEIGHT = 22
         DICE_POOL = 115
         DICE_PROC = DICE_WEIGHT / DICE_POOL # 더블 럭키 다이스 - 인핸스
-        LuckyDice = core.BuffSkill(PirateSkills.LoadedDice.value, 990, 180 * 1000, pdamage = 20+10*DICE_PROC+10*DICE_PROC*((1-DICE_PROC)+DICE_WEIGHT/(DICE_POOL*2-DICE_WEIGHT))*(10*(5+passive_level)*0.01)).isV(vEhc, 2, 2).wrap(core.BuffSkillWrapper)
-        Viposition = core.BuffSkill(BuccaneerSkills.Crossbones.value, 0, (180+4*self.combat) * 1000, patt = 30+self.combat).wrap(core.BuffSkillWrapper)
+        LuckyDice = core.BuffSkill(PirateSkills.LoadedDice, 990, 180 * 1000, pdamage = 20+10*DICE_PROC+10*DICE_PROC*((1-DICE_PROC)+DICE_WEIGHT/(DICE_POOL*2-DICE_WEIGHT))*(10*(5+passive_level)*0.01)).isV(vEhc, 2, 2).wrap(core.BuffSkillWrapper)
+        Viposition = core.BuffSkill(BuccaneerSkills.Crossbones, 0, (180+4*self.combat) * 1000, patt = 30+self.combat).wrap(core.BuffSkillWrapper)
 
         # Damage Skill    
-        FistInrage = core.DamageSkill(BuccaneerSkills.Octopunch.value, 690, 320 + 4*self.combat, 8 + 1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        FistInrage_T = core.DamageSkill(f"{BuccaneerSkills.Octopunch.value}(Transform | 변신)", 690, 320+4*self.combat, 8 + 1 + 2, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        FistInrage = core.DamageSkill(BuccaneerSkills.Octopunch, 690, 320 + 4*self.combat, 8 + 1, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        FistInrage_T = core.DamageSkill(_("{}(변신)").format(BuccaneerSkills.Octopunch), 690, 320+4*self.combat, 8 + 1 + 2, modifier = core.CharacterModifier(boss_pdamage = 20, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        DragonStrike = core.DamageSkill(BuccaneerSkills.DragonStrike.value, 690, 300 + 4*self.combat, 12, cooltime = 15 * 1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        DragonStrikeBuff = core.BuffSkill(f"{BuccaneerSkills.DragonStrike.value}(Debuff | 디버프)", 0, 15 * 1000, cooltime = -1, pdamage_indep = 20 + self.combat//2).wrap(core.BuffSkillWrapper)
+        DragonStrike = core.DamageSkill(BuccaneerSkills.DragonStrike, 690, 300 + 4*self.combat, 12, cooltime = 15 * 1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        DragonStrikeBuff = core.BuffSkill(_("{}(디버프)").format(BuccaneerSkills.DragonStrike), 0, 15 * 1000, cooltime = -1, pdamage_indep = 20 + self.combat//2).wrap(core.BuffSkillWrapper)
         
-        Nautilus = core.DamageSkill(BuccaneerSkills.NautilusStrike.value, 690, 440+4*self.combat, 7, cooltime = 60 * 1000, red=True).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        NautilusFinalAttack = core.DamageSkill(f"{BuccaneerSkills.NautilusStrike.value}(Final attack | 파이널 어택)", 0, 165+2*self.combat, 2).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        Nautilus = core.DamageSkill(BuccaneerSkills.NautilusStrike, 690, 440+4*self.combat, 7, cooltime = 60 * 1000, red=True).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        NautilusFinalAttack = core.DamageSkill(_("{}(파이널 어택)").format(BuccaneerSkills.NautilusStrike), 0, 165+2*self.combat, 2).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
 
         # 타임 리프: 안 쓰는 게 더 셈
-        TimeLeap = core.DamageSkill(BuccaneerSkills.TimeLeap.value, 1080, 0, 0, cooltime = 180000).wrap(core.DamageSkillWrapper)
+        TimeLeap = core.DamageSkill(BuccaneerSkills.TimeLeap, 1080, 0, 0, cooltime = 180000).wrap(core.DamageSkillWrapper)
 
         # Hyper
-        Stimulate = core.BuffSkill(BuccaneerSkills.StimulatingConversation.value, 930, 120 * 1000, cooltime = 240 * 1000, pdamage = 20).wrap(core.BuffSkillWrapper)# 에너지 주기적으로 800씩 증가, 미완충시 풀완충.
-        StimulateSummon = core.SummonSkill(f"{BuccaneerSkills.StimulatingConversation.value}(Guage increasing | 게이지 증가 더미)", 0, (5 + serverlag) * 1000, 0, 0, 120 * 1000, cooltime = -1).wrap(core.SummonSkillWrapper)
-        UnityOfPower = core.DamageSkill(BuccaneerSkills.PowerUnity.value, 690, 650, 5, cooltime = 10000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #완충시에만 사용 가능, 에너지 1500 소모.
-        UnityOfPowerBuff = core.BuffSkill(f'{BuccaneerSkills.PowerUnity.value}(Debuff | 디버프)', 0, 90 * 1000, cooltime = -1, crit_damage = 40).wrap(core.BuffSkillWrapper)   #4스택 가정.
-        EpicAdventure = core.BuffSkill(BuccaneerSkills.EpicAdventure.value, 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
+        Stimulate = core.BuffSkill(BuccaneerSkills.StimulatingConversation, 930, 120 * 1000, cooltime = 240 * 1000, pdamage = 20).wrap(core.BuffSkillWrapper)# 에너지 주기적으로 800씩 증가, 미완충시 풀완충.
+        StimulateSummon = core.SummonSkill(_("{}(게이지 증가 더미)").format(BuccaneerSkills.StimulatingConversation), 0, (5 + serverlag) * 1000, 0, 0, 120 * 1000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        UnityOfPower = core.DamageSkill(BuccaneerSkills.PowerUnity, 690, 650, 5, cooltime = 10000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   #완충시에만 사용 가능, 에너지 1500 소모.
+        UnityOfPowerBuff = core.BuffSkill(_("{}(디버프)").format(BuccaneerSkills.PowerUnity), 0, 90 * 1000, cooltime = -1, crit_damage = 40).wrap(core.BuffSkillWrapper)   #4스택 가정.
+        EpicAdventure = core.BuffSkill(BuccaneerSkills.EpicAdventure, 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
 
         # 5th
         PirateFlag = adventurer.PirateFlagWrapper(vEhc, 3, 2, chtr.level)
@@ -222,23 +222,23 @@ class JobGenerator(ck.JobGenerator):
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
-        Transform = core.BuffSkill(BuccaneerSkills.Meltdown.value, 450, (50+vEhc.getV(1,1))*1000, cooltime = 180 * 1000, red=True, pdamage_indep = 20 + vEhc.getV(1,1) // 5).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
-        TransformEnergyOrbDummy = core.DamageSkill("Energy Orb | 에너지 오브(Dummy | 더미)", 0, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
-        TransformEnergyOrb = core.DamageSkill("Energy Orb | 에너지 오브", 780, 450 +vEhc.getV(1,1)*18, 3 * TRANSFORM_HIT, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        Transform = core.BuffSkill(BuccaneerSkills.Meltdown, 450, (50+vEhc.getV(1,1))*1000, cooltime = 180 * 1000, red=True, pdamage_indep = 20 + vEhc.getV(1,1) // 5).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
+        TransformEnergyOrbDummy = core.DamageSkill(_("에너지 오브(더미)"), 0, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
+        TransformEnergyOrb = core.DamageSkill(_("에너지 오브"), 780, 450 +vEhc.getV(1,1)*18, 3 * TRANSFORM_HIT, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
 
-        SerpentScrew = core.SummonSkill(BuccaneerSkills.LordoftheDeep.value, 600, 260, 360 + vEhc.getV(0,0)*14, 3, 99999 * 10000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
-        SerpentScrewDummy = core.SummonSkill(f"{BuccaneerSkills.LordoftheDeep.value}(Continuing | 지속)", 0, 1000, 0, 0, 99999 * 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        SerpentScrew = core.SummonSkill(BuccaneerSkills.LordoftheDeep, 600, 260, 360 + vEhc.getV(0,0)*14, 3, 99999 * 10000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        SerpentScrewDummy = core.SummonSkill(_("{}(지속)").format(BuccaneerSkills.LordoftheDeep), 0, 1000, 0, 0, 99999 * 10000, cooltime = -1).wrap(core.SummonSkillWrapper)
     
-        FuriousCharge = core.DamageSkill(BuccaneerSkills.SerpentVortex.value, 420, 600+vEhc.getV(4,4)*24, 10, cooltime = 10 * 1000, modifier = core.CharacterModifier(boss_pdamage = 30)).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
+        FuriousCharge = core.DamageSkill(BuccaneerSkills.SerpentVortex, 420, 600+vEhc.getV(4,4)*24, 10, cooltime = 10 * 1000, modifier = core.CharacterModifier(boss_pdamage = 30)).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)
 
-        HowlingFistInit = core.DamageSkill(f"{BuccaneerSkills.HowlingFist.value}(Cast | 개시)", 240, 0, 0, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        HowlingFistCharge = core.DamageSkill(f"{BuccaneerSkills.HowlingFist.value}(Charge | 충전)", 240, 425+17*vEhc.getV(0,0), 6, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        HowlingFistFinal = core.DamageSkill(f"{BuccaneerSkills.HowlingFist.value}(Final attack | 막타)", 1950, 525+21*vEhc.getV(0,0), 10*14, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        HowlingFistInit = core.DamageSkill(_("{}(개시)").format(BuccaneerSkills.HowlingFist), 240, 0, 0, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        HowlingFistCharge = core.DamageSkill(_("{}(충전)").format(BuccaneerSkills.HowlingFist), 240, 425+17*vEhc.getV(0,0), 6, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        HowlingFistFinal = core.DamageSkill(_("{}(막타)").format(BuccaneerSkills.HowlingFist), 1950, 525+21*vEhc.getV(0,0), 10*14, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
         # Energy Charge
         EnergyCharge = EnergyChargeWrapper(passive_level)
-        EnergyConstraint = core.ConstraintElement("Can only be used in enerhy charged state | 에너지 차지 상태에서만 사용 가능", EnergyCharge, EnergyCharge.isStateOn)
+        EnergyConstraint = core.ConstraintElement(_("에너지 차지 상태에서만 사용 가능"), EnergyCharge, EnergyCharge.isStateOn)
 
         Stimulate.onAfter(EnergyCharge.chargeController(10000, force=True))
         Transform.onAfter(EnergyCharge.chargeController(10000, force=True))
@@ -255,8 +255,8 @@ class JobGenerator(ck.JobGenerator):
         HowlingFistInit.onAfter(EnergyCharge.chargeController(-1750))
         
         # Basic Attack
-        BasicAttack = core.OptionalElement(EnergyCharge.isStateOn, FistInrage_T, FistInrage, "Energy buffer | 에너지 완충")
-        BasicAttackWrapper = core.DamageSkill('Basic attack | 기본 공격',0,0,0).wrap(core.DamageSkillWrapper)
+        BasicAttack = core.OptionalElement(EnergyCharge.isStateOn, FistInrage_T, FistInrage, _("에너지 완충"))
+        BasicAttackWrapper = core.DamageSkill(_("기본 공격"),0,0,0).wrap(core.DamageSkillWrapper)
         BasicAttackWrapper.onAfter(BasicAttack)
 
         # Dragon Strike
@@ -264,7 +264,7 @@ class JobGenerator(ck.JobGenerator):
         DragonStrike.onAfter(DragonStrikeBuff)
     
         # Final Attack
-        FinalAttack = core.OptionalElement(lambda: not Nautilus.is_available(), NautilusFinalAttack, name=f"{BuccaneerSkills.NautilusStrike.value}(cooldown | 쿨타임)")
+        FinalAttack = core.OptionalElement(lambda: not Nautilus.is_available(), NautilusFinalAttack, name=_("{}(쿨타임)").format(BuccaneerSkills.NautilusStrike))
         FistInrage.onAfter(FinalAttack)
         FistInrage_T.onAfter(FinalAttack)
         FuriousCharge.onAfter(FinalAttack)
@@ -278,16 +278,16 @@ class JobGenerator(ck.JobGenerator):
         
         # Transform
         Transform.onAfter(TransformEnergyOrbDummy.controller(1))
-        TransformEnergyOrbDummy.onConstraint(core.ConstraintElement("Available only in transform state | 트랜스폼 상태에서만 사용가능", Transform, Transform.is_active))
+        TransformEnergyOrbDummy.onConstraint(core.ConstraintElement(_("트랜스폼 상태에서만 사용가능"), Transform, Transform.is_active))
         TransformEnergyOrbDummy.onAfter(core.RepeatElement(TransformEnergyOrb, 2 + vEhc.getV(1, 1) // 30))
         
         # Serpent Screw
-        SerpentScrew.onConstraint(core.ConstraintElement("More than 100 energy | 에너지 100 이상", EnergyCharge, partial(EnergyCharge.judge, 100, 1)))
+        SerpentScrew.onConstraint(core.ConstraintElement(_("에너지 100 이상"), EnergyCharge, partial(EnergyCharge.judge, 100, 1)))
         SerpentScrew.onAfter(SerpentScrewDummy)
         EnergyCharge.drainCallback = lambda: [SerpentScrew.set_disabled_and_time_left(1), SerpentScrewDummy.set_disabled_and_time_left(-1)]
 
         # Howling Fist
-        HowlingFistInit.onConstraint(core.ConstraintElement("More than 1750 energy | 에너지 1750 이상", EnergyCharge, partial(EnergyCharge.judge, 1750, 1)))
+        HowlingFistInit.onConstraint(core.ConstraintElement(_("에너지 1750 이상"), EnergyCharge, partial(EnergyCharge.judge, 1750, 1)))
         HowlingFistInit.onAfter(core.RepeatElement(HowlingFistCharge, 8))
         HowlingFistInit.onAfter(HowlingFistFinal)
 
