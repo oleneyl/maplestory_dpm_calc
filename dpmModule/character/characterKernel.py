@@ -36,6 +36,9 @@ from ..kernel.graph import (
 )
 from ..status.ability import Ability_grade, Ability_option, Ability_tool
 
+import gettext
+_ = gettext.gettext
+
 ExMDF = ExtendedCharacterModifier
 """Class AbstractCharacter : Basic template for building specific User. User is such object that contains:
 - Buff Skill Wrappers
@@ -65,13 +68,13 @@ class AbstractCharacter:
         self.base_modifier: ExMDF = ExMDF(stat_main=18 + level * 5, stat_sub=4, crit=5)
 
         self.about: str = ""
-        self.add_summary("레벨 %d" % level)
+        self.add_summary(_("레벨 %d") % level)
 
         self._modifier_cache: Optional[CharacterModifier] = None
 
     def unsafe_change_level(self, level: int) -> None:
         level_delta = level - self.level
-        self.add_summary(f"레벨 강제 변경 : {self.level} -> {level}")  # Force level change
+        self.add_summary(_("레벨 강제 변경 : {} -> {}").format(self.level, level))  # Force level change
         self.level = level
         self.base_modifier += ExMDF(stat_main=level_delta * 5)
 
@@ -200,7 +203,7 @@ class GearedCharacter(AbstractCharacter):
             ptnl = ExMDF()
 
             if len(potentials) > 3:
-                raise TypeError("Weapons potential is up to 3 per item. 무기류 잠재능력은 아이템당 최대 3개입니다.")
+                raise TypeError(_("무기류 잠재능력은 아이템당 최대 3개입니다"))
 
             for i in range(len(potentials)):
                 ptnl = ptnl + potentials[i]
@@ -254,7 +257,7 @@ class JobGenerator:
     """
 
     # TODO: vEhc is not used.
-    def __init__(self, vEhc=None, **kwargs) -> None:
+    def __init__(self, vEhc=None) -> None:
         self.buffrem: Tuple[int, int] = (0, 0)
         self.vEnhanceNum: int = 10
         self.vSkillNum: int = 3 + 3
@@ -269,7 +272,6 @@ class JobGenerator:
         self._use_critical_reinforce: bool = False
         self.hyperStatPrefixed: int = 0
         self.conf: dict = None
-        self.lang = kwargs.get('lang')
 
     def _load_skill(self, skill_name, vEhc, background_information={}):
         skill_conf = copy.deepcopy(self.conf['skills'][skill_name])
@@ -379,10 +381,10 @@ class JobGenerator:
         self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
     ) -> None:
         self._passive_skill_list = self.get_passive_skill_list(vEhc, chtr, options)
-        self._passive_skill_list += [InformedCharacterModifier("여제의 축복", att=30)]
-        if self.jobname != "제로":
+        self._passive_skill_list += [InformedCharacterModifier(_("여제의 축복"), att=30)]
+        if self.jobname != _("제로"):
             self._passive_skill_list += [
-                InformedCharacterModifier("연합의 의지", att=5, stat_main=5, stat_sub=5)
+                InformedCharacterModifier(_("연합의 의지"), att=5, stat_main=5, stat_sub=5)
             ]
 
     def get_passive_skill_list(
