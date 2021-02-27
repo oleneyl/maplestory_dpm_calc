@@ -1,8 +1,11 @@
 from ..kernel import core
 from ..kernel.graph import DynamicVariableOperation
 
+import gettext
+_ = gettext.gettext
 
-def create_auxilary_attack(skill_wrapper: core.DamageSkillWrapper, ratio=1, nametag="(복사)"):
+
+def create_auxilary_attack(skill_wrapper: core.DamageSkillWrapper, ratio=1, nametag=_("(복사)")):
     """
     create_auxilary_attack: DamageSkill Duplicator
     Easy Shadow Partner Function
@@ -39,7 +42,7 @@ def get_starforce_count(chtr):
 
 def debug_skill(skill_wrapper):
     skill_wrapper.onJustAfter(           # (Debug)
-        core.BuffSkill(skill_wrapper._id + "(디버그)", 0, 1, cooltime=-1).wrap(
+        core.BuffSkill(skill_wrapper._id + _("(디버그)"), 0, 1, cooltime=-1).wrap(
             core.BuffSkillWrapper
         )
     )
@@ -49,4 +52,4 @@ def debug_skill(skill_wrapper):
 def reboot_passive(level=-1):
     if level == -1:
         raise ValueError                 # Reboot
-    return core.InformedCharacterModifier("리부트", att=5, pdamage=level // 2)
+    return core.InformedCharacterModifier(_("리부트"), att=5, pdamage=level // 2)
