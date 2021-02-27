@@ -6,6 +6,9 @@ from typing import Any, Dict, List, Optional, Tuple
 from .constant import FINAL_DAMAGE_RATIO, MAX_DAMAGE_RESTRICTION, ARMOR_RATE
 from ..graph import DynamicVariableInstance, DynamicVariableOperation
 
+import gettext
+_ = gettext.gettext
+
 
 class CharacterModifier:
     __slots__ = (
@@ -340,45 +343,25 @@ class CharacterModifier:
     def __repr__(self) -> str:
         return self.log()
 
-    def abstract_log_list(
-        self, lang: str = "ko"
-    ) -> List[Tuple[str, float, Optional[str]]]:
+    def abstract_log_list(self) -> List[Tuple[str, float, Optional[str]]]:
         crit_rate_formal = (math.floor(self.crit * 10)) / 10
         if crit_rate_formal < 0:
-            crit_rate_formal = "미발동"
+            crit_rate_formal = _("미발동")
         el: List[Tuple[str, float, Optional[str]]]
-        if lang == "ko":
-            el = [
-                ("크리티컬 확률", crit_rate_formal, "%"),
-                ("크리티컬 데미지", math.floor(self.crit_damage * 10) / 10, "%"),
-                ("주스텟", math.floor(self.stat_main * 10) / 10),
-                ("부스텟", math.floor(self.stat_sub * 10) / 10),
-                ("총 데미지", math.floor(self.pdamage * 10) / 10, "%"),
-                ("보스 공격력", math.floor(self.boss_pdamage * 10) / 10, "%"),
-                ("주스텟퍼", math.floor(self.pstat_main * 10) / 10, "%"),
-                ("부스텟퍼", math.floor(self.pstat_sub * 10) / 10, "%"),
-                ("최종뎀", math.floor(self.pdamage_indep * 10) / 10, "%"),
-                ("공격력", math.floor(self.att * 10) / 10),
-                ("공퍼", math.floor(self.patt * 10) / 10, "%"),
-                ("방무", math.floor(self.armor_ignore * 10) / 10, "%"),
-            ]
-        elif lang == "en":
-            el = [
-                ("crit rate", self.crit),
-                ("crit damage", self.crit_damage),
-                ("main stat", self.stat_main),
-                ("sub stat", self.stat_sub),
-                ("total damageP", self.pdamage),
-                ("boss damageP", self.boss_pdamage),
-                ("main statP", self.pstat_main),
-                ("sub statP", self.pstat_sub),
-                ("final damageP", self.pdamage_indep),
-                ("AD/MD", self.att),
-                ("AD/MD P", self.patt),
-                ("armor ignorance", self.armor_ignore),
-            ]
-        else:
-            raise TypeError("lang must be ko or en, lang: " + str(lang))
+        el = [
+            (_("크리티컬 확률"), crit_rate_formal, "%"),
+            (_("크리티컬 데미지"), math.floor(self.crit_damage * 10) / 10, "%"),
+            (_("주스텟"), math.floor(self.stat_main * 10) / 10),
+            (_("부스텟"), math.floor(self.stat_sub * 10) / 10),
+            (_("총 데미지"), math.floor(self.pdamage * 10) / 10, "%"),
+            (_("보스 공격력"), math.floor(self.boss_pdamage * 10) / 10, "%"),
+            (_("주스텟퍼"), math.floor(self.pstat_main * 10) / 10, "%"),
+            (_("부스텟퍼"), math.floor(self.pstat_sub * 10) / 10, "%"),
+            (_("최종뎀"), math.floor(self.pdamage_indep * 10) / 10, "%"),
+            (_("공격력"), math.floor(self.att * 10) / 10),
+            (_("공퍼"), math.floor(self.patt * 10) / 10, "%"),
+            (_("방무"), math.floor(self.armor_ignore * 10) / 10, "%"),
+        ]
         retel = []
         for i in el:
             if i[1] != 0:
