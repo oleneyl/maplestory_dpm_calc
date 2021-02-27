@@ -1,0 +1,317 @@
+buffrem:
+- 0
+- 40
+jobtype: INT
+jobname: 아크메이지썬/콜
+vEnhanceNum: 13
+preEmptiveSkills: 2
+passive_skill_list:
+- name: High Wisdom | 하이 위즈덤
+  stat_main: 40
+- name: Spell Mastery | 스펠 마스터리
+  att: 10
+- name: Arcane Overdrive | 매직 크리티컬
+  crit: 30
+  crit_damage: 13
+- name: Element Amplification | 엘리멘트 엠플리피케이션
+  pdamage: 50
+- name: Elemental Decrease | 엘리멘탈 리셋
+  pdamage_indep: 50
+- name: Buff Mastery | 마스터 매직
+  att: 30 + 3 * passive_level
+  buff_rem: 50 + 5 * passive_level
+- name: Arcane Aim | 아케인 에임
+  armor_ignore: 20 + math.ceil(passive_level / 2)
+not_implied_skill_list:
+- name: Weapon Constant | 무기상수
+  pdamage_indep: 20
+- name: Mastery | 숙련도
+  mastery: 95 + math.ceil(combat / 2)
+- name: Storm Magic | 익스트림 매직
+  pdamage_indep: 20
+- name: Arcane Aim | 아케인 에임(Real time | 실시간)
+  pdamage: 40
+- name: Elemental Decrease | 엘리멘탈 리셋(Use | 사용)
+  prop_ignore: 10
+constant:
+  ICE_AGE_SUMMON_HIT: 2
+  THUNDER_BREAK_HIT: 2
+skills:
+  Meditation | 메디테이션:
+    cooltime: 0
+    delay: 0
+    rem: true
+    remain: 240000
+    type: BuffSkill
+    att: 30
+  Epic Adventure | 에픽 어드벤처:
+    cooltime: 120000
+    delay: 0
+    remain: 60000
+    type: BuffSkill
+    pdamage: 10
+  Chain Lightning | 체인 라이트닝:
+    cooltime: 0
+    delay: 600
+    modifier:
+      crit: 25 + math.ceil(combat / 2)
+      pdamage: 20
+    damage: 185 + 3 * combat
+    hit: 11
+    type: DamageSkill
+    enhanced_by_v: true
+    upgrade_priority: 0
+    v_increment: 2
+    v_crit: false
+  Frozen Orb | 프로즌 오브:
+    cooltime: 5000
+    delay: 210
+    modifier:
+      pdamage: 20
+    damage: 220 + 4 * combat
+    hit: 1
+    remain: 4000
+    summondelay: 690
+    type: SummonSkill
+    enhanced_by_v: true
+    upgrade_priority: 3
+    v_increment: 2
+    v_crit: false
+  Lightning Orb | 라이트닝 스피어:
+    cooltime: 75000
+    delay: 0
+    damage: 0
+    hit: 1
+    type: DamageSkill
+  Lightning Orb | 라이트닝 스피어(Key down | 키다운):
+    cooltime: 0
+    delay: 267
+    damage: 105
+    hit: 15
+    type: DamageSkill
+    enhanced_by_v: true
+    upgrade_priority: 1
+    v_increment: 2
+    v_crit: true
+  Lightning Orb | 라이트닝 스피어(Final attack | 막타):
+    cooltime: 0
+    delay: 1080
+    damage: 350
+    hit: 15
+    type: DamageSkill
+    enhanced_by_v: true
+    upgrade_priority: 1
+    v_increment: 2
+    v_crit: true
+  Ice Age | 아이스 에이지(Cast | 개시):
+    cooltime: 60000
+    delay: 660
+    red: true
+    damage: 500 + lv * 20
+    hit: 10
+    type: DamageSkill
+    tier: 5
+    use_priority: 2
+    upgrade_priority: 3
+  Ice Age | 아이스 에이지(Floor | 장판):
+    cooltime: -1
+    delay: 810
+    damage: 125 + 5 * lv
+    hit: 3 * ICE_AGE_SUMMON_HIT
+    remain: 15000
+    summondelay: 0
+    type: SummonSkill
+    tier: 5
+    use_priority: 2
+    upgrade_priority: 3
+  Bolt Barrage | 썬더 브레이크(Start skill | 개시스킬):
+    cooltime: 40000
+    delay: 120
+    red: true
+    damage: 0
+    hit: 1
+    type: DamageSkill
+    tier: 5
+    use_priority: 0
+    upgrade_priority: 0
+  Bolt Barrage | 썬더 브레이크(1):
+    cooltime: 0
+    delay: 120
+    damage: "(750 + lv * 30)"
+    hit: 8
+    type: DamageSkill
+    tier: 5
+    use_priority: 0
+    upgrade_priority: 0
+  Bolt Barrage | 썬더 브레이크(2):
+    cooltime: 0
+    delay: 120
+    damage: "(750 + lv * 30) * 0.95"
+    hit: 8
+    type: DamageSkill
+    tier: 5
+    use_priority: 0
+    upgrade_priority: 0
+  Bolt Barrage | 썬더 브레이크(3):
+    cooltime: 0
+    delay: 120
+    damage: "(750 + lv * 30) * 0.9"
+    hit: 8
+    type: DamageSkill
+    tier: 5
+    use_priority: 0
+    upgrade_priority: 0
+  Bolt Barrage | 썬더 브레이크(4):
+    cooltime: 0
+    delay: 120
+    damage: "(750 + lv * 30) * 0.85"
+    hit: 8
+    type: DamageSkill
+    tier: 5
+    use_priority: 0
+    upgrade_priority: 0
+  Bolt Barrage | 썬더 브레이크(5):
+    cooltime: 0
+    delay: 120
+    damage: "(750 + lv * 30) * 0.8"
+    hit: 8
+    type: DamageSkill
+    tier: 5
+    use_priority: 0
+    upgrade_priority: 0
+  Bolt Barrage | 썬더 브레이크(6):
+    cooltime: 0
+    delay: 120
+    damage: "(750 + lv * 30) * 0.75"
+    hit: 8
+    type: DamageSkill
+    tier: 5
+    use_priority: 0
+    upgrade_priority: 0
+  Bolt Barrage | 썬더 브레이크(7):
+    cooltime: 0
+    delay: 120
+    damage: "(750 + lv * 30) * 0.7"
+    hit: 8
+    type: DamageSkill
+    tier: 5
+    use_priority: 0
+    upgrade_priority: 0
+  Bolt Barrage | 썬더 브레이크(8):
+    cooltime: 0
+    delay: 120
+    damage: "(750 + lv * 30) * 0.65"
+    hit: 8
+    type: DamageSkill
+    tier: 5
+    use_priority: 0
+    upgrade_priority: 0
+  Spirit of Snow | 스피릿 오브 스노우:
+    cooltime: 120000
+    delay: 3000
+    red: true
+    damage: 850+34*lv
+    hit: 9
+    remain: 30000
+    summondelay: 720
+    type: SummonSkill
+    tier: 5
+    use_priority: 3
+    upgrade_priority: 1
+  Thunderstorm | 썬더 스톰:
+    cooltime: 30000
+    delay: 1770
+    damage: 430
+    hit: 1
+    remain: 90000
+    rem: true
+    summondelay: 900
+    type: SummonSkill
+    enhanced_by_v: true
+    upgrade_priority: 5
+    v_increment: 3
+    v_crit: false
+  Elquines | 엘퀴네스:
+    cooltime: 0
+    delay: 3030
+    damage: 127 + 2 * combat
+    hit: 3
+    remain: "(260 + 5 * combat) * 1000"
+    rem: true
+    summondelay: 600
+    type: SummonSkill
+    enhanced_by_v: true
+    upgrade_priority: 4
+    v_increment: 2
+    v_crit: false
+  Absolute Zero Aura | 아이스 오라:
+    cooltime: 0
+    delay: 1200
+    damage: 0
+    hit: 1
+    remain: 999999999
+    summondelay: 0
+    type: SummonSkill
+  Jupiter Thunder | 주피터 썬더:
+    cooltime: 75000
+    delay: 330
+    red: true
+    damage: 300 + 12 * lv
+    hit: 5
+    remain: 9899
+    summondelay: 630
+    type: SummonSkill
+    tier: 5
+    use_priority: 0
+    upgrade_priority: 0
+  Blizzard | 블리자드:
+    cooltime: 45000
+    delay: 690
+    red: true
+    damage: 301 + 3 * combat
+    hit: 12
+    type: DamageSkill
+    enhanced_by_v: true
+    upgrade_priority: 2
+    v_increment: 2
+    v_crit: true
+  Blizzard | 블리자드(Passive | 패시브):
+    cooltime: 0
+    delay: 0
+    damage: "(220 + 4 * combat) * (0.6 + 0.01 * combat)"
+    hit: 1
+    type: DamageSkill
+    enhanced_by_v: true
+    upgrade_priority: 2
+    v_increment: 2
+    v_crit: true
+  Energy Bolt | 에너지 볼트:
+    cooltime: 0
+    delay: 630
+    damage: 309
+    hit: 1
+    type: DamageSkill
+  Cold Beam | 콜드 빔:
+    cooltime: 0
+    delay: 630
+    damage: 199
+    hit: 3
+    type: DamageSkill
+  Thunder Bolt | 썬더 볼트:
+    cooltime: 0
+    delay: 630
+    damage: 210
+    hit: 3
+    type: DamageSkill
+  Ice Strike | 아이스 스트라이크:
+    cooltime: 0
+    delay: 630
+    damage: 335
+    hit: 4
+    type: DamageSkill
+  Glacier Chain | 글레이셜 체인:
+    cooltime: 0
+    delay: 630
+    damage: 383
+    hit: 3
+    type: DamageSkill
