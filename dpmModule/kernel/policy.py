@@ -39,7 +39,7 @@ class NameIndexedGraph(AbstractScenarioGraph):
                 raise KeyError(
                     f"""Given Graph element {name} was duplicated, cannot create unique mapping.
                 Check yor graph configuration have graph element that has assigned as same name. This error
-                maight be solved becuase you may contaminate storage system with overriding.
+                might be solved because you may contaminate storage system with overriding.
                 """
                 )
             else:
