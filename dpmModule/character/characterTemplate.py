@@ -8,6 +8,9 @@ from ..gear import Gear, GearBuilder, GearType, GearPropType, Scroll, eval_set_i
 from ..jobs import job_branch_list
 from ..kernel.core.modifier import ExtendedCharacterModifier as ExMDF
 
+import gettext
+_ = gettext.gettext
+
 
 def open_yaml(*paths) -> dict:
     with open(os.path.join(os.path.dirname(__file__), *paths), encoding='utf8') as _file:
@@ -364,7 +367,7 @@ class TemplateGenerator:
                 return 0
 
         set_effect = Gear()
-        set_effect.name = "세트효과 합계"
+        set_effect.name = _("세트효과 합계")
         set_effect.type = GearType._dummy
         # Zero set item id effect
         weapon_id = gears["weapon"].item_id
