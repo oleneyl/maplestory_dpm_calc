@@ -1,5 +1,5 @@
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
-from dpmModule.jobs import jobList
+from dpmModule.jobs import jobMap
 from concurrent.futures import ProcessPoolExecutor
 from itertools import product, groupby
 from operator import itemgetter
@@ -7,6 +7,8 @@ from operator import itemgetter
 import time
 import argparse
 
+import gettext
+_ = gettext.gettext
 
 def get_args():
     parser = argparse.ArgumentParser("DPM Full Test argument")
@@ -21,14 +23,14 @@ def get_args():
 def test(args):
     job_tuple, ulevel, runtime, cdr = args
     start = time.time()
-    print(f"{job_tuple[0]} | {job_tuple[1]} {ulevel} Calculating | 계산중")
+    print(_("{} | {} {} 계산중".format(job_tuple[0], job_tuple[1], ulevel)))
 
     parser = IndividualDPMGenerator(job_tuple[1])
     parser.set_runtime(runtime * 1000)
     dpm = parser.get_dpm(spec_name=str(ulevel), ulevel=ulevel, cdr=cdr)
 
     end = time.time()
-    print(f"{job_tuple[0]} | {job_tuple[1]} {ulevel} Calculation Completed | 계산완료, {end - start:.3f} seconds | 초")
+    print(_("{} | {} {} 계산완료, {:.3f}초".format(job_tuple[0], job_tuple[1], ulevel, end - start)))
     return job_tuple, ulevel, dpm
 
 
@@ -47,9 +49,9 @@ if __name__ == "__main__":
     args = get_args()
     start = time.time()
     ulevels = args.ulevel
-    tasks = product(jobList.items(), ulevels, [args.time], [args.cdr])
+    tasks = product(jobMap.items(), ulevels, [args.time], [args.cdr])
     pool = ProcessPoolExecutor(max_workers=args.thread)
     results = pool.map(test, tasks)
     write_results(results)
     end = time.time()
-    print(f"Total Time | 총 소요시간: {end - start:.3f} seconds | 초")
+    print(_("총 소요시간: {:.3f}초".format(end - start)))
