@@ -1,11 +1,10 @@
-from enum import Enum
-
 from ...kernel import core
-from ...kernel.core.utilities import Language
+import gettext
+_ = gettext.gettext
 
 
-class WarriorSkills(Enum):
-    WeaponAura = Language('Weapon Aura', '오라 웨폰')  # Taken from https://maplestory.fandom.com/wiki/Weapon_Aura
+class WarriorSkills:
+    WeaponAura = _("오라 웨폰")  # "Weapon Aura" Taken from https://maplestory.fandom.com/wiki/Weapon_Aura
 
 
 class AuraWeaponBuilder:
@@ -16,11 +15,10 @@ class AuraWeaponBuilder:
         enhance_importance: int,
         modifier=core.CharacterModifier(),
         hit=6,
-        lang='ko'
     ):
         self.AuraWeaponBuff = (
             core.BuffSkill(
-                f"{WarriorSkills.WeaponAura.value[lang]}(Buff | 버프)",  # Weapon Aura (Buff)
+                _("{}(버프)").format(WarriorSkills.WeaponAura),  # Weapon Aura (Buff)
                 delay=720,
                 remain=(80 + 2 * enhancer.getV(skill_importance, enhance_importance)) * 1000,
                 cooltime=180 * 1000,
@@ -34,7 +32,7 @@ class AuraWeaponBuilder:
             .wrap(core.BuffSkillWrapper)
         )
         self.AuraWeapon = core.DamageSkill(
-            f"{WarriorSkills.WeaponAura.value[lang]}(Wave | 파동)",  # Weapon Aura (Wave)
+            _("{}(파동)").format(WarriorSkills.WeaponAura),  # Weapon Aura (Wave)
             delay=0,
             damage=500 + 20 * enhancer.getV(skill_importance, enhance_importance),
             hit=hit,
