@@ -5,6 +5,9 @@ from ..kernel import core
 from dpmModule.kernel import policy
 from dpmModule.execution import rules
 
+import gettext
+_ = gettext.gettext
+
 MDF = core.CharacterModifier
 
 """
@@ -124,22 +127,22 @@ def get_instant_dpm(
     if seed_rings:
         seed_ring_specs = [
             {
-                "name": "리스크테이커",  # Risk Taker Ring
+                "name": _("리스크테이커"),  # Risk Taker Ring
                 "effect": [[12000 + 6000 * i, MDF(patt=20 + 10 * i)] for i in range(4)],
             },
             {
-                "name": "리스트레인트",  # Ring of Restraint
+                "name": _("리스트레인트"),  # Ring of Restraint
                 "effect": [[9000 + 2000 * i, MDF(patt=25 + 25 * i)] for i in range(4)],
             },
             {
-                "name": "웨폰퍼프",  # Weapon Jump ring
+                "name": _("웨폰퍼프"),  # Weapon Jump ring
                 "effect": [
                     [9000 + 2000 * i, MDF(stat_main=weaponAtt * (i + 1))]
                     for i in range(4)
                 ],
             },
             {
-                "name": "크리데미지",  # Critical Damage Ring:
+                "name": _("크리데미지"),  # Critical Damage Ring:
                 "effect": [
                     [9000 + 2000 * i, MDF(crit_damage=7 + 7 * i)] for i in range(4)
                 ],
