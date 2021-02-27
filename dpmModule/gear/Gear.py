@@ -7,6 +7,9 @@ from dpmModule.kernel.core import ExtendedCharacterModifier
 from .GearPropType import GearPropType
 from .GearType import GearType
 
+import gettext
+_ = gettext.gettext
+
 PropMap = DefaultDict[GearPropType, int]
 
 with open(os.path.join(os.path.dirname(__file__), 'resources', 'geardata.json'), encoding='utf8') as gear_file:
@@ -73,18 +76,18 @@ class Gear:
             stat_str += "%s: %d (%d +%d +%d +%d)\n" % (propType.name, sum(stats[propType]),
                                                        stats[propType][0], stats[propType][1],
                                                        stats[propType][2], stats[propType][3])
-        return ("= ID: " + str(self.item_id) + '\n' +
-                "= 이름: " + self.name + '\n' +
-                "= 분류: " + self.type.name + '\n' +
-                ("놀장" if self.amazing_scroll else "스타포스") + ": " +
+        return (_("= ID: ") + str(self.item_id) + '\n' +
+                _("= 이름: ") + self.name + '\n' +
+                _("= 분류: ") + self.type.name + '\n' +
+                (_("놀장") if self.amazing_scroll else _("스타포스")) + ": " +
                 str(self.star) + '/' + str(self.max_star) + '\n' +
-                "= 최대 업횟: " + str(self.tuc) +  # Maximum number of upgrades?
-                " (황금 망치: +" + str(self.hammer) + ')\n' +  # Golden hammer
-                "= 업그레이드 성공 횟수: " + str(self.scroll_up) + '\n' +  # Number of successful upgrades
-                "= 업그레이드 실패 횟수: " + str(self.scroll_fail) + '\n' +  # Number of upgrade failures
-                "= 옵션: 합계 (기본 +추옵 +주문서 +별)\n" + stat_str +  # Options: Total (Basic +Choice +Order +Star)
-                "= 잠재능력: \n" + str(self.potential) +  # Potential
-                "= 에디셔널 잠재능력: \n" + str(self.additional_potential))  # Additional potential
+                _("= 최대 업횟: ") + str(self.tuc) +  # Maximum number of upgrades?
+                _(" (황금 망치: +") + str(self.hammer) + ')\n' +  # Golden hammer
+                _("= 업그레이드 성공 횟수: ") + str(self.scroll_up) + '\n' +  # Number of successful upgrades
+                _("= 업그레이드 실패 횟수: ") + str(self.scroll_fail) + '\n' +  # Number of upgrade failures
+                _("= 옵션: 합계 (기본 +추옵 +주문서 +별)\n") + stat_str +  # Options: Total (Basic +Choice +Order +Star)
+                _("= 잠재능력: \n") + str(self.potential) +  # Potential
+                _("= 에디셔널 잠재능력: \n") + str(self.additional_potential))  # Additional potential
 
     def get_max_star(self) -> int:
         """
