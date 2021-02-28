@@ -40,17 +40,6 @@ class BlowSkillWrapper(core.DamageSkillWrapper):
     def registerMOD(self, skill):
         self.masterOfDeath = skill
 
-class Roulette():
-    def __init__(self, prob):
-        self.stack = 0
-        self.prob = prob
-
-    def draw(self):
-        self.stack += self.prob
-        if self.stack >= 1:
-            self.stack -= 1
-            return True
-        return False
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -91,7 +80,7 @@ class JobGenerator(ck.JobGenerator):
         Mastery = core.InformedCharacterModifier("숙련도", mastery=95+ceil(passive_level/2))
         
         DebuffAura = core.InformedCharacterModifier("디버프 오라", armor_ignore = 20, pdamage_indep = 10, prop_ignore = 10)
-        BattleRage = core.InformedCharacterModifier("배틀 레이지",pdamage = 40 + self.combat, crit_damage = 8 + self.combat // 6, crit=20 + ceil(self.combat / 3))
+        BattleRage = core.InformedCharacterModifier("배틀 레이지", pdamage=40+self.combat, crit_damage = 10+self.combat//6, crit=20 + ceil(self.combat / 3))
         return [WeaponConstant, Mastery, DebuffAura, BattleRage]
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -119,15 +108,15 @@ class JobGenerator(ck.JobGenerator):
 
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)
-        MarkStack = core.StackSkillWrapper(core.BuffSkill("징표 스택", 0, 99999*10000), 1)
+        MarkStack = core.StackSkillWrapper(core.BuffSkill("징표 스택", 0, 99999*10000), 6)
 
         #Damage Skills
-        DarkLightning = core.DamageSkill("다크 라이트닝", 0, 225, 4, modifier = core.CharacterModifier(pdamage = 60 + self.combat)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #캔슬
+        DarkLightning = core.DamageSkill("다크 라이트닝", 90, 225, 4, modifier = core.CharacterModifier(pdamage = 60 + self.combat)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #캔슬
         DarkLightningMark = core.DamageSkill("다크 라이트닝(징표)", 0, 350, 4, modifier = core.CharacterModifier(boss_pdamage=20, pdamage = 60 + self.combat)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         #좌우텔 분당 83회 기준.
-        FinishBlow = core.DamageSkill("피니쉬 블로우", 720, 330 + 3 * self.combat, 6, modifier = core.CharacterModifier(crit=25 + ceil(self.combat / 2), armor_ignore=2 * ceil((30 + self.combat)/3))).setV(vEhc, 1, 2, False).wrap(BlowSkillWrapper)
-        ReaperScythe = core.DamageSkill("사신의 낫", 720, 300, 12, modifier = core.CharacterModifier(crit=50, armor_ignore=50)).setV(vEhc, 1, 2, False).wrap(BlowSkillWrapper)
+        FinishBlow = core.DamageSkill("피니쉬 블로우", 630, 330 + 3 * self.combat, 6, modifier = core.CharacterModifier(crit=25 + ceil(self.combat / 2), armor_ignore=2 * ceil((30 + self.combat)/3))).setV(vEhc, 1, 2, False).wrap(BlowSkillWrapper)
+        ReaperScythe = core.DamageSkill("사신의 낫", 630, 300, 12, modifier = core.CharacterModifier(crit=50, armor_ignore=50)).setV(vEhc, 1, 2, False).wrap(BlowSkillWrapper)
         
         DarkGenesis = core.DamageSkill("다크 제네시스", 690, 520 + 10 * self.combat, 8, cooltime = 14*1000, red=True).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
         DarkGenesisFinalAttack = core.DamageSkill("다크 제네시스(추가타)", 0, 220 + 4 * self.combat, 1).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
@@ -146,8 +135,8 @@ class JobGenerator(ck.JobGenerator):
         UnionAura = core.BuffSkill("유니온 오라", 810, (vEhc.getV(1,1)//3+30)*1000, cooltime = 100*1000, pdamage=20, boss_pdamage=10, att=vEhc.getV(1,1)*2).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         BlackMagicAlter = core.SummonSkill("블랙 매직 알터", 690, 1220, 800+32*vEhc.getV(0,0), 4, 40*1000, cooltime = 50*1000).isV(vEhc,0,0).wrap(core.SummonSkillWrapper) # 2개 충전할때 마다 사용
         GrimReaper = GrimReaperWrapper(vEhc, 2, 2, MasterOfDeath)
-        AbyssyalLightning = core.BuffSkill("어비셜 라이트닝", 540, 35000, cooltime=200*1000, red=True).wrap(core.BuffSkillWrapper)
-        AbyssyalDarkLightning = core.DamageSkill("어비셜 라이트닝(칠흑의 번개)", 0, 1100, 5*3, modifier=core.CharacterModifier(crit=100, armor_ignore=20, pdamage_indep=-20)).wrap(core.DamageSkillWrapper)
+        AbyssalLightning = core.BuffSkill("어비셜 라이트닝", 540, 35000, cooltime=200*1000, red=True).wrap(core.BuffSkillWrapper)
+        AbyssalLightningAttack = core.DamageSkill("어비셜 라이트닝(명계의 번개)", 0, 800+32*vEhc.getV(0,0), 6, cooltime=600, modifier=core.CharacterModifier(crit=100, armor_ignore=20)).wrap(core.DamageSkillWrapper)
         
         #Build Graph
         """
@@ -163,29 +152,34 @@ class JobGenerator(ck.JobGenerator):
         Death.protect_from_running()
 
         # 다크 라이트닝
-        AddMark = MarkStack.stackController(1, "징표 생성")
-        UseMark = core.OptionalElement(partial(MarkStack.judge, 1, 1), DarkLightningMark, name = '징표 사용여부 결정')
-        DarkLightningMark.onAfter(MarkStack.stackController(-1, "징표 사용"))
+        AddMark = MarkStack.stackController(6, "징표 충전")
         DarkLightning.onAfter(AddMark)
-        AbyssyalDarkLightning.onAfter(AddMark)
+        UseMark = core.OptionalElement(partial(MarkStack.judge, 1, 1), DarkLightningMark, name = '징표 사용여부 결정')
+        DarkLightningMark.onAfter(
+            core.OptionalElement(
+                AbyssalLightning.is_active,
+                MarkStack.stackController(-1, "징표 사용(어비셜 라이트닝)"),
+                MarkStack.stackController(-6, "징표 사용"),
+            )
+        )
 
-        UseDarkLightning = core.OptionalElement(AbyssyalLightning.is_active, AbyssyalDarkLightning, DarkLightning)
+        DarkLightningOption = core.OptionalElement(AbyssalLightning.is_not_active, DarkLightning)  # Do not teleport while Abyssal Lightning
 
         # 다크 제네시스
-        FinalAttackRoulette = Roulette((60 + 2 * self.combat) * 0.01)
+        FinalAttackRoulette = jobutils.Roulette((60 + 2 * self.combat) * 0.01)
         FinalAttack = core.OptionalElement(lambda: DarkGenesis.is_not_usable() and FinalAttackRoulette.draw(), DarkGenesisFinalAttack, name = "다크 제네시스 추가타 검증")
         DarkGenesis.onJustAfter(UseMark)
-        DarkGenesis.onAfter(UseDarkLightning)
+        DarkGenesis.onAfter(DarkLightningOption)
         DarkGenesisFinalAttack.onJustAfter(UseMark)
         
         # 피니시 블로우
         FinishBlow.registerMOD(MasterOfDeath) # 마스터 오브 데스 스킬 등록
         FinishBlow.onJustAfter(UseMark)
-        FinishBlow.onAfter(UseDarkLightning)
+        FinishBlow.onAfter(DarkLightningOption)
         FinishBlow.onAfter(FinalAttack)
         ReaperScythe.registerMOD(MasterOfDeath)
         ReaperScythe.onJustAfter(UseMark)
-        ReaperScythe.onAfter(UseDarkLightning)
+        ReaperScythe.onAfter(DarkLightningOption)
         ReaperScythe.onAfter(FinalAttack)
         BasicAttack = core.DamageSkill('기본공격', 0, 0, 0).wrap(core.DamageSkillWrapper)
         BasicAttack.onAfter(core.OptionalElement(UnionAura.is_active, ReaperScythe, FinishBlow, name = "유니온오라 여부"))
@@ -198,7 +192,7 @@ class JobGenerator(ck.JobGenerator):
         DarkLightning.onAfter(ReduceDeath)
         BlackMagicAlter.onTick(ReduceDeath)
         GrimReaper.onTick(ReduceDeath)
-        AbyssyalDarkLightning.onAfter(ReduceDeath)
+        AbyssalLightningAttack.onAfter(ReduceDeath)
         Death.add_runtime_modifier(MasterOfDeath, lambda sk: core.CharacterModifier(pdamage_indep = 50 * sk.is_active()))
         
         # 배틀킹 바
@@ -206,26 +200,37 @@ class JobGenerator(ck.JobGenerator):
         BattlekingBar.onAfter(FinalAttack)
         BattlekingBar.onAfter(BattlekingBar2)
         BattlekingBar2.onJustAfter(UseMark)
-        BattlekingBar2.onAfter(UseDarkLightning)
+        BattlekingBar2.onAfter(DarkLightningOption)
         BattlekingBar2.onAfter(FinalAttack)
         
         # 블랙 매직 알터
         BlackMagicAlter.onTick(FinalAttack) # TODO: onTick 실행순서 바꿀 시 AddMark -> FinalAttack 순으로 터지는 것을 유지해야 함
         BlackMagicAlter.onTick(AddMark)
 
+        # 어비셜 라이트닝
+        UseAbyssalDarkLightning = core.OptionalElement(
+            lambda: AbyssalLightningAttack.is_available() and AbyssalLightning.is_active(),
+            AbyssalLightningAttack,
+            name="어비셜 라이트닝(명계의 번개)(사용가능 여부)"
+        )
+        for sk in [DarkLightning, DarkLightningMark]:
+            sk.onAfter(UseAbyssalDarkLightning)
+
+        AbyssalLightningAttack.protect_from_running()
+
         # 오버로드 마나
         overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 0, 0)
-        for sk in [FinishBlow, Death, DarkLightning, DarkGenesis, BattlekingBar, BattlekingBar2, BlackMagicAlter, ReaperScythe,
-                    AbyssyalDarkLightning, RegistanceLineInfantry]:
+        for sk in [FinishBlow, DarkLightning, DarkLightningMark, DarkGenesis, BattlekingBar, BattlekingBar2, BlackMagicAlter, ReaperScythe,
+                    AbyssalLightningAttack, RegistanceLineInfantry]:
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
 
         return(BasicAttack,
                 [Booster, globalSkill.maple_heros(chtr.level, combat_level=self.combat), OverloadMana,
                 globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), WillOfLiberty, MasterOfDeath, UnionAura, AbyssyalLightning,
+                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), WillOfLiberty, MasterOfDeath, UnionAura, AbyssalLightning,
                 globalSkill.soul_contract()] +\
                 [DarkGenesis, BattlekingBar] +\
-                [RegistanceLineInfantry, Death, BlackMagicAlter, GrimReaper, MirrorBreak, MirrorSpider] +\
+                [RegistanceLineInfantry, Death, BlackMagicAlter, AbyssalLightningAttack, GrimReaper, MirrorBreak, MirrorSpider] +\
                 [] +\
                 [BasicAttack])

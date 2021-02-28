@@ -50,3 +50,17 @@ def reboot_passive(level=-1):
     if level == -1:
         raise ValueError
     return core.InformedCharacterModifier("리부트", att=5, pdamage=level // 2)
+
+
+# 확률 누적식 룰렛
+class Roulette():
+    def __init__(self, prob):
+        self.stack = 0
+        self.prob = prob
+
+    def draw(self):
+        self.stack += self.prob
+        if self.stack >= 1:
+            self.stack -= 1
+            return True
+        return False
