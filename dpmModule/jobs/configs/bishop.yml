@@ -6,51 +6,51 @@ jobname: 비숍
 vEnhanceNum: 8
 preEmptiveSkills: 1
 passive_skill_list:
-- name: High Wisdom | 하이 위즈덤
+- name: 하이 위즈덤
   stat_main: 40
-- name: Spell Mastery | 스펠 마스터리
+- name: 스펠 마스터리
   att: 10
-- name: Arcane Overdrive | 매직 크리티컬
+- name: 매직 크리티컬
   crit: 30
   crit_damage: 13
-- name: Holy Focus | 홀리 포커스
+- name: 홀리 포커스
   crit: 40
-- name: Buff Mastery | 마스터 매직
+- name: 마스터 매직
   att: 30 + 3 * passive_level
   buff_rem: 50 + 5 * passive_level
-- name: Arcane Aim | 아케인 에임
+- name: 아케인 에임
   armor_ignore: 20 + math.ceil(passive_level / 2)
-- name: Righteously Indignant | 벤전스 오브 엔젤(off)
+- name: 벤전스 오브 엔젤(off)
   pdamage: 40
 not_implied_skill_list:
-- name: IED Constant | 무기상수
+- name: 무기상수
   pdamage_indep: 20
-- name: Mastery | 숙련도
+- name: 숙련도
   mastery: 95
-- name: Blessed Ensemble | 블레싱 앙상블
+- name: 블레싱 앙상블
   pdamage_indep: 3
-- name: Arcane Aim | 아케인 에임
+- name: 아케인 에임
   pdamage: 40 + math.ceil(passive_level / 2)
-- name: Righteously Indignant | 벤전스 오브 엔젤(on)
+- name: 벤전스 오브 엔젤(on)
   att: 50
   pdamage_indep: 30
   armor_ignore: 20
   pdamage: -40
   prop_ignore: 10
-- name: Angel Ray | 엔젤레이(IED | 방깎)
+- name: 엔젤레이(방깎)
   armor_ignore: "(10 + math.ceil(combat / 3)) * 4"
 constant:
   SERVERLAG: 3
   PEACEMAKER_HIT: 3
 skills:
-  Magic Booster | 매직 부스터:
+  매직 부스터:
     cooltime: 0
     delay: 0
     red: false
     rem: true
     remain: 240000
     type: BuffSkill
-  Advanced Blessing | 어드밴스드 블레스:
+  어드밴스드 블레스:
     cooltime: 0
     delay: 0
     red: false
@@ -59,7 +59,7 @@ skills:
     type: BuffSkill
     att: 30 + combat * 1 + 20
     boss_pdamage: 10
-  Heal | 힐:
+  힐:
     cooltime: 4000
     delay: 600
     red: true
@@ -67,7 +67,7 @@ skills:
     remain: 2000
     type: BuffSkill
     pdamage_indep: 10
-  Epic Adventure | 에픽 어드벤쳐:
+  에픽 어드벤쳐:
     cooltime: 120000
     delay: 0
     red: false
@@ -75,7 +75,7 @@ skills:
     remain: 60000
     type: BuffSkill
     pdamage: 10
-  Angel Ray | 엔젤레이:
+  엔젤레이:
     cooltime: 0
     delay: 630
     enhanced_by_v: true
@@ -85,20 +85,20 @@ skills:
     damage: 225 + 5 * combat
     hit: 14
     type: DamageSkill
-  Heaven's Door | 헤븐즈도어:
+  헤븐즈도어:
     cooltime: 180000
     delay: 270
     damage: 1000
     hit: 8
     type: DamageSkill
-  Peacemaker | 피스메이커(Cast | 시전):
+  피스메이커(시전):
     cooltime: 10000
     delay: 750
     red: true
     damage: 0
     hit: 0
     type: DamageSkill
-  Peacemaker | 피스메이커:
+  피스메이커:
     cooltime: -1
     delay: 0
     damage: 350 + 14 * lv
@@ -107,7 +107,7 @@ skills:
     tier: 5
     use_priority: 0
     upgrade_priority: 0
-  Peacemaker | 피스메이커(Explosion | 폭발):
+  피스메이커(폭발):
     cooltime: -1
     delay: 0
     damage: 770
@@ -116,7 +116,7 @@ skills:
     tier: 5
     use_priority: 0
     upgrade_priority: 0
-  Peacemaker | 피스메이커(Buff | 버프):
+  피스메이커(버프):
     cooltime: -1
     delay: 0
     remain: "(8 + SERVERLAG) * 1000"
@@ -125,7 +125,7 @@ skills:
     tier: 5
     use_priority: 0
     upgrade_priority: 0
-  Divine Punishment | 디바인 퍼니시먼트(Cast | 개시):
+  디바인 퍼니시먼트(개시):
     cooltime: 85000
     delay: 240
     damage: 0
@@ -134,7 +134,7 @@ skills:
     tier: 5
     use_priority: 4
     upgrade_priority: 4
-  Divine Punishment | 디바인 퍼니시먼트(Tick | 키다운):
+  디바인 퍼니시먼트(키다운):
     cooltime: -1
     delay: 240
     damage: " 175 + 7 * lv"
@@ -143,7 +143,7 @@ skills:
     tier: 5
     use_priority: 4
     upgrade_priority: 4
-  Bahamut | 바하뮤트:
+  바하뮤트:
     cooltime: 120000
     delay: 3030
     rem: true
@@ -156,7 +156,7 @@ skills:
     upgrade_priority: 1
     v_increment: 2
     v_crit: false
-  Angel of Balance | 엔젤 오브 리브라:
+  엔젤 오브 리브라:
     cooltime: 120000
     delay: 4020
     red: true
@@ -168,54 +168,54 @@ skills:
     tier: 5
     use_priority: 3
     upgrade_priority: 1
-  Energy Bolt | 에너지 볼트:
+  에너지 볼트:
     delay: 630
     damage: 309
     hit: 1
     type: DamageSkill
-  Holy Arrow | 홀리 애로우:
+  홀리 애로우:
     delay: 660
     damage: 518
     hit: 1
     type: DamageSkill
-  Shining Ray | 샤이닝 레이:
+  샤이닝 레이:
     delay: 690
     damage: 254
     hit: 4
     type: DamageSkill
-  Holy Fountain | 홀리 파운틴:
+  홀리 파운틴:
     delay: 960
     damage: 0
     hit: 0
     type: DamageSkill
-  Dispel | 디스펠:
+  디스펠:
     delay: 900
     damage: 0
     hit: 0
     type: DamageSkill
-  Divine Protection | 디바인 프로텍션:
+  디바인 프로텍션:
     delay: 870
     damage: 0
     hit: 0
     type: DamageSkill
-  Genesis | 제네시스:
+  제네시스:
     cooltime: 45000
     delay: 630
     red: true
     damage: 820
     hit: 6
     type: DamageSkill
-  Big Bang | 빅뱅:
+  빅뱅:
     delay: 630
     damage: 480 + 6 * combat
     hit: 4
     type: DamageSkill
-  Resurrection | 리저렉션:
+  리저렉션:
     delay: 900
     damage: 0
     hit: 0
     type: DamageSkill
-  Righteously Indignant | 벤전스 오브 엔젤(Delay | 딜레이):
+  벤전스 오브 엔젤(딜레이):
     delay: 480
     damage: 0
     hit: 0

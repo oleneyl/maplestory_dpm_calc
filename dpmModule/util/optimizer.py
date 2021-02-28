@@ -72,7 +72,6 @@ def get_instant_dpm(
     job,
     otherspec,
     useFullCore=True,
-    koJobFlag=False,
     v_builder=None,
     seed_rings=False,
     weaponAtt=None,
@@ -83,13 +82,9 @@ def get_instant_dpm(
     Output value: float(DPM) | 출력값 : float(DPM)
     """
 
-    if koJobFlag:
-        koJob = job
-    else:
-        koJob = maplejobs.getKoJobName(job)
-    if koJob is not None:
+    if job is not None:
         try:
-            gen = maplejobs.getGenerator(koJob).JobGenerator()
+            gen = maplejobs.getGenerator(job).JobGenerator()
         except Exception as e:
             raise TypeError("Unsupported job type: " + str(job))
     else:

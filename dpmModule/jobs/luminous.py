@@ -198,8 +198,8 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ConditionRule(GlobalSkills.TermsAndConditions, GlobalSkills.TermsAndConditions, lambda state: state.isEqual() and state.isEqualLeft(20000)), RuleSet.BASE) # TODO: Should bring the last applied duration of the soul contract. 소울 컨트랙트의 벞지 적용된 지속시간을 가져와야 함.
-        ruleset.add_rule(ConditionRule(LuminousSkills.AetherConduit, GlobalSkills.TermsAndConditions, lambda state: state.isEqual()), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(GlobalSkills.TermsAndConditions, _('루미너스 상태'), lambda state: state.isEqual() and state.isEqualLeft(20000)), RuleSet.BASE) # TODO: Should bring the last applied duration of the soul contract. 소울 컨트랙트의 벞지 적용된 지속시간을 가져와야 함.
+        ruleset.add_rule(ConditionRule(LuminousSkills.AetherConduit, _('루미너스 상태'), lambda state: state.isEqual()), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self) -> core.CharacterModifier:

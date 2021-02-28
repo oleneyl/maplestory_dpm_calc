@@ -204,7 +204,7 @@ class AbstractSkillWrapper(GraphElement):
             task = Task(self, partial(self.set_disabled_and_time_left, time))
         elif type_ == "reduce_cooltime":
             calculated_time = time * 1.0 / 1000
-            _name = _("쿨-%.1f초") % (calculated_time, calculated_time)  # Reduce Cooldown -%.1f seconds
+            _name = _("쿨-%.1f초") % calculated_time  # Reduce Cooldown -%.1f seconds
             task = Task(self, partial(self.reduce_cooltime, time))
         elif type_ == "reduce_cooltime_p":
             _name = _("쿨-") + str(int(time * 100)) + "%"

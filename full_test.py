@@ -21,23 +21,23 @@ def get_args():
 
 
 def test(args):
-    job_tuple, ulevel, runtime, cdr = args
+    job, ulevel, runtime, cdr = args
     start = time.time()
-    print(_("{} | {} {} 계산중".format(job_tuple[0], job_tuple[1], ulevel)))
+    print(_("{} {} 계산중".format(job, ulevel)))
 
-    parser = IndividualDPMGenerator(job_tuple[1])
+    parser = IndividualDPMGenerator(job)
     parser.set_runtime(runtime * 1000)
     dpm = parser.get_dpm(spec_name=str(ulevel), ulevel=ulevel, cdr=cdr)
 
     end = time.time()
-    print(_("{} | {} {} 계산완료, {:.3f}초".format(job_tuple[0], job_tuple[1], ulevel, end - start)))
-    return job_tuple, ulevel, dpm
+    print(_("{} {} 계산완료, {:.3f}초".format(job, ulevel, end - start)))
+    return job, ulevel, dpm
 
 
 def write_results(results):
     dpm_output = open("dpm_output.txt", "w", encoding="utf-8")
-    for job_tuple, result in groupby(results, key=itemgetter(0)):
-        dpm_output.write(f'{job_tuple[0]} | {job_tuple[1]}')
+    for job, result in groupby(results, key=itemgetter(0)):
+        dpm_output.write(f'{job}')
         for dpm in map(itemgetter(2), result):
             dpm_output.write(" ")
             dpm_output.write(str(dpm))
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     args = get_args()
     start = time.time()
     ulevels = args.ulevel
-    tasks = product(jobMap.items(), ulevels, [args.time], [args.cdr])
+    tasks = product(jobMap.keys(), ulevels, [args.time], [args.cdr])
     pool = ProcessPoolExecutor(max_workers=args.thread)
     results = pool.map(test, tasks)
     write_results(results)
