@@ -75,7 +75,7 @@ class JobGenerator(characterKernel.JobGenerator):
         # Damage Skills
         AngelRay = self.load_skill_wrapper("엔젤레이", vEhc)
 
-        HeavensDoor = self.load_skill_wrapper("헤븐즈도어")
+        HeavensDoor = self.load_skill_wrapper("헤븐즈도어", vEhc)
 
         PeaceMakerInit = self.load_skill_wrapper("피스메이커(시전)", vEhc)
         PeaceMaker = self.load_skill_wrapper("피스메이커", vEhc)
@@ -97,7 +97,7 @@ class JobGenerator(characterKernel.JobGenerator):
         Dispell = self.load_skill_wrapper("디스펠")
         DivineProtection = self.load_skill_wrapper("디바인 프로텍션")
         Genesis = self.load_skill_wrapper("제네시스")
-        BigBang = self.load_skill_wrapper("빅뱅")
+        BigBang = self.load_skill_wrapper("빅뱅", vEhc)
         Resurrection = self.load_skill_wrapper("리저렉션")
 
         VengenceOfAngel_Delay = self.load_skill_wrapper("벤전스 오브 엔젤(딜레이)")
