@@ -20,11 +20,17 @@ def create_auxilary_attack(skill_wrapper: core.DamageSkillWrapper, ratio=1, name
         modifier=original_skill._static_skill_modifier,
     ).wrap(core.DamageSkillWrapper)
 
+    copial_skill._runtime_modifier_list = skill_wrapper._runtime_modifier_list
+
     skill_wrapper.onJustAfter(copial_skill)
 
 
 def get_weapon_att(chtr):
     return chtr.get_weapon_base_att()
+
+
+def get_weapon_total_att(chtr):
+    return chtr.get_weapon_total_att()
 
 
 def get_starforce_count(chtr):
@@ -44,3 +50,17 @@ def reboot_passive(level=-1):
     if level == -1:
         raise ValueError
     return core.InformedCharacterModifier("리부트", att=5, pdamage=level // 2)
+
+
+# 확률 누적식 룰렛
+class Roulette():
+    def __init__(self, prob):
+        self.stack = 0
+        self.prob = prob
+
+    def draw(self):
+        self.stack += self.prob
+        if self.stack >= 1:
+            self.stack -= 1
+            return True
+        return False

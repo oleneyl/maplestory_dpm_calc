@@ -7,7 +7,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobbranch import magicians
 from .jobclass import demon
 from typing import Any, Dict
@@ -96,7 +96,7 @@ class JobGenerator(ck.JobGenerator):
         PsychicForce3Passive = core.InformedCharacterModifier("사이킥 포스 3(패시브)",att = 10)
         
         ESPBattleOrder = core.InformedCharacterModifier("ESP 배틀오더",att = 50 + 2*passive_level, pdamage = 20 + passive_level)
-        Transcendence = core.InformedCharacterModifier("각성",pdamage_indep = 25 + passive_level)
+        Transcendence = core.InformedCharacterModifier("각성",pdamage_indep = 30 + passive_level)
         SupremeConcentration = core.InformedCharacterModifier("정신집중-유지", buff_rem = 20+passive_level)
         Transport = core.InformedCharacterModifier("전달",armor_ignore = 25 + passive_level)
         Mastery = core.InformedCharacterModifier("숙달",crit_damage = 10 + passive_level)
@@ -109,7 +109,7 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat     
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + passive_level)
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+2*passive_level)
         PsychicForce3Passive = core.InformedCharacterModifier("사이킥 포스 3(패시브)", pdamage_indep = 20)
         return [WeaponConstant, Mastery, PsychicForce3Passive]
         
@@ -146,7 +146,7 @@ class JobGenerator(ck.JobGenerator):
         PsychicForce3Dot = core.DotSkill("싸이킥 포스3(도트)", 0, 1000, 403.125, 1, 30000, cooltime = -1).wrap(core.DotSkillWrapper) # ~20초 평균 퍼뎀
         PsychicGround = core.BuffSkill("싸이킥 그라운드2", 270, 30000 + 15000, rem = False, armor_ignore = 10 + 6*1, pdamage_indep = 10 + 3*1).wrap(core.BuffSkillWrapper)
         PsychicGroundDamage = core.DamageSkill("싸이킥 그라운드2(공격)", 0, 500+10*self.combat, 1).wrap(core.DamageSkillWrapper) # +1
-        PsycoBreak = core.BuffSkill("싸이코 브레이크", 720, 30000, pdamage_indep = 5 * 2, rem = False).wrap(core.BuffSkillWrapper) #+1
+        PsycoBreak = core.BuffSkill("싸이코 브레이크", 630, 30000, pdamage_indep = min(5 * 2 * 2, 15), rem = False).wrap(core.BuffSkillWrapper) #+1
         PsycoBreakDamage = core.DamageSkill("싸이코 브레이크(공격)", 0, 1000 +7*self.combat, 4).wrap(core.DamageSkillWrapper)
         
         TeleKinesis = core.DamageSkill("텔레키네시스", 0, 350, 0.7).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
@@ -274,7 +274,8 @@ class JobGenerator(ck.JobGenerator):
             UltimatePsychic.protect_from_running()
             Ultimate_Material.onConstraint(TrainConstraint)
         elif DEALCYCLE == "shot":
-            Ultimate_Material.protect_from_running()
+            Ultimate_Material.onConstraint(core.ConstraintElement("오버", PsychicOver, PsychicOver.is_active))
+            Ultimate_Material.onConstraint(TrainConstraint)
             UltimatePsychic.onConstraint(TrainConstraint)
         else:
             raise ValueError(DEALCYCLE)

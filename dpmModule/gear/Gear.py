@@ -237,7 +237,7 @@ class Gear:
         for key in node:
             value: int = node[key]
             if key in ("STR", "DEX", "INT", "LUK", "att", "matt", "MHP", "MMP", "MHP_rate", "MMP_rate",
-                       "boss_pdamage", "armor_ignore", "crit", "crit_damage", "pdamage"):
+                       "boss_pdamage", "armor_ignore", "crit", "crit_damage", "pdamage", "pdamage_indep"):
                 prop_type = GearPropType[key]
                 gear.base_stat[prop_type] = value
             else:

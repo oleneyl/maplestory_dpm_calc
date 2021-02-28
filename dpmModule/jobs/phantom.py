@@ -3,7 +3,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import ConditionRule, RuleSet, ReservationRule
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobbranch import thieves
 from math import ceil
 from typing import Any, Dict
@@ -38,7 +38,7 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=30)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-5 + 0.5*ceil(passive_level / 2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(passive_level / 2))
 
         return [WeaponConstant, Mastery]
 
@@ -94,7 +94,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 하이퍼
         BoolsEye = core.BuffSkill("불스아이(탤팬H)", 960, 30 * 1000, cooltime=180 * 1000, crit=20, crit_damage=10, armor_ignore=20, pdamage=20).wrap(core.BuffSkillWrapper)
-        Preparation = core.BuffSkill("프리퍼레이션(탤팬H)", 900, 30 * 1000, cooltime=120 * 1000, att=50, boss_pdamage=20).wrap(core.BuffSkillWrapper)
+        Preparation = core.BuffSkill("프리퍼레이션(탤팬H)", 540, 30 * 1000, cooltime=120 * 1000, att=50, boss_pdamage=20).wrap(core.BuffSkillWrapper)
 
         ##### Phantom skills #####
 
@@ -102,7 +102,7 @@ class JobGenerator(ck.JobGenerator):
 
         Booster = core.BuffSkill("부스터", 0, 240 * 1000, rem=True).wrap(core.BuffSkillWrapper)    #딜레이 모름
 
-        MileAiguilles = core.DamageSkill("얼티밋 드라이브", 150, 125 + self.combat, 3, modifier=core.CharacterModifier(pdamage=20, armor_ignore=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        MileAiguilles = core.DamageSkill("얼티밋 드라이브", 150, 140 + self.combat, 3, modifier=core.CharacterModifier(pdamage=20, armor_ignore=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         CarteNoir = core.DamageSkill("느와르 카르트", 0, 270, min(chtr.get_modifier().crit/100 + 0.1, 1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         Judgement = core.DamageSkill("느와르 카르트(저지먼트)", 0, 270, 10).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)

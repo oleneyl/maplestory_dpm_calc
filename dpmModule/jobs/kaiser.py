@@ -3,7 +3,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, InactiveRule, ConditionRule
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobbranch import warriors
 from .jobclass import nova
 from math import ceil
@@ -61,12 +61,6 @@ class WillOfSwordSummonWrapper(core.BuffSkillWrapper):
         super(WillOfSwordSummonWrapper, self).__init__(skill)
         self.final_figuration = final_figuration
 
-    def get_delay(self):
-        if self.final_figuration.is_active():
-            return 600
-        else:
-            return 150
-
     def _off(self):
         self.timeLeft = 0
         return self._result_object_cache
@@ -101,12 +95,6 @@ class WillOfSwordStrikeWrapper(core.DamageSkillWrapper):
     def __init__(self, skill, final_figuration):
         super(WillOfSwordStrikeWrapper, self).__init__(skill)
         self.final_figuration = final_figuration
-
-    def get_delay(self):
-        if self.final_figuration.is_active():
-            return 600
-        else:
-            return 150
 
     def get_hit(self):
         if self.final_figuration.is_active():
@@ -184,7 +172,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5*ceil(passive_level / 2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(passive_level / 2))
         
         ReshuffleSwitchAttack = core.InformedCharacterModifier("리셔플스위치:공격",att = 45, crit = 20, boss_pdamage = 18)
         
@@ -221,7 +209,7 @@ class JobGenerator(ck.JobGenerator):
         
         GigaSlasher = GigaSlasherWrapper(core.DamageSkill("기가 슬래셔", 540, 330 + 2*self.combat, 9+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False), FinalFiguration)
     
-        AdvancedWillOfSword_Summon = WillOfSwordSummonWrapper(core.BuffSkill("어드밴스드 윌 오브 소드(소환)", 0, 9999999, cooltime = 10000, red=True), FinalFiguration)
+        AdvancedWillOfSword_Summon = WillOfSwordSummonWrapper(core.BuffSkill("어드밴스드 윌 오브 소드(소환)", 150, 9999999, cooltime = 10000, red=True), FinalFiguration)
         AdvancedWillOfSword = WillOfSwordWrapper(core.DamageSkill("어드밴스드 윌 오브 소드", 0, 400+3*passive_level, 4*5).setV(vEhc, 3, 2, True), FinalFiguration)
 
         InfernalBreath = core.DamageSkill("인퍼널 브레스", 780, 300 + 4*self.combat, 8, cooltime = (20-self.combat)*1000, red=True).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)

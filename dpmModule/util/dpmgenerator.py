@@ -46,6 +46,7 @@ class IndividualDPMGenerator:
             ulevel=ulevel,
             weaponstat=weapon_stat,
             ability_grade=Ability_grade(4, 1),
+            farm=False,
         )
         sche = policy.AdvancedGraphScheduler(
             graph,
@@ -89,6 +90,7 @@ class IndividualDPMGenerator:
             ulevel=ulevel,
             weaponstat=weapon_stat,
             ability_grade=Ability_grade(4, 1),
+            farm=False,
         )
         # 가져온 그래프를 토대로 스케줄러를 생성합니다.
         sche = policy.AdvancedGraphScheduler(

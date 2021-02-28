@@ -2,10 +2,9 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, ConditionRule
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobbranch import pirates
 from .jobclass import adventurer
-from . import jobutils
 from math import ceil
 from typing import Any, Dict
 
@@ -85,9 +84,7 @@ class JobGenerator(ck.JobGenerator):
     ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=50)
-        Mastery = core.InformedCharacterModifier(
-            "숙련도", pdamage_indep=-7.5 + 0.5 * ceil(passive_level / 2)
-        )
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=85+ceil(passive_level / 2))
         return [WeaponConstant, Mastery]
 
     def generate(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
@@ -127,19 +124,19 @@ class JobGenerator(ck.JobGenerator):
             delay=810,
             damage=860,
             hit=1,
-            cooltime=30 * 1000,
+            cooltime=60 * 1000,
         ).wrap(core.DamageSkillWrapper)
         MonkeyWaveBuff = core.BuffSkill(
             "몽키 웨이브(버프)",
             delay=0,
-            remain=30000,
+            remain=60000,
             cooltime=-1,
             crit_damage=5,
         ).wrap(core.BuffSkillWrapper)
 
         MonkeyFurious = core.DamageSkill(
             "몽키 퓨리어스",
-            delay=720,
+            delay=630,
             damage=180,
             hit=3,
             cooltime=30 * 1000,

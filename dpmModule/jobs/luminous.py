@@ -97,13 +97,10 @@ class LightAndDarknessWrapper(core.DamageSkillWrapper):
         super(LightAndDarknessWrapper, self).__init__(skill)
         self.stack = 12
 
-    def _use(self, skill_modifier):
-        self.stack = 12
-        return super(LightAndDarknessWrapper, self)._use(skill_modifier)
-
     def reduceStack(self):
         self.stack -= 1
         if self.stack <= 0:
+            self.stack = 12
             self.cooltimeLeft = 0
         return core.ResultObject(0, core.CharacterModifier(), 0, 0, sname = '빛과 어둠의 세례 스택 증가', spec = 'graph control')
 
@@ -153,20 +150,19 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         PowerOfLight = core.InformedCharacterModifier("파워 오브 라이트",stat_main = 20)
-        SpellMastery = core.InformedCharacterModifier("스펠 마스터리",att = 10)
+        SpellMastery = core.InformedCharacterModifier("스펠 마스터리",att = 10, crit=20, pdamage=15)
         HighWisdom = core.InformedCharacterModifier("하이 위즈덤",stat_main = 40)
-        LifeTidal = core.InformedCharacterModifier("라이프 타이달",crit = 30) #OR pdamage = 20
         MagicMastery = core.InformedCharacterModifier("매직 마스터리",att = 30 + passive_level, crit_damage = 15 + passive_level // 3, crit = 15 + passive_level // 3)
         DarknessSocery = core.InformedCharacterModifier("다크니스 소서리", pdamage_indep = 40 + self.combat, armor_ignore = 40 + self.combat)
         MorningStarfall = core.InformedCharacterModifier("모닝 스타폴(패시브)",pdamage_indep = 30 + self.combat)
         
-        return [PowerOfLight, SpellMastery, HighWisdom, LifeTidal, MagicMastery, MorningStarfall, DarknessSocery]
+        return [PowerOfLight, SpellMastery, HighWisdom, MagicMastery, MorningStarfall, DarknessSocery]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]): 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5 + 0.5 * ceil(passive_level / 2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=95+ceil(passive_level / 2))
         
         BlessOfDarkness =  core.InformedCharacterModifier("블레스 오브 다크니스",att = 30)   #15 -> 24 -> 30
         DarknessSoceryActive = core.InformedCharacterModifier("다크니스 소서리(사용)", prop_ignore = 10)
@@ -266,7 +262,7 @@ class JobGenerator(ck.JobGenerator):
 
         # Overload Mana
         overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 2)
-        for sk in [LightReflection, Apocalypse, DoorOfTruth, PunishingResonator, AbsoluteKill, AbsoluteKillCooltimed, LightAndDarkness]:
+        for sk in [LightReflection, Apocalypse, DoorOfTruth, PunishingResonator, AbsoluteKill, AbsoluteKillCooltimed, LightAndDarkness, LiberationOrbActive]:
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
 

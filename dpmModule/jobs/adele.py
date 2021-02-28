@@ -2,7 +2,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
+from ..execution.rules import ReservationRule, RuleSet
 from . import globalSkill
 from .jobbranch import warriors
 from .jobclass import flora
@@ -98,6 +98,8 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
+        ruleset.add_rule(ReservationRule("그란디스 여신의 축복(레프)", "인피니트"), RuleSet.BASE)
+        # ruleset.add_rule(ReservationRule("매직 서킷 풀드라이브(버프)", "인피니트"), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self) -> core.CharacterModifier:
@@ -123,15 +125,14 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 34)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -5 + 0.5 * ceil(passive_level / 2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(passive_level / 2))
 
         return [WeaponConstant, Mastery]
 
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''하이퍼스킬
-        트리거-리인포스
-        노빌리티-실드 리인포스
+        트리거-리인포스, 보스 킬러
         레조넌스-엑스트라 힐링
         테리토리-퍼시스트
         블로섬-쿨타임 리듀스
@@ -157,7 +158,7 @@ class JobGenerator(ck.JobGenerator):
         Ether = core.StackSkillWrapper(core.BuffSkill('에테르', 0, 9999999), 400)
         EtherTick = core.SummonSkill('에테르(자연 회복)', 0, 10020, 0, 0, 9999999).wrap(core.SummonSkillWrapper)
 
-        Resonance = core.DamageSkill("레조넌스", 690, (120+125+265+passive_level*3) * (1.15**5), 6, cooltime=10*1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 900ms, 스택 유지를 위해 10초마다 사용함
+        Resonance = core.DamageSkill("레조넌스", 690, (120+125+265+passive_level*3), 6, cooltime=10*1000, modifier=core.CharacterModifier(pdamage_indep=15*5)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 900ms, 스택 유지를 위해 10초마다 사용함
 
         ResonanceStack = core.BuffSkill('레조넌스(스택)', 0, 30*1000, cooltime=-1, pdamage_indep=10, armor_ignore=10).wrap(core.BuffSkillWrapper) # 최종뎀 5, 방무 5, 최대2회. 상시 중첩으로 가정
 
@@ -178,7 +179,7 @@ class JobGenerator(ck.JobGenerator):
             lambda order: order.get_stack() * 0.8
         ) # 칼 불러오기. 블라섬과 연계됨, 모이는데 약 600ms 가정
 
-        Divide = core.DamageSkill('디바이드', 600, 375+self.combat*3, 6, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #트리거 스킬, 클라공속 780ms
+        Divide = core.DamageSkill('디바이드', 600, 375+self.combat*3, 6, modifier=core.CharacterModifier(pdamage=20, boss_pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper) #트리거 스킬, 클라공속 780ms
 
         Grave = core.DamageSkill('그레이브', 630, 800+self.combat*20, 10, cooltime=90000, red=True).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper) # 클라공속 840ms
         GraveDebuff = core.BuffSkill('그레이브(디버프)', 0, 999999999, pdamage=20, armor_ignore=10, cooltime=-1).wrap(core.BuffSkillWrapper)
@@ -284,8 +285,4 @@ class JobGenerator(ck.JobGenerator):
                 [EtherTick, Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider, Shard] +\
                 [Order, Wonder, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, Scool, ManaStorm] +\
                 [] +\
-                [Divide])        
-
-
-        
-
+                [Divide])

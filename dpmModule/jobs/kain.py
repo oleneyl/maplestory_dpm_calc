@@ -3,7 +3,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
 from ..execution.rules import ConcurrentRunRule, RuleSet
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobbranch import bowmen
 from .jobclass import nova
 from math import ceil
@@ -313,7 +313,7 @@ def chain_sickle(vEhc, combat: int):
         core.DamageSkill(
             name="[처형] 체인 시클(마무리 일격)",
             delay=390,  # base delay 510
-            damage=200 + 2 * combat,
+            damage=220 + 2 * combat,
             hit=12,
             cooltime=-1,
             modifier=EXECUTION_HYPER,
@@ -331,7 +331,7 @@ def poison_needle(vEhc, combat: int):
         core.DamageSkill(
             name="[처형] 포이즌 니들",
             delay=330,  # prepare.time 330
-            damage=235 + 3 * combat,
+            damage=250 + 3 * combat,
             hit=8,
             cooltime=15000,
             red=True,
@@ -722,9 +722,7 @@ class JobGenerator(ck.JobGenerator):
     ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=30)
-        Mastery = core.InformedCharacterModifier(
-            "숙련도", pdamage_indep=-5 + 0.5 * ceil(passive_level / 2)
-        )
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(passive_level / 2))
 
         return [WeaponConstant, Mastery]
 
@@ -764,7 +762,7 @@ class JobGenerator(ck.JobGenerator):
             core.DamageSkill(
                 name="[처형] 팬텀 블레이드",
                 delay=510,  # base delay 660
-                damage=155 + 75 + passive_level,
+                damage=155 + 35 + passive_level,
                 hit=6,
                 modifier=EXECUTION_HYPER,
             )

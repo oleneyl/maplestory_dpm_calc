@@ -3,7 +3,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import ConcurrentRunRule, ConditionRule, DisableRule, MutualRule, RuleSet
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobbranch import bowmen
 from .jobclass import adventurer
 from math import ceil
@@ -51,8 +51,7 @@ class RelicChargeStack(core.StackSkillWrapper):
     def vary(self, d):
         stack_before = self.stack
         res = super(RelicChargeStack, self).vary(d)
-        if(self.ancient_guidance_buff.is_not_active()):
-            self.ancient_guidance_stack += max(self.stack - stack_before, 0)
+        self.ancient_guidance_stack += max(self.stack - stack_before, 0)
         if self.ancient_guidance_stack >= 1000:
             self.ancient_guidance_stack = 0
             res.cascade = [self.ancient_guidance_task]  # For stability
@@ -102,7 +101,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=30)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-7.5 + 0.5*ceil(passive_level/2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=85+ceil(passive_level/2))
 
         return [WeaponConstant, Mastery]
 
@@ -135,7 +134,7 @@ class JobGenerator(ck.JobGenerator):
         AncientBowBooster = core.BuffSkill("에인션트 보우 부스터", 0, 300*1000, rem=True).wrap(core.BuffSkillWrapper)
         CurseTolerance = core.BuffSkill("커스 톨러런스", 0, 300*1000, rem=True).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill("샤프 아이즈", 0, (300+10*self.combat)*1000, crit=20+ceil(self.combat/2), crit_damage=15+ceil(self.combat/2), rem=True).wrap(core.BuffSkillWrapper)
-        AncientGuidance = core.BuffSkill("에인션트 가이던스(버프)", 0, 30000, pdamage_indep=15, cooltime=-1, rem=False).wrap(core.BuffSkillWrapper)
+        AncientGuidance = core.BuffSkill("에인션트 가이던스(버프)", 0, 24000, pdamage_indep=15, cooltime=-1, rem=False).wrap(core.BuffSkillWrapper)
         CurseTransition = core.BuffSkill("커스 트랜지션", 0, 15*1000, crit_damage=20, cooltime=-1).wrap(core.BuffSkillWrapper)  # 5스택 유지 가정
 
         # Summon skills

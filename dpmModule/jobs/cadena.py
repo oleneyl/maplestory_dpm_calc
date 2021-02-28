@@ -3,7 +3,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobbranch import thieves
 from .jobclass import nova
 from math import ceil
@@ -118,7 +118,7 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=30)
-        Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep=-5+0.5*ceil(passive_level/2))
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=90+ceil(passive_level/2))
 
         return [WeaponConstant, Mastery]
 
@@ -160,8 +160,8 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill("부스터", 0, 200000).wrap(core.BuffSkillWrapper)
         SpecialPotion = core.BuffSkill("상인단 특제 비약", 570, 60*1000, pdamage=10, crit=10, cooltime=120*1000).wrap(core.BuffSkillWrapper)  # 카데나만 딜레이있음
 
-        ProfessionalAgent = core.BuffSkill("프로페셔널 에이전트", 570, 30000, cooltime=200000).wrap(core.BuffSkillWrapper)
-        ProfessionalAgentAdditionalDamage = core.DamageSkill("프로페셔널 에이전트(공격)", 0, 255, 2).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        ProfessionalAgent = core.BuffSkill("프로페셔널 에이전트", 570, 30000, cooltime=180000).wrap(core.BuffSkillWrapper)
+        ProfessionalAgentAdditionalDamage = core.DamageSkill("프로페셔널 에이전트(공격)", 0, 255, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         ProfessionalAgent_Attack = core.OptionalElement(ProfessionalAgent.is_active, ProfessionalAgentAdditionalDamage, name="프로페셔널 에이전트 추가타")
 
         # 웨폰버라이어티 추가타

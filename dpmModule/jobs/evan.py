@@ -4,7 +4,7 @@ from ..kernel.core import CharacterModifier as MDF
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobclass import heroes
 from .jobbranch import magicians
 from typing import Any, Dict
@@ -169,7 +169,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 0)
-        Mastery = core.InformedCharacterModifier("숙련도",pdamage_indep = -2.5 + 0.5*passive_level)  
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=95+passive_level)  
         Interaction = core.InformedCharacterModifier("교감",pdamage = 20)
         ElementalResetActive = core.InformedCharacterModifier("엘리멘탈 리셋(사용)", prop_ignore = 10)
         

@@ -2,7 +2,7 @@ from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import ConditionRule, ReservationRule, RuleSet, ConcurrentRunRule
+from ..execution.rules import ConditionRule, RuleSet, ConcurrentRunRule
 from . import globalSkill
 from .jobbranch import pirates
 from .jobclass import adventurer
@@ -78,9 +78,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=50)
-        Mastery = core.InformedCharacterModifier(
-            "숙련도", pdamage_indep=-7.5 + 0.5 * ceil(passive_level / 2)
-        )
+        Mastery = core.InformedCharacterModifier("숙련도", mastery=85+ceil(passive_level / 2))
 
         return [WeaponConstant, Mastery]
 
@@ -145,7 +143,6 @@ class JobGenerator(ck.JobGenerator):
             delay=0,  # 래피드/불파 도중 사용가능
             remain=core.infinite_time(),
             cooltime=-1,
-            pdamage_indep=25 + self.combat,
         ).wrap(core.BuffSkillWrapper)
         QuickDrawStack = core.StackSkillWrapper(
             core.BuffSkill("퀵 드로우(준비)", 0, core.infinite_time()), 1
@@ -185,8 +182,8 @@ class JobGenerator(ck.JobGenerator):
             delay=0,
             remain=120000,
             cooltime=-1,
-            crit=(15 + passive_level) / 2,
-            crit_damage=5 / 2,
+            crit=10 + passive_level // 3,
+            crit_damage=5,
             att=45 + 3 * passive_level,
         ).wrap(core.BuffSkillWrapper)
 
@@ -295,7 +292,7 @@ class JobGenerator(ck.JobGenerator):
         StrangeBomb = (
             core.DamageSkill(
                 "스트레인지 봄",
-                delay=810,
+                delay=690,
                 damage=400,
                 hit=12,
                 cooltime=30000,
@@ -386,8 +383,8 @@ class JobGenerator(ck.JobGenerator):
             core.DamageSkill(
                 "데스 트리거",
                 delay=180,
-                damage=575 + 23 * vEhc.getV(0, 0),
-                hit=11,
+                damage=325 + 13 * vEhc.getV(0, 0),
+                hit=7 * 4,
                 cooltime=-1,
                 modifier=CONTINUAL_AIMING + BULLET_ATT,
             )
@@ -456,21 +453,10 @@ class JobGenerator(ck.JobGenerator):
         QuickDrawShutdownTrigger = QuickDraw.controller(-1)
         for sk in [Headshot, StrangeBomb, DeadEye, DeathTrigger, Nautilus, MirrorBreak]:
             sk.onJustAfter(QuickDrawShutdownTrigger)
+            sk.add_runtime_modifier(QuickDraw, lambda sk: core.CharacterModifier(pdamage_indep=(25 + self.combat) * sk.is_active()))
         for sk in [NautilusAssult, NautilusAssult_2]:
             sk.onTick(QuickDrawShutdownTrigger)
-
-        for sk in [  # 이 스킬들에는 퀵 드로우 최종뎀이 안들어감
-            RapidFire,
-            CaptainDignity,
-            BulletPartyTick,
-        ]:
-            sk.add_runtime_modifier(
-                QuickDraw,
-                lambda sk: core.CharacterModifier()
-                - core.CharacterModifier(
-                    pdamage_indep=(25 + self.combat) * sk.is_active()
-                ),
-            )
+            sk.add_runtime_modifier(QuickDraw, lambda sk: core.CharacterModifier(pdamage_indep=(25 + self.combat) * sk.is_active()))
 
         # 노틸러스 어썰트
         NautilusAssult.onEventEnd(NautilusAssult_2)

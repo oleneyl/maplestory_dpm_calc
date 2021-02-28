@@ -45,6 +45,7 @@ def dpm(args):
         ulevel=args.ulevel,
         weaponstat=weapon_stat,
         ability_grade=Ability_grade(4, 1),
+        farm=False,
     )
     sche = policy.AdvancedGraphScheduler(
         graph,
@@ -78,6 +79,7 @@ def burst10(args):
         ulevel=args.ulevel,
         weaponstat=weapon_stat,
         ability_grade=Ability_grade(4, 1),
+        farm=False,
     )
     sche = policy.AdvancedGraphScheduler(
         graph,

@@ -6,6 +6,8 @@ from .constant import NOTWANTTOEXECUTE
 from .modifier import CharacterModifier
 from ..graph import EvaluativeGraphElement
 
+import math
+
 if TYPE_CHECKING:
     from ..abstract import AbstractVEnhancer
     from .skill_wrapper import AbstractSkillWrapper
@@ -447,8 +449,9 @@ class DotSkill(SummonSkill):
 
 
 def _map_background_information(conf, **kwargs):
-    global_variables = globals()
+    global_variables = {k: v for k, v in globals().items()}
     global_variables.update(kwargs)
+    assert global_variables['math'] == math
     exported_conf = {}
     for k, v in conf.items():
         if isinstance(v, str) and k != 'name':

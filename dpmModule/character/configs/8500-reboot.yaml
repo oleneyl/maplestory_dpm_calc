@@ -1,16 +1,19 @@
 ---
 summary:
-  - 제네시스 / 4카5아 / 7칠흑 / 칠요
+  - 제네시스 / 4카5아 / 7칠흑 / 칠요(훈장)
   - 방패 착용가능한 직업은 방패 착용 (20성)
   - 스타포스 - 무기 22성 / 방어구 22성
   - 추옵 - 무기 공1추 / 방어구, 악세 추옵 130급
   - 잠재능력
-  - 무기류 윗잠 9줄유효 에디 공30%
-  - 방어구, 악세 레전33% / 에디 레전 3줄
+  - 무기류 윗잠 9줄유효
+  - 방어구, 악세 레전33%
   - 장갑 크뎀2줄
   - 아케인심볼 고정주스탯 13200
   - 어센틱심볼 고정주스탯 900
-  - 마라벨 풀셋, 프펫공작
+  - 마라벨 풀셋
+  - '칠요의 뱃지 -> 창세의 뱃지'
+  - '스칼렛 링 -> 이터널 플레임 링'
+  - 'TODO: 리부트 유저들의 리뷰 필요'
 
 anchors:
   armor: &armor
@@ -18,17 +21,9 @@ anchors:
       stat_main: 130
       stat_sub: 20
       stat_sub2: 20
-    upgrade:
-      - type: 주문의 흔적
-        prob: 30
-        stat: stat_main
-        count: -1
     star: 22
     potential:
       pstat_main: 33
-    add_potential:
-      pstat_main: 12
-      att: 12
   head_cdr: &head_cdr
     '1':
       potential:
@@ -51,45 +46,17 @@ anchors:
     stat_sub: 20
     stat_sub2: 20
     allstat_rate: 6
-  acc_upgrade: &acc_upgrade
-    - type: 혼줌
-      option:
-        att: 6
-        stat_main: 1
-        stat_sub: 1
-        stat_sub2: 1
-      count: -1
   acc_potential: &acc_potential
     potential:
       pstat_main: 33
-    add_potential:
-      pstat_main: 12
-      att: 12
 
   demon_armor: &demon_armor
-    upgrade:
-      - type: 주문의 흔적
-        prob: 30
-        stat: stat_main
-        count: -1
     star: 22
     potential:
       pstat_main: 33
-    add_potential:
-      pstat_main: 17
-      att: 12
-  demon_acc_upgrade: &demon_acc_upgrade
-    - type: 혼줌
-      option:
-        att: 6
-        stat_main: 10
-      count: -1
   demon_acc_potential: &demon_acc_potential
     potential:
       pstat_main: 33
-    add_potential:
-      pstat_main: 17
-      att: 12
 
   xenon_armor: &xenon_armor
     bonus:
@@ -97,23 +64,9 @@ anchors:
       stat_sub: 40
       stat_sub2: 40
       allstat_rate: 7
-    upgrade:
-      - type: 방공
-        value: 3
-        count: 3
-      - type: 주문의 흔적
-        prob: 30
-        stat: stat_sub2
-        count: 1
-      - type: 방공
-        value: 2
-        count: -1
     star: 22
     potential:
       allstat_rate: 24
-    add_potential:
-      allstat_rate: 9
-      att: 12
   xenon_acc_bonus: &xenon_acc_bonus
     stat_main: 40
     stat_sub: 40
@@ -122,32 +75,17 @@ anchors:
   xenon_acc_potential: &xenon_acc_potential
     potential:
       allstat_rate: 24
-    add_potential:
-      allstat_rate: 9
-      att: 12
-  
   magician_shield: &magician_shield
     id: 데이모스 세이지 실드
-    upgrade:
-      - type: 방공
-        value: 3
-        count: 1
-      - type: 혼줌
-        option:
-          att: 5
-        count: -1
     star: 20
-    add_potential:
-      patt: 30
-
 default:
   level: 275
   arcane_symbol_force: 1320
   authentic_symbol_level:
     - 3
     - 1
-  pet_equip: 124 # 프펫공, 루나 드림 2세트(5+4*9)*2, 루나 쁘띠 1세트(10+4*8)
-  pet_set: 24 # 루나 드림 2세트(7+9), 루나 쁘띠 1세트(8)
+  pet_equip: 0
+  pet_set: 21 # 원더 블랙 펫 3마리
   cash:
     stat_main: 75
     stat_sub: 75
@@ -180,52 +118,38 @@ default:
     <<: *armor
   shoulder:
     id: 아케인셰이드
-    upgrade:
-      - type: 혼줌
-        option:
-          att: 6
-          stat_main: 1
-        count: -1
     star: 22
     <<: *acc_potential
   face:
     id: 루즈 컨트롤 머신 마크
     bonus: *acc_bonus
-    upgrade: *acc_upgrade
     star: 22
     <<: *acc_potential
   eye:
     id: 마력이 깃든 안대
     bonus: *acc_bonus
-    upgrade: *acc_upgrade
     star: 22
     <<: *acc_potential
   ear:
     id: 커맨더 포스 이어링
     bonus: *acc_bonus
-    upgrade: *acc_upgrade
     star: 22
     <<: *acc_potential
   belt:
     id: 몽환의 벨트
     bonus: *acc_bonus
-    upgrade: *acc_upgrade
     star: 22
     <<: *acc_potential
   ring1:
     id: 거대한 공포
-    upgrade: *acc_upgrade
     star: 22
     <<: *acc_potential
   ring2:
     id: 마이스터링
-    upgrade: *acc_upgrade
     star: 22
     <<: *acc_potential
   ring3:
-    id: 스칼렛 링
-    upgrade: *acc_upgrade
-    star: -12
+    id: 이터널 플레임 링
     <<: *acc_potential
   ring4:
     id: '글로리온 링 : 슈프림'
@@ -233,49 +157,31 @@ default:
   pendant1:
     id: 고통의 근원
     bonus: *acc_bonus
-    upgrade: *acc_upgrade
     star: 22
     <<: *acc_potential
   pendant2:
     id: 도미네이터 펜던트
     bonus: *acc_bonus
-    upgrade: *acc_upgrade
     star: 22
     <<: *acc_potential
   pocket:
     id: 마도서
     bonus: *acc_bonus
   badge:
-    id: 칠요의 뱃지
+    id: 창세의 뱃지
   medal:
     id: 칠요의 몬스터파커
   weapon:
     id: 제네시스
     bonus:
       att_grade: 7
-    upgrade:
-      - type: 주문의 흔적
-        prob: 15
-        stat: stat_main
-        count: -1
     star: 22
-    add_potential:
-      patt: 30
   subweapon:
     id: 보조무기
-    add_potential:
-      patt: 30
   emblem:
     id: 엠블렘
-    add_potential:
-      patt: 30
   heart:
     id: 블랙 하트
-    upgrade:
-      - type: 주문의 흔적
-        prob: 30
-        stat: stat_main
-        count: 11
     star: 15
     potential:
       boss_pdamage: 30
@@ -305,49 +211,30 @@ default:
 에반:
   type: override
   job_specific_item:
-    stat_main: 46
-    stat_sub: 46
+    stat_main: 14
+    stat_sub: 14
   subweapon:
     << : *magician_shield
 메카닉:
   type: override
   job_specific_item:
-    stat_main: 18
-    stat_sub: 18
-    att: 16
+    stat_main: 10
+    stat_sub: 10
+    att: 8
 섀도어:
   type: override
   subweapon:
     id: 데이모스 다크니스 실드
-    upgrade:
-      - type: 방공
-        value: 3
-        count: 1
-      - type: 혼줌
-        option:
-          att: 5
-        count: -1
     star: 20
-    add_potential:
-      patt: 30
 듀얼블레이드:
   type: override
   subweapon:
     id: 아케인셰이드
-    upgrade:
-      - type: 주문의 흔적
-        stat: stat_main
-        prob: 15
-        count: -1
     star: 22
-    add_potential:
-      patt: 30
 데몬슬레이어:
   type: override
   subweapon:
     id: 루인 포스실드
-    add_potential:
-      patt: 30
 데몬어벤져:
   type: override
   head:
@@ -392,12 +279,6 @@ default:
     <<: *demon_armor
   shoulder:
     id: 아케인셰이드
-    upgrade:
-      - type: 혼줌
-        option:
-          att: 6
-          stat_main: 10
-        count: -1
     star: 22
     <<: *demon_acc_potential
   face:
@@ -405,7 +286,6 @@ default:
     bonus:
       stat_main: 2880
       att: 5
-    upgrade: *demon_acc_upgrade
     star: 22
     <<: *demon_acc_potential
   eye:
@@ -413,7 +293,6 @@ default:
     bonus:
       stat_main: 2880
       att: 5
-    upgrade: *demon_acc_upgrade
     star: 22
     <<: *demon_acc_potential
   ear:
@@ -421,7 +300,6 @@ default:
     bonus:
       stat_main: 3600
       att: 5
-    upgrade: *demon_acc_upgrade
     star: 22
     <<: *demon_acc_potential
   belt:
@@ -429,23 +307,18 @@ default:
     bonus:
       stat_main: 3600
       att: 5
-    upgrade: *demon_acc_upgrade
     star: 22
     <<: *demon_acc_potential
   ring1:
     id: 거대한 공포
-    upgrade: *demon_acc_upgrade
     star: 22
     <<: *demon_acc_potential
   ring2:
     id: 마이스터링
-    upgrade: *demon_acc_upgrade
     star: 22
     <<: *demon_acc_potential
   ring3:
-    id: 스칼렛 링
-    upgrade: *demon_acc_upgrade
-    star: -12
+    id: 이터널 플레임 링
     <<: *demon_acc_potential
   ring4:
     id: '글로리온 링 : 슈프림'
@@ -455,7 +328,6 @@ default:
     bonus:
       stat_main: 2880
       att: 5
-    upgrade: *demon_acc_upgrade
     star: 22
     <<: *demon_acc_potential
   pendant2:
@@ -463,7 +335,6 @@ default:
     bonus:
       stat_main: 2520
       att: 5
-    upgrade: *demon_acc_upgrade
     star: 22
     <<: *demon_acc_potential
   pocket:
@@ -473,15 +344,8 @@ default:
       att: 5
   subweapon:
     id: 루인 포스실드
-    add_potential:
-      patt: 30
   heart:
     id: 블랙 하트
-    upgrade:
-      - type: 주문의 흔적
-        prob: 30
-        stat: stat_main
-        count: 11
     star: 15
     potential:
       boss_pdamage: 30
@@ -528,52 +392,38 @@ default:
     <<: *xenon_armor
   shoulder:
     id: 아케인셰이드
-    upgrade:
-      - type: 혼줌
-        option:
-          att: 6
-          stat_main: 1
-        count: -1
     star: 22
     <<: *xenon_acc_potential
   face:
     id: 루즈 컨트롤 머신 마크
     bonus: *xenon_acc_bonus
-    upgrade: *acc_upgrade
     star: 22
     <<: *xenon_acc_potential
   eye:
     id: 마력이 깃든 안대
     bonus: *xenon_acc_bonus
-    upgrade: *acc_upgrade
     star: 22
     <<: *xenon_acc_potential
   ear:
     id: 커맨더 포스 이어링
     bonus: *xenon_acc_bonus
-    upgrade: *acc_upgrade
     star: 22
     <<: *xenon_acc_potential
   belt:
     id: 몽환의 벨트
     bonus: *xenon_acc_bonus
-    upgrade: *acc_upgrade
     star: 22
     <<: *xenon_acc_potential
   ring1:
     id: 거대한 공포
-    upgrade: *acc_upgrade
     star: 22
     <<: *xenon_acc_potential
   ring2:
     id: 마이스터링
-    upgrade: *acc_upgrade
     star: 22
     <<: *xenon_acc_potential
   ring3:
-    id: 스칼렛 링
-    upgrade: *acc_upgrade
-    star: -12
+    id: 이터널 플레임 링
     <<: *xenon_acc_potential
   ring4:
     id: '글로리온 링 : 슈프림'
@@ -581,13 +431,11 @@ default:
   pendant1:
     id: 고통의 근원
     bonus: *xenon_acc_bonus
-    upgrade: *acc_upgrade
     star: 22
     <<: *xenon_acc_potential
   pendant2:
     id: 도미네이터 펜던트
     bonus: *xenon_acc_bonus
-    upgrade: *acc_upgrade
     star: 22
     <<: *xenon_acc_potential
   pocket:
@@ -595,11 +443,6 @@ default:
     bonus: *xenon_acc_bonus
   heart:
     id: 블랙 하트
-    upgrade:
-      - type: 주문의 흔적
-        prob: 30
-        stat: stat_main
-        count: 11
     star: 15
     potential:
       boss_pdamage: 30

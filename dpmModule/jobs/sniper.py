@@ -3,7 +3,7 @@ from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, MutualRule, ConcurrentRunRule, ReservationRule
-from . import globalSkill
+from . import globalSkill, jobutils
 from .jobbranch import bowmen
 from .jobclass import adventurer
 from math import ceil
@@ -44,25 +44,28 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier(
             "피지컬 트레이닝", stat_main=30, stat_sub=30
         )
-
+        CrossBowMastery = core.InformedCharacterModifier("크로스보우 마스터리", pdamage_indep=20)
         MarkmanShip = core.InformedCharacterModifier(
             "마크맨쉽", armor_ignore=25, pdamage=15
         )
-
         CrossBowExpert = core.InformedCharacterModifier(
-            "크로스보우 엑스퍼트", att=30 + passive_level, crit_damage=8
+            "크로스보우 엑스퍼트", att=30 + passive_level, crit_damage=15
         )
-
         ElusionStep = core.InformedCharacterModifier(
             "일루젼 스탭", stat_main=40 + passive_level
+        )
+        AdditionalBolt = core.InformedCharacterModifier(
+            "어디셔널 볼트", pdamage_indep=15 + passive_level
         )
 
         return [
             CriticalShot,
             PhisicalTraining,
+            CrossBowMastery,
             MarkmanShip,
             CrossBowExpert,
             ElusionStep,
+            AdditionalBolt,
         ]
 
     def get_not_implied_skill_list(
@@ -71,7 +74,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=35)
         Mastery = core.InformedCharacterModifier(
-            "숙련도", pdamage_indep=-7.5 + 0.5 * ceil(passive_level / 2)
+            "숙련도", mastery=85 + ceil(passive_level / 2)
         )
 
         MortalBlow = core.InformedCharacterModifier("모탈 블로우", pdamage=2)
@@ -91,23 +94,18 @@ class JobGenerator(ck.JobGenerator):
         def weakness_finding(distance: float):
             return core.CharacterModifier(
                 armor_ignore=min(
-                    ceil((20 + passive_level) / 2)
-                    + distance // 40 * ceil((20 + passive_level) / 5),
+                    20 + passive_level // 2 + distance // 40 * 3,
                     20 + 30 + passive_level,
                 )
             )
 
         def distancing_sense(distance: float):
             return core.CharacterModifier(
-                armor_ignore=max(
-                    min((-200 + distance) // -18 * 3, 20 + (10 + passive_level)), 0
-                ),
-                pdamage_indep=max(
-                    min((distance - 200) // 18 * 4, 30 + (10 + passive_level)), 0
-                ),
+                armor_ignore=max(min((-200 + distance) // -18 * 2, 12), 0),
+                pdamage_indep=max(min((distance - 200) // 18 * 2, 12), 0),
             )
 
-        LASTMAN_STANDING = core.CharacterModifier(pdamage_indep=20 + 2 * passive_level)
+        LASTMAN_STANDING = core.CharacterModifier(pdamage_indep=10 + passive_level)
         PASSIVE_MODIFIER = (
             weakness_finding(DISTANCE) + distancing_sense(DISTANCE) + LASTMAN_STANDING
         )
@@ -159,7 +157,7 @@ class JobGenerator(ck.JobGenerator):
                 hit=9 + 1,
                 modifier=core.CharacterModifier(
                     crit=100,
-                    armor_ignore=20 + self.combat * 1,
+                    armor_ignore=25 + ceil(self.combat // 3) * 2,
                     pdamage=20,
                     boss_pdamage=10,
                 )
@@ -177,7 +175,7 @@ class JobGenerator(ck.JobGenerator):
                 damage=950 + vEhc.getV(2, 2) * 30,
                 hit=14 + 1,
                 modifier=core.CharacterModifier(pdamage=100, armor_ignore=100)
-                + PASSIVE_MODIFIER
+                + weakness_finding(999) + distancing_sense(999) + LASTMAN_STANDING
                 + MORTAL_BLOW,
             )
             .isV(vEhc, 2, 2)

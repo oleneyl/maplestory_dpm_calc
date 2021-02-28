@@ -27,7 +27,7 @@ not_implied_skill_list:
 - name: 무기상수
   pdamage_indep: 20
 - name: 숙련도
-  pdamage_indep: "-2.5 + 0.5 * math.ceil(combat / 2)"
+  mastery: 95
 - name: 익스트림 매직
   pdamage_indep: 20
 - name: 아케인 (실시간)
@@ -46,16 +46,6 @@ constant:
   - 80
   - 125
 skills:
-  도트 퍼니셔:
-    type: DamageSkill
-    delay: 690
-    damage: 400 + 15 * lv
-    tier: 5
-    use_priority: 0
-    upgrade_priority: 0
-    hit: 5
-    cooltime: 25000
-    red: true
   메디테이션:
     type: BuffSkill
     delay: 0
@@ -115,13 +105,23 @@ skills:
       pdamage: 10
       pdamage_indep: ERUPTION_RATE[5]
       armor_ignore: 52.8
-    damage: 45 + combat
-    hit: 60
+    damage: 125 + combat
+    hit: 20
     type: DamageSkill
     enhanced_by_v: true
     upgrade_priority: 0
     v_increment: 2
     v_crit: false
+  도트 퍼니셔:
+    type: DamageSkill
+    delay: 690
+    damage: 400 + 15 * lv
+    tier: 5
+    use_priority: 0
+    upgrade_priority: 0
+    hit: 5
+    cooltime: 25000
+    red: true
   도트 퍼니셔(초과):
     cooltime: 0
     delay: 0
@@ -165,18 +165,18 @@ skills:
     rem: false
     modifier:
       pdamage_indep: -50
-    damage: 495
+    damage: 225 + 9 * lv
     hit: 12
     type: DamageSkill
     tier: 5
     use_priority: 2
     upgrade_priority: 1
   포이즌 체인:
-    cooltime: 30000
+    cooltime: 25000
     delay: 600
     red: true
     rem: false
-    damage: 300 + 12 * lv
+    damage: 250 + 10 * lv
     hit: 4
     type: DamageSkill
     tier: 5
