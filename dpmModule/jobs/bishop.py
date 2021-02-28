@@ -142,7 +142,7 @@ class JobGenerator(characterKernel.JobGenerator):
         # Damage Skills
         AngelRay = self.load_skill_wrapper(BishopSkills.AngelRay, vEhc)
 
-        HeavensDoor = self.load_skill_wrapper(BishopSkills.HeavensDoor)
+        HeavensDoor = self.load_skill_wrapper(BishopSkills.HeavensDoor, vEhc)
 
         PeaceMakerInit = self.load_skill_wrapper(_("{}(시전)").format(BishopSkills.Peacemaker), vEhc)
         PeaceMaker = self.load_skill_wrapper(BishopSkills.Peacemaker, vEhc)
@@ -165,7 +165,7 @@ class JobGenerator(characterKernel.JobGenerator):
         Dispell = self.load_skill_wrapper(BishopSkills.Dispel)
         DivineProtection = self.load_skill_wrapper(BishopSkills.DivineProtection)
         Genesis = self.load_skill_wrapper(BishopSkills.Genesis)
-        BigBang = self.load_skill_wrapper(BishopSkills.BigBang)
+        BigBang = self.load_skill_wrapper(BishopSkills.BigBang, vEhc)
         Resurrection = self.load_skill_wrapper(BishopSkills.Resurrection)
 
         VengenceOfAngel_Delay = self.load_skill_wrapper(_("{}(딜레이)").format(BishopSkills.RighteouslyIndignant))
