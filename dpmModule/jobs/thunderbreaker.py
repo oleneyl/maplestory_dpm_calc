@@ -195,6 +195,7 @@ class JobGenerator(ck.JobGenerator):
         ShinNoiHapL = core.BuffSkill(ThunderBreakerSkills.LightningCascade, 540, (30+vEhc.getV(3,2)//2) * 1000, red = True, cooltime = (120-vEhc.getV(3,2)//2)*1000, pdamage_indep=5+vEhc.getV(3,2)//6).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
         ShinNoiHapLAttack = core.SummonSkill(_("{}(공격)").format(ThunderBreakerSkills.LightningCascade), 0, 3000, 16*vEhc.getV(3,2) + 400, 7, (30+vEhc.getV(3,2)//2) * 1000, cooltime = -1).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
         ShinNoiHapLAttack_ChookRoi = core.DamageSkill(f"{ThunderBreakerSkills.LightningCascade}({ThunderBreakerSkills.ArcCharger})", 0, (16*vEhc.getV(3,2) + 400) * CHOOKROI, 7 ).wrap(core.DamageSkillWrapper)
+        ShinNoiHapLPassive = core.DamageSkill(_("{}(패시브)").format(ThunderBreakerSkills.LightningCascade), 0, 16 * vEhc.getV(3, 2) + 400, 7, cooltime=6000).wrap(core.DamageSkillWrapper)
         GioaTan = core.DamageSkill(ThunderBreakerSkills.SharkTorpedo, 360, 1000+40*vEhc.getV(2,1), 7, cooltime = 8000, red = True, modifier = LINK_MASTERY).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)  # Uses the Kyo-Atan-Break Power combo. 교아탄-벽력 콤보 사용함.
 
         NoiShinChanGeuk = core.DamageSkill(ThunderBreakerSkills.LightningGodSpearStrike, 0, 150+6*vEhc.getV(0,0), 6, cooltime = 7000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
@@ -241,7 +242,7 @@ class JobGenerator(ck.JobGenerator):
             jobutils.create_auxilary_attack(skill, CHOOKROI, nametag=f"({ThunderBreakerSkills.ArcCharger})")
 
         for skill in [Thunder, ThunderConcat, WaterWave, WaterWaveConcat, NoiShinChanGeuk,
-                        SpearLightningAttack, SpearLightningAttack_Final]:
+                        ShinNoiHapLPassive, SpearLightningAttack, SpearLightningAttack_Final]:
             skill.onAfter(LightningStack.stackController(1))
 
         for skill in [ShinNoiHapLAttack, CygnusPhalanx, NoiShinChanGeukAttack]:
@@ -257,9 +258,11 @@ class JobGenerator(ck.JobGenerator):
         NoiShinChanGeuk.onAfter(NoiShinChanGeukAttack)
 
         SpearLightningAttack.onAfter(SpearLightningAttack_Lightning)
-        SpearLightningAttack_Final.onAfter(SpearLightningAttack_Final_Lightning)
+        SpearLightningAttack_Final.onAfter(core.RepeatElement(SpearLightningAttack_Final_Lightning, 3))
         SpearLightningAttackInit.onAfter(core.RepeatElement(SpearLightningAttack, 11))
         SpearLightningAttackInit.onAfter(SpearLightningAttack_Final)
+
+        ShinNoiHapLPassive.onConstraint(core.ConstraintElement(f"{ThunderBreakerSkills.LightningCascade} OFF", ShinNoiHapL, ShinNoiHapL.is_not_active))
 
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level, name=ThunderBreakerSkills.CallofCygnus, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),

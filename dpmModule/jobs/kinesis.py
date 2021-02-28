@@ -156,9 +156,9 @@ class JobGenerator(ck.JobGenerator):
         Accurate = core.InformedCharacterModifier(KinesisSkills.ThirdEye,crit = 20, crit_damage = 20)
         PsychicChargingPassive = core.InformedCharacterModifier(_("{}(패시브)").format(KinesisSkills.PsychicCharger),boss_pdamage = 30 + self.combat)
         PsychicForce3Passive = core.InformedCharacterModifier(_("{}(패시브)").format(KinesisSkills.PsychicAssault),att = 10)
-        
+
         ESPBattleOrder = core.InformedCharacterModifier(KinesisSkills.TelepathTactics,att = 50 + 2*passive_level, pdamage = 20 + passive_level)
-        Transcendence = core.InformedCharacterModifier(KinesisSkills.Awakening,pdamage_indep = 25 + passive_level)
+        Transcendence = core.InformedCharacterModifier(KinesisSkills.Awakening,pdamage_indep = 30 + passive_level)
         SupremeConcentration = core.InformedCharacterModifier(KinesisSkills.SupremeConcentration, buff_rem = 20+passive_level)
         Transport = core.InformedCharacterModifier(KinesisSkills.MindScrambler,armor_ignore = 25 + passive_level)
         Mastery = core.InformedCharacterModifier(KinesisSkills.Mastery,crit_damage = 10 + passive_level)
@@ -214,12 +214,12 @@ class JobGenerator(ck.JobGenerator):
 
         Ultimate_Material = core.DamageSkill(KinesisSkills.UltimateMetalPress, 630, 700 + 3*self.combat, 10, modifier = ULTIMATE_AWAKENING).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  #   7
         PsychicDrain = core.SummonSkill(KinesisSkills.PsychicDrain, 540, 500, 150, 1, 15000, cooltime = 5000, rem = False).setV(vEhc, 4, 5, False).wrap(core.SummonSkillWrapper)  # 1 space +. 1칸+.
-        
+
         PsychicForce3 = core.DamageSkill(KinesisSkills.PsychicAssault, 270, 0, 0).wrap(core.DamageSkillWrapper)
-        PsychicForce3Dot = core.DotSkill(_("{}(도트)").format(KinesisSkills.PsychicAssault), 0, 1000, 403.125, 1, 30000, cooltime = -1).wrap(core.DotSkillWrapper)  # ~20 seconds average perdem. ~20초 평균 퍼뎀.
+        PsychicForce3Dot = core.DotSkill(_("{}(도트)").format(KinesisSkills.PsychicAssault), 0, 1000, 403.125, 1, 30000, cooltime = -1).wrap(core.DotSkillWrapper) # ~20 seconds average perdem. ~20초 평균 퍼뎀.
         PsychicGround = core.BuffSkill(KinesisSkills.MindQuake, 270, 30000 + 15000, rem = False, armor_ignore = 10 + 6*1, pdamage_indep = 10 + 3*1).wrap(core.BuffSkillWrapper)
         PsychicGroundDamage = core.DamageSkill(_("{}(공격)").format(KinesisSkills.MindQuake), 0, 500+10*self.combat, 1).wrap(core.DamageSkillWrapper)  # +1
-        PsycoBreak = core.BuffSkill(KinesisSkills.MindBreak, 720, 30000, pdamage_indep = 5 * 2, rem = False).wrap(core.BuffSkillWrapper)  #+1
+        PsycoBreak = core.BuffSkill(KinesisSkills.MindBreak, 630, 30000, pdamage_indep = min(5 * 2 * 2, 15), rem = False).wrap(core.BuffSkillWrapper)  #+1
         PsycoBreakDamage = core.DamageSkill(_("{}(공격)").format(KinesisSkills.MindBreak), 0, 1000 +7*self.combat, 4).wrap(core.DamageSkillWrapper)
         
         TeleKinesis = core.DamageSkill(KinesisSkills.KineticCombo, 0, 350, 0.7).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)

@@ -94,7 +94,7 @@ class JobGenerator(ck.JobGenerator):
         
         SpellControl = core.InformedCharacterModifier(BlazeWizardSkills.SpellControl,att = 10)
         LiberatedMagic = core.InformedCharacterModifier(BlazeWizardSkills.LiberatedMagic,pdamage_indep = 30)
-        BurningFocus = core.InformedCharacterModifier(BlazeWizardSkills.BurningFocus,crit = 30, crit_damage = 15)
+        BurningFocus = core.InformedCharacterModifier(BlazeWizardSkills.BurningFocus,crit = 30, crit_damage = 20)
         BriliantEnlightenment = core.InformedCharacterModifier(BlazeWizardSkills.BrilliantEnlightenment,stat_main = 60)
         PureMagic = core.InformedCharacterModifier(BlazeWizardSkills.PureMagic, att = 20 + passive_level, pdamage_indep = 50 + 3*passive_level)
 
@@ -137,7 +137,7 @@ class JobGenerator(ck.JobGenerator):
         
         #Full speed, No Combat Orders
         OrbitalFlame = core.DamageSkill(BlazeWizardSkills.FinalOrbitalFlame, 210, 215 + self.combat, 3 * 2 * (210 / flamewizardDefaultSpeed), modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        # BlazingExtinction = core.SummonSkill(BlazeWizardSkills.BlazingExtinction, 1020, 2500, 310+2*self.combat, 3+1, 10000, cooltime=5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+        # BlazingExtinction = core.SummonSkill(BlazeWizardSkills.BlazingExtinction, 660, 2500, 310+2*self.combat, 3+1, 10000, cooltime=5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
         CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 2, 1)
         BlazingOrbital = core.DamageSkill(BlazeWizardSkills.OrbitalInferno, 180, 330+13*vEhc.getV(0,0), 6 * blazingOrbitalHit, cooltime = 5000, red = True, modifier = core.CharacterModifier(armor_ignore = 50)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)    # 4 stroke assumptions. 4타 가정.
         

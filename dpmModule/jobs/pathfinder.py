@@ -121,8 +121,7 @@ class RelicChargeStack(core.StackSkillWrapper):
     def vary(self, d):
         stack_before = self.stack
         res = super(RelicChargeStack, self).vary(d)
-        if(self.ancient_guidance_buff.is_not_active()):
-            self.ancient_guidance_stack += max(self.stack - stack_before, 0)
+        self.ancient_guidance_stack += max(self.stack - stack_before, 0)
         if self.ancient_guidance_stack >= 1000:
             self.ancient_guidance_stack = 0
             res.cascade = [self.ancient_guidance_task]  # For stability
@@ -223,7 +222,7 @@ class JobGenerator(ck.JobGenerator):
         AncientBowBooster = core.BuffSkill(PathfinderSkills.AncientBowBooster, 0, 300*1000, rem=True).wrap(core.BuffSkillWrapper)
         CurseTolerance = core.BuffSkill(PathfinderSkills.CurseboundEndurance, 0, 300*1000, rem=True).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill(PathfinderSkills.SharpEyes, 0, (300+10*self.combat)*1000, crit=20+ceil(self.combat/2), crit_damage=15+ceil(self.combat/2), rem=True).wrap(core.BuffSkillWrapper)
-        AncientGuidance = core.BuffSkill(_("{}(버프)").format(PathfinderSkills.GuidanceoftheAncients), 0, 30000, pdamage_indep=15, cooltime=-1, rem=False).wrap(core.BuffSkillWrapper)
+        AncientGuidance = core.BuffSkill(_("{}(버프)").format(PathfinderSkills.GuidanceoftheAncients), 0, 24000, pdamage_indep=15, cooltime=-1, rem=False).wrap(core.BuffSkillWrapper)
         CurseTransition = core.BuffSkill(PathfinderSkills.Curseweaver, 0, 15*1000, crit_damage=20, cooltime=-1).wrap(core.BuffSkillWrapper)  # Assume 5 stacks are maintained. 5스택 유지 가정.
 
         # Summon skills

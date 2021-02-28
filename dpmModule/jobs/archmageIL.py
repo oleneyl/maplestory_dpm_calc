@@ -254,7 +254,7 @@ class JobGenerator(ck.JobGenerator):
         LighteningSpearFinalizer.onJustAfter(FrostDecrement)
         LighteningSpearFinalizer.onAfter(BlizzardPassive)
 
-        LighteningRepeator = core.RepeatElement(LighteningSpearSingle, 30)
+        LighteningRepeator = core.RepeatElement(LighteningSpearSingle, 14)
         LighteningRepeator.onAfter(LighteningSpearFinalizer)
 
         LighteningSpear.onAfter(LighteningRepeator)
@@ -282,6 +282,13 @@ class JobGenerator(ck.JobGenerator):
         JupyterThunder.add_runtime_modifier(FrostEffect, applyFrostEffect)  # TODO: Make sure that Blizzard does not burst. 블리자드 파택 안터지는게 맞는지 확인할것.
         for i in range(1, 6 + 1):
             JupyterThunder.onEventElapsed(FrostDecrement, 330 * 5 * i)  # Freeze reduction for every 5 hits, a total of 6 reductions. 5회 타격시마다 빙결 감소, 총 6회 감소
+
+        for sk in [
+            ChainLightening, LighteningSpearSingle, LighteningSpearFinalizer, ThunderStorm, ThunderBolt,
+            ThunderBrake1, ThunderBrake2, ThunderBrake3, ThunderBrake4,
+            ThunderBrake5, ThunderBrake6, ThunderBrake7, ThunderBrake8
+        ]:
+            sk.add_runtime_modifier(JupyterThunder, lambda sk: core.CharacterModifier(pdamage_indep=12 * sk.is_active()))
 
         # Overload Mana
         overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 5)

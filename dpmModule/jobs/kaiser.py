@@ -124,12 +124,6 @@ class WillOfSwordSummonWrapper(core.BuffSkillWrapper):
         super(WillOfSwordSummonWrapper, self).__init__(skill)
         self.final_figuration = final_figuration
 
-    def get_delay(self):
-        if self.final_figuration.is_active():
-            return 600
-        else:
-            return 150
-
     def _off(self):
         self.timeLeft = 0
         return self._result_object_cache
@@ -164,12 +158,6 @@ class WillOfSwordStrikeWrapper(core.DamageSkillWrapper):
     def __init__(self, skill, final_figuration):
         super(WillOfSwordStrikeWrapper, self).__init__(skill)
         self.final_figuration = final_figuration
-
-    def get_delay(self):
-        if self.final_figuration.is_active():
-            return 600
-        else:
-            return 150
 
     def get_hit(self):
         if self.final_figuration.is_active():
@@ -298,7 +286,7 @@ class JobGenerator(ck.JobGenerator):
         
         GigaSlasher = GigaSlasherWrapper(core.DamageSkill(KaiserSkills.GigasWave, 540, 330 + 2*self.combat, 9+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False), FinalFiguration)
     
-        AdvancedWillOfSword_Summon = WillOfSwordSummonWrapper(core.BuffSkill(_("{}(소환)").format(KaiserSkills.AdvancedTempestBlades), 0, 9999999, cooltime = 10000, red=True), FinalFiguration)
+        AdvancedWillOfSword_Summon = WillOfSwordSummonWrapper(core.BuffSkill(_("{}(소환)").format(KaiserSkills.AdvancedTempestBlades), 150, 9999999, cooltime = 10000, red=True), FinalFiguration)
         AdvancedWillOfSword = WillOfSwordWrapper(core.DamageSkill(KaiserSkills.AdvancedTempestBlades, 0, 400+3*passive_level, 4*5).setV(vEhc, 3, 2, True), FinalFiguration)
 
         InfernalBreath = core.DamageSkill(KaiserSkills.InfernoBreath, 780, 300 + 4*self.combat, 8, cooltime = (20-self.combat)*1000, red=True).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)

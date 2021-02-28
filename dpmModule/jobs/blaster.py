@@ -119,9 +119,10 @@ class JobGenerator(ck.JobGenerator):
         GuntletMastery = core.InformedCharacterModifier(BlasterSkills.ArmCannonMastery, crit= 30, att = 20)
         PhisicalTraining = core.InformedCharacterModifier(BlasterSkills.PhysicalTraining,stat_main = 30, stat_sub = 30)
         ChargeMastery= core.InformedCharacterModifier(BlasterSkills.ChargeMastery, pdamage = 20)
+        CombinationTraining = core.InformedCharacterModifier(BlasterSkills.ComboTraining, patt=15)
         GuntletExpert = core.InformedCharacterModifier(BlasterSkills.GauntletExpert,
-            crit_damage = 15 + ceil(passive_level / 2),
-            boss_pdamage = 15 + ceil(passive_level / 2)
+            crit_damage = 20 + ceil(passive_level / 2),
+            boss_pdamage = 20 + ceil(passive_level / 2)
         )
         AdvancedChargeMastery= core.InformedCharacterModifier(BlasterSkills.AdvancedChargeMastery, armor_ignore = 35 + 3 * passive_level)
         CombinationTraining = core.InformedCharacterModifier(BlasterSkills.ComboTrainingII, att = 40 + 2 * passive_level)

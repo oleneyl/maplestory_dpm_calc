@@ -65,7 +65,7 @@ class JaguerStack(core.DamageSkillWrapper):
         self.debuffQueue = []  # (Probability, time). (확률, 시간).
         self.currentTime = 0
         self.stack = 0
-        self.DEBUF_PERSISTENCE_TIME = 8000  # 8000ms
+        self.DEBUF_PERSISTENCE_TIME = 15000  # 8000ms
         skill = core.DamageSkill(WildHunterSkills.AnotherBite, 0, 60 + level // 3, 0, cooltime=-1).setV(vEhc, 1, 2, False)
         super(JaguerStack, self).__init__(skill)
 
@@ -78,8 +78,8 @@ class JaguerStack(core.DamageSkillWrapper):
 
     def calculate_stack(self):
         """
-        The expected stack value is calculated based on the probability that all Jaguar attacks from the current point in time to 8 seconds ago have failed.
-        현재 시점부터 8초 이전까지의 재규어 공격이 전부 실패했을 확률을 바탕으로 스택 기댓값을 연산합니다.
+        The expected stack value is calculated based on the probability that all Jaguar attacks from the current point in time to 15 seconds ago have failed.
+        현재 시점부터 15초 이전까지의 재규어 공격이 전부 실패했을 확률을 바탕으로 스택 기댓값을 연산합니다.
         """
         fail_prob = reduce(lambda x, y: x * y, [max(1 - x[1], 0) for x in self.debuffQueue], 1)
         return 3 * (1 - fail_prob)
@@ -186,9 +186,9 @@ class JobGenerator(ck.JobGenerator):
         
         Jaguar = JaguarWrapper()
         Normal = core.DamageSkill(_("재규어 평타"), 0, 140+chtr.level, 1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        Swipe = core.DamageSkill(WildHunterSkills.Swipe, 0, 200+chtr.level, 4, cooltime = 5000*0.9, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        DashnSlash = core.DamageSkill(WildHunterSkills.DashnSlash, 0, 225+chtr.level, 2, cooltime = 6000*0.9, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
-        SonicRoar = core.DamageSkill(WildHunterSkills.SonicRoar, 0, 220+chtr.level, 6, cooltime = 6000*0.9, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        Swipe = core.DamageSkill(WildHunterSkills.Swipe, 0, 200+chtr.level, 4, cooltime = 5000*0.8, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        DashnSlash = core.DamageSkill(WildHunterSkills.DashnSlash, 0, 225+chtr.level, 2, cooltime = 6000*0.8, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
+        SonicRoar = core.DamageSkill(WildHunterSkills.SonicRoar, 0, 220+chtr.level, 6, cooltime = 6000*0.8, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         JaguarSoul = core.DamageSkill(WildHunterSkills.JaguarSoul, 0, 270+chtr.level, 12, cooltime = 210000, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         RampageAsOne = core.DamageSkill(WildHunterSkills.JaguarRampage, 0, 500+1*chtr.level, 9, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
     
@@ -230,15 +230,15 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
     
         JaguerStorm = core.BuffSkill(WildHunterSkills.JaguarStorm, 840, 40*1000, cooltime = (150-vEhc.getV(0,0))*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        
-        JaguarMaximum = core.DamageSkill(WildHunterSkills.PrimalFury, 2160, 350+13*vEhc.getV(5,5), 12*9, cooltime = 150*1000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
+
+        JaguarMaximum = core.DamageSkill(WildHunterSkills.PrimalFury, 2160, 350+13*vEhc.getV(5,5), 12*9, cooltime = 120*1000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
         JaguarMaximumFinal = core.DamageSkill(_("{}(마무리)").format(WildHunterSkills.PrimalFury), 630, 450+18*vEhc.getV(5,5), 15*4, cooltime=-1, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
         RidingOff = core.DamageSkill(_("하차 딜레이"), 1800, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper) # 재규어 맥시멈 강제 탑승 해제 딜레이
 
         WildGrenade = core.SummonSkill(WildHunterSkills.PrimalGrenade, 0, 4500, 600+24*vEhc.getV(2,2), 5, 9999*10000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
 
         WildBalkanTypeXInit = core.DamageSkill(_("{}(개시)").format(WildHunterSkills.WildArrowBlastTypeX), 540, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        WildBalkanTypeXTick = core.DamageSkill(WildHunterSkills.WildArrowBlastTypeX, 120, 475+19*vEhc.getV(0,0), 4, cooltime=-1, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  # 67 reps. 67회 반복.
+        WildBalkanTypeXTick = core.DamageSkill(WildHunterSkills.WildArrowBlastTypeX, 120, 450+18*vEhc.getV(0,0), 5, cooltime=-1, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  # 67 reps. 67회 반복.
         WildBalkanTypeXEnd = core.DamageSkill(_("{}(후딜)").format(WildHunterSkills.WildArrowBlastTypeX), 540, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         #Build Graph
@@ -252,7 +252,7 @@ class JobGenerator(ck.JobGenerator):
         JaguarMaximumFinal.onAfter(AnotherBite.add_debuff(3))
         JaguarMaximumFinal.onAfter(RidingOff)
 
-        WildBalkanTypeXKeydown = core.RepeatElement(WildBalkanTypeXTick, 67)
+        WildBalkanTypeXKeydown = core.RepeatElement(WildBalkanTypeXTick, 56)
         WildBalkanTypeXInit.onAfter(WildBalkanTypeXKeydown)
         WildBalkanTypeXInit.onAfter(WildBalkanTypeXEnd)
 

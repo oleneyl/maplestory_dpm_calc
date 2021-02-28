@@ -107,20 +107,6 @@ class CriticalBindWrapper(core.BuffSkillWrapper):
         return super(CriticalBindWrapper, self).is_usable()
 
 
-class DivineAuraWrapper(core.BuffSkillWrapper):
-    def __init__(self, skill_list):
-        skill = core.BuffSkill(f"{ZeroSkills.DivineSpeed}/{ZeroSkills.DivineForce}", 0, 99999999)  # Usually keeps the Divine Swift. 평소에는 디바인 스위프트 상태 유지.
-        super(DivineAuraWrapper, self).__init__(skill)
-        self.modifierInvariantFlag = False
-        self.skill_list = skill_list
-
-    def get_modifier(self):
-        for sk in self.skill_list:
-            if sk.is_active():
-                return core.CharacterModifier(att=20)  # When one or more of the skills in the list is activated, it is changed to Divine Force. 리스트에 있는 스킬 중 하나 이상 활성화시 디바인 포스로 변경.
-        return self.disabledModifier
-
-
 class JobGenerator(ck.JobGenerator):
     # 제로는 쓸컴뱃 효율이 낮으나 일단 딜이 증가하므로 사용
     # 패시브 레벨 +1 어빌 사용 불가능
@@ -194,14 +180,14 @@ class JobGenerator(ck.JobGenerator):
 
         어파스 기준
         '''
-        DEALCYCLE = options.get('dealcycle', 'alpha_new')
+        DEALCYCLE = options.get('dealcycle', 'alpha_legacy')
 
         #### Mastery. 마스터리 ####
         # Beta Mastery's attack power +4 is the difference in weapon base attack power. 베타 마스터리의 공격력 +4는 무기 기본 공격력 차이.
         # Genesis weapon needs to be changed to +5 제네시스 무기의 경우 +5로 변경 필요.
 
-        AlphaMDF = core.CharacterModifier(pdamage_indep=34, crit=40, att=40, armor_ignore=30, crit_damage=50)
-        BetaMDF = core.CharacterModifier(pdamage_indep=49, crit=15, boss_pdamage=30, att=80+4)
+        AlphaMDF = core.CharacterModifier(pdamage_indep=5, crit=40, att=40, armor_ignore=30, crit_damage=50) + core.CharacterModifier(pdamage_indep=34)
+        BetaMDF = core.CharacterModifier(pdamage_indep=5, crit=15, boss_pdamage=30, att=80+4) + core.CharacterModifier(pdamage_indep=49)
 
         AlphaState = core.BuffSkill(_("상태-알파"), 0, 9999*10000, cooltime=-1,
                                     pdamage_indep=AlphaMDF.pdamage_indep,
@@ -359,7 +345,7 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill Wrapper   ######
 
         # Come Divine. 디바인 오라.
-        DivineAura = DivineAuraWrapper([LimitBreak, TimeDistortion])
+        DivineForce = core.BuffSkill(ZeroSkills.DivineForce, 0, core.infinite_time(), att=20).wrap(core.BuffSkillWrapper)
 
         ### Skill connection. 스킬 연결 ###
         ### Alpha. 알파 ###
@@ -503,8 +489,8 @@ class JobGenerator(ck.JobGenerator):
 
         return(ComboHolder,
 
-               [globalSkill.maple_heros(chtr.level, name=ZeroSkills.RhinnesProtection, combat_level=0), globalSkill.useful_sharp_eyes(), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
-                DivineAura, AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, RhinneBless,
+               [globalSkill.maple_heros(chtr.level, name=ZeroSkills.RhinnesProtection, combat_level=0), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+                DivineForce, AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, RhinneBless,
                 DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, LimitBreakFinal, CriticalBind,
                 SoulContract] +
                [TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta, MirrorBreak, MirrorSpider] +

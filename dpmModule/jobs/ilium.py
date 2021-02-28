@@ -249,16 +249,16 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill(IlliumSkills.GauntletFrenzy, 0, 200*1000).wrap(core.BuffSkillWrapper)
         FastCharge = core.BuffSkill(IlliumSkills.FlashCrystalBattery, 30, 10000, cooltime = (120-5*self.combat)*1000, rem=True).wrap(core.BuffSkillWrapper)
         WraithOfGod = core.BuffSkill(IlliumSkills.DivineWrath, 0, 60000, pdamage = 10, cooltime = 120000).wrap(core.BuffSkillWrapper)
-        
+
         Craft_Orb = core.DamageSkill(IlliumSkills.RadiantOrb, 390, 300+4*self.combat, 1).wrap(core.DamageSkillWrapper)
-        Reaction_Domination = core.DamageSkill(IlliumSkills.ReactionDomination, 0, 550, 2, cooltime = 4000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        Reaction_Domination = core.DamageSkill(IlliumSkills.ReactionDomination, 0, 550 + 100 + self.combat*2, 2, cooltime = 4000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         Craft_Javelin_EnhanceBuff = core.BuffSkill(_("{}(자벨린 강화버프)").format(IlliumSkills.RadiantOrb), 0, 2000, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         Craft_Javelin = core.DamageSkill(IlliumSkills.RadiantJavelin, 390, 375 + 2*self.combat, 4 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Craft_Javelin_AfterOrb = core.DamageSkill(_("{}(오브 이후)").format(IlliumSkills.RadiantJavelin), 390, 375 + 2*self.combat, 4 * 3, modifier = core.CharacterModifier(pdamage = 20 + 15, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
         Craft_Javelin_Fragment = core.DamageSkill(_("{}(파편)").format(IlliumSkills.RadiantJavelin), 0, 130 + 2*self.combat, 2 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Reaction_Destruction = core.DamageSkill(IlliumSkills.ReactionDestruction, 0, 550, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 4000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        Reaction_Destruction = core.DamageSkill(IlliumSkills.ReactionDestruction, 0, 550 + 100 + self.combat*2, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 4000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         Craft_Longinus = core.DamageSkill(IlliumSkills.LonginusSpear, 600+180 +10*self.combat, 950, 8, cooltime = (15-self.combat//2)*1000).wrap(core.DamageSkillWrapper)  # Self-delay 600 + Javelin-of link cancellation 180. 자체딜레이 600 + 자벨린-오브 연계 취소 180.
         
@@ -297,8 +297,8 @@ class JobGenerator(ck.JobGenerator):
         SoulOfCrystal = SoulOfCrystalWrapper(core.BuffSkill(IlliumSkills.CrystallineSpirit, 510*2, 30*1000, cooltime=40*1000).isV(vEhc,1,0))
         SoulOfCrystalPassive = core.BuffSkill(_("{}(패시브)").format(IlliumSkills.CrystallineSpirit), 0, 999999999, att = (5+vEhc.getV(1,0)*2)).isV(vEhc,1,0).wrap(core.BuffSkillWrapper)
 
-        SoulOfCrystal_Reaction_Domination = core.DamageSkill(_("{}(소오크)").format(IlliumSkills.ReactionDomination), 0, 550 * 0.01 * (50 + vEhc.getV(1,0)), 2*2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        SoulOfCrystal_Reaction_Destruction = core.DamageSkill(_("{}(소오크)").format(IlliumSkills.ReactionDestruction), 0, 550 * 0.01 * (50 + vEhc.getV(1,0)), 4*2*2, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SoulOfCrystal_Reaction_Domination = core.DamageSkill(_("{}(소오크)").format(IlliumSkills.ReactionDomination), 0, (550 + 100 + self.combat*2) * 0.01 * (50 + vEhc.getV(1,0)), 2*2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        SoulOfCrystal_Reaction_Destruction = core.DamageSkill(_("{}(소오크)").format(IlliumSkills.ReactionDestruction), 0, (550 + 100 + self.combat*2) * 0.01 * (50 + vEhc.getV(1,0)), 4*2*2, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         SoulOfCrystal_Reaction_Spectrum = core.DamageSkill(_("{}(소오크)").format(IlliumSkills.ReactionSpectralBlast), 0, 1000+40*vEhc.getV(2,1), 5*2, modifier = core.CharacterModifier(boss_pdamage = 20)).wrap(core.DamageSkillWrapper)
 
         CrystalGate = core.BuffSkill(IlliumSkills.CrystalGate, 420*2, (130+vEhc.getV(0,0))*1000, cooltime=180*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)

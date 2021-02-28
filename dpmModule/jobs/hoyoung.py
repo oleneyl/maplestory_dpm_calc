@@ -94,6 +94,7 @@ class ChunJiInWrapper(core.GraphElement):
             _("인"): False
         }
         self.seed = 0
+        self.prev_element = None
 
     def _choice(self, arr):
         # return random.choice(arr)
@@ -102,6 +103,7 @@ class ChunJiInWrapper(core.GraphElement):
         return arr[idx]
 
     def _add_element(self, el):
+        self.prev_element = el
         if not self.ChunJiIn[el]:
             self.ChunJiIn[el] = True
         return self._result_object_cache
@@ -146,6 +148,15 @@ class ChunJiInWrapper(core.GraphElement):
     def choice_reset(self, skills: List[core.DamageSkillWrapper]):
         task = core.Task(self, partial(self._choice_reset, skills))
         return core.TaskHolder(task, name=_("속성 도술 쿨타임 초기화"))
+
+    def check_modifier(self, element):
+        if self.prev_element is None:
+            return core.CharacterModifier()
+
+        if self.prev_element != element:
+            return core.CharacterModifier(pdamage_indep=5)
+        else:
+            return core.CharacterModifier()
 
 
 class PausableBuffSkillWrapper(core.BuffSkillWrapper):
@@ -194,9 +205,10 @@ class JobGenerator(ck.JobGenerator):
         ThirdEye = core.InformedCharacterModifier(HoyoungSkills.ThirdEye, crit=30, crit_damage=10)
         FortuneFitness = core.InformedCharacterModifier(HoyoungSkills.FortuneFitness, stat_main=60)
         Asura = core.InformedCharacterModifier(HoyoungSkills.Asura, att=50, crit=10, crit_damage=20, boss_pdamage=20, armor_ignore=10)
-        AdvancedRitualFanMastery = core.InformedCharacterModifier(HoyoungSkills.AdvancedRitualFanMastery, att=40 + passive_level, pdamage_indep=35 + passive_level)
+        AdvancedRitualFanMastery = core.InformedCharacterModifier(HoyoungSkills.AdvancedRitualFanMastery, att=40 + passive_level, pdamage_indep=25 + passive_level // 2)
         Enlightenment = core.InformedCharacterModifier(HoyoungSkills.Enlightenment, pdamage=10 + ceil(passive_level/2))
         DragonsEye = core.InformedCharacterModifier(HoyoungSkills.DragonsEye, att=10 + passive_level, pdamage_indep=10 + passive_level, crit=10 + passive_level, crit_damage=10 + passive_level, armor_ignore=10 + passive_level)
+
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 0, 0)
 
         return [SpiritAffinity, FiendSeal, RitualFanMastery, ThirdEye, FortuneFitness, Asura, AdvancedRitualFanMastery, Enlightenment, DragonsEye, ReadyToDiePassive]
@@ -302,7 +314,7 @@ class JobGenerator(ck.JobGenerator):
         # A skill that replaces the phantom alter ego (algorithm implementation required). 환영 분신부를 대체하는 스킬 (알고리즘 구현 필요).
         # Can only be used during the duration of the illusionist, and the duration of the illusionist is not reduced while active. 환영 분신부 지속중에만 사용가능, 발동 중에는 환영 분신부의 지속시간이 감소하지 않음.
         Clone_Rampage = core.BuffSkill(HoyoungSkills.SageCloneRampage, 900, 30*1000, cooltime=200*1000, red=True).wrap(core.BuffSkillWrapper)
-        Clone_Rampage_Attack = core.DamageSkill(_("{}(공격)").format(HoyoungSkills.SageCloneRampage), 0, 60 + 60 + 110 + 2*passive_level + 200 + vEhc.getV(0, 0) * 8, 4 * 12, cooltime=1500, modifier=core.CharacterModifier(armor_ignore=25)).setV(vEhc, 0, 2, True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        Clone_Rampage_Attack = core.DamageSkill(_("{}(공격)").format(HoyoungSkills.SageCloneRampage), 0, 60 + 60 + 110 + 2*passive_level + 200 + vEhc.getV(0, 0) * 8, 4 * 10, cooltime=1500, modifier=core.CharacterModifier(armor_ignore=25)).setV(vEhc, 0, 2, True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         Clone_Rampage_Attack_Opt = core.OptionalElement(lambda : Clone_Rampage.is_active() and Clone_Rampage_Attack.is_available(), Clone_Rampage_Attack)
         Clone_Rampage_Attack.protect_from_running()
@@ -372,11 +384,20 @@ class JobGenerator(ck.JobGenerator):
         for sk in [Pacho, Flames]:
             sk.onAfter(AddChun)
 
+        for sk in [Pacho, Pacho_Clone, Flames, Flames_Clone]:
+            sk.add_runtime_modifier(ChunJiIn, lambda sk: sk.check_modifier("천"))
+
         for sk in [Topa, EarthQuake]:
             sk.onAfter(AddJi)
 
+        for sk in [Topa, Topa_Clone, EarthQuake, EarthQuake_Clone]:
+            sk.add_runtime_modifier(ChunJiIn, lambda sk: sk.check_modifier("지"))
+
         for sk in [YeoUiSeon, GeumGoBong]:
             sk.onAfter(AddIn)
+
+        for sk in [YeoUiSeon, GeumGoBong, GeumGoBong_2]:
+            sk.add_runtime_modifier(ChunJiIn, lambda sk: sk.check_modifier(_("인")))
 
         # Amulet swordsmanship. 부적 도술.
         TalismanConstraint = core.ConstraintElement(f"{HoyoungSkills.TalismanEnergy} 100", TalismanEnergy, partial(TalismanEnergy.judge, 100, 1))
@@ -437,7 +458,7 @@ class JobGenerator(ck.JobGenerator):
                 base.onAfter(opt)
 
         # Extra strokes are counted for the superpowers. 추가타가 괴력난신 카운트에 들어감.
-        for sk, stack in [(Talisman_Clone_Attack, 3), (Clone_Rampage_Attack, 12), (Butterfly_Dream_Attack, 5), (Elemental_Clone_Active, 1), (Elemental_Clone_Passive, 1)]:
+        for sk, stack in [(Talisman_Clone_Attack, 3), (Clone_Rampage_Attack, 10), (Butterfly_Dream_Attack, 5), (Elemental_Clone_Active, 1), (Elemental_Clone_Passive, 1)]:
             sk.onAfter(core.OptionalElement(Nansin.is_active, Nansin_Stack.stackController(stack)))
             sk.onAfter(Nansin_Attack_Opt)
 

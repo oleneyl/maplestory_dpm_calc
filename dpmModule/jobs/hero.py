@@ -204,7 +204,7 @@ class JobGenerator(ck.JobGenerator):
         EpicAdventure = core.BuffSkill(HeroSkills.EpicAdventure, 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
         #Damage Skills
-        Panic = core.DamageSkill(HeroSkills.Panic, 720, 1150, 1, cooltime = 40000).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        Panic = core.DamageSkill(HeroSkills.Panic, 630, 1150, 1, cooltime = 40000).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         PanicBuff = core.BuffSkill(_("{}(디버프)").format(HeroSkills.Panic), 0, 40000, cooltime = -1, pdamage_indep = 25, rem = False).wrap(core.BuffSkillWrapper)
         
         RagingBlow = core.DamageSkill(HeroSkills.RagingBlow, 600, 200 + 3*self.combat, 8, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)

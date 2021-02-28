@@ -176,7 +176,7 @@ class JobGenerator(ck.JobGenerator):
 
         DemonImpact = core.DamageSkill(DemonSlayerSkills.DemonImpact, 660, 460+4*self.combat, 6+1, modifier=core.CharacterModifier(crit=100, armor_ignore=30+ceil(self.combat/3), boss_pdamage=40+self.combat, pdamage=20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
-        DevilCry = core.DamageSkill(DemonSlayerSkills.DemonCry, 1260, 515+5*self.combat, 7, cooltime=20*1000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)   # Required to use for Evil Torch. 이블 토쳐 위해 사용필수.
+        DevilCry = core.DamageSkill(DemonSlayerSkills.DemonCry, 990, 515+5*self.combat, 7, cooltime=20*1000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)   # Required to use for Evil Torch. 이블 토쳐 위해 사용필수.
         DevilCryBuff = core.BuffSkill(_("{}(위협)").format(DemonSlayerSkills.DemonCry), 0, 20000, cooltime=-1, armor_ignore=15+self.combat//3).wrap(core.BuffSkillWrapper)
 
         InfinityForce = core.BuffSkill(DemonSlayerSkills.BoundlessRage, 990, (50+10*(self.combat//5))*1000, cooltime=(200-self.combat)*1000, rem=True, red=True).wrap(core.BuffSkillWrapper)
@@ -185,7 +185,7 @@ class JobGenerator(ck.JobGenerator):
         MetamorphosisSummon_BB = core.DamageSkill(_("{}(블블)").format(DemonSlayerSkills.DarkMetamorphosis), 0, (250+5*self.combat)*0.9, 1, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
         # Blue Blood cannot be applied to a pet. 블루블러드는 소환수 적용이 안됨.
-        BlueBlood = core.BuffSkill(DemonSlayerSkills.BlueBlood, 1020, 60000, cooltime=120000-60000).wrap(core.BuffSkillWrapper)  # In all attacks, an additional hit occurs at 90% of the final damage -3 seconds when receiving 50 Force, 2 seconds every 4 seconds when receiving Infinity Force, reducing all skill force consumption by 20%. 모든 공격에 최종데미지의 90%로 추가타 발생. 포스50수급시 -3초, 인피니티 포스시 4초마다 2초 감소, 모든 스킬 포스소모량 20%감소.
+        BlueBlood = core.BuffSkill(DemonSlayerSkills.BlueBlood, 750, 60000, cooltime=120000-60000).wrap(core.BuffSkillWrapper)  # In all attacks, an additional hit occurs at 90% of the final damage -3 seconds when receiving 50 Force, 2 seconds every 4 seconds when receiving Infinity Force, reducing all skill force consumption by 20%. 모든 공격에 최종데미지의 90%로 추가타 발생. 포스50수급시 -3초, 인피니티 포스시 4초마다 2초 감소, 모든 스킬 포스소모량 20%감소.
         Cerberus = core.DamageSkill(DemonSlayerSkills.CerberusChomp, 690, 450, 6, cooltime=5000, modifier=core.CharacterModifier(boss_pdamage=50, armor_ignore=50)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 포스50 추가흡수
         CerberusAuto = core.DamageSkill(_("{}(자동)").format(DemonSlayerSkills.CerberusChomp), 0, 450, 6, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=50, armor_ignore=50)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 포스50 추가흡수
         DemonFortitude = core.BuffSkill(DemonSlayerSkills.DemonicFortitude, 0, 60000, cooltime=120000).wrap(core.BuffSkillWrapper)
@@ -193,7 +193,7 @@ class JobGenerator(ck.JobGenerator):
         CallMastema = demon.CallMastemaWrapper(vEhc, 4, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
-        DemonAwakning = core.BuffSkill(DemonSlayerSkills.DemonAwakening, 1110, (35+vEhc.getV(0, 0))*1000, cooltime=120*1000, red=True, crit=(50+vEhc.getV(0, 0)//2)).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
+        DemonAwakning = core.BuffSkill(DemonSlayerSkills.DemonAwakening, 870, (35+vEhc.getV(0, 0))*1000, cooltime=120*1000, red=True, crit=(50+vEhc.getV(0, 0)//2)).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
         DemonAwakningSummon = core.SummonSkill(_("{}(더미)").format(DemonSlayerSkills.DemonAwakening), 0, 8000, 0, 0, (35+vEhc.getV(0, 0))*1000, cooltime=-1).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         SpiritOfRage = core.SummonSkill(DemonSlayerSkills.SpiritofRage, 810, 1080, (850+34*vEhc.getV(3, 3)), 12, (10+vEhc.getV(3, 3)//5)*1000, cooltime=(120-vEhc.getV(3, 3)//2)*1000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc, 3, 3).wrap(core.SummonSkillWrapper)

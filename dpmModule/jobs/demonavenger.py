@@ -138,7 +138,7 @@ class JobGenerator(ck.JobGenerator):
         HP_RATE = options.get('hp_rate', 100)
 
         # Increases final damage by 1% per 3% HP consumed (4% at 24 levels) compared to the maximum HP. 최대 HP 대비 소모된 HP 3%(24레벨가지는 4%)당 최종 데미지 1% 증가.
-        FrenzyPassive = core.InformedCharacterModifier(_("{}(최종 데미지)").format(DemonAvengerSkills.DemonicFrenzy), pdamage_indep=(100-HP_RATE)//(4-(vEhc.getV(0, 0)//25)))
+        FrenzyPassive = core.InformedCharacterModifier(_("{}(최종 데미지)").format(DemonAvengerSkills.DemonicFrenzy), pdamage_indep=min((100 - HP_RATE) // (3 - (vEhc.getV(0, 0) // 25)), 35))
 
         return [WeaponConstant, Mastery, FrenzyPassive]
 
@@ -196,7 +196,7 @@ class JobGenerator(ck.JobGenerator):
         # Up to 10 attacks. 최대 10회 공격.
         ShieldChasing = core.DamageSkill(DemonAvengerSkills.NetherShield, 720, 500+10*self.combat, 2*2*(8+2), cooltime=6000, modifier=core.CharacterModifier(armor_ignore=30+passive_level, pdamage=20+20), red=True).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
 
-        ArmorBreak = core.DamageSkill(DemonAvengerSkills.NetherSlice, 720, 350+5*self.combat, 4, cooltime=-1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
+        ArmorBreak = core.DamageSkill(DemonAvengerSkills.NetherSlice, 660, 350+5*self.combat, 4, cooltime=-1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         ArmorBreakBuff = core.BuffSkill(_("{}(디버프)").format(DemonAvengerSkills.NetherSlice), 0, (30+self.combat)*1000, armor_ignore=30+self.combat).wrap(core.BuffSkillWrapper)
 
         # ThousandSword = core.Damageskill(DemonAvengerSkills.ThousandSwords, 0, 500, 8, cooltime = 8*1000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
@@ -232,7 +232,7 @@ class JobGenerator(ck.JobGenerator):
         # Default 4000ms. 기본 4000ms.
         # Adjusted to trigger every 2 Accu. 엑큐 2번당 발동하도록 조정.
         REVENANT_COOLTIME = 1080
-        Revenant = core.BuffSkill(DemonAvengerSkills.Revenant, 1530, (30+vEhc.getV(0, 0)//5)*1000, cooltime=300*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
+        Revenant = core.BuffSkill(DemonAvengerSkills.Revenant, 1530, 30*1000, cooltime=240*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
         RevenantHit = core.DamageSkill(_("{}(분노의 가시)").format(DemonAvengerSkills.Revenant), 0, 300+vEhc.getV(0, 0)*12, 9, cooltime=REVENANT_COOLTIME, modifier=core.CharacterModifier(armor_ignore=30), red=False).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         # Demon 5th common. 데몬 5차 공용.

@@ -235,8 +235,8 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill(CadenaSkills.WeaponBooster, 0, 200000).wrap(core.BuffSkillWrapper)
         SpecialPotion = core.BuffSkill(CadenaSkills.ShadowdealersElixir, 570, 60*1000, pdamage=10, crit=10, cooltime=120*1000).wrap(core.BuffSkillWrapper)  # Only Cadena has a delay. 카데나만 딜레이있음.
 
-        ProfessionalAgent = core.BuffSkill(CadenaSkills.VeteranShadowdealer, 570, 30000, cooltime=200000).wrap(core.BuffSkillWrapper)
-        ProfessionalAgentAdditionalDamage = core.DamageSkill(_("{}(공격)").format(CadenaSkills.VeteranShadowdealer), 0, 255, 2).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        ProfessionalAgent = core.BuffSkill(CadenaSkills.VeteranShadowdealer, 570, 30000, cooltime=180000).wrap(core.BuffSkillWrapper)
+        ProfessionalAgentAdditionalDamage = core.DamageSkill(_("{}(공격)").format(CadenaSkills.VeteranShadowdealer), 0, 255, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         ProfessionalAgent_Attack = core.OptionalElement(ProfessionalAgent.is_active, ProfessionalAgentAdditionalDamage, name=_("{} 추가타").format(CadenaSkills.VeteranShadowdealer))
 
         # Add weapon variety. 웨폰버라이어티 추가타.

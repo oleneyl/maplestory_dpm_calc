@@ -272,7 +272,7 @@ class JobGenerator(ck.JobGenerator):
         # No delay in Wickham R. 위컴알에 딜레이 없음.
         ExtraSupply = core.BuffSkill(XenonSkills.EmergencyResupply, 0, 1, cooltime=30000, red=True).wrap(core.BuffSkillWrapper)
 
-        OOPArtsCode = core.BuffSkill(XenonSkills.OOPArtsCode, 990, (30+self.combat//2)*1000, pdamage_indep=25+self.combat//2, boss_pdamage=30+self.combat, rem=True).wrap(core.BuffSkillWrapper)
+        OOPArtsCode = core.BuffSkill(XenonSkills.OOPArtsCode, 600, (30+self.combat//2)*1000, pdamage_indep=25+self.combat//2, boss_pdamage=30+self.combat, rem=True).wrap(core.BuffSkillWrapper)
 
         # Damage skills
 
@@ -285,18 +285,16 @@ class JobGenerator(ck.JobGenerator):
         # Stacks with a 30% probability, stacks 3 stacks, and then disappears when attacking. 30%확률로 중첩 쌓임, 3중첩 쌓은 후 공격시 터지면서 사라지도록.
         Triangulation = core.DamageSkill(XenonSkills.Triangulation, 0, 340, 3, cooltime=-1).setV(vEhc, 0, 3, True).wrap(core.DamageSkillWrapper)
 
-        PurgeSnipe = core.DamageSkill(XenonSkills.MechaPurgeSnipe, 690, 345 + 2*self.combat, 7, modifier=core.CharacterModifier(armor_ignore=30 + self.combat) + core.CharacterModifier(pdamage=20, armor_ignore=10)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        PurgeSnipe = core.DamageSkill(XenonSkills.MechaPurgeSnipe, 660, 345 + 2*self.combat, 7, modifier=core.CharacterModifier(armor_ignore=30 + self.combat) + core.CharacterModifier(pdamage=20, armor_ignore=10)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         # Force field criteria. 역장 기준.
         # 3 types of hyper applied. 하이퍼 3종 적용.
         Hologram_Penetrate = core.SummonSkill(XenonSkills.HypogramFieldPenetrate, 720, 30000/116, 213+3*self.combat, 1, 20000+10000, cooltime=30000-1000*ceil(self.combat/3), modifier=core.CharacterModifier(pdamage=10), red=True).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
         Hologram_ForceField = core.SummonSkill(XenonSkills.HypogramFieldForceField, 720, 30000/64, 400+5*self.combat, 1, 20000+10000, cooltime=30000-1000*ceil(self.combat/3), modifier=core.CharacterModifier(pdamage=10), red=True).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
 
-
-        # BladeDancingPrepare = core.DamageSkill(_("{}(준비)").format(XenonSkills.BeamDance), 720 + 420, 0, 0).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        # BladeDancing = core.DamageSkill(XenonSkills.BeamDance, 480, 140+4*self.combat, 1).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        # BladeDancingPrepare = core.DamageSkill(_("{}(준비)").format(XenonSkills.BeamDance), 360, 0, 0).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        # BladeDancing = core.DamageSkill(XenonSkills.BeamDance, 120, 260+4*self.combat, 1).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         # BladeDancingEnd = core.DamageSkill(_("{}(종료)").format(XenonSkills.BeamDance), 300, 0, 0).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-
 
         # Hyper skills
         AmaranthGenerator = core.BuffSkill(XenonSkills.AmaranthGenerator, 900, 10000, cooltime=90000, rem=False).wrap(core.BuffSkillWrapper)  # 에너지 최대치, 10초간 에너지 소모 없음

@@ -171,7 +171,7 @@ class JobGenerator(ck.JobGenerator):
 
         # Hyper. 하이퍼.
         BoolsEye = core.BuffSkill(f"{MarksmanSkills.BullseyeShot}({PhantomSkills.ImpeccableMemoryH})", 960, 30 * 1000, cooltime=180 * 1000, crit=20, crit_damage=10, armor_ignore=20, pdamage=20).wrap(core.BuffSkillWrapper)
-        Preparation = core.BuffSkill(f"{BowmasterSkills.Concentration}({PhantomSkills.ImpeccableMemoryH})", 900, 30 * 1000, cooltime=120 * 1000, att=50, boss_pdamage=20).wrap(core.BuffSkillWrapper)
+        Preparation = core.BuffSkill(f"{BowmasterSkills.Concentration}({PhantomSkills.ImpeccableMemoryH})", 540, 30 * 1000, cooltime=120 * 1000, att=50, boss_pdamage=20).wrap(core.BuffSkillWrapper)
 
         ##### Phantom skills #####
 
@@ -179,7 +179,7 @@ class JobGenerator(ck.JobGenerator):
 
         Booster = core.BuffSkill(PhantomSkills.CaneBooster, 0, 240 * 1000, rem=True).wrap(core.BuffSkillWrapper)    # I don't know the delay. 딜레이 모름.
 
-        MileAiguilles = core.DamageSkill(PhantomSkills.MilleAiguilles, 150, 125 + self.combat, 3, modifier=core.CharacterModifier(pdamage=20, armor_ignore=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        MileAiguilles = core.DamageSkill(PhantomSkills.MilleAiguilles, 150, 140 + self.combat, 3, modifier=core.CharacterModifier(pdamage=20, armor_ignore=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         CarteNoir = core.DamageSkill(PhantomSkills.CarteNoir, 0, 270, min(chtr.get_modifier().crit/100 + 0.1, 1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         Judgement = core.DamageSkill(f"{PhantomSkills.CarteNoir}({PhantomSkills.JudgmentDraw})", 0, 270, 10).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)

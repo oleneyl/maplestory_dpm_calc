@@ -209,8 +209,7 @@ class JobGenerator(ck.JobGenerator):
         Infinite-Restore-Ruin-Maserful-Ora Weapon-(Baos)
 
         하이퍼스킬
-        트리거-리인포스
-        노빌리티-실드 리인포스
+        트리거-리인포스, 보스 킬러
         레조넌스-엑스트라 힐링
         테리토리-퍼시스트
         블로섬-쿨타임 리듀스
@@ -253,7 +252,7 @@ class JobGenerator(ck.JobGenerator):
             lambda order: order.get_stack() * 0.8
         )  # Bring up the knife. Linked to Blossom, assuming about 600ms to gather. 칼 불러오기. 블라섬과 연계됨, 모이는데 약 600ms 가정
 
-        Divide = core.DamageSkill(AdeleSkills.Cleave, 600, 375 + self.combat * 3, 6, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  # Trigger skill, claw speed 780ms. 트리거 스킬, 클라공속 780ms.
+        Divide = core.DamageSkill(AdeleSkills.Cleave, 600, 375 + self.combat * 3, 6, modifier=core.CharacterModifier(pdamage=20, boss_pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  # Trigger skill, claw speed 780ms. 트리거 스킬, 클라공속 780ms.
 
         Grave = core.DamageSkill(AdeleSkills.GraveProclamation, 630, 800 + self.combat * 20, 10, cooltime=90000, red=True).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  # 840ms. 클라공속 840ms.
         GraveDebuff = core.BuffSkill(_("{}(디버프)").format(AdeleSkills.GraveProclamation), 0, 999999999, pdamage=20, armor_ignore=10, cooltime=-1).wrap(core.BuffSkillWrapper)

@@ -128,7 +128,7 @@ class JobGenerator(ck.JobGenerator):
 
         #Buff skills
         NimbleFinger = core.BuffSkill(DawnWarriorSkills.SoulSpeed, 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
-        TrueSight = core.BuffSkill(DawnWarriorSkills.TrueSight, 990, 30 * 1000, armor_ignore = 10+10, pdamage_indep = 5).wrap(core.BuffSkillWrapper) # 내성무시는 not_implied_skill_list에 있음.
+        TrueSight = core.BuffSkill(DawnWarriorSkills.TrueSight, 600, 30 * 1000, armor_ignore = 10+10, pdamage_indep = 5).wrap(core.BuffSkillWrapper) # 내성무시는 not_implied_skill_list에 있음.
         SolunaTime = core.BuffSkill(DawnWarriorSkills.EquinoxCycle, 0, (200+6*self.combat) * 1000, rem = True, crit = 35 + passive_level // 2, pdamage_indep = 25, att = 45+passive_level+passive_level//2).wrap(core.BuffSkillWrapper)  # 딜레이 없음.
         SoulForge = core.BuffSkill(DawnWarriorSkills.SoulForge, 0, 180 * 1000, att = 50, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
         GloryOfGuardians = core.BuffSkill(DawnWarriorSkills.GloryoftheGuardians, 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
@@ -145,12 +145,12 @@ class JobGenerator(ck.JobGenerator):
         
         # Elysion 38 hits / 3 hits. 엘리시온 38타 / 3타.
         Elision = core.BuffSkill(DawnWarriorSkills.RiftofDamnation, 750, 30 * 1000, cooltime = 180 * 1000, red=True).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)    # Cast delay 750ms. 시전딜레이 750ms.
-        ElisionBreak = core.SummonSkill(_("{}(균열)").format(DawnWarriorSkills.RiftofDamnation), 0, 10000, 520 + 21*vEhc.getV(1,1), 5 * 12, 30000, cooltime=-1).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)    # Triggers 3 times. 3회 발동.
+        ElisionBreak = core.SummonSkill(_("{}(균열)").format(DawnWarriorSkills.RiftofDamnation), 0, (750 * 6 + 5000), 520 + 21*vEhc.getV(1,1), 5 * 6 * 2, (750 * 6 + 5000) * 4 - 1, cooltime=-1, modifier = FallingMoon).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)    # Triggers 3 times. 3회 발동.
         ElisionStyx = core.DamageSkill(f"{DawnWarriorSkills.StyxCrossing}({DawnWarriorSkills.RiftofDamnation})", 750, 580/2, 5 * 5 * 2, modifier = FallingMoon).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 40 reps. 40회 반복.
         
         # Soul Eclipse. 소울 이클립스.
-        SoulEclipse = core.SummonSkill(DawnWarriorSkills.SoulEclipse, 630, 1000, 450 + 18 * vEhc.getV(3,3), 7, 30 * 1000, cooltime = 180 * 1000, red=True).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
-        SolunaDivide = core.DamageSkill(_("솔루나 디바이드"), 750, 1250 + 50 * vEhc.getV(3,3), 15 * 5, cooltime = -1).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
+        SoulEclipse = core.SummonSkill(DawnWarriorSkills.SoulEclipse, 270, 1000, 450 + 18 * vEhc.getV(3,3), 7, 30 * 1000, cooltime = 180 * 1000, red=True).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
+        SolunaDivide = core.DamageSkill(_("솔루나 디바이드"), 750 - 300, 1250 + 50 * vEhc.getV(3,3), 15 * 5, cooltime = -1).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
 
         FlareSlash = core.DamageSkill(DawnWarriorSkills.FlareSlash, 0, 550+22*vEhc.getV(0,0), 7*2, cooltime=12000, modifier=FallingMoon).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
