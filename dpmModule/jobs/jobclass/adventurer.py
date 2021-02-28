@@ -1,5 +1,6 @@
 from ...kernel import core
 from functools import partial
+import random
 
 # 모험가 및 모험가 직업 공용 5차스킬 통합코드
 
@@ -86,8 +87,9 @@ class UnstableMemorizeWrapper(core.DamageSkillWrapper):
         for k in self.stacks:
             self.stacks[k] += self.weights[k]
 
-        nextId = sorted(self.stacks.items(), key=lambda x: x[1], reverse=True)[0][0]
-        self.stacks[nextId] -= self.weight_total
+        nextId = random.choices(list(self.weights.keys()), weights=list(self.weights.values()), k=1)[0]
+        # nextId = sorted(self.stacks.items(), key=lambda x: x[1], reverse=True)[0][0]
+        # self.stacks[nextId] -= self.weight_total
 
         skill = self.skills[nextId]
         task = core.Task(skill, partial(self._indirect_use, skill, self.skill_modifier))
