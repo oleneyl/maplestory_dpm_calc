@@ -9,7 +9,7 @@ _ = gettext.gettext
 class AdventurerSkills:
     FuryoftheWild = _("이볼브")  # "Fury of the Wild" Taken from https://maplestory.fandom.com/wiki/Fury_of_the_Wild
     BlitzShield = _("블리츠 실드")  # "Blitz Shield" Taken from https://maplestory.fandom.com/wiki/Blitz_Shield
-    PiratesBanner = _("파이렛 플래그")  # "Pirate"s Banner" Taken from https://maplestory.fandom.com/wiki/Pirate%27s_Banner
+    PiratesBanner = _("파이렛 플래그")  # "Pirate's Banner" Taken from https://maplestory.fandom.com/wiki/Pirate%27s_Banner
     UnreliableMemory = _("언스테이블 메모라이즈")  # "Unreliable Memory" Taken from https://maplestory.fandom.com/wiki/Unreliable_Memory
     Infinity = _("인피니티")  # "Infinity" Taken from https://maplestory.fandom.com/wiki/Infinity
 

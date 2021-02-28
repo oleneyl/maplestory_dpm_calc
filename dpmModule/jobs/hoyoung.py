@@ -75,7 +75,7 @@ class HoyoungSkills:
     DragonsEye = _("점정")  # "Dragon's Eye"
     # Hypers
     SageTaiYusMiracleTonic = _("선기 : 영약 태을선단")  # "Sage: Tai Yu's Miracle Tonic"
-    SageDreamofShangriLa = _("선기 : 몽유도원")  # "Sage: Dream of Shangri-La"
+    SageDreamofShangriLa = _("선기: 몽유도원")  # "Sage: Dream of Shangri-La"
     SageTaiYuClone = _("선기 : 분신 둔갑 태을선인")  # "Sage: Tai Yu Clone"
     # 5th Job
     SageCloneRampage = _("선기 : 극대 분신난무")  # "Sage: Clone Rampage"

@@ -55,9 +55,9 @@ class CadenaSkills:
     WeaponsExpert = _("웨폰 엑스퍼트")  # "Weapons Expert"
     WisdomofShadowsII = _("퀵서비스 마인드 Ⅱ")  # "Wisdom of Shadows II"
     # Hypers
-    ChainArtsCrush = _("체인아츠:크러시")  # " Chain Arts: Crush"
-    ShadowdealersElixir = _("상인단 특제 비약")  # " Shadowdealer's Elixir"
-    VeteranShadowdealer = _("프로페셔널 에이전트")  # " Veteran Shadowdealer"
+    ChainArtsCrush = _("체인아츠:크러시")  # "Chain Arts: Crush"
+    ShadowdealersElixir = _("상인단 특제 비약")  # "Shadowdealer's Elixir"
+    VeteranShadowdealer = _("프로페셔널 에이전트")  # "Veteran Shadowdealer"
     # 5th Job
     VenomBurst = _("베놈 버스트")  # "Venom Burst"
     ChainArtsVoidStrike = _("체인아츠:퓨리")  # "Chain Arts: Void Strike"

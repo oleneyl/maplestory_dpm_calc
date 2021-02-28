@@ -61,9 +61,9 @@ class IlliumSkills:
     UmbralBrandIII = _("커스 마크 완성")  # "Umbral Brand III"
     WisdomoftheCrystal = _("크리스탈의 비밀")  # "Wisdom of the Crystal"
     # Hypers
-    CrystallineBulwark = _("프라이멀 프로텍션")  # " Crystalline Bulwark"
-    LonginusZone = _("롱기누스 존")  # " Longinus Zone"
-    DivineWrath = _("레이스 오브 갓")  # " Divine Wrath"
+    CrystallineBulwark = _("프라이멀 프로텍션")  # "Crystalline Bulwark"
+    LonginusZone = _("롱기누스 존")  # "Longinus Zone"
+    DivineWrath = _("레이스 오브 갓")  # "Divine Wrath"
     # 5th Job
     CrystalIgnition = _("크리스탈 이그니션")  # "Crystal Ignition"
     ReactionSpectralBlast = _("리액션:스펙트럼")  # "Reaction - Spectral Blast"
@@ -262,7 +262,7 @@ class JobGenerator(ck.JobGenerator):
         
         Craft_Longinus = core.DamageSkill(IlliumSkills.LonginusSpear, 600+180 +10*self.combat, 950, 8, cooltime = (15-self.combat//2)*1000).wrap(core.DamageSkillWrapper)  # Self-delay 600 + Javelin-of link cancellation 180. 자체딜레이 600 + 자벨린-오브 연계 취소 180.
         
-        Riyo = RiyoWrapper(core.SummonSkill(_("리요"), 0, 510, 240, 1, 180000).setV(vEhc, 3, 2, False))  # After initial use, it is always refilled without delay at the end of deus. 최초 사용 이후로는 항상 데우스 종료때 딜레이 없이 리필됨.
+        Riyo = RiyoWrapper(core.SummonSkill(IlliumSkills.Ex, 0, 510, 240, 1, 180000).setV(vEhc, 3, 2, False))  # After initial use, it is always refilled without delay at the end of deus. 최초 사용 이후로는 항상 데우스 종료때 딜레이 없이 리필됨.
         Machina = core.SummonSkill(IlliumSkills.Machina, 0, 1980, 250, 4, 180000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)    # After initial use, it is always refilled without delay at the end of deus. 최초 사용 이후로는 항상 데우스 종료때 딜레이 없이 리필됨.
         
         CrystalSkill_MortalSwing = core.DamageSkill(IlliumSkills.CrystalSkillVortexofLight, 0, 600 + 2* passive_level, 10, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)    #30

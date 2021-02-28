@@ -62,7 +62,7 @@ def useful_advanced_bless(slevel=1):
 # Will Node Cast
 class MirrorBreakWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc, num1, num2, modifier) -> None:
-        skill = core.DamageSkill(_('{}(공간 붕괴)').format(GlobalSkills.TrueArachnidReflection), 720, 450 + 18 * vEhc.getV(num1, num2), 15, cooltime=250 * 1000, red=True, modifier=modifier).isV(vEhc, num1, num2)
+        skill = core.DamageSkill(_("{}(공간 붕괴)").format(GlobalSkills.TrueArachnidReflection), 720, 450 + 18 * vEhc.getV(num1, num2), 15, cooltime=250 * 1000, red=True, modifier=modifier).isV(vEhc, num1, num2)
         super(MirrorBreakWrapper, self).__init__(skill)
 
     def ensure(self, chtr: AbstractCharacter) -> bool:
@@ -74,7 +74,7 @@ class MirrorSpiderWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, modifier) -> None:
         self.delays = [900, 850, 750, 650, 5730]  # 400001039. Delay taken from summonedSequenceAttack, 5730ms of open eyes after 5th attack. 400001039.summonedSequenceAttack에서 가져온 딜레이, 5회째 공격 후 눈 감고뜨는 시간 5730ms.
         self.hit_count = 0
-        skill = core.SummonSkill(_('{}(거울 속의 거미)').format(GlobalSkills.TrueArachnidReflection), 0, 900, 175 + 7 * vEhc.getV(num1, num2), 8, 50 * 1000, cooltime=-1, modifier=modifier).isV(vEhc, num1, num2)
+        skill = core.SummonSkill(_("{}(거울 속의 거미)").format(GlobalSkills.TrueArachnidReflection), 0, 900, 175 + 7 * vEhc.getV(num1, num2), 8, 50 * 1000, cooltime=-1, modifier=modifier).isV(vEhc, num1, num2)
         super(MirrorSpiderWrapper, self).__init__(skill)
 
     def _useTick(self) -> core.ResultObject:
@@ -154,13 +154,13 @@ def CrestOfTheSolarBuilder(enhancer, skill_importance, enhance_importance, modif
 # Unfinished code. 미완성 코드.
 def useful_hyper_body_demonavenger(slevel=1):
     # Based on delay clas. 딜레이 클라기준.
-    return core.BuffSkill(_('{}(데몬어벤져)').format(GlobalSkills.DecentHyperBody), 600, usefulSkillRemain(slevel),
+    return core.BuffSkill(_("{}(데몬어벤져)").format(GlobalSkills.DecentHyperBody), 600, usefulSkillRemain(slevel),
                           pstat_main=40, stat_sub=passiveStat(slevel), rem=False
                           ).wrap(core.BuffSkillWrapper)
 
 
 def useful_hyper_body_xenon(slevel=1):
     # Manapup treatment in the job code. 마나뻥 처리는 직업코드에서.
-    return core.BuffSkill(_('{}(제논)').format(GlobalSkills.DecentHyperBody), 600, usefulSkillRemain(slevel),
+    return core.BuffSkill(_("{}(제논)").format(GlobalSkills.DecentHyperBody), 600, usefulSkillRemain(slevel),
                           stat_main=passiveStat(slevel), stat_sub=passiveStat(slevel), rem=False
                           ).wrap(core.BuffSkillWrapper)

@@ -67,8 +67,8 @@ class ArkSkills:
     BattleFrenzy = _("전투 광란")  # "Battle Frenzy"
     # Hypers
     ChargeSpellAmplifier = _(" 차지 스펠 앰플리피케이션")  # "Charge Spell Amplifier"
-    EndlessAgony = _(" 끝없는 고통")  # " Endless Agony"
-    DivineWrath = _("레이스 오브 갓")  # " Divine Wrath"
+    EndlessAgony = _(" 끝없는 고통")  # "Endless Agony"
+    DivineWrath = _("레이스 오브 갓")  # "Divine Wrath"
     # 5th Job
     AbyssalRecall = _("근원의 기억")  # "Abyssal Recall"
     InfinitySpell = _("인피니티 스펠")  # "Infinity Spell"

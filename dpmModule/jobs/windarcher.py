@@ -52,7 +52,7 @@ class WindArcherSkills:
     EmeraldDust = _("에메랄드 더스트")  # "Emerald Dust"
     AlbatrossMax = _("알바트로스 맥시멈")  # "Albatross Max"
     # Hypers
-    Monsoon = _("몬순")  # " Monsoon"
+    Monsoon = _("몬순")  # "Monsoon"
     GloryoftheGuardians = _("글로리 오브 가디언즈")  # "Glory of the Guardians"
     StormBringer = _("스톰 브링어")  # "Storm Bringer"
     # 5th Job

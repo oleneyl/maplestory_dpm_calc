@@ -32,7 +32,7 @@ class AdeleSkills:
     AetherCrystal = _("에테르 결정")  # "Aether Crystal"
     Skewering = _("펀토")  # "Skewering"
     AetherForge = _("크리에이션")  # "Aether Forge"
-    Impale = _("??")  # "Impale"
+    # Impale = _("??")  # "Impale"
     ResonanceRush = _("레조넌스")  # "Resonance Rush"
     AetherialArms = _("원더")  # "Aetherial Arms"
     WeaveInfusion = _("부채 가속")  # "Weave Infusion"
