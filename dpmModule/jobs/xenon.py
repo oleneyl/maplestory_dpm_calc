@@ -113,6 +113,44 @@ class SupplyStackWrapper(core.StackSkillWrapper):
         return core.TaskHolder(core.Task(self, self.end_amaranth), name="아마란스 제너레이터 종료")
 
 
+class PhotonRayWrapper(core.BuffSkillWrapper):
+    def __init__(self, skill):
+        super(PhotonRayWrapper, self).__init__(skill)
+        self.aim = 0
+        self.max_aim = 30
+        self.aiming_time = 0
+        self.initial_aiming_time = 120
+        self.additional_aiming_time = 990
+
+        self.modifierInvariantFlag = True
+
+    def _use(self, skill_modifier):
+        self.aiming_time = self._get_aiming_time()
+        self.aim = 0
+        return super(PhotonRayWrapper, self)._use(skill_modifier)
+
+    def _get_aiming_time(self):
+        if self.aim < 15:
+            return self.initial_aiming_time
+        else:
+            return self.additional_aiming_time
+
+    def spend_time(self, time: float) -> None:
+        self.aiming_time -= time
+        while self.aiming_time <= 0:
+            self.aiming_time += self._get_aiming_time()
+            self.aim = min(self.aim + 1, self.max_aim)
+        return super(PhotonRayWrapper, self).spend_time(time)
+
+    def _add_aim(self):
+        self.aiming_time = self._get_aiming_time()
+        self.aim = min(self.aim + 1, self.max_aim)
+        return self._result_object_cache
+
+    def add_aim(self):
+        return core.TaskHolder(core.Task(self, self._add_aim), name="포톤 레이 조준")
+
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -234,7 +272,7 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
 
-        MegaSmasher = core.DamageSkill("메가 스매셔(개시)", 0, 0, 0, cooltime=180000, red=True).wrap(core.DamageSkillWrapper)
+        MegaSmasher = core.DamageSkill("메가 스매셔(개시)", 0, 0, 0, cooltime=180000, red=True).wrap(core.DamageSkillWrapper)  # TODO: implement charge and change cooltime
         MegaSmasherTick = core.DamageSkill("메가 스매셔(틱)", 210, 300+10*vEhc.getV(4, 4), 6, cooltime=-1).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
         OVERLOAD_TIME = 70
@@ -249,8 +287,12 @@ class JobGenerator(ck.JobGenerator):
         Hologram_Fusion_Buff = core.BuffSkill("홀로그램 그래피티 : 융합 (버프)", 0, 30000+10000, pdamage=5+vEhc.getV(4, 4)//2, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         # 30회 발동, 발사 딜레이 생략, 퍼지롭으로 충전
-        PhotonRay = core.BuffSkill("포톤 레이", 0, 20000, cooltime=35000, red=True).wrap(core.BuffSkillWrapper)
-        PhotonRayHit = core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4)*14, 4*30, cooltime=-1).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        PhotonRay = PhotonRayWrapper(core.BuffSkill("포톤 레이", 0, 20000, cooltime=35000, red=True))
+        PhotonRayHit = core.StackDamageSkillWrapper(
+            core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4)*14, 4, cooltime=-1).isV(vEhc, 4, 4),
+            PhotonRay,
+            lambda sk: sk.aim,
+        )
 
         ######   Skill Wrapper   ######
         SupplySurplus = SupplyStackWrapper(core.BuffSkill("서플러스 서플라이", 0, 999999999))
@@ -288,12 +330,13 @@ class JobGenerator(ck.JobGenerator):
         OverloadMode.onEventElapsed(OverloadHit, 5100)
         OverloadMode.onEventElapsed(OverloadHit_copy, 5100)
 
-        # 퍼지롭 15회 사용 후 포톤레이 발동, 최적화 필요
-        PhotonRay.onEventElapsed(PhotonRayHit, 690*15)
+        PhotonRayAim = core.OptionalElement(PhotonRay.is_active, PhotonRay.add_aim())
+        PhotonRayHit.onJustAfter(PhotonRay.controller(0, "set_disabled"))
 
         for sk in [PurgeSnipe, MeltDown, MegaSmasherTick]:
             sk.onJustAfter(TriangulationTrigger)
             sk.onJustAfter(PinpointRocketOpt)
+            sk.onJustAfter(PhotonRayAim)
             jobutils.create_auxilary_attack(sk, 0.7, nametag="(버추얼 프로젝션)")
 
         MeltDown.onJustAfter(MeltDown_Armor)
@@ -310,6 +353,13 @@ class JobGenerator(ck.JobGenerator):
         EnsureOOPArtsCode = core.OptionalElement(lambda: OverloadMode.is_active() and OOPArtsCode.is_time_left(16000, -1), OOPArtsCode)
         MegaSmasher.onBefore(EnsureOOPArtsCode)
 
+        PhotonRayAim.onJustAfter(
+            core.OptionalElement(
+                lambda: PhotonRay.is_active() and PhotonRay.aim < PhotonRay.max_aim,
+                PhotonRayHit
+            )
+        )
+
         return (
             PurgeSnipe,
             [
@@ -324,6 +374,7 @@ class JobGenerator(ck.JobGenerator):
                 VirtualProjection,
                 LuckyDice,
                 ExtraSupply,
+                PhotonRay,
                 OverloadMode,
                 AmaranthGenerator,
                 OOPArtsCode,
@@ -339,7 +390,6 @@ class JobGenerator(ck.JobGenerator):
                 Hologram_ForceField,
             ]
             + [
-                PhotonRay,
                 MirrorBreak,
                 MirrorSpider,
                 MegaSmasher,
@@ -353,7 +403,6 @@ class JobGenerator(ck.JobGenerator):
                 PinpointRocket,
                 Triangulation,
                 MegaSmasherTick,
-                PhotonRayHit,
             ]
             + [PurgeSnipe],
         )
