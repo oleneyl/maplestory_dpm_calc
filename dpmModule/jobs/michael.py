@@ -151,7 +151,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
-        for sk in [SoullightSlash, SoulAssult, DeadlyCharge, LoyalGuard_5, ShiningCross]:
+        for sk in [SoullightSlash, SoulAssult, DeadlyCharge, ShiningCross, ClauSolis]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
