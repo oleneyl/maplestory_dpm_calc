@@ -6,8 +6,8 @@ from typing import Any, Dict, List, Optional, Tuple
 from .constant import FINAL_DAMAGE_RATIO, MAX_DAMAGE_RESTRICTION, ARMOR_RATE
 from ..graph import DynamicVariableInstance, DynamicVariableOperation
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 class CharacterModifier:

@@ -1,7 +1,7 @@
 from typing import Any, Dict, NamedTuple
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 class Preset(NamedTuple):

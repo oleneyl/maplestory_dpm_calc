@@ -1,8 +1,8 @@
 from ...kernel import core
 from functools import partial
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 # Adventurer and adventurer job common 5th skill integration code. 모험가 및 모험가 직업 공용 5차스킬 통합코드.

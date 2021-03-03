@@ -11,8 +11,8 @@ from math import ceil
 from typing import Any, Dict
 from functools import partial
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 """
 Advisor : Sniper range (red). 저격장(레드).

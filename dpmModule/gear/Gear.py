@@ -7,8 +7,8 @@ from dpmModule.kernel.core import ExtendedCharacterModifier
 from .GearPropType import GearPropType
 from .GearType import GearType
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 PropMap = DefaultDict[GearPropType, int]
 

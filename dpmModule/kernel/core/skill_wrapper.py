@@ -20,8 +20,8 @@ if TYPE_CHECKING:
     from .modifier import SkillModifier
     from .skill import AbstractSkill, BuffSkill, DamageSkill, SummonSkill, DotSkill
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 class AbstractSkillWrapper(GraphElement):

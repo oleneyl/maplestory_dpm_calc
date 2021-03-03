@@ -2,8 +2,8 @@ from typing import Any, Dict, List, Union
 
 from ..kernel.core import ExtendedCharacterModifier as ExMDF
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 class HyperStat:

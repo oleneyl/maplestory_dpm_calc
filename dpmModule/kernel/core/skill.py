@@ -15,8 +15,8 @@ if TYPE_CHECKING:
 
     T = TypeVar("T", bound=AbstractSkillWrapper)
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 class AbstractSkill(EvaluativeGraphElement):

@@ -1,7 +1,7 @@
 from ...kernel import core
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 # Venom Burst is currently only using Cadena, so don"t add it. 베놈 버스트는 현재 카데나만 사용하고 있으므로 추가하지 않음.

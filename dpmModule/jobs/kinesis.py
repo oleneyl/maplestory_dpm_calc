@@ -12,8 +12,8 @@ from .jobbranch import magicians
 from .jobclass import demon
 from typing import Any, Dict
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 # English skill information for Kinesis here https://maplestory.fandom.com/wiki/Kinesis/Skills
 class KinesisSkills:

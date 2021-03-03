@@ -15,8 +15,8 @@ from .jobbranch import thieves
 from math import ceil
 from typing import Any, Dict
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 '''
 TODO: Reorder in a similar style to other professions. 다른 직업들과 비슷한 스타일로 순서 재정리.

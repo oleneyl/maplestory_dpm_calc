@@ -8,8 +8,8 @@ from .loader import load_data
 from .saver import save_data
 from .preset import get_preset
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 plt.style.use(["bmh"])
 

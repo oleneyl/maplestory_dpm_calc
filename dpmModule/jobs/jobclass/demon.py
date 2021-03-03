@@ -1,8 +1,8 @@
 from ...kernel import core
 from math import ceil
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 class DemonSkills:

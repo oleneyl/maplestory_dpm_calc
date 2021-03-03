@@ -8,8 +8,8 @@ from ..gear import Gear, GearBuilder, GearType, GearPropType, Scroll, eval_set_i
 from ..jobs import job_branch_list
 from ..kernel.core.modifier import ExtendedCharacterModifier as ExMDF
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translate_iterable, translator
+_ = translator.gettext
 
 
 def open_yaml(*paths) -> dict:

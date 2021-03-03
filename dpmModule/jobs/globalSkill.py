@@ -2,8 +2,8 @@ from dpmModule.character.characterKernel import AbstractCharacter
 from ..kernel import core
 import math
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 class GlobalSkills:

@@ -9,8 +9,8 @@ from . import jobutils
 from math import ceil
 from typing import Any, Dict
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 # TODO: Assuming 100% Blue Blood duration simulation reflecting force usage (it seems very difficult). 블블 100% 가정하는 중. 포스 사용을 반영해서 블블 지속시간 시뮬레이션(엄청 어려울듯).
 

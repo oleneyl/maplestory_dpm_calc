@@ -5,8 +5,8 @@ from statistics.loader import load_data
 from statistics.preset import get_preset, get_preset_list
 from statistics.saver import save_data
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 try:
     import pandas as pd

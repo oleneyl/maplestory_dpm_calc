@@ -43,9 +43,8 @@ from . import ilium
 from . import ark
 from . import hoyoung
 
-import gettext
-
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 jobMap = {
     _("히어로"): hero,

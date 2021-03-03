@@ -12,8 +12,8 @@ from ..status.ability import Ability_tool
 from ..character import characterKernel as ck
 from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 # English skill information for Ice/Lightning Mage here https://maplestory.fandom.com/wiki/Magician_(Ice,_Lightning)/Skills

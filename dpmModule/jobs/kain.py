@@ -11,8 +11,8 @@ from .jobclass import nova
 from math import ceil
 from typing import Any, Dict
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 BREATH_SHOOTER_HYPER = core.CharacterModifier(
     pdamage=10, boss_pdamage=15, armor_ignore=15

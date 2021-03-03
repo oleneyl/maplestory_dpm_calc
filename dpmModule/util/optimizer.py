@@ -5,8 +5,8 @@ from ..kernel import core
 from dpmModule.kernel import policy
 from dpmModule.execution import rules
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 MDF = core.CharacterModifier
 

@@ -8,8 +8,8 @@ from .jobbranch import warriors
 from math import ceil
 from typing import Any, Dict
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 # It is necessary to consider whether to apply Mihile Youngme. 미하일 영메 적용여부에 대해 고민해볼 필요 있음.
 

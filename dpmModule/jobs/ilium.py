@@ -9,8 +9,8 @@ from .jobclass import flora
 from . import jobutils
 from typing import Any, Dict
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 # English skill information for Illium here https://maplestory.fandom.com/wiki/Illium/Skills
 class IlliumSkills:

@@ -13,8 +13,8 @@ from ..character import characterKernel
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, SynchronizeRule, InactiveRule, DisableRule
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 # English skill information for Bishop here https://maplestory.fandom.com/wiki/Bishop/Skills
 class BishopSkills:

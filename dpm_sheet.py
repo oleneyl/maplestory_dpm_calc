@@ -5,8 +5,8 @@ from statistics.preset import get_preset_list
 
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 try:
     import pandas as pd

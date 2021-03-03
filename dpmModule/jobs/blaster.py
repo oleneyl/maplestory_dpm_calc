@@ -9,8 +9,8 @@ from .jobclass import resistance
 from math import ceil
 from typing import Any, Dict
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 # English skill information for Blaster here https://maplestory.fandom.com/wiki/Blaster/Skills
 class BlasterSkills:

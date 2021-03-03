@@ -8,8 +8,8 @@ from dpmModule.kernel import core
 from dpmModule.kernel import policy
 from dpmModule.status.ability import Ability_grade
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 class IndividualDPMGenerator:

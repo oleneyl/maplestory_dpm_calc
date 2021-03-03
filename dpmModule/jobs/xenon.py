@@ -14,8 +14,8 @@ from . import jobutils
 from math import ceil
 from typing import Any, Dict
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 # English skill information for Xenon here https://maplestory.fandom.com/wiki/Xenon/Skills
 class XenonSkills:

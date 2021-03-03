@@ -10,8 +10,9 @@ from .jobclass import cygnus
 from .jobbranch import magicians
 from typing import Any, Dict
 
-import gettext
-_ = gettext.gettext
+
+from localization.utilities import translator
+_ = translator.gettext
 
 # English skill information for Blaze Wizard here https://maplestory.fandom.com/wiki/Blaze_Wizard/Skills
 class BlazeWizardSkills:

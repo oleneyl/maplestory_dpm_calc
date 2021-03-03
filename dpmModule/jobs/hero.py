@@ -1,6 +1,3 @@
-import gettext
-_ = gettext.gettext
-
 from .globalSkill import GlobalSkills
 from ..kernel import core
 from ..character import characterKernel as ck
@@ -12,6 +9,9 @@ from . import globalSkill, jobutils
 from .jobbranch import warriors
 from math import ceil
 from typing import Any, Dict
+
+from localization.utilities import translator
+_ = translator.gettext
 
 '''
 Hero skill summary

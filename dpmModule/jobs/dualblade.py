@@ -11,8 +11,8 @@ from . import jobutils
 from math import ceil
 from typing import Any, Dict
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 # TODO: Why is Retouda 5th order value 1,1, but Retouda passive is 2,2? 왜 레투다는 5차값이 1,1인데 레투다 패시브는 2,2일까?
 

@@ -1,7 +1,7 @@
 from ...kernel import core
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 class PirateSkills:

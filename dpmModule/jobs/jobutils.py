@@ -1,8 +1,8 @@
 from ..kernel import core
 from ..kernel.graph import DynamicVariableOperation
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 def create_auxilary_attack(skill_wrapper: core.DamageSkillWrapper, ratio=1, nametag=_("(복사)")):

@@ -36,8 +36,8 @@ from ..kernel.graph import (
 )
 from ..status.ability import Ability_grade, Ability_option, Ability_tool
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translate_iterable, translator
+_ = translator.gettext
 
 ExMDF = ExtendedCharacterModifier
 """Class AbstractCharacter : Basic template for building specific User. User is such object that contains:

@@ -11,8 +11,8 @@ from .jobbranch import magicians
 from math import ceil
 from typing import Any, Dict
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 # English skill information for Battle Mage here https://maplestory.fandom.com/wiki/Battle_Mage/Skills
 class BattleMageSkills:

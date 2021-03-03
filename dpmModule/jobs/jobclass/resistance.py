@@ -4,8 +4,8 @@ from ...kernel.core import CharacterModifier as MDF
 from ...character import characterKernel as ck
 from functools import partial
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 class ResistanceSkills:

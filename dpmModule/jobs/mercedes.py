@@ -10,8 +10,8 @@ from .jobbranch import bowmen
 from math import ceil
 from typing import Any, Dict
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 # English skill information for Mercedes here https://maplestory.fandom.com/wiki/Mercedes/Skills
 class MercedesSkills:

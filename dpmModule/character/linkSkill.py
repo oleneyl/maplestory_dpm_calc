@@ -4,8 +4,8 @@ from typing import List
 from ..kernel.core import ExtendedCharacterModifier as ExMDF
 from ..kernel.core import InformedCharacterModifier
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 class LinkSkill:

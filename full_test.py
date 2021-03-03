@@ -7,8 +7,8 @@ from operator import itemgetter
 import time
 import argparse
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 def get_args():
     parser = argparse.ArgumentParser("DPM Full Test argument")
@@ -23,14 +23,14 @@ def get_args():
 def test(args):
     job, ulevel, runtime, cdr = args
     start = time.time()
-    print(_("{} {} 계산중".format(job, ulevel)))
+    print(_("{} {} 계산중").format(job, ulevel))
 
     parser = IndividualDPMGenerator(job)
     parser.set_runtime(runtime * 1000)
     dpm = parser.get_dpm(spec_name=str(ulevel), ulevel=ulevel, cdr=cdr)
 
     end = time.time()
-    print(_("{} {} 계산완료, {:.3f}초".format(job, ulevel, end - start)))
+    print(_("{} {} 계산완료, {:.3f}초").format(job, ulevel, end - start))
     return job, ulevel, dpm
 
 
@@ -54,4 +54,4 @@ if __name__ == "__main__":
     results = pool.map(test, tasks)
     write_results(results)
     end = time.time()
-    print(_("총 소요시간: {:.3f}초".format(end - start)))
+    print(_("총 소요시간: {:.3f}초").format(end - start))

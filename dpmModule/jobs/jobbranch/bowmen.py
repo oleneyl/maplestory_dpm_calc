@@ -2,8 +2,8 @@
 from dpmModule.kernel import core
 from dpmModule.character import characterKernel as ck
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 class ArcherSkills:

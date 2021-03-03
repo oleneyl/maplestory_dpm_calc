@@ -1,7 +1,7 @@
 from ..kernel.core import ExtendedCharacterModifier as ExMDF
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 class Doping:

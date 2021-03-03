@@ -13,8 +13,8 @@ from ..character import characterKernel as ck
 from ..execution.rules import RuleSet, MutualRule, InactiveRule
 from math import ceil
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 # English skill information for Fire/Poison Mage here https://maplestory.fandom.com/wiki/Magician_(Fire,_Poison)/Skills
 class ArchmageFirePoisonSkills:

@@ -9,8 +9,8 @@ from .jobclass import heroes
 from .jobbranch import magicians
 from typing import Any, Dict
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 # English skill information for Evan here https://maplestory.fandom.com/wiki/Evan/Skills
 class EvanSkills:

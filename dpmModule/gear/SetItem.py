@@ -6,8 +6,8 @@ from typing import Dict, DefaultDict, Iterable, List
 from .Gear import Gear
 from .GearPropType import GearPropType
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 PropMap = DefaultDict[GearPropType, int]

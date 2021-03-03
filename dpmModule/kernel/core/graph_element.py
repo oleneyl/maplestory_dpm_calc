@@ -11,8 +11,8 @@ if TYPE_CHECKING:
     from .callback import Callback
     from .modifier import SkillModifier
 
-import gettext
-_ = gettext.gettext
+from localization.utilities import translator
+_ = translator.gettext
 
 
 class Task:
