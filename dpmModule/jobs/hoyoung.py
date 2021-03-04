@@ -397,13 +397,13 @@ class JobGenerator(ck.JobGenerator):
             sk.onAfter(AddChun)
 
         for sk in [Pacho, Pacho_Clone, Flames, Flames_Clone]:
-            sk.add_runtime_modifier(ChunJiIn, lambda sk: sk.check_modifier("천"))
+            sk.add_runtime_modifier(ChunJiIn, lambda sk: sk.check_modifier(_("천")))
 
         for sk in [Topa, EarthQuake]:
             sk.onAfter(AddJi)
 
         for sk in [Topa, Topa_Clone, EarthQuake, EarthQuake_Clone]:
-            sk.add_runtime_modifier(ChunJiIn, lambda sk: sk.check_modifier("지"))
+            sk.add_runtime_modifier(ChunJiIn, lambda sk: sk.check_modifier(_("지")))
 
         for sk in [YeoUiSeon, GeumGoBong]:
             sk.onAfter(AddIn)
