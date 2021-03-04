@@ -6,6 +6,9 @@ from typing import Union as UnionType
 
 from ..kernel.core import ExtendedCharacterModifier as ExMDF
 
+from localization.utilities import translator
+_ = translator.gettext
+
 
 class Union:
     peoples = [
@@ -168,7 +171,7 @@ class Union:
     def _get_union_from_state(state: List[int], jobname: str) -> ExMDF:
         return (
             ExMDF(att=state[0])
-            + (ExMDF(stat_main=250 * state[1]) if jobname == "데몬어벤져" else ExMDF(stat_main=5 * state[1]))
+            + (ExMDF(stat_main=250 * state[1]) if jobname == _("데몬어벤져") else ExMDF(stat_main=5 * state[1]))
             + ExMDF(boss_pdamage=state[2])
             + ExMDF(armor_ignore=state[3])
             + ExMDF(crit=state[4])
