@@ -11,6 +11,7 @@ from . import globalSkill, jobutils
 from .jobbranch import magicians
 from .jobclass import demon
 from typing import Any, Dict
+from .globalSkill import PASSIVE, EXPLOSION, DOT, DEBUFF, SUMMON, LAST_HIT, ATTACK
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -73,6 +74,10 @@ class KinesisSkills:
     UltimateMindOverMatter = _("얼티메이트-무빙 매터")  # "Ultimate - Mind Over Matter"
     UltimatePsychicShockwave = _("얼티메이트-싸이킥 불릿")  # "Ultimate - Psychic Shockwave"
     LawofGravity = _("로 오브 그래비티")  # "Law of Gravity"
+
+
+# Skill name modifiers for Kinesis
+BLACK_HOLE = _("블랙홀")
 
 
 class KinesisStackWrapper(core.StackSkillWrapper):
@@ -144,18 +149,18 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         SuperSensitive = core.InformedCharacterModifier(KinesisSkills.ESP,crit = 10)
-        PsychicForce1Passive = core.InformedCharacterModifier(_("{}(패시브)").format(KinesisSkills.PsychicForce),att = 10)
+        PsychicForce1Passive = core.InformedCharacterModifier(f"{KinesisSkills.PsychicForce}({PASSIVE})",att = 10)
         Inertia1 = core.InformedCharacterModifier(KinesisSkills.MentalFortitude,att = 10)
         
-        PsychicForce2Passive = core.InformedCharacterModifier(_("{}(패시브)").format(KinesisSkills.PsychicBlast),att = 10)
+        PsychicForce2Passive = core.InformedCharacterModifier(f"{KinesisSkills.PsychicBlast}({PASSIVE})",att = 10)
         PureForce = core.InformedCharacterModifier(KinesisSkills.PurePower,pdamage = 20)
         Inertia2 = core.InformedCharacterModifier(KinesisSkills.MentalStrength,att = 10)
         ESPMastery = core.InformedCharacterModifier(KinesisSkills.ESPMastery,crit = 10, stat_main = 40)
         
         MindEnhance = core.InformedCharacterModifier(KinesisSkills.PsychicReinforcement,patt = 10)
         Accurate = core.InformedCharacterModifier(KinesisSkills.ThirdEye,crit = 20, crit_damage = 20)
-        PsychicChargingPassive = core.InformedCharacterModifier(_("{}(패시브)").format(KinesisSkills.PsychicCharger),boss_pdamage = 30 + self.combat)
-        PsychicForce3Passive = core.InformedCharacterModifier(_("{}(패시브)").format(KinesisSkills.PsychicAssault),att = 10)
+        PsychicChargingPassive = core.InformedCharacterModifier(f"{KinesisSkills.PsychicCharger}({PASSIVE})",boss_pdamage = 30 + self.combat)
+        PsychicForce3Passive = core.InformedCharacterModifier(f"{KinesisSkills.PsychicAssault}({PASSIVE})",att = 10)
 
         ESPBattleOrder = core.InformedCharacterModifier(KinesisSkills.TelepathTactics,att = 50 + 2*passive_level, pdamage = 20 + passive_level)
         Transcendence = core.InformedCharacterModifier(KinesisSkills.Awakening,pdamage_indep = 30 + passive_level)
@@ -172,7 +177,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat     
         WeaponConstant = core.InformedCharacterModifier(_("무기상수"),pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier(_("숙련도"), mastery=90+2*passive_level)
-        PsychicForce3Passive = core.InformedCharacterModifier(_("{}(패시브)").format(KinesisSkills.PsychicAssault), pdamage_indep = 20)
+        PsychicForce3Passive = core.InformedCharacterModifier(f"{KinesisSkills.PsychicAssault}({PASSIVE})", pdamage_indep = 20)
         return [WeaponConstant, Mastery, PsychicForce3Passive]
         
         
@@ -216,17 +221,17 @@ class JobGenerator(ck.JobGenerator):
         PsychicDrain = core.SummonSkill(KinesisSkills.PsychicDrain, 540, 500, 150, 1, 15000, cooltime = 5000, rem = False).setV(vEhc, 4, 5, False).wrap(core.SummonSkillWrapper)  # 1 space +. 1칸+.
 
         PsychicForce3 = core.DamageSkill(KinesisSkills.PsychicAssault, 270, 0, 0).wrap(core.DamageSkillWrapper)
-        PsychicForce3Dot = core.DotSkill(_("{}(도트)").format(KinesisSkills.PsychicAssault), 0, 1000, 403.125, 1, 30000, cooltime = -1).wrap(core.DotSkillWrapper) # ~20 seconds average perdem. ~20초 평균 퍼뎀.
+        PsychicForce3Dot = core.DotSkill(f"{KinesisSkills.PsychicAssault}({DOT})", 0, 1000, 403.125, 1, 30000, cooltime = -1).wrap(core.DotSkillWrapper) # ~20 seconds average perdem. ~20초 평균 퍼뎀.
         PsychicGround = core.BuffSkill(KinesisSkills.MindQuake, 270, 30000 + 15000, rem = False, armor_ignore = 10 + 6*1, pdamage_indep = 10 + 3*1).wrap(core.BuffSkillWrapper)
-        PsychicGroundDamage = core.DamageSkill(_("{}(공격)").format(KinesisSkills.MindQuake), 0, 500+10*self.combat, 1).wrap(core.DamageSkillWrapper)  # +1
+        PsychicGroundDamage = core.DamageSkill(f"{KinesisSkills.MindQuake}({ATTACK})", 0, 500+10*self.combat, 1).wrap(core.DamageSkillWrapper)  # +1
         PsycoBreak = core.BuffSkill(KinesisSkills.MindBreak, 630, 30000, pdamage_indep = min(5 * 2 * 2, 15), rem = False).wrap(core.BuffSkillWrapper)  #+1
-        PsycoBreakDamage = core.DamageSkill(_("{}(공격)").format(KinesisSkills.MindBreak), 0, 1000 +7*self.combat, 4).wrap(core.DamageSkillWrapper)
+        PsycoBreakDamage = core.DamageSkill(f"{KinesisSkills.MindBreak}({ATTACK})", 0, 1000 +7*self.combat, 4).wrap(core.DamageSkillWrapper)
         
         TeleKinesis = core.DamageSkill(KinesisSkills.KineticCombo, 0, 350, 0.7).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
         UltimateBPM = core.SummonSkill(KinesisSkills.UltimateBPM, 0, 600, 175 + 2*self.combat, 7, 999999999, modifier = ULTIMATE_AWAKENING).setV(vEhc, 0, 2, False).wrap(core.SummonSkillWrapper)  # 1
         PsychicGrab2 = core.DamageSkill(KinesisSkills.PsychicClutch, 576, 470 + 4*passive_level, 5,  modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # +2, smashing can be used 5 times per grab (510*5+210)/5. +2, 그랩 1번에 스매싱 5회 사용 가능 (510*5+210)/5.
         UltimatePsychic = core.DamageSkill(KinesisSkills.UltimatePsychicShot, 1080, 300+3*self.combat, 3*5*2*SHOT_RATE,  modifier = ULTIMATE_AWAKENING + core.CharacterModifier(pdamage = 20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper) # 5, one shot can be used per grab (900+210). 5, 그랩 1번에 샷 1회 사용가능 (900+210).
-        UltimatePsychicBuff = core.BuffSkill(_("{}(디버프)").format(KinesisSkills.UltimatePsychicShot), 0, 10000, rem = True, armor_ignore = 15, cooltime = -1).wrap(core.BuffSkillWrapper)
+        UltimatePsychicBuff = core.BuffSkill(f"{KinesisSkills.UltimatePsychicShot}({DEBUFF})", 0, 10000, rem = True, armor_ignore = 15, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         PsychicCharging = core.BuffSkill(KinesisSkills.PsychicCharger, 0, 500, cooltime = (45 - self.combat)*1000, red = True).wrap(core.BuffSkillWrapper) # Recharge 50% of the remaining points. 남은포인트의 50%충전.
         
@@ -234,10 +239,10 @@ class JobGenerator(ck.JobGenerator):
 
         # Hyper. 하이퍼.
         EverPsychic = core.DamageSkill(KinesisSkills.MentalTempest, 870, 400, 16, cooltime = 120000).wrap(core.DamageSkillWrapper)  # Delay 870ms through cancellation. 캔슬 통해 딜레 870ms.
-        EverPsychicFinal = core.DamageSkill(_("{}(최종)").format(KinesisSkills.MentalTempest), 0, 1500, 1,  modifier = core.CharacterModifier(armor_ignore = 50, crit = 100)).wrap(core.DamageSkillWrapper)
+        EverPsychicFinal = core.DamageSkill(f"{KinesisSkills.MentalTempest}({LAST_HIT})", 0, 1500, 1,  modifier = core.CharacterModifier(armor_ignore = 50, crit = 100)).wrap(core.DamageSkillWrapper)
         #Psycometry = core.DamageSkill()
         PsychicOver = core.BuffSkill(KinesisSkills.MentalOverdrive, 0, 30000, cooltime = 210000).wrap(core.BuffSkillWrapper)  # Half consumption / point continuous increase (1 per second). 소모량 절반 / 포인트 지속증가(초당 1).
-        PsychicOverSummon = core.SummonSkill(_("{}(소환)").format(KinesisSkills.MentalOverdrive), 0, 750, 0, 0, 30000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        PsychicOverSummon = core.SummonSkill(f"{KinesisSkills.MentalOverdrive}({SUMMON})", 0, 750, 0, 0, 30000, cooltime = -1).wrap(core.SummonSkillWrapper)
         
         # 5th. 5차.
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
@@ -249,14 +254,14 @@ class JobGenerator(ck.JobGenerator):
         PsychicTornadoFinal_2 = core.DamageSkill(f"{KinesisSkills.PsychicTornado}(2)", 0, (350+10*vEhc.getV(2,2))*3, 10*3, cooltime=-1).wrap(core.DamageSkillWrapper)
 
         UltimateMovingMatter = core.SummonSkill(KinesisSkills.UltimateMindOverMatter, 480, 25000/64, 500+20*vEhc.getV(0,0), 5, 25000, cooltime = 90000, red=True, modifier = ULTIMATE_AWAKENING).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)# -10
-        UltimateMovingMatterFinal = core.DamageSkill(_("{}(최종)").format(KinesisSkills.UltimateMindOverMatter), 0, 700+28*vEhc.getV(0,0), 12, modifier = ULTIMATE_AWAKENING).wrap(core.DamageSkillWrapper)
+        UltimateMovingMatterFinal = core.DamageSkill(f"{KinesisSkills.UltimateMindOverMatter}({LAST_HIT})", 0, 700+28*vEhc.getV(0,0), 12, modifier = ULTIMATE_AWAKENING).wrap(core.DamageSkillWrapper)
         
         UltimatePsychicBullet = core.DamageSkill(KinesisSkills.UltimatePsychicShockwave, 630, 550 + 22*vEhc.getV(3,3), 6, modifier = ULTIMATE_AWAKENING).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)# -2, delay 420ms + grab 210ms. -2, 딜레이 420ms + 그랩 210ms.
-        UltimatePsychicBulletBlackhole = core.SummonSkill(_("{}(블랙홀)").format(KinesisSkills.UltimatePsychicShockwave), 0, 500, 500+20*vEhc.getV(3,3), 3, 500*4, cooltime = -1, modifier = ULTIMATE_AWAKENING).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)# +1
+        UltimatePsychicBulletBlackhole = core.SummonSkill(f"{KinesisSkills.UltimatePsychicShockwave}({BLACK_HOLE})", 0, 500, 500+20*vEhc.getV(3,3), 3, 500*4, cooltime = -1, modifier = ULTIMATE_AWAKENING).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)# +1
         
         LawOfGravity = core.DamageSkill(KinesisSkills.LawofGravity, 720, 400+16*vEhc.getV(0,0), 6, cooltime=60000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        LawOfGravityDebuff = core.SummonSkill(_("{}(디버프)").format(KinesisSkills.LawofGravity), 0, 3600, 500+20*vEhc.getV(0,0), 8, 22000, cooltime=-1).isV(vEhc,0,0).wrap(LawOfGravityDebuffWrapper)
-        LawOfGravityFinal = core.DamageSkill(_("{}(폭발)").format(KinesisSkills.LawofGravity), 0, 600+24*vEhc.getV(0,0), 15, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        LawOfGravityDebuff = core.SummonSkill(f"{KinesisSkills.LawofGravity}({DEBUFF})", 0, 3600, 500+20*vEhc.getV(0,0), 8, 22000, cooltime=-1).isV(vEhc,0,0).wrap(LawOfGravityDebuffWrapper)
+        LawOfGravityFinal = core.DamageSkill(f"{KinesisSkills.LawofGravity}({EXPLOSION})", 0, 600+24*vEhc.getV(0,0), 15, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         PsychicPoint = KinesisStackWrapper(core.BuffSkill(_("싸이킥 포인트"), 0, 999999999), 30 + 10, PsychicOver.is_active)
         

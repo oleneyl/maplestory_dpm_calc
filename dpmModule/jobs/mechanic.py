@@ -1,6 +1,6 @@
 """Advisor : 새틀라이트(유니온)
 """
-from .globalSkill import GlobalSkills
+from .globalSkill import GlobalSkills, BUFF, EXPLOSION, HOLDER, CAST, ENDING
 from .jobbranch.pirates import PirateSkills
 from ..kernel import core
 from ..character import characterKernel as ck
@@ -71,6 +71,12 @@ class MechanicSkills:
     FullMetalBarrage = _("메탈아머 전탄발사")  # "Full Metal Barrage"
     MechaCarrier = _("메카 캐리어")  # "Mecha Carrier"
 
+
+# Skill name modifiers for Mechanic
+INSTALL = _("설치")
+PENALTY = _("페널티")
+BOMBER = _("봄버")
+SHOT = _("전탄")
 
 class MultipleOptionWrapper(core.SummonSkillWrapper):
     """
@@ -163,7 +169,7 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ConcurrentRunRule(_("{}(시전)").format(MechanicSkills.FullMetalBarrage), MechanicSkills.FullSpread), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(f"{MechanicSkills.FullMetalBarrage}({CAST})", MechanicSkills.FullSpread), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule(MechanicSkills.FullSpread, GlobalSkills.TermsAndConditions), RuleSet.BASE)
         ruleset.add_rule(ReservationRule(GlobalSkills.TermsAndConditions, MechanicSkills.FullSpread), RuleSet.BASE)
         return ruleset
@@ -204,23 +210,23 @@ class JobGenerator(ck.JobGenerator):
 
         # Robots :: Total Dem 6% per robot, 7% when Ability is applied. 로봇들 :: 로봇당 총뎀6%, 어빌리티 적용 시 7%.
         Robolauncher = core.SummonSkill(MechanicSkills.RoboLauncherRM7, 630, 1000, 250+135+passive_level*4, 1, 60*1000*ROBOT_SUMMON_REMAIN, modifier=ROBOT_MASTERY).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
-        RobolauncherFinal = core.DamageSkill(_("{}(폭발)").format(MechanicSkills.RoboLauncherRM7), 0, 400+135+passive_level*4, 1, modifier=ROBOT_MASTERY, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        RobolauncherBuff = core.BuffSkill(_("{}(버프)").format(MechanicSkills.RoboLauncherRM7), 0, 60*1000*ROBOT_SUMMON_REMAIN, cooltime=-1, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)
+        RobolauncherFinal = core.DamageSkill(f"{MechanicSkills.RoboLauncherRM7}({EXPLOSION})", 0, 400+135+passive_level*4, 1, modifier=ROBOT_MASTERY, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        RobolauncherBuff = core.BuffSkill(f"{MechanicSkills.RoboLauncherRM7}({BUFF})", 0, 60*1000*ROBOT_SUMMON_REMAIN, cooltime=-1, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)
 
         # Magnetic field is not affected by the duration of minions except Robot Mastery and Hyper. Cooldown is dome after installation is complete. 마그네틱 필드는 로봇 마스터리, 하이퍼를 제외한 소환수 지속시간 영향을 받지 않음. 설치 완료 후부터 쿨타임이 돔.
-        MagneticFieldInstall = core.DamageSkill(_("{}(설치)").format(MechanicSkills.RocknShock), 630, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
+        MagneticFieldInstall = core.DamageSkill(f"{MechanicSkills.RocknShock}({INSTALL})", 630, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
         MagneticField = core.SummonSkill(MechanicSkills.RocknShock, 0, 990, 200, 1, 60*1000*ROBOT_SUMMON_REMAIN+10000, cooltime=160*0.75*1000, red=True, modifier=ROBOT_MASTERY).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
-        MagneticFieldBuff = core.BuffSkill(_("{}(버프)").format(MechanicSkills.RocknShock), 0, 60*1000*ROBOT_SUMMON_REMAIN+10000, cooltime=-1, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)
+        MagneticFieldBuff = core.BuffSkill(f"{MechanicSkills.RocknShock}({BUFF})", 0, 60*1000*ROBOT_SUMMON_REMAIN+10000, cooltime=-1, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)
 
         SupportWaver = core.SummonSkill(MechanicSkills.EnhancedSupportUnit, 630, 80000*ROBOT_SUMMON_REMAIN, 0, 0, 80*1000*ROBOT_SUMMON_REMAIN).wrap(core.SummonSkillWrapper)
-        SupportWaverBuff = core.BuffSkill(_("{}(버프)").format(MechanicSkills.EnhancedSupportUnit), 0, 80*1000*ROBOT_SUMMON_REMAIN, pdamage_indep=10+5+ceil(passive_level/3), pdamage=ROBOT_BUFF, armor_ignore=10, cooltime=-1).wrap(core.BuffSkillWrapper)
-        SupportWaverFinal = core.DamageSkill(_("{}(폭발)").format(MechanicSkills.EnhancedSupportUnit), 0, 1100+passive_level*20, 1, modifier=ROBOT_MASTERY, cooltime=-1).wrap(core.DamageSkillWrapper)
+        SupportWaverBuff = core.BuffSkill(f"{MechanicSkills.EnhancedSupportUnit}({BUFF})", 0, 80*1000*ROBOT_SUMMON_REMAIN, pdamage_indep=10+5+ceil(passive_level/3), pdamage=ROBOT_BUFF, armor_ignore=10, cooltime=-1).wrap(core.BuffSkillWrapper)
+        SupportWaverFinal = core.DamageSkill(f"{MechanicSkills.EnhancedSupportUnit}({EXPLOSION})", 0, 1100+passive_level*20, 1, modifier=ROBOT_MASTERY, cooltime=-1).wrap(core.DamageSkillWrapper)
 
         RoboFactory = core.SummonSkill(MechanicSkills.BotsnTots, 630, 3000, 500+self.combat*5, 3, 30*1000*ROBOT_SUMMON_REMAIN, cooltime=60*1000, red=True, modifier=ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.SummonSkillWrapper)
-        RoboFactoryBuff = core.BuffSkill(_("{}(버프)").format(MechanicSkills.BotsnTots), 0, 30*1000*ROBOT_SUMMON_REMAIN, cooltime=-1, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)
-        RoboFactoryFinal = core.DamageSkill(_("{}(폭발)").format(MechanicSkills.BotsnTots), 0, 1000+self.combat*10, 1, modifier=ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        RoboFactoryBuff = core.BuffSkill(f"{MechanicSkills.BotsnTots}({BUFF})", 0, 30*1000*ROBOT_SUMMON_REMAIN, cooltime=-1, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)
+        RoboFactoryFinal = core.DamageSkill(f"{MechanicSkills.BotsnTots}({EXPLOSION})", 0, 1000+self.combat*10, 1, modifier=ROBOT_MASTERY).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
 
-        OpenGateBuff = core.BuffSkill(_("{}(버프)").format(MechanicSkills.OpenPortalGX9), 630*2+600, 300*1000*ROBOT_SUMMON_REMAIN, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)  # Cannot be installed in the same position, and compensates for the loss of one mass by delay. 동위치 설치불가, 매시브 1회 손실을 딜레이로 보정.
+        OpenGateBuff = core.BuffSkill(f"{MechanicSkills.OpenPortalGX9}({BUFF})", 630*2+600, 300*1000*ROBOT_SUMMON_REMAIN, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)  # Cannot be installed in the same position, and compensates for the loss of one mass by delay. 동위치 설치불가, 매시브 1회 손실을 딜레이로 보정.
 
         BomberTime = core.BuffSkill(MechanicSkills.FullSpread, 900, 10*1000, cooltime=100*1000).wrap(core.BuffSkillWrapper)
         DistortionField = core.SummonSkill(MechanicSkills.DistortionBomb, 690, 4000/15, 350, 2, 4000-1, cooltime=8000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)
@@ -232,26 +238,26 @@ class JobGenerator(ck.JobGenerator):
         RegistanceLineInfantry = resistance.ResistanceLineInfantryWrapper(vEhc, 3, 3)
 
         MultipleOption = MultipleOptionWrapper(vEhc, ROBOT_MASTERY)
-        MultipleOptionBuff = core.BuffSkill(_("{}(버프)").format(MechanicSkills.DoomsdayDevice), 0, MultipleOption.skill.remain, cooltime=-1, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)
+        MultipleOptionBuff = core.BuffSkill(f"{MechanicSkills.DoomsdayDevice}({BUFF})", 0, MultipleOption.skill.remain, cooltime=-1, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)
 
         MicroMissle = core.DamageSkill(MechanicSkills.MobileMissileBattery, 540, 375+17*vEhc.getV(0, 0), (30 + vEhc.getV(0, 0) // 3) * 5, cooltime=25000, red=True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         BusterCall_ = core.DamageSkill(MechanicSkills.FullMetalBarrage, 8670/49, 400+16*vEhc.getV(4, 4), 11).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
-        BusterCallInit = core.DamageSkill(_("{}(시전)").format(MechanicSkills.FullMetalBarrage), 1330, 0, 0, cooltime=200*1000, red=True).wrap(core.DamageSkillWrapper)  # Sun delay. 선딜레이.
-        BusterCallBuff = core.BuffSkill(_("{}(버프)").format(MechanicSkills.FullMetalBarrage), 0, 8670, cooltime=-1).isV(vEhc, 4, 4).wrap(core.BuffSkillWrapper)
-        BusterCallEnd = core.DamageSkill(_("{}(하차)").format(MechanicSkills.FullMetalBarrage), 1800, 0, 0).wrap(core.DamageSkillWrapper)
-        BusterCallPenalty = core.BuffSkill(_("{}(페널티)").format(MechanicSkills.FullMetalBarrage), 0, 2000, cooltime=-1).wrap(core.BuffSkillWrapper)
+        BusterCallInit = core.DamageSkill(f"{MechanicSkills.FullMetalBarrage}({CAST})", 1330, 0, 0, cooltime=200*1000, red=True).wrap(core.DamageSkillWrapper)  # Sun delay. 선딜레이.
+        BusterCallBuff = core.BuffSkill(f"{MechanicSkills.FullMetalBarrage}({BUFF})", 0, 8670, cooltime=-1).isV(vEhc, 4, 4).wrap(core.BuffSkillWrapper)
+        BusterCallEnd = core.DamageSkill(f"{MechanicSkills.FullMetalBarrage}({ENDING})", 1800, 0, 0).wrap(core.DamageSkillWrapper)
+        BusterCallPenalty = core.BuffSkill(f"{MechanicSkills.FullMetalBarrage}({PENALTY})", 0, 2000, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         MechCarrier = MechCarrierWrapper(vEhc, 0, 0, ROBOT_MASTERY)
-        MechCarrierBuff = core.BuffSkill(_("{}(버프)").format(MechanicSkills.MechaCarrier), 0, MechCarrier.skill.remain, cooltime=-1, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)
+        MechCarrierBuff = core.BuffSkill(f"{MechanicSkills.MechaCarrier}({BUFF})", 0, MechCarrier.skill.remain, cooltime=-1, pdamage=ROBOT_BUFF).wrap(core.BuffSkillWrapper)
 
         MassiveFire.onAfter(MassiveFire2)
         #### Homing Missile Definition. 호밍 미사일 정의 ####
         HommingMissle_ = core.DamageSkill(MechanicSkills.HomingBeacon, 0, 500*0.6, 9+passive_level).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        HommingMissle_B = core.DamageSkill(_("{}(봄버)").format(MechanicSkills.HomingBeacon), 0, 500*0.6, 9+passive_level+6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        HommingMissle_Bu = core.DamageSkill(_("{}(전탄)").format(MechanicSkills.HomingBeacon), 0, 500, 9+passive_level+7).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        HommingMissle_B_Bu = core.DamageSkill(_("{}(봄버)(전탄)").format(MechanicSkills.HomingBeacon), 0, 500, 9+passive_level+6+7).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        HommingMissle_B = core.DamageSkill(f"{MechanicSkills.HomingBeacon}({BOMBER})", 0, 500*0.6, 9+passive_level+6).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        HommingMissle_Bu = core.DamageSkill(f"{MechanicSkills.HomingBeacon}({SHOT})", 0, 500, 9+passive_level+7).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        HommingMissle_B_Bu = core.DamageSkill(f"{MechanicSkills.HomingBeacon}({BOMBER}{SHOT})", 0, 500, 9+passive_level+6+7).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
-        HommingMissleHolder = core.SummonSkill(_("{}(더미)").format(MechanicSkills.HomingBeacon), 0, 660, 0, 0, 99999 * 100000).wrap(core.SummonSkillWrapper)
+        HommingMissleHolder = core.SummonSkill(f"{MechanicSkills.HomingBeacon}({HOLDER})", 0, 660, 0, 0, 99999 * 100000).wrap(core.SummonSkillWrapper)
 
         MultipleOption.onAfter(MultipleOptionBuff)
         MechCarrier.onAfter(MechCarrierBuff)

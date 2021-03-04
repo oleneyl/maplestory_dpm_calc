@@ -11,6 +11,7 @@ from .jobbranch import magicians
 from ..status.ability import Ability_tool
 from ..character import characterKernel as ck
 from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
+from .globalSkill import PASSIVE, KEYDOWN, LAST_HIT, INIT, FLOOR
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -64,6 +65,10 @@ class ArchmageIceLightningSkills:
     BoltBarrage = _("썬더 브레이크")  # "Bolt Barrage"
     SpiritofSnow = _("스피릿 오브 스노우")  # "Spirit of Snow"
     JupiterThunder = _("주피터 썬더")  # "Jupiter Thunder"
+    
+    
+# Skill modifiers only for IL
+STARTING = _("개시스킬")
 
 
 class FrostEffectWrapper(core.StackSkillWrapper):
@@ -147,15 +152,15 @@ class JobGenerator(ck.JobGenerator):
 
         FrozenOrb = self.load_skill_wrapper(ArchmageIceLightningSkills.FrozenOrb, vEhc)
         LighteningSpear = self.load_skill_wrapper(ArchmageIceLightningSkills.LightningOrb, vEhc)
-        LighteningSpearSingle = self.load_skill_wrapper(_("{}(키다운)").format(ArchmageIceLightningSkills.LightningOrb), vEhc)
-        LighteningSpearFinalizer = self.load_skill_wrapper(_("{}(막타)").format(ArchmageIceLightningSkills.LightningOrb), vEhc)
+        LighteningSpearSingle = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.LightningOrb}({KEYDOWN})", vEhc)
+        LighteningSpearFinalizer = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.LightningOrb}({LAST_HIT})", vEhc)
 
-        IceAgeInit = self.load_skill_wrapper(_("{}(개시)").format(ArchmageIceLightningSkills.IceAge), vEhc)
-        IceAgeSummon = self.load_skill_wrapper(_("{}(장판)").format(ArchmageIceLightningSkills.IceAge), vEhc)
+        IceAgeInit = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.IceAge}({INIT})", vEhc)
+        IceAgeSummon = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.IceAge}({FLOOR})", vEhc)
 
         # 5% reduction per stack. 중첩당 감소량 5%.
         # TODO: ?? must implement canceling the previous skill delay. 썬브가 이전 스킬 딜레이 캔슬하는것 구현해야 함.
-        ThunderBrake = self.load_skill_wrapper(_("{}(개시스킬)").format(ArchmageIceLightningSkills.BoltBarrage), vEhc)  # Awesome! -> Tandem 사출처리 해야함...Later. 690을 일단 급한대로 분배해서 사용.
+        ThunderBrake = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage}({STARTING})", vEhc)  # Awesome! -> Tandem 사출처리 해야함...Later. 690을 일단 급한대로 분배해서 사용.
         ThunderBrake1 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage}(1)", vEhc)
         ThunderBrake2 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage}(2)", vEhc)
         ThunderBrake3 = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.BoltBarrage}(3)", vEhc)
@@ -177,7 +182,7 @@ class JobGenerator(ck.JobGenerator):
 
         # FinalAttack
         Blizzard = self.load_skill_wrapper(ArchmageIceLightningSkills.Blizzard, vEhc)
-        BlizzardPassive = self.load_skill_wrapper(_("{}(패시브)").format(ArchmageIceLightningSkills.Blizzard), vEhc)
+        BlizzardPassive = self.load_skill_wrapper(f"{ArchmageIceLightningSkills.Blizzard}({PASSIVE})", vEhc)
 
         # special skills
         Infinity = adventurer.InfinityWrapper(self.combat)

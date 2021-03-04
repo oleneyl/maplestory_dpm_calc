@@ -1,3 +1,4 @@
+from ..globalSkill import WAVE, BUFF
 from ...kernel import core
 
 from localization.utilities import translator
@@ -19,7 +20,7 @@ class AuraWeaponBuilder:
     ):
         self.AuraWeaponBuff = (
             core.BuffSkill(
-                _("{}(버프)").format(WarriorSkills.WeaponAura),  # Weapon Aura (Buff)
+                f"{WarriorSkills.WeaponAura}({BUFF})",  # Weapon Aura (Buff)
                 delay=720,
                 remain=(80 + 2 * enhancer.getV(skill_importance, enhance_importance)) * 1000,
                 cooltime=180 * 1000,
@@ -33,7 +34,7 @@ class AuraWeaponBuilder:
             .wrap(core.BuffSkillWrapper)
         )
         self.AuraWeapon = core.DamageSkill(
-            _("{}(파동)").format(WarriorSkills.WeaponAura),  # Weapon Aura (Wave)
+            f"{WarriorSkills.WeaponAura}({WAVE})",  # Weapon Aura (Wave)
             delay=0,
             damage=500 + 20 * enhancer.getV(skill_importance, enhance_importance),
             hit=hit,

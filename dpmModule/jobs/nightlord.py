@@ -1,4 +1,4 @@
-from .globalSkill import GlobalSkills
+from .globalSkill import GlobalSkills, DOT, ACTIVE, DAMAGE, LAST_HIT
 from .jobbranch.thieves import ThiefSkills
 from ..kernel import core
 from ..character import characterKernel as ck
@@ -9,6 +9,7 @@ from .jobbranch import thieves
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -64,6 +65,11 @@ class NightLordSkills:
     ThrowBlasting = _("스로우 블래스팅")  # "Throw Blasting"
 
 
+# Skill name modifiers for Night Lord
+WIND = _("풍마")
+EXPLOSION_AMU = _("폭발 부적")
+AMU_STACK = _("부적 스택")
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -86,8 +92,8 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         ruleset.add_rule(ReservationRule(NightLordSkills.EpicAdventure, ThiefSkills.ShadowWalker), RuleSet.BASE)
         ruleset.add_rule(ReservationRule(GlobalSkills.MapleWorldGoddessBlessing, ThiefSkills.ShadowWalker), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule(_("{}(액티브)").format(NightLordSkills.ThrowBlasting), ThiefSkills.ShadowWalker), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule(NightLordSkills.ThrowingStarBarrage, _("{}(액티브)").format(NightLordSkills.ThrowBlasting)), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(f"{NightLordSkills.ThrowBlasting}({ACTIVE})", ThiefSkills.ShadowWalker), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(NightLordSkills.ThrowingStarBarrage, f"{NightLordSkills.ThrowBlasting}({ACTIVE})"), RuleSet.BASE)
         ruleset.add_rule(ComplexConditionRule(ThiefSkills.LastResort, [ThiefSkills.ShadowWalker, GlobalSkills.TermsAndConditions], ready_to_die_rule), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule(GlobalSkills.TermsAndConditions, ThiefSkills.LastResort), RuleSet.BASE)
         ruleset.add_rule(InactiveRule(NightLordSkills.SuddenRaid, NightLordSkills.ThrowingStarBarrage), RuleSet.BASE)
@@ -106,7 +112,7 @@ class JobGenerator(ck.JobGenerator):
         
         Adrenalin = core.InformedCharacterModifier(NightLordSkills.AlchemicAdrenaline, crit_damage=10)
         JavelinMastery = core.InformedCharacterModifier(NightLordSkills.ClawMastery, pdamage_indep=25)    #20%확률로 100%크리. 현재 비활성,
-        PurgeAreaPassive = core.InformedCharacterModifier(_("{}(패시브)").format(NightLordSkills.FrailtyCurse), boss_pdamage=10 + ceil(self.combat / 3))
+        PurgeAreaPassive = core.InformedCharacterModifier(f"{NightLordSkills.FrailtyCurse}({PASSIVE})", boss_pdamage=10 + ceil(self.combat / 3))
         DarkSerenity = core.InformedCharacterModifier(NightLordSkills.DarkHarmony, att=40+passive_level, armor_ignore=30+passive_level)
         
         JavelineExpert = core.InformedCharacterModifier(NightLordSkills.ClawExpert, att=30 + passive_level, crit_damage=15 + passive_level//3)
@@ -148,19 +154,19 @@ class JobGenerator(ck.JobGenerator):
         SpiritJavelin = core.BuffSkill(NightLordSkills.ShadowStars, 0, 200 * 1000, rem=True).wrap(core.BuffSkillWrapper) # 펫버프
         PurgeArea = core.BuffSkill(NightLordSkills.FrailtyCurse, 600, (40+self.combat) * 1000, armor_ignore=30+self.combat).wrap(core.BuffSkillWrapper)
         BleedingToxin = core.BuffSkill(NightLordSkills.BleedDart, 780, 80*1000, cooltime=180 * 1000, att=60).wrap(core.BuffSkillWrapper)
-        BleedingToxinDot = core.DotSkill(_("{}(도트)").format(NightLordSkills.BleedDart), 0, 1000, 1000, 1, 90*1000, cooltime=-1).wrap(core.DotSkillWrapper)
+        BleedingToxinDot = core.DotSkill(f"{NightLordSkills.BleedDart}({DOT})", 0, 1000, 1000, 1, 90*1000, cooltime=-1).wrap(core.DotSkillWrapper)
         EpicAdventure = core.BuffSkill(NightLordSkills.EpicAdventure, 0, 60*1000, cooltime=120 * 1000, pdamage=10).wrap(core.BuffSkillWrapper)
         
         QuarupleThrow = core.DamageSkill(NightLordSkills.QuadStar, 600, 378 + 4 * self.combat, 5, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20) + JAVELIN_ATT).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)    #쉐도우 파트너 적용
 
         SuddenRaid = core.DamageSkill(NightLordSkills.SuddenRaid, 690, 494+5*self.combat, 7, cooltime=(30-2*(self.combat//2))*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        SuddenRaidDOT = core.DotSkill(_("{}(도트)").format(NightLordSkills.SuddenRaid), 0, 1000, 210 + 4 * self.combat, 1, 10000, cooltime=-1).wrap(core.DotSkillWrapper)
+        SuddenRaidDOT = core.DotSkill(f"{NightLordSkills.SuddenRaid}({DOT})", 0, 1000, 210 + 4 * self.combat, 1, 10000, cooltime=-1).wrap(core.DotSkillWrapper)
 
         DarkFlare = core.SummonSkill(NightLordSkills.DarkFlare, 600, 60000 / 62, 280, 1, 60000, cooltime=60000, red=True, rem=True).setV(vEhc, 1, 3, False).wrap(core.SummonSkillWrapper)
         
         MARK_PROP = (60+2*passive_level)/(160+2*passive_level)
         MarkOfNightlord = core.DamageSkill(NightLordSkills.NightLordsMark, 0, (60+3*passive_level+chtr.level), MARK_PROP*3, modifier=JAVELIN_ATT).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        MarkOfNightlordPungma = core.DamageSkill(_("{}(풍마)").format(NightLordSkills.NightLordsMark), 0, (60+3*passive_level+chtr.level), MARK_PROP*3, modifier=JAVELIN_ATT).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 툴팁대로면 19.355%가 맞으나, 쿼드러플과 동일한 37.5%로 적용되는 중
+        MarkOfNightlordPungma = core.DamageSkill(f"{NightLordSkills.NightLordsMark}({WIND})", 0, (60+3*passive_level+chtr.level), MARK_PROP*3, modifier=JAVELIN_ATT).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper) # 툴팁대로면 19.355%가 맞으나, 쿼드러플과 동일한 37.5%로 적용되는 중
 
         FatalVenom = core.DotSkill(NightLordSkills.ToxicVenom, 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 8000, cooltime=-1).wrap(core.DotSkillWrapper)
     
@@ -171,18 +177,18 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         # Set as conditional final attack. 조건부 파이널어택으로 설정함.
-        SpreadThrowTick = core.DamageSkill(_("{}(스프레드)").format(NightLordSkills.QuadStar), 0, (378 + 4 * self.combat)*0.85, 5*SPREAD_HIT, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20) + JAVELIN_ATT).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        SpreadThrowTick = core.DamageSkill(f"{NightLordSkills.QuadStar}({NightLordSkills.ThrowingStarBarrage})", 0, (378 + 4 * self.combat)*0.85, 5*SPREAD_HIT, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20) + JAVELIN_ATT).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         SpreadThrowInit = core.BuffSkill(NightLordSkills.ThrowingStarBarrage, 540, (20+vEhc.getV(0, 0))*1000, cooltime=180*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
         
         Pungma = core.SummonSkill(NightLordSkills.Shurrikane, 360, 100, 0, 1, 1450, cooltime=25*1000, red=True).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)  #10타 가정
-        PungmaHit = core.DamageSkill(_("{}(타격)").format(NightLordSkills.Shurrikane), 0, 250+vEhc.getV(4, 4)*10, 5, cooltime=-1, modifier=JAVELIN_ATT).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        PungmaHit = core.DamageSkill(f"{NightLordSkills.Shurrikane}({DAMAGE})", 0, 250+vEhc.getV(4, 4)*10, 5, cooltime=-1, modifier=JAVELIN_ATT).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
         
         ArcaneOfDarklord = core.SummonSkill(NightLordSkills.DarkLordsOmen, 360, 1020, 350+14*vEhc.getV(2, 2), 7 + 5, 11990, cooltime=60*1000, red=True, modifier=core.CharacterModifier(boss_pdamage=30) + JAVELIN_ATT).isV(vEhc, 2, 2).wrap(core.SummonSkillWrapper) # 132타
-        ArcaneOfDarklordFinal = core.DamageSkill(_("{}(막타)").format(NightLordSkills.DarkLordsOmen), 0, 900+36*vEhc.getV(2, 2), 10, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=30) + JAVELIN_ATT).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
-        ThrowBlasting = core.DamageSkill(_("{}(폭발 부적)").format(NightLordSkills.ThrowBlasting), 0, 475+19*vEhc.getV(0, 0), 5, cooltime=-1, modifier=JAVELIN_ATT).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        ThrowBlastingStack = core.StackSkillWrapper(core.BuffSkill(_("{}(부적 스택)").format(NightLordSkills.ThrowBlasting), 0, 99999999), 68)
-        ThrowBlastingActive = core.BuffSkill(_("{}(액티브)").format(NightLordSkills.ThrowBlasting), 720, 60000, cooltime=180*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
-        ThrowBlastingPassive = core.DamageSkill(_("{}(패시브)").format(NightLordSkills.ThrowBlasting), 0, 0, 0, cooltime=10000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        ArcaneOfDarklordFinal = core.DamageSkill(f"{NightLordSkills.DarkLordsOmen}({LAST_HIT})", 0, 900+36*vEhc.getV(2, 2), 10, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=30) + JAVELIN_ATT).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
+        ThrowBlasting = core.DamageSkill(f"{NightLordSkills.ThrowBlasting}({EXPLOSION_AMU})", 0, 475+19*vEhc.getV(0, 0), 5, cooltime=-1, modifier=JAVELIN_ATT).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        ThrowBlastingStack = core.StackSkillWrapper(core.BuffSkill(f"{NightLordSkills.ThrowBlasting}({AMU_STACK})", 0, 99999999), 68)
+        ThrowBlastingActive = core.BuffSkill(f"{NightLordSkills.ThrowBlasting}({ACTIVE})", 720, 60000, cooltime=180*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
+        ThrowBlastingPassive = core.DamageSkill(f"{NightLordSkills.ThrowBlasting}({PASSIVE})", 0, 0, 0, cooltime=10000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
 

@@ -1,4 +1,4 @@
-from .globalSkill import GlobalSkills
+from .globalSkill import GlobalSkills, INIT, ENDING, LAST_HIT
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial, reduce
@@ -9,6 +9,7 @@ from .jobclass import resistance
 from .jobbranch import bowmen
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -136,8 +137,8 @@ class JobGenerator(ck.JobGenerator):
         CrossbowExpert = core.InformedCharacterModifier(WildHunterSkills.CrossbowExpert,att=30 + passive_level, crit_damage = 20 + passive_level//2)
         WildInstinct = core.InformedCharacterModifier(WildHunterSkills.WildInstinct,armor_ignore = 30 + 3*passive_level)
         ExtendedMagazine = core.InformedCharacterModifier(WildHunterSkills.ExtendedMagazine, pdamage_indep=20 + passive_level // 3, stat_main=60 + 2*passive_level, stat_sub=60 + 2*passive_level)
-        AdvancedFinalAttackPassive = core.InformedCharacterModifier(_("{}(패시브)").format(WildHunterSkills.AdvancedFinalAttack), att = 20 + ceil(passive_level/2))
-        JaugerStormPassive = core.InformedCharacterModifier(_("{}(패시브)").format(WildHunterSkills.JaguarStorm), att = 5+2*vEhc.getV(0,0))
+        AdvancedFinalAttackPassive = core.InformedCharacterModifier(f"{WildHunterSkills.AdvancedFinalAttack}({PASSIVE})", att = 20 + ceil(passive_level/2))
+        JaugerStormPassive = core.InformedCharacterModifier(f"{WildHunterSkills.JaguarStorm}({PASSIVE})", att = 5+2*vEhc.getV(0,0))
     
         return [Jaguer, NaturesWrath, ResistanceAutoCrank,
                             CrossbowMastery, PhisicalTraining, Flurry, JaugarLink, CrossbowExpert,
@@ -232,14 +233,14 @@ class JobGenerator(ck.JobGenerator):
         JaguerStorm = core.BuffSkill(WildHunterSkills.JaguarStorm, 840, 40*1000, cooltime = (150-vEhc.getV(0,0))*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
 
         JaguarMaximum = core.DamageSkill(WildHunterSkills.PrimalFury, 2160, 350+13*vEhc.getV(5,5), 12*9, cooltime = 120*1000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
-        JaguarMaximumFinal = core.DamageSkill(_("{}(마무리)").format(WildHunterSkills.PrimalFury), 630, 450+18*vEhc.getV(5,5), 15*4, cooltime=-1, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
+        JaguarMaximumFinal = core.DamageSkill(f"{WildHunterSkills.PrimalFury}({LAST_HIT})", 630, 450+18*vEhc.getV(5,5), 15*4, cooltime=-1, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc,5,5).wrap(core.DamageSkillWrapper)
         RidingOff = core.DamageSkill(_("하차 딜레이"), 1800, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper) # 재규어 맥시멈 강제 탑승 해제 딜레이
 
         WildGrenade = core.SummonSkill(WildHunterSkills.PrimalGrenade, 0, 4500, 600+24*vEhc.getV(2,2), 5, 9999*10000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
 
-        WildBalkanTypeXInit = core.DamageSkill(_("{}(개시)").format(WildHunterSkills.WildArrowBlastTypeX), 540, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        WildBalkanTypeXInit = core.DamageSkill(f"{WildHunterSkills.WildArrowBlastTypeX}({INIT})", 540, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         WildBalkanTypeXTick = core.DamageSkill(WildHunterSkills.WildArrowBlastTypeX, 120, 450+18*vEhc.getV(0,0), 5, cooltime=-1, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  # 67 reps. 67회 반복.
-        WildBalkanTypeXEnd = core.DamageSkill(_("{}(후딜)").format(WildHunterSkills.WildArrowBlastTypeX), 540, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        WildBalkanTypeXEnd = core.DamageSkill(f"{WildHunterSkills.WildArrowBlastTypeX}({ENDING})", 540, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         #Build Graph
         FinalAttack = core.OptionalElement(SilentRampage.is_active, FinalAttack100, FinalAttack70)

@@ -1,6 +1,6 @@
 from dpmModule.jobs.jobbranch.pirates import PirateSkills
-from dpmModule.jobs.jobclass.flora import FloraSkills
-from .globalSkill import GlobalSkills
+from dpmModule.jobs.jobclass.flora import FloraSkills, LEF
+from .globalSkill import GlobalSkills, BUFF, INIT, LINK, SUBSEQUENT_HIT, SUMMON, ENDING, TICK, STACK
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -66,8 +66,8 @@ class ArkSkills:
     CompleteFusion = _("융합 완성")  # "Complete Fusion"
     BattleFrenzy = _("전투 광란")  # "Battle Frenzy"
     # Hypers
-    ChargeSpellAmplifier = _(" 차지 스펠 앰플리피케이션")  # "Charge Spell Amplifier"
-    EndlessAgony = _(" 끝없는 고통")  # "Endless Agony"
+    ChargeSpellAmplifier = _("차지 스펠 앰플리피케이션")  # "Charge Spell Amplifier"
+    EndlessAgony = _("끝없는 고통")  # "Endless Agony"
     DivineWrath = _("레이스 오브 갓")  # "Divine Wrath"
     # 5th Job
     AbyssalRecall = _("근원의 기억")  # "Abyssal Recall"
@@ -75,6 +75,11 @@ class ArkSkills:
     DeviousNightmare = _("새어 나오는 악몽")  # "Devious Nightmare"
     DeviousDream = _("새어 나오는 흉몽")  # "Devious Dream"
     EndlesslyStarvingBeast = _("영원히 굶주리는 짐승")  # "Endlessly Starving Beast"
+
+
+# Skill name modifiers only for Ark
+TERM_CONNECT = _("종결,연계")
+TRIGGER = _("등장")
 
 
 # TODO: Move to core, make it available with .wrap(). core쪽으로 옮길 것, .wrap()과 함께 사용 가능하게 할 것.
@@ -237,11 +242,11 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
 
         ruleset.add_rule(ConditionRule(ArkSkills.InfinitySpell, ArkSkills.AbyssalRecall, lambda x:x.is_cooltime_left(0, 1)), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule(_('{}(버프)').format(FloraSkills.ConversionOverdrive), ArkSkills.InfinitySpell), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule(_('{}(레프)').format(FloraSkills.GrandisGoddessBlessing), _('{}(버프)').format(FloraSkills.ConversionOverdrive)), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(_("{}(개시)").format(ArkSkills.EndlesslyStarvingBeast), ArkSkills.InfinitySpell, lambda x:x.is_cooltime_left(80000, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(f"{FloraSkills.ConversionOverdrive}({BUFF})", ArkSkills.InfinitySpell), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(f"{FloraSkills.GrandisGoddessBlessing}({LEF})", f"{FloraSkills.ConversionOverdrive}({BUFF})"), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(f"{ArkSkills.EndlesslyStarvingBeast}({INIT})", ArkSkills.InfinitySpell, lambda x:x.is_cooltime_left(80000, 1)), RuleSet.BASE)
         ruleset.add_rule(ConditionRule(ArkSkills.EndlessAgony, ArkSkills.InfinitySpell, lambda x:x.is_cooltime_left(40000, 1)), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(GlobalSkills.TermsAndConditions, _("{}(개시)").format(ArkSkills.EndlesslyStarvingBeast), lambda x:x.is_cooltime_left(60000, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(GlobalSkills.TermsAndConditions, f"{ArkSkills.EndlesslyStarvingBeast}({INIT})", lambda x:x.is_cooltime_left(60000, 1)), RuleSet.BASE)
 
         return ruleset
 
@@ -315,28 +320,28 @@ class JobGenerator(ck.JobGenerator):
         
 
         # 일반 공격들        
-        EndlessNightmare_Link = core.DamageSkill(_("{}(연계)").format(ArkSkills.EndlessNightmare), 540, 440 + 3*passive_level, 6, cooltime = 2000, red=True, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        EndlessNightmare_Link = core.DamageSkill(f"{ArkSkills.EndlessNightmare}({LINK})".format(), 540, 440 + 3*passive_level, 6, cooltime = 2000, red=True, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         PlainChargeDrive = core.DamageSkill(ArkSkills.BasicChargeDrive, 540, 610 + 3*passive_level, 3, modifier=BattleArtsHyper).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        PlainChargeDrive_Link = core.DamageSkill(_("{}(연계)").format(ArkSkills.BasicChargeDrive), 240+LINK_DELAY, 610 + 3*passive_level, 3, modifier=BattleArtsHyper).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        PlainChargeDrive_Link = core.DamageSkill(f"{ArkSkills.BasicChargeDrive}({LINK})", 240+LINK_DELAY, 610 + 3*passive_level, 3, modifier=BattleArtsHyper).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         PlainSpell = core.DamageSkill(_("플레인 스펠"), 0, 370 + 3*passive_level, 2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         PlainBuff = core.BuffSkill(_("플레인 버프"), 0, 60 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper)  # Not used because it does not affect dpm. dpm에 영향을 주지 않아 미사용.
         
         ScarletChargeDrive = core.DamageSkill(ArkSkills.ScarletChargeDrive, 540, 350 + 3*passive_level, 3, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        ScarletChargeDrive_Link = core.DamageSkill(_("{}(연계)").format(ArkSkills.ScarletChargeDrive), 510, 350 + 3*passive_level, 3, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        ScarletChargeDrive_After = core.DamageSkill(_("{}(후속타)").format(ArkSkills.ScarletChargeDrive), 0, 350 + 3*passive_level, 3, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        ScarletChargeDrive_Link = core.DamageSkill(f"{ArkSkills.ScarletChargeDrive}({LINK})", 510, 350 + 3*passive_level, 3, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        ScarletChargeDrive_After = core.DamageSkill(f"{ArkSkills.ScarletChargeDrive}({SUBSEQUENT_HIT})", 0, 350 + 3*passive_level, 3, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         ScarletSpell = core.DamageSkill(_("스칼렛 스펠"), 0, 220 + passive_level, 5).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         ScarletBuff = core.BuffSkill(_("스칼렛 버프"), 0, 60 * 1000, cooltime = -1, rem=True, att = 30, crit = 20).wrap(core.BuffSkillWrapper)
         
-        UnstoppableImpulse_Link = core.DamageSkill(_("{}(연계)").format(ArkSkills.UnstoppableImpulse), 540, 435 + 3*passive_level, 5, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        UnstoppableImpulse_Link = core.DamageSkill(f"{ArkSkills.UnstoppableImpulse}({LINK})", 540, 435 + 3*passive_level, 5, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
 
-        GustChargeDrive_Link = core.DamageSkill(_("{}(연계)").format(ArkSkills.GustChargeDrive), 450, 400 + 3*passive_level, 6, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        GustChargeDrive_Link = core.DamageSkill(f"{ArkSkills.GustChargeDrive}({LINK})", 450, 400 + 3*passive_level, 6, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         GustSpell = core.DamageSkill(_("거스트 스펠(접촉)"), 0, 1 + 30 + passive_level, 1).wrap(core.DamageSkillWrapper)
         GustSpellAttack = core.DamageSkill(_("거스트 스펠"), 0, 230 + passive_level, 4, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         GustBuff = core.BuffSkill(_("거스트 버프"), 0, 60*1000, cooltime = -1).wrap(core.BuffSkillWrapper) # dpm에 영향을 주지 않아 미사용
         
-        AbyssChargeDrive_Link = core.DamageSkill(_("{}(연계)").format(ArkSkills.AbyssalChargeDrive), 630, 340 + 3*self.combat, 4, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        AbyssChargeDrive_After = core.DamageSkill(_("{}(후속타)").format(ArkSkills.AbyssalChargeDrive), 0, 410 + 3*self.combat, 6, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        AbyssChargeDrive_Link = core.DamageSkill(f"{ArkSkills.AbyssalChargeDrive}({LINK})", 630, 340 + 3*self.combat, 4, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        AbyssChargeDrive_After = core.DamageSkill(f"{ArkSkills.AbyssalChargeDrive}({SUBSEQUENT_HIT})", 0, 410 + 3*self.combat, 6, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
         AbyssSpell = core.DamageSkill(_("어비스 스펠(접촉)"), 0, 1, 1).wrap(core.DamageSkillWrapper)
         AbyssSpellSummon = core.SummonSkill(_("어비스 스펠"), 0, 300, 70 + 2*self.combat, 2, 3900, cooltime = -1).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)  # 13 hit
         AbyssBuff = core.BuffSkill(_("어비스 버프"), 0, 60*1000, cooltime = -1, rem=True, pdamage = 20 + self.combat//2, boss_pdamage = 30 + self.combat, armor_ignore = 20 + self.combat//2).wrap(core.BuffSkillWrapper)
@@ -346,7 +351,7 @@ class JobGenerator(ck.JobGenerator):
         
         ##### When in Specter state | 스펙터 상태일 때 #####
         UpcomingDeath = core.DamageSkill(ArkSkills.ImpendingDeath, 0, 450 + 3*passive_level, 2, cooltime = -1).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        ReturningHateStack = core.StackSkillWrapper(core.BuffSkill(_("{}(스택)").format(ArkSkills.VengefulHate), 0, 99999999), 12)
+        ReturningHateStack = core.StackSkillWrapper(core.BuffSkill(f"{ArkSkills.VengefulHate}({STACK})", 0, 99999999), 12)
         ReturningHate = core.StackDamageSkillWrapper(
             core.DamageSkill(ArkSkills.VengefulHate, 0, 320 + 3*passive_level, 6, cooltime=12000, red=True).setV(vEhc, 0, 2, True),
             ReturningHateStack,
@@ -354,24 +359,24 @@ class JobGenerator(ck.JobGenerator):
         )
 
         EndlessBadDream = core.DamageSkill(ArkSkills.EndlessDream, 540, 445 + 3*passive_level, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  # An unending nightmare transformation. 끝나지 않는 악몽 변형.
-        EndlessBadDream_Link = core.DamageSkill(_("{}(연계)").format(ArkSkills.EndlessDream), 180+LINK_DELAY, 445 + 3*passive_level, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  # An unending nightmare transformation. 끝나지 않는 악몽 변형.
+        EndlessBadDream_Link = core.DamageSkill(f"{ArkSkills.EndlessDream}({LINK})", 180+LINK_DELAY, 445 + 3*passive_level, 6, modifier=BattleArtsHyper).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  # An unending nightmare transformation. 끝나지 않는 악몽 변형.
 
-        UncurableHurt_Link = core.DamageSkill(_("{}(연계)").format(ArkSkills.GrievousWound), 480, 510 + 3*passive_level, 6, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  # A variant of the Scarlet Charge Drive. 스칼렛 차지 드라이브의 변형.
+        UncurableHurt_Link = core.DamageSkill(f"{ArkSkills.GrievousWound}({LINK})", 480, 510 + 3*passive_level, 6, cooltime = 3000, red=True, modifier=BattleArtsHyper).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  # A variant of the Scarlet Charge Drive. 스칼렛 차지 드라이브의 변형.
         
-        TenaciousInstinct_Link = core.DamageSkill(_("{}(연계)").format(ArkSkills.TenaciousInstinct), 540, 460 + 3*passive_level, 6, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        TenaciousInstinct_Link = core.DamageSkill(f"{ArkSkills.TenaciousInstinct}({LINK})", 540, 460 + 3*passive_level, 6, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
 
         UnfulfilledHunger = core.DamageSkill(ArkSkills.InsatiableHunger, 750, 510 + 3*passive_level, 7, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  # Gust charge drive variant. 거스트 차지 드라이브 변형.
-        UnfulfilledHunger_Link = core.DamageSkill(_("{}(연계)").format(ArkSkills.InsatiableHunger), 660, 510 + 3*passive_level, 7, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        UnfulfilledHunger_Link = core.DamageSkill(f"{ArkSkills.InsatiableHunger}({LINK})", 660, 510 + 3*passive_level, 7, cooltime = 5000, red=True, modifier=BattleArtsHyper).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         
         CrawlingFear = core.DamageSkill(ArkSkills.CreepingTerror, 30 + 630, 1290 + 3*passive_level, 15, cooltime = 60*1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        CrawlingFear_Link = core.DamageSkill(_("{}(연계)").format(ArkSkills.CreepingTerror), 30 + 360, 1290 + 3*passive_level, 15, cooltime = 60*1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        CrawlingFear_Link = core.DamageSkill(f"{ArkSkills.CreepingTerror}({LINK})", 30 + 360, 1290 + 3*passive_level, 15, cooltime = 60*1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
 
         UncontrollableChaos = core.DamageSkill(ArkSkills.UnbridledChaos, 810, 440 + 3*self.combat, 12, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)  # Abyss Charge Drive variant. 어비스 차지 드라이브 변형.
-        UncontrollableChaos_Link = core.DamageSkill(_("{}(연계)").format(ArkSkills.UnbridledChaos), 720, 440 + 3*self.combat, 12, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        UncontrollableChaos_Link = core.DamageSkill(f"{ArkSkills.UnbridledChaos}({LINK})", 720, 440 + 3*self.combat, 12, cooltime = 9000, red=True, modifier=BattleArtsHyper).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
 
         RaptRestriction = core.DamageSkill(ArkSkills.BlissfulRestraint, 690, 600 + 10*self.combat, 6, cooltime = 180 * 1000, red=True, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        RaptRestrictionSummon = core.SummonSkill(_("{}(소환)").format(ArkSkills.BlissfulRestraint), 0, 450, 400 + 10*self.combat, 3, 9000, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
-        RaptRestrictionEnd = core.DamageSkill(_("{}(종결)").format(ArkSkills.BlissfulRestraint), 0, 1000 + 10*self.combat, 8, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        RaptRestrictionSummon = core.SummonSkill(f"{ArkSkills.BlissfulRestraint}({SUMMON})", 0, 450, 400 + 10*self.combat, 3, 9000, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)
+        RaptRestrictionEnd = core.DamageSkill(f"{ArkSkills.BlissfulRestraint}({ENDING})", 0, 1000 + 10*self.combat, 8, cooltime = -1, modifier=BattleArtsHyper).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
         Impulse_Connected = MultipleDamageSkillWrapper(core.DamageSkill(_("충동/본능 연결"), 0, 0, 0, cooltime = 6000, red=True, modifier=BattleArtsHyper).setV(vEhc, 7, 2, False), 2, 1500)
 
@@ -384,10 +389,10 @@ class JobGenerator(ck.JobGenerator):
         AbyssBuff2 = AmplifiedSpellBuffWrapper(core.BuffSkill(_("증폭된 어비스(버프)"), 0, 60000, cooltime = -1, pdamage = 20 + self.combat//2, boss_pdamage = 30 + self.combat, armor_ignore = 20 + self.combat//2), lambda: ChargeSpellAmplification.timeLeft)
 
         EndlessPain = core.DamageSkill(ArkSkills.EndlessAgony, 360, 0, 0, cooltime = 3030 + 60 * 1000).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   # onTick==> Coming death. onTick==> 다가오는 죽음.
-        EndlessPainTick = core.DamageSkill(_("{}(틱)").format(ArkSkills.EndlessAgony), 180, 300, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   # 15 hits. 15타.
-        EndlessPainEnd = core.DamageSkill(_("{}(종결)").format(ArkSkills.EndlessAgony), 1200/5, 100*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # Delay: 1200ms or 1050ms (when connected later). First to 1200. It repeats 5 times -> delay /5. 딜레이 : 1200ms 또는 1050ms(이후 연계 시). 일단 1200으로. 5회 반복되므로 -> 딜레이 /5.
-        EndlessPainEnd_Link = core.DamageSkill(_("{}(종결,연계)").format(ArkSkills.EndlessAgony), 1050/5, 100*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        EndlessPainBuff = core.BuffSkill(_("{}(버프)").format(ArkSkills.EndlessAgony), 0, 3 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper)  # No mental power is consumed. 정신력 소모되지 않음.
+        EndlessPainTick = core.DamageSkill(f"{ArkSkills.EndlessAgony}({TICK})", 180, 300, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)   # 15 hits. 15타.
+        EndlessPainEnd = core.DamageSkill(f"{ArkSkills.EndlessAgony}({ENDING})", 1200/5, 100*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # Delay: 1200ms or 1050ms (when connected later). First to 1200. It repeats 5 times -> delay /5. 딜레이 : 1200ms 또는 1050ms(이후 연계 시). 일단 1200으로. 5회 반복되므로 -> 딜레이 /5.
+        EndlessPainEnd_Link = core.DamageSkill(f"{ArkSkills.EndlessAgony}({TERM_CONNECT})", 1050/5, 100*3.5, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        EndlessPainBuff = core.BuffSkill(f"{ArkSkills.EndlessAgony}({BUFF})", 0, 3 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper)  # No mental power is consumed. 정신력 소모되지 않음.
         
         WraithOfGod = core.BuffSkill(ArkSkills.DivineWrath, 0, 60*1000, pdamage = 10, cooltime = 120 * 1000).wrap(core.BuffSkillWrapper)
         
@@ -400,17 +405,17 @@ class JobGenerator(ck.JobGenerator):
         FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, WEAPON_ATT)
     
         MemoryOfSource = core.DamageSkill(ArkSkills.AbyssalRecall, 990, 0, 0, cooltime = 200 * 1000, red=True).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
-        MemoryOfSourceTick = core.DamageSkill(_("{}(틱)").format(ArkSkills.AbyssalRecall), 210, 400 + 16 * vEhc.getV(1,1), 6).wrap(core.DamageSkillWrapper)    # 43타
-        MemoryOfSourceEnd = core.DamageSkill(_("{}(종결)").format(ArkSkills.AbyssalRecall), 60, 1200 + 48 * vEhc.getV(1,1), 12 * 6).wrap(core.DamageSkillWrapper)
-        MemoryOfSourceBuff = core.BuffSkill(_("{}(버프)").format(ArkSkills.AbyssalRecall), 0, 30 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper) # 정신력 소모되지 않음
+        MemoryOfSourceTick = core.DamageSkill(f"{ArkSkills.AbyssalRecall}({TICK})", 210, 400 + 16 * vEhc.getV(1,1), 6).wrap(core.DamageSkillWrapper)    # 43타
+        MemoryOfSourceEnd = core.DamageSkill(f"{ArkSkills.AbyssalRecall}({ENDING})", 60, 1200 + 48 * vEhc.getV(1,1), 12 * 6).wrap(core.DamageSkillWrapper)
+        MemoryOfSourceBuff = core.BuffSkill(f"{ArkSkills.AbyssalRecall}({BUFF})", 0, 30 * 1000, cooltime = -1).wrap(core.BuffSkillWrapper) # 정신력 소모되지 않음
                 
         InfinitySpell = core.BuffSkill(ArkSkills.InfinitySpell, 720, (40 + 2*vEhc.getV(0,0)) * 1000, cooltime = 240 * 1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         
         DeviousNightmare = core.DamageSkill(ArkSkills.DeviousNightmare, 0, 500 + 20*vEhc.getV(2,2), 9, cooltime = 10 * 1000, red=True).isV(vEhc,2,2).wrap(DeviousWrapper)
         DeviousDream = core.DamageSkill(ArkSkills.DeviousDream, 0, 600 + 24*vEhc.getV(2,2), 9, cooltime = 10 * 1000, red=True).wrap(DeviousWrapper)
 
-        ForeverHungryBeastInit = core.DamageSkill(_("{}(개시)").format(ArkSkills.EndlesslyStarvingBeast), 540, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        ForeverHungryBeastTrigger = core.DamageSkill(_("{}(등장)").format(ArkSkills.EndlesslyStarvingBeast), 0, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        ForeverHungryBeastInit = core.DamageSkill(f"{ArkSkills.EndlesslyStarvingBeast}({INIT})", 540, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        ForeverHungryBeastTrigger = core.DamageSkill(f"{ArkSkills.EndlesslyStarvingBeast}({TRIGGER})", 0, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ForeverHungryBeast = core.DamageSkill(ArkSkills.EndlesslyStarvingBeast, 0, 400+16*vEhc.getV(0,0), 12, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 20회 반복
 
         ### Skill Wrapper ###

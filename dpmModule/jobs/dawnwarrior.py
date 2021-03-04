@@ -1,3 +1,4 @@
+from .globalSkill import EXTRA_HIT, HYPER, CRACK
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -109,7 +110,7 @@ class JobGenerator(ck.JobGenerator):
 
         WeaponConstant = core.InformedCharacterModifier(_("무기상수"),pdamage_indep = 34)
         Mastery = core.InformedCharacterModifier(_("숙련도"), mastery=90+ceil(passive_level/2))
-        TrueSightHyper = core.InformedCharacterModifier(_("{}(하이퍼)").format(DawnWarriorSkills.TrueSight), prop_ignore = 10)
+        TrueSightHyper = core.InformedCharacterModifier(f"{DawnWarriorSkills.TrueSight}({HYPER})", prop_ignore = 10)
         
         return [WeaponConstant, Mastery, TrueSightHyper]
 
@@ -140,12 +141,12 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         SelestialDanceInit = core.BuffSkill(DawnWarriorSkills.CelestialDance, 570, (40+vEhc.getV(0,0))*1000, cooltime = 150 * 1000, red = True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        SelestialDanceSummon = core.SummonSkill(_("{}(추가타)").format(DawnWarriorSkills.CelestialDance), 0, 5000, (1200 + 40 * vEhc.getV(0,0)), 3, (40 + vEhc.getV(0,0)) * 1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
-        SelestialDanceAttack = core.DamageSkill(_("{}/{}(셀레스티얼)").format(DawnWarriorSkills.MoonDancer, DawnWarriorSkills.SpeedingSunset), 0, (400+4*self.combat)*0.01*(30+vEhc.getV(0,0)), 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + FallingMoon).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    # Direct use X. 직접사용 X.
+        SelestialDanceSummon = core.SummonSkill(f"{DawnWarriorSkills.CelestialDance}({EXTRA_HIT})", 0, 5000, (1200 + 40 * vEhc.getV(0,0)), 3, (40 + vEhc.getV(0,0)) * 1000, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        SelestialDanceAttack = core.DamageSkill(f"{DawnWarriorSkills.MoonDancer}/{DawnWarriorSkills.SpeedingSunset}({DawnWarriorSkills.CelestialDance})", 0, (400+4*self.combat)*0.01*(30+vEhc.getV(0,0)), 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + FallingMoon).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    # Direct use X. 직접사용 X.
         
         # Elysion 38 hits / 3 hits. 엘리시온 38타 / 3타.
         Elision = core.BuffSkill(DawnWarriorSkills.RiftofDamnation, 750, 30 * 1000, cooltime = 180 * 1000, red=True).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)    # Cast delay 750ms. 시전딜레이 750ms.
-        ElisionBreak = core.SummonSkill(_("{}(균열)").format(DawnWarriorSkills.RiftofDamnation), 0, (750 * 6 + 5000), 520 + 21*vEhc.getV(1,1), 5 * 6 * 2, (750 * 6 + 5000) * 4 - 1, cooltime=-1, modifier = FallingMoon).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)    # Triggers 3 times. 3회 발동.
+        ElisionBreak = core.SummonSkill(f"{DawnWarriorSkills.RiftofDamnation}({CRACK})", 0, (750 * 6 + 5000), 520 + 21*vEhc.getV(1,1), 5 * 6 * 2, (750 * 6 + 5000) * 4 - 1, cooltime=-1, modifier = FallingMoon).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)    # Triggers 3 times. 3회 발동.
         ElisionStyx = core.DamageSkill(f"{DawnWarriorSkills.StyxCrossing}({DawnWarriorSkills.RiftofDamnation})", 750, 580/2, 5 * 5 * 2, modifier = FallingMoon).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 40 reps. 40회 반복.
         
         # Soul Eclipse. 소울 이클립스.

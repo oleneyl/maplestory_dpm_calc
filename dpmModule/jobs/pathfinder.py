@@ -1,4 +1,4 @@
-from .globalSkill import GlobalSkills
+from .globalSkill import GlobalSkills, BUFF, BONUS
 from .jobbranch.bowmen import ArcherSkills
 from .jobclass.adventurer import AdventurerSkills
 from ..kernel import core
@@ -11,12 +11,18 @@ from .jobbranch import bowmen
 from .jobclass import adventurer
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE
 
 from localization.utilities import translator
 _ = translator.gettext
 
+
 # English skill information for Pathfinder here https://maplestory.fandom.com/wiki/Pathfinder/Skills
 class PathfinderSkills:
+    # Skill name modifiers
+    DELUGE = _("디스차지")
+    BURST = _("블래스트")
+    TORRENT = _("트랜지션")
     # Link Skill
     # AdventurersCuriosity = _("")  # "Adventurer's Curiosity"
     # 1st Job
@@ -52,9 +58,9 @@ class PathfinderSkills:
     AdvancedCardinalForce = _("어드밴스드 카디널 포스")  # "Advanced Cardinal Force"
     GlyphofImpalement = _("엣지 오브 레조넌스")  # "Glyph of Impalement"
     ComboAssault = _("콤보 어썰트")  # "Combo Assault"
-    ComboAssaultDeluge = _("{}(디스차지)").format(ComboAssault)  # "Combo Assault (Deluge)"
-    ComboAssaultBurst = _("{}(블래스트)").format(ComboAssault)  # "Combo Assault (Burst)"
-    ComboAssaultTorrent = _("{}(트랜지션)").format(ComboAssault)  # "Combo Assault (Torrent)"
+    ComboAssaultDeluge = f"{ComboAssault}({DELUGE})"  # "Combo Assault (Deluge)"
+    ComboAssaultBurst = f"{ComboAssault}({BURST})"  # "Combo Assault (Burst)"
+    ComboAssaultTorrent = f"{ComboAssault}({TORRENT})"  # "Combo Assault (Torrent)"
     SharpEyes = _("샤프 아이즈")  # "Sharp Eyes"
     BountifulTorrent = _("에디셔널 트랜지션")  # "Bountiful Torrent"
     AncientArchery = _("에인션트 아처리")  # "Ancient Archery"
@@ -62,22 +68,27 @@ class PathfinderSkills:
     IllusionStep = _("일루젼 스텝")  # "Illusion Step"
     # Hypers
     AncientAstra = _("에인션트 아스트라")  # "Ancient Astra"
-    AncientAstraDeluge = _("{}(디스차지)") .format(AncientAstra)  # "Ancient Astra (Deluge)"
-    AncientAstraBurst = _("{}(블래스트)").format(AncientAstra)  # "Ancient Astra (Burst)"
-    AncientAstraTorrent = _("{}(트랜지션)").format(AncientAstra)  # "Ancient Astra (Torrent)"
+    AncientAstraDeluge = f"{AncientAstra}({DELUGE})"  # "Ancient Astra (Deluge)"
+    AncientAstraBurst = f"{AncientAstra}({BURST})"  # "Ancient Astra (Burst)"
+    AncientAstraTorrent = f"{AncientAstra}({TORRENT})"  # "Ancient Astra (Torrent)"
     EpicAdventure = _("에픽 어드벤처")  # "Epic Adventure"
     AwakenedRelic = _("렐릭 에볼루션")  # "Awakened Relic"
     # 5th Job
     NovaBlast = _("얼티밋 블래스트")  # "Nova Blast"
     RavenTempest = _("레이븐 템페스트")  # "Raven Tempest"
     ObsidianBarrier = _("옵시디언 배리어")  # "Obsidian Barrier"
-    ObsidianBarrierDeluge = _("{}(디스차지)").format(ObsidianBarrier)  # "Obsidian Barrier (Deluge)"
-    ObsidianBarrierBurst = _("{}(블래스트)").format(ObsidianBarrier)  # "Obsidian Barrier (Burst)"
-    ObsidianBarrierTorrent = _("{}(트랜지션)").format(ObsidianBarrier)  # "Obsidian Barrier (Torrent)"
+    ObsidianBarrierDeluge = f"{ObsidianBarrier}({DELUGE})"  # "Obsidian Barrier (Deluge)"
+    ObsidianBarrierBurst = f"{ObsidianBarrier}({BURST})"  # "Obsidian Barrier (Burst)"
+    ObsidianBarrierTorrent = f"{ObsidianBarrier}({TORRENT})"  # "Obsidian Barrier (Torrent)"
     RelicUnbound = _("렐릭 언바운드")  # "Relic Unbound"
-    RelicUnboundDeluge = _("{}(디스차지)").format(RelicUnbound)  # "Relic Unbound (Deluge)"
-    RelicUnboundBurst = _("{}(블래스트)").format(RelicUnbound)  # "Relic Unbound (Burst)"
-    RelicUnboundTorrent = _("{}(트랜지션)").format(RelicUnbound)  # "Relic Unbound (Torrent)"
+    RelicUnboundDeluge = f"{RelicUnbound}({DELUGE})"  # "Relic Unbound (Deluge)"
+    RelicUnboundBurst = f"{RelicUnbound}({BURST})"  # "Relic Unbound (Burst)"
+    RelicUnboundTorrent = f"{RelicUnbound}({TORRENT})"  # "Relic Unbound (Torrent)"
+
+
+# Skill name modifiers for pathfinder only
+JUMP = _("점프")
+ARROW = _("화살")
 
 
 class CardinalStateWrapper(core.BuffSkillWrapper):
@@ -85,7 +96,7 @@ class CardinalStateWrapper(core.BuffSkillWrapper):
         '''
         DISCHARGE / BLAST / TRANSITION / NONE
         '''
-        skill = core.BuffSkill("카디널 차지", 0, 99999999)
+        skill = core.BuffSkill(_("카디널 차지"), 0, 99999999)
         super(CardinalStateWrapper, self).__init__(skill)
 
         self.state = "DISCHARGE"
@@ -160,7 +171,7 @@ class JobGenerator(ck.JobGenerator):
 
         EssenceOfArcher = core.InformedCharacterModifier(PathfinderSkills.ArchersEssence, crit=10, pdamage=10, armor_ignore=30)
 
-        AdditionalTransitionPassive = core.InformedCharacterModifier(_("{}(패시브)").format(PathfinderSkills.BountifulTorrent), patt=20 + passive_level)
+        AdditionalTransitionPassive = core.InformedCharacterModifier(f"{PathfinderSkills.BountifulTorrent}({PASSIVE})", patt=20 + passive_level)
 
         AncientBowExpert = core.InformedCharacterModifier(PathfinderSkills.AncientBowExpertise, att=60+2*passive_level, crit_damage=10+ceil(passive_level/3))
         IllusionStep = core.InformedCharacterModifier(PathfinderSkills.IllusionStep, stat_main=80+2*passive_level)
@@ -222,7 +233,7 @@ class JobGenerator(ck.JobGenerator):
         AncientBowBooster = core.BuffSkill(PathfinderSkills.AncientBowBooster, 0, 300*1000, rem=True).wrap(core.BuffSkillWrapper)
         CurseTolerance = core.BuffSkill(PathfinderSkills.CurseboundEndurance, 0, 300*1000, rem=True).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill(PathfinderSkills.SharpEyes, 0, (300+10*self.combat)*1000, crit=20+ceil(self.combat/2), crit_damage=15+ceil(self.combat/2), rem=True).wrap(core.BuffSkillWrapper)
-        AncientGuidance = core.BuffSkill(_("{}(버프)").format(PathfinderSkills.GuidanceoftheAncients), 0, 24000, pdamage_indep=15, cooltime=-1, rem=False).wrap(core.BuffSkillWrapper)
+        AncientGuidance = core.BuffSkill(f"{PathfinderSkills.GuidanceoftheAncients}({BUFF})", 0, 24000, pdamage_indep=15, cooltime=-1, rem=False).wrap(core.BuffSkillWrapper)
         CurseTransition = core.BuffSkill(PathfinderSkills.Curseweaver, 0, 15*1000, crit_damage=20, cooltime=-1).wrap(core.BuffSkillWrapper)  # Assume 5 stacks are maintained. 5스택 유지 가정.
 
         # Summon skills
@@ -243,9 +254,9 @@ class JobGenerator(ck.JobGenerator):
 
         # Ancient Force. 에인션트 포스.
         SplitMistel = core.DamageSkill(PathfinderSkills.SwarmShot, LINK_DELAY + 540, 200+350+7*passive_level, 4, cooltime=10*1000, red=True, modifier=ANCIENT_ARCHERY).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
-        SplitMistelBonus = core.DamageSkill(_("{}(보너스)").format(PathfinderSkills.SwarmShot), 0, 100+200+4*passive_level, 4 * 2, modifier=ANCIENT_ARCHERY).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        SplitMistelBonus = core.DamageSkill(f"{PathfinderSkills.SwarmShot}({BONUS})", 0, 100+200+4*passive_level, 4 * 2, modifier=ANCIENT_ARCHERY).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
 
-        TripleImpactJump = core.DamageSkill(_("{}(점프)").format(PathfinderSkills.TripleImpact), LINK_DELAY + 420, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
+        TripleImpactJump = core.DamageSkill(f"{PathfinderSkills.TripleImpact}({JUMP})", LINK_DELAY + 420, 0, 0, cooltime=-1).wrap(core.DamageSkillWrapper)
         TripleImpact = core.DamageSkill(PathfinderSkills.TripleImpact, 0, 400 + 200+5*passive_level, 5*3, cooltime=10*1000, red=True, modifier=ANCIENT_ARCHERY).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
         # 5-stack home, can be cast while using other skills. 5스택 가정, 다른 스킬 사용 중에 시전가능.
@@ -255,13 +266,13 @@ class JobGenerator(ck.JobGenerator):
         ComboAssultHolder = core.DamageSkill(PathfinderSkills.ComboAssault, 0, 0, 0, cooltime=20 * 1000, red=True).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
 
         ComboAssultDischarge = core.DamageSkill(PathfinderSkills.ComboAssaultDeluge, LINK_DELAY + 600, 600+10*self.combat, 7, modifier=ANCIENT_ARCHERY).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)  # 디버프 +1
-        ComboAssultDischargeArrow = core.DamageSkill(_("{}(화살)").format(PathfinderSkills.ComboAssaultDeluge), 150, 650+10*self.combat, 5, modifier=ANCIENT_ARCHERY).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        ComboAssultDischargeArrow = core.DamageSkill(f"{PathfinderSkills.ComboAssaultDeluge}({ARROW})", 150, 650+10*self.combat, 5, modifier=ANCIENT_ARCHERY).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
 
         ComboAssultBlast = core.DamageSkill(PathfinderSkills.ComboAssaultBurst, LINK_DELAY + 600, 600+10*self.combat, 8, modifier=ANCIENT_ARCHERY).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)  # 디버프 +1
-        ComboAssultBlastArrow = core.DamageSkill(_("{}(화살)").format(PathfinderSkills.ComboAssaultBurst), 150, 600+10*self.combat, 5, modifier=ANCIENT_ARCHERY).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        ComboAssultBlastArrow = core.DamageSkill(f"{PathfinderSkills.ComboAssaultBurst}({ARROW})", 150, 600+10*self.combat, 5, modifier=ANCIENT_ARCHERY).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
 
         ComboAssultTransition = core.DamageSkill(PathfinderSkills.ComboAssaultTorrent, LINK_DELAY + 600, 600+10*self.combat, 7, modifier=ANCIENT_ARCHERY).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)  # 디버프 +5
-        ComboAssultTransitionArrow = core.DamageSkill(_("{}(화살)").format(PathfinderSkills.ComboAssaultTorrent), 150, 650+10*self.combat, 5, modifier=ANCIENT_ARCHERY).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        ComboAssultTransitionArrow = core.DamageSkill(f"{PathfinderSkills.ComboAssaultTorrent}({ARROW})", 150, 650+10*self.combat, 5, modifier=ANCIENT_ARCHERY).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
 
         ## Hyper. 하이퍼.
         RelicEvolution = core.BuffSkill(PathfinderSkills.AwakenedRelic, 0, 30*1000, cooltime=120*1000).wrap(core.BuffSkillWrapper)  # Assuming zero delay. 딜레이 0으로 가정.
@@ -269,7 +280,7 @@ class JobGenerator(ck.JobGenerator):
         AncientAstraHolder = core.DamageSkill(PathfinderSkills.AncientAstra, LINK_DELAY + 420, 0, 0, cooltime=80*1000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         AncientAstraDischarge = core.DamageSkill(PathfinderSkills.AncientAstraDeluge, 270, 500, 6, modifier=ANCIENT_ARCHERY).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 16.11 seconds 60*6 strokes. 16.11초 60*6타.
-        AncientAstraDischargeArrow = core.DamageSkill(_("{}(화살)").format(PathfinderSkills.AncientAstraDeluge), 0, 300, 0.3*2*2, modifier=ANCIENT_ARCHERY).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AncientAstraDischargeArrow = core.DamageSkill(f"{PathfinderSkills.AncientAstraDeluge}({ARROW})", 0, 300, 0.3*2*2, modifier=ANCIENT_ARCHERY).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         AncientAstraBlast = core.DamageSkill(PathfinderSkills.AncientAstraBurst, 1570, 1800, 10, modifier=ANCIENT_ARCHERY).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 15.72 seconds 10*10 strokes. 15.72초 10*10타.
 

@@ -1,4 +1,4 @@
-from .globalSkill import GlobalSkills
+from .globalSkill import GlobalSkills, DOT, SHOCK_WAVE, REINFORCE, ENDING, ACTIVE, CAST
 from ..kernel import core
 from ..character import characterKernel as ck
 from ..status.ability import Ability_tool
@@ -62,6 +62,10 @@ class PaladinSkills:
     MightyMjolnir = _("마이티 묠니르")  # "Mighty Mjolnir"
 
 
+# Skill modifiers for Paladin only
+TWO_HANDED = _("두손둔기")
+SMALL = _("작은")
+
 # The 4th skill should be written based on Combat Orders. 4차 스킬은 컴뱃오더스 적용 기준으로 작성해야 함.
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
@@ -90,7 +94,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         ruleset.add_rule(ConditionRule(PaladinSkills.GrandGuardian, PaladinSkills.DivineEcho, lambda sk: sk.is_time_left(7000, 1)), RuleSet.BASE)
         ruleset.add_rule(ComplexConditionRule(GlobalSkills.TermsAndConditions, [PaladinSkills.GrandGuardian, PaladinSkills.DivineEcho], use_soul_contract), RuleSet.BASE)
-        ruleset.add_rule(ComplexConditionRule(_("{}(시전)").format(PaladinSkills.MightyMjolnir), [PaladinSkills.DivineEcho], use_mighty_mjolnir), RuleSet.BASE)
+        ruleset.add_rule(ComplexConditionRule(f"{PaladinSkills.MightyMjolnir}({CAST})", [PaladinSkills.DivineEcho], use_mighty_mjolnir), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self):
@@ -102,13 +106,13 @@ class JobGenerator(ck.JobGenerator):
         ShieldMastery = core.InformedCharacterModifier(PaladinSkills.ShieldMastery, att=10)
 
         PaladinExpert = core.InformedCharacterModifier(
-            _("{}(두손둔기)").format(PaladinSkills.HighPaladin),
+            f"{PaladinSkills.HighPaladin}({TWO_HANDED})",
             crit_damage=5 + (32+passive_level) // 3,
             pdamage_indep=42+passive_level,
             crit=42+passive_level,
             armor_ignore=15+ceil((32+passive_level)/2),
         ) + core.ExtendedCharacterModifier(crit_damage=5, armor_ignore=10)
-        PaladinExpert = core.InformedCharacterModifier.from_extended_modifier(_("{}(두손둔기)").format(PaladinSkills.HighPaladin), PaladinExpert)
+        PaladinExpert = core.InformedCharacterModifier.from_extended_modifier(f"{PaladinSkills.HighPaladin}({TWO_HANDED})", PaladinExpert)
         return [PhisicalTraining, ShieldMastery, PaladinExpert]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -163,24 +167,24 @@ class JobGenerator(ck.JobGenerator):
 
         # Damage Skills
         LighteningCharge = core.DamageSkill(PaladinSkills.LightningCharge, 630, 462, 3+2, cooltime=60 * 1000 * (1 + buff_rem * 0.01)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # Consider the potential application of elemental charge. 엘리멘탈 차지의 벞지 적용 고려함.
-        LighteningChargeDOT = core.DotSkill(_("{}(도트)").format(PaladinSkills.LightningCharge), 0, 1000, 115, 1, 6000, cooltime=-1).wrap(core.DotSkillWrapper)
+        LighteningChargeDOT = core.DotSkill(f"{PaladinSkills.LightningCharge}({DOT})", 0, 1000, 115, 1, 6000, cooltime=-1).wrap(core.DotSkillWrapper)
         DivineCharge = core.DamageSkill(PaladinSkills.DivineCharge, 630, 462, 3+2, cooltime=60 * 1000 * (1 + buff_rem * 0.01)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         Sanctuary = core.DamageSkill(PaladinSkills.HeavensHammer, 750, 580, 8+2, cooltime=14 * 0.7 * 1000, red=True, modifier=core.CharacterModifier(boss_pdamage=30)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
 
         Blast = core.DamageSkill(PaladinSkills.Blast, 630, 291, 9+2+1, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
-        MightyMjollnirInit = core.StackableDamageSkillWrapper(core.DamageSkill(_("{}(시전)").format(PaladinSkills.MightyMjolnir), 630, 0, 0, cooltime=15000).isV(vEhc, 0, 0), 2)
+        MightyMjollnirInit = core.StackableDamageSkillWrapper(core.DamageSkill(f"{PaladinSkills.MightyMjolnir}({CAST})", 630, 0, 0, cooltime=15000).isV(vEhc, 0, 0), 2)
         MightyMjollnir = core.DamageSkill(PaladinSkills.MightyMjolnir, 0, 225+9*vEhc.getV(0, 0), 6, cooltime=-1, modifier=core.CharacterModifier(crit=50)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        MightyMjollnirWave = core.DamageSkill(_("{}(충격파)").format(PaladinSkills.MightyMjolnir), 0, 250+10*vEhc.getV(0, 0), 9, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        MightyMjollnirWave = core.DamageSkill(f"{PaladinSkills.MightyMjolnir}({SHOCK_WAVE})", 0, 250+10*vEhc.getV(0, 0), 9, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         # Summon Skills
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         BlessedHammer = core.SummonSkill(PaladinSkills.HammersoftheRighteous, 0, 600, 250 + vEhc.getV(1, 1)*10, 2, 999999 * 10000).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)
-        BlessedHammerActive = core.SummonSkill(_("블레스드 해머(활성화)"), 360, 600, 525+vEhc.getV(1, 1)*21, 3, 30 * 1000, cooltime=60 * 1000, red=True).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)
+        BlessedHammerActive = core.SummonSkill(f"{PaladinSkills.HammersoftheRighteous}({ACTIVE})", 360, 600, 525+vEhc.getV(1, 1)*21, 3, 30 * 1000, cooltime=60 * 1000, red=True).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)
         GrandCross = core.DamageSkill(PaladinSkills.GrandGuardian, 900, 0, 0, cooltime=150 * 1000, red=True).wrap(core.DamageSkillWrapper)
-        GrandCrossSmallTick = core.DamageSkill(_("{}(작은)").format(PaladinSkills.GrandGuardian), 200, 175 + vEhc.getV(3, 3)*7, 12, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)  # 3s, 15*6 strokes. 3s, 15*6타.
-        GrandCrossLargeTick = core.DamageSkill(_("{}(강화)").format(PaladinSkills.GrandGuardian), 146, 300 + vEhc.getV(3, 3)*12, 12, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)  # 6s, 41*6 strokes. 6s, 41*6타.
-        GrandCrossEnd = core.DamageSkill(_("{}(종료)").format(PaladinSkills.GrandGuardian), 450, 0, 0).wrap(core.DamageSkillWrapper)
+        GrandCrossSmallTick = core.DamageSkill(f"{PaladinSkills.GrandGuardian}({SMALL})", 200, 175 + vEhc.getV(3, 3)*7, 12, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)  # 3s, 15*6 strokes. 3s, 15*6타.
+        GrandCrossLargeTick = core.DamageSkill(f"{PaladinSkills.GrandGuardian}({REINFORCE})", 146, 300 + vEhc.getV(3, 3)*12, 12, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)  # 6s, 41*6 strokes. 6s, 41*6타.
+        GrandCrossEnd = core.DamageSkill(f"{PaladinSkills.GrandGuardian}({ENDING})", 450, 0, 0).wrap(core.DamageSkillWrapper)
 
         FinalAttack = core.DamageSkill(PaladinSkills.FinalAttack, 0, 80, 2*0.4).setV(vEhc, 4, 5, True).wrap(core.DamageSkillWrapper)
 

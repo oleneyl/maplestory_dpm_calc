@@ -1,4 +1,4 @@
-from .globalSkill import GlobalSkills
+from .globalSkill import GlobalSkills, DOT, BUFF, CAST, LAST_HIT, ENDING, CRACK, DEBUFF, PASSIVE
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -54,7 +54,7 @@ class HeroSkills:
     FinalAttack = _("파이널 어택")  # "Final Attack"
     PhysicalTraining = _("피지컬 트레이닝")  # "Physical Training"
     # 3rd Job
-    Panic = _("패닉 ")  # "Panic"
+    Panic = _("패닉")  # "Panic"
     Rush = _("돌진")  # "Rush"
     IntrepidSlash = _("브레이브 슬래시")  # "Intrepid Slash"
     Shout = "샤우트"  # "Shout"
@@ -79,6 +79,11 @@ class HeroSkills:
     InstinctualCombo = _("콤보 인스팅트")  # "Instinctual Combo"
     Worldreaver = _("콤보 데스폴트")  # "Worldreaver"
     BurningSoulBlade = _("소드 오브 버닝 소울")  # "Burning Soul Blade"
+
+
+# Skill name modifiers for hero only
+AXE = _("두손도끼")
+
 
 
 #ComboAttack
@@ -135,13 +140,13 @@ class JobGenerator(ck.JobGenerator):
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponMastery = core.InformedCharacterModifier(_("{}(두손도끼)").format(HeroSkills.WeaponMastery), pdamage_indep = 10, pdamage = 5)  # Two-handed ax. 두손도끼.
+        WeaponMastery = core.InformedCharacterModifier(f"{HeroSkills.WeaponMastery}({AXE})", pdamage_indep = 10, pdamage = 5)  # Two-handed ax. 두손도끼.
         PhisicalTraining = core.InformedCharacterModifier(HeroSkills.PhysicalTraining,stat_main = 30, stat_sub = 30)
         
-        ChanceAttack = core.InformedCharacterModifier(_("{}(패시브)").format(HeroSkills.ChanceAttack),crit = 20)
+        ChanceAttack = core.InformedCharacterModifier(f"{HeroSkills.ChanceAttack}({PASSIVE})",crit = 20)
 
         CombatMastery = core.InformedCharacterModifier(HeroSkills.CombatMastery,armor_ignore = 50 + passive_level)
-        AdvancedFinalAttack = core.InformedCharacterModifier(_("{}(패시브)").format(HeroSkills.AdvancedFinalAttack),att = 30 + passive_level)
+        AdvancedFinalAttack = core.InformedCharacterModifier(f"{HeroSkills.AdvancedFinalAttack}({PASSIVE})",att = 30 + passive_level)
         
         return [WeaponMastery, PhisicalTraining, ChanceAttack, CombatMastery, AdvancedFinalAttack]
 
@@ -205,15 +210,15 @@ class JobGenerator(ck.JobGenerator):
         
         #Damage Skills
         Panic = core.DamageSkill(HeroSkills.Panic, 630, 1150, 1, cooltime = 40000).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-        PanicBuff = core.BuffSkill(_("{}(디버프)").format(HeroSkills.Panic), 0, 40000, cooltime = -1, pdamage_indep = 25, rem = False).wrap(core.BuffSkillWrapper)
+        PanicBuff = core.BuffSkill(f"{HeroSkills.Panic}({DEBUFF})", 0, 40000, cooltime = -1, pdamage_indep = 25, rem = False).wrap(core.BuffSkillWrapper)
         
         RagingBlow = core.DamageSkill(HeroSkills.RagingBlow, 600, 200 + 3*self.combat, 8, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        RagingBlowEnrage = core.DamageSkill(_("{}(인레이지)").format(HeroSkills.RagingBlow), 600, 215+3*self.combat, 6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  # I use this. 이걸 사용함.
-        RagingBlowEnrageFinalizer = core.DamageSkill(_("{}(인레이지)(최종타)").format(HeroSkills.RagingBlow), 0, 215+3*self.combat, 2, modifier = core.CharacterModifier(pdamage = 20, crit = 100)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  # I use this. You need to connect the two. 이걸 사용함. 둘을 연결해야 함.
+        RagingBlowEnrage = core.DamageSkill(f"{HeroSkills.RagingBlow}({HeroSkills.Enrage})", 600, 215+3*self.combat, 6, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  # I use this. 이걸 사용함.
+        RagingBlowEnrageFinalizer = core.DamageSkill(f"{HeroSkills.RagingBlow}({HeroSkills.Enrage})({LAST_HIT})", 0, 215+3*self.combat, 2, modifier = core.CharacterModifier(pdamage = 20, crit = 100)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)  # I use this. You need to connect the two. 이걸 사용함. 둘을 연결해야 함.
         
         Puncture = core.DamageSkill(HeroSkills.Puncture, 660, 576 + 7 * self.combat, 4, cooltime = 30 * 1000).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        PunctureBuff = core.BuffSkill(_("{}(버프)").format(HeroSkills.Puncture), 0, (30 + self.combat // 2) * 1000, cooltime = -1, pdamage = 25 + ceil(self.combat / 2)).wrap(core.BuffSkillWrapper)
-        PunctureDot = core.DotSkill(_("{}(도트)").format(HeroSkills.Puncture), 0, 2000, 165 + 3*self.combat, 1, (30 + self.combat // 2) * 1000, cooltime = -1).wrap(core.DotSkillWrapper)
+        PunctureBuff = core.BuffSkill(f"{HeroSkills.Puncture}({BUFF})", 0, (30 + self.combat // 2) * 1000, cooltime = -1, pdamage = 25 + ceil(self.combat / 2)).wrap(core.BuffSkillWrapper)
+        PunctureDot = core.DotSkill(f"{HeroSkills.Puncture}({DOT})", 0, 2000, 165 + 3*self.combat, 1, (30 + self.combat // 2) * 1000, cooltime = -1).wrap(core.DotSkillWrapper)
     
         AdvancedFinalAttack = core.DamageSkill(HeroSkills.AdvancedFinalAttack, 0, 170 + 2*passive_level, 3 * 0.01 * (60 + ceil(passive_level/2) + 15)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
@@ -226,15 +231,15 @@ class JobGenerator(ck.JobGenerator):
         SwordOfBurningSoul = core.SummonSkill(HeroSkills.BurningSoulBlade, 810, 1000, (315+12*vEhc.getV(0,0)), 6, (60+vEhc.getV(0,0)//2) * 1000, cooltime = 120 * 1000, red=True, modifier = core.CharacterModifier(crit = 50)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
         
         ComboDeathFault = core.DamageSkill(HeroSkills.Worldreaver, 1260, 400 + 16*vEhc.getV(2,3), 14, cooltime = 20 * 1000, red=True).isV(vEhc, 2, 3).wrap(core.DamageSkillWrapper)
-        ComboDeathFaultBuff = core.BuffSkill(_("{}(버프)").format(HeroSkills.Worldreaver), 0, 5 * 1000, rem = False, cooltime = -1).isV(vEhc, 2, 3).wrap(core.BuffSkillWrapper)
+        ComboDeathFaultBuff = core.BuffSkill(f"{HeroSkills.Worldreaver}({BUFF})", 0, 5 * 1000, rem = False, cooltime = -1).isV(vEhc, 2, 3).wrap(core.BuffSkillWrapper)
         
         ComboInstinct = core.BuffSkill(HeroSkills.InstinctualCombo, 360, 30 * 1000, cooltime = 240 * 1000, rem = False, red = True).isV(vEhc, 1, 1).wrap(core.BuffSkillWrapper)
-        ComboInstinctFringe = core.DamageSkill(_("{}(균열)").format(HeroSkills.InstinctualCombo), 0, 200 + 8*vEhc.getV(1,1), 18).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
-        ComboInstinctOff = core.BuffSkill(_("{}(종료)").format(HeroSkills.InstinctualCombo), 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper)
+        ComboInstinctFringe = core.DamageSkill(f"{HeroSkills.InstinctualCombo}({CRACK})", 0, 200 + 8*vEhc.getV(1,1), 18).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        ComboInstinctOff = core.BuffSkill(f"{HeroSkills.InstinctualCombo}({ENDING})", 0, 1, cooltime = -1).wrap(core.BuffSkillWrapper)
 
-        SwordIllusionInit = core.DamageSkill(_("{}(시전)").format(HeroSkills.SwordIllusion), 660, 0, 0, cooltime=30000, red=True).wrap(core.DamageSkillWrapper)
+        SwordIllusionInit = core.DamageSkill(f"{HeroSkills.SwordIllusion}({CAST})", 660, 0, 0, cooltime=30000, red=True).wrap(core.DamageSkillWrapper)
         SwordIllusion = core.DamageSkill(HeroSkills.SwordIllusion, 0, 125+5*vEhc.getV(0,0), 4, cooltime=-1).wrap(core.DamageSkillWrapper)
-        SwordIllusionFinal = core.DamageSkill(_("{}(최종)").format(HeroSkills.SwordIllusion), 0, 250+10*vEhc.getV(0,0), 5, cooltime=-1).wrap(core.DamageSkillWrapper)
+        SwordIllusionFinal = core.DamageSkill(f"{HeroSkills.SwordIllusion}({LAST_HIT})", 0, 250+10*vEhc.getV(0,0), 5, cooltime=-1).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
         ComboAttack = ComboAttackWrapper(core.BuffSkill(_("콤보어택"), 0, 999999 * 1000), ComboDeathFaultBuff, vEhc, passive_level)

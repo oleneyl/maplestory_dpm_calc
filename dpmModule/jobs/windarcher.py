@@ -1,4 +1,4 @@
-from .globalSkill import GlobalSkills
+from .globalSkill import GlobalSkills, DOT, BUFF
 from .jobbranch.bowmen import ArcherSkills
 from ..kernel import core
 from ..character import characterKernel as ck
@@ -9,6 +9,7 @@ from .jobbranch import bowmen
 from .jobclass import cygnus
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -104,7 +105,7 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier(WindArcherSkills.PhysicalTraining, stat_main=30, stat_sub=30)
 
         WindBlessingPassive = core.InformedCharacterModifier(
-            _("{}(패시브)").format(WindArcherSkills.TouchoftheWind),
+            f"{WindArcherSkills.TouchoftheWind}({PASSIVE})",
             pstat_main=15 + passive_level // 3,
             patt=10 + ceil(passive_level / 3),
         )
@@ -194,7 +195,7 @@ class JobGenerator(ck.JobGenerator):
         ).wrap(core.BuffSkillWrapper)
 
         StormBringerDummy = core.BuffSkill(
-            _("{}(버프)").format(WindArcherSkills.StormBringer),
+            f"{WindArcherSkills.StormBringer}({BUFF})",
             delay=0,  # Delay calculation required. 딜레이 계산 필요.
             remain=200 * 1000,
         ).wrap(core.BuffSkillWrapper)
@@ -229,7 +230,7 @@ class JobGenerator(ck.JobGenerator):
             cooltime=30 * 1000,
         ).wrap(core.DamageSkillWrapper)
         PinPointPierceDebuff = core.BuffSkill(
-            _("{}(버프)").format(WindArcherSkills.PinpointPierce),
+            f"{WindArcherSkills.PinpointPierce}({BUFF})",
             delay=0,
             remain=30 * 1000,
             cooltime=-1,
@@ -269,7 +270,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
         MercilesswindDOT = core.DotSkill(
-            _("{}(도트)").format(WindArcherSkills.MercilessWinds),
+            f"{WindArcherSkills.MercilessWinds}({DOT})",
             summondelay=0,
             delay=1000,
             damage=500 + 20 * vEhc.getV(4, 4),

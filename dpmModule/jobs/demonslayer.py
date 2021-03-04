@@ -8,6 +8,7 @@ from .jobclass import demon
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE, ONE_HIT, INIT, ENDING, HOLDER, SUMMON
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -72,11 +73,20 @@ class DemonSlayerSkills:
     DemonBane = _("데몬 베인")  # "Demon Bane"
 
 
+# Skill name modifiers only for Demon Slayer
+THREAT = _("위협")
+BLUE_BLOOD = _("블블")
+AUTO = _("자동")
+NEMEA = _("네메아")
+GERYON = _("게리온")
+SUNDEAL = _("선딜")
+
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.jobtype = "STR"
-        self.jobname = "데몬슬레이어"
+        self.jobname = _("데몬슬레이어")
         self.vEnhanceNum = 15
         self.preEmptiveSkills = 1
         self.hyperStatPrefixed = 85  # DF 8레벨 투자
@@ -102,11 +112,11 @@ class JobGenerator(ck.JobGenerator):
         나머지는 알아서 시전
         '''
         ruleset = RuleSet()
-        ruleset.add_rule(InactiveRule(_("{}(1타)").format(DemonSlayerSkills.DemonLash), DemonSlayerSkills.DemonAwakening), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule(_("{}(1타)").format(DemonSlayerSkills.DemonLash), _("{}-리메인타임").format(DemonSlayerSkills.DemonLash)), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(f"{DemonSlayerSkills.DemonLash}({ONE_HIT})", DemonSlayerSkills.DemonAwakening), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(f"{DemonSlayerSkills.DemonLash}({ONE_HIT})", _("{}-리메인타임").format(DemonSlayerSkills.DemonLash)), RuleSet.BASE)
         ruleset.add_rule(InactiveRule(DemonSlayerSkills.CerberusChomp, DemonSlayerSkills.DemonAwakening), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule(DemonSlayerSkills.DemonCry, DemonSlayerSkills.DemonAwakening), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule(_("{}(개시)").format(DemonSlayerSkills.DemonBane), DemonSlayerSkills.DemonAwakening), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(f"{DemonSlayerSkills.DemonBane}({INIT})", DemonSlayerSkills.DemonAwakening), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self):
@@ -122,7 +132,7 @@ class JobGenerator(ck.JobGenerator):
         Concentration = core.InformedCharacterModifier(DemonSlayerSkills.FocusedFury, pdamage_indep=25)
         AdvancedWeaponMastery = core.InformedCharacterModifier(DemonSlayerSkills.BarricadeMastery, att=50+passive_level, crit_damage=15+passive_level//3)
 
-        DarkBindPassive = core.InformedCharacterModifier(_("{}(패시브)").format(DemonSlayerSkills.BindingDarkness), armor_ignore=30+self.combat)
+        DarkBindPassive = core.InformedCharacterModifier(f"{DemonSlayerSkills.BindingDarkness}({PASSIVE})", armor_ignore=30+self.combat)
 
         return [DeathCurse, Outrage, PhisicalTraining, Concentration, AdvancedWeaponMastery, DarkBindPassive]
 
@@ -167,7 +177,7 @@ class JobGenerator(ck.JobGenerator):
         DemonSlashRemainTime = core.BuffSkill(_("{}-리메인타임").format(DemonSlayerSkills.DemonLash), 0, 4000, cooltime=-1, pdamage_indep=10).wrap(core.BuffSkillWrapper)
 
         # When using only 1 stroke, the delay is longer than when it leads to 2 strokes. 1타만 사용시 딜레이가 2타로 이어질때보다 김.
-        DemonSlash1 = core.DamageSkill(_("{}(1타)").format(DemonSlayerSkills.DemonLash), 390, 110+80, 2, modifier=DS_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        DemonSlash1 = core.DamageSkill(f"{DemonSlayerSkills.DemonLash}({ONE_HIT})", 390, 110+80, 2, modifier=DS_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         DemonSlashAW1 = core.DamageSkill(_("데몬 슬래시 강화(1타)"), 270, 600+80, 3, modifier=AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         DemonSlashAW2 = core.DamageSkill(_("데몬 슬래시 강화(2타)"), 270, 600+80, 3, modifier=AW_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
@@ -177,35 +187,35 @@ class JobGenerator(ck.JobGenerator):
         DemonImpact = core.DamageSkill(DemonSlayerSkills.DemonImpact, 660, 460+4*self.combat, 6+1, modifier=core.CharacterModifier(crit=100, armor_ignore=30+ceil(self.combat/3), boss_pdamage=40+self.combat, pdamage=20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
         DevilCry = core.DamageSkill(DemonSlayerSkills.DemonCry, 990, 515+5*self.combat, 7, cooltime=20*1000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)   # Required to use for Evil Torch. 이블 토쳐 위해 사용필수.
-        DevilCryBuff = core.BuffSkill(_("{}(위협)").format(DemonSlayerSkills.DemonCry), 0, 20000, cooltime=-1, armor_ignore=15+self.combat//3).wrap(core.BuffSkillWrapper)
+        DevilCryBuff = core.BuffSkill(f"{DemonSlayerSkills.DemonCry}({THREAT})", 0, 20000, cooltime=-1, armor_ignore=15+self.combat//3).wrap(core.BuffSkillWrapper)
 
         InfinityForce = core.BuffSkill(DemonSlayerSkills.BoundlessRage, 990, (50+10*(self.combat//5))*1000, cooltime=(200-self.combat)*1000, rem=True, red=True).wrap(core.BuffSkillWrapper)
         Metamorphosis = core.BuffSkill(DemonSlayerSkills.DarkMetamorphosis, 1680, (180+4*self.combat)*1000, rem=True, pdamage=35+self.combat).wrap(core.BuffSkillWrapper)
-        MetamorphosisSummon = core.SummonSkill(_("{}(소환)").format(DemonSlayerSkills.DarkMetamorphosis), 0, 510, 250+5*self.combat, 1, (180+4*self.combat)*(1+buff_rem/100)*1000, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
-        MetamorphosisSummon_BB = core.DamageSkill(_("{}(블블)").format(DemonSlayerSkills.DarkMetamorphosis), 0, (250+5*self.combat)*0.9, 1, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        MetamorphosisSummon = core.SummonSkill(f"{DemonSlayerSkills.DarkMetamorphosis}({SUMMON})", 0, 510, 250+5*self.combat, 1, (180+4*self.combat)*(1+buff_rem/100)*1000, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        MetamorphosisSummon_BB = core.DamageSkill(f"{DemonSlayerSkills.DarkMetamorphosis}({BLUE_BLOOD})", 0, (250+5*self.combat)*0.9, 1, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
         # Blue Blood cannot be applied to a pet. 블루블러드는 소환수 적용이 안됨.
         BlueBlood = core.BuffSkill(DemonSlayerSkills.BlueBlood, 750, 60000, cooltime=120000-60000).wrap(core.BuffSkillWrapper)  # In all attacks, an additional hit occurs at 90% of the final damage -3 seconds when receiving 50 Force, 2 seconds every 4 seconds when receiving Infinity Force, reducing all skill force consumption by 20%. 모든 공격에 최종데미지의 90%로 추가타 발생. 포스50수급시 -3초, 인피니티 포스시 4초마다 2초 감소, 모든 스킬 포스소모량 20%감소.
         Cerberus = core.DamageSkill(DemonSlayerSkills.CerberusChomp, 690, 450, 6, cooltime=5000, modifier=core.CharacterModifier(boss_pdamage=50, armor_ignore=50)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 포스50 추가흡수
-        CerberusAuto = core.DamageSkill(_("{}(자동)").format(DemonSlayerSkills.CerberusChomp), 0, 450, 6, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=50, armor_ignore=50)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 포스50 추가흡수
+        CerberusAuto = core.DamageSkill(f"{DemonSlayerSkills.CerberusChomp}({AUTO})", 0, 450, 6, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=50, armor_ignore=50)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 포스50 추가흡수
         DemonFortitude = core.BuffSkill(DemonSlayerSkills.DemonicFortitude, 0, 60000, cooltime=120000).wrap(core.BuffSkillWrapper)
 
         CallMastema = demon.CallMastemaWrapper(vEhc, 4, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         DemonAwakning = core.BuffSkill(DemonSlayerSkills.DemonAwakening, 870, (35+vEhc.getV(0, 0))*1000, cooltime=120*1000, red=True, crit=(50+vEhc.getV(0, 0)//2)).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
-        DemonAwakningSummon = core.SummonSkill(_("{}(더미)").format(DemonSlayerSkills.DemonAwakening), 0, 8000, 0, 0, (35+vEhc.getV(0, 0))*1000, cooltime=-1).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        DemonAwakningSummon = core.SummonSkill(f"{DemonSlayerSkills.DemonAwakening}({HOLDER})", 0, 8000, 0, 0, (35+vEhc.getV(0, 0))*1000, cooltime=-1).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         SpiritOfRage = core.SummonSkill(DemonSlayerSkills.SpiritofRage, 810, 1080, (850+34*vEhc.getV(3, 3)), 12, (10+vEhc.getV(3, 3)//5)*1000, cooltime=(120-vEhc.getV(3, 3)//2)*1000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc, 3, 3).wrap(core.SummonSkillWrapper)
-        SpiritOfRageEnd = core.DamageSkill(_("{}(종료)").format(DemonSlayerSkills.SpiritofRage), 0, 900+36*vEhc.getV(3, 3), 15, cooltime=-1).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
-        Orthros = core.SummonSkill(_("{}(네메아)").format(DemonSlayerSkills.Orthrus), 510, 2000, 400+16*vEhc.getV(1, 1), 12, 40000, cooltime=120*1000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)
-        Orthros_ = core.SummonSkill(_("{}(게리온)").format(DemonSlayerSkills.Orthrus), 0, 3000, 900+36*vEhc.getV(1, 1), 10, 40000, cooltime=-1, modifier=core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)
+        SpiritOfRageEnd = core.DamageSkill(f"{DemonSlayerSkills.SpiritofRage}({ENDING})", 0, 900+36*vEhc.getV(3, 3), 15, cooltime=-1).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
+        Orthros = core.SummonSkill(f"{DemonSlayerSkills.Orthrus}({NEMEA})", 510, 2000, 400+16*vEhc.getV(1, 1), 12, 40000, cooltime=120*1000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)
+        Orthros_ = core.SummonSkill(f"{DemonSlayerSkills.Orthrus}({GERYON})", 0, 3000, 900+36*vEhc.getV(1, 1), 10, 40000, cooltime=-1, modifier=core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)
 
-        DemonBaneInit = core.DamageSkill(_("{}(개시)").format(DemonSlayerSkills.DemonBane), 240, 0, 0, cooltime=240*1000, red=True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        DemonBaneTick = core.DamageSkill(_("{}(1)").format(DemonSlayerSkills.DemonBane), 3760/16, 325+13*vEhc.getV(0, 0), 6, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)  # 3760ms 16 times. 3760ms 16회.
-        DemonBane2Pre = core.DamageSkill(_("{}(2)(선딜)").format(DemonSlayerSkills.DemonBane), 600, 0, 0, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        DemonBane2Tick = core.DamageSkill(_("{}(2)").format(DemonSlayerSkills.DemonBane), 2400/21, 650+26*vEhc.getV(0, 0), 7, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)  # 2400 ms 21 times. 2400ms 21회.
-        DemonBane2After = core.DamageSkill(_("{}(2)(후딜)").format(DemonSlayerSkills.DemonBane), 240, 0, 0, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        DemonBaneInit = core.DamageSkill(f"{DemonSlayerSkills.DemonBane}({INIT})", 240, 0, 0, cooltime=240*1000, red=True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        DemonBaneTick = core.DamageSkill(f"{DemonSlayerSkills.DemonBane}(1)", 3760/16, 325+13*vEhc.getV(0, 0), 6, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)  # 3760ms 16 times. 3760ms 16회.
+        DemonBane2Pre = core.DamageSkill(f"{DemonSlayerSkills.DemonBane}(2)({SUNDEAL})", 600, 0, 0, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        DemonBane2Tick = core.DamageSkill(f"{DemonSlayerSkills.DemonBane}(2)", 2400/21, 650+26*vEhc.getV(0, 0), 7, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)  # 2400 ms 21 times. 2400ms 21회.
+        DemonBane2After = core.DamageSkill(f"{DemonSlayerSkills.DemonBane}(2)({ENDING})", 240, 0, 0, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
 

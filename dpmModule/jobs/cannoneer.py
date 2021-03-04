@@ -1,4 +1,4 @@
-from .globalSkill import GlobalSkills
+from .globalSkill import GlobalSkills, DOT, BUFF, FLOOR
 from .jobbranch.pirates import PirateSkills
 from ..kernel import core
 from ..character import characterKernel as ck
@@ -9,6 +9,7 @@ from .jobbranch import pirates
 from .jobclass import adventurer
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -62,6 +63,10 @@ class CannoneerSkills:
     Poolmaker = _("풀 메이커")  # "Poolmaker"
 
 
+# Skill name modifiers only for Cannoneer
+BOMB = _("폭탄")
+
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -100,8 +105,8 @@ class JobGenerator(ck.JobGenerator):
         CriticalFire = core.InformedCharacterModifier(CannoneerSkills.CriticalFire, crit=20, crit_damage=5)
         PirateTraining = core.InformedCharacterModifier(CannoneerSkills.PirateTraining, stat_main=30, stat_sub=30)
 
-        MonkeyWavePassive = core.InformedCharacterModifier(_("{}(패시브)").format(CannoneerSkills.MonkeyWave), crit=20)
-        OakRuletPassive = core.InformedCharacterModifier(_("{}(패시브)").format(CannoneerSkills.BarrelRoulette), pdamage_indep=10)
+        MonkeyWavePassive = core.InformedCharacterModifier(f"{CannoneerSkills.MonkeyWave}({PASSIVE})", crit=20)
+        OakRuletPassive = core.InformedCharacterModifier(f"{CannoneerSkills.BarrelRoulette}({PASSIVE})", pdamage_indep=10)
         ReinforceCannon = core.InformedCharacterModifier(CannoneerSkills.ReinforcedCannon, att=40)
         PirateSpirit = core.InformedCharacterModifier(CannoneerSkills.PiratesSpirit, boss_pdamage=40 + self.combat)
         OverburningCannon = core.InformedCharacterModifier(CannoneerSkills.CannonOverload,pdamage_indep=30 + passive_level,armor_ignore=20 + passive_level // 2,)
@@ -177,7 +182,7 @@ class JobGenerator(ck.JobGenerator):
             cooltime=60 * 1000,
         ).wrap(core.DamageSkillWrapper)
         MonkeyWaveBuff = core.BuffSkill(
-            _("{}(버프)").format(CannoneerSkills.MonkeyWave),
+            f"{CannoneerSkills.MonkeyWave}({BUFF})",
             delay=0,
             remain=60000,
             cooltime=-1,
@@ -192,14 +197,14 @@ class JobGenerator(ck.JobGenerator):
             cooltime=30 * 1000,
         ).wrap(core.DamageSkillWrapper)
         MonkeyFuriousBuff = core.BuffSkill(
-            _("{}(버프)").format(CannoneerSkills.MonkeyFury),
+            f"{CannoneerSkills.MonkeyFury}({BUFF})",
             delay=0,
             remain=30000,
             cooltime=-1,
             pdamage=40,
         ).wrap(core.BuffSkillWrapper)
         MonkeyFuriousDot = core.DotSkill(
-            _("{}(도트)").format(CannoneerSkills.MonkeyFury),
+            f"{CannoneerSkills.MonkeyFury}({DOT})",
             summondelay=0,
             delay=1000,
             damage=200,
@@ -217,7 +222,7 @@ class JobGenerator(ck.JobGenerator):
             crit_damage=1.25,
         ).wrap(core.BuffSkillWrapper)
         OakRuletDOT = core.DotSkill(
-            _("{}(도트)").format(CannoneerSkills.BarrelRoulette),
+            f"{CannoneerSkills.BarrelRoulette}({DOT})",
             summondelay=0,
             delay=1000,
             damage=50,
@@ -325,7 +330,7 @@ class JobGenerator(ck.JobGenerator):
         )
         ICBMDOT = (
             core.SummonSkill(
-                _("{}(장판)").format(CannoneerSkills.TheNuclearOption),
+                f"{CannoneerSkills.TheNuclearOption}({FLOOR})",
                 summondelay=0,
                 delay=15000 / 27,  # 27 hits. 27타.
                 damage=(500 + 20 * vEhc.getV(1, 1)) * 0.45,  # BuckShot
@@ -353,7 +358,7 @@ class JobGenerator(ck.JobGenerator):
         )
         SpecialMonkeyEscort_Bomb = (
             core.SummonSkill(
-                _("{}(폭탄)").format(CannoneerSkills.MonkeyBusiness),
+                f"{CannoneerSkills.MonkeyBusiness}({BOMB})",
                 summondelay=0,
                 delay=5000,
                 damage=450 + 18 * vEhc.getV(2, 2),

@@ -12,6 +12,7 @@ from ..status.ability import Ability_tool
 from ..character import characterKernel as ck
 from ..execution.rules import RuleSet, MutualRule, InactiveRule
 from math import ceil
+from .globalSkill import PASSIVE, POISON, EXCEED, EXPLOSION, DOT
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -68,7 +69,7 @@ class ArchmageFirePoisonSkills:
 class PoisonChainToxicWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2):
         skill = core.SummonSkill(
-            _("{}(중독)").format(ArchmageFirePoisonSkills.PoisonChain),  # Poison chain (addition)
+            f"{ArchmageFirePoisonSkills.PoisonChain}({POISON})",  # Poison chain (addition)
             summondelay=0,
             delay=1800,
             damage=150 + 6 * vEhc.getV(3, 2),
@@ -150,10 +151,10 @@ class JobGenerator(ck.JobGenerator):
         MistEruption = self.load_skill_wrapper(ArchmageFirePoisonSkills.MistEruption, vEhc)
 
         DotPunisher = self.load_skill_wrapper(ArchmageFirePoisonSkills.DoTPunisher, vEhc)
-        DotPunisherExceed = self.load_skill_wrapper(_("{}(초과)").format(ArchmageFirePoisonSkills.DoTPunisher), vEhc)
+        DotPunisherExceed = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.DoTPunisher}({EXCEED})", vEhc)
         PoisonNova = self.load_skill_wrapper(ArchmageFirePoisonSkills.PoisonNova, vEhc)
-        PoisonNovaErupt = self.load_skill_wrapper(_("{}(폭발)").format(ArchmageFirePoisonSkills.PoisonNova), vEhc)
-        PoisonNovaEruptExceed = self.load_skill_wrapper(_("{}(폭발)(초과)").format(ArchmageFirePoisonSkills.PoisonNova), vEhc)
+        PoisonNovaErupt = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.PoisonNova}({EXPLOSION})", vEhc)
+        PoisonNovaEruptExceed = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.PoisonNova}({EXPLOSION})({EXCEED})", vEhc)
         PoisonChain = self.load_skill_wrapper(ArchmageFirePoisonSkills.PoisonChain, vEhc)
         PoisonChainToxic = PoisonChainToxicWrapper(vEhc, 0, 0)
 
@@ -167,21 +168,21 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         # Final Attack
-        MeteorPassive = self.load_skill_wrapper(_("{}(패시브)").format(ArchmageFirePoisonSkills.MeteorShower), vEhc)
+        MeteorPassive = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.MeteorShower}({PASSIVE})", vEhc)
         Ignite = self.load_skill_wrapper(ArchmageFirePoisonSkills.Ignite, vEhc)
         IgniteMeteor = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.Ignite}({ArchmageFirePoisonSkills.MeteorShower})", vEhc)
         # Ignite : Need Wrapper
 
         # DoT Skills
-        ParalyzeDOT = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.Paralyze))
-        MistDOT = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.PoisonMist))
-        IfrittDot = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.Ifrit))
-        HeizeFlameDOT = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.FlameHaze))
-        TeleportMasteryDOT = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.TeleportMastery))
-        PoisonBreathDOT = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.PoisonBreath))
-        MegidoFlameDOT = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.MegiddoFlame))
-        DotPunisherDOT = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.DoTPunisher), vEhc)
-        PoisonNovaDOT = self.load_skill_wrapper(_("{}(도트)").format(ArchmageFirePoisonSkills.PoisonNova), vEhc)
+        ParalyzeDOT = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.Paralyze}({DOT})")
+        MistDOT = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.PoisonMist}({DOT})")
+        IfrittDot = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.Ifrit}({DOT})")
+        HeizeFlameDOT = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.FlameHaze}({DOT})")
+        TeleportMasteryDOT = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.TeleportMastery}({DOT})")
+        PoisonBreathDOT = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.PoisonBreath}({DOT})")
+        MegidoFlameDOT = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.MegiddoFlame}({DOT})")
+        DotPunisherDOT = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.DoTPunisher}({DOT})", vEhc)
+        PoisonNovaDOT = self.load_skill_wrapper(f"{ArchmageFirePoisonSkills.PoisonNova}({DOT})", vEhc)
 
         # Unstable Memorize Skills
         EnergyBolt = self.load_skill_wrapper(ArchmageFirePoisonSkills.EnergyBolt)

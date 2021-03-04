@@ -92,7 +92,7 @@ def weaponpuff_ring(level: int, weapon_att: int):
 
 def demonavenger_weaponpuff_ring(level: int, weapon_att: int):
     return core.BuffSkill(
-        _("{}(데몬어벤져)").format(OzRings.WeaponJumpRing),
+        f"{OzRings.WeaponJumpRing}({_('데몬어벤져')})",
         delay=60,
         remain=(7+2*level)*1000,
         cooltime=180000,
@@ -114,7 +114,7 @@ def levelpuff_ring(level: int, chtr_level: int):
 
 def demonavenger_levelpuff_ring(level: int, chtr_level: int):
     return core.BuffSkill(
-        _("{}(데몬어벤져)").format(OzRings.LevelJumpRing),
+        f"{OzRings.LevelJumpRing}({_('데몬어벤져')})",
         delay=60,
         remain=(7+2*level)*1000,
         cooltime=180000,

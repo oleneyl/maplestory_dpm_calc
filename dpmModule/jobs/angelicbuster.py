@@ -1,4 +1,4 @@
-from dpmModule.jobs.globalSkill import GlobalSkills
+from dpmModule.jobs.globalSkill import GlobalSkills, TWO_HIT, THREE_HIT, BUFF, CAST
 from dpmModule.jobs.jobbranch.pirates import PirateSkills
 
 from ..kernel import core
@@ -12,6 +12,7 @@ from .jobclass import nova
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -96,11 +97,11 @@ class JobGenerator(ck.JobGenerator):
         CallOfAncient = core.InformedCharacterModifier(AngelicBusterSkills.DragonWhistle, att=40)
         AffinityIII = core.InformedCharacterModifier(AngelicBusterSkills.AffinityHeartIII, stat_main=40, pdamage=20)
         AffinityIV = getAffinityIV(1272.08)  # Should be changed every time the average period of trinity changes. 1000 * time(sec) / (Trinity usage count). 트리니티 평균 주기가 바뀔 때 마다 변경해 줘야함. 1000 * time(초) / (트리니티 사용 횟수).
-        TrinityPassive = core.InformedCharacterModifier(_("{}(패시브)").format(AngelicBusterSkills.Trinity), pdamage_indep=ceil((30 + self.combat) / 3), armor_ignore=ceil((30 + self.combat) / 2))
+        TrinityPassive = core.InformedCharacterModifier(f"{AngelicBusterSkills.Trinity}({PASSIVE})", pdamage_indep=ceil((30 + self.combat) / 3), armor_ignore=ceil((30 + self.combat) / 2))
         SoulShooterExpert = core.InformedCharacterModifier(AngelicBusterSkills.SoulShooterExpert, att=30 + passive_level, crit=30 + passive_level, crit_damage=15 + ceil(passive_level / 2))
 
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
-        TrinityFusionPassive = core.InformedCharacterModifier(_("{}( 패시브)").format(AngelicBusterSkills.TrinityFusion), stat_main=10 + vEhc.getV(0, 0))
+        TrinityFusionPassive = core.InformedCharacterModifier(f"{AngelicBusterSkills.TrinityFusion}({PASSIVE})", stat_main=10 + vEhc.getV(0, 0))
 
         return [SoulShooterMastery, InnerFire,
                 CallOfAncient, AffinityIII, AffinityIV, TrinityPassive, SoulShooterExpert,
@@ -175,12 +176,12 @@ class JobGenerator(ck.JobGenerator):
         # -70 is a split attack. -70은 스플릿 어택.
         TRINITY_DAMAGE = 360 + 12 * (30 + self.combat) - 70
         Trinity_1 = core.DamageSkill(AngelicBusterSkills.Trinity, 360, TRINITY_DAMAGE, 2 + 1, modifier=TRINITY_MDF).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Trinity_2 = core.DamageSkill(_("{}(2타)").format(AngelicBusterSkills.Trinity), 360, TRINITY_DAMAGE, 3 + 1, modifier=TRINITY_MDF).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Trinity_3 = core.DamageSkill(_("{}(3타)").format(AngelicBusterSkills.Trinity), 360, TRINITY_DAMAGE, 4 + 1, modifier=TRINITY_MDF).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Trinity_2 = core.DamageSkill(f"{AngelicBusterSkills.Trinity}({TWO_HIT})", 360, TRINITY_DAMAGE, 3 + 1, modifier=TRINITY_MDF).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Trinity_3 = core.DamageSkill(f"{AngelicBusterSkills.Trinity}({THREE_HIT})", 360, TRINITY_DAMAGE, 4 + 1, modifier=TRINITY_MDF).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         FinaturaFettuccia = core.DamageSkill(AngelicBusterSkills.FinaleRibbon, 1020, 400 + 7 * self.combat, 10, red=True, cooltime=40000 * 0.75).setV(vEhc, 3, 2, False).wrap(
             core.DamageSkillWrapper)
-        FinaturaFettucciaBuff = core.BuffSkill(_("{}(버프)").format(AngelicBusterSkills.FinaleRibbon), 0, 20000, cooltime=-1, pdamage_indep=25).wrap(core.BuffSkillWrapper)
+        FinaturaFettucciaBuff = core.BuffSkill(f"{AngelicBusterSkills.FinaleRibbon}({BUFF})", 0, 20000, cooltime=-1, pdamage_indep=25).wrap(core.BuffSkillWrapper)
 
         SoulGaze = core.BuffSkill(AngelicBusterSkills.StarGazer, 1080, (180 + 5 * self.combat) * 1000, rem=True, crit_damage=45 + self.combat).wrap(core.BuffSkillWrapper)
 
@@ -200,14 +201,14 @@ class JobGenerator(ck.JobGenerator):
 
         EnergyBurst = core.DamageSkill(AngelicBusterSkills.SparkleBurst, 900, (450 + 18 * vEhc.getV(4, 4)) * 3, 15, red=True, cooltime=120 * 1000).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
         SpotLight = core.SummonSkill(AngelicBusterSkills.SuperstarSpotlight, 990, 800, 400 + 16 * vEhc.getV(0, 0), 3 * SPOTLIGHTHIT, 30000, cooltime=120 * 1000, red=True).isV(vEhc, 0,0).wrap(core.SummonSkillWrapper)
-        SpotLightBuff = core.BuffSkill(_("{}(버프)").format(AngelicBusterSkills.SuperstarSpotlight), 0, 30000, cooltime=-1, crit=(10 + int(0.2 * vEhc.getV(0, 0))) * SPOTLIGHTHIT, pdamage_indep=(3 + (vEhc.getV(0, 0) // 10)) * SPOTLIGHTHIT).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
+        SpotLightBuff = core.BuffSkill(f"{AngelicBusterSkills.SuperstarSpotlight}({BUFF})", 0, 30000, cooltime=-1, crit=(10 + int(0.2 * vEhc.getV(0, 0))) * SPOTLIGHTHIT, pdamage_indep=(3 + (vEhc.getV(0, 0) // 10)) * SPOTLIGHTHIT).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
 
         MascortFamilier = core.BuffSkill(AngelicBusterSkills.MightyMascot, 810, 30 + (vEhc.getV(2, 1) // 5) * 1000, red=True, cooltime=120 * 1000).isV(vEhc, 2, 1).wrap(core.BuffSkillWrapper)
         MascortFamilierAttack = core.SummonSkill(_("트윙클 스타/매지컬 벌룬"), 0, 2500, 1200, 5, (30 + (vEhc.getV(2, 1) // 5)) * 1000, cooltime=-1).isV(vEhc, 2, 1).wrap(core.SummonSkillWrapper)
         ShinyBubbleBreath = core.SummonSkill(_("샤이니 버블 브레스"), 0, 210, 250 + 10 * vEhc.getV(2, 1), 7, (3 + 0.4 * 8) * 1000, cooltime=-1).isV(vEhc, 2, 1).wrap(core.SummonSkillWrapper)
 
         # Canceled the previous trinity delay by 150ms. 이전 트리니티 딜레이를 150ms만큼 캔슬함. TODO: Make trinity (cancellation) and fusion 660ms. 트리니티(캔슬) 만들고 퓨전 660ms로 할것
-        TrinityFusionInit = core.DamageSkill(_("{}(시전)").format(AngelicBusterSkills.TrinityFusion), 660 - 150, 0, 0, cooltime=(16 - vEhc.getV(0, 0) // 10) * 1000, red=True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        TrinityFusionInit = core.DamageSkill(f"{AngelicBusterSkills.TrinityFusion}({CAST})", 660 - 150, 0, 0, cooltime=(16 - vEhc.getV(0, 0) // 10) * 1000, red=True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         TrinityFusion = core.DamageSkill(AngelicBusterSkills.TrinityFusion, 0, 330 + vEhc.getV(0, 0), 3, cooltime=-1, modifier=TRINITY_MDF).setV(vEhc, 0, 2, True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         ### build graph relationships

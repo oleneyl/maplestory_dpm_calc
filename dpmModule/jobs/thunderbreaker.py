@@ -1,4 +1,4 @@
-from .globalSkill import GlobalSkills
+from .globalSkill import GlobalSkills, CAST, LAST_HIT, LINK, BUFF, CANCEL, SUBSEQUENT_HIT, ATTACK
 from .jobbranch.pirates import PirateSkills
 from ..kernel import core
 from ..character import characterKernel as ck
@@ -12,6 +12,7 @@ from .jobclass import cygnus
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -64,6 +65,10 @@ class ThunderBreakerSkills:
     LightningSpearMultistrike = _("창뇌연격")  # "Lightning Spear Multistrike"
 
 
+# SKill name modifiers for Thunder Breaker only
+LIGHTNING = _("번개")
+
+
 # TODO : Added to the Haesin Advent damage cycle. 해신강림 딜사이클에 추가.
 class LightningWrapper(core.StackSkillWrapper):
     def __init__(self, skill):
@@ -88,9 +93,9 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(ReservationRule(GlobalSkills.TermsAndConditions, _("{}(시전)").format(ThunderBreakerSkills.LightningSpearMultistrike)), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule(_("{}(시전)").format(ThunderBreakerSkills.LightningSpearMultistrike), GlobalSkills.TermsAndConditions), RuleSet.BASE)
-        ruleset.add_rule(MutualRule(ThunderBreakerSkills.PrimalBolt, _("{}(시전)").format(ThunderBreakerSkills.LightningSpearMultistrike)), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule(GlobalSkills.TermsAndConditions, f"{ThunderBreakerSkills.LightningSpearMultistrike}({CAST})"), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(f"{ThunderBreakerSkills.LightningSpearMultistrike}({CAST})", GlobalSkills.TermsAndConditions), RuleSet.BASE)
+        ruleset.add_rule(MutualRule(ThunderBreakerSkills.PrimalBolt, f"{ThunderBreakerSkills.LightningSpearMultistrike}({CAST})"), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -107,7 +112,7 @@ class JobGenerator(ck.JobGenerator):
         NuckleExpert = core.InformedCharacterModifier(ThunderBreakerSkills.KnuckleExpert,att = 30 + passive_level, crit_damage = 20 + passive_level // 2)
         NoiShin = core.InformedCharacterModifier(ThunderBreakerSkills.ThunderGod,crit = 30, crit_damage = 25)
         
-        SkyOpenPassive = core.InformedCharacterModifier(_("{}(패시브)").format(ThunderBreakerSkills.PrimalBolt),pdamage_indep = 20)
+        SkyOpenPassive = core.InformedCharacterModifier(f"{ThunderBreakerSkills.PrimalBolt}({PASSIVE})",pdamage_indep = 20)
         
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 3)
 
@@ -164,20 +169,20 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill(ThunderBreakerSkills.KnuckleBooster, 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
         ChookRoi = core.BuffSkill(ThunderBreakerSkills.ArcCharger, 690, (180+5*self.combat)*1000, rem = True).wrap(core.BuffSkillWrapper)
         WindBooster = core.BuffSkill(ThunderBreakerSkills.SpeedInfusion, 0, (300+5*passive_level)*1000, rem = True).wrap(core.BuffSkillWrapper)
-        HurricaneBuff = core.BuffSkill(_("{}(버프)").format(ThunderBreakerSkills.Typhoon), 0, (90+passive_level)*1000, rem = True, pdamage = 35).wrap(core.BuffSkillWrapper) # TODO: 뇌전 스택에 연동해야함
+        HurricaneBuff = core.BuffSkill(f"{ThunderBreakerSkills.Typhoon}({BUFF})", 0, (90+passive_level)*1000, rem = True, pdamage = 35).wrap(core.BuffSkillWrapper) # TODO: 뇌전 스택에 연동해야함
     
         LightningStack = LightningWrapper(core.BuffSkill(ThunderBreakerSkills.LightningElemental, 0, 99999999))
 
         Hurricane = core.DamageSkill(ThunderBreakerSkills.Typhoon, 420, 390+3*passive_level, 5+1).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
-        HurricaneConcat = core.DamageSkill(_("{}(연계)").format(ThunderBreakerSkills.Typhoon), 420, 390+3*passive_level, 5+1, modifier = LINK_MASTERY).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
+        HurricaneConcat = core.DamageSkill(f"{ThunderBreakerSkills.Typhoon}({LINK})", 420, 390+3*passive_level, 5+1, modifier = LINK_MASTERY).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
         
         Destroy = core.DamageSkill(ThunderBreakerSkills.Annihilate, 480, 350 + 4*self.combat, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Thunder = core.DamageSkill(ThunderBreakerSkills.Thunderbolt, 540, 320 + 4*self.combat, 5 + 1).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         WaterWave = core.DamageSkill(ThunderBreakerSkills.TidalCrash, 270, 255, 2).setV(vEhc, 1, 5, False).wrap(core.DamageSkillWrapper)
-        DestroyConcat = core.DamageSkill(_("{}(연계)").format(ThunderBreakerSkills.Annihilate), 480, 350 + 4*self.combat, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + LINK_MASTERY).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        ThunderConcat = core.DamageSkill(_("{}(연계)").format(ThunderBreakerSkills.Thunderbolt), 540, 320 + 4*self.combat, 5 + 1, modifier = LINK_MASTERY).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   # Linked Final Damage 20%. 연계최종뎀 20%.
-        WaterWaveConcat = core.DamageSkill(_("{}(연계)").format(ThunderBreakerSkills.TidalCrash), 270, 255, 2, modifier = LINK_MASTERY).setV(vEhc, 1, 5, False).wrap(core.DamageSkillWrapper)
-        WaterWaveConcatCancel = core.DamageSkill(_("{}(연계)(캔슬)").format(ThunderBreakerSkills.TidalCrash), 60+60, 255, 2, modifier = LINK_MASTERY).setV(vEhc, 1, 5, False).wrap(core.DamageSkillWrapper)
+        DestroyConcat = core.DamageSkill(f"{ThunderBreakerSkills.Annihilate}({LINK})", 480, 350 + 4*self.combat, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + LINK_MASTERY).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        ThunderConcat = core.DamageSkill(f"{ThunderBreakerSkills.Thunderbolt}({LINK})", 540, 320 + 4*self.combat, 5 + 1, modifier = LINK_MASTERY).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   # Linked Final Damage 20%. 연계최종뎀 20%.
+        WaterWaveConcat = core.DamageSkill(f"{ThunderBreakerSkills.TidalCrash}({LINK})", 270, 255, 2, modifier = LINK_MASTERY).setV(vEhc, 1, 5, False).wrap(core.DamageSkillWrapper)
+        WaterWaveConcatCancel = core.DamageSkill(f"{ThunderBreakerSkills.TidalCrash}({LINK})({CANCEL})", 60+60, 255, 2, modifier = LINK_MASTERY).setV(vEhc, 1, 5, False).wrap(core.DamageSkillWrapper)
 
         # Hyper. 하이퍼.
         # Need to add delay. 딜레이 추가 필요.
@@ -193,20 +198,20 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         ShinNoiHapL = core.BuffSkill(ThunderBreakerSkills.LightningCascade, 540, (30+vEhc.getV(3,2)//2) * 1000, red = True, cooltime = (120-vEhc.getV(3,2)//2)*1000, pdamage_indep=5+vEhc.getV(3,2)//6).isV(vEhc,3,2).wrap(core.BuffSkillWrapper)
-        ShinNoiHapLAttack = core.SummonSkill(_("{}(공격)").format(ThunderBreakerSkills.LightningCascade), 0, 3000, 16*vEhc.getV(3,2) + 400, 7, (30+vEhc.getV(3,2)//2) * 1000, cooltime = -1).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
+        ShinNoiHapLAttack = core.SummonSkill(f"{ThunderBreakerSkills.LightningCascade}({ATTACK})", 0, 3000, 16*vEhc.getV(3,2) + 400, 7, (30+vEhc.getV(3,2)//2) * 1000, cooltime = -1).isV(vEhc,3,2).wrap(core.SummonSkillWrapper)
         ShinNoiHapLAttack_ChookRoi = core.DamageSkill(f"{ThunderBreakerSkills.LightningCascade}({ThunderBreakerSkills.ArcCharger})", 0, (16*vEhc.getV(3,2) + 400) * CHOOKROI, 7 ).wrap(core.DamageSkillWrapper)
-        ShinNoiHapLPassive = core.DamageSkill(_("{}(패시브)").format(ThunderBreakerSkills.LightningCascade), 0, 16 * vEhc.getV(3, 2) + 400, 7, cooltime=6000).wrap(core.DamageSkillWrapper)
+        ShinNoiHapLPassive = core.DamageSkill(f"{ThunderBreakerSkills.LightningCascade}({PASSIVE})", 0, 16 * vEhc.getV(3, 2) + 400, 7, cooltime=6000).wrap(core.DamageSkillWrapper)
         GioaTan = core.DamageSkill(ThunderBreakerSkills.SharkTorpedo, 360, 1000+40*vEhc.getV(2,1), 7, cooltime = 8000, red = True, modifier = LINK_MASTERY).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)  # Uses the Kyo-Atan-Break Power combo. 교아탄-벽력 콤보 사용함.
 
         NoiShinChanGeuk = core.DamageSkill(ThunderBreakerSkills.LightningGodSpearStrike, 0, 150+6*vEhc.getV(0,0), 6, cooltime = 7000, red = True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        NoiShinChanGeukAttack = core.SummonSkill(_("{}(후속타)").format(ThunderBreakerSkills.LightningGodSpearStrike), 0, 1000, 200 + 8*vEhc.getV(0,0), 7, 3999, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)    # Act 4 times. 4번 발동.
-        NoiShinChanGeukAttack_ChookRoi = core.DamageSkill(_("{}(후속타)({})").format(ThunderBreakerSkills.LightningGodSpearStrike, ThunderBreakerSkills.ArcCharger), 0, (200 + 8*vEhc.getV(0,0)) * CHOOKROI, 7).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        NoiShinChanGeukAttack = core.SummonSkill(f"{ThunderBreakerSkills.LightningGodSpearStrike}({SUBSEQUENT_HIT})", 0, 1000, 200 + 8*vEhc.getV(0,0), 7, 3999, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)    # Act 4 times. 4번 발동.
+        NoiShinChanGeukAttack_ChookRoi = core.DamageSkill(f"{ThunderBreakerSkills.LightningGodSpearStrike}({SUBSEQUENT_HIT})({ThunderBreakerSkills.ArcCharger})", 0, (200 + 8*vEhc.getV(0,0)) * CHOOKROI, 7).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
-        SpearLightningAttackInit = core.DamageSkill(_("{}(시전)").format(ThunderBreakerSkills.LightningSpearMultistrike), 0, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  # It's a stack-saving skill like throw blasting, but it's just handled with a 12 repetition extreme deal. 스로우 블래스팅같은 스택 저장형 스킬이지만... 그냥 12회 반복되는 극딜기로 처리.
+        SpearLightningAttackInit = core.DamageSkill(f"{ThunderBreakerSkills.LightningSpearMultistrike}({CAST})", 0, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  # It's a stack-saving skill like throw blasting, but it's just handled with a 12 repetition extreme deal. 스로우 블래스팅같은 스택 저장형 스킬이지만... 그냥 12회 반복되는 극딜기로 처리.
         SpearLightningAttack = core.DamageSkill(ThunderBreakerSkills.LightningSpearMultistrike, 240, 375+15*vEhc.getV(0,0), 5, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        SpearLightningAttack_Lightning = core.DamageSkill(_("{}(번개)").format(ThunderBreakerSkills.LightningSpearMultistrike), 0, 500+20*vEhc.getV(0,0), 4, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        SpearLightningAttack_Final = core.DamageSkill(_("{}(막타)").format(ThunderBreakerSkills.LightningSpearMultistrike), 450, 600+24*vEhc.getV(0,0), 7, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        SpearLightningAttack_Final_Lightning = core.DamageSkill(_("{}(막타)(번개)").format(ThunderBreakerSkills.LightningSpearMultistrike), 0, 725+29*vEhc.getV(0,0), 6, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        SpearLightningAttack_Lightning = core.DamageSkill(f"{ThunderBreakerSkills.LightningSpearMultistrike}({LIGHTNING})", 0, 500+20*vEhc.getV(0,0), 4, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        SpearLightningAttack_Final = core.DamageSkill(f"{ThunderBreakerSkills.LightningSpearMultistrike}({LAST_HIT})", 450, 600+24*vEhc.getV(0,0), 7, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        SpearLightningAttack_Final_Lightning = core.DamageSkill(f"{ThunderBreakerSkills.LightningSpearMultistrike}({LAST_HIT})({LIGHTNING})", 0, 725+29*vEhc.getV(0,0), 6, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         # Annihilation linkage (default). 섬멸 연계 (default).
         WaterWaveDestroy = core.GraphElement(_("파섬"))

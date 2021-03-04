@@ -1,4 +1,4 @@
-from dpmModule.jobs.globalSkill import GlobalSkills
+from dpmModule.jobs.globalSkill import GlobalSkills, WAVE, BUFF, LINK, SHOCK_WAVE, ENDING, DAMAGE, LAST_HIT
 
 from ..kernel import core
 from ..character import characterKernel as ck
@@ -74,6 +74,14 @@ class ZeroSkills:
     EgoWeapon = _("에고 웨폰")  # "Ego Weapon"
 
 
+# Skill name modifiers for zero only
+TAG = _("태그")
+AURA = _("오라")
+SWIRL = _("소용돌이")
+ELECTRIC = _("전기")
+CDR = _("재사용 대기시간 감소")
+ALPHA = _("알파")
+BETA = _("베타")
 '''
 Assist mechanism summary
 
@@ -213,45 +221,45 @@ class JobGenerator(ck.JobGenerator):
 
         #### Alpha. 알파 ####
         MoonStrike = core.DamageSkill(ZeroSkills.MoonStrike, 390, 120, 6).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-        MoonStrikeLink = core.DamageSkill(_("{}(연계)").format(ZeroSkills.MoonStrike), 330, 120, 6).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-        MoonStrikeTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.MoonStrike), 0, 120, 6).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        MoonStrikeLink = core.DamageSkill(f"{ZeroSkills.MoonStrike}({LINK})", 330, 120, 6).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        MoonStrikeTAG = core.DamageSkill(f"{ZeroSkills.MoonStrike}({TAG})", 0, 120, 6).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
 
         PierceStrike = core.DamageSkill(ZeroSkills.PiercingThrust, 510, 170, 6).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
-        PierceStrikeLink = core.DamageSkill(_("{}(연계)").format(ZeroSkills.PiercingThrust), 360, 170, 6).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
-        PierceStrikeTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.PiercingThrust), 0, 170, 6).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        PierceStrikeLink = core.DamageSkill(f"{ZeroSkills.PiercingThrust}({LINK})", 360, 170, 6).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        PierceStrikeTAG = core.DamageSkill(f"{ZeroSkills.PiercingThrust}({TAG})", 0, 170, 6).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
 
         ShadowStrike = core.DamageSkill(ZeroSkills.ShadowStrike, 240+90, 195, 8).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-        ShadowStrikeAura = core.DamageSkill(_("{}(오라)").format(ZeroSkills.ShadowStrike), 0, 310, 1).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        ShadowStrikeAura = core.DamageSkill(f"{ZeroSkills.ShadowStrike}({AURA})", 0, 310, 1).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
 
         FlashAssault = core.DamageSkill(ZeroSkills.FlashAssault, 270, 165, 8).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        FlashAssaultTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.FlashAssault), 0, 165, 8).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        FlashAssaultTAG = core.DamageSkill(f"{ZeroSkills.FlashAssault}({TAG})", 0, 165, 8).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
 
         AdvancedSpinCutter = core.DamageSkill(ZeroSkills.AdvancedSpinCutter, 270, 260+3*self.combat, 10).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedSpinCutterTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.AdvancedSpinCutter), 0, 260+3*self.combat, 10).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedSpinCutterAura = core.DamageSkill(_("{}(오라)").format(ZeroSkills.AdvancedSpinCutter), 0, 130+3*self.combat, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedSpinCutterAuraTAG = core.DamageSkill(_("{}(오라)(태그)").format(ZeroSkills.AdvancedSpinCutter), 0, 130+3*self.combat, 4, modifier=AlphaMDF-BetaMDF).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  # 항상 알파 스탯이 적용됨
+        AdvancedSpinCutterTAG = core.DamageSkill(f"{ZeroSkills.AdvancedSpinCutter}({TAG})", 0, 260+3*self.combat, 10).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedSpinCutterAura = core.DamageSkill(f"{ZeroSkills.AdvancedSpinCutter}({AURA})", 0, 130+3*self.combat, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedSpinCutterAuraTAG = core.DamageSkill(f"{ZeroSkills.AdvancedSpinCutter}({AURA})({TAG})", 0, 130+3*self.combat, 4, modifier=AlphaMDF-BetaMDF).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)  # 항상 알파 스탯이 적용됨
 
         AdvancedRollingCurve = core.DamageSkill(ZeroSkills.GrandRollingCross, 960, 365+3*self.combat, 12).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingCurveTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.GrandRollingCross), 0, 365+3*self.combat, 12).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingCurveAura = core.DamageSkill(_("{}(오라)").format(ZeroSkills.GrandRollingCross), 0, 350+self.combat, 2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingCurveAuraTAG = core.DamageSkill(_("{}(오라)(태그)").format(ZeroSkills.GrandRollingCross), 0, 350+self.combat, 2*2, modifier=AlphaMDF-BetaMDF).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 항상 알파 스탯이 적용됨, 각 투사체가 2회 타격함
+        AdvancedRollingCurveTAG = core.DamageSkill(f"{ZeroSkills.GrandRollingCross}({TAG})", 0, 365+3*self.combat, 12).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingCurveAura = core.DamageSkill(f"{ZeroSkills.GrandRollingCross}({AURA})", 0, 350+self.combat, 2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingCurveAuraTAG = core.DamageSkill(f"{ZeroSkills.GrandRollingCross}({AURA})({TAG})", 0, 350+self.combat, 2*2, modifier=AlphaMDF-BetaMDF).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 항상 알파 스탯이 적용됨, 각 투사체가 2회 타격함
 
         AdvancedRollingAssulter = core.DamageSkill(ZeroSkills.AdvancedRollingAssault, 960, 375+2*self.combat, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingAssulterTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.AdvancedRollingAssault), 0, 375+2*self.combat, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingAssulterAura = core.DamageSkill(_("{}(오라)").format(ZeroSkills.AdvancedRollingAssault), 0, 250+self.combat, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedRollingAssulterAuraTAG = core.DamageSkill(_("{}(오라)(태그)").format(ZeroSkills.AdvancedRollingAssault), 0, 250+self.combat, 3*2*2, modifier=AlphaMDF-BetaMDF).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # 항상 알파 스탯이 적용됨, 2회 사출, 각 투사체가 2회 타격함
+        AdvancedRollingAssulterTAG = core.DamageSkill(f"{ZeroSkills.AdvancedRollingAssault}({TAG})", 0, 375+2*self.combat, 12).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingAssulterAura = core.DamageSkill(f"{ZeroSkills.AdvancedRollingAssault}({AURA})", 0, 250+self.combat, 3).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedRollingAssulterAuraTAG = core.DamageSkill(f"{ZeroSkills.AdvancedRollingAssault}({AURA})({TAG})", 0, 250+self.combat, 3*2*2, modifier=AlphaMDF-BetaMDF).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # 항상 알파 스탯이 적용됨, 2회 사출, 각 투사체가 2회 타격함
 
         WindCutter = core.DamageSkill(ZeroSkills.WindCutter, 420, 165, 8).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        WindCutterSummon = core.DamageSkill(_("{}(소용돌이)").format(ZeroSkills.WindCutter), 0, 110, 3*2, cooltime=-1).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)  # Lasts up to 3 seconds, hits twice. 최대 3초지속, 2회 타격.
-        WindCutterTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.WindCutter), 0, 165, 8).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        WindCutterSummon = core.DamageSkill(f"{ZeroSkills.WindCutter}({SWIRL})", 0, 110, 3*2, cooltime=-1).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)  # Lasts up to 3 seconds, hits twice. 최대 3초지속, 2회 타격.
+        WindCutterTAG = core.DamageSkill(f"{ZeroSkills.WindCutter}({TAG})", 0, 165, 8).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
 
         WindStrike = core.DamageSkill(ZeroSkills.WindStriker, 480, 250, 8).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
-        WindStrikeTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.WindStriker), 0, 250, 8).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
+        WindStrikeTAG = core.DamageSkill(f"{ZeroSkills.WindStriker}({TAG})", 0, 250, 8).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
 
         AdvancedStormBreak = core.DamageSkill(ZeroSkills.AdvancedStormBreak, 690, 335+2*self.combat, 10).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedStormBreakSummon = core.DamageSkill(_("{}(소용돌이)").format(ZeroSkills.AdvancedStormBreak), 0, 335+2*self.combat, 4, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  # Lasts up to 3 seconds, hits once. 최대 3초지속, 1회 타격.
-        AdvancedStormBreakElectric = core.SummonSkill(_("{}(전기)").format(ZeroSkills.AdvancedStormBreak), 0, 1000, 230+2*self.combat, 1, (3+ceil(self.combat/10))*1000, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
-        AdvancedStormBreakTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.AdvancedStormBreak), 0, 335+2*self.combat, 10).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedStormBreakSummon = core.DamageSkill(f"{ZeroSkills.AdvancedStormBreak}({SWIRL})", 0, 335+2*self.combat, 4, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)  # Lasts up to 3 seconds, hits once. 최대 3초지속, 1회 타격.
+        AdvancedStormBreakElectric = core.SummonSkill(f"{ZeroSkills.AdvancedStormBreak}({ELECTRIC})", 0, 1000, 230+2*self.combat, 1, (3+ceil(self.combat/10))*1000, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        AdvancedStormBreakTAG = core.DamageSkill(f"{ZeroSkills.AdvancedStormBreak}({TAG})", 0, 335+2*self.combat, 10).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
         # Dot skill does not apply Cdem, so there is no need to add AlphaSkill. 도트스킬은 크뎀 미적용이므로 AlphaSkill 추가할 필요없음.
         DivineLeer = core.DotSkill(ZeroSkills.DivineLeer, 0, 1000, 200, 1, 99999999).wrap(core.DotSkillWrapper)
@@ -259,35 +267,35 @@ class JobGenerator(ck.JobGenerator):
         #### Beta. 베타 ####
 
         UpperSlash = core.DamageSkill(ZeroSkills.RisingSlash, 390, 210, 6, modifier=extra_damage(6)).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
-        UpperSlashTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.RisingSlash), 0, 210, 6, modifier=extra_damage(6)).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
+        UpperSlashTAG = core.DamageSkill(f"{ZeroSkills.RisingSlash}({TAG})", 0, 210, 6, modifier=extra_damage(6)).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
 
         AdvancedPowerStomp = core.DamageSkill(ZeroSkills.AirRiot, 570, 330+5*self.combat, 9, modifier=extra_damage(6)).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
-        AdvancedPowerStompTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.AirRiot), 0, 330+5*self.combat, 9, modifier=extra_damage(6)).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
-        AdvancedPowerStompWave = core.DamageSkill(_("{}(파동)").format(ZeroSkills.AirRiot), 0, 330+5*self.combat, 9, modifier=extra_damage(6)).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
-        AdvancedPowerStompWaveTAG = core.DamageSkill(_("{}(파동)(태그)").format(ZeroSkills.AirRiot), 0, 330+5*self.combat, 9, modifier=extra_damage(6)+BetaMDF-AlphaMDF).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)  # Beta stats are always applied. 항상 베타 스탯이 적용됨.
+        AdvancedPowerStompTAG = core.DamageSkill(f"{ZeroSkills.AirRiot}({TAG})", 0, 330+5*self.combat, 9, modifier=extra_damage(6)).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        AdvancedPowerStompWave = core.DamageSkill(f"{ZeroSkills.AirRiot}({WAVE})", 0, 330+5*self.combat, 9, modifier=extra_damage(6)).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)
+        AdvancedPowerStompWaveTAG = core.DamageSkill(f"{ZeroSkills.AirRiot}({WAVE})({TAG})", 0, 330+5*self.combat, 9, modifier=extra_damage(6)+BetaMDF-AlphaMDF).setV(vEhc, 0, 3, False).wrap(core.DamageSkillWrapper)  # Beta stats are always applied. 항상 베타 스탯이 적용됨.
 
         FrontSlash = core.DamageSkill(ZeroSkills.FlashCut, 450, 205, 6, modifier=extra_damage(6)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        FrontSlashTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.FlashCut), 0, 205, 6, modifier=extra_damage(6)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        FrontSlashTAG = core.DamageSkill(f"{ZeroSkills.FlashCut}({TAG})", 0, 205, 6, modifier=extra_damage(6)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
 
         THROWINGHIT = 5
         ThrowingWeapon = core.SummonSkill(ZeroSkills.AdvancedThrowingWeapon, 480, 300, 550+5*self.combat, 2, THROWINGHIT*300, cooltime=-1, modifier=extra_damage(6)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
 
         TurningDrive = core.DamageSkill(ZeroSkills.SpinDriver, 360, 260, 6, modifier=extra_damage(6)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        TurningDriveTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.SpinDriver), 0, 260, 6, modifier=extra_damage(6)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        TurningDriveTAG = core.DamageSkill(f"{ZeroSkills.SpinDriver}({TAG})", 0, 260, 6, modifier=extra_damage(6)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedWheelWind = core.DamageSkill(ZeroSkills.AdvancedWheelWind, 900, 200+2*self.combat, 2*7, modifier=extra_damage(6)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # 1 stroke per 0.1 seconds, maximum 7 seconds, 7 strokes applied. 0.1초당 1타, 최대 7초, 7타로 적용.
-        AdvancedWheelWindTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.AdvancedWheelWind), 0, 200+2*self.combat, 2*7, modifier=extra_damage(6)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # 1 stroke per 0.1 seconds, maximum 7 seconds, 7 strokes applied. 0.1초당 1타, 최대 7초, 7타로 적용.
+        AdvancedWheelWindTAG = core.DamageSkill(f"{ZeroSkills.AdvancedWheelWind}({TAG})", 0, 200+2*self.combat, 2*7, modifier=extra_damage(6)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)  # 1 stroke per 0.1 seconds, maximum 7 seconds, 7 strokes applied. 0.1초당 1타, 최대 7초, 7타로 적용.
 
         GigaCrash = core.DamageSkill(ZeroSkills.GigaCrash, 540, 250, 6, modifier=extra_damage(6)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        GigaCrashTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.GigaCrash), 0, 250, 6, modifier=extra_damage(6)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        GigaCrashTAG = core.DamageSkill(f"{ZeroSkills.GigaCrash}({TAG})", 0, 250, 6, modifier=extra_damage(6)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
 
         JumpingCrash = core.DamageSkill(ZeroSkills.FallingStar, 300+210, 225, 6, modifier=extra_damage(6)).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
-        JumpingCrashTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.FallingStar), 0, 225, 6, modifier=extra_damage(6)).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
-        JumpingCrashWave = core.DamageSkill(_("{}(충격파)").format(ZeroSkills.FallingStar), 0, 225, 3, modifier=extra_damage(6)).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
+        JumpingCrashTAG = core.DamageSkill(f"{ZeroSkills.FallingStar}({TAG})", 0, 225, 6, modifier=extra_damage(6)).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
+        JumpingCrashWave = core.DamageSkill(f"{ZeroSkills.FallingStar}({SHOCK_WAVE})", 0, 225, 3, modifier=extra_damage(6)).setV(vEhc, 8, 2, False).wrap(core.DamageSkillWrapper)
 
         AdvancedEarthBreak = core.DamageSkill(ZeroSkills.AdvancedEarthBreak, 630+390, 380+3*self.combat, 10, modifier=extra_damage(6)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedEarthBreakTAG = core.DamageSkill(_("{}(태그)").format(ZeroSkills.AdvancedEarthBreak), 0, 380+3*self.combat, 10, modifier=extra_damage(6)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedEarthBreakWave = core.DamageSkill(_("{}(파동)").format(ZeroSkills.AdvancedEarthBreak), 0, 285+3*self.combat, 10, modifier=extra_damage(6)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedEarthBreakElectric = core.SummonSkill(_("{}(전기)").format(ZeroSkills.AdvancedEarthBreak), 0, 1000, 340+3*self.combat, 1, 5000, cooltime=-1, modifier=extra_damage(6)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
+        AdvancedEarthBreakTAG = core.DamageSkill(f"{ZeroSkills.AdvancedEarthBreak}({TAG})", 0, 380+3*self.combat, 10, modifier=extra_damage(6)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedEarthBreakWave = core.DamageSkill(f"{ZeroSkills.AdvancedEarthBreak}({WAVE})", 0, 285+3*self.combat, 10, modifier=extra_damage(6)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedEarthBreakElectric = core.SummonSkill(f"{ZeroSkills.AdvancedEarthBreak}({ELECTRIC})", 0, 1000, 340+3*self.combat, 1, 5000, cooltime=-1, modifier=extra_damage(6)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
 
         CriticalBind = CriticalBindWrapper(AlphaState, BetaState)
 
@@ -311,36 +319,36 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)  # TODO: Check whether the damage increase per beta target is applied. 베타 타겟당 데미지 증가 적용여부 확인할것.
 
         LimitBreakAttack = core.DamageSkill(ZeroSkills.ChronoBreak, 0, 400+15*vEhc.getV(0, 0), 5, modifier=extra_damage(15)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        LimitBreak = core.BuffSkill(_("{}(버프)").format(ZeroSkills.ChronoBreak), 450, (30+vEhc.getV(0, 0)//2)*1000, pdamage_indep=30+vEhc.getV(0, 0)//5, cooltime=240*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
-        LimitBreakCDR = core.SummonSkill(_("{}(재사용 대기시간 감소)").format(ZeroSkills.ChronoBreak), 0, 1000, 0, 0, (30+vEhc.getV(0, 0)//2)*1000, cooltime=-1).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        LimitBreak = core.BuffSkill(f"{ZeroSkills.ChronoBreak}({BUFF})", 450, (30+vEhc.getV(0, 0)//2)*1000, pdamage_indep=30+vEhc.getV(0, 0)//5, cooltime=240*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
+        LimitBreakCDR = core.SummonSkill(f"{ZeroSkills.ChronoBreak}({CDR})", 0, 1000, 0, 0, (30+vEhc.getV(0, 0)//2)*1000, cooltime=-1).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
-        LimitBreakFinal = core.DamageSkill(_("{}(막타)").format(ZeroSkills.ChronoBreak), 0, 650 + 26*vEhc.getV(0, 0), 12*6, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        LimitBreakFinal = core.DamageSkill(f"{ZeroSkills.ChronoBreak}({LAST_HIT})", 0, 650 + 26*vEhc.getV(0, 0), 12*6, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         # 베타로 사용함.
         TwinBladeOfTime = core.DamageSkill(ZeroSkills.TwinBladesofTime, 0, 0, 0, cooltime=120*1000, red=True).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_Alpha_1 = core.DamageSkill(_("{}(알파)(1)").format(ZeroSkills.TwinBladesofTime), 450, 875+35*vEhc.getV(1, 1), 8).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_Alpha_2 = core.DamageSkill(_("{}(알파)(2)").format(ZeroSkills.TwinBladesofTime), 720, 835+33*vEhc.getV(1, 1), 12).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_Alpha_3 = core.DamageSkill(_("{}(알파)(3)").format(ZeroSkills.TwinBladesofTime), 1020, 1000+40*vEhc.getV(1, 1), 13).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_Beta_1 = core.DamageSkill(_("{}(베타)(1)").format(ZeroSkills.TwinBladesofTime), 540, 875+35*vEhc.getV(1, 1), 8, modifier=extra_damage(12)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_Beta_2 = core.DamageSkill(_("{}(베타)(2)").format(ZeroSkills.TwinBladesofTime), 450, 835+33*vEhc.getV(1, 1), 12, modifier=extra_damage(12)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
-        TwinBladeOfTime_Beta_3 = core.DamageSkill(_("{}(베타)(3)").format(ZeroSkills.TwinBladesofTime), 360, 1000+40*vEhc.getV(1, 1), 13, modifier=extra_damage(12)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Alpha_1 = core.DamageSkill(f"{ZeroSkills.TwinBladesofTime}({ALPHA}(1))", 450, 875+35*vEhc.getV(1, 1), 8).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Alpha_2 = core.DamageSkill(f"{ZeroSkills.TwinBladesofTime}({ALPHA}(2))", 720, 835+33*vEhc.getV(1, 1), 12).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Alpha_3 = core.DamageSkill(f"{ZeroSkills.TwinBladesofTime}({ALPHA}(3))", 1020, 1000+40*vEhc.getV(1, 1), 13).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Beta_1 = core.DamageSkill(f"{ZeroSkills.TwinBladesofTime}({BETA}(1))", 540, 875+35*vEhc.getV(1, 1), 8, modifier=extra_damage(12)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Beta_2 = core.DamageSkill(f"{ZeroSkills.TwinBladesofTime}({BETA}(2))", 450, 835+33*vEhc.getV(1, 1), 12, modifier=extra_damage(12)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        TwinBladeOfTime_Beta_3 = core.DamageSkill(f"{ZeroSkills.TwinBladesofTime}({BETA}(3))", 360, 1000+40*vEhc.getV(1, 1), 13, modifier=extra_damage(12)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
         TwinBladeOfTime_end = core.DamageSkill(f"{ZeroSkills.TwinBladesofTime}(4)", 1050, 900+36*vEhc.getV(1, 1), 15*3, modifier=extra_damage(12)+core.CharacterModifier(armor_ignore=100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
 
         # Alpha. 알파.
-        ShadowFlashAlpha = core.DamageSkill(_("{}(알파)").format(ZeroSkills.ShadowFlash), 510, 500+20*vEhc.getV(2, 2), 6, cooltime=40*1000, red=True).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
-        ShadowFlashAlphaEnd = core.DamageSkill(_("{}(알파)(종료)").format(ZeroSkills.ShadowFlash), 660, 400+16*vEhc.getV(2, 2), 15*3).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
+        ShadowFlashAlpha = core.DamageSkill(f"{ZeroSkills.ShadowFlash}({ALPHA})", 510, 500+20*vEhc.getV(2, 2), 6, cooltime=40*1000, red=True).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
+        ShadowFlashAlphaEnd = core.DamageSkill(f"{ZeroSkills.ShadowFlash}({ALPHA})({ENDING})", 660, 400+16*vEhc.getV(2, 2), 15*3).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
 
         # Beta. 베타.
-        ShadowFlashBeta = core.DamageSkill(_("{}(베타)").format(ZeroSkills.ShadowFlash), 510, 600+24*vEhc.getV(2, 2), 5, cooltime=40*1000, modifier=extra_damage(8), red=True).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
-        ShadowFlashBetaEnd = core.DamageSkill(_("{}(베타)(종료)").format(ZeroSkills.ShadowFlash), 660, 750+30*vEhc.getV(2, 2), 12*2, modifier=extra_damage(15)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
+        ShadowFlashBeta = core.DamageSkill(f"{ZeroSkills.ShadowFlash}({BETA})", 510, 600+24*vEhc.getV(2, 2), 5, cooltime=40*1000, modifier=extra_damage(8), red=True).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
+        ShadowFlashBetaEnd = core.DamageSkill(f"{ZeroSkills.ShadowFlash}({BETA})({ENDING})", 660, 750+30*vEhc.getV(2, 2), 12*2, modifier=extra_damage(15)).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
 
         # The origin of the Transcendent Lune 초월자 륀느의 기원.
         RhinneBless = core.BuffSkill(ZeroSkills.TranscendentRhinnesPrayer, 480, (30+vEhc.getV(0, 0)//2)*1000, cooltime=240000, att=10+3*vEhc.getV(0, 0)).wrap(core.BuffSkillWrapper)
-        RhinneBlessAttack_hit = core.DamageSkill(_("{}(타격)").format(ZeroSkills.TranscendentRhinnesPrayer), 0, 125+5*vEhc.getV(0, 0), 5).wrap(core.DamageSkillWrapper)
+        RhinneBlessAttack_hit = core.DamageSkill(f"{ZeroSkills.TranscendentRhinnesPrayer}({DAMAGE})", 0, 125+5*vEhc.getV(0, 0), 5).wrap(core.DamageSkillWrapper)
         RhinneBlessAttack = core.OptionalElement(RhinneBless.is_active, RhinneBlessAttack_hit)
 
         # Ego weapon. 에고 웨폰.
-        EgoWeaponAlpha = core.DamageSkill(_("{}(알파)").format(ZeroSkills.EgoWeapon), 0, 175+7*vEhc.getV(0, 0), 6*9, cooltime=15000, red=True).wrap(core.DamageSkillWrapper)
-        EgoWeaponBeta = core.DamageSkill(_("{}(베타)").format(ZeroSkills.EgoWeapon), 0, 175+7*vEhc.getV(0, 0), 9*2*3, cooltime=15000, red=True, modifier=extra_damage(4)).wrap(core.DamageSkillWrapper)
+        EgoWeaponAlpha = core.DamageSkill(f"{ZeroSkills.EgoWeapon}({ALPHA})", 0, 175+7*vEhc.getV(0, 0), 6*9, cooltime=15000, red=True).wrap(core.DamageSkillWrapper)
+        EgoWeaponBeta = core.DamageSkill(f"{ZeroSkills.EgoWeapon}({BETA})", 0, 175+7*vEhc.getV(0, 0), 9*2*3, cooltime=15000, red=True, modifier=extra_damage(4)).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
 

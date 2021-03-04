@@ -4,6 +4,10 @@ from localization.utilities import translator
 _ = translator.gettext
 
 
+# Skill name modifiers for Nova
+NOVA = _("노바")
+
+
 class NovaSkills:
     GrandisGoddessBlessing = _("그란디스 여신의 축복")  # "Grandis Goddess's Blessing" Taken from https://maplestory.fandom.com/wiki/Grandis_Goddess%27s_Blessing
     MightoftheNova = _("판테온")  # "Might of the Nova" Taken from https://maplestory.fandom.com/wiki/Might_of_the_Nova
@@ -13,7 +17,7 @@ class NovaSkills:
 class NovaGoddessBlessWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, num1, num2, morph_gauge=None):
         skill = core.BuffSkill(
-            _("{}(노바)").format(NovaSkills.GrandisGoddessBlessing),
+            f"{NovaSkills.GrandisGoddessBlessing}({NOVA})",
             delay=480,
             remain=40 * 1000,
             pdamage=5 + vEhc.getV(num1, num2),

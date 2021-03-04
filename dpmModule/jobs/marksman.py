@@ -1,4 +1,4 @@
-from .globalSkill import GlobalSkills
+from .globalSkill import GlobalSkills, HOLDER, DAMAGE, ATTACK
 from .jobbranch.bowmen import ArcherSkills
 from ..kernel import core
 from ..character import characterKernel as ck
@@ -213,7 +213,7 @@ class JobGenerator(ck.JobGenerator):
 
         TrueSnippingTick = (
             core.DamageSkill(
-                name=_("{}(타격)").format(MarksmanSkills.PerfectShot),
+                name=f"{MarksmanSkills.PerfectShot}({DAMAGE})",
                 delay=690,
                 damage=950 + vEhc.getV(2, 2) * 30,
                 hit=14 + 1,
@@ -243,7 +243,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
         ChargedArrowHold = (
-            core.SummonSkill(_("{}(더미)").format(MarksmanSkills.SurgeBolt), 0, 10000, 0, 0, 9999999, cooltime=-1)
+            core.SummonSkill(f"{MarksmanSkills.SurgeBolt}({HOLDER})", 0, 10000, 0, 0, 9999999, cooltime=-1)
             .isV(vEhc, 1, 1)
             .wrap(core.SummonSkillWrapper)
         )  # TODO: Cool feeling should be applied to the attack cycle. 공격 주기에 쿨감 적용해야 함.
@@ -279,7 +279,7 @@ class JobGenerator(ck.JobGenerator):
 
         SplitArrow = (
             core.DamageSkill(
-                name=_("{}(공격)").format(MarksmanSkills.SplitShot),
+                name=f"{MarksmanSkills.SplitShot}({ATTACK})",
                 delay=0,
                 damage=600 + vEhc.getV(0, 0) * 24,
                 hit=5 + 1,

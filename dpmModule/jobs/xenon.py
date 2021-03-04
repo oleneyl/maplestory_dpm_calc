@@ -1,6 +1,6 @@
 from functools import partial
 
-from .globalSkill import GlobalSkills
+from .globalSkill import GlobalSkills, INIT, TICK, BUFF, STACK
 from .jobbranch.pirates import PirateSkills
 from .jobbranch.thieves import ThiefSkills
 from ..kernel import core
@@ -13,6 +13,7 @@ from .jobclass import resistance
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -84,6 +85,11 @@ class XenonSkills:
     PhotonRay = _("포톤 레이")  # "Photon Ray"
 
 
+# Skill name modifiers for xenon only
+IGNORE = _("방무")
+DAMAGE = _("데미지")
+ELECTRICAL = _("전류")
+CANNON = _("캐논")
 '''
 Advisor: Monolith, 몰라#4508
 '''
@@ -208,7 +214,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(InactiveRule(XenonSkills.AmaranthGenerator, XenonSkills.CoreOverload), RuleSet.BASE)
         ruleset.add_rule(ConditionRule(XenonSkills.AmaranthGenerator, XenonSkills.SupplySurplus, lambda sk : sk.stack <= 1), RuleSet.BASE)
 
-        for skill in [_("{}(개시)").format(XenonSkills.OmegaBlaster), GlobalSkills.TermsAndConditions, ThiefSkills.LastResort, PirateSkills.Overdrive]:
+        for skill in [f"{XenonSkills.OmegaBlaster}({INIT})", GlobalSkills.TermsAndConditions, ThiefSkills.LastResort, PirateSkills.Overdrive]:
             ruleset.add_rule(ConcurrentRunRule(skill, XenonSkills.HypogramFieldFusion), RuleSet.BASE)
 
         ruleset.add_rule(ConditionRule(XenonSkills.HypogramFieldFusion, XenonSkills.CoreOverload, lambda sk: sk.is_time_left(40000, -1)), RuleSet.BASE)
@@ -236,7 +242,7 @@ class JobGenerator(ck.JobGenerator):
         LinearPerspective = core.InformedCharacterModifier(XenonSkills.PerspectiveShift, crit=40)
         MinoritySupport = core.InformedCharacterModifier(XenonSkills.StructuralIntegrity, stat_main=60)  # Strength deck 20 each. 힘덱럭 20씩.
         XenonMastery = core.InformedCharacterModifier(XenonSkills.XenonMastery, att=20)
-        HybridDefensesPassive = core.InformedCharacterModifier(_("{}(패시브)").format(XenonSkills.HybridDefenses), stat_main=30)  # Strength deck 30 each. 힘덱럭 30씩.
+        HybridDefensesPassive = core.InformedCharacterModifier(f"{XenonSkills.HybridDefenses}({PASSIVE})", stat_main=30)  # Strength deck 30 each. 힘덱럭 30씩.
         XenonExpert = core.InformedCharacterModifier(XenonSkills.XenonExpert, att=30 + passive_level, crit_damage=8)
         OffensiveMatrix = core.InformedCharacterModifier(XenonSkills.OffensiveMatrix, armor_ignore=30 + passive_level)
 
@@ -292,15 +298,15 @@ class JobGenerator(ck.JobGenerator):
         Hologram_Penetrate = core.SummonSkill(XenonSkills.HypogramFieldPenetrate, 720, 30000/116, 213+3*self.combat, 1, 20000+10000, cooltime=30000-1000*ceil(self.combat/3), modifier=core.CharacterModifier(pdamage=10), red=True).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
         Hologram_ForceField = core.SummonSkill(XenonSkills.HypogramFieldForceField, 720, 30000/64, 400+5*self.combat, 1, 20000+10000, cooltime=30000-1000*ceil(self.combat/3), modifier=core.CharacterModifier(pdamage=10), red=True).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
 
-        # BladeDancingPrepare = core.DamageSkill(_("{}(준비)").format(XenonSkills.BeamDance), 360, 0, 0).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        # BladeDancingPrepare = core.DamageSkill(f"{XenonSkills.BeamDance}({PREPARE})", 360, 0, 0).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         # BladeDancing = core.DamageSkill(XenonSkills.BeamDance, 120, 260+4*self.combat, 1).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        # BladeDancingEnd = core.DamageSkill(_("{}(종료)").format(XenonSkills.BeamDance), 300, 0, 0).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        # BladeDancingEnd = core.DamageSkill(f"{XenonSkills.BeamDance}({ENDING})", 300, 0, 0).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         # Hyper skills
         AmaranthGenerator = core.BuffSkill(XenonSkills.AmaranthGenerator, 900, 10000, cooltime=90000, rem=False).wrap(core.BuffSkillWrapper)  # 에너지 최대치, 10초간 에너지 소모 없음
         MeltDown = core.DamageSkill(XenonSkills.OrbitalCataclysm, 3150, 900, 6, red=False, cooltime=50000).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        MeltDown_Armor = core.BuffSkill(_("{}(방무)").format(XenonSkills.OrbitalCataclysm), 0, 10000, armor_ignore=30, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
-        MeltDown_Damage = core.BuffSkill(_("{}(데미지)").format(XenonSkills.OrbitalCataclysm), 0, 25000, pdamage=10, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
+        MeltDown_Armor = core.BuffSkill(f"{XenonSkills.OrbitalCataclysm}({IGNORE})", 0, 10000, armor_ignore=30, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
+        MeltDown_Damage = core.BuffSkill(f"{XenonSkills.OrbitalCataclysm}({DAMAGE})", 0, 25000, pdamage=10, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         # V skills
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
@@ -311,23 +317,23 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
 
-        MegaSmasher = core.DamageSkill(_("{}(개시)").format(XenonSkills.OmegaBlaster), 0, 0, 0, cooltime=180000, red=True).wrap(core.DamageSkillWrapper)
-        MegaSmasherTick = core.DamageSkill(_("{}(틱)").format(XenonSkills.OmegaBlaster), 210, 300+10*vEhc.getV(4, 4), 6, cooltime=-1).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        MegaSmasher = core.DamageSkill(f"{XenonSkills.OmegaBlaster}({INIT})", 0, 0, 0, cooltime=180000, red=True).wrap(core.DamageSkillWrapper)
+        MegaSmasherTick = core.DamageSkill(f"{XenonSkills.OmegaBlaster}({TICK})", 210, 300+10*vEhc.getV(4, 4), 6, cooltime=-1).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
         OVERLOAD_TIME = 70
         OverloadMode = core.BuffSkill(XenonSkills.CoreOverload, 720, OVERLOAD_TIME*1000, cooltime=180000, red=True).wrap(core.BuffSkillWrapper)
         # First attack always starts after 5100ms. 첫 공격은 항상 5100ms 후에 시작.
         # Attack period is random from 3600ms~10800ms. 공격 주기는 3600ms~10800ms 중 랜덤.
-        OverloadHit = core.SummonSkill(_("{}(전류)").format(XenonSkills.CoreOverload), 0, (3600+10800)/2, 180+7*vEhc.getV(4, 4), 6*4, OVERLOAD_TIME*1000-5100, cooltime=-1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
-        OverloadHit_copy = core.SummonSkill(_("{}(전류)({})").format(XenonSkills.CoreOverload, XenonSkills.ManifestProjector), 0, (3600+10800)/2, (180+7*vEhc.getV(4, 4))*0.7, 6*4, OVERLOAD_TIME*1000-5100, cooltime=-1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
+        OverloadHit = core.SummonSkill(f"{XenonSkills.CoreOverload}({ELECTRICAL})", 0, (3600+10800)/2, 180+7*vEhc.getV(4, 4), 6*4, OVERLOAD_TIME*1000-5100, cooltime=-1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
+        OverloadHit_copy = core.SummonSkill(f"{XenonSkills.CoreOverload}({ELECTRICAL})({XenonSkills.ManifestProjector})", 0, (3600+10800)/2, (180+7*vEhc.getV(4, 4))*0.7, 6*4, OVERLOAD_TIME*1000-5100, cooltime=-1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
 
         # Hyper applied. 하이퍼 적용됨.
         Hologram_Fusion = core.SummonSkill(XenonSkills.HypogramFieldFusion, 930, (30000+10000)/(HOLOGRAM_FUSION_HIT/5), 250+10*vEhc.getV(4, 4), 5, 30000+10000, cooltime=100000, red=True, modifier=core.CharacterModifier(pdamage=10)).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
-        Hologram_Fusion_Buff = core.BuffSkill(_("{}(버프)").format(XenonSkills.HypogramFieldFusion), 0, 30000+10000, pdamage=5+vEhc.getV(4, 4)//2, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
+        Hologram_Fusion_Buff = core.BuffSkill(f"{XenonSkills.HypogramFieldFusion}({BUFF})", 0, 30000+10000, pdamage=5+vEhc.getV(4, 4)//2, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         # Activates 30 times, skips firing delay, and charges with fuzzy robs. 30회 발동, 발사 딜레이 생략, 퍼지롭으로 충전.
         PhotonRay = core.BuffSkill(XenonSkills.PhotonRay, 0, 20000, cooltime=35000, red=True).wrap(core.BuffSkillWrapper)
-        PhotonRayHit = core.DamageSkill(_("{}(캐논)").format(XenonSkills.PhotonRay), 0, 350+vEhc.getV(4, 4)*14, 4*30, cooltime=-1).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        PhotonRayHit = core.DamageSkill(f"{XenonSkills.PhotonRay}({CANNON})", 0, 350+vEhc.getV(4, 4)*14, 4*30, cooltime=-1).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
         SupplySurplus = SupplyStackWrapper(core.BuffSkill(XenonSkills.SupplySurplus, 0, 999999999))
@@ -354,7 +360,7 @@ class JobGenerator(ck.JobGenerator):
         AmaranthGenerator.onJustAfter(SupplySurplus.beginAmaranthGenerator())
         AmaranthGenerator.onEventEnd(SupplySurplus.endAmaranthGenerator())
 
-        TriangulationStack = core.StackSkillWrapper(core.BuffSkill(_("{} 스택").format(XenonSkills.Triangulation), 0, 99999999), 3)
+        TriangulationStack = core.StackSkillWrapper(core.BuffSkill(f"{XenonSkills.Triangulation} {STACK}", 0, 99999999), 3)
         TriangulationTrigger = core.OptionalElement(lambda : TriangulationStack.judge(3, 1), Triangulation, TriangulationStack.stackController(0.3))
         Triangulation.onJustAfter(TriangulationStack.stackController(0, dtype='set'))
 

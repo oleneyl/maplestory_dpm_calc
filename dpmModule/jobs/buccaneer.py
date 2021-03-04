@@ -1,4 +1,4 @@
-from dpmModule.jobs.globalSkill import GlobalSkills
+from dpmModule.jobs.globalSkill import GlobalSkills, LAST_HIT, INIT, DEBUFF, COOLDOWN
 from dpmModule.jobs.jobbranch.pirates import PirateSkills
 
 from ..kernel import core
@@ -12,6 +12,7 @@ from .jobclass import adventurer
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -75,6 +76,14 @@ class BuccaneerSkills:
     HowlingFist = _("하울링 피스트")  # "Howling Fist"
 
 
+# Skill name modifiers only for Buccaneer
+BOSS = _("보스")
+TRANSFORM = _("변신")
+GUAGE_INC = _("게이지 증가 더미")
+CONTINUING = _("지속")
+CHARGE = _("충전")
+
+
 class EnergyChargeWrapper(core.StackSkillWrapper):
     def __init__(self, combat):
         skill = core.BuffSkill(BuccaneerSkills.EnergyCharge, 0, 999999 * 1000)
@@ -134,7 +143,7 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConditionRule(_("에너지 오브(더미)"), BuccaneerSkills.EnergyCharge, lambda sk: sk.isStateOff()), RuleSet.BASE)
         ruleset.add_rule(MutualRule(BuccaneerSkills.StimulatingConversation, BuccaneerSkills.Meltdown), RuleSet.BASE)
         ruleset.add_rule(ConditionRule(BuccaneerSkills.StimulatingConversation, BuccaneerSkills.EnergyCharge, lambda sk: sk.judge(2000, -1) or sk.isStateOff()), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(BuccaneerSkills.PowerUnity, _("{}(디버프)").format(BuccaneerSkills.PowerUnity), lambda sk: sk.is_time_left(1000, -1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(BuccaneerSkills.PowerUnity, f"{BuccaneerSkills.PowerUnity}({DEBUFF})", lambda sk: sk.is_time_left(1000, -1)), RuleSet.BASE)
         # ruleset.add_rule(MutualRule(BuccaneerSkills.TimeLeap, GlobalSkills.TermsAndConditions), RuleSet.BASE)
         # ruleset.add_rule(InactiveRule(BuccaneerSkills.TimeLeap, GlobalSkills.TermsAndConditions), RuleSet.BASE)
         ruleset.add_rule(DisableRule(BuccaneerSkills.TimeLeap), RuleSet.BASE)
@@ -150,7 +159,7 @@ class JobGenerator(ck.JobGenerator):
         MentalClearity = core.InformedCharacterModifier(BuccaneerSkills.DarkClarity, att=30)
         PhisicalTraining = core.InformedCharacterModifier(BuccaneerSkills.PhysicalTraining, stat_main=30, stat_sub=30)
         CriticalRage = core.InformedCharacterModifier(BuccaneerSkills.PrecisionStrikes, crit=15, crit_damage=10)   # Boss opponent +20% Crit rate. 보스상대 추가+20% 크리율.
-        StimulatePassive = core.InformedCharacterModifier(_("{}(패시브)").format(BuccaneerSkills.StimulatingConversation), boss_pdamage=20)
+        StimulatePassive = core.InformedCharacterModifier(f"{BuccaneerSkills.StimulatingConversation}({PASSIVE})", boss_pdamage=20)
 
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 2, 3)
         
@@ -162,7 +171,7 @@ class JobGenerator(ck.JobGenerator):
         WeaponConstant = core.InformedCharacterModifier(_("무기상수"), pdamage_indep=70)
         Mastery = core.InformedCharacterModifier(_("숙련도"), mastery=90 + ceil(self.combat / 2))
 
-        CriticalRage = core.InformedCharacterModifier(_("{}(보스)").format(BuccaneerSkills.PrecisionStrikes), crit=20)    # Boss opponent +20% Crit rate. 보스상대 추가+20% 크리율.
+        CriticalRage = core.InformedCharacterModifier(f"{BuccaneerSkills.PrecisionStrikes}({BOSS})", crit=20)    # Boss opponent +20% Crit rate. 보스상대 추가+20% 크리율.
         GuardCrush = core.InformedCharacterModifier(BuccaneerSkills.TyphoonCrush, armor_ignore=40 + 2 * passive_level)  # 40% chance of ignoring 100% of defence. 40% 확률로 방무 100% 무시.
         # CounterAttack = core.InformedCharacterModifier(BuccaneerSkills.PiratesRevenge,pdamage = 25 + 2*passive_level) # TODO: Should decide whether to apply. 적용 여부 결정해야함.
         
@@ -237,7 +246,7 @@ class JobGenerator(ck.JobGenerator):
         )
         FistInrage_T = (
             core.DamageSkill(
-                _("{}(변신)").format(BuccaneerSkills.Octopunch),
+                f"{BuccaneerSkills.Octopunch}({TRANSFORM})",
                 delay=600,
                 damage=320 + 4 * self.combat,
                 hit=8 + 1 + 2,
@@ -260,7 +269,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
         DragonStrikeBuff = core.BuffSkill(
-            _("{}(디버프)").format(BuccaneerSkills.DragonStrike),
+            f"{BuccaneerSkills.DragonStrike}({DEBUFF})",
             delay=0,
             remain=15 * 1000,
             cooltime=-1,
@@ -281,7 +290,7 @@ class JobGenerator(ck.JobGenerator):
         )
         NautilusFinalAttack = (
             core.DamageSkill(
-                _("{}(파이널 어택)").format(BuccaneerSkills.NautilusStrike), delay=0, damage=165 + 2 * self.combat, hit=2
+                f"{BuccaneerSkills.NautilusStrike}({LAST_HIT})", delay=0, damage=165 + 2 * self.combat, hit=2
             )
             .setV(vEhc, 1, 2, True)
             .wrap(core.DamageSkillWrapper)
@@ -300,7 +309,7 @@ class JobGenerator(ck.JobGenerator):
             pdamage=20,
         ).wrap(core.BuffSkillWrapper)
         StimulateSummon = core.SummonSkill(
-            _("{}(게이지 증가 더미)").format(BuccaneerSkills.StimulatingConversation),
+            f"{BuccaneerSkills.StimulatingConversation}({GUAGE_INC})",
             summondelay=0,
             delay=(5 + serverlag) * 1000,
             damage=0,
@@ -321,7 +330,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
         UnityOfPowerBuff = core.BuffSkill(
-            _("{}(디버프)").format(BuccaneerSkills.PowerUnity),
+            f"{BuccaneerSkills.PowerUnity}({DEBUFF})",
             delay=0,
             remain=90 * 1000,
             cooltime=-1,
@@ -383,7 +392,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.SummonSkillWrapper)
         )
         SerpentScrewDummy = core.SummonSkill(
-            _("{}(지속)").format(BuccaneerSkills.LordoftheDeep),
+            f"{BuccaneerSkills.LordoftheDeep}({CONTINUING})",
             summondelay=0,
             delay=1000,
             damage=0,
@@ -407,7 +416,7 @@ class JobGenerator(ck.JobGenerator):
 
         HowlingFistInit = (
             core.DamageSkill(
-                _("{}(개시)").format(BuccaneerSkills.HowlingFist),
+                f"{BuccaneerSkills.HowlingFist}({INIT})",
                 delay=240,
                 damage=0,
                 hit=0,
@@ -419,7 +428,7 @@ class JobGenerator(ck.JobGenerator):
         )
         HowlingFistCharge = (
             core.DamageSkill(
-                _("{}(충전)").format(BuccaneerSkills.HowlingFist),
+                f"{BuccaneerSkills.HowlingFist}({CHARGE})",
                 delay=240,
                 damage=425 + 17 * vEhc.getV(0, 0),
                 hit=6,
@@ -430,7 +439,7 @@ class JobGenerator(ck.JobGenerator):
         )
         HowlingFistFinal = (
             core.DamageSkill(
-                _("{}(막타)").format(BuccaneerSkills.HowlingFist),
+                f"{BuccaneerSkills.HowlingFist}({LAST_HIT})",
                 delay=1950,
                 damage=525 + 21 * vEhc.getV(0, 0),
                 hit=10 * 14,
@@ -476,7 +485,7 @@ class JobGenerator(ck.JobGenerator):
     
         # Final Attack
         FinalAttack = core.OptionalElement(
-            lambda: not Nautilus.is_available(), NautilusFinalAttack, name=_("{}(쿨타임)").format(BuccaneerSkills.NautilusStrike)
+            lambda: not Nautilus.is_available(), NautilusFinalAttack, name=f"{BuccaneerSkills.NautilusStrike}({COOLDOWN})"
         )
         FistInrage.onAfter(FinalAttack)
         FistInrage_T.onAfter(FinalAttack)

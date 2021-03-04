@@ -6,7 +6,7 @@ from .darknight import DarkKnightSkills
 from .bowmaster import BowmasterSkills
 from .marksman import MarksmanSkills
 
-from .globalSkill import GlobalSkills
+from .globalSkill import GlobalSkills, BUFF, LAST_HIT, CAST, STACK
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -111,10 +111,10 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ReservationRule(GlobalSkills.TermsAndConditions, PhantomSkills.PhantomsMark), RuleSet.BASE)
 
         # TODO: 쿨감 4초기준 최적화, 쿨감 수치를 받아와서 처리해야 함
-        ruleset.add_rule(ConditionRule(_("{}(시전)").format(PhantomSkills.Tempest), PhantomSkills.AceintheHole, lambda sk: sk.is_cooltime_left(8500, 1)), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(_("{}(시전)").format(PhantomSkills.Tempest), PhantomSkills.PhantomsMark, lambda sk: sk.is_cooltime_left(8500, 1)), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(_("{}(시전)").format(PhantomSkills.Tempest), PhantomSkills.RiftBreak, lambda sk: sk.is_cooltime_left(8500, 1)), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(_("{}(시전)").format(PhantomSkills.Tempest), _("{}(시전)").format(PhantomSkills.LuckoftheDraw), lambda sk: sk.is_cooltime_left(8500, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(f"{PhantomSkills.Tempest}({CAST})".format(), PhantomSkills.AceintheHole, lambda sk: sk.is_cooltime_left(8500, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(f"{PhantomSkills.Tempest}({CAST})", PhantomSkills.PhantomsMark, lambda sk: sk.is_cooltime_left(8500, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(f"{PhantomSkills.Tempest}({CAST})", PhantomSkills.RiftBreak, lambda sk: sk.is_cooltime_left(8500, 1)), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(f"{PhantomSkills.Tempest}({CAST})", f"{PhantomSkills.LuckoftheDraw}({CAST})", lambda sk: sk.is_cooltime_left(8500, 1)), RuleSet.BASE)
         return ruleset
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -167,7 +167,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 4th. 4차.
         FinalCut = core.DamageSkill(f"{DualBladeSkills.FinalCut}({PhantomSkills.ImpeccableMemoryIV})", 450, 2000 + 20 * self.combat, 1, modifier=STEALSKILL, cooltime=90000, red=True).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
-        FinalCutBuff = core.BuffSkill(_("{}({})(버프)").format(DualBladeSkills.FinalCut, PhantomSkills.ImpeccableMemoryIV), 0, 60000, cooltime=-1, rem=True, pdamage_indep=40 + self.combat).wrap(core.BuffSkillWrapper)
+        FinalCutBuff = core.BuffSkill(f"{DualBladeSkills.FinalCut}({PhantomSkills.ImpeccableMemoryIV})({BUFF})", 0, 60000, cooltime=-1, rem=True, pdamage_indep=40 + self.combat).wrap(core.BuffSkillWrapper)
 
         # Hyper. 하이퍼.
         BoolsEye = core.BuffSkill(f"{MarksmanSkills.BullseyeShot}({PhantomSkills.ImpeccableMemoryH})", 960, 30 * 1000, cooltime=180 * 1000, crit=20, crit_damage=10, armor_ignore=20, pdamage=20).wrap(core.BuffSkillWrapper)
@@ -186,7 +186,7 @@ class JobGenerator(ck.JobGenerator):
 
         PrieredAria = core.BuffSkill(PhantomSkills.PriereDAria, 0, (240+7*self.combat)*1000, pdamage=30+self.combat, armor_ignore=30+self.combat).wrap(core.BuffSkillWrapper)
 
-        TempestOfCardInit = core.DamageSkill(_("{}(시전)").format(PhantomSkills.Tempest), 0, 0, 0, cooltime=18000*0.8 + 180*56, red=True).wrap(core.DamageSkillWrapper)
+        TempestOfCardInit = core.DamageSkill(f"{PhantomSkills.Tempest}({CAST})", 0, 0, 0, cooltime=18000*0.8 + 180*56, red=True).wrap(core.DamageSkillWrapper)
         TempestOfCard = core.DamageSkill(PhantomSkills.Tempest, 180, 200+2*self.combat, 3, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         HerosOath = core.BuffSkill(PhantomSkills.HeroicMemories, 0, 60000, cooltime=120000, pdamage=10).wrap(core.BuffSkillWrapper)
@@ -196,17 +196,17 @@ class JobGenerator(ck.JobGenerator):
 
         # Twilight not applied. 트와일라이트 미적용 상태.
         # Twilight = core.BuffSkill(PhantomSkills.Penombre, 150, 15000, cooltime=15000, armor_ignore=20 + self.combat//2).wrap(core.BuffSkillWrapper)
-        # TwilightHit = core.DamageSkill(_("{}(공격)").format(PhantomSkills.Penombre), 540, 450+3*self.combat, 3, cooltime=-1).wrap(core.DamageSkillWrapper)
+        # TwilightHit = core.DamageSkill(f"{PhantomSkills.Penombre}({ATTACK})", 540, 450+3*self.combat, 3, cooltime=-1).wrap(core.DamageSkillWrapper)
 
-        JokerInit = core.DamageSkill(_("{}(시전)").format(PhantomSkills.LuckoftheDraw), 540, 0, 0, cooltime=150000, red=True).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        JokerInit = core.DamageSkill(f"{PhantomSkills.LuckoftheDraw}({CAST})", 540, 0, 0, cooltime=150000, red=True).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
         JokerDamage = core.DamageSkill(PhantomSkills.LuckoftheDraw, 460, 240+9*vEhc.getV(4, 4), 30).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)  # 14 repetitions, a total of 420 strokes, so 30 strokes applied. 14회 반복, 총 420타이므로 30타로 적용.
-        JokerBuff = core.BuffSkill(_("{}(버프)").format(PhantomSkills.LuckoftheDraw), 1230, 30000, cooltime=-1, pdamage_indep=(1 + (vEhc.getV(4, 4) - 1) // 5) * 2 / 5).isV(vEhc, 4, 4).wrap(core.BuffSkillWrapper)
+        JokerBuff = core.BuffSkill(f"{PhantomSkills.LuckoftheDraw}({BUFF})", 1230, 30000, cooltime=-1, pdamage_indep=(1 + (vEhc.getV(4, 4) - 1) // 5) * 2 / 5).isV(vEhc, 4, 4).wrap(core.BuffSkillWrapper)
 
         BlackJack = core.SummonSkill(PhantomSkills.AceintheHole, 570, 250, 400+16*vEhc.getV(1, 1), 1, 5000-1, cooltime=15000, red=True).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)
-        BlackJackFinal = core.DamageSkill(_("{}(최종)").format(PhantomSkills.AceintheHole), 0, 600+24*vEhc.getV(1, 1), 12, cooltime=-1).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        BlackJackFinal = core.DamageSkill(f"{PhantomSkills.AceintheHole}({LAST_HIT})", 0, 600+24*vEhc.getV(1, 1), 12, cooltime=-1).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
 
         MarkOfPhantom = core.DamageSkill(PhantomSkills.PhantomsMark, 690, 300+12*vEhc.getV(2, 2), 6 * 7, cooltime=30000, red=True).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
-        MarkOfPhantomEnd = core.DamageSkill(_("{}(최종)").format(PhantomSkills.PhantomsMark), 0, 485+19*vEhc.getV(2, 2), 15).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)  # Repeat 2 times. 2회 반복.
+        MarkOfPhantomEnd = core.DamageSkill(f"{PhantomSkills.PhantomsMark}({LAST_HIT})", 0, 485+19*vEhc.getV(2, 2), 15).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)  # Repeat 2 times. 2회 반복.
 
         LiftBreak = core.DamageSkill(PhantomSkills.RiftBreak, 750, 400+16*vEhc.getV(0, 0), 7*7, cooltime=30000, red=True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
@@ -215,7 +215,7 @@ class JobGenerator(ck.JobGenerator):
         FinalCut.onAfter(CarteNoir)
         FinalCut.onAfter(FinalCutBuff)
 
-        CardStack = core.StackSkillWrapper(core.BuffSkill(_("카드 스택"), 0, 99999999), 40, name=_("{}(스택)").format(PhantomSkills.CarteNoir))
+        CardStack = core.StackSkillWrapper(core.BuffSkill(_("카드 스택"), 0, 99999999), 40, name=f"{PhantomSkills.CarteNoir}({STACK})")
 
         AddCard = CardStack.stackController(1, name=_("스택 1 증가"))
         Judgement.onAfter(CardStack.stackController(-9999, name=_("스택 초기화")))

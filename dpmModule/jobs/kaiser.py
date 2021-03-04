@@ -8,6 +8,7 @@ from .jobbranch import warriors
 from .jobclass import nova
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE, EXPLOSION, FLOOR, SUMMON
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -70,6 +71,12 @@ class KaiserSkills:
     Bladefall = _("윌 오브 소드: 스트라이크")  # "Bladefall"
     DracoSurge = _("드라코 슬래셔")  # "Draco Surge"
     DragonBlaze = _("드래곤 블레이즈")  # "Dragon Blaze"
+
+
+# Skill name modifiers for kaiser
+LAUNCH = _("발사")
+BLAZE_AURA = _("불의 기운")
+FIREBALL = _("화염구")
 
 
 ######   Passive Skill   ######
@@ -224,7 +231,7 @@ class JobGenerator(ck.JobGenerator):
         InnerBlaze = core.InformedCharacterModifier(KaiserSkills.InnerBlaze,stat_main = 20)
         AdvancedInnerBlaze = core.InformedCharacterModifier(KaiserSkills.AdvancedInnerBlaze,stat_main = 30)
         Catalyze = core.InformedCharacterModifier(KaiserSkills.Catalyze, patt=30, crit=20, pdamage_indep=20)
-        AdvancedWillOfSwordPassive = core.InformedCharacterModifier(_("{}(패시브)").format(KaiserSkills.AdvancedTempestBlades),att = 20 + 2*ceil(passive_level/3))
+        AdvancedWillOfSwordPassive = core.InformedCharacterModifier(f"{KaiserSkills.AdvancedTempestBlades}({PASSIVE})",att = 20 + 2*ceil(passive_level/3))
         UnflinchingCourage = core.InformedCharacterModifier(KaiserSkills.UnbreakableWill,armor_ignore = 40 + passive_level)
         AdvancedSwordMastery = core.InformedCharacterModifier(KaiserSkills.ExpertSwordMastery, att = 30 + passive_level, crit_damage = 15 + passive_level//3, crit=20 + passive_level//2)
     
@@ -282,15 +289,15 @@ class JobGenerator(ck.JobGenerator):
         MorphGauge = MorphGaugeWrapper(core.BuffSkill(_("모프 게이지"), 0, 9999999), FinalFiguration)
 
         Wingbit_1 = WingbitWrapper(core.SummonSkill(KaiserSkills.WingBeat, 0, 330, 200, 1, 15900, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, True), FinalFiguration) # 48 strokes. 48타.
-        Wingbit_2 = WingbitWrapper(core.SummonSkill(_("{}(2)").format(KaiserSkills.WingBeat), 0, 330, 200, 1, 15900, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, True), FinalFiguration) # 48 strokes. 48타.
+        Wingbit_2 = WingbitWrapper(core.SummonSkill(f"{KaiserSkills.WingBeat}(2)", 0, 330, 200, 1, 15900, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 3, True), FinalFiguration) # 48 strokes. 48타.
         
         GigaSlasher = GigaSlasherWrapper(core.DamageSkill(KaiserSkills.GigasWave, 540, 330 + 2*self.combat, 9+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False), FinalFiguration)
     
-        AdvancedWillOfSword_Summon = WillOfSwordSummonWrapper(core.BuffSkill(_("{}(소환)").format(KaiserSkills.AdvancedTempestBlades), 150, 9999999, cooltime = 10000, red=True), FinalFiguration)
+        AdvancedWillOfSword_Summon = WillOfSwordSummonWrapper(core.BuffSkill(f"{KaiserSkills.AdvancedTempestBlades}({SUMMON})", 150, 9999999, cooltime = 10000, red=True), FinalFiguration)
         AdvancedWillOfSword = WillOfSwordWrapper(core.DamageSkill(KaiserSkills.AdvancedTempestBlades, 0, 400+3*passive_level, 4*5).setV(vEhc, 3, 2, True), FinalFiguration)
 
         InfernalBreath = core.DamageSkill(KaiserSkills.InfernoBreath, 780, 300 + 4*self.combat, 8, cooltime = (20-self.combat)*1000, red=True).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)
-        InfernalBreath_Tile = core.SummonSkill(_("{}(바닥)").format(KaiserSkills.InfernoBreath), 0, 1200, 200 + 3*self.combat, 2, 20000, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
+        InfernalBreath_Tile = core.SummonSkill(f"{KaiserSkills.InfernoBreath}({FLOOR})", 0, 1200, 200 + 3*self.combat, 2, 20000, cooltime = -1).setV(vEhc, 4, 2, True).wrap(core.SummonSkillWrapper)
 
         Petrified = core.SummonSkill(KaiserSkills.StoneDragon, 450, 3030, 400, 1, 60000).setV(vEhc, 5, 3, False).wrap(core.SummonSkillWrapper)
     
@@ -309,14 +316,14 @@ class JobGenerator(ck.JobGenerator):
         GuardianOfNova_3 = core.SummonSkill(f"{KaiserSkills.NovaGuardians}(3)", 0, 45000/26, 900+35*vEhc.getV(2,2), 2, (30+int(0.5*vEhc.getV(2,2)))*1000, cooltime = -1).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)  # 26*2 strokes. 26*2타.
 
         WillOfSwordStrike = WillOfSwordStrikeWrapper(core.DamageSkill(KaiserSkills.Bladefall, 150, 500+20*vEhc.getV(3,3), 4*5, cooltime = 30000, red=True).isV(vEhc,3,3), FinalFiguration)
-        WillOfSwordStrike_Explode = WillOfSwordStrikeExplodeWrapper(core.DamageSkill(_("{}(폭발)").format(KaiserSkills.Bladefall), 0, 1000+40*vEhc.getV(3,3), 6*5).isV(vEhc,3,3), FinalFiguration)
+        WillOfSwordStrike_Explode = WillOfSwordStrikeExplodeWrapper(core.DamageSkill(f"{KaiserSkills.Bladefall}({EXPLOSION})", 0, 1000+40*vEhc.getV(3,3), 6*5).isV(vEhc,3,3), FinalFiguration)
         
         DrakeSlasher = DrakeSlasherWrapper(core.DamageSkill(KaiserSkills.DracoSurge, 540, 500+5*vEhc.getV(0,0), 10+1, cooltime = (7-(vEhc.getV(0,0)//15))*1000, red=True, modifier = core.CharacterModifier(crit=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0), FinalFiguration)
-        DrakeSlasher_Projectile = DrakeSlasherProjectileWrapper(core.DamageSkill(_("{}(발사)").format(KaiserSkills.DracoSurge), 0, 500+5*vEhc.getV(0,0), 6+1, cooltime = -1, modifier = core.CharacterModifier(crit=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0), FinalFiguration)
+        DrakeSlasher_Projectile = DrakeSlasherProjectileWrapper(core.DamageSkill(f"{KaiserSkills.DracoSurge}({LAUNCH})", 0, 500+5*vEhc.getV(0,0), 6+1, cooltime = -1, modifier = core.CharacterModifier(crit=100, armor_ignore=50) + core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).isV(vEhc,0,0), FinalFiguration)
 
         DragonBlaze = core.SummonSkill(KaiserSkills.DragonBlaze, 900, 240, 250+10*vEhc.getV(0,0), 6, 20000, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
-        DragonBlazeAura = core.DamageSkill(_("{}(불의 기운)").format(KaiserSkills.DragonBlaze), 0, 375+15*vEhc.getV(0,0), 5, cooltime=3600).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        DragonBlazeFireball = core.DamageSkill(_("{}(화염구)").format(KaiserSkills.DragonBlaze), 0, 350+14*vEhc.getV(0,0), 3*6, cooltime=10000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DragonBlazeAura = core.DamageSkill(f"{KaiserSkills.DragonBlaze}({BLAZE_AURA})", 0, 375+15*vEhc.getV(0,0), 5, cooltime=3600).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        DragonBlazeFireball = core.DamageSkill(f"{KaiserSkills.DragonBlaze}({FIREBALL})", 0, 350+14*vEhc.getV(0,0), 3*6, cooltime=10000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
         

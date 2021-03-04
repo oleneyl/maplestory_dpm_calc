@@ -2,7 +2,7 @@
 """
 from typing import List
 
-from .globalSkill import GlobalSkills
+from .globalSkill import GlobalSkills, ACTIVE, TWO_HIT, ONE_HIT, ATTACK, DOT, STACK, BUFF, DEBUFF
 from .jobbranch.thieves import ThiefSkills
 from .jobclass.flora import FloraSkills
 from ..kernel import core
@@ -14,6 +14,7 @@ from . import globalSkill, jobutils
 from .jobbranch import thieves
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -82,6 +83,17 @@ class HoyoungSkills:
     ScrollTigerofSongyu = _("권술 : 산령소환")  # "Scroll: Tiger of Songyu"
     SageWrathofGods = _("선기 : 강림 괴력난신")  # "Sage: Wrath of Gods"
     SageThreePathsApparition = _("선기 : 천지인 환영")  # "Sage: Three Paths Apparition"
+
+
+# Skill name modifiers only for Hoyoung
+RECOVERY = _("회복")
+ANIMA = _("아니마")
+NORMAL = _("일반")
+ROAR = _("포효")
+ROAR_CHECK = _("포효 가능")
+GODS_DESCENT = _("신들의 강림")
+CLONE_STACK = _("재등장 스택")
+GODS_STRIKE = _("신들의 일격")
 
 
 class ChunJiInWrapper(core.GraphElement):
@@ -252,7 +264,7 @@ class JobGenerator(ck.JobGenerator):
 
         # Both vegetation & pet duration apply. 벞지 & 소환수 지속시간 둘다 적용.
         Talisman_Clone = core.BuffSkill(HoyoungSkills.TalismanClone, 900, 200*1000, rem=True).wrap(PausableBuffSkillWrapper)
-        Talisman_Clone_Attack = core.DamageSkill(_("{}(공격)").format(HoyoungSkills.TalismanClone), 0, 60 + 60 + 110 + 2*passive_level, 4 * 3, cooltime=1500, modifier=core.CharacterModifier(armor_ignore=25)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Talisman_Clone_Attack = core.DamageSkill(f"{HoyoungSkills.TalismanClone}({ATTACK})", 0, 60 + 60 + 110 + 2*passive_level, 4 * 3, cooltime=1500, modifier=core.CharacterModifier(armor_ignore=25)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Talisman_Clone_Attack_Opt = core.OptionalElement(lambda : Talisman_Clone.is_active() and Talisman_Clone_Attack.is_available(), Talisman_Clone_Attack)
         Talisman_Clone_Attack.protect_from_running()
 
@@ -272,7 +284,7 @@ class JobGenerator(ck.JobGenerator):
         Talisman_Seeker = core.SummonSkill(HoyoungSkills.TalismanSeekingGhostFlame, 630, 1800 * 0.75, 390 + 5*passive_level, 5, 40*1000, rem=True).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
 
         Misaeng = core.DamageSkill(HoyoungSkills.ScrollDegeneration, 540, 850 + 4*self.combat, 8, modifier=core.CharacterModifier(boss_pdamage=20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Misaeng_Debuff = core.BuffSkill(_("{}(디버프)").format(HoyoungSkills.ScrollDegeneration), 0, 60*1000, armor_ignore=20, cooltime=-1).wrap(core.BuffSkillWrapper)
+        Misaeng_Debuff = core.BuffSkill(f"{HoyoungSkills.ScrollDegeneration}({DEBUFF})", 0, 60*1000, armor_ignore=20, cooltime=-1).wrap(core.BuffSkillWrapper)
         Misaeng.onAfter(Misaeng_Debuff)
 
         # 4th. 4차.
@@ -280,25 +292,25 @@ class JobGenerator(ck.JobGenerator):
         Flames_Clone = core.DamageSkill(HoyoungSkills.ConsumingFlamesCloneTrue, 0, 340 + self.combat, 6, modifier=BASIC_HYPER, cooltime=-1).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         Flames.onAfter(Flames_Clone)
 
-        GeumGoBong = core.DamageSkill(_("{}(1타)").format(HoyoungSkills.HumanityGoldBandedCudgel), 330 + 30, 260 + 3*self.combat, 10, cooltime=11000, red=True, modifier=BASIC_HYPER + core.CharacterModifier(boss_pdamage=30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        GeumGoBong_2 = core.DamageSkill(_("{}(2타)").format(HoyoungSkills.HumanityGoldBandedCudgel), 300 + 30, 420 + self.combat, 8, cooltime=-1, modifier=BASIC_HYPER + core.CharacterModifier(boss_pdamage=30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        GeumGoBong = core.DamageSkill(f"{HoyoungSkills.HumanityGoldBandedCudgel}({ONE_HIT})", 330 + 30, 260 + 3*self.combat, 10, cooltime=11000, red=True, modifier=BASIC_HYPER + core.CharacterModifier(boss_pdamage=30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        GeumGoBong_2 = core.DamageSkill(f"{HoyoungSkills.HumanityGoldBandedCudgel}({TWO_HIT})", 300 + 30, 420 + self.combat, 8, cooltime=-1, modifier=BASIC_HYPER + core.CharacterModifier(boss_pdamage=30)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         GeumGoBong.onAfter(GeumGoBong_2)
 
         # Estimated delay (frame analysis from jump to complete loss of effect). 추정치 딜레이 (점프부터 이펙트 완전소멸까지 프레임 분석).
         Thousand_Ton_Stone = core.DamageSkill(HoyoungSkills.ThousandTonStone, 1530, 275 + 3*self.combat, 6, cooltime=500).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        Thousand_Ton_Stone_DOT = core.DotSkill(_("{}(출혈)").format(HoyoungSkills.ThousandTonStone), 0, 1000, 270 + self.combat, 1, 10000, cooltime=-1).setV(vEhc, 0, 2, False).wrap(core.DotSkillWrapper)
+        Thousand_Ton_Stone_DOT = core.DotSkill(f"{HoyoungSkills.ThousandTonStone}({DOT})", 0, 1000, 270 + self.combat, 1, 10000, cooltime=-1).setV(vEhc, 0, 2, False).wrap(core.DotSkillWrapper)
         Thousand_Ton_Stone.onAfter(Thousand_Ton_Stone_DOT)
 
         Waryu = core.SummonSkill(HoyoungSkills.ScrollStarVortex, 990, 1000 * 0.8, 240 + 4*self.combat, 6, 40000, rem=True).setV(vEhc, 0, 2, True).wrap(core.SummonSkillWrapper)
 
         Butterfly_Dream = core.BuffSkill(HoyoungSkills.ScrollButterflyDream, 600, 100*1000, rem=True, pdamage_indep=10).wrap(core.BuffSkillWrapper)
-        Butterfly_Dream_Attack = core.DamageSkill(_("{}(공격)").format(HoyoungSkills.ScrollButterflyDream), 0, 275 + 3 * self.combat, 5, cooltime=1000).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Butterfly_Dream_Attack = core.DamageSkill(f"{HoyoungSkills.ScrollButterflyDream}({ATTACK})", 0, 275 + 3 * self.combat, 5, cooltime=1000).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Butterfly_Dream_Attack_Opt = core.OptionalElement(Butterfly_Dream_Attack.is_available, Butterfly_Dream_Attack)
         Butterfly_Dream_Attack.protect_from_running()
 
         # Hyper Active. 하이퍼 액티브.
         Miracle_Tonic = core.BuffSkill(HoyoungSkills.SageTaiYusMiracleTonic, 540, 12*1000, cooltime=100*1000).wrap(core.BuffSkillWrapper)
-        Miracle_Tonic_Charge = core.SummonSkill(_("{}(회복)").format(HoyoungSkills.SageTaiYusMiracleTonic), 0, 1000, 0, 0, 12*1000, cooltime=-1).wrap(core.SummonSkillWrapper)
+        Miracle_Tonic_Charge = core.SummonSkill(f"{HoyoungSkills.SageTaiYusMiracleTonic}({RECOVERY})", 0, 1000, 0, 0, 12*1000, cooltime=-1).wrap(core.SummonSkillWrapper)
         Miracle_Tonic.onAfter(Miracle_Tonic_Charge)
 
         CloneBinding = core.DamageSkill(HoyoungSkills.SageTaiYuClone, 540, 800, 8, cooltime=200000).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
@@ -309,37 +321,37 @@ class JobGenerator(ck.JobGenerator):
 
         # Goddess Grandis' blessing (no). 그란디스 여신의 축복 (아니마).
         # Anima Make public code when a new job appears. 아니마 신직업 등장시 공용코드화 할것.
-        AnimaGoddessBless = core.BuffSkill(_("{}(아니마)").format(FloraSkills.GrandisGoddessBlessing), 0, 40*1000, cooltime=240*1000, red=True, pdamage=10 + vEhc.getV(0, 0)).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
+        AnimaGoddessBless = core.BuffSkill(f"{FloraSkills.GrandisGoddessBlessing}({ANIMA})", 0, 40*1000, cooltime=240*1000, red=True, pdamage=10 + vEhc.getV(0, 0)).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
 
         # A skill that replaces the phantom alter ego (algorithm implementation required). 환영 분신부를 대체하는 스킬 (알고리즘 구현 필요).
         # Can only be used during the duration of the illusionist, and the duration of the illusionist is not reduced while active. 환영 분신부 지속중에만 사용가능, 발동 중에는 환영 분신부의 지속시간이 감소하지 않음.
         Clone_Rampage = core.BuffSkill(HoyoungSkills.SageCloneRampage, 900, 30*1000, cooltime=200*1000, red=True).wrap(core.BuffSkillWrapper)
-        Clone_Rampage_Attack = core.DamageSkill(_("{}(공격)").format(HoyoungSkills.SageCloneRampage), 0, 60 + 60 + 110 + 2*passive_level + 200 + vEhc.getV(0, 0) * 8, 4 * 10, cooltime=1500, modifier=core.CharacterModifier(armor_ignore=25)).setV(vEhc, 0, 2, True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        Clone_Rampage_Attack = core.DamageSkill(f"{HoyoungSkills.SageCloneRampage}({ATTACK})", 0, 60 + 60 + 110 + 2*passive_level + 200 + vEhc.getV(0, 0) * 8, 4 * 10, cooltime=1500, modifier=core.CharacterModifier(armor_ignore=25)).setV(vEhc, 0, 2, True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         Clone_Rampage_Attack_Opt = core.OptionalElement(lambda : Clone_Rampage.is_active() and Clone_Rampage_Attack.is_available(), Clone_Rampage_Attack)
         Clone_Rampage_Attack.protect_from_running()
 
         Summon_Sanryung = core.SummonSkill(HoyoungSkills.ScrollTigerofSongyu, 900, 3000, 0, 0, (vEhc.getV(0, 0)//2 + 45)*1000, cooltime=200*1000, red=True).wrap(core.SummonSkillWrapper)
-        Summon_Sanryung_Normal = core.DamageSkill(_("{}(일반)").format(HoyoungSkills.ScrollTigerofSongyu), 0, vEhc.getV(0, 0)*36 + 900, 8, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        Summon_Sanryung_Roar = core.DamageSkill(_("{}(포효)").format(HoyoungSkills.ScrollTigerofSongyu), 0, vEhc.getV(0, 0)*14 + 350, 7*4, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)  # 7 reps of 4 strokes. 4타씩 7회.
-        Summon_Sanryung_Check = core.StackSkillWrapper(core.BuffSkill(_("{}(포효 가능)").format(HoyoungSkills.ScrollTigerofSongyu), 0, 99999999), 1)
+        Summon_Sanryung_Normal = core.DamageSkill(f"{HoyoungSkills.ScrollTigerofSongyu}({NORMAL})", 0, vEhc.getV(0, 0)*36 + 900, 8, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        Summon_Sanryung_Roar = core.DamageSkill(f"{HoyoungSkills.ScrollTigerofSongyu}({ROAR})", 0, vEhc.getV(0, 0)*14 + 350, 7*4, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)  # 7 reps of 4 strokes. 4타씩 7회.
+        Summon_Sanryung_Check = core.StackSkillWrapper(core.BuffSkill(f"{HoyoungSkills.ScrollTigerofSongyu}({ROAR_CHECK})", 0, 99999999), 1)
 
         Nansin = core.BuffSkill(HoyoungSkills.SageWrathofGods, 900, 30*1000, cooltime=200*1000, red=True, pdamage=vEhc.getV(0, 0)*2+20).wrap(core.BuffSkillWrapper)
-        Nansin_Stack = core.StackSkillWrapper(core.BuffSkill(_("{}(스택)").format(HoyoungSkills.SageWrathofGods), 0, 99999999), 12)
-        Nansin_Attack = core.DamageSkill(_("{}(신들의 일격)").format(HoyoungSkills.SageWrathofGods), 0, vEhc.getV(0, 0)*34 + 850, 8, cooltime=1500).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        Nansin_Final = core.DamageSkill(_("{}(신들의 강림)").format(HoyoungSkills.SageWrathofGods), 2850, vEhc.getV(0, 0)*40+1000, 15*6, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        Nansin_Final_Buff = core.BuffSkill(_("{}(신들의 강림)(버프)").format(HoyoungSkills.SageWrathofGods), 0, 30000, cooltime=-1).wrap(core.BuffSkillWrapper)
+        Nansin_Stack = core.StackSkillWrapper(core.BuffSkill(f"{HoyoungSkills.SageWrathofGods}({STACK})", 0, 99999999), 12)
+        Nansin_Attack = core.DamageSkill(f"{HoyoungSkills.SageWrathofGods}({GODS_STRIKE})", 0, vEhc.getV(0, 0)*34 + 850, 8, cooltime=1500).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        Nansin_Final = core.DamageSkill(f"{HoyoungSkills.SageWrathofGods}({GODS_DESCENT})", 2850, vEhc.getV(0, 0)*40+1000, 15*6, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        Nansin_Final_Buff = core.BuffSkill(f"{HoyoungSkills.SageWrathofGods}({GODS_DESCENT})({BUFF})", 0, 30000, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         Nansin_Attack_Opt = core.OptionalElement(lambda: Nansin_Stack.judge(12, 1), Nansin_Attack)
         Nansin_Attack.protect_from_running()
 
-        Elemental_Clone_Passive = core.DamageSkill(_("{}(패시브)").format(HoyoungSkills.SageThreePathsApparition), 0, 625 + 25*vEhc.getV(0, 0), 6, cooltime=5000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        Elemental_Clone_Passive = core.DamageSkill(f"{HoyoungSkills.SageThreePathsApparition}({PASSIVE})", 0, 625 + 25*vEhc.getV(0, 0), 6, cooltime=5000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         Elemental_Clone_Passive_Opt = core.OptionalElement(Elemental_Clone_Passive.is_available, Elemental_Clone_Passive)
         Elemental_Clone_Passive.protect_from_running()
 
         Elemental_Clone = core.BuffSkill(HoyoungSkills.SageThreePathsApparition, 540, 30*1000, cooltime=100*1000, red=True).wrap(core.BuffSkillWrapper)
-        Elemental_Clone_Active = core.DamageSkill(_("{}(액티브)").format(HoyoungSkills.SageThreePathsApparition), 0, 625 + 25*vEhc.getV(0, 0), 6, cooltime=2000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        Elemental_Clone_Active_Stack = core.StackSkillWrapper(core.BuffSkill(_("{}(재등장 스택)").format(HoyoungSkills.SageThreePathsApparition), 0, 99999999), 2)
+        Elemental_Clone_Active = core.DamageSkill(f"{HoyoungSkills.SageThreePathsApparition}({ACTIVE})", 0, 625 + 25*vEhc.getV(0, 0), 6, cooltime=2000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        Elemental_Clone_Active_Stack = core.StackSkillWrapper(core.BuffSkill(f"{HoyoungSkills.SageThreePathsApparition}({CLONE_STACK})", 0, 99999999), 2)
         Elemental_Clone.onAfter(Elemental_Clone_Active_Stack.stackController(2))
 
         Elemental_Clone_Active_Opt = core.OptionalElement(Elemental_Clone_Active.is_available, Elemental_Clone_Active)

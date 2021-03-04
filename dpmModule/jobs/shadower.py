@@ -7,6 +7,7 @@ from .jobbranch import thieves
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE, TICK, ONE_HIT, TWO_HIT
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -65,6 +66,10 @@ class ShadowerSkills:
     SlashShadowFormation = _("멸귀참영진")  # "Slash Shadow Formation"
 
 
+# Skill name modifiers for shadower only
+CAPTAIN = _("우두머리")
+
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -86,12 +91,12 @@ class JobGenerator(ck.JobGenerator):
         SheildMastery = core.InformedCharacterModifier(ShadowerSkills.ShieldMastery, att=15)
         Grid = core.InformedCharacterModifier(ShadowerSkills.MesoMastery, att=5)
         
-        PrimaCriticalPassive = core.InformedCharacterModifier(_("{}(패시브)").format(ShadowerSkills.PrimeCritical), stat_main=10, crit_damage=20)
+        PrimaCriticalPassive = core.InformedCharacterModifier(f"{ShadowerSkills.PrimeCritical}({PASSIVE})", stat_main=10, crit_damage=20)
         PrimaCritical = core.InformedCharacterModifier(ShadowerSkills.PrimeCritical, crit_damage=8.33)  # Can also be calculated stacked. 150/18 = 8.33... 스택식으로도 계산 가능. 150 / 18 = 8.33...
         
-        BoomerangStepPassive = core.InformedCharacterModifier(_("{}(패시브)").format(ShadowerSkills.BoomerangStab), pdamage_indep=25+2*(self.combat//3))
+        BoomerangStepPassive = core.InformedCharacterModifier(f"{ShadowerSkills.BoomerangStab}({PASSIVE})", pdamage_indep=25+2*(self.combat//3))
         
-        ShadowerInstinctPassive = core.InformedCharacterModifier(_("{}(패시브)").format(ShadowerSkills.ShadowerInstinct), armor_ignore=20 + self.combat)
+        ShadowerInstinctPassive = core.InformedCharacterModifier(f"{ShadowerSkills.ShadowerInstinct}({PASSIVE})", armor_ignore=20 + self.combat)
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 2, 2)
     
         DaggerExpert = core.InformedCharacterModifier(ShadowerSkills.DaggerExpert, att=40 + passive_level, crit_damage=15 + passive_level//3)
@@ -146,16 +151,16 @@ class JobGenerator(ck.JobGenerator):
         Booster = core.BuffSkill(ShadowerSkills.DaggerBooster, 0, 200*1000, rem=True).wrap(core.BuffSkillWrapper)
         FlipTheCoin = core.BuffSkill(ShadowerSkills.FlipoftheCoin, 0, 120*1000, pdamage=5*5, crit=10*5).wrap(core.BuffSkillWrapper)
         ShadowerInstinct = core.BuffSkill(ShadowerSkills.ShadowerInstinct, 900, (200+6*self.combat)*1000, rem=True, att=40+30+2*self.combat).wrap(core.BuffSkillWrapper)
-        #StealPotion = core.BuffSkill(_("{}(포션)).format(ShadowerSkills.Steal)", 0, 180000, cooltime=-1, att=30).wrap(core.BuffSkillWrapper)
+        # StealPotion = core.BuffSkill(f"{ShadowerSkills.Steal}({_('포션')})", 0, 180000, cooltime=-1, att=30).wrap(core.BuffSkillWrapper)
         
         ShadowPartner = core.BuffSkill(ShadowerSkills.ShadowPartner, 0, 2000*1000, rem=True).wrap(core.BuffSkillWrapper)
         
         # When using 3 kills, the final damage is increased by 100%. 킬포3개 사용시 최종뎀 100% 증가.
-        Assasinate1 = core.DamageSkill(_("{}(1타)").format(ShadowerSkills.Assassinate), 630, 275+4*self.combat, 6, modifier=core.CharacterModifier(pdamage=20, boss_pdamage=20, armor_ignore=10, pdamage_indep=STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   # ??. 쉐파.
-        Assasinate2 = core.DamageSkill(_("{}(2타)").format(ShadowerSkills.Assassinate), 420, 350+5*self.combat, 6, modifier=core.CharacterModifier(pdamage=20, boss_pdamage=20, armor_ignore=10, pdamage_indep=STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   # ??. 쉐파.
+        Assasinate1 = core.DamageSkill(f"{ShadowerSkills.Assassinate}({ONE_HIT})", 630, 275+4*self.combat, 6, modifier=core.CharacterModifier(pdamage=20, boss_pdamage=20, armor_ignore=10, pdamage_indep=STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   # ??. 쉐파.
+        Assasinate2 = core.DamageSkill(f"{ShadowerSkills.Assassinate}({TWO_HIT})", 420, 350+5*self.combat, 6, modifier=core.CharacterModifier(pdamage=20, boss_pdamage=20, armor_ignore=10, pdamage_indep=STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   # ??. 쉐파.
         
-        Assasinate1_D = core.DamageSkill(_("{}(1타)({})").format(ShadowerSkills.Assassinate, ShadowerSkills.DarkSight), 630, 275+4*self.combat, 6, modifier=core.CharacterModifier(pdamage=20+150+4*self.combat, boss_pdamage=20, armor_ignore=10, pdamage_indep=STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   # ??. 쉐파.
-        Assasinate2_D = core.DamageSkill(_("{}(2타)({})").format(ShadowerSkills.Assassinate, ShadowerSkills.DarkSight), 420, 350+5*self.combat, 6, modifier=core.CharacterModifier(pdamage=20+150+4*self.combat, boss_pdamage=20, armor_ignore=10, pdamage_indep=STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   # ??. 쉐파.
+        Assasinate1_D = core.DamageSkill(f"{ShadowerSkills.Assassinate}({ONE_HIT})({ShadowerSkills.DarkSight})", 630, 275+4*self.combat, 6, modifier=core.CharacterModifier(pdamage=20+150+4*self.combat, boss_pdamage=20, armor_ignore=10, pdamage_indep=STACK1RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   # ??. 쉐파.
+        Assasinate2_D = core.DamageSkill(f"{ShadowerSkills.Assassinate}({TWO_HIT})({ShadowerSkills.DarkSight})", 420, 350+5*self.combat, 6, modifier=core.CharacterModifier(pdamage=20+150+4*self.combat, boss_pdamage=20, armor_ignore=10, pdamage_indep=STACK2RATE)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   # ??. 쉐파.
 
         MesoStack = core.StackSkillWrapper(core.BuffSkill(ShadowerSkills.PickPocket, 0, 9999999), 20)
         MesoExplosion = core.StackDamageSkillWrapper(core.DamageSkill(ShadowerSkills.MesoExplosion, 0, 120, 2).setV(vEhc, 2, 3, False), MesoStack, lambda skill: skill.stack)
@@ -190,10 +195,10 @@ class JobGenerator(ck.JobGenerator):
 
         # Patch 1.2.324 applied. 1.2.324 패치 적용.
         SonicBlow = core.DamageSkill(ShadowerSkills.SonicBlow, 900, 0, 0, cooltime=80 * 1000, red=True).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
-        SonicBlowTick = core.DamageSkill(_("{}(틱)").format(ShadowerSkills.SonicBlow), 107, 500+20*vEhc.getV(1, 1), 7, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper, name="소닉 블로우(사용)") # 7 * 15
+        SonicBlowTick = core.DamageSkill(f"{ShadowerSkills.SonicBlow}({TICK})", 107, 500+20*vEhc.getV(1, 1), 7, modifier=core.CharacterModifier(armor_ignore=100)).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper, name="소닉 블로우(사용)") # 7 * 15
 
         ShadowFormation = core.SummonSkill(ShadowerSkills.SlashShadowFormation, 0, 8000/12, 425+17*vEhc.getV(0, 0), 8, 8000-1, cooltime=90000, red=True, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
-        ShadowFormationFinal = core.DamageSkill(_("{}(우두머리)").format(ShadowerSkills.SlashShadowFormation), 0, 625+25*vEhc.getV(0, 0), 15*4, cooltime=-1, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        ShadowFormationFinal = core.DamageSkill(f"{ShadowerSkills.SlashShadowFormation}({CAPTAIN})", 0, 625+25*vEhc.getV(0, 0), 15*4, cooltime=-1, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         
         ### build graph relationships
         def isNotDarkSight():

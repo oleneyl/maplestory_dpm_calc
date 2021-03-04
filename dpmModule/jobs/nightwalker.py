@@ -1,3 +1,4 @@
+from .globalSkill import DOT, LAST_HIT, BUFF, INIT, STACK, ATTACK
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -64,6 +65,15 @@ class NightWalkerSkills:
     GreaterDarkServant = _("쉐도우 서번트 익스텐드")  # "Greater Dark Servant"
     ShadowBite = _("쉐도우 바이트")  # "Shadow Bite"
     RapidThrow = _("래피드 스로우")  # "Rapid Throw"
+
+
+# Skill name modifiers only for nightwalker
+SERVANT = _("서번트")
+ILLUSION50 = _("일루젼 50%")
+ILLUSION30 = _("일루젼 30%")
+FIFTH = _("5차")
+SPEAR = _("창")
+GIANT_SPEAR = _("거대 창")
 
 
 class ShadowBatStackWrapper(core.StackSkillWrapper):
@@ -189,33 +199,33 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill   ######
 
         ElementalDarkness = core.BuffSkill(NightWalkerSkills.DarkElemental, 0, 180000, armor_ignore = (4+1+1+1) * (2+1+1+1), att = 60).wrap(core.BuffSkillWrapper)  # Pet buff, siphon vitality-reinforce summed. 펫버프, 사이펀 바이탈리티-리인포스 합산.
-        ElementalDarknessDOT = core.DotSkill(_("{}(도트)").format(NightWalkerSkills.DarkElemental), 0, 1000, 80 + 40 + 50 + 50, 2+1+1+1, 100000000, cooltime = -1).wrap(core.DotSkillWrapper)
+        ElementalDarknessDOT = core.DotSkill(f"{NightWalkerSkills.DarkElemental}({DOT})", 0, 1000, 80 + 40 + 50 + 50, 2+1+1+1, 100000000, cooltime = -1).wrap(core.DotSkillWrapper)
         Booster = core.BuffSkill(NightWalkerSkills.ThrowingBooster, 0, 180000, rem  = True).wrap(core.BuffSkillWrapper)  # Pet buff. 펫버프.
         ShadowServent = core.BuffSkill(NightWalkerSkills.DarkServant, 990, 180000).wrap(core.BuffSkillWrapper)  # Pet buff registration is not possible. 펫버프 등록불가.
         SpiritThrowing = core.BuffSkill(NightWalkerSkills.SpiritProjection, 0, 180000, rem  = True).wrap(core.BuffSkillWrapper)  # Pet buff. 펫버프.
 
-        ShadowBatStack = ShadowBatStackWrapper(core.BuffSkill(_("{}(스택)").format(NightWalkerSkills.ShadowBat), 0, 0, cooltime=-1))
+        ShadowBatStack = ShadowBatStackWrapper(core.BuffSkill(f"{NightWalkerSkills.ShadowBat}({STACK})", 0, 0, cooltime=-1))
         ShadowBat = core.DamageSkill(NightWalkerSkills.ShadowBat, 0, 150 + 120 + 150 + 200 + 4*passive_level, 1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
 
         # Based on point shot (400ms). 점샷기준(400ms).
         QuintupleThrow = core.DamageSkill(NightWalkerSkills.QuintupleStar, (400 * JUMPRATE + 510 * (1-JUMPRATE)), 340+self.combat, 4, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal = core.DamageSkill(_("{}(막타)").format(NightWalkerSkills.QuintupleStar), 0, 475+self.combat, 1, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal = core.DamageSkill(f"{NightWalkerSkills.QuintupleStar}({LAST_HIT})", 0, 475+self.combat, 1, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        QuintupleThrow_Sv = core.DamageSkill(_("{}(서번트)").format(NightWalkerSkills.QuintupleStar), 0, (340+self.combat)*0.7, 4, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal_Sv = core.DamageSkill(_("{}(서번트)(막타)").format(NightWalkerSkills.QuintupleStar), 0, (475+self.combat)*0.7, 1, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow_Sv = core.DamageSkill(f"{NightWalkerSkills.QuintupleStar}({SERVANT})", 0, (340+self.combat)*0.7, 4, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal_Sv = core.DamageSkill(f"{NightWalkerSkills.QuintupleStar}({SERVANT})({LAST_HIT})", 0, (475+self.combat)*0.7, 1, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        QuintupleThrow_I50 = core.DamageSkill(_("{}(일루젼 50%)").format(NightWalkerSkills.QuintupleStar), 0, (340+self.combat)*0.5, 4, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal_I50 = core.DamageSkill(_("{}(일루젼 50%)(막타)").format(NightWalkerSkills.QuintupleStar), 0, (475+self.combat)*0.5, 1, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrow_I30 = core.DamageSkill(_("{}(일루젼 30%)").format(NightWalkerSkills.QuintupleStar), 0, (340+self.combat)*0.3, 4, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal_I30 = core.DamageSkill(_("{}(일루젼 30%)(막타)").format(NightWalkerSkills.QuintupleStar), 0, (475+self.combat)*0.3, 1, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow_I50 = core.DamageSkill(f"{NightWalkerSkills.QuintupleStar}({ILLUSION50})", 0, (340+self.combat)*0.5, 4, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal_I50 = core.DamageSkill(f"{NightWalkerSkills.QuintupleStar}({ILLUSION50})({LAST_HIT})", 0, (475+self.combat)*0.5, 1, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow_I30 = core.DamageSkill(f"{NightWalkerSkills.QuintupleStar}({ILLUSION30})", 0, (340+self.combat)*0.3, 4, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal_I30 = core.DamageSkill(f"{NightWalkerSkills.QuintupleStar}({ILLUSION30})({LAST_HIT})", 0, (475+self.combat)*0.3, 1, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
-        QuintupleThrow_V = core.DamageSkill(_("{}(5차)").format(NightWalkerSkills.QuintupleStar), 0, (340+self.combat) * 0.01 * (25+vEhc.getV(0,0)), 4, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        QuintupleThrowFinal_V = core.DamageSkill(_("{}(5차)(막타)").format(NightWalkerSkills.QuintupleStar), 0, (475+self.combat) * 0.01 * (25+vEhc.getV(0,0)), 1, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrow_V = core.DamageSkill(f"{NightWalkerSkills.QuintupleStar}({FIFTH})", 0, (340+self.combat) * 0.01 * (25+vEhc.getV(0,0)), 4, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        QuintupleThrowFinal_V = core.DamageSkill(f"{NightWalkerSkills.QuintupleStar}({FIFTH})({LAST_HIT})", 0, (475+self.combat) * 0.01 * (25+vEhc.getV(0,0)), 1, modifier=QUINTAPLE_MDF).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
     
         # Hyper skill. 하이퍼스킬.
         ShadowElusion = core.BuffSkill(NightWalkerSkills.ShadowIllusion, 690, 30000, cooltime = 180000).wrap(core.BuffSkillWrapper)
         Dominion = core.BuffSkill(NightWalkerSkills.Dominion, 1890, 30000, crit = 100, pdamage_indep = 20, cooltime = 180000).wrap(core.BuffSkillWrapper)
-        DominionAttack = core.DamageSkill(_("{}(공격)").format(NightWalkerSkills.Dominion), 0, 1000, 10, modifier=JAVELIN_ATT).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        DominionAttack = core.DamageSkill(f"{NightWalkerSkills.Dominion}({ATTACK})", 0, 1000, 10, modifier=JAVELIN_ATT).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
         GloryOfGuardians = core.BuffSkill(NightWalkerSkills.GloryoftheGuardians, 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
@@ -224,28 +234,28 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         ShadowSpear = core.BuffSkill(NightWalkerSkills.ShadowSpear, 600, (50+vEhc.getV(0,0))*1000, red = True, cooltime = int(181 - vEhc.getV(0,0) / 2)*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        ShadowSpearSmall = core.DamageSkill(_("{}(창)").format(NightWalkerSkills.ShadowSpear), 0, 100+4*vEhc.getV(0,0), 4).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        ShadowSpearLarge = core.SummonSkill(_("{}(거대 창)").format(NightWalkerSkills.ShadowSpear), 0, 3000, 400 + 16*vEhc.getV(0,0), 6, (50+vEhc.getV(0,0))*1000 - 1, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
+        ShadowSpearSmall = core.DamageSkill(f"{NightWalkerSkills.ShadowSpear}({SPEAR})", 0, 100+4*vEhc.getV(0,0), 4).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        ShadowSpearLarge = core.SummonSkill(f"{NightWalkerSkills.ShadowSpear}({GIANT_SPEAR})", 0, 3000, 400 + 16*vEhc.getV(0,0), 6, (50+vEhc.getV(0,0))*1000 - 1, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
 
         ShadowServentExtend = core.BuffSkill(NightWalkerSkills.GreaterDarkServant, 570, (30+vEhc.getV(1,1)//2)*1000, red = True, cooltime = 60000).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
 
         ShadowBite = core.DamageSkill(NightWalkerSkills.ShadowBite, 630, 600+24*vEhc.getV(2,2), 14, red = True, cooltime = 15000).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        ShadowBiteBuff = core.BuffSkill(_("{}(버프)").format(NightWalkerSkills.ShadowBite), 0, (10+vEhc.getV(2,2)//3)*1000, pdamage_indep = (8+vEhc.getV(2,2)//3), cooltime = -1).isV(vEhc,2,2).wrap(core.BuffSkillWrapper)
+        ShadowBiteBuff = core.BuffSkill(f"{NightWalkerSkills.ShadowBite}({BUFF})", 0, (10+vEhc.getV(2,2)//3)*1000, pdamage_indep = (8+vEhc.getV(2,2)//3), cooltime = -1).isV(vEhc,2,2).wrap(core.BuffSkillWrapper)
 
-        RapidThrowInit = core.DamageSkill(_("{}(개시)").format(NightWalkerSkills.RapidThrow), 120, 0, 0, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrowInit = core.DamageSkill(f"{NightWalkerSkills.RapidThrow}({INIT})", 120, 0, 0, cooltime=90000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         # 22회 반복
         RapidThrow = core.DamageSkill(NightWalkerSkills.RapidThrow, 180, 475+19*vEhc.getV(0,0), 5, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrow_Sv = core.DamageSkill(_("{}(서번트)").format(NightWalkerSkills.RapidThrow), 0, (475+19*vEhc.getV(0,0))*0.7, 5, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrow_I50 = core.DamageSkill(_("{}(일루젼 50%)").format(NightWalkerSkills.RapidThrow), 0, (475+19*vEhc.getV(0,0))*0.5, 5, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrow_I30 = core.DamageSkill(_("{}(일루젼 30%)").format(NightWalkerSkills.RapidThrow), 0, (475+19*vEhc.getV(0,0))*0.3, 5, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrow_V = core.DamageSkill(_("{}(5차)").format(NightWalkerSkills.RapidThrow), 0, (475+19*vEhc.getV(0,0)) * 0.01 * (25+vEhc.getV(0,0)), 5, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrow_Sv = core.DamageSkill(f"{NightWalkerSkills.RapidThrow}({SERVANT})", 0, (475+19*vEhc.getV(0,0))*0.7, 5, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrow_I50 = core.DamageSkill(f"{NightWalkerSkills.RapidThrow}({ILLUSION50})", 0, (475+19*vEhc.getV(0,0))*0.5, 5, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrow_I30 = core.DamageSkill(f"{NightWalkerSkills.RapidThrow}({ILLUSION30})", 0, (475+19*vEhc.getV(0,0))*0.3, 5, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrow_V = core.DamageSkill(f"{NightWalkerSkills.RapidThrow}({FIFTH})", 0, (475+19*vEhc.getV(0,0)) * 0.01 * (25+vEhc.getV(0,0)), 5, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
-        RapidThrowFinal = core.DamageSkill(_("{}(막타)").format(NightWalkerSkills.RapidThrow), 480, 850+34*vEhc.getV(0,0), 13, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrowFinal_Sv = core.DamageSkill(_("{}(막타)(서번트)").format(NightWalkerSkills.RapidThrow), 0, (850+34*vEhc.getV(0,0))*0.7, 13, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrowFinal_I50 = core.DamageSkill(_("{}(막타)(일루젼 50%)").format(NightWalkerSkills.RapidThrow), 0, (850+34*vEhc.getV(0,0))*0.5, 13, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrowFinal_I30 = core.DamageSkill(_("{}(막타)(일루젼 30%)").format(NightWalkerSkills.RapidThrow), 0, (850+34*vEhc.getV(0,0))*0.3, 13, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        RapidThrowFinal_V = core.DamageSkill(_("{}(막타)(5차)").format(NightWalkerSkills.RapidThrow), 0, (850+34*vEhc.getV(0,0)) * 0.01 * (25+vEhc.getV(0,0)), 13, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrowFinal = core.DamageSkill(f"{NightWalkerSkills.RapidThrow}({LAST_HIT})", 480, 850+34*vEhc.getV(0,0), 13, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrowFinal_Sv = core.DamageSkill(f"{NightWalkerSkills.RapidThrow}({LAST_HIT})({SERVANT})", 0, (850+34*vEhc.getV(0,0))*0.7, 13, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrowFinal_I50 = core.DamageSkill(f"{NightWalkerSkills.RapidThrow}({LAST_HIT})({ILLUSION50})", 0, (850+34*vEhc.getV(0,0))*0.5, 13, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrowFinal_I30 = core.DamageSkill(f"{NightWalkerSkills.RapidThrow}({LAST_HIT})({ILLUSION30})", 0, (850+34*vEhc.getV(0,0))*0.3, 13, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RapidThrowFinal_V = core.DamageSkill(f"{NightWalkerSkills.RapidThrow}({LAST_HIT})({FIFTH})", 0, (850+34*vEhc.getV(0,0)) * 0.01 * (25+vEhc.getV(0,0)), 13, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ######   Skill Wrapper   ######
 
         ElementalDarkness.onAfter(ElementalDarknessDOT)

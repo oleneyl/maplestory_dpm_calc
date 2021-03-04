@@ -1,3 +1,4 @@
+from ..globalSkill import PASSIVE
 from ...kernel import core
 
 from localization.utilities import translator
@@ -33,6 +34,6 @@ class OverdriveWrapper(core.BuffSkillWrapper):
 
 def LoadedDicePassiveWrapper(vEhc, num1, num2):
     LoadedDicePassive = core.InformedCharacterModifier(
-        _("{}(패시브)").format(PirateSkills.LoadedDice), att=vEhc.getV(num1, num2) + 10  # Loaded Dice (Passive)
+        f"{PirateSkills.LoadedDice}({PASSIVE})", att=vEhc.getV(num1, num2) + 10  # Loaded Dice (Passive)
     )
     return LoadedDicePassive

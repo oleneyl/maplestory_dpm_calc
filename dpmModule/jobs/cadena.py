@@ -1,4 +1,5 @@
 from dpmModule.jobs.jobbranch.thieves import ThiefSkills
+from .globalSkill import WAVE, ONE_HIT, CANCEL, TWO_HIT, POISON, THREE_HIT, EXPLOSION, COOLDOWN, STACK, BLEEDING, ATTACK, LAST_HIT, SUMMON, DEBUFF, EXTRA_HIT
 
 from ..kernel.graph import DynamicVariableOperation
 from ..kernel import core
@@ -67,12 +68,21 @@ class CadenaSkills:
     MuscleMemoryFinale = _("웨폰 버라이어티 피날레")  # "Muscle Memory Finale"
 
 
+# Skill name modifiers for Cadena only
+MAGE_LINK = _("모법링크")
+CONTINUOUS = _("연속 공격")
+BIND = _("바인드")
+FEAR = _("공포")
+CONFUSION = _("혼미")
+WEP_NUM = _("웨버횟수")
+
+
 ######   Passive Skill   ######
 class WeaponVarietyStackWrapper(core.StackSkillWrapper):
     def __init__(self, _max, prof_agent, final_attack, use_prof_agent_attack):
-        super(WeaponVarietyStackWrapper, self).__init__(core.BuffSkill(_("{}(스택)").format(CadenaSkills.MuscleMemoryIII), 0, 99999999), _max)
+        super(WeaponVarietyStackWrapper, self).__init__(core.BuffSkill(f"{CadenaSkills.MuscleMemoryIII}({STACK})", 0, 99999999), _max)
         self.currentWeapon = None
-        self.use_final_attack = core.OptionalElement(final_attack.is_available, final_attack, name=_("{}(쿨타임)").format(CadenaSkills.MuscleMemoryIII))
+        self.use_final_attack = core.OptionalElement(final_attack.is_available, final_attack, name=f"{CadenaSkills.MuscleMemoryIII}({COOLDOWN})")
         self.use_prof_agent_attack = use_prof_agent_attack
         self.prof_agent = prof_agent
         self.modifierInvariantFlag = False
@@ -228,27 +238,27 @@ class JobGenerator(ck.JobGenerator):
 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         CheapShotII = core.CharacterModifier(crit=2, crit_damage=10+ceil(passive_level/4))  # Weekpoint Converging Attack. 위크포인트 컨버징 어택.
-        CheapShotIIBleed = core.DotSkill(_("{}(출혈)").format(CadenaSkills.CheapShotII), 0, 1000, 110+2*passive_level, 1, 99999999).wrap(core.DotSkillWrapper)
-        CheapShotIIBleedBuff = core.BuffSkill(_("{}(출혈)(디버프)").format(CadenaSkills.CheapShotII), 0, 99999999, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
-        CheapShotIIAdventureMageBuff = core.BuffSkill(_("{}(모법링크)").format(CadenaSkills.CheapShotII), 0, 99999999, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
+        CheapShotIIBleed = core.DotSkill(f"{CadenaSkills.CheapShotII}({BLEEDING})", 0, 1000, 110+2*passive_level, 1, 99999999).wrap(core.DotSkillWrapper)
+        CheapShotIIBleedBuff = core.BuffSkill(f"{CadenaSkills.CheapShotII}({BLEEDING})({DEBUFF})", 0, 99999999, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
+        CheapShotIIAdventureMageBuff = core.BuffSkill(f"{CadenaSkills.CheapShotII}({MAGE_LINK})", 0, 99999999, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
 
         # buff. 버프.
         Booster = core.BuffSkill(CadenaSkills.WeaponBooster, 0, 200000).wrap(core.BuffSkillWrapper)
         SpecialPotion = core.BuffSkill(CadenaSkills.ShadowdealersElixir, 570, 60*1000, pdamage=10, crit=10, cooltime=120*1000).wrap(core.BuffSkillWrapper)  # Only Cadena has a delay. 카데나만 딜레이있음.
 
         ProfessionalAgent = core.BuffSkill(CadenaSkills.VeteranShadowdealer, 570, 30000, cooltime=180000).wrap(core.BuffSkillWrapper)
-        ProfessionalAgentAdditionalDamage = core.DamageSkill(_("{}(공격)").format(CadenaSkills.VeteranShadowdealer), 0, 255, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
-        ProfessionalAgent_Attack = core.OptionalElement(ProfessionalAgent.is_active, ProfessionalAgentAdditionalDamage, name=_("{} 추가타").format(CadenaSkills.VeteranShadowdealer))
+        ProfessionalAgentAdditionalDamage = core.DamageSkill(f"{CadenaSkills.VeteranShadowdealer}({ATTACK})", 0, 255, 3).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        ProfessionalAgent_Attack = core.OptionalElement(ProfessionalAgent.is_active, ProfessionalAgentAdditionalDamage, name=f"{CadenaSkills.VeteranShadowdealer}({EXTRA_HIT})")
 
         # Add weapon variety. 웨폰버라이어티 추가타.
         WeaponVarietyAttack = core.DamageSkill(CadenaSkills.MuscleMemoryIII, 0, 350+15*passive_level, 4, cooltime=250).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         WeaponVariety = WeaponVarietyStackWrapper(11, ProfessionalAgent, WeaponVarietyAttack, ProfessionalAgent_Attack)
 
         # Chain Arts. 체인아츠.
-        ChainArts_Stroke_1 = core.DamageSkill(_("{}(1타)").format(CadenaSkills.ChainArtsThrashIV), 210, 150, 2 * STROKE1_HIT_RATE, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        ChainArts_Stroke_1_Cancel = core.DamageSkill(_("{}(1타)(캔슬)").format(CadenaSkills.ChainArtsThrashIV), STROKE1_CANCEL_TIME, 150, 2 * STROKE1_HIT_RATE, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        ChainArts_Stroke_2 = core.DamageSkill(_("{}(2타)").format(CadenaSkills.ChainArtsThrashIV), 390, 400, 5, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        ChainArts_Stroke_2_Cancel = core.DamageSkill(_("{}(2타)(캔슬)").format(CadenaSkills.ChainArtsThrashIV), CANCEL_TIME, 400, 5, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ChainArts_Stroke_1 = core.DamageSkill(f"{CadenaSkills.ChainArtsThrashIV}({ONE_HIT})", 210, 150, 2 * STROKE1_HIT_RATE, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ChainArts_Stroke_1_Cancel = core.DamageSkill(f"{CadenaSkills.ChainArtsThrashIV}({ONE_HIT})({CANCEL})", STROKE1_CANCEL_TIME, 150, 2 * STROKE1_HIT_RATE, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ChainArts_Stroke_2 = core.DamageSkill(f"{CadenaSkills.ChainArtsThrashIV}({TWO_HIT})", 390, 400, 5, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ChainArts_Stroke_2_Cancel = core.DamageSkill(f"{CadenaSkills.ChainArtsThrashIV}({TWO_HIT})({CANCEL})", CANCEL_TIME, 400, 5, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         ChainArts_Chais = core.DamageSkill(CadenaSkills.ChainArtsPursuit, 150, 100, 1).wrap(core.DamageSkillWrapper)
         ChainArts_Crush = core.DamageSkill(CadenaSkills.ChainArtsCrush, 750, 510, 15, cooltime=30000).setV(vEhc, 4, 2, True).wrap(core.DamageSkillWrapper)  # unused. 미사용.
@@ -257,10 +267,10 @@ class JobGenerator(ck.JobGenerator):
         # ChainArts_ToughHustle = core.DamageSkill("체인아츠:터프허슬", 5000000, 600 + 7 * self.combat, 2).setV(vEhc, 0, 2, False)  # Lasting, 6 seconds, unused. 지속형, 6초, 미사용.
 
         ChainArts_Takedown_Init = core.DamageSkill(CadenaSkills.ChainArtsBeatdown, 4080, 300+3*self.combat, 2, cooltime=(150-30)*1000, red=True).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        ChainArts_Takedown_Attack = core.DamageSkill(_("{}(연속 공격)").format(CadenaSkills.ChainArtsBeatdown), 2970, 990+15*self.combat, 15, modifier=core.CharacterModifier(armor_ignore=80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        ChainArts_Takedown_Wave = core.DamageSkill(_("{}(파동)").format(CadenaSkills.ChainArtsBeatdown), 0, 600+5*self.combat, 4).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)  # 8 repetitions. 8회 반복.
-        ChainArts_Takedown_Final = core.DamageSkill(_("{}(최종)").format(CadenaSkills.ChainArtsBeatdown), 0, 500, 10, modifier=core.CharacterModifier(armor_ignore=80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        ChainArts_Takedown_Bind = core.BuffSkill(_("{}(바인드)").format(CadenaSkills.ChainArtsBeatdown), 0, 10000, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage, cooltime=-1).wrap(core.BuffSkillWrapper)
+        ChainArts_Takedown_Attack = core.DamageSkill(f"{CadenaSkills.ChainArtsBeatdown}({CONTINUOUS})", 2970, 990+15*self.combat, 15, modifier=core.CharacterModifier(armor_ignore=80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        ChainArts_Takedown_Wave = core.DamageSkill(f"{CadenaSkills.ChainArtsBeatdown}({WAVE})", 0, 600+5*self.combat, 4).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)  # 8 repetitions. 8회 반복.
+        ChainArts_Takedown_Final = core.DamageSkill(f"{CadenaSkills.ChainArtsBeatdown}({LAST_HIT})", 0, 500, 10, modifier=core.CharacterModifier(armor_ignore=80)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        ChainArts_Takedown_Bind = core.BuffSkill(f"{CadenaSkills.ChainArtsBeatdown}({BIND})", 0, 10000, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         # Non-chain arts skills. 논체인아츠 스킬.
 
@@ -268,42 +278,42 @@ class JobGenerator(ck.JobGenerator):
         SummonScratchingClaw = core.DamageSkill(CadenaSkills.SummonClaw, CANCEL_TIME, 455 + 5 * passive_level, 4, cooltime=3000, red=True, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
 
         SummonThrowingWingdagger = core.DamageSkill(CadenaSkills.SummonShuriken, 780, 0, 0, cooltime=10000, red=True, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20)).wrap(core.DamageSkillWrapper)
-        SummonThrowingWingdaggerSummon = core.SummonSkill(_("{}(소환)").format(CadenaSkills.SummonShuriken), 0, 330, 425 + 5 * passive_level, 1, 330*WINGDAGGER_HIT, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20, pdamage_indep=15 / WINGDAGGER_HIT)).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
-        SummonThrowingWingdaggerEnd = core.DamageSkill(_("{}(폭발)").format(CadenaSkills.SummonShuriken), 0, 670 + 5 * passive_level, 3, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        SummonThrowingWingdaggerSummon = core.SummonSkill(f"{CadenaSkills.SummonShuriken}({SUMMON})", 0, 330, 425 + 5 * passive_level, 1, 330*WINGDAGGER_HIT, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20, pdamage_indep=15 / WINGDAGGER_HIT)).setV(vEhc, 6, 2, False).wrap(core.SummonSkillWrapper)
+        SummonThrowingWingdaggerEnd = core.DamageSkill(f"{CadenaSkills.SummonShuriken}({EXPLOSION})", 0, 670 + 5 * passive_level, 3, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
 
         SummonShootingShotgun = core.DamageSkill(CadenaSkills.SummonShotgun, CANCEL_TIME, 510 + 5 * passive_level, 7, cooltime=5000, red=True, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20, pdamage_indep=15)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         SummonSlachingKnife = core.DamageSkill(CadenaSkills.SummonDaggers, CANCEL_TIME, 435 + 5 * passive_level, 8, cooltime=10000, red=True, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20, pdamage_indep=15)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        SummonSlachingKnife_Horror = core.BuffSkill(_("{}(공포)").format(CadenaSkills.SummonDaggers), 0, 10000, armor_ignore=30, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage, cooltime=-1).wrap(core.BuffSkillWrapper)
+        SummonSlachingKnife_Horror = core.BuffSkill(f"{CadenaSkills.SummonDaggers}({FEAR})", 0, 10000, armor_ignore=30, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         SummonReleasingBoom = core.DamageSkill(CadenaSkills.SummonDecoyBomb, CANCEL_TIME, 0, 0, cooltime=8000, red=True).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        SummonReleasingBoom_Explode = core.DamageSkill(_("{}(폭발)").format(CadenaSkills.SummonDecoyBomb), 0, 535 + 5 * passive_level, 6, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        SummonReleasingBoom_Explode = core.DamageSkill(f"{CadenaSkills.SummonDecoyBomb}({EXPLOSION})", 0, 535 + 5 * passive_level, 6, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         SummonStrikingBrick = core.DamageSkill(CadenaSkills.SummonBrick, 390+CANCEL_TIME-STROKE1_CANCEL_TIME, 485 + 8*self.combat, 7, cooltime=8000, red=True, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20, pdamage_indep=15)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         # Forced movement 390ms, explosion 360ms (cancellable), 1 stroke can be used during forced movement, so 1 stroke delay is subtracted. 강제이동 390ms, 폭발 360ms(캔슬가능), 강제이동 도중 1타 사용 가능하므로 1타 딜레이만큼 뺌.
 
-        SummonBeatingNeedlebat_1 = core.DamageSkill(_("{}(1타)").format(CadenaSkills.SummonSpikedBat), 360, 450 + 10 * self.combat, 6, modifier=core.CharacterModifier(pdamage=35+20, boss_pdamage=20, pdamage_indep=15), cooltime=12000, red=True).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        SummonBeatingNeedlebat_2 = core.DamageSkill(_("{}(2타)").format(CadenaSkills.SummonSpikedBat), 420, 555 + 10 * self.combat, 7, modifier=core.CharacterModifier(pdamage=35+20, boss_pdamage=20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        SummonBeatingNeedlebat_3 = core.DamageSkill(_("{}(3타)").format(CadenaSkills.SummonSpikedBat), CANCEL_TIME, 715 + 10 * self.combat, 8, modifier=core.CharacterModifier(pdamage=45+20, boss_pdamage=20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        SummonBeatingNeedlebat_Honmy = core.BuffSkill(_("{}(혼미)").format(CadenaSkills.SummonSpikedBat), 0, 15000, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage, cooltime=-1).wrap(core.BuffSkillWrapper)
+        SummonBeatingNeedlebat_1 = core.DamageSkill(f"{CadenaSkills.SummonSpikedBat}({ONE_HIT})", 360, 450 + 10 * self.combat, 6, modifier=core.CharacterModifier(pdamage=35+20, boss_pdamage=20, pdamage_indep=15), cooltime=12000, red=True).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SummonBeatingNeedlebat_2 = core.DamageSkill(f"{CadenaSkills.SummonSpikedBat}({TWO_HIT})", 420, 555 + 10 * self.combat, 7, modifier=core.CharacterModifier(pdamage=35+20, boss_pdamage=20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SummonBeatingNeedlebat_3 = core.DamageSkill(f"{CadenaSkills.SummonSpikedBat}({THREE_HIT})", CANCEL_TIME, 715 + 10 * self.combat, 8, modifier=core.CharacterModifier(pdamage=45+20, boss_pdamage=20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SummonBeatingNeedlebat_Honmy = core.BuffSkill(f"{CadenaSkills.SummonSpikedBat}({CONFUSION})", 0, 15000, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         # 5th. 5차.
         VenomBurst = core.DotSkill(ThiefSkills.VenomBurst, 0, 1000, 160+6*vEhc.getV(4, 4), 1, 99999999).isV(vEhc, 4, 4).wrap(core.DotSkillWrapper)
-        VenomBurst_Poison = core.BuffSkill(_("{}(중독)").format(ThiefSkills.VenomBurst), 0, 99999999, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage, cooltime=-1).isV(vEhc, 4, 4).wrap(core.BuffSkillWrapper)
+        VenomBurst_Poison = core.BuffSkill(f"{ThiefSkills.VenomBurst}({POISON})", 0, 99999999, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage, cooltime=-1).isV(vEhc, 4, 4).wrap(core.BuffSkillWrapper)
 
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 2, 3)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         NovaGoddessBless = nova.NovaGoddessBlessWrapper(vEhc, 0, 0)
 
         ChainArts_Fury = core.BuffSkill(CadenaSkills.ChainArtsVoidStrike, 420, (35+vEhc.getV(0, 0))*1000, cooltime=(180-vEhc.getV(0, 0))*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
-        ChainArts_Fury_Damage = core.DamageSkill(_("{}(공격)").format(CadenaSkills.ChainArtsVoidStrike), 0, 250+10*vEhc.getV(0, 0), 6, cooltime=600).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        ChainArts_Fury_Damage = core.DamageSkill(f"{CadenaSkills.ChainArtsVoidStrike}({ATTACK})", 0, 250+10*vEhc.getV(0, 0), 6, cooltime=600).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         AD_Odnunce = core.SummonSkill(CadenaSkills.ApocalypseCannon, 360, 270, 225+9*vEhc.getV(1, 1), 5, 10000, cooltime=25000, red=True).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)  # 37*5타
-        AD_Odnunce_Final = core.DamageSkill(_("{}(막타)").format(CadenaSkills.ApocalypseCannon), 0, 750+30*vEhc.getV(1, 1), 8, cooltime=-1).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        AD_Odnunce_Final = core.DamageSkill(f"{CadenaSkills.ApocalypseCannon}({LAST_HIT})", 0, 750+30*vEhc.getV(1, 1), 8, cooltime=-1).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
 
         ChainArts_Maelstorm = MaelstromWrapper(vEhc, 8)
-        ChainArts_Maelstorm_Slow = core.BuffSkill(_("{}(중독)").format(CadenaSkills.ChainArtsMaelstrom), 0, 4000+6000, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage, cooltime=-1).isV(vEhc, 3, 2).wrap(core.BuffSkillWrapper)
+        ChainArts_Maelstorm_Slow = core.BuffSkill(f"{CadenaSkills.ChainArtsMaelstrom}({POISON})", 0, 4000+6000, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage, cooltime=-1).isV(vEhc, 3, 2).wrap(core.BuffSkillWrapper)
 
         WeaponVarietyFinale = core.StackableDamageSkillWrapper(core.DamageSkill(CadenaSkills.MuscleMemoryFinale, 0, 250+10*vEhc.getV(0, 0), 7*4, cooltime=11000).isV(vEhc, 0, 0), 3)
-        WeaponVarietyFinaleTrigger = core.StackSkillWrapper(core.BuffSkill(_("{}(웨버횟수)").format(CadenaSkills.MuscleMemoryFinale), 0, 99999999), 4)
+        WeaponVarietyFinaleTrigger = core.StackSkillWrapper(core.BuffSkill(f"{CadenaSkills.MuscleMemoryFinale}({WEP_NUM})", 0, 99999999), 4)
 
         ######   Skill Wrapper   ######
 

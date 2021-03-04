@@ -5,6 +5,7 @@ from . import globalSkill
 from .jobbranch import warriors
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE, EXPLOSION, HOLDER, ENDING
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -60,6 +61,10 @@ class DarkKnightSkills:
     DarknessAura = _("다크니스 오라")  # "Darkness Aura"
 
 
+# Skill modifiers only for Dark Knight
+INFINITE = _("무한")
+
+
 #TODO: Beholder's Revenge main effect added. 비홀더스 리벤지 메인 효과 추가.
 
 class JobGenerator(ck.JobGenerator):
@@ -84,11 +89,11 @@ class JobGenerator(ck.JobGenerator):
         LordOfDarkness = core.InformedCharacterModifier(DarkKnightSkills.LordofDarkness,crit=30, crit_damage = 8)
     
         AdvancedWeaponMastery = core.InformedCharacterModifier(DarkKnightSkills.BarricadeMastery,att = 30 + passive_level, crit_damage = 15 + passive_level // 3)
-        ReincarnationBuff = core.InformedCharacterModifier(_("{}(패시브)").format(DarkKnightSkills.FinalPact),pdamage_indep=30 + passive_level, crit=10 + ceil(passive_level / 3), crit_damage=15 + passive_level // 3)
+        ReincarnationBuff = core.InformedCharacterModifier(f"{DarkKnightSkills.FinalPact}({PASSIVE})",pdamage_indep=30 + passive_level, crit=10 + ceil(passive_level / 3), crit_damage=15 + passive_level // 3)
         ReincarnationHyper = core.InformedCharacterModifier(DarkKnightSkills.FinalPactCriticalChance, crit = 20)
     
-        SacrificePassive = core.InformedCharacterModifier(_("{}(패시브)").format(DarkKnightSkills.Sacrifice),armor_ignore = 30)
-        CrossoverChainPassive = core.InformedCharacterModifier(_("{}(패시브)").format(DarkKnightSkills.CrossSurge), pdamage_indep=50)
+        SacrificePassive = core.InformedCharacterModifier(f"{DarkKnightSkills.Sacrifice}({PASSIVE})",armor_ignore = 30)
+        CrossoverChainPassive = core.InformedCharacterModifier(f"{DarkKnightSkills.CrossSurge}({PASSIVE})", pdamage_indep=50)
         return [WeaponMastery, PhisicalTraining, LordOfDarkness, AdvancedWeaponMastery, ReincarnationBuff, ReincarnationHyper, SacrificePassive, CrossoverChainPassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -139,7 +144,7 @@ class JobGenerator(ck.JobGenerator):
         DarkImpail = core.DamageSkill(DarkKnightSkills.DarkImpale, 630, 280 + 4 * self.combat, 5 + (30 + self.combat) // 16).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
         GOUNGNIL_MODIFIER = core.CharacterModifier(armor_ignore=30 + self.combat) + core.CharacterModifier(armor_ignore=20, pdamage=20)
-        GoungnilDescentNoCooltime = core.DamageSkill(_("{}(무한)").format(DarkKnightSkills.GungnirsDescent), 600, 225 + self.combat, 12, modifier=GOUNGNIL_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        GoungnilDescentNoCooltime = core.DamageSkill(f"{DarkKnightSkills.GungnirsDescent}({INFINITE})", 600, 225 + self.combat, 12, modifier=GOUNGNIL_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         GoungnilDescent = core.DamageSkill(DarkKnightSkills.GungnirsDescent, 600, 225 + self.combat, 12, cooltime=8000, red=True, modifier=GOUNGNIL_MODIFIER).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         
         Sacrifice = core.BuffSkill(DarkKnightSkills.Sacrifice, 1080, (30 + self.combat // 2)*1000, rem=True, red=True, cooltime=70000, armor_ignore=10 + self.combat // 3, boss_pdamage=10 + self.combat // 3).wrap(core.BuffSkillWrapper)   # Ignores the cool cool, decreases the cool by 0.3 when attacking the beholder. 궁그닐 쿨 무시, 비홀더 공격시 쿨0.3감소.
@@ -153,11 +158,11 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         DarkSpear = core.DamageSkill(DarkKnightSkills.SpearofDarkness, 750, 325+13*vEhc.getV(1, 0), 7*10, cooltime=10000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc, 1, 0).wrap(core.DamageSkillWrapper)
         BiholderImpact = core.SummonSkill(DarkKnightSkills.RadiantEvil, 0, 270, 100+vEhc.getV(0, 2), 6, 2880, cooltime=20000, red=True, modifier=core.CharacterModifier(pdamage=150, armor_ignore=20)).setV(vEhc, 2, 3, False).isV(vEhc, 0, 2).wrap(core.SummonSkillWrapper) # 0.3 seconds each with onTick. onTick으로 0.3초씩.
-        PierceCyclone = core.DamageSkill(_("{}(더미)").format(DarkKnightSkills.CalamitousCyclone), 90, 0, 0, cooltime=180*1000, red=True).wrap(core.DamageSkillWrapper)
+        PierceCyclone = core.DamageSkill(f"{DarkKnightSkills.CalamitousCyclone}({HOLDER})", 90, 0, 0, cooltime=180*1000, red=True).wrap(core.DamageSkillWrapper)
         PierceCycloneTick = core.DamageSkill(DarkKnightSkills.CalamitousCyclone, 360, 400+16*vEhc.getV(3, 3), 12, modifier=core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper) # 25 strokes. 25타.
-        PierceCycloneEnd = core.DamageSkill(_("{}(종료)").format(DarkKnightSkills.CalamitousCyclone), 900, 300+12*vEhc.getV(3, 3), 15*5, modifier=core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
+        PierceCycloneEnd = core.DamageSkill(f"{DarkKnightSkills.CalamitousCyclone}({ENDING})", 900, 300+12*vEhc.getV(3, 3), 15*5, modifier=core.CharacterModifier(crit=100, armor_ignore=50)).isV(vEhc, 3, 3).wrap(core.DamageSkillWrapper)
         DarknessAura = core.SummonSkill(DarkKnightSkills.DarknessAura, 600, 1530, 400+16*vEhc.getV(0, 0), 5, 40000, cooltime=180*1000, red=True).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
-        DarknessAuraFinal = core.DamageSkill(_("{}(폭발)").format(DarkKnightSkills.DarknessAura), 0, 675+26*vEhc.getV(0, 0), 13*(1+15//3), cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper) # Adds 1 explosion every 3 health, maximum health 15. 생명력 3마다 폭발 1회 추가, 생명력 최대 15.
+        DarknessAuraFinal = core.DamageSkill(f"{DarkKnightSkills.DarknessAura}({EXPLOSION})", 0, 675+26*vEhc.getV(0, 0), 13*(1+15//3), cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper) # Adds 1 explosion every 3 health, maximum health 15. 생명력 3마다 폭발 1회 추가, 생명력 최대 15.
         ######   Skill Wrapper   ######
 
         # Damage skill

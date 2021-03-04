@@ -1,4 +1,4 @@
-from .globalSkill import GlobalSkills
+from .globalSkill import GlobalSkills, DOT, BUFF, DEBUFF, TICK, SUMMON, ENDING
 from .jobbranch.thieves import ThiefSkills
 from ..kernel import core
 from ..character import characterKernel as ck
@@ -69,6 +69,10 @@ class DualBladeSkills:
     BladesofDestiny = _("카르마 퓨리")  # "Blades of Destiny"
     BladeTornado = _("블레이드 토네이도")  # "Blade Tornado"
     HauntedEdge = _("헌티드 엣지")  # "Haunted Edge"
+
+
+# Skill name modifiers only for dual blade
+YAKSA = _("나찰")
 
 
 class JobGenerator(ck.JobGenerator):
@@ -146,38 +150,38 @@ class JobGenerator(ck.JobGenerator):
         
         PhantomBlow = core.DamageSkill(DualBladeSkills.PhantomBlow, 540, 315 + 3 * self.combat, 6+1, modifier = core.CharacterModifier(armor_ignore = 44, pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         SuddenRaid = core.DamageSkill(DualBladeSkills.SuddenRaid, 690, 494+5*self.combat, 7, cooltime = (30-2*(self.combat//2))*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)    # Pacutt's remaining cooldown is reduced by 20%. 파컷의 남은 쿨타임 20% 감소.
-        SuddenRaidDOT = core.DotSkill(_("{}(도트)").format(DualBladeSkills.SuddenRaid), 0, 1000, 210 + 4 * self.combat, 1, 10000, cooltime = -1).wrap(core.DotSkillWrapper)
+        SuddenRaidDOT = core.DotSkill(f"{DualBladeSkills.SuddenRaid}({DOT})", 0, 1000, 210 + 4 * self.combat, 1, 10000, cooltime = -1).wrap(core.DotSkillWrapper)
 
         FinalCut = core.DamageSkill(DualBladeSkills.FinalCut, 450, 2000 + 20 * self.combat, 1, cooltime = 90000, red=True).wrap(core.DamageSkillWrapper)
-        FinalCutBuff = core.BuffSkill(_("{}(버프)").format(DualBladeSkills.FinalCut), 0, 60000, rem = True, cooltime = -1, pdamage_indep = 40 + self.combat).wrap(core.BuffSkillWrapper)
+        FinalCutBuff = core.BuffSkill(f"{DualBladeSkills.FinalCut}({BUFF})", 0, 60000, rem = True, cooltime = -1, pdamage_indep = 40 + self.combat).wrap(core.BuffSkillWrapper)
         
         EpicAdventure = core.BuffSkill(DualBladeSkills.EpicAdventure, 0, 60*1000, cooltime = 120 * 1000, pdamage = 10).wrap(core.BuffSkillWrapper)
         
         FlashBang = core.DamageSkill(DualBladeSkills.Flashbang, 390, 250, 1, cooltime = 60000, red=True).wrap(core.DamageSkillWrapper)  # Random delay. 임의 딜레이.
-        FlashBangDebuff = core.BuffSkill(_("{}(디버프)").format(DualBladeSkills.Flashbang), 0, 50000/2, cooltime = -1, pdamage = 10 * 0.9).wrap(core.BuffSkillWrapper)
+        FlashBangDebuff = core.BuffSkill(f"{DualBladeSkills.Flashbang}({DEBUFF})", 0, 50000/2, cooltime = -1, pdamage = 10 * 0.9).wrap(core.BuffSkillWrapper)
         Venom = core.DotSkill(DualBladeSkills.ToxicVenom, 0, 1000, 160+5*passive_level, 2+(10+passive_level)//6, 8000, cooltime = -1).wrap(core.DotSkillWrapper)  # Stacks 3 times. 3회 중첩.
 
-        HiddenBladeBuff = core.BuffSkill(_("{}(버프)").format(DualBladeSkills.BladeClone), 0, 60000, cooltime = 90000, pdamage = 10).wrap(core.BuffSkillWrapper)
+        HiddenBladeBuff = core.BuffSkill(f"{DualBladeSkills.BladeClone}({BUFF})", 0, 60000, cooltime = 90000, pdamage = 10).wrap(core.BuffSkillWrapper)
         HiddenBlade = core.DamageSkill(DualBladeSkills.BladeClone, 0, 140, 1).setV(vEhc, 5, 2, True).wrap(core.DamageSkillWrapper)
         
         Asura = core.DamageSkill(DualBladeSkills.AsurasAnger, 810, 0, 0, cooltime = 60000).wrap(core.DamageSkillWrapper)
-        AsuraTick = core.DamageSkill(_("{}(틱)").format(DualBladeSkills.AsurasAnger), 300, 420, 4, modifier =core.CharacterModifier(armor_ignore = 100)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AsuraEnd = core.DamageSkill(_("{}(종료)").format(DualBladeSkills.AsurasAnger), 360, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
+        AsuraTick = core.DamageSkill(f"{DualBladeSkills.AsurasAnger}({TICK})", 300, 420, 4, modifier =core.CharacterModifier(armor_ignore = 100)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AsuraEnd = core.DamageSkill(f"{DualBladeSkills.AsurasAnger}({ENDING})", 360, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
         
         UltimateDarksight = thieves.UltimateDarkSightWrapper(vEhc, 3, 3, 20)
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc,4,4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         
         BladeStorm = core.DamageSkill(DualBladeSkills.BladeTempest, 120, 580+23*vEhc.getV(0,0), 7, red = True, cooltime = 90000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        BladeStormTick = core.DamageSkill(_("{}(틱)").format(DualBladeSkills.BladeTempest), 210, 350+10*vEhc.getV(0,0), 5, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  #10000/210 타
-        BladeStormEnd = core.DamageSkill(_("{}(종료)").format(DualBladeSkills.BladeTempest), 120, 0, 0).wrap(core.DamageSkillWrapper)
+        BladeStormTick = core.DamageSkill(f"{DualBladeSkills.BladeTempest}({TICK})", 210, 350+10*vEhc.getV(0,0), 5, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)  #10000/210 타
+        BladeStormEnd = core.DamageSkill(f"{DualBladeSkills.BladeTempest}({ENDING})", 120, 0, 0).wrap(core.DamageSkillWrapper)
         
         KarmaFury = core.DamageSkill(DualBladeSkills.BladesofDestiny, 750, 400+16*vEhc.getV(1,1), 7 * 5, red = True, cooltime = 10000, modifier = core.CharacterModifier(armor_ignore = 30)).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         BladeTornado = core.DamageSkill(DualBladeSkills.BladeTornado, 540, 600+24*vEhc.getV(2,2), 7, red = True, cooltime = 12000, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.DamageSkillWrapper)
-        BladeTornadoSummon = core.SummonSkill(_("{}(소환)").format(DualBladeSkills.BladeTornado), 0, 3000/5, 400+16*vEhc.getV(2,2), 6, 3000-1, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
-        BladeTornadoSummonMirrorImaging = core.SummonSkill(_("{}(소환)({})").format(DualBladeSkills.BladeTornado, DualBladeSkills.MirrorImage), 0, 3000/5, (400+16*vEhc.getV(2,2)) * 0.7, 6, 3000-1, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
+        BladeTornadoSummon = core.SummonSkill(f"{DualBladeSkills.BladeTornado}({SUMMON})", 0, 3000/5, 400+16*vEhc.getV(2,2), 6, 3000-1, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
+        BladeTornadoSummonMirrorImaging = core.SummonSkill(f"{DualBladeSkills.BladeTornado}({SUMMON})({DualBladeSkills.MirrorImage})", 0, 3000/5, (400+16*vEhc.getV(2,2)) * 0.7, 6, 3000-1, cooltime=-1, modifier = core.CharacterModifier(armor_ignore = 100)).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
 
-        HauntedEdge = core.DamageSkill(_("{}(나찰)").format(DualBladeSkills.HauntedEdge), 0, 200+8*vEhc.getV(0,0), 4*5, cooltime=14000, red=True, modifier=core.CharacterModifier(armor_ignore=30)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        HauntedEdge = core.DamageSkill(f"{DualBladeSkills.HauntedEdge}({YAKSA})", 0, 200+8*vEhc.getV(0,0), 4*5, cooltime=14000, red=True, modifier=core.CharacterModifier(armor_ignore=30)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         ######   Skill Wrapper   ######
     

@@ -1,3 +1,4 @@
+from ..globalSkill import HOLDER
 from ...kernel import core
 from ...kernel.core import VSkillModifier as V
 from ...kernel.core import CharacterModifier as MDF
@@ -14,7 +15,7 @@ class HeroesSkills:
 
 class FridWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, num1, num2):
-        super(FridWrapper, self).__init__(core.BuffSkill(_("{}(더미)").format(HeroesSkills.FreudsWisdom), 810, 30*1000, red=True).isV(vEhc, num1, num2))
+        super(FridWrapper, self).__init__(core.BuffSkill(f"{HeroesSkills.FreudsWisdom}({HOLDER})", 810, 30*1000, red=True).isV(vEhc, num1, num2))
         vlevel = vEhc.getV(num1, num2)
         self.modifierList = [
             core.CharacterModifier(),

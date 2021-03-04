@@ -7,6 +7,7 @@ from .jobclass import cygnus
 from .jobbranch import warriors
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE, BUFF, SUMMON, DEBUFF
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -67,6 +68,11 @@ class MihileSkills:
     LightofCourage = _("라이트 오브 커리지")  # "Light of Courage"
 
 
+# Skill name modifiers for Mihile
+INSTALL = _("인스톨")
+SLASH = _("슬래시")
+
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -86,12 +92,12 @@ class JobGenerator(ck.JobGenerator):
         
         PhisicalTraiging = core.InformedCharacterModifier(MihileSkills.PhysicalTraining,stat_main = 30, stat_sub = 30)
         SwordMastery = core.InformedCharacterModifier(MihileSkills.SwordMastery,pdamage_indep = 15)
-        InvigoratePassive = core.InformedCharacterModifier(_("{}(패시브)").format(MihileSkills.Rally),att = 20)
+        InvigoratePassive = core.InformedCharacterModifier(f"{MihileSkills.Rally}({PASSIVE})",att = 20)
         Intension = core.InformedCharacterModifier(MihileSkills.IntenseFocus,stat_main = 60, crit = 20, pdamage_indep = 10)
-        ShiningCharge = core.InformedCharacterModifier(_("{}(패시브)").format(MihileSkills.RadiantCharge),pdamage = 60)
+        ShiningCharge = core.InformedCharacterModifier(f"{MihileSkills.RadiantCharge}({PASSIVE})",pdamage = 60)
         CombatMastery = core.InformedCharacterModifier(MihileSkills.CombatMastery,armor_ignore = 40+2*passive_level)
         AdvancedSowrdMastery = core.InformedCharacterModifier(MihileSkills.ExpertSwordMastery,att = 30+passive_level, crit = 15+passive_level//3, crit_damage = 10)
-        AdvancedFinalAttackPassive = core.InformedCharacterModifier(_("{}(패시브)").format(MihileSkills.AdvancedFinalAttack),att = 30+passive_level)
+        AdvancedFinalAttackPassive = core.InformedCharacterModifier(f"{MihileSkills.AdvancedFinalAttack}({PASSIVE})",att = 30+passive_level)
 
         return [ElementalExpert, PhisicalTraiging, SwordMastery,
                             InvigoratePassive, Intension, ShiningCharge, CombatMastery, AdvancedSowrdMastery,
@@ -150,14 +156,14 @@ class JobGenerator(ck.JobGenerator):
         LoyalGuard_3 = core.DamageSkill(f"{MihileSkills.RoyalGuard}(3)", 120+450, 440+chtr.level, 6, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         LoyalGuard_4 = core.DamageSkill(f"{MihileSkills.RoyalGuard}(4)", 120+450, 480+chtr.level, 7, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         LoyalGuard_5 = core.DamageSkill(f"{MihileSkills.RoyalGuard}(5)", 120+450, 565+chtr.level, 9, cooltime = 6000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        LoyalGuardBuff = core.BuffSkill(_("{}(버프)").format(MihileSkills.RoyalGuard), 0, 12000, att = 45).wrap(core.BuffSkillWrapper)  #10->15->20->30->45
+        LoyalGuardBuff = core.BuffSkill(f"{MihileSkills.RoyalGuard}({BUFF})", 0, 12000, att = 45).wrap(core.BuffSkillWrapper)  #10->15->20->30->45
         
         SoulAssult = core.DamageSkill(MihileSkills.FourPointAssault, 540, 210+3*self.combat, 11+1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)   # 20% darkness. 암흑 20%.
         
         FinalAttack = core.DamageSkill(MihileSkills.FinalAttack, 0, 95+passive_level, 4*0.01*(75+passive_level)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
         
         ShiningCross = core.DamageSkill(MihileSkills.RadiantCross, 540, 440+3*self.combat, 4+1, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)   # Darkness 30% 10 seconds. 암흑 30% 10초.
-        ShiningCrossInstall = core.SummonSkill(_("{}(인스톨)").format(MihileSkills.RadiantCross), 0, 1200, 75, 4+1, 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    # 100% dark 5 seconds. 100% 암흑 5초.
+        ShiningCrossInstall = core.SummonSkill(f"{MihileSkills.RadiantCross}({INSTALL})", 0, 1200, 75, 4+1, 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    # 100% dark 5 seconds. 100% 암흑 5초.
         
         # Hyper
         SacredCube = core.BuffSkill(MihileSkills.SacredCube, 90, 30000, cooltime = 210000, pdamage = 10).wrap(core.BuffSkillWrapper)
@@ -172,7 +178,7 @@ class JobGenerator(ck.JobGenerator):
             .setV(vEhc, 4, 2, False)
             .wrap(core.DamageSkillWrapper)
         )
-        DeadlyChargeBuff = core.BuffSkill(_("{}(디버프)").format(MihileSkills.ChargingLight), 0, 10000, cooltime = -1, pdamage = 10).wrap(core.BuffSkillWrapper)
+        DeadlyChargeBuff = core.BuffSkill(f"{MihileSkills.ChargingLight}({DEBUFF})", 0, 10000, cooltime = -1, pdamage = 10).wrap(core.BuffSkillWrapper)
         QueenOfTomorrow = core.BuffSkill(MihileSkills.QueenofTomorrow, 0, 60000, cooltime = 120000, pdamage = 10).wrap(core.BuffSkillWrapper)
     
         # 5th
@@ -180,10 +186,10 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         RoIias = core.BuffSkill(MihileSkills.ShieldofLight, 840, (75+3*vEhc.getV(0,0))*1000, cooltime = 300*1000, red = True, pdamage_indep = 5 + (35+3*(vEhc.getV(0,0)//4))//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ClauSolis = core.DamageSkill(MihileSkills.SwordofLight, 690, 700+28*vEhc.getV(4,4), 7, cooltime = 12000, red = True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)    # Royal Guard buff duration increased by 6 seconds. 100% dark 5 seconds. 로얄가드 버프지속시간 6초 증가. 100% 암흑 5초.
-        ClauSolisSummon = core.SummonSkill(_("{}(소환)").format(MihileSkills.SwordofLight), 0, 5000, 350+14*vEhc.getV(4,4), 7, 7000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   # 100% dark 5 seconds. 100% 암흑 5초.
+        ClauSolisSummon = core.SummonSkill(f"{MihileSkills.SwordofLight}({SUMMON})", 0, 5000, 350+14*vEhc.getV(4,4), 7, 7000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   # 100% dark 5 seconds. 100% 암흑 5초.
     
         SwordOfSoullight = core.BuffSkill(MihileSkills.RadiantSoul, 810, 35000, cooltime = 180*1000, red = True, patt = 15 + vEhc.getV(1,1)//2, crit = 100, armor_ignore = 100).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
-        SoullightSlash = core.DamageSkill(_("{}(슬래시)").format(MihileSkills.RadiantSoul), 630, 400+16*vEhc.getV(1,1), 12).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        SoullightSlash = core.DamageSkill(f"{MihileSkills.RadiantSoul}({SLASH})", 630, 400+16*vEhc.getV(1,1), 12).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         LightForceRay = core.DamageSkill("라이트 포스레이", 720, 850+34*vEhc.getV(1,1), 12*6, cooltime=-1).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)  # TODO: 공속 적용 여부 확인 (base delay 930)
         SwordOfSoullightSummon = core.SummonSkill("소드 오브 소울 라이트(잔상)", 0, 1800, 450+18*vEhc.getV(0,0), 5, 35000, cooltime=-1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
 

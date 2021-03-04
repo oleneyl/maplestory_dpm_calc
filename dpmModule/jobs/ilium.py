@@ -8,6 +8,7 @@ from .jobbranch import magicians
 from .jobclass import flora
 from . import jobutils
 from typing import Any, Dict
+from .globalSkill import PASSIVE, EXTRA_HIT, STACK, CAST, ENDING, BUFF, EXPLOSION
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -70,6 +71,17 @@ class IlliumSkills:
     TemplarKnight = _("그람홀더")  # "Templar Knight"
     CrystallineSpirit = _("소울 오브 크리스탈")  # "Crystalline Spirit"
     CrystalGate = _("크리스탈 게이트")  # "Crystal Gate"
+
+
+# Skill name modifiers for Illium only
+ENTER = _("진입")
+JAVELIN_ENH = _("자벨린 강화버프")
+AFTER = _("오브 이후")
+FRAGMENTS = _("조각")
+SATELLITE = _("위성")
+MAGIC_MISSILE = _("매직 미사일")
+SOAK = _("소오크")
+SOAK_CHECK = _("소오크여부")
 
 
 class IliumStackWrapper(core.StackSkillWrapper):
@@ -193,20 +205,20 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(MutualRule(IlliumSkills.FlashCrystalBattery, _("{}(시전)").format(IlliumSkills.CrystalIgnition)), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule(IlliumSkills.FlashCrystalBattery, _("{}(진입)").format(IlliumSkills.CrystalSkillWingsofGlory)), RuleSet.BASE)
-        ruleset.add_rule(ReservationRule(IlliumSkills.TemplarKnight, _("{}(진입)").format(IlliumSkills.CrystalSkillWingsofGlory)), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(_("{}(진입)").format(IlliumSkills.CrystalSkillWingsofGlory), IlliumSkills.TemplarKnight, lambda x:x.is_active() or x.is_not_usable()), RuleSet.BASE)
-        ruleset.add_rule(ReservationRule(IlliumSkills.CrystalSkillDeus, _("{}(진입)").format(IlliumSkills.CrystalSkillWingsofGlory)), RuleSet.BASE)
-        ruleset.add_rule(ConditionRule(_("{}(진입)").format(IlliumSkills.CrystalSkillWingsofGlory), IlliumSkills.CrystalSkillDeus, lambda x:x.is_active() or x.is_not_usable()), RuleSet.BASE)
+        ruleset.add_rule(MutualRule(IlliumSkills.FlashCrystalBattery, f"{IlliumSkills.CrystalIgnition}({CAST})"), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(IlliumSkills.FlashCrystalBattery, f"{IlliumSkills.CrystalSkillWingsofGlory}({ENTER})"), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule(IlliumSkills.TemplarKnight, f"{IlliumSkills.CrystalSkillWingsofGlory}({ENTER})"), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(f"{IlliumSkills.CrystalSkillWingsofGlory}({ENTER})", IlliumSkills.TemplarKnight, lambda x:x.is_active() or x.is_not_usable()), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule(IlliumSkills.CrystalSkillDeus, f"{IlliumSkills.CrystalSkillWingsofGlory}({ENTER})"), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(f"{IlliumSkills.CrystalSkillWingsofGlory}({ENTER})", IlliumSkills.CrystalSkillDeus, lambda x:x.is_active() or x.is_not_usable()), RuleSet.BASE)
 
         # A damage cycle that uses Ignition and Glory Wings separately. 이그니션과 글로리 윙 따로 사용하는 딜사이클.
-        ruleset.add_rule(InactiveRule(_("{}(시전)").format(IlliumSkills.CrystalIgnition), _("{}(진입)").format(IlliumSkills.CrystalSkillWingsofGlory)), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule(_("{}(시전)").format(IlliumSkills.CrystalIgnition), IlliumSkills.CrystallineSpirit), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(f"{IlliumSkills.CrystalIgnition}({CAST})", f"{IlliumSkills.CrystalSkillWingsofGlory}({ENTER})"), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(f"{IlliumSkills.CrystalIgnition}({CAST})", IlliumSkills.CrystallineSpirit), RuleSet.BASE)
 
         # To use together, comment out the above 2 and use the below 2 rules. 함께 사용하게 하려면 위 2개 주석처리하고 아래 2개 Rule을 사용
-        # ruleset.add_rule(ConcurrentRunRule(_("{IlliumSkills.CrystalIgnition}(시전)", _("{IlliumSkills.CrystalSkillWingsofGlory}(진입)"), RuleSet.BASE)
-        # ruleset.add_rule(ConditionRule(_("{IlliumSkills.CrystalSkillWingsofGlory}(진입)", _("{IlliumSkills.CrystalIgnition}(시전)", lambda x:x.is_cooltime_left(20000, 1) or x.is_cooltime_left(10000, -1)), RuleSet.BASE)
+        # ruleset.add_rule(ConcurrentRunRule(f"{IlliumSkills.CrystalIgnition}({CAST})", f"{IlliumSkills.CrystalSkillWingsofGlory}({ENTER})"), RuleSet.BASE)
+        # ruleset.add_rule(ConditionRule(f"{IlliumSkills.CrystalSkillWingsofGlory}({ENTER})", f"{IlliumSkills.CrystalIgnition}({CAST})", lambda x:x.is_cooltime_left(20000, 1) or x.is_cooltime_left(10000, -1)), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self) -> core.CharacterModifier:
@@ -218,7 +230,7 @@ class JobGenerator(ck.JobGenerator):
         MagicCircuit = core.InformedCharacterModifier(IlliumSkills.MagicConversion, att = WEAPON_ATT*0.2)
         
         MagicGuntletMastery = core.InformedCharacterModifier(IlliumSkills.LucentGauntletMastery, crit = 20)
-        BlessMarkPassive = core.InformedCharacterModifier(_("{}(패시브)").format(IlliumSkills.LucentBrand), pdamage = 10)
+        BlessMarkPassive = core.InformedCharacterModifier(f"{IlliumSkills.LucentBrand}({PASSIVE})", pdamage = 10)
         LefMastery = core.InformedCharacterModifier(IlliumSkills.MightoftheFlora, pdamage = 10)
         
         DestinyPioneer = core.InformedCharacterModifier(IlliumSkills.Tenacity, stat_main = 40, patt = 10)
@@ -252,12 +264,12 @@ class JobGenerator(ck.JobGenerator):
 
         Craft_Orb = core.DamageSkill(IlliumSkills.RadiantOrb, 390, 300+4*self.combat, 1).wrap(core.DamageSkillWrapper)
         Reaction_Domination = core.DamageSkill(IlliumSkills.ReactionDomination, 0, 550 + 100 + self.combat*2, 2, cooltime = 4000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        Craft_Javelin_EnhanceBuff = core.BuffSkill(_("{}(자벨린 강화버프)").format(IlliumSkills.RadiantOrb), 0, 2000, cooltime = -1).wrap(core.BuffSkillWrapper)
+        Craft_Javelin_EnhanceBuff = core.BuffSkill(f"{IlliumSkills.RadiantOrb}({JAVELIN_ENH})", 0, 2000, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         Craft_Javelin = core.DamageSkill(IlliumSkills.RadiantJavelin, 390, 375 + 2*self.combat, 4 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Craft_Javelin_AfterOrb = core.DamageSkill(_("{}(오브 이후)").format(IlliumSkills.RadiantJavelin), 390, 375 + 2*self.combat, 4 * 3, modifier = core.CharacterModifier(pdamage = 20 + 15, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Craft_Javelin_AfterOrb = core.DamageSkill(f"{IlliumSkills.RadiantJavelin}({AFTER})", 390, 375 + 2*self.combat, 4 * 3, modifier = core.CharacterModifier(pdamage = 20 + 15, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
-        Craft_Javelin_Fragment = core.DamageSkill(_("{}(파편)").format(IlliumSkills.RadiantJavelin), 0, 130 + 2*self.combat, 2 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        Craft_Javelin_Fragment = core.DamageSkill(f"{IlliumSkills.RadiantJavelin}({FRAGMENTS})", 0, 130 + 2*self.combat, 2 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Reaction_Destruction = core.DamageSkill(IlliumSkills.ReactionDestruction, 0, 550 + 100 + self.combat*2, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 4000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
         Craft_Longinus = core.DamageSkill(IlliumSkills.LonginusSpear, 600+180 +10*self.combat, 950, 8, cooltime = (15-self.combat//2)*1000).wrap(core.DamageSkillWrapper)  # Self-delay 600 + Javelin-of link cancellation 180. 자체딜레이 600 + 자벨린-오브 연계 취소 180.
@@ -268,48 +280,48 @@ class JobGenerator(ck.JobGenerator):
         CrystalSkill_MortalSwing = core.DamageSkill(IlliumSkills.CrystalSkillVortexofLight, 0, 600 + 2* passive_level, 10, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)    #30
         # Deus Passive Riyo Demjeung does not apply to combat. 데우스 패시브 리요 뎀증은 컴뱃 미적용.
         CrystalSkill_Deus = core.SummonSkill(IlliumSkills.CrystalSkillDeus, 30, 4800, 500+4*self.combat, 5+1, (30+self.combat//3)*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.SummonSkillWrapper)   #90, 7타
-        CrystalSkill_Deus_Satelite = RiyoWrapper(core.SummonSkill(_("{}(위성)").format(IlliumSkills.CrystalSkillDeus), 0, 510, 240, 1+1, 30*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False))
+        CrystalSkill_Deus_Satelite = RiyoWrapper(core.SummonSkill(f"{IlliumSkills.CrystalSkillDeus}({SATELLITE})", 0, 510, 240, 1+1, 30*1000, cooltime = -1, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False))
                 
         BlessMark = core.BuffSkill(IlliumSkills.LucentBrand, 0, 99999999, att = 46).wrap(core.BuffSkillWrapper)
         CurseMark = core.BuffSkill(IlliumSkills.UmbralBrand, 0, 99999999, armor_ignore = 20).wrap(core.BuffSkillWrapper)
-        CurseMarkFinalAttack = core.DamageSkill(_("{}(추가타)").format(IlliumSkills.UmbralBrand), 0, 200, 1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
+        CurseMarkFinalAttack = core.DamageSkill(f"{IlliumSkills.UmbralBrand}({EXTRA_HIT})", 0, 200, 1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         # Glory Wing. 글로리 윙.
-        GloryWingStackSkill = core.BuffSkill(_("{}(스택)").format(IlliumSkills.CrystalSkillWingsofGlory), 0, 9999999)
+        GloryWingStackSkill = core.BuffSkill(f"{IlliumSkills.CrystalSkillWingsofGlory}({STACK})", 0, 9999999)
         
-        GloryWingUse = core.BuffSkill(_("{}(진입)").format(IlliumSkills.CrystalSkillWingsofGlory), 30, 20000, pdamage_indep = 25, pdamage = (vEhc.getV(1,0) + 5) * 2, boss_pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper)  # Always matched with 2 soaks. 소오크 2개에 항상 맞춰 사용.
+        GloryWingUse = core.BuffSkill(f"{IlliumSkills.CrystalSkillWingsofGlory}({ENTER})", 30, 20000, pdamage_indep = 25, pdamage = (vEhc.getV(1,0) + 5) * 2, boss_pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper)  # Always matched with 2 soaks. 소오크 2개에 항상 맞춰 사용.
         
         GloryWing_MortalWingbit = core.DamageSkill(IlliumSkills.VortexWings, 630, 1070 + 20*self.combat, 15, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  # 1 time. 1회.
         
         GloryWing_Craft_Javelin = core.DamageSkill(f"{IlliumSkills.CrystalSkillWingsofGlory}:{IlliumSkills.RadiantJavelin}", 420, 465 + 3*self.combat, 7, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, pdamage_indep = 40)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        GloryWing_Craft_Javelin_Fragment = core.DamageSkill(_("{}:{}(매직 미사일)").format(IlliumSkills.CrystalSkillWingsofGlory, IlliumSkills.RadiantJavelin), 0, 250 + 5*self.combat, 3*3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        GloryWing_Craft_Javelin_Fragment = core.DamageSkill(f"{IlliumSkills.CrystalSkillWingsofGlory}:{IlliumSkills.RadiantJavelin}({MAGIC_MISSILE})", 0, 250 + 5*self.combat, 3*3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
 
         # 5th skills. 5차 스킬들.
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         FloraGoddessBless = flora.FloraGoddessBlessWrapper(vEhc, 0, 0, jobutils.get_weapon_att(chtr))
         GramHolder = GramHolderWrapper(core.SummonSkill(IlliumSkills.TemplarKnight, 210, 3000, 500+20*vEhc.getV(4,3), 12, 40000, cooltime = 180000).isV(vEhc,4,3))
 
-        CrystalIgnitionInit = core.DamageSkill(_("{}(시전)").format(IlliumSkills.CrystalIgnition), 720, 0, 0, cooltime = 180*1000).wrap(core.DamageSkillWrapper)
+        CrystalIgnitionInit = core.DamageSkill(f"{IlliumSkills.CrystalIgnition}({CAST})", 720, 0, 0, cooltime = 180*1000).wrap(core.DamageSkillWrapper)
         CrystalIgnition = core.DamageSkill(IlliumSkills.CrystalIgnition, 150, 750 + 30*vEhc.getV(2,1), 4, modifier = core.CharacterModifier(boss_pdamage = 20)).isV(vEhc,2,1).wrap(core.DamageSkillWrapper)
-        CrystalIgnitionEnd = core.DamageSkill(_("{}(종료)").format(IlliumSkills.CrystalIgnition), 630, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
+        CrystalIgnitionEnd = core.DamageSkill(f"{IlliumSkills.CrystalIgnition}({ENDING})", 630, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
         Reaction_Spectrum = core.DamageSkill(IlliumSkills.ReactionSpectralBlast, 0, 1000+40*vEhc.getV(2,1), 5, cooltime = 1000, modifier = core.CharacterModifier(boss_pdamage = 20)).wrap(core.DamageSkillWrapper)  # Cast every 1 second. 1초마다 시전됨.
  
         SoulOfCrystal = SoulOfCrystalWrapper(core.BuffSkill(IlliumSkills.CrystallineSpirit, 510*2, 30*1000, cooltime=40*1000).isV(vEhc,1,0))
-        SoulOfCrystalPassive = core.BuffSkill(_("{}(패시브)").format(IlliumSkills.CrystallineSpirit), 0, 999999999, att = (5+vEhc.getV(1,0)*2)).isV(vEhc,1,0).wrap(core.BuffSkillWrapper)
+        SoulOfCrystalPassive = core.BuffSkill(f"{IlliumSkills.CrystallineSpirit}({PASSIVE})", 0, 999999999, att = (5+vEhc.getV(1,0)*2)).isV(vEhc,1,0).wrap(core.BuffSkillWrapper)
 
-        SoulOfCrystal_Reaction_Domination = core.DamageSkill(_("{}(소오크)").format(IlliumSkills.ReactionDomination), 0, (550 + 100 + self.combat*2) * 0.01 * (50 + vEhc.getV(1,0)), 2*2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
-        SoulOfCrystal_Reaction_Destruction = core.DamageSkill(_("{}(소오크)").format(IlliumSkills.ReactionDestruction), 0, (550 + 100 + self.combat*2) * 0.01 * (50 + vEhc.getV(1,0)), 4*2*2, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        SoulOfCrystal_Reaction_Spectrum = core.DamageSkill(_("{}(소오크)").format(IlliumSkills.ReactionSpectralBlast), 0, 1000+40*vEhc.getV(2,1), 5*2, modifier = core.CharacterModifier(boss_pdamage = 20)).wrap(core.DamageSkillWrapper)
+        SoulOfCrystal_Reaction_Domination = core.DamageSkill(f"{IlliumSkills.ReactionDomination}({SOAK})", 0, (550 + 100 + self.combat*2) * 0.01 * (50 + vEhc.getV(1,0)), 2*2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        SoulOfCrystal_Reaction_Destruction = core.DamageSkill(f"{IlliumSkills.ReactionDestruction}({SOAK})", 0, (550 + 100 + self.combat*2) * 0.01 * (50 + vEhc.getV(1,0)), 4*2*2, modifier = core.CharacterModifier(boss_pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        SoulOfCrystal_Reaction_Spectrum = core.DamageSkill(f"{IlliumSkills.ReactionSpectralBlast}({SOAK})", 0, 1000+40*vEhc.getV(2,1), 5*2, modifier = core.CharacterModifier(boss_pdamage = 20)).wrap(core.DamageSkillWrapper)
 
         CrystalGate = core.BuffSkill(IlliumSkills.CrystalGate, 420*2, (130+vEhc.getV(0,0))*1000, cooltime=180*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        CrystalGateBuff = core.BuffSkill(_("{}(버프)").format(IlliumSkills.CrystalGate), 0, 25000, att=5+2*vEhc.getV(0,0)).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        CrystalGateAttack = core.DamageSkill(_("{}(폭격)").format(IlliumSkills.CrystalGate), 0, 450+18*vEhc.getV(0,0), 5, cooltime=1500).wrap(core.DamageSkillWrapper)
+        CrystalGateBuff = core.BuffSkill(f"{IlliumSkills.CrystalGate}({BUFF})", 0, 25000, att=5+2*vEhc.getV(0,0)).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        CrystalGateAttack = core.DamageSkill(f"{IlliumSkills.CrystalGate}({EXPLOSION})", 0, 450+18*vEhc.getV(0,0), 5, cooltime=1500).wrap(core.DamageSkillWrapper)
         
         # Links between skills. 스킬간 연결.
 
-        Reaction_Destruction_Link = core.OptionalElement(SoulOfCrystal.is_active, SoulOfCrystal_Reaction_Destruction, name=_("{}(소오크여부)").format(IlliumSkills.ReactionDestruction))
-        Reaction_Domination_Link = core.OptionalElement(SoulOfCrystal.is_active, SoulOfCrystal_Reaction_Domination, name=_("{}(소오크여부)").format(IlliumSkills.ReactionDomination))
-        Reaction_Spectrum_Link = core.OptionalElement(SoulOfCrystal.is_active, SoulOfCrystal_Reaction_Spectrum, name=_("{}(소오크여부)").format(IlliumSkills.ReactionSpectralBlast))
+        Reaction_Destruction_Link = core.OptionalElement(SoulOfCrystal.is_active, SoulOfCrystal_Reaction_Destruction, name=f"{IlliumSkills.ReactionDestruction}({SOAK_CHECK})")
+        Reaction_Domination_Link = core.OptionalElement(SoulOfCrystal.is_active, SoulOfCrystal_Reaction_Domination, name=f"{IlliumSkills.ReactionDomination}({SOAK_CHECK})")
+        Reaction_Spectrum_Link = core.OptionalElement(SoulOfCrystal.is_active, SoulOfCrystal_Reaction_Spectrum, name=f"{IlliumSkills.ReactionSpectralBlast}({SOAK_CHECK})")
         
         Reaction_Destruction.onAfter(Reaction_Destruction_Link)
         Reaction_Domination.onAfter(Reaction_Domination_Link)

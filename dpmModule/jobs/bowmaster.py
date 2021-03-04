@@ -1,4 +1,4 @@
-from dpmModule.jobs.globalSkill import GlobalSkills
+from dpmModule.jobs.globalSkill import GlobalSkills, DOT, BUFF, STACK
 
 from ..kernel import core
 from ..character import characterKernel as ck
@@ -10,6 +10,7 @@ from .jobclass import adventurer
 from math import ceil
 from typing import Any, Dict
 from functools import partial
+from .globalSkill import PASSIVE
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -150,7 +151,7 @@ class JobGenerator(ck.JobGenerator):
             BowmasterSkills.BowExpert, att=60 + passive_level, crit_damage=8
         )
         AdvancedFinalAttackPassive = core.InformedCharacterModifier(
-            _("{}(패시브)").format(BowmasterSkills.AdvancedFinalAttack), att=20 + ceil(passive_level / 2)
+            f"{BowmasterSkills.AdvancedFinalAttack}({PASSIVE})", att=20 + ceil(passive_level / 2)
         )  # Need to apply order. 오더스 적용필요.
 
         ElusionStep = core.InformedCharacterModifier(
@@ -234,7 +235,7 @@ class JobGenerator(ck.JobGenerator):
             pdamage=35,
         ).wrap(core.BuffSkillWrapper)
         MortalBlowStack = core.StackSkillWrapper(
-            core.BuffSkill(_("{}(스택)").format(BowmasterSkills.MortalBlow), 0, 99999999), 30
+            core.BuffSkill(f"{BowmasterSkills.MortalBlow}({STACK})", 0, 99999999), 30
         )
 
         # Damage Skills
@@ -296,7 +297,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
         GrittyGustDOT = core.DotSkill(
-            _("{}(도트)").format(BowmasterSkills.GrittyGust),
+            f"{BowmasterSkills.GrittyGust}({DOT})",
             summondelay=0,
             delay=1000,
             damage=200,
@@ -307,7 +308,7 @@ class JobGenerator(ck.JobGenerator):
 
         ArrowRainBuff = (
             core.BuffSkill(
-                _("{}(버프)").format(BowmasterSkills.StormofArrows),
+                f"{BowmasterSkills.StormofArrows}({BUFF})",
                 delay=510,
                 remain=(40 + vEhc.getV(0, 0)) * 1000,
                 cooltime=120 * 1000,
@@ -349,7 +350,7 @@ class JobGenerator(ck.JobGenerator):
 
         # No application of remnant poems. 잔영의시 미적용.
         QuibberFullBurstBuff = core.BuffSkill(
-            _("{}(버프)").format(BowmasterSkills.QuiverBarrage),
+            f"{BowmasterSkills.QuiverBarrage}({BUFF})",
             delay=0,
             remain=30 * 1000,
             cooltime=120 * 1000,
@@ -395,7 +396,7 @@ class JobGenerator(ck.JobGenerator):
         )
         ImageArrowPassive = (
             core.SummonSkill(
-                _("{}(패시브)").format(BowmasterSkills.InhumanSpeed),
+                f"{BowmasterSkills.InhumanSpeed}({PASSIVE})",
                 summondelay=0,
                 delay=2580,
                 damage=400 + 16 * vEhc.getV(1, 1),

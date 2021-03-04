@@ -2,7 +2,7 @@ import os
 
 from typing import Any, Dict
 
-from dpmModule.jobs.globalSkill import GlobalSkills
+from dpmModule.jobs.globalSkill import GlobalSkills, EXPLOSION, CAST, BUFF, KEYDOWN, INIT, DELAY
 from dpmModule.jobs.jobclass.adventurer import AdventurerSkills
 
 from . import globalSkill
@@ -144,13 +144,13 @@ class JobGenerator(characterKernel.JobGenerator):
 
         HeavensDoor = self.load_skill_wrapper(BishopSkills.HeavensDoor, vEhc)
 
-        PeaceMakerInit = self.load_skill_wrapper(_("{}(시전)").format(BishopSkills.Peacemaker), vEhc)
+        PeaceMakerInit = self.load_skill_wrapper(f"{BishopSkills.Peacemaker}({CAST})", vEhc)
         PeaceMaker = self.load_skill_wrapper(BishopSkills.Peacemaker, vEhc)
-        PeaceMakerFinal = self.load_skill_wrapper(_("{}(폭발)").format(BishopSkills.Peacemaker), vEhc)
-        PeaceMakerFinalBuff = self.load_skill_wrapper(_("{}(버프)").format(BishopSkills.Peacemaker), vEhc)
+        PeaceMakerFinal = self.load_skill_wrapper(f"{BishopSkills.Peacemaker}({EXPLOSION})", vEhc)
+        PeaceMakerFinalBuff = self.load_skill_wrapper(f"{BishopSkills.Peacemaker}({BUFF})", vEhc)
 
-        DivinePunishmentInit = self.load_skill_wrapper(_("{}(개시)").format(BishopSkills.DivinePunishment), vEhc)
-        DivinePunishmentTick = self.load_skill_wrapper(_("{}(키다운)").format(BishopSkills.DivinePunishment), vEhc)
+        DivinePunishmentInit = self.load_skill_wrapper(f"{BishopSkills.DivinePunishment}({INIT})", vEhc)
+        DivinePunishmentTick = self.load_skill_wrapper(f"{BishopSkills.DivinePunishment}({KEYDOWN})", vEhc)
 
         # Summoning skill
         Bahamutt = self.load_skill_wrapper(BishopSkills.Bahamut, vEhc)  # 최종뎀25%스택, 리브라 종료시 자동소환 되므로 딜레이 0
@@ -168,7 +168,7 @@ class JobGenerator(characterKernel.JobGenerator):
         BigBang = self.load_skill_wrapper(BishopSkills.BigBang, vEhc)
         Resurrection = self.load_skill_wrapper(BishopSkills.Resurrection)
 
-        VengenceOfAngel_Delay = self.load_skill_wrapper(_("{}(딜레이)").format(BishopSkills.RighteouslyIndignant))
+        VengenceOfAngel_Delay = self.load_skill_wrapper(f"{BishopSkills.RighteouslyIndignant}({DELAY})")
 
         ######   Wrappers    ######
         # Unstable Memorize

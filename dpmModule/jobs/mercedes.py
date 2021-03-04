@@ -1,4 +1,4 @@
-from .globalSkill import GlobalSkills
+from .globalSkill import GlobalSkills, LINK, TICK, ATTACK, BUFF, STACK
 from .jobbranch.bowmen import ArcherSkills
 from ..kernel.graph import DynamicVariableOperation
 from ..kernel import core
@@ -64,6 +64,12 @@ class MercedesSkills:
     SylvidiasFlight = _("실피디아")  # "Sylvidia's Flight"
     IrkallasWrath = _("이르칼라의 숨결")  # "Irkalla's Wrath"
     RoyalKnights = _("로얄 나이츠")  # "Royal Knights"
+    
+    
+# Skill name modifiers for Mercedes
+SNAPSHOT = _("속사")
+SPIRITS = _("정령의 기운")
+NORMAL = _("일반")
 
 
 class ElementalGhostWrapper(core.BuffSkillWrapper):
@@ -166,7 +172,7 @@ class JobGenerator(ck.JobGenerator):
         WeaponConstant = core.InformedCharacterModifier(_("무기상수"),pdamage_indep = 30)
         Mastery = core.InformedCharacterModifier(_("숙련도"), mastery=85+ceil(passive_level/2))
 
-        IgnisRoarStack = core.InformedCharacterModifier(_("{}(스택)").format(MercedesSkills.IgnisRoar),pdamage_indep = 2*10)
+        IgnisRoarStack = core.InformedCharacterModifier(f"{MercedesSkills.IgnisRoar}({STACK})",pdamage_indep = 2*10)
         
         return [WeaponConstant, Mastery, IgnisRoarStack]
         
@@ -219,10 +225,10 @@ class JobGenerator(ck.JobGenerator):
         IshtarRing = core.DamageSkill(MercedesSkills.IshtarsRing, 120, 220 + self.combat, 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         AdvanceStrikeDualShot = core.DamageSkill(MercedesSkills.StaggeringStrikes, 480, 380, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AdvanceStrikeDualShot_Link = core.DamageSkill(_("{}(연계)").format(MercedesSkills.StaggeringStrikes), 360, 380, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvanceStrikeDualShot_Link = core.DamageSkill(f"{MercedesSkills.StaggeringStrikes}({LINK})", 360, 380, 4).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
-        AdvancedFinalAttackFast = core.DamageSkill(_("{}(속사)").format(MercedesSkills.AdvancedFinalAttack), 0, 120 + passive_level, 2*0.01*(75 + passive_level)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        AdvancedFinalAttackSlow = core.DamageSkill(_("{}(일반)").format(MercedesSkills.AdvancedFinalAttack), 0, 120 + passive_level, 2*0.01*(75 + passive_level)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedFinalAttackFast = core.DamageSkill(f"{MercedesSkills.AdvancedFinalAttack}({SNAPSHOT})", 0, 120 + passive_level, 2*0.01*(75 + passive_level)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        AdvancedFinalAttackSlow = core.DamageSkill(f"{MercedesSkills.AdvancedFinalAttack}({NORMAL})", 0, 120 + passive_level, 2*0.01*(75 + passive_level)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
     
         # Hyper
         ElvishBlessing = core.BuffSkill(MercedesSkills.ElvishBlessing, 900, 60 * 1000, cooltime = 90 * 1000, att = 80).wrap(core.BuffSkillWrapper)
@@ -231,11 +237,11 @@ class JobGenerator(ck.JobGenerator):
         # 5th
         Sylphidia = core.BuffSkill(MercedesSkills.SylvidiasFlight, 0, (30 + vEhc.getV(5,5)//2) * 1000, cooltime = 150 * 1000, red=True, patt = (5+vEhc.getV(5,5)//2)).isV(vEhc,5,5).wrap(core.BuffSkillWrapper) # No information. 정보 없음.
         ElementalGhost = ElementalGhostWrapper(vEhc, 0, 0, sylphidia=Sylphidia)
-        ElementalGhostSpirit = core.DamageSkill(_("{}(정령의 기운)").format(MercedesSkills.SpiritofElluel), 0, 450+15*vEhc.getV(0,0), 8, cooltime=10*1000).wrap(core.DamageSkillWrapper)
+        ElementalGhostSpirit = core.DamageSkill(f"{MercedesSkills.SpiritofElluel}({SPIRITS})", 0, 450+15*vEhc.getV(0,0), 8, cooltime=10*1000).wrap(core.DamageSkillWrapper)
         IrkilaBreathInit = core.DamageSkill(MercedesSkills.IrkallasWrath, 900, 0, 0, cooltime = 150 * 1000, red=True).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
-        IrkilaBreathTick = core.DamageSkill(_("{}(틱)").format(MercedesSkills.IrkallasWrath), 150, 400+16*vEhc.getV(1,1), 8).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
+        IrkilaBreathTick = core.DamageSkill(f"{MercedesSkills.IrkallasWrath}({TICK})", 150, 400+16*vEhc.getV(1,1), 8).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
         RoyalKnights = core.BuffSkill(MercedesSkills.RoyalKnights, 1260, 30000, cooltime=150*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        RoyalKnightsAttack = core.DamageSkill(_("{}(공격)").format(MercedesSkills.RoyalKnights), 0, 325+13*vEhc.getV(0,0), 4*4, cooltime=1410).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        RoyalKnightsAttack = core.DamageSkill(f"{MercedesSkills.RoyalKnights}({ATTACK})", 0, 325+13*vEhc.getV(0,0), 4*4, cooltime=1410).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
@@ -246,15 +252,15 @@ class JobGenerator(ck.JobGenerator):
             Sylphidia,
             540
         )
-        UnicornSpikeBuff = core.BuffSkill(_("{}(버프)").format(MercedesSkills.UnicornSpike), 0, 30 * 1000, pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper)  # No direct casting. 직접시전 금지.
+        UnicornSpikeBuff = core.BuffSkill(f"{MercedesSkills.UnicornSpike}({BUFF})", 0, 30 * 1000, pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper)  # No direct casting. 직접시전 금지.
         RegendrySpear = SylphidiaDamageSkill(
             core.DamageSkill(MercedesSkills.SpikesRoyale, 690, 700 + 10*self.combat, 3, cooltime = 5 * 1000, red=True, modifier = core.CharacterModifier(crit=100)).setV(vEhc, 4, 2, False),
             Sylphidia,
             540
         )
-        RegendrySpearBuff = core.BuffSkill(_("{}(버프)").format(MercedesSkills.SpikesRoyale), 0, (30+self.combat) * 1000, armor_ignore = 30+20+self.combat, cooltime = -1).wrap(core.BuffSkillWrapper) # No direct casting. 직접시전 금지.
+        RegendrySpearBuff = core.BuffSkill(f"{MercedesSkills.SpikesRoyale}({BUFF})", 0, (30+self.combat) * 1000, armor_ignore = 30+20+self.combat, cooltime = -1).wrap(core.BuffSkillWrapper) # No direct casting. 직접시전 금지.
         LightningEdge = core.DamageSkill(MercedesSkills.LightningEdge, 630, 420 + 5*self.combat, 3).wrap(core.DamageSkillWrapper)
-        LightningEdgeBuff = core.BuffSkill(_("{}(버프)").format(MercedesSkills.LightningEdge), 0, 30000, cooltime=-1).wrap(core.BuffSkillWrapper)
+        LightningEdgeBuff = core.BuffSkill(f"{MercedesSkills.LightningEdge}({BUFF})", 0, 30000, cooltime=-1).wrap(core.BuffSkillWrapper)
         LeapTornado = core.DamageSkill(MercedesSkills.LeapTornado, 390, 390+30+3*self.combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         GustDive = core.DamageSkill(MercedesSkills.GustDive, 480, 430 + 3*self.combat, 4).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
         WrathOfEllil = SylphidiaDamageSkill(
@@ -280,7 +286,7 @@ class JobGenerator(ck.JobGenerator):
         IrkilaBreathInit.onAfter(IrkilaBreath)
 
         #Cooldown
-        LinkAttack = core.GraphElement(_("연계"))
+        LinkAttack = core.GraphElement(LINK)
         LinkAttack.onAfter(WrathOfEllil.controller(1000, "reduce_cooltime"))
         LinkAttack.onAfter(UnicornSpike.controller(1000, "reduce_cooltime"))
         LinkAttack.onAfter(RegendrySpear.controller(1000, "reduce_cooltime"))

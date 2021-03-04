@@ -1,4 +1,4 @@
-from dpmModule.jobs.globalSkill import GlobalSkills
+from dpmModule.jobs.globalSkill import GlobalSkills, EXTRA_HIT, TWO_HIT
 
 from ..kernel import core
 from ..character import characterKernel as ck
@@ -10,6 +10,7 @@ from .jobclass import resistance
 from .jobbranch import magicians
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -60,6 +61,11 @@ class BattleMageSkills:
     GrimHarvest = _("그림 리퍼")  # "Grim Harvest"
     AbyssalLightning = _("어비셜 라이트닝")  # "Abyssal Lightning"
 
+
+# Skill name modifiers only for Battle Mage
+MARK = _("징표")
+BLACK_LIGHTNING = _("명계의 번개")
+CHECK = _("사용가능 여부")
 
 class GrimReaperWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, masterOfDeath):
@@ -145,7 +151,7 @@ class JobGenerator(ck.JobGenerator):
             pdamage_indep=15,
             crit_damage=20,
         )
-        DarkAuraPassive = core.InformedCharacterModifier(_("{}(패시브)").format(BattleMageSkills.DarkAura), patt=15)
+        DarkAuraPassive = core.InformedCharacterModifier(f"{BattleMageSkills.DarkAura}({PASSIVE})", patt=15)
         
         StaffExpert = core.InformedCharacterModifier(BattleMageSkills.StaffExpert,att = 30 + passive_level, crit_damage = 20 + ceil(passive_level / 2))
         SpellBoost = core.InformedCharacterModifier(BattleMageSkills.SpellBoost, patt = 25 + passive_level // 2, pdamage = 10 + ceil(passive_level / 3), armor_ignore = 30 + passive_level)
@@ -154,12 +160,12 @@ class JobGenerator(ck.JobGenerator):
 
 
         StaffExpert = core.InformedCharacterModifier(
-            "스태프 엑스퍼트",
+            BattleMageSkills.StaffExpert,
             att=30 + passive_level,
             crit_damage=20 + ceil(passive_level / 2),
         )
         SpellBoost = core.InformedCharacterModifier(
-            "스펠 부스트",
+            BattleMageSkills.SpellBoost,
             patt=25 + passive_level // 2,
             pdamage=10 + ceil(passive_level / 3),
             armor_ignore=30 + passive_level,
@@ -265,7 +271,7 @@ class JobGenerator(ck.JobGenerator):
         )  # Cancel. 캔슬.
         DarkLightningMark = (
             core.DamageSkill(
-                _("{}(징표)").format(BattleMageSkills.DarkShock),
+                f"{BattleMageSkills.DarkShock}({MARK})",
                 delay=0,
                 damage=350,
                 hit=4,
@@ -318,7 +324,7 @@ class JobGenerator(ck.JobGenerator):
         )
         DarkGenesisFinalAttack = (
             core.DamageSkill(
-                _("{}(추가타)").format(BattleMageSkills.DarkGenesis),
+                f"{BattleMageSkills.DarkGenesis}({EXTRA_HIT})",
                 delay=0,
                 damage=220 + 4 * self.combat,
                 hit=1,
@@ -359,7 +365,7 @@ class JobGenerator(ck.JobGenerator):
         )
         BattlekingBar2 = (
             core.DamageSkill(
-                _("{}(2타)").format(BattleMageSkills.SweepingStaff),
+                f"{BattleMageSkills.SweepingStaff}({TWO_HIT})",
                 delay=240,
                 damage=650,
                 hit=5,
@@ -416,7 +422,7 @@ class JobGenerator(ck.JobGenerator):
             red=True,
         ).wrap(core.BuffSkillWrapper)
         AbyssalLightningAttack = core.DamageSkill(
-            _("{}(명계의 번개)").format(BattleMageSkills.AbyssalLightning),
+            f"{BattleMageSkills.AbyssalLightning}({BLACK_LIGHTNING})",
             delay=0,
             damage=800 + 32 * vEhc.getV(0, 0),
             hit=6,
@@ -534,7 +540,7 @@ class JobGenerator(ck.JobGenerator):
             lambda: AbyssalLightningAttack.is_available()
             and AbyssalLightning.is_active(),
             AbyssalLightningAttack,
-            name=_("{}(명계의 번개)(사용가능 여부)").format(BattleMageSkills.AbyssalLightning),
+            name=f"{BattleMageSkills.AbyssalLightning}({BLACK_LIGHTNING})({CHECK})",
         )
         for sk in [DarkLightning, DarkLightningMark]:
             sk.onJustAfter(UseAbyssalDarkLightning)

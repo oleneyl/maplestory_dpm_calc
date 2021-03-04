@@ -1,3 +1,4 @@
+from ..globalSkill import PASSIVE
 from ...kernel import core
 
 from localization.utilities import translator
@@ -29,7 +30,7 @@ def ReadyToDieWrapper(vEhc, num1, num2):
 
 def ReadyToDiePassiveWrapper(vEhc, num1, num2):
     ReadyToDiePassive = core.InformedCharacterModifier(
-        _("{}(패시브)").format(ThiefSkills.LastResort), att=vEhc.getV(num1, num2)  # Ready to Die (Passive)
+        f"{ThiefSkills.LastResort}({PASSIVE})", att=vEhc.getV(num1, num2)  # Ready to Die (Passive)
     )
     return ReadyToDiePassive
 

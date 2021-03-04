@@ -1,4 +1,4 @@
-from dpmModule.jobs.globalSkill import GlobalSkills
+from dpmModule.jobs.globalSkill import GlobalSkills, INIT, DEBUFF, REINFORCE
 
 from ..kernel import core
 from ..character import characterKernel as ck
@@ -73,6 +73,14 @@ class DemonAvengerSkills:
     Revenant = _("레버넌트")  # "Revenant"
 
 
+# Skill name modifiers only for Demon Avenger
+FINAL_DAMAGE = _("최종 데미지")
+ZERO_STACKS = _("0스택")
+ONE_STACKS = _("1스택")
+TWO_STACKS = _("2스택")
+THREE_STACKS = _("3스택")
+THORNS_RAGE = _("분노의 가시")
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -124,7 +132,7 @@ class JobGenerator(ck.JobGenerator):
         DemonicSharpness = core.InformedCharacterModifier(DemonAvengerSkills.DemonicVeracity, crit=20)
 
         # Meyong: Fixed to +15% health. 메용: 체력+15%로 수정.
-        MapleHeroesDemon = core.InformedCharacterModifier(_('메이플 용사(데몬어벤져)'), pstat_main=15+self.combat/2)
+        MapleHeroesDemon = core.InformedCharacterModifier(_("메이플 용사(데몬어벤져)"), pstat_main=15+self.combat/2)
 
         InnerStrength = core.InformedCharacterModifier(DemonAvengerSkills.RageWithin, stat_main=600)
 
@@ -138,7 +146,7 @@ class JobGenerator(ck.JobGenerator):
         HP_RATE = options.get('hp_rate', 100)
 
         # Increases final damage by 1% per 3% HP consumed (4% at 24 levels) compared to the maximum HP. 최대 HP 대비 소모된 HP 3%(24레벨가지는 4%)당 최종 데미지 1% 증가.
-        FrenzyPassive = core.InformedCharacterModifier(_("{}(최종 데미지)").format(DemonAvengerSkills.DemonicFrenzy), pdamage_indep=min((100 - HP_RATE) // (3 - (vEhc.getV(0, 0) // 25)), 35))
+        FrenzyPassive = core.InformedCharacterModifier(f"{DemonAvengerSkills.DemonicFrenzy}({FINAL_DAMAGE})", pdamage_indep=min((100 - HP_RATE) // (3 - (vEhc.getV(0, 0) // 25)), 35))
 
         return [WeaponConstant, Mastery, FrenzyPassive]
 
@@ -186,18 +194,18 @@ class JobGenerator(ck.JobGenerator):
 
         # Exceed 0~3 stack: Clar standard delay 900, 900, 840, 780. 익시드 0~3스택: 클라기준 딜레이 900, 900, 840, 780.
         # Entering reinforcement mode in 3 times when using Exceed immediately after release. 릴리즈 사용 직후 익시드 사용시 3번만에 강화모드 진입.
-        Execution_0 = core.DamageSkill(_("{}(0스택)").format(DemonAvengerSkills.ExceedExecution), 660, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        Execution_1 = core.DamageSkill(_("{}(1스택)").format(DemonAvengerSkills.ExceedExecution), 630, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        Execution_2 = core.DamageSkill(_("{}(2스택)").format(DemonAvengerSkills.ExceedExecution), 600, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        Execution_3 = core.DamageSkill(_("{}(3스택)").format(DemonAvengerSkills.ExceedExecution), 570, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Execution_0 = core.DamageSkill(f"{DemonAvengerSkills.ExceedExecution}({ZERO_STACKS})", 660, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Execution_1 = core.DamageSkill(f"{DemonAvengerSkills.ExceedExecution}({ONE_STACKS})", 630, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Execution_2 = core.DamageSkill(f"{DemonAvengerSkills.ExceedExecution}({TWO_STACKS})", 600, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        Execution_3 = core.DamageSkill(f"{DemonAvengerSkills.ExceedExecution}({THREE_STACKS})", 570, 540+8*self.combat, 4, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         # Four or more extended seeded stacks. 익시드 4스택 이상
-        ExecutionExceed = core.DamageSkill(_("{}(강화)").format(DemonAvengerSkills.ExceedExecution), 540, 540+8*self.combat, 6, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        ExecutionExceed = core.DamageSkill(f"{DemonAvengerSkills.ExceedExecution}({REINFORCE})", 540, 540+8*self.combat, 6, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         # Up to 10 attacks. 최대 10회 공격.
         ShieldChasing = core.DamageSkill(DemonAvengerSkills.NetherShield, 720, 500+10*self.combat, 2*2*(8+2), cooltime=6000, modifier=core.CharacterModifier(armor_ignore=30+passive_level, pdamage=20+20), red=True).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
 
         ArmorBreak = core.DamageSkill(DemonAvengerSkills.NetherSlice, 660, 350+5*self.combat, 4, cooltime=-1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-        ArmorBreakBuff = core.BuffSkill(_("{}(디버프)").format(DemonAvengerSkills.NetherSlice), 0, (30+self.combat)*1000, armor_ignore=30+self.combat).wrap(core.BuffSkillWrapper)
+        ArmorBreakBuff = core.BuffSkill(f"{DemonAvengerSkills.NetherSlice}({DEBUFF})", 0, (30+self.combat)*1000, armor_ignore=30+self.combat).wrap(core.BuffSkillWrapper)
 
         # ThousandSword = core.Damageskill(DemonAvengerSkills.ThousandSwords, 0, 500, 8, cooltime = 8*1000).setV(vEhc, 0, 0, False).wrap(core.DamageSkillWrapper)
 
@@ -233,7 +241,7 @@ class JobGenerator(ck.JobGenerator):
         # Adjusted to trigger every 2 Accu. 엑큐 2번당 발동하도록 조정.
         REVENANT_COOLTIME = 1080
         Revenant = core.BuffSkill(DemonAvengerSkills.Revenant, 1530, 30*1000, cooltime=240*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
-        RevenantHit = core.DamageSkill(_("{}(분노의 가시)").format(DemonAvengerSkills.Revenant), 0, 300+vEhc.getV(0, 0)*12, 9, cooltime=REVENANT_COOLTIME, modifier=core.CharacterModifier(armor_ignore=30), red=False).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        RevenantHit = core.DamageSkill(f"{DemonAvengerSkills.Revenant}({THORNS_RAGE})", 0, 300+vEhc.getV(0, 0)*12, 9, cooltime=REVENANT_COOLTIME, modifier=core.CharacterModifier(armor_ignore=30), red=False).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         # Demon 5th common. 데몬 5차 공용.
         CallMastema = demon.CallMastemaWrapper(vEhc, 0, 0)
@@ -276,7 +284,7 @@ class JobGenerator(ck.JobGenerator):
         프렌지 발동 타이밍을 앞당기기 위한 initializer입니다.
         일반적으로 SummonSkill이 BuffSkill보다 실행 순위가 밀리기 때문에 이 코드가 없으면 프렌지가 7~8초 후에서야 실행됩니다.
         '''
-        FrenzyInit = core.BuffSkill(_("{}(개시)").format(DemonAvengerSkills.DemonicFrenzy), 0, 999999999).wrap(core.BuffSkillWrapper)
+        FrenzyInit = core.BuffSkill(f"{DemonAvengerSkills.DemonicFrenzy}({INIT})", 0, 999999999).wrap(core.BuffSkillWrapper)
         FrenzyInit.onAfter(DemonFrenzy)
         DemonFrenzy.protect_from_running()
 

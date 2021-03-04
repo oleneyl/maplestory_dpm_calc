@@ -1,3 +1,4 @@
+from ..globalSkill import HOLDER
 from ...kernel import core
 from functools import partial
 
@@ -141,7 +142,7 @@ def PirateFlagWrapper(vEhc, num1, num2, level):
 def BlitzShieldWrappers(vEhc, num1, num2):
     # Need to add delay. 딜레이 추가 필요.
     BlitzShieldDummy = core.BuffSkill(
-        name=_("{}(더미)").format(AdventurerSkills.BlitzShield),
+        name=f"{AdventurerSkills.BlitzShield}({HOLDER})",
         delay=600,
         remain=2000,
         cooltime=15000,

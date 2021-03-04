@@ -1,4 +1,4 @@
-from .globalSkill import GlobalSkills
+from .globalSkill import GlobalSkills, INIT, PREPARE, ENDING, BUFF, TICK
 from .jobbranch.pirates import PirateSkills
 from ..kernel import core
 from ..character import characterKernel as ck
@@ -11,6 +11,7 @@ from .jobclass import adventurer
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE
 
 from localization.utilities import translator
 _ = translator.gettext
@@ -69,6 +70,13 @@ class CorsairSkills:
     DeathTrigger = _("데스 트리거")  # "Death Trigger"
 
 
+# Skill name modifiers only for corsair
+SUMMON1 = _("소환,1")
+SUMMON2 = _("소환,2")
+VOLUNTARY_FIRE = _("일제 사격")
+COOLDOWN8 = _("쿨타임 8초")
+
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
@@ -100,8 +108,8 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier(CorsairSkills.PhysicalTraining, stat_main=30, stat_sub=30)
         HalopointBullet = core.InformedCharacterModifier(CorsairSkills.CrossCutBlast, att=60)
         FullMetaJacket = core.InformedCharacterModifier(CorsairSkills.FullmetalJacket, pdamage_indep=20, crit=30, armor_ignore=20)
-        ContinualAimingPassive = core.InformedCharacterModifier(_("{}(패시브)").format(CorsairSkills.Parrotargetting), crit_damage=20 + self.combat)
-        CaptainDignityPassive = core.InformedCharacterModifier(_("{}(패시브)").format(CorsairSkills.MajesticPresence), att=30 + passive_level)
+        ContinualAimingPassive = core.InformedCharacterModifier(f"{CorsairSkills.Parrotargetting}({PASSIVE})", crit_damage=20 + self.combat)
+        CaptainDignityPassive = core.InformedCharacterModifier(f"{CorsairSkills.MajesticPresence}({PASSIVE})", att=30 + passive_level)
         CrueCommandership = core.InformedCharacterModifier(CorsairSkills.AhoyMateys, crit_damage=25 + passive_level)
 
         UnwierdingNectar = core.InformedCharacterModifier(CorsairSkills.WhalersPotion, crit=10)
@@ -217,7 +225,7 @@ class JobGenerator(ck.JobGenerator):
             cooltime=-1,
         ).wrap(core.BuffSkillWrapper)
         QuickDrawStack = core.StackSkillWrapper(
-            core.BuffSkill(_("{}(준비)").format(CorsairSkills.Quickdraw), 0, core.infinite_time()), 1
+            core.BuffSkill(f"{CorsairSkills.Quickdraw}({PREPARE})", 0, core.infinite_time()), 1
         )
 
         # Summon Skills
@@ -250,7 +258,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.SummonSkillWrapper)
         )
         SummonCrewBuff = core.BuffSkill(
-            _("{}(버프)").format(CorsairSkills.ScurvySummons),
+            f"{CorsairSkills.ScurvySummons}({BUFF})",
             delay=0,
             remain=120000,
             cooltime=-1,
@@ -284,7 +292,7 @@ class JobGenerator(ck.JobGenerator):
         ).wrap(core.BuffSkillWrapper)
         BattleshipBomber_1 = (
             core.SummonSkill(
-                _("{}(소환,1)").format(CorsairSkills.Broadside),
+                f"{CorsairSkills.Broadside}({SUMMON1})",
                 summondelay=390,
                 delay=600,
                 damage=BB_AVERAGE,
@@ -298,7 +306,7 @@ class JobGenerator(ck.JobGenerator):
         )
         BattleshipBomber_2 = (
             core.SummonSkill(
-                _("{}(소환,2)").format(CorsairSkills.Broadside),
+                f"{CorsairSkills.Broadside}({SUMMON2})",
                 summondelay=390,
                 delay=600,
                 damage=BB_AVERAGE,
@@ -397,7 +405,7 @@ class JobGenerator(ck.JobGenerator):
         BulletParty = core.DamageSkill(CorsairSkills.BulletBarrage, 0, 0, 0, cooltime=75000, red=True).wrap(core.DamageSkillWrapper)
         BulletPartyTick = (
             core.DamageSkill(
-                _("{}(틱)").format(CorsairSkills.BulletBarrage),
+                f"{CorsairSkills.BulletBarrage}({TICK})",
                 delay=BULLET_PARTY_TICK,  # Lasts 12 seconds -> Cast 50 times. 12초간 지속 -> 50회 시전.
                 damage=230 + 9 * vEhc.getV(5, 5),
                 hit=5,
@@ -438,7 +446,7 @@ class JobGenerator(ck.JobGenerator):
         )  # 7회 2초간
         NautilusAssult_2 = (
             core.SummonSkill(
-                _("{}(일제 사격)").format(CorsairSkills.NautilusAssault),
+                f"{CorsairSkills.NautilusAssault}({VOLUNTARY_FIRE})",
                 summondelay=0,
                 delay=160,
                 damage=300 + 12 * vEhc.getV(0, 0),
@@ -451,7 +459,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.SummonSkillWrapper)
         )  # 36회 6초간
         DeathTriggerInit = (
-            core.DamageSkill(_("{}(개시)").format(CorsairSkills.DeathTrigger), 360, 0, 0, cooltime=45000, red=True)
+            core.DamageSkill(f"{CorsairSkills.DeathTrigger}({INIT})", 360, 0, 0, cooltime=45000, red=True)
             .isV(vEhc, 0, 0)
             .wrap(core.DamageSkillWrapper)
         )
@@ -468,7 +476,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
         DeathTriggerEnd = (
-            core.DamageSkill(_("{}(후딜)").format(CorsairSkills.DeathTrigger), 300, 0, 0, cooltime=-1)
+            core.DamageSkill(f"{CorsairSkills.DeathTrigger}({ENDING})", 300, 0, 0, cooltime=-1)
             .isV(vEhc, 0, 0)
             .wrap(core.DamageSkillWrapper)
         )
@@ -540,14 +548,14 @@ class JobGenerator(ck.JobGenerator):
             core.OptionalElement(
                 partial(Nautilus.is_cooltime_left, 8000, -1),
                 Nautilus.controller(8000),
-                name=_("{}(쿨타임 8초)").format(CorsairSkills.NautilusStrike),
+                name=f"{CorsairSkills.NautilusStrike}({COOLDOWN8})",
             )
         )
         Nautilus.onJustAfter(
             core.OptionalElement(
                 partial(NautilusAssult.is_cooltime_left, 8000, -1),
                 NautilusAssult.controller(8000),
-                name=_("{}(쿨타임 8초)").format(CorsairSkills.NautilusAssault),
+                name=f"{CorsairSkills.NautilusAssault}({COOLDOWN8})",
             )
         )
 
