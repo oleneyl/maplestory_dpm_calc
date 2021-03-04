@@ -10,17 +10,23 @@ dpmModule
     
     - https://maplestats.com
 
-  - download
+  - install
     ```bash
     pip install dpmModule
     ```
     
+  - install from github
     ```bash
     git clone https://github.com/oleneyl/maplestory_dpm_calc
+    cd maplestory_dpm_calc/
+    python3 setup.py [develop, install]
     ```
+
+  
 
 About 
 ------------
+
   dpmModule은 메이플스토리에서 데미지와 관련된 계산(기댓값, DPM, 최적잠재 등) 을 쉽게 계산하기
   위한 라이브러리입니다. 전체 43개 직업군중 데벤, 제논을 제외한 41개 직업군의 데미지 시뮬레이션을 지원합니다.
 
@@ -59,6 +65,7 @@ Example
     from dpmModule.util.dpmgenerator import IndividualDPMGenerator
     import dpmModule.character.characterTemplateHigh as template
     gen = IndividualDPMGenerator('나이트로드', template.getU6000CharacterTemplate)
+    # gen = IndividualDPMGenerator('nightlord', template.getU6000CharacterTemplate)
     print(gen.get_dpm(ulevel = 6000))
     
     # Result
@@ -67,13 +74,14 @@ Example
 
   - Advanced Usage
 
-    - 유니온 7천, 240레벨, 유니온 8천급 스펙, 무보엠 레전2줄, 240초
+    - 유니온 7천, 240레벨, 유니온 8천급 스펙, 무보엠 레전2줄, 240초.
 
       ```python
       import dpmModule
       from dpmModule.util.dpmgenerator import IndividualDPMGenerator
       import dpmModule.character.characterTemplateHigh as template
       gen = IndividualDPMGenerator('나이트로드', template.getU8000CharacterTemplate)
+       # gen = IndividualDPMGenerator('nightlord', template.getU8000CharacterTemplate)
       gen.set_runtime(240 * 1000)
       print(gen.get_dpm(ulevel = 7000, level = 240, weaponstat = [4,6]))
       ```
@@ -149,9 +157,9 @@ Example
     from dpmModule.execution import rules
     from dpmModule.character.characterTemplate import get_template_generator
 
-    character = get_template_generator('high_standard').get_template(6000) # 고스펙 기준 유니온 6천인 캐릭터 설정
+    character = get_template_generator('high_standard').get_template(6000) # 고스펙 기준 유니온 6천인 캐릭터 설정.
     generator = nightlord.JobGenerator()
-    v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17) #스킬코어 25렙, 3중코어코강
+    v_builder = core.NjbStyleVBuilder(skill_core_level=25, each_enhanced_amount=17) # 스킬코어 25렙, 3중코어코강.
 
     graph = generator.package(character, v_builder)
 
@@ -163,11 +171,11 @@ Example
         ]), 
         [rules.UniquenessRule()]) # 버프, 소환수, 쿨타임 스킬 순으로 사용.
 
-    analytics = core.Analytics(printFlag=False) # 로그를 최소한으로 출력
+    analytics = core.Analytics(printFlag=False) # 로그를 최소한으로 출력.
     control = core.Simulator(sche, character, analytics) 
-    control.start_simulation(180 * 1000) # 3분간 시뮬레이션 진행
+    control.start_simulation(180 * 1000) # 3분간 시뮬레이션 진행.
     
-    dpm = control.getDPM() # dpm 출력
+    dpm = control.getDPM() # dpm 출력.
     print(dpm)
     ```
 

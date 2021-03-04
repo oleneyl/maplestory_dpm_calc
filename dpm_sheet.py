@@ -5,12 +5,16 @@ from statistics.preset import get_preset_list
 
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
 
+from localization.utilities import translator
+_ = translator.gettext
+
 try:
     import pandas as pd
     import xlsxwriter
 except ImportError:
-    print("pandas, xlsxwriter 모듈을 설치해야 합니다.")
+    print(_("모듈을 설치해야 합니다"))
     exit()
+
 
 
 def get_args():
@@ -45,20 +49,20 @@ if __name__ == "__main__":
     df = pd.DataFrame.from_records(
         results,
         exclude=["loss"],
-        columns=["직업", "쿨감", "비고", "dpm", "loss", "alt"],
+        columns=[_("직업"), _("쿨감"), _("비고"), "dpm", "loss", "alt"],
     )
     # df.to_pickle("cache.pkl")
     # df: pd.DataFrame = pd.read_pickle("cache.pkl")
     df = df.sort_values(by="dpm", axis=0, ascending=False)
-    df = df.drop_duplicates(subset=["직업", "비고"]).copy()
+    df = df.drop_duplicates(subset=[_("직업"), _("비고")]).copy()
 
-    df["best"] = df.groupby(["직업"])["dpm"].transform("max")
+    df["best"] = df.groupby([_("직업")])["dpm"].transform("max")
     df = df.sort_values(by=["best", "dpm"], axis=0, ascending=False)
 
     median = df["best"].median()
-    df["배율"] = df["dpm"] / median
+    df[_("배율")] = df["dpm"] / median
 
-    df = df[["직업", "쿨감", "비고", "dpm", "배율", "alt"]]
+    df = df[[_("직업"), _("쿨감"), _("비고"), "dpm", _("배율"), "alt"]]
 
     writer = pd.ExcelWriter(f"./dpm_sheet_{ulevel}.xlsx", engine="xlsxwriter")
     df.to_excel(writer, sheet_name="dpm", index=False)

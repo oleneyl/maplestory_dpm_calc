@@ -2,7 +2,7 @@ from typing import Dict, List, Optional
 from itertools import filterfalse, product, combinations_with_replacement
 from functools import reduce
 
-from ..kernel.core import ExtendedCharacterModifier as ExMDF
+from dpmModule.kernel.core import ExtendedCharacterModifier as ExMDF
 
 
 class WeaponPotential:

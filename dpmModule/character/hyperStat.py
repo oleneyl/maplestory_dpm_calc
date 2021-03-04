@@ -2,6 +2,9 @@ from typing import Any, Dict, List, Union
 
 from ..kernel.core import ExtendedCharacterModifier as ExMDF
 
+from localization.utilities import translator
+_ = translator.gettext
+
 
 class HyperStat:
     requirement = [1, 2, 4, 8, 10, 15, 20, 25, 30, 35, 50, 65, 80, 95, 110, 9999]
@@ -52,7 +55,7 @@ class HyperStat:
         requirement = HyperStat.requirement.copy()
         enhancement = HyperStat.enhancement.copy()
 
-        if jobname == "데몬어벤져":
+        if jobname == _("데몬어벤져"):
             enhancement[0] = [ExMDF(pstat_main=i*2) for i in range(16)]
         while True:
             not_enough = True

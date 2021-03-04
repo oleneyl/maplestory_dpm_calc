@@ -1,3 +1,5 @@
+from dpmModule.jobs.globalSkill import GlobalSkills, EXTRA_HIT, TWO_HIT
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
@@ -8,12 +10,67 @@ from .jobclass import resistance
 from .jobbranch import magicians
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE
 
+from localization.utilities import translator
+_ = translator.gettext
+
+# English skill information for Battle Mage here https://maplestory.fandom.com/wiki/Battle_Mage/Skills
+class BattleMageSkills:
+    # 1st Job
+    TripleBlow = _("트리플 블로우")  # "Triple Blow"
+    CombatTeleport = _("텔레포트")  # "Combat Teleport"
+    HastyAura = _("옐로우 오라")  # "Hasty Aura"
+    Condemnation = _("데스")  # "Condemnation"
+    StaffArtist = _("아트 오브 스태프")  # "Staff Artist"
+    # 2nd Job
+    QuadBlow = _("쿼드 블로우")  # "Quad Blow"
+    DarkChain = _("다크 체인")  # "Dark Chain"
+    DrainingAura = _("드레인 오라")  # "Draining Aura"
+    StaffBoost = _("스태프 부스터")  # "Staff Boost"
+    StaffMastery = _("스태프 마스터리")  # "Staff Mastery"
+    HighWisdom = _("하이 위즈덤")  # "High Wisdom"
+    OrdinaryConversion = _("오디너리 컨버전")  # "Ordinary Conversion"
+    GrimContract = _("데스 컨트랙트")  # "Grim Contract"
+    # 3rd Job
+    QuintupleBlow = _("데스 블로우")  # "Quintuple Blow"
+    BattleBurst = _("배틀 스퍼트")  # "Battle Burst"
+    BlueAura = _("블루 오라")  # "Blue Aura"
+    DarkShock = _("다크 라이트닝")  # "Dark Shock"
+    BattleMastery = _("배틀 마스터리")  # "Battle Mastery"
+    PowerStance = _("스탠스")  # "Power Stance"
+    DarkConditioning = _("너브 스티뮬레이션")  # "Dark Conditioning"
+    GrimContractII = _("데스 컨트랙트2")  # "Grim Contract II"
+    # 4th Job
+    FinishingBlow = _("피니쉬 블로우")  # "Finishing Blow"
+    DarkGenesis = _("다크 제네시스")  # "Dark Genesis"
+    DarkAura = _("다크 오라")  # "Dark Aura"
+    WeakeningAura = _("디버프 오라")  # "Weakening Aura"
+    BattleRage = _("배틀 레이지")  # "Battle Rage"
+    PartyShield = _("쉘터")  # "Party Shield"
+    StaffExpert = _("스태프 엑스퍼트")  # "Staff Expert"
+    SpellBoost = _("스펠 부스트")  # "Spell Boost"
+    GrimContractIII = _("데스 컨트랙트3")  # "Grim Contract III"
+    # Hypers
+    SweepingStaff = _("배틀킹 바")  # "Sweeping Staff"
+    ForLiberty = _("윌 오브 리버티")  # "For Liberty"
+    MasterofDeath = _("마스터 오브 데스")  # "Master of Death"
+    # 5th Job
+    AuraScythe = _("유니온 오라")  # "Aura Scythe"
+    AltarofAnnihilation = _("블랙 매직 알터")  # "Altar of Annihilation"
+    GrimHarvest = _("그림 리퍼")  # "Grim Harvest"
+    AbyssalLightning = _("어비셜 라이트닝")  # "Abyssal Lightning"
+
+
+# Skill name modifiers only for Battle Mage
+MARK = _("징표")
+BLACK_LIGHTNING = _("명계의 번개")
+CHECK = _("사용가능 여부")
 
 class GrimReaperWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, masterOfDeath):
         skill = core.SummonSkill(
-            "그림 리퍼",
+            BattleMageSkills.GrimHarvest,
             summondelay=540,
             delay=4000,
             damage=800 + 32 * vEhc.getV(num1, num2),
@@ -36,7 +93,6 @@ class GrimReaperWrapper(core.SummonSkillWrapper):
         else:
             return self.skill.delay
 
-
 class BlowSkillWrapper(core.DamageSkillWrapper):
     def __init__(self, skill):
         super(BlowSkillWrapper, self).__init__(skill)
@@ -56,7 +112,7 @@ class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.jobtype = "INT"
-        self.jobname = "배틀메이지"
+        self.jobname = _("배틀메이지")
         self.vEnhanceNum = 10
         self.ability_list = Ability_tool.get_ability_set(
             "boss_pdamage", "crit", "reuse"
@@ -70,40 +126,46 @@ class JobGenerator(ck.JobGenerator):
         ruleset = RuleSet()
         ruleset.add_rule(
             ConditionRule(
-                "유니온 오라",
-                "마스터 오브 데스",
+                BattleMageSkills.AuraScythe,
+                BattleMageSkills.MasterofDeath,
                 lambda sk: sk.is_usable() or sk.is_cooltime_left(95000, 1),
             ),
             RuleSet.BASE,
         )
-        ruleset.add_rule(ConcurrentRunRule("그림 리퍼", "유니온 오라"), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule("소울 컨트랙트", "유니온 오라"), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule("소울 컨트랙트", "블랙 매직 알터"), RuleSet.BASE)
-        ruleset.add_rule(ConcurrentRunRule("어비셜 라이트닝", "유니온 오라"), RuleSet.BASE)
-        ruleset.add_rule(ReservationRule("메이플월드 여신의 축복", "유니온 오라"), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(BattleMageSkills.GrimHarvest, BattleMageSkills.AuraScythe), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(GlobalSkills.TermsAndConditions, BattleMageSkills.AuraScythe), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(GlobalSkills.TermsAndConditions, BattleMageSkills.AltarofAnnihilation), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule(BattleMageSkills.AbyssalLightning, BattleMageSkills.AuraScythe), RuleSet.BASE)
+        ruleset.add_rule(ReservationRule(GlobalSkills.MapleWorldGoddessBlessing, BattleMageSkills.AuraScythe), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(
         self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
     ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        ArtOfStaff = core.InformedCharacterModifier("아트 오브 스태프", att=20, crit=15)
-        StaffMastery = core.InformedCharacterModifier("스태프 마스터리", att=30, crit=20)
-        HighWisdom = core.InformedCharacterModifier("하이 위즈덤", stat_main=40)
+        ArtOfStaff = core.InformedCharacterModifier(BattleMageSkills.StaffArtist, att=20, crit=15)
+        StaffMastery = core.InformedCharacterModifier(BattleMageSkills.StaffMastery, att=30, crit=20)
+        HighWisdom =  core.InformedCharacterModifier(BattleMageSkills.HighWisdom, stat_main=40)
         BattleMastery = core.InformedCharacterModifier(
-            "배틀 마스터리",
+            BattleMageSkills.BattleMastery,
             pdamage_indep=15,
             crit_damage=20,
         )
-        DarkAuraPassive = core.InformedCharacterModifier("다크 오라(패시브)", patt=15)
+        DarkAuraPassive = core.InformedCharacterModifier(f"{BattleMageSkills.DarkAura}({PASSIVE})", patt=15)
+        
+        StaffExpert = core.InformedCharacterModifier(BattleMageSkills.StaffExpert,att = 30 + passive_level, crit_damage = 20 + ceil(passive_level / 2))
+        SpellBoost = core.InformedCharacterModifier(BattleMageSkills.SpellBoost, patt = 25 + passive_level // 2, pdamage = 10 + ceil(passive_level / 3), armor_ignore = 30 + passive_level)
+        
+        return [ArtOfStaff, StaffMastery, HighWisdom, BattleMastery, DarkAuraPassive, StaffExpert, SpellBoost]
+
 
         StaffExpert = core.InformedCharacterModifier(
-            "스태프 엑스퍼트",
+            BattleMageSkills.StaffExpert,
             att=30 + passive_level,
             crit_damage=20 + ceil(passive_level / 2),
         )
         SpellBoost = core.InformedCharacterModifier(
-            "스펠 부스트",
+            BattleMageSkills.SpellBoost,
             patt=25 + passive_level // 2,
             pdamage=10 + ceil(passive_level / 3),
             armor_ignore=30 + passive_level,
@@ -123,27 +185,47 @@ class JobGenerator(ck.JobGenerator):
         self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
     ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수")
+        WeaponConstant = core.InformedCharacterModifier(_("무기상수"))
         Mastery = core.InformedCharacterModifier(
-            "숙련도", mastery=95 + ceil(passive_level / 2)
+            _("숙련도"), mastery=95 + ceil(passive_level / 2)
         )
-
+        
         DebuffAura = core.InformedCharacterModifier(
-            "디버프 오라",
+            BattleMageSkills.WeakeningAura,
             armor_ignore=20,
             pdamage_indep=10,
             prop_ignore=10,
         )
         BattleRage = core.InformedCharacterModifier(
-            "배틀 레이지",
+            BattleMageSkills.BattleRage,
             pdamage=40 + self.combat,
             crit_damage=10 + self.combat // 6,
             crit=20 + ceil(self.combat / 3),
         )
         return [WeaponConstant, Mastery, DebuffAura, BattleRage]
 
-    def generate(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
-        """
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
+        '''
+        Aura switching not used
+        Use debuff aura
+        Alter hit rate 100%, 2 alternators maintained for 40 seconds every 50 seconds
+        Abyssal Lightning Pathway of the Underworld Unused
+
+        Hyper:
+        Dark Genesis-Cool Time Reduce
+        Dark Aura-Boss Killer
+        Debuff Aura-Elemental Reset
+        Shelter-Cool Time Reduce, Persist
+
+        Nasal order:
+        Myra-Pebble-Death-Kingba-Tetjene-Battle Spurt
+
+        Left and Right Tel 83 times per minute
+
+        Master of Death used with the Ripper
+        Alter is used every cool
+        Main axis and Abyssial Lightning are used with Union Aura.
+
         오라스위칭 미사용
         디버프 오라 사용
         알터 히트율 100%, 50초마다 40초간 유지되는 2개 알터 사용
@@ -159,22 +241,26 @@ class JobGenerator(ck.JobGenerator):
         닼라-피블-데스-킹바-닼제네-배틀스퍼트
 
         좌우텔 분당 83회
+        
+        마스터 오브 데스는 리퍼와 같이 사용함
+        알터는 쿨마다 사용함
+        메여축, 어비셜 라이트닝은 유니온 오라와 같이 사용함
 
         50초마다 블랙 매직 알터 2개 설치
         100초마다 그림 리퍼, 유니온 오라, 소울 컨트랙트 사용
         200초마다 메여축, 어비셜 라이트닝, 마오데 사용
-        """
+        '''
 
         # Buff skills
-        Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem=True).wrap(
+        Booster = core.BuffSkill(BattleMageSkills.StaffBoost, 0, 180 * 1000, rem=True).wrap(
             core.BuffSkillWrapper
         )
-        MarkStack = core.StackSkillWrapper(core.BuffSkill("징표 스택", 0, 99999 * 10000), 6)
+        MarkStack = core.StackSkillWrapper(core.BuffSkill(_("징표 스택"), 0, 99999 * 10000), 6)
 
         # Damage Skills
         DarkLightning = (
             core.DamageSkill(
-                "다크 라이트닝",
+                BattleMageSkills.DarkShock,
                 delay=90,
                 damage=225,
                 hit=4,
@@ -182,10 +268,10 @@ class JobGenerator(ck.JobGenerator):
             )
             .setV(vEhc, 0, 2, False)
             .wrap(core.DamageSkillWrapper)
-        )  # 캔슬
+        )  # Cancel. 캔슬.
         DarkLightningMark = (
             core.DamageSkill(
-                "다크 라이트닝(징표)",
+                f"{BattleMageSkills.DarkShock}({MARK})",
                 delay=0,
                 damage=350,
                 hit=4,
@@ -196,11 +282,11 @@ class JobGenerator(ck.JobGenerator):
             .setV(vEhc, 0, 2, False)
             .wrap(core.DamageSkillWrapper)
         )
-
-        # 좌우텔 분당 83회 기준.
+        
+        # Based on 83 left and right tells per minute. 좌우텔 분당 83회 기준.
         FinishBlow = (
             core.DamageSkill(
-                "피니쉬 블로우",
+                BattleMageSkills.FinishingBlow,
                 delay=630,
                 damage=330 + 3 * self.combat,
                 hit=6,
@@ -214,7 +300,7 @@ class JobGenerator(ck.JobGenerator):
         )
         ReaperScythe = (
             core.DamageSkill(
-                "사신의 낫",
+                _("사신의 낫"),
                 delay=630,
                 damage=300,
                 hit=12,
@@ -223,10 +309,10 @@ class JobGenerator(ck.JobGenerator):
             .setV(vEhc, 1, 2, False)
             .wrap(BlowSkillWrapper)
         )
-
+        
         DarkGenesis = (
             core.DamageSkill(
-                "다크 제네시스",
+                BattleMageSkills.DarkGenesis,
                 delay=690,
                 damage=520 + 10 * self.combat,
                 hit=8,
@@ -238,7 +324,7 @@ class JobGenerator(ck.JobGenerator):
         )
         DarkGenesisFinalAttack = (
             core.DamageSkill(
-                "다크 제네시스(추가타)",
+                f"{BattleMageSkills.DarkGenesis}({EXTRA_HIT})",
                 delay=0,
                 damage=220 + 4 * self.combat,
                 hit=1,
@@ -249,8 +335,7 @@ class JobGenerator(ck.JobGenerator):
 
         Death = (
             core.DamageSkill(
-                "데스",
-                delay=0,
+                _("데스"), delay=0,
                 damage=200 + chtr.level,
                 hit=12,
                 cooltime=5000,
@@ -262,15 +347,14 @@ class JobGenerator(ck.JobGenerator):
 
         # Hyper
         MasterOfDeath = core.BuffSkill(
-            "마스터 오브 데스",
+            BattleMageSkills.MasterofDeath,
             delay=1020,
             remain=30 * 1000,
             cooltime=200 * 1000,
         ).wrap(core.BuffSkillWrapper)
-
         BattlekingBar = (
             core.DamageSkill(
-                "배틀킹 바",
+                BattleMageSkills.SweepingStaff,
                 delay=180,
                 damage=650,
                 hit=2,
@@ -281,7 +365,7 @@ class JobGenerator(ck.JobGenerator):
         )
         BattlekingBar2 = (
             core.DamageSkill(
-                "배틀킹 바(2타)",
+                f"{BattleMageSkills.SweepingStaff}({TWO_HIT})",
                 delay=240,
                 damage=650,
                 hit=5,
@@ -291,7 +375,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
         WillOfLiberty = core.BuffSkill(
-            "윌 오브 리버티",
+            BattleMageSkills.ForLiberty,
             delay=0,
             remain=60 * 1000,
             cooltime=120 * 1000,
@@ -304,7 +388,7 @@ class JobGenerator(ck.JobGenerator):
 
         UnionAura = (
             core.BuffSkill(
-                "유니온 오라",
+                BattleMageSkills.AuraScythe,
                 delay=810,
                 remain=(vEhc.getV(1, 1) // 3 + 30) * 1000,
                 cooltime=100 * 1000,
@@ -316,10 +400,9 @@ class JobGenerator(ck.JobGenerator):
             .isV(vEhc, 1, 1)
             .wrap(core.BuffSkillWrapper)
         )
-
         BlackMagicAlter = (
             core.SummonSkill(
-                "블랙 매직 알터",
+                BattleMageSkills.AltarofAnnihilation,
                 summondelay=690,
                 delay=1220,
                 damage=800 + 32 * vEhc.getV(0, 0),
@@ -330,36 +413,34 @@ class JobGenerator(ck.JobGenerator):
             .isV(vEhc, 0, 0)
             .wrap(core.SummonSkillWrapper)
         )
-
         GrimReaper = GrimReaperWrapper(vEhc, 2, 2, MasterOfDeath)
-
         AbyssalLightning = core.BuffSkill(
-            "어비셜 라이트닝",
+            BattleMageSkills.AbyssalLightning,
             delay=540,
             remain=35000,
             cooltime=200 * 1000,
             red=True,
         ).wrap(core.BuffSkillWrapper)
         AbyssalLightningAttack = core.DamageSkill(
-            "어비셜 라이트닝(명계의 번개)",
+            f"{BattleMageSkills.AbyssalLightning}({BLACK_LIGHTNING})",
             delay=0,
             damage=800 + 32 * vEhc.getV(0, 0),
             hit=6,
             cooltime=600,
             modifier=core.CharacterModifier(crit=100, armor_ignore=20),
         ).wrap(core.DamageSkillWrapper)
-
-        # Build Graph
+        
+        #Build Graph
         """
-        스킬간 발동관계 참고 링크
+        Reference link for activation relationship between skills.
+        스킬간 발동관계 참고 링크.
         http://www.inven.co.kr/board/maple/2295/19973
         http://www.inven.co.kr/board/maple/2295/4339
         """
-        # 피니시 블로우
-        BasicAttack = core.DamageSkill("기본공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
+        BasicAttack = core.DamageSkill(_("기본공격"), 0, 0, 0).wrap(core.DamageSkillWrapper)
         BasicAttack.onAfter(
             core.OptionalElement(
-                UnionAura.is_active, ReaperScythe, FinishBlow, name="유니온오라 여부"
+                UnionAura.is_active, ReaperScythe, FinishBlow, name=_("유니온오라 여부")
             )
         )
 
@@ -368,7 +449,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 데스
         Death.protect_from_running()
-        UseDeath = core.OptionalElement(Death.is_available, Death, name="데스 쿨타임 확인")
+        UseDeath = core.OptionalElement(Death.is_available, Death, name=_("데스 쿨타임 확인"))
         for sk in [
             FinishBlow,
             ReaperScythe,
@@ -384,7 +465,7 @@ class JobGenerator(ck.JobGenerator):
         FinalAttack = core.OptionalElement(
             lambda: DarkGenesis.is_not_usable() and FinalAttackRoulette.draw(),
             DarkGenesisFinalAttack,
-            name="다크 제네시스 추가타 검증",
+            name=_("{} 추가타 검증").format(BattleMageSkills.DarkGenesis),
         )
         FinishBlow.onJustAfter(FinalAttack)
         ReaperScythe.onJustAfter(FinalAttack)
@@ -404,23 +485,27 @@ class JobGenerator(ck.JobGenerator):
         BattlekingBar2.onAfter(DarkLightningOption)
 
         # 다크 라이트닝 (징표 충전)
-        AddMark = MarkStack.stackController(6, "징표 충전")
+        AddMark = MarkStack.stackController(6, _("징표 충전"))
         DarkLightning.onJustAfter(AddMark)
         BlackMagicAlter.onTick(AddMark)
 
         # 다크 라이트닝 (징표 소모)
         UseMark = core.OptionalElement(
-            partial(MarkStack.judge, 1, 1), DarkLightningMark, name="징표 사용여부 결정"
+            partial(MarkStack.judge, 1, 1), DarkLightningMark, name=_("징표 사용여부 결정")
         )
         DarkLightningMark.onAfter(
             core.OptionalElement(
                 AbyssalLightning.is_active,
-                MarkStack.stackController(-1, "징표 사용(어비셜 라이트닝)"),
-                MarkStack.stackController(-6, "징표 사용"),
+                MarkStack.stackController(-1, _("징표 사용({})").format(BattleMageSkills.AbyssalLightning)),
+                MarkStack.stackController(-6, _("징표 사용")),
             )
         )
+
         DarkGenesis.onJustAfter(UseMark)
         DarkGenesisFinalAttack.onJustAfter(UseMark)
+
+        # Finishing blow. 피니시 블로우.
+        FinishBlow.registerMOD(MasterOfDeath)  # Master of Death skill registration. 마스터 오브 데스 스킬 등록.
         FinishBlow.onJustAfter(UseMark)
         ReaperScythe.onJustAfter(UseMark)
         BattlekingBar.onJustAfter(UseMark)
@@ -455,12 +540,12 @@ class JobGenerator(ck.JobGenerator):
             lambda: AbyssalLightningAttack.is_available()
             and AbyssalLightning.is_active(),
             AbyssalLightningAttack,
-            name="어비셜 라이트닝(명계의 번개)(사용가능 여부)",
+            name=f"{BattleMageSkills.AbyssalLightning}({BLACK_LIGHTNING})({CHECK})",
         )
         for sk in [DarkLightning, DarkLightningMark]:
             sk.onJustAfter(UseAbyssalDarkLightning)
 
-        # 오버로드 마나
+        # Mana Overload. 오버로드 마나.
         overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 0, 0)
         for sk in [
             FinishBlow,

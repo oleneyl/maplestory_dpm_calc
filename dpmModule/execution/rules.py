@@ -12,6 +12,7 @@ from dpmModule.kernel.policy import AbstractRule, NameIndexedGraph
 
 class ConditionRule(AbstractRule):
     """
+    For both GraphElements A,B and check_function, use A if check_function(B) returns True.
     두 GraphElement A,B와 check_function에 대해, check_function(B)가 True를 리턴하면 A를 사용합니다.
     """
 
@@ -38,6 +39,7 @@ class ConditionRule(AbstractRule):
 
 class ComplexConditionRule(AbstractRule):
     """
+    For GraphElement A, List[GraphElement] B and check_function, use A if check_function(A, *B) returns True.
     GraphElement A, List[GraphElement] B와 check_function에 대해, check_function(A, *B)가 True를 리턴하면 A를 사용합니다.
     """
 
@@ -70,6 +72,7 @@ class ComplexConditionRule(AbstractRule):
 
 class UniquenessRule(AbstractRule):
     """
+    If the given element is not on, use is prohibited.
     주어진 Element가 on 상태가 아니면 사용을 금지합니다.
     """
 
@@ -94,6 +97,7 @@ class UniquenessRule(AbstractRule):
 
 class ConcurrentRunRule(AbstractRule):
     """
+    For two GraphElements A and B, it is forced to use only when A is using B.
     두 GraphElement A,B에 대해, A가 B를 사용중일 때만 사용하도록 강제합니다.
     """
 
@@ -117,6 +121,7 @@ class ConcurrentRunRule(AbstractRule):
 
 class ReservationRule(AbstractRule):
     """
+    For two GraphElements A,B, force A to use only when B is available.
     두 GraphElement A,B에 대해, A가 B가 사용가능할 때만 사용하도록 강제합니다.
     """
 
@@ -140,6 +145,7 @@ class ReservationRule(AbstractRule):
 
 class SynchronizeRule(AbstractRule):
     """
+    When B is on, A can be used when the remaining time of B (buff or minion) is more than time(ms) (direction=1) / less than (direction=-1). If B is off, you can use A.
     B가 켜져있다면, B(버프 또는 소환수) 의 남은 시간이 time(ms) 이상(direction=1) / 이하(direction=-1) 일 때 A를 사용할 수 있습니다. B가 꺼져있다면, A를 사용할 수 있습니다.
     """
 
@@ -170,6 +176,7 @@ class SynchronizeRule(AbstractRule):
 
 class MutualRule(AbstractRule):
     """
+    Avoid using A when B is available.
     A를 B가 사용 가능할 때는 사용하지 않도록 합니다.
     """
 
@@ -195,6 +202,7 @@ class MutualRule(AbstractRule):
 
 class InactiveRule(AbstractRule):
     """
+    Avoid using A when B is being used.
     A를 B가 사용되고 있을 때는 사용하지 않도록 합니다.
     """
 
@@ -218,6 +226,7 @@ class InactiveRule(AbstractRule):
 
 class DisableRule(AbstractRule):
     """
+    Disable the use of the given GraphElement.
     주어진 GraphElement를 사용하지 못하도록 합니다.
     """
 

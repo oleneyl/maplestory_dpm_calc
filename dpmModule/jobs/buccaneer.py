@@ -1,30 +1,98 @@
+from dpmModule.jobs.globalSkill import GlobalSkills, LAST_HIT, INIT, DEBUFF, COOLDOWN
+from dpmModule.jobs.jobbranch.pirates import PirateSkills
+
 from ..kernel import core
 from ..character import characterKernel as ck
 from functools import partial
 from ..status.ability import Ability_tool
-from ..execution.rules import (
-    DisableRule,
-    RuleSet,
-    ConditionRule,
-    MutualRule,
-)
+from ..execution.rules import DisableRule, InactiveRule, RuleSet, ConditionRule, MutualRule
 from . import globalSkill
 from .jobbranch import pirates
 from .jobclass import adventurer
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+from .globalSkill import PASSIVE
+
+from localization.utilities import translator
+_ = translator.gettext
+
+# English skill information for Buccaneer here https://maplestory.fandom.com/wiki/Buccaneer/Skills
+class BuccaneerSkills:
+    # link Skill
+    PirateBlessing = _("파이렛 블레스")  # "Pirate Blessing"
+    # Beginner
+    SuperTransformation = _("슈퍼 트랜스폼")  # "Super Transformation"
+    # 1st Job
+    SommersaultKick = _("써머솔트 킥")  # "Sommersault Kick"
+    DoubleShot = _("더블 파이어")  # "Double Shot"
+    Octopush = _("옥토푸시")  # "Octopush"
+    Dash = _("대쉬")  # "Dash"
+    ShadowHeart = _("크리티컬 로어")  # "Shadow Heart"
+    BulletTime = _("퀵모션")  # "Bullet Time"
+    # 2nd Job
+    TornadoUppercut = _("토네이도 어퍼")  # "Tornado Uppercut"
+    EnergyVortex = _("에너지 토네이도")  # "Energy Vortex"
+    EnergyCharge = _("에너지 차지")  # "Energy Charge"
+    CorkscrewBlow = _("스크류 펀치")  # "Corkscrew Blow"
+    DarkClarity = _("멘탈 클리어리티")  # "Dark Clarity"
+    KnuckleBooster = _("너클 부스터")  # "Knuckle Booster"
+    AdvancedDash = _("어드밴스드 대쉬")  # "Advanced Dash"
+    KnuckleMastery = _("너클 마스터리")  # "Knuckle Mastery"
+    HPBoost = _("HP 증가")  # "HP Boost"
+    PhysicalTraining = _("피지컬 트레이닝")  # "Physical Training"
+    Perseverance = _("인듀어런스")  # "Perseverance"
+    # 3rd Job
+    SpiralAssault = _("더블 스파이럴")  # "Spiral Assault"
+    EnergyBurst = _("에너지 버스터")  # "Energy Burst"
+    HedgehogBuster = _("헤지호그 버스터")  # "Hedgehog Buster"
+    Supercharge = _("슈퍼 차지")  # "Supercharge"
+    StaticThumper = _("쇼크웨이브")  # "Static Thumper"
+    RolloftheDice = _("럭키 다이스")  # "Roll of the Dice"
+    AdmiralsWings = _("윌로우 디펜시브")  # "Admiral's Wings"
+    PrecisionStrikes = _("크리티컬 레이지")  # "Precision Strikes"
+    StunMastery = _("스턴 마스터리")  # "Stun Mastery"
+    # 4th Job
+    Octopunch = _("피스트 인레이지")  # "Octopunch"
+    DragonStrike = _("드래곤 스트라이크")  # "Dragon Strike"
+    NautilusStrike = _("전함 노틸러스")  # "Nautilus Strike"
+    BuccaneerBlast = _("에너지 블라스트")  # "Buccaneer Blast"
+    DoubleBlast = _("더블 블라스트")  # "Double Blast"
+    Crossbones = _("바이퍼지션")  # "Crossbones"
+    TimeLeap = _("타임 리프")  # "Time Leap"
+    SpeedInfusion = _("윈드 부스터")  # "Speed Infusion"
+    DoubleDown = _("더블 럭키 다이스")  # "Double Down"
+    UltraCharge = _("울트라 차지")  # "Ultra Charge"
+    PiratesRevenge = _("카운터 어택")  # "Pirate's Revenge"
+    TyphoonCrush = _("가드 크러시")  # "Typhoon Crush"
+    # Hypers
+    PowerUnity = _("유니티 오브 파워")  # "Power Unity"
+    EpicAdventure = _("에픽 어드벤처")  # "Epic Adventure"
+    StimulatingConversation = _("스티뮬레이트")  # "Stimulating Conversation"
+    # 5th Job
+    Meltdown = _("트랜스 폼")  # "Meltdown"
+    LordoftheDeep = _("서펜트 스크류")  # "Lord of the Deep"
+    SerpentVortex = _("퓨리어스 차지")  # "Serpent Vortex"
+    HowlingFist = _("하울링 피스트")  # "Howling Fist"
+
+
+# Skill name modifiers only for Buccaneer
+BOSS = _("보스")
+TRANSFORM = _("변신")
+GUAGE_INC = _("게이지 증가 더미")
+CONTINUING = _("지속")
+CHARGE = _("충전")
 
 
 class EnergyChargeWrapper(core.StackSkillWrapper):
     def __init__(self, combat):
-        skill = core.BuffSkill("에너지 차지", 0, 999999 * 1000)
+        skill = core.BuffSkill(BuccaneerSkills.EnergyCharge, 0, 999999 * 1000)
         super(EnergyChargeWrapper, self).__init__(skill, 10000)
         self.stack = 0
         self.charged = False
         self.combat = combat
         self.drainCallback = None
-
+    
     def charge(self, val, force):
         if (force or not self.charged) and val > 0:
             self.stack = min(self.stack + val, 10000)
@@ -35,7 +103,7 @@ class EnergyChargeWrapper(core.StackSkillWrapper):
         elif (not self.charged) and self.stack >= 10000:
             self.charged = True
         if self.stack <= 0:
-            self.drainCallback()  # 게이지 고갈시 서펜트 종료. 카데나와 같이 Taskholder에 체이닝해서 구현하는게 좋지만, 성능 문제로 이와 같이 해둠.
+            self.drainCallback() # 게이지 고갈시 서펜트 종료. 카데나와 같이 Taskholder에 체이닝해서 구현하는게 좋지만, 성능 문제로 이와 같이 해둠.
         return core.ResultObject(
             0,
             core.CharacterModifier(),
@@ -47,7 +115,7 @@ class EnergyChargeWrapper(core.StackSkillWrapper):
 
     def chargeController(self, val, force=False):
         task = core.Task(self, partial(self.charge, val, force))
-        return core.TaskHolder(task, name=f"게이지 {val}")
+        return core.TaskHolder(task, name=_("게이지: {}").format(val))
 
     def get_modifier(self):
         if self.charged == 1:
@@ -61,40 +129,24 @@ class EnergyChargeWrapper(core.StackSkillWrapper):
     def isStateOff(self):
         return not self.charged
 
-
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
         self.vEnhanceNum = 10
         self.jobtype = "STR"
-        self.jobname = "바이퍼"
-        self.ability_list = Ability_tool.get_ability_set(
-            "boss_pdamage", "crit", "buff_rem"
-        )
+        self.jobname = _("바이퍼")
+        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 1
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(
-            ConditionRule("에너지 오브(더미)", "에너지 차지", lambda sk: sk.isStateOff()),
-            RuleSet.BASE,
-        )
-        ruleset.add_rule(MutualRule("스티뮬레이트", "트랜스 폼"), RuleSet.BASE)
-        ruleset.add_rule(
-            ConditionRule(
-                "스티뮬레이트", "에너지 차지", lambda sk: sk.judge(2000, -1) or sk.isStateOff()
-            ),
-            RuleSet.BASE,
-        )
-        ruleset.add_rule(
-            ConditionRule(
-                "유니티 오브 파워", "유니티 오브 파워(디버프)", lambda sk: sk.is_time_left(1000, -1)
-            ),
-            RuleSet.BASE,
-        )
-        # ruleset.add_rule(MutualRule('타임 리프', '소울 컨트랙트'), RuleSet.BASE)
-        # ruleset.add_rule(InactiveRule('타임 리프', '소울 컨트랙트'), RuleSet.BASE)
-        ruleset.add_rule(DisableRule("타임 리프"), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(_("에너지 오브(더미)"), BuccaneerSkills.EnergyCharge, lambda sk: sk.isStateOff()), RuleSet.BASE)
+        ruleset.add_rule(MutualRule(BuccaneerSkills.StimulatingConversation, BuccaneerSkills.Meltdown), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(BuccaneerSkills.StimulatingConversation, BuccaneerSkills.EnergyCharge, lambda sk: sk.judge(2000, -1) or sk.isStateOff()), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule(BuccaneerSkills.PowerUnity, f"{BuccaneerSkills.PowerUnity}({DEBUFF})", lambda sk: sk.is_time_left(1000, -1)), RuleSet.BASE)
+        # ruleset.add_rule(MutualRule(BuccaneerSkills.TimeLeap, GlobalSkills.TermsAndConditions), RuleSet.BASE)
+        # ruleset.add_rule(InactiveRule(BuccaneerSkills.TimeLeap, GlobalSkills.TermsAndConditions), RuleSet.BASE)
+        ruleset.add_rule(DisableRule(BuccaneerSkills.TimeLeap), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self):
@@ -102,54 +154,42 @@ class JobGenerator(ck.JobGenerator):
             pdamage=49, armor_ignore=15.3, crit_damage=39, patt=2.4
         )
 
-    def get_passive_skill_list(
-        self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
-    ):
-        CriticalRoar = core.InformedCharacterModifier("크리티컬 로어", crit=20, crit_damage=5)
-        MentalClearity = core.InformedCharacterModifier("멘탈 클리어리티", att=30)
-        PhisicalTraining = core.InformedCharacterModifier(
-            "피지컬 트레이닝", stat_main=30, stat_sub=30
-        )
-        CriticalRage = core.InformedCharacterModifier(
-            "크리티컬 레이지", crit=15, crit_damage=10  # 보스상대 추가 크확은 not_implied_skill_list
-        )
-        StimulatePassive = core.InformedCharacterModifier(
-            "스티뮬레이트(패시브)", boss_pdamage=20
-        )
+    def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
+        CriticalRoar = core.InformedCharacterModifier(BuccaneerSkills.ShadowHeart, crit=20, crit_damage=5)
+        MentalClearity = core.InformedCharacterModifier(BuccaneerSkills.DarkClarity, att=30)
+        PhisicalTraining = core.InformedCharacterModifier(BuccaneerSkills.PhysicalTraining, stat_main=30, stat_sub=30)
+        CriticalRage = core.InformedCharacterModifier(BuccaneerSkills.PrecisionStrikes, crit=15, crit_damage=10)   # Boss opponent +20% Crit rate. 보스상대 추가+20% 크리율.
+        StimulatePassive = core.InformedCharacterModifier(f"{BuccaneerSkills.StimulatingConversation}({PASSIVE})", boss_pdamage=20)
 
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 2, 3)
+        
+        return [CriticalRoar, MentalClearity, PhisicalTraining, CriticalRage, StimulatePassive, LoadedDicePassive]
 
-        return [
-            CriticalRoar,
-            MentalClearity,
-            PhisicalTraining,
-            CriticalRage,
-            StimulatePassive,
-            LoadedDicePassive,
-        ]
-
-    def get_not_implied_skill_list(
-        self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
-    ):
+    def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=70)
-        Mastery = core.InformedCharacterModifier(
-            "숙련도", mastery=90 + ceil(self.combat / 2)
-        )
+        WeaponConstant = core.InformedCharacterModifier(_("무기상수"), pdamage_indep=70)
+        Mastery = core.InformedCharacterModifier(_("숙련도"), mastery=90 + ceil(self.combat / 2))
 
-        CriticalRage = core.InformedCharacterModifier(
-            "크리티컬 레이지(보스)", crit=20  # 보스상대 추가+20% 크리율
-        )
-        GuardCrush = core.InformedCharacterModifier(
-            "가드 크러시", armor_ignore=40 + 2 * passive_level  # 40% 확률로 방무 100% 무시.
-        )
-        # CounterAttack = core.InformedCharacterModifier("카운터 어택",pdamage = 25 + 2*passive_level) # TODO: 적용 여부 결정해야함
-
+        CriticalRage = core.InformedCharacterModifier(f"{BuccaneerSkills.PrecisionStrikes}({BOSS})", crit=20)    # Boss opponent +20% Crit rate. 보스상대 추가+20% 크리율.
+        GuardCrush = core.InformedCharacterModifier(BuccaneerSkills.TyphoonCrush, armor_ignore=40 + 2 * passive_level)  # 40% chance of ignoring 100% of defence. 40% 확률로 방무 100% 무시.
+        # CounterAttack = core.InformedCharacterModifier(BuccaneerSkills.PiratesRevenge,pdamage = 25 + 2*passive_level) # TODO: Should decide whether to apply. 적용 여부 결정해야함.
+        
         return [WeaponConstant, Mastery, CriticalRage, GuardCrush]
+        
+    def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
+        '''
+        Ultra Charge: 350 charge when attacking, double charge when attacking boss. Stack 10000.
 
-    def generate(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
-        """
+        Stimulate is used when it is not in a fully buffered state or is below 2000 gauge
+        Energy Orb is used for gauge recovery
+
+        Double Lucky Dice-Enhance
+        Fist Enrage-Reinforce, Boss Killer, Bonus Attack
+        Energy Blast-Bonus Attack
+
+        Inlay-Nautil-Des-Unity
+
         울트라 차지 : 공격시 350충전, 보스공격시 2배 충전. 최대스택 10000.
 
         스티뮬레이트는 완충 상태가 아니거나 게이지 2000 이하일때 사용
@@ -160,7 +200,7 @@ class JobGenerator(ck.JobGenerator):
         에너지 블라스트-보너스 어택
 
         인레이지-노틸-드스-유니티
-        """
+        '''
         ######   Skill   ######
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         serverlag = 3
@@ -172,7 +212,7 @@ class JobGenerator(ck.JobGenerator):
         DICE_PROC = DICE_WEIGHT / DICE_POOL  # 더블 럭키 다이스 - 인핸스
         LuckyDice = (
             core.BuffSkill(
-                "로디드 다이스",
+                PirateSkills.LoadedDice,
                 delay=990,
                 remain=180 * 1000,
                 pdamage=20
@@ -186,16 +226,16 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.BuffSkillWrapper)
         )
         Viposition = core.BuffSkill(
-            "바이퍼지션",
+            BuccaneerSkills.Crossbones,
             delay=0,
             remain=(180 + 4 * self.combat) * 1000,
             patt=30 + self.combat,
         ).wrap(core.BuffSkillWrapper)
 
-        # Damage Skill
+        # Damage Skill    
         FistInrage = (
             core.DamageSkill(
-                "피스트 인레이지",
+                BuccaneerSkills.Octopunch,
                 delay=600,
                 damage=320 + 4 * self.combat,
                 hit=8 + 1,
@@ -206,7 +246,7 @@ class JobGenerator(ck.JobGenerator):
         )
         FistInrage_T = (
             core.DamageSkill(
-                "피스트 인레이지(변신)",
+                f"{BuccaneerSkills.Octopunch}({TRANSFORM})",
                 delay=600,
                 damage=320 + 4 * self.combat,
                 hit=8 + 1 + 2,
@@ -215,10 +255,10 @@ class JobGenerator(ck.JobGenerator):
             .setV(vEhc, 0, 2, False)
             .wrap(core.DamageSkillWrapper)
         )
-
+        
         DragonStrike = (
             core.DamageSkill(
-                "드래곤 스트라이크",
+                BuccaneerSkills.DragonStrike,
                 delay=690,
                 damage=300 + 4 * self.combat,
                 hit=12,
@@ -229,16 +269,16 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
         DragonStrikeBuff = core.BuffSkill(
-            "드래곤 스트라이크(디버프)",
+            f"{BuccaneerSkills.DragonStrike}({DEBUFF})",
             delay=0,
             remain=15 * 1000,
             cooltime=-1,
             pdamage_indep=20 + self.combat // 2,
         ).wrap(core.BuffSkillWrapper)
-
+        
         Nautilus = (
             core.DamageSkill(
-                "노틸러스",
+                BuccaneerSkills.NautilusStrike,
                 delay=690,
                 damage=440 + 4 * self.combat,
                 hit=7,
@@ -250,7 +290,7 @@ class JobGenerator(ck.JobGenerator):
         )
         NautilusFinalAttack = (
             core.DamageSkill(
-                "노틸러스(파이널 어택)", delay=0, damage=165 + 2 * self.combat, hit=2
+                f"{BuccaneerSkills.NautilusStrike}({LAST_HIT})", delay=0, damage=165 + 2 * self.combat, hit=2
             )
             .setV(vEhc, 1, 2, True)
             .wrap(core.DamageSkillWrapper)
@@ -258,19 +298,18 @@ class JobGenerator(ck.JobGenerator):
 
         # 타임 리프: 안 쓰는 게 더 셈
         TimeLeap = core.DamageSkill(
-            "타임 리프", delay=1080, damage=0, hit=0, cooltime=180000
+            BuccaneerSkills.TimeLeap, delay=1080, damage=0, hit=0, cooltime=180000
         ).wrap(core.DamageSkillWrapper)
 
         # Hyper
-        Stimulate = core.BuffSkill(  # 에너지 주기적으로 800씩 증가, 미완충시 풀완충.
-            "스티뮬레이트",
-            delay=930,
+        Stimulate = core.BuffSkill(
+            BuccaneerSkills.StimulatingConversation, delay=930,
             remain=120 * 1000,
             cooltime=240 * 1000,
             pdamage=20,
         ).wrap(core.BuffSkillWrapper)
         StimulateSummon = core.SummonSkill(
-            "스티뮬레이트(게이지 증가 더미)",
+            f"{BuccaneerSkills.StimulatingConversation}({GUAGE_INC})",
             summondelay=0,
             delay=(5 + serverlag) * 1000,
             damage=0,
@@ -279,9 +318,9 @@ class JobGenerator(ck.JobGenerator):
             cooltime=-1,
         ).wrap(core.SummonSkillWrapper)
 
-        UnityOfPower = (  # 완충시에만 사용 가능, 에너지 1500 소모.
+        UnityOfPower = (
             core.DamageSkill(
-                "유니티 오브 파워",
+                BuccaneerSkills.PowerUnity,
                 delay=690,
                 damage=650,
                 hit=5,
@@ -291,7 +330,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
         UnityOfPowerBuff = core.BuffSkill(
-            "유니티 오브 파워(디버프)",
+            f"{BuccaneerSkills.PowerUnity}({DEBUFF})",
             delay=0,
             remain=90 * 1000,
             cooltime=-1,
@@ -299,7 +338,7 @@ class JobGenerator(ck.JobGenerator):
         ).wrap(core.BuffSkillWrapper)
 
         EpicAdventure = core.BuffSkill(
-            "에픽 어드벤처",
+            BuccaneerSkills.EpicAdventure,
             delay=0,
             remain=60 * 1000,
             cooltime=120 * 1000,
@@ -312,10 +351,10 @@ class JobGenerator(ck.JobGenerator):
         WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
-
+        
         Transform = (
             core.BuffSkill(
-                "트랜스 폼",
+                BuccaneerSkills.Meltdown,
                 delay=450,
                 remain=(50 + vEhc.getV(1, 1)) * 1000,
                 cooltime=180 * 1000,
@@ -326,11 +365,11 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.BuffSkillWrapper)
         )
         TransformEnergyOrbDummy = core.DamageSkill(
-            "에너지 오브(더미)", 0, 0, 0, cooltime=-1
+            _("에너지 오브(더미)"), 0, 0, 0, cooltime=-1
         ).wrap(core.DamageSkillWrapper)
         TransformEnergyOrb = (
             core.DamageSkill(
-                "에너지 오브",
+                _("에너지 오브"),
                 delay=780,
                 damage=450 + vEhc.getV(1, 1) * 18,
                 hit=3 * TRANSFORM_HIT,
@@ -342,7 +381,7 @@ class JobGenerator(ck.JobGenerator):
 
         SerpentScrew = (
             core.SummonSkill(
-                "서펜트 스크류",
+                BuccaneerSkills.LordoftheDeep,
                 summondelay=600,
                 delay=260,
                 damage=360 + vEhc.getV(0, 0) * 14,
@@ -353,7 +392,7 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.SummonSkillWrapper)
         )
         SerpentScrewDummy = core.SummonSkill(
-            "서펜트 스크류(지속)",
+            f"{BuccaneerSkills.LordoftheDeep}({CONTINUING})",
             summondelay=0,
             delay=1000,
             damage=0,
@@ -361,10 +400,10 @@ class JobGenerator(ck.JobGenerator):
             remain=99999 * 10000,
             cooltime=-1,
         ).wrap(core.SummonSkillWrapper)
-
+    
         FuriousCharge = (
             core.DamageSkill(
-                "퓨리어스 차지",
+                BuccaneerSkills.SerpentVortex,
                 delay=420,
                 damage=600 + vEhc.getV(4, 4) * 24,
                 hit=10,
@@ -377,7 +416,7 @@ class JobGenerator(ck.JobGenerator):
 
         HowlingFistInit = (
             core.DamageSkill(
-                "하울링 피스트(개시)",
+                f"{BuccaneerSkills.HowlingFist}({INIT})",
                 delay=240,
                 damage=0,
                 hit=0,
@@ -389,7 +428,7 @@ class JobGenerator(ck.JobGenerator):
         )
         HowlingFistCharge = (
             core.DamageSkill(
-                "하울링 피스트(충전)",
+                f"{BuccaneerSkills.HowlingFist}({CHARGE})",
                 delay=240,
                 damage=425 + 17 * vEhc.getV(0, 0),
                 hit=6,
@@ -400,7 +439,7 @@ class JobGenerator(ck.JobGenerator):
         )
         HowlingFistFinal = (
             core.DamageSkill(
-                "하울링 피스트(막타)",
+                f"{BuccaneerSkills.HowlingFist}({LAST_HIT})",
                 delay=1950,
                 damage=525 + 21 * vEhc.getV(0, 0),
                 hit=10 * 14,
@@ -414,7 +453,7 @@ class JobGenerator(ck.JobGenerator):
         # Energy Charge
         EnergyCharge = EnergyChargeWrapper(passive_level)
         EnergyConstraint = core.ConstraintElement(
-            "에너지 차지 상태에서만 사용 가능", EnergyCharge, EnergyCharge.isStateOn
+            _("에너지 차지 상태에서만 사용 가능"), EnergyCharge, EnergyCharge.isStateOn
         )
 
         Stimulate.onAfter(EnergyCharge.chargeController(10000, force=True))
@@ -430,12 +469,12 @@ class JobGenerator(ck.JobGenerator):
         DragonStrike.onAfter(EnergyCharge.chargeController(-180))
         UnityOfPower.onAfter(EnergyCharge.chargeController(-1500))
         HowlingFistInit.onAfter(EnergyCharge.chargeController(-1750))
-
+        
         # Basic Attack
         BasicAttack = core.OptionalElement(
-            EnergyCharge.isStateOn, FistInrage_T, FistInrage, "에너지 완충"
+            EnergyCharge.isStateOn, FistInrage_T, FistInrage, _("에너지 완충")
         )
-        BasicAttackWrapper = core.DamageSkill("기본 공격", 0, 0, 0).wrap(
+        BasicAttackWrapper = core.DamageSkill(_("기본 공격"), 0, 0, 0).wrap(
             core.DamageSkillWrapper
         )
         BasicAttackWrapper.onAfter(BasicAttack)
@@ -443,10 +482,10 @@ class JobGenerator(ck.JobGenerator):
         # Dragon Strike
         DragonStrike.onConstraint(EnergyConstraint)
         DragonStrike.onAfter(DragonStrikeBuff)
-
+    
         # Final Attack
         FinalAttack = core.OptionalElement(
-            lambda: not Nautilus.is_available(), NautilusFinalAttack, name="노틸러스 쿨타임"
+            lambda: not Nautilus.is_available(), NautilusFinalAttack, name=f"{BuccaneerSkills.NautilusStrike}({COOLDOWN})"
         )
         FistInrage.onAfter(FinalAttack)
         FistInrage_T.onAfter(FinalAttack)
@@ -454,36 +493,36 @@ class JobGenerator(ck.JobGenerator):
 
         # Stimulate
         Stimulate.onAfter(StimulateSummon)
-
+    
         # Unity Of Power
         UnityOfPower.onConstraint(EnergyConstraint)
         UnityOfPower.onAfter(UnityOfPowerBuff)
-
+        
         # Transform
         Transform.onAfter(TransformEnergyOrbDummy.controller(1))
         TransformEnergyOrbDummy.onConstraint(
-            core.ConstraintElement("트랜스폼 상태에서만 사용가능", Transform, Transform.is_active)
+            core.ConstraintElement(_("트랜스폼 상태에서만 사용가능"), Transform, Transform.is_active)
         )
         TransformEnergyOrbDummy.onAfter(
             core.RepeatElement(TransformEnergyOrb, 2 + vEhc.getV(1, 1) // 30)
         )
-
+        
         # Serpent Screw
         SerpentScrew.onConstraint(
             core.ConstraintElement(
-                "에너지 100 이상", EnergyCharge, partial(EnergyCharge.judge, 100, 1)
+                _("에너지 100 이상"), EnergyCharge, partial(EnergyCharge.judge, 100, 1)
             )
         )
         SerpentScrew.onAfter(SerpentScrewDummy)
         EnergyCharge.drainCallback = lambda: [
             SerpentScrew.set_disabled_and_time_left(1),
-            SerpentScrewDummy.set_disabled_and_time_left(-1),
+            SerpentScrewDummy.set_disabled_and_time_left(-1)
         ]
 
         # Howling Fist
         HowlingFistInit.onConstraint(
             core.ConstraintElement(
-                "에너지 1750 이상", EnergyCharge, partial(EnergyCharge.judge, 1750, 1)
+                _("에너지 1750 이상"), EnergyCharge, partial(EnergyCharge.judge, 1750, 1)
             )
         )
         HowlingFistInit.onAfter(core.RepeatElement(HowlingFistCharge, 8))

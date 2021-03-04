@@ -6,6 +6,10 @@ from typing import Dict, DefaultDict, Iterable, List
 from .Gear import Gear
 from .GearPropType import GearPropType
 
+from localization.utilities import translator
+_ = translator.gettext
+
+
 PropMap = DefaultDict[GearPropType, int]
 
 with open(os.path.join(os.path.dirname(__file__), 'resources', 'setitem.json'), encoding='utf8') as file:
@@ -24,11 +28,8 @@ class SetItem:
         self.effects = {}
 
     def __str__(self):
-        return """ID: {}
-이름: {}
-럭키아이템: {}
-장비 ID: {}
-효과: {}""".format(self.set_item_id, self.set_item_name, self.joker_possible, self.item_ids, self.effects)
+        # ID, Name, Lucky Item, Equipment ID, effect
+        return _("ID: {} 이름: {} 럭키아이템: {} 장비 ID: {} 효과: {}").format(self.set_item_id, self.set_item_name, self.joker_possible, self.item_ids, self.effects)
 
     @property
     def item_count(self) -> int:

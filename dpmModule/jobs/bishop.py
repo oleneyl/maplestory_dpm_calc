@@ -2,6 +2,9 @@ import os
 
 from typing import Any, Dict
 
+from dpmModule.jobs.globalSkill import GlobalSkills, EXPLOSION, CAST, BUFF, KEYDOWN, INIT, DELAY
+from dpmModule.jobs.jobclass.adventurer import AdventurerSkills
+
 from . import globalSkill
 from ..kernel import core
 from .jobclass import adventurer
@@ -10,10 +13,64 @@ from ..character import characterKernel
 from ..status.ability import Ability_tool
 from ..execution.rules import RuleSet, SynchronizeRule, InactiveRule, DisableRule
 
+from localization.utilities import translator
+_ = translator.gettext
+
+# English skill information for Bishop here https://maplestory.fandom.com/wiki/Bishop/Skills
+class BishopSkills:
+    # Link SKill
+    EmpiricalKnowledge = _("임피리컬 널리지")  # "Empirical Knowledge"
+    # 1st Job
+    EnergyBolt = _("에너지 볼트")  # "Energy Bolt"
+    MagicGuard = _("매직 가드")  # "Magic Guard"
+    Teleport = _("텔레포트")  # "Teleport"
+    MagicArmor = _("매직 아머")  # "Magic Armor"
+    MPBoost = _("MP 증가")  # "MP Boost"
+    # 2nd Job
+    HolyArrow = _("홀리 애로우")  # "Holy Arrow"
+    BlessedEnsemble = _("블레싱 앙상블")  # "Blessed Ensemble"
+    Heal = _("힐")  # "Heal"
+    Bless = _("블레스")  # "Bless"
+    MagicBooster = _("매직 부스터")  # "Magic Booster"
+    Invincible = _("인빈서블")  # "Invincible"
+    SpellMastery = _("스펠 마스터리")  # "Spell Mastery"
+    HighWisdom = _("하이 위즈덤")  # "High Wisdom"
+    MPEater = _("MP 이터")  # "MP Eater"
+    # 3rd Job
+    ShiningRay = _("샤이닝 레이")  # "Shining Ray"
+    HolyFountain = _("홀리 파운틴")  # "Holy Fountain"
+    DivineProtection = _("디바인 프로텍션")  # "Divine Protection"
+    MysticDoor = _("미스틱 도어")  # "Mystic Door"
+    Dispel = _("디스펠")  # "Dispel"
+    HolySymbol = _("홀리 심볼")  # "Holy Symbol"
+    TeleportMastery = _("텔레포트 마스터리")  # "Teleport Mastery"
+    HolyMagicShell = _("홀리 매직쉘")  # "Holy Magic Shell"
+    ArcaneOverdrive = _("매직 크리티컬")  # "Arcane Overdrive"
+    HolyFocus = _("홀리 포커스")  # "Holy Focus"
+    # 4th Job
+    AngelRay = _("엔젤레이")  # "Angel Ray"
+    Genesis = _("제네시스")  # "Genesis"
+    BigBang = _("빅뱅")  # "Big Bang"
+    BlessedHarmony = _("블레싱 하모니")  # "Blessed Harmony"
+    Resurrection = _("리저렉션")  # "Resurrection"
+    Bahamut = _("바하뮤트")  # "Bahamut"
+    AdvancedBlessing = _("어드밴스드 블레스")  # "Advanced Blessing"
+    BuffMastery = _("마스터 매직")  # "Buff Mastery"
+    ArcaneAim = _("아케인 에임")  # "Arcane Aim"
+    # Hypers
+    HeavensDoor = _("헤븐즈도어")  # "Heaven's Door"
+    EpicAdventure = _("에픽 어드벤쳐")  # "Epic Adventure"
+    RighteouslyIndignant = _("벤전스 오브 엔젤")  # "Righteously Indignant"
+    # 5th Job
+    Benediction = _("프레이")  # "Benediction"
+    AngelofBalance = _("엔젤 오브 리브라")  # "Angel of Balance"
+    Peacemaker = _("피스메이커")  # "Peacemaker"
+    DivinePunishment = _("디바인 퍼니시먼트")  # "Divine Punishment"
+
 
 class PrayWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, num1, num2):
-        super(PrayWrapper, self).__init__(core.BuffSkill("프레이", 360, 1000 * (30 + vEhc.getV(num1, num2) // 2), cooltime=180 * 1000, red=True).isV(vEhc, num1, num2))
+        super(PrayWrapper, self).__init__(core.BuffSkill(BishopSkills.Benediction, 360, 1000 * (30 + vEhc.getV(num1, num2) // 2), cooltime=180 * 1000, red=True).isV(vEhc, num1, num2))
         self.enable_referring_runtime_context()
         self.stat = None
         self.modifierInvariantFlag = False
@@ -37,10 +94,10 @@ class JobGenerator(characterKernel.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
-        ruleset.add_rule(SynchronizeRule('소울 컨트랙트', '인피니티', 35000, -1), RuleSet.BASE)
-        ruleset.add_rule(SynchronizeRule('프레이', '인피니티', 45000, -1), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule('언스테이블 메모라이즈', '인피니티'), RuleSet.BASE)
-        ruleset.add_rule(DisableRule('힐'), RuleSet.BASE)
+        ruleset.add_rule(SynchronizeRule(GlobalSkills.TermsAndConditions, AdventurerSkills.Infinity, 35000, -1), RuleSet.BASE)
+        ruleset.add_rule(SynchronizeRule(BishopSkills.Benediction, AdventurerSkills.Infinity, 45000, -1), RuleSet.BASE)
+        ruleset.add_rule(InactiveRule(AdventurerSkills.UnreliableMemory, AdventurerSkills.Infinity), RuleSet.BASE)
+        ruleset.add_rule(DisableRule(BishopSkills.Heal), RuleSet.BASE)
         return ruleset
 
     def get_modifier_optimization_hint(self):
@@ -54,7 +111,17 @@ class JobGenerator(characterKernel.JobGenerator):
         return default_list
 
     def generate(self, vEhc, chtr : characterKernel.AbstractCharacter, options: Dict[str, Any]):
-        '''리브라 ON
+        '''
+        Libra ON
+        Server rack 3 seconds
+        Peacemaker 3 hits
+
+        Unstable Memorise is used when Infinity is off
+        The fray is used in a way that ends when the infi ends.
+        Soul contract is used in line with the end of Infi
+        Libra is used every cool time
+
+        리브라 ON
         서버렉 3초
         피스메이커 3히트
 
@@ -64,48 +131,49 @@ class JobGenerator(characterKernel.JobGenerator):
         리브라는 쿨마다 사용
         '''
         # Buff skills
-        Booster = self.load_skill_wrapper("부스터")
-        AdvancedBless = self.load_skill_wrapper("어드밴스드 블레스")
-        Heal = self.load_skill_wrapper("힐")
+        Booster = self.load_skill_wrapper(BishopSkills.MagicBooster)
+        AdvancedBless = self.load_skill_wrapper(BishopSkills.AdvancedBlessing)
+        Heal = self.load_skill_wrapper(BishopSkills.Heal)
         Infinity = adventurer.InfinityWrapper(self.combat)
-        EpicAdventure = self.load_skill_wrapper("에픽 어드벤처")
+        EpicAdventure = self.load_skill_wrapper(BishopSkills.EpicAdventure)
 
         Pray = PrayWrapper(vEhc, 2, 2)
 
         # Damage Skills
-        AngelRay = self.load_skill_wrapper("엔젤레이", vEhc)
+        AngelRay = self.load_skill_wrapper(BishopSkills.AngelRay, vEhc)
 
-        HeavensDoor = self.load_skill_wrapper("헤븐즈도어", vEhc)
+        HeavensDoor = self.load_skill_wrapper(BishopSkills.HeavensDoor, vEhc)
 
-        PeaceMakerInit = self.load_skill_wrapper("피스메이커(시전)", vEhc)
-        PeaceMaker = self.load_skill_wrapper("피스메이커", vEhc)
-        PeaceMakerFinal = self.load_skill_wrapper("피스메이커(폭발)", vEhc)
-        PeaceMakerFinalBuff = self.load_skill_wrapper("피스메이커(버프)", vEhc)
-        DivinePunishmentInit = self.load_skill_wrapper("디바인 퍼니시먼트(개시)", vEhc)
-        DivinePunishmentTick = self.load_skill_wrapper("디바인 퍼니시먼트(키다운)", vEhc)
+        PeaceMakerInit = self.load_skill_wrapper(f"{BishopSkills.Peacemaker}({CAST})", vEhc)
+        PeaceMaker = self.load_skill_wrapper(BishopSkills.Peacemaker, vEhc)
+        PeaceMakerFinal = self.load_skill_wrapper(f"{BishopSkills.Peacemaker}({EXPLOSION})", vEhc)
+        PeaceMakerFinalBuff = self.load_skill_wrapper(f"{BishopSkills.Peacemaker}({BUFF})", vEhc)
+
+        DivinePunishmentInit = self.load_skill_wrapper(f"{BishopSkills.DivinePunishment}({INIT})", vEhc)
+        DivinePunishmentTick = self.load_skill_wrapper(f"{BishopSkills.DivinePunishment}({KEYDOWN})", vEhc)
 
         # Summoning skill
-        Bahamutt = self.load_skill_wrapper("바하뮤트", vEhc)  # 최종뎀25%스택, 리브라 종료시 자동소환 되므로 딜레이 0
-        AngelOfLibra = self.load_skill_wrapper("엔젤 오브 리브라", vEhc)  # 최종뎀50%스택
+        Bahamutt = self.load_skill_wrapper(BishopSkills.Bahamut, vEhc)  # 최종뎀25%스택, 리브라 종료시 자동소환 되므로 딜레이 0
+        AngelOfLibra = self.load_skill_wrapper(BishopSkills.AngelofBalance, vEhc)  # 최종뎀50%스택
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         # Unstable Memorize skills
-        EnergyBolt = self.load_skill_wrapper("에너지 볼트")
-        HolyArrow = self.load_skill_wrapper("홀리 애로우")
-        ShiningRay = self.load_skill_wrapper("샤이닝 레이")
-        HolyFountain = self.load_skill_wrapper("홀리 파운틴")
-        Dispell = self.load_skill_wrapper("디스펠")
-        DivineProtection = self.load_skill_wrapper("디바인 프로텍션")
-        Genesis = self.load_skill_wrapper("제네시스")
-        BigBang = self.load_skill_wrapper("빅뱅", vEhc)
-        Resurrection = self.load_skill_wrapper("리저렉션")
+        EnergyBolt = self.load_skill_wrapper(BishopSkills.EnergyBolt)
+        HolyArrow = self.load_skill_wrapper(BishopSkills.HolyArrow)
+        ShiningRay = self.load_skill_wrapper(BishopSkills.ShiningRay)
+        HolyFountain = self.load_skill_wrapper(BishopSkills.HolyFountain)
+        Dispell = self.load_skill_wrapper(BishopSkills.Dispel)
+        DivineProtection = self.load_skill_wrapper(BishopSkills.DivineProtection)
+        Genesis = self.load_skill_wrapper(BishopSkills.Genesis)
+        BigBang = self.load_skill_wrapper(BishopSkills.BigBang, vEhc)
+        Resurrection = self.load_skill_wrapper(BishopSkills.Resurrection)
 
-        VengenceOfAngel_Delay = self.load_skill_wrapper("벤전스 오브 엔젤(딜레이)")
+        VengenceOfAngel_Delay = self.load_skill_wrapper(f"{BishopSkills.RighteouslyIndignant}({DELAY})")
 
         ######   Wrappers    ######
         # Unstable Memorize
         UnstableMemorize = adventurer.UnstableMemorizeWrapper(vEhc, 4, 4, chtr.get_skill_modifier())
-        UnstableMemorize.onAfter(VengenceOfAngel_Delay)  # 벤전스 OFF(딜레이 0) - 언스테이블 - 벤전스 ON(딜레이 480)
+        UnstableMemorize.onAfter(VengenceOfAngel_Delay)  # Vengeance OFF (Delay 0)-Unstable-Vengeance ON (Delay 480). 벤전스 OFF(딜레이 0) - 언스테이블 - 벤전스 ON(딜레이 480).
 
         for sk, weight in [(EnergyBolt, 1), (HolyArrow, 10), (Heal, 10), (ShiningRay, 10),
                            (HolyFountain, 10), (Dispell, 25), (DivineProtection, 10), (AngelRay, 25), (Genesis, 25),
@@ -113,12 +181,12 @@ class JobGenerator(characterKernel.JobGenerator):
             UnstableMemorize.add_skill(sk, weight)
 
         # Sacred Mark Control
-        SacredMark = core.StackSkillWrapper(core.BuffSkill("소환수 표식", 0, 999999 * 1000), 50)
-        Bahamutt.onTick(SacredMark.stackController(25, name="표식(25%)", dtype="set"))
-        AngelOfLibra.onTick(SacredMark.stackController(50, name="표식(50%)", dtype="set"))
+        SacredMark = core.StackSkillWrapper(core.BuffSkill(_("소환수 표식"), 0, 999999 * 1000), 50)
+        Bahamutt.onTick(SacredMark.stackController(25, name=_("표식(25%)"), dtype="set"))
+        AngelOfLibra.onTick(SacredMark.stackController(50, name=_("표식(50%)"), dtype="set"))
 
         for sk in [HolyArrow, ShiningRay, Genesis, BigBang, AngelRay, PeaceMaker, PeaceMakerFinal, DivinePunishmentTick]:
-            sk.onJustAfter(SacredMark.stackController(0, name="표식(소모)", dtype="set"))
+            sk.onJustAfter(SacredMark.stackController(0, name=_("표식(소모)"), dtype="set"))
             sk.add_runtime_modifier(SacredMark, lambda skill: core.CharacterModifier(pdamage_indep=skill.stack))
 
         # Peace Maker
@@ -129,7 +197,7 @@ class JobGenerator(characterKernel.JobGenerator):
 
         # Libra - Bahamutt exclusive
         AngelOfLibra.onAfter(Bahamutt.controller(1))
-        Bahamutt.onConstraint(core.ConstraintElement("리브라와 동시사용 불가", AngelOfLibra, AngelOfLibra.is_not_active))
+        Bahamutt.onConstraint(core.ConstraintElement(_("리브라와 동시사용 불가"), AngelOfLibra, AngelOfLibra.is_not_active))
 
         # Divine Punishment
         DivinePunishmentInit.onAfter(core.RepeatElement(DivinePunishmentTick, 41))  # 1스택당 지속시간이 1초보다 길게 측정됨, 9스택시 41틱 발동

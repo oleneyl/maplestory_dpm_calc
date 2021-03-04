@@ -1,0 +1,9160 @@
+# Korean translations for PROJECT.
+# Copyright (C) 2021 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2021-03-03 21:34-0500\n"
+"PO-Revision-Date: 2021-02-28 00:23-0500\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ko\n"
+"Language-Team: ko <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.0\n"
+
+#: dpm_sheet.py:15 statistics/detail_sheet.py:15 statistics/saver.py:21
+msgid "모듈을 설치해야 합니다"
+msgstr ""
+
+#: dpm_sheet.py:52 dpm_sheet.py:57 dpm_sheet.py:59 dpm_sheet.py:65
+#: statistics/detail_sheet.py:74
+msgid "직업"
+msgstr ""
+
+#: dpm_sheet.py:52 dpm_sheet.py:65 statistics/detail_sheet.py:75
+msgid "쿨감"
+msgstr ""
+
+#: dpm_sheet.py:52 dpm_sheet.py:57 dpm_sheet.py:65
+#: statistics/detail_sheet.py:76
+msgid "비고"
+msgstr ""
+
+#: dpm_sheet.py:63 dpm_sheet.py:65
+msgid "배율"
+msgstr ""
+
+#: full_test.py:26
+msgid "{} {} 계산중"
+msgstr ""
+
+#: full_test.py:33
+msgid "{} {} 계산완료, {:.3f}초"
+msgstr ""
+
+#: full_test.py:57
+msgid "총 소요시간: {:.3f}초"
+msgstr ""
+
+#: dpmModule/character/characterKernel.py:71
+#, python-format
+msgid "레벨 %d"
+msgstr ""
+
+#: dpmModule/character/characterKernel.py:77
+msgid "레벨 강제 변경 : {} -> {}"
+msgstr ""
+
+#: dpmModule/character/characterKernel.py:206
+msgid "무기류 잠재능력은 아이템당 최대 3개입니다"
+msgstr ""
+
+#: dpmModule/character/characterKernel.py:384
+msgid "여제의 축복"
+msgstr ""
+
+#: dpmModule/character/characterKernel.py:385
+#: dpmModule/character/characterTemplate.py:99
+#: dpmModule/character/linkSkill.py:81 dpmModule/character/linkSkill.py:99
+#: dpmModule/jobs/__init__.py:88 dpmModule/jobs/__init__.py:137
+#: dpmModule/jobs/zero.py:126 statistics/preset.py:375 statistics/preset.py:382
+msgid "제로"
+msgstr ""
+
+#: dpmModule/character/characterKernel.py:387
+msgid "연합의 의지"
+msgstr ""
+
+#: dpmModule/character/characterTemplate.py:371
+msgid "세트효과 합계"
+msgstr ""
+
+#: dpmModule/character/doping.py:9
+msgid "길드의 더 큰 축복"
+msgstr ""
+
+#: dpmModule/character/doping.py:10
+msgid "우뿌"
+msgstr ""
+
+#: dpmModule/character/doping.py:11
+msgid "붕뿌"
+msgstr ""
+
+#: dpmModule/character/doping.py:12
+msgid "유니온의 힘"
+msgstr ""
+
+#: dpmModule/character/doping.py:13
+msgid "익스레드/블루"
+msgstr ""
+
+#: dpmModule/character/doping.py:14
+msgid "MVP 버프"
+msgstr ""
+
+#: dpmModule/character/doping.py:15
+msgid "영웅의 메아리"
+msgstr ""
+
+#: dpmModule/character/doping.py:19 dpmModule/character/doping.py:20
+msgid "향상된 10단계 물약"
+msgstr ""
+
+#: dpmModule/character/doping.py:21
+msgid "익스트림 레드"
+msgstr ""
+
+#: dpmModule/character/doping.py:24
+msgid "노블레스(뎀퍼)"
+msgstr ""
+
+#: dpmModule/character/doping.py:25
+msgid "노블레스(보공)"
+msgstr ""
+
+#: dpmModule/character/doping.py:26
+msgid "반빨별"
+msgstr ""
+
+#: dpmModule/character/doping.py:29
+msgid "고관비"
+msgstr ""
+
+#: dpmModule/character/doping.py:31
+msgid "노블레스(크뎀)"
+msgstr ""
+
+#: dpmModule/character/hyperStat.py:58 dpmModule/character/linkSkill.py:73
+#: dpmModule/character/linkSkill.py:122 dpmModule/jobs/__init__.py:78
+#: dpmModule/jobs/__init__.py:127 dpmModule/jobs/demonavenger.py:88
+msgid "데몬어벤져"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:12
+msgid "링크(데몬슬레이어)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:13
+msgid "링크(데몬어벤져)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:14
+msgid "링크(아크)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:15
+msgid "링크(일리움)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:16
+msgid "링크(카데나)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:17
+msgid "링크(모법)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:18
+msgid "링크(모도)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:19
+msgid "링크(아델)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:20
+msgid "링크(루미너스)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:21
+msgid "링크(제로)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:22
+msgid "링크(호영)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:23
+msgid "링크(제논)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:24
+msgid "링크(모해)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:25
+msgid "링크(시그너스)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:26
+msgid "링크(팬텀)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:27
+msgid "링크(모궁)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:28
+msgid "링크(키네시스)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:29
+msgid "링크(카인)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:30
+msgid "링크(엔젤릭버스터)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:31
+msgid "링크(미하일)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:32
+msgid "링크(메르세데스)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:33
+msgid "링크(아란)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:34
+msgid "링크(에반)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:35
+msgid "링크(은월)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:36
+msgid "링크(카이저)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:37
+msgid "링크(레지스탕스)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:38
+msgid "링크(모전)"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:41 dpmModule/jobs/__init__.py:53
+#: dpmModule/jobs/__init__.py:102 statistics/preset.py:39
+msgid "아크메이지불/독"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:42 dpmModule/jobs/__init__.py:54
+#: dpmModule/jobs/__init__.py:103 statistics/preset.py:46
+msgid "아크메이지썬/콜"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:43 dpmModule/jobs/__init__.py:55
+#: dpmModule/jobs/__init__.py:104 statistics/preset.py:53
+msgid "비숍"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:44 dpmModule/jobs/__init__.py:50
+#: dpmModule/jobs/__init__.py:99 dpmModule/jobs/hero.py:130
+#: statistics/preset.py:18
+msgid "히어로"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:45 dpmModule/jobs/__init__.py:51
+#: dpmModule/jobs/__init__.py:100 dpmModule/jobs/paladin.py:75
+#: statistics/preset.py:25
+msgid "팔라딘"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:46 dpmModule/jobs/__init__.py:52
+#: dpmModule/jobs/__init__.py:101 dpmModule/jobs/darknight.py:75
+#: statistics/preset.py:32
+msgid "다크나이트"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:47 dpmModule/jobs/__init__.py:56
+#: dpmModule/jobs/__init__.py:105 dpmModule/jobs/bowmaster.py:125
+#: statistics/preset.py:60
+msgid "보우마스터"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:48 dpmModule/jobs/__init__.py:58
+#: dpmModule/jobs/__init__.py:107 dpmModule/jobs/pathfinder.py:146
+#: statistics/preset.py:81
+msgid "패스파인더"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:49 dpmModule/jobs/__init__.py:57
+#: dpmModule/jobs/__init__.py:106 dpmModule/jobs/marksman.py:73
+#: statistics/preset.py:67 statistics/preset.py:74
+msgid "신궁"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:50 dpmModule/jobs/__init__.py:59
+#: dpmModule/jobs/__init__.py:108 dpmModule/jobs/nightlord.py:78
+#: statistics/preset.py:88 statistics/preset.py:95
+msgid "나이트로드"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:51 dpmModule/jobs/__init__.py:60
+#: dpmModule/jobs/__init__.py:109 dpmModule/jobs/shadower.py:78
+#: statistics/preset.py:102
+msgid "섀도어"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:52 dpmModule/jobs/__init__.py:61
+#: dpmModule/jobs/__init__.py:110 dpmModule/jobs/dualblade.py:82
+#: statistics/preset.py:109
+msgid "듀얼블레이드"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:53 dpmModule/jobs/__init__.py:63
+#: dpmModule/jobs/__init__.py:112 dpmModule/jobs/corsair.py:84
+#: statistics/preset.py:123
+msgid "캡틴"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:54 dpmModule/jobs/__init__.py:62
+#: dpmModule/jobs/__init__.py:111 dpmModule/jobs/buccaneer.py:137
+#: statistics/preset.py:116
+msgid "바이퍼"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:55 dpmModule/jobs/__init__.py:64
+#: dpmModule/jobs/__init__.py:113 dpmModule/jobs/cannoneer.py:74
+#: statistics/preset.py:130
+msgid "캐논슈터"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:56 dpmModule/character/linkSkill.py:99
+#: dpmModule/jobs/__init__.py:65 dpmModule/jobs/__init__.py:114
+#: dpmModule/jobs/dawnwarrior.py:76 statistics/preset.py:137
+msgid "소울마스터"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:57 dpmModule/jobs/__init__.py:66
+#: dpmModule/jobs/__init__.py:115 dpmModule/jobs/blazewizard.py:79
+#: statistics/preset.py:158 statistics/preset.py:165
+msgid "플레임위자드"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:58 dpmModule/jobs/__init__.py:67
+#: dpmModule/jobs/__init__.py:116 dpmModule/jobs/windarcher.py:71
+#: statistics/preset.py:172
+msgid "윈드브레이커"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:59 dpmModule/character/linkSkill.py:99
+#: dpmModule/jobs/__init__.py:68 dpmModule/jobs/__init__.py:117
+#: dpmModule/jobs/nightwalker.py:128 statistics/preset.py:179
+#: statistics/preset.py:186
+msgid "나이트워커"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:60 dpmModule/character/linkSkill.py:99
+#: dpmModule/jobs/__init__.py:69 dpmModule/jobs/__init__.py:118
+#: dpmModule/jobs/thunderbreaker.py:87 statistics/preset.py:193
+#: statistics/preset.py:200
+msgid "스트라이커"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:61 dpmModule/jobs/__init__.py:70
+#: dpmModule/jobs/__init__.py:119 dpmModule/jobs/mihile.py:81
+#: statistics/preset.py:144 statistics/preset.py:151
+msgid "미하일"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:62 dpmModule/jobs/__init__.py:71
+#: dpmModule/jobs/__init__.py:120 dpmModule/jobs/aran.py:131
+#: statistics/preset.py:249
+msgid "아란"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:63 dpmModule/jobs/__init__.py:72
+#: dpmModule/jobs/__init__.py:121 dpmModule/jobs/evan.py:213
+#: statistics/preset.py:256
+msgid "에반"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:64 dpmModule/jobs/__init__.py:76
+#: dpmModule/jobs/__init__.py:125 dpmModule/jobs/luminous.py:200
+#: statistics/preset.py:263
+msgid "루미너스"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:65 dpmModule/jobs/__init__.py:73
+#: dpmModule/jobs/__init__.py:122 dpmModule/jobs/mercedes.py:137
+#: statistics/preset.py:270 statistics/preset.py:277
+msgid "메르세데스"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:66 dpmModule/jobs/__init__.py:74
+#: dpmModule/jobs/__init__.py:123 dpmModule/jobs/phantom.py:82
+#: statistics/preset.py:284 statistics/preset.py:291
+msgid "팬텀"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:67 dpmModule/jobs/__init__.py:75
+#: dpmModule/jobs/__init__.py:124 dpmModule/jobs/shade.py:110
+#: statistics/preset.py:298 statistics/preset.py:305
+msgid "은월"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:68 dpmModule/jobs/__init__.py:81
+#: dpmModule/jobs/__init__.py:130 dpmModule/jobs/mechanic.py:140
+#: statistics/preset.py:235
+msgid "메카닉"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:69 dpmModule/character/linkSkill.py:99
+#: dpmModule/jobs/__init__.py:79 dpmModule/jobs/__init__.py:128
+#: dpmModule/jobs/battlemage.py:115 statistics/preset.py:221
+msgid "배틀메이지"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:70 dpmModule/jobs/__init__.py:80
+#: dpmModule/jobs/__init__.py:129 dpmModule/jobs/wildhunter.py:115
+#: statistics/preset.py:228
+msgid "와일드헌터"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:71 dpmModule/character/linkSkill.py:99
+#: dpmModule/jobs/__init__.py:83 dpmModule/jobs/__init__.py:132
+#: dpmModule/jobs/blaster.py:102 statistics/preset.py:207
+msgid "블래스터"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:72 dpmModule/jobs/__init__.py:82
+#: dpmModule/jobs/__init__.py:131 dpmModule/jobs/xenon.py:202
+#: statistics/preset.py:242
+msgid "제논"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:74 dpmModule/jobs/__init__.py:77
+#: dpmModule/jobs/__init__.py:126 dpmModule/jobs/demonslayer.py:89
+#: statistics/preset.py:214
+msgid "데몬슬레이어"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:75 dpmModule/jobs/__init__.py:84
+#: dpmModule/jobs/__init__.py:133 dpmModule/jobs/kaiser.py:214
+#: statistics/preset.py:312
+msgid "카이저"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:76 dpmModule/jobs/__init__.py:87
+#: dpmModule/jobs/__init__.py:136 dpmModule/jobs/angelicbuster.py:81
+#: statistics/preset.py:333 statistics/preset.py:340
+msgid "엔젤릭버스터"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:77 dpmModule/character/linkSkill.py:99
+#: dpmModule/jobs/__init__.py:86 dpmModule/jobs/__init__.py:135
+#: dpmModule/jobs/cadena.py:161 statistics/preset.py:326
+msgid "카데나"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:78 dpmModule/jobs/__init__.py:91
+#: dpmModule/jobs/__init__.py:140 dpmModule/jobs/ilium.py:200
+#: statistics/preset.py:354
+msgid "일리움"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:79 dpmModule/jobs/__init__.py:92
+#: dpmModule/jobs/__init__.py:141 dpmModule/jobs/ark.py:233
+#: statistics/preset.py:361
+msgid "아크"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:80 dpmModule/jobs/__init__.py:90
+#: dpmModule/jobs/__init__.py:139 dpmModule/jobs/adele.py:159
+#: statistics/preset.py:347
+msgid "아델"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:82 dpmModule/jobs/__init__.py:89
+#: dpmModule/jobs/__init__.py:138 dpmModule/jobs/kinesis.py:144
+#: statistics/preset.py:389 statistics/preset.py:396
+msgid "키네시스"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:83 dpmModule/jobs/__init__.py:93
+#: dpmModule/jobs/__init__.py:142 dpmModule/jobs/hoyoung.py:205
+#: statistics/preset.py:368
+msgid "호영"
+msgstr ""
+
+#: dpmModule/character/linkSkill.py:84 dpmModule/jobs/__init__.py:85
+#: dpmModule/jobs/__init__.py:134 dpmModule/jobs/kain.py:672
+#: statistics/preset.py:319
+msgid "카인"
+msgstr ""
+
+#: dpmModule/gear/Gear.py:79
+msgid "= ID: "
+msgstr ""
+
+#: dpmModule/gear/Gear.py:80
+msgid "= 이름: "
+msgstr ""
+
+#: dpmModule/gear/Gear.py:81
+msgid "= 분류: "
+msgstr ""
+
+#: dpmModule/gear/Gear.py:82
+msgid "놀장"
+msgstr ""
+
+#: dpmModule/gear/Gear.py:82
+msgid "스타포스"
+msgstr ""
+
+#: dpmModule/gear/Gear.py:84
+msgid "= 최대 업횟: "
+msgstr ""
+
+#: dpmModule/gear/Gear.py:85
+msgid " (황금 망치: +"
+msgstr ""
+
+#: dpmModule/gear/Gear.py:86
+msgid "= 업그레이드 성공 횟수: "
+msgstr ""
+
+#: dpmModule/gear/Gear.py:87
+msgid "= 업그레이드 실패 횟수: "
+msgstr ""
+
+#: dpmModule/gear/Gear.py:88
+msgid "= 옵션: 합계 (기본 +추옵 +주문서 +별)\n"
+msgstr ""
+
+#: dpmModule/gear/Gear.py:89
+msgid "= 잠재능력: \n"
+msgstr ""
+
+#: dpmModule/gear/Gear.py:90
+msgid "= 에디셔널 잠재능력: \n"
+msgstr ""
+
+#: dpmModule/gear/SetItem.py:32
+msgid "ID: {} 이름: {} 럭키아이템: {} 장비 ID: {} 효과: {}"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:23
+msgid "노블레스"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:25 dpmModule/jobs/ark.py:25
+#: dpmModule/jobs/ilium.py:21
+msgid "매직 서킷"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:26
+msgid "패이스"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:28
+msgid "플레인"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:29
+msgid "샤드"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:30
+msgid "루디먼트"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:32
+msgid "에테르"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:33
+msgid "에테르 결정"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:34
+msgid "펀토"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:35
+msgid "크리에이션"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:37
+msgid "레조넌스"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:38
+msgid "원더"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:39 dpmModule/jobs/hoyoung.py:47
+msgid "부채 가속"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:40
+msgid "마스터리"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:41
+msgid "트레인"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:43
+msgid "크로스"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:44
+msgid "오더"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:45
+msgid "게더링"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:46
+msgid "테리토리"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:47
+msgid "노빌리티"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:48
+msgid "어센트"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:50
+msgid "하이 에테르"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:51
+msgid "디바이드"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:52
+msgid "블로섬"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:53
+msgid "그레이브"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:54 dpmModule/jobs/ark.py:62
+msgid "레프의 용사"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:55
+msgid "엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:56
+msgid "퍼펙션"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:57
+msgid "데몰리션"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:58
+msgid "어테인"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:60
+msgid "마커"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:61
+msgid "스콜"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:62 dpmModule/jobs/ark.py:71
+#: dpmModule/jobs/ilium.py:67
+msgid "레이스 오브 갓"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:64
+msgid "루인"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:65
+msgid "인피니트"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:66
+msgid "리스토어"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:67
+msgid "스톰"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:71
+msgid "자연 회복"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:72
+msgid "주기공격"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:126
+msgid "오더 지속시간 지연"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:191 dpmModule/jobs/angelicbuster.py:112
+#: dpmModule/jobs/aran.py:169 dpmModule/jobs/ark.py:273
+#: dpmModule/jobs/battlemage.py:188 dpmModule/jobs/blaster.py:138
+#: dpmModule/jobs/blazewizard.py:111 dpmModule/jobs/bowmaster.py:174
+#: dpmModule/jobs/buccaneer.py:171 dpmModule/jobs/cadena.py:186
+#: dpmModule/jobs/cannoneer.py:132 dpmModule/jobs/corsair.py:134
+#: dpmModule/jobs/darknight.py:102 dpmModule/jobs/dawnwarrior.py:111
+#: dpmModule/jobs/demonavenger.py:143 dpmModule/jobs/demonslayer.py:141
+#: dpmModule/jobs/dualblade.py:104 dpmModule/jobs/evan.py:248
+#: dpmModule/jobs/hero.py:157 dpmModule/jobs/hoyoung.py:230
+#: dpmModule/jobs/ilium.py:244 dpmModule/jobs/kaiser.py:244
+#: dpmModule/jobs/kinesis.py:178 dpmModule/jobs/luminous.py:228
+#: dpmModule/jobs/marksman.py:116 dpmModule/jobs/mechanic.py:163
+#: dpmModule/jobs/mercedes.py:172 dpmModule/jobs/mihile.py:109
+#: dpmModule/jobs/nightlord.py:127 dpmModule/jobs/nightwalker.py:160
+#: dpmModule/jobs/paladin.py:120 dpmModule/jobs/pathfinder.py:184
+#: dpmModule/jobs/phantom.py:104 dpmModule/jobs/shade.py:142
+#: dpmModule/jobs/shadower.py:110 dpmModule/jobs/thunderbreaker.py:127
+#: dpmModule/jobs/wildhunter.py:150 dpmModule/jobs/windarcher.py:133
+#: dpmModule/jobs/xenon.py:258
+msgid "무기상수"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:192 dpmModule/jobs/angelicbuster.py:113
+#: dpmModule/jobs/aran.py:170 dpmModule/jobs/ark.py:274
+#: dpmModule/jobs/battlemage.py:190 dpmModule/jobs/blaster.py:139
+#: dpmModule/jobs/blazewizard.py:112 dpmModule/jobs/bowmaster.py:175
+#: dpmModule/jobs/buccaneer.py:172 dpmModule/jobs/cadena.py:187
+#: dpmModule/jobs/cannoneer.py:133 dpmModule/jobs/corsair.py:135
+#: dpmModule/jobs/darknight.py:103 dpmModule/jobs/dawnwarrior.py:112
+#: dpmModule/jobs/demonavenger.py:144 dpmModule/jobs/demonslayer.py:142
+#: dpmModule/jobs/dualblade.py:105 dpmModule/jobs/evan.py:249
+#: dpmModule/jobs/hero.py:158 dpmModule/jobs/hoyoung.py:231
+#: dpmModule/jobs/ilium.py:245 dpmModule/jobs/kaiser.py:245
+#: dpmModule/jobs/kinesis.py:179 dpmModule/jobs/luminous.py:229
+#: dpmModule/jobs/marksman.py:117 dpmModule/jobs/mechanic.py:164
+#: dpmModule/jobs/mercedes.py:173 dpmModule/jobs/mihile.py:110
+#: dpmModule/jobs/nightlord.py:128 dpmModule/jobs/nightwalker.py:161
+#: dpmModule/jobs/paladin.py:121 dpmModule/jobs/pathfinder.py:185
+#: dpmModule/jobs/phantom.py:105 dpmModule/jobs/shade.py:143
+#: dpmModule/jobs/shadower.py:111 dpmModule/jobs/thunderbreaker.py:128
+#: dpmModule/jobs/wildhunter.py:151 dpmModule/jobs/windarcher.py:134
+#: dpmModule/jobs/xenon.py:260 dpmModule/jobs/zero.py:137
+msgid "숙련도"
+msgstr ""
+
+#: dpmModule/jobs/adele.py:333
+msgid "오더가 있을 때"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:24
+msgid "버블 스타"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:25
+msgid "리리컬 크로스"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:26
+msgid "어피니티 I"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:28
+msgid "스팅 익스플로전"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:29
+msgid "핑크 스커드"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:30
+msgid "파워 트랜스퍼"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:31
+msgid "소울슈터 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:32
+msgid "이너 파이어"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:33
+msgid "어피니티 Ⅱ"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:35
+msgid "소울 시커"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:36
+msgid "폴링 스타"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:37
+msgid "랜드 크래시"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:38
+msgid "콜 오브 에인션트"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:39
+msgid "어피니티 Ⅲ"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:41
+msgid "프라이멀 로어"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:42
+msgid "트리니티"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:43
+msgid "피니투라 페투치아"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:44
+msgid "소울 레조넌스"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:45
+msgid "소울 게이즈"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:46
+msgid "소울슈터 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:47
+msgid "어피니티 Ⅳ"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:48 dpmModule/jobs/cadena.py:54
+#: dpmModule/jobs/kaiser.py:61
+msgid "노바의 용사"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:49
+msgid "소울 시커 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:51
+msgid "슈퍼 노바"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:52
+msgid "파이널 컨트랙트"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:53
+msgid "소울 익절트"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:55
+msgid "에너지 버스트"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:56
+msgid "스포트라이트"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:57
+msgid "마스코트 패밀리어"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:58
+msgid "트리니티 퓨전"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:207
+msgid "트윙클 스타/매지컬 벌룬"
+msgstr ""
+
+#: dpmModule/jobs/angelicbuster.py:208
+msgid "샤이니 버블 브레스"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:22
+msgid "되찾은 기억"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:24
+msgid "콤보 어빌리티"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:25
+msgid "스매시 스윙"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:26
+msgid "스매쉬 웨이브"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:27
+msgid "폴암 부스터"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:28
+msgid "바디 프레셔"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:30
+msgid "폴암 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:31
+msgid "파이널 차지"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:32
+msgid "드레인"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:33
+msgid "스노우 차지"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:34 dpmModule/jobs/ark.py:45
+#: dpmModule/jobs/blaster.py:31 dpmModule/jobs/bowmaster.py:39
+#: dpmModule/jobs/buccaneer.py:43 dpmModule/jobs/cadena.py:37
+#: dpmModule/jobs/corsair.py:39 dpmModule/jobs/darknight.py:32
+#: dpmModule/jobs/demonslayer.py:41 dpmModule/jobs/dualblade.py:38
+#: dpmModule/jobs/hero.py:56 dpmModule/jobs/marksman.py:35
+#: dpmModule/jobs/mechanic.py:40 dpmModule/jobs/mercedes.py:37
+#: dpmModule/jobs/mihile.py:39 dpmModule/jobs/nightlord.py:35
+#: dpmModule/jobs/nightwalker.py:35 dpmModule/jobs/paladin.py:32
+#: dpmModule/jobs/pathfinder.py:43 dpmModule/jobs/shade.py:39
+#: dpmModule/jobs/shadower.py:34 dpmModule/jobs/thunderbreaker.py:37
+#: dpmModule/jobs/wildhunter.py:33 dpmModule/jobs/windarcher.py:36
+msgid "피지컬 트레이닝"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:35 dpmModule/jobs/darknight.py:31
+#: dpmModule/jobs/hero.py:55 dpmModule/jobs/mihile.py:33
+#: dpmModule/jobs/paladin.py:31 dpmModule/jobs/wildhunter.py:32
+msgid "파이널 어택"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:36
+msgid "파이널 토스"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:37
+msgid "롤링 스핀"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:38
+msgid "다이나믹 마스터리 Ⅰ"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:39
+msgid "스윙 연구 Ⅰ"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:41
+msgid "어드밴스드 콤보 어빌리티"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:42
+msgid "클리빙 어택"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:43
+msgid "블레싱 마하"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:44
+msgid "에어로 스윙"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:45
+msgid "아드레날린 부스트"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:46
+msgid "파이널 블로우"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:47 dpmModule/jobs/phantom.py:32
+msgid "저지먼트"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:48
+msgid "게더링 캐쳐"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:49
+msgid "마이트"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:51
+msgid "하이 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:52
+msgid "스위프트 무브"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:53 dpmModule/jobs/bowmaster.py:58
+#: dpmModule/jobs/hero.py:73 dpmModule/jobs/mercedes.py:55
+#: dpmModule/jobs/mihile.py:53 dpmModule/jobs/wildhunter.py:50
+msgid "어드밴스드 파이널 어택"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:54
+msgid "비욘더"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:55
+msgid "부스트 엔드-스톰 오브 피어"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:56
+msgid "부스트 엔드-헌터즈 타겟팅"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:57
+msgid "다이나믹 마스터리 II"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:58
+msgid "스윙 연구 II"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:60
+msgid "마하의 영역"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:61 dpmModule/jobs/evan.py:73
+#: dpmModule/jobs/luminous.py:63 dpmModule/jobs/mercedes.py:60
+#: dpmModule/jobs/phantom.py:67 dpmModule/jobs/shade.py:63
+msgid "히어로즈 오쓰"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:62
+msgid "아드레날린 제네레이터"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:64
+msgid "인스톨 마하"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:65
+msgid "브랜디쉬 마하"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:66
+msgid "펜릴 크래시"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:67
+msgid "블리자드 템페스트"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:71
+msgid "콤보"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:72
+msgid "눈보라"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:73
+msgid "빙산"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:74
+msgid "저주"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:525
+msgid "아란(콤보)"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:527
+#, python-format
+msgid "콤보 %d만큼 증가"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:608
+msgid "스윙 연구가 없을때"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:621
+msgid "콤보가 1000이상"
+msgstr ""
+
+#: dpmModule/jobs/aran.py:628
+msgid "아드레날린 부스트가 불가능할때"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:23 dpmModule/jobs/archmageIL.py:23
+#: dpmModule/jobs/bishop.py:22
+msgid "임피리컬 널리지"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:25 dpmModule/jobs/archmageIL.py:25
+#: dpmModule/jobs/bishop.py:24
+msgid "에너지 볼트"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:26 dpmModule/jobs/archmageIL.py:26
+#: dpmModule/jobs/bishop.py:25 dpmModule/jobs/evan.py:25
+msgid "매직 가드"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:27 dpmModule/jobs/archmageIL.py:27
+#: dpmModule/jobs/battlemage.py:22 dpmModule/jobs/bishop.py:26
+#: dpmModule/jobs/evan.py:24
+msgid "텔레포트"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:29
+msgid "플레임 오브"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:30
+msgid "엘리멘탈 드레인"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:31
+msgid "포이즌 브레스"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:32 dpmModule/jobs/archmageIL.py:35
+msgid "메디테이션"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:33 dpmModule/jobs/archmageIL.py:36
+#: dpmModule/jobs/bishop.py:34 dpmModule/jobs/evan.py:36
+#: dpmModule/jobs/luminous.py:40
+msgid "매직 부스터"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:34
+msgid "이그나이트"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:35 dpmModule/jobs/archmageIL.py:37
+#: dpmModule/jobs/bishop.py:36 dpmModule/jobs/evan.py:40
+#: dpmModule/jobs/luminous.py:41
+msgid "스펠 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:36 dpmModule/jobs/archmageIL.py:38
+#: dpmModule/jobs/battlemage.py:32 dpmModule/jobs/bishop.py:37
+#: dpmModule/jobs/evan.py:38 dpmModule/jobs/luminous.py:42
+msgid "하이 위즈덤"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:37 dpmModule/jobs/archmageIL.py:39
+#: dpmModule/jobs/bishop.py:38
+msgid "MP 이터"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:39
+msgid "익스플로젼"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:40
+msgid "포이즌 미스트"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:41
+msgid "슬라임 바이러스"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:42
+msgid "엘리멘탈 어뎁팅"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:43 dpmModule/jobs/archmageIL.py:45
+#: dpmModule/jobs/evan.py:50
+msgid "엘리멘탈 리셋"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:44 dpmModule/jobs/archmageIL.py:46
+#: dpmModule/jobs/bishop.py:46
+msgid "텔레포트 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:45
+msgid "마나 번"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:46 dpmModule/jobs/archmageIL.py:49
+msgid "엘리멘트 엠플리피케이션"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:47 dpmModule/jobs/archmageIL.py:47
+#: dpmModule/jobs/bishop.py:48
+msgid "매직 크리티컬"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:48 dpmModule/jobs/archmageIL.py:48
+msgid "익스트림 매직"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:50
+msgid "페럴라이즈"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:51
+msgid "미스트 이럽션"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:52
+msgid "퍼번트 드레인"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:53
+msgid "메테오"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:54
+msgid "플레임 헤이즈"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:55
+msgid "이프리트"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:56 dpmModule/jobs/archmageIL.py:58
+#: dpmModule/jobs/bishop.py:59
+msgid "아케인 에임"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:57 dpmModule/jobs/archmageIL.py:57
+#: dpmModule/jobs/bishop.py:58
+msgid "마스터 매직"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:59
+msgid "메기도 플레임"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:60 dpmModule/jobs/archmageIL.py:61
+#: dpmModule/jobs/bowmaster.py:62 dpmModule/jobs/buccaneer.py:70
+#: dpmModule/jobs/cannoneer.py:57 dpmModule/jobs/corsair.py:64
+#: dpmModule/jobs/darknight.py:55 dpmModule/jobs/dualblade.py:65
+#: dpmModule/jobs/hero.py:76 dpmModule/jobs/marksman.py:59
+#: dpmModule/jobs/nightlord.py:59 dpmModule/jobs/paladin.py:56
+#: dpmModule/jobs/pathfinder.py:74 dpmModule/jobs/shadower.py:60
+msgid "에픽 어드벤처"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:61
+msgid "파이어 오라"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:63
+msgid "도트 퍼니셔"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:64
+msgid "포이즌 노바"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:65
+msgid "퓨리 오브 이프리트"
+msgstr ""
+
+#: dpmModule/jobs/archmageFP.py:66
+msgid "포이즌 체인"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:28 dpmModule/jobs/bishop.py:27
+msgid "매직 아머"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:29 dpmModule/jobs/bishop.py:28
+msgid "MP 증가"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:31
+msgid "콜드 빔"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:32
+msgid "프리징 이펙트"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:33
+msgid "썬더 볼트"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:34
+msgid "칠링 스텝"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:41
+msgid "아이스 스트라이크"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:42
+msgid "글레이셜 체인"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:43
+msgid "썬더 스톰"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:44
+msgid "엘리멘탈 어뎁팅(썬,콜)"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:50
+msgid "프로즌 브레이크"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:52
+msgid "체인 라이트닝"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:53
+msgid "프리징 브레스"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:54
+msgid "블리자드"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:55
+msgid "프로즌 오브"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:56
+msgid "엘퀴네스"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:59
+msgid "프로스트 이펙트"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:60
+msgid "라이트닝 스피어"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:62
+msgid "아이스 오라"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:64
+msgid "아이스 에이지"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:65
+msgid "썬더 브레이크"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:66
+msgid "스피릿 오브 스노우"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:67
+msgid "주피터 썬더"
+msgstr ""
+
+#: dpmModule/jobs/archmageIL.py:71
+msgid "개시스킬"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:22
+msgid "무아"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:24
+msgid "컨택트 카라반"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:27
+msgid "스펙터 잠식"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:28
+msgid "잊혀지지 않는 악몽"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:29
+msgid "잊혀지지 않는 흉몽"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:30
+msgid "플레인 차지드라이브"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:31
+msgid "스펠 불릿"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:32
+msgid "미스틱 리프"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:33
+msgid "인스팅트 리프"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:34
+msgid "미스틱 아츠 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:36
+msgid "잠식 제어"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:37
+msgid "스칼렛 차지드라이브"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:38
+msgid "지워지지 않는 상처"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:39
+msgid "멈출 수 없는 충동"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:40
+msgid "멈출 수 없는 본능"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:41
+msgid "다가오는 죽음"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:42 dpmModule/jobs/buccaneer.py:39
+#: dpmModule/jobs/thunderbreaker.py:35
+msgid "너클 부스터"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:43 dpmModule/jobs/buccaneer.py:41
+#: dpmModule/jobs/shade.py:37 dpmModule/jobs/thunderbreaker.py:36
+msgid "너클 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:44
+msgid "융합 개시"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:47
+msgid "되살아나는 악몽"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:48
+msgid "되살아나는 흉몽"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:49
+msgid "거스트 차지드라이브"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:50
+msgid "채워지지 않는 굶주림"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:51
+msgid "기어 다니는 공포"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:52
+msgid "돌아오는 증오"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:53
+msgid "미스틱 아츠 트레이닝"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:54
+msgid "인스팅트 아츠 트레이닝"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:55
+msgid "융합 진행"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:57
+msgid "끝나지 않는 악몽"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:58
+msgid "끝나지 않는 흉몽"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:59
+msgid "어비스 차지드라이브"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:60
+msgid "걷잡을 수 없는 혼돈"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:61
+msgid "황홀한 구속"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:63 dpmModule/jobs/thunderbreaker.py:54
+msgid "너클 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:64
+msgid "어드밴스드 미스틱 아츠"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:65
+msgid "어드밴스드 인스팅트 아츠"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:66
+msgid "융합 완성"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:67
+msgid "전투 광란"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:69
+msgid "차지 스펠 앰플리피케이션"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:70
+msgid "끝없는 고통"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:73
+msgid "근원의 기억"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:74
+msgid "인피니티 스펠"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:75
+msgid "새어 나오는 악몽"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:76
+msgid "새어 나오는 흉몽"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:77
+msgid "영원히 굶주리는 짐승"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:81
+msgid "종결,연계"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:82
+msgid "등장"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:135
+msgid "스펙터 상태"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:191
+msgid "잠식-어드밴스드 효과 적용"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:195
+msgid "정신력 추가 소모"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:207
+msgid "상태 변경"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:327
+msgid "플레인 스펠"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:328
+msgid "플레인 버프"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:333
+msgid "스칼렛 스펠"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:334
+msgid "스칼렛 버프"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:339
+msgid "거스트 스펠(접촉)"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:340
+msgid "거스트 스펠"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:341
+msgid "거스트 버프"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:345
+msgid "어비스 스펠(접촉)"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:346
+msgid "어비스 스펠"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:347
+msgid "어비스 버프"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:381
+msgid "충동/본능 연결"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:388
+msgid "증폭된 스칼렛(버프)"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:389
+msgid "증폭된 어비스(버프)"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:472
+msgid "악몽 사용제한"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:474
+msgid "충동 사용제한"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:481 dpmModule/jobs/ark.py:490
+#: dpmModule/jobs/ark.py:533 dpmModule/jobs/ark.py:553
+#: dpmModule/jobs/ark.py:554 dpmModule/jobs/ark.py:562
+msgid "차지앰플 확인"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:482 dpmModule/jobs/ark.py:491
+#: dpmModule/jobs/ark.py:555 dpmModule/jobs/ark.py:556
+msgid "게이지 150 이상"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:519
+msgid "스칼렛"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:520
+msgid "거스트"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:521
+msgid "어비스"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:524
+msgid "상처"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:525
+msgid "굶주림"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:526
+msgid "혼돈"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:527
+msgid "본능"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:528 dpmModule/jobs/cadena.py:75
+msgid "공포"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:534
+msgid "게이지 250 이상"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:540 dpmModule/jobs/buccaneer.py:477
+#: dpmModule/jobs/dawnwarrior.py:173 dpmModule/jobs/demonavenger.py:255
+#: dpmModule/jobs/demonslayer.py:227 dpmModule/jobs/ilium.py:388
+#: dpmModule/jobs/kaiser.py:348 dpmModule/jobs/luminous.py:289
+#: dpmModule/jobs/marksman.py:371 dpmModule/jobs/mercedes.py:315
+#: dpmModule/jobs/mihile.py:201 dpmModule/jobs/shade.py:272
+#: dpmModule/jobs/shadower.py:244 dpmModule/jobs/thunderbreaker.py:242
+#: dpmModule/jobs/zero.py:437
+msgid "기본 공격"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:546
+msgid "레프 모드"
+msgstr ""
+
+#: dpmModule/jobs/ark.py:551
+msgid "스펙터 모드"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:21
+msgid "트리플 블로우"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:23
+msgid "옐로우 오라"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:24 dpmModule/jobs/battlemage.py:338
+msgid "데스"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:25
+msgid "아트 오브 스태프"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:27
+msgid "쿼드 블로우"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:28
+msgid "다크 체인"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:29
+msgid "드레인 오라"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:30
+msgid "스태프 부스터"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:31
+msgid "스태프 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:33
+msgid "오디너리 컨버전"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:34
+msgid "데스 컨트랙트"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:36
+msgid "데스 블로우"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:37
+msgid "배틀 스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:38
+msgid "블루 오라"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:39
+msgid "다크 라이트닝"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:40
+msgid "배틀 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:41 dpmModule/jobs/darknight.py:47
+#: dpmModule/jobs/hero.py:69 dpmModule/jobs/mihile.py:58
+#: dpmModule/jobs/paladin.py:50
+msgid "스탠스"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:42
+msgid "너브 스티뮬레이션"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:43
+msgid "데스 컨트랙트2"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:45
+msgid "피니쉬 블로우"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:46
+msgid "다크 제네시스"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:47
+msgid "다크 오라"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:48
+msgid "디버프 오라"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:49
+msgid "배틀 레이지"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:50
+msgid "쉘터"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:51
+msgid "스태프 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:52
+msgid "스펠 부스트"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:53
+msgid "데스 컨트랙트3"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:55
+msgid "배틀킹 바"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:56 dpmModule/jobs/blaster.py:55
+#: dpmModule/jobs/mechanic.py:66 dpmModule/jobs/wildhunter.py:55
+msgid "윌 오브 리버티"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:57
+msgid "마스터 오브 데스"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:59
+msgid "유니온 오라"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:60
+msgid "블랙 매직 알터"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:61
+msgid "그림 리퍼"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:62
+msgid "어비셜 라이트닝"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:66
+msgid "징표"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:67
+msgid "명계의 번개"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:68
+msgid "사용가능 여부"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:258
+msgid "징표 스택"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:303
+msgid "사신의 낫"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:440
+msgid "기본공격"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:443
+msgid "유니온오라 여부"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:452
+msgid "데스 쿨타임 확인"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:468
+msgid "{} 추가타 검증"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:488
+msgid "징표 충전"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:494
+msgid "징표 사용여부 결정"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:499
+msgid "징표 사용({})"
+msgstr ""
+
+#: dpmModule/jobs/battlemage.py:500
+msgid "징표 사용"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:30
+msgid "홀리 애로우"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:31
+msgid "블레싱 앙상블"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:32
+msgid "힐"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:33
+msgid "블레스"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:35
+msgid "인빈서블"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:40
+msgid "샤이닝 레이"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:41
+msgid "홀리 파운틴"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:42
+msgid "디바인 프로텍션"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:43
+msgid "미스틱 도어"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:44
+msgid "디스펠"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:45
+msgid "홀리 심볼"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:47
+msgid "홀리 매직쉘"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:49
+msgid "홀리 포커스"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:51
+msgid "엔젤레이"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:52
+msgid "제네시스"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:53
+msgid "빅뱅"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:54
+msgid "블레싱 하모니"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:55
+msgid "리저렉션"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:56
+msgid "바하뮤트"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:57
+msgid "어드밴스드 블레스"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:61
+msgid "헤븐즈도어"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:62
+msgid "에픽 어드벤쳐"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:63
+msgid "벤전스 오브 엔젤"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:65
+msgid "프레이"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:66
+msgid "엔젤 오브 리브라"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:67
+msgid "피스메이커"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:68
+msgid "디바인 퍼니시먼트"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:184
+msgid "소환수 표식"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:185
+msgid "표식(25%)"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:186
+msgid "표식(50%)"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:189
+msgid "표식(소모)"
+msgstr ""
+
+#: dpmModule/jobs/bishop.py:200
+msgid "리브라와 동시사용 불가"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:19
+msgid "매그넘 펀치"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:20
+msgid "리볼빙 캐논"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:21
+msgid "릴리즈 파일 벙커"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:22 dpmModule/jobs/bowmaster.py:28
+#: dpmModule/jobs/marksman.py:24 dpmModule/jobs/pathfinder.py:31
+msgid "더블 점프"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:23
+msgid "익스플로젼 무브"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:24
+msgid "인듀어런스 실드"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:25
+msgid "리볼빙 캐논 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:27
+msgid "더블 팡"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:28
+msgid "더킹"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:29
+msgid "건틀렛 부스터"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:30
+msgid "건틀렛 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:32
+msgid "차지 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:33
+msgid "리볼빙 캐논 업그레이드"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:35
+msgid "해머 스매시"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:36
+msgid "스웨이"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:37
+msgid "리프트 프레스"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:38
+msgid "리프트 매그넘"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:39
+msgid "리볼빙 캐논 업그레이드II"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:40
+msgid "인듀어런스 트레이닝"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:41
+msgid "콤비네이션 트레이닝"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:43
+msgid "쇼크 웨이브 펀치"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:44
+msgid "플래시 무브"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:45
+msgid "허리케인 믹서"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:46
+msgid "리볼빙 벙커"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:47
+msgid "슈퍼 인듀어런스"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:48
+msgid "리볼빙 캐논 업그레이드III"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:49
+msgid "인듀어런스 트레이닝II"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:50
+msgid "건틀렛 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:51
+msgid "어드밴스드 차지 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:52
+msgid "콤비네이션 트레이닝II"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:54
+msgid "하이퍼 매그넘 펀치"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:56
+msgid "맥시마이즈 캐논"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:58
+msgid "벙커 버스터"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:59
+msgid "발칸 펀치"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:60
+msgid "버닝 브레이커"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:61
+msgid "애프터이미지 쇼크"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:64 dpmModule/jobs/darknight.py:35
+#: dpmModule/jobs/hero.py:59 dpmModule/jobs/paladin.py:36
+msgid "돌진"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:193
+msgid "실린더 게이지"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:194
+msgid "실린더 과열"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:292
+msgid "릴파벙해머"
+msgstr ""
+
+#: dpmModule/jobs/blaster.py:293
+msgid "실린더 게이지 최대"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:20 dpmModule/jobs/dawnwarrior.py:19
+#: dpmModule/jobs/nightwalker.py:18 dpmModule/jobs/thunderbreaker.py:23
+#: dpmModule/jobs/windarcher.py:20
+msgid "시그너스 블레스"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:22 dpmModule/jobs/dawnwarrior.py:21
+#: dpmModule/jobs/nightwalker.py:20 dpmModule/jobs/thunderbreaker.py:25
+#: dpmModule/jobs/windarcher.py:22
+msgid "엘리멘탈 하모니"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:23 dpmModule/jobs/dawnwarrior.py:22
+#: dpmModule/jobs/mihile.py:23 dpmModule/jobs/nightwalker.py:21
+#: dpmModule/jobs/thunderbreaker.py:26 dpmModule/jobs/windarcher.py:23
+msgid "엘리멘탈 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:25
+msgid "오비탈 플레임"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:26
+msgid "플레임 바이트"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:27
+msgid "엘리멘트: 플레임"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:28
+msgid "파이어워크"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:29
+msgid "불의 반발력"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:30
+msgid "타고난 재능"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:32
+msgid "오비탈 플레임 II"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:33
+msgid "플레임 볼텍스"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:34
+msgid "이그니션"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:36
+msgid "북 오브 파이어"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:37
+msgid "번 앤 레스트"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:38
+msgid "엘리멘트: 플레임 II"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:39
+msgid "주문 연마"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:41
+msgid "오비탈 플레임 III"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:42
+msgid "플레임 템페스타"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:43
+msgid "마엘스트롬"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:44
+msgid "본 피닉스"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:45
+msgid "엘리멘트: 플레임 III"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:46
+msgid "해방된 마력"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:47
+msgid "약점 분석"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:48
+msgid "번뜩이는 깨달음"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:50 dpmModule/jobs/dawnwarrior.py:48
+#: dpmModule/jobs/mihile.py:59 dpmModule/jobs/nightwalker.py:49
+#: dpmModule/jobs/thunderbreaker.py:48 dpmModule/jobs/windarcher.py:46
+msgid "시그너스 나이츠"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:51
+msgid "오비탈 플레임 IV"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:52
+msgid "블레이징 익스팅션"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:53
+msgid "인페르노라이즈"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:54
+msgid "스피릿 오브 플레임"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:55
+msgid "버닝 리전"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:56
+msgid "플레임 배리어"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:57
+msgid "엘리멘트: 플레임 IV"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:58
+msgid "마법의 진리"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:59
+msgid "꺼지지 않는 화염"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:61
+msgid "카타클리즘"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:62 dpmModule/jobs/dawnwarrior.py:62
+#: dpmModule/jobs/nightwalker.py:61 dpmModule/jobs/thunderbreaker.py:59
+#: dpmModule/jobs/windarcher.py:57
+msgid "글로리 오브 가디언즈"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:63
+msgid "드래곤 슬레이브"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:65
+msgid "블레이징 오비탈 플레임"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:66
+msgid "플레임 디스차지"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:67
+msgid "인피니티 플레임 서클"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:68
+msgid "샐리맨더 미스칩"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:72
+msgid "불씨"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:184
+msgid "도트 갱신"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:192
+msgid "이그니션 시간 체크"
+msgstr ""
+
+#: dpmModule/jobs/blazewizard.py:195
+msgid "2스택 이상"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:27 dpmModule/jobs/marksman.py:23
+msgid "애로우 블로우"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:29 dpmModule/jobs/marksman.py:25
+#: dpmModule/jobs/pathfinder.py:33
+msgid "크리티컬 샷"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:30 dpmModule/jobs/marksman.py:26
+#: dpmModule/jobs/pathfinder.py:32
+msgid "아처 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:32
+msgid "애로우 봄"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:33
+msgid "리트리트 샷"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:34 dpmModule/jobs/windarcher.py:33
+msgid "보우 부스터"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:35
+msgid "소울 애로우: 활"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:36
+msgid "퀴버 카트리지"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:37 dpmModule/jobs/windarcher.py:35
+msgid "보우 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:38
+msgid "파이널 어택: 활"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:41 dpmModule/jobs/kaiser.py:26
+msgid "플레임 샷"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:42
+msgid "피닉스"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:43 dpmModule/jobs/marksman.py:40
+msgid "슈타이크 아이젠"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:44
+msgid "익스트림 아처리"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:45 dpmModule/jobs/marksman.py:43
+msgid "모탈 블로우"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:46 dpmModule/jobs/demonslayer.py:51
+msgid "컨센트레이션"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:47 dpmModule/jobs/marksman.py:45
+#: dpmModule/jobs/pathfinder.py:53
+msgid "닷지"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:48 dpmModule/jobs/marksman.py:46
+msgid "마크맨쉽"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:49
+msgid "애로우 플래터"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:51
+msgid "폭풍의 시"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:52
+msgid "운즈 샷"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:53
+msgid "언카운터블 애로우"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:54 dpmModule/jobs/marksman.py:51
+#: dpmModule/jobs/pathfinder.py:64 dpmModule/jobs/wildhunter.py:48
+#: dpmModule/jobs/windarcher.py:51
+msgid "샤프 아이즈"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:55 dpmModule/jobs/marksman.py:52
+msgid "일루젼 스탭"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:56
+msgid "어드밴스드 퀴버"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:57 dpmModule/jobs/windarcher.py:52
+msgid "보우 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:59 dpmModule/jobs/bowmaster.py:85
+msgid "아머 피어싱"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:61
+msgid "윈드 오브 프레이"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:63
+msgid "프리퍼레이션"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:65
+msgid "애로우 레인"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:66
+msgid "잔영의 시"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:67
+msgid "퀴버 풀버스트"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:68
+msgid "실루엣 미라주"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:374
+msgid "독화살"
+msgstr ""
+
+#: dpmModule/jobs/bowmaster.py:452
+msgid "쿨타임 체크"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:23 dpmModule/jobs/cannoneer.py:20
+#: dpmModule/jobs/corsair.py:22
+msgid "파이렛 블레스"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:25
+msgid "슈퍼 트랜스폼"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:27 dpmModule/jobs/corsair.py:24
+msgid "써머솔트 킥"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:28 dpmModule/jobs/corsair.py:25
+msgid "더블 파이어"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:29 dpmModule/jobs/corsair.py:26
+msgid "옥토푸시"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:30 dpmModule/jobs/corsair.py:27
+msgid "대쉬"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:31 dpmModule/jobs/corsair.py:28
+msgid "크리티컬 로어"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:32 dpmModule/jobs/corsair.py:29
+msgid "퀵모션"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:34
+msgid "토네이도 어퍼"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:35
+msgid "에너지 토네이도"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:36
+msgid "에너지 차지"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:37
+msgid "스크류 펀치"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:38
+msgid "멘탈 클리어리티"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:40
+msgid "어드밴스드 대쉬"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:42 dpmModule/jobs/mihile.py:30
+msgid "HP 증가"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:44
+msgid "인듀어런스"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:46
+msgid "더블 스파이럴"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:47
+msgid "에너지 버스터"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:48
+msgid "헤지호그 버스터"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:49
+msgid "슈퍼 차지"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:50
+msgid "쇼크웨이브"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:51 dpmModule/jobs/cannoneer.py:41
+#: dpmModule/jobs/corsair.py:44 dpmModule/jobs/mechanic.py:51
+msgid "럭키 다이스"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:52
+msgid "윌로우 디펜시브"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:53
+msgid "크리티컬 레이지"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:54
+msgid "스턴 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:56
+msgid "피스트 인레이지"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:57
+msgid "드래곤 스트라이크"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:58 dpmModule/jobs/cannoneer.py:50
+#: dpmModule/jobs/corsair.py:55
+msgid "전함 노틸러스"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:59
+msgid "에너지 블라스트"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:60
+msgid "더블 블라스트"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:61
+msgid "바이퍼지션"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:62
+msgid "타임 리프"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:63 dpmModule/jobs/thunderbreaker.py:53
+msgid "윈드 부스터"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:64 dpmModule/jobs/cannoneer.py:54
+#: dpmModule/jobs/corsair.py:59 dpmModule/jobs/mechanic.py:62
+msgid "더블 럭키 다이스"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:65
+msgid "울트라 차지"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:66 dpmModule/jobs/corsair.py:58
+msgid "카운터 어택"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:67
+msgid "가드 크러시"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:69
+msgid "유니티 오브 파워"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:71
+msgid "스티뮬레이트"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:73
+msgid "트랜스 폼"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:74
+msgid "서펜트 스크류"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:75
+msgid "퓨리어스 차지"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:76
+msgid "하울링 피스트"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:80
+msgid "보스"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:81
+msgid "변신"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:82
+msgid "게이지 증가 더미"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:83
+msgid "지속"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:84
+msgid "충전"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:118
+msgid "게이지: {}"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:143 dpmModule/jobs/buccaneer.py:368
+msgid "에너지 오브(더미)"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:372
+msgid "에너지 오브"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:456
+msgid "에너지 차지 상태에서만 사용 가능"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:475
+msgid "에너지 완충"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:504
+msgid "트랜스폼 상태에서만 사용가능"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:513
+msgid "에너지 100 이상"
+msgstr ""
+
+#: dpmModule/jobs/buccaneer.py:525
+msgid "에너지 1750 이상"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:22
+msgid "인텐시브 인썰트"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:24
+msgid "체인아츠:체이스"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:25
+msgid "체인아츠:"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:26
+msgid "서먼 커팅 시미터"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:27
+msgid "에이전트 시프트"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:28
+msgid "에이전트 스텝"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:29
+msgid "콜렉팅 포리프"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:31
+msgid "체인아츠:스트로크 1차 강화"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:32
+msgid "서먼 스크래칭 클로"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:33
+msgid "서먼 스로잉 윙대거"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:34 dpmModule/jobs/darknight.py:27
+#: dpmModule/jobs/hero.py:52 dpmModule/jobs/paladin.py:29
+msgid "웨폰 부스터"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:35
+msgid "웨폰 버라이어티 I"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:36 dpmModule/jobs/darknight.py:30
+#: dpmModule/jobs/demonslayer.py:40 dpmModule/jobs/hero.py:54
+#: dpmModule/jobs/paladin.py:30
+msgid "웨폰 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:38
+msgid "퀵서비스 마인드 I"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:40
+msgid "체인아츠:스트로크 2차 강화"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:41
+msgid "서먼 슈팅 샷건"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:42
+msgid "서먼 슬래싱 나이프"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:43
+msgid "서먼 릴리징 봄"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:44
+msgid "웨폰 버라이어티 II"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:45
+msgid "템퍼"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:46
+msgid "위크포인트 어택"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:47
+msgid "베이직 디텍션"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:49
+msgid "체인아츠:스트로크 최종 강화"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:50
+msgid "서먼 스트라이킹 브릭"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:51
+msgid "서먼 비팅 니들배트"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:52
+msgid "체인아츠:터프 허슬"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:53
+msgid "체인아츠:테이크다운"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:55
+msgid "웨폰 버라이어티 III"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:56
+msgid "위크포인트 컨버징 어택"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:57
+msgid "웨폰 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:58
+msgid "퀵서비스 마인드 Ⅱ"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:60
+msgid "체인아츠:크러시"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:61
+msgid "상인단 특제 비약"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:62
+msgid "프로페셔널 에이전트"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:64 dpmModule/jobs/jobbranch/thieves.py:12
+msgid "베놈 버스트"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:65
+msgid "체인아츠:퓨리"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:66
+msgid "A.D 오드넌스"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:67
+msgid "체인아츠:메일스트롬"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:68
+msgid "웨폰 버라이어티 피날레"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:72
+msgid "모법링크"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:73
+msgid "연속 공격"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:74
+msgid "바인드"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:76
+msgid "혼미"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:77
+msgid "웨버횟수"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:105
+msgid "웨버 스택"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:108
+msgid "무기 교체"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:147
+msgid "(쿨타임)"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:335
+msgid "{} 발동조건"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:341
+msgid "시미터"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:342
+msgid "클로"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:343 dpmModule/jobs/cadena.py:344
+#: dpmModule/jobs/cadena.py:392
+msgid "윙대거"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:346
+msgid "샷건"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:347 dpmModule/jobs/cadena.py:386
+msgid "나이프"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:348
+msgid "봄"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:349
+msgid "브릭"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:351 dpmModule/jobs/cadena.py:353
+#: dpmModule/jobs/cadena.py:355 dpmModule/jobs/cadena.py:395
+msgid "배트"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:375
+msgid "평타"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:380
+msgid "샷건-클로"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:383
+msgid "시미터-체이스"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:389
+msgid "봄브릭"
+msgstr ""
+
+#: dpmModule/jobs/cadena.py:398 dpmModule/jobs/cadena.py:402
+msgid "메일스트롬"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:22
+msgid "캐논 스플래셔"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:23
+msgid "펀칭 캐논"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:24
+msgid "기간틱 백스탭"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:25
+msgid "몽키푸시"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:26
+msgid "빌드업 캐논"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:28
+msgid "슬러그 샷"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:29
+msgid "몽키 러쉬붐"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:30
+msgid "캐논 부스터"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:31
+msgid "몽키 매직"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:32
+msgid "크리티컬 파이어"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:33
+msgid "캐논 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:34
+msgid "파이렛 트레이닝"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:36
+msgid "캐논 스파이크"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:37
+msgid "몽키 퓨리어스"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:38
+msgid "몽키 웨이브"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:39
+msgid "캐논 점프"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:40
+msgid "오크통 룰렛"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:42
+msgid "리인포스 캐논"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:43
+msgid "바이탈 익스트림"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:44
+msgid "반격의 슈터"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:46
+msgid "캐논 바주카"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:47
+msgid "캐논 버스터"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:48
+msgid "마그네틱 앵커"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:49
+msgid "서포트 몽키 트윈스"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:51
+msgid "파이렛 스피릿"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:52
+msgid "오버버닝 캐논"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:53
+msgid "하이퍼 몽키 스펠"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:56
+msgid "롤링 캐논 레인보우"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:58
+msgid "벅 샷"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:60
+msgid "빅 휴즈 기간틱 캐논볼"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:61
+msgid "ICBM"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:62
+msgid "스페셜 몽키 에스코트"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:63
+msgid "풀 메이커"
+msgstr ""
+
+#: dpmModule/jobs/cannoneer.py:67
+msgid "폭탄"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:31
+msgid "트리플 파이어"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:32
+msgid "서먼 크루"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:33
+msgid "매그넘 샷"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:34
+msgid "백스텝샷"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:35
+msgid "건 부스터"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:36
+msgid "윙즈"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:37
+msgid "인피닛 불릿"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:38
+msgid "건 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:41
+msgid "더블 배럴 샷"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:42
+msgid "불릿 스매시"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:43
+msgid "옥타 쿼터덱"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:45
+msgid "할로포인트 불릿"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:46
+msgid "발키리 페이션트"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:47
+msgid "풀 메탈 재킷"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:48
+msgid "어셈블 크루"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:50
+msgid "래피드 파이어"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:51
+msgid "배틀쉽 봄버"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:52
+msgid "헤드 샷"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:53
+msgid "컨티뉴얼 에이밍"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:54
+msgid "퍼실레이드"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:56
+msgid "퀵 드로우"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:57
+msgid "파이렛 스타일"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:60
+msgid "크루 커맨더쉽"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:61
+msgid "캡틴 디그니티"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:63
+msgid "스트레인지 봄"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:65
+msgid "언위어링 넥타"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:67
+msgid "불릿 파티"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:68
+msgid "데드아이"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:69
+msgid "노틸러스 어썰트"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:70
+msgid "데스 트리거"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:74
+msgid "소환,1"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:75
+msgid "소환,2"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:76
+msgid "일제 사격"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:77
+msgid "쿨타임 8초"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:495
+msgid "배틀쉽 1,2"
+msgstr ""
+
+#: dpmModule/jobs/corsair.py:515
+msgid "퀵 드로우 확률"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:16 dpmModule/jobs/paladin.py:17
+msgid "인빈서블 빌리프"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:18 dpmModule/jobs/hero.py:45
+#: dpmModule/jobs/paladin.py:19
+msgid "슬래시 블러스트"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:19 dpmModule/jobs/hero.py:46
+#: dpmModule/jobs/paladin.py:20
+msgid "워리어 리프"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:20 dpmModule/jobs/hero.py:47
+#: dpmModule/jobs/paladin.py:21
+msgid "리프 어택"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:21 dpmModule/jobs/paladin.py:22
+msgid "아이언 바디"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:22 dpmModule/jobs/paladin.py:23
+msgid "워리어 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:24
+msgid "피어싱 쓰루"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:25
+msgid "비홀더"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:26
+msgid "스피어 풀링"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:28
+msgid "아이언 월"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:29
+msgid "하이퍼 바디"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:34
+msgid "라만차 스피어"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:36
+msgid "비홀더 도미넌트"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:37
+msgid "비홀더 쇼크"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:38 dpmModule/jobs/hero.py:62
+#: dpmModule/jobs/paladin.py:38
+msgid "어퍼 차지"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:39
+msgid "크로스 오버 체인"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:40
+msgid "로드 오브 다크니스"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:41
+msgid "인듀어"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:42
+msgid "비홀더스 버프"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:44
+msgid "궁그닐 디센트"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:45 dpmModule/jobs/hero.py:68
+#: dpmModule/jobs/mihile.py:48 dpmModule/jobs/paladin.py:47
+msgid "매직 크래쉬"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:46
+msgid "다크 임페일"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:48
+msgid "새크리파이스"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:49
+msgid "리인카네이션"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:50 dpmModule/jobs/demonslayer.py:63
+msgid "어드밴스드 웨폰 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:51
+msgid "비홀더스 리벤지"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:53
+msgid "리인카네이션-크리티컬 레이트"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:54
+msgid "다크 신서시스"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:56
+msgid "다크 서스트"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:58
+msgid "다크 스피어"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:59
+msgid "비홀더 임팩트"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:60
+msgid "피어스 사이클론"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:61
+msgid "다크니스 오라"
+msgstr ""
+
+#: dpmModule/jobs/darknight.py:65
+msgid "무한"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:24
+msgid "트리플 슬래시"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:25
+msgid "엘리멘트: 소울"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:26
+msgid "소드 오브 라이트"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:28
+msgid "사일런트 무브"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:29
+msgid "라우드 러쉬"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:30
+msgid "트레이스 컷"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:31
+msgid "섀도우 번"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:32
+msgid "폴링 문"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:33
+msgid "님블 핑거"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:34
+msgid "이너 트러스트"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:35 dpmModule/jobs/kaiser.py:35
+#: dpmModule/jobs/mihile.py:32
+msgid "소드 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:36
+msgid "바디 앤 소울"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:38
+msgid "라이트 플럭스"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:39
+msgid "문 섀도우"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:40
+msgid "선크로스"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:41
+msgid "문크로스"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:42
+msgid "라이징 선"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:43
+msgid "트루 사이트"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:44
+msgid "소울 가디언"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:45
+msgid "윌 오브 스틸"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:46
+msgid "이너 샤우트"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:49
+msgid "댄스오브 문"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:50
+msgid "스피딩 선셋"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:51
+msgid "솔라 피어스"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:52
+msgid "크레센트 디바이드"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:53
+msgid "소울 페네트레이션"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:54
+msgid "솔루나 타임"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:55
+msgid "솔루나 슬래시"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:56
+msgid "소울 플레지"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:57
+msgid "소드 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:58
+msgid "언포시어블"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:59
+msgid "마스터 오브 더 소드"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:61
+msgid "크로스 더 스틱스"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:63
+msgid "소울 포지"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:65
+msgid "셀레스티얼 댄스"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:66
+msgid "엘리시온"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:67
+msgid "소울 이클립스"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:68
+msgid "플레어 슬래시"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:154
+msgid "솔루나 디바이드"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:172
+msgid "기본공격(엘리시온 여부 판단)"
+msgstr ""
+
+#: dpmModule/jobs/dawnwarrior.py:181
+msgid "플레어 슬래시 쿨타임 체크"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:26
+msgid "와일드 레이지"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:28 dpmModule/jobs/demonslayer.py:24
+msgid "데몬 점프"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:29 dpmModule/jobs/demonslayer.py:25
+msgid "데모닉 블러드"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:30 dpmModule/jobs/demonslayer.py:26
+msgid "데빌 윙즈"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:31
+msgid "익시드"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:32
+msgid "하이 이피션시"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:33
+msgid "컨버전 스타포스"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:34
+msgid "블러드 컨트랙트"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:36
+msgid "익시드: 더블 슬래시"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:37
+msgid "릴리즈 오버로드"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:38
+msgid "앱졸브 라이프"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:39
+msgid "데모닉 샤프니스"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:41
+msgid "익시드: 데몬 스트라이크"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:42
+msgid "배츠 스웜"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:43 dpmModule/jobs/demonslayer.py:31
+msgid "데몬 부스터"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:44
+msgid "어비셜 레이지"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:45
+msgid "솔리드 윌"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:46
+msgid "데스페라도 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:47
+msgid "이너 스트렝스"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:49
+msgid "익시드: 문라이트 슬래시"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:50
+msgid "인헤일 바이탈러티"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:51
+msgid "쉴드 차지"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:52
+msgid "리프랙트 이블"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:53
+msgid "디아볼릭 리커버리"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:54
+msgid "이즈 익시드 페인"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:55
+msgid "어드밴스드 앱졸브 라이프"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:57
+msgid "익시드: 엑스큐션"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:58
+msgid "실드 체이싱"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:59
+msgid "아머 브레이크"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:60
+msgid "블러디 임프리즌"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:61
+msgid "오버휄밍 파워"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:62
+msgid "디펜스 엑스퍼타이즈"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:63
+msgid "어드밴스드 데스페라도 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:64
+msgid "인핸스드 익시드"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:66
+msgid "사우전드 소드"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:67
+msgid "데모닉 포티튜드"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:68
+msgid "포비든 컨트랙트"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:70
+msgid "데몬 프렌지"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:71
+msgid "블러드 피스트"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:72
+msgid "디멘션 소드"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:73
+msgid "레버넌트"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:77
+msgid "최종 데미지"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:78
+msgid "0스택"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:79
+msgid "1스택"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:80
+msgid "2스택"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:81
+msgid "3스택"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:82
+msgid "분노의 가시"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:135
+msgid "메이플 용사(데몬어벤져)"
+msgstr ""
+
+#: dpmModule/jobs/demonavenger.py:261
+msgid "레버넌트 타격 여부 확인"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:22
+msgid "데몬스 퓨리"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:27
+msgid "데스 커스"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:29
+msgid "데몬 슬래시"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:30
+msgid "데빌 사이더"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:32
+msgid "다크 어질리티"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:33
+msgid "HP증가"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:35
+msgid "데몬 슬래시 1차 강화"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:36
+msgid "소울 이터"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:37
+msgid "다크 쓰러스트"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:38
+msgid "데몬 트레이스"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:39
+msgid "다크 리벤지"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:42
+msgid "아웃레이지"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:44
+msgid "데몬 슬래시 2차 강화"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:45
+msgid "다크 저지먼트"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:46
+msgid "데쓰 드로우"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:47
+msgid "블러디 레이븐"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:48
+msgid "데모닉 브레스"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:49
+msgid "다크 인듀어"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:50
+msgid "이블 토쳐"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:52
+msgid "포스 가드"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:53
+msgid "맥스 포스"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:55
+msgid "데몬 슬래시 최종 강화"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:56
+msgid "데몬 익스플로젼"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:57
+msgid "데몬 임팩트"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:58
+msgid "데빌 크라이"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:59
+msgid "다크 바인드"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:60
+msgid "메타모포시스"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:61
+msgid "인피니티 포스"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:62
+msgid "뱀피릭 터치"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:64
+msgid "하드 스킨"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:66
+msgid "서버러스"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:67
+msgid "데몬 포티튜드"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:68
+msgid "블루 블러드"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:70
+msgid "데몬 어웨이크닝"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:71
+msgid "요르문간드"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:72
+msgid "오르트로스"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:73
+msgid "데몬 베인"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:77 dpmModule/jobs/paladin.py:37
+msgid "위협"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:78
+msgid "블블"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:79
+msgid "자동"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:80
+msgid "네메아"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:81
+msgid "게리온"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:82
+msgid "선딜"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:116 dpmModule/jobs/demonslayer.py:177
+msgid "{}-리메인타임"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:171 dpmModule/jobs/wildhunter.py:34
+msgid "부스터"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:182
+msgid "데몬 슬래시 강화(1타)"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:183
+msgid "데몬 슬래시 강화(2타)"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:184
+msgid "데몬 슬래시 강화(3타)"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:185
+msgid "데몬 슬래시 강화(4타)"
+msgstr ""
+
+#: dpmModule/jobs/demonslayer.py:226
+msgid "어웨이크닝 ON"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:23 dpmModule/jobs/nightlord.py:20
+#: dpmModule/jobs/shadower.py:18
+msgid "시프 커닝"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:25 dpmModule/jobs/nightlord.py:25
+#: dpmModule/jobs/nightwalker.py:26
+msgid "다크 사이트"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:26 dpmModule/jobs/nightlord.py:26
+#: dpmModule/jobs/shadower.py:24
+msgid "플래시 점프"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:27
+msgid "사이드 스텝"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:28
+msgid "샤프 슬래시"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:30
+msgid "이도류 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:31
+msgid "셀프 헤이스트"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:32
+msgid "토네이도 스핀"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:34
+msgid "페이탈 블로우"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:35
+msgid "슬래시 스톰"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:36 dpmModule/jobs/shadower.py:32
+msgid "카르마"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:37
+msgid "이도 부스터"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:40
+msgid "플라잉 어썰터"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:41
+msgid "어퍼 스탭"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:42
+msgid "플래시 뱅"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:43 dpmModule/jobs/nightlord.py:44
+#: dpmModule/jobs/shadower.py:43
+msgid "베놈"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:45
+msgid "블러디 스톰"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:46
+msgid "블레이드 어센션"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:47
+msgid "사슬지옥"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:48
+msgid "미러이미징"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:49 dpmModule/jobs/shadower.py:46
+msgid "어드밴스드 다크 사이트"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:50
+msgid "바이탈 스틸"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:51 dpmModule/jobs/nightlord.py:43
+#: dpmModule/jobs/nightwalker.py:43 dpmModule/jobs/shadower.py:45
+msgid "래디컬 다크니스"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:52
+msgid "섀도우 이베이젼"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:54
+msgid "블레이드 퓨리"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:55
+msgid "팬텀 블로우"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:56
+msgid "파이널 컷"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:57 dpmModule/jobs/nightlord.py:51
+#: dpmModule/jobs/shadower.py:52
+msgid "써든레이드"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:58
+msgid "더미 이펙트"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:59
+msgid "쏜즈 이펙트"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:60
+msgid "샤프니스"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:61 dpmModule/jobs/nightlord.py:55
+#: dpmModule/jobs/shadower.py:56
+msgid "페이탈 베놈"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:62
+msgid "이도류 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:64
+msgid "아수라"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:66
+msgid "히든 블레이드"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:68
+msgid "블레이드 스톰"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:69
+msgid "카르마 퓨리"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:70
+msgid "블레이드 토네이도"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:71
+msgid "헌티드 엣지"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:75
+msgid "나찰"
+msgstr ""
+
+#: dpmModule/jobs/dualblade.py:213
+msgid "헌티드 엣지 쿨타임 체크"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:19
+msgid "룬 퍼시스턴스"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:21
+msgid "계승된 의지"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:23
+msgid "서클 오브 마나Ⅰ"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:26
+msgid "드래곤 소울"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:27
+msgid "링크드 매직"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:28
+msgid "드래곤 스파킹"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:30
+msgid "서클 오브 마나II"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:31
+msgid "서클 오브 윈드"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:32
+msgid "드래곤 스위프트"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:33
+msgid "스위프트 오브 윈드"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:34
+msgid "스위프트-돌아와!"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:35
+msgid "돌아와!"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:37
+msgid "서포트 점프"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:39
+msgid "교감"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:41
+msgid "어드밴스 드래곤 스파킹"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:43
+msgid "서클 오브 마나III"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:44
+msgid "서클 오브 썬더"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:45
+msgid "드래곤 다이브"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:46
+msgid "다이브-돌아와!"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:47
+msgid "다이브 오브 썬더"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:48
+msgid "스위프트 오브 썬더"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:49
+msgid "마법 잔해"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:51
+msgid "크리티컬 매직"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:52
+msgid "매직 레지스턴스"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:53
+msgid "매직 엠플리피케이션"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:54
+msgid "드래곤 포텐셜"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:56
+msgid "서클 오브 마나IV"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:57
+msgid "서클 오브 어스"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:58
+msgid "드래곤 브레스"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:59
+msgid "브레스 오브 윈드"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:60
+msgid "브레스 오브 어스"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:61
+msgid "브레스-돌아와!"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:62
+msgid "다이브 오브 어스"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:63
+msgid "다크 포그"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:64
+msgid "오닉스의 축복"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:65
+msgid "강화된 마법 잔해"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:66 dpmModule/jobs/luminous.py:59
+msgid "매직 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:67
+msgid "오닉스의 의지"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:68
+msgid "드래곤 퓨리"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:69
+msgid "하이 드래곤 포텐셜"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:71
+msgid "드래곤 마스터"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:72
+msgid "서먼 오닉스 드래곤"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:75
+msgid "엘리멘탈 블래스트"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:76
+msgid "드래곤 브레이크"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:77
+msgid "임페리얼 브레스"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:78
+msgid "드래곤 브레이크-돌아와!"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:79
+msgid "조디악 레이"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:80
+msgid "스파이럴 오브 마나"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:84
+msgid "실행조건"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:107
+msgid "{}(추가)"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:146
+msgid "마력{:+d}"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:173
+msgid "스오마 타수 감소"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:207 dpmModule/jobs/kaiser.py:140
+msgid "종료"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:310
+msgid "미르(공격중)"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:363
+msgid "미르(사용중)"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:393
+msgid "브오어(실행조건)"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:402
+msgid "다오어 실행조건"
+msgstr ""
+
+#: dpmModule/jobs/evan.py:410
+msgid "스위프트 실행조건"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:9
+msgid "공격"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:10
+msgid "액티브"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:11
+msgid "패시브"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:12 dpmModule/kernel/core/skill.py:173
+msgid "버프"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:13
+msgid "보너스"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:14
+msgid "출혈"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:15
+msgid "균열"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:16
+msgid "디버프"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:17
+msgid "타격"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:18
+msgid "시전"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:19 dpmModule/kernel/core/skill.py:181
+#: dpmModule/kernel/core/skill.py:245 dpmModule/kernel/core/skill.py:330
+#: dpmModule/kernel/core/skill.py:404
+msgid "쿨타임"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:20
+msgid "개시"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:21
+msgid "파동"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:22
+msgid "충격파"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:23
+msgid "캔슬"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:24
+msgid "더미"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:25
+msgid "중독"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:26
+msgid "초과"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:27
+msgid "하이퍼"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:28
+msgid "폭발"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:29
+msgid "도트"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:30 dpmModule/kernel/core/skill.py:174
+#: dpmModule/kernel/core/skill.py:241 dpmModule/kernel/core/skill.py:320
+#: dpmModule/kernel/core/skill.py:394
+msgid "딜레이"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:31
+msgid "키다운"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:32
+msgid "장판"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:33
+msgid "강화"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:34
+msgid "사용"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:35
+msgid "연계"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:36
+msgid "스택"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:37
+msgid "소환"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:38
+msgid "종결"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:39
+msgid "틱"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:40
+msgid "준비"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:41
+msgid "1타"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:42
+msgid "2타"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:43
+msgid "3타"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:44
+msgid "4타"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:45
+msgid "5타"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:46
+msgid "6타"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:47
+msgid "7타"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:48
+msgid "8타"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:49
+msgid "막타"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:50
+msgid "후속타"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:51
+msgid "추가타"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:55
+msgid "소울 컨트랙트"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:56
+msgid "메이플 용사"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:57
+msgid "쓸만한 컴뱃 오더스"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:58
+msgid "쓸만한 샤프 아이즈"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:59
+msgid "쓸만한 윈드 부스터"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:60
+msgid "쓸만한 하이퍼 바디"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:61
+msgid "쓸만한 어드밴스드 블레스"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:62
+msgid "메이플월드 여신의 축복"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:63
+msgid "스파이더 인 미러"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:64
+msgid "파괴의 얄다바오트"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:65
+msgid "창조의 아이온"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:66
+msgid "크레스트 오브 더 솔라"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:110
+msgid "{}(공간 붕괴)"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:122
+msgid "{}(거울 속의 거미)"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:177
+msgid "{}(미트라의 불꽃)"
+msgstr ""
+
+#: dpmModule/jobs/globalSkill.py:186
+msgid "{}(불꽃의 문양)"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:49
+msgid "브랜디쉬"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:50
+msgid "콤보 포스"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:51
+msgid "콤보 어택"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:58
+msgid "패닉"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:60
+msgid "브레이브 슬래시"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:63
+msgid "콤보 시너지"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:64
+msgid "찬스 어택"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:66
+msgid "레이징 블로우"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:67
+msgid "인사이징"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:70
+msgid "인레이지"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:71
+msgid "어드밴스드 콤보"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:72 dpmModule/jobs/mihile.py:57
+msgid "컴뱃 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:75
+msgid "레이지 업라이징"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:77
+msgid "발할라"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:79
+msgid "소드 일루전"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:80
+msgid "콤보 인스팅트"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:81
+msgid "콤보 데스폴트"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:82
+msgid "소드 오브 버닝 소울"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:86
+msgid "두손도끼"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:100
+#, python-format
+msgid "%d 만큼 콤보 변화"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:108
+msgid "인스팅트 토글"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:246
+msgid "콤보어택"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:252
+msgid "{} 여부"
+msgstr ""
+
+#: dpmModule/jobs/hero.py:265
+msgid "콤보 6개 이상"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:30
+msgid "자신감"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:32 dpmModule/jobs/ilium.py:22
+msgid "익스클루시브 스펠"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:33 dpmModule/jobs/shade.py:26
+msgid "정령친화"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:34
+msgid "괴이봉인"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:36
+msgid "부적 도력"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:37
+msgid "여의선 : 인"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:38
+msgid "마봉 호로부"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:39
+msgid "초상비"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:40
+msgid "근두운"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:41
+msgid "경공"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:42
+msgid "무중"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:44
+msgid "토파류 : 지"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:45
+msgid "토파류 : 허/실"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:46
+msgid "환영 분신부"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:48
+msgid "부채 숙련"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:49
+msgid "암행"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:50
+msgid "심안"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:51
+msgid "운신"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:52
+msgid "신체 단련"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:54
+msgid "두루마리 도력"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:55
+msgid "파초풍 : 천"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:56
+msgid "파초풍 : 허/실"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:57
+msgid "지진쇄 : 지"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:58
+msgid "지진쇄 : 허/실"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:59
+msgid "추적 귀화부"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:60
+msgid "권술 : 미생강변"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:61
+msgid "득의"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:62
+msgid "수라"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:63
+msgid "금강"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:64
+msgid "조식"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:66
+msgid "멸화염 : 천"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:67
+msgid "멸화염 : 허/실"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:68
+msgid "금고봉 : 인"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:69
+msgid "둔갑 천근석"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:70
+msgid "왜곡 축지부"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:71
+msgid "권술 : 흡성와류"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:72
+msgid "권술 : 호접지몽"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:73
+msgid "아니마의 용사"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:74
+msgid "고급 부채 숙련"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:75
+msgid "득도"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:76
+msgid "점정"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:78
+msgid "선기 : 영약 태을선단"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:79
+msgid "선기: 몽유도원"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:80
+msgid "선기 : 분신 둔갑 태을선인"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:82
+msgid "선기 : 극대 분신난무"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:83
+msgid "권술 : 산령소환"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:84
+msgid "선기 : 강림 괴력난신"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:85
+msgid "선기 : 천지인 환영"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:89
+msgid "회복"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:90
+msgid "아니마"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:91 dpmModule/jobs/mercedes.py:72
+msgid "일반"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:92
+msgid "포효"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:93
+msgid "포효 가능"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:94
+msgid "신들의 강림"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:95
+msgid "재등장 스택"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:96
+msgid "신들의 일격"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:101
+msgid "천지인"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:104 dpmModule/jobs/hoyoung.py:128
+#: dpmModule/jobs/hoyoung.py:143 dpmModule/jobs/hoyoung.py:373
+msgid "천"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:105 dpmModule/jobs/hoyoung.py:128
+#: dpmModule/jobs/hoyoung.py:143 dpmModule/jobs/hoyoung.py:374
+msgid "지"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:106 dpmModule/jobs/hoyoung.py:128
+#: dpmModule/jobs/hoyoung.py:143 dpmModule/jobs/hoyoung.py:375
+#: dpmModule/jobs/hoyoung.py:412
+msgid "인"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:140
+msgid "천지인 초기화"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:150
+msgid "속성 연계 완성"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:162
+msgid "속성 도술 쿨타임 초기화"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:369
+msgid "그여축(도력 충전량)"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:378
+msgid "1속성"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:379
+msgid "2속성"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:380
+msgid "3속성"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:386
+msgid "3속성 초기화"
+msgstr ""
+
+#: dpmModule/jobs/hoyoung.py:434
+msgid "환영 분신부 지속중"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:19
+msgid "전투의 흐름"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:24
+msgid "크래프트:자벨린"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:25
+msgid "크래프트:오브"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:26
+msgid "리요"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:27
+msgid "크리스탈 포탈"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:28
+msgid "매직 건틀렛 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:29
+msgid "블레스 마크"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:31
+msgid "크리스탈 차지"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:32
+msgid "크리스탈 컨트롤"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:33
+msgid "리액션:디스트럭션"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:34
+msgid "리액션:도미네이션"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:35
+msgid "크리스탈 스킬:모탈스윙"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:36
+msgid "매직 건틀렛 부스터"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:37
+msgid "마키나"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:38
+msgid "디바인 실드"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:39
+msgid "커스 마크"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:41
+msgid "크리스탈 차지 숙련"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:42
+msgid "리액션:디스트럭션II"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:43
+msgid "리액션:도미네이션II"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:44
+msgid "크리스탈 스킬:글로리 윙"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:45
+msgid "크리스탈 스킬:하모니 링크"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:46
+msgid "블레스 마크 숙련"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:47
+msgid "커스 마크 숙련"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:48
+msgid "레프 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:49
+msgid "운명 개척"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:50
+msgid "끊임없는 연구"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:52
+msgid "크리스탈 차지 완성"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:53
+msgid "크래프트:자벨린II"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:54
+msgid "크래프트:오브II"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:55
+msgid "크래프트:롱기누스"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:56
+msgid "크리스탈 스킬:데우스"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:57
+msgid "글로리 윙:모탈 윙비트"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:58
+msgid "글로리 윙:하모니 윙비트"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:59
+msgid "레프 용사의 의지"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:60
+msgid "패스트 차지"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:61
+msgid "블레스 마크 완성"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:62
+msgid "커스 마크 완성"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:63
+msgid "크리스탈의 비밀"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:65
+msgid "프라이멀 프로텍션"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:66
+msgid "롱기누스 존"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:69
+msgid "크리스탈 이그니션"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:70
+msgid "리액션:스펙트럼"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:71
+msgid "그람홀더"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:72
+msgid "소울 오브 크리스탈"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:73
+msgid "크리스탈 게이트"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:77
+msgid "진입"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:78
+msgid "자벨린 강화버프"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:79
+msgid "오브 이후"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:80
+msgid "조각"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:81
+msgid "위성"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:82
+msgid "매직 미사일"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:83
+msgid "소오크"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:84
+msgid "소오크여부"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:130
+msgid "소오크 흡수"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:361
+msgid "폭격 조건 체크"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:377
+msgid "소오크 가동중"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:380 dpmModule/jobs/ilium.py:381
+msgid "글로리윙 미사용중"
+msgstr ""
+
+#: dpmModule/jobs/ilium.py:387
+msgid "기본공격(글로리 윙 여부 판단)"
+msgstr ""
+
+#: dpmModule/jobs/jobutils.py:8
+msgid "(복사)"
+msgstr ""
+
+#: dpmModule/jobs/jobutils.py:45
+msgid "(디버그)"
+msgstr ""
+
+#: dpmModule/jobs/jobutils.py:55
+msgid "리부트"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:19
+msgid "커맨드"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:21
+msgid "리셔플스위치: 방어모드"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:22
+msgid "리셔플스위치: 공격모드"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:23
+msgid "트랜스피규레이션"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:25
+msgid "드래곤슬래시"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:27
+msgid "더블 리프"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:28
+msgid "스킨 프로텍션"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:30
+msgid "드래곤슬래시 1차 강화"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:31
+msgid "임팩트 웨이브"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:32
+msgid "피어스 러쉬"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:33
+msgid "윌 오브 소드"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:34
+msgid "블레이즈 업"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:36
+msgid "이너 블레이즈"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:37
+msgid "방어모드 1차 강화"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:38
+msgid "공격모드 1차 강화"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:40
+msgid "드래곤슬래시 2차 강화"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:41
+msgid "윙비트"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:42
+msgid "체인풀링"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:43
+msgid "파이널 피규레이션"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:44
+msgid "페트리파이드"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:45
+msgid "리게인 스트렝스"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:46
+msgid "카탈라이즈"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:47 dpmModule/jobs/mihile.py:41
+msgid "셀프 리커버리"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:48
+msgid "어드밴스드 이너 블레이즈"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:49
+msgid "방어모드 2차 강화"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:50
+msgid "공격모드 2차 강화"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:52
+msgid "드래곤슬래시 3차 강화"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:53
+msgid "기가 슬래셔"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:54
+msgid "블루 스트릭"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:55
+msgid "소드 스트라이크"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:56
+msgid "인퍼널 브레스"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:57
+msgid "어드밴스드 윌 오브 소드"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:58
+msgid "로버스트 아머"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:59
+msgid "언플린칭 커리지"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:60 dpmModule/jobs/mihile.py:52
+msgid "어드밴스드 소드 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:62
+msgid "노바 용사의 의지"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:63
+msgid "방어모드 3차 강화"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:64
+msgid "공격모드 3차 강화"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:66
+msgid "프로미넌스"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:67
+msgid "파이널 트랜스"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:68
+msgid "마제스티 오브 카이저"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:70
+msgid "가디언 오브 노바"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:71
+msgid "윌 오브 소드: 스트라이크"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:72
+msgid "드라코 슬래셔"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:73
+msgid "드래곤 블레이즈"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:77
+msgid "발사"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:78
+msgid "불의 기운"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:79
+msgid "화염구"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:289
+msgid "모프 게이지"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:331
+msgid "게이지 리셋"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:332
+msgid "게이지 충전시 변신"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:336
+msgid "파이널 피규레이션 여부 확인"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:349
+msgid "드라코 슬래셔 충전시"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:352
+msgid "윌 오브 소드 소환시"
+msgstr ""
+
+#: dpmModule/jobs/kaiser.py:363
+msgid "{} - 재사용 초기화"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:22
+msgid "판단"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:24
+msgid "초감각"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:26
+msgid "내재 1"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:27
+msgid "크래시"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:28
+msgid "싸이킥 포스"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:29
+msgid "얼티메이트-메테리얼"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:30
+msgid "사이킥 실드"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:31
+msgid "ESP 부스터"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:32
+msgid "싸이킥 워크"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:34
+msgid "매드 크래시"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:35
+msgid "ESP 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:36
+msgid "싸이킥 포스2"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:37
+msgid "싸이킥 드레인"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:38
+msgid "얼티메이트-딥 임팩트"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:39
+msgid "싸이킥 실드"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:40
+msgid "순수한 힘"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:41
+msgid "내재 2"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:43
+msgid "싸이킥 그랩"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:44
+msgid "싸이킥 포스3"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:45
+msgid "싸이킥 그라운드"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:46
+msgid "얼티메이트-트레인"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:47
+msgid "텔레키네시스"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:48
+msgid "싸이킥 실드2(왜곡)"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:49
+msgid "정신 강화"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:50
+msgid "정신강화"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:51
+msgid "정밀"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:52
+msgid "초월"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:54
+msgid "싸이킥 그랩2"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:55
+msgid "얼티메이트-싸이킥 샷"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:56
+msgid "얼티메이트-B.P.M"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:57
+msgid "싸이킥 그라운드2"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:58
+msgid "싸이코 브레이크"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:59
+msgid "이계의 용사"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:60
+msgid "싸이킥 차징"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:61
+msgid "정신정화"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:62
+msgid "ESP 배틀오더"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:63
+msgid "각성"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:64
+msgid "정신집중-유지"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:65
+msgid "임계"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:66
+msgid "전달"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:67
+msgid "숙달"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:69
+msgid "에버 싸이킥"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:70
+msgid "싸이코 메트리"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:71
+msgid "싸이킥 오버"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:73
+msgid "싸이킥 토네이도"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:74
+msgid "얼티메이트-무빙 매터"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:75
+msgid "얼티메이트-싸이킥 불릿"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:76
+msgid "로 오브 그래비티"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:80
+msgid "블랙홀"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:87
+#, python-format
+msgid "pp 변화 : %d"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:105
+msgid "싸이킥 차지"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:250
+msgid "회복의 축복"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:266
+msgid "싸이킥 포인트"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:295
+msgid "7포인트"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:298
+msgid "도트 종료시"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:307 dpmModule/jobs/kinesis.py:334
+msgid "5포인트"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:317 dpmModule/jobs/kinesis.py:331
+msgid "15포인트"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:320
+msgid "10포인트"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:323
+msgid "2포인트"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:328
+msgid "5포인트 이하"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:347
+msgid "트레인 깔려있으면"
+msgstr ""
+
+#: dpmModule/jobs/kinesis.py:355
+msgid "오버"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:20
+msgid "퍼미에이트"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:22
+msgid "선파이어"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:23
+msgid "이클립스"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:24
+msgid "이퀄리브리엄"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:25
+msgid "파워 오브 라이트"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:26
+msgid "라이트 블링크"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:28
+msgid "트윙클 플래쉬"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:29
+msgid "다크 폴링"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:30
+msgid "라이트랜스포밍"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:31
+msgid "오디너리 매직가드"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:32
+msgid "익스텐드 마나"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:33
+msgid "빛 마법 강화"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:34
+msgid "어둠 마법 강화"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:36
+msgid "실피드 랜서"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:37
+msgid "인바이러빌러티"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:38
+msgid "보이드 프레셔"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:39
+msgid "블레스 오브 다크니스"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:44
+msgid "스펙트럴 라이트"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:45
+msgid "샤인 리뎀션"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:46
+msgid "녹스피어"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:47
+msgid "데스 사이드"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:48
+msgid "안티 매직쉘"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:49
+msgid "라이트쉐도우 가드"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:50
+msgid "포딕 메디테이션"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:51
+msgid "라이프 타이달"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:53
+msgid "라이트 리플렉션"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:54
+msgid "모닝 스타폴"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:55
+msgid "아포칼립스"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:56
+msgid "앱솔루트 킬"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:57
+msgid "다크 크레센도"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:58
+msgid "다크니스 소서리"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:60
+msgid "다크라이트 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:62
+msgid "아마겟돈"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:64
+msgid "메모라이즈"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:66
+msgid "진리의 문"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:67
+msgid "퍼니싱 리소네이터"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:68
+msgid "빛과 어둠의 세례"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:69
+msgid "리버레이션 오브"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:72
+msgid "이퀄X"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:73
+msgid "빛"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:74
+msgid "어둠"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:109
+msgid "루미너스 스택 변경"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:120
+msgid "스택 변경"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:169
+msgid "{}(스택 증가)"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:185
+msgid "{}(데미지 설정)"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:206 dpmModule/jobs/luminous.py:207
+#: dpmModule/jobs/luminous.py:261
+msgid "루미너스 상태"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:290
+msgid "빛이면 라리플 사용"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:291
+msgid "이퀄리브리엄이면 앱킬 사용"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:297
+msgid "비이퀄때만 앱킬 쿨타임"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:301
+msgid "이퀄일때는 사용하지 않음"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:308
+msgid "{}(쿨다운 스택 1 감소)"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:315
+msgid "{}(마력 제한)"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:323
+msgid "{}(패시브 조건)"
+msgstr ""
+
+#: dpmModule/jobs/luminous.py:326
+msgid "{}(액티브 조건)"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:28
+msgid "아이언 애로우"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:29
+msgid "디스턴싱 센스"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:30
+msgid "네트 쓰로잉"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:31
+msgid "크로스보우 부스터"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:32
+msgid "소울 애로우:석궁"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:33 dpmModule/jobs/wildhunter.py:29
+msgid "크로스보우 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:34
+msgid "파이널 어택:석궁"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:37
+msgid "볼트 럽쳐"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:38
+msgid "드래곤 펄스"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:39
+msgid "프리저"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:41
+msgid "페인 킬러"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:42
+msgid "익스트림 아처리:석궁"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:44
+msgid "데미지 리버싱"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:48
+msgid "피어싱"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:49
+msgid "스나이핑"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:50
+msgid "애로우 일루전"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:53 dpmModule/jobs/wildhunter.py:47
+msgid "크로스보우 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:54
+msgid "어디셔널 볼트"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:55
+msgid "라스트맨 스탠딩"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:56
+msgid "위크니스 파인딩"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:58
+msgid "롱 레인지 트루샷"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:60
+msgid "불스아이"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:62
+msgid "트루 스나이핑"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:63
+msgid "스플릿 애로우"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:64
+msgid "차지드 애로우"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:65
+msgid "리피팅 크로스보우 카트리지"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:315
+msgid "카트리지"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:318
+msgid "풀버스트 샷"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:348 dpmModule/jobs/shadower.py:208
+msgid "{} 여부 확인"
+msgstr ""
+
+#: dpmModule/jobs/marksman.py:354
+msgid "차징 유예"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:22
+msgid "스피릿 오브 프리덤"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:24
+msgid "메카닉 대쉬"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:25
+msgid "히든 피스"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:26
+msgid "비밀광장 긴급집결"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:28
+msgid "메탈아머:휴먼"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:29
+msgid "개틀링 샷"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:30
+msgid "드릴 러쉬"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:31
+msgid "로켓 부스터"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:33
+msgid "어드밴스드 개틀링 샷"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:34
+msgid "호밍 미사일"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:35
+msgid "메카닉 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:36
+msgid "메카닉 부스터"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:37
+msgid "오픈 게이트:GX-9"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:38
+msgid "퍼펙트 아머"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:39
+msgid "로봇 런처:RM7"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:42
+msgid "메탈아머:탱크"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:43
+msgid "매시브 파이어:SPLASH"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:44
+msgid "매시브 파이어:IRON"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:45
+msgid "서포트 웨이버:H-EX"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:46
+msgid "로켓 펀치"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:47
+msgid "마그네틱 필드"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:48
+msgid "어드밴스드 호밍 미사일"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:49
+msgid "메카닉 디펜스 시스템"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:50
+msgid "전투 프로그램 셋업"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:52
+msgid "오버 튜닝"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:54
+msgid "매시브 파이어:SPLASH-F"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:55
+msgid "매시브 파이어:IRON-B"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:56
+msgid "메탈아머 익스트림"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:57
+msgid "워머신:타이탄"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:58
+msgid "서포트 웨이버 강화"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:59
+msgid "로봇 팩토리:RM1"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:60
+msgid "로봇 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:61
+msgid "호밍 미사일 시스템 연구"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:63
+msgid "메탈아머 합금 연구"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:65
+msgid "디스토션 필드"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:67
+msgid "봄버 타임"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:69
+msgid "멀티플 옵션:M-FL"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:70
+msgid "마이크로 미사일 컨테이너"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:71
+msgid "메탈아머 전탄발사"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:72
+msgid "메카 캐리어"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:76
+msgid "설치"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:77
+msgid "페널티"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:78
+msgid "봄버"
+msgstr ""
+
+#: dpmModule/jobs/mechanic.py:79
+msgid "전탄"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:19
+msgid "엘프의 축복"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:21
+msgid "엘프의 회복"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:22
+msgid "스타일리쉬 무브"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:23
+msgid "왕의 자격"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:25
+msgid "스피드 듀얼샷"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:26
+msgid "포텐셜 파워"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:27
+msgid "아크로바틱 점프"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:28
+msgid "샤프 에이밍"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:30
+msgid "크로스 피어싱"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:31
+msgid "차지 드라이브"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:32
+msgid "파이널 샷"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:33
+msgid "듀얼보우건 부스터"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:34
+msgid "스피릿 인퓨전"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:35
+msgid "듀얼보우건 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:36
+msgid "파이널 어택: 듀얼보우건"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:39
+msgid "스트라이크 듀얼샷"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:40
+msgid "리프 토네이도"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:41
+msgid "유니콘 스파이크"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:42
+msgid "거스트 다이브"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:43
+msgid "이그니스 로어"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:44
+msgid "워터 쉴드"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:45
+msgid "하이킥 데몰리션"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:46
+msgid "엘리멘탈 나이트"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:48
+msgid "이슈타르의 링"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:49
+msgid "레전드리 스피어"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:50
+msgid "라이트닝 엣지"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:51
+msgid "롤링 문썰트"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:52
+msgid "엔시언트 스피릿"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:53
+msgid "듀얼보우건 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:54
+msgid "디펜스 브레이크"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:56
+msgid "어드밴스드 스트라이크 듀얼샷"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:57
+msgid "스피릿 이스케이프"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:59
+msgid "래쓰 오브 엔릴"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:61
+msgid "엘비시 블레싱"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:63
+msgid "엘리멘탈 고스트"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:64
+msgid "실피디아"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:65
+msgid "이르칼라의 숨결"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:66
+msgid "로얄 나이츠"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:70
+msgid "속사"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:71
+msgid "정령의 기운"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:90
+msgid "(엘고)"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:110
+msgid "엘고 ON, 실피디아 OFF"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:296
+msgid "디버프 콤보"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:304
+msgid "디버프 없을시"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:305
+msgid "{} 아닐시"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:307
+msgid "엘고 콤보"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:327
+msgid "정령의 기운 조건"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:329
+msgid "{}(조건)"
+msgstr ""
+
+#: dpmModule/jobs/mercedes.py:353
+msgid "{} 탑승중"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:21
+msgid "빛의 수호"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:25
+msgid "소울 실드"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:26
+msgid "로얄 가드"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:27
+msgid "소울 블레이드"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:28
+msgid "소울 점프"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:29
+msgid "소울 어질리티"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:34
+msgid "소드 부스터"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:35
+msgid "격려"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:36
+msgid "소울 드라이버"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:37
+msgid "샤이닝 체이스"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:38
+msgid "버티컬 샤이닝 체이스"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:42
+msgid "인텐션"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:43
+msgid "소울 어택"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:44
+msgid "어드밴스드 로얄 가드"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:45
+msgid "샤이닝 차지"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:46
+msgid "소울 인듀어"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:47
+msgid "소울 링크"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:49
+msgid "소울 슬래시"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:51
+msgid "어드밴스드 소울 실드"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:54
+msgid "소울 어썰트"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:55
+msgid "샤이닝 크로스"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:56
+msgid "소울 레이지"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:61
+msgid "데들리 차지"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:62
+msgid "퀸 오브 투모로우"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:63
+msgid "세이크리드 큐브"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:65
+msgid "로 아이아스"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:66
+msgid "클라우 솔라스"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:67
+msgid "소드 오브 소울 라이트"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:68
+msgid "라이트 오브 커리지"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:72
+msgid "인스톨"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:73
+msgid "슬래시"
+msgstr ""
+
+#: dpmModule/jobs/mihile.py:238
+msgid "로얄 가드로 캔슬 가능할때"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:22 dpmModule/jobs/shadower.py:20
+msgid "더블 스탭"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:23 dpmModule/jobs/nightwalker.py:23
+#: dpmModule/jobs/shadower.py:21
+msgid "럭키 세븐"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:24 dpmModule/jobs/nightwalker.py:25
+#: dpmModule/jobs/shadower.py:22
+msgid "헤이스트"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:27 dpmModule/jobs/shadower.py:25
+msgid "님블 바디"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:29
+msgid "슈리켄 버스트"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:30
+msgid "마크 오브 어쌔신"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:31
+msgid "윈드 탈리스만"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:32
+msgid "자벨린 부스터"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:33
+msgid "자벨린 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:34
+msgid "크리티컬 스로우"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:37 dpmModule/jobs/nightwalker.py:31
+msgid "트리플 스로우"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:38
+msgid "쉐이드 스플릿"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:39 dpmModule/jobs/shadower.py:40
+msgid "다크 플레어"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:40
+msgid "쉐도우 웹"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:41
+msgid "쉐도우 파트너"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:42
+msgid "스피릿 자벨린"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:45
+msgid "숙련된 표창술"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:46 dpmModule/jobs/nightwalker.py:44
+msgid "아드레날린"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:48 dpmModule/jobs/nightwalker.py:39
+msgid "쿼드러플 스로우"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:49
+msgid "쇼다운 챌린지"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:50
+msgid "마크 오브 나이트로드"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:52
+msgid "퍼지 에어리어"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:53
+msgid "다크 세레니티"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:54 dpmModule/jobs/shadower.py:55
+msgid "페이크"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:56
+msgid "자벨린 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:58
+msgid "포 시즌"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:60
+msgid "블리딩 톡신"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:62
+msgid "스프레드 스로우"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:63
+msgid "풍마수리검"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:64
+msgid "다크로드의 비전서"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:65
+msgid "스로우 블래스팅"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:69
+msgid "풍마"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:70
+msgid "폭발 부적"
+msgstr ""
+
+#: dpmModule/jobs/nightlord.py:71
+msgid "부적 스택"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:24
+msgid "엘리멘탈 : 다크니스"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:27
+msgid "래피드 이베이전"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:28
+msgid "쉐도우 점프"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:29
+msgid "쉐도우 배트"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:32
+msgid "스로잉 부스터"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:33
+msgid "스로잉 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:34
+msgid "크리티컬 스로잉"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:36
+msgid "다크니스 어뎁팅"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:37
+msgid "배트 커뮤니온"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:40
+msgid "스타더스트"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:41
+msgid "쉐도우 서번트"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:42
+msgid "스피릿 스로잉"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:45
+msgid "다크니스 어뎁팅II"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:46
+msgid "배트 커뮤니온II"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:47
+msgid "다크니스 어센션"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:50
+msgid "퀸터플 스로우"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:51
+msgid "다크니스 오멘"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:52
+msgid "쉐도우 스티치"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:53
+msgid "스로잉 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:54
+msgid "다크니스 블레싱"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:55
+msgid "다크니스 어뎁팅III"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:56
+msgid "배트 커뮤니온III"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:58
+msgid "쉐도우 어시밀레이션"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:60
+msgid "도미니언"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:62
+msgid "쉐도우 일루전"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:64
+msgid "쉐도우 스피어"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:65
+msgid "쉐도우 서번트 익스텐드"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:66
+msgid "쉐도우 바이트"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:67
+msgid "래피드 스로우"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:71
+msgid "서번트"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:72
+msgid "일루젼 50%"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:73
+msgid "일루젼 30%"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:74
+msgid "5차"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:75
+msgid "창"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:76
+msgid "거대 창"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:107
+msgid "표창 사용 추가"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:264
+msgid "배트 사출가능 여부"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:266
+msgid "스피어ON"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:288 dpmModule/jobs/nightwalker.py:289
+#: dpmModule/jobs/nightwalker.py:298 dpmModule/jobs/nightwalker.py:299
+#: dpmModule/jobs/nightwalker.py:303 dpmModule/jobs/nightwalker.py:304
+msgid "일루전 여부"
+msgstr ""
+
+#: dpmModule/jobs/nightwalker.py:290 dpmModule/jobs/nightwalker.py:300
+#: dpmModule/jobs/nightwalker.py:305
+msgid "익스텐드 여부"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:25
+msgid "플레임 차지"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:26
+msgid "블리자드 차지"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:27
+msgid "엘리멘탈 차지"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:28
+msgid "페이지 오더"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:34
+msgid "라이트닝 차지"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:35
+msgid "리스토네이션"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:39
+msgid "파라쇼크 가드"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:40
+msgid "컴뱃 오더스"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:41 dpmModule/jobs/shadower.py:35
+msgid "실드 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:42
+msgid "아킬레스"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:43
+msgid "블래싱 아머"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:45 dpmModule/jobs/pathfinder.py:24
+msgid "블래스트"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:46
+msgid "디바인 차지"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:48
+msgid "생츄어리"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:49
+msgid "엘리멘탈 포스"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:51
+msgid "가디언 스피릿"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:52
+msgid "팔라딘 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:53
+msgid "어드밴스드 차지"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:55
+msgid "스마이트"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:57
+msgid "새크로생티티"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:59
+msgid "홀리 유니티"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:60
+msgid "블래스드 해머"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:61
+msgid "그랜드 크로스"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:62
+msgid "마이티 묠니르"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:66
+msgid "두손둔기"
+msgstr ""
+
+#: dpmModule/jobs/paladin.py:67
+msgid "작은"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:23
+msgid "디스차지"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:25
+msgid "트랜지션"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:29
+msgid "커스 위크닝I"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:30
+msgid "카디널 디스차지"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:35
+msgid "렐릭 차지I"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:36
+msgid "커스 위크닝II"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:37
+msgid "카디널 디스차지 강화"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:38
+msgid "카디널 블래스트"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:39
+msgid "스플릿 미스텔"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:40
+msgid "에인션트 보우 부스터"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:41
+msgid "에디셔널 디스차지"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:42
+msgid "에인션트 보우 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:45
+msgid "커스 위크닝III"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:46
+msgid "카디널 블래스트 강화"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:47
+msgid "카디널 트랜지션"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:48
+msgid "트리플 임팩트"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:49
+msgid "레이븐"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:50
+msgid "커스 톨러런스"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:51
+msgid "에인션트 가이던스"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:52
+msgid "에디셔널 블래스트"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:55
+msgid "에센스 오브 아처"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:56
+msgid "렐릭 차지II"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:57
+msgid "커스 트랜지션"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:58
+msgid "어드밴스드 카디널 포스"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:59
+msgid "엣지 오브 레조넌스"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:60
+msgid "콤보 어썰트"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:65
+msgid "에디셔널 트랜지션"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:66
+msgid "에인션트 아처리"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:67
+msgid "에인션트 보우 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:68
+msgid "일루젼 스텝"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:70
+msgid "에인션트 아스트라"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:75
+msgid "렐릭 에볼루션"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:77
+msgid "얼티밋 블래스트"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:78
+msgid "레이븐 템페스트"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:79
+msgid "옵시디언 배리어"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:83
+msgid "렐릭 언바운드"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:90
+msgid "점프"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:91
+msgid "화살"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:99
+msgid "카디널 차지"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:120
+msgid "문양 변경"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:310
+msgid "{}시 사용 금지"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:322
+msgid "레조넌스 동기화"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:339 dpmModule/jobs/pathfinder.py:342
+msgid "50 이상"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:345
+msgid "100 이상"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:348
+msgid "150 이상"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:350 dpmModule/jobs/pathfinder.py:355
+msgid "300 이상"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:359
+msgid "500 이상"
+msgstr ""
+
+#: dpmModule/jobs/pathfinder.py:364
+msgid "200 이상"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:26
+msgid "데들리 인스팅트"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:28
+msgid "팬텀 슈라우드"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:29
+msgid "하이 덱스터리티"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:30
+msgid "스틸 스킬"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:31
+msgid "스킬 매니지먼트"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:33
+msgid "스니킹 무브먼트"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:35
+msgid "더블 피어싱"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:36
+msgid "탤런트 오브 팬텀시프 Ⅰ"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:37
+msgid "스위프트 팬텀"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:38
+msgid "퀵 이베이젼"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:40
+msgid "콜 오브 페이트"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:41
+msgid "탤런트 오브 팬텀시프 II"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:42
+msgid "브리즈 카르트"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:43
+msgid "블랑 카르트"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:44
+msgid "케인 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:45
+msgid "케인 부스터"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:46
+msgid "럭 모노폴리"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:48
+msgid "코트 오브 암즈"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:49
+msgid "탤런트 오브 팬텀시프 Ⅲ"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:50
+msgid "럭오브팬텀시프"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:51
+msgid "미스포츈 프로텍션"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:52
+msgid "플래시 앤 플리"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:53
+msgid "문 라이트"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:54
+msgid "팬텀 차지"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:55
+msgid "어큐트 센스"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:57
+msgid "얼티밋 드라이브"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:58
+msgid "탤런트 오브 팬텀시프 Ⅳ"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:59
+msgid "느와르 카르트"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:60
+msgid "트와일라이트"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:61
+msgid "프레이 오브 아리아"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:62
+msgid "템페스트 오브 카드"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:63
+msgid "케인 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:64
+msgid "소울 스틸"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:66
+msgid "로즈 카르트 피날레"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:68
+msgid "탤런트 오브 팬텀시프 H"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:70
+msgid "조커"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:71
+msgid "블랙잭"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:72
+msgid "마크 오브 팬텀"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:73
+msgid "리프트 브레이크"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:218
+msgid "카드 스택"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:220
+msgid "스택 1 증가"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:221
+msgid "스택 초기화"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:223
+msgid "풀스택시"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:263
+msgid "얼드 후딜"
+msgstr ""
+
+#: dpmModule/jobs/phantom.py:269
+msgid "연계 취소 딜레이"
+msgstr ""
+
+#: dpmModule/jobs/seedrings.py:24
+msgid "리스트레인트 링"
+msgstr ""
+
+#: dpmModule/jobs/seedrings.py:30
+msgid "웨폰퍼프 링"
+msgstr ""
+
+#: dpmModule/jobs/seedrings.py:31
+msgid "크리데미지 링"
+msgstr ""
+
+#: dpmModule/jobs/seedrings.py:32
+msgid "크리디펜스 링"
+msgstr ""
+
+#: dpmModule/jobs/seedrings.py:33
+msgid "레벨퍼프 링"
+msgstr ""
+
+#: dpmModule/jobs/seedrings.py:34
+msgid "리스트테이커 링"
+msgstr ""
+
+#: dpmModule/jobs/seedrings.py:35
+msgid "크라이시스 H/M 링"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:22
+msgid "구사 일생"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:24
+msgid "축지"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:25
+msgid "정령 결속 1식"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:28
+msgid "메가 펀치"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:30
+msgid "도약"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:31
+msgid "건곤 일체"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:33
+msgid "파력권"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:34
+msgid "파쇄철조-반"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:35
+msgid "파쇄철조-前"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:36
+msgid "후방 이동"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:38
+msgid "정령 결속 2식"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:40
+msgid "여우령"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:41
+msgid "여우령 숙련"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:43
+msgid "통백권 충격파"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:44
+msgid "파쇄철조-회"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:45
+msgid "소혼 장막"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:46
+msgid "속박술"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:47
+msgid "정령 결속 3식"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:49
+msgid "환령 강신"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:50
+msgid "약화"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:52
+msgid "폭류권"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:53
+msgid "귀참"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:54
+msgid "사혼 각인"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:55
+msgid "분혼 격참"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:56
+msgid "소혼 결계"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:57
+msgid "불여우령"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:58
+msgid "정령 결속 4식"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:59
+msgid "고급 너클 숙련"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:60
+msgid "약점 간파"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:62
+msgid "정령의 화신"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:64
+msgid "정령 결속 극대화"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:66
+msgid "정령 집속"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:67
+msgid "귀문진"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:68
+msgid "진 귀참"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:69
+msgid "파쇄 연권"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:73
+msgid "저항"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:74
+msgid "간간 수월래"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:75
+msgid "제한"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:76
+msgid "무작위"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:90
+msgid "{} 디버프 변경"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:93
+msgid "{} 디버프 추가"
+msgstr ""
+
+#: dpmModule/jobs/shade.py:269
+msgid "{} 발동 가능?"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:23
+msgid "다크사이트"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:27
+msgid "새비지 블로우"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:28
+msgid "크리티컬 그로잉"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:29
+msgid "스틸"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:30
+msgid "대거 부스터"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:31
+msgid "메소 가드"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:33
+msgid "대거 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:37
+msgid "엣지 카니발"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:38
+msgid "무스펠 하임"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:39
+msgid "메소 익스플로전"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:41
+msgid "픽파킷"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:42
+msgid "섀도우 파트너"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:44
+msgid "그리드"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:47
+msgid "인투 다크니스"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:49
+msgid "암살"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:50
+msgid "부메랑 스텝"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:51
+msgid "프리마 크리티컬"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:53
+msgid "연막탄"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:54
+msgid "섀도어 인스팅트"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:57
+msgid "대거 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:59
+msgid "베일 오브 섀도우"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:61
+msgid "플립 더 코인"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:63
+msgid "쉐도우 어썰트"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:64
+msgid "절개"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:65
+msgid "소닉 블로우"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:66
+msgid "멸귀참영진"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:70
+msgid "우두머리"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:210
+msgid "메소 제거"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:212 dpmModule/jobs/shadower.py:213
+#: dpmModule/jobs/shadower.py:217 dpmModule/jobs/shadower.py:218
+#: dpmModule/jobs/shadower.py:223 dpmModule/jobs/shadower.py:232
+#: dpmModule/jobs/shadower.py:238
+msgid "메소 생성"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:235
+msgid "{} 연계 여부"
+msgstr ""
+
+#: dpmModule/jobs/shadower.py:243
+msgid "닼사 여부"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:28
+msgid "충아"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:29
+msgid "섬광"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:30
+msgid "엘리멘탈 : 라이트닝"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:31
+msgid "뇌인"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:33
+msgid "회축"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:34
+msgid "파도"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:38
+msgid "뇌백"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:40
+msgid "승천"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:41
+msgid "뇌성"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:42
+msgid "질풍"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:43
+msgid "와류"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:44
+msgid "극갑"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:45
+msgid "연쇄"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:46
+msgid "뇌제"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:49
+msgid "섬멸"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:50
+msgid "벽력"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:51
+msgid "태풍"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:52
+msgid "축뢰"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:55
+msgid "자극"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:56
+msgid "뇌신"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:58
+msgid "해신강림"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:60
+msgid "천지개벽"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:62
+msgid "신뇌합일"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:63
+msgid "교아탄"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:64
+msgid "뇌신창격"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:65
+msgid "창뇌연격"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:69
+msgid "번개"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:77
+#, python-format
+msgid "%d 만큼 뇌전 변화"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:217 statistics/preset.py:194
+msgid "파섬"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:220
+msgid "태섬"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:225 statistics/preset.py:201
+msgid "벽섬"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:228
+msgid "파파섬"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:231
+msgid "파파태"
+msgstr ""
+
+#: dpmModule/jobs/thunderbreaker.py:256
+msgid "{} 체크"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:20
+msgid "어나더 바이트"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:21
+msgid "더블 샷"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:22
+msgid "서먼 재규어"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:23
+msgid "클로우 컷"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:24
+msgid "오토매팅 슈팅 디바이스"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:25
+msgid "네이처스 래쓰"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:27
+msgid "트리플 샷"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:28
+msgid "크로스 로드"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:30
+msgid "소울 애로우"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:31
+msgid "하울링"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:36
+msgid "와일드 샷"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:37
+msgid "소닉 붐"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:38
+msgid "화이트 히트 러쉬"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:39
+msgid "어시스턴트 헌팅 유닛"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:40
+msgid "비스트 폼"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:41
+msgid "플러리"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:42
+msgid "재규어 링크"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:44
+msgid "와일드 발칸"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:45
+msgid "재규어 소울"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:46
+msgid "드릴 컨테이너"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:49
+msgid "와일드 인스팅트"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:51
+msgid "익스텐드 매거진"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:53
+msgid "플래쉬 레인"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:54
+msgid "램피지 애즈 원"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:56
+msgid "사일런트 램피지"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:58
+msgid "재규어 스톰"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:59
+msgid "재규어 맥시멈"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:60
+msgid "와일드 그레네이드"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:61
+msgid "와일드 발칸 Type X"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:100 dpmModule/jobs/wildhunter.py:130
+msgid "재규어"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:108
+msgid "재규어 딜레이 {}"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:189
+msgid "재규어 평타"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:196
+msgid "재규어 평타({})"
+msgstr ""
+
+#: dpmModule/jobs/wildhunter.py:237
+msgid "하차 딜레이"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:25
+msgid "브리즈 애로우"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:26
+msgid "윈드워크"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:27
+msgid "엘리멘트 : 스톰"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:28
+msgid "위스퍼 오브 윈드"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:30
+msgid "페어리 턴"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:31
+msgid "거스트 샷"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:32
+msgid "트라이플링 윔 I"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:34
+msgid "실프스 에이드"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:38
+msgid "서리바람의 군무"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:39
+msgid "핀포인트 피어스"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:40
+msgid "트라이플링 윔II"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:41
+msgid "알바트로스"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:42
+msgid "에메랄드 플라워"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:43
+msgid "페더리니스"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:44
+msgid "세컨드 윈드"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:47
+msgid "천공의 노래"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:48
+msgid "스파이럴 볼텍스"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:49
+msgid "트라이플링 윔III"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:50
+msgid "윈드 블레싱"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:53
+msgid "에메랄드 더스트"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:54
+msgid "알바트로스 맥시멈"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:56
+msgid "몬순"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:58
+msgid "스톰 브링어"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:60
+msgid "하울링 게일"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:61
+msgid "아이들 윔"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:62
+msgid "윈드 월"
+msgstr ""
+
+#: dpmModule/jobs/windarcher.py:63
+msgid "볼텍스 스피어"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:24
+msgid "하이브리드 로직"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:26
+msgid "서플러스 서플라이"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:27
+msgid "멀티래터럴 I"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:28
+msgid "멀티 모드 링커"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:30
+msgid "에너지 스플라인"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:31
+msgid "서든 프로펠"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:32
+msgid "인클라인 파워"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:33
+msgid "레디얼너브 리파인"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:34
+msgid "멀티래터럴 II"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:35
+msgid "핀포인트 로켓"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:37
+msgid "퀵실버 소드 : 섬광"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:38
+msgid "퀵실버 소드 : 집중"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:39
+msgid "퀵실버 소드 : 도약"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:40
+msgid "이온 쓰러스터"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:41
+msgid "리니어 퍼스펙티브"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:42
+msgid "에피션시 파이프라인"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:43
+msgid "제논 부스터"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:44
+msgid "마이너리티 서포트"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:45
+msgid "제논 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:46
+msgid "멀티래터럴 III"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:47
+msgid "핀포인트 로켓 1차 강화"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:49
+msgid "컴뱃 스위칭 : 폭발"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:50
+msgid "컴뱃 스위칭 : 격추"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:51
+msgid "컴뱃 스위칭 : 분열"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:52
+msgid "다이아그널 체이스"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:53
+msgid "필라 스크램블"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:54
+msgid "듀얼브리드 디펜시브"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:55
+msgid "이지스 시스템"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:56
+msgid "트라이앵글 포메이션"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:57
+msgid "버추얼 프로젝션"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:58
+msgid "멀티래터럴 IV"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:59
+msgid "엑스트라 서플라이"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:60
+msgid "핀포인트 로켓 2차 강화"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:62
+msgid "블레이드 댄싱"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:63
+msgid "퍼지롭 매스커레이드 : 저격"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:64
+msgid "퍼지롭 매스커레이드 : 포격"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:65
+msgid "퍼지롭 매스커레이드 : 폭격"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:66
+msgid "홀로그램 그래피티 : 관통"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:67
+msgid "홀로그램 그래피티 : 역장"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:68
+msgid "홀로그램 그래피티 : 지원"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:69
+msgid "오파츠 코드"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:70
+msgid "오펜시브 매트릭스"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:71
+msgid "인스턴트 셔크"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:72
+msgid "제논 엑스퍼트"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:73
+msgid "타임 캡슐"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:74
+msgid "멀티래터럴 V"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:75
+msgid "핀포인트 로켓 최종 강화"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:76
+msgid "멀티래터럴 VI"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:78
+msgid "멜트다운 익스플로전"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:79
+msgid "컨파인 인탱글"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:80
+msgid "아마란스 제네레이터"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:82
+msgid "메가 스매셔"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:83
+msgid "오버로드 모드"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:84
+msgid "홀로그램 그래피티 : 융합"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:85
+msgid "포톤 레이"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:89 dpmModule/kernel/core/modifier.py:363
+msgid "방무"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:90
+msgid "데미지"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:91
+msgid "전류"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:92
+msgid "캐논"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:121
+msgid "에너지 -{}"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:131
+msgid "에너지 +{}"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:171 dpmModule/jobs/xenon.py:188
+msgid "{} 시작"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:181 dpmModule/jobs/xenon.py:195
+msgid "{} 종료"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:259
+msgid "직업상수"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:343
+msgid "(사용 제한)"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:355
+msgid "에너지 3"
+msgstr ""
+
+#: dpmModule/jobs/xenon.py:357
+msgid "에너지 20"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:18
+msgid "륀느의 축복"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:20
+msgid "듀얼 컴뱃"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:21 dpmModule/jobs/zero.py:138
+msgid "리졸브 타임"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:22
+msgid "디바인 포스"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:23
+msgid "디바인 스위프트"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:24
+msgid "륀느의 가호"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:25
+msgid "래피드 타임"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:26
+msgid "타임 디스토션"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:27
+msgid "타임 홀딩"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:28
+msgid "타임 리와인드"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:29
+msgid "쉐도우 레인"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:30
+msgid "인탠시브 타임"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:32
+msgid "문 스트라이크"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:33
+msgid "피어스 쓰러스트"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:34
+msgid "쉐도우 스트라이크"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:35
+msgid "플래시 어썰터"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:36
+msgid "스핀 커터"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:37
+msgid "어드밴스드 스핀 커터"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:38
+msgid "롤링 커브"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:39
+msgid "어드밴스드 롤링 커브"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:40
+msgid "롤링 어썰터"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:41
+msgid "어드밴스드 롤링 어썰터"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:42
+msgid "윈드 커터"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:43
+msgid "윈드 스트라이크"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:44
+msgid "스톰 브레이크"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:45
+msgid "어드밴스드 스톰 브레이크"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:46
+msgid "태도 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:47
+msgid "컴뱃 리커버리"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:48
+msgid "리인포스 바디"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:49
+msgid "디바인 리어"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:51
+msgid "어퍼 슬래시"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:52
+msgid "파워 스텀프"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:53
+msgid "어드밴스드 파워 스텀프"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:54
+msgid "프론트 슬래시"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:55
+msgid "스로잉 웨폰"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:56
+msgid "어드밴스드 스로잉 웨폰"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:57
+msgid "터닝 드라이브"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:58
+msgid "휠 윈드"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:59
+msgid "어드밴스드 휠 윈드"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:60
+msgid "기가 크래시"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:61
+msgid "점핑 크래시"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:62
+msgid "어스 브레이크"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:63
+msgid "어드밴스드 어스 브레이크"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:64
+msgid "대검 마스터리"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:65
+msgid "솔리드 바디"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:66
+msgid "아머 스플릿"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:67
+msgid "이뮨 배리어"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:68
+msgid "크리티컬 바인드"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:70
+msgid "초월자 륀느의 기원"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:71
+msgid "리미트 브레이크"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:72
+msgid "조인트 어택"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:73
+msgid "쉐도우 플래시"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:74
+msgid "에고 웨폰"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:78
+msgid "태그"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:79
+msgid "오라"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:80
+msgid "소용돌이"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:81
+msgid "전기"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:82
+msgid "재사용 대기시간 감소"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:83
+msgid "알파"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:84
+msgid "베타"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:200
+msgid "상태-알파"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:208
+msgid "상태-베타"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:388
+msgid "알파로 태그"
+msgstr ""
+
+#: dpmModule/jobs/zero.py:391
+msgid "베타로 태그"
+msgstr ""
+
+#: dpmModule/jobs/jobbranch/bowmen.py:10
+msgid "크리티컬 리인포스"
+msgstr ""
+
+#: dpmModule/jobs/jobbranch/bowmen.py:11
+msgid "가이디드 애로우"
+msgstr ""
+
+#: dpmModule/jobs/jobbranch/magicians.py:9
+msgid "오버로드 마나"
+msgstr ""
+
+#: dpmModule/jobs/jobbranch/pirates.py:9
+msgid "오버 드라이브"
+msgstr ""
+
+#: dpmModule/jobs/jobbranch/pirates.py:10
+msgid "로디드 다이스"
+msgstr ""
+
+#: dpmModule/jobs/jobbranch/thieves.py:10
+msgid "레디 투 다이"
+msgstr ""
+
+#: dpmModule/jobs/jobbranch/thieves.py:11
+msgid "얼티밋 다크 사이트"
+msgstr ""
+
+#: dpmModule/jobs/jobbranch/warriors.py:9
+msgid "오라 웨폰"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/adventurer.py:11
+msgid "이볼브"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/adventurer.py:12
+msgid "블리츠 실드"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/adventurer.py:13
+msgid "파이렛 플래그"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/adventurer.py:14
+msgid "언스테이블 메모라이즈"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/adventurer.py:15
+msgid "인피니티"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/adventurer.py:185
+msgid " 있을때 사용 가능"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/adventurer.py:189
+msgid "이볼브 지속중 사용 금지"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/cygnus.py:12
+msgid "여제 시그너스의 축복"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/cygnus.py:13
+msgid "초월자 시그너스의 축복"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/cygnus.py:14
+msgid "시그너스 팔랑크스"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/demon.py:9
+msgid "콜 마스테마"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/demon.py:10
+msgid "이계 여신의 축복"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/demon.py:26
+msgid "이계의 공허"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/flora.py:12
+msgid "레프"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/flora.py:13
+msgid "마력 폭풍"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/flora.py:17 dpmModule/jobs/jobclass/nova.py:12
+msgid "그란디스 여신의 축복"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/flora.py:18
+msgid "매직 서킷 풀드라이브"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/heroes.py:13
+msgid "프리드의 가호"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/nova.py:8
+msgid "노바"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/nova.py:13
+msgid "판테온"
+msgstr ""
+
+#: dpmModule/jobs/jobclass/resistance.py:12
+msgid "레지스탕스 라인 인팬트리"
+msgstr ""
+
+#: dpmModule/kernel/core/graph_element.py:145
+msgid "종류:그래프 요소"
+msgstr ""
+
+#: dpmModule/kernel/core/graph_element.py:282
+msgid "연결"
+msgstr ""
+
+#: dpmModule/kernel/core/graph_element.py:287
+#, python-format
+msgid "%s"
+msgstr ""
+
+#: dpmModule/kernel/core/graph_element.py:392
+#, python-format
+msgid ""
+"종류:조건적 실행\n"
+"%s"
+msgstr ""
+
+#: dpmModule/kernel/core/graph_element.py:446
+#, python-format
+msgid ""
+"종류:반복\n"
+"이름:%s\n"
+"반복대상:%s\n"
+"반복 횟수:%d"
+msgstr ""
+
+#: dpmModule/kernel/core/graph_element.py:491
+#, python-format
+msgid ""
+"종류:제한\n"
+"이름:%s"
+msgstr ""
+
+#: dpmModule/kernel/core/modifier.py:349
+msgid "미발동"
+msgstr ""
+
+#: dpmModule/kernel/core/modifier.py:352
+msgid "크리티컬 확률"
+msgstr ""
+
+#: dpmModule/kernel/core/modifier.py:353
+msgid "크리티컬 데미지"
+msgstr ""
+
+#: dpmModule/kernel/core/modifier.py:354
+msgid "주스텟"
+msgstr ""
+
+#: dpmModule/kernel/core/modifier.py:355
+msgid "부스텟"
+msgstr ""
+
+#: dpmModule/kernel/core/modifier.py:356
+msgid "총 데미지"
+msgstr ""
+
+#: dpmModule/kernel/core/modifier.py:357
+msgid "보스 공격력"
+msgstr ""
+
+#: dpmModule/kernel/core/modifier.py:358
+msgid "주스텟퍼"
+msgstr ""
+
+#: dpmModule/kernel/core/modifier.py:359
+msgid "부스텟퍼"
+msgstr ""
+
+#: dpmModule/kernel/core/modifier.py:360
+msgid "최종뎀"
+msgstr ""
+
+#: dpmModule/kernel/core/modifier.py:361
+msgid "공격력"
+msgstr ""
+
+#: dpmModule/kernel/core/modifier.py:362
+msgid "공퍼"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:55
+msgid "무한/자동발동불가"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:79 dpmModule/kernel/core/skill.py:172
+#: dpmModule/kernel/core/skill.py:239 dpmModule/kernel/core/skill.py:318
+#: dpmModule/kernel/core/skill.py:392
+msgid "스킬 이름"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:79 dpmModule/kernel/core/skill.py:173
+#: dpmModule/kernel/core/skill.py:240 dpmModule/kernel/core/skill.py:319
+#: dpmModule/kernel/core/skill.py:393
+msgid "분류"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:79
+msgid "템플릿(상속되지 않음)"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:176 dpmModule/kernel/core/skill.py:325
+#: dpmModule/kernel/core/skill.py:399
+msgid "지속 시간"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:185 dpmModule/kernel/core/skill.py:249
+#: dpmModule/kernel/core/skill.py:334 dpmModule/kernel/core/skill.py:408
+msgid "쿨타임 감소 가능 여부"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:186 dpmModule/kernel/core/skill.py:250
+#: dpmModule/kernel/core/skill.py:335 dpmModule/kernel/core/skill.py:409
+msgid "지속시간 증가 여부"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:188
+msgid "효과"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:194
+msgid "+미발동"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:194 dpmModule/kernel/core/skill.py:258
+#: dpmModule/kernel/core/skill.py:343 dpmModule/kernel/core/skill.py:417
+msgid " 미발동"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:240
+msgid "공격기"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:242 dpmModule/kernel/core/skill.py:322
+#: dpmModule/kernel/core/skill.py:396
+msgid "퍼뎀"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:243 dpmModule/kernel/core/skill.py:323
+#: dpmModule/kernel/core/skill.py:397
+msgid "타격수"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:252 dpmModule/kernel/core/skill.py:337
+#: dpmModule/kernel/core/skill.py:411
+msgid "추가효과"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:258 dpmModule/kernel/core/skill.py:343
+#: dpmModule/kernel/core/skill.py:417
+msgid "+미발동%"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:319
+msgid "소환기"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:321 dpmModule/kernel/core/skill.py:395
+msgid "타격주기"
+msgstr ""
+
+#: dpmModule/kernel/core/skill.py:393
+msgid "도트뎀"
+msgstr ""
+
+#: dpmModule/kernel/core/skill_wrapper.py:81
+msgid "사용 금지"
+msgstr ""
+
+#: dpmModule/kernel/core/skill_wrapper.py:197
+msgid "사용 종료"
+msgstr ""
+
+#: dpmModule/kernel/core/skill_wrapper.py:201
+msgid "사용 불가"
+msgstr ""
+
+#: dpmModule/kernel/core/skill_wrapper.py:203
+#, python-format
+msgid "%.1f초이후 시전"
+msgstr ""
+
+#: dpmModule/kernel/core/skill_wrapper.py:207
+#, python-format
+msgid "쿨-%.1f초"
+msgstr ""
+
+#: dpmModule/kernel/core/skill_wrapper.py:210
+msgid "쿨-"
+msgstr ""
+
+#: dpmModule/kernel/core/skill_wrapper.py:213
+#, python-format
+msgid "%.1f초간 시전"
+msgstr ""
+
+#: dpmModule/util/dpmgenerator.py:135
+msgid "노말"
+msgstr ""
+
+#: dpmModule/util/dpmgenerator.py:135
+msgid "레어"
+msgstr ""
+
+#: dpmModule/util/dpmgenerator.py:135
+msgid "에픽"
+msgstr ""
+
+#: dpmModule/util/dpmgenerator.py:135
+msgid "유니크"
+msgstr ""
+
+#: dpmModule/util/dpmgenerator.py:135
+msgid "레전"
+msgstr ""
+
+#: dpmModule/util/dpmgenerator.py:147
+#, python-format
+msgid "유니온: %d"
+msgstr ""
+
+#: dpmModule/util/optimizer.py:125
+msgid "리스크테이커"
+msgstr ""
+
+#: dpmModule/util/optimizer.py:129
+msgid "리스트레인트"
+msgstr ""
+
+#: dpmModule/util/optimizer.py:133
+msgid "웨폰퍼프"
+msgstr ""
+
+#: dpmModule/util/optimizer.py:140
+msgid "크리데미지"
+msgstr ""
+
+#: statistics/detail_sheet.py:47 statistics/detail_sheet.py:48
+#: statistics/detail_sheet.py:49
+msgid "누적 데미지"
+msgstr ""
+
+#: statistics/detail_sheet.py:48 statistics/detail_sheet.py:55
+msgid "점유율"
+msgstr ""
+
+#: statistics/detail_sheet.py:49
+msgid "평균 데미지(1초당)"
+msgstr ""
+
+#: statistics/detail_sheet.py:50
+msgid "공격 횟수"
+msgstr ""
+
+#: statistics/detail_sheet.py:51
+msgid "최대 데미지(1타당)"
+msgstr ""
+
+#: statistics/detail_sheet.py:52
+msgid "평균 데미지(1타당)"
+msgstr ""
+
+#: statistics/detail_sheet.py:53
+msgid "최소 데미지(1타당)"
+msgstr ""
+
+#: statistics/detail_sheet.py:81
+msgid "분당 타수"
+msgstr ""
+
+#: statistics/graph.py:50
+msgid "{} {}, 쿨감{}초"
+msgstr ""
+
+#: statistics/moving_total.py:48
+msgid "{} {}, 쿨감{}초, {}초 이동합계"
+msgstr ""
+
+#: statistics/preset.py:19
+msgid "두손도끼, 소오버 고정"
+msgstr ""
+
+#: statistics/preset.py:26
+msgid "두손둔기, 블레싱 아머 미발동"
+msgstr ""
+
+#: statistics/preset.py:33
+msgid "다크 스피어 10히트, 체력 100%, 리인카 쿨마다 사용"
+msgstr ""
+
+#: statistics/preset.py:40
+msgid "포이즌 노바 4히트, 언스 사용"
+msgstr ""
+
+#: statistics/preset.py:47
+msgid "썬브 2히트, 언스 사용"
+msgstr ""
+
+#: statistics/preset.py:54
+msgid "피스메이커 3히트, 솔플, 언스 사용"
+msgstr ""
+
+#: statistics/preset.py:61
+msgid "애로우 레인 1줄기"
+msgstr ""
+
+#: statistics/preset.py:68
+msgid "거리 400"
+msgstr ""
+
+#: statistics/preset.py:75
+msgid "거리 100"
+msgstr ""
+
+#: statistics/preset.py:82
+msgid "블래 210ms 디차 240ms"
+msgstr ""
+
+#: statistics/preset.py:89
+msgid "스프 풀히트"
+msgstr ""
+
+#: statistics/preset.py:96
+msgid "스프 1줄샘"
+msgstr ""
+
+#: statistics/preset.py:103
+msgid "KP3 1타 94.6% / 2타 100%"
+msgstr ""
+
+#: statistics/preset.py:110
+msgid "블토 태풍 5히트"
+msgstr ""
+
+#: statistics/preset.py:117
+msgid "카운터 어택 미발동"
+msgstr ""
+
+#: statistics/preset.py:124
+msgid "데드아이 풀조준, 카운터 어택 미발동"
+msgstr ""
+
+#: statistics/preset.py:131
+msgid "코코볼 27히트"
+msgstr ""
+
+#: statistics/preset.py:145
+msgid "솔플, 로얄가드 쿨마다"
+msgstr ""
+
+#: statistics/preset.py:152
+msgid "솔플, 로얄가드 안씀"
+msgstr ""
+
+#: statistics/preset.py:159
+msgid "블비탈 4히트, 오비탈 분당 1350타"
+msgstr ""
+
+#: statistics/preset.py:166
+msgid "블비탈 4히트, 오비탈 분당 1150타"
+msgstr ""
+
+#: statistics/preset.py:173
+msgid "하울링게일 58히트, 볼텍스 스피어 17히트"
+msgstr ""
+
+#: statistics/preset.py:180
+msgid "점샷 400ms"
+msgstr ""
+
+#: statistics/preset.py:187
+msgid "노점샷"
+msgstr ""
+
+#: statistics/preset.py:208
+msgid "매그팡 510ms"
+msgstr ""
+
+#: statistics/preset.py:215
+msgid "블블 100%"
+msgstr ""
+
+#: statistics/preset.py:222
+msgid "좌우텔 분당 83회, 디버프 오라만, 명계문 미사용"
+msgstr ""
+
+#: statistics/preset.py:229
+msgid "재규어 스톰 3히트"
+msgstr ""
+
+#: statistics/preset.py:243
+msgid "오버로드 70초, 융합 680타"
+msgstr ""
+
+#: statistics/preset.py:257
+msgid "다오어 3히트, 다오어-브레스-브오어"
+msgstr ""
+
+#: statistics/preset.py:271
+msgid "엘고때 연계사이클"
+msgstr ""
+
+#: statistics/preset.py:278
+msgid "엘고때 이슈타르"
+msgstr ""
+
+#: statistics/preset.py:285
+msgid "블디, 블디/크오체/파컷/불스아이, 체력 100%"
+msgstr ""
+
+#: statistics/preset.py:292
+msgid "얼드, 분노/크오체/파컷/불스아이, 체력 100%"
+msgstr ""
+
+#: statistics/preset.py:299
+msgid "분혼 격참 이동형 보스 판정, 약점 간파 적용"
+msgstr ""
+
+#: statistics/preset.py:306
+msgid "분혼 격참 이동형 보스 판정, 약점 간파 미적용"
+msgstr ""
+
+#: statistics/preset.py:327
+msgid "1타캔슬 150ms, 캔슬 180ms, 윙대거 3틱"
+msgstr ""
+
+#: statistics/preset.py:334
+msgid "스포트라이트 3중첩, 어피니티IV 가동률 94.18%"
+msgstr ""
+
+#: statistics/preset.py:341
+msgid "스포트라이트 2중첩, 어피니티IV 가동률 94.18%"
+msgstr ""
+
+#: statistics/preset.py:348
+msgid "게더링 80% 히트, 레조넌스 10초마다"
+msgstr ""
+
+#: statistics/preset.py:362
+msgid "플레인 캔슬 270ms, 흉몽 캔슬 210ms"
+msgstr ""
+
+#: statistics/preset.py:369
+msgid "금고봉/지진쇄/토파류"
+msgstr ""
+
+#: statistics/preset.py:376
+msgid "문피쉐, 카벨뚝"
+msgstr ""
+
+#: statistics/preset.py:383
+msgid "어파스, 카벨뚝"
+msgstr ""
+
+#: statistics/preset.py:390
+msgid "메테리얼"
+msgstr ""
+
+#: statistics/preset.py:397
+msgid "샷 80%"
+msgstr ""
+
+#~ msgid "파편"
+#~ msgstr ""
+

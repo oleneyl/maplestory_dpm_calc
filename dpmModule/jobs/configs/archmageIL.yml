@@ -29,7 +29,7 @@ not_implied_skill_list:
   mastery: 95 + math.ceil(combat / 2)
 - name: 익스트림 매직
   pdamage_indep: 20
-- name: 아케인 (실시간)
+- name: 아케인 에임(실시간)
   pdamage: 40
 - name: 엘리멘탈 리셋(사용)
   prop_ignore: 10
@@ -124,7 +124,7 @@ skills:
     tier: 5
     use_priority: 2
     upgrade_priority: 3
-  썬더 브레이크 개시스킬:
+  썬더 브레이크(개시스킬):
     cooltime: 40000
     delay: 120
     red: true
@@ -275,7 +275,7 @@ skills:
     upgrade_priority: 2
     v_increment: 2
     v_crit: true
-  블리자드 패시브:
+  블리자드(패시브):
     cooltime: 0
     delay: 0
     damage: "(220 + 4 * combat) * (0.6 + 0.01 * combat)"

@@ -1,23 +1,24 @@
 import argparse
 from pathlib import Path
 
-from .loader import load_data
-from .preset import get_preset, get_preset_list
-from .saver import save_data
+from statistics.loader import load_data
+from statistics.preset import get_preset, get_preset_list
+from statistics.saver import save_data
+
+from localization.utilities import translator
+_ = translator.gettext
 
 try:
     import pandas as pd
     import xlsxwriter
 except ImportError:
-    print("pandas, xlsxwriter 모듈을 설치해야 합니다.")
+    print(_("모듈을 설치해야 합니다"))
     exit()
 
 
 def get_args():
     parser = argparse.ArgumentParser("Detail sheet argument")
-    parser.add_argument(
-        "--id", type=str, help="Target preset id to calculate statistics"
-    )
+    parser.add_argument("--id", type=str, help="Target preset id to calculate statistics")
     parser.add_argument("--graph", action="store_true")
     parser.add_argument("--ulevel", type=int, default=8000)
     parser.add_argument("--cdr", type=int, default=0)
@@ -42,15 +43,16 @@ def write_sheet(args, df: pd.DataFrame, writer: xlsxwriter):
 
     grouped = df.groupby(["name"])
     df = pd.DataFrame()
-    df["누적 데미지"] = grouped["deal"].sum()
-    df["점유율"] = df["누적 데미지"] / deal_total
-    df["평균 데미지(1초당)"] = df["누적 데미지"] / time
-    df["공격 횟수"] = grouped["hit"].sum()
-    df["최대 데미지(1타당)"] = grouped["deal_one"].max()
-    df["평균 데미지(1타당)"] = grouped["deal_one"].mean()
-    df["최소 데미지(1타당)"] = grouped["deal_one"].min()
 
-    df = df.sort_values(by="점유율", axis=0, ascending=False)
+    df[_("누적 데미지")] = grouped["deal"].sum()
+    df[_("점유율")] = df[_("누적 데미지")] / deal_total
+    df[_("평균 데미지(1초당)")] = df[_("누적 데미지")] / time
+    df[_("공격 횟수")] = grouped["hit"].sum()
+    df[_("최대 데미지(1타당)")] = grouped["deal_one"].max()
+    df[_("평균 데미지(1타당)")] = grouped["deal_one"].mean()
+    df[_("최소 데미지(1타당)")] = grouped["deal_one"].min()
+
+    df = df.sort_values(by=_("점유율"), axis=0, ascending=False)
 
     sheet_name = jobname.replace("/", "_") + "_" + str(args.cdr) + "_" + str(alt)
     df.to_excel(writer, sheet_name=sheet_name, startrow=3)
@@ -69,15 +71,16 @@ def write_sheet(args, df: pd.DataFrame, writer: xlsxwriter):
 
     worksheet.merge_range("B3:G3", "", center_format)
 
-    worksheet.write("A1", "직업")
+    worksheet.write("A1", _("직업"))
+    worksheet.write("A2", _("쿨감"))
+    worksheet.write("A3", _("비고"))
     worksheet.write("B1", jobname)
-    worksheet.write("A2", "쿨감")
     worksheet.write("B2", args.cdr)
-    worksheet.write("A3", "비고")
     worksheet.write("B3", description)
     worksheet.write("C1", "dpm")
+    worksheet.write("C2", _("분당 타수"))
+    worksheet.write("C1", "dpm")
     worksheet.write("D1", deal_total / (time / 60), num_format)
-    worksheet.write("C2", "분당 타수")
     worksheet.write("D2", hit_total / (time / 60), num_format)
 
     if args.graph:
@@ -95,7 +98,10 @@ def save_all(args):
     Path("data/detail_sheet/").mkdir(parents=True, exist_ok=True)
     writer = pd.ExcelWriter("data/detail_sheet/detail_sheet.xlsx", engine="xlsxwriter")
     for task in tasks:
-        data = load_data(task)
+        if args.calc:
+            data = save_data(task)
+        else:
+            data = load_data(task)
         write_sheet(task, data, writer)
     writer.close()
 

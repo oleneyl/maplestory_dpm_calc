@@ -2,21 +2,21 @@
 for maplestory_dpm_calc
 
 ## Example:
-### 리소스에서 장비 ID 검색
+### 리소스에서 장비 ID 검색.
 ```
 Gear.searchIDsByName(name="앱솔랩스 아처후드")  # exact=True
 ```
-정확히 일치하는 모든 장비 ID list 반환
+정확히 일치하는 모든 장비 ID list 반환.
 ```
 Gear.searchIDsByName(name="응축", exact=False)
 ```
-검색어를 포함하는 모든 장비 ID list 반환
+검색어를 포함하는 모든 장비 ID list 반환.
 ### 리소스에서 장비 불러오기
 ```
 Gear.createGearFromID(gearID=1004424)
 ```
-리소스에 장비 ID가 존재할 경우 해당 장비 반환, 없을 경우 기본 장비 반환
-### 장비 강화하기 (GearBuilder)
+리소스에 장비 ID가 존재할 경우 해당 장비 반환, 없을 경우 기본 장비 반환.
+### 장비 강화하기 (GearBuilder).
 Gear에 직접 수치를 적용할 수도 있지만 GearBuilder를 사용하면 인게임 방식대로 간단하게 강화가 가능합니다.
 ```
 gb = GearBuilder(gear)
@@ -29,7 +29,7 @@ gb.setGear(gear)
 ```
 gb.applyAdditionalStat(propType: GearPropType, grade: int, isDoubleAdd: bool = False) -> bool
 ```
-`gear.additionalStat`에 추가옵션 적용  
+`gear.additionalStat`에 추가옵션 적용.
 `GearPropType.allstat` 전달 시 올스탯% 추옵 적용, 실제로는 STRr, DEXr, INTr, LUKr로 대체됨
 propType: incSTR, incDEX, incINT, incLUK, incMHP, incMMP, incPAD, incMAD, incPDD, incSpeed, incJump, imdR, damR, bdR, incAllStat(올스탯%), reduceReq만 가능  
 grade: 1 ~ 7, 7이 가장 높고 1이 가장 낮은 옵션. 보스 드랍템의 경우 강환불로 3 ~ 6등급, 영환불로 4 ~ 7등급이 붙고 일반 드랍템의 경우 강환불로 1 ~ 4등급, 영환불로 2 ~ 5등급이 붙음. 파프니르 무기 1추=7등급  
@@ -38,7 +38,7 @@ isDoubleAdd: 이중추옵
 ```
 gb.scrollAvailable() -> int
 ```
-업그레이드 가능 횟수 반환  
+업그레이드 가능 횟수 반환.
 ```
 scroll = Scroll("방어구 공격력 주문서", defaultdict(int, {GearPropType.incPAD: 2}))
 gb.applyScroll(scroll: Scroll, count: int = 1) -> bool

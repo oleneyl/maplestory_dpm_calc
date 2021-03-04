@@ -43,7 +43,7 @@ constant:
   SERVERLAG: 3
   PEACEMAKER_HIT: 3
 skills:
-  부스터:
+  매직 부스터:
     cooltime: 0
     delay: 0
     red: false
@@ -67,7 +67,7 @@ skills:
     remain: 2000
     type: BuffSkill
     pdamage_indep: 10
-  에픽 어드벤처:
+  에픽 어드벤쳐:
     cooltime: 120000
     delay: 0
     red: false

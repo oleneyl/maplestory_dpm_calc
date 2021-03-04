@@ -1,10 +1,19 @@
+from ..globalSkill import PASSIVE
 from ...kernel import core
+
+from localization.utilities import translator
+_ = translator.gettext
+
+
+class PirateSkills:
+    Overdrive = _("오버 드라이브")  # "Overdrive" Taken from https://maplestory.fandom.com/wiki/Overdrive
+    LoadedDice = _("로디드 다이스")  # "Loaded Dice" Taken from https://maplestory.fandom.com/wiki/Loaded_Dice
 
 
 class OverdriveWrapper(core.BuffSkillWrapper):
     def __init__(self, vEhc, num1, num2, WEAPON_ATT):
         skill = core.BuffSkill(
-            "오버 드라이브",
+            PirateSkills.Overdrive,  # Overdrive
             delay=420,
             remain=30 * 1000,
             cooltime=(70 - vEhc.getV(num1, num2) // 5) * 1000,
@@ -25,6 +34,6 @@ class OverdriveWrapper(core.BuffSkillWrapper):
 
 def LoadedDicePassiveWrapper(vEhc, num1, num2):
     LoadedDicePassive = core.InformedCharacterModifier(
-        "로디드 다이스(패시브)", att=vEhc.getV(num1, num2) + 10
+        f"{PirateSkills.LoadedDice}({PASSIVE})", att=vEhc.getV(num1, num2) + 10  # Loaded Dice (Passive)
     )
     return LoadedDicePassive

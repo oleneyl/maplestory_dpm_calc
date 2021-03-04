@@ -149,7 +149,7 @@ class NjbStyleVBuilder(AbstractVBuilder):
             chance_for_upgrade = min(level_bonus, 5)
             target_upgrade_skill_index = 0
 
-            enhancement_left = 3  # 하나의 코어는 3개의 스킬을 강화합니다.
+            enhancement_left = 3  # One core strengthens 3 skills. 하나의 코어는 3개의 스킬을 강화합니다.
             while (
                 target_upgrade_skill_index < len(enhance_state_will_be_setted)
                 and enhancement_left > 0

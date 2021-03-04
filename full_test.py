@@ -7,12 +7,12 @@ from operator import itemgetter
 import time
 import argparse
 
+from localization.utilities import translator
+_ = translator.gettext
 
 def get_args():
     parser = argparse.ArgumentParser("DPM Full Test argument")
-    parser.add_argument(
-        "--ulevel", nargs="+", type=int, default=[4500, 6000, 7000, 8000, 8500]
-    )
+    parser.add_argument("--ulevel", nargs="+", type=int, default=[4500, 5000, 6000, 7000, 8000, 8500])
     parser.add_argument("--time", type=int, default=1800)
     parser.add_argument("--cdr", type=int, default=0)
     parser.add_argument("--thread", type=int, default=4)
@@ -21,23 +21,23 @@ def get_args():
 
 
 def test(args):
-    jobname, ulevel, runtime, cdr = args
+    job, ulevel, runtime, cdr = args
     start = time.time()
-    print(f"{jobname} {ulevel} 계산중")
+    print(_("{} {} 계산중").format(job, ulevel))
 
-    parser = IndividualDPMGenerator(jobname)
+    parser = IndividualDPMGenerator(job)
     parser.set_runtime(runtime * 1000)
     dpm = parser.get_dpm(spec_name=str(ulevel), ulevel=ulevel, cdr=cdr)
 
     end = time.time()
-    print(f"{jobname} {ulevel} 계산완료, {end - start:.3f}초")
-    return jobname, ulevel, dpm
+    print(_("{} {} 계산완료, {:.3f}초").format(job, ulevel, end - start))
+    return job, ulevel, dpm
 
 
 def write_results(results):
     dpm_output = open("dpm_output.txt", "w", encoding="utf-8")
-    for jobname, result in groupby(results, key=itemgetter(0)):
-        dpm_output.write(jobname)
+    for job, result in groupby(results, key=itemgetter(0)):
+        dpm_output.write(f'{job}')
         for dpm in map(itemgetter(2), result):
             dpm_output.write(" ")
             dpm_output.write(str(dpm))
@@ -54,4 +54,4 @@ if __name__ == "__main__":
     results = pool.map(test, tasks)
     write_results(results)
     end = time.time()
-    print(f"총 소요시간: {end - start:.3f}초")
+    print(_("총 소요시간: {:.3f}초").format(end - start))

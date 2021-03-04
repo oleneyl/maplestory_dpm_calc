@@ -33,6 +33,7 @@ class Simulator(object):
         self.analytics: Analytics = analytics
 
         # TODO: Not used attribute.
+        # Cache the buff modifier hourly to reduce the amount of computation.
         # Buff modifier를 시간별로 캐싱하여 연산량을 줄입니다.
         self._modifier_cache_and_time: List[int, CharacterModifier] = [
             -1,
@@ -52,6 +53,7 @@ class Simulator(object):
         self.scheduler.initialize(time)
         self.analytics.set_total_runtime(time)
         self.analytics.chtrmdf = self.character.get_modifier()
+        # It saves computational resources by caching because it is not necessary to recalculate the character's modifier every time (the character's state does not change during simulation).
         # 캐릭터의 Modifier를 매번 재계산 할 필요가 없으므로 (캐릭터의 상태는 시뮬레이션 도중 변화하지 않음) 캐싱하여 연산 자원을 절약합니다.
         self.character.generate_modifier_cache()
         while not self.scheduler.is_simulation_end():
@@ -362,6 +364,7 @@ class Analytics:
             # print("log",time_start, time_length, damage_sum)
             return damage_sum
 
+        # search_time_scan_rate: Time period to scan the recorded log. Default: 1000(ms)
         # search_time_scan_rate : 기록되어 있는 로그를 스캔할 시간주기입니다. 기본값 : 1000(ms)
 
         # scanning algorithm

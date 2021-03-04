@@ -7,16 +7,14 @@ from dpmModule.jobs import jobMap
 from dpmModule.kernel import core
 from dpmModule.status.ability import Ability_grade
 
-from .loader import load_data
-from .preset import get_preset
-from .saver import save_data
+from statistics.loader import load_data
+from statistics.preset import get_preset
+from statistics.saver import save_data
 
 
 def get_args():
     parser = argparse.ArgumentParser("Optimization hint argument")
-    parser.add_argument(
-        "--id", type=str, help="Target preset id to calculate statistics"
-    )
+    parser.add_argument("--id", type=str, required=True, help="Target preset id to calculate statistics")
     parser.add_argument("--ulevel", type=int, default=8000)
     parser.add_argument("--cdr", type=int, default=0)
     parser.add_argument("--time", type=int, default=1800)

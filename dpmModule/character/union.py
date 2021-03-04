@@ -6,6 +6,9 @@ from typing import Union as UnionType
 
 from ..kernel.core import ExtendedCharacterModifier as ExMDF
 
+from localization.utilities import translator
+_ = translator.gettext
+
 
 class Union:
     peoples = [
@@ -34,8 +37,8 @@ class Union:
 
     maxSlot = [6, 13, 21, 30, 40]
     # hierarchy : 공 - 주스텟 - 보공 - 방무 - 크확 - 크뎀 - 벞지
-    # links : 연결가능한 경로 제공.
-    # 기본적으로 보공과 방무를 연결합니다. 6칸씩 버림.(12칸)
+    # links : Provides a connectable route. 연결가능한 경로 제공.
+    # Basically, it connects ?? and ??. 6 spaces are discarded (12 spaces). 기본적으로 보공과 방무를 연결합니다. 6칸씩 버림.(12칸)
 
     initial_state = [6, 6, 1, 1, 0, 0, 0]
 
@@ -55,7 +58,9 @@ class Union:
 
     @staticmethod
     def get_apt_slot(ulevel: int, maplem=True) -> int:
-        """get_apt_slot(ulevel, maplem = True) : Return Apt union slot.
+        """
+        get_apt_slot(ulevel, maplem = True) : Return Apt union slot.
+        Union characters have one 200 level by default, and at least 200 level characters to match the union level.
         유니온 캐릭터는 기본적으로 200레벨 하나를 가지며, 유니온 레벨을 맞추기 위한 최소한의 200레벨 캐릭터를 가집니다.
         """
         limit = Union.peoples[ulevel // 500]
@@ -87,7 +92,8 @@ class Union:
         slot=None,
         critical_reinforce: bool = False,
     ) -> UnionType[ExMDF, List[int]]:
-        """get_union(mdf, ulevel, buffrem, asIndex=False, slot=None, critical_reinforce=False) : return optimized ExMDF value.
+        """
+        get_union(mdf, ulevel, buffrem, asIndex=False, slot=None, critical_reinforce=False) : return optimized ExMDF value.
         return value : (ExMDF, buffremain) tuple.
         """
         if slot is None:
@@ -135,12 +141,12 @@ class Union:
                     raise ArithmeticError("Something gonna wrong")
             if idx in [0, 1] and state[6] < min(
                 buffrem_max, maxvalue
-            ):  # 보공, 방무, 크확, 크뎀 점령이 끝났으면 벞지를 추가 수급
+            ):  # When the occupation of ??, ??, ??, and ?? is over, additional supply of ??. 보공, 방무, 크확, 크뎀 점령이 끝났으면 벞지를 추가 수급
                 idx = 6
             state[idx] += 1
             slots -= 1
 
-            if state[6] >= 6 and state[0] >= 6:  # 벞지가 6칸 이상이면 벞지-방무를 이어서 내부 점령 1칸을 절약함
+            if state[6] >= 6 and state[0] >= 6:  # If the base is more than 6 spaces, then the ?? is continued, saving 1 internal occupied space. 벞지가 6칸 이상이면 벞지-방무를 이어서 내부 점령 1칸을 절약함
                 state[0] -= 1
                 slots += 1
 
@@ -165,7 +171,7 @@ class Union:
     def _get_union_from_state(state: List[int], jobname: str) -> ExMDF:
         return (
             ExMDF(att=state[0])
-            + (ExMDF(stat_main=250 * state[1]) if jobname == "데몬어벤져" else ExMDF(stat_main=5 * state[1]))
+            + (ExMDF(stat_main=250 * state[1]) if jobname == _("데몬어벤져") else ExMDF(stat_main=5 * state[1]))
             + ExMDF(boss_pdamage=state[2])
             + ExMDF(armor_ignore=state[3])
             + ExMDF(crit=state[4])
@@ -177,7 +183,7 @@ class Union:
 class Card:
     """
     10/20/40/80/100
-    힘캐 : 8
+    Strength | 힘캐 : 8
     법캐 : 7
     덱 : 4
     럭 : 5
@@ -209,8 +215,10 @@ class Card:
     벞지 5/10/15/20/25
     메카
 
+    Xenon: All Stats 5/10/20/40/50
     제논 : 힘덱럭 5/10/20/40/50
 
+    Zero: Experience
     제로 : 경치
 
     닼나 : 체력% 2/3/4/5/6
@@ -230,9 +238,9 @@ class Card:
         [ExMDF(stat_main_fixed=i, stat_sub_fixed=i) for i in [5, 10, 20, 40, 50]],
         [ExMDF(pcooltime_reduce=i) for i in [2, 3, 4, 5, 6]],
         [ExMDF(buff_rem=i) for i in [5, 10, 15, 20, 25]],
-        [ExMDF(stat_main_fixed=i * 3) for i in [5, 10, 20, 40, 50]],  # 제논 전용 제논 공격대원
-        [ExMDF(stat_main_fixed=i) for i in [250, 500, 1000, 2000, 2500]],  # 데벤 전용 고정HP
-        [ExMDF(pstat_main=i) for i in [2, 3, 4, 5, 6]],  # 데벤 전용 HP%
+        [ExMDF(stat_main_fixed=i * 3) for i in [5, 10, 20, 40, 50]],  # Xenon raid member for Xenon. 제논 전용 제논 공격대원
+        [ExMDF(stat_main_fixed=i) for i in [250, 500, 1000, 2000, 2500]],  # Fixed HP for Demon. 데벤 전용 고정HP
+        [ExMDF(pstat_main=i) for i in [2, 3, 4, 5, 6]],  # Demon-exclusive HP%. 데벤 전용 HP%
     ]
 
     priority = {
@@ -268,7 +276,13 @@ class Card:
 
     @staticmethod
     def get_apt_slot(ulevel: int, maplem: bool = True) -> List[int]:
-        """get_apt_slot(ulevel, maplem = True) : Return Apt union slot.
+        """
+        get_apt_slot(ulevel, maplem = True) : Return Apt union slot.
+        Union characters increase by 1 for every 300 level from 2000 level. You basically have one.
+        The number that can be captured is as follows.
+
+        Return value type: number of 200 levels, number of 140 levels
+
         유니온 캐릭터는 2000레벨부터 300레벨당 200짜리가 1개씩 증가합니다. 기본적으로 하나를 가집니다.
         점령 가능한 개수는 아래와 같습니다.
 
@@ -284,7 +298,10 @@ class Card:
     # TODO define Character Cards
     @staticmethod
     def get_card(jobtype: str, ulevel: int, maplem: bool = True) -> ExMDF:
-        """get_card : 캐릭터카드 효과를 리턴합니다.
+        """
+        get_card: Returns the character card effect.
+        Return type: Modifier
+        get_card : 캐릭터카드 효과를 리턴합니다.
         리턴 형태 : Modifier
         """
         # TODO: 실행을 위해 임시로 변환

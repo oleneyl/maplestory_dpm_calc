@@ -41,7 +41,7 @@
             "name": "익스트림 매직",
             "pdamage_indep": 20
         }, {
-            "name": "아케인 (실시간)",
+            "name": "아케인 에임(실시간)",
             "pdamage": 40
         }, {
             "name": "퍼번트 드레인",
@@ -498,8 +498,5 @@
             "summondelay": 1680,
             "type": "DotSkill"
         }
-    
-    
-        
     }
 }

@@ -1,20 +1,20 @@
 from typing import Any, Dict, List
 
-from dpmModule.status.ability import Ability_grade
-from dpmModule.character.characterKernel import GearedCharacter, JobGenerator
-
-from ..kernel import core
-
-from dpmModule.character.characterTemplate import TemplateGenerator
-
 import dpmModule.jobs as maplejobs
-
-from dpmModule.kernel import policy
+from dpmModule.character.characterKernel import JobGenerator
+from dpmModule.character.characterTemplate import TemplateGenerator
 from dpmModule.execution import rules
+from dpmModule.kernel import core
+from dpmModule.kernel import policy
+from dpmModule.status.ability import Ability_grade
+
+from localization.utilities import translator
+_ = translator.gettext
 
 
 class IndividualDPMGenerator:
-    """IndividualDPMGenerator는 단일 직업의 dpm을 연산합니다. 연산을 위해 인자로 job을 받습니다."""
+    """IndividualDPMGenerator는 단일 직업의 dpm을 연산합니다. 연산을 위해 인자로 job을 받습니다.
+    IndividualDPMGenerator calculates dpm of a single job. Receives a job as an argument for operation."""
 
     def __init__(self, job):
         self.job = job
@@ -58,13 +58,13 @@ class IndividualDPMGenerator:
                 ]
             ),
             [rules.UniquenessRule()] + gen.get_predefined_rules(rules.RuleSet.BASE),
-        )  # 가져온 그래프를 토대로 스케줄러를 생성합니다.
-        analytics = core.Analytics(printFlag=printFlag)  # 데이터를 분석할 분석기를 생성합니다.
+        )  # 가져온 그래프를 토대로 스케줄러를 생성합니다. Create a scheduler based on the imported graph.
+        analytics = core.Analytics(printFlag=printFlag)  # 데이터를 분석할 분석기를 생성합니다. Create an analyzer to analyze the data.
         if printFlag:
             print(target.get_modifier())
         control = core.Simulator(
             sche, target, analytics
-        )  # 시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
+        )  # 시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다. Connect and create schedulers, characters, and analytics to the simulator
         control.set_default_modifier(default_modifier)
         control.start_simulation(self.runtime)
         if statistics:
@@ -82,6 +82,7 @@ class IndividualDPMGenerator:
         target, weapon_stat = TemplateGenerator().get_template_and_weapon_stat(gen=gen, spec_name=spec_name, cdr=cdr)
 
         # 코어강화량 설정
+        # Core reinforcement amount setting
         v_builder = core.AlwaysMaximumVBuilder()
         graph = gen.package(
             target,
@@ -93,6 +94,7 @@ class IndividualDPMGenerator:
             farm=False,
         )
         # 가져온 그래프를 토대로 스케줄러를 생성합니다.
+        # Create a scheduler based on the imported graph.
         sche = policy.AdvancedGraphScheduler(
             graph,
             policy.TypebaseFetchingPolicy(
@@ -105,8 +107,10 @@ class IndividualDPMGenerator:
             [rules.UniquenessRule()] + gen.get_predefined_rules(rules.RuleSet.BASE),
         )
         # 데이터를 분석할 분석기를 생성합니다.
+        # Create an analyzer to analyze the data.
         analytics = core.Analytics()
         # 시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
+        # Connect and create schedulers, characters, and analytics to the simulator
         control = core.Simulator(
             sche, target, analytics
         )
@@ -124,21 +128,23 @@ class IndividualDPMGenerator:
 
 
 class DpmSetting:
-    """DpmSetting은 모든 직업의 dpm 설정값을 연산합니다. IndividualDPMGenerator에 필요한 메타데이터를 저장합니다."""
+    """DpmSetting은 모든 직업의 dpm 설정값을 연산합니다. IndividualDPMGenerator에 필요한 메타데이터를 저장합니다.
+    DpmSetting calculates dpm settings for all classes. Stores metadata required by IndividualDPMGenerator."""
 
-    itemGrade = ["노말", "레어", "에픽", "유니크", "레전"]
+    # Normal, Rare, Epic, Unique, Legendary
+    itemGrade = [_("노말"), _("레어"), _("에픽"), _("유니크"), _("레전")]
 
     def __init__(
         self,
         # v_builder=core.AlwaysMaximumVBuilder(),
-        ulevel: int =0,
+        ulevel: int = 0,
     ):
         self.ulevel = ulevel
         self.detail = ""
 
     def getSettingInfo(self) -> List[str]:
         retli = []
-        retli.append("유니온 %d" % self.ulevel)
+        retli.append(_("유니온: %d") % self.ulevel)
         # retli.append("무기상태 %s %d줄" % (self.itemGrade[self.weaponstat[0]], (self.weaponstat[1] // 3)))
         retli.append(self.detail)
         return retli
@@ -153,9 +159,8 @@ class DpmSetting:
         retli = []
         retDict = []
 
-        for _job, idx in zip(jobli, range(len(jobli))):
-            job = maplejobs.jobList[_job]
-            generator = IndividualDPMGenerator(job)
+        for idx, _job in enumerate(jobli):
+            generator = IndividualDPMGenerator(_job)
             dpm = generator.get_dpm(
                 spec_name=str(self.ulevel),
                 ulevel=self.ulevel,
@@ -163,12 +168,10 @@ class DpmSetting:
                 default_modifier=default_modifier,
             )
             retli.append(dpm)
-            value = {"name": job, "dpm": dpm}
+            value = {"name": _job, "dpm": dpm}
             # print(value)
             retDict.append(value)
-            print(
-                "%s done ... %d / %d ... %d" % (job, idx + 1, len(jobli), value["dpm"])
-            )
+            print("%s done ... %d / %d ... %d" % (_job, idx + 1, len(jobli), value["dpm"]))
 
         sorteddata = sorted(retDict, key=lambda d: d["dpm"])
         data = {
@@ -183,10 +186,10 @@ class DpmSetting:
 
     def processJob(
             self,
-            koJob: str,
+            job: str,
             runtime: int = 180 * 1000
     ) -> Dict[str, Any]:
-        generator = IndividualDPMGenerator(koJob)
+        generator = IndividualDPMGenerator(job)
         generator.set_runtime(runtime)
         return generator.get_detailed_dpm(
             spec_name=str(self.ulevel),
@@ -225,10 +228,10 @@ class DpmInterface:
 
     def calculate_job(
             self,
-            koJob: str,
+            job: str,
             ulevel: int,
             runtime: int = 180 * 1000
     ) -> Dict[str, Any]:
         setting = DpmSetting(ulevel=ulevel)
 
-        return setting.processJob(koJob, runtime=runtime)
+        return setting.processJob(job, runtime=runtime)

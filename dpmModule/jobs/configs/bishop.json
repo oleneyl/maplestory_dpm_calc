@@ -36,9 +36,9 @@
             "pdamage_indep": 20
         }, {
             "name": "숙련도",
-            "pdamage_indep": -2.5
+            "mastery": 95
         }, {
-            "name": "블레싱 앙상블",
+            "name": "B블레싱 앙상블",
             "pdamage_indep": 3
         }, {
             "name": "아케인 에임",
@@ -60,7 +60,7 @@
         "PEACEMAKER_HIT": 3
     },
     "skills":{
-        "부스터": {
+        "매직 부스터": {
             "cooltime": 0,
             "delay": 0,
             "red": false,
@@ -87,7 +87,7 @@
             "type": "BuffSkill",
             "pdamage_indep":10
         },
-        "에픽 어드벤처": {
+        "에픽 어드벤쳐": {
             "cooltime": 120000,
             "delay": 0,
             "red": false,

@@ -4,7 +4,7 @@
 ===========
 
 
-kernel에는 프로그램이 실제로 작동하기 위해 필요한 모듈들이 집합되어 있습니다.
+kernel에는 프로그램이 실제로 작동하기 위해 필요한 모듈들이 집합되어 있습니다. 
 kernel을 제외한 다른 module는 dpmModule을 실제 상황에 적용할 수 있도록 구현한 
 코드라면, kernel은 dpmModule의 기본 작동을 안내합니다.
 
@@ -56,22 +56,22 @@ dpmModule은 다음과 같은 순서로 적동하도록 설계되어 있습니�
 
 - Graph
 
-  - `Graph`는 방향을 가지는 link를 0개 이상 가지는 GraphElement들의 연결로서 정의됩니다.
+  - -`Graph`는 방향을 가지는 link를 0개 이상 가지는 GraphElement들의 연결로서 정의됩니다.
   - `GraphElement` 는 시뮬레이션에서 action을 수행할 수 있는 연산 단위입니다. 다음과 같은 것들이 `GraphElement` 가 될 수 있습니다.
   
-    - 특정한 버프(ex. `메이플용사` 버프)
-    - 특정한 스킬(ex. `파이널 블로우` 스킬)
-    - 조건(ex. `인피니티` 스킬의 쿨타임 확인)
-    - 스택, 게이지(ex. `루미너스` 의 `라크니스 게이지`)
+    - 특정한 버프(ex. `메이플용사` 버프).
+    - 특정한 스킬(ex. `파이널 블로우` 스킬).
+    - 조건(ex. `인피니티` 스킬의 쿨타임 확인).
+    - 스택, 게이지(ex. `루미너스` 의 `라크니스 게이지`).
     
 - Task
   
   - `Task`는 시뮬레이션이 작동할 때 수행되는 실제의 행동을 의미합니다. 다음과 같은 것들이 `Task`가 될 수 있습니다.
   
-    - 특정한 버프의 `사용` (ex. `메이플 용사` 버프의 사용)
-    - 특정한 스킬의 `사용` (ex. `파이널 블로우` 스킬의 사용)
-    - 조건의 `평가` (ex. `인피니티` 스킬이 사용가능한지 확인)
-    - 스택, 게이지의 감소 (ex. `루미너스` 의 `라크니스게이지` 를 100만큼 증가)
+    - 특정한 버프의 `사용` (ex. `메이플 용사` 버프의 사용).
+    - 특정한 스킬의 `사용` (ex. `파이널 블로우` 스킬의 사용).
+    - 조건의 `평가` (ex. `인피니티` 스킬이 사용가능한지 확인).
+    - 스택, 게이지의 감소 (ex. `루미너스` 의 `라크니스게이지` 를 100만큼 증가).
     
   - 하나의 `GraphElement` 는 하나의 대표 `Task` 를 가집니다. 이 Task는 `GraphElement.build_task()` 를 통해 얻을 수 있습니다.
   - 어떤 GraphElement가 `사용` 되었다고 말하는 것은 이 대표 `Task` 가 사용된 것을 의미합니다.
@@ -94,7 +94,7 @@ dpmModule은 다음과 같은 순서로 적동하도록 설계되어 있습니�
     - 스택형 스킬 : 스킬이 사용된 후 스택을 변화시켜야 합니다.
     - 연계형 스킬 : 스킬이 발동된 후 다른 스킬을 항상 사용해야 합니다.
     
-  - 특정 GraphElement 가 사용된 이후, 다른 GraphElement가 사용되도록 하기 위해서 몇 가지 함수들이 지원됩니다. GraphElement `origin` 에 대해
+  - 특정 GraphElement 가 사용된 이후, 다른 GraphElement가 사용되도록 하기 위해서 몇 가지 함수들이 지원됩니다. GraphElement `origin` 에 대해.
     
     - origin.onAfter(target : GraphElement) : origin이 사용된 직후 target이 사용됩니다.
     - origin.onBefore(target : GraphElement) : origin이 사용되지 직전 target이 사용됩니다.
@@ -104,11 +104,10 @@ dpmModule은 다음과 같은 순서로 적동하도록 설계되어 있습니�
 
   - 시뮬레이션의 조건은 정적이지 않습니다. 각각의 조건은 매 시뮬레이션이 진행될 때마다 변화합니다.
   
-     - 모든 스킬의 남은 쿨타임
-     - 게이지형 스킬의 게이지
+     - 모든 스킬의 남은 쿨타임.
+     - 게이지형 스킬의 게이지.
      
-  - 시뮬레이션의 제작자는 최적화된 시뮬레이션을 위해 논리적 요소를 추가하고자 할 수 있습니다. 이를 위해 본 라이브러리는 `OptionalElement`
-  를 지원합니다.
+  - 시뮬레이션의 제작자는 최적화된 시뮬레이션을 위해 논리적 요소를 추가하고자 할 수 있습니다. 이를 위해 본 라이브러리는 `OptionalElement` 를 지원합니다.
   
     - OptionalElement(disc : function, after : GraphElement, fail = None : GraphElement, name = "Optional Element" : string)
       
@@ -162,9 +161,8 @@ dpmModule은 다음과 같은 순서로 적동하도록 설계되어 있습니�
     
   - 그래프를 정의하기 위해서는 세 가지가 필요합니다. 
     
-    - `실행가능한 그래프 요소`. 이들은 시뮬레이션이 진행될 때 직접적으로 Simulator가 사용할 수 있습니다(X, Y)
-    - `실행불가능한 그래프 요소`. 이들은 직접적으로 사용할 수는 없으나, 간접적으로 사용되는 순간이 존재합니다. onAfter과 같은
-    method를 통해 `실행가능한 그래프 요소` 들과 연결되어 있습니다.(Z)
+    - `실행가능한 그래프 요소`. 이들은 시뮬레이션이 진행될 때 직접적으로 Simulator가 사용할 수 있습니다(X, Y).
+    - `실행불가능한 그래프 요소`. 이들은 직접적으로 사용할 수는 없으나, 간접적으로 사용되는 순간이 존재합니다. onAfter과 같은. method를 통해 `실행가능한 그래프 요소` 들과 연결되어 있습니다.(Z).
     - `기본 그래프 요소` 이 요소는 시뮬레이션이 아무런 다른 사용가능한 요소가 없을 때 default로 사용할 요소입니다(X).
     
     - 현재 존재하는 모든 그래프 요소를 가져오기 위해, 현재까지 생성된 그래프 요소들을 가져옵니다.
@@ -183,8 +181,8 @@ dpmModule은 다음과 같은 순서로 적동하도록 설계되어 있습니�
     
 - 생성된 그래프를 동작시키기 위해서는 두 가지가 필요합니다.
 
-  - `GraphElement`가 사용될 우선순위를 정하는 `Policy`
-  - 우선순위 내에서 해당 `GraphElement`가 사용가능한지를 판별하는 `Rule`
+  - `GraphElement`가 사용될 우선순위를 정하는 `Policy`.
+  - 우선순위 내에서 해당 `GraphElement`가 사용가능한지를 판별하는 `Rule`.
   
   - Policy는 `dpmModule.kernel.graph.FetchingPolicy`를 상속하여 정의할 수 있습니다.
   - 기본적으로 GraphElement의 속성에 따라서 우선순위를 정하는 TypebaseFetchingPolicy를 지원합니다.
@@ -205,19 +203,16 @@ dpmModule은 다음과 같은 순서로 적동하도록 설계되어 있습니�
   
     - `UniquenessRule` : 제일 기본적이고 필수적인 Rule입니다. 주어진 Element가 on 상태이면 사용을 금지합니다.
     
-    - `ConcurrentRunRule` : 두 GraphElement A,B에 대해, A가 B가 사용중일 때만 사용하도록록 강제합니다. 극딜기를 함께 사용하도록
-    할 때 유용합니다.
+    - `ConcurrentRunRule` : 두 GraphElement A,B에 대해, A가 B가 사용중일 때만 사용하도록록 강제합니다. 극딜기를 함께 사용하도록 할 때 유용합니다.
     
-    - `ReservationRule` : 두 GraphElement A,B에 대해, B가 A가 사용가능할 때만 사용하도록록 강제합니다. 극딜기를 함께 사용하도록
-    할 때 유용합니다.
+    - `ReservationRule` : 두 GraphElement A,B에 대해, B가 A가 사용가능할 때만 사용하도록록 강제합니다. 극딜기를 함께 사용하도록 할 때 유용합니다.
     
     - `MutualRule` : 두 GraphElement A,B에 대해, 둘이 함께 사용될 수 없도록 강제합니다.
     
     - 이 외에도 다양한 Rule이 있습니다.
     - 아무런 Rule도 사용하려 하지 않을 경우 `UniquenessRule`만 적용합니다.
     
-  - Rule과 Policy가 정의되었다면, Scheduler를 생성할 수 있습니다. Scheduler는 주어진 Rule과 Policy를 바탕으로, 다음에 사용되어야 할
-  Task를 제시합니다.
+  - Rule과 Policy가 정의되었다면, Scheduler를 생성할 수 있습니다. Scheduler는 주어진 Rule과 Policy를 바탕으로, 다음에 사용되어야 할 Task를 제시합니다.
   
     ```python
     from dpmModule.kernel.policy import AdvancedGraphScheduler
@@ -226,8 +221,8 @@ dpmModule은 다음과 같은 순서로 적동하도록 설계되어 있습니�
     
 - 마지막으로, 시뮬레이션을 진행하는 단계입니다. 시뮬레이션은 Simulator 객체를 통해 진행할 수 있습니다. Simulator는 
   - Scheduler로부터 다음에 실행될 Task를 받아온 후,
-  - Task를 실행하고,
-  - Task에 정의되어 있는 delay만큼 시간을 spend하며
+  - RTask를 실행하고,
+  - Task에 정의되어 있는 delay만큼 시간을 spend하며.
   - 그 결과를 시뮬레이션 종료 전까지 저장, 분석합니다.
   
   - 시뮬레이션의 분석은 Analytics가 담당하고 있습니다. 예시 코드는 다음과 같습니다.
@@ -235,8 +230,8 @@ dpmModule은 다음과 같은 순서로 적동하도록 설계되어 있습니�
   ```python
   from dpmModule.kernel import core
   
-  analytics = core.Analytics()  #데이터를 분석할 분석기를 생성합니다.
-  control = core.Simulator(scheduler, character, analytics) #시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
+  analytics = core.Analytics()  # 데이터를 분석할 분석기를 생성합니다.
+  control = core.Simulator(scheduler, character, analytics) #  시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
   # 캐릭터에 대해서는 본문에서는 아직 다루지 않았습니다. 이는 Simulator가 DPM 계산만을 위해 정의된 객체이기 때문입니다.
-  control.start_simulation(3600*1000) # 1시간
+  control.start_simulation(3600*1000) # 1 hours. 1시간.
   ```

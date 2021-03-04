@@ -5,6 +5,9 @@ from ..kernel import core
 from dpmModule.kernel import policy
 from dpmModule.execution import rules
 
+from localization.utilities import translator
+_ = translator.gettext
+
 MDF = core.CharacterModifier
 
 """
@@ -28,13 +31,13 @@ parameter : by POST(To many parameters)
     "boss_pdamage", "armor_ignore", "crit", "crit_damage", "buffrem", total_slot"
 }
 
-연산 후 리턴하는 결과물
+Result returned after operation | 연산 후 리턴하는 결과물
 
 dpm : DPM
-hyper : 하이퍼
-union : 유니온
+hyper : hyper | 하이퍼
+union : legion | 유니온
 
-추후 추가 예정. 일단은 MVP부터 생성 필요.
+To be added later. First, you need to create an MVP. 추후 추가 예정. 일단은 MVP부터 생성 필요.
 """
 
 
@@ -45,9 +48,10 @@ def get_optimal_hyper_from_bare(spec, job, level):
 
 
 def get_optimal_hyper_union(spec, job, otherspec, hyper, union):
-    """최적화된 하이퍼 / 유니온 값을 계산해서 리턴합니다.
-    입력값 : CharacterModifier들
-    출력값 : [hyper, union]
+    """
+    Calculate and return the optimized hyper/union value. | 최적화된 하이퍼 / 유니온 값을 계산해서 리턴합니다.
+    Input value: CharacterModifiers | 입력값 : CharacterModifier들
+    Output value: [hyper, union] | 출력값 : [hyper, union]
     """
     ref = spec.copy()
     ref = ref - hyper.mdf
@@ -68,23 +72,19 @@ def get_instant_dpm(
     job,
     otherspec,
     useFullCore=True,
-    koJobFlag=False,
     v_builder=None,
     seed_rings=False,
     weaponAtt=None,
 ):
-    """주어진 값과 직업값으로부터 dpm을 계산해서 리턴합니다.
-    입력값 : CharacterModifier, job, otherspec
-    출력값 : float(DPM)
+    """
+    Calculate and return dpm from the given value and job value. | 주어진 값과 직업값으로부터 dpm을 계산해서 리턴합니다.
+    Input value: CharacterModifier, job, otherspec | 입력값 : CharacterModifier, job, otherspec
+    Output value: float(DPM) | 출력값 : float(DPM)
     """
 
-    if koJobFlag:
-        koJob = job
-    else:
-        koJob = maplejobs.getKoJobName(job)
-    if koJob is not None:
+    if job is not None:
         try:
-            gen = maplejobs.getGenerator(koJob).JobGenerator()
+            gen = maplejobs.getGenerator(job).JobGenerator()
         except Exception as e:
             raise TypeError("Unsupported job type: " + str(job))
     else:
@@ -112,32 +112,32 @@ def get_instant_dpm(
             ]
         ),
         [rules.UniquenessRule()] + gen.get_predefined_rules(rules.RuleSet.BASE),
-    )  # 가져온 그래프를 토대로 스케줄러를 생성합니다.
+    )  # Create a scheduler based on the imported graph. 가져온 그래프를 토대로 스케줄러를 생성합니다.
     analytics = core.Analytics(printFlag=False)  # 데이터를 분석할 분석기를 생성합니다.
     control = core.Simulator(
         sche, template, analytics
-    )  # 시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
+    )  # Connect and create schedulers, characters, and analytics to the simulator. 시뮬레이터에 스케줄러, 캐릭터, 애널리틱을 연결하고 생성합니다.
     control.start_simulation(180 * 1000)
 
     if seed_rings:
         seed_ring_specs = [
             {
-                "name": "리스크테이커",
+                "name": _("리스크테이커"),  # Risk Taker Ring
                 "effect": [[12000 + 6000 * i, MDF(patt=20 + 10 * i)] for i in range(4)],
             },
             {
-                "name": "리스트레인트",
+                "name": _("리스트레인트"),  # Ring of Restraint
                 "effect": [[9000 + 2000 * i, MDF(patt=25 + 25 * i)] for i in range(4)],
             },
             {
-                "name": "웨폰퍼프",
+                "name": _("웨폰퍼프"),  # Weapon Jump ring
                 "effect": [
                     [9000 + 2000 * i, MDF(stat_main=weaponAtt * (i + 1))]
                     for i in range(4)
                 ],
             },
             {
-                "name": "크리데미지",
+                "name": _("크리데미지"),  # Critical Damage Ring:
                 "effect": [
                     [9000 + 2000 * i, MDF(crit_damage=7 + 7 * i)] for i in range(4)
                 ],

@@ -34,7 +34,7 @@ def test_informed_modifier_loading():
 
 
 def test_job_generator_creation():
-    with open('../dpmModule/jobs/configs/archmageFb.json', encoding='utf-8') as f:
+    with open('../dpmModule/jobs/configs/archmageFP.json', encoding='utf-8') as f:
         test_conf = json.load(f)
     vEhc = None
     gen = JobGenerator()

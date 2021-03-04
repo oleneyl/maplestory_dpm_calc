@@ -5,17 +5,15 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
-from .loader import load_data
-from .saver import save_data
+from statistics.loader import load_data
+from statistics.saver import save_data
 
 plt.style.use(["bmh"])
 
 
 def get_args():
     parser = argparse.ArgumentParser("Gini coefficient argument")
-    parser.add_argument(
-        "--id", type=str, help="Target preset id to calculate statistics"
-    )
+    parser.add_argument("--id", type=str, required=True, help="Target preset id to calculate statistics")
     parser.add_argument("--ulevel", type=int, default=8000)
     parser.add_argument("--cdr", type=int, default=0)
     parser.add_argument("--task", default="dpm")

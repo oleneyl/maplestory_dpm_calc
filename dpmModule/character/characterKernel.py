@@ -36,6 +36,9 @@ from ..kernel.graph import (
 )
 from ..status.ability import Ability_grade, Ability_option, Ability_tool
 
+from localization.utilities import translate_iterable, translator
+_ = translator.gettext
+
 ExMDF = ExtendedCharacterModifier
 """Class AbstractCharacter : Basic template for building specific User. User is such object that contains:
 - Buff Skill Wrappers
@@ -65,13 +68,13 @@ class AbstractCharacter:
         self.base_modifier: ExMDF = ExMDF(stat_main=18 + level * 5, stat_sub=4, crit=5)
 
         self.about: str = ""
-        self.add_summary("레벨 %d" % level)
+        self.add_summary(_("레벨 %d") % level)
 
         self._modifier_cache: Optional[CharacterModifier] = None
 
     def unsafe_change_level(self, level: int) -> None:
         level_delta = level - self.level
-        self.add_summary(f"레벨 강제 변경 : {self.level} -> {level}")
+        self.add_summary(_("레벨 강제 변경 : {} -> {}").format(self.level, level))  # Force level change
         self.level = level
         self.base_modifier += ExMDF(stat_main=level_delta * 5)
 
@@ -200,7 +203,7 @@ class GearedCharacter(AbstractCharacter):
             ptnl = ExMDF()
 
             if len(potentials) > 3:
-                raise TypeError("무기류 잠재능력은 아이템당 최대 3개입니다.")
+                raise TypeError(_("무기류 잠재능력은 아이템당 최대 3개입니다"))
 
             for i in range(len(potentials)):
                 ptnl = ptnl + potentials[i]
@@ -219,7 +222,7 @@ class GearedCharacter(AbstractCharacter):
             ptnl = ExMDF()
 
             if len(potentials) > 3:
-                raise TypeError("무기류 잠재능력은 아이템당 최대 3개입니다.")
+                raise TypeError("Weapons potential is up to 3 per item. 무기류 잠재능력은 아이템당 최대 3개입니다.")
 
             for i in range(len(potentials)):
                 ptnl = ptnl + potentials[i]
@@ -248,9 +251,9 @@ class JobGenerator:
     - Values that you must re-  implement
 
     .buffrem : (min, max), option that this character will use bufrem property in union, card, etc.
-    .jobtype : str, int, dex, luk. 사용하는 스탯의 종류를 명시해야 합니다. You must specify which type of stat this job uses.
-    .vEnhanceNum : 5차 강화 스킬의 총 개수입니다.
-    .vSkillNum : 5차 스킬의 총 개수입니다.
+    .jobtype : str, int, dex, luk. You must specify which type of stat this job uses. 사용하는 스탯의 종류를 명시해야 합니다.
+    .vEnhanceNum : Total number of 5th enhancement skills. 5차 강화 스킬의 총 개수입니다.
+    .vSkillNum : Total number of 5th skills. 5차 스킬의 총 개수입니다.
     """
 
     # TODO: vEhc is not used.
@@ -308,9 +311,9 @@ class JobGenerator:
         if isinstance(conf, str):
             with open(conf, encoding='utf-8') as f:
                 if conf.split('.')[-1] == 'json':
-                    conf = json.load(f)
+                    conf = translate_iterable(json.load(f))
                 elif conf.split('.')[-1] == 'yml':
-                    conf = yaml.safe_load(f)
+                    conf = translate_iterable(yaml.safe_load(f))
 
         self.conf = conf
         self.buffrem = conf.get('buffrem', (0, 0))
@@ -378,10 +381,10 @@ class JobGenerator:
         self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
     ) -> None:
         self._passive_skill_list = self.get_passive_skill_list(vEhc, chtr, options)
-        self._passive_skill_list += [InformedCharacterModifier("여제의 축복", att=30)]
-        if self.jobname != "제로":
+        self._passive_skill_list += [InformedCharacterModifier(_("여제의 축복"), att=30)]
+        if self.jobname != _("제로"):
             self._passive_skill_list += [
-                InformedCharacterModifier("연합의 의지", att=5, stat_main=5, stat_sub=5)
+                InformedCharacterModifier(_("연합의 의지"), att=5, stat_main=5, stat_sub=5)
             ]
 
     def get_passive_skill_list(

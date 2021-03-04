@@ -62,7 +62,7 @@ class AbstractScenarioGraph:
         for node, idx in zip(nodes, range(len(nodes))):
             node_info = {
                 "name": node._id,
-                "expl": node.get_explanation(lang="ko"),
+                "expl": node.get_explanation(),
                 "flag": node._flag,
             }
             if node._flag & 1:

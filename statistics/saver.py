@@ -9,20 +9,22 @@ from dpmModule.jobs import jobMap
 from dpmModule.kernel import core, policy
 from dpmModule.status.ability import Ability_grade
 
-from .preset import get_preset, get_preset_list
+from statistics.preset import get_preset, get_preset_list
+
+from localization.utilities import translator
+_ = translator.gettext
+
 
 try:
     import pandas as pd
 except ImportError:
-    print("pandas 모듈을 설치해야 합니다.")
+    print(_("모듈을 설치해야 합니다"))
     exit()
 
 
 def get_args():
     parser = argparse.ArgumentParser("Statistics saver argument")
-    parser.add_argument(
-        "--id", type=str, help="Target preset id to calculate statistics"
-    )
+    parser.add_argument( "--id", type=str, required=True, help="Target preset id to calculate statistics")
     parser.add_argument("--ulevel", type=int, default=8000)
     parser.add_argument("--cdr", type=int, default=0)
     parser.add_argument("--time", type=int, default=1800)
@@ -62,7 +64,7 @@ def dpm(args):
     control = core.Simulator(sche, target, analytics)
     control.start_simulation(args.time * 1000)
     dpm = analytics.get_dpm()
-    print(preset.job, f"{dpm:,.3f}")
+    print(f'{preset.job}', f"{dpm:,.3f}")
 
     return analytics.get_log()
 

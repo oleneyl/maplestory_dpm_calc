@@ -8,8 +8,7 @@ JobGenerator
   - JobGenerator.package (chtr : ck.Character, vEhc : jt.VEnhancer, kwargs)
     
     * package는 직업 시뮬레이션에 관련된 정보를 연산하기 위해서 호출되는 함수입니다. 
-    * package는 직업 그래프를 생성하고, 직업이 기본적으로 가지고 있는 성능을 적용하고, 하이퍼/유니온 스펙을 최적화하는 등
-      부차적인 모든 작업을 자동으로 수행합니다.
+    * package는 직업 그래프를 생성하고, 직업이 기본적으로 가지고 있는 성능을 적용하고, 하이퍼/유니온 스펙을 최적화하는 등 부차적인 모든 작업을 자동으로 수행합니다.
 
   - JobGenerator.package_bare (chtr : ck.Character, vEhc : jt.VEnhancer, kwargs)
 
@@ -38,7 +37,7 @@ JobGenerator
 
     아래 값들을 올바른 값으로 다시 초기화 합니다.
     
-    - self.jobname : 직업명
+    - self.jobname : 직업명.
     - self.jobtype : 주스텟입니다. "STR", "DEX", "INT", "LUK", "LUK2", "HP", "xenon" 중 하나.
     - self.buffrem : 버프 지속시간이 중요한 직업인지 표시합니다.
     - self.vEnhanceNum : 5차 코어를 통해 강화되는 스킬의 수입니다.
@@ -52,8 +51,8 @@ JobGenerator
     - Example
       
       ```python
-      chtr.buff_rem += 50 : 추가적인 버프 지속시간 증가스킬을 가지고 있는 경우
-      chtr.add_property_ignorance(10) : 추가적인 속성무시 능력을 가지고 있는 경우
+      chtr.buff_rem += 50 # 추가적인 버프 지속시간 증가스킬을 가지고 있는 경우.
+      chtr.add_property_ignorance(10) # 추가적인 속성무시 능력을 가지고 있는 경우.
       ```
 
   - get_ruleset(self)
@@ -95,8 +94,8 @@ JobGenerator
        
       ```python
       def get_not_implied_skill_list(self):
-      WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)  # 무기상수
-      Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5)  # 숙련도
+      WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep = 20)  # 무기상수.
+      Mastery = core.InformedCharacterModifier("숙련도", pdamage_indep = -2.5)  # Mastery. 숙련도.
       ExtremeMagic = core.InformedCharacterModifier("익스트림 매직", pdamage_indep = 20)  # 익스트림 매직은 전투가 시작되어야 스텟에 반영됩니다.
       ArcaneAim = core.InformedCharacterModifier("아케인 (실시간)", pdamage = 40)
       PerventDrain = core.InformedCharacterModifier("퍼번트 드레인", pdamage_indep = 25)
@@ -113,11 +112,11 @@ JobGenerator
 
       - 스킬 오브젝트를 생성합니다.
         ```python
-        core.BuffSkill("메디테이션", 0, 240000, att = 30, rem = True, red = True) # 버프스킬
-        core.SummonSkill("이프리트", 600, 3030, 150+2*self.combat, 3, (260+5*self.combat)*1000) # 소환스킬
+        core.BuffSkill("메디테이션", 0, 240000, att = 30, rem = True, red = True) # Buff Skill. 버프스킬.
+        core.SummonSkill("이프리트", 600, 3030, 150+2*self.combat, 3, (260+5*self.combat)*1000) # 소환스킬.
         core.DamageSkill("페럴라이즈", 600, 220 + 3*self.combat, 7+1, modifier = core.CharacterModifier(pdamage = 10)) # 공격스킬.
         
-        core.DamageSkill("도트 퍼니셔", 690, 400+vEhc.getV(0,0)*15, 5, cooltime = 25 * 1000, red = True) # 5차인 경우 getV(first_priority, second_priority)로 스킬 레벨을 가져옵니다.
+        core.DamageSkill("도트 퍼니셔", 690, 400+vEhc.getV(0,0)*15, 5, cooltime = 25 * 1000, red = True) # For 5th order, get the skill level with getV(first_priority, second_priority). 5차인 경우 getV(first_priority, second_priority)로 스킬 레벨을 가져옵니다.
         ```
 
       - 4차 이하 및 하이퍼 스킬이고 강화 코어가 존재하는 경우, 강화 수치를 적용합니다.
@@ -154,9 +153,8 @@ JobGenerator
 
     3. 마지막으로, 시전 가능한 스킬들을 리스트로 만들어 리턴합니다.
       - 직접적으로 시전할 수 없는 스킬들은 넣지 않습니다.
-      - 소환수는 시전할 수 없어도 넣어야 합니다(그렇지 않으면 계산이 되지 않습니다)
-      - 필요한 경우, ensure() 함수를 통해 조건을 만족하지 않는 경우 주어진 값을 None으로
-        만들 수 있습니다. None으로 전달된 요소들은 무시됩니다.
+      - 소환수는 시전할 수 없어도 넣어야 합니다(그렇지 않으면 계산이 되지 않습니다).
+      - 필요한 경우, ensure() 함수를 통해 조건을 만족하지 않는 경우 주어진 값을 None으로 만들 수 있습니다. None으로 전달된 요소들은 무시됩니다.
         
       - Example
 
@@ -171,7 +169,7 @@ JobGenerator
             return chtr.level >= 235
         ```
 
-        - 
+  
 
       
 

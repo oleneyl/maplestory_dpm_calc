@@ -1,13 +1,24 @@
+from ..globalSkill import HOLDER
 from ...kernel import core
 from functools import partial
 
-# 모험가 및 모험가 직업 공용 5차스킬 통합코드
+from localization.utilities import translator
+_ = translator.gettext
+
+
+# Adventurer and adventurer job common 5th skill integration code. 모험가 및 모험가 직업 공용 5차스킬 통합코드.
+class AdventurerSkills:
+    FuryoftheWild = _("이볼브")  # "Fury of the Wild" Taken from https://maplestory.fandom.com/wiki/Fury_of_the_Wild
+    BlitzShield = _("블리츠 실드")  # "Blitz Shield" Taken from https://maplestory.fandom.com/wiki/Blitz_Shield
+    PiratesBanner = _("파이렛 플래그")  # "Pirate's Banner" Taken from https://maplestory.fandom.com/wiki/Pirate%27s_Banner
+    UnreliableMemory = _("언스테이블 메모라이즈")  # "Unreliable Memory" Taken from https://maplestory.fandom.com/wiki/Unreliable_Memory
+    Infinity = _("인피니티")  # "Infinity" Taken from https://maplestory.fandom.com/wiki/Infinity
 
 
 class InfinityWrapper(core.BuffSkillWrapper):
     def __init__(self, combat, interval=7):
         skill = core.BuffSkill(
-            name="인피니티",
+            name=AdventurerSkills.Infinity,
             delay=600,
             remain=(40 + combat) * 1000,
             cooltime=180 * 1000,
@@ -48,7 +59,7 @@ class UnstableMemorizeWrapper(core.DamageSkillWrapper):
         skill_modifier: core.SkillModifier,
     ):
         skill = core.DamageSkill(
-            name="언스테이블 메모라이즈",
+            name=AdventurerSkills.UnreliableMemory,
             delay=870,
             damage=0,
             hit=0,
@@ -66,6 +77,9 @@ class UnstableMemorizeWrapper(core.DamageSkillWrapper):
         self, skill: core.AbstractSkillWrapper, skill_modifier: core.SkillModifier
     ):
         """
+        Change the skill's cooldown time and availability so that it does not change.
+        TODO: It's a dangerous way, so you need to change it in a way that's not dangerous to the side-effect.
+
         스킬의 쿨타임, 사용가능 여부가 변하지 않도록 바꿔치기 합니다.
         TODO: 위험한 방식이기 때문에, side-effect에 위험하지 않은 방식으로 변경해야 합니다.
         """
@@ -100,18 +114,18 @@ class UnstableMemorizeWrapper(core.DamageSkillWrapper):
 
 def UnstableMemorizePassiveWrapper(vEhc, num1, num2):
     UnstableMemorizePassive = core.InformedCharacterModifier(
-        "언스테이블 메모라이즈(패시브)", stat_main=vEhc.getV(num1, num2)
+        AdventurerSkills.UnreliableMemory, stat_main=vEhc.getV(num1, num2)
     )
     return UnstableMemorizePassive
 
 
-# 이하 모든 코드 테스트 필요
+# Need to test all code below. 이하 모든 코드 테스트 필요.
 
 
 def PirateFlagWrapper(vEhc, num1, num2, level):
     PirateFlag = (
         core.BuffSkill(
-            name="파이렛 플래그",
+            name=AdventurerSkills.PiratesBanner,
             delay=990,
             remain=30 * 1000,
             cooltime=(60 - vEhc.getV(num1, num2)) * 1000,
@@ -124,17 +138,17 @@ def PirateFlagWrapper(vEhc, num1, num2, level):
     return PirateFlag
 
 
-# 작성중, 2초 후 폭발 가정
+# Writing, assuming explosion after 2 seconds. 작성중, 2초 후 폭발 가정.
 def BlitzShieldWrappers(vEhc, num1, num2):
-    # 딜레이 추가 필요
+    # Need to add delay. 딜레이 추가 필요.
     BlitzShieldDummy = core.BuffSkill(
-        name="블리츠 실드 (더미)",
+        name=f"{AdventurerSkills.BlitzShield}({HOLDER})",
         delay=600,
         remain=2000,
         cooltime=15000,
     ).wrap(core.BuffSkillWrapper)
     BlitzShield = core.DamageSkill(
-        name="블리츠 실드",
+        name=AdventurerSkills.BlitzShield,
         delay=2000,
         damage=vEhc.getV(num1, num2) * 20 + 500,
         hit=5,
@@ -152,7 +166,7 @@ def EvolveWrapper(
 ):
     Evolve = (
         core.SummonSkill(
-            name="이볼브",
+            name=AdventurerSkills.FuryoftheWild,
             summondelay=600,
             delay=3330,
             damage=450 + vEhc.getV(num1, num2) * 15,
@@ -166,10 +180,12 @@ def EvolveWrapper(
         .wrap(core.SummonSkillWrapper)
     )
     Evolve.onAfter(bird.controller(1))
+    # Available when available?
     Evolve.onConstraint(
-        core.ConstraintElement(bird._id + " 있을때 사용 가능", bird, bird.is_active)
+        core.ConstraintElement(bird._id + _(" 있을때 사용 가능"), bird, bird.is_active)
     )
+    # Do not use Evolve while continuing
     bird.onConstraint(
-        core.ConstraintElement("이볼브 지속중 사용 금지", Evolve, Evolve.is_not_active)
+        core.ConstraintElement(_("이볼브 지속중 사용 금지"), Evolve, Evolve.is_not_active)
     )
     return Evolve

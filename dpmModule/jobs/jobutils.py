@@ -1,8 +1,11 @@
 from ..kernel import core
 from ..kernel.graph import DynamicVariableOperation
 
+from localization.utilities import translator
+_ = translator.gettext
 
-def create_auxilary_attack(skill_wrapper: core.DamageSkillWrapper, ratio=1, nametag="(복사)"):
+
+def create_auxilary_attack(skill_wrapper: core.DamageSkillWrapper, ratio=1, nametag=_("(복사)")):
     """
     create_auxilary_attack: DamageSkill Duplicator
     Easy Shadow Partner Function
@@ -38,18 +41,18 @@ def get_starforce_count(chtr):
 
 
 def debug_skill(skill_wrapper):
-    skill_wrapper.onJustAfter(
-        core.BuffSkill(skill_wrapper._id + "(디버그)", 0, 1, cooltime=-1).wrap(
+    skill_wrapper.onJustAfter(           # (Debug)
+        core.BuffSkill(skill_wrapper._id + _("(디버그)"), 0, 1, cooltime=-1).wrap(
             core.BuffSkillWrapper
         )
     )
 
 
-# 리부트 패시브
+# Reboot passive. 리부트 패시브.
 def reboot_passive(level=-1):
     if level == -1:
-        raise ValueError
-    return core.InformedCharacterModifier("리부트", att=5, pdamage=level // 2)
+        raise ValueError                 # Reboot
+    return core.InformedCharacterModifier(_("리부트"), att=5, pdamage=level // 2)
 
 
 # 확률 누적식 룰렛
