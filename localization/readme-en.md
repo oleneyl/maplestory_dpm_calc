@@ -15,6 +15,25 @@ from localization.utilities import translator
 # register the translator to the _ function
 _ = translator.gettext
 ```
+## Limitations and Design Choices
+There are limitations on where strings can be in order to be detectable for building our initial .pot file.
+```python
+# Invalid, will not be detected
+string = f"{'BIG'} {_('TEST')}"
+# Valid, will be detected 
+string = "BIG {}".format(_('TEST'))
+# Valid, will be detected
+string = _("{} TEST").format('BIG')
+# Valid, will be detected
+str1 = _('TEST')
+str2 = _('STOP')
+string = f"{str1} {str2}"
+```
+
+All but the first option are valid for getting our strings detected and into our .pot file. 
+However, we need to make a design decision based off our code base. Since we normally generate skills 
+names as ```SKILL NAME(MODIFIER)``` it makes most sense to make use of standalone strings if possible. As
+This will allow us to detect each string individually and translate configuration files after loading.
 
 ## Changing languages
 By default the dpm calculator will run in Korean. In order to run in English modify the .env file to
