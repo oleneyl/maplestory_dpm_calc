@@ -4788,7 +4788,7 @@ msgstr "Earth: Ground-Shattering Wave"
 
 #: dpmModule/jobs/hoyoung.py:45
 msgid "토파류 : 허/실"
-msgstr "Ground-Shattering Wave (Clone/True)"
+msgstr "Ground-Shattering Wave: Clone/True"
 
 #: dpmModule/jobs/hoyoung.py:46
 msgid "환영 분신부"
@@ -4824,7 +4824,7 @@ msgstr "Heaven: Iron Fan Gale"
 
 #: dpmModule/jobs/hoyoung.py:56
 msgid "파초풍 : 허/실"
-msgstr "Iron Fan Gale (Clone/True)"
+msgstr "Iron Fan Gale: Clone/True"
 
 #: dpmModule/jobs/hoyoung.py:57
 msgid "지진쇄 : 지"
@@ -4832,7 +4832,7 @@ msgstr "Earth: Stone Tremor"
 
 #: dpmModule/jobs/hoyoung.py:58
 msgid "지진쇄 : 허/실"
-msgstr "Stone Tremor (Clone／True)"
+msgstr "Stone Tremor: Clone／True"
 
 #: dpmModule/jobs/hoyoung.py:59
 msgid "추적 귀화부"
@@ -4864,7 +4864,7 @@ msgstr "Heaven: Consuming Flames"
 
 #: dpmModule/jobs/hoyoung.py:67
 msgid "멸화염 : 허/실"
-msgstr "Consuming Flames (Clone/True)"
+msgstr "Consuming Flames: Clone/True"
 
 #: dpmModule/jobs/hoyoung.py:68
 msgid "금고봉 : 인"
