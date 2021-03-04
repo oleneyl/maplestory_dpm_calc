@@ -160,7 +160,6 @@ class JobGenerator(ck.JobGenerator):
         AfterImageShockInit = core.BuffSkill("애프터이미지 쇼크", 780, 180*1000, cooltime=240*1000, red=True).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         AfterImageShockStack = core.StackSkillWrapper(core.BuffSkill("애프터이미지 쇼크(스택)", 0, 99999999), 99)
         AfterImageShockActive = core.DamageSkill("애프터이미지 쇼크(액티브)", 0, 450+18*vEhc.getV(0,0), 5, cooltime=100).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        AfterImageShockPassive = core.DamageSkill("애프터이미지 쇼크(패시브)", 0, 500+20*vEhc.getV(0,0), 3, cooltime=6000).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         #스킬 기본 연계 연결
         ReleaseFileBunker.onAfter(Cylinder.stackController(-6))
@@ -184,12 +183,6 @@ class JobGenerator(ck.JobGenerator):
         #버닝 브레이커
         BurningBreaker.onAfter(BurningBreakerRush)
         BurningBreakerRush.onAfter(BurningBreakerExplode)
-
-        #애프터이미지 쇼크 - 패시브
-        UseAfterImageShockPassive = core.OptionalElement(lambda: AfterImageShockStack.judge(0, -1) and AfterImageShockPassive.is_available(), AfterImageShockPassive)
-        for sk in [MagnumPunch, DoublePang, HammerSmash, BalkanPunch, BalkanPunchTick, BurningBreakerExplode]:
-            sk.onAfter(UseAfterImageShockPassive)
-        AfterImageShockPassive.protect_from_running()
 
         #애프터이미지 쇼크 - 액티브
         AfterImageShockInit.onAfter(AfterImageShockStack.stackController(99))
@@ -242,6 +235,6 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), MaximizeCannon, WillOfLiberty, AuraWeaponBuff, AuraWeapon, BunkerBuster, Cylinder, Overheat, HammerSmashDebuff,
                     SoulContract] +\
-                [ReleaseHammer, BurningBreaker, BalkanPunch, AfterImageShockInit, AfterImageShockActive, AfterImageShockPassive, MirrorBreak, MirrorSpider] +\
+                [ReleaseHammer, BurningBreaker, BalkanPunch, AfterImageShockInit, AfterImageShockActive, MirrorBreak, MirrorSpider] +\
                 [RegistanceLineInfantry, HammerSmashWave] +\
                 [Mag_Pang])
