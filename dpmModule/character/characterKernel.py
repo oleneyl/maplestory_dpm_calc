@@ -311,9 +311,9 @@ class JobGenerator:
         if isinstance(conf, str):
             with open(conf, encoding='utf-8') as f:
                 if conf.split('.')[-1] == 'json':
-                    conf = json.load(f)
+                    conf = translate_iterable(json.load(f))
                 elif conf.split('.')[-1] == 'yml':
-                    conf = yaml.safe_load(f)
+                    conf = translate_iterable(yaml.safe_load(f))
 
         self.conf = conf
         self.buffrem = conf.get('buffrem', (0, 0))
