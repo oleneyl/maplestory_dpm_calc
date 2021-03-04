@@ -5,20 +5,65 @@ import math
 from localization.utilities import translator
 _ = translator.gettext
 
+# Skill name modifiers for all classes
+ACTIVE = _("액티브")
+ATTACK = _("공격")
+BLEEDING = _("출혈")
+BONUS = _("보너스")
+BUFF = _("버프")
+CANCEL = _("캔슬")
+CAST = _("시전")
+COOLDOWN = _("쿨타임")
+CRACK = _("균열")
+DAMAGE = _("타격")
+DEBUFF = _("디버프")
+DELAY = _("딜레이")
+DOT = _("도트")
+ENDING = _("종결")
+EXCEED = _("초과")
+EXPLOSION = _("폭발")
+FLOOR = _("장판")
+HOLDER = _("더미")
+HYPER = _("하이퍼")
+INIT = _("개시")
+KEYDOWN = _("키다운")
+LINK = _("연계")
+PASSIVE = _("패시브")
+POISON = _("중독")
+PREPARE = _("준비")
+REINFORCE = _("강화")
+SHOCK_WAVE = _("충격파")
+STACK = _("스택")
+SUMMON = _("소환")
+TICK = _("틱")
+USE = _("사용")
+WAVE = _("파동")
+ONE_HIT = _("1타")
+TWO_HIT = _("2타")
+THREE_HIT = _("3타")
+FOUR_HIT = _("4타")
+FIVE_HIT = _("5타")
+SIX_HIT = _("6타")
+SEVEN_HIT = _("7타")
+EIGHT_HIT = _("8타")
+LAST_HIT = _("막타")
+SUBSEQUENT_HIT = _("후속타")
+EXTRA_HIT = _("추가타")
+
 
 class GlobalSkills:
-    TermsAndConditions = _('소울 컨트랙트')  # 'Terms and Conditions' Taken from https://maplestory.fandom.com/wiki/Terms_and_Conditions
-    MapleWarrior = _('메이플 용사')  # 'Maple Warrior' Taken from https://maplestory.fandom.com/wiki/Maple_Warrior
-    DecentCombatOrders = _('쓸만한 컴뱃 오더스')  # 'Decent Combat Orders' Taken from https://maplestory.fandom.com/wiki/Decent_Combat_Orders
-    DecentSharpEyes = _('쓸만한 샤프 아이즈')  # 'Decent Sharp Eyes' Taken from https://maplestory.fandom.com/wiki/Decent_Sharp_Eyes
-    DecentSpeedInfusion = _('쓸만한 윈드 부스터')  # 'Decent Speed Infusion' Taken from https://maplestory.fandom.com/wiki/Decent_Speed_Infusion
-    DecentHyperBody = _('쓸만한 하이퍼 바디')  # 'Decent Hyper Body' Taken from https://maplestory.fandom.com/wiki/Decent_Hyper_Body
-    DecentAdvancedBlessing = _('쓸만한 어드밴스드 블레스')  # 'Decent Advanced Blessing' Taken from https://maplestory.fandom.com/wiki/Decent_Advanced_Blessing
-    MapleWorldGoddessBlessing = _('메이플월드 여신의 축복')  # 'Maple World Goddess' Blessing' Taken from https://maplestory.fandom.com/wiki/Maple_World_Goddess%27s_Blessing
-    TrueArachnidReflection = _('스파이더 인 미러')  # 'True Arachnid Reflection' Taken from https://maplestory.fandom.com/wiki/True_Arachnid_Reflection
-    TanadianRuin = _('파괴의 얄다바오트')  # 'Tanadian Ruin' Taken from https://maplestory.fandom.com/wiki/Tanadian_Ruin_(Skill)
-    AeonianRise = _('창조의 아이온')  # 'Aeonian Rise' Taken from https://maplestory.fandom.com/wiki/Aeonian_Rise_(Skill)
-    MitraFlame = _('크레스트 오브 더 솔라')  # 'Mitra Flame?' Taken from
+    TermsAndConditions = _("소울 컨트랙트")  # "Terms and Conditions" Taken from https://maplestory.fandom.com/wiki/Terms_and_Conditions
+    MapleWarrior = _("메이플 용사")  # "Maple Warrior" Taken from https://maplestory.fandom.com/wiki/Maple_Warrior
+    DecentCombatOrders = _("쓸만한 컴뱃 오더스")  # "Decent Combat Orders" Taken from https://maplestory.fandom.com/wiki/Decent_Combat_Orders
+    DecentSharpEyes = _("쓸만한 샤프 아이즈")  # "Decent Sharp Eyes" Taken from https://maplestory.fandom.com/wiki/Decent_Sharp_Eyes
+    DecentSpeedInfusion = _("쓸만한 윈드 부스터")  # "Decent Speed Infusion" Taken from https://maplestory.fandom.com/wiki/Decent_Speed_Infusion
+    DecentHyperBody = _("쓸만한 하이퍼 바디")  # "Decent Hyper Body" Taken from https://maplestory.fandom.com/wiki/Decent_Hyper_Body
+    DecentAdvancedBlessing = _("쓸만한 어드밴스드 블레스")  # "Decent Advanced Blessing" Taken from https://maplestory.fandom.com/wiki/Decent_Advanced_Blessing
+    MapleWorldGoddessBlessing = _("메이플월드 여신의 축복")  # "Maple World Goddess' Blessing" Taken from https://maplestory.fandom.com/wiki/Maple_World_Goddess%27s_Blessing
+    TrueArachnidReflection = _("스파이더 인 미러")  # "True Arachnid Reflection" Taken from https://maplestory.fandom.com/wiki/True_Arachnid_Reflection
+    TanadianRuin = _("파괴의 얄다바오트")  # "Tanadian Ruin" Taken from https://maplestory.fandom.com/wiki/Tanadian_Ruin_(Skill)
+    AeonianRise = _("창조의 아이온")  # "Aeonian Rise" Taken from https://maplestory.fandom.com/wiki/Aeonian_Rise_(Skill)
+    MitraFlame = _("크레스트 오브 더 솔라")  # "Mitra Flame?" Taken from
 
 
 def usefulSkillRemain(slevel=1): return (180+slevel*3)*1000
@@ -129,7 +174,7 @@ def GenesisSkillBuilder():
 # Seren Node Cast
 class MitraFlameWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc, num1, num2, modifier) -> None:
-        skill = core.DamageSkill(_('{}(미트라의 불꽃)').format(GlobalSkills.MitraFlame), 870, 750 + 30 * vEhc.getV(num1, num2), 12, cooltime=250 * 1000, red=True, modifier=modifier).isV(vEhc, num1, num2)
+        skill = core.DamageSkill(_("{}(미트라의 불꽃)").format(GlobalSkills.MitraFlame), 870, 750 + 30 * vEhc.getV(num1, num2), 12, cooltime=250 * 1000, red=True, modifier=modifier).isV(vEhc, num1, num2)
         super(MitraFlameWrapper, self).__init__(skill)
 
     def ensure(self, chtr: AbstractCharacter) -> bool:
@@ -138,7 +183,7 @@ class MitraFlameWrapper(core.DamageSkillWrapper):
 # Seren Node Summon
 class FlamePatternWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, modifier) -> None:
-        skill = core.SummonSkill(_('{}(불꽃의 문양)').format(GlobalSkills.MitraFlame), 0, 2100, 275 + 11 * vEhc.getV(num1, num2), 6, 51 * 1000, cooltime=-1, modifier=modifier).isV(vEhc, num1, num2)
+        skill = core.SummonSkill(_("{}(불꽃의 문양)").format(GlobalSkills.MitraFlame), 0, 2100, 275 + 11 * vEhc.getV(num1, num2), 6, 51 * 1000, cooltime=-1, modifier=modifier).isV(vEhc, num1, num2)
         super(FlamePatternWrapper, self).__init__(skill)
 
     def ensure(self, chtr: AbstractCharacter) -> bool:
@@ -154,13 +199,13 @@ def CrestOfTheSolarBuilder(enhancer, skill_importance, enhance_importance, modif
 # Unfinished code. 미완성 코드.
 def useful_hyper_body_demonavenger(slevel=1):
     # Based on delay clas. 딜레이 클라기준.
-    return core.BuffSkill(_("{}(데몬어벤져)").format(GlobalSkills.DecentHyperBody), 600, usefulSkillRemain(slevel),
+    return core.BuffSkill(f"{GlobalSkills.DecentHyperBody}({_('데몬어벤져')})", 600, usefulSkillRemain(slevel),
                           pstat_main=40, stat_sub=passiveStat(slevel), rem=False
                           ).wrap(core.BuffSkillWrapper)
 
 
 def useful_hyper_body_xenon(slevel=1):
     # Manapup treatment in the job code. 마나뻥 처리는 직업코드에서.
-    return core.BuffSkill(_("{}(제논)").format(GlobalSkills.DecentHyperBody), 600, usefulSkillRemain(slevel),
+    return core.BuffSkill(f"{GlobalSkills.DecentHyperBody}({_('제논')})", 600, usefulSkillRemain(slevel),
                           stat_main=passiveStat(slevel), stat_sub=passiveStat(slevel), rem=False
                           ).wrap(core.BuffSkillWrapper)
