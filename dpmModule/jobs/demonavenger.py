@@ -132,7 +132,7 @@ class JobGenerator(ck.JobGenerator):
         DemonicSharpness = core.InformedCharacterModifier(DemonAvengerSkills.DemonicVeracity, crit=20)
 
         # Meyong: Fixed to +15% health. 메용: 체력+15%로 수정.
-        MapleHeroesDemon = core.InformedCharacterModifier(_("메이플 용사(데몬어벤져)"), pstat_main=15+self.combat/2)
+        MapleHeroesDemon = core.InformedCharacterModifier(f"{GlobalSkills.MapleWarrior}({_('데몬어벤져')})", pstat_main=15+self.combat/2)
 
         InnerStrength = core.InformedCharacterModifier(DemonAvengerSkills.RageWithin, stat_main=600)
 
