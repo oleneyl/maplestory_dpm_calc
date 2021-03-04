@@ -55,6 +55,7 @@ class TemplateGenerator:
         _template_yaml = open_yaml('configs', 'template.yaml')
         for key in _template_yaml:
             self.data[key] = open_yaml('configs', _template_yaml[key])
+        self.data = translate_iterable(self.data)
 
     def get_spec_names(self) -> Tuple[str]:
         names: List[str] = []
@@ -95,7 +96,7 @@ class TemplateGenerator:
         gear_list = {}
         for part in self.parts:
             # Set zero subweapon
-            if part == "subweapon" and gen.jobname == "제로":
+            if part == "subweapon" and gen.jobname == _("제로"):
                 gear_list["subweapon"] = self._get_zero_subweapon(gear_list["weapon"])
             else:
                 gear_list[part] = self._get_enchanted_gear(part, node, gen, cdr)
