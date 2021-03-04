@@ -130,7 +130,8 @@ class JobGenerator(ck.JobGenerator):
         orbital_per_min = options.get("orbital_per_min", 1350)
         flamewizardDefaultSpeed = 60000 / (orbital_per_min / 6)  #266
         blazingOrbitalHit = 4
-        
+        blazingExtinctionHit = 9
+
         #Buff skills
         WordOfFire = core.BuffSkill(BlazeWizardSkills.WordofFire, 0, 300000, att = 20).wrap(core.BuffSkillWrapper)
         FiresOfCreation = core.BuffSkill(BlazeWizardSkills.FiresofCreation, 600, 300 * 1000, armor_ignore = 30+self.combat).wrap(core.BuffSkillWrapper)
@@ -143,7 +144,7 @@ class JobGenerator(ck.JobGenerator):
         
         #Full speed, No Combat Orders
         OrbitalFlame = core.DamageSkill(BlazeWizardSkills.FinalOrbitalFlame, 210, 215 + self.combat, 3 * 2 * (210 / flamewizardDefaultSpeed), modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
-        # BlazingExtinction = core.SummonSkill(BlazeWizardSkills.BlazingExtinction, 660, 2500, 310+2*self.combat, 3+1, 10000, cooltime=5000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+        BlazingExtinction = core.SummonSkill(BlazeWizardSkills.BlazingExtinction, 660, 990, 310+2*self.combat, 3+1, 990 * blazingExtinctionHit - 1, cooltime=5000, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
         CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 2, 1)
         BlazingOrbital = core.DamageSkill(BlazeWizardSkills.OrbitalInferno, 180, 330+13*vEhc.getV(0,0), 6 * blazingOrbitalHit, cooltime = 5000, red = True, modifier = core.CharacterModifier(armor_ignore = 50)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)    # 4 stroke assumptions. 4타 가정.
         
@@ -210,9 +211,8 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, name=BlazeWizardSkills.CallofCygnus, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                      cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level), WordOfFire, FiresOfCreation, BurningRegion, GloryOfGuardians, OverloadMana, Flame, SalamanderMischeifBuff,
                     globalSkill.soul_contract()] +\
-                [SalamanderMischeif, CygnusPhalanx, BlazingOrbital, InfinityFlameCircleInit, DragonSlaveInit, SavageFlame,
+                [SalamanderMischeif, CygnusPhalanx, BlazingExtinction, BlazingOrbital, InfinityFlameCircleInit, DragonSlaveInit, SavageFlame,
                     InfernoRize, MirrorBreak, MirrorSpider] +\
                 [IgnitionDOT] +\
                 [] +\
-                [OrbitalFlame])    
-    
+                [OrbitalFlame])

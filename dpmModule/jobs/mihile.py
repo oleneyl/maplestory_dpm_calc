@@ -185,8 +185,9 @@ class JobGenerator(ck.JobGenerator):
         CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 3, 3)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         RoIias = core.BuffSkill(MihileSkills.ShieldofLight, 840, (75+3*vEhc.getV(0,0))*1000, cooltime = 300*1000, red = True, pdamage_indep = 5 + (35+3*(vEhc.getV(0,0)//4))//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
-        ClauSolis = core.DamageSkill(MihileSkills.SwordofLight, 690, 700+28*vEhc.getV(4,4), 7, cooltime = 12000, red = True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)    # Royal Guard buff duration increased by 6 seconds. 100% dark 5 seconds. 로얄가드 버프지속시간 6초 증가. 100% 암흑 5초.
-        ClauSolisSummon = core.SummonSkill(f"{MihileSkills.SwordofLight}({SUMMON})", 0, 5000, 350+14*vEhc.getV(4,4), 7, 7000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   # 100% dark 5 seconds. 100% 암흑 5초.
+        CLAUSOLIS_DAMAGE = 700 + 28 * vEhc.getV(4, 4) if USE_ROYAL_GUARD else 350 + 14 * vEhc.getV(4, 4)
+        ClauSolis = core.DamageSkill(MihileSkills.SwordofLight, 690, CLAUSOLIS_DAMAGE, 7, cooltime = 12000, red = True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)    # Royal Guard buff duration increased by 6 seconds. 100% dark 5 seconds. 로얄가드 버프지속시간 6초 증가. 100% 암흑 5초.
+        ClauSolisSummon = core.SummonSkill(f"{MihileSkills.SwordofLight}({SUMMON})", 0, 5000, 350+20*vEhc.getV(4,4), 7, 7000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   # 100% dark 5 seconds. 100% 암흑 5초.
     
         SwordOfSoullight = core.BuffSkill(MihileSkills.RadiantSoul, 810, 35000, cooltime = 180*1000, red = True, patt = 15 + vEhc.getV(1,1)//2, crit = 100, armor_ignore = 100).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)
         SoullightSlash = core.DamageSkill(f"{MihileSkills.RadiantSoul}({SLASH})", 630, 400+16*vEhc.getV(1,1), 12).isV(vEhc,1,1).wrap(core.DamageSkillWrapper)
@@ -226,7 +227,7 @@ class JobGenerator(ck.JobGenerator):
 
         # Weapon Aura 오라 웨폰.
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
-        for sk in [SoullightSlash, SoulAssult, DeadlyCharge, LoyalGuard_5, ShiningCross]:
+        for sk in [SoullightSlash, SoulAssult, DeadlyCharge, ShiningCross, ClauSolis]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 

@@ -200,7 +200,7 @@ class JobGenerator(characterKernel.JobGenerator):
         Bahamutt.onConstraint(core.ConstraintElement(_("리브라와 동시사용 불가"), AngelOfLibra, AngelOfLibra.is_not_active))
 
         # Divine Punishment
-        DivinePunishmentInit.onAfter(core.RepeatElement(DivinePunishmentTick, 33))
+        DivinePunishmentInit.onAfter(core.RepeatElement(DivinePunishmentTick, 41))  # 1스택당 지속시간이 1초보다 길게 측정됨, 9스택시 41틱 발동
 
         # Overload Mana
         overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 4)
