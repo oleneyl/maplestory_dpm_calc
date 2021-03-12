@@ -332,6 +332,7 @@ class JobGenerator(ck.JobGenerator):
 
         PhotonRayAim = core.OptionalElement(PhotonRay.is_active, PhotonRay.add_aim())
         PhotonRayHit.onJustAfter(PhotonRay.controller(0, "set_disabled"))
+        PhotonRayHit.onJustAfter(core.RepeatElement(TriangulationTrigger, 30))  # TODO: set repeat count based on aim
 
         for sk in [PurgeSnipe, MeltDown, MegaSmasherTick]:
             sk.onJustAfter(TriangulationTrigger)
@@ -355,7 +356,7 @@ class JobGenerator(ck.JobGenerator):
 
         PhotonRayAim.onJustAfter(
             core.OptionalElement(
-                lambda: PhotonRay.is_active() and PhotonRay.aim < PhotonRay.max_aim,
+                lambda: PhotonRay.is_active() and PhotonRay.aim == PhotonRay.max_aim,
                 PhotonRayHit
             )
         )
