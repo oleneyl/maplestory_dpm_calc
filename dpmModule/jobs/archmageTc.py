@@ -226,6 +226,8 @@ class JobGenerator(ck.JobGenerator):
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         return (
             ChainLightening,
             [
@@ -241,6 +243,7 @@ class JobGenerator(ck.JobGenerator):
                 EpicAdventure,
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                 globalSkill.soul_contract(),
+                TandadianRuin,
                 ThunderStorm,
                 Elquiness,
                 SpiritOfSnow,
@@ -253,6 +256,7 @@ class JobGenerator(ck.JobGenerator):
                 LighteningSpear,
                 MirrorBreak,
                 MirrorSpider,
+                AeonianRise,
                 UnstableMemorize,
                 ChainLightening,
             ]
