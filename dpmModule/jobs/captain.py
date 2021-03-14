@@ -397,6 +397,8 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         # 크루 사용 후 버프 제공
@@ -451,7 +453,7 @@ class JobGenerator(ck.JobGenerator):
             sk.onTick(QuickDrawProc)
 
         QuickDrawShutdownTrigger = QuickDraw.controller(-1)
-        for sk in [Headshot, StrangeBomb, DeadEye, DeathTrigger, Nautilus, MirrorBreak]:
+        for sk in [Headshot, StrangeBomb, DeadEye, DeathTrigger, Nautilus, MirrorBreak, AeonianRise]:
             sk.onJustAfter(QuickDrawShutdownTrigger)
             sk.add_runtime_modifier(QuickDraw, lambda sk: core.CharacterModifier(pdamage_indep=(25 + self.combat) * sk.is_active()))
         for sk in [NautilusAssult, NautilusAssult_2]:
@@ -499,6 +501,7 @@ class JobGenerator(ck.JobGenerator):
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                 QuickDraw,
                 globalSkill.soul_contract(),
+                TandadianRuin,
             ]
             + [
                 BattleshipBomber,
@@ -509,6 +512,7 @@ class JobGenerator(ck.JobGenerator):
                 StrangeBomb,
                 MirrorBreak,
                 MirrorSpider,
+                AeonianRise,
             ]
             + [
                 OctaQuaterdeck,

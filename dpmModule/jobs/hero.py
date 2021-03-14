@@ -155,6 +155,8 @@ class JobGenerator(ck.JobGenerator):
         SwordIllusion = core.DamageSkill("소드 일루전", 0, 125+5*vEhc.getV(0,0), 4, cooltime=-1).wrap(core.DamageSkillWrapper)
         SwordIllusionFinal = core.DamageSkill("소드 일루전(최종)", 0, 250+10*vEhc.getV(0,0), 5, cooltime=-1).wrap(core.DamageSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
         ComboAttack = ComboAttackWrapper(core.BuffSkill("콤보어택", 0, 999999 * 1000), ComboDeathFaultBuff, vEhc, passive_level)
         IncreaseCombo = ComboAttack.stackController(1)
@@ -197,7 +199,7 @@ class JobGenerator(ck.JobGenerator):
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), ComboAttack, Fury, EpicAdventure, Valhalla, 
                     InsizingBuff, InsizingDot, AuraWeaponBuff, AuraWeapon, ComboDeathFaultBuff, 
                     ComboInstinct, ComboInstinctOff, PanicBuff,
-                    globalSkill.soul_contract()] +\
+                    globalSkill.soul_contract(), TandadianRuin] +\
                 [Panic, Insizing, ComboDeathFault, SwordIllusionInit, RisingRage] +\
-                [SwordOfBurningSoul, MirrorBreak, MirrorSpider] +\
+                [SwordOfBurningSoul, MirrorBreak, MirrorSpider, AeonianRise] +\
                 [RaisingBlowInrage])

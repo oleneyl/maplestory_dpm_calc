@@ -275,6 +275,8 @@ class JobGenerator(ck.JobGenerator):
 
         Elemental_Clone_Opt = core.OptionalElement(Elemental_Clone.is_active, Elemental_Clone_Active_Opt, Elemental_Clone_Passive_Opt)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ### Skill Wrapper ###
         # 그란디스 여신의 축복(아니마)
         def gainEnergy(energy: core.StackSkillWrapper, stack):
@@ -413,11 +415,12 @@ class JobGenerator(ck.JobGenerator):
                 Miracle_Tonic,
                 AnimaGoddessBless,
                 ReadyToDie,
-                globalSkill.soul_contract()
+                globalSkill.soul_contract(),
+                TandadianRuin
             ]
             + [Talisman_Seeker, Waryu, Summon_Sanryung]
             + [Nansin_Final]  # reserved task, use early as possible
-            + [GeumGoBong, EarthQuake, Flames, Mabong, Misaeng, CloneBinding, MirrorBreak, MirrorSpider]
+            + [GeumGoBong, EarthQuake, Flames, Mabong, Misaeng, CloneBinding, MirrorBreak, MirrorSpider, AeonianRise]
             + [
                 Miracle_Tonic_Charge,
                 Nansin_Final_Buff,

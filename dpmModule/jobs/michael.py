@@ -120,6 +120,9 @@ class JobGenerator(ck.JobGenerator):
         SwordOfSoullightSummon = core.SummonSkill("소드 오브 소울 라이트(잔상)", 0, 1800, 450+18*vEhc.getV(0,0), 5, 35000, cooltime=-1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
 
         LightOfCourage = core.BuffSkill("라이트 오브 커리지", 570, 25000, cooltime=90*1000, red=True, pdamage=10+vEhc.getV(0,0)//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ##### Build Graph
         
         # 기본 공격
@@ -174,7 +177,7 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     GuardOfLight, LoyalGuardBuff, SoulAttack, Booster, Invigorate, SacredCube, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                     DeadlyChargeBuff, QueenOfTomorrow, AuraWeaponBuff, AuraWeapon, RoIias, SwordOfSoullight, SwordOfSoullightSummon, LightOfCourage,
-                    globalSkill.soul_contract()] +\
-                [CygnusPhalanx, MirrorBreak, MirrorSpider, LightForceRay, DeadlyCharge, LoyalGuard_5, ShiningCross, ClauSolis] +\
+                    globalSkill.soul_contract(), TandadianRuin] +\
+                [CygnusPhalanx, MirrorBreak, MirrorSpider, AeonianRise, LightForceRay, DeadlyCharge, LoyalGuard_5, ShiningCross, ClauSolis] +\
                 [ShiningCrossInstall, ClauSolisSummon] +\
                 [BasicAttackWrapper])

@@ -154,6 +154,8 @@ class JobGenerator(ck.JobGenerator):
         BladeImp = core.DamageSkill("파쇄철조-회", 360, 160, 4).wrap(core.DamageSkillWrapper)
         BladeImpBuff = core.BuffSkill("파쇄철조-반", 0, 15 * 1000, cooltime=-1, pdamage_indep=10).wrap(core.BuffSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         #분혼 격참
@@ -216,8 +218,8 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     EnhanceSpiritLink, LuckyDice, HerosOath,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), Overdrive, SoulConcentrate, DoubleBody, SoulTrapStack,
-                    globalSkill.soul_contract()] +\
+                    globalSkill.soul_contract(), TandadianRuin] +\
                 [BladeImp, BladeImpBuff, SoulTrap] +\
                 [EnhanceSpiritLinkSummon_S, EnhanceSpiritLinkSummon_J_Init, EnhanceSpiritLinkSummon_J, SoulConcentrateSummon] +\
-                [RealSoulAttack, DoubleBodyRegistance, SpiritFrenzy, ChainBombPunchInit, MirrorBreak, MirrorSpider] +\
+                [RealSoulAttack, DoubleBodyRegistance, SpiritFrenzy, ChainBombPunchInit, MirrorBreak, MirrorSpider, AeonianRise] +\
                 [BasicAttackWrapper])

@@ -169,6 +169,9 @@ class JobGenerator(ck.JobGenerator):
         RapidThrowFinal_I50 = core.DamageSkill("래피드 스로우(막타)(일루젼 50%)", 0, (850+34*vEhc.getV(0,0))*0.5, 13, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         RapidThrowFinal_I30 = core.DamageSkill("래피드 스로우(막타)(일루젼 30%)", 0, (850+34*vEhc.getV(0,0))*0.3, 13, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         RapidThrowFinal_V = core.DamageSkill("래피드 스로우(막타)(5차)", 0, (850+34*vEhc.getV(0,0)) * 0.01 * (25+vEhc.getV(0,0)), 13, cooltime=-1, modifier=RAPID_MDF).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         ElementalDarkness.onAfter(ElementalDarknessDOT)
@@ -230,8 +233,8 @@ class JobGenerator(ck.JobGenerator):
                     ElementalDarkness, Booster, ShadowServent, SpiritThrowing, ShadowBatStack,
                     ShadowElusion, ReadyToDie, Dominion, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                     GloryOfGuardians, ShadowSpear, ShadowServentExtend, ShadowBite, ShadowBiteBuff,
-                    globalSkill.soul_contract()] +\
-                [RapidThrowInit, CygnusPhalanx, MirrorBreak, MirrorSpider] +\
+                    globalSkill.soul_contract(), TandadianRuin] +\
+                [RapidThrowInit, CygnusPhalanx, MirrorBreak, MirrorSpider, AeonianRise] +\
                 [ElementalDarknessDOT, ShadowSpearLarge] +\
                 [] +\
                 [QuintupleThrow])

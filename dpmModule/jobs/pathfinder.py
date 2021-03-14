@@ -203,6 +203,9 @@ class JobGenerator(ck.JobGenerator):
 
         RelicUnboundDischarge = core.SummonSkill("렐릭 언바운드(디스차지)", LINK_DELAY + 540, 360, 500+20*vEhc.getV(0, 0), 3, 22000, cooltime=120*1000, red=True, modifier=ANCIENT_ARCHERY).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
         # RelicUnboundBlast = core.SummonSkill("렐릭 언바운드(블래스트)", LINK_DELAY + 540, 2000, 625+25*vEhc.getV(0, 0), 8*4, 2000*4-1, cooltime=120*1000, red=True, modifier=ANCIENT_ARCHERY).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         # 이볼브 / 레이븐 설정
@@ -314,9 +317,9 @@ class JobGenerator(ck.JobGenerator):
                 RelicCharge, AncientBowBooster, CurseTolerance, CurseTransition, SharpEyes,
                 RelicEvolution, EpicAdventure,
                 AncientGuidance, AdditionalTransition, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), CriticalReinforce,
-                globalSkill.soul_contract()] +
+                globalSkill.soul_contract(), TandadianRuin] +
                [RelicUnboundDischarge, AncientAstraHolder, TripleImpact, EdgeOfResonance,
                 ComboAssultHolder, UltimateBlast, SplitMistel, CardinalTransition] +
-               [Evolve, Raven, GuidedArrow, RavenTempest, ObsidionBarrierBlast, MirrorBreak, MirrorSpider] +
+               [Evolve, Raven, GuidedArrow, RavenTempest, ObsidionBarrierBlast, MirrorBreak, MirrorSpider, AeonianRise] +
                [] +
                [CardinalBlast])

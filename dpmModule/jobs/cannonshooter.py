@@ -331,6 +331,8 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.SummonSkillWrapper)
         )
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ### build graph relationships
         MonkeyWave.onAfter(MonkeyWaveBuff)
         MonkeyFurious.onAfters([MonkeyFuriousBuff, MonkeyFuriousDot])
@@ -360,6 +362,7 @@ class JobGenerator(ck.JobGenerator):
                 Overdrive,
                 PirateFlag,
                 globalSkill.soul_contract(),
+                TandadianRuin,
             ]
             + [
                 SpecialMonkeyEscort_Cannon,
@@ -372,6 +375,7 @@ class JobGenerator(ck.JobGenerator):
             + [
                 SpecialMonkeyEscort_Bomb,
                 MirrorSpider,
+                AeonianRise,
                 OakRuletDOT,
                 MonkeyFuriousDot,
                 MonkeyWaveBuff,

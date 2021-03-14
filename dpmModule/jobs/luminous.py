@@ -211,6 +211,8 @@ class JobGenerator(ck.JobGenerator):
         LiberationOrbActive = LiberationOrbActiveWrapper(vEhc,0,0)
         LiberationOrbActiveStack = core.StackSkillWrapper(core.BuffSkill("리버레이션 오브(액티브)(스택)", 0, 99999999), 20)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         # Skill Wrapper - Basic Attack
         LightReflection.onAfter(LuminousState.modifyStack(390))
         Apocalypse.onAfter(LuminousState.modifyStack(410 + 40)) # 아포칼립스-리차지 +40
@@ -269,8 +271,8 @@ class JobGenerator(ck.JobGenerator):
         return(Attack, 
                 [LuminousState, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     Booster, PodicMeditaion, DarknessSocery, DarkCrescendo, HerosOath, Memorize, OverloadMana, LiberationOrb,
-                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
+                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract(), TandadianRuin] +\
                 [LightAndDarkness, LiberationOrbActive, LiberationOrbPassive, AbsoluteKillCooltimed] +\
-                [PunishingResonator, DoorOfTruth, MirrorBreak, MirrorSpider] +\
+                [PunishingResonator, DoorOfTruth, MirrorBreak, MirrorSpider, AeonianRise] +\
                 [] +\
                 [Attack])

@@ -295,6 +295,8 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         CriticalReinforce = bowmen.CriticalReinforceWrapper(
@@ -347,9 +349,10 @@ class JobGenerator(ck.JobGenerator):
                 RepeatingCartrige,
                 SplitArrowBuff,
                 globalSkill.soul_contract(),
+                TandadianRuin,
             ]
             + [TrueSnipping, ChargedArrowHold, ChargedArrow]
-            + [Freezer, Evolve, GuidedArrow, MirrorBreak, MirrorSpider]
+            + [Freezer, Evolve, GuidedArrow, MirrorBreak, MirrorSpider, AeonianRise]
             + []
             + [BasicAttack],
         )

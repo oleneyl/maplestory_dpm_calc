@@ -129,6 +129,8 @@ class JobGenerator(ck.JobGenerator):
         DemonBane2Tick = core.DamageSkill("데몬 베인(2)", 2400/21, 650+26*vEhc.getV(0, 0), 7, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)  # 2400ms 21회
         DemonBane2After = core.DamageSkill("데몬 베인(2)(후딜)", 240, 0, 0, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         DemonSlashAW1.onAfter(DemonSlashAW2)
@@ -173,7 +175,7 @@ class JobGenerator(ck.JobGenerator):
         return(BasicAttackWrapper,
                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                 Booster, DemonSlashRemainTime, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
-                *demon.AnotherWorldWrapper(vEhc, 0, 0), globalSkill.soul_contract()] +
+                *demon.AnotherWorldWrapper(vEhc, 0, 0), globalSkill.soul_contract(), TandadianRuin] +
                [Cerberus, DevilCry, DemonSlash1, SpiritOfRageEnd] +
-               [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_, DemonBaneInit, MirrorBreak, MirrorSpider] +
+               [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_, DemonBaneInit, MirrorBreak, MirrorSpider, AeonianRise] +
                [BasicAttackWrapper])

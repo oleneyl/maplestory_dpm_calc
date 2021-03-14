@@ -326,6 +326,8 @@ class JobGenerator(ck.JobGenerator):
         ForeverHungryBeastTrigger = core.DamageSkill("영원히 굶주리는 짐승(등장)", 0, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ForeverHungryBeast = core.DamageSkill("영원히 굶주리는 짐승", 0, 400+16*vEhc.getV(0,0), 12, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 20회 반복
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ### Skill Wrapper ###
 
         SpecterState = SpecterWrapper(MemoryOfSourceBuff, EndlessPainBuff)
@@ -406,7 +408,7 @@ class JobGenerator(ck.JobGenerator):
         magic_curcuit_full_drive_builder = flora.MagicCircuitFullDriveBuilder(vEhc, 4, 3)
         for sk in (HUMAN_SKILLS_MCF + SPECTER_SKILLS_MCF +
             [EndlessPainTick, EndlessPainEnd, EndlessPainEnd_Link, MemoryOfSourceTick, MemoryOfSourceEnd, 
-            DeviousNightmare, DeviousDream, ForeverHungryBeast, MirrorBreak]):
+            DeviousNightmare, DeviousDream, ForeverHungryBeast, MirrorBreak, AeonianRise]):
             magic_curcuit_full_drive_builder.add_trigger(sk)
         MagicCircuitFullDrive, MagicCircuitFullDriveStorm = magic_curcuit_full_drive_builder.get_skill()
 
@@ -418,6 +420,7 @@ class JobGenerator(ck.JobGenerator):
             skill.onAfter(UpcomingDeath_Connected)
         MagicCircuitFullDriveStorm.onAfter(core.OptionalElement(SpecterState.is_active, UpcomingDeath_Connected))
         MirrorBreak.onAfter(core.OptionalElement(SpecterState.is_active, UpcomingDeath_Connected))
+        AeonianRise.onAfter(core.OptionalElement(SpecterState.is_active, UpcomingDeath_Connected))
         
         # 5차 - 새어나오는 악몽 / 흉몽 연계
         EndlessNightmare_Link.onAfter(core.OptionalElement(DeviousNightmare.is_available, DeviousNightmare))
@@ -528,14 +531,14 @@ class JobGenerator(ck.JobGenerator):
                 ContactCaravan, Booster, LuckyDice, ScarletBuff, AbyssBuff, SpecterState, ScarletBuff2, AbyssBuff2,
                 ChargeSpellAmplification, WraithOfGod, InfinitySpell, MagicCircuitFullDrive, FloraGoddessBless, Overdrive, 
                 MemoryOfSourceBuff, EndlessPainBuff,
-                globalSkill.soul_contract()
+                globalSkill.soul_contract(), TandadianRuin
             ]
             + [RaptRestrictionEnd, ForeverHungryBeastTrigger]  # reserved task, use as early as possible
             + [
                 MemoryOfSource, RaptRestriction, ReturningHate, ForeverHungryBeastInit, CrawlingFear_Link, 
                 EndlessNightmare_Link, ScarletChargeDrive_Link, GustChargeDrive_Link, AbyssChargeDrive_Link, 
                 UncurableHurt_Link, UnfulfilledHunger_Link, Impulse_Connected, UncontrollableChaos_Link, EndlessPain, 
-                GustSpellAttack, AbyssSpellSummon, RaptRestrictionSummon, DeviousNightmare, DeviousDream, MirrorBreak, MirrorSpider
+                GustSpellAttack, AbyssSpellSummon, RaptRestrictionSummon, DeviousNightmare, DeviousDream, MirrorBreak, MirrorSpider, AeonianRise
             ]
             + [MagicCircuitFullDriveStorm]
             + [PlainAttack]

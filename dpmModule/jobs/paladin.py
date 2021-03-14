@@ -122,6 +122,8 @@ class JobGenerator(ck.JobGenerator):
 
         FinalAttack = core.DamageSkill("파이널 어택", 0, 80, 2*0.4).setV(vEhc, 4, 5, True).wrap(core.DamageSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         # Damage skill
@@ -163,9 +165,10 @@ class JobGenerator(ck.JobGenerator):
                 AuraWeaponBuff,
                 AuraWeapon,
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, combat_level=2),
-                globalSkill.soul_contract()
+                globalSkill.soul_contract(),
+                TandadianRuin,
             ] +
-            [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, MightyMjollnirInit, GrandCross, MirrorBreak, MirrorSpider] +
+            [LighteningCharge, LighteningChargeDOT, DivineCharge, Sanctuary, MightyMjollnirInit, GrandCross, MirrorBreak, MirrorSpider, AeonianRise] +
             [BlessedHammer, BlessedHammerActive] +
             [Blast]
         )

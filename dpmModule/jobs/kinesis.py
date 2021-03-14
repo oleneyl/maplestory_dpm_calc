@@ -186,6 +186,8 @@ class JobGenerator(ck.JobGenerator):
         LawOfGravityFinal = core.DamageSkill("로 오브 그래비티(폭발)", 0, 600+24*vEhc.getV(0,0), 15, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         
         PsychicPoint = KinesisStackWrapper(core.BuffSkill("싸이킥 포인트", 0, 999999999), 30 + 10, PsychicOver.is_active)
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
         
         ### Build Graph ###
 
@@ -296,7 +298,8 @@ class JobGenerator(ck.JobGenerator):
                 PsychicCharging,
                 AnotherGoddessBuff,
                 PsychicOver,
-                globalSkill.soul_contract()
+                globalSkill.soul_contract(),
+                TandadianRuin,
             ]
             + [
                 AnotherHeal,
@@ -317,7 +320,8 @@ class JobGenerator(ck.JobGenerator):
                 Ultimate_Material,
                 LawOfGravity,
                 UltimatePsychic,
-                MirrorBreak
+                MirrorBreak,
+                AeonianRise,
             ]
             + [
                 UltimatePsychicBuff,

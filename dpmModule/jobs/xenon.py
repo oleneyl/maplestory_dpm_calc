@@ -294,6 +294,8 @@ class JobGenerator(ck.JobGenerator):
             lambda sk: sk.aim,
         )
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
         SupplySurplus = SupplyStackWrapper(core.BuffSkill("서플러스 서플라이", 0, 999999999))
 
@@ -383,6 +385,7 @@ class JobGenerator(ck.JobGenerator):
                 Overdrive,
                 ReadyToDie,
                 globalSkill.soul_contract(),
+                TandadianRuin,
             ]
             + [
                 Hologram_Fusion,
@@ -393,6 +396,7 @@ class JobGenerator(ck.JobGenerator):
             + [
                 MirrorBreak,
                 MirrorSpider,
+                AeonianRise,
                 MegaSmasher,
                 MeltDown,
                 MeltDown_Armor,

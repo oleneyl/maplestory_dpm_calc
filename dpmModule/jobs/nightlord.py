@@ -122,6 +122,8 @@ class JobGenerator(ck.JobGenerator):
         ThrowBlastingActive = core.BuffSkill("스로우 블래스팅(액티브)", 720, 60000, cooltime=180*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
         ThrowBlastingPassive = core.DamageSkill("스로우 블래스팅(패시브)", 0, 0, 0, cooltime=10000).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         # 써든레이드
@@ -180,9 +182,9 @@ class JobGenerator(ck.JobGenerator):
                 ShadowPartner, SpiritJavelin, PurgeArea, DarkFlare, BleedingToxin, EpicAdventure,
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), UltimateDarksight, ReadyToDie, SpreadThrowInit,
                 ThrowBlasting, ThrowBlastingPassive, ThrowBlastingActive,
-                globalSkill.soul_contract()
+                globalSkill.soul_contract(), TandadianRuin,
             ]
             + [ArcaneOfDarklordFinal]
-            + [SuddenRaid, SuddenRaidDOT, Pungma, PungmaHit, ArcaneOfDarklord, MirrorBreak, MirrorSpider, BleedingToxinDot, FatalVenom]
+            + [SuddenRaid, SuddenRaidDOT, Pungma, PungmaHit, ArcaneOfDarklord, MirrorBreak, MirrorSpider, AeonianRise, BleedingToxinDot, FatalVenom]
             + [QuarupleThrow]
         )

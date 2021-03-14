@@ -349,6 +349,8 @@ class JobGenerator(ck.JobGenerator):
             modifier=core.CharacterModifier(crit=100, armor_ignore=20),
         ).wrap(core.DamageSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         # Build Graph
         """
         스킬간 발동관계 참고 링크
@@ -491,6 +493,7 @@ class JobGenerator(ck.JobGenerator):
                 AbyssalLightning,
                 MasterOfDeath,
                 globalSkill.soul_contract(),
+                TandadianRuin,
             ]
             + [DarkGenesis, BattlekingBar]
             + [
@@ -499,6 +502,7 @@ class JobGenerator(ck.JobGenerator):
                 GrimReaper,
                 MirrorBreak,
                 MirrorSpider,
+                AeonianRise,
             ]
             + [AbyssalLightningAttack, Death]  # Not used from scheduler
             + [BasicAttack],
