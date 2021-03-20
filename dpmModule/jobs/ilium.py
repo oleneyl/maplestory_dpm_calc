@@ -57,7 +57,6 @@ class SoulOfCrystalWrapper(core.BuffSkillWrapper):
 
     def get_modifier(self):
         if self.is_absorbed > 0:
-            print(f'Currently absorbed..{self.is_absorbed}')
             return self.absorbed_buff_modifier
         else:
             return self.disabledModifier
