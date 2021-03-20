@@ -44,12 +44,27 @@ class IliumStackWrapper(core.StackSkillWrapper):
         return result
 
 class SoulOfCrystalWrapper(core.BuffSkillWrapper):
-    def __init__(self, skill, name = None):
+    def __init__(self, skill, vEhc, name = None):
         super().__init__(skill, name)
+        self.modifierInvariantFlag = False
+        self.absorbed_buff_modifier = core.CharacterModifier(pdamage = (vEhc.getV(1,0) + 5) * 2)
+        self.is_absorbed = -1
 
     def turnOff(self):
+        self.is_absorbed = self.timeLeft
         self.timeLeft = 0
         return self._result_object_cache
+
+    def get_modifier(self):
+        if self.is_absorbed > 0:
+            print(f'Currently absorbed..{self.is_absorbed}')
+            return self.absorbed_buff_modifier
+        else:
+            return self.disabledModifier
+
+    def spend_time(self, time: float) -> None:
+        super().spend_time(time)
+        self.is_absorbed -= time
 
     def turnOffController(self):
         task = core.Task(self, self.turnOff)
@@ -205,7 +220,7 @@ class JobGenerator(ck.JobGenerator):
         #글로리 윙
         GloryWingStackSkill = core.BuffSkill("글로리 윙(스택)", 0, 9999999)
         
-        GloryWingUse = core.BuffSkill("글로리 윙(진입)", 30, 20000, pdamage_indep = 25, pdamage = (vEhc.getV(1,0) + 5) * 2, boss_pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper) # 소오크 2개에 항상 맞춰 사용
+        GloryWingUse = core.BuffSkill("글로리 윙(진입)", 30, 20000, pdamage_indep = 25, boss_pdamage = 30, cooltime = -1).wrap(core.BuffSkillWrapper) # 소오크 2개에 항상 맞춰 사용
         
         GloryWing_MortalWingbit = core.DamageSkill("글로리 윙:모탈 윙비트", 630, 1070 + 20*self.combat, 15, cooltime = -1).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)  #1회
         
@@ -222,7 +237,7 @@ class JobGenerator(ck.JobGenerator):
         CrystalIgnitionEnd = core.DamageSkill("크리스탈 이그니션(종료)", 630, 0, 0, cooltime = -1).wrap(core.DamageSkillWrapper)
         Reaction_Spectrum = core.DamageSkill("리액션:스펙트럼", 0, 1000+40*vEhc.getV(2,1), 5, cooltime = 1000, modifier = core.CharacterModifier(boss_pdamage = 20)).wrap(core.DamageSkillWrapper) #1초마다 시전됨.
  
-        SoulOfCrystal = SoulOfCrystalWrapper(core.BuffSkill("소울 오브 크리스탈", 510*2, 30*1000, cooltime=40*1000).isV(vEhc,1,0))
+        SoulOfCrystal = SoulOfCrystalWrapper(core.BuffSkill("소울 오브 크리스탈", 510*2, 30*1000, cooltime=40*1000).isV(vEhc,1,0), vEhc)
         SoulOfCrystalPassive = core.BuffSkill("소울 오브 크리스탈(패시브)", 0, 999999999, att = (5+vEhc.getV(1,0)*2)).isV(vEhc,1,0).wrap(core.BuffSkillWrapper)
 
         SoulOfCrystal_Reaction_Domination = core.DamageSkill("리액션:도미네이션(소오크)", 0, (550 + 100 + self.combat*2) * 0.01 * (50 + vEhc.getV(1,0)), 2*2).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
