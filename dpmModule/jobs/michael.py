@@ -130,6 +130,7 @@ class JobGenerator(ck.JobGenerator):
         SoullightSlash.onAfter(FinalAttack)
         SoulAssult.onAfter(FinalAttack)
         LoyalGuard_5.onAfter(FinalAttack)
+        LightForceRay.onAfter(FinalAttack)
 
         # 클라우 솔라스
         ClauSolis.onEventElapsed(ClauSolisSummon, 5000)
@@ -152,7 +153,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
-        for sk in [SoullightSlash, SoulAssult, DeadlyCharge, ShiningCross, ClauSolis]:
+        for sk in [SoullightSlash, SoulAssult, DeadlyCharge, ShiningCross, ClauSolis, LightForceRay]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
