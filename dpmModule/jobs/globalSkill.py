@@ -21,25 +21,39 @@ def maple_heros(level, name="메이플 용사", combat_level=0):
 
 
 # 1레벨 고정 (레벨당 보너스가 내성이므로)
-def useful_combat_orders():
-    return core.BuffSkill("쓸만한 컴뱃 오더스", 1500, usefulSkillRemain(), rem=False).wrap(core.BuffSkillWrapper)
+def useful_combat_orders(use_pet=False):
+    return core.BuffSkill("쓸만한 컴뱃 오더스", 0 if use_pet else 1500, usefulSkillRemain(), rem=False).wrap(core.BuffSkillWrapper)
 
 
-def useful_sharp_eyes(slevel=1):
-    return core.BuffSkill("쓸만한 샤프 아이즈", 900, usefulSkillRemain(slevel), rem=False, crit=10, crit_damage=8,
+def useful_sharp_eyes(slevel=1, use_pet=False):
+    return core.BuffSkill("쓸만한 샤프 아이즈", 0 if use_pet else 900, usefulSkillRemain(slevel), rem=False, crit=10, crit_damage=8,
                           stat_main=passiveStat(slevel), stat_sub=passiveStat(slevel)).wrap(core.BuffSkillWrapper)
 
 
-def useful_wind_booster(slevel=1):
-    return core.BuffSkill("쓸만한 윈드 부스터", 900, usefulSkillRemain(slevel), rem=False,
+def useful_wind_booster(slevel=1, use_pet=False):
+    return core.BuffSkill("쓸만한 윈드 부스터", 0 if use_pet else 900, usefulSkillRemain(slevel), rem=False,
                           stat_main=passiveStat(slevel), stat_sub=passiveStat(slevel)
                           ).wrap(core.BuffSkillWrapper)
 
 
 # TODO: 제논, 데몬어벤져용 각각 분리
-def useful_advanced_bless(slevel=1):
-    return core.BuffSkill("쓸만한 어드밴스드 블레스", 600, usefulSkillRemain(slevel), rem=False, att=20).wrap(core.BuffSkillWrapper)
+def useful_advanced_bless(slevel=1, use_pet=False):
+    return core.BuffSkill("쓸만한 어드밴스드 블레스", 0 if use_pet else 600, usefulSkillRemain(slevel), rem=False, att=20).wrap(core.BuffSkillWrapper)
 
+
+# 미완성 코드
+def useful_hyper_body_demonavenger(slevel=1, use_pet=False):
+    # 딜레이 클라기준
+    return core.BuffSkill("쓸만한 하이퍼 바디 (데몬어벤져)", 0 if use_pet else 600, usefulSkillRemain(slevel),
+                          pstat_main=40, stat_sub=passiveStat(slevel), rem=False
+                          ).wrap(core.BuffSkillWrapper)
+
+
+def useful_hyper_body_xenon(slevel=1, use_pet=False):
+    # 마나뻥 처리는 직업코드에서
+    return core.BuffSkill("쓸만한 하이퍼 바디 (제논)", 0 if use_pet else 600, usefulSkillRemain(slevel),
+                          stat_main=passiveStat(slevel), stat_sub=passiveStat(slevel), rem=False
+                          ).wrap(core.BuffSkillWrapper)
 
 class MirrorBreakWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc, num1, num2, modifier) -> None:
@@ -130,18 +144,3 @@ def CrestOfTheSolarBuilder(enhancer, skill_importance, enhance_importance, modif
     FlamePattern = FlamePatternWrapper(enhancer, skill_importance, enhance_importance, modifier)
     MitraFlame.onAfter(FlamePattern)
     return MitraFlame, FlamePattern
-
-
-# 미완성 코드
-def useful_hyper_body_demonavenger(slevel=1):
-    # 딜레이 클라기준
-    return core.BuffSkill("쓸만한 하이퍼 바디 (데몬어벤져)", 600, usefulSkillRemain(slevel),
-                          pstat_main=40, stat_sub=passiveStat(slevel), rem=False
-                          ).wrap(core.BuffSkillWrapper)
-
-
-def useful_hyper_body_xenon(slevel=1):
-    # 마나뻥 처리는 직업코드에서
-    return core.BuffSkill("쓸만한 하이퍼 바디 (제논)", 600, usefulSkillRemain(slevel),
-                          stat_main=passiveStat(slevel), stat_sub=passiveStat(slevel), rem=False
-                          ).wrap(core.BuffSkillWrapper)
