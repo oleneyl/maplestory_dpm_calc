@@ -96,7 +96,7 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
 
         Booster = core.BuffSkill("부스터", 0, 180000, rem = True).wrap(core.BuffSkillWrapper)
-        ChookRoi = core.BuffSkill("축뢰", 690, (180+5*self.combat)*1000, rem = True).wrap(core.BuffSkillWrapper)
+        ChookRoi = core.BuffSkill("축뢰", 0, (180+5*self.combat)*1000, rem = True).wrap(core.BuffSkillWrapper)
         WindBooster = core.BuffSkill("윈드 부스터", 0, (300+5*passive_level)*1000, rem = True).wrap(core.BuffSkillWrapper)
         HurricaneBuff = core.BuffSkill("태풍(버프)", 0, (90+passive_level)*1000, rem = True, pdamage = 35).wrap(core.BuffSkillWrapper) # TODO: 뇌전 스택에 연동해야함
     
