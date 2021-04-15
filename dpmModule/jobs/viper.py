@@ -368,7 +368,7 @@ class JobGenerator(ck.JobGenerator):
                 delay=420,
                 damage=600 + vEhc.getV(4, 4) * 24,
                 hit=10,
-                cooltime=10 * 1000,
+                cooltime=8 * 1000,
                 modifier=core.CharacterModifier(boss_pdamage=30),
             )
             .isV(vEhc, 4, 4)
