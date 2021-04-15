@@ -86,10 +86,11 @@ class JobGenerator(ck.JobGenerator):
         ExtentMagazine = core.InformedCharacterModifier("익스텐드 매거진", pdamage_indep=20 + passive_level // 3, stat_main=60 + 2*passive_level, stat_sub=60 + 2*passive_level)
         AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)", att = 20 + ceil(passive_level/2))
         JaugerStormPassive = core.InformedCharacterModifier("재규어 스톰(패시브)", att = 5+2*vEhc.getV(0,0))
+        BeastForm = core.InformedCharacterModifier("비스트 폼", patt=20+5).wrap(core.BuffSkillWrapper) # 하이퍼 리인포스
     
         return [Jaguer, NaturesWrath, AutomaticShootingDevice,
                             CrossbowMastery, PhisicalTraining, Flurry, JaugerLink, CrossbowExpert, 
-                            WildInstinct, ExtentMagazine, AdvancedFinalAttackPassive, JaugerStormPassive]
+                            WildInstinct, ExtentMagazine, AdvancedFinalAttackPassive, JaugerStormPassive, BeastForm]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -139,9 +140,7 @@ class JobGenerator(ck.JobGenerator):
         ######   Skill   ######
         #Buff skills
         SoulArrow = core.BuffSkill("소울 애로우", 0, 300*1000, rem = True, att = 20).wrap(core.BuffSkillWrapper)
-        Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)
         Hauling = core.BuffSkill("하울링", 0, 300*1000, rem = True, patt = 10).wrap(core.BuffSkillWrapper)
-        BeastForm = core.BuffSkill("비스트 폼", 0, 300*1000, rem = True, patt=20+5).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill("샤프 아이즈", 1080, (300+3*self.combat) * 1000, crit = 20 + ceil(self.combat/2), crit_damage = 15 + ceil(self.combat/2), rem = True).wrap(core.BuffSkillWrapper)
 
         #Summon skills
@@ -212,7 +211,7 @@ class JobGenerator(ck.JobGenerator):
         return(WildBalkan,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_combat_orders(),
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), CriticalReinforce, SoulArrow,
-                    Booster, Hauling, BeastForm, SharpEyes, SilentRampage, JaguerStorm, WillOfLiberty, Jaguar,
+                    Hauling, SharpEyes, SilentRampage, JaguerStorm, WillOfLiberty, Jaguar,
                     globalSkill.soul_contract()] +\
                 [RampageAsOne, JaguarSoul, SonicBoom, Crossroad, ClawCut, Normal] +\
                 [HuntingUnit, DrillContainer, GuidedArrow, RegistanceLineInfantry, WildGrenade, JaguarMaximum, WildBalkanTypeXInit, MirrorBreak, MirrorSpider] +\
