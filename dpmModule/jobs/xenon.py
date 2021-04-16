@@ -323,7 +323,8 @@ class JobGenerator(ck.JobGenerator):
         TriangulationTrigger = core.OptionalElement(lambda : TriangulationStack.judge(3, 1), Triangulation, TriangulationStack.stackController(0.3))
         Triangulation.onJustAfter(TriangulationStack.stackController(0, dtype='set'))
 
-        MegaSmasher.onAfter(core.RepeatElement(MegaSmasherTick, 74)) # 계산을 통한 추정치
+        # 스킬 레벨에 따라 타수가 달라짐. 30레벨 기준.
+        MegaSmasher.onAfter(core.RepeatElement(MegaSmasherTick, 82))  # https://youtu.be/P1KKWl33n18?t=490
 
         OverloadMode.onJustAfter(SupplySurplus.beginOverloadMode())
         OverloadMode.onEventEnd(SupplySurplus.endOverloadMode())
