@@ -17,24 +17,6 @@ https://github.com/Monolith11/memo/wiki/Zero-Skill-Mechanics
 '''
 
 
-class CriticalBindWrapper(core.BuffSkillWrapper):
-    def __init__(self, alphaState: core.BuffSkillWrapper, betaState: core.BuffSkillWrapper):
-        skill = core.BuffSkill("크리티컬 바인드", 0, 4000, cooltime=35000, crit=30, crit_damage=20)
-        super(CriticalBindWrapper, self).__init__(skill)
-        self.alphaState = alphaState
-        self.betaState = betaState
-
-    def get_modifier(self):
-        if self.alphaState.is_not_active():
-            return self.disabledModifier
-        return super(CriticalBindWrapper, self).get_modifier()
-
-    def is_usable(self):
-        if self.betaState.is_not_active():
-            return False
-        return super(CriticalBindWrapper, self).is_usable()
-
-
 class JobGenerator(ck.JobGenerator):
     # 제로는 쓸컴뱃 효율이 낮으나 일단 딜이 증가하므로 사용
     # 패시브 레벨 +1 어빌 사용 불가능
@@ -105,9 +87,10 @@ class JobGenerator(ck.JobGenerator):
         #### 마스터리 ####
         # 베타 마스터리의 공격력 +4는 무기 기본 공격력 차이
         # 제네시스 무기의 경우 +5로 변경 필요
+        # 알파 Modifier에 크리티컬 바인드 효과 합산적용
 
-        AlphaMDF = core.CharacterModifier(pdamage_indep=5, crit=40, att=40, armor_ignore=30, crit_damage=50) + core.CharacterModifier(pdamage_indep=34)
-        BetaMDF = core.CharacterModifier(pdamage_indep=5, crit=15, boss_pdamage=30, att=80+4) + core.CharacterModifier(pdamage_indep=49)
+        AlphaMDF = core.CharacterModifier(pdamage_indep=34) + core.CharacterModifier(pdamage_indep=5, crit=40, att=40, armor_ignore=30, crit_damage=50) + core.CharacterModifier(crit_damage=20)
+        BetaMDF = core.CharacterModifier(pdamage_indep=49) + core.CharacterModifier(pdamage_indep=5, crit=15, boss_pdamage=30, att=80+4)
 
         AlphaState = core.BuffSkill("상태-알파", 0, 9999*10000, cooltime=-1,
                                     pdamage_indep=AlphaMDF.pdamage_indep,
@@ -208,8 +191,6 @@ class JobGenerator(ck.JobGenerator):
 
         AdvancedEarthBreakWave = core.DamageSkill("어드밴스드 어스 브레이크(파동)", 0, 285+3*self.combat, 10, modifier=extra_damage(6)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedEarthBreakElectric = core.SummonSkill("어드밴스드 어스 브레이크(전기)", 0, 1000, 340+3*self.combat, 1, 5000, cooltime=-1, modifier=extra_damage(6)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
-
-        CriticalBind = CriticalBindWrapper(AlphaState, BetaState)
 
         #### 초월자 스킬 ####
 
@@ -409,7 +390,7 @@ class JobGenerator(ck.JobGenerator):
         return(ComboHolder,
                [globalSkill.maple_heros(chtr.level, name="륀느의 가호", combat_level=0), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                 DivineForce, AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, RhinneBless,
-                DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, LimitBreakFinal, CriticalBind,
+                DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, LimitBreakFinal,
                 SoulContract] +
                [TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta, MirrorBreak, MirrorSpider] +
                [AdvancedStormBreakSummon, AdvancedStormBreakElectric, AdvancedEarthBreakElectric, WindCutterSummon, ThrowingWeapon] +
