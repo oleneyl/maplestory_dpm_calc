@@ -1,4 +1,5 @@
 import copy
+from dpmModule.kernel.core.constant import IS_REBOOT
 import json
 import math
 import yaml
@@ -383,6 +384,11 @@ class JobGenerator:
             self._passive_skill_list += [
                 InformedCharacterModifier("연합의 의지", att=5, stat_main=5, stat_sub=5)
             ]
+        if IS_REBOOT:
+            if self.jobname != "데몬어벤져":
+                self._passive_skill_list += [InformedCharacterModifier("리부트", att=5, pdamage_indep=chtr.level//2)]
+            else:
+                self._passive_skill_list += [InformedCharacterModifier("리부트", att=5, pdamage_indep=chtr.level//2, stat_main=200)]
 
     def get_passive_skill_list(
         self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
