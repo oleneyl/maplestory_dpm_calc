@@ -484,6 +484,8 @@ class JobGenerator:
         chtr.apply_modifiers([personality])
 
         # 농장 적용
+        if IS_REBOOT:
+            farm = False
         if farm:
             chtr.apply_modifiers([Farm.get_farm(self.jobtype)])
 
