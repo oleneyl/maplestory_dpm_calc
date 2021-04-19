@@ -356,9 +356,9 @@ default:
     star: 18
     <<: *xenon_acc_potential
   belt:
-    id: 분노한 자쿰의 벨트
+    id: 타일런트
     bonus: *xenon_acc_bonus
-    star: 18
+    star: 8
     <<: *xenon_acc_potential
   ring1:
     id: 고귀한 이피아의 반지

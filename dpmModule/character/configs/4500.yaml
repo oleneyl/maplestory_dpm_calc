@@ -429,7 +429,7 @@ default:
     star: 12
     <<: *xenon_acc_potential
   belt:
-    id: 분노한 자쿰의 벨트
+    id: 골든 클로버 벨트
     bonus: *xenon_acc_bonus
     upgrade: *acc_upgrade
     star: 12
