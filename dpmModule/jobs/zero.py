@@ -99,6 +99,9 @@ class JobGenerator(ck.JobGenerator):
         elif BETA_DEALCYCLE == "advanced_earth_break":
             WHEELWIND_DELAY = 750
             WHEELWIND_HIT = 5
+        elif BETA_DEALCYCLE == "turning_upper":
+            WHEELWIND_DELAY = 60
+            WHEELWIND_HIT = 1
         else:
             raise ValueError(BETA_DEALCYCLE)
 
@@ -332,6 +335,11 @@ class JobGenerator(ck.JobGenerator):
             # 국콤
             AlphaCombo = [SetAlpha, WindCutter, GigaCrashTAG, WindStrike, JumpingCrashTAG, AdvancedStormBreak, AdvancedEarthBreakTAG,
                           AdvancedRollingCurve, TurningDriveTAG, AdvancedRollingAssulter]
+        elif ALPHA_DEALCYCLE == "moon_pierce_shadow_wind":
+            # 윈커-윈스-스톰-문스-피어싱-쉐스-문스-윈커
+            AlphaCombo = [SetAlpha, WindCutter, GigaCrashTAG, WindStrike, JumpingCrashTAG, AdvancedStormBreak, AdvancedEarthBreakTAG,
+                          MoonStrikeLink, UpperSlashTAG, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike,
+                          MoonStrikeLink, UpperSlashTAG, WindCutter]
         else:
             raise ValueError(ALPHA_DEALCYCLE)
 
@@ -343,6 +351,11 @@ class JobGenerator(ck.JobGenerator):
         elif BETA_DEALCYCLE == "advanced_earth_break":  # 국콤
             BetaCombo = [SetBeta, TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind, AdvancedRollingAssulterTAG,
                          GigaCrash, JumpingCrash, WindStrikeTAG, AdvancedEarthBreak, AdvancedStormBreakTAG]
+        elif BETA_DEALCYCLE == "turning_upper":  # 터닝어퍼
+            BetaCombo = [SetBeta, TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind, AdvancedRollingAssulterTAG,
+                         FrontSlash, ThrowingWeapon, UpperSlash, MoonStrikeTAG, AdvancedPowerStomp, PierceStrikeTAG,
+                         TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind, AdvancedRollingAssulterTAG,
+                         UpperSlash, MoonStrikeTAG, AdvancedPowerStomp]
         else:
             raise ValueError(BETA_DEALCYCLE)
 
