@@ -370,12 +370,22 @@ presets = [
     Preset(
         id="zero",
         job="제로",
+        description="터닝스로잉",
+        options={
+            "alpha_dealcycle": "moon_pierce_shadow_wind",
+            "beta_dealcycle": "turning_upper",
+        },
+        alt=0,
+    ),
+    Preset(
+        id="zero_moon_pierce_shadow",
+        job="제로",
         description="문피쉐",
         options={
             "alpha_dealcycle": "moon_pierce_shadow",
             "beta_dealcycle": "advanced_power_stomp",
         },
-        alt=0,
+        alt=1,
     ),
     Preset(
         id="zero_advanced_power_stomp",
@@ -385,7 +395,7 @@ presets = [
             "alpha_dealcycle": "advanced_storm_break_pierce",
             "beta_dealcycle": "advanced_power_stomp",
         },
-        alt=1,
+        alt=2,
     ),
     Preset(
         id="kinesis",
