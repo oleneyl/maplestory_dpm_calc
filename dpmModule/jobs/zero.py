@@ -14,6 +14,9 @@ from typing import Any, Dict
 항상 베타 스탯 적용: 파워 스텀프 충격파
 
 https://github.com/Monolith11/memo/wiki/Zero-Skill-Mechanics
+
+딜사이클 자료
+http://www.inven.co.kr/board/maple/2294/204582
 '''
 
 
@@ -353,9 +356,9 @@ class JobGenerator(ck.JobGenerator):
                          GigaCrash, JumpingCrash, WindStrikeTAG, AdvancedEarthBreak, AdvancedStormBreakTAG]
         elif BETA_DEALCYCLE == "turning_upper":  # 터닝어퍼
             BetaCombo = [SetBeta, TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind, AdvancedRollingAssulterTAG,
-                         FrontSlash, ThrowingWeapon, UpperSlash, MoonStrikeTAG, AdvancedPowerStomp, PierceStrikeTAG,
+                         FrontSlash, ThrowingWeapon, AdvancedSpinCutterTAG, UpperSlash, MoonStrikeTAG, AdvancedPowerStomp, PierceStrikeTAG,
                          TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind, AdvancedRollingAssulterTAG,
-                         UpperSlash, MoonStrikeTAG, AdvancedPowerStomp]
+                         UpperSlash, AdvancedPowerStomp]
         else:
             raise ValueError(BETA_DEALCYCLE)
 
