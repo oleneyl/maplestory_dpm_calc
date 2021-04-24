@@ -386,7 +386,7 @@ class JobGenerator:
             ]
         if IS_REBOOT:
             if self.jobname != "데몬어벤져":
-                self._passive_skill_list += [InformedCharacterModifier("리부트", att=5, pdamage_indep=chtr.level//2)]
+                self._passive_skill_list += [InformedCharacterModifier("리부트", att=5, pdamage=chtr.level//2)]
             else:
                 self._passive_skill_list += [InformedCharacterModifier("리부트", att=5, pdamage=chtr.level//2, stat_main=200)]
 
