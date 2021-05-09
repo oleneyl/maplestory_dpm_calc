@@ -98,6 +98,8 @@ class JobGenerator(ck.JobGenerator):
         DarknessAura = core.SummonSkill("다크니스 오라", 600, 1530, 400+16*vEhc.getV(0, 0), 5, 40000, cooltime=180*1000, red=True).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
         DarknessAuraFinal = core.DamageSkill("다크니스 오라(폭발)", 0, 675+26*vEhc.getV(0, 0), 13*(1+15//3), cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)  # 생명력 3마다 폭발 1회 추가, 생명력 최대 15
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         # Damage skill
@@ -139,9 +141,9 @@ class JobGenerator(ck.JobGenerator):
             [
                 globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                 Booster, CrossoverChain, Sacrifice, Reincarnation, EpicAdventure, DarkThurst, AuraWeaponBuff, AuraWeapon,
-                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()
+                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract(), TandadianRuin
             ]
-            + [DarknessAura, DarknessAuraFinal, BiholderShock, GoungnilDescent, DarkSpear, PierceCyclone, MirrorBreak, MirrorSpider]
+            + [DarknessAura, DarknessAuraFinal, BiholderShock, GoungnilDescent, DarkSpear, PierceCyclone, MirrorBreak, MirrorSpider, AeonianRise]
             + [BiholderDominant, BiholderImpact]
             + [BasicAttackWrapped]
         )

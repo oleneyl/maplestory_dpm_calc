@@ -172,6 +172,8 @@ class JobGenerator(ck.JobGenerator):
         CallMastema = demon.CallMastemaWrapper(vEhc, 0, 0)
         AnotherGoddessBuff, AnotherVoid = demon.AnotherWorldWrapper(vEhc, 0, 0)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
         ArmorBreakBuff.onBefore(ArmorBreak)
 
@@ -212,7 +214,7 @@ class JobGenerator(ck.JobGenerator):
         return(BasicAttack,
                [FrenzyInit, globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_hyper_body_demonavenger(),
                 Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
-                globalSkill.soul_contract(), Revenant, RevenantHit, CallMastema, AnotherGoddessBuff, AnotherVoid] +
+                globalSkill.soul_contract(), TandadianRuin, Revenant, RevenantHit, CallMastema, AnotherGoddessBuff, AnotherVoid] +
                [DemonFrenzy, ShieldChasing, ArmorBreakBuff] +
-               [BatSwarm, MirrorBreak, MirrorSpider, DimensionSword, DemonicBlast] +
+               [BatSwarm, MirrorBreak, MirrorSpider, AeonianRise, DimensionSword, DemonicBlast] +
                [BasicAttack])

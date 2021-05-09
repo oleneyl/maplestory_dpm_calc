@@ -253,7 +253,9 @@ class JobGenerator(ck.JobGenerator):
         ZodiacRay = ZodiacRayWrapper(vEhc, 4, 2)
 
         SpiralOfMana = SpiralOfManaWrapper(vEhc, 0, 0)
-        
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ##### build graph #####
         CircleOfMana1.onAfter(SpiralOfMana.setPenalty())
         CircleOfMana1.onAfter(core.OptionalElement(SpiralOfMana.is_not_active, SpiralOfMana, CircleOfMana2))
@@ -347,9 +349,9 @@ class JobGenerator(ck.JobGenerator):
         return(CircleOfMana1,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
                     Mir, OverloadMana, Booster, OnixBless, HerosOath, ElementalBlastBuff,
-                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
+                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract(), TandadianRuin] +\
                 [ZodiacRay, MagicParticle] +\
                 [SummonOnixDragon, SpiralOfMana, DragonBreak, DragonBreakBack, ElementalBlast, ImperialBreath,
-                    DragonSwift, SwiftBack, DragonDive, DiveOfEarth, DiveBack, DragonBreath, BreathOfEarth, BreathBack, MirrorBreak, MirrorSpider] +\
+                    DragonSwift, SwiftBack, DragonDive, DiveOfEarth, DiveBack, DragonBreath, BreathOfEarth, BreathBack, MirrorBreak, MirrorSpider, AeonianRise] +\
                 [] +\
                 [CircleOfMana1])

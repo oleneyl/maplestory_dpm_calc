@@ -91,7 +91,9 @@ class JobGenerator(ck.JobGenerator):
         SolunaDivide = core.DamageSkill("솔루나 디바이드", 750 - 300, 1250 + 50 * vEhc.getV(3,3), 15 * 5, cooltime = -1).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)  # 다른 스킬 도중 사용 가능, 평균 딜레이만큼 뺌
 
         FlareSlash = core.DamageSkill("플레어 슬래시", 0, 550+22*vEhc.getV(0,0), 7*2, cooltime=12000, modifier=FallingMoon).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
         
         #Final attack type
@@ -129,8 +131,8 @@ class JobGenerator(ck.JobGenerator):
         return(BasicAttackWrapper,
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     NimbleFinger, TrueSight, SolunaTime, SoulForge, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
-                    GloryOfGuardians, AuraWeaponBuff, AuraWeapon, globalSkill.soul_contract(), SelestialDanceInit, Elision, ElisionBreak,
+                    GloryOfGuardians, AuraWeaponBuff, AuraWeapon, globalSkill.soul_contract(), TandadianRuin, SelestialDanceInit, Elision, ElisionBreak,
                     ] +\
                 [FlareSlash, CygnusPhalanx, SolunaDivide] +\
-                [SelestialDanceSummon, SoulEclipse, MirrorBreak, MirrorSpider] +\
+                [SelestialDanceSummon, SoulEclipse, MirrorBreak, MirrorSpider, AeonianRise] +\
                 [BasicAttackWrapper])

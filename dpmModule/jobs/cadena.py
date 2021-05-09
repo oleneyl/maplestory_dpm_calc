@@ -229,6 +229,8 @@ class JobGenerator(ck.JobGenerator):
         WeaponVarietyFinale = core.StackableDamageSkillWrapper(core.DamageSkill("웨폰 버라이어티 피날레", 0, 250+10*vEhc.getV(0, 0), 7*4, cooltime=11000).isV(vEhc, 0, 0), 3)
         WeaponVarietyFinaleTrigger = core.StackSkillWrapper(core.BuffSkill("웨폰 버라이어티 피날레(웨버횟수)", 0, 99999999), 4)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
 
         # 기본 연계 연결
@@ -321,7 +323,7 @@ class JobGenerator(ck.JobGenerator):
         for s in [ChainArts_Stroke_1, ChainArts_Stroke_2, ChainArts_Stroke_1_Cancel, ChainArts_Stroke_2_Cancel,
                   SummonCuttingSimiter, SummonScratchingClaw, SummonShootingShotgun, SummonSlachingKnife, ChainArts_Chais, SummonThrowingWingdaggerEnd,
                   ChainArts_Takedown_Init, ChainArts_Takedown_Attack, ChainArts_Takedown_Wave, ChainArts_Takedown_Final, ChainArts_Crush,
-                  SummonReleasingBoom, SummonStrikingBrick, SummonBeatingNeedlebat_1, SummonBeatingNeedlebat_2, SummonBeatingNeedlebat_3, MirrorBreak]:
+                  SummonReleasingBoom, SummonStrikingBrick, SummonBeatingNeedlebat_1, SummonBeatingNeedlebat_2, SummonBeatingNeedlebat_3, MirrorBreak, AeonianRise]:
             s.onAfter(ChainArts_Fury_Use)
 
         for s in [SummonThrowingWingdaggerSummon, ChainArts_Maelstorm]:
@@ -349,9 +351,9 @@ class JobGenerator(ck.JobGenerator):
                 WeaponVariety, Booster, SpecialPotion, ProfessionalAgent,
                 ReadyToDie, ChainArts_Fury, NovaGoddessBless,
                 SummonSlachingKnife_Horror, SummonBeatingNeedlebat_Honmy, VenomBurst_Poison, ChainArts_Maelstorm_Slow,
-                globalSkill.soul_contract(), CheapShotIIBleed, CheapShotIIBleedBuff, CheapShotIIAdventureMageBuff] +
+                globalSkill.soul_contract(), TandadianRuin, CheapShotIIBleed, CheapShotIIBleedBuff, CheapShotIIAdventureMageBuff] +
                [SummonReleasingBoom_Explode, SummonThrowingWingdaggerEnd, AD_Odnunce_Final] +
-               [WingDaggerCombo, BatCombo, BommBrickCombo, ShootgunClawCombo, SimiterChaseCombo, KnifeCombo, MaleStromCombo, ChainArts_Crush, MirrorBreak, MirrorSpider] +
+               [WingDaggerCombo, BatCombo, BommBrickCombo, ShootgunClawCombo, SimiterChaseCombo, KnifeCombo, MaleStromCombo, ChainArts_Crush, MirrorBreak, MirrorSpider, AeonianRise] +
                [WeaponVarietyAttack, SummonThrowingWingdaggerSummon, VenomBurst, AD_Odnunce, ChainArts_Maelstorm] +
                [ChainArts_Fury_Damage, WeaponVarietyFinale, SummonShootingShotgun, SummonScratchingClaw,
                 SummonCuttingSimiter, SummonSlachingKnife,

@@ -495,6 +495,8 @@ class JobGenerator(ck.JobGenerator):
 
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ### Skill Wrapper ###
 
         Combo = core.BuffSkill("아란(콤보)", 0, 99999999)
@@ -630,6 +632,7 @@ class JobGenerator(ck.JobGenerator):
                 AdrenalineBoost,
                 AdrenalineGenerator,
                 globalSkill.soul_contract(),
+                TandadianRuin,
             ]
             + [
                 MahaRegionInit,
@@ -646,6 +649,7 @@ class JobGenerator(ck.JobGenerator):
                 InstallMahaBlizzard,
                 BlizzardTempestAura,
                 MirrorSpider,
+                AeonianRise
             ]  # Not used from scheduler
             + [FinalBlow],
         )

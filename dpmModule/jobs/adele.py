@@ -217,6 +217,8 @@ class JobGenerator(ck.JobGenerator):
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
         MagicCircuitFullDrive, ManaStorm = magic_curcuit_full_drive_builder.get_skill()
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         # 딜 사이클 정의
 
         # 에테르
@@ -281,8 +283,8 @@ class JobGenerator(ck.JobGenerator):
         return(Divide,
                 [globalSkill.maple_heros(chtr.level, name = "레프의 용사", combat_level=self.combat), ResonanceStack, GraveDebuff, WraithOfGod, Restore,
                     AuraWeaponBuff, AuraWeapon, MagicCircuitFullDrive, FloraGoddessBless,
-                    globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract()] +\
-                [EtherTick, Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider, Shard] +\
+                    globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.soul_contract(), TandadianRuin] +\
+                [EtherTick, Resonance, Grave, Blossom, Marker, Ruin, Storm, MirrorBreak, MirrorSpider, AeonianRise, Shard] +\
                 [Order, Wonder, Territory, TerritoryEnd, Infinite, RuinFirstTick, RuinSecondTick, RestoreTick, Creation, Scool, ManaStorm] +\
                 [] +\
                 [Divide])

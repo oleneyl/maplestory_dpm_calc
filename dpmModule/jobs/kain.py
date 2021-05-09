@@ -1043,6 +1043,8 @@ class JobGenerator(ck.JobGenerator):
         for sk in counted_skills:
             sk.onJustAfter(AddAgony)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         # Scheduling
         GrapOfAgony.vary(15 * 25)  # start with full stack
 
@@ -1086,11 +1088,12 @@ class JobGenerator(ck.JobGenerator):
                 Incarnation,
                 ThanatosDescent,
                 globalSkill.soul_contract(),
+                TandadianRuin,
                 Possession,
             ]
             + [MaliceTick, DragonPang, GuidedArrow, GrapOfAgony]
             + [ThanatosDescentFinalInit]  # reserved task, use as early as possible
-            + [Pantheon, DragonBurstReleaseInit, FatalBlitzInit, MirrorBreak, MirrorSpider]
+            + [Pantheon, DragonBurstReleaseInit, FatalBlitzInit, MirrorBreak, MirrorSpider, AeonianRise]
             + [
                 SneakySnipingRelease,
                 FallingDustRelease,

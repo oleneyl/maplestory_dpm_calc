@@ -126,6 +126,8 @@ class JobGenerator(ck.JobGenerator):
         ShadowFormation = core.SummonSkill("멸귀참영진", 0, 8000/12, 425+17*vEhc.getV(0, 0), 8, 8000-1, cooltime=90000, red=True, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
         ShadowFormationFinal = core.DamageSkill("멸귀참영진(우두머리)", 0, 625+25*vEhc.getV(0, 0), 15*4, cooltime=-1, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ### build graph relationships
         def isNotDarkSight():
             return (not AdvancedDarkSight.is_active())
@@ -178,9 +180,9 @@ class JobGenerator(ck.JobGenerator):
             [
                 globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                 Booster, FlipTheCoin, ShadowerInstinct, ShadowPartner, Smoke, AdvancedDarkSight, EpicAdventure, UltimateDarksight, MesoStack,
-                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), ReadyToDie, globalSkill.soul_contract()
+                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), ReadyToDie, globalSkill.soul_contract(), TandadianRuin,
             ]
-            + [ShadowFormation, ShadowFormationFinal, Eviscerate, SonicBlow, BailOfShadow, DarkFlare, MirrorBreak, MirrorSpider]
+            + [ShadowFormation, ShadowFormationFinal, Eviscerate, SonicBlow, BailOfShadow, DarkFlare, MirrorBreak, MirrorSpider, AeonianRise]
             + [Venom]
             + [BasicAttackWrapper]
         )

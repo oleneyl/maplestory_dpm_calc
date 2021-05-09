@@ -363,6 +363,8 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.SummonSkillWrapper)
         )
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
         GrittyGust.onAfter(GrittyGustDOT)
 
@@ -442,6 +444,7 @@ class JobGenerator(ck.JobGenerator):
                 QuibberFullBurstDOT,
                 ImageArrowPassive,
                 globalSkill.soul_contract(),
+                TandadianRuin,
             ]
             + []
             + [
@@ -454,6 +457,7 @@ class JobGenerator(ck.JobGenerator):
                 ImageArrow,
                 MirrorBreak,
                 MirrorSpider,
+                AeonianRise,
                 OpticalIllusion,
             ]
             + [MortalBlow]

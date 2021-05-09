@@ -190,7 +190,9 @@ class JobGenerator(ck.JobGenerator):
             Sylphidia,
             540
         )
-    
+
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
         #Buff
         CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 2, 2, 10)
@@ -286,8 +288,8 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), 
                     Booster, ElvishBlessing, AncientSpirit, HerosOath, RoyalKnights,
                     CriticalReinforce, UnicornSpikeBuff, RegendrySpearBuff, LightningEdgeBuff, ElementalGhost, Sylphidia,
-                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
+                    globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract(), TandadianRuin] +\
                 [RoyalKnightsAttack, ElementalGhostSpirit, DebuffCombo, UnicornSpike, RegendrySpear, WrathOfEllil, IrkilaBreathInit] +\
-                [ElementalKnights, ElementalKnights_1, ElementalKnights_2, GuidedArrow, MirrorBreak, MirrorSpider] +\
+                [ElementalKnights, ElementalKnights_1, ElementalKnights_2, GuidedArrow, MirrorBreak, MirrorSpider, AeonianRise] +\
                 [] +\
                 [BasicAttack])

@@ -177,6 +177,8 @@ class JobGenerator(ck.JobGenerator):
         WildBalkanTypeXTick = core.DamageSkill("와일드 발칸 Type X", 120, 450+18*vEhc.getV(0,0), 5, cooltime=-1, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 67회 반복
         WildBalkanTypeXEnd = core.DamageSkill("와일드 발칸 Type X(후딜)", 540, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         #Build Graph
         FinalAttack = core.OptionalElement(SilentRampage.is_active, FinalAttack100, FinalAttack70)
         
@@ -213,8 +215,8 @@ class JobGenerator(ck.JobGenerator):
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_combat_orders(),
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), CriticalReinforce, SoulArrow,
                     Booster, Hauling, BeastForm, SharpEyes, SilentRampage, JaguerStorm, WillOfLiberty, Jaguar,
-                    globalSkill.soul_contract()] +\
+                    globalSkill.soul_contract(), TandadianRuin] +\
                 [RampageAsOne, JaguarSoul, SonicBoom, Crossroad, ClawCut, Normal] +\
-                [HuntingUnit, DrillContainer, GuidedArrow, RegistanceLineInfantry, WildGrenade, JaguarMaximum, WildBalkanTypeXInit, MirrorBreak, MirrorSpider] +\
+                [HuntingUnit, DrillContainer, GuidedArrow, RegistanceLineInfantry, WildGrenade, JaguarMaximum, WildBalkanTypeXInit, MirrorBreak, MirrorSpider, AeonianRise] +\
                 [AnotherBite] +\
                 [WildBalkan])

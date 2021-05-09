@@ -410,6 +410,8 @@ class JobGenerator(ck.JobGenerator):
             .wrap(core.DamageSkillWrapper)
         )
 
+        TandadianRuin, AeonianRise = globalSkill.GenesisSkillBuilder()
+
         ######   Skill Wrapper   ######
         # Energy Charge
         EnergyCharge = EnergyChargeWrapper(passive_level)
@@ -424,6 +426,7 @@ class JobGenerator(ck.JobGenerator):
         FistInrage.onAfter(EnergyCharge.chargeController(700))
         Nautilus.onAfter(EnergyCharge.chargeController(700))
         MirrorBreak.onAfter(EnergyCharge.chargeController(700))
+        AeonianRise.onAfter(EnergyCharge.chargeController(700))
         SerpentScrewDummy.onTick(EnergyCharge.chargeController(-60))
         SerpentScrew.onTick(EnergyCharge.chargeController(-85 * 0.3))
         FistInrage_T.onAfter(EnergyCharge.chargeController(-150))
@@ -513,6 +516,7 @@ class JobGenerator(ck.JobGenerator):
                 EnergyCharge,
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
                 SoulContract,
+                TandadianRuin,
             ]
             + [
                 UnityOfPower,
@@ -523,6 +527,7 @@ class JobGenerator(ck.JobGenerator):
                 TransformEnergyOrbDummy,
                 MirrorBreak,
                 MirrorSpider,
+                AeonianRise,
                 TimeLeap,
             ]
             + [SerpentScrew, SerpentScrewDummy, StimulateSummon]
