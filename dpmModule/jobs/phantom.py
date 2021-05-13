@@ -29,11 +29,13 @@ class JobGenerator(ck.JobGenerator):
         LuckOfPhantomtheif = core.InformedCharacterModifier("럭오브팬텀시프", stat_main=60)
         MoonLight = core.InformedCharacterModifier("문 라이트", att=40)
         AcuteSence = core.InformedCharacterModifier("어큐트 센스", crit=35, pdamage_indep=30)
-        CainExpert = core.InformedCharacterModifier("케인 엑스퍼트", att=40+passive_level, crit_damage=15+passive_level//3, pdamage_indep=25 + passive_level//2)
+        CaneExpert = core.InformedCharacterModifier("케인 엑스퍼트", att=40+passive_level, crit_damage=15+passive_level//3, pdamage_indep=25 + passive_level//2)
+        CaneAcceleration = core.InformedCharacterModifier("케인 엑셀레이션", stat_main=20)
+        PrieredAria = core.InformedCharacterModifier("프레이 오브 아리아", pdamage=30+self.combat, armor_ignore=30+self.combat)
 
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 3, 3)
 
-        return [HighDexterity, LuckMonopoly, LuckOfPhantomtheif, MoonLight, AcuteSence, CainExpert, ReadyToDiePassive]
+        return [HighDexterity, LuckMonopoly, LuckOfPhantomtheif, MoonLight, AcuteSence, CaneExpert, CaneAcceleration, PrieredAria, ReadyToDiePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -65,8 +67,7 @@ class JobGenerator(ck.JobGenerator):
         1티어 :  얼티밋, 느와르, 템와
         2티어 : 탤팬4
 
-        펫버프 : 프레이 오브 아리아, 메용, 크오체
-        템페스트 오브 카드 사용하지 않음
+        펫버프 : 메용, 크오체
         '''
         DEALCYCLE = options.get('dealcycle', 'ultimate_drive')
 
@@ -100,14 +101,10 @@ class JobGenerator(ck.JobGenerator):
 
         # Buff skills
 
-        Booster = core.BuffSkill("부스터", 0, 240 * 1000, rem=True).wrap(core.BuffSkillWrapper)    #딜레이 모름
-
         MileAiguilles = core.DamageSkill("얼티밋 드라이브", 150, 140 + self.combat, 3, modifier=core.CharacterModifier(pdamage=20, armor_ignore=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         CarteNoir = core.DamageSkill("느와르 카르트", 0, 270, min(chtr.get_modifier().crit/100 + 0.1, 1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         Judgement = core.DamageSkill("느와르 카르트(저지먼트)", 0, 270, 10).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-
-        PrieredAria = core.BuffSkill("프레이 오브 아리아", 0, (240+7*self.combat)*1000, pdamage=30+self.combat, armor_ignore=30+self.combat).wrap(core.BuffSkillWrapper)
 
         TempestOfCardInit = core.DamageSkill("템페스트 오브 카드(시전)", 0, 0, 0, cooltime=18000*0.8 + 180*56, red=True).wrap(core.DamageSkillWrapper)
         TempestOfCard = core.DamageSkill("템페스트 오브 카드", 180, 200+2*self.combat, 3, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
@@ -203,8 +200,6 @@ class JobGenerator(ck.JobGenerator):
                 globalSkill.useful_combat_orders(),
                 Talent2,
                 CrossoverChain,
-                Booster,
-                PrieredAria,
                 FinalCutBuff,
                 JokerBuff,
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
