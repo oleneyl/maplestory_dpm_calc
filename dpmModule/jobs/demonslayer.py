@@ -98,7 +98,7 @@ class JobGenerator(ck.JobGenerator):
 
         DemonImpact = core.DamageSkill("데몬 임팩트", 660, 460+4*self.combat, 6+1, modifier=core.CharacterModifier(crit=100, armor_ignore=30+ceil(self.combat/3), boss_pdamage=40+self.combat, pdamage=20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
 
-        DevilCry = core.DamageSkill("데빌 크라이", 990, 515+5*self.combat, 7, cooltime=20*1000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)   # 이블 토쳐 위해 사용필수.
+        DevilCry = core.DamageSkill("데빌 크라이", 750, 515+5*self.combat, 7, cooltime=20*1000).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)   # 이블 토쳐 위해 사용필수.
         DevilCryBuff = core.BuffSkill("데빌 크라이(위협)", 0, 20000, cooltime=-1, armor_ignore=15+self.combat//3).wrap(core.BuffSkillWrapper)
 
         InfinityForce = core.BuffSkill("인피니티 포스", 990, (50+10*(self.combat//5))*1000, cooltime=(200-self.combat)*1000, rem=True, red=True).wrap(core.BuffSkillWrapper)
