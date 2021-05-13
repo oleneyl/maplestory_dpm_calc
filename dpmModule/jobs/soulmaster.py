@@ -82,12 +82,12 @@ class JobGenerator(ck.JobGenerator):
         SelestialDanceAttack = core.DamageSkill("댄스오브 문/스피딩 선셋(셀레스티얼)", 0, (400+4*self.combat)*0.01*(30+vEhc.getV(0,0)), 4 * 2, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20, armor_ignore = 20) + FallingMoon).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)    #직접사용 X
         
         #엘리시온 38타 / 3타
-        Elision = core.BuffSkill("엘리시온", 750, 30 * 1000, cooltime = 180 * 1000, red=True).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)    #시전딜레이 750ms
+        Elision = core.BuffSkill("엘리시온", 750, 40 * 1000, cooltime = 180 * 1000, red=True).isV(vEhc,1,1).wrap(core.BuffSkillWrapper)    #시전딜레이 750ms
         ElisionBreak = core.SummonSkill("엘리시온(균열)", 0, (750 * 6 + 5000), 520 + 21*vEhc.getV(1,1), 5 * 6 * 2, (750 * 6 + 5000) * 4 - 1, cooltime=-1, modifier = FallingMoon).isV(vEhc,1,1).wrap(core.SummonSkillWrapper)    # 엘리시온 6회마다, 총 4회 발동
         ElisionStyx = core.DamageSkill("크로스 더 스틱스(엘리시온)", 750, 580/2, 5 * 5 * 2, modifier = FallingMoon).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  #40회 반복
         
         #소울 이클립스
-        SoulEclipse = core.SummonSkill("소울 이클립스", 270, 1000, 450 + 18 * vEhc.getV(3,3), 7, 30 * 1000, cooltime = 180 * 1000, red=True).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
+        SoulEclipse = core.SummonSkill("소울 이클립스", 270, 1000, 450 + 18 * vEhc.getV(3,3), 7, 40 * 1000, cooltime = 180 * 1000, red=True).isV(vEhc,3,3).wrap(core.SummonSkillWrapper)
         SolunaDivide = core.DamageSkill("솔루나 디바이드", 750 - 300, 1250 + 50 * vEhc.getV(3,3), 15 * 5, cooltime = -1).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)  # 다른 스킬 도중 사용 가능, 평균 딜레이만큼 뺌
 
         FlareSlash = core.DamageSkill("플레어 슬래시", 0, 550+22*vEhc.getV(0,0), 7*2, cooltime=12000, modifier=FallingMoon).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
