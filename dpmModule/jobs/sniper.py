@@ -336,7 +336,6 @@ class JobGenerator(ck.JobGenerator):
             BasicAttack,
             [
                 globalSkill.maple_heros(chtr.level, combat_level=self.combat),
-                globalSkill.useful_wind_booster(),
                 globalSkill.useful_combat_orders(),
                 SoulArrow,
                 SharpEyes,

@@ -155,7 +155,6 @@ class JobGenerator(ck.JobGenerator):
             [
                 globalSkill.maple_heros(chtr.level, combat_level=2),
                 globalSkill.useful_sharp_eyes(),
-                globalSkill.useful_wind_booster(),
                 Threat,
                 ElementalForce,
                 EpicAdventure,
