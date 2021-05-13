@@ -385,10 +385,25 @@ class JobGenerator:
                 InformedCharacterModifier("연합의 의지", att=5, stat_main=5, stat_sub=5)
             ]
         if IS_REBOOT:
-            if self.jobname != "데몬어벤져":
-                self._passive_skill_list += [InformedCharacterModifier("리부트", att=5, pdamage=chtr.level//2)]
+            RebootPassive = InformedCharacterModifier("리부트", att=5)
+
+            if chtr.level < 100:
+                RebootPassive += ExtendedCharacterModifier(pdamage_indep=30)
+            elif chtr.level < 150:
+                RebootPassive += ExtendedCharacterModifier(pdamage_indep=40)
+            elif chtr.level < 200:
+                RebootPassive += ExtendedCharacterModifier(pdamage_indep=50)
+            elif chtr.level < 250:
+                RebootPassive += ExtendedCharacterModifier(pdamage_indep=60)
+            elif chtr.level < 300:
+                RebootPassive += ExtendedCharacterModifier(pdamage_indep=65)
             else:
-                self._passive_skill_list += [InformedCharacterModifier("리부트", att=5, pdamage=chtr.level//2, stat_main=200)]
+                RebootPassive += ExtendedCharacterModifier(pdamage_indep=70)
+
+            if self.jobname == "데몬어벤져":
+                RebootPassive += ExtendedCharacterModifier(stat_main=200)  # HP
+
+            self._passive_skill_list += [RebootPassive]
 
     def get_passive_skill_list(
         self, vEhc, chtr: AbstractCharacter, options: Dict[str, Any]
