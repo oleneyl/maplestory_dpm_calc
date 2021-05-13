@@ -106,6 +106,10 @@ class JobGenerator(ck.JobGenerator):
             "일루젼 스탭", stat_main=80 + 2 * passive_level
         )
 
+        BowAcceleration = core.InformedCharacterModifier(
+            "보우 액셀레이션", stat_main=20
+        )
+
         return [
             CriticalShot,
             PhisicalTraining,
@@ -113,6 +117,7 @@ class JobGenerator(ck.JobGenerator):
             BowExpert,
             AdvancedFinalAttackPassive,
             ElusionStep,
+            BowAcceleration,
         ]
 
     def get_not_implied_skill_list(
@@ -150,12 +155,12 @@ class JobGenerator(ck.JobGenerator):
         ).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill(
             "샤프 아이즈",
-            delay=690,
+            delay=0,
             remain=300 * 1000,
             crit=20 + 5 + ceil(self.combat / 2),
             crit_damage=15 + ceil(self.combat / 2),
             armor_ignore=5,
-        ).wrap(core.BuffSkillWrapper)
+        ).wrap(core.BuffSkillWrapper)  # 펫버프
         Preparation = core.BuffSkill(
             "프리퍼레이션",
             delay=540,
@@ -330,7 +335,7 @@ class JobGenerator(ck.JobGenerator):
                 damage=400 + 16 * vEhc.getV(1, 1),
                 hit=3,  # 13 * 3타
                 remain=3000,
-                cooltime=30000,
+                cooltime=60000,
                 red=True,
             )
             .isV(vEhc, 1, 1)
