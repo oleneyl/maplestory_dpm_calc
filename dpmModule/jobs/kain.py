@@ -623,14 +623,14 @@ class GrapOfAgonyWrapper(core.SummonSkillWrapper):
             delay=340,  # TODO: check delay in game
             damage=475 + 19 * vEhc.getV(num1, num2),
             hit=6,
-            remain=6000,
-            cooltime=180 * 1000,
+            remain=5000,
+            cooltime=90*1000,
             red=True,
         ).isV(vEhc, num1, num2)
         super(GrapOfAgonyWrapper, self).__init__(skill)
         self.stack = 0
         self.hit_per_stack = 25
-        self.max_stack = 15 * self.hit_per_stack
+        self.max_stack = 5 * self.hit_per_stack
         self.remain_time = self.skill.remain
 
     def _use(self, skill_modifier):
@@ -909,7 +909,7 @@ class JobGenerator(ck.JobGenerator):
             core.OptionalElement(
                 ThanatosDescent.is_active,
                 Malice.stackController(40),
-                Malice.stackController(20),
+                Malice.stackController(30),
             )
         )
         AddMalice = core.OptionalElement(
@@ -1044,7 +1044,7 @@ class JobGenerator(ck.JobGenerator):
             sk.onJustAfter(AddAgony)
 
         # Scheduling
-        GrapOfAgony.vary(15 * 25)  # start with full stack
+        GrapOfAgony.vary(5 * 25)  # start with full stack
 
         IsDeathBlessed = core.ConstraintElement(
             "데스 블레싱 스택 >= 1",
