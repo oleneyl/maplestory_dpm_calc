@@ -381,6 +381,7 @@ class JobGenerator(ck.JobGenerator):
         )
         ImageArrow.onEventEnd(ImageArrowPassive)
         ImageArrow.onTick(AdvancedFinalAttack)
+        ImageArrow.onTick(MagicArrow)
 
         GuidedArrow.onTick(MagicArrow)
 

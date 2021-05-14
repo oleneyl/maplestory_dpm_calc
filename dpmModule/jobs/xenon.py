@@ -119,7 +119,7 @@ class PhotonRayWrapper(core.BuffSkillWrapper):
         self.aim = 0
         self.max_aim = 30
         self.aiming_time = 0
-        self.initial_aiming_time = 120
+        self.initial_aiming_time = 60
         self.additional_aiming_time = 990
 
         self.modifierInvariantFlag = True
@@ -273,7 +273,7 @@ class JobGenerator(ck.JobGenerator):
         Overdrive = pirates.OverdriveWrapper(vEhc, 5, 5, WEAPON_ATT)
 
         MegaSmasher = core.DamageSkill("메가 스매셔(개시)", 0, 0, 0, cooltime=180000, red=True).wrap(core.DamageSkillWrapper)  # TODO: implement charge and change cooltime
-        MegaSmasherTick = core.DamageSkill("메가 스매셔(틱)", 210, 300+10*vEhc.getV(4, 4), 6, cooltime=-1).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
+        MegaSmasherTick = core.DamageSkill("메가 스매셔(틱)", 150, 275+10*vEhc.getV(4, 4), 6, cooltime=-1).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)
 
         OVERLOAD_TIME = 70
         OverloadMode = core.BuffSkill("오버로드 모드", 720, OVERLOAD_TIME*1000, cooltime=180000, red=True).wrap(core.BuffSkillWrapper)
@@ -323,7 +323,7 @@ class JobGenerator(ck.JobGenerator):
         TriangulationTrigger = core.OptionalElement(lambda : TriangulationStack.judge(3, 1), Triangulation, TriangulationStack.stackController(0.3))
         Triangulation.onJustAfter(TriangulationStack.stackController(0, dtype='set'))
 
-        MegaSmasher.onAfter(core.RepeatElement(MegaSmasherTick, 78))
+        MegaSmasher.onAfter(core.RepeatElement(MegaSmasherTick, 82))
 
         OverloadMode.onJustAfter(SupplySurplus.beginOverloadMode())
         OverloadMode.onEventEnd(SupplySurplus.endOverloadMode())

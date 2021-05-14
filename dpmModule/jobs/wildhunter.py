@@ -10,6 +10,7 @@ from math import ceil
 from typing import Any, Dict
 
 class JaguerStack(core.DamageSkillWrapper):
+    # TODO: 재규어 스톰시 디버프 발생 확률 50% 증가
     def __init__(self, level, vEhc):
         self.debuffQueue = []  # (확률, 시간)
         self.currentTime = 0
@@ -86,10 +87,11 @@ class JobGenerator(ck.JobGenerator):
         ExtentMagazine = core.InformedCharacterModifier("익스텐드 매거진", pdamage_indep=20 + passive_level // 3, stat_main=60 + 2*passive_level, stat_sub=60 + 2*passive_level)
         AdvancedFinalAttackPassive = core.InformedCharacterModifier("어드밴스드 파이널 어택(패시브)", att = 20 + ceil(passive_level/2))
         JaugerStormPassive = core.InformedCharacterModifier("재규어 스톰(패시브)", att = 5+2*vEhc.getV(0,0))
+        BeastForm = core.InformedCharacterModifier("비스트 폼", patt=20+5)
     
         return [Jaguer, NaturesWrath, AutomaticShootingDevice,
                             CrossbowMastery, PhisicalTraining, Flurry, JaugerLink, CrossbowExpert, 
-                            WildInstinct, ExtentMagazine, AdvancedFinalAttackPassive, JaugerStormPassive]
+                            WildInstinct, ExtentMagazine, AdvancedFinalAttackPassive, JaugerStormPassive, BeastForm]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -128,21 +130,19 @@ class JobGenerator(ck.JobGenerator):
         JaguarSoul = core.DamageSkill("재규어 소울", 0, 270+chtr.level, 12, cooltime = 210000, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
         RampageAsOne = core.DamageSkill("램피지 애즈 원", 0, 500+1*chtr.level, 9, cooltime = 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
     
-        Normal_JG = core.DamageSkill("재규어 평타(재규어 스톰)", 0, (140+chtr.level)*(62+vEhc.getV(0,0))*0.01, 1 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
-        ClawCut_JG = core.DamageSkill("클로우 컷(재규어 스톰)", 0, (200+chtr.level)*(62+vEhc.getV(0,0))*0.01, 4 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
-        Crossroad_JG = core.DamageSkill("크로스 로드(재규어 스톰)", 0, (225+chtr.level)*(62+vEhc.getV(0,0))*0.01, 2 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
-        SonicBoom_JG = core.DamageSkill("소닉 붐(재규어 스톰)", 0, (220+chtr.level)*(62+vEhc.getV(0,0))*0.01, 6 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
-        JaguarSoul_JG = core.DamageSkill("재규어 소울(재규어 스톰)", 0, (270+chtr.level)*(62+vEhc.getV(0,0))*0.01, 12 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
-        RampageAsOne_JG = core.DamageSkill("램피지 애즈 원(재규어 스톰)", 0, (500+1*chtr.level)*(62+vEhc.getV(0,0))*0.01, 9 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
+        Normal_JG = core.DamageSkill("재규어 평타(재규어 스톰)", 0, (140+chtr.level)*(180+vEhc.getV(0,0))*0.01, 1 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        ClawCut_JG = core.DamageSkill("클로우 컷(재규어 스톰)", 0, (200+chtr.level)*(180+vEhc.getV(0,0))*0.01, 4 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 3, 2, False).wrap(core.DamageSkillWrapper)
+        Crossroad_JG = core.DamageSkill("크로스 로드(재규어 스톰)", 0, (225+chtr.level)*(180+vEhc.getV(0,0))*0.01, 2 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 8, 3, False).wrap(core.DamageSkillWrapper)
+        SonicBoom_JG = core.DamageSkill("소닉 붐(재규어 스톰)", 0, (220+chtr.level)*(180+vEhc.getV(0,0))*0.01, 6 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 6, 2, False).wrap(core.DamageSkillWrapper)
+        JaguarSoul_JG = core.DamageSkill("재규어 소울(재규어 스톰)", 0, (270+chtr.level)*(180+vEhc.getV(0,0))*0.01, 12 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 7, 2, False).wrap(core.DamageSkillWrapper)
+        RampageAsOne_JG = core.DamageSkill("램피지 애즈 원(재규어 스톰)", 0, (500+1*chtr.level)*(180+vEhc.getV(0,0))*0.01, 9 * JAGUAR_STORM_HIT, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 5, 2, False).wrap(core.DamageSkillWrapper)
     
 
         ######   Skill   ######
         #Buff skills
         SoulArrow = core.BuffSkill("소울 애로우", 0, 300*1000, rem = True, att = 20).wrap(core.BuffSkillWrapper)
-        Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper)
         Hauling = core.BuffSkill("하울링", 0, 300*1000, rem = True, patt = 10).wrap(core.BuffSkillWrapper)
-        BeastForm = core.BuffSkill("비스트 폼", 0, 300*1000, rem = True, patt=20+5).wrap(core.BuffSkillWrapper)
-        SharpEyes = core.BuffSkill("샤프 아이즈", 1080, (300+3*self.combat) * 1000, crit = 20 + ceil(self.combat/2), crit_damage = 15 + ceil(self.combat/2), rem = True).wrap(core.BuffSkillWrapper)
+        SharpEyes = core.BuffSkill("샤프 아이즈", 0, (300+3*self.combat) * 1000, crit = 20 + ceil(self.combat/2), crit_damage = 15 + ceil(self.combat/2), rem = True).wrap(core.BuffSkillWrapper)
 
         #Summon skills
         HuntingUnit = core.SummonSkill("어시스턴트 헌팅 유닛", 660, 31000/90, 150, 1.5, 31000, rem=True).setV(vEhc, 4, 3, False).wrap(core.SummonSkillWrapper)
@@ -212,7 +212,7 @@ class JobGenerator(ck.JobGenerator):
         return(WildBalkan,
                 [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_combat_orders(),
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), CriticalReinforce, SoulArrow,
-                    Booster, Hauling, BeastForm, SharpEyes, SilentRampage, JaguerStorm, WillOfLiberty, Jaguar,
+                    Hauling, SharpEyes, SilentRampage, JaguerStorm, WillOfLiberty, Jaguar,
                     globalSkill.soul_contract()] +\
                 [RampageAsOne, JaguarSoul, SonicBoom, Crossroad, ClawCut, Normal] +\
                 [HuntingUnit, DrillContainer, GuidedArrow, RegistanceLineInfantry, WildGrenade, JaguarMaximum, WildBalkanTypeXInit, MirrorBreak, MirrorSpider] +\

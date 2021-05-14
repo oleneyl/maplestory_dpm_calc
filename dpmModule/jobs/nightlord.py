@@ -89,7 +89,7 @@ class JobGenerator(ck.JobGenerator):
         BleedingToxinDot = core.DotSkill("블리딩 톡신(도트)", 0, 1000, 1000, 1, 90*1000, cooltime=-1).wrap(core.DotSkillWrapper)
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime=120 * 1000, pdamage=10).wrap(core.BuffSkillWrapper)
 
-        QuarupleThrow = core.DamageSkill("쿼드러플 스로우", 600, 378 + 4 * self.combat, 5, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20) + JAVELIN_ATT).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)  # 쉐도우 파트너 적용
+        QuarupleThrow = core.DamageSkill("쿼드러플 스로우", 600, 420 + 4 * self.combat, 5, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20) + JAVELIN_ATT).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)  # 쉐도우 파트너 적용
 
         SuddenRaid = core.DamageSkill("써든레이드", 690, 494+5*self.combat, 7, cooltime=(30-2*(self.combat//2))*1000, red=True).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         SuddenRaidDOT = core.DotSkill("써든레이드(도트)", 0, 1000, 210 + 4 * self.combat, 1, 10000, cooltime=-1).wrap(core.DotSkillWrapper)
@@ -109,7 +109,7 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         # 조건부 파이널어택으로 설정함.
-        SpreadThrowTick = core.DamageSkill("쿼드러플 스로우(스프레드)", 0, (378 + 4 * self.combat)*0.85, 5*SPREAD_HIT, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20) + JAVELIN_ATT).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
+        SpreadThrowTick = core.DamageSkill("쿼드러플 스로우(스프레드)", 0, (420 + 4 * self.combat)*0.8, 5*SPREAD_HIT, modifier=core.CharacterModifier(boss_pdamage=20, pdamage=20) + JAVELIN_ATT).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         SpreadThrowInit = core.BuffSkill("스프레드 스로우", 540, (20+vEhc.getV(0, 0))*1000, cooltime=180*1000, red=True).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
 
         Pungma = core.SummonSkill("풍마수리검", 360, 100, 0, 1, 1450, cooltime=25*1000, red=True).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)  # 10타 가정
