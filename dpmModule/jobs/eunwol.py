@@ -162,9 +162,15 @@ class JobGenerator(ck.JobGenerator):
         DoubleBodyConstraint = core.ConstraintElement("분혼 격참(저항)(제한)", DoubleBodyRegistance, DoubleBodyRegistance.is_not_active)
         DoubleBody.onConstraint(DoubleBodyConstraint)
 
-        def double_body_single_target(doubleBody):
+        def double_body_single_target_main(doubleBody):
             if doubleBody.is_active():
-                # 분혼 도중 1타겟 스킬 데미지 감소, (100/120) * (0.5*1 + 0.5*0.2)
+                # 분혼 도중 1타겟 스킬 데미지 감소, 본체 우선 타격 100/120
+                return core.CharacterModifier() - core.CharacterModifier(pdamage_indep=20)
+            return core.CharacterModifier()
+
+        def double_body_single_target_random(doubleBody):
+            if doubleBody.is_active():
+                # 분혼 도중 1타겟 스킬 데미지 감소, 랜덤 타격 (100/120) * (0.5*1 + 0.5*0.2)
                 return core.CharacterModifier(pdamage_indep=-40) - core.CharacterModifier(pdamage_indep=20)
             return core.CharacterModifier()
 
@@ -180,7 +186,7 @@ class JobGenerator(ck.JobGenerator):
         SoulTrapStack = SoulTrapStackWrapper(core.BuffSkill("귀문진(버프)", 0, 9999999, cooltime = -1))
         SoulTrap.onTick(core.RepeatElement(SoulTrapStack.add_debuff(), 2)) # 한 번에 디버프 두 개 생성
         SoulTrap.onTick(SoulTrap_D)
-        SoulTrap_D.add_runtime_modifier(DoubleBody, double_body_single_target)
+        SoulTrap_D.add_runtime_modifier(DoubleBody, double_body_single_target_main)
 
         #진 귀참 알고리즘
         BasicAttack = core.OptionalElement(RealSoulAttack.is_available, RealSoulAttack, SoulAttack, name = "진 귀참 발동 가능?")
@@ -194,8 +200,8 @@ class JobGenerator(ck.JobGenerator):
         ChainBombPunchInit.onAfter(ChainBombPunchFinal)
 
         #여우령
-        FoxSoul.add_runtime_modifier(DoubleBody, double_body_single_target)
-        FoxSoul_100.add_runtime_modifier(DoubleBody, double_body_single_target)
+        FoxSoul.add_runtime_modifier(DoubleBody, double_body_single_target_random)
+        FoxSoul_100.add_runtime_modifier(DoubleBody, double_body_single_target_random)
         BasicAttack.onAfter(FoxSoul)
         SoulTrap.onTick(core.RepeatElement(FoxSoul, 2))
         SoulConcentrateSummon.onTick(core.RepeatElement(FoxSoul, 2))

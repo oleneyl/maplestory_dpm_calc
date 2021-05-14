@@ -155,8 +155,9 @@ class JobGenerator(ck.JobGenerator):
         MagicMastery = core.InformedCharacterModifier("매직 마스터리",att = 30 + passive_level, crit_damage = 15 + passive_level // 3, crit = 15 + passive_level // 3)
         DarknessSocery = core.InformedCharacterModifier("다크니스 소서리", pdamage_indep = 40 + self.combat, armor_ignore = 40 + self.combat)
         MorningStarfall = core.InformedCharacterModifier("모닝 스타폴(패시브)",pdamage_indep = 30 + self.combat)
+        DarkCrescendo = core.InformedCharacterModifier("다크 크레센도", pdamage = 40)
         
-        return [PowerOfLight, SpellMastery, HighWisdom, MagicMastery, MorningStarfall, DarknessSocery]
+        return [PowerOfLight, SpellMastery, HighWisdom, MagicMastery, MorningStarfall, DarknessSocery, DarkCrescendo]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]): 
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -184,7 +185,6 @@ class JobGenerator(ck.JobGenerator):
         #Buff skills
         Booster = core.BuffSkill("부스터", 0, 180 * 1000, rem = True).wrap(core.BuffSkillWrapper) # 펫버프
         PodicMeditaion = core.BuffSkill("포딕 메디테이션", 0, 1800000, att = 40).wrap(core.BuffSkillWrapper) # 펫버프
-        DarkCrescendo = core.BuffSkill("다크 크레센도", 0, (180 + 4*self.combat) * 1000, pdamage = 28, rem = True).wrap(core.BuffSkillWrapper) # 펫버프. 스택 제대로 계산 필요함.
         DarknessSocery = core.BuffSkill("다크니스 소서리(버프)", 270, (180 + 5*self.combat) * 1000, rem = True).wrap(core.BuffSkillWrapper)
     
         LuminousState = LuminousStateController(core.BuffSkill("루미너스 상태", 0, 99999999), chtr.get_base_modifier().buff_rem)
@@ -268,7 +268,7 @@ class JobGenerator(ck.JobGenerator):
 
         return(Attack, 
                 [LuminousState, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
-                    Booster, PodicMeditaion, DarknessSocery, DarkCrescendo, HerosOath, Memorize, OverloadMana, LiberationOrb,
+                    Booster, PodicMeditaion, DarknessSocery, HerosOath, Memorize, OverloadMana, LiberationOrb,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
                 [LightAndDarkness, LiberationOrbActive, LiberationOrbPassive, AbsoluteKillCooltimed] +\
                 [PunishingResonator, DoorOfTruth, MirrorBreak, MirrorSpider] +\

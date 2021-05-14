@@ -150,9 +150,12 @@ class JobGenerator(ck.JobGenerator):
         SwordOfSoullight.onAfter(SwordOfSoullightSummon)
         SwordOfSoullight.onAfter(LightForceRay.controller(1))
 
+        # 라이트 포스레이
+        LightForceRay.onAfter(core.RepeatElement(FinalAttack, 6))
+
         # 오라 웨폰
         auraweapon_builder = warriors.AuraWeaponBuilder(vEhc, 2, 2)
-        for sk in [SoullightSlash, SoulAssult, DeadlyCharge, ShiningCross, ClauSolis]:
+        for sk in [SoullightSlash, SoulAssult, DeadlyCharge, ShiningCross, ClauSolis, LightForceRay]:
             auraweapon_builder.add_aura_weapon(sk)
         AuraWeaponBuff, AuraWeapon = auraweapon_builder.get_buff()
 
