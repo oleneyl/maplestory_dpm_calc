@@ -567,8 +567,8 @@ class ExtendedCharacterModifier(CharacterModifier):
 
     def degenerate(self) -> CharacterModifier:
         mdf = super(ExtendedCharacterModifier, self).copy()
-        mastery_mdf = CharacterModifier(  # transform mastery (95% cap) to pdamage_indep
-            pdamage_indep=-(100 - min(self.mastery, 95)) / 2
+        mastery_mdf = CharacterModifier(  # transform mastery (99% cap) to pdamage_indep
+            pdamage_indep=-(100 - min(self.mastery, 99)) / 2
         )
         return mdf + mastery_mdf
 
