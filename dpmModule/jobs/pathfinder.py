@@ -310,7 +310,7 @@ class JobGenerator(ck.JobGenerator):
 
         ### Exports ###
         return(CardinalBlast,
-               [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_wind_booster(), globalSkill.useful_combat_orders(),
+               [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_combat_orders(),
                 RelicCharge, AncientBowBooster, CurseTolerance, CurseTransition, SharpEyes,
                 RelicEvolution, EpicAdventure,
                 AncientGuidance, AdditionalTransition, globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), CriticalReinforce,

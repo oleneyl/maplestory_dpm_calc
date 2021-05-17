@@ -287,7 +287,6 @@ class JobGenerator(ck.JobGenerator):
                 globalSkill.maple_heros(chtr.level, name = "이계의 용사", combat_level=self.combat),
                 globalSkill.useful_sharp_eyes(),
                 globalSkill.useful_combat_orders(),
-                globalSkill.useful_wind_booster(),
                 OverloadMana,
                 Booster,
                 PsychicShield,

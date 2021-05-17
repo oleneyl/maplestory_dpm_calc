@@ -236,7 +236,6 @@ class JobGenerator(ck.JobGenerator):
                 globalSkill.maple_heros(chtr.level, combat_level=self.combat),
                 globalSkill.useful_sharp_eyes(),
                 globalSkill.useful_combat_orders(),
-                globalSkill.useful_wind_booster(),
                 Infinity,
                 EpicAdventure,
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
