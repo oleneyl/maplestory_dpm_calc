@@ -92,6 +92,9 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier(
             "피지컬 트레이닝", stat_main=30, stat_sub=30
         )
+        BowAccelation = core.InformedCharacterModifier(
+            "보우 엑셀레이션", stat_main=20
+        )
 
         MarkmanShip = core.InformedCharacterModifier("마크맨쉽", armor_ignore=25, patt=25)
 
@@ -109,6 +112,7 @@ class JobGenerator(ck.JobGenerator):
         return [
             CriticalShot,
             PhisicalTraining,
+            BowAccelation,
             MarkmanShip,
             BowExpert,
             AdvancedFinalAttackPassive,
@@ -330,7 +334,7 @@ class JobGenerator(ck.JobGenerator):
                 damage=400 + 16 * vEhc.getV(1, 1),
                 hit=3,  # 13 * 3타
                 remain=3000,
-                cooltime=30000,
+                cooltime=60000,
                 red=True,
             )
             .isV(vEhc, 1, 1)
