@@ -169,12 +169,12 @@ class JobGenerator(ck.JobGenerator):
             delay=690,
             damage=340,
             hit=2,
-            cooltime=30 * 1000,
+            cooltime=60 * 1000,
         ).wrap(core.DamageSkillWrapper)
         PinPointPierceDebuff = core.BuffSkill(
             "핀포인트 피어스(버프)",
             delay=0,
-            remain=30 * 1000,
+            remain=60 * 1000,
             cooltime=-1,
             pdamage=15,
             armor_ignore=15,
