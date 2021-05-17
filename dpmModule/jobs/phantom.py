@@ -12,7 +12,7 @@ from typing import Any, Dict
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.buffrem = (12, 12)
+        self.buffrem = (2, 2)
         self.vEnhanceNum = 14
         self.jobtype = "LUK"
         self.jobname = "팬텀"
@@ -26,14 +26,16 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         HighDexterity = core.InformedCharacterModifier("하이 덱스터리티", stat_sub=40)
         LuckMonopoly = core.InformedCharacterModifier("럭 모노폴리", stat_main=60)
+        Accelation = core.InformedCharacterModifier("케인 엑셀레이션", stat_main=20)
         LuckOfPhantomtheif = core.InformedCharacterModifier("럭오브팬텀시프", stat_main=60)
         MoonLight = core.InformedCharacterModifier("문 라이트", att=40)
         AcuteSence = core.InformedCharacterModifier("어큐트 센스", crit=35, pdamage_indep=30)
         CainExpert = core.InformedCharacterModifier("케인 엑스퍼트", att=40+passive_level, crit_damage=15+passive_level//3, pdamage_indep=25 + passive_level//2)
+        PrayOfAria = core.InformedCharacterModifier("프레이 오브 아리아", pdamage=30+self.combat, armor_ignore=30+self.combat)
 
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 3, 3)
 
-        return [HighDexterity, LuckMonopoly, LuckOfPhantomtheif, MoonLight, AcuteSence, CainExpert, ReadyToDiePassive]
+        return [HighDexterity, LuckMonopoly, Accelation, LuckOfPhantomtheif, MoonLight, AcuteSence, CainExpert, PrayOfAria, ReadyToDiePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -74,13 +76,14 @@ class JobGenerator(ck.JobGenerator):
 
         # 훔친 스킬은 공격력에 패널티가 있습니다.
         STEALSKILL = core.CharacterModifier(pdamage_indep=100*((1.2 / 1.3)-1))
+        STEAL_BUFFREM = (100 + chtr.get_base_modifier().buff_rem + 10) / 100  # 탤런트 오브 팬텀시프-퍼시스트
 
         # 1차
         CardinalDischarge = core.DamageSkill("카디널 디스차지(탤팬1)", 210, 90, 4, modifier=STEALSKILL).setV(vEhc, 0, 7, True).wrap(core.DamageSkillWrapper)
 
         # 2차
         # 힐+마오팬보다 분노가 허수아비딜은 잘나옴
-        Fury = core.BuffSkill("분노(탤팬2)", 0, 180000, rem=True, att=30).wrap(core.BuffSkillWrapper)
+        Fury = core.BuffSkill("분노(탤팬2)", 0, 180000 * STEAL_BUFFREM, rem=False, att=30).wrap(core.BuffSkillWrapper)
         CardinalBlast = core.DamageSkill("카디널 블래스트(탤팬2)", 240, 200, 4, modifier=STEALSKILL).setV(vEhc, 1, 5, False).wrap(core.DamageSkillWrapper)  # 210~270ms 랜덤 (1.2.338 기준 측정), 최종뎀 단리적용
         Heal = core.BuffSkill("힐(탤팬2)", 450, 2*1000, cooltime=10*1000, pdamage_indep=10).wrap(core.BuffSkillWrapper)
 
@@ -90,7 +93,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 4차
         FinalCut = core.DamageSkill("파이널 컷(탤팬4)", 450, 2000 + 20 * self.combat, 1, modifier=STEALSKILL, cooltime=90000, red=True).setV(vEhc, 3, 2, True).wrap(core.DamageSkillWrapper)
-        FinalCutBuff = core.BuffSkill("파이널 컷(탤팬4)(버프)", 0, 60000, cooltime=-1, rem=True, pdamage_indep=40 + self.combat).wrap(core.BuffSkillWrapper)
+        FinalCutBuff = core.BuffSkill("파이널 컷(탤팬4)(버프)", 0, 60000 * STEAL_BUFFREM, cooltime=-1, rem=False, pdamage_indep=40 + self.combat).wrap(core.BuffSkillWrapper)
 
         # 하이퍼
         BoolsEye = core.BuffSkill("불스아이(탤팬H)", 960, 30 * 1000, cooltime=180 * 1000, crit=20, crit_damage=10, armor_ignore=20, pdamage=20).wrap(core.BuffSkillWrapper)
@@ -99,15 +102,10 @@ class JobGenerator(ck.JobGenerator):
         ##### Phantom skills #####
 
         # Buff skills
-
-        Booster = core.BuffSkill("부스터", 0, 240 * 1000, rem=True).wrap(core.BuffSkillWrapper)    #딜레이 모름
-
         MileAiguilles = core.DamageSkill("얼티밋 드라이브", 150, 140 + self.combat, 3, modifier=core.CharacterModifier(pdamage=20, armor_ignore=20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         CarteNoir = core.DamageSkill("느와르 카르트", 0, 270, min(chtr.get_modifier().crit/100 + 0.1, 1)).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         Judgement = core.DamageSkill("느와르 카르트(저지먼트)", 0, 270, 10).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
-
-        PrieredAria = core.BuffSkill("프레이 오브 아리아", 0, (240+7*self.combat)*1000, pdamage=30+self.combat, armor_ignore=30+self.combat).wrap(core.BuffSkillWrapper)
 
         TempestOfCardInit = core.DamageSkill("템페스트 오브 카드(시전)", 0, 0, 0, cooltime=18000*0.8 + 180*56, red=True).wrap(core.DamageSkillWrapper)
         TempestOfCard = core.DamageSkill("템페스트 오브 카드", 180, 200+2*self.combat, 3, modifier=core.CharacterModifier(pdamage=20)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
@@ -125,8 +123,8 @@ class JobGenerator(ck.JobGenerator):
         JokerDamage = core.DamageSkill("조커", 460, 240+9*vEhc.getV(4, 4), 30).isV(vEhc, 4, 4).wrap(core.DamageSkillWrapper)  # 14회 반복, 총 420타이므로 30타로 적용
         JokerBuff = core.BuffSkill("조커(버프)", 1230, 30000, cooltime=-1, pdamage_indep=(1 + (vEhc.getV(4, 4) - 1) // 5) * 2 / 5).isV(vEhc, 4, 4).wrap(core.BuffSkillWrapper)
 
-        BlackJack = core.SummonSkill("블랙잭", 570, 250, 400+16*vEhc.getV(1, 1), 1, 5000-1, cooltime=15000, red=True).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)
-        BlackJackFinal = core.DamageSkill("블랙잭(최종)", 0, 600+24*vEhc.getV(1, 1), 12, cooltime=-1).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
+        BlackJack = core.SummonSkill("블랙잭", 570, 600, 600+24*vEhc.getV(1, 1), 3, 600*8-1, cooltime=15000, red=True).isV(vEhc, 1, 1).wrap(core.SummonSkillWrapper)
+        BlackJackFinal = core.DamageSkill("블랙잭(최종)", 0, 800+32*vEhc.getV(1, 1), 6*3, cooltime=-1).isV(vEhc, 1, 1).wrap(core.DamageSkillWrapper)
 
         MarkOfPhantom = core.DamageSkill("마크 오브 팬텀", 690, 300+12*vEhc.getV(2, 2), 6 * 7, cooltime=30000, red=True).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
         MarkOfPhantomEnd = core.DamageSkill("마크 오브 팬텀(최종)", 0, 485+19*vEhc.getV(2, 2), 15).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)  # 2회 반복
@@ -158,9 +156,9 @@ class JobGenerator(ck.JobGenerator):
         JokerInit.onAfter(JokerDamages)
         JokerDamages.onAfter(JokerBuff)
 
-        BlackJack.onTick(CarteNoir)
-        BlackJack.onAfter(BlackJackFinal.controller(5000))
-        BlackJackFinal.onAfter(CarteNoir)
+        BlackJack.onTick(core.RepeatElement(CarteNoir, 3))
+        BlackJack.onAfter(BlackJackFinal.controller(600*8))
+        BlackJackFinal.onAfter(core.RepeatElement(CarteNoir, 3))
 
         MarkOfPhantom.onAfter(core.RepeatElement(CarteNoir, 7))
         MarkOfPhantom.onAfter(core.RepeatElement(MarkOfPhantomEnd, 2))
@@ -203,8 +201,6 @@ class JobGenerator(ck.JobGenerator):
                 globalSkill.useful_combat_orders(),
                 Talent2,
                 CrossoverChain,
-                Booster,
-                PrieredAria,
                 FinalCutBuff,
                 JokerBuff,
                 globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat),
