@@ -27,7 +27,7 @@ presets = [
     Preset(
         id="darknight",
         job="다크나이트",
-        description="다크 스피어 10히트, 체력 100%, 리인카 쿨마다 사용",
+        description="다크 스피어 10히트, 체력>50%, 리인카 쿨마다 사용",
         options={},
         alt=0,
     ),
@@ -216,7 +216,7 @@ presets = [
     Preset(
         id="battlemage",
         job="배틀메이지",
-        description="좌우텔 분당 83회, 디버프 오라만, 명계문 미사용",
+        description="좌우텔 분당 83회, 디버프 오라만",
         options={},
         alt=0,
     ),
@@ -279,14 +279,14 @@ presets = [
     Preset(
         id="phantom_pathfinder",
         job="팬텀",
-        description="블디, 블디/크오체/파컷/불스아이, 체력 100%",
+        description="블디, 블디/크오체/파컷/불스아이, 체력>50%",
         options={"dealcycle": "blast_discharge"},
         alt=0,
     ),
     Preset(
         id="phantom",
         job="팬텀",
-        description="얼드, 분노/크오체/파컷/불스아이, 체력 100%",
+        description="얼드, 분노/크오체/파컷/불스아이, 체력>50%",
         options={"dealcycle": "ultimate_drive"},
         alt=1,
     ),
