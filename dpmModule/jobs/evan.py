@@ -345,7 +345,7 @@ class JobGenerator(ck.JobGenerator):
         OverloadMana = overload_mana_builder.get_buff()
             
         return(CircleOfMana1,
-                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_wind_booster(),
+                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Mir, OverloadMana, Booster, OnixBless, HerosOath, ElementalBlastBuff,
                     globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), globalSkill.soul_contract()] +\
                 [ZodiacRay, MagicParticle] +\
