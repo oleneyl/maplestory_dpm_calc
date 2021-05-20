@@ -620,7 +620,7 @@ class GrapOfAgonyWrapper(core.SummonSkillWrapper):
         skill = core.SummonSkill(
             name="그립 오브 애거니",
             summondelay=510,  # base delay 660, TODO: check AS applying
-            delay=340,  # TODO: check delay in game
+            delay=360,  # TODO: check delay in game
             damage=600 + 24 * vEhc.getV(num1, num2),
             hit=6,
             remain=5000,
@@ -634,7 +634,7 @@ class GrapOfAgonyWrapper(core.SummonSkillWrapper):
 
     def _use(self, skill_modifier):
         result = super(GrapOfAgonyWrapper, self)._use(skill_modifier)
-        self.timeLeft += (self.stack // self.hit_per_stack) * 1000
+        self.timeLeft += (self.stack // self.hit_per_stack - 1) * 1000
         self.stack = self.stack % self.hit_per_stack
         return result
 
