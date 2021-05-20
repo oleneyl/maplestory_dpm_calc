@@ -331,7 +331,7 @@ class JobGenerator(ck.JobGenerator):
                 "잔영의 시",
                 summondelay=720,
                 delay=240,
-                damage=400 + 16 * vEhc.getV(1, 1),
+                damage=600 + 24 * vEhc.getV(1, 1),
                 hit=3,  # 13 * 3타
                 remain=3000,
                 cooltime=60000,
