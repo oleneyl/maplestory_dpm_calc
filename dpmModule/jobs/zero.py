@@ -46,6 +46,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "제로"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
+        self.combat = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -385,7 +386,7 @@ class JobGenerator(ck.JobGenerator):
         EgoWeaponBeta.protect_from_running()
 
         return(ComboHolder,
-               [globalSkill.maple_heros(chtr.level, name="륀느의 가호", combat_level=0), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+               [globalSkill.maple_heros(chtr.level, name="륀느의 가호", combat_level=0), globalSkill.useful_sharp_eyes(),
                 DivineForce, AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, RhinneBless,
                 DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, LimitBreakFinal, CriticalBind,
                 SoulContract] +
