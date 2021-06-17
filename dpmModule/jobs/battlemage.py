@@ -336,7 +336,7 @@ class JobGenerator(ck.JobGenerator):
         AbyssalLightning = core.BuffSkill(
             "어비셜 라이트닝",
             delay=540,
-            remain=35000,
+            remain=40000,
             cooltime=200 * 1000,
             red=True,
         ).wrap(core.BuffSkillWrapper)

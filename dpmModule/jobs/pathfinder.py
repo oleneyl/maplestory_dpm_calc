@@ -195,7 +195,7 @@ class JobGenerator(ck.JobGenerator):
         CriticalReinforce = bowmen.CriticalReinforceWrapper(vEhc, chtr, 1, 1, 20+ceil(self.combat/2))
 
         Evolve = adventurer.EvolveWrapper(vEhc, 5, 5, Raven)
-        UltimateBlast = core.DamageSkill("얼티밋 블래스트", LINK_DELAY + 1350, 400+20*vEhc.getV(2, 2), 15*5, cooltime=120*1000, red=True, modifier=core.CharacterModifier(armor_ignore=100) + ANCIENT_ARCHERY).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
+        UltimateBlast = core.DamageSkill("얼티밋 블래스트", LINK_DELAY + 1350, 400+20*vEhc.getV(2, 2), 15*6, cooltime=120*1000, red=True, modifier=core.CharacterModifier(armor_ignore=100) + ANCIENT_ARCHERY).isV(vEhc, 2, 2).wrap(core.DamageSkillWrapper)
 
         RavenTempest = core.SummonSkill("레이븐 템페스트", LINK_DELAY + 540, 250, 400+20*vEhc.getV(0, 0), 5, 25*1000, cooltime=120*1000, red=True, modifier=ANCIENT_ARCHERY).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
@@ -266,8 +266,8 @@ class JobGenerator(ck.JobGenerator):
         UltimateBlast.onAfter(RelicCharge.stackController(-1000))
         UltimateBlast.add_runtime_modifier(RelicCharge, lambda charge: core.CharacterModifier(pdamage_indep=(charge.stack // 250) * 25))
 
-        RelicUnboundDischarge.onConstraint(core.ConstraintElement('350 이상', RelicCharge, partial(RelicCharge.judge, 350, 1)))
-        RelicUnboundDischarge.onAfter(RelicCharge.stackController(-350))
+        RelicUnboundDischarge.onConstraint(core.ConstraintElement('250 이상', RelicCharge, partial(RelicCharge.judge, 250, 1)))
+        RelicUnboundDischarge.onAfter(RelicCharge.stackController(-250))
 
         # 카디널 차지 연결
         CardinalBlast.onAfter(core.OptionalElement(partial(CardinalState.is_state, "DISCHARGE"), AdditionalDischarge))

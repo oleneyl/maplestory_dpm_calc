@@ -193,16 +193,16 @@ class JobGenerator(ck.JobGenerator):
         WraithOfGod = core.BuffSkill("레이스 오브 갓", 0, 60000, pdamage = 10, cooltime = 120000).wrap(core.BuffSkillWrapper)
         
         Craft_Orb = core.DamageSkill("크래프트:오브", 390, 300+4*self.combat, 1).wrap(core.DamageSkillWrapper)
-        Reaction_Domination = core.DamageSkill("리액션:도미네이션", 0, 550 + 100 + self.combat*2, 2, cooltime = 4000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        Reaction_Domination = core.DamageSkill("리액션:도미네이션", 0, 610 + 100 + self.combat*2, 2, cooltime = 4000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         Craft_Javelin_EnhanceBuff = core.BuffSkill("크래프트:오브(자벨린 강화버프)", 0, 2000, cooltime = -1).wrap(core.BuffSkillWrapper)
         
         Craft_Javelin = core.DamageSkill("크래프트:자벨린", 390, 375 + 2*self.combat, 4 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         Craft_Javelin_AfterOrb = core.DamageSkill("크래프트:자벨린(오브 이후)", 390, 375 + 2*self.combat, 4 * 3, modifier = core.CharacterModifier(pdamage = 20 + 15, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
         
         Craft_Javelin_Fragment = core.DamageSkill("크래프트:자벨린(파편)", 0, 130 + 2*self.combat, 2 * 3, modifier = core.CharacterModifier(pdamage = 20, boss_pdamage = 20)).setV(vEhc, 0, 2, True).wrap(core.DamageSkillWrapper)
-        Reaction_Destruction = core.DamageSkill("리액션:디스트럭션", 0, 550 + 100 + self.combat*2, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 4000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
+        Reaction_Destruction = core.DamageSkill("리액션:디스트럭션", 0, 610 + 100 + self.combat*2, 4*2, modifier = core.CharacterModifier(boss_pdamage = 20), cooltime = 4000).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)
         
-        Craft_Longinus = core.DamageSkill("크래프트:롱기누스", 600+180 +10*self.combat, 950, 8, cooltime = (15-self.combat//2)*1000).wrap(core.DamageSkillWrapper) # 자체딜레이 600 + 자벨린-오브 연계 취소 180
+        Craft_Longinus = core.DamageSkill("크래프트:롱기누스", 600+180 +10*self.combat, 950, 8, cooltime = (15-self.combat//2)*1000, modifier = core.CharacterModifier(crit = 100)).wrap(core.DamageSkillWrapper) # 자체딜레이 600 + 자벨린-오브 연계 취소 180
         
         Riyo = RiyoWrapper(core.SummonSkill("리요", 0, 510, 240, 1, 180000).setV(vEhc, 3, 2, False)) # 최초 사용 이후로는 항상 데우스 종료때 딜레이 없이 리필됨
         Machina = core.SummonSkill("마키나", 0, 1980, 250, 4, 180000).setV(vEhc, 2, 2, False).wrap(core.SummonSkillWrapper)    # 최초 사용 이후로는 항상 데우스 종료때 딜레이 없이 리필됨
