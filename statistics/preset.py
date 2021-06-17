@@ -277,17 +277,17 @@ presets = [
         alt=1,
     ),
     Preset(
-        id="phantom_pathfinder",
-        job="팬텀",
-        description="블디, 블디/크오체/파컷/불스아이, 체력>50%",
-        options={"dealcycle": "blast_discharge"},
-        alt=0,
-    ),
-    Preset(
         id="phantom",
         job="팬텀",
         description="얼드, 분노/크오체/파컷/불스아이, 체력>50%",
         options={"dealcycle": "ultimate_drive"},
+        alt=0,
+    ),
+    Preset(
+        id="phantom_pathfinder",
+        job="팬텀",
+        description="블디, 블디/크오체/파컷/불스아이, 체력>50%",
+        options={"dealcycle": "blast_discharge"},
         alt=1,
     ),
     Preset(
