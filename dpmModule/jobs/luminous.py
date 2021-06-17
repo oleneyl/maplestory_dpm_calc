@@ -266,6 +266,10 @@ class JobGenerator(ck.JobGenerator):
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
 
+        # Initial setup
+        LiberationOrbStackDark.vary(4)
+        LiberationOrbStackLight.vary(4)
+
         return(Attack, 
                 [LuminousState, globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                     Booster, PodicMeditaion, DarknessSocery, HerosOath, Memorize, OverloadMana, LiberationOrb,
