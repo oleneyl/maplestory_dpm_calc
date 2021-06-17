@@ -108,7 +108,7 @@ class LiberationOrbActiveWrapper(core.DamageSkillWrapper):
     def __init__(self, vEhc, num1, num2):
         self.light = 0
         self.dark = 0
-        skill = core.DamageSkill("리버레이션 오브(액티브)", 0, 400 + 17 * vEhc.getV(num1,num2), 10, cooltime = 1000, modifier = core.CharacterModifier(crit = 100)).isV(vEhc,num1,num2)
+        skill = core.DamageSkill("리버레이션 오브(액티브)", 0, 475 + 20 * vEhc.getV(num1,num2), 10, cooltime = 1000, modifier = core.CharacterModifier(crit = 100)).isV(vEhc,num1,num2)
         super(LiberationOrbActiveWrapper, self).__init__(skill)
 
     def _setStack(self, light, dark):
@@ -124,7 +124,7 @@ class LiberationOrbActiveWrapper(core.DamageSkillWrapper):
         damage = self.skill.damage
         if self.light == self.dark:
             damage += 25
-        damage += max(0, self.light + self.dark - 1) * 50
+        damage += max(0, self.light + self.dark - 1) * 55
         return damage
 
 class JobGenerator(ck.JobGenerator):

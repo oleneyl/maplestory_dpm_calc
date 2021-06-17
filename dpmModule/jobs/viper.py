@@ -24,6 +24,7 @@ class EnergyChargeWrapper(core.StackSkillWrapper):
         self.charged = False
         self.combat = combat
         self.drainCallback = None
+        self.modifierInvariantFlag = True
 
     def charge(self, val, force):
         if (force or not self.charged) and val > 0:
@@ -48,12 +49,6 @@ class EnergyChargeWrapper(core.StackSkillWrapper):
     def chargeController(self, val, force=False):
         task = core.Task(self, partial(self.charge, val, force))
         return core.TaskHolder(task, name=f"게이지 {val}")
-
-    def get_modifier(self):
-        if self.charged == 1:
-            return core.CharacterModifier(att=50 + 2 * self.combat)
-        else:
-            return core.CharacterModifier(att=25 + 1 * self.combat)
 
     def isStateOn(self):
         return self.charged
@@ -105,16 +100,21 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(
         self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
     ):
+        base_modifier = chtr.get_base_modifier()
+        passive_level = base_modifier.passive_level + self.combat
         CriticalRoar = core.InformedCharacterModifier("크리티컬 로어", crit=20, crit_damage=5)
         MentalClearity = core.InformedCharacterModifier("멘탈 클리어리티", att=30)
         PhisicalTraining = core.InformedCharacterModifier(
             "피지컬 트레이닝", stat_main=30, stat_sub=30
         )
         CriticalRage = core.InformedCharacterModifier(
-            "크리티컬 레이지", crit=15, crit_damage=10  # 보스상대 추가 크확은 not_implied_skill_list
+            "크리티컬 레이지", crit=15, crit_damage=10, att=30  # 보스상대 추가 크확은 not_implied_skill_list
         )
         StimulatePassive = core.InformedCharacterModifier(
             "스티뮬레이트(패시브)", boss_pdamage=20
+        )
+        GuardCrush = core.InformedCharacterModifier(
+            "가드 크러시", att=30 + passive_level  # 확률 방무는 not_implied_skill_list
         )
 
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 2, 3)
@@ -126,6 +126,7 @@ class JobGenerator(ck.JobGenerator):
             CriticalRage,
             StimulatePassive,
             LoadedDicePassive,
+            GuardCrush
         ]
 
     def get_not_implied_skill_list(
@@ -428,8 +429,8 @@ class JobGenerator(ck.JobGenerator):
         SerpentScrew.onTick(EnergyCharge.chargeController(-85 * 0.3))
         FistInrage_T.onAfter(EnergyCharge.chargeController(-150))
         DragonStrike.onAfter(EnergyCharge.chargeController(-180))
-        UnityOfPower.onAfter(EnergyCharge.chargeController(-1500))
-        HowlingFistInit.onAfter(EnergyCharge.chargeController(-1750))
+        UnityOfPower.onAfter(EnergyCharge.chargeController(-1000))
+        HowlingFistInit.onAfter(EnergyCharge.chargeController(-1250))
 
         # Basic Attack
         BasicAttack = core.OptionalElement(
@@ -483,7 +484,7 @@ class JobGenerator(ck.JobGenerator):
         # Howling Fist
         HowlingFistInit.onConstraint(
             core.ConstraintElement(
-                "에너지 1750 이상", EnergyCharge, partial(EnergyCharge.judge, 1750, 1)
+                "에너지 1250 이상", EnergyCharge, partial(EnergyCharge.judge, 1250, 1)
             )
         )
         HowlingFistInit.onAfter(core.RepeatElement(HowlingFistCharge, 8))

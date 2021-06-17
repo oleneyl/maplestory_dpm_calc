@@ -91,7 +91,7 @@ class JobGenerator(ck.JobGenerator):
         ShiningCrossInstall = core.SummonSkill("샤이닝 크로스-인스톨", 0, 1200, 75, 4+1, 12000, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)    #100% 암흑 5초
         
         # Hyper
-        SacredCube = core.BuffSkill("세이크리드 큐브", 90, 30000, cooltime = 210000, pdamage = 10).wrap(core.BuffSkillWrapper)
+        SacredCube = core.BuffSkill("세이크리드 큐브", 90, 25000, cooltime = 180*1000, pdamage = 15).wrap(core.BuffSkillWrapper)
         DeadlyCharge = (
             core.DamageSkill(
                 "데들리 차지",
@@ -109,7 +109,7 @@ class JobGenerator(ck.JobGenerator):
         # 5th
         CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 3, 3)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
-        RoIias = core.BuffSkill("로 아이아스", 840, (75+3*vEhc.getV(0,0))*1000, cooltime = 300*1000, red = True, pdamage_indep = 5 + (35+3*(vEhc.getV(0,0)//4))//2).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        RoIias = core.BuffSkill("로 아이아스", 840, (39+2*vEhc.getV(0,0))*1000, cooltime = 180*1000, red = True, pdamage_indep = 21+3*(vEhc.getV(0,0)//7)).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         CLAUSOLIS_DAMAGE = 700+28*vEhc.getV(4,4) if USE_ROYAL_GUARD else 350+14*vEhc.getV(4,4)
         ClauSolis = core.DamageSkill("클라우 솔라스", 690, CLAUSOLIS_DAMAGE, 7, cooltime = 12000, red = True).isV(vEhc,4,4).wrap(core.DamageSkillWrapper)    #로얄가드 버프지속시간 6초 증가. 100% 암흑 5초
         ClauSolisSummon = core.SummonSkill("클라우 솔라스(소환)", 0, 5000, 350+20*vEhc.getV(4,4), 7, 7000, cooltime = -1).isV(vEhc,4,4).wrap(core.SummonSkillWrapper)   #100% 암흑 5초

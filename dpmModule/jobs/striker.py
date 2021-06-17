@@ -137,10 +137,10 @@ class JobGenerator(ck.JobGenerator):
         NoiShinChanGeukAttack_ChookRoi = core.DamageSkill("뇌신창격(후속타)(축뢰)", 0, (200 + 8*vEhc.getV(0,0)) * CHOOKROI, 7).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         SpearLightningAttackInit = core.DamageSkill("창뇌연격(시전)", 0, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 스로우 블래스팅같은 스택 저장형 스킬이지만... 그냥 12회 반복되는 극딜기로 처리
-        SpearLightningAttack = core.DamageSkill("창뇌연격", 240, 375+15*vEhc.getV(0,0), 5, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        SpearLightningAttack_Lightning = core.DamageSkill("창뇌연격(번개)", 0, 500+20*vEhc.getV(0,0), 4, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        SpearLightningAttack_Final = core.DamageSkill("창뇌연격(막타)", 450, 600+24*vEhc.getV(0,0), 7, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        SpearLightningAttack_Final_Lightning = core.DamageSkill("창뇌연격(막타)(번개)", 0, 725+29*vEhc.getV(0,0), 6, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        SpearLightningAttack = core.DamageSkill("창뇌연격", 240, 500+20*vEhc.getV(0,0), 5, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        SpearLightningAttack_Lightning = core.DamageSkill("창뇌연격(번개)", 0, 550+22*vEhc.getV(0,0), 4, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        SpearLightningAttack_Final = core.DamageSkill("창뇌연격(막타)", 450, 700+28*vEhc.getV(0,0), 7, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
+        SpearLightningAttack_Final_Lightning = core.DamageSkill("창뇌연격(막타)(번개)", 0, 750+30*vEhc.getV(0,0), 6, cooltime=-1, modifier = LINK_MASTERY).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         #섬멸 연계 (default)
         WaterWaveDestroy = core.GraphElement("파섬")

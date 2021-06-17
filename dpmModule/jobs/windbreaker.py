@@ -56,6 +56,10 @@ class JobGenerator(ck.JobGenerator):
             "피지컬 트레이닝", stat_main=30, stat_sub=30
         )
 
+        Albatross = core.InformedCharacterModifier(
+            "알바트로스", att=20, crit=10
+        )
+
         WindBlessingPassive = core.InformedCharacterModifier(
             "윈드 블레싱(패시브)",
             pstat_main=15 + passive_level // 3,
@@ -68,13 +72,22 @@ class JobGenerator(ck.JobGenerator):
             pdamage_indep=25 + passive_level // 3,
             boss_pdamage=40 + passive_level,
         )
+        AlbatrossMaximum = core.InformedCharacterModifier(
+            "알바트로스 맥시멈",
+            att=30 + passive_level,
+            pdamage=25 + 2 * (passive_level // 3),
+            armor_ignore=15 + passive_level // 3,
+            crit=15 + passive_level // 3,
+        )
         return [
             ElementalExpert,
             ElementalHarmony,
             WhisperOfWind,
             PhisicalTraining,
+            Albatross,
             BowExpert,
             WindBlessingPassive,
+            AlbatrossMaximum,
         ]
 
     def get_not_implied_skill_list(
@@ -105,24 +118,14 @@ class JobGenerator(ck.JobGenerator):
         passive_level = base_modifier.passive_level + self.combat
         # Buff skills
         Storm = core.BuffSkill(
-            "엘리멘트(스톰)", delay=0, remain=200 * 1000, pdamage=10, rem=True
+            "엘리멘트(스톰)", delay=0, remain=core.infinite_time(), pdamage=10
         ).wrap(core.BuffSkillWrapper)
         SylphsAid = core.BuffSkill(
             "실프스 에이드", delay=0, remain=200 * 1000, att=20, crit=10, rem=True
         ).wrap(core.BuffSkillWrapper)
-        Albatross = core.BuffSkill(
-            "알바트로스 맥시멈",
-            delay=0,
-            remain=200 * 1000,
-            att=50 + passive_level,
-            pdamage=25 + 2 * (passive_level // 3),
-            armor_ignore=15 + passive_level // 3,
-            crit=25 + passive_level // 2,
-            rem=True,
-        ).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill(
             "샤프 아이즈",
-            delay=660,
+            delay=0,
             remain=(300 + 10 * self.combat) * 1000,
             crit=20 + ceil(self.combat / 2),
             crit_damage=15 + ceil(self.combat / 2),
@@ -292,7 +295,6 @@ class JobGenerator(ck.JobGenerator):
                 globalSkill.useful_combat_orders(),
                 Storm,
                 SylphsAid,
-                Albatross,
                 SharpEyes,
                 StormBringerDummy,
                 cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
