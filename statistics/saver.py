@@ -26,6 +26,7 @@ def get_args():
     parser.add_argument("--ulevel", type=int, default=8000)
     parser.add_argument("--cdr", type=int, default=0)
     parser.add_argument("--time", type=int, default=1800)
+    parser.add_argument("--filename", type=str, default=None)
     parser.add_argument("--task", default="dpm")
     parser.add_argument("--all", action="store_true")
     parser.add_argument("--thread", type=int, default=4)
@@ -108,8 +109,10 @@ def save_data(args):
     df["spec"] = df["spec"].astype("category")
 
     Path("./data").mkdir(parents=True, exist_ok=True)
-    df.to_pickle(f"data/{args.task}_{args.id}_{args.ulevel}_{args.cdr}.pkl")
-
+    if hasattr(args, "filename"):
+        df.to_pickle(f"data/{args.filename}.pkl")
+    else:
+        df.to_pickle(f"data/{args.task}_{args.id}_{args.ulevel}_{args.cdr}.pkl")
     return df
 
 
