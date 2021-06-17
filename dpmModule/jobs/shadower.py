@@ -177,8 +177,8 @@ class JobGenerator(ck.JobGenerator):
             BasicAttackWrapper,
             [
                 globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                Booster, FlipTheCoin, ShadowerInstinct, ShadowPartner, Smoke, AdvancedDarkSight, EpicAdventure, UltimateDarksight, MesoStack,
-                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), ReadyToDie, globalSkill.soul_contract()
+                Booster, FlipTheCoin, ShadowerInstinct, ShadowPartner, AdvancedDarkSight, EpicAdventure, UltimateDarksight, Smoke, MesoStack,
+                globalSkill.MapleHeroes2Wrapper(vEhc, 0, 0, chtr.level, self.combat), ReadyToDie, globalSkill.soul_contract(),
             ]
             + [ShadowFormation, ShadowFormationFinal, Eviscerate, SonicBlow, BailOfShadow, DarkFlare, MirrorBreak, MirrorSpider]
             + [Venom]
