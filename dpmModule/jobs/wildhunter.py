@@ -174,7 +174,7 @@ class JobGenerator(ck.JobGenerator):
         WildGrenade = core.SummonSkill("와일드 그레네이드", 0, 4500, 600+24*vEhc.getV(2,2), 5, 9999*10000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)
 
         WildBalkanTypeXInit = core.DamageSkill("와일드 발칸 Type X(개시)", 540, 0, 0, cooltime=120*1000, red=True).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
-        WildBalkanTypeXTick = core.DamageSkill("와일드 발칸 Type X", 120, 450+18*vEhc.getV(0,0), 5, cooltime=-1, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 67회 반복
+        WildBalkanTypeXTick = core.DamageSkill("와일드 발칸 Type X", 120, 525+21*vEhc.getV(0,0), 5, cooltime=-1, modifier=core.CharacterModifier(armor_ignore=20)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper) # 67회 반복
         WildBalkanTypeXEnd = core.DamageSkill("와일드 발칸 Type X(후딜)", 540, 0, 0, cooltime=-1).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
 
         #Build Graph
