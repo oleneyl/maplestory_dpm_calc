@@ -123,6 +123,9 @@ class JobGenerator(ck.JobGenerator):
         SylphsAid = core.BuffSkill(
             "실프스 에이드", delay=0, remain=200 * 1000, att=20, crit=10, rem=True
         ).wrap(core.BuffSkillWrapper)
+        EmeraldFlower = core.BuffSkill(
+            "에메랄드 플라워", delay=900, remain=60000 * (1 + base_modifier.summon_rem / 100), armor_ignore=10,
+        ).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill(
             "샤프 아이즈",
             delay=0,
@@ -296,6 +299,7 @@ class JobGenerator(ck.JobGenerator):
                 Storm,
                 SylphsAid,
                 SharpEyes,
+                EmeraldFlower,
                 StormBringerDummy,
                 cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                 GloryOfGuardians,
