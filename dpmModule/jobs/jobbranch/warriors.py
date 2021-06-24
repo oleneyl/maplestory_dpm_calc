@@ -1,4 +1,5 @@
 from ...kernel import core
+from math import ceil
 
 
 class AuraWeaponBuilder:
@@ -17,9 +18,9 @@ class AuraWeaponBuilder:
                 remain=(80 + 2 * enhancer.getV(skill_importance, enhance_importance)) * 1000,
                 cooltime=180 * 1000,
                 red=True,
-                armor_ignore=15,
+                armor_ignore=10+enhancer.getV(skill_importance, enhance_importance)//5,
                 pdamage_indep=(
-                    enhancer.getV(skill_importance, enhance_importance) // 5
+                    ceil(enhancer.getV(skill_importance, enhance_importance) / 5)
                 ),
             )
             .isV(enhancer, skill_importance, enhance_importance)
