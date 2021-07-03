@@ -8,7 +8,7 @@ from .jobclass import adventurer
 from math import ceil
 from typing import Any, Dict
 from functools import partial
-
+import os
 """
 Advisor : 저격장(레드)
 https://github.com/oleneyl/maplestory_dpm_calc/issues/247
@@ -67,13 +67,8 @@ class DelayVaryingSummonSkillWrapper(core.SummonSkillWrapper):
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.jobtype = "DEX"
-        self.jobname = "보우마스터"
-        self.vEnhanceNum = 11
-        self.ability_list = Ability_tool.get_ability_set(
-            "boss_pdamage", "crit", "buff_rem"
-        )
-        self.preEmptiveSkills = 1
+        self.load(os.path.join(os.path.dirname(__file__), 'configs', 'bowmaster.json'))
+        self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(pdamage=66, patt=8)
@@ -83,55 +78,6 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(ConcurrentRunRule("프리퍼레이션", "퀴버 풀버스트"), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule("소울 컨트랙트", "퀴버 풀버스트"), RuleSet.BASE)
         return ruleset
-
-    def get_passive_skill_list(
-        self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
-    ):
-        passive_level = chtr.get_base_modifier().passive_level + self.combat
-        CriticalShot = core.InformedCharacterModifier("크리티컬 샷", crit=40)
-        PhisicalTraining = core.InformedCharacterModifier(
-            "피지컬 트레이닝", stat_main=30, stat_sub=30
-        )
-        BowAccelation = core.InformedCharacterModifier(
-            "보우 엑셀레이션", stat_main=20
-        )
-
-        MarkmanShip = core.InformedCharacterModifier("마크맨쉽", armor_ignore=25, patt=25)
-
-        BowExpert = core.InformedCharacterModifier(
-            "보우 엑스퍼트", att=60 + passive_level, crit_damage=8
-        )
-        AdvancedFinalAttackPassive = core.InformedCharacterModifier(
-            "어드밴스드 파이널 어택(패시브)", att=20 + ceil(passive_level / 2)
-        )  # 오더스 적용필요
-
-        ElusionStep = core.InformedCharacterModifier(
-            "일루젼 스탭", stat_main=80 + 2 * passive_level
-        )
-
-        return [
-            CriticalShot,
-            PhisicalTraining,
-            BowAccelation,
-            MarkmanShip,
-            BowExpert,
-            AdvancedFinalAttackPassive,
-            ElusionStep,
-        ]
-
-    def get_not_implied_skill_list(
-        self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
-    ):
-        passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=30)
-        Mastery = core.InformedCharacterModifier(
-            "숙련도", mastery=85 + ceil(passive_level / 2)
-        )
-        ExtremeArchery = core.InformedCharacterModifier(
-            "익스트림 아처리", att=40, pdamage_indep=30
-        )
-
-        return [WeaponConstant, Mastery, ExtremeArchery]
 
     def generate(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
         """
@@ -146,124 +92,33 @@ class JobGenerator(ck.JobGenerator):
         프리퍼레이션, 엔버링크를 120초 주기에 맞춰 사용
         """
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-
+        self.passive_level = chtr.get_base_modifier().passive_level + self.combat
         ######   Skill   ######
         # Buff skills
-        SoulArrow = core.BuffSkill(
-            "소울 애로우", delay=0, remain=300 * 1000, att=30  # 펫버프
-        ).wrap(core.BuffSkillWrapper)
-        SharpEyes = core.BuffSkill(
-            "샤프 아이즈",
-            delay=690,
-            remain=300 * 1000,
-            crit=20 + 5 + ceil(self.combat / 2),
-            crit_damage=15 + ceil(self.combat / 2),
-            armor_ignore=5,
-        ).wrap(core.BuffSkillWrapper)
-        Preparation = core.BuffSkill(
-            "프리퍼레이션",
-            delay=540,
-            remain=30 * 1000,
-            cooltime=90 * 1000,
-            att=50,
-            boss_pdamage=20,
-        ).wrap(core.BuffSkillWrapper)
-        EpicAdventure = core.BuffSkill(
-            "에픽 어드벤처", delay=0, remain=60 * 1000, cooltime=120 * 1000, pdamage=10
-        ).wrap(core.BuffSkillWrapper)
 
+        SoulArrow = self.load_skill_wrapper("소울 애로우")
+        SharpEyes = self.load_skill_wrapper("샤프 아이즈")
+        Preparation = self.load_skill_wrapper("프리퍼레이션")
+
+        EpicAdventure = self.load_skill_wrapper("에픽 어드벤처")
         ArmorPiercing = ArmorPiercingWrapper(passive_level, chtr)
-        MortalBlow = core.BuffSkill(
-            "모탈 블로우",
-            delay=0,
-            remain=5000,
-            cooltime=-1,
-            pdamage=35,
-        ).wrap(core.BuffSkillWrapper)
+
+        MortalBlow = self.load_skill_wrapper("모탈 블로우")
         MortalBlowStack = core.StackSkillWrapper(
             core.BuffSkill("모탈 블로우(스택)", 0, 99999999), 30
         )
 
         # Damage Skills
-        MagicArrow = (
-            core.DamageSkill("어드밴스드 퀴버", delay=0, damage=260, hit=0.6)
-            .setV(vEhc, 3, 2, True)
-            .wrap(core.DamageSkillWrapper)
-        )
-        MagicArrow_ArrowRain = (
-            core.DamageSkill("어드밴스드 퀴버(애로우 레인)", delay=0, damage=260, hit=1)
-            .setV(vEhc, 3, 2, True)
-            .wrap(core.DamageSkillWrapper)
-        )
-        AdvancedFinalAttack = (
-            core.DamageSkill(
-                "어드밴스드 파이널 어택",
-                delay=0,
-                damage=210 + 2 * passive_level,
-                hit=0.7 + 0.01 * passive_level,
-            )
-            .setV(vEhc, 1, 2, True)
-            .wrap(core.DamageSkillWrapper)
-        )
+        MagicArrow = self.load_skill_wrapper("어드밴스드 퀴버", vEhc)
+        MagicArrow_ArrowRain = self.load_skill_wrapper("어드밴스드 퀴버(애로우 레인)", vEhc)
 
-        ArrowOfStorm = (
-            core.DamageSkill(
-                "폭풍의 시",
-                delay=120,
-                damage=(350 + self.combat * 3) * 0.75,
-                hit=1 + 1,
-                modifier=core.CharacterModifier(pdamage=30, boss_pdamage=10),
-            )
-            .setV(vEhc, 0, 2, True)
-            .wrap(core.DamageSkillWrapper)
-        )
-        ArrowFlatter = (
-            core.SummonSkill(
-                "애로우 플래터",
-                summondelay=600,  # 딜레이 모름
-                delay=210,
-                damage=85 + 90 + self.combat * 3,
-                hit=1,
-                remain=30 * 1000,
-                modifier=core.CharacterModifier(pdamage=30),
-            )
-            .setV(vEhc, 4, 2, False)
-            .wrap(core.SummonSkillWrapper)
-        )
+        AdvancedFinalAttack = self.load_skill_wrapper("어드밴스드 파이널 어택", vEhc)
+        ArrowOfStorm = self.load_skill_wrapper("폭풍의 시", vEhc)
+        ArrowFlatter = self.load_skill_wrapper("애로우 플래터", vEhc)
+        GrittyGust = self.load_skill_wrapper("윈드 오브 프레이", vEhc)
+        GrittyGustDOT = self.load_skill_wrapper("윈드 오브 프레이(도트)", vEhc)
+        ArrowRainBuff = self.load_skill_wrapper("애로우 레인(버프)", vEhc)
 
-        GrittyGust = (
-            core.DamageSkill(
-                "윈드 오브 프레이",
-                delay=720,
-                damage=335,
-                hit=12,
-                cooltime=15 * 1000,
-            )
-            .setV(vEhc, 6, 2, True)
-            .wrap(core.DamageSkillWrapper)
-        )
-        GrittyGustDOT = core.DotSkill(
-            "윈드 오브 프레이(도트)",
-            summondelay=0,
-            delay=1000,
-            damage=200,
-            hit=1,
-            remain=10 * 1000,
-            cooltime=-1,
-        ).wrap(core.DotSkillWrapper)
-
-        ArrowRainBuff = (
-            core.BuffSkill(
-                "애로우 레인(버프)",
-                delay=510,
-                remain=(40 + vEhc.getV(0, 0)) * 1000,
-                cooltime=120 * 1000,
-                red=True,
-                pdamage=15 + (vEhc.getV(0, 0) // 2),
-            )
-            .isV(vEhc, 0, 0)
-            .wrap(core.BuffSkillWrapper)
-        )
         ArrowRain = DelayVaryingSummonSkillWrapper(
             core.SummonSkill(
                 "애로우 레인",
@@ -278,32 +133,13 @@ class JobGenerator(ck.JobGenerator):
         )  # 1초마다 떨어지고, 평균 3.5히트가 나오도록.
 
         # Summon Skills
-        Pheonix = (
-            core.SummonSkill(
-                "피닉스",
-                summondelay=0,  # 이볼브가 끝나면 자동으로 소환되므로 딜레이 0
-                delay=1710,
-                damage=390,
-                hit=1,
-                remain=220 * 1000,
-            )
-            .setV(vEhc, 5, 3, True)
-            .wrap(core.SummonSkillWrapper)
-        )
+        Pheonix = self.load_skill_wrapper("피닉스", vEhc)
         GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4)
         Evolve = adventurer.EvolveWrapper(vEhc, 5, 5, Pheonix)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         # 잔영의시 미적용
-        QuibberFullBurstBuff = core.BuffSkill(
-            "퀴버 풀버스트(버프)",
-            delay=0,
-            remain=30 * 1000,
-            cooltime=120 * 1000,
-            red=True,
-            patt=(5 + int(vEhc.getV(2, 2) * 0.5)),
-            crit_damage=8,  # 독화살 크뎀을 이쪽에 합침
-        ).wrap(core.BuffSkillWrapper)
+        QuibberFullBurstBuff = self.load_skill_wrapper("퀴버 풀버스트(버프)",vEhc)
         QuibberFullBurst = DelayVaryingSummonSkillWrapper(
             core.SummonSkill(
                 "퀴버 풀버스트",
@@ -316,56 +152,10 @@ class JobGenerator(ck.JobGenerator):
             ).isV(vEhc, 2, 2),
             delays=[90, 90, 90, 90, 90, 90 + (2000 - 90 * 6)],
         )  # 2초에 한번씩 90ms 간격으로 6회 발사
-        QuibberFullBurstDOT = core.DotSkill(
-            "독화살",
-            summondelay=0,
-            delay=1000,
-            damage=220,
-            hit=3,  # 3회 중첩
-            remain=30 * 1000,
-            cooltime=-1,
-        ).wrap(core.DotSkillWrapper)
-
-        ImageArrow = (
-            core.SummonSkill(
-                "잔영의 시",
-                summondelay=720,
-                delay=240,
-                damage=600 + 24 * vEhc.getV(1, 1),
-                hit=3,  # 13 * 3타
-                remain=3000,
-                cooltime=60000,
-                red=True,
-            )
-            .isV(vEhc, 1, 1)
-            .wrap(core.SummonSkillWrapper)
-        )
-        ImageArrowPassive = (
-            core.SummonSkill(
-                "잔영의 시(패시브)",
-                summondelay=0,
-                delay=2580,
-                damage=400 + 16 * vEhc.getV(1, 1),
-                hit=3.5 * 3,  # 3~4 * 3타, 잔시 쿨동안 11회 사용
-                remain=9999999,
-            )
-            .isV(vEhc, 1, 1)
-            .wrap(core.SummonSkillWrapper)
-        )
-
-        OpticalIllusion = (
-            core.SummonSkill(
-                "실루엣 미라주",
-                summondelay=0,
-                delay=210,
-                damage=400 + 16 * vEhc.getV(0, 0),
-                hit=3,
-                remain=210 * 5,
-                cooltime=7500,
-            )
-            .isV(vEhc, 0, 0)
-            .wrap(core.SummonSkillWrapper)
-        )
+        QuibberFullBurstDOT = self.load_skill_wrapper("독화살")
+        ImageArrow = self.load_skill_wrapper("잔영의 시", vEhc)
+        ImageArrowPassive = self.load_skill_wrapper("잔영의 시(패시브)", vEhc)
+        OpticalIllusion = self.load_skill_wrapper("실루엣 미라주", vEhc)
 
         ######   Skill Wrapper   ######
         GrittyGust.onAfter(GrittyGustDOT)

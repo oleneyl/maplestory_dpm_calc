@@ -294,6 +294,8 @@ class JobGenerator:
     def load_skill_wrapper(self, skill_name, vEhc=None):
         background_information = {k: v for k, v in self.conf.get('constant', {}).items()}
         background_information['combat'] = self.combat
+        if hasattr(self, 'passive_level'):
+            background_information['passive_level'] = self.passive_level
         skill = self._load_skill(skill_name, vEhc, background_information=background_information)
         if isinstance(skill, DamageSkill):
             return skill.wrap(DamageSkillWrapper)

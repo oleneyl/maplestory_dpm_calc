@@ -1,0 +1,320 @@
+{
+    "jobtype": "DEX",
+    "jobname": "보우마스터",
+    "vEnhanceNum": 11,
+    "preEmptiveSkills": 1,
+    "passive_skill_list": [
+        {
+            "name": "크리티컬 샷",
+            "crit": 40
+        }, {
+            "name": "피지컬 트레이닝",
+            "stat_main": 30,
+            "stat_sub": 30
+        }, {
+            "name": "보우 엑셀레이션",
+            "stat_main": 20
+        }, {
+            "name": "마크맨쉽",
+            "armor_ignore": 25,
+            "patt": 25
+        }, {
+            "name": "보우 엑스퍼트",
+            "att": "60 + passive_level",
+            "crit_damage": 8
+        }, {
+            "name": "어드밴스드 파이널 어택(패시브)",
+            "att": "20 + math.ceil(passive_level / 2)"
+        }, {
+            "name": "일루젼 스텝",
+            "stat_main": "80 + 2 * passive_level"
+        }
+    ],
+    "not_implied_skill_list": [
+        {
+            "name": "무기상수",
+            "pdamage_indep": 30
+        }, {
+            "name": "숙련도",
+            "mastery": "85 + math.ceil(passive_level / 2)"
+        }, {
+            "name": "익스트림 아처리",
+            "att": 40,
+            "pdamage_indep": 30
+        }
+    ],
+    "skills":{
+        "소울 애로우": {
+            "cooltime": 0,
+            "delay": 0,
+            "name": "소울 애로우",
+            "remain": 300000,
+            "type": "BuffSkill",
+            "att": 30
+        },
+        "샤프 아이즈": {
+            "cooltime": 0,
+            "delay": 690,
+            "name": "샤프 아이즈",
+            "remain": 300000,
+            "type": "BuffSkill",
+            "crit": "20 + 5 + math.ceil(combat / 2)",
+            "crit_damage": "15 + math.ceil(combat / 2)",
+            "armor_ignore": 5
+        },
+        "프리퍼레이션": {
+            "cooltime": 90000,
+            "delay": 540,
+            "name": "프리퍼레이션",
+            "remain": 30000,
+            "type": "BuffSkill",
+            "att": 50,
+            "boss_pdamage": 20
+        },
+        "에픽 어드벤처": {
+            "cooltime": 120000,
+            "delay": 0,
+            "name": "에픽 어드벤처",
+            "remain": 60000,
+            "type": "BuffSkill",
+            "pdamage": 10
+        },
+        "모탈 블로우": {
+            "cooltime": -1,
+            "delay": 0,
+            "name": "모탈 블로우",
+            "remain": 5000,
+            "type": "BuffSkill",
+            "pdamage": 35
+        },
+        "어드밴스드 퀴버": {
+            "delay": 0,
+            "name": "어드밴스드 퀴버",
+            "damage": 260,
+            "hit": 0.6,
+            "type": "DamageSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 3,
+            "v_increment": 2,
+            "v_crit": true
+        },
+        "어드밴스드 퀴버(애로우 레인)": {
+            "delay": 0,
+            "name": "어드밴스드 퀴버(애로우 레인)",
+            "damage": 260,
+            "hit": 1,
+            "type": "DamageSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 3,
+            "v_increment": 2,
+            "v_crit": true
+        },
+        "어드밴스드 파이널 어택": {
+            "delay": 0,
+            "name": "어드밴스드 파이널 어택",
+            "damage": "210 + 2 * passive_level",
+            "hit": "0.7 + 0.01 * passive_level",
+            "type": "DamageSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 1,
+            "v_increment": 2,
+            "v_crit": true
+        },
+        "폭풍의 시": {
+            "cooltime": 0,
+            "delay": 120,
+            "name": "폭풍의 시",
+            "damage": "(350 + combat * 3) * 0.75",
+            "hit": "1 + 1",
+            "type": "DamageSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 0,
+            "v_increment": 2,
+            "v_crit": true,
+            "modifier": {
+                "pdamage": 30,
+                "boss_pdamage": 10
+            }
+        },
+        "애로우 플래터": {
+            "cooltime": 0,
+            "delay": 210,
+            "name": "애로우 플래터",
+            "damage": "85 + 90 + combat * 3",
+            "hit": 1,
+            "remain": 30000,
+            "summondelay": 600,
+            "type": "SummonSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 4,
+            "v_increment": 2,
+            "v_crit": false,
+            "modifier": {
+                "pdamage": 30
+            }
+        },
+        "윈드 오브 프레이": {
+            "cooltime": 15000,
+            "delay": 720,
+            "name": "윈드 오브 프레이",
+            "damage": 335,
+            "hit": 12,
+            "type": "DamageSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 6,
+            "v_increment": 2,
+            "v_crit": true
+        },
+        "윈드 오브 프레이(도트)": {
+            "cooltime": -1,
+            "delay": 1000,
+            "name": "윈드 오브 프레이(도트)",
+            "damage": 200,
+            "hit": 1,
+            "remain": 10000,
+            "summondelay": 0,
+            "type": "DotSkill"
+        },
+        "애로우 레인(버프)": {
+            "cooltime": 120000,
+            "delay": 510,
+            "name": "애로우 레인(버프)",
+            "red": true,
+            "remain": "(40 + lv) * 1000",
+            "type": "BuffSkill",
+            "tier": 5,
+            "use_priority": 0,
+            "upgrade_priority": 0,
+            "pdamage": "15 + lv // 2"
+        },
+        "피닉스": {
+            "cooltime": 0,
+            "delay": 1710,
+            "name": "피닉스",
+            "damage": 390,
+            "hit": 1,
+            "remain": 220000,
+            "summondelay": "0 # 이볼브가 끝나면 자동으로 소환되므로 딜레이 0",
+            "type": "SummonSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 5,
+            "v_increment": 3,
+            "v_crit": true
+        },
+        "퀴버 풀버스트(버프)": {
+            "cooltime": 120000,
+            "delay": 0,
+            "name": "퀴버 풀버스트(버프)",
+            "red": true,
+            "rem": false,
+            "remain": 30000,
+            "type": "BuffSkill",
+            "patt": "5 + int(lv * 0.5)",
+            "crit_damage": "8 # 독화살 크뎀을 이쪽에 합침",
+            "tier": 5,
+            "use_priority": 2,
+            "upgrade_priority": 2
+        },
+        "독화살": {
+            "cooltime": -1,
+            "delay": 1000,
+            "name": "독화살",
+            "damage": 220,
+            "hit": 3,
+            "remain": 30000,
+            "summondelay": 0,
+            "type": "DotSkill"
+        },
+        "잔영의 시": {
+            "cooltime": 60000,
+            "delay": 240,
+            "name": "잔영의 시",
+            "red": true,
+            "damage": "600 + 24 * lv",
+            "hit": "3  # 13 * 3타",
+            "remain": 3000,
+            "summondelay": 720,
+            "type": "SummonSkill",
+            "tier": 5,
+            "use_priority": 1,
+            "upgrade_priority": 1
+        },
+        "잔영의 시(패시브)": {
+            "cooltime": 0,
+            "delay": 2580,
+            "name": "잔영의 시(패시브)",
+            "damage": "400 + 16 * lv",
+            "hit": "3.5 * 3  # 3~4 * 3타, 잔시 쿨동안 11회 사용",
+            "remain": 9999999,
+            "summondelay": 0,
+            "type": "SummonSkill",
+            "tier": 5,
+            "use_priority": 1,
+            "upgrade_priority": 1
+        },
+        "실루엣 미라주": {
+            "cooltime": 7500,
+            "delay": 210,
+            "name": "실루엣 미라주",
+            "damage": "400 + 16 * lv",
+            "hit": 3,
+            "remain": "210 * 5",
+            "summondelay": 0,
+            "type": "SummonSkill",
+            "tier": 5,
+            "use_priority": 0,
+            "upgrade_priority": 0
+        },
+        "크리티컬 리인포스": {
+            "cooltime": 120000,
+            "delay": 600,
+            "name": "크리티컬 리인포스",
+            "red": true,
+            "rem": false,
+            "remain": 30000,
+            "type": "DamageSkill",
+            "tier": 5,
+            "use_priority": 3,
+            "upgrade_priority": 3
+        },
+        "메이플 용사": {
+            "cooltime": 0,
+            "delay": 0,
+            "name": "메이플 용사",
+            "red": false,
+            "rem": true,
+            "remain": 915000,
+            "type": "DamageSkill"
+        },
+        "쓸만한 컴뱃 오더스": {
+            "cooltime": 0,
+            "delay": 1500,
+            "name": "쓸만한 컴뱃 오더스",
+            "red": false,
+            "rem": false,
+            "remain": 183000,
+            "type": "DamageSkill"
+        },
+        "메이플월드 여신의 축복": {
+            "cooltime": 180000,
+            "delay": 450,
+            "name": "메이플월드 여신의 축복",
+            "red": true,
+            "rem": false,
+            "remain": 60000,
+            "type": "DamageSkill",
+            "tier": 5,
+            "use_priority": 0,
+            "upgrade_priority": 0
+        },
+        "소울 컨트랙트": {
+            "cooltime": 90000,
+            "delay": 900,
+            "name": "소울 컨트랙트",
+            "red": true,
+            "rem": true,
+            "remain": 10000,
+            "type": "DamageSkill"
+        }
+    }
+}
