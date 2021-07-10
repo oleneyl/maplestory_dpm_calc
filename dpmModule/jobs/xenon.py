@@ -196,7 +196,7 @@ class JobGenerator(ck.JobGenerator):
         Multilateral = [Multilateral1, Multilateral2, Multilateral3, Multilateral4, Multilateral5, Multilateral6]
 
         LinearPerspective = core.InformedCharacterModifier("리니어 퍼스펙티브", crit=40)
-        MinoritySupport = core.InformedCharacterModifier("마이너리티 서포트", stat_main=60)  # 힘덱럭 20씩
+        MinoritySupport = core.InformedCharacterModifier("마이너리티 서포트", stat_main=25*3)  # 힘덱럭 20씩
         XenonMastery = core.InformedCharacterModifier("제논 마스터리", att=20)
         HybridDefensesPassive = core.InformedCharacterModifier("듀얼브리드 디펜시브(패시브)", stat_main=30)  # 힘덱럭 30씩
         XenonExpert = core.InformedCharacterModifier("제논 엑스퍼트", att=30 + passive_level, crit_damage=8)
@@ -224,7 +224,7 @@ class JobGenerator(ck.JobGenerator):
         HOLOGRAM_FUSION_HIT = 680
 
         # Buff skills
-        # 펫버프: 에피션시, 부스터
+        # 펫버프: X
         InclinePower = core.BuffSkill("인클라인 파워", 990, 240000, att=30, rem=True).wrap(core.BuffSkillWrapper)
         EfficiencyPipeLine = core.BuffSkill("에피션시 파이프라인", 0, 240000, rem=True).wrap(core.BuffSkillWrapper)
         Booster = core.BuffSkill("제논 부스터", 0, 240000, rem=True).wrap(core.BuffSkillWrapper)
@@ -233,7 +233,7 @@ class JobGenerator(ck.JobGenerator):
         # 위컴알에 딜레이 없음
         ExtraSupply = core.BuffSkill("엑스트라 서플라이", 0, 1, cooltime=30000, red=True).wrap(core.BuffSkillWrapper)
 
-        OOPArtsCode = core.BuffSkill("오파츠 코드", 600, (30+self.combat//2)*1000, pdamage_indep=25+self.combat//2, boss_pdamage=30+self.combat, rem=True).wrap(core.BuffSkillWrapper)
+        OOPArtsCode = core.BuffSkill("오파츠 코드", 600, (40+self.combat//2)*1000, pdamage_indep=30+self.combat//2, boss_pdamage=30+self.combat, rem=True).wrap(core.BuffSkillWrapper)
 
         # Damage skills
 
@@ -259,7 +259,7 @@ class JobGenerator(ck.JobGenerator):
 
         # Hyper skills
         AmaranthGenerator = core.BuffSkill("아마란스 제네레이터", 900, 10000, cooltime=90000, rem=False).wrap(core.BuffSkillWrapper)  # 에너지 최대치, 10초간 에너지 소모 없음
-        MeltDown = core.DamageSkill("멜트다운 익스플로전", 3150, 900, 6, red=False, cooltime=50000).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        MeltDown = core.DamageSkill("멜트다운 익스플로전", 3150, 1500, 6, red=False, cooltime=50000).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         MeltDown_Armor = core.BuffSkill("멜트다운 익스플로전 (방무)", 0, 10000, armor_ignore=30, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
         MeltDown_Damage = core.BuffSkill("멜트다운 익스플로전 (데미지)", 0, 25000, pdamage=10, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
 

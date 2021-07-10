@@ -761,7 +761,7 @@ class JobGenerator(ck.JobGenerator):
             core.DamageSkill(
                 name="[처형] 팬텀 블레이드",
                 delay=510,  # base delay 660
-                damage=155 + 35 + passive_level,
+                damage=155 + 115 + passive_level,
                 hit=6,
                 modifier=EXECUTION_HYPER,
             )
@@ -773,7 +773,7 @@ class JobGenerator(ck.JobGenerator):
             core.DamageSkill(
                 name="[처형] 테어링 나이프",
                 delay=510,  # base delay 660
-                damage=210 + 95 + passive_level,
+                damage=210 + 115 + passive_level,
                 hit=7,
                 cooltime=4500,
                 red=True,
@@ -845,7 +845,7 @@ class JobGenerator(ck.JobGenerator):
                 delay=840,  # base delay 960, AS from buff not applied
                 damage=320,
                 hit=6 * 3,
-                cooltime=30000,
+                cooltime=25000,
                 modifier=BREATH_SHOOTER_HYPER,
             )
             .setV(vEhc, 0, 2)
@@ -997,7 +997,7 @@ class JobGenerator(ck.JobGenerator):
         ]:
             sk.add_runtime_modifier(
                 DeathBlessingBonus,
-                lambda sk: core.CharacterModifier(pdamage_indep=15 * sk.is_active()),
+                lambda sk: core.CharacterModifier(pdamage_indep=20 * sk.is_active()),
             )
             sk.onJustAfter(DeathBlessingBonusMalice)
 
@@ -1009,7 +1009,7 @@ class JobGenerator(ck.JobGenerator):
         ]:
             sk.add_runtime_modifier(
                 DeathBlessingBonus,
-                lambda sk: core.CharacterModifier(pdamage_indep=15 * sk.is_active()),
+                lambda sk: core.CharacterModifier(pdamage_indep=20 * sk.is_active()),
             )
 
         # Thanatos Descent

@@ -264,8 +264,8 @@ class JobGenerator(ck.JobGenerator):
                 delay=180,
                 damage=400 + 16 * vEhc.getV(0, 0),
                 hit=6,
-                remain=180 * 17 - 1,
-                cooltime=35000,
+                remain=180 * 20 - 1,
+                cooltime=30000,
                 red=True,
             )
             .isV(vEhc, 0, 0)
