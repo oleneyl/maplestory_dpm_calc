@@ -27,6 +27,7 @@ from ..kernel.core import (
     ExtendedCharacterModifier,
     InformedCharacterModifier,
     SkillModifier,
+    StackableSummonSkillWrapper
 )
 from ..kernel.core.skill import load_skill, BuffSkill, DamageSkill, SummonSkill, DotSkill
 from ..kernel.graph import (
@@ -291,6 +292,9 @@ class JobGenerator:
 
         return skill
 
+    def _get_skill_conf(self, skill_name):
+        return self.conf['skills'][skill_name]
+
     def _load_constant(self, constant_value):
         if isinstance(constant_value, dict):
             if constant_value['type'] == 'eval':
@@ -305,6 +309,9 @@ class JobGenerator:
         if hasattr(self, 'passive_level'):
             background_information['passive_level'] = self.passive_level
         skill = self._load_skill(skill_name, vEhc, background_information=background_information)
+        skill_conf = self._get_skill_conf(skill_name)
+        if skill_conf['type'] == 'StackableSummonSkill':
+            return StackableSummonSkillWrapper(skill, max_stack=skill_conf['max_stack'])
         if isinstance(skill, DamageSkill):
             return skill.wrap(DamageSkillWrapper)
         elif isinstance(skill, BuffSkill):

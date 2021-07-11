@@ -473,7 +473,8 @@ def load_skill(skill_conf, background_information: Dict[str, Any]) -> AbstractSk
         'DamageSkill': DamageSkill,
         'SummonSkill': SummonSkill,
         'BuffSkill': BuffSkill,
-        'DotSkill': DotSkill
+        'DotSkill': DotSkill,
+        'StackableSummonSkill': SummonSkill,
     }
 
     SkillObject = skill_object_type[skill_conf['type']]
