@@ -1,0 +1,323 @@
+{
+    "jobtype": "STR",
+    "jobname": "캐논슈터",
+    "vEnhanceNum": 16,
+    "preEmptiveSkills": 2,
+    "ability_list": [
+        "boss_pdamage", "crit", "reuse"
+    ],
+    "passive_skill_list":[
+        {
+            "name": "빌드업 캐논",
+            "att": 20
+        }, {
+            "name": "크리티컬 파이어",
+            "crit": 20,
+            "crit_damage": 5
+        }, {
+            "name": "파이렛 트레이닝", 
+            "stat_main": 30,
+            "stat_sub": 30
+        }, {
+            "name": "몽키 웨이브(패시브)",
+            "crit": 20
+        }, {
+            "name": "오크통 룰렛(패시브)",
+            "pdamage_indep": 10
+        }, {
+            "name": "리인포스 캐논", 
+            "att": 40
+        }, {
+            "name": "파이렛 스피릿",
+            "boss_pdamage": "40 + combat"
+        }, {
+            "name": "오버버닝 캐논", 
+            "pdamage_indep": "30 + passive_level",
+            "armor_ignore": "20 + passive_level // 2"
+        }
+    ],
+    "not_implied_skill_list":[
+        {
+            "name": "무기상수",
+            "pdamage_indep": 50
+        }, {
+            "name": "숙련도",
+            "mastery": "85 + math.ceil(passive_level / 2)"
+        }
+    ],
+    "constant":{
+        "COCOBALLHIT": 27,
+        "ICBMHIT": 6
+    },
+    "skills":{
+        "부스터": {
+            "cooltime": 0,
+            "delay": 0,
+            "name": "부스터",
+            "red": false,
+            "rem": false,
+            "remain": 200000,
+            "type": "BuffSkill"
+        },
+        "벅 샷": {
+            "cooltime": 0,
+            "delay": 0,
+            "name": "벅 샷",
+            "red": false,
+            "rem": false,
+            "remain": 180000,
+            "type": "BuffSkill"
+        },
+        "로디드 다이스": {
+            "cooltime": 0,
+            "delay": 0,
+            "name": "로디드 다이스",
+            "red": false,
+            "rem": false,
+            "remain": 180000,
+            "type": "BuffSkill",
+            "tier": 5,
+            "use_priority": 3,
+            "upgrade_priority": 4,
+            "pdamage": "20 + 10 / 6 + 10 / 6 * (5 / 6 + 1 / 11) * (10 * (5 + passive_level) * 0.01)"
+        },
+        "몽키 웨이브": {
+            "cooltime": 60000,
+            "delay": 810,
+            "name": "몽키 웨이브",
+            "red": false,
+            "rem": false,
+            "damage": 860,
+            "hit": 1,
+            "type": "DamageSkill"
+        },
+        "몽키 웨이브(버프)": {
+            "cooltime": -1,
+            "delay": 0,
+            "name": "몽키 웨이브(버프)",
+            "red": false,
+            "rem": false,
+            "remain": 60000,
+            "type": "BuffSkill",
+            "crit_damage": 5
+        },
+        "몽키 퓨리어스": {
+            "cooltime": 30000,
+            "delay": 630,
+            "name": "몽키 퓨리어스",
+            "red": false,
+            "rem": false,
+            "damage": 180,
+            "hit": 3,
+            "type": "DamageSkill"
+        },
+        "몽키 퓨리어스(버프)": {
+            "cooltime": -1,
+            "delay": 0,
+            "name": "몽키 퓨리어스(버프)",
+            "red": false,
+            "rem": false,
+            "remain": 30000,
+            "type": "BuffSkill",
+            "pdamage": 40
+        },
+        "몽키 퓨리어스(도트)": {
+            "cooltime": -1,
+            "delay": 1000,
+            "name": "몽키 퓨리어스(도트)",
+            "red": false,
+            "rem": false,
+            "damage": 200,
+            "hit": 1,
+            "remain": 30000,
+            "summondelay": 0,
+            "type": "DotSkill"
+        },
+        "오크통 룰렛": {
+            "cooltime": 180000,
+            "delay": 840,
+            "name": "오크통 룰렛",
+            "red": false,
+            "rem": true,
+            "remain": 180000,
+            "type": "BuffSkill",
+            "crit_damage": 1.25
+        },
+        "오크통 룰렛(도트)": {
+            "cooltime": -1,
+            "delay": 1000,
+            "name": "오크통 룰렛(도트)",
+            "red": false,
+            "rem": false,
+            "damage": 50,
+            "hit": 1,
+            "remain": 5000,
+            "summondelay": 0,
+            "type": "DotSkill"
+        },
+        "하이퍼 몽키 스펠": {
+            "cooltime": 0,
+            "delay": 0,
+            "name": "하이퍼 몽키 스펠",
+            "red": false,
+            "rem": true,
+            "remain": 180000,
+            "type": "BuffSkill",
+            "stat_main": "60 + passive_level",
+            "stat_sub": "60 + passive_level"
+        },
+        "캐논 버스터": {
+            "cooltime": 0,
+            "delay": 690,
+            "name": "캐논 버스터",
+            "red": false,
+            "rem": false,
+            "damage": "(750 + 5 * combat) * 0.45  # BuckShot",
+            "hit": "3 * (4 + 1)",
+            "type": "DamageSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 0,
+            "v_increment": 2,
+            "v_crit": 5,
+            "modifier": {
+                "crit": "15 + math.ceil(combat / 2)",
+                "armor_ignore": "20 + combat // 2",
+                "pdamage": 20
+            }
+        },
+        "서포트 몽키 트윈스": {
+            "cooltime": 0,
+            "delay": 930,
+            "name": "서포트 몽키 트윈스",
+            "red": false,
+            "rem": true,
+            "damage": "(295 + 8 * combat) * 0.6  # Split Damage",
+            "hit": "(1 + 1) * (2 + 1)  # Split Damage, Enhance",
+            "remain": "60000 + 2000 * combat",
+            "summondelay": 720,
+            "type": "SummonSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 1,
+            "v_increment": 2,
+            "v_crit": false
+        },
+        "롤링 캐논 레인보우": {
+            "cooltime": 90000,
+            "delay": "12000 / 26",
+            "name": "롤링 캐논 레인보우",
+            "red": false,
+            "rem": false,
+            "damage": 600,
+            "hit": 3,
+            "remain": 12000,
+            "summondelay": 480,
+            "type": "SummonSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 3,
+            "v_increment": 2,
+            "v_crit": true
+        },
+        "에픽 어드벤처": {
+            "cooltime": 120000,
+            "delay": 0,
+            "name": "에픽 어드벤처",
+            "red": false,
+            "rem": false,
+            "remain": 60000,
+            "type": "BuffSkill",
+            "pdamage": 10
+        },
+        "빅 휴즈 기간틱 캐논볼": {
+            "cooltime": 25000,
+            "delay": 210,
+            "name": "빅 휴즈 기간틱 캐논볼",
+            "red": false,
+            "rem": false,
+            "damage": "(450 + 15 * lv) * 0.45  # BuckShot",
+            "hit": "4 * 3",
+            "remain": "210 * COCOBALLHIT",
+            "summondelay": 600,
+            "type": "StackableSummonSkill",
+            "tier": 5,
+            "use_priority": 0,
+            "upgrade_priority": 0,
+            "max_stack": 3
+        },
+        "ICBM": {
+            "cooltime": 30000,
+            "delay": 1140,
+            "name": "ICBM",
+            "red": true,
+            "rem": false,
+            "damage": "(800 + 32 * lv) * 0.45  # BuckShot",
+            "hit": "5 * ICBMHIT * 3",
+            "type": "DamageSkill",
+            "tier": 5,
+            "use_priority": 1,
+            "upgrade_priority": 1
+        },
+        "ICBM(장판)": {
+            "cooltime": -1,
+            "delay": "15000 / 27  # 27타",
+            "name": "ICBM(장판)",
+            "red": false,
+            "rem": false,
+            "damage": "(500 + 20 * lv) * 0.45",
+            "hit": 3,
+            "remain": 15000,
+            "summondelay": 0,
+            "type": "SummonSkill",
+            "tier": 5,
+            "use_priority": 1,
+            "upgrade_priority": 1
+        },
+        "스페셜 몽키 에스코트": {
+            "cooltime": 120000,
+            "delay": 1500,
+            "name": "스페셜 몽키 에스코트",
+            "red": true,
+            "rem": false,
+            "damage": "300 + 12 * lv",
+            "hit": "4 * 3",
+            "remain": "(30 + lv // 2) * 1000",
+            "summondelay": 780,
+            "type": "SummonSkill",
+            "tier": 5,
+            "use_priority": 2,
+            "upgrade_priority": 2
+        },
+        "스페셜 몽키 에스코트(폭탄)": {
+            "cooltime": -1,
+            "delay": 5000,
+            "name": "스페셜 몽키 에스코트(폭탄)",
+            "red": false,
+            "rem": false,
+            "damage": "450 + lv * 18",
+            "hit": "7 * 3",
+            "remain": "(30 + lv // 2) * 1000",
+            "summondelay": 0,
+            "type": "SummonSkill",
+            "tier": 5,
+            "use_priority": 2,
+            "upgrade_priority": 2,
+            "modifier": {
+                "armor_ignore": 100
+            }
+        },
+        "풀 메이커": {
+            "cooltime": 60000,
+            "delay": 360,
+            "name": "풀 메이커",
+            "red": true,
+            "rem": false,
+            "damage": "(700 + 28 * lv) * 0.45  # BuckShot",
+            "hit": 9,
+            "remain": "360 * 20 - 1",
+            "summondelay": 720,
+            "type": "SummonSkill",
+            "tier": 5,
+            "use_priority": 0,
+            "upgrade_priority": 0
+        }
+    }
+}
