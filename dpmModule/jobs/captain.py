@@ -101,111 +101,18 @@ class JobGenerator(ck.JobGenerator):
         # TODO: 배틀쉽 봄버 공격주기 확인 필요
         BattleshipBomber = self.load_skill_wrapper("배틀쉽 봄버")
 
-        BattleshipBomber_1 = (
-            core.SummonSkill(
-                "배틀쉽 봄버(소환,1)",
-                summondelay=390,
-                delay=600,
-                damage=BB_AVERAGE,
-                hit=3,
-                remain=60000,
-                rem=True,
-                cooltime=-1,
-            )
-            .setV(vEhc, 4, 2, True)
-            .wrap(core.SummonSkillWrapper)
-        )
         BattleshipBomber_1 = self.load_skill_wrapper("배틀쉽 봄버(소환, 1)", vEhc)
-        BattleshipBomber_2 = (
-            core.SummonSkill(
-                "배틀쉽 봄버(소환,2)",
-                summondelay=390,
-                delay=600,
-                damage=BB_AVERAGE,
-                hit=3,
-                remain=60000,
-                rem=True,
-                cooltime=-1,
-            )
-            .setV(vEhc, 4, 2, True)
-            .wrap(core.SummonSkillWrapper)
-        )
+        BattleshipBomber_2 = self.load_skill_wrapper("배틀쉽 봄버(소환, 2)", vEhc)
 
         # Damage Skills
-        RapidFire = (
-            core.DamageSkill(
-                "래피드 파이어",
-                delay=120,
-                damage=325 + 3 * self.combat,
-                hit=1,
-                modifier=core.CharacterModifier(pdamage=30, boss_pdamage=20)
-                + CONTINUAL_AIMING
-                + BULLET_ATT,
-            )
-            .setV(vEhc, 0, 2, True)
-            .wrap(core.DamageSkillWrapper)
-        )
-        Headshot = (
-            core.DamageSkill(
-                "헤드 샷",
-                delay=450,
-                damage=525 + 5 * self.combat,
-                hit=12 + 1,
-                cooltime=5000,
-                red=True,
-                modifier=core.CharacterModifier(crit=100, armor_ignore=60, pdamage=20)
-                + CONTINUAL_AIMING
-                + BULLET_ATT,
-            )
-            .setV(vEhc, 3, 2, True)
-            .wrap(core.DamageSkillWrapper)
-        )
-
-        Nautilus = (
-            core.DamageSkill(
-                "노틸러스",
-                delay=690,
-                damage=440 + 130 + (4 + 3) * self.combat,
-                hit=7,
-                red=True,
-                cooltime=30000,
-                modifier=CONTINUAL_AIMING + BULLET_ATT,
-            )
-            .setV(vEhc, 8, 2, True)
-            .wrap(core.DamageSkillWrapper)
-        )
-        CaptainDignity = (
-            core.DamageSkill(
-                "캡틴 디그니티",
-                delay=0,
-                damage=275 + 3 * passive_level,
-                hit=1,
-                modifier=CONTINUAL_AIMING + BULLET_ATT,
-            )
-            .setV(vEhc, 1, 2, True)
-            .wrap(core.DamageSkillWrapper)
-        )
+        RapidFire = self.load_skill_wrapper("래피드 파이어", vEhc)
+        Headshot = self.load_skill_wrapper("헤드 샷", vEhc)
+        Nautilus = self.load_skill_wrapper("노틸러스", vEhc)
+        CaptainDignity = self.load_skill_wrapper("캡틴 디그니티", vEhc)
 
         # Hyper
-        StrangeBomb = (
-            core.DamageSkill(
-                "스트레인지 봄",
-                delay=690,
-                damage=400,
-                hit=12,
-                cooltime=30000,
-                modifier=CONTINUAL_AIMING + BULLET_ATT,
-            )
-            .setV(vEhc, 7, 2, True)
-            .wrap(core.DamageSkillWrapper)
-        )
-        EpicAdventure = core.BuffSkill(
-            "에픽 어드벤처",
-            delay=0,
-            remain=60 * 1000,
-            cooltime=150 * 1000,
-            pdamage=10,
-        ).wrap(core.BuffSkillWrapper)
+        StrangeBomb = self.load_skill_wrapper("스트레인지 봄", vEhc)
+        EpicAdventure = self.load_skill_wrapper("에픽 어드벤처")
 
         # 5th
         PirateFlag = adventurer.PirateFlagWrapper(vEhc, 2, 1, chtr.level)
@@ -213,87 +120,17 @@ class JobGenerator(ck.JobGenerator):
 
         WEAPON_ATT = jobutils.get_weapon_att(chtr)
         Overdrive = pirates.OverdriveWrapper(vEhc, 4, 4, WEAPON_ATT)
+        BulletParty = self.load_skill_wrapper("불릿 파티", vEhc)
+        BulletPartyTick = self.load_skill_wrapper("불릿 파티(틱)", vEhc)
+        
+        DeadEye = self.load_skill_wrapper("데드아이", vEhc)
+        NautilusAssult = self.load_skill_wrapper("노틸러스 어썰트", vEhc)
+        NautilusAssult_2 = self.load_skill_wrapper("노틸러스 어썰트(일제 사격)", vEhc)
 
-        BulletParty = core.DamageSkill("불릿 파티", 0, 0, 0, cooltime=75000, red=True).wrap(
-            core.DamageSkillWrapper
-        )
-        BulletPartyTick = (
-            core.DamageSkill(
-                "불릿 파티(틱)",
-                delay=BULLET_PARTY_TICK,  # 12초간 지속 -> 50회 시전
-                damage=230 + 9 * vEhc.getV(5, 5),
-                hit=5,
-                modifier=CONTINUAL_AIMING + BULLET_ATT,
-            )
-            .isV(vEhc, 5, 5)
-            .wrap(core.DamageSkillWrapper)
-        )
-        DeadEye = (
-            core.DamageSkill(
-                "데드아이",
-                delay=450,
-                damage=(320 + 13 * vEhc.getV(3, 3)) * DEADEYEACC,
-                hit=15,
-                cooltime=30000 + DEADEYEAIM,  # TODO: 조준시간은 쿨감 안받아야함
-                red=True,
-                modifier=core.CharacterModifier(crit=100, pdamage_indep=4 * 11)
-                + CONTINUAL_AIMING
-                + BULLET_ATT,
-            )
-            .isV(vEhc, 3, 3)
-            .wrap(core.DamageSkillWrapper)
-        )
-        NautilusAssult = (
-            core.SummonSkill(
-                "노틸러스 어썰트",
-                summondelay=690,
-                delay=360,
-                damage=600 + 24 * vEhc.getV(0, 0),
-                hit=6,
-                remain=360 * 7 - 1,
-                cooltime=180000,
-                red=True,
-                modifier=CONTINUAL_AIMING + BULLET_ATT,
-            )
-            .isV(vEhc, 0, 0)
-            .wrap(core.SummonSkillWrapper)
-        )  # 7회 2초간
-        NautilusAssult_2 = (
-            core.SummonSkill(
-                "노틸러스 어썰트(일제 사격)",
-                summondelay=0,
-                delay=160,
-                damage=300 + 12 * vEhc.getV(0, 0),
-                hit=12,
-                remain=160 * 36 - 1,
-                cooltime=-1,
-                modifier=CONTINUAL_AIMING + BULLET_ATT,
-            )
-            .isV(vEhc, 0, 0)
-            .wrap(core.SummonSkillWrapper)
-        )  # 36회 6초간
-        DeathTriggerInit = (
-            core.DamageSkill("데스 트리거(개시)", 360, 0, 0, cooltime=45000, red=True)
-            .isV(vEhc, 0, 0)
-            .wrap(core.DamageSkillWrapper)
-        )
-        DeathTrigger = (
-            core.DamageSkill(
-                "데스 트리거",
-                delay=180,
-                damage=325 + 13 * vEhc.getV(0, 0),
-                hit=7 * 4,
-                cooltime=-1,
-                modifier=CONTINUAL_AIMING + BULLET_ATT,
-            )
-            .isV(vEhc, 0, 0)
-            .wrap(core.DamageSkillWrapper)
-        )
-        DeathTriggerEnd = (
-            core.DamageSkill("데스 트리거(후딜)", 300, 0, 0, cooltime=-1)
-            .isV(vEhc, 0, 0)
-            .wrap(core.DamageSkillWrapper)
-        )
+        DeathTriggerInit = self.load_skill_wrapper("데스 트리거(개시)", vEhc)
+        DeathTrigger = self.load_skill_wrapper("데스 트리거", vEhc)
+        DeathTriggerEnd = self.load_skill_wrapper("데스 트리거(후딜)", vEhc)
+
 
         ######   Skill Wrapper   ######
 

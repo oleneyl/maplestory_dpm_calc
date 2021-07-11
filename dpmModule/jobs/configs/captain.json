@@ -51,6 +51,10 @@
         "DEADEYEAIM": 3480,
         "BULLET_PARTY_TICK": 150,
         "BULLET_ATT": 22,
+        "CONTINUAL_AIMING": {
+            "type": "eval",
+            "value": "25 + 2 * combat"
+        },
         "BB_AVERAGE": {
             "type": "eval",
             "value":"((330 + 3 * combat) + (445 + 3 * combat) * (600 / 810) + (200 + 3 * combat) * (600 / 570) + (320 + 3 * combat)) / 4"
@@ -148,13 +152,13 @@
             "v_increment": 2,
             "v_crit": 5
         },
-        "배틀쉽 봄버(소환,2)": {
+        "배틀쉽 봄버(소환, 2)": {
             "cooltime": -1,
             "delay": 600,
-            "name": "배틀쉽 봄버(소환,2)",
+            "name": "배틀쉽 봄버(소환, 2)",
             "red": false,
             "rem": true,
-            "damage": 300.3840155945419,
+            "damage": "BB_AVERAGE",
             "hit": 3,
             "remain": 60000,
             "summondelay": 390,
@@ -170,7 +174,7 @@
             "name": "래피드 파이어",
             "red": false,
             "rem": false,
-            "damage": 328,
+            "damage": "325 + 3 * combat",
             "hit": 1,
             "type": "DamageSkill",
             "enhanced_by_v": true,
@@ -179,9 +183,9 @@
             "v_crit": 5,
             "modifier": {
                 "pdamage": 30,
-                "pdamage_indep": 27.0,
+                "pdamage_indep": "CONTINUAL_AIMING",
                 "boss_pdamage": 20,
-                "att": 22
+                "att": "BULLET_ATT"
             }
         },
         "헤드 샷": {
@@ -190,8 +194,8 @@
             "name": "헤드 샷",
             "red": true,
             "rem": false,
-            "damage": 530,
-            "hit": 13,
+            "damage": "525 + 5 * combat",
+            "hit": "12 + 1",
             "type": "DamageSkill",
             "enhanced_by_v": true,
             "upgrade_priority": 3,
@@ -200,9 +204,9 @@
             "modifier": {
                 "crit": 100,
                 "pdamage": 20,
-                "pdamage_indep": 27.0,
+                "pdamage_indep": "CONTINUAL_AIMING",
                 "armor_ignore": 60.0,
-                "att": 22
+                "att": "BULLET_ATT"
             }
         },
         "노틸러스": {
@@ -211,7 +215,7 @@
             "name": "노틸러스",
             "red": true,
             "rem": false,
-            "damage": 577,
+            "damage": "440 + 130 + (4 + 3) * combat",
             "hit": 7,
             "type": "DamageSkill",
             "enhanced_by_v": true,
@@ -219,8 +223,8 @@
             "v_increment": 2,
             "v_crit": 5,
             "modifier": {
-                "pdamage_indep": 27.0,
-                "att": 22
+                "pdamage_indep": "CONTINUAL_AIMING",
+                "att": "BULLET_ATT"
             }
         },
         "캡틴 디그니티": {
@@ -229,7 +233,7 @@
             "name": "캡틴 디그니티",
             "red": false,
             "rem": false,
-            "damage": 278,
+            "damage": "275 + 3 * passive_level",
             "hit": 1,
             "type": "DamageSkill",
             "enhanced_by_v": true,
@@ -237,8 +241,8 @@
             "v_increment": 2,
             "v_crit": 5,
             "modifier": {
-                "pdamage_indep": 27.0,
-                "att": 22
+                "pdamage_indep": "CONTINUAL_AIMING",
+                "att": "BULLET_ATT"
             }
         },
         "스트레인지 봄": {
@@ -255,8 +259,8 @@
             "v_increment": 2,
             "v_crit": 5,
             "modifier": {
-                "pdamage_indep": 27.0,
-                "att": 22
+                "pdamage_indep": "CONTINUAL_AIMING",
+                "att": "BULLET_ATT"
             }
         },
         "에픽 어드벤처": {
@@ -266,59 +270,8 @@
             "red": false,
             "rem": false,
             "remain": 60000,
-            "type": "DamageSkill"
-        },
-        "파이렛 플래그": {
-            "cooltime": 30000,
-            "delay": 990,
-            "name": "파이렛 플래그",
-            "red": false,
-            "rem": false,
-            "remain": 30000,
-            "type": "DamageSkill",
-            "tier": 5,
-            "use_priority": 2,
-            "upgrade_priority": 1
-        },
-        "스파이더 인 미러(공간 붕괴)": {
-            "cooltime": 250000,
-            "delay": 720,
-            "name": "스파이더 인 미러(공간 붕괴)",
-            "red": true,
-            "rem": false,
-            "damage": 990,
-            "hit": 15,
-            "type": "DamageSkill",
-            "tier": 5,
-            "use_priority": 0,
-            "upgrade_priority": 0
-        },
-        "스파이더 인 미러(거울 속의 거미)": {
-            "cooltime": -1,
-            "delay": 900,
-            "name": "스파이더 인 미러(거울 속의 거미)",
-            "red": false,
-            "rem": false,
-            "damage": 385,
-            "hit": 8,
-            "remain": 50000,
-            "summondelay": 0,
-            "type": "SummonSkill",
-            "tier": 5,
-            "use_priority": 0,
-            "upgrade_priority": 0
-        },
-        "오버 드라이브": {
-            "cooltime": 64000,
-            "delay": 420,
-            "name": "오버 드라이브",
-            "red": true,
-            "rem": false,
-            "remain": 30000,
-            "type": "DamageSkill",
-            "tier": 5,
-            "use_priority": 4,
-            "upgrade_priority": 4
+            "type": "BuffSkill",
+            "pdamage": 10
         },
         "불릿 파티": {
             "cooltime": 75000,
@@ -328,32 +281,35 @@
             "rem": false,
             "damage": 0,
             "hit": 0,
-            "type": "DamageSkill"
+            "type": "DamageSkill",
+            "tier": 5,
+            "use_priority": 5,
+            "upgrade_priority": 5
         },
         "불릿 파티(틱)": {
             "cooltime": 0,
-            "delay": 150,
+            "delay": "BULLET_PARTY_TICK",
             "name": "불릿 파티(틱)",
             "red": false,
             "rem": false,
-            "damage": 500,
+            "damage": "230 + 9 * lv",
             "hit": 5,
             "type": "DamageSkill",
             "tier": 5,
             "use_priority": 5,
             "upgrade_priority": 5,
             "modifier": {
-                "pdamage_indep": 27.0,
-                "att": 22
+                "pdamage_indep": "CONTINUAL_AIMING",
+                "att": "BULLET_ATT"
             }
         },
         "데드아이": {
-            "cooltime": 33480,
+            "cooltime": "30000 + DEADEYEAIM",
             "delay": 450,
             "name": "데드아이",
             "red": true,
             "rem": false,
-            "damage": 2130,
+            "damage": "(320 + 13 * lv) * DEADEYEACC",
             "hit": 15,
             "type": "DamageSkill",
             "tier": 5,
@@ -361,8 +317,8 @@
             "upgrade_priority": 3,
             "modifier": {
                 "crit": 100,
-                "pdamage_indep": 82.88,
-                "att": 22
+                "pdamage_indep": "CONTINUAL_AIMING + (4 * 11) + 0.01 * (4 * 11) * CONTINUAL_AIMING",
+                "att": "BULLET_ATT"
             }
         },
         "노틸러스 어썰트": {
@@ -371,17 +327,17 @@
             "name": "노틸러스 어썰트",
             "red": true,
             "rem": false,
-            "damage": 1320,
+            "damage": "600 + 24 * lv",
             "hit": 6,
-            "remain": 2519,
+            "remain": "360 * 7 - 1",
             "summondelay": 690,
             "type": "SummonSkill",
             "tier": 5,
             "use_priority": 0,
             "upgrade_priority": 0,
             "modifier": {
-                "pdamage_indep": 27.0,
-                "att": 22
+                "pdamage_indep": "CONTINUAL_AIMING",
+                "att": "BULLET_ATT"
             }
         },
         "노틸러스 어썰트(일제 사격)": {
@@ -390,17 +346,17 @@
             "name": "노틸러스 어썰트(일제 사격)",
             "red": false,
             "rem": false,
-            "damage": 660,
+            "damage": "300 + 12 * lv",
             "hit": 12,
-            "remain": 5759,
+            "remain": "160 * 36 - 1",
             "summondelay": 0,
             "type": "SummonSkill",
             "tier": 5,
             "use_priority": 0,
             "upgrade_priority": 0,
             "modifier": {
-                "pdamage_indep": 27.0,
-                "att": 22
+                "pdamage_indep": "CONTINUAL_AIMING",
+                "att": "BULLET_ATT"
             }
         },
         "데스 트리거(개시)": {
@@ -422,15 +378,15 @@
             "name": "데스 트리거",
             "red": false,
             "rem": false,
-            "damage": 715,
-            "hit": 28,
+            "damage": "325 + 13 * lv",
+            "hit": "7 * 4",
             "type": "DamageSkill",
             "tier": 5,
             "use_priority": 0,
             "upgrade_priority": 0,
             "modifier": {
-                "pdamage_indep": 27.0,
-                "att": 22
+                "pdamage_indep": "CONTINUAL_AIMING",
+                "att": "BULLET_ATT"
             }
         },
         "데스 트리거(후딜)": {
@@ -445,54 +401,6 @@
             "tier": 5,
             "use_priority": 0,
             "upgrade_priority": 0
-        },
-        "메이플 용사": {
-            "cooltime": 0,
-            "delay": 0,
-            "name": "메이플 용사",
-            "red": false,
-            "rem": true,
-            "remain": 915000,
-            "type": "DamageSkill"
-        },
-        "쓸만한 샤프 아이즈": {
-            "cooltime": 0,
-            "delay": 900,
-            "name": "쓸만한 샤프 아이즈",
-            "red": false,
-            "rem": false,
-            "remain": 183000,
-            "type": "DamageSkill"
-        },
-        "쓸만한 컴뱃 오더스": {
-            "cooltime": 0,
-            "delay": 1500,
-            "name": "쓸만한 컴뱃 오더스",
-            "red": false,
-            "rem": false,
-            "remain": 183000,
-            "type": "DamageSkill"
-        },
-        "메이플월드 여신의 축복": {
-            "cooltime": 180000,
-            "delay": 450,
-            "name": "메이플월드 여신의 축복",
-            "red": true,
-            "rem": false,
-            "remain": 60000,
-            "type": "DamageSkill",
-            "tier": 5,
-            "use_priority": 0,
-            "upgrade_priority": 0
-        },
-        "소울 컨트랙트": {
-            "cooltime": 90000,
-            "delay": 900,
-            "name": "소울 컨트랙트",
-            "red": true,
-            "rem": true,
-            "remain": 10000,
-            "type": "DamageSkill"
         }
     }
 }
