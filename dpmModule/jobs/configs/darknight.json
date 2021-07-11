@@ -1,0 +1,336 @@
+{
+    "buffrem": [7, 7],
+    "jobtype": "STR",
+    "jobname": "다크나이트",
+    "vEnhanceNum": 9,
+    "preEmptiveSkills": 2,
+    "ability_list": [
+        "buff_rem", "reuse", "boss_pdamage"
+    ],
+    "passive_skill_list":[
+        {
+            "name": "웨폰 마스터리",
+            "pdamage": 5
+        }, {
+            "name": "피지컬 트레이닝",
+            "stat_main": 30,
+            "stat_sub": 30
+        }, {
+            "name": "로드 오브 다크니스",
+            "crit": 30,
+            "crit_damage": 8
+        }, {
+            "name": "어드밴스드 웨폰 마스터리",
+            "att": "30 + passive_level",
+            "crit_damage": "15 + passive_level // 2"
+        }, {
+            "name": "리인카네이션(패시브)",
+            "pdamage_indep": "30 + passive_level",
+            "crit": "10 + math.ceil(passive_level / 3)",
+            "crit_damage": "15 + passive_level // 3"
+        }, {
+            "name": "리인카네이션-크리티컬 레이트",
+            "crit": 20
+        }, {
+            "name": "새크리파이스(패시브)", 
+            "armor_ignore": 30
+        }, {
+            "name": "크로스 오버 체인(패시브)",
+            "pdamage_indep": 50
+        }
+    ],
+    "not_implied_skill_list":[
+        {
+            "name": "무기상수",
+            "pdamage_indep": 49
+        }, {
+            "name": "숙련도",
+            "mastery": "90 + math.ceil(passive_level / 2)"
+        }, {
+            "name": "비홀더스 버프",
+            "att": 40,
+            "crit": 10
+        }
+    ],
+    "constant": {
+        "HP_RATE": 100,
+        "GOUNGNIL_MODIFIER_ARMOR_IGNORE": {
+            "value": "(30 + combat) + 20 - 0.01 * (30 + combat) * 20",
+            "type": "eval"
+        },
+        "GOUNGNIL_MODIFIER_PDAMAGE": 20
+    },
+    "skills":{
+        "부스터": {
+            "cooltime": 0,
+            "delay": 0,
+            "name": "부스터",
+            "red": false,
+            "rem": true,
+            "remain": 180000,
+            "type": "BuffSkill"
+        },
+        "크로스 오버 체인": {
+            "cooltime": 0,
+            "delay": 0,
+            "name": "크로스 오버 체인",
+            "red": false,
+            "rem": false,
+            "remain": 200000,
+            "type": "BuffSkill",
+            "pdamage_indep": "20 + min(HP_RATE, 50) / 50"
+        },
+        "파이널 어택": {
+            "cooltime": 0,
+            "delay": 0,
+            "name": "파이널 어택",
+            "red": false,
+            "rem": false,
+            "damage": 80,
+            "hit": "2 * 0.4",
+            "type": "DamageSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 3,
+            "v_increment": 4,
+            "v_crit": 5
+        },
+        "비홀더 도미넌트": {
+            "cooltime": 0,
+            "delay": 10000,
+            "name": "비홀더 도미넌트",
+            "red": false,
+            "rem": false,
+            "damage": 210,
+            "hit": 1,
+            "remain": 999990000,
+            "summondelay": 0,
+            "type": "SummonSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 2,
+            "v_increment": 3,
+            "v_crit": false,
+            "modifier": {
+                "pdamage": 150
+            }
+        },
+        "비홀더 쇼크": {
+            "cooltime": 12000,
+            "delay": 0,
+            "name": "비홀더 쇼크",
+            "red": true,
+            "rem": false,
+            "damage": "215 + 300 + 5 * passive_level",
+            "hit": 6,
+            "type": "DamageSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 2,
+            "v_increment": 3,
+            "v_crit": false,
+            "modifier": {
+                "pdamage": 150
+            }
+        },
+        "다크 임페일": {
+            "cooltime": 0,
+            "delay": 630,
+            "name": "다크 임페일",
+            "red": false,
+            "rem": false,
+            "damage": "280 + 4 * combat",
+            "hit": "5 + (30 + combat) // 16",
+            "type": "DamageSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 1,
+            "v_increment": 2,
+            "v_crit": false
+        },
+        "궁그닐 디센트(무한)": {
+            "cooltime": 0,
+            "delay": 600,
+            "name": "궁그닐 디센트(무한)",
+            "red": false,
+            "rem": false,
+            "damage": "225 + combat",
+            "hit": 12,
+            "type": "DamageSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 0,
+            "v_increment": 2,
+            "v_crit": false,
+            "modifier": {
+                "pdamage": "GOUNGNIL_MODIFIER_PDAMAGE",
+                "armor_ignore": "GOUNGNIL_MODIFIER_ARMOR_IGNORE"
+            }
+        },
+        "궁그닐 디센트": {
+            "cooltime": 8000,
+            "delay": 600,
+            "name": "궁그닐 디센트",
+            "red": true,
+            "rem": false,
+            "damage": "225 + combat",
+            "hit": 12,
+            "type": "DamageSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 0,
+            "v_increment": 2,
+            "v_crit": false,
+            "modifier": {
+                "pdamage": "GOUNGNIL_MODIFIER_PDAMAGE",
+                "armor_ignore": "GOUNGNIL_MODIFIER_ARMOR_IGNORE"
+            }
+        },
+        "새크리파이스": {
+            "cooltime": 70000,
+            "delay": 1080,
+            "name": "새크리파이스",
+            "red": true,
+            "rem": true,
+            "remain": 30000,
+            "type": "BuffSkill",
+            "armor_ignore": "10 + combat // 3",
+            "boss_pdamage": "10 + combat // 3"
+        },
+        "리인카네이션": {
+            "cooltime": "(900 - 7 * passive_level) * 1000",
+            "delay": 0,
+            "name": "리인카네이션",
+            "red": true,
+            "rem": true,
+            "remain": "(40 + passive_level) * 1000",
+            "type": "BuffSkill",
+            "pdamage_indep": 30
+        },
+        "다크 서스트": {
+            "cooltime": 120000,
+            "delay": 900,
+            "name": "다크 서스트",
+            "red": false,
+            "rem": false,
+            "remain": 30000,
+            "type": "BuffSkill",
+            "att": 80
+        },
+        "에픽 어드벤처": {
+            "cooltime": 120000,
+            "delay": 0,
+            "name": "에픽 어드벤처",
+            "red": false,
+            "rem": false,
+            "remain": 60000,
+            "type": "BuffSkill",
+            "pdamage": 10
+        },
+        "다크 스피어": {
+            "cooltime": 10000,
+            "delay": 750,
+            "name": "다크 스피어",
+            "red": true,
+            "rem": false,
+            "damage": "325 + 13 * lv",
+            "hit": "7 * 10",
+            "type": "DamageSkill",
+            "tier": 5,
+            "use_priority": 1,
+            "upgrade_priority": 0,
+            "modifier": {
+                "crit": 100,
+                "armor_ignore": 50
+            }
+        },
+        "비홀더 임팩트": {
+            "cooltime": 20000,
+            "delay": 270,
+            "name": "비홀더 임팩트",
+            "red": true,
+            "rem": false,
+            "damage": "100 + lv",
+            "hit": 6,
+            "remain": 2880,
+            "summondelay": 0,
+            "type": "SummonSkill",
+            "enhanced_by_v": true,
+            "upgrade_priority": 2,
+            "v_increment": 3,
+            "v_crit": false,
+            "tier": 5,
+            "use_priority": 0,
+            "modifier": {
+                "pdamage": 150,
+                "armor_ignore": 20
+            }
+        },
+        "피어스 사이클론(더미)": {
+            "cooltime": 180000,
+            "delay": 90,
+            "name": "피어스 사이클론(더미)",
+            "red": true,
+            "rem": false,
+            "damage": 0,
+            "hit": 0,
+            "type": "DamageSkill"
+        },
+        "피어스 사이클론": {
+            "cooltime": 0,
+            "delay": 360,
+            "name": "피어스 사이클론",
+            "red": false,
+            "rem": false,
+            "damage": "400 + 16 * lv",
+            "hit": 12,
+            "type": "DamageSkill",
+            "tier": 5,
+            "use_priority": 3,
+            "upgrade_priority": 3,
+            "modifier": {
+                "crit": 100,
+                "armor_ignore": 50
+            }
+        },
+        "피어스 사이클론(종료)": {
+            "cooltime": 0,
+            "delay": 900,
+            "name": "피어스 사이클론(종료)",
+            "red": false,
+            "rem": false,
+            "damage": "300 + 12 * lv",
+            "hit": "15 * 5",
+            "type": "DamageSkill",
+            "tier": 5,
+            "use_priority": 3,
+            "upgrade_priority": 3,
+            "modifier": {
+                "crit": 100,
+                "armor_ignore": 50
+            }
+        },
+        "다크니스 오라": {
+            "cooltime": 180000,
+            "delay": 1530,
+            "name": "다크니스 오라",
+            "red": true,
+            "rem": false,
+            "damage": "400 + 16 * lv",
+            "hit": 5,
+            "remain": 40000,
+            "summondelay": 600,
+            "type": "SummonSkill",
+            "tier": 5,
+            "use_priority": 0,
+            "upgrade_priority": 0
+        },
+        "다크니스 오라(폭발)": {
+            "cooltime": -1,
+            "delay": 0,
+            "name": "다크니스 오라(폭발)",
+            "red": false,
+            "rem": false,
+            "damage": "675 + 26 * lv",
+            "hit": "13*(1+15//3) # 생명력 3마다 폭발 1회 추가, 생명력 최대 15",
+            "type": "DamageSkill",
+            "tier": 5,
+            "use_priority": 0,
+            "upgrade_priority": 0
+        }
+    }
+}
