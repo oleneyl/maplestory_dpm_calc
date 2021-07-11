@@ -9,18 +9,13 @@ from .jobclass import adventurer
 from . import jobutils
 from math import ceil
 from typing import Any, Dict
+import os
 
 
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         super(JobGenerator, self).__init__()
-        self.jobtype = "DEX"
-        self.jobname = "캡틴"
-        self.vEnhanceNum = 14
-        self.ability_list = Ability_tool.get_ability_set(
-            "boss_pdamage", "buff_rem", "crit"
-        )
-        self.preEmptiveSkills = 1
+        self.load(os.path.join(os.path.dirname(__file__), 'configs', 'captain.json'))
 
     def get_modifier_optimization_hint(self):
         return core.CharacterModifier(pdamage=28, armor_ignore=22)
@@ -36,51 +31,9 @@ class JobGenerator(ck.JobGenerator):
     def get_passive_skill_list(
         self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
     ):
-        passive_level = chtr.get_base_modifier().passive_level + self.combat
-
-        CriticalRoar = core.InformedCharacterModifier("크리티컬 로어", crit=20, crit_damage=5)
-        PhisicalTraining = core.InformedCharacterModifier(
-            "피지컬 트레이닝", stat_main=30, stat_sub=30
-        )
-        HalopointBullet = core.InformedCharacterModifier("할로포인트 불릿", att=60)
-        FullMetaJacket = core.InformedCharacterModifier(
-            "풀 메탈 재킷", pdamage_indep=20, crit=30, armor_ignore=20
-        )
-        ContinualAimingPassive = core.InformedCharacterModifier(
-            "컨티뉴얼 에이밍(패시브)", crit_damage=20 + self.combat
-        )
-        CaptainDignityPassive = core.InformedCharacterModifier(
-            "캡틴 디그니티(패시브)", att=30 + passive_level
-        )
-        CrueCommandership = core.InformedCharacterModifier(
-            "크루 커맨더쉽", crit_damage=25 + passive_level
-        )
-
-        UnwierdingNectar = core.InformedCharacterModifier("언위어링 넥타", crit=10)
-
+        passive_skill_list = super(JobGenerator, self).get_passive_skill_list(vEhc, chtr, options)
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
-
-        return [
-            CriticalRoar,
-            PhisicalTraining,
-            HalopointBullet,
-            ContinualAimingPassive,
-            FullMetaJacket,
-            CaptainDignityPassive,
-            CrueCommandership,
-            UnwierdingNectar,
-            LoadedDicePassive,
-        ]
-
-    def get_not_implied_skill_list(
-        self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
-    ):
-        passive_level = chtr.get_base_modifier().passive_level + self.combat
-
-        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=50)
-        Mastery = core.InformedCharacterModifier("숙련도", mastery=85+ceil(passive_level / 2))
-
-        return [WeaponConstant, Mastery]
+        return passive_skill_list + [LoadedDicePassive]
 
     def generate(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
         """
@@ -111,6 +64,8 @@ class JobGenerator(ck.JobGenerator):
         서먼크루 / 스트봄 / 노틸러스
         """
         passive_level = chtr.get_base_modifier().passive_level + self.combat
+        self.passive_level = chtr.get_base_modifier().passive_level + self.combat
+
         DEADEYEACC = 3
         DEADEYEAIM = 3480
         BULLET_PARTY_TICK = 150
@@ -119,74 +74,17 @@ class JobGenerator(ck.JobGenerator):
 
         ######   Skill   ######
         # Buff skills
-        PirateStyle = core.BuffSkill(
-            "파이렛 스타일",
-            delay=0,
-            remain=(180 + 6 * self.combat) * 1000,
-            rem=True,
-            patt=20 + self.combat,
-        ).wrap(core.BuffSkillWrapper)
-        LuckyDice = (
-            core.BuffSkill(
-                "로디드 다이스",
-                delay=990,
-                remain=180 * 1000,
-                pdamage=20
-                + 10 / 6
-                + 10 / 6 * (5 / 6 + 1 / 11) * (10 * (5 + passive_level) * 0.01),
-            )
-            .isV(vEhc, 1, 2)
-            .wrap(core.BuffSkillWrapper)
-        )
-        QuickDraw = core.BuffSkill(
-            "퀵 드로우",
-            delay=0,  # 래피드/불파 도중 사용가능
-            remain=core.infinite_time(),
-            cooltime=-1,
-        ).wrap(core.BuffSkillWrapper)
+        PirateStyle = self.load_skill_wrapper("파이렛 스타일")
+        LuckyDice = self.load_skill_wrapper("로디드 다이스", vEhc)
+        QuickDraw = self.load_skill_wrapper("퀵 드로우", vEhc)
+
         QuickDrawStack = core.StackSkillWrapper(
             core.BuffSkill("퀵 드로우(준비)", 0, core.infinite_time()), 1
         )
-
         # Summon Skills
-        OctaQuaterdeck = (
-            core.SummonSkill(
-                "옥타 쿼터덱",
-                summondelay=630,
-                delay=60000 / 110,
-                damage=300,
-                hit=1,
-                remain=30000,
-                rem=True,
-                cooltime=10000,
-            )
-            .setV(vEhc, 5, 2, True)
-            .wrap(core.SummonSkillWrapper)
-        )
-        SummonCrew = (
-            core.SummonSkill(
-                "서먼 크루",
-                summondelay=900,
-                delay=60000 / 17,  # 분당 17타
-                damage=465,  # 평균 퍼뎀 465
-                hit=2,
-                remain=120000,
-                modifier=core.CharacterModifier(pdamage_indep=15 + passive_level),
-                rem=True,
-            )
-            .setV(vEhc, 6, 2, True)
-            .wrap(core.SummonSkillWrapper)
-        )
-        SummonCrewBuff = core.BuffSkill(
-            "서먼 크루(버프)",
-            delay=0,
-            remain=120000,
-            cooltime=-1,
-            crit=10 + passive_level // 3,
-            crit_damage=5,
-            att=45 + 3 * passive_level,
-        ).wrap(core.BuffSkillWrapper)
-
+        OctaQuaterdeck = self.load_skill_wrapper("옥타 쿼터덱", vEhc)
+        SummonCrew = self.load_skill_wrapper("서먼 크루", vEhc)
+        SummonCrewBuff = self.load_skill_wrapper("서먼 크루(버프)")
         """
         돈틀레스 : 330 보통 13/22 타수3 600
         블랙바크 : 445 느림 15/18 타수3 810
@@ -201,9 +99,8 @@ class JobGenerator(ck.JobGenerator):
             + (320 + 3 * self.combat)
         ) / 4
         # TODO: 배틀쉽 봄버 공격주기 확인 필요
-        BattleshipBomber = core.BuffSkill(
-            "배틀쉽 봄버", delay=0, remain=0, cooltime=30000, red=True
-        ).wrap(core.BuffSkillWrapper)
+        BattleshipBomber = self.load_skill_wrapper("배틀쉽 봄버")
+
         BattleshipBomber_1 = (
             core.SummonSkill(
                 "배틀쉽 봄버(소환,1)",
@@ -218,6 +115,7 @@ class JobGenerator(ck.JobGenerator):
             .setV(vEhc, 4, 2, True)
             .wrap(core.SummonSkillWrapper)
         )
+        BattleshipBomber_1 = self.load_skill_wrapper("배틀쉽 봄버(소환, 1)", vEhc)
         BattleshipBomber_2 = (
             core.SummonSkill(
                 "배틀쉽 봄버(소환,2)",

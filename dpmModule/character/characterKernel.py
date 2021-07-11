@@ -291,8 +291,16 @@ class JobGenerator:
 
         return skill
 
+    def _load_constant(self, constant_value):
+        if isinstance(constant_value, dict):
+            if constant_value['type'] == 'eval':
+                return eval(constant_value['value'])
+        
+        return constant_value
+
     def load_skill_wrapper(self, skill_name, vEhc=None):
-        background_information = {k: v for k, v in self.conf.get('constant', {}).items()}
+        background_information = {k: self._load_constant(v) for k, v in self.conf.get('constant', {}).items()}
+        
         background_information['combat'] = self.combat
         if hasattr(self, 'passive_level'):
             background_information['passive_level'] = self.passive_level
@@ -322,6 +330,13 @@ class JobGenerator:
         self.jobname = conf['jobname']
         self.jobtype = conf['jobtype']
         self._use_critical_reinforce = conf.get('use_critical_reinforce', False)
+
+        if conf.get('ability_list'):
+            assert len(conf.get('ability_list')) == 3
+            self.ability_list = Ability_tool.get_ability_set(
+                *conf.get('ability_list')
+            )
+
 
     def get_ruleset(self) -> Optional[RuleSet]:
         return
