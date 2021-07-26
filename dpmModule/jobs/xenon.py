@@ -196,7 +196,7 @@ class JobGenerator(ck.JobGenerator):
         Multilateral = [Multilateral1, Multilateral2, Multilateral3, Multilateral4, Multilateral5, Multilateral6]
 
         LinearPerspective = core.InformedCharacterModifier("리니어 퍼스펙티브", crit=40)
-        MinoritySupport = core.InformedCharacterModifier("마이너리티 서포트", stat_main=25*3)  # 힘덱럭 20씩
+        MinoritySupport = core.InformedCharacterModifier("마이너리티 서포트", stat_main=25*3)  # 힘덱럭 25씩
         XenonMastery = core.InformedCharacterModifier("제논 마스터리", att=20)
         HybridDefensesPassive = core.InformedCharacterModifier("듀얼브리드 디펜시브(패시브)", stat_main=30)  # 힘덱럭 30씩
         XenonExpert = core.InformedCharacterModifier("제논 엑스퍼트", att=30 + passive_level, crit_damage=8)
@@ -226,8 +226,6 @@ class JobGenerator(ck.JobGenerator):
         # Buff skills
         # 펫버프: X
         InclinePower = core.BuffSkill("인클라인 파워", 990, 240000, att=30, rem=True).wrap(core.BuffSkillWrapper)
-        EfficiencyPipeLine = core.BuffSkill("에피션시 파이프라인", 0, 240000, rem=True).wrap(core.BuffSkillWrapper)
-        Booster = core.BuffSkill("제논 부스터", 0, 240000, rem=True).wrap(core.BuffSkillWrapper)
         VirtualProjection = core.BuffSkill("버추얼 프로젝션", 0, 999999999).wrap(core.BuffSkillWrapper)
 
         # 위컴알에 딜레이 없음
@@ -369,9 +367,7 @@ class JobGenerator(ck.JobGenerator):
                 globalSkill.useful_sharp_eyes(),
                 globalSkill.useful_combat_orders(),
                 globalSkill.useful_hyper_body_xenon(),
-                Booster,
                 InclinePower,
-                EfficiencyPipeLine,
                 VirtualProjection,
                 LuckyDice,
                 ExtraSupply,
