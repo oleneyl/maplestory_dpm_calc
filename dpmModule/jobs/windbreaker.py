@@ -237,7 +237,7 @@ class JobGenerator(ck.JobGenerator):
                 delay=150,
                 damage=250 + 10 * vEhc.getV(1, 1),
                 hit=3,
-                remain=150 * 58 - 1,  # 58타
+                remain=150 * 61 - 1,  # 61타
                 cooltime=20 * 1000,
             ).isV(vEhc, 1, 1),
             max_stack=2,
