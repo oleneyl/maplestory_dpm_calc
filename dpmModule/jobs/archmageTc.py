@@ -8,7 +8,7 @@ from .jobclass import adventurer
 from .jobbranch import magicians
 from ..status.ability import Ability_tool
 from ..character import characterKernel as ck
-from ..execution.rules import RuleSet, ConcurrentRunRule, InactiveRule
+from ..execution.rules import ConditionRule, RuleSet, ConcurrentRunRule, InactiveRule
 
 
 class FrostEffectWrapper(core.StackSkillWrapper):
@@ -32,8 +32,12 @@ class JobGenerator(ck.JobGenerator):
 
     def get_ruleset(self):
         ruleset = RuleSet()
+        ruleset.add_rule(ConcurrentRunRule('소울 컨트랙트', '주피터 썬더'), RuleSet.BASE)
         ruleset.add_rule(ConcurrentRunRule('라이트닝 스피어', '인피니티'), RuleSet.BASE)
-        ruleset.add_rule(InactiveRule('언스테이블 메모라이즈', '인피니티'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('주피터 썬더', '인피니티'), RuleSet.BASE)
+        ruleset.add_rule(ConcurrentRunRule('스피릿 오브 스노우', '인피니티'), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('언스테이블 메모라이즈', '인피니티', lambda sk: sk.is_time_left(60000, -1) or sk.is_not_active()), RuleSet.BASE)
+        ruleset.add_rule(ConditionRule('언스테이블 메모라이즈', '인피니티', lambda sk: sk.timeLeft < sk.cooltimeLeft), RuleSet.BASE)
         return ruleset
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
