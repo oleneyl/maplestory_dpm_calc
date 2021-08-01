@@ -145,3 +145,38 @@ def useful_hyper_body_xenon(slevel=1):
     return core.BuffSkill("쓸만한 하이퍼 바디 (제논)", 600, usefulSkillRemain(slevel),
                           stat_main=passiveStat(slevel), stat_sub=passiveStat(slevel), rem=False
                           ).wrap(core.BuffSkillWrapper)
+
+### 특수 코어 ###
+# 스킬 n회 공격 조건은 직업 코드에서 직접 구현바람
+
+
+# 같은 몬스터를 800회(스킬의 공격 횟수당 1회) 공격하면 발동
+def only_one(serverlag=0):
+    return core.BuffSkill("한놈만 I", 0, 10000+serverlag, cooltime=60000, crit=100).wrap(core.BuffSkillWrapper)
+
+
+# 공격 횟수 1000회 마다 발동
+def lethal_strike(serverlag=0):
+    return core.BuffSkill("치명적인 일격 I", 0, 10000+serverlag, cooltime=60000, crit=100).wrap(core.BuffSkillWrapper)
+
+
+# 같은 몬스터를 800회(스킬의 공격 횟수당 1회) 공격하면 발동
+def armor_break_I(serverlag=0):
+    return core.BuffSkill("방어구 부수기 I", 0, 10000+serverlag, cooltime=60000, armor_ignore=100).wrap(core.BuffSkillWrapper)
+
+
+def armor_break_II(serverlag=0):
+    return core.BuffSkill("방어구 부수기 II", 0, 10000+serverlag, cooltime=120000, armor_ignore=100).wrap(core.BuffSkillWrapper)
+
+
+# 공격 시 0.1% 확률로 발동
+def boss_slayer_I(serverlag=0):
+    return core.BuffSkill("보스 슬레이어 I", 0, 10000+serverlag, cooltime=30000, boss_pdamage=50).wrap(core.BuffSkillWrapper)
+
+
+def boss_slayer_II(serverlag=0):
+    return core.BuffSkill("보스 슬레이어 II", 0, 10000+serverlag, cooltime=120000, boss_pdamage=50).wrap(core.BuffSkillWrapper)
+
+
+def fatal_strike(serverlag=0):
+    return core.BuffSkill("일격 필살 I", 0, 2000+serverlag, cooltime=30000, pdamage=100).wrap(core.BuffSkillWrapper)
