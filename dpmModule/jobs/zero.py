@@ -89,7 +89,7 @@ class JobGenerator(ck.JobGenerator):
         어파스 기준
         '''
         ALPHA_DEALCYCLE = options.get('alpha_dealcycle', 'moon_pierce_shadow')
-        BETA_DEALCYCLE = options.get('beta_dealcycle', 'wheel_throw_stomp_wheel_stomp')
+        BETA_DEALCYCLE = options.get('beta_dealcycle', 'wheel_stomp_throw_wheel_stomp')
 
         THROWINGHIT = 5
 
@@ -321,6 +321,10 @@ class JobGenerator(ck.JobGenerator):
         elif BETA_DEALCYCLE == "wheel_throw_stomp_wheel_stomp":  # 휠스어휠어
             BetaCombo = [SetBeta, TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG,
                          FrontSlash, ThrowingWeapon, AdvancedSpinCutterTAG, UpperSlash, MoonStrikeTAG, AdvancedPowerStomp, PierceStrikeTAG,
+                         TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG, UpperSlash, AdvancedPowerStompLast]
+        elif BETA_DEALCYCLE == "wheel_stomp_throw_wheel_stomp":  # 휠어스휠어
+            BetaCombo = [SetBeta, TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG,
+                         UpperSlash, MoonStrikeTAG, AdvancedPowerStomp, PierceStrikeTAG, FrontSlash, FlashAssaultTAG, ThrowingWeapon, AdvancedSpinCutterTAG, 
                          TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG, UpperSlash, AdvancedPowerStompLast]
         else:
             raise ValueError(BETA_DEALCYCLE)
