@@ -25,6 +25,32 @@ class EchoWrapper(core.BuffSkillWrapper):
     def get_modifier(self):  # 그란디스 여신의 축복 활성화시 용맥의 메아리 최종데미지 증가 (기본 6% + 6레벨당 1%)
         return core.CharacterModifier(pdamage_indep=5 + self.extra * self.anima_goddess.is_active())
 
+
+class RiverWrapper(core.SummonSkillWrapper):
+    def __init__(self, skill):
+        super(RiverWrapper, self).__init__(skill)
+
+    def _useTick(self) -> core.ResultObject:
+        self.tick += self.get_delay()
+        if (self.tick // self.get_delay()) % 3 == 2:  # TODO: 큰 너울 최초 발동 타이밍 확인필요
+            return core.ResultObject(
+                0,
+                self.get_modifier(),
+                580,
+                8,
+                sname="분출 : 너울이는 강 (큰 너울)",
+                spec=self.skill.spec,
+            )
+        return core.ResultObject(
+            0,
+            self.get_modifier(),
+            215 + 120 + 128,
+            4 + 1,
+            sname="분출 : 너울이는 강 (너울)",
+            spec=self.skill.spec,
+        )
+
+
 class JobGenerator(ck.JobGenerator):
     def __init__(self):
         ### Incomplete ###
@@ -64,6 +90,8 @@ class JobGenerator(ck.JobGenerator):
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         """
         TODO: 딜사이클 작성
+        분출 : 너울이는 강, 분출 : 돌개바람, 흡수 : 햇빛 맹아리
+
         분출/흡수 - 리인포스
         분출/흡수 - 보스 킬러
         정기 뿌리기 - 보스 킬러
@@ -83,9 +111,8 @@ class JobGenerator(ck.JobGenerator):
         ### 2차 스킬 ###
         # TODO: 최대 타격 후 종료해야 함
         ERUPTION_MODIFIER = HYPER_MODIFIER + core.CharacterModifier(pdamage=chtr.get_base_modifier().summon_rem//2)
-        Eruption = core.DamageSkill("용맥 분출", 0, 0, 0, 300).wrap(core.DamageSkillWrapper)  # TODO: 딜레이 확인
-        Eruption_River = core.SummonSkill("분출 : 너울이는 강", 0, 2000, 215+120+128, 4+1, (8+1)*2000, rem=False, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2).wrap(core.SummonSkillWrapper)  # 일반 너울
-        Eruption_River_Enhanced = core.DamageSkill("분출 : 너울이는 강 (큰 너울)", 0, 580, 8, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)  # TODO: 일반 너울 스킬과 동기화
+        Eruption = core.DamageSkill("용맥 분출", 450, 0, 0, 300).wrap(core.DamageSkillWrapper)
+        Eruption_River = RiverWrapper(core.SummonSkill("분출 : 너울이는 강", 0, 2000, 0, 0, (8+1)*2000, rem=False, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2))
         Eruption_Wind = core.SummonSkill("분출 : 돌개바람", 0, 480, 63+35+157, 5, 10000, rem=False, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2).wrap(core.SummonSkillWrapper)  # 최대 5회 생성
         Eruption_Sun_Giant = core.DamageSkill("분출 : 해돋이 우물 (거인)", 0, 120+48+247, 6, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
         Eruption_Sun = core.SummonSkill("분출 : 해돋이 우물", 0, 1000, 85+48+117, 1, (8+1)*2000, rem=False, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2).wrap(core.SummonSkillWrapper)
@@ -93,10 +120,12 @@ class JobGenerator(ck.JobGenerator):
         Eruption_Sun_Bullet_2 = core.DamageSkill("분출 : 해돋이 우물 (화산탄 다중히트)", 0, (75+48+157)*0.9, 3*4, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
         Eruption_Sun_DOT = core.DotSkill("분출 : 해돋이 우물 (도트)", 0, 1000, 60+48+50, 1, 8*1000).setV(vEhc, 0, 2).wrap(core.SummonSkillWrapper)  # TODO: 소환수 지속시간 -> 데미지 증가 적용여부 확인필요
 
+        # 자동 시전 모드
+        # TODO: 정확한 수치 확인필요
         MountainSeed = core.StackableSummonSkillWrapper(
-            core.SummonSkill("산의 씨앗", 0, 2000, 55+75+170+5*passive_level, 1, 10000+20000).setV(vEhc, 0, 2).wrap(core.SummonSkillWrapper),  # TODO: 공격 주기 확인
+            core.SummonSkill("산의 씨앗", 0, 2000, 55+75+170+5*passive_level, 1, 10000+20000, 7000).setV(vEhc, 0, 2).wrap(core.SummonSkillWrapper),  # TODO: 공격 주기 확인
             max_stack=4
-        )  # 자동 시전 모드
+        )
 
         Booster = core.BuffSkill("지팡이 가속", 0, 180000).wrap(core.BuffSkillWrapper)
 
@@ -108,8 +137,7 @@ class JobGenerator(ck.JobGenerator):
         TrackTeleport = core.DamageSkill("용맥의 자취", 90, 500+55+2*passive_level, 2, cooltime=6000).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
 
         ### 4차 스킬 ###
-        # 흡수: 용맥을 흡수해 추가 공격으로 변환, 정기 뿌리기나 잠 깨우기가 적중할 때 발동
-        Absorption = core.DamageSkill("용맥 흡수", 0, 0, 0, 300).wrap(core.DamageSkillWrapper)  # TODO: 딜레이 확인
+        Absorption = core.DamageSkill("용맥 흡수", 300, 0, 0, 300).wrap(core.DamageSkillWrapper)
         Absorption_River_Buff = core.BuffSkill("흡수 : 강 웅덩이 물벼락 (버프)", 0, (60+self.combat)*1000).wrap(core.BuffSkillWrapper)
         Absorption_River = core.DamageSkill("흡수 : 강 웅덩이 물벼락", 0, 500+self.combat, 6, 2500, modifier=HYPER_MODIFIER).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
         Absorption_Wind_Buff = core.BuffSkill("흡수 : 소소리 바람 (버프)", 0, (60+self.combat)*1000).wrap(core.BuffSkillWrapper)
@@ -117,7 +145,7 @@ class JobGenerator(ck.JobGenerator):
         Absorption_Sun_Buff = core.BuffSkill("흡수 : 햇빛 맹아리 (버프)", 0, (45+self.combat)*1000).wrap(core.BuffSkillWrapper)
         Absorption_Sun = core.DamageSkill("흡수 : 햇빛 맹아리", 0, 200+5*self.combat, 5*6, 2500, modifier=HYPER_MODIFIER).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
 
-        Switch = core.DamageSkill("용맥 변환", 0, 0, 0, 3000+7000).wrap(core.DamageSkillWrapper)  # 성공시 쿨타임 10초
+        Switch = core.DamageSkill("용맥 변환", 240, 0, 0, 3000+7000).wrap(core.DamageSkillWrapper)  # 성공시 쿨타임 10초
 
         ### 하이퍼 액티브 ###
         FreeDragonVein = core.StackableDamageSkillWrapper(core.DamageSkill("자유로운 용맥", 240, 0, 0, 1500), 3)
@@ -139,23 +167,48 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         ### TODO: Skill Wrapper ###
-        # 극딜 순서: 해 강 산 바람->산등성이 굽이굽이->큰 기지개->용솟음치는 정기
 
+        # 평타
         LaraAttack.onAfter(MountainKid)
         WakeUp.onAfter(WakeUp_Add)
 
+        # 극딜 순서: 해 강 산 바람->산등성이 굽이굽이->큰 기지개->용솟음치는 정기
         CombinationBlow.onAfter(CombinationBlow_Spirit)
         CombinationBlow_Spirit.onAfter(CombinationBlow_Explosion)
         BigEruption.onAfter(core.RepeatElement(BigEruption_Add, 4))
 
+        # 메아리
         Echo = EchoWrapper(AnimaGoddessBless, vEhc.getV(0, 0))
         Eruption.onAfter(Echo)
         Absorption.onAfter(Echo)
+        
+        # 분출
+        Eruption_River.onBefore(Eruption)
+        Eruption_Wind.onBefore(Eruption)
+        Eruption_Sun.onBefore(Eruption)
+
+        Eruption_Sun.onAfter(Eruption_Sun_Giant)
+        Eruption_Sun.onTick(Eruption_Sun_Bullet)
+        Eruption_Sun.onTick(Eruption_Sun_Bullet_2)
+        Eruption_Sun_Bullet.onAfter(Eruption_Sun_DOT)
+        
+        # 흡수
+        Absorption_Sun.onBefore(Absorption)
+        Absorption_River.onBefore(Absorption)
+        Absorption_Wind.onBefore(Absorption)
+
+        LaraAttack.onAfter(core.OptionalElement(Absorption_Sun_Buff.is_active, Absorption_Sun))
+        LaraAttack.onAfter(core.OptionalElement(Absorption_River_Buff.is_active, Absorption_River))
+        LaraAttack.onAfter(core.OptionalElement(Absorption_Wind_Buff.is_active, Absorption_Wind))
 
         # TODO: Overload Mana (스인미 제외)
 
         overload_mana_builder = magicians.OverloadManaBuilder(vEhc, 1, 5)
-        for sk in [LaraAttack, ]:
+        for sk in [LaraAttack, MountainKid, Eruption_River, Eruption_Wind, Eruption_Sun,
+                   Eruption_Sun_Giant, Eruption_Sun_Bullet, Eruption_Sun_Bullet_2,
+                   MountainSeed, WakeUp, WakeUp_Add, Absorption_Sun, Absorption_Wind, Absorption_River,
+                   TangledVine, BigEruption, BigEruption_Add, CombinationBlow_Spirit, CombinationBlow_Explosion,
+                   AdvancedLaraAttack, BurstUp]:
             overload_mana_builder.add_skill(sk)
         OverloadMana = overload_mana_builder.get_buff()
 
@@ -178,7 +231,7 @@ class JobGenerator(ck.JobGenerator):
                 BigEruption,
                 AdvancedLaraAttack,
             ]
-            + [WakeUp, MountainKid]
-            + [MirrorBreak, MirrorSpider]
+            + [WakeUp, MountainKid, Eruption_River, Eruption_Wind, Absorption_Sun_Buff]
+            + [MirrorBreak, MirrorSpider, MountainSeed]
             + [LaraAttack]
         )
