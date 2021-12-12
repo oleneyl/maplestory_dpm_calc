@@ -1,3 +1,4 @@
+from dpmModule.kernel.core.constant import IS_REBOOT
 import yaml
 import os
 from copy import copy, deepcopy
@@ -46,7 +47,11 @@ class TemplateGenerator:
 
         # load template.yaml to 'data'
         self.data = {}
-        _template_yaml = open_yaml('configs', 'template.yaml')
+
+        if not IS_REBOOT:  # 본섭
+            _template_yaml = open_yaml('configs', 'template.yaml')
+        else:  # 리부트
+            _template_yaml = open_yaml('configs', 'template-reboot.yaml')
         for key in _template_yaml:
             self.data[key] = open_yaml('configs', _template_yaml[key])
 
