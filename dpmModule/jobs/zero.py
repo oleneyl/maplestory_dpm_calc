@@ -366,11 +366,9 @@ class JobGenerator(ck.JobGenerator):
         else:
             raise ValueError(ALPHA_DEALCYCLE)
 
-        ### 기본 : 휠xx휠x 에서 두번째 휠 태그로 롤썰터 나감 
-        ### 확인 : 휠xx휠x 에서 두번째 휠 태그로 롤썰터 잘 안나감 빡빡함
+        ### 기본 : 휠xx휠x 에서 두번째 휠 태그로 롤썰터 빡빡하게 나감
         ### 휠x휠xx가 실전에서는 더 유용하나 쿨뚝 없을시 한 사이클마다 60ms 손해
         ### 휠윈드 직후 스로잉 사용시 태그로 플썰터 안나감
-        ### 휠윈드 직후 어파스 사용시 경직이 심함
         
         # 휠x휠xx
         if BETA_DEALCYCLE == "wheel_throw_wheel_throw_stomp":  # 휠스휠스어
