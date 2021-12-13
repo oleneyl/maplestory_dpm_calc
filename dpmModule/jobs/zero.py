@@ -88,14 +88,14 @@ class JobGenerator(ck.JobGenerator):
 
         어파스 기준
         '''
-        ### 스로잉 12회 기준
-        ### 스문스문윈 / 휠스휠어스 
+        ### 스로잉 12타 기준
+        ### 스문스문윈 / 휠어스휠스 
 
-        ### 스로잉 5회 기준
-        ### 스문스문윈 / 휠어스휠어 ??? 왜 5회도 스문스문윈이 더 쌔지???
+        ### 스로잉 5타 기준
+        ### 스문스문윈 / 휠어스휠어
 
         # spin_moon_wind
-        # moon_pierce_shadow
+        # moon_pierce_shadow # 기본
         # storm_moon_pierce_shadow_wind
         ALPHA_DEALCYCLE = options.get('alpha_dealcycle', 'spin_moon_wind')
         # "wheel_throw_wheel_throw_stomp":  # 휠스휠스어
