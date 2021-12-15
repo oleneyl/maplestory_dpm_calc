@@ -3,7 +3,7 @@ import argparse
 import pandas as pd
 from dpmModule.character.characterKernel import JobGenerator
 from dpmModule.character.characterTemplate import TemplateGenerator
-from dpmModule.jobs import jobMap
+from dpmModule.jobs import get_generator
 from dpmModule.kernel import core
 from dpmModule.status.ability import Ability_grade
 
@@ -36,7 +36,7 @@ def armor_float_to_percent(num: float):
 
 def get_modifier(args) -> core.CharacterModifier:
     preset = get_preset(args.id)
-    gen: JobGenerator = jobMap[preset.job].JobGenerator()
+    gen: JobGenerator = get_generator(preset.job).JobGenerator()
     target, weapon_stat = TemplateGenerator().get_template_and_weapon_stat(gen, str(args.ulevel), args.cdr)
     v_builder = core.AlwaysMaximumVBuilder()
     graph = gen.package(

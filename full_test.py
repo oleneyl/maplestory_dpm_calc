@@ -1,5 +1,5 @@
 from dpmModule.util.dpmgenerator import IndividualDPMGenerator
-from dpmModule.jobs import jobMap
+from dpmModule.jobs import job_list_order
 from concurrent.futures import ProcessPoolExecutor
 from itertools import product, groupby
 from operator import itemgetter
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     args = get_args()
     start = time.time()
     ulevels = args.ulevel
-    tasks = product(jobMap.keys(), ulevels, [args.time], [args.cdr])
+    tasks = product(job_list_order, ulevels, [args.time], [args.cdr])
     pool = ProcessPoolExecutor(max_workers=args.thread)
     results = pool.map(test, tasks)
     write_results(results)

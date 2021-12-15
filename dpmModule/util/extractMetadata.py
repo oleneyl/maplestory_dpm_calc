@@ -7,7 +7,7 @@ from dpmModule.execution import rules
 
 
 def getpassiveInformation(enjob: str):
-    gen = maplejobs.getGenerator(maplejobs.getKoJobName(enjob)).JobGenerator()
+    gen = maplejobs.get_generator(maplejobs.get_ko_jobname(enjob)).JobGenerator()
     template = GChar(gen)
 
     # 1레벨
@@ -36,7 +36,7 @@ def getpassiveInformation(enjob: str):
 
 
 def extract_skill_info(enjob: str):
-    gen = maplejobs.getGenerator(maplejobs.getKoJobName(enjob)).JobGenerator()
+    gen = maplejobs.get_generator(maplejobs.get_ko_jobname(enjob)).JobGenerator()
     template = GChar(gen)
 
     # 1레벨
@@ -44,7 +44,7 @@ def extract_skill_info(enjob: str):
     graph_bare = gen.package_bare(template, v_builder=no_enhancer)
 
     # 25레벨
-    gen = maplejobs.getGenerator(maplejobs.getKoJobName(enjob)).JobGenerator()
+    gen = maplejobs.get_generator(maplejobs.get_ko_jobname(enjob)).JobGenerator()
     graph_full = gen.package_bare(template, useFullCore=True)
 
     vEhc = no_enhancer.build_enhancer(template, gen)
@@ -58,7 +58,7 @@ def extract_skill_info(enjob: str):
 
 def extract_every_skill_info(enjob: str):
     print(enjob)
-    gen = maplejobs.getGenerator(maplejobs.getKoJobName(enjob)).JobGenerator()
+    gen = maplejobs.get_generator(maplejobs.get_ko_jobname(enjob)).JobGenerator()
     template = GChar(gen)
 
     # 1레벨
@@ -67,7 +67,7 @@ def extract_every_skill_info(enjob: str):
     graph_bare = gen.package_bare(template, v_builder=no_enhancer)
 
     # 25레벨
-    gen = maplejobs.getGenerator(maplejobs.getKoJobName(enjob)).JobGenerator()
+    gen = maplejobs.get_generator(maplejobs.get_ko_jobname(enjob)).JobGenerator()
     graph_full = gen.package_bare(template, v_builder=no_enhancer)
 
     vEhc = no_enhancer.build_enhancer(template, gen)
