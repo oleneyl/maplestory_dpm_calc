@@ -19,6 +19,7 @@ def get_args():
     parser.add_argument("--cdr", nargs="+", type=int, default=[0, 2, 4])
     parser.add_argument("--time", type=int, default=1800)
     parser.add_argument("--thread", type=int, default=4)
+    parser.add_argument("--base", type=int, default=0)
 
     return parser.parse_args()
 
@@ -34,6 +35,14 @@ def test(args):
 
     return jobname, cdr, description, dpm, loss, alt
 
+def get_base(df, base):
+    if base == 1:
+        return df["best"].mean()
+    if base == 2:
+        return df["best"].min()
+    if base == 3:
+        return df["best"][df.index[df["직업"] == "비숍"][0]]
+    return df["best"].median()
 
 if __name__ == "__main__":
     args = get_args()
@@ -55,8 +64,8 @@ if __name__ == "__main__":
     df["best"] = df.groupby(["직업"])["dpm"].transform("max")
     df = df.sort_values(by=["best", "dpm"], axis=0, ascending=False)
 
-    median = df["best"].median()
-    df["배율"] = df["dpm"] / median
+    base_unit = get_base(df, args.base)
+    df["배율"] = df["dpm"] / base_unit
 
     df = df[["직업", "쿨감", "비고", "dpm", "배율", "alt"]]
 
