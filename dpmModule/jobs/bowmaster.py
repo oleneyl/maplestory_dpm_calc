@@ -92,14 +92,14 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier(
             "피지컬 트레이닝", stat_main=30, stat_sub=30
         )
-        BowAccelation = core.InformedCharacterModifier(
-            "보우 엑셀레이션", stat_main=20
-        )
+        BowAccelation = core.InformedCharacterModifier("보우 엑셀레이션", stat_main=20)
 
+        SoulArrow = core.InformedCharacterModifier("소울 애로우 : 활", att=30)
         MarkmanShip = core.InformedCharacterModifier("마크맨쉽", armor_ignore=25, patt=25)
 
+        AdvancedQuibber = core.InformedCharacterModifier("어드밴스드 퀴버", pdamage_indep=6)
         BowExpert = core.InformedCharacterModifier(
-            "보우 엑스퍼트", att=60 + passive_level, crit_damage=8
+            "보우 엑스퍼트", att=60 + passive_level, crit_damage=16 + passive_level // 3
         )
         AdvancedFinalAttackPassive = core.InformedCharacterModifier(
             "어드밴스드 파이널 어택(패시브)", att=20 + ceil(passive_level / 2)
@@ -113,7 +113,9 @@ class JobGenerator(ck.JobGenerator):
             CriticalShot,
             PhisicalTraining,
             BowAccelation,
+            SoulArrow,
             MarkmanShip,
+            AdvancedQuibber,
             BowExpert,
             AdvancedFinalAttackPassive,
             ElusionStep,
@@ -135,7 +137,6 @@ class JobGenerator(ck.JobGenerator):
 
     def generate(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
         """
-        잔영의 시 : 액티브 13*3타, 패시브 3.5*3타. 패시브는 쿨타임동안 10~11회 사용
         애로우 레인 : 1줄기, 떨어질 때 마다 3.5회 타격
 
         코강 순서:
@@ -149,12 +150,9 @@ class JobGenerator(ck.JobGenerator):
 
         ######   Skill   ######
         # Buff skills
-        SoulArrow = core.BuffSkill(
-            "소울 애로우", delay=0, remain=300 * 1000, att=30  # 펫버프
-        ).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill(
             "샤프 아이즈",
-            delay=690,
+            delay=0,  # 펫버프
             remain=300 * 1000,
             crit=20 + 5 + ceil(self.combat / 2),
             crit_damage=15 + ceil(self.combat / 2),
@@ -169,7 +167,11 @@ class JobGenerator(ck.JobGenerator):
             boss_pdamage=20,
         ).wrap(core.BuffSkillWrapper)
         EpicAdventure = core.BuffSkill(
-            "에픽 어드벤처", delay=0, remain=60 * 1000, cooltime=120 * 1000, pdamage=10
+            "에픽 어드벤처",
+            delay=0,
+            remain=60 * 1000,
+            cooltime=120 * 1000,
+            pdamage=10,
         ).wrap(core.BuffSkillWrapper)
 
         ArmorPiercing = ArmorPiercingWrapper(passive_level, chtr)
@@ -229,6 +231,21 @@ class JobGenerator(ck.JobGenerator):
             )
             .setV(vEhc, 4, 2, False)
             .wrap(core.SummonSkillWrapper)
+        )
+
+        FlashMirage = (
+            core.DamageSkill(
+                "플래시 미라주",
+                delay=0,
+                damage=420 + 120 + passive_level * 2,
+                hit=4 * 4,
+                cooltime=1000,
+            )
+            .setV(vEhc, 4, 2, False)
+            .wrap(core.DamageSkillWrapper)
+        )
+        FlashMirageStack = core.StackSkillWrapper(
+            core.BuffSkill("플래시 미라주(스택)", 0, 9999999), 49
         )
 
         GrittyGust = (
@@ -298,11 +315,10 @@ class JobGenerator(ck.JobGenerator):
         QuibberFullBurstBuff = core.BuffSkill(
             "퀴버 풀버스트(버프)",
             delay=0,
-            remain=30 * 1000,
+            remain=40 * 1000,
             cooltime=120 * 1000,
             red=True,
             patt=(5 + int(vEhc.getV(2, 2) * 0.5)),
-            crit_damage=8,  # 독화살 크뎀을 이쪽에 합침
         ).wrap(core.BuffSkillWrapper)
         QuibberFullBurst = DelayVaryingSummonSkillWrapper(
             core.SummonSkill(
@@ -311,30 +327,21 @@ class JobGenerator(ck.JobGenerator):
                 delay=-1,
                 damage=250 + 10 * vEhc.getV(2, 2),
                 hit=9,
-                remain=30 * 1000,
+                remain=18 * 2 * 1000,  # 18회 모두 소모시 종료
                 cooltime=-1,
             ).isV(vEhc, 2, 2),
             delays=[90, 90, 90, 90, 90, 90 + (2000 - 90 * 6)],
         )  # 2초에 한번씩 90ms 간격으로 6회 발사
-        QuibberFullBurstDOT = core.DotSkill(
-            "독화살",
-            summondelay=0,
-            delay=1000,
-            damage=220,
-            hit=3,  # 3회 중첩
-            remain=30 * 1000,
-            cooltime=-1,
-        ).wrap(core.DotSkillWrapper)
 
         ImageArrow = (
             core.SummonSkill(
                 "잔영의 시",
                 summondelay=720,
-                delay=240,
-                damage=600 + 24 * vEhc.getV(1, 1),
-                hit=3,  # 13 * 3타
-                remain=3000,
-                cooltime=60000,
+                delay=210,
+                damage=400 + 16 * vEhc.getV(1, 1),
+                hit=3,
+                remain=30 * 1000,  # 최대 30초 지속
+                cooltime=120 * 1000,
                 red=True,
             )
             .isV(vEhc, 1, 1)
@@ -346,7 +353,7 @@ class JobGenerator(ck.JobGenerator):
                 summondelay=0,
                 delay=2580,
                 damage=400 + 16 * vEhc.getV(1, 1),
-                hit=3.5 * 3,  # 3~4 * 3타, 잔시 쿨동안 11회 사용
+                hit=3.5 * 3,  # 3~4 * 3타
                 remain=9999999,
             )
             .isV(vEhc, 1, 1)
@@ -389,7 +396,6 @@ class JobGenerator(ck.JobGenerator):
 
         GuidedArrow.onTick(MagicArrow)
 
-        QuibberFullBurstBuff.onAfter(QuibberFullBurstDOT)
         QuibberFullBurstBuff.onAfter(QuibberFullBurst)
         QuibberFullBurst.onTick(MagicArrow)
 
@@ -428,6 +434,20 @@ class JobGenerator(ck.JobGenerator):
                 lambda armor_piercing: armor_piercing.check_modifier(),
             )
         ArmorPiercing.protect_from_running()
+        FlashMirage.protect_from_running()
+
+        # Flash Mirage
+        AddMirageStack = FlashMirageStack.stackController(1)
+        AddMirageStack.onJustAfter(
+            core.OptionalElement(
+                partial(FlashMirageStack.judge, 49, 1),
+                core.OptionalElement(FlashMirage.is_available, FlashMirage),
+            )
+        )
+        FlashMirage.onJustAfter(FlashMirageStack.stackController(-49))
+        ArrowOfStorm.onJustAfter(AddMirageStack)
+        for sk in [ArrowRain, ImageArrow, QuibberFullBurst, OpticalIllusion]:
+            sk.onTick(AddMirageStack)
 
         ### Exports ###
         return (
@@ -435,7 +455,6 @@ class JobGenerator(ck.JobGenerator):
             [
                 globalSkill.maple_heros(chtr.level, combat_level=self.combat),
                 globalSkill.useful_combat_orders(),
-                SoulArrow,
                 SharpEyes,
                 EpicAdventure,
                 ArmorPiercing,
@@ -444,7 +463,6 @@ class JobGenerator(ck.JobGenerator):
                 ArrowRainBuff,
                 CriticalReinforce,
                 QuibberFullBurstBuff,
-                QuibberFullBurstDOT,
                 ImageArrowPassive,
                 globalSkill.soul_contract(),
             ]
@@ -461,6 +479,6 @@ class JobGenerator(ck.JobGenerator):
                 MirrorSpider,
                 OpticalIllusion,
             ]
-            + [MortalBlow]
+            + [MortalBlow, FlashMirage]
             + [ArrowOfStorm],
         )
