@@ -36,7 +36,7 @@ class RiverWrapper(core.SummonSkillWrapper):
             return core.ResultObject(
                 0,
                 self.get_modifier(),
-                580,
+                638,
                 8,
                 sname="분출 : 너울이는 강 (큰 너울)",
                 spec=self.skill.spec,
@@ -44,7 +44,7 @@ class RiverWrapper(core.SummonSkillWrapper):
         return core.ResultObject(
             0,
             self.get_modifier(),
-            215 + 120 + 128,
+            215 + 120 + 295,
             4 + 1,
             sname="분출 : 너울이는 강 (너울)",
             spec=self.skill.spec,
@@ -105,32 +105,32 @@ class JobGenerator(ck.JobGenerator):
 
         ### 1차 스킬 ###
 
-        LaraAttack = core.DamageSkill("정기 뿌리기", 510, 80+50+175, 4, modifier=core.CharacterModifier(boss_pdamage=15)).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
-        MountainKid = core.DamageSkill("산 꼬마", 0, 105+45+160+5*passive_level, (0.4+0.3)*3, cooltime=-1).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)  # 오버로드 마나 미적용
+        LaraAttack = core.DamageSkill("정기 뿌리기", 510, 80+50+306, 4, modifier=core.CharacterModifier(boss_pdamage=15)).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
+        MountainKid = core.DamageSkill("산 꼬마", 0, 105+45+178+6*passive_level, (0.4+0.3)*3, modifier=core.CharacterModifier(boss_pdamage=222+7*passive_level), cooltime=-1).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)  # 오버로드 마나 미적용
 
         ### 2차 스킬 ###
         # TODO: 최대 타격 후 종료해야 함
         ERUPTION_MODIFIER = HYPER_MODIFIER + core.CharacterModifier(pdamage=chtr.get_base_modifier().summon_rem//2)
         Eruption = core.DamageSkill("용맥 분출", 450, 0, 0, 300).wrap(core.DamageSkillWrapper)
         Eruption_River = RiverWrapper(core.SummonSkill("분출 : 너울이는 강", 0, 2000, 0, 0, (8+1)*2000, rem=False, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2))
-        Eruption_Wind = core.SummonSkill("분출 : 돌개바람", 0, 480, 63+35+157, 5, 10000, rem=False, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2).wrap(core.SummonSkillWrapper)  # 최대 5회 생성
-        Eruption_Sun_Giant = core.DamageSkill("분출 : 해돋이 우물 (거인)", 0, 120+48+247, 6, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
-        Eruption_Sun = core.SummonSkill("분출 : 해돋이 우물", 0, 1000, 85+48+117, 1, (8+1)*2000, rem=False, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2).wrap(core.SummonSkillWrapper)
-        Eruption_Sun_Bullet = core.DamageSkill("분출 : 해돋이 우물 (화산탄)", 0, 75+48+157, 3, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
+        Eruption_Wind = core.SummonSkill("분출 : 돌개바람", 0, 480, 63+35+218, 5, 10000, rem=False, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2).wrap(core.SummonSkillWrapper)  # 최대 5회 생성
+        Eruption_Sun_Giant = core.DamageSkill("분출 : 해돋이 우물 (거인)", 0, 120+48+337, 6, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
+        Eruption_Sun = core.SummonSkill("분출 : 해돋이 우물", 0, 1000, 85+48+190, 1, (8+1)*2000, rem=False, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2).wrap(core.SummonSkillWrapper)
+        Eruption_Sun_Bullet = core.DamageSkill("분출 : 해돋이 우물 (화산탄)", 0, 75+48+233, 3, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
         Eruption_Sun_Bullet_2 = core.DamageSkill("분출 : 해돋이 우물 (화산탄 다중히트)", 0, (75+48+157)*0.9, 3*4, modifier=ERUPTION_MODIFIER).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
         Eruption_Sun_DOT = core.DotSkill("분출 : 해돋이 우물 (도트)", 0, 1000, 60+48+50, 1, 8*1000).setV(vEhc, 0, 2).wrap(core.SummonSkillWrapper)  # TODO: 소환수 지속시간 -> 데미지 증가 적용여부 확인필요
 
         # 자동 시전 모드
         # TODO: 정확한 수치 확인필요
         MountainSeed = core.StackableSummonSkillWrapper(
-            core.SummonSkill("산의 씨앗", 0, 2000, 55+75+170+5*passive_level, 1, 10000+20000, 7000).setV(vEhc, 0, 2).wrap(core.SummonSkillWrapper),  # TODO: 공격 주기 확인
+            core.SummonSkill("산의 씨앗", 0, 2000, 55+75+230+7*passive_level, 1, 10000+20000, 7000).setV(vEhc, 0, 2).wrap(core.SummonSkillWrapper),  # TODO: 공격 주기 확인
             max_stack=4
         )
 
         Booster = core.BuffSkill("지팡이 가속", 0, 180000).wrap(core.BuffSkillWrapper)
 
         ### 3차 스킬 ###
-        Expression_Wind = core.BuffSkill("발현 : 바람 그네", 720, 20000+60000).wrap(core.BuffSkillWrapper)
+        Expression_Wind = core.BuffSkill("발현 : 바람 그네", 720, 30000+60000).wrap(core.BuffSkillWrapper)
         Expression_Sun = core.BuffSkill("발현 : 햇살 가득 안은 터", 690, 20000+60000, pdamage=25).wrap(core.BuffSkillWrapper)
         WakeUp = core.DamageSkill("잠 깨우기", 540, 105+45+passive_level, 4, cooltime=11000*0.8).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)  # 하이퍼 쿨감 20% 감소
         WakeUp_Add = core.DamageSkill("잠 깨우기(추가타)", 540, (105+45+passive_level)*0.6, 4*(6+9)/2, cooltime=-1).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)  # 추가타: 6~9회
@@ -138,12 +138,12 @@ class JobGenerator(ck.JobGenerator):
 
         ### 4차 스킬 ###
         Absorption = core.DamageSkill("용맥 흡수", 300, 0, 0, 300).wrap(core.DamageSkillWrapper)
-        Absorption_River_Buff = core.BuffSkill("흡수 : 강 웅덩이 물벼락 (버프)", 0, (60+self.combat)*1000).wrap(core.BuffSkillWrapper)
-        Absorption_River = core.DamageSkill("흡수 : 강 웅덩이 물벼락", 0, 500+self.combat, 6, 2500, modifier=HYPER_MODIFIER).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
-        Absorption_Wind_Buff = core.BuffSkill("흡수 : 소소리 바람 (버프)", 0, (60+self.combat)*1000).wrap(core.BuffSkillWrapper)
-        Absorption_Wind = core.DamageSkill("흡수 : 소소리 바람", 0, 215+2*self.combat, 2, 2500, modifier=HYPER_MODIFIER).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
-        Absorption_Sun_Buff = core.BuffSkill("흡수 : 햇빛 맹아리 (버프)", 0, (45+self.combat)*1000).wrap(core.BuffSkillWrapper)
-        Absorption_Sun = core.DamageSkill("흡수 : 햇빛 맹아리", 0, 200+5*self.combat, 5*6, 2500, modifier=HYPER_MODIFIER).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
+        Absorption_River_Buff = core.BuffSkill("흡수 : 강 웅덩이 물벼락 (버프)", 0, (90+self.combat)*1000, rem=True).wrap(core.BuffSkillWrapper)
+        Absorption_River = core.DamageSkill("흡수 : 강 웅덩이 물벼락", 0, 550+self.combat*12, 6, 2500, modifier=HYPER_MODIFIER).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
+        Absorption_Wind_Buff = core.BuffSkill("흡수 : 소소리 바람 (버프)", 0, (90+self.combat)*1000, rem=True).wrap(core.BuffSkillWrapper)
+        Absorption_Wind = core.DamageSkill("흡수 : 소소리 바람", 0, 237+5*self.combat, 2, 2500, modifier=HYPER_MODIFIER).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
+        Absorption_Sun_Buff = core.BuffSkill("흡수 : 햇빛 맹아리 (버프)", 0, (90+self.combat)*1000, rem=True).wrap(core.BuffSkillWrapper)
+        Absorption_Sun = core.DamageSkill("흡수 : 햇빛 맹아리", 0, 220+5*self.combat, 5*6, 2500, modifier=HYPER_MODIFIER).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
 
         Switch = core.DamageSkill("용맥 변환", 240, 0, 0, 3000+7000).wrap(core.DamageSkillWrapper)  # 성공시 쿨타임 10초
 
