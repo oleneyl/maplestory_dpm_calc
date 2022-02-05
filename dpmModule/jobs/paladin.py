@@ -117,7 +117,7 @@ class JobGenerator(ck.JobGenerator):
                 remain=(30 + vEhc.getV(0, 0) // 2) * 1000,
                 cooltime=90 * 1000,
                 red=True,
-                pdamage_indep=50 + vEhc.getV(0, 0) // 2,
+                pdamage_indep=60 + vEhc.getV(0, 0) // 2,
             )
             .isV(vEhc, 0, 0)
             .wrap(core.BuffSkillWrapper)
