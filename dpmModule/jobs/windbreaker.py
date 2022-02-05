@@ -69,7 +69,7 @@ class JobGenerator(ck.JobGenerator):
             "보우 엑스퍼트",
             att=30 + passive_level,
             crit_damage=20 + passive_level // 2,
-            pdamage_indep=25 + passive_level // 3,
+            pdamage_indep=35 + passive_level // 3,
             boss_pdamage=40 + passive_level,
         )
         AlbatrossMaximum = core.InformedCharacterModifier(
@@ -78,6 +78,9 @@ class JobGenerator(ck.JobGenerator):
             pdamage=25 + 2 * (passive_level // 3),
             armor_ignore=15 + passive_level // 3,
             crit=15 + passive_level // 3,
+        )
+        SylphsAid = core.InformedCharacterModifier(
+            "실프스 에이드", att=20, crit=10,
         )
         return [
             ElementalExpert,
@@ -88,6 +91,7 @@ class JobGenerator(ck.JobGenerator):
             BowExpert,
             WindBlessingPassive,
             AlbatrossMaximum,
+            SylphsAid,
         ]
 
     def get_not_implied_skill_list(
@@ -119,9 +123,6 @@ class JobGenerator(ck.JobGenerator):
         # Buff skills
         Storm = core.BuffSkill(
             "엘리멘트(스톰)", delay=0, remain=core.infinite_time(), pdamage=10
-        ).wrap(core.BuffSkillWrapper)
-        SylphsAid = core.BuffSkill(
-            "실프스 에이드", delay=0, remain=200 * 1000, att=20, crit=10, rem=True
         ).wrap(core.BuffSkillWrapper)
         EmeraldFlower = core.BuffSkill(
             "에메랄드 플라워", delay=900, remain=60000 * (1 + base_modifier.summon_rem / 100), armor_ignore=10,
@@ -209,7 +210,7 @@ class JobGenerator(ck.JobGenerator):
             core.DamageSkill(
                 "아이들 윔",
                 delay=600,
-                damage=(500 + 20 * vEhc.getV(4, 4)) * 0.775,
+                damage=(500 + 20 * vEhc.getV(4, 4)) * 0.865,  # (1 + 0.85 * 9) / 10 = 0.865
                 hit=10 * 3,
                 cooltime=10 * 1000,
                 red=True,
@@ -221,7 +222,7 @@ class JobGenerator(ck.JobGenerator):
             "아이들 윔(도트)",
             summondelay=0,
             delay=1000,
-            damage=500 + 20 * vEhc.getV(4, 4),
+            damage=500 + 22 * vEhc.getV(4, 4),
             hit=1,
             remain=9000,
             cooltime=-1,
@@ -235,7 +236,7 @@ class JobGenerator(ck.JobGenerator):
                 "하울링 게일",
                 summondelay=630,
                 delay=150,
-                damage=250 + 10 * vEhc.getV(1, 1),
+                damage=325 + 13 * vEhc.getV(1, 1),
                 hit=3,
                 remain=150 * 58 - 1,  # 58타
                 cooltime=20 * 1000,
@@ -297,7 +298,6 @@ class JobGenerator(ck.JobGenerator):
                 ),
                 globalSkill.useful_combat_orders(),
                 Storm,
-                SylphsAid,
                 SharpEyes,
                 EmeraldFlower,
                 StormBringerDummy,
