@@ -123,7 +123,7 @@ class JobGenerator(ck.JobGenerator):
         self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]
     ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-        WeaponConstant = core.InformedCharacterModifier("무기상수")
+        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=20)
         Mastery = core.InformedCharacterModifier(
             "숙련도", mastery=95 + ceil(passive_level / 2)
         )

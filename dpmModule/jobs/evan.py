@@ -168,7 +168,7 @@ class JobGenerator(ck.JobGenerator):
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
 
-        WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 0)
+        WeaponConstant = core.InformedCharacterModifier("무기상수", pdamage_indep=20)
         Mastery = core.InformedCharacterModifier("숙련도", mastery=95+passive_level)  
         Interaction = core.InformedCharacterModifier("교감",pdamage = 20)
         ElementalResetActive = core.InformedCharacterModifier("엘리멘탈 리셋(사용)", prop_ignore = 10)
