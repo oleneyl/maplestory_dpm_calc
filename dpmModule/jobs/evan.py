@@ -48,7 +48,7 @@ class MagicParticleWrapper(core.DamageSkillWrapper):
 
 class ZodiacRayWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2):
-        skill = core.SummonSkill("조디악 레이", 780, 180, 400+16*vEhc.getV(num1,num2), 6, (14+vEhc.getV(num1,num2)//10)*1000+240, cooltime = 180*1000, red=True, modifier = MDF(armor_ignore = 100)).isV(vEhc,num1,num2)
+        skill = core.SummonSkill("조디악 레이", 780, 180, 580+16*vEhc.getV(num1,num2), 6, (14+vEhc.getV(num1,num2)//10)*1000+240, cooltime = 180*1000, red=True, modifier = MDF(armor_ignore = 100)).isV(vEhc,num1,num2)
         self.mana = 0
         self.open = False
         super(ZodiacRayWrapper, self).__init__(skill)
@@ -160,10 +160,12 @@ class JobGenerator(ck.JobGenerator):
         HighDragonPotential = core.InformedCharacterModifier("하이 드래곤 포텐셜",boss_pdamage = 20+passive_level)
 
         SpiralOfManaPassive = core.InformedCharacterModifier("스파이럴 오브 마나(패시브)", att=5+vEhc.getV(0,0))
-        
+
+        MagicAcceleration = core.InformedCharacterModifier("매직 액셀레이션", stat_main=20)
+
         return [InheritWill, LinkedMagic,
             HighWisdom, SpellMastery, ElementalReset, CriticalMagic, MagicAmplification, DragonPotential,
-            MagicMastery, DragonFury, HighDragonPotential, SpiralOfManaPassive]
+            MagicMastery, DragonFury, HighDragonPotential, SpiralOfManaPassive, MagicAcceleration]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -224,7 +226,7 @@ class JobGenerator(ck.JobGenerator):
         SwiftOfWind = core.SummonSkill("스위프트 오브 윈드", 0, 360, 215 + self.combat, 2*3, 3360, cooltime=-1, modifier=MDF(pdamage_indep=-35)).setV(vEhc, 3, 2, False).wrap(MirSkillWrapper)
         SwiftOfThunder = core.SummonSkill("스위프트 오브 썬더", 0, 2280/SWIFT_OF_THUNDER_HIT, 450 + self.combat, 6, 2280, cooltime=-1).setV(vEhc, 4, 2, False).wrap(MirSkillWrapper)
         # DiveOfThunder - 안씀
-        DiveOfEarth = core.SummonSkill("다이브 오브 어스", 0, 2310/DIVE_OF_EARTH_HIT, 190 + 420, 6, 2310, cooltime=-1, modifier = MDF(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(MirSkillWrapper) # 컴뱃오더스: 위컴알 기준 적용이나 인게임에서 미적용
+        DiveOfEarth = core.SummonSkill("다이브 오브 어스", 0, 2310/DIVE_OF_EARTH_HIT, 190 + 420 + self.combat, 6, 2310, cooltime=-1, modifier = MDF(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(MirSkillWrapper) # 컴뱃오더스: 위컴알 기준 적용이나 인게임에서 미적용
         BreathOfWind = core.SummonSkill("브레스 오브 윈드", 0, 450, 215+self.combat+BREATH_OF_WIND_BONUS*(65+self.combat+85), 5, 3510, cooltime=-1).setV(vEhc, 3, 2, False).wrap(MirSkillWrapper)
         BreathOfEarth = core.SummonSkill("브레스 오브 어스", 0, 450, 280+self.combat, 5, 3510, cooltime=-1).setV(vEhc, 1, 2, False).wrap(MirSkillWrapper)
         
@@ -248,7 +250,7 @@ class JobGenerator(ck.JobGenerator):
 
         DragonBreak = core.SummonSkill("드래곤 브레이크", 0, 360, 450+18*vEhc.getV(5,5), 7, 2500, cooltime = 20000, red=True).isV(vEhc,5,5).wrap(MirSkillWrapper)
         DragonBreakBack = core.SummonSkill("드래곤 브레이크-돌아와!", 30, 510, 150+6*vEhc.getV(5,5), 3 * BREAK_BACK_HIT_RATE, 5000, cooltime=-1).isV(vEhc,5,5).wrap(core.SummonSkillWrapper)
-        ImperialBreath = core.SummonSkill("임페리얼 브레스", 0, 240, 500+20*vEhc.getV(5,5), 7, 4000, cooltime=-1).isV(vEhc,5,5).wrap(MirSkillWrapper)
+        ImperialBreath = core.SummonSkill("임페리얼 브레스", 0, 240, 550+20*vEhc.getV(5,5), 7, 4000, cooltime=-1).isV(vEhc,5,5).wrap(MirSkillWrapper)
 
         ZodiacRay = ZodiacRayWrapper(vEhc, 4, 2)
 
