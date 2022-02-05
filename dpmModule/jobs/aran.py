@@ -102,7 +102,8 @@ class JobGenerator(ck.JobGenerator):
         )
         Might = core.InformedCharacterModifier("마이트", att=40)
         HighMastery = core.InformedCharacterModifier(
-            "하이 마스터리", att=30 + passive_level, crit_damage=8
+            "하이 마스터리", att=30 + passive_level, crit_damage=8,
+            pdamage_indep=8,
         )
         AdvancedFinalAttackPassive = core.InformedCharacterModifier(
             "어드밴스드 파이널 어택(패시브)",
@@ -224,7 +225,7 @@ class JobGenerator(ck.JobGenerator):
         SmashSwingIncr = core.BuffSkill(
             "스윙 연구 II(버프)",
             delay=0,
-            remain=5000 + 3000,
+            remain=20000,
             pdamage_indep=15 + passive_level,
             pdamage=20,
             cooltime=-1,
@@ -360,7 +361,7 @@ class JobGenerator(ck.JobGenerator):
                 delay=30,  # 게더링캐쳐 캔슬 : 1680 -> 30
                 damage=800 + ADRENALINE_BOOST_PASSIVE,
                 hit=5,
-                cooltime=150 * 1000,
+                cooltime=90 * 1000,
             ).setV(vEhc, 5, 2, True),
             AdrenalineBoost,
         )
@@ -371,7 +372,7 @@ class JobGenerator(ck.JobGenerator):
                 delay=1000,
                 damage=500 + ADRENALINE_BOOST_PASSIVE,
                 hit=3,
-                remain=10 * 1000,
+                remain=8 * 1000,
                 cooltime=-1,
             ).setV(vEhc, 5, 2, True),
             AdrenalineBoost,
@@ -390,9 +391,9 @@ class JobGenerator(ck.JobGenerator):
             core.BuffSkill(
                 "인스톨 마하",
                 delay=30,  # 게더링캐쳐 캔슬 : 960 -> 30
-                remain=(30 + vEhc.getV(1, 1)) * 1000,
+                remain=(25 + vEhc.getV(1, 1) // 2) * 1000,
                 patt=5 + vEhc.getV(1, 1),
-                cooltime=150 * 1000,
+                cooltime=9 * 1000,
                 red=True,
             )
             .isV(vEhc, 1, 1)
@@ -511,7 +512,7 @@ class JobGenerator(ck.JobGenerator):
 
         # 인스톨 마하
         InstallMaha.onAfter(InstallMahaBlizzard)
-        InstallMaha.onAfter(Combo.stackController(100))
+        InstallMaha.onAfter(Combo.stackController(80))
 
         # 브랜디쉬 마하
         BrandishMahaHolder.onAfter(core.RepeatElement(BrandishMaha, 2))
