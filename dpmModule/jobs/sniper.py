@@ -22,7 +22,7 @@ class JobGenerator(ck.JobGenerator):
         self.preEmptiveSkills = 1
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(armor_ignore=55, boss_pdamage=48, crit_damage=25)
+        return core.CharacterModifier(armor_ignore=25, boss_pdamage=17, crit_damage=25)
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -41,9 +41,11 @@ class JobGenerator(ck.JobGenerator):
     ):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         CriticalShot = core.InformedCharacterModifier("크리티컬 샷", crit=40)
+        CrossbowAccelation = core.InformedCharacterModifier("크로스보우 엑셀레이션", stat_main=20)
         PhisicalTraining = core.InformedCharacterModifier(
             "피지컬 트레이닝", stat_main=30, stat_sub=30
         )
+        SoulArrow = core.InformedCharacterModifier("소울 애로우 : 석궁", att=30)
         CrossBowMastery = core.InformedCharacterModifier("크로스보우 마스터리", pdamage_indep=20)
         MarkmanShip = core.InformedCharacterModifier(
             "마크맨쉽", armor_ignore=25, pdamage=15
@@ -52,20 +54,34 @@ class JobGenerator(ck.JobGenerator):
             "크로스보우 엑스퍼트", att=30 + passive_level, crit_damage=15
         )
         ElusionStep = core.InformedCharacterModifier(
-            "일루젼 스탭", stat_main=40 + passive_level
+            "일루젼 스탭", stat_main=80 + passive_level * 2
         )
         AdditionalBolt = core.InformedCharacterModifier(
             "어디셔널 볼트", pdamage_indep=15 + passive_level
         )
+        AdvancedEnhanceArrow = core.InformedCharacterModifier(
+            "어드밴스드 인핸스 애로우(패시브)", pdamage_indep=8, armor_ignore=20
+        )
+        ArrowIllusion = core.InformedCharacterModifier(
+            "애로우 일루전(패시브)", armor_ignore=30 + self.combat
+        )
+        LastmanStanding = core.InformedCharacterModifier(
+            "라스트맨 스탠딩", pdamage_indep=10 + passive_level
+        )
 
         return [
             CriticalShot,
+            CrossbowAccelation,
             PhisicalTraining,
+            SoulArrow,
             CrossBowMastery,
             MarkmanShip,
             CrossBowExpert,
             ElusionStep,
             AdditionalBolt,
+            AdvancedEnhanceArrow,
+            ArrowIllusion,
+            LastmanStanding,
         ]
 
     def get_not_implied_skill_list(
@@ -83,50 +99,23 @@ class JobGenerator(ck.JobGenerator):
         return [WeaponConstant, Mastery, MortalBlow, ExtremeArchery]
 
     def generate(self, vEhc, chtr: ck.AbstractCharacter, options: Dict[str, Any]):
-        """
-        거리 400
-
-        스나, 피어싱, 롱레트, 프리저
-        """
-        DISTANCE = options.get("distance", 400)
+        """ """
         passive_level = chtr.get_base_modifier().passive_level + self.combat
-
-        def weakness_finding(distance: float):
-            return core.CharacterModifier(
-                armor_ignore=min(
-                    20 + passive_level // 2 + distance // 40 * 3,
-                    20 + 30 + passive_level,
-                )
-            )
-
-        def distancing_sense(distance: float):
-            return core.CharacterModifier(
-                armor_ignore=max(min((-200 + distance) // -18 * 2, 12), 0),
-                pdamage_indep=max(min((distance - 200) // 18 * 2, 12), 0),
-            )
-
-        LASTMAN_STANDING = core.CharacterModifier(pdamage_indep=10 + passive_level)
-        PASSIVE_MODIFIER = (
-            weakness_finding(DISTANCE) + distancing_sense(DISTANCE) + LASTMAN_STANDING
-        )
-        PASSIVE_MODIFIER_SUMMON = weakness_finding(0) + distancing_sense(0)
         MORTAL_BLOW = core.CharacterModifier(pdamage=2)
+        ADDITIONAL_BOLT = 1
 
         # Buff skills
-        SoulArrow = core.BuffSkill(
-            name="소울 애로우",
-            delay=0,
-            remain=300 * 1000,
-            att=30,
-            rem=True,
-        ).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill(
             name="샤프 아이즈",
-            delay=660,
+            delay=0,  # 펫버프
             remain=(300 + 10 * self.combat) * 1000,
             crit=20 + ceil(self.combat / 2),
             crit_damage=15 + ceil(self.combat / 2),
             rem=True,
+        ).wrap(core.BuffSkillWrapper)
+
+        FocusOn = core.BuffSkill(
+            name="포커스 온", delay=0, remain=15000, pdamage_indep=4, armor_ignore=13
         ).wrap(core.BuffSkillWrapper)
 
         BoolsEye = core.BuffSkill(
@@ -147,41 +136,68 @@ class JobGenerator(ck.JobGenerator):
             pdamage=10,
         ).wrap(core.BuffSkillWrapper)
 
+        EnhanceStack = core.StackSkillWrapper(core.BuffSkill("인핸스 중첩", 0, 9999999), 3)
+        EnhanceSnipingTarget = core.BuffSkill(
+            "인핸스 스나이핑(표식)", delay=0, remain=5000, cooltime=-1
+        ).wrap(core.BuffSkillWrapper)
+
         # Damage Skills
-        # 롱레인지 트루샷: 나무위키피셜 DPM 떨어지므로 보류
-        Snipping = (
+        SNIPING_MODIFIER = (
+            core.CharacterModifier(
+                crit=100,
+                armor_ignore=25 + ceil(self.combat // 3) * 2,
+                pdamage=20,
+                boss_pdamage=10,
+            )
+            + MORTAL_BLOW
+        )
+        Sniping = (
             core.DamageSkill(
                 name="스나이핑",
-                delay=630,
+                delay=600,
                 damage=465 + self.combat * 5,
-                hit=9 + 1,
-                modifier=core.CharacterModifier(
-                    crit=100,
-                    armor_ignore=25 + ceil(self.combat // 3) * 2,
-                    pdamage=20,
-                    boss_pdamage=10,
-                )
-                + PASSIVE_MODIFIER
-                + MORTAL_BLOW,
+                hit=9 + 1 + ADDITIONAL_BOLT,
+                modifier=SNIPING_MODIFIER + MORTAL_BLOW,
+            )
+            .setV(vEhc, 0, 2, False)
+            .wrap(core.DamageSkillWrapper)
+        )
+        EnhanceSniping = (
+            core.DamageSkill(
+                name="인핸스 스나이핑",
+                delay=630,
+                damage=510 + passive_level * 7,
+                hit=10 + 1 + ADDITIONAL_BOLT,
+                modifier=SNIPING_MODIFIER + MORTAL_BLOW,
+            )
+            .setV(vEhc, 0, 2, False)
+            .wrap(core.DamageSkillWrapper)
+        )
+        EnhanceSnipingTargetBonus = (
+            core.DamageSkill(
+                name="인핸스 스나이핑(추가타)",
+                delay=0,
+                damage=250 + passive_level * 2,
+                hit=5 + ADDITIONAL_BOLT,
+                modifier=SNIPING_MODIFIER + MORTAL_BLOW,
             )
             .setV(vEhc, 0, 2, False)
             .wrap(core.DamageSkillWrapper)
         )
 
-        TrueSnippingTick = (
+        TrueSnipingTick = (
             core.DamageSkill(
                 name="트루 스나이핑(타격)",
                 delay=690,
                 damage=950 + vEhc.getV(2, 2) * 30,
-                hit=14 + 1,
+                hit=14 + ADDITIONAL_BOLT,
                 modifier=core.CharacterModifier(pdamage=100, armor_ignore=100)
-                + weakness_finding(999) + distancing_sense(999) + LASTMAN_STANDING
                 + MORTAL_BLOW,
             )
             .isV(vEhc, 2, 2)
             .wrap(core.DamageSkillWrapper)
         )
-        TrueSnipping = (
+        TrueSniping = (
             core.DamageSkill("트루 스나이핑", 120, 0, 0, cooltime=180 * 1000, red=True)
             .isV(vEhc, 2, 2)
             .wrap(core.DamageSkillWrapper)
@@ -192,9 +208,9 @@ class JobGenerator(ck.JobGenerator):
                 name="차지드 애로우",
                 delay=0,
                 damage=750 + vEhc.getV(1, 1) * 30,
-                hit=10 + 1,
+                hit=10 + ADDITIONAL_BOLT,
                 cooltime=-1,
-                modifier=PASSIVE_MODIFIER + MORTAL_BLOW,
+                modifier=MORTAL_BLOW,
             )
             .isV(vEhc, 1, 1)
             .wrap(core.DamageSkillWrapper)
@@ -211,27 +227,18 @@ class JobGenerator(ck.JobGenerator):
                 name="프리저",
                 summondelay=0,
                 delay=1710,
-                damage=390 if DISTANCE <= 280 else 0,
+                damage=390,
                 hit=1,
                 remain=220 * 1000,
-                modifier=PASSIVE_MODIFIER_SUMMON,
             )
             .setV(vEhc, 3, 3, False)
             .wrap(core.SummonSkillWrapper)
-        )  # 이볼브 종료시 자동소환되므로 딜레이 0, 사거리 280보다 멀면 공격안함
-        Evolve = adventurer.EvolveWrapper(
-            vEhc, 5, 5, Freezer, modifier=PASSIVE_MODIFIER_SUMMON
-        )
+        )  # 이볼브 종료시 자동소환되므로 딜레이 0
+        Evolve = adventurer.EvolveWrapper(vEhc, 5, 5, Freezer)
 
-        GuidedArrow = bowmen.GuidedArrowWrapper(
-            vEhc, 4, 4, modifier=PASSIVE_MODIFIER + MORTAL_BLOW
-        )
+        GuidedArrow = bowmen.GuidedArrowWrapper(vEhc, 4, 4, modifier=MORTAL_BLOW)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(
-            vEhc,
-            0,
-            0,
-            break_modifier=PASSIVE_MODIFIER + MORTAL_BLOW,
-            spider_modifier=PASSIVE_MODIFIER_SUMMON,
+            vEhc, 0, 0, break_modifier=MORTAL_BLOW
         )
 
         SplitArrow = (
@@ -239,8 +246,8 @@ class JobGenerator(ck.JobGenerator):
                 name="스플릿 애로우(공격)",
                 delay=0,
                 damage=600 + vEhc.getV(0, 0) * 24,
-                hit=5 + 1,
-                modifier=PASSIVE_MODIFIER + MORTAL_BLOW,
+                hit=5 + ADDITIONAL_BOLT,
+                modifier=MORTAL_BLOW,
             )
             .isV(vEhc, 0, 0)
             .wrap(core.DamageSkillWrapper)
@@ -249,14 +256,13 @@ class JobGenerator(ck.JobGenerator):
             core.BuffSkill(
                 name="스플릿 애로우",
                 delay=810,
-                remain=60 * 1000,
+                remain=72 * 1000,
                 cooltime=120 * 1000,
                 red=True,
             )
             .isV(vEhc, 0, 0)
             .wrap(core.BuffSkillWrapper)
         )
-        # TODO : 스플릿애로우 계산
 
         RepeatingCartrige = (
             core.BuffSkill(
@@ -275,9 +281,9 @@ class JobGenerator(ck.JobGenerator):
                 name="풀버스트 샷",
                 delay=810,
                 damage=300 + 12 * vEhc.getV(0, 0),
-                hit=(9 + 1) * 4,
+                hit=(9 + ADDITIONAL_BOLT) * 4,
                 cooltime=-1,
-                modifier=PASSIVE_MODIFIER + MORTAL_BLOW,
+                modifier=MORTAL_BLOW,
             )
             .isV(vEhc, 0, 0)
             .wrap(core.DamageSkillWrapper)
@@ -289,7 +295,6 @@ class JobGenerator(ck.JobGenerator):
                 delay=0,
                 damage=150,
                 hit=0.4,
-                modifier=PASSIVE_MODIFIER,
             )
             .setV(vEhc, 4, 2, True)
             .wrap(core.DamageSkillWrapper)
@@ -301,26 +306,42 @@ class JobGenerator(ck.JobGenerator):
             vEhc, chtr, 3, 3, 20 + 20 + ceil(self.combat / 2)
         )  # 샤프 아이즈 20 + 불스아이 20. 불스아이를 항상 크리인에 맞춰쓰므로 가동률 고려 X
 
+        Sniping.onAfter(
+            core.OptionalElement(
+                EnhanceSnipingTarget.is_active, EnhanceSnipingTargetBonus
+            )
+        )
+        Sniping.onAfter(EnhanceStack.stackController(1))
+        EnhanceSniping.onAfter(EnhanceSnipingTarget)
+        EnhanceSniping.onAfter(EnhanceStack.stackController(-3))
+        EnhanceSnipingTargetBonus.onJustAfter(
+            EnhanceSnipingTarget.controller(0, "set_disabled")
+        )
+
         SplitArrowOption = core.OptionalElement(
             SplitArrowBuff.is_active, SplitArrow, name="스플릿 애로우 여부 확인"
         )
-        Snipping.onAfter(SplitArrowOption)
+        Sniping.onAfter(SplitArrowOption)
+        EnhanceSniping.onAfter(SplitArrowOption)
         FullBurstShot.onAfter(core.RepeatElement(SplitArrowOption, 4))
 
-        TrueSnippingDeal = core.RepeatElement(TrueSnippingTick, 7)
-        TrueSnipping.onBefore(ChargedArrowHold.controller(10000, name="차징 유예"))
-        TrueSnipping.onAfter(TrueSnippingDeal)
+        TrueSnipingDeal = core.RepeatElement(TrueSnipingTick, 7)
+        TrueSniping.onBefore(ChargedArrowHold.controller(10000, name="차징 유예"))
+        TrueSniping.onAfter(TrueSnipingDeal)
 
         # TODO: 차지드 캔슬 구현할것 / 딜레이 중간에 끊는게 구현되기 전까지 어려움
         ChargedArrowHold.onTick(
             core.OptionalElement(partial(CartrigeStack.judge, 0, -1), ChargedArrow)
         )  # 풀버스트샷 도중에는 차지드 동시발사가 안됨
 
-        for sk in [Snipping, TrueSnippingTick, ChargedArrow]:
+        for sk in [EnhanceSniping, TrueSnipingTick, ChargedArrow, FullBurstShot]:
+            sk.onAfter(FocusOn)
+
+        for sk in [Sniping, EnhanceSniping, TrueSnipingTick, ChargedArrow]:
             sk.onAfter(FinalAttack)
         FullBurstShot.onAfter(core.RepeatElement(FinalAttack, 4))
 
-        ChargedArrowHold.set_disabled_and_time_left(5000)  # 최초 차징 시간
+        ChargedArrowHold.set_disabled_and_time_left(3000)  # 최초 차징 시간
 
         RepeatingCartrige.onAfter(CartrigeStack.stackController(8))
         FullBurstShot.onAfter(CartrigeStack.stackController(-1))
@@ -328,7 +349,11 @@ class JobGenerator(ck.JobGenerator):
         BasicAttack = core.DamageSkill("기본 공격", 0, 0, 0).wrap(core.DamageSkillWrapper)
         BasicAttack.onAfter(
             core.OptionalElement(
-                partial(CartrigeStack.judge, 1, 1), FullBurstShot, Snipping
+                partial(CartrigeStack.judge, 1, 1),
+                FullBurstShot,
+                core.OptionalElement(
+                    partial(EnhanceStack.judge, 3, 1), EnhanceSniping, Sniping
+                ),
             )
         )
 
@@ -337,7 +362,6 @@ class JobGenerator(ck.JobGenerator):
             [
                 globalSkill.maple_heros(chtr.level, combat_level=self.combat),
                 globalSkill.useful_combat_orders(),
-                SoulArrow,
                 SharpEyes,
                 BoolsEye,
                 EpicAdventure,
@@ -347,8 +371,8 @@ class JobGenerator(ck.JobGenerator):
                 SplitArrowBuff,
                 globalSkill.soul_contract(),
             ]
-            + [TrueSnipping, ChargedArrowHold, ChargedArrow]
+            + [TrueSniping, ChargedArrowHold, ChargedArrow]
             + [Freezer, Evolve, GuidedArrow, MirrorBreak, MirrorSpider]
-            + []
+            + [EnhanceSnipingTarget, FocusOn]
             + [BasicAttack],
         )
