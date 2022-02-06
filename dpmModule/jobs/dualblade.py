@@ -34,6 +34,10 @@ class JobGenerator(ck.JobGenerator):
         PhisicalTraining = core.InformedCharacterModifier(
             "피지컬 트레이닝", stat_main=30, stat_sub=30
         )
+        DualBladeAccelation = core.InformedCharacterModifier(
+            "이도 액셀레이션",
+            stat_main=20,
+        )
 
         SornsEffect = core.InformedCharacterModifier("쏜즈 이펙트", att=30 + passive_level)
         DualBladeExpert = core.InformedCharacterModifier(
@@ -51,6 +55,7 @@ class JobGenerator(ck.JobGenerator):
         return [
             Karma,
             PhisicalTraining,
+            DualBladeAccelation,
             SornsEffect,
             DualBladeExpert,
             Sharpness,
@@ -86,10 +91,6 @@ class JobGenerator(ck.JobGenerator):
         ruleset.add_rule(
             ConditionRule("써든레이드", "파이널 컷", check_final_cut_time), RuleSet.BASE
         )
-        ruleset.add_rule(
-            ConditionRule("아수라", "카르마 퓨리", lambda sk: sk.is_cooltime_left(6000, 1)),
-            RuleSet.BASE,
-        )  # TODO: 쿨감 4초기준 최적화, 쿨감 수치를 받아와서 처리해야 함
         ruleset.add_rule(
             ComplexConditionRule("레디 투 다이", ["블레이드 스톰", "얼티밋 다크 사이트"], sync_burst_buff),
             RuleSet.BASE,
@@ -194,25 +195,23 @@ class JobGenerator(ck.JobGenerator):
 
         FlashBang = core.DamageSkill(
             "플래시 뱅",
-            delay=390,
+            delay=450,
             damage=250,
             hit=1,
             cooltime=60000,
             red=True,
-        ).wrap(
-            core.DamageSkillWrapper
-        )  # 임의 딜레이.
+        ).wrap(core.DamageSkillWrapper)
         FlashBangDebuff = core.BuffSkill(
             "플래시 뱅(디버프)",
             delay=0,
             remain=50000 / 2,
             cooltime=-1,
-            pdamage=10 * 0.9,
+            pdamage=10,
         ).wrap(core.BuffSkillWrapper)
         Venom = core.DotSkill(
             "페이탈 베놈",
             summondelay=0,
-            dealy=1000,
+            delay=1000,
             damage=160 + 5 * passive_level,
             hit=2 + (10 + passive_level) // 6,  # 3회 중첩
             remain=8000,
@@ -243,8 +242,8 @@ class JobGenerator(ck.JobGenerator):
             core.DamageSkill(
                 "아수라(틱)",
                 delay=300,
-                damage=420,
-                hit=4,
+                damage=693,
+                hit=5,
                 modifier=core.CharacterModifier(armor_ignore=100),
             )
             .setV(vEhc, 1, 2, False)
@@ -274,8 +273,8 @@ class JobGenerator(ck.JobGenerator):
         BladeStormTick = (
             core.DamageSkill(
                 "블레이드 스톰(틱)",
-                delay=210,
-                damage=350 + 10 * vEhc.getV(0, 0),
+                delay=120,
+                damage=565 + 12 * vEhc.getV(0, 0),
                 hit=5,
                 modifier=core.CharacterModifier(armor_ignore=100),
             )
@@ -345,9 +344,9 @@ class JobGenerator(ck.JobGenerator):
             core.DamageSkill(
                 "헌티드 엣지-나찰",
                 delay=0,
-                damage=200 + 8 * vEhc.getV(0, 0),
+                damage=410 + 8 * vEhc.getV(0, 0),
                 hit=4 * 5,
-                cooltime=14000,
+                cooltime=12000,
                 red=True,
                 modifier=core.CharacterModifier(armor_ignore=30),
             )
@@ -379,13 +378,11 @@ class JobGenerator(ck.JobGenerator):
         for sk in [PhantomBlow, AsuraTick, BladeStormTick]:
             sk.onAfter(Venom)
 
-        AsuraRepeat = core.RepeatElement(
-            AsuraTick, 26
-        )  # 최대 28회까지 가능하나, dpm 최적화를 위해 26회로 설정함.
+        AsuraRepeat = core.RepeatElement(AsuraTick, 14)
         Asura.onAfter(AsuraRepeat)
         AsuraRepeat.onAfter(AsuraEnd)
 
-        BladeStormRepeat = core.RepeatElement(BladeStormTick, 48)
+        BladeStormRepeat = core.RepeatElement(BladeStormTick, 42)
         BladeStorm.onAfter(BladeStormRepeat)
         BladeStormRepeat.onAfter(BladeStormEnd)
 
