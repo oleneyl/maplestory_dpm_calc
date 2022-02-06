@@ -19,7 +19,7 @@ def get_args():
     parser.add_argument("--cdr", nargs="+", type=int, default=[0, 2, 4])
     parser.add_argument("--time", type=int, default=1800)
     parser.add_argument("--thread", type=int, default=4)
-    parser.add_argument("--base", type=int, default=0)
+    parser.add_argument("--base", type=str, default="median")
 
     return parser.parse_args()
 
@@ -36,13 +36,15 @@ def test(args):
     return jobname, cdr, description, dpm, loss, alt
 
 def get_base(df, base):
-    if base == 1:
+    if base == "mean":
         return df["best"].mean()
-    if base == 2:
+    if base == "min":
         return df["best"].min()
-    if base == 3:
+    if base == "bishop":
         return df["best"][df.index[df["직업"] == "비숍"][0]]
-    return df["best"].median()
+    if base == "median":
+        return df["best"].median()
+    raise ValueError("invalid parameter for base")
 
 if __name__ == "__main__":
     args = get_args()
