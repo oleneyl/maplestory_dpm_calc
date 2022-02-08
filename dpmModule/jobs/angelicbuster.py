@@ -45,7 +45,7 @@ class JobGenerator(ck.JobGenerator):
         CallOfAncient = core.InformedCharacterModifier("콜 오브 에인션트", att = 40)
         AffinityIII = core.InformedCharacterModifier("어피니티 III", stat_main = 40, pdamage = 20)
         AffinityIV = getAffinityIV(1272.08) # 트리니티 평균 주기가 바뀔 때 마다 변경해 줘야함. 1000 * time(초) / (트리니티 사용 횟수).
-        TrinityPassive = core.InformedCharacterModifier("트리니티(패시브)", pdamage_indep = ceil((30 + self.combat) / 3), armor_ignore = ceil((30 + self.combat) / 2))
+        TrinityPassive = core.InformedCharacterModifier("트리니티(패시브)", pdamage_indep = 10 + ceil((30 + self.combat) / 2), armor_ignore = ceil((30 + self.combat) / 2))
         SoulShooterExpert = core.InformedCharacterModifier("소울슈터 엑스퍼트", att = 30 + passive_level, crit = 30 + passive_level, crit_damage = 15 + ceil(passive_level / 2))
         
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
