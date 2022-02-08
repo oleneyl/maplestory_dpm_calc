@@ -58,7 +58,7 @@ class JobGenerator(ck.JobGenerator):
         # 주스탯 미반영, 추가바람.
         AbyssalRage = core.InformedCharacterModifier("어비셜 레이지", att=40)
         AdvancedDesperadoMastery = core.InformedCharacterModifier("어드밴스드 데스페라도 마스터리", att=50+passive_level, crit_damage=8)
-        OverwhelmingPower = core.InformedCharacterModifier("오버휄밍 파워", pdamage=30+passive_level)
+        OverwhelmingPower = core.InformedCharacterModifier("오버휄밍 파워", pdamage=30+passive_level, pdamage_indep=15+passive_level//3)
         DefenseExpertise = core.InformedCharacterModifier("디펜스 엑스퍼타이즈", armor_ignore=30+passive_level)
         DemonicSharpness = core.InformedCharacterModifier("데모닉 샤프니스", crit=20)
 
@@ -88,8 +88,6 @@ class JobGenerator(ck.JobGenerator):
         """
         하이퍼: 익시드 3종, 실드 체이싱 리인포스, 엑스트라 타겟 적용
 
-        데몬 프렌지 - 중첩당 10.8타/s, 2중첩, HP 100%
-
         블러드 피스트 쿨타임마다 3중첩 (캔슬 X)
 
         디멘션 소드 - 재시전 X
@@ -97,7 +95,6 @@ class JobGenerator(ck.JobGenerator):
 
         passive_level = chtr.get_base_modifier().passive_level+self.combat
 
-        FRENZY_STACK = options.get('frenzy_hit', 2)  # 프렌지 중첩 수
         BATS_HIT = options.get('bats', 24)  # 배츠 스웜 타수
         DIMENSION_PHASE = options.get('dimension_phase', 1)
 
@@ -128,7 +125,7 @@ class JobGenerator(ck.JobGenerator):
         ExecutionExceed = core.DamageSkill("익시드: 엑스큐션(강화)", 540, 540+8*self.combat, 6, modifier=core.CharacterModifier(armor_ignore=30+self.combat, pdamage=20+20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
 
         # 최대 10회 공격
-        ShieldChasing = core.DamageSkill("실드 체이싱", 720, 500+10*self.combat, 2*2*(8+2), cooltime=6000, modifier=core.CharacterModifier(armor_ignore=30+passive_level, pdamage=20+20), red=True).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
+        ShieldChasing = core.DamageSkill("실드 체이싱", 480, 500+10*self.combat, 2*2*(8+2), cooltime=6000, modifier=core.CharacterModifier(armor_ignore=30+passive_level, pdamage=20+20), red=True).setV(vEhc, 0, 2).wrap(core.DamageSkillWrapper)
 
         ArmorBreak = core.DamageSkill("아머 브레이크", 660, 350+5*self.combat, 4, cooltime=-1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
         ArmorBreakBuff = core.BuffSkill("아머 브레이크(디버프)", 0, (30+self.combat)*1000, armor_ignore=30+self.combat).wrap(core.BuffSkillWrapper)
@@ -147,13 +144,12 @@ class JobGenerator(ck.JobGenerator):
 
         ### V skills ###
 
-        # 초당 10.8타 가정
-        # http://www.inven.co.kr/board/maple/2304/23974
-        DemonFrenzy = core.SummonSkill("데몬 프렌지", 0, 1000/10.8, 300+8*vEhc.getV(0, 0), FRENZY_STACK, 99999999).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
+        # 분당 250타 가정
+        DemonFrenzy = core.SummonSkill("데몬 프렌지", 0, 240, 390+15*vEhc.getV(0, 0), 3, 99999999).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
         # 블피 (3중첩)
         # TODO: 블피캔슬 구현 (다른스킬 시전중에 블피사용시 그 전에 사용한 스킬 딜레이가 캔슬되고 즉시 블피가 발동)
-        DemonicBlast = core.DamageSkill("블러드 피스트", 330, 800+32*vEhc.getV(0, 0), 7, cooltime=17000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
+        DemonicBlast = core.DamageSkill("블러드 피스트", 330, 725+29*vEhc.getV(0, 0), 7, cooltime=12000, red=True, modifier=core.CharacterModifier(crit=100, armor_ignore=100)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         # 평딜 기준
         # 참고자료: https://blog.naver.com/oe135/221372243858
@@ -200,17 +196,8 @@ class JobGenerator(ck.JobGenerator):
 
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
-        """
-        프렌지 발동 타이밍을 앞당기기 위한 initializer입니다.
-        일반적으로 SummonSkill이 BuffSkill보다 실행 순위가 밀리기 때문에 이 코드가 없으면 프렌지가 7~8초 후에서야 실행됩니다.
-        """
-
-        FrenzyInit = core.BuffSkill("데몬 프렌지(개시)", 0, 999999999).wrap(core.BuffSkillWrapper)
-        FrenzyInit.onAfter(DemonFrenzy)
-        DemonFrenzy.protect_from_running()
-
         return(BasicAttack,
-               [FrenzyInit, globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_hyper_body_demonavenger(),
+               [globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(), globalSkill.useful_hyper_body_demonavenger(),
                 Booster, ReleaseOverload, DiabolicRecovery, WardEvil, ForbiddenContract, DemonicFortitude, AuraWeaponBuff, AuraWeapon,
                 globalSkill.soul_contract(), Revenant, RevenantHit, CallMastema, AnotherGoddessBuff, AnotherVoid] +
                [DemonFrenzy, ShieldChasing, ArmorBreakBuff] +

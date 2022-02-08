@@ -75,7 +75,7 @@ class JobGenerator(ck.JobGenerator):
         InfernoRize = core.DamageSkill("인페르노라이즈", 570, 350+3*self.combat, 10, cooltime = 30*1000, modifier = core.CharacterModifier(pdamage_indep = 90 + self.combat), red = True).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         
         #Full speed, No Combat Orders
-        OrbitalFlame = core.DamageSkill("오비탈 플레임 IV", 210, 215 + self.combat, 3 * 2 * (210 / flamewizardDefaultSpeed), modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
+        OrbitalFlame = core.DamageSkill("오비탈 플레임 IV", 210, 330 + self.combat, 3 * 2 * (210 / flamewizardDefaultSpeed), modifier = core.CharacterModifier(armor_ignore = 20)).setV(vEhc, 0, 2, False).wrap(core.DamageSkillWrapper)
         BlazingExtinction = core.SummonSkill("블레이징 익스팅션", 660, 990, 310+2*self.combat, 3+1, 990 * blazingExtinctionHit - 1, cooltime=5000, red=True, modifier = core.CharacterModifier(pdamage = 20)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
         CygnusPhalanx = cygnus.PhalanxChargeWrapper(vEhc, 2, 1)
         BlazingOrbital = core.DamageSkill("블레이징 오비탈 플레임", 180, 330+13*vEhc.getV(0,0), 6 * blazingOrbitalHit, cooltime = 5000, red = True, modifier = core.CharacterModifier(armor_ignore = 50)).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)    #4타 가정
@@ -96,7 +96,7 @@ class JobGenerator(ck.JobGenerator):
             lambda sk: (8 + (sk.stack - 2) * 2)
         )
         
-        InfinityFlameCircleTick = core.DamageSkill("인피니티 플레임 서클", 180, 500+20*vEhc.getV(3,3), 7, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #1틱
+        InfinityFlameCircleTick = core.DamageSkill("인피니티 플레임 서클", 120, 550+22*vEhc.getV(3,3), 8, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #1틱
         InfinityFlameCircleInit = core.DamageSkill("인피니티 플레임 서클(개시)", 360, 0, 0, cooltime = 15*6*1000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
 
         # 84타
@@ -110,7 +110,7 @@ class JobGenerator(ck.JobGenerator):
         DragonSlave.onAfter(DragonSlaveEnd)
         DragonSlaveInit.onAfter(DragonSlave)
     
-        InfinityFlameCircle = core.RepeatElement(InfinityFlameCircleTick, 39)
+        InfinityFlameCircle = core.RepeatElement(InfinityFlameCircleTick, 59)
         
         InfinityFlameCircleInit.onAfter(InfinityFlameCircle)
         

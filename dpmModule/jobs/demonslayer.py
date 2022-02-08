@@ -50,7 +50,7 @@ class JobGenerator(ck.JobGenerator):
         DeathCurse = core.InformedCharacterModifier("데스 커스", pdamage=1)
         Outrage = core.InformedCharacterModifier("아웃레이지", att=50, crit=20)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝", stat_main=30, stat_sub=30)
-        Concentration = core.InformedCharacterModifier("컨센트레이션", pdamage_indep=25)
+        Concentration = core.InformedCharacterModifier("컨센트레이션", pdamage_indep=30)
         AdvancedWeaponMastery = core.InformedCharacterModifier("어드밴스드 웨폰 마스터리", att=50+passive_level, crit_damage=15+passive_level//3)
 
         DarkBindPassive = core.InformedCharacterModifier("다크 바인드(패시브)", armor_ignore=30+self.combat)
@@ -102,12 +102,11 @@ class JobGenerator(ck.JobGenerator):
         DevilCryBuff = core.BuffSkill("데빌 크라이(위협)", 0, 20000, cooltime=-1, armor_ignore=15+self.combat//3).wrap(core.BuffSkillWrapper)
 
         InfinityForce = core.BuffSkill("인피니티 포스", 990, (50+10*(self.combat//5))*1000, cooltime=(200-self.combat)*1000, rem=True, red=True).wrap(core.BuffSkillWrapper)
-        Metamorphosis = core.BuffSkill("메타모포시스", 1680, (180+4*self.combat)*1000, rem=True, pdamage=35+self.combat).wrap(core.BuffSkillWrapper)
+        Metamorphosis = core.BuffSkill("메타모포시스", 0, (180+4*self.combat)*1000, rem=True, pdamage=35+self.combat).wrap(core.BuffSkillWrapper)
         MetamorphosisSummon = core.SummonSkill("메타모포시스(소환)", 0, 510, 250+5*self.combat, 1, (180+4*self.combat)*(1+buff_rem/100)*1000, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
         MetamorphosisSummon_BB = core.DamageSkill("메타모포시스(블블)", 0, (250+5*self.combat)*0.9, 1, cooltime=-1).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
 
         # 블루블러드는 소환수 적용이 안됨.
-        BlueBlood = core.BuffSkill("블루 블러드", 750, 60000, cooltime=120000-60000).wrap(core.BuffSkillWrapper)  # 모든 공격에 최종데미지의 90%로 추가타 발생. 포스50수급시 -3초, 인피니티 포스시 4초마다 2초 감소, 모든 스킬 포스소모량 20%감소.
         Cerberus = core.DamageSkill("서버러스", 690, 450, 6, cooltime=5000, modifier=core.CharacterModifier(boss_pdamage=50, armor_ignore=50)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 포스50 추가흡수
         CerberusAuto = core.DamageSkill("서버러스(자동)", 0, 450, 6, cooltime=-1, modifier=core.CharacterModifier(boss_pdamage=50, armor_ignore=50)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 포스50 추가흡수
         DemonFortitude = core.BuffSkill("데몬 포티튜드", 0, 60000, cooltime=120000).wrap(core.BuffSkillWrapper)
@@ -126,7 +125,7 @@ class JobGenerator(ck.JobGenerator):
         DemonBaneInit = core.DamageSkill("데몬 베인(개시)", 240, 0, 0, cooltime=240*1000, red=True).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
         DemonBaneTick = core.DamageSkill("데몬 베인(1)", 3760/16, 325+13*vEhc.getV(0, 0), 6, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)  # 3760ms 16회
         DemonBane2Pre = core.DamageSkill("데몬 베인(2)(선딜)", 600, 0, 0, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
-        DemonBane2Tick = core.DamageSkill("데몬 베인(2)", 2400/21, 650+26*vEhc.getV(0, 0), 7, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)  # 2400ms 21회
+        DemonBane2Tick = core.DamageSkill("데몬 베인(2)", 2400/21, 785+31*vEhc.getV(0, 0), 7, cooltime=-1, modifier=core.CharacterModifier(crit=50, armor_ignore=30)).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)  # 2400ms 21회
         DemonBane2After = core.DamageSkill("데몬 베인(2)(후딜)", 240, 0, 0, cooltime=-1).isV(vEhc, 0, 0).wrap(core.DamageSkillWrapper)
 
         ######   Skill Wrapper   ######
@@ -172,7 +171,7 @@ class JobGenerator(ck.JobGenerator):
 
         return(BasicAttackWrapper,
                [globalSkill.maple_heros(chtr.level, combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                Booster, DemonSlashRemainTime, DevilCryBuff, InfinityForce, Metamorphosis, BlueBlood, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
+                Booster, DemonSlashRemainTime, DevilCryBuff, InfinityForce, Metamorphosis, DemonFortitude, AuraWeaponBuff, AuraWeapon, DemonAwakning,
                 *demon.AnotherWorldWrapper(vEhc, 0, 0), globalSkill.soul_contract()] +
                [Cerberus, DevilCry, DemonSlash1, SpiritOfRageEnd] +
                [MetamorphosisSummon, CallMastema, DemonAwakningSummon, SpiritOfRage, Orthros, Orthros_, DemonBaneInit, MirrorBreak, MirrorSpider] +

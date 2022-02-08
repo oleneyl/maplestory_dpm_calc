@@ -16,25 +16,6 @@ from typing import Any, Dict
 https://github.com/Monolith11/memo/wiki/Zero-Skill-Mechanics
 '''
 
-
-class CriticalBindWrapper(core.BuffSkillWrapper):
-    def __init__(self, alphaState: core.BuffSkillWrapper, betaState: core.BuffSkillWrapper):
-        skill = core.BuffSkill("크리티컬 바인드", 0, 4000, cooltime=35000, crit=30, crit_damage=20)
-        super(CriticalBindWrapper, self).__init__(skill)
-        self.alphaState = alphaState
-        self.betaState = betaState
-
-    def get_modifier(self):
-        if self.alphaState.is_not_active():
-            return self.disabledModifier
-        return super(CriticalBindWrapper, self).get_modifier()
-
-    def is_usable(self):
-        if self.betaState.is_not_active():
-            return False
-        return super(CriticalBindWrapper, self).is_usable()
-
-
 class JobGenerator(ck.JobGenerator):
     # 제로는 쓸컴뱃 효율이 낮으나 일단 딜이 증가하므로 사용
     # 패시브 레벨 +1 어빌 사용 불가능
@@ -55,23 +36,21 @@ class JobGenerator(ck.JobGenerator):
 
     def get_passive_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         Mastery = core.InformedCharacterModifier("숙련도", mastery=90)
+        CommonSpec = core.InformedCharacterModifier("태도/대검 마스터리 - 공용스펙", pdamage_indep=10, crit=30)
         ResolutionTime = core.InformedCharacterModifier("리졸브 타임", pdamage_indep=25, stat_main=50)
 
-        return [Mastery, ResolutionTime]
+        return [Mastery, CommonSpec, ResolutionTime]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         ArmorSplit = core.InformedCharacterModifier("아머 스플릿", armor_ignore=50)
         return [ArmorSplit]
 
     def get_modifier_optimization_hint(self):
-        return core.CharacterModifier(crit=15, pdamage=75, armor_ignore=20, crit_damage=22)
+        return core.CharacterModifier(pdamage=75, armor_ignore=20, crit_damage=22)
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
         마스터리 별개로 적용 : 알파 : 1.34, 베타 : 1.49
-
-        디바인 스위프트 사용
-        리미트 브레이크 도중에만 디바인 포스 사용
 
         코강 순서
 
@@ -97,8 +76,8 @@ class JobGenerator(ck.JobGenerator):
         # 베타 마스터리의 공격력 +4는 무기 기본 공격력 차이
         # 제네시스 무기의 경우 +5로 변경 필요
 
-        AlphaMDF = core.CharacterModifier(pdamage_indep=5, crit=40, att=40, armor_ignore=30, crit_damage=50) + core.CharacterModifier(pdamage_indep=34)
-        BetaMDF = core.CharacterModifier(pdamage_indep=5, crit=15, boss_pdamage=30, att=80+4) + core.CharacterModifier(pdamage_indep=49)
+        AlphaMDF = core.CharacterModifier(att=40, armor_ignore=30, crit_damage=50+20, crit=30) + core.CharacterModifier(pdamage_indep=34)  # 알파 기본스펙 + 크바 패시브
+        BetaMDF = core.CharacterModifier(boss_pdamage=30, att=80+4) + core.CharacterModifier(pdamage_indep=49)
 
         AlphaState = core.BuffSkill("상태-알파", 0, 9999*10000, cooltime=-1,
                                     pdamage_indep=AlphaMDF.pdamage_indep,
@@ -203,8 +182,6 @@ class JobGenerator(ck.JobGenerator):
 
         AdvancedEarthBreakWave = core.DamageSkill("어드밴스드 어스 브레이크(파동)", 0, 285+3*self.combat, 10, modifier=extra_damage(6)).setV(vEhc, 4, 2, False).wrap(core.DamageSkillWrapper)
         AdvancedEarthBreakElectric = core.SummonSkill("어드밴스드 어스 브레이크(전기)", 0, 1000, 340+3*self.combat, 1, 5000, cooltime=-1, modifier=extra_damage(6)).setV(vEhc, 4, 2, False).wrap(core.SummonSkillWrapper)
-
-        CriticalBind = CriticalBindWrapper(AlphaState, BetaState)
 
         #### 초월자 스킬 ####
 
@@ -343,7 +320,7 @@ class JobGenerator(ck.JobGenerator):
         LimitBreak.onBefore(SetBeta)
         LimitBreak.onAfter(LimitBreakAttack)
         LimitBreak.onAfter(LimitBreakCDR)
-        LimitBreak.onEventElapsed(LimitBreakFinal, (30+vEhc.getV(0, 0)//2)*1000-1)  # 버프 종료 직전에 막타
+        LimitBreak.onAfter(LimitBreakFinal)  # 버프 시작 직후 막타
         LimitBreakFinal.add_runtime_modifier(BetaState, lambda beta: extra_damage(15) if beta.is_active() else core.CharacterModifier())
 
         for sk in [TimeDistortion, SoulContract]:
@@ -388,7 +365,7 @@ class JobGenerator(ck.JobGenerator):
         return(ComboHolder,
                [globalSkill.maple_heros(chtr.level, name="륀느의 가호", combat_level=0), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
                 DivineForce, AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, RhinneBless,
-                DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, LimitBreakFinal, CriticalBind,
+                DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, LimitBreakFinal,
                 SoulContract] +
                [TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta, MirrorBreak, MirrorSpider] +
                [AdvancedStormBreakSummon, AdvancedStormBreakElectric, AdvancedEarthBreakElectric,

@@ -64,7 +64,7 @@ class JobGenerator(ck.JobGenerator):
         ElementalExpert = core.InformedCharacterModifier("엘리멘탈 엑스퍼트",stat_main = chtr.level // 2)
         ElementalHarmony = core.InformedCharacterModifier("엘리멘탈 하모니",patt = 10)
 
-        ElementalDarkness = core.InformedCharacterModifier("엘리멘탈 : 다크니스", pdamage_indep=15)
+        ElementalDarkness = core.InformedCharacterModifier("엘리멘탈 : 다크니스", pdamage_indep=20)
 
         ThrowingMastery = core.InformedCharacterModifier("스로잉 마스터리",pdamage = 30)
         CriticalThrowing = core.InformedCharacterModifier("크리티컬 스로잉",crit = 35, crit_damage = 10)
@@ -76,9 +76,11 @@ class JobGenerator(ck.JobGenerator):
 
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 3, 3)
 
+        SpiritThrowing = core.InformedCharacterModifier("스피릿 스로잉", att=10)
+
         return [ElementalExpert, ElementalHarmony, ElementalDarkness, ThrowingMastery, CriticalThrowing, PhisicalTraining, 
             Adrenalin, ThrowingExpert, DarknessBlessing,
-            ReadyToDiePassive]
+            ReadyToDiePassive, SpiritThrowing]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -114,8 +116,7 @@ class JobGenerator(ck.JobGenerator):
         ElementalDarkness = core.BuffSkill("엘리멘탈 : 다크니스", 0, 180000, armor_ignore = (4+1+1+1) * (2+1+1+1), att = 60).wrap(core.BuffSkillWrapper) # 펫버프, 사이펀 바이탈리티-리인포스 합산
         ElementalDarknessDOT = core.DotSkill("엘리멘탈 : 다크니스(도트)", 0, 1000, 80 + 40 + 50 + 50, 2+1+1+1, 100000000, cooltime = -1).wrap(core.DotSkillWrapper)
         Booster = core.BuffSkill("부스터", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper) # 펫버프
-        ShadowServent = core.BuffSkill("쉐도우 서번트", 990, 180000).wrap(core.BuffSkillWrapper) # 펫버프 등록불가
-        SpiritThrowing = core.BuffSkill("스피릿 스로잉", 0, 180000, rem  = True).wrap(core.BuffSkillWrapper) # 펫버프
+        ShadowServent = core.BuffSkill("쉐도우 서번트", 0, 180000).wrap(core.BuffSkillWrapper) # 펫버프
 
         ShadowBatStack = ShadowBatStackWrapper(core.BuffSkill("쉐도우 배트(스택)", 0, 0, cooltime=-1))
         ShadowBat = core.DamageSkill("쉐도우 배트", 0, 150 + 120 + 150 + 200 + 4*passive_level, 1).setV(vEhc, 1, 2, True).wrap(core.DamageSkillWrapper)
@@ -146,7 +147,7 @@ class JobGenerator(ck.JobGenerator):
         ReadyToDie = thieves.ReadyToDieWrapper(vEhc, 3, 3)
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
-        ShadowSpear = core.BuffSkill("쉐도우 스피어", 600, (50+vEhc.getV(0,0))*1000, red = True, cooltime = int(181 - vEhc.getV(0,0) / 2)*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
+        ShadowSpear = core.BuffSkill("쉐도우 스피어", 600, (57+vEhc.getV(0,0))*1000, red = True, cooltime = (192 - vEhc.getV(0,0) // 2)*1000).isV(vEhc,0,0).wrap(core.BuffSkillWrapper)
         ShadowSpearSmall = core.DamageSkill("쉐도우 스피어(창)", 0, 100+4*vEhc.getV(0,0), 4).isV(vEhc,0,0).wrap(core.DamageSkillWrapper)
         ShadowSpearLarge = core.SummonSkill("쉐도우 스피어(거대 창)", 0, 3000, 400 + 16*vEhc.getV(0,0), 6, (50+vEhc.getV(0,0))*1000 - 1, cooltime = -1).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)
 
@@ -227,7 +228,7 @@ class JobGenerator(ck.JobGenerator):
                 
         return( QuintupleThrow,
                 [globalSkill.maple_heros(chtr.level, name = "시그너스 나이츠", combat_level=self.combat), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
-                    ElementalDarkness, Booster, ShadowServent, SpiritThrowing, ShadowBatStack,
+                    ElementalDarkness, Booster, ShadowServent, ShadowBatStack,
                     ShadowElusion, ReadyToDie, Dominion, cygnus.CygnusBlessWrapper(vEhc, 0, 0, chtr.level),
                     GloryOfGuardians, ShadowSpear, ShadowServentExtend, ShadowBite, ShadowBiteBuff,
                     globalSkill.soul_contract()] +\
