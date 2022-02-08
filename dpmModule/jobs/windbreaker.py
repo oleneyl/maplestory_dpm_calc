@@ -210,7 +210,7 @@ class JobGenerator(ck.JobGenerator):
             core.DamageSkill(
                 "아이들 윔",
                 delay=600,
-                damage=(500 + 20 * vEhc.getV(4, 4)) * 0.865,  # (1 + 0.85 * 9) / 10 = 0.865
+                damage=(500 + 22 * vEhc.getV(4, 4)) * 0.865,  # (1 + 0.85 * 9) / 10 = 0.865
                 hit=10 * 3,
                 cooltime=10 * 1000,
                 red=True,
@@ -222,7 +222,7 @@ class JobGenerator(ck.JobGenerator):
             "아이들 윔(도트)",
             summondelay=0,
             delay=1000,
-            damage=500 + 22 * vEhc.getV(4, 4),
+            damage=500 + 20 * vEhc.getV(4, 4),
             hit=1,
             remain=9000,
             cooltime=-1,
