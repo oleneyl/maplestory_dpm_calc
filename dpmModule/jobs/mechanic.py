@@ -83,7 +83,7 @@ class JobGenerator(ck.JobGenerator):
         MechanicMastery = core.InformedCharacterModifier("메카닉 마스터리", att=20, crit=10, crit_damage=5)
         PhisicalTraining = core.InformedCharacterModifier("피지컬 트레이닝", stat_main=30, stat_sub=30)
 
-        OverTunning = core.InformedCharacterModifier("오버 튜닝", pdamage_indep=20, crit=20, armor_ignore=30)
+        OverTunning = core.InformedCharacterModifier("오버 튜닝", pdamage_indep=25, crit=20, armor_ignore=30)
         MetalArmorExtreme = core.InformedCharacterModifier("메탈아머 익스트림", att=55 + passive_level)
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 1, 2)
 
