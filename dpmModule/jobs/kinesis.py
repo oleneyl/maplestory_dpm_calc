@@ -10,6 +10,7 @@ from ..status.ability import Ability_tool
 from . import globalSkill, jobutils
 from .jobbranch import magicians
 from .jobclass import demon
+from ..execution.rules import RuleSet, DisableRule
 from typing import Any, Dict
 
 
@@ -29,7 +30,7 @@ class KinesisStackWrapper(core.StackSkillWrapper):
         return result
 
     def charge(self):
-        delta = (self._max - self.stack) // 2
+        delta = self._max // 2
         result = super(KinesisStackWrapper, self).vary(delta)
         return result
 
@@ -95,8 +96,8 @@ class JobGenerator(ck.JobGenerator):
         PsychicChargingPassive = core.InformedCharacterModifier("사이킥 차징(패시브)",boss_pdamage = 30 + self.combat)
         PsychicForce3Passive = core.InformedCharacterModifier("사이킥 포스 3(패시브)",att = 10)
         
-        ESPBattleOrder = core.InformedCharacterModifier("ESP 배틀오더",att = 50 + 2*passive_level, pdamage = 20 + passive_level)
-        Transcendence = core.InformedCharacterModifier("각성",pdamage_indep = 30 + passive_level)
+        ESPBattleOrder = core.InformedCharacterModifier("ESP 배틀오더",att = 50 + 2*passive_level, pdamage = 20 + passive_level, pdamage_indep=20+passive_level)
+        Transcendence = core.InformedCharacterModifier("각성", pdamage_indep=40 + passive_level)
         SupremeConcentration = core.InformedCharacterModifier("정신집중-유지", buff_rem = 20+passive_level)
         Transport = core.InformedCharacterModifier("전달",armor_ignore = 25 + passive_level)
         Mastery = core.InformedCharacterModifier("숙달",crit_damage = 10 + passive_level)
@@ -110,10 +111,14 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat     
         WeaponConstant = core.InformedCharacterModifier("무기상수",pdamage_indep = 20)
         Mastery = core.InformedCharacterModifier("숙련도", mastery=90+2*passive_level)
-        PsychicForce3Passive = core.InformedCharacterModifier("사이킥 포스 3(패시브)", pdamage_indep = 20)
-        return [WeaponConstant, Mastery, PsychicForce3Passive]
+        return [WeaponConstant, Mastery]
         
-        
+    
+    def get_ruleset(self):
+        ruleset = RuleSet()
+        ruleset.add_rule(DisableRule('싸이킥 포스3'), RuleSet.BASE)
+        return ruleset
+
 
     def generate(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         '''
@@ -140,13 +145,13 @@ class JobGenerator(ck.JobGenerator):
         PsychicShield = core.BuffSkill("사이킥 실드", 0, 180000).wrap(core.BuffSkillWrapper)
 
         Ultimate_Material = core.DamageSkill("얼티메이트-메테리얼", 630, 700 + 3*self.combat, 10, modifier = ULTIMATE_AWAKENING).setV(vEhc, 1, 2, False).wrap(core.DamageSkillWrapper)#   7
-        PsychicDrain = core.SummonSkill("싸이킥 드레인", 540, 500, 150, 1, 15000, cooltime = 5000, rem = False).setV(vEhc, 4, 5, False).wrap(core.SummonSkillWrapper) # 1칸+
+        PsychicDrain = core.SummonSkill("싸이킥 드레인", 540, 500, 150, 1, 30000, cooltime = 3000, rem = False).setV(vEhc, 4, 5, False).wrap(core.SummonSkillWrapper) # 1칸+
         
         PsychicForce3 = core.DamageSkill("싸이킥 포스3", 270, 0, 0).wrap(core.DamageSkillWrapper)
         PsychicForce3Dot = core.DotSkill("싸이킥 포스3(도트)", 0, 1000, 403.125, 1, 30000, cooltime = -1).wrap(core.DotSkillWrapper) # ~20초 평균 퍼뎀
         PsychicGround = core.BuffSkill("싸이킥 그라운드2", 270, 30000 + 15000, rem = False, armor_ignore = 10 + 6*1, pdamage_indep = 10 + 3*1).wrap(core.BuffSkillWrapper)
         PsychicGroundDamage = core.DamageSkill("싸이킥 그라운드2(공격)", 0, 500+10*self.combat, 1).wrap(core.DamageSkillWrapper) # +1
-        PsycoBreak = core.BuffSkill("싸이코 브레이크", 630, 30000, pdamage_indep = min(5 * 2 * 2, 15), rem = False).wrap(core.BuffSkillWrapper) #+1
+        PsycoBreak = core.BuffSkill("싸이코 브레이크", 630, 45000, pdamage_indep = min(5 * 2 * 2, 15), rem = False).wrap(core.BuffSkillWrapper) #+1
         PsycoBreakDamage = core.DamageSkill("싸이코 브레이크(공격)", 0, 1000 +7*self.combat, 4).wrap(core.DamageSkillWrapper)
         
         TeleKinesis = core.DamageSkill("텔레키네시스", 0, 350, 0.7).setV(vEhc, 5, 3, False).wrap(core.DamageSkillWrapper)
@@ -163,17 +168,17 @@ class JobGenerator(ck.JobGenerator):
         EverPsychic = core.DamageSkill("에버 싸이킥", 870, 400, 16, cooltime = 120000).wrap(core.DamageSkillWrapper) # 캔슬 통해 딜레 870ms
         EverPsychicFinal = core.DamageSkill("에버 싸이킥(최종)", 0, 1500, 1,  modifier = core.CharacterModifier(armor_ignore = 50, crit = 100)).wrap(core.DamageSkillWrapper)
         #Psycometry = core.DamageSkill()
-        PsychicOver = core.BuffSkill("싸이킥 오버", 0, 30000, cooltime = 210000).wrap(core.BuffSkillWrapper) # 소모량 절반 / 포인트 지속증가(초당 1)
-        PsychicOverSummon = core.SummonSkill("싸이킥 오버(소환)", 0, 750, 0, 0, 30000, cooltime = -1).wrap(core.SummonSkillWrapper)
+        PsychicOver = core.BuffSkill("싸이킥 오버", 0, 26000, cooltime = 180000).wrap(core.BuffSkillWrapper) # 소모량 절반 / 포인트 지속증가(초당 1)
+        PsychicOverSummon = core.SummonSkill("싸이킥 오버(소환)", 0, 750, 0, 0, 26000, cooltime = -1).wrap(core.SummonSkillWrapper)
         
         #5차
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
         AnotherGoddessBuff, AnotherVoid = demon.AnotherWorldWrapper(vEhc, 0, 0)
         AnotherHeal = core.SummonSkill("회복의 축복", 0, 4000/0.25, 0, 0, 40000, cooltime=-1).wrap(core.SummonSkillWrapper)
         
-        PsychicTornado = core.SummonSkill("싸이킥 토네이도", 540, 1000, 500+20*vEhc.getV(2,2), 4, 20000, red = True, cooltime = 120000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)# -15
-        PsychicTornadoFinal_1 = core.DamageSkill("싸이킥 토네이도(1)", 540, (200+3*vEhc.getV(2,2))*3, 2, cooltime=-1).wrap(core.DamageSkillWrapper)
-        PsychicTornadoFinal_2 = core.DamageSkill("싸이킥 토네이도(2)", 0, (350+10*vEhc.getV(2,2))*3, 10*3, cooltime=-1).wrap(core.DamageSkillWrapper)
+        PsychicTornado = core.SummonSkill("싸이킥 토네이도", 540, 1000, 750+30*vEhc.getV(2,2), 4, 20000, red = True, cooltime = 180000).isV(vEhc,2,2).wrap(core.SummonSkillWrapper)# -15
+        PsychicTornadoFinal_1 = core.DamageSkill("싸이킥 토네이도(1)", 540, (313+4*vEhc.getV(2,2))*3, 2, cooltime=-1).wrap(core.DamageSkillWrapper)
+        PsychicTornadoFinal_2 = core.DamageSkill("싸이킥 토네이도(2)", 0, (525+15*vEhc.getV(2,2))*3, 10*3, cooltime=-1).wrap(core.DamageSkillWrapper)
 
         UltimateMovingMatter = core.SummonSkill("얼티메이트-무빙 매터", 480, 25000/64, 500+20*vEhc.getV(0,0), 5, 25000, cooltime = 90000, red=True, modifier = ULTIMATE_AWAKENING).isV(vEhc,0,0).wrap(core.SummonSkillWrapper)# -10
         UltimateMovingMatterFinal = core.DamageSkill("얼티메이트-무빙 매터(최종)", 0, 700+28*vEhc.getV(0,0), 12, modifier = ULTIMATE_AWAKENING).wrap(core.DamageSkillWrapper)
@@ -247,7 +252,7 @@ class JobGenerator(ck.JobGenerator):
         
         UltimatePsychicBulletBlackhole.onTick(PsychicPoint.stackController(1))
         
-        PsychicCharging.onConstraint(core.ConstraintElement("5포인트 이하", PsychicPoint, partial(PsychicPoint.judge,5,-1)))
+        PsychicCharging.onConstraint(core.ConstraintElement("10포인트 이하", PsychicPoint, partial(PsychicPoint.judge,10,-1)))
         PsychicCharging.onAfter(PsychicPoint.chargeController())
 
         UltimateTrain.onConstraint(core.ConstraintElement("15포인트", PsychicPoint, partial(PsychicPoint.judge_ultimate,15)))
