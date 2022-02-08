@@ -153,6 +153,7 @@ class JobGenerator(ck.JobGenerator):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
         CheapShotII = core.CharacterModifier(crit=2, crit_damage=10+ceil(passive_level/4))  # 위크포인트 컨버징 어택
         CheapShotIIBleed = core.DotSkill("위크포인트 컨버징 어택(출혈)", 0, 1000, 110+2*passive_level, 1, 99999999).wrap(core.DotSkillWrapper)
+        CheapShotIISlowBuff = core.BuffSkill("체인아츠 : 스트로크(슬로우)", 0, 99999999, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
         CheapShotIIBleedBuff = core.BuffSkill("위크포인트 컨버징 어택(출혈)(디버프)", 0, 99999999, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
         CheapShotIIAdventureMageBuff = core.BuffSkill("위크포인트 컨버징 어택(모법링크)", 0, 99999999, crit=CheapShotII.crit, crit_damage=CheapShotII.crit_damage).wrap(core.BuffSkillWrapper)
 
@@ -349,7 +350,7 @@ class JobGenerator(ck.JobGenerator):
                 WeaponVariety, Booster, SpecialPotion, ProfessionalAgent,
                 ReadyToDie, ChainArts_Fury, NovaGoddessBless,
                 SummonSlachingKnife_Horror, SummonBeatingNeedlebat_Honmy, VenomBurst_Poison,
-                globalSkill.soul_contract(), CheapShotIIBleed, CheapShotIIBleedBuff, CheapShotIIAdventureMageBuff] +
+                globalSkill.soul_contract(), CheapShotIIBleed, CheapShotIISlowBuff, CheapShotIIBleedBuff, CheapShotIIAdventureMageBuff] +
                [SummonReleasingBoom_Explode, SummonThrowingWingdaggerEnd, AD_Odnunce_Final] +
                [WingDaggerCombo, BatCombo, BommBrickCombo, ShootgunClawCombo, SimiterChaseCombo, KnifeCombo, MaleStromCombo, ChainArts_Crush, MirrorBreak, MirrorSpider] +
                [WeaponVarietyAttack, SummonThrowingWingdaggerSummon, VenomBurst, AD_Odnunce, ChainArts_Maelstorm] +
