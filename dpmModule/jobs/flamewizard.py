@@ -96,7 +96,7 @@ class JobGenerator(ck.JobGenerator):
             lambda sk: (8 + (sk.stack - 2) * 2)
         )
         
-        InfinityFlameCircleTick = core.DamageSkill("인피니티 플레임 서클", 120, 500+22*vEhc.getV(3,3), 8, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #1틱
+        InfinityFlameCircleTick = core.DamageSkill("인피니티 플레임 서클", 120, 550+22*vEhc.getV(3,3), 8, modifier = core.CharacterModifier(crit = 50, armor_ignore = 50)).isV(vEhc,3,3).wrap(core.DamageSkillWrapper) #1틱
         InfinityFlameCircleInit = core.DamageSkill("인피니티 플레임 서클(개시)", 360, 0, 0, cooltime = 15*6*1000).isV(vEhc,3,3).wrap(core.DamageSkillWrapper)
 
         # 84타
