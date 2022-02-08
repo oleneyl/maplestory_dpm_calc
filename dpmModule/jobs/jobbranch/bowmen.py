@@ -37,12 +37,11 @@ class GuidedArrowWrapper(core.SummonSkillWrapper):
     def __init__(self, vEhc, num1, num2, modifier=core.CharacterModifier()):
         skill = core.SummonSkill(
             "가이디드 애로우",
-            summondelay=720,
+            summondelay=0,
             delay=510,
             damage=400 + 16 * vEhc.getV(num1, num2),
             hit=1,
-            remain=510 * 90,
-            cooltime=60 * 1000,
+            remain=9999999,
             red=True,
             modifier=modifier,
         ).isV(vEhc, num1, num2)

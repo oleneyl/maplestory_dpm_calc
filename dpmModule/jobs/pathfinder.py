@@ -92,10 +92,11 @@ class JobGenerator(ck.JobGenerator):
 
         AdditionalTransitionPassive = core.InformedCharacterModifier("에디셔널 트랜지션(패시브)", patt=20 + passive_level)
 
+        AncientGuidance = core.InformedCharacterModifier("에인션트 가이던스(패시브)", pdamage_indep=20)
         AncientBowExpert = core.InformedCharacterModifier("에인션트 보우 엑스퍼트", att=60+2*passive_level, crit_damage=10+ceil(passive_level/3))
         IllusionStep = core.InformedCharacterModifier("일루젼 스텝", stat_main=80+2*passive_level)
         return [CriticalShot, AncientBowMastery, PhisicalTraining, EssenceOfArcher,
-                AdditionalTransitionPassive, AncientBowExpert, IllusionStep]
+                AdditionalTransitionPassive, AncientGuidance, AncientBowExpert, IllusionStep]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
         passive_level = chtr.get_base_modifier().passive_level + self.combat
@@ -134,7 +135,7 @@ class JobGenerator(ck.JobGenerator):
         AncientBowBooster = core.BuffSkill("에인션트 보우 부스터", 0, 300*1000, rem=True).wrap(core.BuffSkillWrapper)
         CurseTolerance = core.BuffSkill("커스 톨러런스", 0, 300*1000, rem=True).wrap(core.BuffSkillWrapper)
         SharpEyes = core.BuffSkill("샤프 아이즈", 0, (300+10*self.combat)*1000, crit=20+ceil(self.combat/2), crit_damage=15+ceil(self.combat/2), rem=True).wrap(core.BuffSkillWrapper)
-        AncientGuidance = core.BuffSkill("에인션트 가이던스(버프)", 0, 24000, pdamage_indep=15, cooltime=-1, rem=False).wrap(core.BuffSkillWrapper)
+        AncientGuidance = core.BuffSkill("에인션트 가이던스(버프)", 0, 40000, pdamage_indep=5, cooltime=-1, rem=False).wrap(core.BuffSkillWrapper)
         CurseTransition = core.BuffSkill("커스 트랜지션", 0, 15*1000, crit_damage=20, cooltime=-1).wrap(core.BuffSkillWrapper)  # 5스택 유지 가정
 
         # Summon skills
@@ -178,14 +179,14 @@ class JobGenerator(ck.JobGenerator):
         ## 하이퍼
         RelicEvolution = core.BuffSkill("렐릭 에볼루션", 0, 30*1000, cooltime=120*1000).wrap(core.BuffSkillWrapper)  # 딜레이 0으로 가정
 
-        AncientAstraHolder = core.DamageSkill("에인션트 아스트라", LINK_DELAY + 420, 0, 0, cooltime=80*1000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AncientAstraHolder = core.DamageSkill("에인션트 아스트라", LINK_DELAY + 420, 0, 0, cooltime=60*1000).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        AncientAstraDischarge = core.DamageSkill("에인션트 아스트라(디스차지)", 270, 500, 6, modifier=ANCIENT_ARCHERY).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 16.11초 60*6타
-        AncientAstraDischargeArrow = core.DamageSkill("에인션트 아스트라(디스차지)(화살)", 0, 300, 0.3*2*2, modifier=ANCIENT_ARCHERY).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
+        AncientAstraDischarge = core.DamageSkill("에인션트 아스트라(디스차지)", 270, 400, 6, modifier=ANCIENT_ARCHERY).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 16.11초 60*6타
+        AncientAstraDischargeArrow = core.DamageSkill("에인션트 아스트라(디스차지)(화살)", 0, 240, 0.3*2*2, modifier=ANCIENT_ARCHERY).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
 
-        AncientAstraBlast = core.DamageSkill("에인션트 아스트라(블래스트)", 1570, 1800, 10, modifier=ANCIENT_ARCHERY).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 15.72초 10*10타
+        AncientAstraBlast = core.DamageSkill("에인션트 아스트라(블래스트)", 1570, 1440, 10, modifier=ANCIENT_ARCHERY).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 15.72초 10*10타
 
-        AncientAstraTransition = core.DamageSkill("에인션트 아스트라(트랜지션)", 270, 450, 6, modifier=ANCIENT_ARCHERY).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 16.11초 60*6타
+        AncientAstraTransition = core.DamageSkill("에인션트 아스트라(트랜지션)", 270, 360, 6, modifier=ANCIENT_ARCHERY).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)  # 16.11초 60*6타
 
         EpicAdventure = core.BuffSkill("에픽 어드벤처", 0, 60*1000, cooltime=120*1000, pdamage=10).wrap(core.BuffSkillWrapper)
 
@@ -199,7 +200,7 @@ class JobGenerator(ck.JobGenerator):
 
         RavenTempest = core.SummonSkill("레이븐 템페스트", LINK_DELAY + 540, 250, 400+20*vEhc.getV(0, 0), 5, 25*1000, cooltime=120*1000, red=True, modifier=ANCIENT_ARCHERY).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
 
-        ObsidionBarrierBlast = core.SummonSkill("옵시디언 배리어", LINK_DELAY + 60, 510, 400+12*vEhc.getV(4, 4), 4, (10+vEhc.getV(4, 4)//5)*1000, cooltime=200*1000, red=True, modifier=ANCIENT_ARCHERY).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
+        ObsidionBarrierBlast = core.SummonSkill("옵시디언 배리어", LINK_DELAY + 60, 510, 400+12*vEhc.getV(4, 4), 4, (6+vEhc.getV(4, 4)//5)*1000, cooltime=120*1000, red=True, modifier=ANCIENT_ARCHERY).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
 
         RelicUnboundDischarge = core.SummonSkill("렐릭 언바운드(디스차지)", LINK_DELAY + 540, 360, 500+20*vEhc.getV(0, 0), 3, 22000, cooltime=120*1000, red=True, modifier=ANCIENT_ARCHERY).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
         # RelicUnboundBlast = core.SummonSkill("렐릭 언바운드(블래스트)", LINK_DELAY + 540, 2000, 625+25*vEhc.getV(0, 0), 8*4, 2000*4-1, cooltime=120*1000, red=True, modifier=ANCIENT_ARCHERY).isV(vEhc, 0, 0).wrap(core.SummonSkillWrapper)
@@ -257,8 +258,8 @@ class JobGenerator(ck.JobGenerator):
         RavenTempest.onAfter(RelicCharge.stackController(-300))
         RavenTempest.onTick(RelicCharge.stackController(20))
 
-        ObsidionBarrierBlast.onConstraint(core.ConstraintElement('500 이상', RelicCharge, partial(RelicCharge.judge, 500, 1)))
-        ObsidionBarrierBlast.onAfter(RelicCharge.stackController(-500))
+        ObsidionBarrierBlast.onConstraint(core.ConstraintElement('300 이상', RelicCharge, partial(RelicCharge.judge, 300, 1)))
+        ObsidionBarrierBlast.onAfter(RelicCharge.stackController(-300))
 
         RelicEvolution.onAfter(RelicCharge.stackController(1000))
 
