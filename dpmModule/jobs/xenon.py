@@ -159,7 +159,6 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = None
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
-        self.hyperStatPrefixed = 25  # 스탠스 5레벨 투자
         self.buffrem = (0, 40)
 
     # TODO: 포톤 레이가 융합과 함께 사용되는 빈도를 늘릴 수 있음
