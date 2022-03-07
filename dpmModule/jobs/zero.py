@@ -19,7 +19,7 @@ https://github.com/Monolith11/memo/wiki/Zero-Skill-Mechanics
 
 class CriticalBindWrapper(core.BuffSkillWrapper):
     def __init__(self, alphaState: core.BuffSkillWrapper, betaState: core.BuffSkillWrapper):
-        skill = core.BuffSkill("크리티컬 바인드", 0, 4000, cooltime=35000, crit=30, crit_damage=20)
+        skill = core.BuffSkill("크리티컬 바인드", 0, 4000, cooltime=35000+4000, crit=30, crit_damage=20, red=False)  # 지속시간 4초 + 저항시간 35초
         super(CriticalBindWrapper, self).__init__(skill)
         self.alphaState = alphaState
         self.betaState = betaState
@@ -46,6 +46,7 @@ class JobGenerator(ck.JobGenerator):
         self.jobname = "제로"
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
+        self.combat = 0
 
     def get_ruleset(self):
         ruleset = RuleSet()
@@ -94,11 +95,10 @@ class JobGenerator(ck.JobGenerator):
         THROWINGHIT = 5
 
         #### 마스터리 ####
-        # 베타 마스터리의 공격력 +4는 무기 기본 공격력 차이
-        # 제네시스 무기의 경우 +5로 변경 필요
+        # 베타 마스터리의 공격력 +5는 무기 기본 공격력 차이
 
         AlphaMDF = core.CharacterModifier(pdamage_indep=5, crit=40, att=40, armor_ignore=30, crit_damage=50) + core.CharacterModifier(pdamage_indep=34)
-        BetaMDF = core.CharacterModifier(pdamage_indep=5, crit=15, boss_pdamage=30, att=80+4) + core.CharacterModifier(pdamage_indep=49)
+        BetaMDF = core.CharacterModifier(pdamage_indep=5, crit=15, boss_pdamage=30, att=80+5) + core.CharacterModifier(pdamage_indep=49)
 
         AlphaState = core.BuffSkill("상태-알파", 0, 9999*10000, cooltime=-1,
                                     pdamage_indep=AlphaMDF.pdamage_indep,
@@ -386,7 +386,7 @@ class JobGenerator(ck.JobGenerator):
         EgoWeaponBeta.protect_from_running()
 
         return(ComboHolder,
-               [globalSkill.maple_heros(chtr.level, name="륀느의 가호", combat_level=0), globalSkill.useful_sharp_eyes(), globalSkill.useful_combat_orders(),
+               [globalSkill.maple_heros(chtr.level, name="륀느의 가호", combat_level=0), globalSkill.useful_sharp_eyes(),
                 DivineForce, AlphaState, BetaState, DivineLeer, AuraWeaponBuff, AuraWeapon, RhinneBless,
                 DoubleTime, TimeDistortion, TimeHolding, LimitBreak, LimitBreakCDR, LimitBreakFinal, CriticalBind,
                 SoulContract] +
