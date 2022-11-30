@@ -1,3 +1,8 @@
+Deprecation!
+===
+This project is going to be deprecated and project will migrate to [simaple](https://github.com/oleneyl/simaple)
+
+
 dpmModule
 ========================
 
