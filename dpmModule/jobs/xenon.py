@@ -159,7 +159,6 @@ class JobGenerator(ck.JobGenerator):
         self.vEnhanceNum = None
         self.ability_list = Ability_tool.get_ability_set('boss_pdamage', 'crit', 'buff_rem')
         self.preEmptiveSkills = 2
-        self.hyperStatPrefixed = 25  # 스탠스 5레벨 투자
         self.buffrem = (0, 40)
 
     # TODO: 포톤 레이가 융합과 함께 사용되는 빈도를 늘릴 수 있음
@@ -191,10 +190,11 @@ class JobGenerator(ck.JobGenerator):
         Multilateral3 = core.InformedCharacterModifier("멀티래터럴 III", pdamage=7)
         Multilateral4 = core.InformedCharacterModifier("멀티래터럴 IV", pdamage=10)
         Multilateral5 = core.InformedCharacterModifier("멀티래터럴 V", pdamage=10)
-        Multilateral6 = core.InformedCharacterModifier("멀티래터럴 VI", pdamage=5)
+        Multilateral6 = core.InformedCharacterModifier("멀티래터럴 VI", pdamage=5, pdamage_indep=15)
 
         Multilateral = [Multilateral1, Multilateral2, Multilateral3, Multilateral4, Multilateral5, Multilateral6]
 
+        ConversionStarforce = core.InformedCharacterModifier("컨버전 스타포스", stat_main=70)  # 스타포스 100 이상으로 가정, 힘덱럭 +70
         LinearPerspective = core.InformedCharacterModifier("리니어 퍼스펙티브", crit=40)
         MinoritySupport = core.InformedCharacterModifier("마이너리티 서포트", stat_main=25*3)  # 힘덱럭 25씩
         XenonMastery = core.InformedCharacterModifier("제논 마스터리", att=20)
@@ -205,7 +205,7 @@ class JobGenerator(ck.JobGenerator):
         LoadedDicePassive = pirates.LoadedDicePassiveWrapper(vEhc, 3, 4)
         ReadyToDiePassive = thieves.ReadyToDiePassiveWrapper(vEhc, 2, 2)
 
-        return Multilateral + [LinearPerspective, MinoritySupport, XenonMastery, HybridDefensesPassive, XenonExpert, OffensiveMatrix,
+        return Multilateral + [ConversionStarforce + LinearPerspective, MinoritySupport, XenonMastery, HybridDefensesPassive, XenonExpert, OffensiveMatrix,
                                LoadedDicePassive, ReadyToDiePassive]
 
     def get_not_implied_skill_list(self, vEhc, chtr : ck.AbstractCharacter, options: Dict[str, Any]):
@@ -281,11 +281,11 @@ class JobGenerator(ck.JobGenerator):
         OverloadHit_copy = core.SummonSkill("오버로드 모드(전류)(버추얼 프로젝션)", 0, (3600+10800)/2, (180+7*vEhc.getV(4, 4))*0.7, 6*4, OVERLOAD_TIME*1000-5100, cooltime=-1).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
 
         # 하이퍼 적용됨
-        Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", 930, (30000+10000)/(HOLOGRAM_FUSION_HIT/5), 250+10*vEhc.getV(4, 4), 5, 30000+10000, cooltime=100000, red=True, modifier=core.CharacterModifier(pdamage=10)).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
+        Hologram_Fusion = core.SummonSkill("홀로그램 그래피티 : 융합", 930, (30000+10000)/(HOLOGRAM_FUSION_HIT/5), 250+10*vEhc.getV(4, 4), 5, 30000+10000, cooltime=90000, red=True, modifier=core.CharacterModifier(pdamage=10)).isV(vEhc, 4, 4).wrap(core.SummonSkillWrapper)
         Hologram_Fusion_Buff = core.BuffSkill("홀로그램 그래피티 : 융합 (버프)", 0, 30000+10000, pdamage=5+vEhc.getV(4, 4)//2, rem=False, cooltime=-1).wrap(core.BuffSkillWrapper)
 
         # 30회 발동, 발사 딜레이 생략, 퍼지롭으로 충전
-        PhotonRay = PhotonRayWrapper(core.BuffSkill("포톤 레이", 0, 20000, cooltime=35000, red=True))
+        PhotonRay = PhotonRayWrapper(core.BuffSkill("포톤 레이", 0, 20000, cooltime=30000, red=True))
         PhotonRayHit = core.StackDamageSkillWrapper(
             core.DamageSkill("포톤 레이(캐논)", 0, 350+vEhc.getV(4, 4)*14, 4, cooltime=-1).isV(vEhc, 4, 4),
             PhotonRay,
