@@ -370,10 +370,10 @@ presets = [
     Preset(
         id="zero",
         job="제로",
-        description="문피쉐윈/휠스어휠어",
+        description="문피쉐윈/휠어스휠어",
         options={
             "alpha_dealcycle": "moon_pierce_shadow",
-            "beta_dealcycle": "wheel_throw_stomp_wheel_stomp",
+            "beta_dealcycle": "wheel_stomp_throw_wheel_stomp",
         },
         alt=0,
     ),
