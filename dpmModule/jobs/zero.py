@@ -88,9 +88,26 @@ class JobGenerator(ck.JobGenerator):
 
         어파스 기준
         '''
-        ALPHA_DEALCYCLE = options.get('alpha_dealcycle', 'moon_pierce_shadow')
-        BETA_DEALCYCLE = options.get('beta_dealcycle', 'wheel_throw_stomp_wheel_stomp')
+        ### 스로잉 12타 기준
+        ### 스문스문윈 / 휠어스휠스 
 
+        ### 스로잉 5타 기준
+        ### 스문스문윈 / 휠어스휠어
+
+        # spin_moon_wind
+        # moon_pierce_shadow # 기본
+        # storm_moon_pierce_shadow_wind
+        ALPHA_DEALCYCLE = options.get('alpha_dealcycle', 'spin_moon_wind')
+        # "wheel_throw_wheel_throw_stomp":  # 휠스휠스어
+        # "wheel_throw_wheel_stomp_throw":  # 휠스휠어스
+        # "wheel_stomp_wheel_stomp_throw":  # 휠어휠어스
+        # "wheel_throw_stomp_wheel_throw":  # 휠스어휠스 기본
+        # "wheel_stomp_throw_wheel_stomp":  # 휠어스휠어
+        # "wheel_stomp_throw_wheel_throw":  # 휠어스휠스
+        # "wheel_throw_stomp_wheel_stomp":  # 휠스어휠어
+        BETA_DEALCYCLE = options.get('beta_dealcycle', 'wheel_stomp_throw_wheel_stomp')
+
+        # 스로잉 횟수 5회 / 12회 
         THROWINGHIT = 5
 
         #### 마스터리 ####
@@ -185,6 +202,8 @@ class JobGenerator(ck.JobGenerator):
 
         ThrowingWeapon = core.SummonSkill("어드밴스드 스로잉 웨폰", 480, 300, 550+5*self.combat, 2, THROWINGHIT*300, cooltime=-1, modifier=extra_damage(6)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
         ThrowingWeaponLast = core.SummonSkill("어드밴스드 스로잉 웨폰(마무리)", 30, 300, 550+5*self.combat, 2, THROWINGHIT*300, cooltime=-1, modifier=extra_damage(6)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+        ThrowingWeaponTAG = core.SummonSkill("어드밴스드 스로잉 웨폰(태그)", 0, 300, 550+5*self.combat, 2, THROWINGHIT*300, cooltime=-1, modifier=extra_damage(6)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
+        ThrowingWeaponTAG2 = core.SummonSkill("어드밴스드 스로잉 웨폰(태그2)", 0, 300, 550 + 5 * self.combat, 2, THROWINGHIT * 300, cooltime=-1, modifier=extra_damage(6)).setV(vEhc, 1, 2, False).wrap(core.SummonSkillWrapper)
 
         TurningDrive = core.DamageSkill("터닝 드라이브", 360, 260, 6, modifier=extra_damage(6)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
         TurningDriveTAG = core.DamageSkill("터닝 드라이브(태그)", 0, 260, 6, modifier=extra_damage(6)).setV(vEhc, 2, 2, False).wrap(core.DamageSkillWrapper)
@@ -305,23 +324,96 @@ class JobGenerator(ck.JobGenerator):
 
         BetaState.controller(1)  # 베타로 시작
 
-        ### 딜사이클 생성
-        if ALPHA_DEALCYCLE == "moon_pierce_shadow":
-            AlphaCombo = [SetAlpha, MoonStrikeLink, UpperSlashTAG, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike,
-                          MoonStrikeLink, UpperSlashTAG, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike,
-                          MoonStrikeLink, UpperSlashTAG, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike,
+        ### 딜사이클 생성 (쿨뚝 요구 x)
+        ### 신규 딜 사이클 = 스문스문윈
+        ### 플래시 어썰터 - 프론트 슬래시
+        ### 스핀 커터 - 스로잉 웨폰
+        ### 문 스트라이크 - 어퍼 슬래시
+        ### 피어스 스트라이크 - 어드밴스드 파워 스텀프
+        ### 플래시 어썰터 - 프론트 슬래시
+        ### 스핀 커터 - 스로잉 웨폰
+        ### 문 스트라이크 - 어퍼 슬래시
+        ### 피어스 스트라이크 - 어드밴스드 파워 스텀프
+        ### 윈드 커터 - X
+
+        ### 기존 dpm 기준 딜사이클 문피쉐
+        ### 문피쉐 - 문피쉐 - 문피쉐 - 윈커
+
+        ### 요즘 실전에서 많이 사용하는 콤보
+        ### 윈커 윈스 스톰브 - 문피쉐 - 문 - 윈커
+        if ALPHA_DEALCYCLE == "spin_moon_wind":
+            AlphaCombo = [SetAlpha, FlashAssault, FrontSlashTAG,
+                          AdvancedSpinCutter, ThrowingWeaponTAG,
+                          MoonStrikeLink, UpperSlashTAG,
+                          PierceStrike, AdvancedPowerStompTAG,
+                          FlashAssault, FrontSlashTAG,
+                          AdvancedSpinCutter, ThrowingWeaponTAG2,
+                          MoonStrikeLink, UpperSlashTAG,
+                          PierceStrike, AdvancedPowerStomp,
                           WindCutterLast]
+        elif ALPHA_DEALCYCLE == "moon_pierce_shadow":
+            AlphaCombo = [SetAlpha, MoonStrikeLink, UpperSlashTAG, 
+                          PierceStrikeLink, AdvancedPowerStompTAG, 
+                          ShadowStrike, MoonStrikeLink, UpperSlashTAG, 
+                          PierceStrikeLink, AdvancedPowerStompTAG, 
+                          ShadowStrike, MoonStrikeLink, UpperSlashTAG, 
+                          PierceStrikeLink, AdvancedPowerStompTAG, 
+                          ShadowStrike, WindCutterLast]
+        elif ALPHA_DEALCYCLE == "storm_moon_pierce_shadow_wind":
+            AlphaCombo = [SetAlpha, WindCutter, GigaCrashTAG, WindStrike, JumpingCrashTAG, AdvancedStormBreak, AdvancedEarthBreakTAG,
+                          MoonStrikeLink, UpperSlashTAG, PierceStrikeLink, AdvancedPowerStompTAG, ShadowStrike,
+                          MoonStrikeLink, UpperSlashTAG, WindCutterLast]
         else:
             raise ValueError(ALPHA_DEALCYCLE)
 
-        if BETA_DEALCYCLE == "wheel_throw_stomp_wheel_throw":  # 휠스어휠스
+        ### 기본 : 휠xx휠x 에서 두번째 휠 태그로 롤썰터 빡빡하게 나감
+        ### 휠x휠xx가 실전에서는 더 유용하나 쿨뚝 없을시 한 사이클마다 60ms 손해
+        ### 휠윈드 직후 스로잉 사용시 태그로 플썰터 안나감
+        
+        # 휠x휠xx
+        if BETA_DEALCYCLE == "wheel_throw_wheel_throw_stomp":  # 휠스휠스어
             BetaCombo = [SetBeta, TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG,
-                         FrontSlash, ThrowingWeapon, AdvancedSpinCutterTAG, UpperSlash, MoonStrikeTAG, AdvancedPowerStomp, PierceStrikeTAG,
-                         TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG, FrontSlash, ThrowingWeaponLast]
+                         FrontSlash, ThrowingWeapon, AdvancedSpinCutterTAG, 
+                         TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG, 
+                         FrontSlash, ThrowingWeapon, AdvancedSpinCutterTAG, 
+                         UpperSlash, AdvancedPowerStompLast]
+        elif BETA_DEALCYCLE == "wheel_throw_wheel_stomp_throw":  # 휠스휠어스
+            BetaCombo = [SetBeta, TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG,
+                         FrontSlash, ThrowingWeapon, AdvancedSpinCutterTAG, 
+                         TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG, 
+                         UpperSlash, MoonStrikeTAG, AdvancedPowerStomp, PierceStrikeTAG,
+                         FrontSlash, ThrowingWeaponLast]
+        elif BETA_DEALCYCLE == "wheel_stomp_wheel_stomp_throw":  # 휠어휠어스
+            BetaCombo = [SetBeta, TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG,
+                         UpperSlash, MoonStrikeTAG, AdvancedPowerStomp, PierceStrikeTAG,
+                         TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG,
+                         UpperSlash, MoonStrikeTAG, AdvancedPowerStomp, PierceStrikeTAG,
+                         FrontSlash, ThrowingWeaponLast]
+        # 휠xx휠x
+        elif BETA_DEALCYCLE == "wheel_throw_stomp_wheel_throw":  # 휠스어휠스 기본
+            BetaCombo = [SetBeta, TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG,
+                         FrontSlash, ThrowingWeapon, AdvancedSpinCutterTAG, 
+                         UpperSlash, MoonStrikeTAG, AdvancedPowerStomp, PierceStrikeTAG,
+                         TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG, 
+                         FrontSlash, ThrowingWeaponLast]
+        elif BETA_DEALCYCLE == "wheel_stomp_throw_wheel_stomp":  # 휠어스휠어
+            BetaCombo = [SetBeta, TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG,
+                         UpperSlash, MoonStrikeTAG, AdvancedPowerStomp, PierceStrikeTAG,
+                         FrontSlash, FlashAssaultTAG, ThrowingWeapon, AdvancedSpinCutterTAG, 
+                         TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG, 
+                         UpperSlash, AdvancedPowerStompLast]
+        elif BETA_DEALCYCLE == "wheel_stomp_throw_wheel_throw":  # 휠어스휠스
+            BetaCombo = [SetBeta, TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG,
+                         UpperSlash, MoonStrikeTAG, AdvancedPowerStomp, PierceStrikeTAG,
+                         FrontSlash, FlashAssaultTAG, ThrowingWeapon, AdvancedSpinCutterTAG, 
+                         TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG, 
+                         FrontSlash, ThrowingWeaponLast]
         elif BETA_DEALCYCLE == "wheel_throw_stomp_wheel_stomp":  # 휠스어휠어
             BetaCombo = [SetBeta, TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG,
-                         FrontSlash, ThrowingWeapon, AdvancedSpinCutterTAG, UpperSlash, MoonStrikeTAG, AdvancedPowerStomp, PierceStrikeTAG,
-                         TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG, UpperSlash, AdvancedPowerStompLast]
+                         FrontSlash, ThrowingWeapon, AdvancedSpinCutterTAG, 
+                         UpperSlash, MoonStrikeTAG, AdvancedPowerStomp, PierceStrikeTAG,
+                         TurningDrive, AdvancedRollingCurveTAG, AdvancedWheelWind1, AdvancedRollingAssulterTAG, 
+                         UpperSlash, AdvancedPowerStompLast]
         else:
             raise ValueError(BETA_DEALCYCLE)
 
@@ -392,6 +484,6 @@ class JobGenerator(ck.JobGenerator):
                 SoulContract] +
                [TwinBladeOfTime, ShadowFlashAlpha, ShadowFlashBeta, MirrorBreak, MirrorSpider] +
                [AdvancedStormBreakSummon, AdvancedStormBreakElectric, AdvancedEarthBreakElectric,
-                WindCutterSummon, WindCutterLastSummon, ThrowingWeapon, ThrowingWeaponLast] +
+                WindCutterSummon, WindCutterLastSummon, ThrowingWeapon, ThrowingWeaponLast, ThrowingWeaponTAG, ThrowingWeaponTAG2] +
                [EgoWeaponAlpha, EgoWeaponBeta] +
                [ComboHolder])
