@@ -7,6 +7,7 @@ from functools import partial
 from ..status.ability import Ability_tool
 from ..execution.rules import ConcurrentRunRule, ConditionRule, DisableRule, RuleSet
 from . import globalSkill, jobutils
+from dpmModule.jobs.jobclass import anima
 from .jobbranch import thieves
 from math import ceil
 from typing import Any, Dict
@@ -236,8 +237,7 @@ class JobGenerator(ck.JobGenerator):
         MirrorBreak, MirrorSpider = globalSkill.SpiderInMirrorBuilder(vEhc, 0, 0)
 
         # 그란디스 여신의 축복 (아니마)
-        # 아니마 신직업 등장시 공용코드화 할것
-        AnimaGoddessBless = core.BuffSkill("그란디스 여신의 축복 (아니마)", 0, 40*1000, cooltime=240*1000, red=True, pdamage=10 + vEhc.getV(0, 0)).isV(vEhc, 0, 0).wrap(core.BuffSkillWrapper)
+        AnimaGoddessBless = anima.AnimaGoddessBlessWrapper(vEhc, 0, 0)
 
         # 환영 분신부를 대체하는 스킬 (알고리즘 구현 필요)
         # 환영 분신부 지속중에만 사용가능, 발동 중에는 환영 분신부의 지속시간이 감소하지 않음
