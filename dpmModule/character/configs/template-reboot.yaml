@@ -1,0 +1,7 @@
+---
+'4500': 4500-reboot.yaml
+'6000': 6000-reboot.yaml
+'7000': 7000-reboot.yaml
+'8000': 8000-reboot.yaml
+'8500': 8500-reboot.yaml
+_preset: preset.yaml
