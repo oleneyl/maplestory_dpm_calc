@@ -5,7 +5,7 @@ from pathlib import Path
 from dpmModule.character.characterKernel import JobGenerator
 from dpmModule.character.characterTemplate import TemplateGenerator
 from dpmModule.execution import rules
-from dpmModule.jobs import jobMap
+from dpmModule.jobs import get_generator
 from dpmModule.kernel import core, policy
 from dpmModule.status.ability import Ability_grade
 
@@ -36,7 +36,7 @@ def get_args():
 
 def dpm(args):
     preset = get_preset(args.id)
-    gen: JobGenerator = jobMap[preset.job].JobGenerator()
+    gen: JobGenerator = get_generator(preset.job).JobGenerator()
     target, weapon_stat = TemplateGenerator().get_template_and_weapon_stat(gen, str(args.ulevel), args.cdr)
     v_builder = core.AlwaysMaximumVBuilder()
     graph = gen.package(
@@ -70,7 +70,7 @@ def dpm(args):
 
 def burst10(args):
     preset = get_preset(args.id)
-    gen: JobGenerator = jobMap[preset.job].JobGenerator()
+    gen: JobGenerator = get_generator(preset.job).JobGenerator()
     target, weapon_stat = TemplateGenerator().get_template_and_weapon_stat(gen, str(args.ulevel), args.cdr)
     v_builder = core.AlwaysMaximumVBuilder()
     graph = gen.package(

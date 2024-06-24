@@ -5,7 +5,7 @@ import dpmModule.jobs as maplejobs
 
 
 def export_configuration(jobname):
-    supplier = maplejobs.jobMap[jobname]
+    supplier = maplejobs.get_generator(jobname)
     gen = supplier.JobGenerator()
     target = TemplateGenerator().get_template(gen, "6000")
 
@@ -17,8 +17,9 @@ def export_configuration(jobname):
 
     return graph.storage.export()
 
+
 def export_enhancer_configuration(jobname):
-    supplier = maplejobs.jobMap[jobname]
+    supplier = maplejobs.get_generator(jobname)
     gen = supplier.JobGenerator()
     target = TemplateGenerator().get_template(gen, "6000")
 

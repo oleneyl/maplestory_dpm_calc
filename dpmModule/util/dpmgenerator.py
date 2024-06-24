@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
 
 from dpmModule.status.ability import Ability_grade
-from dpmModule.character.characterKernel import GearedCharacter, JobGenerator
+from dpmModule.character.characterKernel import JobGenerator
 
 from ..kernel import core
 
@@ -17,8 +17,9 @@ class IndividualDPMGenerator:
     """IndividualDPMGenerator는 단일 직업의 dpm을 연산합니다. 연산을 위해 인자로 job을 받습니다."""
 
     def __init__(self, job):
+        job = maplejobs.get_ko_jobname(job)
         self.job = job
-        self.supplier = maplejobs.jobMap[job]
+        self.supplier = maplejobs.get_generator(job)
         self.runtime = 1800 * 1000
 
     def set_runtime(self, time):
@@ -131,7 +132,7 @@ class DpmSetting:
     def __init__(
         self,
         # v_builder=core.AlwaysMaximumVBuilder(),
-        ulevel: int =0,
+        ulevel: int = 0,
     ):
         self.ulevel = ulevel
         self.detail = ""
@@ -149,12 +150,11 @@ class DpmSetting:
             default_modifier=core.CharacterModifier()
     ) -> Dict[str, Any]:
         print("ulevel : " + str(self.ulevel))
-        jobli = maplejobs.jobListOrder
+        jobli = maplejobs.job_list_order
         retli = []
         retDict = []
 
-        for _job, idx in zip(jobli, range(len(jobli))):
-            job = maplejobs.jobList[_job]
+        for job, idx in zip(jobli, range(len(jobli))):
             generator = IndividualDPMGenerator(job)
             dpm = generator.get_dpm(
                 spec_name=str(self.ulevel),
